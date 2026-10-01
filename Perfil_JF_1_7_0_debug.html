@@ -12,7 +12,8 @@
           com {nome}; validação de dados na abertura (console + painel Cérebro).
           Depois da revisão do GPT: Reiniciar cala o C.A.O.S.; falas atrasadas presas à
           partida (caosToastAtrasado); timers do save validados; alert() -> caosAvisoModal;
-          baralhoSemAnimal -> baralhoClassico; voz masculina (iPhone) e tom grave automático;
+          baralhoSemAnimal -> baralhoClassico; voz masculina quando existe e tom grave automático
+          (no iOS o Safari não expõe vozes baixadas, como o Felipe, para sites);
           falas para chute igual à resposta; pronomes; 40 dicas de ANO "entre X e Y" e 39
           cartas fora de 1-4 especiais corrigidas; sobras de animation no CSS removidas;
           service worker (sw.js) e fonte embutida para jogar offline.
@@ -16804,7 +16805,7 @@ function updateVoiceBtn() {
           list.map((v) => v.name).join(", ") +
           (list.some((v) => CAOS_MALE_VOICE_RE.test(v.name || ""))
             ? ""
-            : " — nenhuma masculina (deixei o tom mais grave). No iPhone: Ajustes > Acessibilidade > Conteúdo Falado > Vozes > Português (Brasil) > baixe a voz Felipe.")
+            : " — nenhuma masculina, então deixei o tom mais grave (ajuste em Tom). No iPhone/iPad o Safari só libera para sites as vozes de fábrica: vozes baixadas (como Felipe ou as Aprimoradas) não aparecem aqui.")
         : "Nenhuma voz em português encontrada: o navegador usa a padrão.";
     }
   }
@@ -25230,7 +25231,7 @@ const NOVIDADES = [
     t: "Jogo reorganizado, offline, voz masculina e cartas revisadas",
     itens: [
       "📴 Funciona sem internet: no iPhone, adicione à Tela de Início e abra uma vez com internet. Também existe um arquivo offline para baixar.",
-      "🗣️ O C.A.O.S. prefere voz masculina (Felipe, Eddy, Reed...). Se o aparelho só tem voz feminina, ele fala mais grave e o painel ensina a baixar a voz Felipe.",
+      "🗣️ O C.A.O.S. prefere voz masculina quando o navegador oferece uma (computador, Android). No iPhone o Safari só libera a Luciana para sites, então ele fala com ela num tom mais grave.",
       '🃏 Cartas de ANO sem dica de intervalo ("entre X e Y") e todas as cartas com 1 a 4 especiais.',
       "🔁 Reiniciar cala o C.A.O.S. na hora, e falas atrasadas não vazam mais para a partida seguinte.",
       "🎯 Se o chute digitado for igual à resposta, o C.A.O.S. avisa o Mestre.",
