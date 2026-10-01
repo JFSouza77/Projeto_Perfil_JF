@@ -55,13 +55,14 @@ const tamanho = (s) => Buffer.byteLength(s, "utf8");
 function acharMestre() {
   const dado = process.argv.slice(2).find((a) => !a.startsWith("--"));
   if (dado) return path.resolve(dado);
-  const versao = (f) => f.match(/_(\d+)_(\d+)_(\d+)\.html$/).slice(1).map(Number);
+  const versao = (f) => f.match(/_(\d+(?:_\d+){2,3})\.html$/)[1].split("_").map(Number);
   const lista = fs
     .readdirSync(PASTA)
-    .filter((f) => /^Perfil_JF_Mestre_\d+_\d+_\d+\.html$/.test(f))
+    .filter((f) => /^Perfil_JF_Mestre_\d+(_\d+){2,3}\.html$/.test(f))
     .sort((a, b) => {
       const [x, y] = [versao(a), versao(b)];
-      return x[0] - y[0] || x[1] - y[1] || x[2] - y[2];
+      for (let i = 0; i < 4; i++) if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) - (y[i] || 0);
+      return 0;
     });
   if (!lista.length) throw new Error("Nenhum Perfil_JF_Mestre_X_Y_Z.html encontrado.");
   return path.join(PASTA, lista[lista.length - 1]);
@@ -294,8 +295,16 @@ async function testarNavegador(arquivo) {
 // ------------------------------------------------------------------ main
 (async () => {
   const mestreArq = acharMestre();
-  const versao = path.basename(mestreArq).match(/(\d+_\d+_\d+)/)[1];
+  const versao = path.basename(mestreArq).match(/(\d+(?:_\d+){2,3})\.html$/)[1];
   const mestre = fs.readFileSync(mestreArq, "utf8");
+  console.log(`Mestre usado: ${path.basename(mestreArq)} (versão ${versao.replace(/_/g, ".")})`);
+  // O carimbo de versão dentro do HTML (<title>) tem que bater com o nome do arquivo.
+  const carimbo = (mestre.match(/<title>[^<]*?(\d+(?:\.\d+){2,3})[^<]*<\/title>/) || [])[1];
+  if (carimbo !== versao.replace(/_/g, "."))
+    console.warn(
+      `\n⚠️  ATENÇÃO: o nome do mestre diz ${versao.replace(/_/g, ".")}, mas o <title> do HTML diz ${carimbo || "(sem versão)"}.` +
+        `\n    Confira o histórico/título do mestre antes de publicar.\n`,
+    );
   const saidas = {
     debug: path.join(PASTA, `Perfil_JF_${versao}_debug.html`),
     compacta: path.join(PASTA, `Perfil_JF_${versao}.html`),
@@ -322,6 +331,8 @@ async function testarNavegador(arquivo) {
   linhas.push(`Debug    ${path.basename(saidas.debug).padEnd(36)} ${kb(tamanho(debug)).padStart(10)}  ${fmt(cD)}`);
   linhas.push(`Compacta ${path.basename(saidas.compacta).padEnd(36)} ${kb(tamanho(comp.html)).padStart(10)}  ${fmt(cC)} (igual ao mestre)`);
   linhas.push(`Offline  ${path.basename(saidas.offline).padEnd(36)} ${kb(tamanho(comp.offline)).padStart(10)}  mesmo JS da compacta, comprimido`);
+  console.log("\nArquivos gerados (só desta versão; os de outras versões não são tocados):");
+  for (const f of Object.values(saidas)) console.log("  " + path.basename(f));
   console.log("\nSintaxe: ok no mestre e nas três saídas.\n");
   console.log(linhas.join("\n"));
   console.log("\nRemovido na compacta:\n  - " + comp.removido.join("\n  - "));
