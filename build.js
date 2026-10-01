@@ -55,13 +55,14 @@ const tamanho = (s) => Buffer.byteLength(s, "utf8");
 function acharMestre() {
   const dado = process.argv.slice(2).find((a) => !a.startsWith("--"));
   if (dado) return path.resolve(dado);
-  const versao = (f) => f.match(/_(\d+)_(\d+)_(\d+)\.html$/).slice(1).map(Number);
+  const versao = (f) => f.match(/_(\d+(?:_\d+){2,3})\.html$/)[1].split("_").map(Number);
   const lista = fs
     .readdirSync(PASTA)
-    .filter((f) => /^Perfil_JF_Mestre_\d+_\d+_\d+\.html$/.test(f))
+    .filter((f) => /^Perfil_JF_Mestre_\d+(_\d+){2,3}\.html$/.test(f))
     .sort((a, b) => {
       const [x, y] = [versao(a), versao(b)];
-      return x[0] - y[0] || x[1] - y[1] || x[2] - y[2];
+      for (let i = 0; i < 4; i++) if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) - (y[i] || 0);
+      return 0;
     });
   if (!lista.length) throw new Error("Nenhum Perfil_JF_Mestre_X_Y_Z.html encontrado.");
   return path.join(PASTA, lista[lista.length - 1]);
@@ -294,7 +295,7 @@ async function testarNavegador(arquivo) {
 // ------------------------------------------------------------------ main
 (async () => {
   const mestreArq = acharMestre();
-  const versao = path.basename(mestreArq).match(/(\d+_\d+_\d+)/)[1];
+  const versao = path.basename(mestreArq).match(/(\d+(?:_\d+){2,3})\.html$/)[1];
   const mestre = fs.readFileSync(mestreArq, "utf8");
   const saidas = {
     debug: path.join(PASTA, `Perfil_JF_${versao}_debug.html`),
