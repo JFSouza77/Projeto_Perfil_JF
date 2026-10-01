@@ -1,0 +1,17 @@
+{
+  "name": "perfil-jf-build",
+  "private": true,
+  "description": "Ferramenta de build do Perfil JF (gera debug e compacta a partir do mestre).",
+  "scripts": {
+    "build": "node build.js",
+    "testar": "node build.js --testar"
+  },
+  "devDependencies": {
+    "acorn": "^8.15.0",
+    "csso": "^5.0.5",
+    "terser": "^5.44.0"
+  },
+  "optionalDependencies": {
+    "playwright-core": "^1.56.0"
+  }
+}
