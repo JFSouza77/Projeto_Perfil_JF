@@ -4,12 +4,16 @@
 //
 //   npm install                 (uma vez: instala terser, csso e acorn)
 //   node build.js               usa o Perfil_JF_Mestre_X_Y_Z.html mais novo da pasta
-//   node build.js --comprimir   compacta com o JS comprimido (deflate-raw + base64)
-//   node build.js --publicar    também copia a compacta para index.html
+//   node build.js --publicar    também copia a compacta normal para index.html (GitHub Pages)
 //   node build.js --testar      também abre cada saída num navegador headless
 //                               (precisa de playwright-core e Chromium instalados)
 //
-// Saídas: Perfil_JF_X_Y_Z_debug.html e Perfil_JF_X_Y_Z.html (compacta).
+// Saídas:
+//   Perfil_JF_X_Y_Z_debug.html    código legível, dados reduzidos (para depurar)
+//   Perfil_JF_X_Y_Z.html          compacta normal (vai para o GitHub como index.html)
+//   Perfil_JF_X_Y_Z_offline.html  compacta comprimida, para baixar e jogar sem internet
+//                                 (exige Safari 16.4+, Chrome 80+ ou Firefox 113+)
+// Todas levam a fonte Baloo 2 embutida (pasta fontes/), sem depender do Google Fonts.
 
 "use strict";
 const fs = require("fs");
@@ -27,6 +31,22 @@ const PASTA = __dirname;
 const CARTAS_DEBUG = ["Leão", "2005", "1950", "Smartphone", "Colher", "Internet", "Cristo Redentor", "Oa", "Pelé", "Mônica"];
 // Listas de REACTIVE_VOICE que não são falas (não são reduzidas no debug).
 const LISTAS_NAO_FALA = ["familiasSorteio"];
+
+// Fonte embutida: troca os <link> do Google Fonts por @font-face com os arquivos de fontes/.
+const FONTES = [
+  ["baloo2-latin.woff2", "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"],
+  ["baloo2-latin-ext.woff2", "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF"],
+];
+function embutirFonte(antes) {
+  const links = /<link[^>]*fonts\.(googleapis|gstatic)\.com[^>]*>\s*/g;
+  if (!links.test(antes)) return antes;
+  const faces = FONTES.map(([arq, faixa]) => {
+    const b64 = fs.readFileSync(path.join(PASTA, "fontes", arq)).toString("base64");
+    return `@font-face{font-family:"Baloo 2";font-style:normal;font-weight:400 800;font-display:swap;src:url(data:font/woff2;base64,${b64}) format("woff2");unicode-range:${faixa}}`;
+  }).join("");
+  let feito = false;
+  return antes.replace(links, () => (feito ? "" : ((feito = true), `<style>${faces}</style>\n`)));
+}
 
 // ---------------------------------------------------------------- utilitários
 const kb = (n) => (n / 1024).toFixed(1) + " KB";
@@ -130,12 +150,12 @@ function gerarDebug(html, versao) {
   })(inicializador(ast, "REACTIVE_VOICE"), "");
   js = aplicar(js, edits);
   let meio = p.meio.replace(/>\d+ cartas</, `>${CARTAS_DEBUG.length} cartas<`);
-  const antes = p.antes.replace(/<title>([^<]*)<\/title>/, "<title>$1 (debug)</title>");
+  const antes = embutirFonte(p.antes).replace(/<title>([^<]*)<\/title>/, "<title>$1 (debug)</title>");
   return antes + "<style>" + p.css + "</style>" + meio + "<script>" + js + "</script>" + p.depois;
 }
 
 // --------------------------------------------------------------- compacta
-async function gerarCompacta(html, comprimir) {
+async function gerarCompacta(html) {
   const p = partes(html);
   const removido = [];
   // DEBUG desligado: o terser apaga os console.* que ficam atrás dele
@@ -159,21 +179,22 @@ async function gerarCompacta(html, comprimir) {
       .replace(/\n[ \t]+/g, "\n")
       .replace(/\n{2,}/g, "\n");
   removido.push("HTML: comentários (inclusive o histórico do mestre) e recuos");
-  let script;
-  if (comprimir) {
-    const bin = zlib.deflateRawSync(Buffer.from(r.code, "utf8"), { level: 9 });
+  const bin = zlib.deflateRawSync(Buffer.from(r.code, "utf8"), { level: 9 });
     const b64 = bin.toString("base64");
     // Carregador: descomprime e executa. Abertura assíncrona; exige DecompressionStream
     // (Safari 16.4+, Chrome 80+, Firefox 113+).
-    script =
+    const script =
       `<script>(async()=>{try{const b=Uint8Array.from(atob("${b64}"),c=>c.charCodeAt(0));` +
       `const t=await new Response(new Blob([b]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).text();` +
       `const s=document.createElement("script");s.textContent=t;document.body.appendChild(s)}catch(e){` +
       `document.body.insertAdjacentHTML("afterbegin",'<p style="color:#fff;padding:16px">Este navegador é antigo demais para esta versão do Perfil JF (precisa de Safari 16.4 ou mais novo).</p>')}})()</script>`;
-    removido.push(`JS comprimido: ${kb(tamanho(r.code))} → ${kb(bin.length)} (base64 ${kb(b64.length)})`);
-  } else script = "<script>" + r.code + "</script>";
-  const out = limpaHtml(p.antes).trim() + "\n<style>" + css + "</style>" + limpaHtml(p.meio) + script + limpaHtml(p.depois);
-  return { html: out, js: r.code, removido };
+  if (zlib.inflateRawSync(bin).toString("utf8") !== r.code) throw new Error("A compressão não voltou idêntica.");
+  removido.push(`Offline: JS comprimido ${kb(tamanho(r.code))} → ${kb(bin.length)} (base64 ${kb(b64.length)})`);
+  removido.push("Fonte Baloo 2 embutida (sem Google Fonts)");
+  const antes = limpaHtml(embutirFonte(p.antes)).trim() + "\n<style>" + css + "</style>" + limpaHtml(p.meio);
+  const normal = antes + "<script>" + r.code + "</script>" + limpaHtml(p.depois);
+  const offline = antes.replace(/<title>([^<]*)<\/title>/, "<title>$1 (offline)</title>") + script + limpaHtml(p.depois);
+  return { html: normal, offline, js: r.code, removido };
 }
 
 // ------------------------------------------------------------- verificação
@@ -204,7 +225,9 @@ async function testarNavegador(arquivo) {
   page.on("console", (m) => m.type() === "error" && !/ERR_FAILED|ERR_NAME|net::/.test(m.text()) && erros.push(m.text()));
   await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
   await page.goto("file://" + arquivo);
-  await page.waitForFunction(() => !document.getElementById("goToRulesBtn").disabled, null, { timeout: 15000 });
+  // a versão offline descomprime o jogo antes de rodar: espera o iniciar() existir
+  await page.waitForFunction(() => typeof iniciar === "function" && !document.getElementById("goToRulesBtn").disabled, null, { timeout: 20000 });
+  await page.waitForTimeout(800);
   let etapa = "";
   const clica = async (sel, rotulo) => {
     etapa = rotulo || sel;
@@ -276,19 +299,21 @@ async function testarNavegador(arquivo) {
   const saidas = {
     debug: path.join(PASTA, `Perfil_JF_${versao}_debug.html`),
     compacta: path.join(PASTA, `Perfil_JF_${versao}.html`),
+    offline: path.join(PASTA, `Perfil_JF_${versao}_offline.html`),
   };
 
   const debug = gerarDebug(mestre, versao);
-  const comp = await gerarCompacta(mestre, ARGS.has("--comprimir"));
+  const comp = await gerarCompacta(mestre);
   fs.writeFileSync(saidas.debug, debug);
   fs.writeFileSync(saidas.compacta, comp.html);
+  fs.writeFileSync(saidas.offline, comp.offline);
 
   // verificação
   const linhas = [];
   const cM = contar(partes(mestre).js);
   const cD = contar(partes(debug).js);
   const cC = contar(comp.js);
-  for (const [nome, h] of [["mestre", mestre], ["debug", debug], ["compacta", comp.html]]) sintaxe(h, nome);
+  for (const [nome, h] of [["mestre", mestre], ["debug", debug], ["compacta", comp.html], ["offline", comp.offline]]) sintaxe(h, nome);
   const igual = JSON.stringify(cM) === JSON.stringify(cC);
   if (!igual) throw new Error("Contagens da compacta diferentes do mestre: " + JSON.stringify({ cM, cC }));
   if (cD.cartas !== CARTAS_DEBUG.length || cD.familias !== cM.familias) throw new Error("Debug com contagem inesperada: " + JSON.stringify(cD));
@@ -296,14 +321,15 @@ async function testarNavegador(arquivo) {
   linhas.push(`Mestre   ${path.basename(mestreArq).padEnd(36)} ${kb(tamanho(mestre)).padStart(10)}  ${fmt(cM)}`);
   linhas.push(`Debug    ${path.basename(saidas.debug).padEnd(36)} ${kb(tamanho(debug)).padStart(10)}  ${fmt(cD)}`);
   linhas.push(`Compacta ${path.basename(saidas.compacta).padEnd(36)} ${kb(tamanho(comp.html)).padStart(10)}  ${fmt(cC)} (igual ao mestre)`);
-  console.log("\nSintaxe: ok nas três saídas.\n");
+  linhas.push(`Offline  ${path.basename(saidas.offline).padEnd(36)} ${kb(tamanho(comp.offline)).padStart(10)}  mesmo JS da compacta, comprimido`);
+  console.log("\nSintaxe: ok no mestre e nas três saídas.\n");
   console.log(linhas.join("\n"));
   console.log("\nRemovido na compacta:\n  - " + comp.removido.join("\n  - "));
   console.log(`\nRemovido no debug: ${cM.cartas - cD.cartas} cartas e ${cM.falas - cD.falas} falas (fica a 1ª de cada grupo/família).`);
 
   if (ARGS.has("--testar")) {
     console.log("\nTeste no navegador:");
-    for (const [n, f] of [["mestre", mestreArq], ["debug", saidas.debug], ["compacta", saidas.compacta]])
+    for (const [n, f] of [["mestre", mestreArq], ["debug", saidas.debug], ["compacta", saidas.compacta], ["offline", saidas.offline]])
       console.log(`  ${n.padEnd(9)} ${await testarNavegador(f)}`);
   }
   if (ARGS.has("--publicar")) {

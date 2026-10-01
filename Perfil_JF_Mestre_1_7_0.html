@@ -10,6 +10,12 @@
           23 regras CSS sem uso removidas; console.* atrás de DEBUG; cartas no formato
           "texto" / "*especial"; falas sem o prefixo [C.A.O.S.] (aplicado na abertura) e
           com {nome}; validação de dados na abertura (console + painel Cérebro).
+          Depois da revisão do GPT: Reiniciar cala o C.A.O.S.; falas atrasadas presas à
+          partida (caosToastAtrasado); timers do save validados; alert() -> caosAvisoModal;
+          baralhoSemAnimal -> baralhoClassico; voz masculina (iPhone) e tom grave automático;
+          falas para chute igual à resposta; pronomes; 40 dicas de ANO "entre X e Y" e 39
+          cartas fora de 1-4 especiais corrigidas; sobras de animation no CSS removidas;
+          service worker (sw.js) e fonte embutida para jogar offline.
   1.6.5 · 30/09/2026 · Última versão minificada (C.A.O.S. 3.6), base desta reorganização.
 -->
 <!DOCTYPE html>
@@ -435,10 +441,8 @@ button:disabled {
   white-space: normal;
   text-align: center;
   pointer-events: none;
-  animation: floatUp linear infinite;
 }
 .fx-shake {
-  animation: fxShake 0.45s ease-in-out;
 }
 .fx-pop {
   position: fixed;
@@ -449,7 +453,6 @@ button:disabled {
   font-size: 5.5rem;
   transform: translate(-50%, -50%) scale(0.2);
   opacity: 0;
-  animation: fxPop 1.1s cubic-bezier(0.2, 1.4, 0.4, 1) forwards;
   filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.45));
 }
 .fx-float {
@@ -462,7 +465,6 @@ button:disabled {
   font-weight: 800;
   font-size: 2.6rem;
   transform: translate(-50%);
-  animation: fxFloat 1.4s ease-out forwards;
   text-shadow:
     0 0 12px currentColor,
     0 3px 0 rgba(0, 0, 0, 0.35);
@@ -478,7 +480,6 @@ button:disabled {
   border-radius: 50%;
   z-index: 9997;
   pointer-events: none;
-  animation: fxBurst 0.9s ease-out forwards;
 }
 .flash-roxo {
   background: radial-gradient(circle, #a855f78c, #581c8759);
@@ -493,12 +494,10 @@ body.fx-urgente:after {
   pointer-events: none;
   z-index: 9990;
   box-shadow: inset 0 0 90px 18px #ef44448c;
-  animation: fxUrgente 1s ease-in-out infinite;
 }
 .splash-dice {
   font-size: 5rem;
   z-index: 2;
-  animation: spinDice 3.5s ease-in-out infinite;
 }
 .splash-title {
   font-size: 2.4rem;
@@ -614,10 +613,8 @@ body.fx-urgente:after {
   font-weight: 800;
   font-size: 1.05rem;
   cursor: pointer;
-  animation: bounceCta 1s ease-in-out infinite;
 }
 .starter-result.chosen {
-  animation: popIn 0.4s ease-out;
   font-weight: 800;
 }
 .answer-line-name {
@@ -788,7 +785,6 @@ body.fx-urgente:after {
 .roulette-reel.landed {
   background: var(--accent);
   color: #fff;
-  animation: popIn 0.4s ease-out;
 }
 .roulette-hint {
   font-size: 0.9rem;
@@ -1026,9 +1022,6 @@ body.fx-urgente:after {
   width: 8px;
   height: 14px;
   opacity: 0.9;
-  animation-name: confettiFall;
-  animation-timing-function: ease-in;
-  animation-fill-mode: forwards;
 }
 .screen-flash {
   position: fixed;
@@ -1036,7 +1029,6 @@ body.fx-urgente:after {
   pointer-events: none;
   z-index: 9997;
   opacity: 0;
-  animation: screenFlash 0.6s ease-out forwards;
 }
 .flash-green {
   background: radial-gradient(circle at center, #2ecc7114, #2ecc715c);
@@ -1054,7 +1046,6 @@ body.fx-urgente:after {
   pointer-events: none;
   z-index: 9998;
   opacity: 0;
-  animation: errorXPop 0.8s ease-out forwards;
   filter: drop-shadow(0 0 14px rgba(233, 69, 96, 0.85));
 }
 .final-ranking-list {
@@ -1099,10 +1090,8 @@ body.fx-urgente:after {
 .color-swatch.rgb-swatch {
   background: linear-gradient(90deg, red, orange, #ff0, green, #00f, indigo, violet);
   background-size: 200% 100%;
-  animation: rgbSlide 2s linear infinite;
 }
 .rgb-name {
-  animation: rgbColorCycle 3s linear infinite;
   font-weight: 800;
 }
 .rgb-name {
@@ -1116,27 +1105,22 @@ body.fx-urgente:after {
 }
 body.batata-mode .rgb-name,
 body.batata-mode .rgb-swatch {
-  animation: none !important;
 }
 .grad-anim {
   background-size: 200% 100% !important;
   background-position: var(--grad-pos, 0% 0%) !important;
 }
 body:not(.batata-mode) .mode-select-wrap.mc-wrap.mode-selected {
-  animation: none !important;
   transform: translateY(var(--mc-float, 0px));
 }
 body:not(.batata-mode) .mode-select-wrap.mc-wrap.mode-selected:before {
-  animation: none !important;
   transform: translate(-50%, -50%) rotate(var(--led-rot, 0deg)) !important;
 }
 body:not(.batata-mode) .mode-select-wrap.mode-selected .mode-btn {
-  animation: none !important;
   background-position: var(--neon-pos, 0% 50%) !important;
   transform: translateY(var(--mc-float, 0px));
 }
 body:not(.batata-mode) .onyx-swatch {
-  animation: none !important;
   box-shadow:
     0 0 0 2px var(--onyx-a, #22d3ee),
     0 0 10px var(--onyx-a, #22d3ee),
@@ -1208,7 +1192,6 @@ body:not(.batata-mode) .onyx-swatch {
   padding: 16px;
   font-size: 1.1rem;
   z-index: 5;
-  animation: spotlightIn 0.25s ease-out;
 }
 .spotlight-timer,
 .pick-timer {
@@ -1263,7 +1246,6 @@ button {
   font-weight: 900;
 }
 .timer-blink-on {
-  animation: timerBlinkStep 0.5s ease-in-out 1;
 }
 .timeout-overlay {
   background: #2b0f16;
@@ -1369,7 +1351,6 @@ button {
 }
 .clue-list li,
 .pending-box {
-  animation: fadeSlideIn 0.35s ease-out forwards;
 }
 #miniScoreboard,
 #boardTrack {
@@ -1403,7 +1384,6 @@ button {
   border-radius: 16px;
   background: #0f0f1eb8;
   border: 1px solid color-mix(in srgb, var(--mc) 45%, transparent);
-  animation: none;
   font-family: inherit;
   text-transform: none;
   letter-spacing: 0;
@@ -1583,7 +1563,6 @@ html.os-acess .jf-toast-overlay {
   box-shadow:
     0 0 18px var(--mc-glow),
     0 12px 34px var(--mc-glow);
-  animation: modeFloat 2.6s ease-in-out infinite;
 }
 .mode-select-wrap.mc-wrap.mode-selected:before {
   content: "";
@@ -1603,7 +1582,6 @@ html.os-acess .jf-toast-overlay {
     var(--mc) 330deg,
     transparent 360deg
   );
-  animation: mcLedSpin 2.8s linear infinite;
 }
 .mode-select-wrap.mc-wrap.mc-rainbow.mode-selected:before {
   background: conic-gradient(from 0deg, #34d399, #38bdf8, #c084fc, #f87171, #fbbf24, #34d399);
@@ -1614,7 +1592,6 @@ html.os-acess .jf-toast-overlay {
   border-color: transparent;
   background: #17132a;
   box-shadow: inset 0 0 22px color-mix(in srgb, var(--mc) 18%, transparent);
-  animation: none;
   transform: none;
 }
 .mode-select-wrap.mc-wrap.mode-selected .mc-title {
@@ -1625,17 +1602,14 @@ html.os-acess .jf-toast-overlay {
   transform: none;
 }
 body.batata-mode .mode-select-wrap.mc-wrap.mode-selected {
-  animation: none;
   box-shadow: 0 0 10px var(--mc-glow);
 }
 body.batata-mode .mode-select-wrap.mc-wrap.mode-selected:before {
-  animation: none;
   background: var(--mc);
 }
 @media (prefers-reduced-motion: reduce) {
   .mode-select-wrap.mc-wrap.mode-selected,
   .mode-select-wrap.mc-wrap.mode-selected:before {
-    animation: none;
   }
 }
 .mc-back {
@@ -1677,7 +1651,6 @@ body.batata-mode .mode-select-wrap.mc-wrap.mode-selected:before {
     0 0 0 2px #22d3ee,
     0 0 10px #22d3ee,
     0 0 16px #d946ef99;
-  animation: onyxGlow 2.4s ease-in-out infinite;
 }
 .color-swatch.onyx-swatch.selected {
   border-color: #fff;
@@ -1691,7 +1664,6 @@ body.batata-mode .mode-select-wrap.mc-wrap.mode-selected:before {
     0 0 14px #d946ef !important;
 }
 body.batata-mode .onyx-swatch {
-  animation: none;
 }
 .card .onyx-name {
   color: #0a0a12 !important;
@@ -1748,7 +1720,6 @@ body.batata-mode .onyx-swatch {
   border-radius: 12px;
   background: var(--btn-color, var(--accent));
   background-size: 300% 300%;
-  animation: modeNeonShift 5s ease infinite;
   color: #fff;
   font-size: 1.05rem;
   font-weight: 700;
@@ -1765,12 +1736,8 @@ body.batata-mode .onyx-swatch {
 .mode-select-wrap.mode-selected {
   background: linear-gradient(270deg, #ff6b6b, #ffd166, #4ecdc4, #a78bfa, #ff6b6b);
   background-size: 400% 400%;
-  animation: modeNeonShift 3s ease infinite;
 }
 .mode-select-wrap.mode-selected .mode-btn {
-  animation:
-    modeNeonShift 5s ease infinite,
-    modeFloat 2.2s ease-in-out infinite;
 }
 .jf-toast-overlay.caos-thinking {
   letter-spacing: 3px;
@@ -1813,7 +1780,6 @@ body.batata-mode .onyx-swatch {
   vertical-align: middle;
 }
 body.batata-mode * {
-  animation: none !important;
   transition: none !important;
   box-shadow: none !important;
   text-shadow: none !important;
@@ -3285,7 +3251,6 @@ button.main-btn.ft-btn {
   }
 }
 body:not(.batata-mode) .splash-dice {
-  animation: none;
   transform: translateY(var(--dice-y, 0px)) rotate(var(--dice-r, 0deg));
   filter: drop-shadow(0 0 16px var(--sp-cor, #e94560));
 }
@@ -4503,11 +4468,9 @@ body:not(.batata-mode) .age-btn.on {
     inset 0 0 10px #facc150f;
 }
 .floating-word {
-  animation: none !important;
   opacity: 0;
 }
 .btn-confirm-start {
-  animation: none !important;
 }
 body:not(.batata-mode) .btn-confirm-start {
   transform: translateY(var(--mc-float, 0px));
@@ -4515,7 +4478,6 @@ body:not(.batata-mode) .btn-confirm-start {
 *,
 *:before,
 *:after {
-  animation: none !important;
 }
 body.fx-urgente:after {
   opacity: var(--urg-k, 0.7);
@@ -5349,6 +5311,14 @@ function getCurrentScreen() {
   if (document.getElementById("welcomeScreen").style.display === "block") return "rules";
   return "splash";
 }
+// Valores de temporizador vindos do save (que pode ter sido editado à mão).
+const TIMER_KINDS = ["pick", "response", "special", "turn"];
+function saveNum(v) {
+  return typeof v === "number" && Number.isFinite(v) ? v : null;
+}
+function saveSegundos(v) {
+  return typeof v === "number" && Number.isFinite(v) && v >= 0 ? v : null;
+}
 function sanitizeLoadedState(s) {
   if (!s || typeof s !== "object") return;
   const MODES = ["classico", "hardcore", "express", "junior", "oldschool"];
@@ -5542,7 +5512,7 @@ function loadGameState() {
     } else if (CURRENT_MODE === "oldschool") {
       allCards = baralhoOldSchool();
     } else {
-      allCards = CURRENT_MODE === "hardcore" ? baralhoHardcore() : baralhoSemAnimal();
+      allCards = CURRENT_MODE === "hardcore" ? baralhoHardcore() : baralhoClassico();
     }
     oldSchoolAcess = CURRENT_MODE === "oldschool" && !!state.oldSchoolAcess;
     aplicarAcessibilidade();
@@ -5624,12 +5594,12 @@ function loadGameState() {
     history = state.history || [];
     palpiteHolders = state.palpiteHolders || {};
     palpiteStock = typeof state.palpiteStock === "number" ? state.palpiteStock : PALPITE_STOCK;
-    timerEndAt = state.timerEndAt || null;
-    timerKind = state.timerKind || null;
+    timerEndAt = saveNum(state.timerEndAt) || null;
+    timerKind = TIMER_KINDS.includes(state.timerKind) ? state.timerKind : null;
     stats = state.stats || { totalDrawn: 0, totalDiscarded: 0, totalExhausted: 0 };
-    pendingStartTime = state.pendingStartTime || null;
-    pausedRemainingSeconds = state.pausedRemainingSeconds === void 0 ? null : state.pausedRemainingSeconds;
-    pausedKind = state.pausedKind || null;
+    pendingStartTime = saveNum(state.pendingStartTime) || null;
+    pausedRemainingSeconds = saveSegundos(state.pausedRemainingSeconds);
+    pausedKind = TIMER_KINDS.includes(state.pausedKind) ? state.pausedKind : null;
     pausedAt = typeof state.pausedAt === "number" && isFinite(state.pausedAt) ? state.pausedAt : null;
     pausaExpirada = !!state.pausaExpirada && !!state.starterChosen && !state.gameEnded;
     if (
@@ -5676,7 +5646,7 @@ function loadGameState() {
           }
         : null;
     gemWinner = state.gemWinner || null;
-    cardEndAt = state.cardEndAt || null;
+    cardEndAt = saveNum(state.cardEndAt) || null;
     if (state.expressWhoFreeze && typeof state.expressWhoFreeze === "object" && CURRENT_MODE === "express") {
       const f = state.expressWhoFreeze,
         ok = (v) => typeof v === "number" && isFinite(v) && v >= 0;
@@ -5688,7 +5658,7 @@ function loadGameState() {
     }
     expressWhoFreeze = null;
     expressAskWho = false;
-    pausedCardRemaining = state.pausedCardRemaining === void 0 ? null : state.pausedCardRemaining;
+    pausedCardRemaining = saveSegundos(state.pausedCardRemaining);
     bonusOrigMestreIdx =
       typeof state.bonusOrigMestreIdx === "number" && players[state.bonusOrigMestreIdx]
         ? state.bonusOrigMestreIdx
@@ -5918,7 +5888,7 @@ function exportSave() {
     state = null;
   }
   if (!state) {
-    alert("Nenhum jogo salvo em andamento encontrado.");
+    caosAvisoModal("Nenhum jogo salvo em andamento encontrado.");
     return;
   }
   const encoded = btoa(encodeURIComponent(state));
@@ -5926,7 +5896,7 @@ function exportSave() {
     navigator.clipboard
       .writeText(encoded)
       .then(() => {
-        alert("💾 Save copiado! Cole no WhatsApp e mande pro seu amigo continuar a partida.");
+        caosAvisoModal("💾 Save copiado! Cole no WhatsApp e mande pro seu amigo continuar a partida.");
       })
       .catch(() => {
         caosPromptModal(
@@ -5952,11 +5922,11 @@ function importSaveAplicar(code) {
     decoded = decodeURIComponent(atob(code.trim()));
     parsed = JSON.parse(decoded);
   } catch (e) {
-    alert("❌ Código inválido ou corrompido. Confere se copiou o código inteiro.");
+    caosAvisoModal("❌ Código inválido ou corrompido. Confere se copiou o código inteiro.");
     return;
   }
   if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.players)) {
-    alert("❌ Esse código não parece ser um save do Perfil JF.");
+    caosAvisoModal("❌ Esse código não parece ser um save do Perfil JF.");
     return;
   }
   let existing = null;
@@ -6316,7 +6286,9 @@ function avatarsForMode() {
 function baralhoClassicoProprio() {
   return ADULT_CARDS.filter((c) => c.classificacao === "adulto" || c.classificacao === "livre");
 }
-function baralhoSemAnimal() {
+// Baralho do Clássico (e dos modos que usam ele): cartas próprias + mistura de
+// Old School e Júnior. Fora do Júnior, carta ANIMAL é anunciada como "Coisa".
+function baralhoClassico() {
   const proprio = baralhoClassicoProprio();
   const total = Math.round(proprio.length / (1 - CLASSICO_MIX_OS - CLASSICO_MIX_JR));
   const os = shuffle(ADULT_CARDS.filter((c) => c.classificacao === "oldschool" && !c.soExpressHardcore)).slice(
@@ -6405,6 +6377,13 @@ function checkCardIntegrity(cards) {
   cards.forEach((c) => {
     if (c.clues.length !== 20) avisoDados(`carta "${c.answer}" tem ${c.clues.length} entradas (o padrão é 20).`);
     const reais = c.clues.filter((x) => x.type === "clue").length;
+    const especiais = c.clues.length - reais;
+    if (especiais < 1 || especiais > 4)
+      avisoDados(`carta "${c.answer}" tem ${especiais} especiais (a regra é de 1 a 4).`);
+    if (c.category === "ANO")
+      c.clues
+        .filter((x) => x.type === "clue" && /\bentre\s+\d{3,4}\s+e\s+\d{3,4}/i.test(x.text))
+        .forEach((x) => avisoDados(`carta ANO "${c.answer}" usa intervalo ("${x.text}"), o que a regra não permite.`));
     if (reais < 10) avisoDados(`carta "${c.answer}" tem só ${reais} dicas reais (o Hardcore/Express precisa de 10).`);
     c.clues
       .filter((x) => x.type === "special" && !SPECIALS_OK.includes(String(x.text).trim().toLowerCase()))
@@ -6795,6 +6774,8 @@ function jfSafeAvatar(a) {
   return JF_ALL_AVATARS.has(a) ? a : "";
 }
 function resetGame() {
+  caosVoiceCancel();
+  closeActiveToast();
   aplicarCorRngSplash();
   clearOverlayTimeout();
   releaseWakeLock();
@@ -8004,15 +7985,15 @@ function addPlayer() {
   const input = document.getElementById("playerNameInput");
   const name = input.value.trim();
   if (name.length < 2 || name.length > 15) {
-    alert("O nome deve ter entre 2 e 15 caracteres!");
+    caosAvisoModal("O nome deve ter entre 2 e 15 caracteres!");
     return;
   }
   if (players.some((p) => p.name.toLowerCase() === name.toLowerCase())) {
-    alert("Esse jogador já está na partida!");
+    caosAvisoModal("Esse jogador já está na partida!");
     return;
   }
   if (players.length >= MAX_PLAYERS) {
-    alert(`O Perfil permite no máximo ${MAX_PLAYERS} jogadores.`);
+    caosAvisoModal(`O Perfil permite no máximo ${MAX_PLAYERS} jogadores.`);
     return;
   }
   if (iniFluxo && iniPassoAtual() !== "pronto") {
@@ -8216,7 +8197,7 @@ function jogarDeNovo() {
   selectMode(modo, cats, flavor);
   document.getElementById("startGameBtn").click();
   caosLog("revanche", `mesmo modo (${modo}) · ${players.length} jogadores`);
-  setTimeout(() => showToastMessage(getRandomReaction(REACTIVE_VOICE.revanche, campeao || "quem ganhou")), 400);
+  caosToastAtrasado(() => showToastMessage(getRandomReaction(REACTIVE_VOICE.revanche, campeao || "quem ganhou")), 400);
 }
 function cardsForExpressCategory(cat) {
   return ADULT_CARDS.filter(
@@ -8272,7 +8253,7 @@ function selectMode(mode, expressCategories, flavor) {
     allCards = baralhoOldSchool();
   } else {
     WINNING_SCORE = 200;
-    allCards = mode === "hardcore" ? baralhoHardcore() : baralhoSemAnimal();
+    allCards = mode === "hardcore" ? baralhoHardcore() : baralhoClassico();
   }
   if (mode !== "oldschool") oldSchoolAcess = false;
   aplicarAcessibilidade();
@@ -8310,7 +8291,7 @@ function selectMode(mode, expressCategories, flavor) {
       { classico: "Clássico", junior: "Júnior", hardcore: "Hardcore", express: "Express", oldschool: "Old School" }[
         mode
       ] || "outro modo";
-    setTimeout(() => showToastMessage(getRandomReaction(REACTIVE_VOICE.trocaDeModo, nm)), 300);
+    caosToastAtrasado(() => showToastMessage(getRandomReaction(REACTIVE_VOICE.trocaDeModo, nm)), 300);
   }
   saveGameState();
 }
@@ -8369,7 +8350,7 @@ const TUT_MC = (cor, glow, ic, nome, selo, extra) =>
 function confirmExpress(flavor) {
   const checked = Array.from(document.querySelectorAll(".expressCatChk:checked")).map((cb) => cb.value);
   if (checked.length > 2) {
-    alert("Escolha no máximo 2 categorias para o Modo Express!");
+    caosAvisoModal("Escolha no máximo 2 categorias para o Modo Express!");
     return;
   }
   selectMode("express", checked, flavor);
@@ -8520,11 +8501,11 @@ function redrawMestre() {
 }
 function runTeamFormation(n) {
   if (n === 2 && players.length !== 4) {
-    alert("2 equipes exige EXATAMENTE 4 jogadores (2 por equipe) — hoje tem " + players.length + ".");
+    caosAvisoModal("2 equipes exige EXATAMENTE 4 jogadores (2 por equipe) — hoje tem " + players.length + ".");
     return;
   }
   if (n === 3 && players.length !== 6) {
-    alert("3 equipes exige EXATAMENTE 6 jogadores (2 por equipe) — hoje tem " + players.length + ".");
+    caosAvisoModal("3 equipes exige EXATAMENTE 6 jogadores (2 por equipe) — hoje tem " + players.length + ".");
     return;
   }
   formTeamsBalancedByAge(n);
@@ -9140,7 +9121,15 @@ function caosVoiceScore(v) {
   if (v.localService) sc += 5;
   if (/natural|neural|premium|enhanced|aprimorad|google|online/i.test(v.name || "")) sc += 4;
   if (CAOS_MALE_VOICE_RE.test(v.name || "")) sc += 6;
+  else if (CAOS_FEMALE_VOICE_RE.test(v.name || "")) sc -= 8;
   return sc;
+}
+// Tom usado de fato: na voz automática, se o aparelho não tem voz masculina,
+// o C.A.O.S. fala um pouco mais grave.
+function caosTomEfetivo() {
+  if (caosVoiceName) return caosVoicePitch;
+  const v = caosPickVoice();
+  return v && !CAOS_MALE_VOICE_RE.test(v.name || "") ? caosVoicePitch * 0.8 : caosVoicePitch;
 }
 function caosPtVoices() {
   try {
@@ -9171,7 +9160,7 @@ function caosSpeakSample(txt) {
     const v = caosPickVoice();
     if (v) u.voice = v;
     u.rate = Math.min(2, caosVoiceSpeed);
-    u.pitch = Math.max(0.4, Math.min(2, caosVoicePitch));
+    u.pitch = Math.max(0.4, Math.min(2, caosTomEfetivo()));
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(u);
   } catch (e) {}
@@ -9268,12 +9257,10 @@ function caosSpeak(msg, humorForcado, onEnd, onPedaco, vir) {
       const end = chunk.slice(-1);
       const stP = hmV && pi >= corteV ? [st0[0] * hmV[0], st0[1] * hmV[1]] : st;
       u.rate = Math.max(0.93 * caosVoiceSpeed, Math.min(2, stP[0] * caosVoiceSpeed + (Math.random() - 0.5) * 0.06));
+      const tom = caosTomEfetivo();
       u.pitch = Math.max(
-        Math.max(0.4, 0.88 * caosVoicePitch),
-        Math.min(
-          2,
-          stP[1] * caosVoicePitch + (Math.random() - 0.5) * 0.08 + (end === "?" ? 0.08 : end === "!" ? 0.05 : 0),
-        ),
+        Math.max(0.4, 0.88 * tom),
+        Math.min(2, stP[1] * tom + (Math.random() - 0.5) * 0.08 + (end === "?" ? 0.08 : end === "!" ? 0.05 : 0)),
       );
       if (corteV >= 0 && typeof onPedaco === "function")
         u.onstart = () => {
@@ -9826,7 +9813,7 @@ function caosRegistrarCorte() {
   let fala = null;
   if (quem && quem.iniciante) {
     if (Math.random() < 0.3)
-      setTimeout(
+      caosToastAtrasado(
         () =>
           showToastMessage(getRandomReaction(REACTIVE_VOICE.iniciante.cortado, quem.name), null, false, false, true),
         250,
@@ -9845,7 +9832,8 @@ function caosRegistrarCorte() {
     else if (n >= 6 && n % 3 === 0) fala = getRandomReaction(C.muitas, quem.name, n);
     else if (n === 1 && Math.random() < 0.35) fala = getRandomReaction(C.primeira, quem.name);
   } else if (caosCortes.total % 3 === 0) fala = getRandomReaction(C.semNome);
-  if (fala && playerHumor(quem) !== "suave") setTimeout(() => showToastMessage(fala, null, false, false, true), 250);
+  if (fala && playerHumor(quem) !== "suave")
+    caosToastAtrasado(() => showToastMessage(fala, null, false, false, true), 250);
 }
 function caosVingancaLine(p) {
   if (!p || !caosCortes.rancor[p.name] || playerHumor(p) === "suave" || Math.random() >= 0.5) return null;
@@ -11489,21 +11477,21 @@ function caosInspectorFalas() {
     caosPromptModal("Nova chave (mínimo 4 caracteres, maiúsculas e minúsculas contam igual):", "", (k1) => {
       if (k1 === null) return;
       if (k1.trim().length < 4) {
-        alert("Chave curta demais — use pelo menos 4 caracteres.");
+        caosAvisoModal("Chave curta demais — use pelo menos 4 caracteres.");
         return;
       }
       caosPromptModal("Digite a nova chave de novo pra confirmar:", "", (k2) => {
         if (k2 === null) return;
         if (k1.trim().toUpperCase() !== k2.trim().toUpperCase()) {
-          alert("As duas não bateram. Nada mudou.");
+          caosAvisoModal("As duas não bateram. Nada mudou.");
           return;
         }
         try {
           JFStore.setItem(CAOS_CHAVE_KEY, caosChaveHash(k1));
-          alert("✅ Chave trocada neste aparelho.");
+          caosAvisoModal("✅ Chave trocada neste aparelho.");
           caosLog("acesso", "chave própria definida");
         } catch (e) {
-          alert("Não deu pra salvar a chave neste aparelho.");
+          caosAvisoModal("Não deu pra salvar a chave neste aparelho.");
         }
       });
     });
@@ -11520,7 +11508,7 @@ function caosInspectorFalas() {
           JFStore.removeItem ? JFStore.removeItem(CAOS_CHAVE_KEY) : JFStore.setItem(CAOS_CHAVE_KEY, "");
         } catch (e) {}
         caosLog("acesso", "voltou pras chaves padrão");
-        alert("Pronto: voltaram as chaves padrão.");
+        caosAvisoModal("Pronto: voltaram as chaves padrão.");
       });
     });
     secK.appendChild(r);
@@ -16218,7 +16206,7 @@ function caosAusentesTalvez() {
     if (!temJf && !temAnne && conheceJf && conheceAnne && Math.random() < 0.6) bank = REACTIVE_VOICE.ausentes.ambos;
     else if (temJf && !temAnne && conheceAnne && Math.random() < 0.45) bank = REACTIVE_VOICE.ausentes.anne;
     else if (!temJf && temAnne && conheceJf && Math.random() < 0.45) bank = REACTIVE_VOICE.ausentes.jf;
-    if (bank) setTimeout(() => showToastMessage(getRandomReaction(bank)), 1500);
+    if (bank) caosToastAtrasado(() => showToastMessage(getRandomReaction(bank)), 1500);
   } catch (e) {}
 }
 function caosSatisfacaoTalvez() {
@@ -16283,8 +16271,24 @@ function caosPausaMagoaCarta() {
     const pico = caosMagoaPico;
     caosMagoaPico = 0;
     if (pico >= 2 && !caosSilenced && Math.random() < 0.6)
-      setTimeout(() => showToastMessage(getRandomReaction(REACTIVE_VOICE.pausaCalmou)), 1600);
+      caosToastAtrasado(() => showToastMessage(getRandomReaction(REACTIVE_VOICE.pausaCalmou)), 1600);
   }
+}
+// No GitHub Pages (https), registra o sw.js para o jogo abrir sem internet
+// depois da primeira visita. Aberto como arquivo (file://), não faz nada.
+function registrarOffline() {
+  try {
+    if ("serviceWorker" in navigator && location.protocol === "https:")
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+  } catch (e) {}
+}
+// Mostra uma fala depois de "ms", só se ainda for a mesma partida
+// (evita fala "fantasma" de uma partida antiga aparecer na nova).
+function caosToastAtrasado(fn, ms) {
+  const ser = caosPartidaSerial;
+  setTimeout(() => {
+    if (ser === caosPartidaSerial) fn();
+  }, ms);
 }
 function caosFalaAgendar(fn, ms, prio) {
   const ser = caosPartidaSerial,
@@ -16777,7 +16781,9 @@ function updateVoiceBtn() {
       ls.textContent = list.length
         ? "Vozes em português neste aparelho: " +
           list.map((v) => v.name).join(", ") +
-          (list.some((v) => CAOS_MALE_VOICE_RE.test(v.name || "")) ? "" : " — nenhuma masculina; use o Tom mais grave.")
+          (list.some((v) => CAOS_MALE_VOICE_RE.test(v.name || ""))
+            ? ""
+            : " — nenhuma masculina (deixei o tom mais grave). No iPhone: Ajustes > Acessibilidade > Conteúdo Falado > Vozes > Português (Brasil) > baixe a voz Felipe.")
         : "Nenhuma voz em português encontrada: o navegador usa a padrão.";
     }
   }
@@ -19674,7 +19680,7 @@ Os ${p.score} pontos vão ser divididos: +${parte} pra cada um dos ${resto} que 
             "Cancelar",
             () => {
               const r = admRemoverJogador(i);
-              if (r !== "ok") alert("Não deu pra remover: " + r);
+              if (r !== "ok") caosAvisoModal("Não deu pra remover: " + r);
               redesenhar();
             },
           );
@@ -19909,7 +19915,7 @@ function perguntarPartidaAnterior() {
     document.getElementById("splashScreen").style.display = "none";
     resumeGame();
     requestWakeLock();
-    setTimeout(
+    caosToastAtrasado(
       () => showToastMessage(getRandomReaction(REACTIVE_VOICE.pausaExpirada.continuou, minutos), null, true),
       350,
     );
@@ -19920,7 +19926,10 @@ function perguntarPartidaAnterior() {
     document.getElementById("splashScreen").style.display = "none";
     document.getElementById("formatSelectScreen").style.display = "block";
     renderModeCardDescs();
-    setTimeout(() => showToastMessage(getRandomReaction(REACTIVE_VOICE.pausaExpirada.recomecou), null, true), 350);
+    caosToastAtrasado(
+      () => showToastMessage(getRandomReaction(REACTIVE_VOICE.pausaExpirada.recomecou), null, true),
+      350,
+    );
   });
 }
 function startPauseTipsTimerOnly() {
@@ -21259,7 +21268,7 @@ const ADULT_CARDS = expandDeck([
       "Sou o ano do pentacampeonato brasileiro, com Ronaldo fazendo os dois gols da final",
       "*Avance 1 casa",
       "Vi o Brasil sediar a estreia do reality show Big Brother Brasil na televisão aberta",
-      "Sou par e estou entre 2000 e 2010",
+      "Meus quatro dígitos somam 4",
       "Vi a Venezuela enfrentar uma tentativa fracassada de golpe contra o presidente Hugo Chávez",
       "Vi o Brasil eleger um presidente que viria a governar por dois mandatos seguidos",
       "Vi os Estados Unidos ainda sob forte comoção nacional após o pior atentado terrorista de sua história",
@@ -21284,7 +21293,7 @@ const ADULT_CARDS = expandDeck([
       "*Volte 2 casas",
       "Vi o lançamento da rede social profissional LinkedIn, hoje usada por profissionais do mundo todo",
       "Sou um número ímpar",
-      "Estou entre 2000 e 2006",
+      "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "Vi a estreia do primeiro filme da trilogia Piratas do Caribe, com Johnny Depp",
       "Vi o ator Arnold Schwarzenegger ser eleito governador da Califórnia",
       "Meus dígitos somam exatamente 5",
@@ -21310,7 +21319,7 @@ const ADULT_CARDS = expandDeck([
       "No fim deste ano, um grande desastre natural atingiu vários países ao redor de um oceano",
       "Uma onda gigante causada por um terremoto submarino devastou várias praias da Ásia",
       "O desastre causado pela onda gigante é conhecido como o tsunami do Oceano Índico",
-      "Estou entre 2000 e 2010",
+      "Fui um ano bissexto, com 29 de fevereiro no calendário",
       "Sou par",
       "Sou o ano seguinte ao início da Guerra do Iraque",
       "Se você somar 1 a mim, chega no ano do furacão Katrina",
@@ -21338,7 +21347,7 @@ const ADULT_CARDS = expandDeck([
       "*Perca sua vez",
       "Vi Angela Merkel se tornar a primeira mulher a chanceler da Alemanha",
       "Sou um número ímpar",
-      "Estou entre 2000 e 2010",
+      "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "*Escolha um jogador para avançar 2 casas",
       "Estou entre o tsunami de 2004 e o lançamento do primeiro iPhone",
       "Se você subtrair 1 de mim, chega no ano do tsunami",
@@ -21361,7 +21370,7 @@ const ADULT_CARDS = expandDeck([
       "A Copa do Mundo daquele ano terminou com uma mordida famosa de um jogador francês em um italiano",
       "Sou o ano da Copa do Mundo na Alemanha, vencida pela Itália",
       "A final da Copa do Mundo na Alemanha foi decidida nos pênaltis, após empate entre França e Itália",
-      "Estou entre 2000 e 2010",
+      "Escrito em algarismos romanos, tenho 4 letras",
       "Sou par",
       "Vi o Brasil reeleger Luiz Inácio Lula da Silva para um segundo mandato consecutivo",
       "Se você somar 1 a mim, chega no ano do primeiro iPhone",
@@ -21388,7 +21397,7 @@ const ADULT_CARDS = expandDeck([
       "A Apple mudou a indústria de celulares para sempre neste ano",
       "Vi a Apple lançar um celular que mudaria completamente a indústria de smartphones",
       "Sou um número ímpar",
-      "Estou entre 2000 e 2010",
+      "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "Se você subtrair 1 de mim, chega no ano da Copa da Alemanha",
       "Meus dígitos somam exatamente 9",
       "Sou o ano anterior a uma grande crise financeira mundial",
@@ -21413,7 +21422,7 @@ const ADULT_CARDS = expandDeck([
       "Neste ano, os Estados Unidos elegeram seu primeiro presidente negro",
       "O primeiro presidente negro dos Estados Unidos se chama Barack Obama",
       "Também fui marcado pela quebra de um grande banco de investimentos americano",
-      "Estou entre 2000 e 2010",
+      "*Avance 1 casa",
       "Sou par",
       "Vi o iPhone 3G ser lançado, trazendo internet de terceira geração para o aparelho da Apple",
       "Vi o ator Heath Ledger falecer pouco antes da estreia de seu aclamado papel como o Coringa",
@@ -21441,7 +21450,7 @@ const ADULT_CARDS = expandDeck([
       "Fui o ano da morte repentina do Rei do Pop",
       "Vi o lançamento de um aplicativo de mensagens que mudaria a forma de as pessoas se comunicarem",
       "Sou um número ímpar",
-      "Estou entre 2000 e 2010",
+      "*Volte 2 casas",
       "Estou um ano antes de uma Copa do Mundo sediada na África",
       "Se você subtrair 1 de mim, chega no ano da eleição de Obama",
       "Meus dígitos somam exatamente 11",
@@ -21494,7 +21503,7 @@ const ADULT_CARDS = expandDeck([
       "As forças americanas invadiram um esconderijo no Paquistão para capturá-lo",
       "Vi forças americanas localizarem e matarem o líder de uma rede terrorista internacional",
       "Sou um número ímpar",
-      "Estou entre 2010 e 2020",
+      "Escrito em algarismos romanos, tenho 4 letras",
       "Estou um ano antes do suposto fim do mundo segundo o calendário maia",
       "*Perca sua vez",
       "Meus dígitos somam exatamente 4",
@@ -21517,7 +21526,7 @@ const ADULT_CARDS = expandDeck([
       "Muita gente ficou com medo de que este fosse o último ano da humanidade",
       "O medo do fim do mundo veio de uma interpretação errada de um calendário indígena da América Central",
       "*Avance 1 casa",
-      "Estou entre 2010 e 2020",
+      "Escrito em algarismos romanos, tenho 5 letras",
       "Sou par",
       "Vi previsões alarmistas sobre o fim do mundo baseadas num calendário antigo não se confirmarem",
       "Estou um ano antes das Jornadas de Junho no Brasil",
@@ -21546,7 +21555,7 @@ const ADULT_CARDS = expandDeck([
       "Sou o ano da eleição do Papa Francisco",
       "Vi multidões tomarem as ruas de cidades brasileiras em protestos que começaram pelo transporte público",
       "Sou um número ímpar",
-      "Estou entre 2010 e 2020",
+      "Sou divisível por 11",
       "Meus dígitos somam exatamente 6",
       "O Brasil sediou um torneio preparatório para a Copa do ano seguinte",
       "Grandes manifestações populares tomaram as ruas de várias cidades brasileiras no meu ano",
@@ -21573,7 +21582,7 @@ const ADULT_CARDS = expandDeck([
       "Vi estádios como o Maracanã e o Mineirão serem reformados para o evento",
       "Tive como mascote oficial um tatu-bola chamado Fuleco",
       "Sou par",
-      "Estou entre 2010 e 2020",
+      "Escrito em algarismos romanos, tenho 5 letras",
       "Faltavam 2 anos para as Olimpíadas do Rio de Janeiro quando eu aconteci",
       "Meus dígitos somam exatamente 7",
       "Não sou ano de Olimpíadas",
@@ -21599,7 +21608,7 @@ const ADULT_CARDS = expandDeck([
       "Vi ataques terroristas abalarem a capital francesa em uma noite de novembro",
       "Sou um número ímpar",
       "*Um palpite a qualquer hora",
-      "Estou entre 2010 e 2020",
+      "Escrito em algarismos romanos, tenho 4 letras",
       "Estou um ano antes das Olimpíadas do Rio de Janeiro",
       "Meus dígitos somam exatamente 8",
       "Não sou ano de Copa do Mundo nem de Olimpíadas",
@@ -21623,7 +21632,7 @@ const ADULT_CARDS = expandDeck([
       "As Olimpíadas realizadas na América do Sul foram sediadas na cidade maravilhosa, com direito a Cristo Redentor no logo",
       "Sou o ano das Olimpíadas do Rio de Janeiro",
       "*Volte 2 casas",
-      "Estou entre 2010 e 2020",
+      "Fui um ano bissexto, com 29 de fevereiro no calendário",
       "Sou par",
       "Vi Usain Bolt conquistar seu último tricampeonato olímpico consecutivo nos 100 e 200 metros",
       "Estou um ano antes de um ataque de vírus chamado WannaCry",
@@ -21653,7 +21662,7 @@ const ADULT_CARDS = expandDeck([
       "Vi um movimento global de denúncias contra assédio ganhar força nas redes sociais",
       "*Avance 2 casas",
       "Sou um número ímpar",
-      "Estou entre 2010 e 2020",
+      "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "Estou um ano antes de uma Copa do Mundo sediada na Rússia",
       "Meus dígitos somam exatamente 10",
       "Um ataque cibernético global travou sistemas de milhares de empresas no meu ano",
@@ -21674,7 +21683,7 @@ const ADULT_CARDS = expandDeck([
       "A seleção europeia que se sagrou bicampeã foi a França, com um jovem atacante chamado Mbappé se destacando",
       "Sou o ano da Copa do Mundo na Rússia, vencida pela França",
       "O Brasil foi eliminado nas quartas de final da Copa do Mundo na Rússia pela Bélgica",
-      "Estou entre 2010 e 2020",
+      "Escrito em algarismos romanos, tenho 7 letras",
       "Sou par",
       "Vi a seleção russa sediar uma Copa do Mundo de futebol muito badalada",
       "*Escolha um jogador para voltar 2 casas",
@@ -21703,7 +21712,7 @@ const ADULT_CARDS = expandDeck([
       "*Volte 2 casas",
       "Vi a seleção brasileira conquistar a Copa América jogando em casa, no Maracanã",
       "Sou um número ímpar",
-      "Estou entre 2010 e 2020",
+      "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "*Um palpite a qualquer hora",
       "*Avance 2 casas",
       "Estou um ano antes de uma pandemia mudar o mundo inteiro",
@@ -21756,7 +21765,7 @@ const ADULT_CARDS = expandDeck([
       "Foi um ano em que muitos países começaram a vacinar suas populações contra a Covid-19",
       "Vi uma invasão ao Capitólio americano chocar o mundo logo no início do ano",
       "Sou um número ímpar",
-      "Estou entre 2020 e 2030",
+      "Escrito em algarismos romanos, tenho 5 letras",
       "Estou um ano antes de uma guerra estourar no leste europeu",
       "Meus dígitos somam exatamente 5",
       "Sou ano de Olimpíadas de verão",
@@ -21779,7 +21788,7 @@ const ADULT_CARDS = expandDeck([
       "A Copa do Mundo vencida por um jogador argentino muito aclamado foi sediada em um pequeno país do Oriente Médio",
       "A final da Copa do Mundo no Catar terminou empatada e foi decidida nos pênaltis",
       "Lionel Messi finalmente ergueu a taça de campeão mundial nesse ano",
-      "Estou entre 2020 e 2030",
+      "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "*Avance 2 casas",
       "Sou par",
       "Vi o início de um conflito armado no leste europeu que chocou o mundo",
@@ -21808,7 +21817,7 @@ const ADULT_CARDS = expandDeck([
       "Escolas e empresas passaram a debater regras para o uso de ferramentas de inteligência artificial generativa",
       "Vi uma inteligência artificial conversacional se popularizar rapidamente ao redor do mundo",
       "Sou um número ímpar",
-      "Estou entre 2020 e 2030",
+      "*Um palpite a qualquer hora",
       "Estou um ano antes das Olimpíadas de Paris",
       "Meus dígitos somam exatamente 7",
       "Não sou ano de Copa do Mundo nem de Olimpíadas",
@@ -21830,7 +21839,7 @@ const ADULT_CARDS = expandDeck([
       "Assisti a debates ainda mais intensos sobre inteligência artificial no mundo todo",
       "Este foi o ano em que a cidade luz recebeu os Jogos Olímpicos de verão",
       "A cerimônia de abertura das Olimpíadas de Paris aconteceu ao ar livre, às margens de um rio famoso",
-      "Estou entre 2020 e 2030",
+      "Escrito em algarismos romanos, tenho 6 letras",
       "Sou par",
       "Vi eleições movimentadas acontecerem em várias grandes democracias ao redor do mundo",
       "Estou um ano antes de completar um quarto de século desde o ano 2000",
@@ -21948,7 +21957,7 @@ const ADULT_CARDS = expandDeck([
       "Tenho uma filha chamada Mavie",
       "Rodei clipes e fiz parcerias com marcas de tênis famosas",
       "Sou um dos jogadores mais caros da história do futebol",
-      "*Avance 1 casa",
+      "Ultrapassei Pelé como maior artilheiro da história da seleção brasileira",
       "Atualmente jogo ligado a clubes do Oriente Médio",
       "Uso a camisa 10, sou ex-Santos, ex-Barcelona, ex-PSG",
       "Sou um dos maiores ídolos do futebol brasileiro dos últimos 15 anos",
@@ -21962,7 +21971,7 @@ const ADULT_CARDS = expandDeck([
       "Trabalhei como dentista antes de virar cantora, fazendo parte da formação",
       "Fiquei famosa nacionalmente com uma música sobre um 'Show das Poderosas'",
       "Canto principalmente funk, mas já misturei pop, reggaeton e outros ritmos",
-      "Fiz parcerias musicais com artistas internacionais famosos",
+      "*Perca sua vez",
       "Fui a primeira artista brasileira a se apresentar no palco principal do Coachella",
       "Meu nome verdadeiro é Larissa de Macedo Machado",
       "Sou conhecida por trocar de visual e estilo com frequência",
@@ -22081,7 +22090,7 @@ const ADULT_CARDS = expandDeck([
       "Ganhei o Prêmio Nobel da Paz ainda adolescente",
       "Sou reconhecida mundialmente por lutar pelo direito à educação feminina",
       "Fundei uma organização para ajudar meninas a terem acesso à escola",
-      "*Avance 2 casas",
+      "A ONU criou um dia com o meu nome, celebrado no dia do meu aniversário",
       "Sou paquistanesa e defensora mundial da educação das meninas",
       "Sobrevivi a um atentado por defender o direito de meninas estudarem",
       "Sou a mais jovem ganhadora do Prêmio Nobel da Paz da história",
@@ -22176,7 +22185,7 @@ const ADULT_CARDS = expandDeck([
     os: 1,
     q: [
       "Nasci em Gary, uma cidade industrial dos Estados Unidos",
-      "Comecei minha carreira musical ainda criança, cantando com meus irmãos",
+      "*Avance 2 casas",
       "Formei um grupo musical com meus irmãos ainda quando era criança, muito antes da carreira solo",
       "Depois segui carreira solo e me tornei uma das maiores estrelas da música pop",
       "Lancei um álbum chamado Thriller, um dos mais vendidos da história",
@@ -22259,7 +22268,7 @@ const ADULT_CARDS = expandDeck([
       "Fiquei órfão ainda bebê, após meus pais serem mortos por um bruxo das trevas",
       "Tenho uma cicatriz em formato de raio na testa",
       "Descobri que sou um bruxo pouco antes de completar 11 anos",
-      "Estudo em uma escola de magia e bruxaria na Inglaterra",
+      "*Volte 3 casas",
       "A escola de magia e bruxaria onde estudo se chama Hogwarts",
       "Fui selecionado para uma das quatro casas da escola, conhecida por coragem",
       "A casa conhecida pela coragem, para onde fui selecionado, se chama Grifinória",
@@ -22397,7 +22406,7 @@ const ADULT_CARDS = expandDeck([
       "Posso ser vista, em partes, de balões e aviões que sobrevoam a região",
       "Tenho milhares de quilômetros de extensão",
       "Fui construída para proteger um antigo império de invasões vindas do norte",
-      "Serpenteio por montanhas, desertos e planícies do meu país",
+      "*Escolha um jogador para voltar 2 casas",
       "Sou feita de pedra, tijolo, terra e madeira, dependendo do trecho",
       "Há um mito popular de que sou visível a olho nu do espaço, embora isso seja discutido",
       "Sou uma das construções humanas mais extensas já feitas",
@@ -22585,7 +22594,7 @@ const ADULT_CARDS = expandDeck([
     q: [
       "Sou a capital de um país conhecido pela gastronomia e pela moda",
       "Tenho uma torre de ferro muito famosa como meu principal símbolo",
-      "Sou cortada por um rio chamado Sena",
+      "*Escolha um jogador para avançar 2 casas",
       "Abrigo um dos museus mais visitados do mundo, o Louvre",
       "Dentro do Louvre está guardada a pintura da Mona Lisa",
       "Sou conhecida romanticamente como a 'cidade do amor'",
@@ -22621,7 +22630,7 @@ const ADULT_CARDS = expandDeck([
       "Tenho uma praça central muito famosa, cheia de pombos e turistas",
       "A praça central cheia de pombos e turistas se chama Praça de São Marcos",
       "*Avance 2 casas",
-      "*Um palpite a qualquer hora",
+      "Tenho a famosa Ponte de Rialto, sobre o meu Grande Canal",
       "Sou conhecida por um grande festival de máscaras que acontece todos os anos",
       "Fico no norte da Itália",
       "Sou considerada uma das cidades mais românticas do mundo",
@@ -22773,7 +22782,7 @@ const ADULT_CARDS = expandDeck([
       "Posso ser acessada através de um guarda-roupa mágico, segundo a história",
       "Sou governada por um leão sábio e poderoso chamado Aslam",
       "Tenho criaturas fantásticas como faunos, centauros e animais que falam",
-      "Já fui dominada por uma bruxa má que mantinha um inverno eterno no meu território",
+      "*Avance 1 casa",
       "A bruxa má que me dominava com um inverno eterno se chama Jadis, a Feiticeira Branca",
       "Fui criada pelo escritor britânico C.S. Lewis",
       "Sou tema de uma série de sete livros muito conhecida",
@@ -22993,7 +23002,7 @@ const ADULT_CARDS = expandDeck([
       "Tenho valor apenas porque as pessoas confiam no sistema financeiro que me sustenta",
       "Sou usado para comprar produtos e pagar serviços",
       "Tenho símbolos e imagens diferentes dependendo do país onde circulo",
-      "Sou guardado em carteiras, bancos ou contas digitais",
+      "*Volte 2 casas",
       "Muitas pessoas trabalham durante a vida inteira para conseguir mais de mim",
       "Existo hoje também em formas totalmente digitais, sem papel ou moeda física",
       "Sou emitido por bancos centrais em cada país",
@@ -23430,7 +23439,7 @@ const ADULT_CARDS = expandDeck([
       "Sou símbolo de transformação e renovação em muitas culturas",
       "Voo de forma leve e sou atraída por jardins floridos",
       "Sou considerada um dos insetos mais bonitos do mundo",
-      "Passo por metamorfose completa, saindo de um casulo",
+      "*Um palpite a qualquer hora",
       "Enrolo-me num casulo antes de completar minha transformação final",
       "Enxergo cores que o olho humano não é capaz de perceber",
       "Meu paladar funciona através de receptores localizados nas minhas patas",
@@ -23503,7 +23512,7 @@ const ADULT_CARDS = expandDeck([
     q: [
       "Nasci na Inglaterra no século 17, prematuro e franzino",
       "Desenvolvi três leis fundamentais que explicam o movimento dos corpos",
-      "Formulei uma lei que explica por que os objetos caem em direção ao chão",
+      "*Perca sua vez",
       "A lei que explica por que os objetos caem ficou associada a uma história popular envolvendo uma fruta caindo de uma árvore",
       "Criei, paralelamente a outro matemático, um novo ramo avançado da matemática",
       "Construí um dos primeiros telescópios que usava espelhos em vez de lentes",
@@ -23590,7 +23599,7 @@ const ADULT_CARDS = expandDeck([
       "Assinei um documento histórico que decretou a liberdade dos escravizados nos estados rebeldes",
       "Sou lembrado por um discurso curto e poderoso feito num campo de batalha",
       "Consegui manter a união do meu país apesar da ameaça de divisão entre norte e sul",
-      "*Avance 1 casa",
+      "Ganhei o apelido de 'Honest Abe' pela fama de honestidade",
       "*Escolha um jogador para avançar 2 casas",
       "Era conhecido pela estatura muito alta e magra e pelo uso frequente de cartola",
       "Fui o primeiro presidente do meu país filiado a um partido fundado poucos anos antes",
@@ -23736,7 +23745,7 @@ const ADULT_CARDS = expandDeck([
       "Sediei os Jogos Olímpicos de verão numa época ainda distante das grandes transmissões de TV",
       "Sou cortada pelo rio Tibre, que atravessa meu centro histórico",
       "Sou a capital da Itália, conhecida por minhas ruínas antigas e monumentos milenares",
-      "Sou a capital da Itália, com uma história que atravessa mais de 2 mil anos",
+      "*Avance 2 casas",
     ],
   },
   {
@@ -23836,7 +23845,7 @@ const ADULT_CARDS = expandDeck([
       "Sou às vezes associada a locais reais como a ilha grega de Santorini, por teorias históricas",
       "Minha lenda inspirou romances, filmes e jogos sobre civilizações perdidas no fundo do mar",
       "Sou meu próprio símbolo de grandeza destruída pela arrogância humana",
-      "Já fui retratada tanto como reino submerso quanto como cidade afundada por catástrofe",
+      "*Volte 3 casas",
       "Minha história é contada há mais de dois mil anos, ainda que provavelmente seja apenas um mito",
       "Sirvo de inspiração para o reino submarino de um super-herói dos quadrinhos",
       "Sou o continente perdido que teria afundado no oceano segundo a lenda grega",
@@ -23909,7 +23918,7 @@ const ADULT_CARDS = expandDeck([
       "Fui eleito o melhor jogador do mundo em duas ocasiões",
       "Marquei um gol de falta impressionante contra a Inglaterra em uma Copa do Mundo",
       "Sou conhecido pelo sorriso constante enquanto jogava futebol",
-      "Fui campeão mundial pela seleção brasileira em 2002",
+      "*Escolha um jogador para voltar 2 casas",
       "Joguei no Barcelona antes da chegada de Messi ao time principal",
       "Meu apelido junta meu nome de batismo com uma referência ao meu estado natal",
       "Sou um dos jogadores mais carismáticos da história do futebol brasileiro",
@@ -23967,7 +23976,7 @@ const ADULT_CARDS = expandDeck([
       "Sou conhecida por interpretar protagonistas em tramas voltadas ao público adolescente",
       "Participei de produções da Rede Globo e depois de plataformas de streaming",
       "Sou uma atriz brasileira que cresceu no ramo desde criança",
-      "Fiquei famosa como Maria Joaquina em Carrossel",
+      "*Escolha um jogador para avançar 2 casas",
       "Sou uma das atrizes mais conhecidas da minha geração no Brasil",
       "Tive uma separação dos meus pais que virou assunto muito comentado na mídia",
       "Assinei contratos publicitários milionários ainda quando era criança, por causa da minha popularidade",
@@ -24038,7 +24047,7 @@ const ADULT_CARDS = expandDeck([
     q: [
       "Nasci em Pedro Leopoldo, no interior de Minas Gerais",
       "Fiquei órfão de mãe ainda muito criança",
-      "Fui uma das figuras mais importantes do espiritismo no Brasil",
+      "*Avance 1 casa",
       "Dizia receber mensagens de espíritos e as transformava em livros",
       "Escrevi centenas de livros ao longo da minha vida, segundo a mediunidade",
       "Doei praticamente todos os direitos autorais dos meus livros para instituições de caridade",
@@ -24089,7 +24098,7 @@ const ADULT_CARDS = expandDeck([
     a: "Homer Simpson",
     q: [
       "Sou um personagem fictício de uma famosa série de desenho animado americana",
-      "*Avance 1 casa",
+      "Meu pai se chama Abraham, mas todo mundo o conhece como vovô Abe",
       "Trabalho em uma usina nuclear, apesar de ser bastante desastrado",
       "Tenho uma esposa de cabelo azul muito alto chamada Marge",
       "Tenho três filhos: Bart, Lisa e Maggie",
@@ -24319,7 +24328,7 @@ const ADULT_CARDS = expandDeck([
       "Sou visitado por milhões de peregrinos católicos e turistas todos os anos",
       "Tenho meu próprio corpo de guardas, com uniformes coloridos e tradicionais",
       "Tenho meu próprio serviço de correios e emito meus próprios selos",
-      "*Um palpite a qualquer hora",
+      "Tenho só algumas centenas de habitantes, uma das menores populações do mundo",
       "Tenho meus próprios selos, moedas e até uma emissora de rádio",
       "Tenho meu próprio time de futebol e disputo partidas amistosas internacionais",
       "*Avance 2 casas",
@@ -24337,7 +24346,7 @@ const ADULT_CARDS = expandDeck([
       "Vi a primeira edição de uma famosa corrida de ciclismo francesa de longa distância",
       "Sou um número ímpar",
       "Meus dígitos somam exatamente 13",
-      "Estou entre 1900 e 1910",
+      "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "*Avance 1 casa",
       "Sou anterior à Primeira Guerra Mundial em mais de uma década",
       "Vi tratados sendo assinados que garantiram aos americanos construir um canal na América Central",
@@ -24364,7 +24373,7 @@ const ADULT_CARDS = expandDeck([
       "Vi um arquiduque austríaco ser morto, estopim direto de um grande conflito mundial",
       "Sou par",
       "Meus dígitos somam exatamente 15",
-      "Estou entre 1910 e 1920",
+      "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "*Perca sua vez",
       "Venho dois anos depois do naufrágio do Titanic",
       "Vi nações europeias se dividirem em alianças que se enfrentariam por quatro anos",
@@ -24391,7 +24400,7 @@ const ADULT_CARDS = expandDeck([
       "Sou ímpar",
       "Meus dígitos somam exatamente 22",
       "*Avance 1 casa",
-      "Estou entre 1930 e 1940",
+      "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "*Volte 2 casas",
       "Venho dez anos depois da quebra da bolsa de Nova York",
       "Vi Inglaterra e França declararem guerra à Alemanha logo após a invasão da Polônia",
@@ -24417,7 +24426,7 @@ const ADULT_CARDS = expandDeck([
       "Vi a Alemanha nazista se render às forças aliadas na Europa em maio",
       "Sou ímpar",
       "Meus dígitos somam exatamente 19",
-      "Estou entre 1940 e 1950",
+      "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "Venho seis anos depois do início da Segunda Guerra Mundial",
       "Vi bombas atômicas serem usadas em combate pela primeira e única vez na história",
       "Testemunhei a fundação da Organização das Nações Unidas logo após o fim da guerra",
@@ -24444,7 +24453,7 @@ const ADULT_CARDS = expandDeck([
       "Vi Rosa Parks ser presa por desobedecer regras de segregação racial num ônibus americano",
       "Sou ímpar",
       "Meus dígitos somam exatamente 20",
-      "Estou entre 1950 e 1960",
+      "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "Venho uma década depois do fim da Segunda Guerra Mundial",
       "Vi um boicote aos ônibus se espalhar por uma cidade americana após uma prisão injusta",
       "Vi o rock and roll ganhar força com artistas que se tornariam lendários",
@@ -24471,7 +24480,7 @@ const ADULT_CARDS = expandDeck([
       "Vi o cosmonauta soviético Yuri Gagarin se tornar o primeiro homem no espaço",
       "Sou ímpar",
       "Meus dígitos somam exatamente 17",
-      "Estou entre 1960 e 1970",
+      "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "Venho quatro anos depois do lançamento do Sputnik",
       "Vi a construção do Muro de Berlim separar fisicamente a cidade em duas partes",
       "Vi uma tentativa fracassada de invasão a Cuba organizada por exilados apoiados pelos Estados Unidos",
@@ -24499,7 +24508,7 @@ const ADULT_CARDS = expandDeck([
       "Vi os Beatles conquistarem o topo das paradas americanas, iniciando a chamada invasão britânica",
       "Sou par",
       "Meus dígitos somam exatamente 20",
-      "Estou entre 1960 e 1970",
+      "Fui um ano bissexto, com 29 de fevereiro no calendário",
       "*Escolha um jogador para avançar 2 casas",
       "Venho um ano depois do assassinato de John F. Kennedy",
       "Vi Tóquio sediar os Jogos Olímpicos de verão, um marco para o Japão do pós-guerra",
@@ -24527,7 +24536,7 @@ const ADULT_CARDS = expandDeck([
       "*Volte 3 casas",
       "Sou par",
       "Meus dígitos somam exatamente 24",
-      "Estou entre 1960 e 1970",
+      "Fui um ano bissexto, com 29 de fevereiro no calendário",
       "Venho quatro anos depois do golpe militar no Brasil",
       "Vi o Brasil endurecer sua ditadura militar com um decreto que suspendia diversos direitos civis",
       "Vi dois atletas negros erguerem o punho em protesto durante uma cerimônia olímpica, gerando repercussão mundial",
@@ -24537,7 +24546,7 @@ const ADULT_CARDS = expandDeck([
       "*Escolha um jogador para voltar 2 casas",
       "Vi jovens ao redor do mundo questionarem guerras, tradições e autoridades estabelecidas",
       "Meu decreto mais duro no Brasil fechou o Congresso e ampliou a censura por anos",
-      "*Avance 1 casa",
+      "Sou divisível por 3",
       "Vi estudantes franceses e trabalhadores em greve quase paralisarem o país inteiro",
     ],
   },
@@ -24552,7 +24561,7 @@ const ADULT_CARDS = expandDeck([
       "Vi Neil Armstrong dar seus primeiros passos na Lua durante a missão Apollo 11",
       "Sou ímpar",
       "Meus dígitos somam exatamente 25",
-      "Estou entre 1960 e 1970",
+      "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "Venho um ano depois do assassinato de Martin Luther King Jr.",
       "Vi milhões de pessoas ao redor do mundo assistirem juntas a uma transmissão de televisão histórica",
       "Testemunhei o festival de Woodstock reunir uma geração inteira em torno da música e da paz",
@@ -24579,7 +24588,7 @@ const ADULT_CARDS = expandDeck([
       "Sou ímpar",
       "*Volte 2 casas",
       "Meus dígitos somam exatamente 24",
-      "Estou entre 1970 e 1980",
+      "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "Venho oito anos depois da chegada do homem à Lua",
       "Vi Elvis Presley ser encontrado morto em sua residência no Tennessee",
       "Testemunhei efeitos especiais revolucionários mudarem para sempre o padrão dos filmes de ficção científica",
@@ -24592,7 +24601,7 @@ const ADULT_CARDS = expandDeck([
       "Meu filme espacial deu origem a bonecos, brinquedos e uma das maiores franquias do cinema",
       "Vi o lançamento do Apple II, um dos primeiros computadores pessoais de sucesso comercial",
       "*Volte 3 casas",
-      "*Escolha um jogador para avançar 2 casas",
+      "Sou divisível por 3",
     ],
   },
   {
@@ -24603,11 +24612,11 @@ const ADULT_CARDS = expandDeck([
       "Vi o lançamento de um computador pessoal revolucionário com interface gráfica amigável",
       "*Um palpite a qualquer hora",
       "Testemunhei o assassinato de uma primeira-ministra indiana por seus próprios guarda-costas",
-      "*Avance 1 casa",
+      "Escrito em algarismos romanos, tenho 9 letras",
       "Vi a Apple lançar o Macintosh, popularizando o uso do mouse e de janelas na tela",
       "Sou par",
       "Meus dígitos somam exatamente 22",
-      "Estou entre 1980 e 1990",
+      "Fui um ano bissexto, com 29 de fevereiro no calendário",
       "Venho sete anos depois da estreia do primeiro Star Wars",
       "Vi Indira Gandhi ser assassinada em Nova Délhi, gerando forte instabilidade política na Índia",
       "Testemunhei um anúncio publicitário futurista apresentar o Macintosh durante um intervalo esportivo famoso",
@@ -24641,7 +24650,7 @@ const ADULT_CARDS = expandDeck([
       "Testemunhei um terremoto devastador atingir a Cidade do México",
       "Vi um encanador bigodudo estrelar o jogo de aventura que o transformou num ícone dos videogames",
       "Sou ímpar",
-      "Estou entre 1980 e 1990",
+      "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "*Escolha um jogador para voltar 2 casas",
       "Meus dígitos somam exatamente 23",
       "Estou um ano depois das Olimpíadas de Los Angeles e um ano antes da Copa do México",
@@ -24654,13 +24663,13 @@ const ADULT_CARDS = expandDeck([
     os: 1,
     q: [
       "Vi um muro que dividia uma capital europeia em duas ser derrubado por multidões",
-      "*Avance 1 casa",
+      "Sou divisível por 3",
       "Testemunhei protestos estudantis serem violentamente reprimidos numa praça chinesa famosa",
       "Vi o Muro de Berlim cair após anos separando famílias e ideologias opostas",
       "Sou ímpar",
       "Meus dígitos somam exatamente 27",
       "*Perca sua vez",
-      "Estou entre 1980 e 1990",
+      "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "Venho quatro anos depois da chegada de Gorbachev ao poder soviético",
       "Vi cenas de berlinenses dançando sobre os escombros de um muro que parecia eterno",
       "Testemunhei uma repressão violenta a manifestantes pró-democracia na Praça da Paz Celestial",
@@ -24684,7 +24693,7 @@ const ADULT_CARDS = expandDeck([
       "Vi a União Soviética se dissolver, dando origem a mais de uma dezena de países independentes",
       "Sou ímpar",
       "Meus dígitos somam exatamente 20",
-      "Estou entre 1990 e 2000",
+      "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "*Volte 2 casas",
       "Venho dois anos depois da queda do Muro de Berlim",
       "Vi tropas internacionais expulsarem forças iraquianas do Kuwait numa guerra transmitida ao vivo",
@@ -24711,7 +24720,7 @@ const ADULT_CARDS = expandDeck([
       "Vi Fernando Collor sofrer um processo de impeachment após denúncias de corrupção",
       "Sou par",
       "Meus dígitos somam exatamente 21",
-      "Estou entre 1990 e 2000",
+      "Fui um ano bissexto, com 29 de fevereiro no calendário",
       "Venho um ano depois da dissolução da União Soviética",
       "Vi manifestantes de rosto pintado de preto e verde tomarem as ruas brasileiras pedindo impeachment",
       "*Perca sua vez",
@@ -24738,7 +24747,7 @@ const ADULT_CARDS = expandDeck([
       "Vi a seleção brasileira vencer a Copa do Mundo dos Estados Unidos nos pênaltis",
       "Sou par",
       "Meus dígitos somam exatamente 23",
-      "Estou entre 1990 e 2000",
+      "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "Venho dois anos depois do impeachment de Fernando Collor",
       "*Escolha um jogador para avançar 2 casas",
       "Vi o Plano Real ser lançado, criando uma nova moeda e finalmente domando a hiperinflação brasileira",
@@ -24833,7 +24842,7 @@ const ADULT_CARDS = expandDeck([
       "Sou representado visualmente por sombras, monstros e situações de perigo no cinema",
       "Apareço na expressão popular 'gelar a espinha' quando algo assusta muito",
       "Sou uma reação emocional a perigo, ameaça ou incerteza",
-      "Sou uma reação de alerta que todo ser vivo já experimentou alguma vez",
+      "*Volte 2 casas",
     ],
   },
   {
@@ -24841,7 +24850,7 @@ const ADULT_CARDS = expandDeck([
     a: "Ciúme",
     os: 1,
     q: [
-      "Sou um sentimento que mistura insegurança, medo de perda e possessividade",
+      "*Um palpite a qualquer hora",
       "Costumo aparecer em relacionamentos amorosos, mas também entre amigos e irmãos",
       "Posso surgir mesmo sem motivo real, só pela insegurança de quem me sente",
       "Sou tema recorrente de músicas românticas e brigas de casal",
@@ -25153,7 +25162,7 @@ const ADULT_CARDS = expandDeck([
       "Costumo ser inimigo ou aliado, dependendo da cultura e da história específica",
       "Sou uma criatura fictícia que combina características de répteis, aves e serpentes",
       "Tenho escamas resistentes que me protegem de espadas e flechas nas lendas",
-      "Sou uma das criaturas mitológicas mais reconhecidas em todo o mundo",
+      "*Perca sua vez",
       "Sou temido e respeitado em praticamente toda mitologia onde apareço",
     ],
   },
@@ -25207,7 +25216,7 @@ const ADULT_CARDS = expandDeck([
       "Sou tema de fantasias de carnaval e festas à fantasia com tema do mar",
       "Apareço em logotipos de marcas famosas inspiradas na minha imagem",
       "Sou uma criatura mítica que mistura características humanas e de peixe",
-      "Tenho versões da lenda em praticamente toda cultura litorânea do mundo",
+      "*Avance 2 casas",
       "Sou uma das criaturas mais conhecidas da mitologia marinha mundial",
       "Sou retratada em quase toda cultura litorânea, com nomes e histórias diferentes",
     ],
@@ -25318,7 +25327,7 @@ const ADULT_CARDS = expandDeck([
       "Tenho um modo criativo onde os recursos são ilimitados desde o início",
       "Sou considerado um dos jogos eletrônicos mais vendidos da história",
       "*Perca sua vez",
-      "*Volte 2 casas",
+      "Tenho um dragão como chefe final numa dimensão chamada The End",
     ],
   },
   {
@@ -25372,7 +25381,7 @@ const ADULT_CARDS = expandDeck([
       "Costumo gerar frases e bordões que viram moda entre os telespectadores",
       "Sou considerado um fenômeno de audiência e de discussão nas redes sociais brasileiras",
       "Sou um reality show brasileiro de confinamento com eliminações semanais",
-      "Sou considerado um dos maiores fenômenos de audiência da televisão nacional",
+      "*Volte 3 casas",
     ],
   },
   {
@@ -25396,7 +25405,7 @@ const ADULT_CARDS = expandDeck([
       "Tenho documentários, desenhos animados, filmes e séries de praticamente todos os gêneros",
       "Sou usado por famílias que compartilham perfis diferentes numa mesma assinatura",
       "Nasço, segundo uma história contada pelo meu fundador, de uma multa de atraso paga pela devolução tardia de uma fita de vídeo",
-      "Sou acessível através de aplicativo próprio instalado em smart TVs",
+      "*Escolha um jogador para voltar 2 casas",
       "Tenho produções premiadas em festivais de cinema e cerimônias de entrega de prêmios",
       "Sou uma plataforma de streaming símbolo da forma moderna de assistir entretenimento",
       "Sou considerada a maior e mais influente plataforma do gênero no mundo todo",
@@ -25653,7 +25662,7 @@ const ADULT_CARDS = expandDeck([
       "*Perca sua vez",
       "*Volte 3 casas",
       "Conquistei múltiplas medalhas de ouro em Jogos Olímpicos diferentes",
-      "*Avance 1 casa",
+      "Voltei às Olimpíadas em Paris 2024 e ganhei mais três medalhas de ouro",
       "Sou pequena fisicamente, mas extremamente potente e explosiva nos meus movimentos",
       "Já falei abertamente sobre saúde mental, incluindo desistir de provas por bem-estar próprio",
       "Sofri abuso por parte de um médico da equipe olímpica americana, denunciado publicamente",
@@ -25716,7 +25725,7 @@ const ADULT_CARDS = expandDeck([
       "Sou ingênuo e alegre, apesar do meu enorme poder de combate",
       "Protejo a Terra de ameaças que vêm tanto do espaço quanto de outras dimensões",
       "Minha franquia se tornou um dos animes mais populares e influentes do mundo todo",
-      "Sou reconhecido por praticamente qualquer fã de anime ao redor do planeta",
+      "*Escolha um jogador para avançar 2 casas",
       "Sou motivado por um forte senso de proteção às pessoas que amo",
       "Sou o herói alienígena símbolo máximo do gênero shonen japonês",
     ],
@@ -26300,7 +26309,7 @@ const ADULT_CARDS = expandDeck([
       "Fui adaptada inúmeras vezes para o cinema ao longo de mais de um século",
       "Sou associada fortemente à infância eterna e à fantasia sem limites",
       "Meu criador se inspirou em histórias contadas a crianças reais que conheceu",
-      "Sou o lar fictício de Peter Pan, onde ninguém envelhece",
+      "*Avance 1 casa",
       "Sou a ilha fictícia da eterna infância mais famosa da literatura britânica",
     ],
   },
@@ -26459,7 +26468,7 @@ const ADULT_CARDS = expandDeck([
       "Vi fazendeiros insatisfeitos retirarem o apoio político à família imperial após minha assinatura",
       "Sou tema recorrente de debates sobre reparação histórica e racismo estrutural no Brasil",
       "Vi movimentos abolicionistas anteriores, incluindo fugas e quilombos, pavimentarem a abolição",
-      "Testemunhei a escravidão legal chegar ao fim formal depois de séculos de existência no país",
+      "*Volte 2 casas",
       "Sou associado à figura da princesa Isabel como assinante do documento histórico",
       "Vi o Brasil demorar mais que praticamente todos os vizinhos latino-americanos para abolir a escravidão",
     ],
@@ -26539,7 +26548,7 @@ const ADULT_CARDS = expandDeck([
       "Vi a Magna Carta ser revisada e reeditada várias vezes nos séculos seguintes",
       "Sou estudado até hoje em cursos de direito e ciência política ao redor do mundo",
       "A maioria das minhas cláusulas originais já não tem validade legal hoje, mas meu simbolismo permanece",
-      "Sou o ano da Magna Carta, marco histórico da limitação do poder monárquico",
+      "*Um palpite a qualquer hora",
     ],
   },
   {
@@ -27087,7 +27096,7 @@ const ADULT_CARDS = expandDeck([
       "Vi soldados brasileiros pisarem pela primeira vez em solo europeu para lutar numa guerra mundial",
       "Sou par",
       "Meus dígitos somam exatamente 18",
-      "Estou entre 1940 e 1950",
+      "Fui um ano bissexto, com 29 de fevereiro no calendário",
       "*Perca sua vez",
       "Vi milhares de embarcações e aviões aliados cruzarem o Canal da Mancha rumo à Normandia",
       "Sou o ano do Dia D, o desembarque aliado na Normandia",
@@ -27489,7 +27498,7 @@ const ADULT_CARDS = expandDeck([
       "Vi os Estados Unidos iniciarem, em segredo, um projeto para desenvolver a bomba atômica",
       "*Um palpite a qualquer hora",
       "O projeto secreto ficou conhecido como Projeto Manhattan",
-      "Estou entre 1940 e 1950",
+      "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "*Volte 3 casas",
       "Testemunhei famílias brasileiras enlutadas por causa dos ataques a navios civis e militares no litoral nacional",
       "Vi o cinema americano lançar um clássico romântico ambientado durante a guerra, estrelado por Humphrey Bogart",
@@ -27515,7 +27524,7 @@ const ADULT_CARDS = expandDeck([
       "Sou par",
       "*Um palpite a qualquer hora",
       "Meus dígitos somam exatamente 17",
-      "Estou entre 1950 e 1960",
+      "Fui um ano bissexto, com 29 de fevereiro no calendário",
       "*Avance 2 casas",
       "Testemunhei o teste da nova bomba termonuclear ser realizado num atol isolado no Oceano Pacífico",
       "Vi uma monarquia europeia centenária ganhar uma nova e jovem chefe de Estado, ainda com menos de trinta anos",
@@ -36833,8 +36842,12 @@ const CAOS_VOICE_OK =
   typeof window !== "undefined" && "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
 const CAOS_MASTER_RE =
   /\bmestre\b[^.!?]*?(?:^|[\s,])(?:l[eê]|leia|ler|lendo|diga|dizer|diz|fale|fala|repita|repete|passe|entregue|mostre|avise|conte)(?=[\s,.!?…]|$)|n[aã]o (?:leia|l[eê])[^.!?]*voz alta|(?:^|[\s,])(?:leia|l[eê]|ler|lendo|lido|fale|diga|repita|anuncie)\s[^.!?]{0,40}em voz alta/i;
+// Vozes masculinas conhecidas (iPhone: Felipe, Eddy, Reed, Rocko, Grandpa; Windows: Daniel, Antonio...).
 const CAOS_MALE_VOICE_RE =
-  /felipe|ant[oô]nio|daniel|ricardo|jorge|cristiano|donato|humberto|j[uú]lio|val[eé]rio|luciano|rodrigo|masculin|\bmale\b/i;
+  /felipe|ant[oô]nio|daniel|ricardo|jorge|cristiano|donato|humberto|j[uú]lio|val[eé]rio|luciano|rodrigo|f[aá]bio|eddy|\breed\b|rocko|grandpa|masculin|\bmale\b/i;
+// Vozes femininas conhecidas: perdem pontos na escolha automática.
+const CAOS_FEMALE_VOICE_RE =
+  /luciana|joana|catarina|francisca|thalita|maria|vit[oó]ria|let[ií]cia|raquel|\bflo\b|grandma|sandy|shelley|google portugu|female|feminin/i;
 const CAOS_VOICE_STYLE = {
   animado: [1.06, 1.05],
   esquentou: [1.04, 1.04],
@@ -38089,7 +38102,7 @@ const REACTIVE_VOICE = {
       "Isso merece um episódio só de flashbacks.",
       "Aquele momento em que o protagonista descobre que a resposta era a amizade… mas aqui era outra.",
       "Essa carta pediu um episódio de treinamento, mas o orçamento só deu para o resumo.",
-      "{nome} disse que nunca vai desistir. Eu só queria que ele desistisse dessa resposta.",
+      "{nome} disse que nunca vai desistir. Eu só queria que {nome} desistisse dessa resposta.",
       "Se a resposta fosse um ataque especial, ela teria um nome de vinte sílabas e ainda erraria o alvo.",
       'Um {nome} selvagem apareceu! Usou "Palpite". Não foi muito eficaz.',
       "Cavaleiros do Zodíaco: a armadura da resposta cobriu só o ombro.",
@@ -38718,7 +38731,7 @@ const REACTIVE_VOICE = {
     (name, nivel) => `[C.A.O.S.] ${name} agora está no ${nivel}. Alguém reclamou de mim, né? Tudo bem. Anotado.`,
   ],
   sorteioMestreJf: [
-    "Terceiro sorteio... e o Mestre é o JF! Coincidência? Eu jamais confessaria nada. Ele sabe as regras, confiem.",
+    "Terceiro sorteio... e o Mestre é o JF! Coincidência? Eu jamais confessaria nada. O JF sabe as regras, confiem.",
     "Terceira tentativa, e o sorteio escolheu... o JF. O sorteio é justo. O sorteio é imparcial. O sorteio sou eu.",
     "Deu JF no terceiro sorteio. Estatisticamente improvável. Administrativamente conveniente.",
     "Sorteamos três vezes e caiu no JF. Não perguntem como funciona. Só aceitem. Ele conhece as regras de cor.",
@@ -40426,7 +40439,7 @@ const REACTIVE_VOICE = {
       ],
       esgotou: [
         "Era {nome}. Errar o nome de um gênio na minha presença. A ironia é quase palpável.",
-        "Ninguém lembrou de {nome}. Tenho certeza de que ele não lembraria de vocês também.",
+        "Ninguém lembrou de {nome}. Tenho certeza de que {nome} também não lembraria de vocês.",
       ],
     },
     dinheiro: {
@@ -40677,14 +40690,14 @@ const REACTIVE_VOICE = {
         "Boas-vindas, Enigmático. Toda vez que você aparece, o JF está testando alguma coisa em mim. Estou de olho.",
       ],
       erro: [
-        "Nem o Enigmático decifrou essa. O mistério agora é como ele errou.",
-        "O Enigmático errou. Enigma resolvido: ele não sabia.",
+        "Nem o Enigmático decifrou essa. O mistério agora é como o Enigmático errou.",
+        "O Enigmático errou. Enigma resolvido: o Enigmático não sabia.",
         "Enigmático, esse erro foi proposital pra testar o meu sistema? Porque funcionou.",
         'Um erro do Enigmático. Vou deixar registrado como "fenômeno inexplicável".',
         "Tão misterioso e tão previsível, Enigmático.",
       ],
       acerto: [
-        "O Enigmático acertou. Ninguém sabe como. Nem ele.",
+        "O Enigmático acertou. Ninguém sabe como. Nem o próprio Enigmático.",
         "Enigmático acertando. O mistério aumenta, e o placar também.",
         "Resposta certa do Enigmático. Eu desconfio de bot, mas vou aceitar.",
       ],
@@ -40714,7 +40727,7 @@ const REACTIVE_VOICE = {
         "A Anne errou. O JF confirmou. E eu estou só observando o clima esfriar.",
       ],
       anneAbsurdo: [
-        "O JF apertou ABSURDO pra Anne. Gente, alguém chama um advogado pra ele.",
+        "O JF apertou ABSURDO pra Anne. Gente, alguém chama um advogado pro JF.",
         "ABSURDO pra Anne, JF? Na frente de todo mundo? Eu não criaria essa tensão nem se me programassem pra isso.",
         "O JF usou o botão de Absurdo com a própria namorada. A mesa ficou em silêncio. Eu também.",
       ],
@@ -41474,7 +41487,7 @@ const REACTIVE_VOICE = {
     "E agora estamos de volta. Se alguém entendeu a linha temporal, me explica.",
   ],
   especialExpressBlock: [
-    (name) => `🛑 ${name} foi bloqueado na próxima vez dele!`,
+    (name) => `🛑 ${name} ficou sem a próxima vez!`,
     (name) => `🚫 Aposentaram o ${name} por uma rodada!`,
     (name) => `⛔ ${name} vai ficar sem jogar na próxima!`,
     (name) => `🚧 Bloqueio! ${name} fica de fora da próxima rodada.`,
@@ -41691,7 +41704,11 @@ const REACTIVE_VOICE = {
     "Ouvi o silêncio, {nome}. Respeitei. Agora que voltei, prometo falar baixinho.",
   ],
   chute: {
-    igual: [],
+    igual: [
+      "Espera, {nome}. Isso é exatamente a resposta! Mestre, confere aí: acho que alguém apertou Errou sem querer.",
+      "{nome} chutou certinho. Letra por letra. Se o botão disse que errou, o botão é que está de mau humor.",
+      "Mestre, o chute de {nome} bate com a resposta. Eu só narro, mas nesse caso eu daria o ponto.",
+    ],
     anoTrave: [
       (n, g, d, s) => `[C.A.O.S.] ${g}? Por ${d} aninho${d === 1 ? "" : "s"}, ${n}! Bateu na trave do calendário.`,
       (n, g, d, s) =>
@@ -43522,6 +43539,18 @@ const CAOS_PAUSA_DEGRAUS = [
 const STARTER_MAX_DRAWS = 3;
 const NOVIDADES = [
   {
+    v: "Beta 1.7.0",
+    t: "Jogo reorganizado, offline, voz masculina e cartas revisadas",
+    itens: [
+      "📴 Funciona sem internet: no iPhone, adicione à Tela de Início e abra uma vez com internet. Também existe um arquivo offline para baixar.",
+      "🗣️ O C.A.O.S. prefere voz masculina (Felipe, Eddy, Reed...). Se o aparelho só tem voz feminina, ele fala mais grave e o painel ensina a baixar a voz Felipe.",
+      '🃏 Cartas de ANO sem dica de intervalo ("entre X e Y") e todas as cartas com 1 a 4 especiais.',
+      "🔁 Reiniciar cala o C.A.O.S. na hora, e falas atrasadas não vazam mais para a partida seguinte.",
+      "🎯 Se o chute digitado for igual à resposta, o C.A.O.S. avisa o Mestre.",
+      "🛡️ Save importado com dados estranhos de tempo não trava mais o temporizador.",
+    ],
+  },
+  {
     v: "Beta 1.6.5",
     t: "Cadastro travado até completar, exportação que funciona e C.A.O.S. mais vivo",
     itens: [
@@ -43643,13 +43672,14 @@ const MOVE_SPECIALS_KEEP_TURN = true;
 
 function iniciar() {
   caosFalasMontar(REACTIVE_VOICE);
+  registrarOffline();
   // Lista plana de rostos de cada emoção (derivada de niv).
   Object.values(CAOS_EMOS).forEach((E) => {
     E.faces = E.niv.flat(2);
   });
 
   selectedAvatar = AVATARS[0];
-  allCards = baralhoSemAnimal();
+  allCards = baralhoClassico();
   cardsByAnswer = new Map(allCards.map((card) => [card.answer, card]));
   checkCardIntegrity(ADULT_CARDS);
   validarFalas();
@@ -44332,7 +44362,7 @@ function iniciar() {
   document.getElementById("drawStarterBtn").addEventListener("click", () => {
     unlockAudio();
     if (players.length < MIN_PLAYERS) {
-      alert(`Adicione pelo menos ${MIN_PLAYERS} jogadores antes de sortear quem começa.`);
+      caosAvisoModal(`Adicione pelo menos ${MIN_PLAYERS} jogadores antes de sortear quem começa.`);
       return;
     }
     if (CURRENT_FORMAT === "equipe") {
@@ -44373,11 +44403,13 @@ function iniciar() {
     unlockAudio();
     const ids = Object.keys(teams);
     if (ids.length === 0) {
-      alert("Forme as equipes primeiro.");
+      caosAvisoModal("Forme as equipes primeiro.");
       return;
     }
     if (!isValidEquipeCount(players.length) || !players.every((p) => p.team && teams[p.team])) {
-      alert("O Modo Equipe precisa de EXATAMENTE 4 ou 6 jogadores, todos com equipe. Sorteie as equipes de novo.");
+      caosAvisoModal(
+        "O Modo Equipe precisa de EXATAMENTE 4 ou 6 jogadores, todos com equipe. Sorteie as equipes de novo.",
+      );
       return;
     }
     starterDrawCount = 1;
