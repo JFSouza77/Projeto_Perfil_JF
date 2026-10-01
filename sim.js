@@ -18,7 +18,7 @@
 //   - trava: no máximo 2 joias por jogador por rodada (rodada = o 1º mestre voltar a ser mestre);
 //   - mestre gira a cada carta; baralho do Clássico tem limite de 400 cartas (aí vence quem está na frente).
 // Aproximações (ditas no relatório): a chance de acerto é um modelo (perfil × nº de dicas reais vistas);
-// o palpite a qualquer hora não é simulado; a carta-duelo de bônus não gasta a vez do mestre.
+// o palpite a qualquer hora não é simulado.
 "use strict";
 const fs = require("fs");
 const path = require("path");
@@ -41,6 +41,8 @@ const JOIAS = +arg("joias", 4);
 const LIMITE_DICAS_JOIA = +arg("limite", 5);
 const TABULEIRO = +arg("tabuleiro", 200);
 const LIMITE_CARTAS = 400;
+// Última rodada (como no jogo 1.7.1.3+): bateu a meta, a rodada termina; --sem-ultima desliga.
+const ULTIMA = !process.argv.includes("--sem-ultima");
 const BONUS = 10;
 // Perfis: chance de acerto por chute = perfil × curva(dicas reais já vistas)
 const PERFIS = { fraco: 0.65, medio: 1.0, forte: 1.4 };
@@ -125,7 +127,8 @@ function partida(modo, perfis, comTrava = true) {
   let rodada = 1,
     joiasRodada = {},
     bloqueios = 0,
-    bonusFila = [];
+    bonusFila = [],
+    primeiroMeta = -1;
   const venceu = () => {
     if (modo === "tabuleiro") return J.findIndex((j) => j.pos >= TABULEIRO);
     if (modo === "pontos") return J.findIndex((j) => j.score >= meta);
@@ -160,7 +163,18 @@ function partida(modo, perfis, comTrava = true) {
     let aberta = 0,
       reais = 0,
       resp = duelo ? duelo.a : (mestre + 1) % n;
-    const mestreCarta = duelo ? [...Array(n).keys()].find((i) => i !== duelo.a && i !== duelo.b) : mestre;
+    // como no jogo: o duelo é lido pelo mestre da vez (ou pelo próximo, se o mestre estiver duelando)
+    let mestreCarta = mestre;
+    if (duelo && (mestre === duelo.a || mestre === duelo.b)) {
+      mestreCarta = undefined;
+      for (let k = 1; k < n; k++) {
+        const c2 = (mestre + k) % n;
+        if (c2 !== duelo.a && c2 !== duelo.b) {
+          mestreCarta = c2;
+          break;
+        }
+      }
+    }
     const mult = duelo ? 2 : 1;
     const proximo = (r) => {
       if (duelo) return r === duelo.a ? duelo.b : duelo.a;
@@ -200,18 +214,28 @@ function partida(modo, perfis, comTrava = true) {
         }
         resp = proximo(resp);
       }
-      if (venceu() >= 0) break;
+      if (!ULTIMA && venceu() >= 0) break;
     }
     if (!acertou && aberta >= 20 && mestreCarta !== undefined) credita(mestreCarta, 20 * mult, false);
     const w = venceu();
-    if (w >= 0) return { vencedor: w, cartas: c + 1, rodadas: (c + 1) / n, bloqueios, travou: false };
-    if (!duelo) {
+    if (!ULTIMA && w >= 0) return { vencedor: w, cartas: c + 1, rodadas: (c + 1) / n, bloqueios, travou: false };
+    if (ULTIMA && w >= 0 && primeiroMeta < 0) primeiroMeta = w;
+    {
+      // o duelo gasta a vez do mestre, como no jogo (a carta normal dele não acontece)
       mestre = (mestre + 1) % n;
+      if (mestre === 0 && primeiroMeta >= 0) {
+        // fim da última rodada: vence quem está na frente; empate = quem bateu a meta primeiro
+        const v = (j) => (modo === "pontos" ? j.score : modo === "joias" ? j.total : j.pos);
+        const max = Math.max(...J.map(v));
+        const top = J.map((j, i) => (v(j) === max ? i : -1)).filter((i) => i >= 0);
+        const venc = top.length === 1 ? top[0] : top.includes(primeiroMeta) ? primeiroMeta : -1;
+        return { vencedor: venc, cartas: c + 1, rodadas: (c + 1) / n, bloqueios, travou: false };
+      }
       if (mestre === 0) {
         rodada++;
         joiasRodada = {};
       }
-    } else c--; // duelo não gasta a carta normal da vez
+    }
   }
   // baralho acabou: vence quem está na frente (empate = empate)
   const val = (j) => (modo === "pontos" ? j.score : modo === "joias" ? j.total : j.pos);
