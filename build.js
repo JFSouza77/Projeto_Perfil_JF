@@ -297,6 +297,14 @@ async function testarNavegador(arquivo) {
   const mestreArq = acharMestre();
   const versao = path.basename(mestreArq).match(/(\d+(?:_\d+){2,3})\.html$/)[1];
   const mestre = fs.readFileSync(mestreArq, "utf8");
+  console.log(`Mestre usado: ${path.basename(mestreArq)} (versão ${versao.replace(/_/g, ".")})`);
+  // O carimbo de versão dentro do HTML (<title>) tem que bater com o nome do arquivo.
+  const carimbo = (mestre.match(/<title>[^<]*?(\d+(?:\.\d+){2,3})[^<]*<\/title>/) || [])[1];
+  if (carimbo !== versao.replace(/_/g, "."))
+    console.warn(
+      `\n⚠️  ATENÇÃO: o nome do mestre diz ${versao.replace(/_/g, ".")}, mas o <title> do HTML diz ${carimbo || "(sem versão)"}.` +
+        `\n    Confira o histórico/título do mestre antes de publicar.\n`,
+    );
   const saidas = {
     debug: path.join(PASTA, `Perfil_JF_${versao}_debug.html`),
     compacta: path.join(PASTA, `Perfil_JF_${versao}.html`),
@@ -323,6 +331,8 @@ async function testarNavegador(arquivo) {
   linhas.push(`Debug    ${path.basename(saidas.debug).padEnd(36)} ${kb(tamanho(debug)).padStart(10)}  ${fmt(cD)}`);
   linhas.push(`Compacta ${path.basename(saidas.compacta).padEnd(36)} ${kb(tamanho(comp.html)).padStart(10)}  ${fmt(cC)} (igual ao mestre)`);
   linhas.push(`Offline  ${path.basename(saidas.offline).padEnd(36)} ${kb(tamanho(comp.offline)).padStart(10)}  mesmo JS da compacta, comprimido`);
+  console.log("\nArquivos gerados (só desta versão; os de outras versões não são tocados):");
+  for (const f of Object.values(saidas)) console.log("  " + path.basename(f));
   console.log("\nSintaxe: ok no mestre e nas três saídas.\n");
   console.log(linhas.join("\n"));
   console.log("\nRemovido na compacta:\n  - " + comp.removido.join("\n  - "));

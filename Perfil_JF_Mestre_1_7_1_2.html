@@ -7,9 +7,9 @@
   1.7.1.2 · 01/10/2026 · Mestre em 9 seções (configuração, estado, regras, turno e rodada, tela,
           voz e som, C.A.O.S., salvamento, utilitários). Moda da Casa: o C.A.O.S. sorteia o
           modo da mesa (tabuleiro/pontos/joias, sem repetir o anterior; saves antigos = "misto");
-          meta de pontos por nº de jogadores (CASA_META_PONTOS, a confirmar pela simulação);
-          joias valem com 2+ jogadores; trava de 2 joias por jogador por rodada (rodada =
-          volta do 1º mestre). sim.js (fora do jogo) para equilíbrio.
+          meta de pontos 200 e joia com até 6 dicas na Moda da Casa (aprovados pela simulação
+          sim.js); joias valem com 2+ jogadores; trava de 2 joias por jogador por rodada
+          (rodada = volta do 1º mestre); falas do C.A.O.S. sem colagem fora de contexto.
   1.7.0 · 01/10/2026 · Mestre legível criado a partir da Beta 1.6.5 sem mudar o jogo:
           índice e seções; funções em cima, estado, dados e iniciar() no fim; 3 funções
           mortas removidas; remendos de rostos/falas consolidados nas tabelas finais;
@@ -5217,7 +5217,12 @@ const GEMS_MIN_PLAYERS = 4;
 // "A Moda da Casa": no começo da partida o C.A.O.S. sorteia UM destes modos para a mesa toda.
 const CASA_MODOS = ["tabuleiro", "pontos", "joias"];
 // Meta de pontos da Moda da Casa (quando o sorteio cai em Pontos), por número de jogadores.
-const CASA_META_PONTOS = { 2: 200, 3: 250, 4: 300, 5: 350, 6: 400 };
+// Simulação de equilíbrio (sim.js, 10 mil partidas por mesa): 200 deixa Pontos com a mesma
+// duração do Tabuleiro em qualquer mesa (a tabela 200..400 deixava Pontos até 141% mais longo).
+const CASA_META_PONTOS = { 2: 200, 3: 200, 4: 200, 5: 200, 6: 200 };
+// Na Moda da Casa sorteada em Joias, a joia vale com 1 dica real a mais que o limite do modo
+// (Clássico: até 6). Simulação: assim Joias dura o mesmo que Tabuleiro e Pontos (diferença <= 6%).
+const CASA_JOIA_DICAS_EXTRA = 1;
 // Último modo sorteado (para não repetir na partida seguinte).
 const CASA_ULTIMO_KEY = "perfil5_casa_ultimo";
 // Trava de joias: no máximo esta quantidade por jogador (ou equipe) em cada rodada,
@@ -6338,6 +6343,12 @@ function metaPontos() {
   }
   return WINNING_SCORE;
 }
+// Quantas dicas reais (no máximo) valem joia agora.
+function gemClueLimit(mode) {
+  const m = mode || CURRENT_MODE;
+  const base = GEM_CLUE_LIMIT[m] || 5;
+  return WIN_CONDITION === "casa" && casaSorteado === "joias" && m !== "express" ? base + CASA_JOIA_DICAS_EXTRA : base;
+}
 // Joias contam com trava por rodada?
 function joiasComTrava() {
   return CURRENT_MODE !== "express" && winCond() === "joias";
@@ -6417,7 +6428,7 @@ function awardGemIfEarned(scorerIdx, realCluesRevealed) {
   if (!gemsEnabled() || !currentCard || currentCard.isBonus) return null;
   const cat = gemCategoryFor(currentCard.category);
   if (!currentGemCategories().includes(cat)) return null;
-  const limit = GEM_CLUE_LIMIT[CURRENT_MODE];
+  const limit = gemClueLimit();
   if (!limit || realCluesRevealed > limit) return null;
   const holder = gemHolder(scorerIdx);
   if (!holder) return null;
@@ -8862,7 +8873,7 @@ function rulesCtx() {
     cats: mode === "junior" ? "Animal, Pessoa, Lugar ou Coisa" : "Ano, Pessoa, Lugar ou Coisa",
     card: Math.floor(xt.card / 60) + ":" + String(xt.card % 60).padStart(2, "0"),
     turn: xt.turn,
-    gemLimit: GEM_CLUE_LIMIT[mode] || 5,
+    gemLimit: gemClueLimit(mode),
   };
 }
 function updateModeNotice() {
@@ -43744,7 +43755,7 @@ const PAUSE_TIPS = [
   {
     when: () => gemsEnabled(),
     text: () =>
-      `Joias 💎: acerte uma carta revelando poucas dicas (até ${GEM_CLUE_LIMIT[CURRENT_MODE] || 5}) e ganhe a joia da categoria dela. ${gemsCountForWin() ? `Juntou ${GEMS_TO_WIN}? Vitória na hora!` : `Com menos de ${GEMS_MIN_PLAYERS} jogadores a joia é só troféu.`}`,
+      `Joias 💎: acerte uma carta revelando poucas dicas (até ${gemClueLimit()}) e ganhe a joia da categoria dela. ${gemsCountForWin() ? `Juntou ${GEMS_TO_WIN}? Vitória na hora!` : `Com menos de ${GEMS_MIN_PLAYERS} jogadores a joia é só troféu.`}`,
   },
   {
     when: () => true,
@@ -43851,8 +43862,8 @@ const NOVIDADES = [
     t: "Moda da Casa sorteada pelo C.A.O.S. e trava de joias",
     itens: [
       "🏠 Na Moda da Casa, o C.A.O.S. sorteia no início o modo da mesa toda: Tabuleiro, Pontos ou Joias (sem repetir o da partida anterior).",
-      "🔢 Se cair Pontos, a meta depende da mesa: 2 jogadores = 200, 3 = 250, 4 = 300, 5 = 350, 6 = 400.",
-      "💎 Se cair Joias, elas valem com qualquer número de jogadores.",
+      "🔢 Se cair Pontos, a meta é 200 pontos (mesma duração do Tabuleiro, segundo a simulação).",
+      "💎 Se cair Joias, elas valem com qualquer número de jogadores e a joia sai com até 6 dicas lidas.",
       "🔒 No modo Joias (Moda da Casa ou Só Joias): no máximo 2 joias por jogador em cada rodada. Rodada = até o primeiro mestre voltar a ser mestre.",
       "🗣️ Falas do C.A.O.S. mais naturais: ele não cola mais frases sem relação nem repete o nome duas vezes, e as falas montadas ficaram mais curtas.",
     ],
