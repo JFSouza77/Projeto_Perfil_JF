@@ -3172,6 +3172,29 @@ body.batata-mode .number-btn:not(:disabled):before {
   background: #2b2d3a;
   color: #fff;
 }
+/* Botões de ação das instruções especiais (Avançar, Voltar, Pular, Escolher jogador):
+   grandes e legíveis, no mesmo estilo dos demais botões do jogo. */
+.btn-acao {
+  display: block;
+  width: 100%;
+  min-height: 52px;
+  margin-top: 12px;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  cursor: pointer;
+  box-shadow:
+    0 2px #0000001f,
+    0 6px 16px #0000002e;
+}
+.btn-acao:active {
+  transform: translateY(1px);
+}
 .mesa-btns button {
   background: transparent !important;
   border: 1.5px solid;
@@ -17730,42 +17753,42 @@ function render() {
               <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ⭐ ${item.text}</div>
               <div style="text-align:center; opacity:0.8; font-size:0.85rem; margin:4px 0 8px;">Estilo UNO: pula ${steps} jogador${steps === 1 ? "" : "es"} na ordem atual.</div>
               ${spotlightTimerHtml}
-              <button class="btn-correct" style="width:100%; margin-top:10px;" onclick="expressSkip(${steps})">⏭️ Pular ${steps} jogador${steps === 1 ? "" : "es"}</button>`;
+              <button class="btn-correct btn-acao" onclick="expressSkip(${steps})">⏭️ Pular ${steps} jogador${steps === 1 ? "" : "es"}</button>`;
           } else if (txt.includes("volte") && !txt.includes("escolha")) {
             const steps = txt.includes("3") ? 3 : 2;
             controlsHtml = `
               <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ⭐ ${item.text}</div>
               <div style="text-align:center; opacity:0.8; font-size:0.85rem; margin:4px 0 8px;">Estilo UNO: inverte o sentido do jogo e anda ${steps} passos pra trás.</div>
               ${spotlightTimerHtml}
-              <button class="btn-wrong" style="width:100%; margin-top:10px;" onclick="expressReverse(${steps})">🔁 Inverter e voltar ${steps}</button>`;
+              <button class="btn-wrong btn-acao" onclick="expressReverse(${steps})">🔁 Inverter e voltar ${steps}</button>`;
           } else if (txt.includes("escolha um jogador")) {
             const isAvancar = txt.includes("avan");
             controlsHtml = `
               <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ⭐ ${item.text}</div>
               <div style="text-align:center; opacity:0.8; font-size:0.85rem; margin:4px 0 8px;">${isAvancar ? "Cede sua vez pra outro jogador responder essa dica." : "Bloqueia outro jogador na próxima vez dele."}</div>
               ${spotlightTimerHtml}
-              <button class="btn-correct" style="width:100%; margin-top:10px;" onclick="openExpressTargetPopup('${isAvancar ? "steal" : "block"}')">🎯 Escolher jogador</button>`;
+              <button class="btn-correct btn-acao" onclick="openExpressTargetPopup('${isAvancar ? "steal" : "block"}')">🎯 Escolher jogador</button>`;
           }
         } else if (txt.includes("avance 1 casa")) {
           controlsHtml = `
             <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ⭐ ${item.text}</div>
             ${spotlightTimerHtml}
-            <button class="btn-correct" style="width:100%; margin-top:10px;" onclick="applySpecialMove(${responderIndex}, 1)">➡️ Avançar 1 casa e passar a vez</button>`;
+            <button class="btn-correct btn-acao" onclick="applySpecialMove(${responderIndex}, 1)">➡️ Avançar 1 casa e passar a vez</button>`;
         } else if (txt.includes("avance 2 casas") && !txt.includes("escolha")) {
           controlsHtml = `
             <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ⭐ ${item.text}</div>
             ${spotlightTimerHtml}
-            <button class="btn-correct" style="width:100%; margin-top:10px;" onclick="applySpecialMove(${responderIndex}, 2)">➡️ Avançar 2 casas e passar a vez</button>`;
+            <button class="btn-correct btn-acao" onclick="applySpecialMove(${responderIndex}, 2)">➡️ Avançar 2 casas e passar a vez</button>`;
         } else if (txt.includes("volte 2 casas") && !txt.includes("escolha")) {
           controlsHtml = `
             <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ⭐ ${item.text}</div>
             ${spotlightTimerHtml}
-            <button class="btn-wrong" style="width:100%; margin-top:10px;" onclick="applySpecialMove(${responderIndex}, -2)">⬅️ Voltar 2 casas e passar a vez</button>`;
+            <button class="btn-wrong btn-acao" onclick="applySpecialMove(${responderIndex}, -2)">⬅️ Voltar 2 casas e passar a vez</button>`;
         } else if (txt.includes("volte 3 casas")) {
           controlsHtml = `
             <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ⭐ ${item.text}</div>
             ${spotlightTimerHtml}
-            <button class="btn-wrong" style="width:100%; margin-top:10px;" onclick="applySpecialMove(${responderIndex}, -3)">⬅️ Voltar 3 casas e passar a vez</button>`;
+            <button class="btn-wrong btn-acao" onclick="applySpecialMove(${responderIndex}, -3)">⬅️ Voltar 3 casas e passar a vez</button>`;
         } else if (txt.includes("escolha um jogador")) {
           const moveVal = txt.includes("avançar") ? 2 : -2;
           const moveText = txt.includes("avançar") ? "avançar" : "voltar";
@@ -17815,7 +17838,7 @@ function render() {
             <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ⭐ ${item.text}</div>
             <div style="text-align:center; opacity:0.85; font-size:0.85rem; margin:8px 0;">Com só 2 ${CURRENT_FORMAT === "equipe" ? "equipes" : "jogadores"} ninguém pode escolher a si mesmo — o efeito vai direto pra <b>${autoName}</b>.</div>
             ${spotlightTimerHtml}
-            <button class="${moveVal > 0 ? "btn-correct" : "btn-wrong"}" style="width:100%; margin-top:10px;" onclick="${autoOnclick}">${moveVal > 0 ? "➡️ Avançar" : "⬅️ Voltar"} 2 casas: ${autoName} — e passar a vez</button>`
+            <button class="${moveVal > 0 ? "btn-correct" : "btn-wrong"} btn-acao" onclick="${autoOnclick}">${moveVal > 0 ? "➡️ Avançar" : "⬅️ Voltar"} 2 casas: ${autoName} — e passar a vez</button>`
             : `
             <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ⭐ ${item.text}</div>
             ${spotlightTimerHtml}
@@ -19306,7 +19329,7 @@ function buildRulesHtml() {
     );
   else
     li.push(
-      `<b>⭐ Especiais:</b> Avance/Volte casas, Escolha um jogador (nunca você mesmo), Perca sua vez${c.palpite ? ", Palpite a qualquer hora" : ""}. Contam como dica revelada. Avance/Volte e Escolha um jogador <b>não tiram a vez</b> de quem as revelou; só Perca sua vez passa a vez. Têm ${SPECIAL_TIME_LIMIT}s: se ninguém tocar, Avance/Volte são aplicados sozinhos.`,
+      `<b>⭐ Especiais:</b> Avance/Volte casas, Escolha um jogador (nunca você mesmo), Perca sua vez${c.palpite ? ", Palpite a qualquer hora" : ""}. Contam como dica revelada. Toda instrução (Avance, Volte, Escolha um jogador, Perca sua vez) <b>passa a vez</b> de quem a revelou. Têm ${SPECIAL_TIME_LIMIT}s: se ninguém tocar, Avance/Volte são aplicados sozinhos.`,
     );
   if (c.palpite)
     li.push(
@@ -24890,7 +24913,7 @@ const TUTORIAL_STEPS = [
     sec: 2,
     icon: "⭐",
     title: "5. Instruções especiais",
-    text: "Às vezes o número esconde uma <b>instrução</b> em vez de dica: “Avance 2 casas”, “Volte 1 casa”, “Escolha um jogador”, “Perca sua vez”... O Mestre lê e toca no botão que aparece. Se ninguém tocar em 15 s, o jogo aplica sozinho. A instrução conta como dica lida. Avance/Volte não tiram a sua vez; só <b>Perca sua vez</b> passa a vez.",
+    text: "Às vezes o número esconde uma <b>instrução</b> em vez de dica: “Avance 2 casas”, “Volte 1 casa”, “Escolha um jogador”, “Perca sua vez”... O Mestre lê e toca no botão que aparece. Se ninguém tocar em 15 s, o jogo aplica sozinho. A instrução conta como dica lida e <b>passa a vez</b> pro próximo jogador.",
   },
   {
     sec: 2,
@@ -25212,6 +25235,8 @@ const NOVIDADES = [
       "🔁 Reiniciar cala o C.A.O.S. na hora, e falas atrasadas não vazam mais para a partida seguinte.",
       "🎯 Se o chute digitado for igual à resposta, o C.A.O.S. avisa o Mestre.",
       "🛡️ Save importado com dados estranhos de tempo não trava mais o temporizador.",
+      "🔁 Avance, Volte e Escolha um jogador voltam a passar a vez de quem revelou (fora do Express).",
+      "🔠 Botões de Avançar, Voltar e Escolher jogador maiores e mais fáceis de ler.",
     ],
   },
   {
@@ -25328,7 +25353,8 @@ const NOVIDADES = [
 const NOVIDADES_KEY = "perfil5_novidades_visto";
 const CAOS_DESCANSO_KEY = "perfil5_caos_descanso";
 const CAOS_DESCANSO_MIN = 15;
-const MOVE_SPECIALS_KEEP_TURN = true;
+// Avance/Volte/Escolha um jogador: quem revelou PERDE a vez (regra do jogo; o Express tem regras próprias).
+const MOVE_SPECIALS_KEEP_TURN = false;
 
 /* ======================================================================
  * 8. INICIAR (roda por último, depois de todos os dados)
