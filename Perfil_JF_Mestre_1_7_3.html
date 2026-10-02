@@ -817,8 +817,27 @@ body.fx-urgente:after {
 }
 .roulette-title {
   font-weight: 700;
-  opacity: 0.7;
   margin-bottom: 8px;
+}
+.mestre-destaque {
+  display: inline-block;
+  margin: 2px 2px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 1.08rem;
+  background: #a78bfa2e;
+  border: 1.5px solid #c084fc;
+  box-shadow: 0 0 10px #a855f766;
+}
+.mestre-da-vez {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+body.claro .mestre-destaque {
+  background: #ede9fe;
+  border-color: #7c3aed;
+  box-shadow: none;
 }
 .roulette-phrase {
   font-size: 1.35rem;
@@ -10308,14 +10327,15 @@ function render() {
     drawBtn.textContent = "🔀 Sortear carta";
   } else if (cardState === "hidden") {
     area.className = "card face-down";
-    const mestreName = players[mestreIndex] ? escapeHtml(players[mestreIndex].name) : "?";
+    const mestreBadge = mestreDestaqueHtml();
     const bonusBannerHiddenHtml = currentCard && currentCard.isBonus ? renderBonusBanner() : "";
     area.innerHTML = `
       ${bonusBannerHiddenHtml}
       <i class="verso-canto c1" aria-hidden="true">✦</i><i class="verso-canto c2" aria-hidden="true">✦</i><i class="verso-canto c3" aria-hidden="true">✦</i><i class="verso-canto c4" aria-hidden="true">✦</i>
       ${VERSO_EMBLEMA_SVG}
       <div class="verso-frase">Você sabe dizer quem sou?!</div>
-      <div>Carta virada — ${mestreName} é o Mestre, segura o celular e vira quando estiver pronto</div>
+      <div class="mestre-da-vez">Mestre da rodada: ${mestreBadge}</div>
+      <div>Só o Mestre segura o celular e vira a carta quando estiver pronto.</div>
       <button class="flip-btn" id="flipBtn">↻ Virar carta</button>
     `;
     drawBtn.style.display = "none";
@@ -10656,6 +10676,11 @@ function render() {
     }
   }
 }
+// Nome do Mestre em destaque (carta virada e roleta), pra ninguém ler a carta sem ser o Mestre.
+function mestreDestaqueHtml() {
+  const m = players[mestreIndex];
+  return `<span class="mestre-destaque">🎙️ ${m ? playerNameHtml(m.name, m.color, m.avatar) : "?"}</span>`;
+}
 function startCategoryRoulette() {
   if (cardState !== "hidden" || !currentCard) return;
   const area = document.getElementById("cardArea");
@@ -10667,7 +10692,7 @@ function startCategoryRoulette() {
   area.style.setProperty("--card-glow", (GEM_INFO[finalCat] || {}).color || "#a78bfa");
   area.innerHTML = `
     <div class="roulette" style="--cat:${(GEM_INFO[finalCat] || {}).color || "#e94560"};">
-      <div class="roulette-title">Diga aos jogadores:</div>
+      <div class="roulette-title">Mestre ${mestreDestaqueHtml()}, diga aos jogadores:</div>
       <div class="roulette-phrase">"Eu sou <span class="roulette-reel" id="rouletteReel">${label(cats[0])}</span>"</div>
       <div class="roulette-hint" id="rouletteHint">🎰 sorteando a categoria...</div>
       <button type="button" class="flip-btn" id="rouletteDoneBtn" style="display:none;">✓ Falei! Mostrar a carta</button>
@@ -46145,6 +46170,7 @@ const NOVIDADES = [
       "🎴 A carta virada não tem mais o botão \"Puxou sem querer?\" (com ela virada, não fazia sentido). O descarte de carta difícil continua depois de virar.",
       "🎙️ O Máscara: no Brasil, a dublagem mais reprisada é do Marco Ribeiro. O Guilherme Briggs dublou o Jim Carrey em O Grinch.",
 
+      "🎙️ O Mestre da rodada fica em destaque na carta virada, e a roleta da categoria começa com \"Mestre Fulano, diga aos jogadores\". Assim ninguém lê a carta achando que é a vez dele de ser Mestre.",
       "🚫 Tocou numa cor ou emoji que já tem dono? A tela nega na hora: sonzinho de \"uh-uh\", vibração, piscada vermelha e o botão treme.",
     ],
   },
