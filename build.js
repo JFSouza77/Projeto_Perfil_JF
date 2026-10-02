@@ -261,7 +261,7 @@ async function testarNavegador(arquivo) {
       // escolhe cor, emoji e zoeira até o botão Adicionar liberar
       for (let t = 0; t < 4 && (await page.locator("#addPlayerBtn:disabled").count()); t++) {
         await fechaModais();
-        for (const sel of ["#colorPickerRow .color-swatch:not(:disabled)", "#avatarPickerRow .avatar-swatch:not(:disabled)", "#humorPickerRow button"]) {
+        for (const sel of ["#colorPickerRow .color-swatch:not(.tomada)", "#avatarPickerRow .avatar-swatch:not(.tomada)", "#humorPickerRow button"]) {
           const b = page.locator(sel).nth(t);
           if (await b.count()) await b.click({ timeout: 1500, force: true }).catch(() => {});
         }

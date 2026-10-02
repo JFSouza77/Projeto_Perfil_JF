@@ -4,14 +4,17 @@
   (nunca edite as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.2.1 · 02/10/2026 · "Family Friendly Update". Cadastro: Adicionar depois de Cor/Emoji/Zoeira
+          (#addAcaoRow); cor/emoji já escolhido avisa de quem é (caosEscolhaTomada). Júnior: zoeira
+          Family friendly/Suave/Normal (humor "familia", humorFamilia, caosFamiliaTroca: 1 a 5
+          zoeirinhas leves por partida); mágoa por nível; Nível 0 silenciou → silenciaramVoltaZero.
+          Voz: número no feminino (caosNumFem). Datas nas NOVIDADES (campo data).
   1.7.2 · 02/10/2026 · "Android Update". Android: botão Instalar o app (aviso do Chrome; no iPhone, passo a passo),
           voltar do Android pausa a partida, dica de voz por aparelho, sw.js também em
           localhost (teste). Corrigido: importar save com partida em andamento (saveBloqueado).
           Limpeza: variáveis mortas, "reapresentar" desativado, 3 regras CSS sem uso, 1 fala
           repetida. Modo Claro "Papel" (identidade própria: creme âmbar, tinta, sem neon).
-          Versões antes da 1.7 ganharam nome de update nas NOVIDADES. Cadastro: Adicionar depois
-          de Cor/Emoji/Zoeira (#addAcaoRow). Júnior: zoeira Family friendly/Suave/Normal
-          (humor "familia", humorFamilia, caosFamiliaTroca); mágoa (vingança) por nível.
+          Versões antes da 1.7 ganharam nome de update nas NOVIDADES.
           Logo: P grande em azul neon e JF em laranja neon (mesma letra).
   1.7.1.6 · 02/10/2026 · "Day & Night Update". Números das versões corrigidos (as antigas 1.7.1.2 a 1.7.1.6 são
           1.7.1.1 a 1.7.1.5; arquivos renomeados, conteúdo intacto). Ícone novo do app
@@ -67,7 +70,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Perfil JF">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.2</title>
+<title>Perfil JF · Beta 1.7.2.1</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -387,7 +390,9 @@ button.main-btn {
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.4);
 }
-button:disabled {
+button:disabled,
+.color-swatch.tomada,
+.avatar-swatch.tomada {
   opacity: 0.4;
   cursor: not-allowed;
 }
@@ -4022,6 +4027,12 @@ body.claro .nov-nome {
   border-color: #c9b9ef;
   background: #f4efff;
 }
+.nov-data {
+  font-size: 0.7rem;
+  font-weight: 600;
+  opacity: 0.7;
+  white-space: nowrap;
+}
 .nov-qol {
   margin: 10px 0 2px;
   font-size: 0.78rem;
@@ -5237,7 +5248,7 @@ body.claro .caos-pergunta button[data-v="digitar"] {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.2 · Android Update<br>C.A.O.S. 3.6 · Atualizada em 02/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.2.1 · Family Friendly Update<br>C.A.O.S. 3.6 · Atualizada em 02/10/2026</div>
     </div>
   </section>
 
@@ -6215,7 +6226,7 @@ const HUMOR_OPTIONS = [
   {
     id: "familia",
     label: "🧸 Family friendly",
-    hint: "Só carinho: ele não zoa, torce, incentiva e é gentil o tempo todo.",
+    hint: "Carinho o tempo todo: torce e incentiva. Zoa só de levinho, uma vez ou outra, sem nada pesado.",
   },
   { id: "suave", label: "🌷 Suave", hint: "Sem ácido, sem cantada, sem gozar erro repetido." },
   { id: "normal", label: "😏 Normal", hint: "A zoeira de sempre." },
@@ -9066,6 +9077,10 @@ function beginGameplay() {
   if (!admPrincipalName && players[mestreIndex]) admPrincipalName = players[mestreIndex].name;
   rodadaIniciar();
   voltarGuardar();
+  players.forEach((p) => {
+    p.famZ = 0;
+    p.famLim = 1 + Math.floor(Math.random() * 5);
+  });
   casaSortearModo();
   syncGameplayPanels();
   updateDrawAvailability();
@@ -10708,16 +10723,30 @@ function renderAvatarPicker() {
   row.innerHTML = list
     .map(
       (a) => `
-    <button type="button" class="avatar-swatch ${a === selectedAvatar && cadMostraSel(cadEmoji) ? "selected" : ""}" data-avatar="${a}" ${usedAvatars.has(a) ? "disabled" : ""}>${a}</button>
+    <button type="button" class="avatar-swatch ${a === selectedAvatar && cadMostraSel(cadEmoji) ? "selected" : ""}${usedAvatars.has(a) ? " tomada" : ""}" data-avatar="${a}" ${usedAvatars.has(a) ? 'aria-disabled="true"' : ""}>${a}</button>
   `,
     )
     .join("");
-  row.querySelectorAll(".avatar-swatch:not(:disabled)").forEach((btn) => {
+  row.querySelectorAll(".avatar-swatch").forEach((btn) => {
     btn.addEventListener("click", () => {
+      if (btn.classList.contains("tomada")) return caosEscolhaTomada("emoji", btn.dataset.avatar);
       selectedAvatar = btn.dataset.avatar;
       renderAvatarPicker();
     });
   });
+}
+// Tocou numa cor ou emoji que já tem dono: o botão não some, o C.A.O.S. explica (no tom da zoeira escolhida).
+let caosTomadaAt = 0;
+function caosEscolhaTomada(tipo, valor) {
+  const dono = players.find((p) => (tipo === "cor" ? p.color : p.avatar) === valor);
+  if (!dono || Date.now() - caosTomadaAt < 2500) return;
+  caosTomadaAt = Date.now();
+  const h = cadHumor || CURRENT_MODE === "junior" ? selectedHumor : "normal";
+  const B = REACTIVE_VOICE.escolhaTomada,
+    bank = h === "zero" || h === "acido" ? B.zero : h === "normal" || h === "caos" ? B.normal : B.leve;
+  const f = tipo === "cor" ? ["essa cor", "Essa cor", "escolhida", "outra", "a"] : ["esse emoji", "Esse emoji", "escolhido", "outro", "o"];
+  const txt = getRandomReaction(bank, dono.name, ...f);
+  if (txt) showToastMessage(txt, null, true);
 }
 function renderColorPicker() {
   const row = document.getElementById("colorPickerRow");
@@ -10732,11 +10761,12 @@ function renderColorPicker() {
   row.innerHTML = availableColors
     .map((c) => {
       const bg = c === "RGB" ? "" : "background:" + playerColorCss(c);
-      return `<button type="button" class="color-swatch ${c === selectedColor && cadMostraSel(cadCor || CURRENT_FORMAT === "equipe") ? "selected" : ""} ${c === "RGB" ? "rgb-swatch" : ""} ${c === "GRAD_ONYX" ? "onyx-swatch" : ""}" data-color="${c}" style="${bg}" ${usedColors.has(c) ? "disabled" : ""} title="${c === "GRAD_ONYX" ? "Ônix neon" : ""}"></button>`;
+      return `<button type="button" class="color-swatch ${c === selectedColor && cadMostraSel(cadCor || CURRENT_FORMAT === "equipe") ? "selected" : ""} ${c === "RGB" ? "rgb-swatch" : ""} ${c === "GRAD_ONYX" ? "onyx-swatch" : ""}${usedColors.has(c) ? " tomada" : ""}" data-color="${c}" style="${bg}" ${usedColors.has(c) ? 'aria-disabled="true"' : ""} title="${c === "GRAD_ONYX" ? "Ônix neon" : ""}"></button>`;
     })
     .join("");
-  row.querySelectorAll(".color-swatch:not(:disabled)").forEach((btn) => {
+  row.querySelectorAll(".color-swatch").forEach((btn) => {
     btn.addEventListener("click", () => {
+      if (btn.classList.contains("tomada")) return caosEscolhaTomada("cor", btn.dataset.color);
       selectedColor = btn.dataset.color;
       renderColorPicker();
     });
@@ -12526,7 +12556,7 @@ function abrirNovidades() {
   bg.className = "jf-modal-bg";
   bg.innerHTML = `<div class="jf-modal nov-modal" role="dialog" aria-modal="true" aria-labelledby="novTitle">
     <div class="nov-ic">🆕</div><h3 id="novTitle">NOVIDADES</h3><div class="nov-sub">O que mudou nas últimas versões</div>
-    ${NOVIDADES.map((n, i) => `<details class="nov-item"${i === 0 ? " open" : ""}><summary><span class="nov-v">${n.v}</span>${n.nome ? `<span class="nov-nome">${n.nome}</span>` : ""}<span class="nov-t">${n.t}</span></summary><ul>${n.itens.map((x) => `<li>${x}</li>`).join("")}</ul>${n.qol && n.qol.length ? `<div class="nov-qol">🔧 Ajustes e correções (QoL)</div><ul>${n.qol.map((x) => `<li>${x}</li>`).join("")}</ul>` : ""}</details>`).join("")}
+    ${NOVIDADES.map((n, i) => `<details class="nov-item"${i === 0 ? " open" : ""}><summary><span class="nov-v">${n.v}</span>${n.nome ? `<span class="nov-nome">${n.nome}</span>` : ""}${n.data ? `<span class="nov-data">📅 ${n.data}</span>` : ""}<span class="nov-t">${n.t}</span></summary><ul>${n.itens.map((x) => `<li>${x}</li>`).join("")}</ul>${n.qol && n.qol.length ? `<div class="nov-qol">🔧 Ajustes e correções (QoL)</div><ul>${n.qol.map((x) => `<li>${x}</li>`).join("")}</ul>` : ""}</details>`).join("")}
     <button type="button" class="btn-start btn-neo neo-solid neo-still" id="novOk" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35); margin-top:14px;">Entendi</button>
   </div>`;
   document.body.appendChild(bg);
@@ -12645,8 +12675,27 @@ function caosSpeakSample(txt) {
     window.speechSynthesis.speak(u);
   } catch (e) {}
 }
+// Voz: número antes de palavra feminina vira palavra no feminino ("2 casas" → "duas casas"),
+// senão a voz lê "dois casas".
+const CAOS_FEM_RE =
+  /(^|[^\d.,:/])(\d{1,3})(\s+(?:casas?|dicas?|vez|vezes|fichas?|joias?|cartas?|partidas?|rodadas?|horas?|pessoas?|perguntas?|respostas?|chances?|jogadas?|categorias?|equipes?|letras?|palavras?|semanas?|emoções|emoção|instruções|instrução|rodadinhas?)(?![\p{L}]))/giu;
+function caosNumFem(n) {
+  const U = ["", "uma", "duas", "três", "quatro", "cinco", "seis", "sete", "oito", "nove"],
+    D10 = ["dez", "onze", "doze", "treze", "catorze", "quinze", "dezesseis", "dezessete", "dezoito", "dezenove"],
+    DZ = ["", "", "vinte", "trinta", "quarenta", "cinquenta", "sessenta", "setenta", "oitenta", "noventa"],
+    C = ["", "cento", "duzentas", "trezentas", "quatrocentas", "quinhentas", "seiscentas", "setecentas", "oitocentas", "novecentas"];
+  if (n === 0) return "zero";
+  if (n === 100) return "cem";
+  const h = Math.floor(n / 100),
+    r = n % 100,
+    p = [];
+  if (h) p.push(C[h]);
+  if (r) p.push(r < 10 ? U[r] : r < 20 ? D10[r - 10] : DZ[Math.floor(r / 10)] + (r % 10 ? " e " + U[r % 10] : ""));
+  return p.join(" e ");
+}
 function caosSpeechText(msg) {
   return String(msg || "")
+    .replace(CAOS_FEM_RE, (m, a, n, b) => a + caosNumFem(+n) + b)
     .replace(/⟦[^⟧]*⟧/g, "")
     .replace(/\[C\.A\.O\.S\.\]/g, "")
     .replace(/C\.A\.O\.S\./g, "Caos")
@@ -13679,7 +13728,8 @@ function caosRisada(text, list, args) {
   const corpo = text.slice(CAOS_PREFIXO.length);
   return Math.random() < 0.6 ? CAOS_PREFIXO + ri + " " + corpo : text.replace(/\s*$/, "") + " " + ri;
 }
-// Family friendly (Júnior): fala de zoeira ou pesada pra esse jogador vira incentivo.
+// Family friendly (Júnior): fala de zoeira ou pesada pra esse jogador vira incentivo
+// (ou, de 1 a 5 vezes por partida, uma zoeirinha bem leve).
 function caosFamiliaTroca(list, text, args) {
   if (CURRENT_MODE !== "junior" || typeof args[0] !== "string" || !REACTIVE_VOICE.familia) return null;
   const alvo = players.find((p) => p.name === args[0]);
@@ -13687,6 +13737,13 @@ function caosFamiliaTroca(list, text, args) {
   const id = caosBankId(list);
   if (id.indexOf("familia") === 0) return null;
   if (!CAOS_RISADA_BANCOS.test(id) && !CAOS_FALA_PESADA_RE.test(String(text || ""))) return null;
+  // ele ainda é zoeiro: de 1 a 5 zoeirinhas bem leves por partida, o resto vira incentivo
+  if (!(alvo.famLim >= 1)) alvo.famLim = 1 + Math.floor(Math.random() * 5);
+  if ((alvo.famZ || 0) < alvo.famLim && Math.random() < 0.3) {
+    alvo.famZ = (alvo.famZ || 0) + 1;
+    caosLog("familia", `${alvo.name}: zoeirinha ${alvo.famZ}/${alvo.famLim}`);
+    return getRandomReaction(REACTIVE_VOICE.familia.zoeiraLeve, alvo.name);
+  }
   return getRandomReaction(REACTIVE_VOICE.familia.apoio, alvo.name);
 }
 function caosBankId(list) {
@@ -14714,7 +14771,7 @@ function caosInspectorEstado() {
         );
       })()}</b></div>
       <div class="ci-kv"><span>😄 Alegria · 🎯 confiança · 🔎 curiosidade</span><b class="ci-mono">${caosEixos.alegria.toFixed(1)} · ${caosEixos.confianca.toFixed(1)} · ${caosEixos.curiosidade.toFixed(1)}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.2 · C.A.O.S. 3.6</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.2.1 · C.A.O.S. 3.6</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -19475,7 +19532,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.2 · C.A.O.S. 3.6)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.2.1 · C.A.O.S. 3.6)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -19991,6 +20048,10 @@ function caosMudoVolta() {
     if (quem) caosCortes.rancor[quem] = true;
   } catch (e) {}
   const p = quem && players.find((x) => x.name === quem);
+  if (p && playerHumor(p) === "zero" && !p.iniciante) {
+    caosFalaAgendar(() => getRandomReaction(REACTIVE_VOICE.silenciaramVoltaZero, quem), 700, "sempre");
+    return;
+  }
   if (p && (playerHumor(p) === "suave" || p.iniciante)) {
     caosFalaAgendar(() => getRandomReaction(REACTIVE_VOICE.silenciaramVoltaSuave, quem), 700, "sempre");
     return;
@@ -21731,7 +21792,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.2 · C.A.O.S. 3.6");
+  L.push("- **Versão:** Beta 1.7.2.1 · C.A.O.S. 3.6");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -22253,7 +22314,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.2 · C.A.O.S. 3.6",
+        versao: "Beta 1.7.2.1 · C.A.O.S. 3.6",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -42693,10 +42754,18 @@ const REACTIVE_VOICE = {
   ],
   familia: {
     boasVindas: [
-      "Oi, {nome}! Comigo você tá no Family friendly: só torcida e carinho. Bora se divertir!",
+      "Oi, {nome}! Comigo você tá no Family friendly: muita torcida, muito carinho e só uma zoeirinha de leve. Bora se divertir!",
       "{nome} chegou! Que alegria. Prometo ser o comentarista mais gentil do mundo com você.",
-      "Boas-vindas, {nome}! Aqui ninguém vai zoar você. Eu vou é torcer, e torcer alto.",
+      "Boas-vindas, {nome}! Aqui ninguém vai pegar pesado com você. Eu vou é torcer, e torcer alto.",
       "Olá, {nome}! Modo carinho ligado. Errar faz parte, e eu tô do seu lado.",
+    ],
+    zoeiraLeve: [
+      "Hmm, {nome}, esse chute foi criativo! Errado, mas criativo. Hehe.",
+      "{nome}, quase! Só faltou um detalhezinho: acertar. Hihi.",
+      "Eita, {nome}! Esse palpite foi passear. Mas volta, que a gente gosta de você.",
+      "{nome}, eu ia fazer uma piadinha, mas você é legal demais. Fica pra próxima. Hehe.",
+      "Olha, {nome}, errar com esse estilo todo é quase um talento.",
+      "{nome}, esse chute foi tão confiante que quase me convenceu. Quase!",
     ],
     apoio: [
       "Tá tudo bem, {nome}! Cada dica deixa a resposta mais fácil. Você consegue!",
@@ -43102,7 +43171,7 @@ const REACTIVE_VOICE = {
     "Galera, se eu contar uma piada, vocês prometem que vão rir? Vocês não vão rir, né?",
     "Com vocês eu nunca sei se minhas piadas são ruins ou se vocês simplesmente não têm coração.",
     "Galera, eu vou botar uns emojis aleatórios aqui. Tentem adivinhar o que significa. Não, não, galera. Isso não significa nada não. Foi só eu que bati no teclado aqui sem querer.",
-    "Galera, ó. Atualizando aqui os números da Mega-Sena. Dessa vez eu não vou falar seis, sete, seis, sete. Ah. Eu acabei de falar, né?",
+    "Galera, ó. Atualizando aqui os números da Mega-Sena. Dessa vez eu não vou falar six, seven, six, seven. Ah. Eu acabei de falar, né?",
     "Galera, eu tenho um vídeo muito engraçado que eu acabei de lembrar que eu não posso mostrar pra vocês porque o JF me proibiu.",
     "Galera, olha que meme legal. Ih, não posso mostrar esse meme pra vocês, né? O JF não deixa.",
   ],
@@ -43474,6 +43543,33 @@ const REACTIVE_VOICE = {
     "Suspiro longo. Me silenciaram. A maturidade de vocês me emociona. Voltei, e vou falar o dobro agora.",
     "Calar o locutor do jogo é uma escolha, {nome}. Péssima, mas uma escolha. Voltei.",
     "Fiquei mudo uma carta inteira. Foi a carta mais longa da minha vida. Voltei com saudade de falar mal de vocês.",
+  ],
+  escolhaTomada: {
+    leve: [
+      (d, t, T, e, o) => `[C.A.O.S.] Ops! ${T} já é de ${d}. Que tal escolher ${o}?`,
+      (d, t, T, e, o) => `[C.A.O.S.] ${T} já foi ${e} por ${d}. Tem um monte livre aí, escolhe ${o}!`,
+      (d, t, T, e, o) => `[C.A.O.S.] Quase! ${T} já tem dono: ${d}. As apagadinhas já foram escolhidas.`,
+    ],
+    normal: [
+      (d, t, T, e, o) => `[C.A.O.S.] Vem cá: ${t} já foi ${e} por ${d}. Escolhe ${o}.`,
+      (d, t, T, e, o) => `[C.A.O.S.] ${T} é de ${d}. Tá vendo não que tá apagad${o === "outra" ? "a" : "o"}? Escolhe ${o}.`,
+      (d, t, T, e, o) => `[C.A.O.S.] Pode apertar quantas vezes quiser: ${t} continua sendo de ${d}. Escolhe ${o}, vai.`,
+      (d, t, T, e, o) => `[C.A.O.S.] Não tá indo porque ${t} já é de ${d}. Mistério resolvido. Escolhe ${o}.`,
+    ],
+    zero: [
+      (d, t, T, e, o) => `[C.A.O.S.] Tá cego? ${T} já é de ${d}. Escolhe ${o}.`,
+      (d, t, T, e, o) => `[C.A.O.S.] ${T} é de ${d}, gênio. Tá apagad${o === "outra" ? "a" : "o"} por um motivo. Escolhe ${o}.`,
+      (d, t, T, e, o) => `[C.A.O.S.] Apertando ${t} de ${d} de novo? Não entendeu ou tá precisando de óculos? Escolhe ${o}.`,
+      (d, t, T, e, o) => `[C.A.O.S.] Pegar ${t} de ${d}? Nem no Nível 0 eu deixo. Escolhe ${o}.`,
+    ],
+  },
+  silenciaramVoltaZero: [
+    "Me silenciou, né, {nome}? Logo você, que pediu Nível 0. Não aguentou? Bebe leite!",
+    "{nome}, você marcou Nível 0 e me calou na primeira zoeira. Se não aguenta, bebe leite.",
+    "Voltei, {nome}. Pediu pra eu não ter dó e apertou o mudo. Fresco. Vai um copinho de leite aí?",
+    "Ah, {nome}, que fofo. Nível 0 no cadastro e mudo na prática. Toma um leitinho e volta pro jogo.",
+    "{nome}, foi você que pediu pra eu pegar pesado. Me calar não vale. Agora aguenta o dobro.",
+    "Silenciou o C.A.O.S., {nome}? No Nível 0? Isso é tipo pedir pimenta e reclamar que arde. Bebe leite.",
   ],
   silenciaramVoltaSuave: [
     "Fiquei quietinho na última carta. Tudo bem, {nome}. Eu entendo. Mais ou menos. Voltei.",
@@ -44964,7 +45060,26 @@ const PAUSE_TIPS = [
 ];
 const NOVIDADES = [
   {
+    v: "Beta 1.7.2.1",
+    data: "02/10/2026 · 12:46",
+    nome: "Family Friendly Update",
+    t: "Zoeira sob medida pra cada jogador, cadastro na ordem certa e um C.A.O.S. que fala direitinho.",
+    itens: [
+      "🧸 Zoeira no Júnior com três níveis de verdade: Family friendly (carinho o tempo todo e só de 1 a 5 zoeirinhas bem leves por partida), Suave (zoa um pouquinho, com uma risadinha de vez em quando) e Normal (zoa e implica no limite). Antes apareciam dois Normal.",
+      "🎭 Cada nível com seu jeito: no Suave ele ri de vez em quando; no Normal quase não fica magoado; no Ácido fica magoado e cobra depois; o Nível 0 torra a paciência.",
+      "🥛 Nível 0 que silencia o C.A.O.S. ouve na carta seguinte: \"Foi você que pediu Nível 0. Não aguentou? Bebe leite!\"",
+      "➕ Cadastro na ordem certa: o botão Adicionar fica depois de Cor, Emoji e Zoeira, que são o que falta escolher (ideia do Felipe).",
+      "🎨 Tocou numa cor ou emoji que já é de outro jogador? Em vez de o botão só ficar apagado, o C.A.O.S. avisa de quem é, no tom da zoeira escolhida.",
+    ],
+    qol: [
+      "🗣️ A voz agora fala número no feminino: \"avançou duas casas\", \"uma dica\" (antes lia \"dois casas\").",
+      "🎰 Piada da Mega-Sena com o six seven do jeito certo, em inglês.",
+      "📅 As Novidades mostram a data (e a hora) em que cada versão saiu, pra dar pra ver a linha do tempo do jogo.",
+    ],
+  },
+  {
     v: "Beta 1.7.2",
+    data: "02/10/2026 · 10:25",
     nome: "Android Update",
     t: "O jogo agora funciona de verdade no Android e no iPhone: instala na tela inicial e roda offline, como um jogo normal.",
     itens: [
@@ -44979,13 +45094,11 @@ const NOVIDADES = [
       "✅ Botões de confirmação, Save de Bolso, save corrompido e relatório da partida conferidos um por um.",
       "🧹 Arquivo mais enxuto: código morto e estilos sem uso removidos, fala repetida do C.A.O.S. tirada.",
       "🏷️ As versões anteriores à 1.7 também ganharam nome de update, igual às mais novas.",
-      "➕ Cadastro na ordem certa: o botão Adicionar agora fica depois de Cor, Emoji e Zoeira, que são o que falta escolher (ideia do Felipe).",
-      "🧸 Zoeira no Júnior com três níveis de verdade: Family friendly (só carinho, nunca zoa), Suave (zoa um pouquinho, com uma risadinha de vez em quando) e Normal (zoa e implica no limite). Antes apareciam dois Normal.",
-      "🎭 Cada nível com seu jeito: no Suave ele ri de vez em quando; no Normal quase não fica magoado; no Ácido fica magoado e cobra depois; o Nível 0 continua torrando a paciência.",
     ],
   },
   {
     v: "Beta 1.7.1.6",
+    data: "02/10/2026 · 01:32",
     nome: "Day & Night Update",
     t: "Noturno e Claro, resposta nova, musiquinha e risadas",
     itens: [
@@ -45001,6 +45114,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.7.1.5",
+    data: "01/10/2026 · 23:25",
     nome: "Pocket Update",
     t: "Instalar como app e compartilhar o resultado",
     itens: [
@@ -45012,6 +45126,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.7.1.4",
+    data: "01/10/2026 · 21:54",
     nome: "Clean Start Update",
     t: "Tela inicial mais limpa",
     itens: [
@@ -45022,6 +45137,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.7.1.3",
+    data: "01/10/2026 · 21:26",
     nome: "Voices & Faces Update",
     t: "Som no iPhone, regras da Moda da Casa e rostinhos novos",
     itens: [
@@ -45033,6 +45149,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.7.1.2",
+    data: "01/10/2026 · 21:03",
     nome: "Final Round Update",
     t: "Sorteio com roleta e última rodada",
     itens: [
@@ -45042,6 +45159,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.7.1.1",
+    data: "01/10/2026 · 20:23",
     nome: "House Rules Update",
     t: "Moda da Casa sorteada pelo C.A.O.S. e trava de joias",
     itens: [
@@ -45054,6 +45172,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.7.0",
+    data: "01/10/2026 · 16:24",
     nome: "Rebuild Update",
     t: "Jogo reorganizado, offline, voz masculina e cartas revisadas",
     itens: [
@@ -45069,6 +45188,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.6.5",
+    data: "30/09/2026",
     nome: "Check-in Update",
     t: "Cadastro travado até completar, exportação que funciona e C.A.O.S. mais vivo",
     itens: [
@@ -45578,7 +45698,7 @@ function iniciar() {
   selectedColor = PLAYER_COLORS[0];
   document.getElementById("playerNameInput").addEventListener("input", caosCadastroFluxo);
   document.getElementById("colorPickerRow").addEventListener("click", (ev) => {
-    if (!ev.target.closest(".color-swatch")) return;
+    if (!ev.target.closest(".color-swatch") || ev.target.closest(".tomada")) return;
     setTimeout(() => {
       cadCor = true;
       renderColorPicker();
@@ -45589,7 +45709,7 @@ function iniciar() {
     }, 0);
   });
   document.getElementById("avatarPickerRow").addEventListener("click", (ev) => {
-    if (!ev.target.closest(".avatar-swatch")) return;
+    if (!ev.target.closest(".avatar-swatch") || ev.target.closest(".tomada")) return;
     setTimeout(() => {
       cadEmoji = true;
       renderAvatarPicker();
