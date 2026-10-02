@@ -3,7 +3,13 @@
   As versões debug e compacta são geradas pelo build.js:  node build.js
   (nunca edite as saídas à mão).
 
-  HISTÓRICO (uma linha por versão). Numeração: 1.7.1.N; depois do .9 sobe para 1.7.2.
+  HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.2 · 02/10/2026 · Android: botão Instalar o app (aviso do Chrome; no iPhone, passo a passo),
+          voltar do Android pausa a partida, dica de voz por aparelho, sw.js também em
+          localhost (teste). Corrigido: importar save com partida em andamento (saveBloqueado).
+          Limpeza: variáveis mortas, "reapresentar" desativado, 3 regras CSS sem uso, 1 fala
+          repetida. Modo Claro revisto (2ª passada: cartões, botões, nomes, carta virada).
+          Logo: P grande em azul neon e JF em laranja neon (mesma letra).
   1.7.1.6 · 02/10/2026 · Números das versões corrigidos (as antigas 1.7.1.2 a 1.7.1.6 são
           1.7.1.1 a 1.7.1.5; arquivos renomeados, conteúdo intacto). Ícone novo do app
           (? neon + carta com P). Dois visuais: Noturno (padrão) e Claro (body.claro).
@@ -58,7 +64,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Perfil JF">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.1.6</title>
+<title>Perfil JF · Beta 1.7.2</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -582,12 +588,6 @@ body.fx-urgente:after {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-.splash-chips {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
 }
 .chip {
   border: 1px solid rgba(245, 195, 68, 0.7);
@@ -3241,21 +3241,6 @@ body.batata-mode .number-btn:not(:disabled):before {
 .casa-roleta .roulette-reel {
   min-width: 11ch;
 }
-.casa-sorteio-reel {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 800;
-  padding: 14px 10px;
-  border-radius: 14px;
-  background: #ffffff12;
-  border: 1px solid #ffffff2e;
-  margin-bottom: 12px;
-}
-.casa-sorteio-reel.casa-sorteio-final {
-  background: #fbbf2426;
-  border-color: #fbbf24;
-  color: #fde68a;
-}
 .casa-sorteio-desc {
   font-size: 0.95rem;
   line-height: 1.4;
@@ -4125,6 +4110,10 @@ body.batata-mode .splash-go-flutua {
 .splash-menu-voz {
   margin-top: 8px;
 }
+.splash-menu-instalar {
+  width: 100%;
+  margin-top: 8px;
+}
 /* Modo Noturno (opcional): a carta, única parte clara do jogo, fica escura */
 body.noturno {
   --card-bg: #1f1d36;
@@ -4986,11 +4975,90 @@ body.claro .splash-caos .sc-face {
   filter: brightness(0.75) saturate(1.3);
   text-shadow: none;
 }
-/* nomes neon dos jogadores: mais escuros pra ler no claro */
-body.claro .player-name-neon,
+/* títulos neon: mais escuros pra ler no claro */
 body.claro .hall-box h3,
 body.claro .stats-box h3 {
   filter: brightness(0.72) saturate(1.35);
+}
+/* ===== Modo Claro, 2ª passada (1.7.2): nada de vidro escuro; cor sólida nos botões,
+   cartões brancos com borda colorida, nomes sem brilho borrado ===== */
+/* cartões de formato/modo */
+body.claro .mode-btn.mc-card {
+  background: #fff;
+  border-color: color-mix(in srgb, var(--mc) 40%, #fff);
+  box-shadow: 0 4px 14px rgba(60, 40, 110, 0.08);
+}
+body.claro .mc-badge:after {
+  background: color-mix(in srgb, var(--mc) 14%, #fff);
+}
+body.claro .mc-badge {
+  color: color-mix(in srgb, var(--mc) 72%, #1a1030);
+  text-shadow: none;
+}
+body.claro .mc-icon:after {
+  background: color-mix(in srgb, var(--mc) 12%, #fff);
+}
+body.claro .mode-select-wrap.mc-wrap.mode-selected {
+  background: color-mix(in srgb, var(--mc) 30%, #fff);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--mc) 30%, transparent);
+}
+body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-card {
+  background: color-mix(in srgb, var(--mc) 9%, #fff);
+  box-shadow: none;
+}
+body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-title {
+  color: var(--claro-txt);
+  text-shadow: none;
+}
+body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-desc {
+  color: var(--claro-suave);
+}
+body.claro .mode-select-wrap.mc-wrap.mode-dimmed {
+  opacity: 0.55;
+}
+/* botões neon: claros (secundários) e cor sólida (principais) */
+body.claro .btn-start.btn-neo {
+  color: color-mix(in srgb, var(--mc, #7c3aed) 68%, #1a1030);
+  text-shadow: none;
+  background: color-mix(in srgb, var(--mc, #7c3aed) 35%, #fff);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--mc, #7c3aed) 22%, transparent);
+}
+body.claro .btn-neo:after,
+body.claro .btn-neo.neo-ghost:after,
+body.claro .btn-neo.neo-solid.neo-ghost:after {
+  background: color-mix(in srgb, var(--mc, #7c3aed) 9%, #fff);
+}
+body.claro .btn-neo.neo-solid:not(.neo-ghost):after,
+body.claro .btn-neo.mc-confirm:after {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--mc, #7c3aed) 92%, #fff),
+    color-mix(in srgb, var(--mc, #7c3aed) 82%, #1a1030)
+  );
+}
+body.claro .btn-start.btn-neo.neo-solid:not(.neo-ghost),
+body.claro .btn-start.btn-neo.mc-confirm {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+}
+/* nomes dos jogadores: sem o brilho que borra no fundo claro */
+body.claro .player-name-neon {
+  text-shadow: none;
+  filter: brightness(0.62) saturate(1.5);
+}
+/* condição de vitória e avisos amarelos */
+body.claro .wincond-btn:not(.on) {
+  color: color-mix(in srgb, var(--wc, #7c3aed) 66%, #1a1030);
+  box-shadow: none;
+}
+body.claro #playerWarning {
+  color: #a15c07 !important;
+}
+/* carta virada pra baixo: branca com borda roxa, em vez do bloco escuro */
+body.claro .card.face-down {
+  background: linear-gradient(160deg, #ffffff, #efe9fb);
+  color: var(--claro-txt);
+  border: 1.5px solid var(--claro-borda);
 }
 </style>
 </head>
@@ -5008,6 +5076,7 @@ body.claro .stats-box h3 {
           <button id="btnBatata" class="chip" style="--cc:#facc15;" title="Modo Batata: tira animações pesadas (economia de bateria)">🥔 Batata</button>
           <button id="btnNoturno" class="chip" style="--cc:#a5b4fc;" title="Modo Noturno: carta escura, mais confortável no escuro">🌙 Noturno</button>
         </div>
+        <button id="btnInstalar" class="chip splash-menu-instalar" style="--cc:#f472b6; display:none;">📲 Instalar o app</button>
         <div class="splash-menu-grade splash-menu-voz">
           <button id="btnVoz" class="chip" style="--cc:#34d399;">🗣️ Voz</button>
           <button id="btnVozAjustar" class="chip" style="--cc:#fb923c;">🎚️ Ajustar voz</button>
@@ -5031,7 +5100,7 @@ body.claro .stats-box h3 {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.1.6 · C.A.O.S. 3.6<br>Atualizada em 02/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.2 · C.A.O.S. 3.6<br>Atualizada em 02/10/2026</div>
     </div>
   </section>
 
@@ -6237,7 +6306,6 @@ let caosMarked = { idx: null, remaining: 0 };
 let caosPrevMarkedIdx = null;
 let caosLastSpeechByPlayer = {};
 let caosCardMem = null;
-let caosReapresentando = null;
 let caosUltimaFalaAt = 0;
 let caosFalasRecentes = [];
 let caosLastMoodSeen = null;
@@ -6252,6 +6320,7 @@ let primeiroMestreNome = null;
 let joiasRodada = {}; // joias ganhas na rodada atual, por jogador (índice) ou equipe (id)
 let ultimaRodada = false; // true = alguém bateu a meta e a rodada está terminando
 let ultimaRodadaQuem = ""; // quem bateu a meta primeiro (nome do jogador ou da equipe)
+let saveBloqueado = false; // true depois de importar um save (até recarregar)
 let audioTravadoToques = 0; // toques seguidos com o som ainda parado (iPhone)
 let caosSorteioSilencio = false; // true enquanto o sorteio da Moda da Casa está na tela
 let lastSplashColor = null;
@@ -6377,7 +6446,6 @@ var caosSplashIdx = 0;
 var caosSplashAt = 0;
 var caosRepetidaAt = 0;
 var caosRepetidaN = 0;
-var caosRepetidaCarta = -1;
 const caosAnimRodando = new Map();
 let caosAnimRaf = 0;
 let caosCatSeq = [];
@@ -6448,7 +6516,6 @@ var caosDescansoFalou = false;
 var caosPausaAcum = 0;
 var caosMudoCarta = false;
 var caosMudoPor = null;
-var caosMudoCont = 0;
 
 /* ======================================================================
  * 3. REGRAS (VITÓRIA, PONTOS, JOIAS, TABULEIRO, BARALHO, EQUIPES)
@@ -6639,7 +6706,6 @@ function applyTeamRosters(ids, rosters) {
 function applyTeamSpecialMove(teamId, amount, wasChosenByAnother) {
   if (gameEnded || !teams[teamId]) return;
   const t = teams[teamId];
-  const oldPosition = t.position;
   t.position = Math.max(0, Math.min(Math.max(WINNING_SCORE, t.position), t.position + amount));
   renderMiniScoreboard();
   renderScoreboard();
@@ -6882,7 +6948,6 @@ function isJfPlayer(p) {
 }
 function specialIsVoid(item) {
   if (!item || item.type !== "special" || CURRENT_MODE === "express") return false;
-  const txt = (item.text || "").toLowerCase();
   if (isWildcardSpecial(item.text)) {
     const e = revealedOrder.find((r) => r.index === pendingIndex);
     return !(e && (e.palpiteResult === "ganhou" || e.palpiteResult === "fominha"));
@@ -6910,7 +6975,6 @@ function applySpecialMove(targetIdx, amount) {
   }
   if (!players[targetIdx]) return;
   const p = players[targetIdx];
-  const oldPosition = p.position;
   p.position = Math.max(0, Math.min(Math.max(WINNING_SCORE, p.position), p.position + amount));
   renderMiniScoreboard();
   renderScoreboard();
@@ -8842,6 +8906,7 @@ function beginGameplay() {
   caosMagoaInicio();
   if (!admPrincipalName && players[mestreIndex]) admPrincipalName = players[mestreIndex].name;
   rodadaIniciar();
+  voltarGuardar();
   casaSortearModo();
   syncGameplayPanels();
   updateDrawAvailability();
@@ -10043,7 +10108,6 @@ function render() {
           ${spotlightTimerHtml}
           ${bodyHtml}`;
       } else {
-        const realCluesRevealed = revealedOrder.filter((r) => r.item.type === "clue").length;
         const totalCardPointsNow = currentCard.clues.length;
         const entriesNow = revealedOrder.length;
         const bonusMult = (currentCard && currentCard.isBonus ? 2 : 1) * (CURRENT_MODE === "hardcore" ? 2 : 1);
@@ -12386,6 +12450,14 @@ function caosTomEfetivo() {
   const v = caosPickVoice();
   return v && !CAOS_MALE_VOICE_RE.test(v.name || "") ? caosVoicePitch * 0.8 : caosVoicePitch;
 }
+// Dica de voz de cada aparelho (iPhone e Android liberam vozes de jeitos diferentes).
+function caosVozDicaAparelho() {
+  if (aparelhoIOS())
+    return " No iPhone/iPad o Safari só libera para sites as vozes de fábrica: vozes baixadas (como Felipe ou as Aprimoradas) não aparecem aqui.";
+  if (aparelhoAndroid())
+    return " No Android, dá pra baixar outras vozes em Configurações › Sistema › Idiomas › Saída de texto para fala (Google), em Português (Brasil).";
+  return "";
+}
 function caosPtVoices() {
   try {
     return (window.speechSynthesis.getVoices() || [])
@@ -12681,8 +12753,8 @@ function updateVoiceBtn() {
           list.map((v) => v.name).join(", ") +
           (list.some((v) => CAOS_MALE_VOICE_RE.test(v.name || ""))
             ? ""
-            : " — nenhuma masculina, então deixei o tom mais grave (ajuste em Tom). No iPhone/iPad o Safari só libera para sites as vozes de fábrica: vozes baixadas (como Felipe ou as Aprimoradas) não aparecem aqui.")
-        : "Nenhuma voz em português encontrada: o navegador usa a padrão.";
+            : " — nenhuma masculina, então deixei o tom mais grave (ajuste em Tom)." + caosVozDicaAparelho())
+        : "Nenhuma voz em português encontrada: o navegador usa a padrão." + caosVozDicaAparelho();
     }
   }
   if (nome) {
@@ -13557,7 +13629,6 @@ function caosDecorate(text, list) {
   if (set.length > 1 && e === caosLastEmoji) e = set[(set.indexOf(e) + 1) % set.length];
   caosLastEmoji = e;
   caosUltEmojiAdd = e;
-  const m = /^(\[C\.A\.O\.S\.\]\s*)/.exec(text);
   return text + " " + e;
 }
 function caosHasProfanity(text, args) {
@@ -14473,7 +14544,7 @@ function caosInspectorEstado() {
         );
       })()}</b></div>
       <div class="ci-kv"><span>😄 Alegria · 🎯 confiança · 🔎 curiosidade</span><b class="ci-mono">${caosEixos.alegria.toFixed(1)} · ${caosEixos.confianca.toFixed(1)} · ${caosEixos.curiosidade.toFixed(1)}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.1.6 · C.A.O.S. 3.6</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.2 · C.A.O.S. 3.6</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -17896,7 +17967,6 @@ function caosDicaRepetida(idx) {
   if (!e || !v) return;
   caosRepetidaAt = agora;
   caosRepetidaN++;
-  caosRepetidaCarta = stats.totalDrawn;
   const B = REACTIVE_VOICE.dicaRepetida,
     dono = e.pickedByName || "alguém";
   let bank =
@@ -19234,7 +19304,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.1.6 · C.A.O.S. 3.6)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.2 · C.A.O.S. 3.6)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -19724,7 +19794,6 @@ function caosSilenciarCarta() {
   const quem = players[mestreIndex] ? players[mestreIndex].name : null;
   caosMudoCarta = true;
   caosMudoPor = quem;
-  caosMudoCont++;
   try {
     caosLog("silenciado", "C.A.O.S. silenciado nesta carta por " + (quem || "?"));
   } catch (e) {}
@@ -19909,7 +19978,6 @@ function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze) {
       return;
     }
   }
-  const reapresentar = false ? activeToastState.msg : null;
   for (let guard = 0; activeToastState && guard < 4; guard++) {
     if (guard > 0 && activeToastState.priority && !priority) {
       if (typeof afterClose === "function") activeToastState.deferred.push(afterClose);
@@ -20012,13 +20080,6 @@ function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze) {
   caosFalasRecentes.push(caosUltimaFalaAt);
   activeToastState.msg = msg;
   activeToastState.virada = virada || null;
-  if (reapresentar)
-    activeToastState.deferred.push(() => {
-      caosReapresentando = reapresentar;
-      showToastMessage(reapresentar);
-      caosReapresentando = null;
-    });
-  if (caosReapresentando && msg === caosReapresentando) activeToastState.jaReapresentada = true;
   const caosDelay = caosReactionDelay(msg);
   activeToastState.shownAt = Date.now() + caosDelay;
   if (caosDelay > 0) {
@@ -20379,6 +20440,8 @@ function caosExtraRestaurar(x) {
   } catch (e) {}
 }
 function saveGameState() {
+  // importando um save: nada pode gravar por cima até a página recarregar
+  if (saveBloqueado) return;
   try {
     const state = {
       saveVersion: SAVE_VERSION,
@@ -21123,6 +21186,7 @@ function importSaveAplicar(code) {
   }
   const gravar = () => {
     parsed.savedAt = Date.now();
+    saveBloqueado = true;
     JFStore.setItem("perfil200_state", JSON.stringify(parsed));
     JFStore.flushNow();
     caosAvisoModal("✅ Jogo importado! A página vai recarregar pra continuar de onde parou.", () => location.reload());
@@ -21496,7 +21560,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.1.6 · C.A.O.S. 3.6");
+  L.push("- **Versão:** Beta 1.7.2 · C.A.O.S. 3.6");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -22018,7 +22082,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.1.6 · C.A.O.S. 3.6",
+        versao: "Beta 1.7.2 · C.A.O.S. 3.6",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -22068,9 +22132,65 @@ function caosPartidaMarkdown() {
 // depois da primeira visita. Aberto como arquivo (file://), não faz nada.
 function registrarOffline() {
   try {
-    if ("serviceWorker" in navigator && location.protocol === "https:")
+    if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost"))
       navigator.serviceWorker.register("sw.js").catch(() => {});
   } catch (e) {}
+}
+// Instalar o app na tela de início. Android (Chrome): usa o aviso do próprio navegador.
+// iPhone (Safari) não tem aviso: mostra o passo a passo. Já instalado: o botão some.
+let instalarPrompt = null;
+function appInstalado() {
+  try {
+    return (
+      (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
+      window.navigator.standalone === true
+    );
+  } catch (e) {
+    return false;
+  }
+}
+function aparelhoIOS() {
+  const ua = navigator.userAgent || "";
+  return /iPhone|iPad|iPod/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+}
+function aparelhoAndroid() {
+  return /Android/i.test(navigator.userAgent || "");
+}
+function instalarAtualizarBotao() {
+  const b = document.getElementById("btnInstalar");
+  if (!b) return;
+  const pode =
+    !appInstalado() && location.protocol !== "file:" && (instalarPrompt || aparelhoIOS() || aparelhoAndroid());
+  b.style.display = pode ? "" : "none";
+}
+function instalarApp() {
+  if (instalarPrompt) {
+    const pr = instalarPrompt;
+    instalarPrompt = null;
+    try {
+      pr.prompt();
+      pr.userChoice.then(() => instalarAtualizarBotao()).catch(() => {});
+    } catch (e) {}
+    return;
+  }
+  caosAvisoModal(
+    aparelhoIOS()
+      ? "📲 Pra instalar no iPhone/iPad:\n\n1. Abra o jogo no Safari.\n2. Toque em Compartilhar (o quadrado com a seta pra cima).\n3. Toque em Adicionar à Tela de Início.\n\nO jogo abre em tela cheia e funciona sem internet."
+      : "📲 Pra instalar no Android:\n\n1. Abra o jogo no Chrome.\n2. Toque no menu ⋮ do navegador (canto de cima).\n3. Toque em Instalar app (ou Adicionar à tela inicial).\n\nO jogo abre em tela cheia e funciona sem internet.",
+  );
+}
+// Botão voltar do Android no meio da partida: pausa o jogo em vez de fechar o app.
+// (window.history explícito: "history" no jogo é a lista de cartas acertadas.)
+function voltarGuardar() {
+  try {
+    if (!window.history.state || !window.history.state.perfilJF) window.history.pushState({ perfilJF: 1 }, "");
+  } catch (e) {}
+}
+function voltarApertado() {
+  if (starterChosen && !gameEnded && document.getElementById("gameScreen").style.display !== "none") {
+    voltarGuardar();
+    if (!pausaEstaAberta()) pauseGame();
+  }
 }
 function caosExportarPartidaModal() {
   let md;
@@ -41174,7 +41294,7 @@ const REACTIVE_VOICE = {
     "Hahaha, perdeu, playboy! Bônus cancelado.",
     "Perca sua vez em duelo de bônus? Hahaha, perdeu, playboy!",
     "Bônus cancelado. Hahaha... perdeu, playboy.",
-    "Bônus cancelado! Hahaha, perdeu, playboy!",
+
     "Perca a vez, perca o bônus. Perdeu, playboy!",
     "Que pena. Muito triste. Hahaha... perdeu, playboy.",
     "O bônus veio, olhou pra mesa, e foi embora. Eu entendo ele.",
@@ -44402,7 +44522,7 @@ const TUTORIAL_STEPS = [
     sec: 5,
     icon: "📳",
     title: "Ajustes do aparelho",
-    text: "Na tela inicial, no menu <b>⋮</b> do canto de cima:<ul><li>🔊 <b>Som</b> liga/desliga os efeitos;</li><li>📳 <b>Vibrar</b> faz o celular tremer nos acertos, erros e sustos;</li><li>🗣️ <b>Voz</b>: o C.A.O.S. fala em voz alta; 🎚️ <b>Ajustar voz</b> muda velocidade, tom e a voz;</li><li>🥔 <b>Batata</b>: tira as animações pesadas (celular fraco ou bateria acabando);</li><li>🌙 <b>Noturno</b> / ☀️ <b>Claro</b>: troca o visual do jogo. O Noturno (padrão) é todo escuro; o Claro tem fundo lavanda e cartas brancas.</li></ul>",
+    text: "Na tela inicial, no menu <b>⋮</b> do canto de cima:<ul><li>🔊 <b>Som</b> liga/desliga os efeitos;</li><li>📳 <b>Vibrar</b> faz o celular tremer nos acertos, erros e sustos;</li><li>🗣️ <b>Voz</b>: o C.A.O.S. fala em voz alta; 🎚️ <b>Ajustar voz</b> muda velocidade, tom e a voz;</li><li>🥔 <b>Batata</b>: tira as animações pesadas (celular fraco ou bateria acabando);</li><li>📲 <b>Instalar o app</b>: põe o jogo na tela inicial (Android e iPhone);</li><li>🌙 <b>Noturno</b> / ☀️ <b>Claro</b>: troca o visual do jogo. O Noturno (padrão) é todo escuro; o Claro tem fundo lavanda e cartas brancas.</li></ul>",
     dark: true,
     mock: '<div class="tut-row"><span class="tut-chip" style="--mc:#f5c344;">🔊 Som</span><span class="tut-chip" style="--mc:#f5c344;">📳 Vibrar</span><span class="tut-chip" style="--mc:#f5c344;">🗣️ Voz</span><span class="tut-chip" style="--mc:#f5c344;">🥔 Batata</span></div>',
   },
@@ -44416,7 +44536,7 @@ const TUTORIAL_STEPS = [
     sec: 5,
     icon: "🎮",
     title: "Pronto!",
-    text: "Dica: no Safari, toque em Compartilhar → <b>Adicionar à Tela de Início</b> e o jogo vira um app, em tela cheia e funcionando sem internet. Isso é tudo. O resto vocês aprendem jogando — e o <b>Resumo rápido</b> das regras está sempre antes da partida e na pausa. Bom jogo, e boa sorte com o C.A.O.S. 😏",
+    text: "Dica: dá pra instalar o jogo como app, em tela cheia e funcionando sem internet. No menu <b>⋮</b> da tela inicial, toque em <b>📲 Instalar o app</b> (no Android o Chrome instala direto; no iPhone aparece o passo a passo: Compartilhar → Adicionar à Tela de Início). Isso é tudo. O resto vocês aprendem jogando — e o <b>Resumo rápido</b> das regras está sempre antes da partida e na pausa. Bom jogo, e boa sorte com o C.A.O.S. 😏",
   },
 ];
 const PAUSE_TIPS = [
@@ -44654,6 +44774,19 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.2",
+    t: "Android de verdade, revisão geral e limpeza",
+    itens: [
+      "📲 Botão Instalar o app no menu ⋮: no Android o Chrome instala o jogo direto na tela inicial; no iPhone aparece o passo a passo.",
+      "🤖 Android: o botão voltar do celular no meio da partida agora abre a pausa em vez de fechar o jogo. Som, vibração e voz conferidos num Android simulado.",
+      "🗣️ O painel de voz dá a dica certa pra cada aparelho (no Android, onde baixar vozes em português).",
+      "💾 Corrigido: importar um save com outra partida em andamento agora funciona (antes a partida antiga gravava por cima).",
+      "🧹 Arquivo mais enxuto: código morto e estilos sem uso removidos, falas repetidas do C.A.O.S. tiradas.",
+      "☀️ Modo Claro revisto: cartão escolhido fica claro com a borda colorida, botões principais em cor sólida, nomes sem o brilho que borrava e textos amarelos mais escuros pra ler.",
+      "📱 Logo nova: o P de Perfil grande em azul neon e o JF em laranja neon, na mesma letra, dentro da carta dourada. Quem já instalou: apague o atalho e adicione de novo pra ver.",
+    ],
+  },
   {
     v: "Beta 1.7.1.6",
     t: "Noturno e Claro, resposta nova, musiquinha e risadas",
@@ -45630,6 +45763,26 @@ function iniciar() {
   document.getElementById("btnNoturno").addEventListener("click", toggleNoturno);
   temaAplicar();
   document.getElementById("btnNovidades").addEventListener("click", abrirNovidades);
+  document.getElementById("btnInstalar").addEventListener("click", instalarApp);
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    instalarPrompt = e;
+    instalarAtualizarBotao();
+  });
+  window.addEventListener("appinstalled", () => {
+    instalarPrompt = null;
+    instalarAtualizarBotao();
+  });
+  instalarAtualizarBotao();
+  window.addEventListener("popstate", voltarApertado);
+  // depois de reabrir no meio da partida, o 1º toque já protege o "voltar"
+  document.addEventListener(
+    "click",
+    () => {
+      if (starterChosen && !gameEnded) voltarGuardar();
+    },
+    { capture: true, passive: true },
+  );
   // Menu ⋮ da tela inicial: abre/fecha no botão; fecha ao tocar fora dele.
   (function () {
     const bt = document.getElementById("btnMenuSplash"),
