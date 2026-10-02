@@ -4,6 +4,9 @@
   (nunca edite as saídas à mão).
 
   HISTÓRICO (uma linha por versão)
+  1.7.1.3 · 01/10/2026 · Sorteio da Moda da Casa com a roleta da categoria (som), C.A.O.S.
+          calado durante o sorteio (só comenta o resultado); última rodada (ULTIMA_RODADA):
+          bateu a meta, a rodada termina e vence quem estiver na frente.
   1.7.1.2 · 01/10/2026 · Mestre em 9 seções (configuração, estado, regras, turno e rodada, tela,
           voz e som, C.A.O.S., salvamento, utilitários). Moda da Casa: o C.A.O.S. sorteia o
           modo da mesa (tabuleiro/pontos/joias, sem repetir o anterior; saves antigos = "misto");
@@ -33,7 +36,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1a1a2e">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.1.2</title>
+<title>Perfil JF · Beta 1.7.1.3</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -3207,10 +3210,14 @@ body.batata-mode .number-btn:not(:disabled):before {
   font-weight: 800;
   margin-bottom: 4px;
 }
-.casa-sorteio-sub {
-  opacity: 0.8;
-  font-size: 0.95rem;
-  margin-bottom: 14px;
+.casa-roleta {
+  background: var(--card-bg);
+  border-radius: 16px;
+  margin: 10px 0 14px;
+  box-shadow: inset 0 0 0 2px #fbbf2466;
+}
+.casa-roleta .roulette-reel {
+  min-width: 11ch;
 }
 .casa-sorteio-reel {
   font-family: var(--font-display);
@@ -4707,7 +4714,7 @@ body.fx-urgente:after {
       </div>
       
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.1.2 · C.A.O.S. 3.6<br>Atualizada em 01/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.1.3 · C.A.O.S. 3.6<br>Atualizada em 01/10/2026</div>
     </div>
   </section>
 
@@ -5228,6 +5235,9 @@ const CASA_ULTIMO_KEY = "perfil5_casa_ultimo";
 // Trava de joias: no máximo esta quantidade por jogador (ou equipe) em cada rodada,
 // sempre que o modo em jogo for Joias (Moda da Casa sorteada em Joias ou "Só Joias").
 const JOIAS_POR_RODADA = 2;
+// Última rodada: quando alguém bate a meta, a rodada termina para todos terem jogado o
+// mesmo número de vezes (menos no Express). Vence quem estiver na frente no fim da rodada.
+const ULTIMA_RODADA = true;
 const PALPITE_MODES_OK = ["classico", "junior", "oldschool"];
 const DECK_LIMITE = { classico: 400, hardcore: 300, oldschool: 240, junior: 250, express: 50 };
 const CAOS_VOICE_OK =
@@ -5904,6 +5914,9 @@ let casaSorteado = null;
 let rodadaAtual = 1;
 let primeiroMestreNome = null;
 let joiasRodada = {}; // joias ganhas na rodada atual, por jogador (índice) ou equipe (id)
+let ultimaRodada = false; // true = alguém bateu a meta e a rodada está terminando
+let ultimaRodadaQuem = ""; // quem bateu a meta primeiro (nome do jogador ou da equipe)
+let caosSorteioSilencio = false; // true enquanto o sorteio da Moda da Casa está na tela
 let lastSplashColor = null;
 var splashH0;
 // atribuído em iniciar()
@@ -6288,10 +6301,10 @@ function applyTeamSpecialMove(teamId, amount, wasChosenByAnother) {
   if (gameEnded || !teams[teamId]) return;
   const t = teams[teamId];
   const oldPosition = t.position;
-  t.position = Math.max(0, Math.min(WINNING_SCORE, t.position + amount));
+  t.position = Math.max(0, Math.min(Math.max(WINNING_SCORE, t.position), t.position + amount));
   renderMiniScoreboard();
   renderScoreboard();
-  if (victoryReached()) {
+  if (victoryReached() && !ultimaRodadaAtiva()) {
     saveGameState();
     endGame();
     return;
@@ -6389,6 +6402,12 @@ function victoryReached() {
     : players.some((p) => p.position >= WINNING_SCORE);
 }
 function winCondRuleText(goal) {
+  const t = winCondRuleTextBase(goal);
+  return ultimaRodadaAtiva() && winCond() !== "casa"
+    ? t + " Quando alguém bate a meta, a rodada termina para todo mundo jogar o mesmo número de vezes."
+    : t;
+}
+function winCondRuleTextBase(goal) {
   const g = goal || WINNING_SCORE || 200,
     w = winCond();
   if (w === "joias")
@@ -6442,7 +6461,7 @@ function awardGemIfEarned(scorerIdx, realCluesRevealed) {
   holder.gems[cat] = (holder.gems[cat] || 0) + 1;
   if (joiasComTrava()) joiasRodada[String(key)] = (joiasRodada[String(key)] || 0) + 1;
   const total = gemTotal(holder);
-  if (total >= GEMS_TO_WIN && gemsCountForWin())
+  if (total >= GEMS_TO_WIN && gemsCountForWin() && !gemWinner)
     gemWinner = { kind: CURRENT_FORMAT === "equipe" ? "team" : "player", id: key };
   return { cat, count: holder.gems[cat], total, key, trofeu: !gemsCountForWin() };
 }
@@ -6552,10 +6571,10 @@ function applySpecialMove(targetIdx, amount) {
   if (!players[targetIdx]) return;
   const p = players[targetIdx];
   const oldPosition = p.position;
-  p.position = Math.max(0, Math.min(WINNING_SCORE, p.position + amount));
+  p.position = Math.max(0, Math.min(Math.max(WINNING_SCORE, p.position), p.position + amount));
   renderMiniScoreboard();
   renderScoreboard();
-  if (victoryReached()) {
+  if (victoryReached() && !ultimaRodadaAtiva()) {
     saveGameState();
     endGame();
     return;
@@ -6782,6 +6801,35 @@ function rodadaVirar() {
   joiasRodada = {};
   caosLog("rodada", "começou a rodada " + rodadaAtual);
 }
+// A rodada acabou de virar? (mestre de volta ao primeiro; equipes: 1ª equipe lendo de novo)
+function rodadaNoComeco() {
+  if (CURRENT_FORMAT === "equipe") return !!teamOrder.length && teamRoundIndex % teamOrder.length === 0;
+  const m = players[mestreIndex];
+  if (!m || !primeiroMestreNome) return true;
+  return m.name === primeiroMestreNome;
+}
+// A última rodada vale agora? (Express encerra na hora, como sempre)
+function ultimaRodadaAtiva() {
+  return ULTIMA_RODADA && CURRENT_MODE !== "express";
+}
+// Alguém bateu a meta no meio da rodada: anuncia a última rodada e segue o jogo.
+function ultimaRodadaComecar() {
+  ultimaRodada = true;
+  const eq = CURRENT_FORMAT === "equipe";
+  let quem = "";
+  if (gemWinner)
+    quem =
+      gemWinner.kind === "team" ? "Equipe " + TEAM_INFO[gemWinner.id].label : (players[gemWinner.id] || {}).name || "";
+  else if (eq) {
+    const id = [...teamOrder].sort((a, b) => rankValue(teams[b], b) - rankValue(teams[a], a))[0];
+    quem = id ? "Equipe " + TEAM_INFO[id].label : "";
+  } else quem = ([...players].sort((a, b) => rankValue(b) - rankValue(a))[0] || {}).name || "";
+  ultimaRodadaQuem = quem;
+  caosLog("rodada", `${quem} bateu a meta: última rodada (${rodadaAtual})`);
+  updateDeckInfo();
+  fxFloat("🏁 Última rodada!", "#fbbf24");
+  showToastMessage(getRandomReaction(REACTIVE_VOICE.ultimaRodada, quem), null, false, true);
+}
 // Joia bloqueada pela trava: aviso curto na tela + fala do C.A.O.S.
 function joiasTravaAvisar(scorerIdx) {
   const quem =
@@ -6956,6 +7004,8 @@ function resetDeck() {
   rodadaAtual = 1;
   primeiroMestreNome = null;
   joiasRodada = {};
+  ultimaRodada = false;
+  ultimaRodadaQuem = "";
   players.forEach((p) => {
     p.gems = {};
     p.emo = { h: "" };
@@ -7118,6 +7168,17 @@ function flipCard() {
 function checkWinnerThenDraw() {
   renderScoreboard();
   renderMiniScoreboard();
+  if (ultimaRodadaAtiva() && (ultimaRodada || gemWinner || victoryReached())) {
+    // a rodada fechou (todos jogaram o mesmo número de vezes): acabou
+    if (rodadaNoComeco()) {
+      endGame();
+      return;
+    }
+    if (!ultimaRodada) ultimaRodadaComecar();
+    if (CURRENT_FORMAT !== "equipe") maybeTriggerMercyEvent();
+    if (!maybeAnnounceCardPrediction()) drawHidden();
+    return;
+  }
   if (gemWinner) {
     endGame();
     return;
@@ -8609,7 +8670,7 @@ function maybeTriggerMercyEvent() {
     creditPoints(targetIdx, bonusPoints);
     renderMiniScoreboard();
     renderScoreboard();
-    if (victoryReached()) {
+    if (victoryReached() && !ultimaRodadaAtiva()) {
       saveGameState();
       endGame();
       return;
@@ -8628,7 +8689,7 @@ function maybeTriggerMercyEvent() {
         );
       renderMiniScoreboard();
       renderScoreboard();
-      if (victoryReached()) {
+      if (victoryReached() && !ultimaRodadaAtiva()) {
         saveGameState();
         endGame();
         return;
@@ -9003,6 +9064,7 @@ function aplicarCorRngSplash() {
 }
 function updateDeckInfo() {
   document.getElementById("deckInfo").textContent =
+    (ultimaRodada ? `🏁 Última rodada (${ultimaRodadaQuem} bateu a meta) · ` : "") +
     `Cartas restantes no baralho: ${deck.length} de ${Math.min(allCards.length, deckLimiteModo())}`;
 }
 function updateTimerDisplay() {
@@ -10917,52 +10979,82 @@ function updateExpressCheckboxState() {
   if (classicoBtn) classicoBtn.innerHTML = `🃏 Iniciar Express Clássico${suffix} 🃏`;
   if (hardcoreBtn) hardcoreBtn.innerHTML = `💀 Iniciar Express Hardcore${suffix} 💀`;
 }
-// Anúncio do sorteio da Moda da Casa: roleta com os três modos, depois o resultado.
+// Anúncio do sorteio da Moda da Casa: roleta igual à da categoria (com som), o C.A.O.S.
+// fica calado enquanto gira, comenta só o resultado e volta a falar quando a mesa toca "Bora jogar!".
 function casaAnunciar() {
-  const NOMES = { tabuleiro: "🎲 Tabuleiro", pontos: "🔢 Pontos", joias: "💎 Joias" };
+  const NOMES = { tabuleiro: "🎲 TABULEIRO", pontos: "🔢 PONTOS", joias: "💎 JOIAS" };
+  const final = casaSorteado;
+  caosSorteioSilencio = true;
+  try {
+    closeActiveToast();
+    caosVoiceCancel();
+  } catch (e) {}
   const { ov, box } = caosModalBase();
   ov.classList.add("casa-sorteio-ov");
   box.innerHTML =
     '<div class="casa-sorteio-tit">🏠 A Moda da Casa</div>' +
-    '<div class="casa-sorteio-sub">O C.A.O.S. está sorteando o modo da mesa...</div>' +
-    '<div class="casa-sorteio-reel" id="casaReel">🎲 Tabuleiro</div>' +
+    '<div class="casa-roleta"><div class="roulette">' +
+    '<div class="roulette-title">O C.A.O.S. sorteia o modo da mesa:</div>' +
+    '<div class="roulette-phrase"><span class="roulette-reel" id="casaReel">' +
+    NOMES[CASA_MODOS[0]] +
+    "</span></div>" +
+    '<div class="roulette-hint" id="casaHint">🎰 sorteando o modo...</div>' +
+    "</div></div>" +
     '<div class="casa-sorteio-desc" id="casaDesc"></div>';
   document.body.appendChild(ov);
-  showToastMessage(getRandomReaction(REACTIVE_VOICE.casaSorteio.suspense));
   const reel = box.querySelector("#casaReel"),
+    hint = box.querySelector("#casaHint"),
     desc = box.querySelector("#casaDesc");
-  const PASSOS = 14,
-    final = casaSorteado;
-  let i = 0;
-  const girar = () => {
+  const fechar = () => {
+    ov.remove();
+    caosSorteioSilencio = false;
+  };
+  const finish = () => {
     if (!ov.isConnected) return;
-    i++;
-    if (i < PASSOS) {
-      reel.textContent = NOMES[CASA_MODOS[i % CASA_MODOS.length]];
-      try {
-        caosRoletaSom("tick", i, PASSOS);
-      } catch (e) {}
-      setTimeout(girar, 70 + i * i * 2.2);
-      return;
-    }
     reel.textContent = NOMES[final];
-    reel.classList.add("casa-sorteio-final");
-    const sub = box.querySelector(".casa-sorteio-sub");
-    if (sub) sub.textContent = "Modo da mesa sorteado! Vale para todo mundo nesta partida.";
+    reel.classList.add("landed");
+    hint.textContent = "Modo da mesa sorteado! Vale para todo mundo nesta partida.";
     try {
       caosRoletaSom("pouso");
     } catch (e) {}
     desc.innerHTML = winCondRuleText();
     const row = caosModalRow();
-    row.append(caosModalBtn("Bora jogar!", "#1f7a4f", () => ov.remove()));
+    row.append(caosModalBtn("Bora jogar!", "#1f7a4f", fechar));
     box.append(row);
     renderMiniScoreboard();
     renderWinCondPicker();
     updateModeNotice();
+    // única fala permitida no sorteio: o comentário sobre o modo sorteado
     const banco = REACTIVE_VOICE.casaSorteio[final];
-    caosToastAtrasado(() => showToastMessage(getRandomReaction(banco, final === "pontos" ? metaPontos() : final)), 400);
+    setTimeout(() => {
+      if (ov.isConnected)
+        showToastMessage(getRandomReaction(banco, final === "pontos" ? metaPontos() : final), null, true);
+    }, 350);
   };
-  setTimeout(girar, 900);
+  if (!visualFxAllowed()) {
+    finish();
+    return;
+  }
+  let i = Math.floor(Math.random() * CASA_MODOS.length),
+    step = 0,
+    delay = 55;
+  const STEPS = 14 + Math.floor(Math.random() * 4);
+  const spin = () => {
+    if (!ov.isConnected) return;
+    if (step >= STEPS) {
+      finish();
+      return;
+    }
+    i = (i + 1) % CASA_MODOS.length;
+    reel.textContent = NOMES[CASA_MODOS[i]];
+    try {
+      caosRoletaSom("tick", step, STEPS);
+    } catch (e) {}
+    step++;
+    delay = Math.min(260, delay * 1.16);
+    setTimeout(spin, delay);
+  };
+  setTimeout(spin, 400);
 }
 function renderWinCondPicker() {
   const wrap = document.getElementById("winCondWrap");
@@ -13840,7 +13932,7 @@ function caosInspectorEstado() {
         );
       })()}</b></div>
       <div class="ci-kv"><span>😄 Alegria · 🎯 confiança · 🔎 curiosidade</span><b class="ci-mono">${caosEixos.alegria.toFixed(1)} · ${caosEixos.confianca.toFixed(1)} · ${caosEixos.curiosidade.toFixed(1)}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.1.2 · C.A.O.S. 3.6</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.1.3 · C.A.O.S. 3.6</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -18596,7 +18688,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.1.2 · C.A.O.S. 3.6)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.1.3 · C.A.O.S. 3.6)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -19201,6 +19293,10 @@ function closeActiveToast() {
   caosFilaProxima();
 }
 function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze) {
+  if (caosSorteioSilencio && !bypassSilence) {
+    if (typeof afterClose === "function") afterClose();
+    return;
+  }
   if (caosMudoCarta && !bypassSilence && !priority && typeof msg === "string" && msg.indexOf("[C.A.O.S.]") !== -1) {
     if (typeof afterClose === "function") afterClose();
     return;
@@ -19799,6 +19895,8 @@ function saveGameState() {
       rodadaAtual,
       primeiroMestreNome,
       joiasRodada,
+      ultimaRodada,
+      ultimaRodadaQuem,
       oldSchoolAcess,
       caosRitmoLog,
       caosEmoHist,
@@ -20174,6 +20272,8 @@ function loadGameState() {
         : null;
     rodadaAtual = Number.isInteger(state.rodadaAtual) && state.rodadaAtual >= 1 ? state.rodadaAtual : 1;
     primeiroMestreNome = typeof state.primeiroMestreNome === "string" ? state.primeiroMestreNome.slice(0, 15) : null;
+    ultimaRodada = state.ultimaRodada === true;
+    ultimaRodadaQuem = typeof state.ultimaRodadaQuem === "string" ? state.ultimaRodadaQuem.slice(0, 30) : "";
     joiasRodada = {};
     if (state.joiasRodada && typeof state.joiasRodada === "object")
       Object.keys(state.joiasRodada).forEach((k) => {
@@ -20843,7 +20943,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.1.2 · C.A.O.S. 3.6");
+  L.push("- **Versão:** Beta 1.7.1.3 · C.A.O.S. 3.6");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -21365,7 +21465,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.1.2 · C.A.O.S. 3.6",
+        versao: "Beta 1.7.1.3 · C.A.O.S. 3.6",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -37709,11 +37809,6 @@ const CAOS_GIRIAS_RE = new RegExp(
 const REACTIVE_VOICE = {
   // Moda da Casa: sorteio do modo da mesa (pontos recebe a meta como argumento)
   casaSorteio: {
-    suspense: [
-      "Moda da Casa. Hoje quem escolhe a regra sou eu. Segurem o fôlego.",
-      "Rufem os tambores. Ou batam na mesa, que eu não tenho tambor.",
-      "Vou sortear o modo da mesa. Sem choro depois, combinado?",
-    ],
     tabuleiro: [
       "Deu TABULEIRO! Vence quem chegar primeiro na casa final. Corram.",
       "Tabuleiro, gente. Cada ponto é uma casa. Andem logo.",
@@ -37730,6 +37825,12 @@ const REACTIVE_VOICE = {
       "Sorteei Joias. Caçada às quatro pedras, com freio de duas por rodada.",
     ],
   },
+  // Última rodada ({nome} = quem bateu a meta)
+  ultimaRodada: [
+    "{nome} bateu a meta! Mas calma: a rodada termina pra todo mundo jogar igual. Última rodada!",
+    "Última rodada, gente. {nome} chegou lá, mas quem ainda não jogou nesta rodada tem a chance de virar.",
+    "{nome} cruzou a linha. Eu sou justo: termina a rodada e aí a gente vê quem fica na frente.",
+  ],
   // Trava de joias por rodada
   joiasTrava: [
     "Calma, {nome}. Duas joias nesta rodada já é o limite. A próxima fica pra próxima rodada.",
@@ -43857,6 +43958,14 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.1.3",
+    t: "Sorteio com roleta e última rodada",
+    itens: [
+      "🎰 O sorteio da Moda da Casa agora gira como a roleta da categoria, com barulhinho. O C.A.O.S. fica quieto enquanto gira, comenta só o modo sorteado e volta a falar quando a mesa toca em Bora jogar!",
+      "🏁 Última rodada: quando alguém bate a meta, a rodada termina para todo mundo jogar o mesmo número de vezes. Vence quem estiver na frente no fim (nas Joias, quem fechou primeiro). Não vale no Express.",
+    ],
+  },
   {
     v: "Beta 1.7.1.2",
     t: "Moda da Casa sorteada pelo C.A.O.S. e trava de joias",
