@@ -873,6 +873,21 @@ body.fx-urgente:after {
 .turn-info .mestre-tag {
   opacity: 0.75;
 }
+.nega-treme {
+  animation: negaTreme 0.42s ease-in-out;
+  outline: 2px solid #ef4444 !important;
+  outline-offset: 1px;
+}
+@keyframes negaTreme {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nega-treme { animation: none; }
+}
 .turn-info .responder-tag {
   font-weight: 800;
   font-size: 1.05rem;
@@ -6483,6 +6498,7 @@ const NICKS_REPERTORIO_KEY = "perfil5_nicks_repertorio";
 const VIBRA_PADROES = {
   acerto: [35, 60, 35],
   erro: [170],
+  nega: [45, 45, 45],
   absurdo: [60, 40, 60, 40, 220],
   pular: [22],
   tique: [18],
@@ -10935,7 +10951,7 @@ function renderAvatarPicker() {
     .join("");
   row.querySelectorAll(".avatar-swatch").forEach((btn) => {
     btn.addEventListener("click", () => {
-      if (btn.classList.contains("tomada")) return caosEscolhaTomada("emoji", btn.dataset.avatar);
+      if (btn.classList.contains("tomada")) return caosEscolhaTomada("emoji", btn.dataset.avatar, btn);
       selectedAvatar = btn.dataset.avatar;
       renderAvatarPicker();
     });
@@ -10956,9 +10972,27 @@ let caosTomadaAt = 0;
 // Cada toque repetido sobe o tom: 1º leve, 2º normal, 3º em diante bravo (no Júnior para no normal).
 // Zera quando alguém é adicionado.
 let caosTomadaN = 0;
-function caosEscolhaTomada(tipo, valor) {
+// Toque em cor/emoji com dono: a tela nega na hora (som, vibração, piscada vermelha e o
+// botão treme) a cada toque; a fala do C.A.O.S. tem intervalo e sobe o tom.
+function negarEscolha(btn) {
+  playSfx("nega");
+  vibrar("nega");
+  if (!visualFxAllowed()) return;
+  const el = document.createElement("div");
+  el.className = "screen-flash flash-red";
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 700);
+  if (btn) {
+    btn.classList.remove("nega-treme");
+    void btn.offsetWidth;
+    btn.classList.add("nega-treme");
+    setTimeout(() => btn.classList.remove("nega-treme"), 450);
+  }
+}
+function caosEscolhaTomada(tipo, valor, btn) {
   const exclusiva = tipo === "cor" && COR_EXCLUSIVA[valor];
   const dono = exclusiva ? null : players.find((p) => (tipo === "cor" ? p.color : p.avatar) === valor);
+  if (dono || exclusiva) negarEscolha(btn);
   if ((!dono && !exclusiva) || Date.now() - caosTomadaAt < 2500) return;
   caosTomadaAt = Date.now();
   caosTomadaN++;
@@ -10996,7 +11030,7 @@ function renderColorPicker() {
     .join("");
   row.querySelectorAll(".color-swatch").forEach((btn) => {
     btn.addEventListener("click", () => {
-      if (btn.classList.contains("tomada")) return caosEscolhaTomada("cor", btn.dataset.color);
+      if (btn.classList.contains("tomada")) return caosEscolhaTomada("cor", btn.dataset.color, btn);
       selectedColor = btn.dataset.color;
       renderColorPicker();
     });
@@ -13465,6 +13499,17 @@ function playSfx(type) {
       gain.gain.exponentialRampToValueAtTime(1e-4, now + 0.3);
       osc.start(now);
       osc.stop(now + 0.3);
+    } else if (type === "nega") {
+      // "uh-uh" de negação: dois toques curtos descendo
+      osc.type = "square";
+      osc.frequency.setValueAtTime(240, now);
+      osc.frequency.setValueAtTime(180, now + 0.14);
+      gain.gain.setValueAtTime(0.09, now);
+      gain.gain.exponentialRampToValueAtTime(1e-4, now + 0.1);
+      gain.gain.setValueAtTime(0.09, now + 0.14);
+      gain.gain.exponentialRampToValueAtTime(1e-4, now + 0.27);
+      osc.start(now);
+      osc.stop(now + 0.28);
     } else if (type === "agonia") {
       osc.type = "sine";
       osc.frequency.setValueAtTime(400, now);
@@ -46099,6 +46144,8 @@ const NOVIDADES = [
       "👉 O \"Vez de\" ganhou destaque amarelo na carta aberta, pra ninguém se perder de quem é a vez.",
       "🎴 A carta virada não tem mais o botão \"Puxou sem querer?\" (com ela virada, não fazia sentido). O descarte de carta difícil continua depois de virar.",
       "🎙️ O Máscara: no Brasil, a dublagem mais reprisada é do Marco Ribeiro. O Guilherme Briggs dublou o Jim Carrey em O Grinch.",
+
+      "🚫 Tocou numa cor ou emoji que já tem dono? A tela nega na hora: sonzinho de \"uh-uh\", vibração, piscada vermelha e o botão treme.",
     ],
   },
   {
