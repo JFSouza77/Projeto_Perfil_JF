@@ -8,7 +8,8 @@
           voltar do Android pausa a partida, dica de voz por aparelho, sw.js também em
           localhost (teste). Corrigido: importar save com partida em andamento (saveBloqueado).
           Limpeza: variáveis mortas, "reapresentar" desativado, 3 regras CSS sem uso, 1 fala
-          repetida.
+          repetida. Modo Claro revisto (2ª passada: cartões, botões, nomes, carta virada).
+          Logo com P grande em neon (serifa itálica).
   1.7.1.6 · 02/10/2026 · Números das versões corrigidos (as antigas 1.7.1.2 a 1.7.1.6 são
           1.7.1.1 a 1.7.1.5; arquivos renomeados, conteúdo intacto). Ícone novo do app
           (? neon + carta com P). Dois visuais: Noturno (padrão) e Claro (body.claro).
@@ -4974,11 +4975,90 @@ body.claro .splash-caos .sc-face {
   filter: brightness(0.75) saturate(1.3);
   text-shadow: none;
 }
-/* nomes neon dos jogadores: mais escuros pra ler no claro */
-body.claro .player-name-neon,
+/* títulos neon: mais escuros pra ler no claro */
 body.claro .hall-box h3,
 body.claro .stats-box h3 {
   filter: brightness(0.72) saturate(1.35);
+}
+/* ===== Modo Claro, 2ª passada (1.7.2): nada de vidro escuro; cor sólida nos botões,
+   cartões brancos com borda colorida, nomes sem brilho borrado ===== */
+/* cartões de formato/modo */
+body.claro .mode-btn.mc-card {
+  background: #fff;
+  border-color: color-mix(in srgb, var(--mc) 40%, #fff);
+  box-shadow: 0 4px 14px rgba(60, 40, 110, 0.08);
+}
+body.claro .mc-badge:after {
+  background: color-mix(in srgb, var(--mc) 14%, #fff);
+}
+body.claro .mc-badge {
+  color: color-mix(in srgb, var(--mc) 72%, #1a1030);
+  text-shadow: none;
+}
+body.claro .mc-icon:after {
+  background: color-mix(in srgb, var(--mc) 12%, #fff);
+}
+body.claro .mode-select-wrap.mc-wrap.mode-selected {
+  background: color-mix(in srgb, var(--mc) 30%, #fff);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--mc) 30%, transparent);
+}
+body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-card {
+  background: color-mix(in srgb, var(--mc) 9%, #fff);
+  box-shadow: none;
+}
+body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-title {
+  color: var(--claro-txt);
+  text-shadow: none;
+}
+body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-desc {
+  color: var(--claro-suave);
+}
+body.claro .mode-select-wrap.mc-wrap.mode-dimmed {
+  opacity: 0.55;
+}
+/* botões neon: claros (secundários) e cor sólida (principais) */
+body.claro .btn-start.btn-neo {
+  color: color-mix(in srgb, var(--mc, #7c3aed) 68%, #1a1030);
+  text-shadow: none;
+  background: color-mix(in srgb, var(--mc, #7c3aed) 35%, #fff);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--mc, #7c3aed) 22%, transparent);
+}
+body.claro .btn-neo:after,
+body.claro .btn-neo.neo-ghost:after,
+body.claro .btn-neo.neo-solid.neo-ghost:after {
+  background: color-mix(in srgb, var(--mc, #7c3aed) 9%, #fff);
+}
+body.claro .btn-neo.neo-solid:not(.neo-ghost):after,
+body.claro .btn-neo.mc-confirm:after {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--mc, #7c3aed) 92%, #fff),
+    color-mix(in srgb, var(--mc, #7c3aed) 82%, #1a1030)
+  );
+}
+body.claro .btn-start.btn-neo.neo-solid:not(.neo-ghost),
+body.claro .btn-start.btn-neo.mc-confirm {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+}
+/* nomes dos jogadores: sem o brilho que borra no fundo claro */
+body.claro .player-name-neon {
+  text-shadow: none;
+  filter: brightness(0.62) saturate(1.5);
+}
+/* condição de vitória e avisos amarelos */
+body.claro .wincond-btn:not(.on) {
+  color: color-mix(in srgb, var(--wc, #7c3aed) 66%, #1a1030);
+  box-shadow: none;
+}
+body.claro #playerWarning {
+  color: #a15c07 !important;
+}
+/* carta virada pra baixo: branca com borda roxa, em vez do bloco escuro */
+body.claro .card.face-down {
+  background: linear-gradient(160deg, #ffffff, #efe9fb);
+  color: var(--claro-txt);
+  border: 1.5px solid var(--claro-borda);
 }
 </style>
 </head>
@@ -44703,6 +44783,8 @@ const NOVIDADES = [
       "🗣️ O painel de voz dá a dica certa pra cada aparelho (no Android, onde baixar vozes em português).",
       "💾 Corrigido: importar um save com outra partida em andamento agora funciona (antes a partida antiga gravava por cima).",
       "🧹 Arquivo mais enxuto: código morto e estilos sem uso removidos, falas repetidas do C.A.O.S. tiradas.",
+      "☀️ Modo Claro revisto: cartão escolhido fica claro com a borda colorida, botões principais em cor sólida, nomes sem o brilho que borrava e textos amarelos mais escuros pra ler.",
+      "📱 Logo: o P de Perfil agora é grande, em neon e com letra elegante, no meio da carta.",
     ],
   },
   {
