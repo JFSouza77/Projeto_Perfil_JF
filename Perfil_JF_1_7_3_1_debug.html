@@ -1368,6 +1368,9 @@ body:not(.batata-mode) .mode-select-wrap.mode-selected .mode-btn {
   background-position: var(--neon-pos, 0% 50%) !important;
   transform: translateY(var(--mc-float, 0px));
 }
+body:not(.batata-mode) .mode-select-wrap.mc-wrap.mode-selected .mode-btn.mc-card {
+  transform: none;
+}
 body:not(.batata-mode) .onyx-swatch {
   box-shadow:
     0 0 0 2px var(--onyx-a, #22d3ee),
@@ -5634,6 +5637,92 @@ body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-desc {
 }
 body.claro .mode-select-wrap.mc-wrap.mode-dimmed {
   opacity: 0.55;
+}
+/* 1.7.3.1: no Claro o brilho que gira nas bordas dos botões da carta e da dica vem num tom escuro da cor (o branco sumia no fundo claro e parecia falha) */
+body.claro .card .guess-btns > button:before,
+body.claro .card .mesa-btns button:before,
+body.claro .card .continue-btn:before,
+body.claro .card .flip-btn:before {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 250deg,
+    color-mix(in srgb, var(--mc) 50%, transparent) 310deg,
+    color-mix(in srgb, var(--mc) 55%, #1b1d33) 332deg,
+    color-mix(in srgb, var(--mc) 50%, transparent) 345deg,
+    transparent 360deg
+  );
+  opacity: 0.9;
+}
+body.claro .spotlight-box:after {
+  background: conic-gradient(
+    from var(--card-rot, 0deg),
+    transparent 0deg 250deg,
+    rgba(190, 40, 70, 0.55) 315deg,
+    #9f1239 335deg,
+    rgba(190, 40, 70, 0.55) 350deg,
+    transparent 360deg
+  );
+}
+body.claro .mode-select-wrap.mc-wrap.mode-dimmed {
+  opacity: 0.62;
+}
+/* 1.7.3.1: "Ver regras completas" no Claro: pílula lilás e regras em faixas visíveis */
+body.claro .pause-rules > summary,
+body.claro .rules-more > summary {
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: #ede9fe;
+  border: 1px solid #c4b5fd;
+  color: #5b21b6;
+  font-weight: 700;
+  opacity: 1;
+}
+body.claro .pause-rules[open] > summary,
+body.claro .rules-more[open] > summary {
+  margin-bottom: 10px;
+}
+body.claro .rules-more li:nth-child(odd),
+body.claro .pause-rules li:nth-child(odd) {
+  border-color: var(--claro-borda);
+  background: var(--claro-sup);
+}
+/* 1.7.3.1: Exportar/Importar da tela de regras: no Claro o texto vinha clareado pro branco */
+body.claro #welcomeScreen .btn-sec {
+  color: color-mix(in srgb, var(--cc, #6d4ad8) 55%, #1b1d33);
+  border-color: color-mix(in srgb, var(--cc, #6d4ad8) 60%, transparent);
+  background: color-mix(in srgb, var(--cc, #6d4ad8) 10%, var(--claro-sup));
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--cc, #6d4ad8) 18%, transparent);
+}
+/* 1.7.3.1: escolhido no Claro mantém a cor do modo (e o arco-íris no Aleatório), com borda forte e brilho suave */
+body.claro .mode-select-wrap.mc-wrap.mode-selected {
+  overflow: visible;
+  border-radius: 16px;
+}
+body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-card {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--mc) 34%, #fffaf0),
+    color-mix(in srgb, var(--mc) 16%, #fffaf0)
+  );
+  border: 2.5px solid color-mix(in srgb, var(--mc) 75%, #1b1d33);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--mc) 22%, transparent),
+    0 10px 24px color-mix(in srgb, var(--mc) 30%, transparent);
+}
+body.claro .mode-select-wrap.mc-wrap.mc-rainbow.mode-selected .mc-card {
+  background: linear-gradient(110deg, #fecaca, #fde68a, #bbf7d0, #bfdbfe, #e9d5ff, #fecaca);
+  background-size: 300% 100%;
+  background-position: var(--neon-pos, 0% 50%) !important;
+  border-color: #8b5cf6;
+  box-shadow:
+    0 0 0 4px #c4b5fd55,
+    0 10px 24px #a78bfa55;
+}
+body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-desc {
+  color: #3d3852;
 }
 /* botões: principais em cor chapada; secundários brancos com borda colorida */
 body.claro .btn-start.btn-neo {
@@ -27463,6 +27552,8 @@ const NOVIDADES = [
       "📋 Lista de jogadores: uma linha discreta separa cada jogador no cadastro.",
       "🎴 Carta virada no Claro: o mesmo desenho do Noturno, em tons de lavanda e com o centro mais clarinho.",
       "⏯️ Pausar, Reiniciar e Encerrar: no Claro, o mesmo neon do Noturno num tom mais escuro.",
+      "🎰 Modo escolhido: o cartão não perde mais a borda de cima enquanto flutua, e no Claro ele fica com a cor do modo (o Aleatório com o arco-íris correndo).",
+      "✨ Brilhos no Claro: a luz que gira nas bordas dos botões da carta vem num tom escuro da própria cor, sem o risco branco; Ver regras completas e Exportar/Importar ficaram legíveis.",
     ],
   },
   {
