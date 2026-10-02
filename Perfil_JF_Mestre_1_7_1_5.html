@@ -4,6 +4,8 @@
   (nunca edite as saídas à mão).
 
   HISTÓRICO (uma linha por versão)
+  1.7.1.5 · 02/10/2026 · Tela inicial mais limpa: botão Jogar flutua de leve; Novidades e um
+          menu ⋮ (Som, Vibrar, Voz + Ajustar voz, Batata) no canto superior direito.
   1.7.1.4 · 02/10/2026 · Som no iPhone religa no primeiro toque depois de o Safari suspender o
           áudio; Moda da Casa e última rodada nas regras, tutorial e dicas da pausa; rostinhos
           novos do C.A.O.S.; falas novas no Encerrar e no sorteio da Moda da Casa.
@@ -39,7 +41,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1a1a2e">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.1.4</title>
+<title>Perfil JF · Beta 1.7.1.5</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -3374,7 +3376,8 @@ body:not(.batata-mode) .splash-dice {
   margin-top: 14px;
   z-index: 2;
 }
-.splash-settings .chip {
+.splash-settings .chip,
+.splash-menu .chip {
   background: transparent;
   border-color: #f5c34480;
 }
@@ -4020,6 +4023,101 @@ body.batata-mode .pause-min {
 #btnNovidades {
   position: relative;
 }
+/* Tela inicial: Jogar flutuando de leve (no invólucro, pois o botão usa transform: none) */
+.splash-go-flutua {
+  position: relative;
+  z-index: 2;
+  animation: splashFlutua 3.4s ease-in-out infinite;
+}
+@keyframes splashFlutua {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+body.batata-mode .splash-go-flutua {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .splash-go-flutua {
+    animation: none;
+  }
+}
+/* Tela inicial: Novidades e menu ⋮ no canto superior direito */
+.splash-topo {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  right: 12px;
+  z-index: 5;
+  display: flex;
+  gap: 8px;
+}
+.splash-ico {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(245, 195, 68, 0.55);
+  background: rgba(20, 12, 36, 0.7);
+  color: #f5c344;
+  font-size: 1.15rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(245, 195, 68, 0.2);
+}
+.splash-ico-menu {
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+.splash-ico[aria-expanded="true"] {
+  background: rgba(245, 195, 68, 0.18);
+}
+.splash-menu {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  width: min(320px, calc(100vw - 24px));
+  box-sizing: border-box;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(245, 195, 68, 0.45);
+  background: rgba(18, 10, 32, 0.97);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+  text-align: left;
+}
+.splash-menu[hidden] {
+  display: none;
+}
+.splash-menu-tit {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 8px;
+}
+.splash-menu-grade {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.splash-menu-largo {
+  width: 100%;
+  margin-top: 8px;
+}
+.splash-menu .voz-panel {
+  margin-top: 8px;
+  box-sizing: border-box;
+}
+.splash-menu .voz-row {
+  grid-template-columns: minmax(0, 1fr) 36px 64px 36px;
+  gap: 4px;
+  font-size: 0.78rem;
+}
 #btnNovidades.tem-novo:after {
   content: "";
   position: absolute;
@@ -4087,7 +4185,8 @@ body:not(.batata-mode) .splash-dice {
 .splash-caos {
   margin: 18px 16px;
 }
-.splash-settings .chip {
+.splash-settings .chip,
+.splash-menu .chip {
   --cc: #f5c344;
   background: transparent;
   border-color: color-mix(in srgb, var(--cc) 70%, transparent);
@@ -4099,7 +4198,8 @@ body:not(.batata-mode) .splash-dice {
     0 0 8px color-mix(in srgb, var(--cc) 35%, transparent),
     inset 0 0 6px color-mix(in srgb, var(--cc) 12%, transparent);
 }
-.splash-settings .chip.off {
+.splash-settings .chip,
+.splash-menu .chip.off {
   border-color: color-mix(in srgb, var(--cc) 35%, transparent);
   color: var(--cc);
   opacity: 0.55;
@@ -4690,34 +4790,38 @@ body.fx-urgente:after {
 <body>
   
   <section class="splash-screen" id="splashScreen">
+    <div class="splash-topo">
+      <button id="btnNovidades" class="splash-ico" type="button" title="O que mudou nas últimas versões" aria-label="Novidades">🆕</button>
+      <button id="btnMenuSplash" class="splash-ico splash-ico-menu" type="button" title="Ajustes" aria-label="Ajustes" aria-expanded="false" aria-controls="splashMenu">⋮</button>
+      <div id="splashMenu" class="splash-menu" hidden>
+        <div class="splash-menu-tit">Ajustes</div>
+        <div class="splash-menu-grade">
+          <button id="btnSom" class="chip" style="--cc:#38bdf8;">🔊 Som</button>
+          <button id="btnVibra" class="chip" style="--cc:#a78bfa;">📳 Vibrar</button>
+          <button id="btnBatata" class="chip" style="--cc:#facc15;" title="Modo Batata: tira animações pesadas (economia de bateria)">🥔 Batata</button>
+          <button id="btnVoz" class="chip" style="--cc:#34d399;">🗣️ Voz</button>
+        </div>
+        <button id="btnVozAjustar" class="chip splash-menu-largo" style="--cc:#fb923c;">🎚️ Ajustar voz</button>
+        <div id="vozAjustes" class="voz-panel" style="display:none;">
+          <div class="voz-row"><span>⏩ Velocidade</span><button type="button" class="voz-step" data-kind="vel" data-dir="-1">−</button><b id="lblVozVel">1.2x</b><button type="button" class="voz-step" data-kind="vel" data-dir="1">+</button></div>
+          <div class="voz-row"><span>🎚️ Tom</span><button type="button" class="voz-step" data-kind="tom" data-dir="-1">−</button><b id="lblVozTom">normal</b><button type="button" class="voz-step" data-kind="tom" data-dir="1">+</button></div>
+          <button id="btnVozNome" class="chip" style="width:100%; margin-top:6px;">🎙️ Voz: automática</button>
+          <div id="vozLista" style="font-size:0.7rem; opacity:0.6; margin-top:6px;"></div>
+        </div>
+      </div>
+    </div>
     <div id="floatingWordsContainer"></div>
     <div class="splash-dice">🎲</div>
     <div class="splash-title splash-neon grad-anim">Perfil JF</div> 
     <div class="splash-tagline">Quantas dicas você vai precisar pra descobrir quem eu sou?</div>
     <div class="splash-subtitle" id="splashSubtitle">575 cartas</div>
     
-    <button class="btn-start btn-neo neo-solid neo-still splash-go" id="goToRulesBtn" style="--mc:#ff1f4b; --mc-glow:rgba(255,31,75,0.55);"><span class="sg-ic">🎮</span><span class="sg-tx">Jogar</span></button>
+    <div class="splash-go-flutua"><button class="btn-start btn-neo neo-solid neo-still splash-go" id="goToRulesBtn" style="--mc:#ff1f4b; --mc-glow:rgba(255,31,75,0.55);"><span class="sg-ic">🎮</span><span class="sg-tx">Jogar</span></button></div>
     <div class="splash-caos" id="splashCaos" role="button" tabindex="0" aria-label="Recado do C.A.O.S. (toque pra outra frase)"><span class="sc-face">(•‿•)</span><span class="sc-txt">Oi!</span></div>
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
-      <div class="splash-chips">
-        <button id="btnSom" class="chip" style="--cc:#38bdf8;">🔊 Som</button>
-        <button id="btnVibra" class="chip" style="--cc:#a78bfa;">📳 Vibrar</button>
-        <button id="btnVoz" class="chip" style="--cc:#34d399;">🗣️ Voz</button>
-        <button id="btnVozAjustar" class="chip" style="--cc:#fb923c;">🎚️ Ajustar voz</button>
-        <button id="btnBatata" class="chip" style="--cc:#facc15;" title="Modo Batata: tira animações pesadas (economia de bateria)">🥔 Batata</button>
-        <button id="btnNovidades" class="chip" style="--cc:#f472b6;" title="O que mudou nas últimas versões">🆕 Novidades</button>
-      </div>
-      
-      <div id="vozAjustes" class="voz-panel" style="display:none;">
-        <div class="voz-row"><span>⏩ Velocidade</span><button type="button" class="voz-step" data-kind="vel" data-dir="-1">−</button><b id="lblVozVel">1.2x</b><button type="button" class="voz-step" data-kind="vel" data-dir="1">+</button></div>
-        <div class="voz-row"><span>🎚️ Tom</span><button type="button" class="voz-step" data-kind="tom" data-dir="-1">−</button><b id="lblVozTom">normal</b><button type="button" class="voz-step" data-kind="tom" data-dir="1">+</button></div>
-        <button id="btnVozNome" class="chip" style="width:100%; margin-top:6px;">🎙️ Voz: automática</button>
-        <div id="vozLista" style="font-size:0.7rem; opacity:0.6; margin-top:6px;"></div>
-      </div>
-      
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.1.4 · C.A.O.S. 3.6<br>Atualizada em 02/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.1.5 · C.A.O.S. 3.6<br>Atualizada em 02/10/2026</div>
     </div>
   </section>
 
@@ -13970,7 +14074,7 @@ function caosInspectorEstado() {
         );
       })()}</b></div>
       <div class="ci-kv"><span>😄 Alegria · 🎯 confiança · 🔎 curiosidade</span><b class="ci-mono">${caosEixos.alegria.toFixed(1)} · ${caosEixos.confianca.toFixed(1)} · ${caosEixos.curiosidade.toFixed(1)}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.1.4 · C.A.O.S. 3.6</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.1.5 · C.A.O.S. 3.6</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -18726,7 +18830,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.1.4 · C.A.O.S. 3.6)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.1.5 · C.A.O.S. 3.6)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -20981,7 +21085,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.1.4 · C.A.O.S. 3.6");
+  L.push("- **Versão:** Beta 1.7.1.5 · C.A.O.S. 3.6");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -21503,7 +21607,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.1.4 · C.A.O.S. 3.6",
+        versao: "Beta 1.7.1.5 · C.A.O.S. 3.6",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -43887,7 +43991,7 @@ const TUTORIAL_STEPS = [
     sec: 5,
     icon: "📳",
     title: "Ajustes do aparelho",
-    text: "Na tela inicial, a barrinha de baixo:<ul><li>🔊 <b>Som</b> liga/desliga os efeitos;</li><li>📳 <b>Vibrar</b> faz o celular tremer nos acertos, erros e sustos;</li><li>🗣️ <b>Voz</b>: o C.A.O.S. fala em voz alta; 🎚️ <b>Ajustar voz</b> muda velocidade, tom e a voz;</li><li>🥔 <b>Batata</b>: tira as animações pesadas (celular fraco ou bateria acabando).</li></ul>",
+    text: "Na tela inicial, no menu <b>⋮</b> do canto de cima:<ul><li>🔊 <b>Som</b> liga/desliga os efeitos;</li><li>📳 <b>Vibrar</b> faz o celular tremer nos acertos, erros e sustos;</li><li>🗣️ <b>Voz</b>: o C.A.O.S. fala em voz alta; 🎚️ <b>Ajustar voz</b> muda velocidade, tom e a voz;</li><li>🥔 <b>Batata</b>: tira as animações pesadas (celular fraco ou bateria acabando).</li></ul>",
     dark: true,
     mock: '<div class="tut-row"><span class="tut-chip" style="--mc:#f5c344;">🔊 Som</span><span class="tut-chip" style="--mc:#f5c344;">📳 Vibrar</span><span class="tut-chip" style="--mc:#f5c344;">🗣️ Voz</span><span class="tut-chip" style="--mc:#f5c344;">🥔 Batata</span></div>',
   },
@@ -44041,7 +44145,7 @@ const PAUSE_TIPS = [
   {
     when: () => true,
     text: () =>
-      "Celular esquentando ou com pouca bateria? Na tela inicial tem o 🥔 Modo Batata, que tira as animações pesadas.",
+      "Celular esquentando ou com pouca bateria? Na tela inicial, no menu ⋮ do canto de cima, tem o 🥔 Modo Batata, que tira as animações pesadas.",
   },
   {
     when: () => CURRENT_MODE === "hardcore",
@@ -44080,7 +44184,10 @@ const PAUSE_TIPS = [
     text: () =>
       "O C.A.O.S. tem humor próprio: acertos seguidos animam, erros em sequência deixam ele abatido. O rostinho do balão mostra como ele está.",
   },
-  { when: () => true, text: () => 'Na tela inicial, "🆕 Novidades" mostra o que mudou nas últimas versões do jogo.' },
+  {
+    when: () => true,
+    text: () => "Na tela inicial, o 🆕 no canto de cima mostra o que mudou nas últimas versões do jogo.",
+  },
   {
     when: () => true,
     text: () =>
@@ -44107,6 +44214,15 @@ const PAUSE_TIPS = [
 ];
 const NOVIDADES = [
   {
+    v: "Beta 1.7.1.5",
+    t: "Tela inicial mais limpa",
+    itens: [
+      "🎮 O botão Jogar agora flutua de leve na tela (no Modo Batata ele fica parado).",
+      "🆕 As Novidades foram para o canto de cima, à direita.",
+      "⋮ Som, Vibrar, Voz, Ajustar voz e Batata ficam num menu no canto de cima. O Ajustar voz aparece logo abaixo da Voz.",
+    ],
+  },
+  {
     v: "Beta 1.7.1.4",
     t: "Som no iPhone, regras da Moda da Casa e rostinhos novos",
     itens: [
@@ -44117,7 +44233,7 @@ const NOVIDADES = [
     ],
   },
   {
-    v: "Beta 1.7.1.4",
+    v: "Beta 1.7.1.3",
     t: "Sorteio com roleta e última rodada",
     itens: [
       "🎰 O sorteio da Moda da Casa agora gira como a roleta da categoria, com barulhinho. O C.A.O.S. fica quieto enquanto gira, comenta só o modo sorteado e volta a falar quando a mesa toca em Bora jogar!",
@@ -45047,6 +45163,40 @@ function iniciar() {
   renderHumorPicker();
   document.getElementById("btnBatata").addEventListener("click", toggleBatataMode);
   document.getElementById("btnNovidades").addEventListener("click", abrirNovidades);
+  // Menu ⋮ da tela inicial: abre/fecha no botão; fecha ao tocar fora dele.
+  (function () {
+    const bt = document.getElementById("btnMenuSplash"),
+      menu = document.getElementById("splashMenu");
+    if (!bt || !menu) return;
+    let engolir = 0;
+    const abrir = (sim) => {
+      menu.hidden = !sim;
+      bt.setAttribute("aria-expanded", sim ? "true" : "false");
+    };
+    bt.addEventListener("click", () => abrir(menu.hidden));
+    document.addEventListener(
+      "pointerdown",
+      (e) => {
+        if (!menu.hidden && !menu.contains(e.target) && !bt.contains(e.target)) {
+          abrir(false);
+          engolir = Date.now();
+        }
+      },
+      { capture: true, passive: true },
+    );
+    // o toque que fechou o menu não aciona o botão que estava embaixo
+    document.addEventListener(
+      "click",
+      (e) => {
+        if (Date.now() - engolir < 700) {
+          engolir = 0;
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      },
+      true,
+    );
+  })();
   novidadesMarcarChip();
   document.getElementById("btnSom").addEventListener("click", toggleSound);
   document.getElementById("btnVibra").addEventListener("click", toggleVibra);

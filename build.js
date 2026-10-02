@@ -228,6 +228,8 @@ async function testarNavegador(arquivo) {
   await page.goto("file://" + arquivo);
   // a versão offline descomprime o jogo antes de rodar: espera o iniciar() existir
   await page.waitForFunction(() => typeof iniciar === "function" && !document.getElementById("goToRulesBtn").disabled, null, { timeout: 20000 });
+  // o botão Jogar flutua (animação contínua); parado no teste para o clique ser "estável"
+  await page.addStyleTag({ content: ".splash-go-flutua{animation:none!important}" });
   await page.waitForTimeout(800);
   let etapa = "";
   const clica = async (sel, rotulo) => {
