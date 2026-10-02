@@ -5091,7 +5091,7 @@ body.claro .btn-start.btn-neo {
 body.claro .btn-neo:after,
 body.claro .btn-neo.neo-ghost:after,
 body.claro .btn-neo.neo-solid.neo-ghost:after {
-  background: #fff;
+  background: color-mix(in srgb, var(--mc, #6d4ad8) 12%, #fff);
 }
 body.claro .btn-neo.neo-solid:not(.neo-ghost):after,
 body.claro .btn-neo.mc-confirm:after {
@@ -5111,13 +5111,17 @@ body.claro .btn-start.btn-neo.splash-go {
 body.claro .splash-menu .chip,
 body.claro .splash-settings .chip {
   color: color-mix(in srgb, var(--cc) 62%, #1b1d33);
-  border-color: color-mix(in srgb, var(--cc) 55%, #fff);
-  background: #fff;
+  border-color: color-mix(in srgb, var(--cc) 50%, #fff);
+  background: color-mix(in srgb, var(--cc) 13%, #fff);
   box-shadow: none;
+}
+body.claro .splash-menu .chip.off,
+body.claro .splash-settings .chip.off {
+  background: color-mix(in srgb, var(--cc) 5%, #fff);
 }
 body.claro .wincond-btn:not(.on) {
   color: color-mix(in srgb, var(--wc, #6d4ad8) 64%, #1b1d33);
-  background: #fff;
+  background: color-mix(in srgb, var(--wc, #6d4ad8) 12%, #fff);
   box-shadow: none;
 }
 body.claro .wincond-btn.on {
@@ -5136,7 +5140,7 @@ body.claro .ans-nome {
   color: var(--claro-txt);
   background: color-mix(in srgb, var(--card-glow, #d4a017) 12%, #fff);
 }
-/* janelas e balões do C.A.O.S. em papel */
+/* janelas em papel (os balões do C.A.O.S. ficam como no Noturno) */
 body.claro .caos-modal-ov,
 body.claro .jf-modal-bg,
 body.claro .tut-overlay {
@@ -5148,22 +5152,21 @@ body.claro .caos-modal-ov > div {
   border-color: var(--claro-borda) !important;
   box-shadow: var(--claro-sombra2) !important;
 }
-body.claro .jf-toast-overlay.caos-emo {
-  background: #fff;
-  color: var(--claro-txt);
-  box-shadow:
-    0 8px 24px rgba(60, 45, 25, 0.18),
-    0 0 0 1px color-mix(in srgb, var(--emo-cor) 35%, transparent);
+/* Claro: botões vazados ganham fundo suave na própria cor */
+body.claro #colorBox {
+  background: #fdf0f6;
 }
-body.claro .jf-toast-overlay.caos-emo:before {
-  background: color-mix(in srgb, var(--emo-cor) 10%, #fff);
-  color: color-mix(in srgb, var(--emo-cor) 70%, #1b1d33);
-  text-shadow: none;
+body.claro #avatarBox {
+  background: #f5f1fe;
 }
-body.claro .caos-pergunta {
-  background: #fff;
-  color: var(--claro-txt);
-  box-shadow: var(--claro-sombra2);
+body.claro #humorBox {
+  background: #fff8e6;
+}
+body.claro .voz-step {
+  background: #eaf7fe;
+}
+body.claro .discard-btn {
+  background: color-mix(in srgb, currentColor 8%, #fff);
 }
 </style>
 </head>
@@ -26508,7 +26511,7 @@ const NOVIDADES = [
       "📱 Logo nova: o P de Perfil grande em azul neon e o JF em laranja neon, na mesma letra, dentro da carta dourada. Quem já instalou: apague o atalho e adicione de novo pra ver.",
     ],
     qol: [
-      "☀️ Modo Claro “Papel” com cara própria: fundo creme, tinta azul-escura, cartões brancos com sombra suave, botões de cor chapada e nenhum brilho neon (o neon fica pro Noturno).",
+      "☀️ Modo Claro “Papel” com cara própria: fundo creme, tinta azul-escura, cartões brancos com sombra suave, botões de cor chapada e sem brilho neon. Botões de ajuste e botões vazados ganham um fundo suave na própria cor; os balões do C.A.O.S. ficam como sempre foram.",
       "💾 Corrigido: importar um save com outra partida em andamento agora funciona (antes a partida antiga gravava por cima).",
       "✅ Botões de confirmação, Save de Bolso, save corrompido e relatório da partida conferidos um por um.",
       "🧹 Arquivo mais enxuto: código morto e estilos sem uso removidos, fala repetida do C.A.O.S. tirada.",
