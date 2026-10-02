@@ -4,6 +4,9 @@
   (nunca edite as saídas à mão).
 
   HISTÓRICO (uma linha por versão)
+  1.7.1.4 · 02/10/2026 · Som no iPhone religa no primeiro toque depois de o Safari suspender o
+          áudio; Moda da Casa e última rodada nas regras, tutorial e dicas da pausa; rostinhos
+          novos do C.A.O.S.; falas novas no Encerrar e no sorteio da Moda da Casa.
   1.7.1.3 · 01/10/2026 · Sorteio da Moda da Casa com a roleta da categoria (som), C.A.O.S.
           calado durante o sorteio (só comenta o resultado); última rodada (ULTIMA_RODADA):
           bateu a meta, a rodada termina e vence quem estiver na frente.
@@ -36,7 +39,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1a1a2e">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.1.3</title>
+<title>Perfil JF · Beta 1.7.1.4</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -4714,7 +4717,7 @@ body.fx-urgente:after {
       </div>
       
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.1.3 · C.A.O.S. 3.6<br>Atualizada em 01/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.1.4 · C.A.O.S. 3.6<br>Atualizada em 02/10/2026</div>
     </div>
   </section>
 
@@ -5916,6 +5919,7 @@ let primeiroMestreNome = null;
 let joiasRodada = {}; // joias ganhas na rodada atual, por jogador (índice) ou equipe (id)
 let ultimaRodada = false; // true = alguém bateu a meta e a rodada está terminando
 let ultimaRodadaQuem = ""; // quem bateu a meta primeiro (nome do jogador ou da equipe)
+let audioTravadoToques = 0; // toques seguidos com o som ainda parado (iPhone)
 let caosSorteioSilencio = false; // true enquanto o sorteio da Moda da Casa está na tela
 let lastSplashColor = null;
 var splashH0;
@@ -6403,9 +6407,10 @@ function victoryReached() {
 }
 function winCondRuleText(goal) {
   const t = winCondRuleTextBase(goal);
-  return ultimaRodadaAtiva() && winCond() !== "casa"
-    ? t + " Quando alguém bate a meta, a rodada termina para todo mundo jogar o mesmo número de vezes."
-    : t;
+  if (!ultimaRodadaAtiva() || casaSorteado === "misto") return t;
+  return winCond() === "casa"
+    ? t + " Bateu a meta? A rodada termina pra todo mundo jogar igual, e vence quem estiver na frente."
+    : t + " Quando alguém bate a meta, a rodada termina para todo mundo jogar o mesmo número de vezes.";
 }
 function winCondRuleTextBase(goal) {
   const g = goal || WINNING_SCORE || 200,
@@ -6416,7 +6421,7 @@ function winCondRuleTextBase(goal) {
     return `Vence quem somar <b>${metaPontos()} pontos</b> primeiro${CURRENT_FORMAT === "equipe" ? " (soma da equipe)" : ""}. Avance/Volte mexem só na casa — o tabuleiro é enfeite.`;
   if (w === "tabuleiro") return `Vence quem chegar primeiro na <b>casa ${g}</b>. Sem joias; pontos não decidem nada.`;
   if (casaSorteado !== "misto")
-    return "No começo da partida o C.A.O.S. sorteia o modo da mesa: <b>Tabuleiro</b> (chegar na casa final), <b>Pontos</b> (meta pelo número de jogadores) ou <b>Joias</b> (as 4 joias, no máximo 2 por rodada).";
+    return `No começo da partida o C.A.O.S. gira a roleta e sorteia o modo da mesa (nunca repete o da partida anterior): <b>Tabuleiro</b> (chegar na casa ${g}), <b>Pontos</b> (somar ${CASA_META_PONTOS[Math.max(2, Math.min(6, players.length || 2))]} pontos) ou <b>Joias</b> (as ${GEMS_TO_WIN} joias, valendo com até ${(GEM_CLUE_LIMIT[CURRENT_MODE] || 5) + CASA_JOIA_DICAS_EXTRA} dicas, no máximo ${JOIAS_POR_RODADA} por rodada).`;
   return players.length && players.length < GEMS_MIN_PLAYERS
     ? `Vence quem chegar primeiro na <b>casa ${g}</b>. Com menos de ${GEMS_MIN_PLAYERS} jogadores as joias são só troféu.`
     : `Vence quem chegar primeiro na <b>casa ${g}</b> — ou quem juntar as <b>${GEMS_TO_WIN} joias</b> antes.`;
@@ -11199,7 +11204,7 @@ function buildRulesHtml() {
     );
   if (c.gems)
     li.push(
-      `<b>💎 Joias:</b> acerte com até ${c.gemLimit} dicas reais e ganhe a joia da categoria${c.equipe ? " (é da equipe)" : ""}. ${gemsCountForWin() ? "4 joias = vitória na hora." : `Com menos de ${GEMS_MIN_PLAYERS} jogadores (Moda da Casa) a joia é só troféu.`}${c.express ? " Com 1 categoria dá pra ter até 4 dela; com 2, até 2 de cada." : " Carta bônus não dá joia."}`,
+      `<b>💎 Joias:</b> acerte com até ${c.gemLimit} dicas reais e ganhe a joia da categoria${c.equipe ? " (é da equipe)" : ""}. ${gemsCountForWin() ? (ultimaRodadaAtiva() ? "4 joias = meta batida (a rodada termina e aí sai o vencedor)." : "4 joias = vitória na hora.") : `Com menos de ${GEMS_MIN_PLAYERS} jogadores (Moda da Casa) a joia é só troféu.`}${c.express ? " Com 1 categoria dá pra ter até 4 dela; com 2, até 2 de cada." : " Carta bônus não dá joia."}`,
     );
   li.push(
     c.express
@@ -12055,9 +12060,9 @@ function caosBip(emo) {
   if (!soundOn || Date.now() - caosBipAt < 1200) return;
   caosBipAt = Date.now();
   try {
-    if (!window.audioCtx) window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioContexto();
     const ac = window.audioCtx;
-    if (ac.state === "suspended") ac.resume();
+    audioRetomar(ac);
     const now = ac.currentTime,
       [f1, f2] = CAOS_BIP[emo] || [660, 880];
     const len = Math.floor(ac.sampleRate * 0.04),
@@ -12083,9 +12088,9 @@ function caosBip(emo) {
 function caosRoletaSom(tipo, passo, total) {
   if (!soundOn) return;
   try {
-    if (!window.audioCtx) window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioContexto();
     const c = window.audioCtx;
-    if (c.state === "suspended") c.resume();
+    audioRetomar(c);
     const t = c.currentTime;
     if (tipo === "tick") {
       const k = total ? Math.min(1, passo / total) : 0;
@@ -12114,11 +12119,44 @@ function caosFalarNormal(txt) {
     return false;
   }
 }
+// iPhone: o Safari deixa o som "suspended" ou "interrupted" (troca de app, tela bloqueada,
+// ligação) e só religa num toque. Retoma em qualquer estado que não seja "running";
+// contexto fechado é recriado.
+function audioContexto() {
+  if (!window.audioCtx || window.audioCtx.state === "closed")
+    window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return window.audioCtx;
+}
+function audioRetomar(c) {
+  if (!c || c.state === "running" || c.state === "closed") return;
+  try {
+    const p = c.resume();
+    if (p && p.catch) p.catch(() => {});
+  } catch (e) {}
+}
+// Qualquer toque na tela religa o som se ele estiver parado. Se 3 toques seguidos não
+// adiantarem (contexto travado), troca por um novo.
+function audioDestravarNoToque() {
+  if (!soundOn) return;
+  const c = window.audioCtx;
+  if (c && c.state === "running") {
+    audioTravadoToques = 0;
+    return;
+  }
+  if (c && ++audioTravadoToques >= 3) {
+    try {
+      c.close();
+    } catch (e) {}
+    window.audioCtx = null;
+    audioTravadoToques = 0;
+  }
+  unlockAudio();
+}
 function unlockAudio() {
   try {
-    if (!window.audioCtx) window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioContexto();
     const audioCtx = window.audioCtx;
-    if (audioCtx.state === "suspended") audioCtx.resume();
+    audioRetomar(audioCtx);
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
     gainNode.gain.setValueAtTime(1e-4, audioCtx.currentTime);
@@ -12281,9 +12319,9 @@ function playFanfare(ctx) {
 function playBeep(frequency = 440, duration = 0.1) {
   if (!soundOn) return;
   try {
-    if (!window.audioCtx) window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioContexto();
     const audioCtx = window.audioCtx;
-    if (audioCtx.state === "suspended") audioCtx.resume();
+    audioRetomar(audioCtx);
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
     oscillator.type = "sine";
@@ -12298,9 +12336,9 @@ function playBeep(frequency = 440, duration = 0.1) {
 function playSfx(type) {
   if (!soundOn) return;
   try {
-    if (!window.audioCtx) window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioContexto();
     const audioCtx = window.audioCtx;
-    if (audioCtx.state === "suspended") audioCtx.resume();
+    audioRetomar(audioCtx);
     const now = audioCtx.currentTime;
     if (type === "vitoria") {
       playFanfare(audioCtx);
@@ -13932,7 +13970,7 @@ function caosInspectorEstado() {
         );
       })()}</b></div>
       <div class="ci-kv"><span>😄 Alegria · 🎯 confiança · 🔎 curiosidade</span><b class="ci-mono">${caosEixos.alegria.toFixed(1)} · ${caosEixos.confianca.toFixed(1)} · ${caosEixos.curiosidade.toFixed(1)}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.1.3 · C.A.O.S. 3.6</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.1.4 · C.A.O.S. 3.6</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -18688,7 +18726,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.1.3 · C.A.O.S. 3.6)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.1.4 · C.A.O.S. 3.6)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -20943,7 +20981,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.1.3 · C.A.O.S. 3.6");
+  L.push("- **Versão:** Beta 1.7.1.4 · C.A.O.S. 3.6");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -21465,7 +21503,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.1.3 · C.A.O.S. 3.6",
+        versao: "Beta 1.7.1.4 · C.A.O.S. 3.6",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -21658,6 +21696,9 @@ const CAOS_EMOS = {
         ["(◠﹏◠)", "(◠‿◠) ♪", "(◠﹏◠) ♪♪", "(◠‿◠) ♪"],
         ["(ᵔᴥᵔ)", "(ᵔᴥᵔ)  ♪", "(ᵔᴥᵔ) ♪♪", "(ᵔᴥᵔ)  ♪"],
         ["( ͡• _•)☕︎", "( ͡• ‿•)☕︎ ♪", "( ͡• _•)☕︎ ♪♪", "( ͡• ‿•)☕︎ ♪"],
+        ["(￣ー￣)", "(￣ー￣) ♪"],
+        ["( ˘ω˘ )", "( ˘ω˘ ) ♪", "( ˘ω˘ ) ♪♪", "( ˘ω˘ ) ♪"],
+        ["(っ˘ω˘ς )", "(っ˘ω˘ς ) ♪"],
       ],
       [
         ["(^_^)", "(^‿^) ♪", "(^_^) ♪♪", "(^‿^) ♪"],
@@ -21668,6 +21709,8 @@ const CAOS_EMOS = {
         ["(˶ᵔ ᵕ ᵔ˶)", "(˶ᵔ ᴗ ᵔ˶) ♪", "(˶ᵔ ᵕ ᵔ˶) ♪♪", "(˶ᵔ ᴗ ᵔ˶) ♪"],
         ["◖ᵔᴥᵔ◗ ♪ ♫", "◖ᵔᴥᵔ◗ ♫ ♪"],
         ["~(^-^)~", "~(^‿^)~ ♪", "~(^-^)~ ♪♪", "~(^‿^)~ ♪"],
+        ["( ´ ▽ ` )", "( ´ ᴗ ` ) ♪"],
+        ["(¯▿¯)", "(¯▿¯) ♪"],
       ],
     ],
   },
@@ -21717,18 +21760,24 @@ const CAOS_EMOS = {
         ["(  •̀⤙•́  )", "(  •̀_•́  ) ╬", "(  •̀⤙•́  ) ╬╬", "(  •̀_•́  ) ╬"],
         ["(¬`‸´¬)", "(¬`_´¬) ╬", "(¬`‸´¬) ╬╬", "(¬`_´¬) ╬"],
         ["٩(ˋᗣˊ*)و", "٩(ˋ_ˊ*)و ╬", "٩(ˋᗣˊ*)و ╬╬", "٩(ˋ_ˊ*)و ╬"],
+        ["(｀へ´)", "(｀へ´) ╬", "(｀へ´) ╬╬", "(｀へ´) ╬"],
+        ["(¬_¬;)", "(¬_¬;) ╬"],
       ],
       [
         ["(╬Ò﹏Ó)", "(╬ÒДÓ)"],
         ["(╬ ಠ益ಠ)", "(╬ ಠ_ಠ)"],
         ["ლ(｀ー´ლ)", "ლ(｀Д´ლ) ╬", "ლ(｀ー´ლ) ╬╬", "ლ(｀Д´ლ) ╬"],
         ["( ఠൠఠ )ﾉ", "( ఠ_ఠ )ﾉ ╬", "( ఠൠఠ )ﾉ ╬╬", "( ఠ_ఠ )ﾉ ╬"],
+        ["(╬｀益´)", "(╬｀Д´)"],
+        ["(ง •̀_•́)ง ╬", "(ง •̀益•́)ง ╬"],
       ],
       [
         ["(ノಠ益ಠ)ノ", "(ノಠ益ಠ)ノ!"],
         ["ლ(ಠ益ಠლ)", "ლ(ಠ_ಠლ) ╬", "ლ(ಠ益ಠლ) ╬╬", "ლ(ಠ_ಠლ) ╬"],
         ["٩(╬ʘ益ʘ╬)۶", "٩(╬ʘ_ʘ╬)۶"],
         ["ヽ(╬ಠ益ಠ)ﾉ", "ヽ(╬ಠ_ಠ)ﾉ ╬", "ヽ(╬ಠ益ಠ)ﾉ ╬╬", "ヽ(╬ಠ_ಠ)ﾉ ╬"],
+        ["(╬☉д⊙)", "(╬⊙д☉)"],
+        ["ヽ(`Д´)ﾉ", "ヽ(`益´)ﾉ ╬"],
       ],
     ],
   },
@@ -21768,17 +21817,23 @@ const CAOS_EMOS = {
         ["(-.-)", "(-_-)"],
         ["눈_눈", "눈-눈"],
         ["ᴖ̮ ̮ᴖ", "ᴖ̮ ̮ᴖ "],
+        ["( ˘ o˘ )", "( ˘ ᵕ˘ ) z"],
+        ["(-ω-)", "(-ω-) z"],
       ],
       [
         ["(－_－) z", "(－_－) zZ"],
         ["( ͡ಠ ʖ̯ ͡ಠ)", "( ͡ಠ _ ͡ಠ)"],
         ["(￣ρ￣)..z", "(￣ρ￣)..zZ"],
         ["(－_－) zzZ", "(－.－) zZ", "(－_－) zzZ", "(－.－) zZ"],
+        ["(ᴗ˳ᴗ)", "(ᴗ˳ᴗ) z", "(ᴗ˳ᴗ) zZ", "(ᴗ˳ᴗ) zZz"],
+        ["(¦3[▓▓]", "(¦3[▓▓] z", "(¦3[▓▓] zZ"],
       ],
       [
         ["(-_-) zZ", "(-_-) zZz"],
         ["(-_-) ᶻ", "(-_-) ᶻ 𝗓", "(-_-) ᶻ 𝗓 ᶻ"],
         ["( _　_ )💤", "( _　_ )💤💤"],
+        ["(￣o￣) zzZZ", "(￣ρ￣) zzZZ"],
+        ["(∪｡∪)｡｡｡zzz", "(∪｡∪)｡｡｡zZz"],
       ],
     ],
   },
@@ -21799,6 +21854,8 @@ const CAOS_EMOS = {
         ["V•ᴥ•V", "V-ᴥ-V ♡", "V•ᴥ•V ♡♡", "V-ᴥ-V ♡"],
         ["(๑•́ ₃ •̀๑)", "(๑-́ ₃ -̀๑) ♡", "(๑•́ ₃ •̀๑) ♡♡", "(๑-́ ₃ -̀๑) ♡"],
         ["₍^. .^₎⟆", "₍^- -^₎⟆ ♡", "₍^. .^₎⟆ ♡♡", "₍^- -^₎⟆ ♡"],
+        ["(◍•ᴗ•◍)", "(◍•ᴗ•◍) ♡"],
+        ["(˘ᵕ˘)", "(˘ᵕ˘) ♡"],
       ],
       [
         ["(◕‿◕)♡", "(◕ᴗ◕)♥"],
@@ -21807,11 +21864,15 @@ const CAOS_EMOS = {
         ["(⊃｡•́‿•̀｡)⊃", "(⊃｡-́‿-̀｡)⊃"],
         ["(づ￣ ³￣)づ", "(づ￣ ᴗ￣)づ ♡", "(づ￣ ³￣)づ ♡♡", "(づ￣ ᴗ￣)づ ♡"],
         ["⊂(◉‿◉)つ", "⊂(◉ᴗ◉)つ ♡", "⊂(◉‿◉)つ ♡♡", "⊂(◉ᴗ◉)つ ♡"],
+        ["(っ◕‿◕)っ", "(っ◕‿◕)っ ♡"],
+        ["(づ｡◕‿‿◕｡)づ", "(づ｡◕‿‿◕｡)づ ♡"],
       ],
       [
         ["♥‿♥", "♥ᴗ♥"],
         ["( ˘ ³˘)♥", "( ˘ ᴗ˘)♥"],
         ["-`ღ´-", "-`ღ´-  ♡", "-`ღ´- ♡♡", "-`ღ´-  ♡"],
+        ["(♡˙︶˙♡)", "(♡˙ᴗ˙♡)"],
+        ["(*˘︶˘*).｡*♡", "(*˘ᴗ˘*).｡*♡"],
       ],
     ],
   },
@@ -21905,6 +21966,8 @@ const CAOS_EMOS = {
         ["◝(ᵔᵕᵔ)◜", "◟(ᵔᵕᵔ)◞ ✧", "◝(ᵔᵕᵔ)◜ ✧˖°", "◟(ᵔᵕᵔ)◞ ✧"],
         ["◝(ᵔᗜᵔ)◜", "◟(ᵔᗜᵔ)◞ ✧", "◝(ᵔᗜᵔ)◜ ✧˖°", "◟(ᵔᗜᵔ)◞ ✧"],
         ["ヽ(´▽`)/", "ヽ(´ᗜ`)/ ✧", "ヽ(´▽`)/ ✧˖°", "ヽ(´ᗜ`)/ ✧"],
+        ["(•ᴗ•)/", "(•ᴗ•)/ ✿", "(•ᴗ•)/ ✿✿", "(•ᴗ•)/ ✿"],
+        ["٩(◕‿◕)۶", "٩(◕ᴗ◕)۶ ♪", "٩(◕‿◕)۶ ♪♪", "٩(◕ᴗ◕)۶ ♪"],
       ],
       [
         ["ヽ(•‿•)ノ", "ヽ(^‿^)ノ ✧", "ヽ(•‿•)ノ ✧˖°", "ヽ(^‿^)ノ ✧"],
@@ -21913,6 +21976,8 @@ const CAOS_EMOS = {
         ["♪♪ ヽ(ˇ∀ˇ )ゞ", "♪♪ ヾ( ˇ∀ˇ)ノ"],
         ["┌(ㆆ㉨ㆆ)ʃ", "ʅ(ㆆ㉨ㆆ)┐ ✧", "┌(ㆆ㉨ㆆ)ʃ ✧˖°", "ʅ(ㆆ㉨ㆆ)┐ ✧"],
         ["⁽⁽ଘ( ˊᵕˋ )ଓ⁾⁾", "₍₍ଘ( ˊᵕˋ )ଓ₎₎ ✧", "⁽⁽ଘ( ˊᵕˋ )ଓ⁾⁾ ✧˖°", "₍₍ଘ( ˊᵕˋ )ଓ₎₎ ✧"],
+        ["ヽ(＾▽＾)ノ", "ヽ(＾ᴗ＾)ノ ♪", "ヽ(＾▽＾)ノ ♪♪", "ヽ(＾ᴗ＾)ノ ♪"],
+        ["(ﾉ´▽`)ﾉ ♪", "(ﾉ´ᴗ`)ﾉ ♪♪"],
       ],
       [
         ["\\(^o^)/", "＼（^０＾）／ ✧", "\\(^o^)/ ✧˖°", "＼（^０＾）／ ✧"],
@@ -21927,6 +21992,8 @@ const CAOS_EMOS = {
         ["ヽ( •_)ᕗ", "ᕕ(_• )ノ ✧", "ヽ( •_)ᕗ ✧˖°", "ᕕ(_• )ノ ✧"],
         ["(˶ᵔ ᵕ ᵔ˶) .ᐟ.ᐟ", "(˶ᵔ ᗜ ᵔ˶) .ᐟ.ᐟ ✧", "(˶ᵔ ᵕ ᵔ˶) .ᐟ.ᐟ ✧˖°", "(˶ᵔ ᗜ ᵔ˶) .ᐟ.ᐟ ✧"],
         ["₍₍⚞(˶>ᗜ<˶)⚟⁾⁾", "⁽⁽⚞(˶>ᗜ<˶)⚟₎₎ ✧", "₍₍⚞(˶>ᗜ<˶)⚟⁾⁾ ✧˖°", "⁽⁽⚞(˶>ᗜ<˶)⚟₎₎ ✧"],
+        ["┏(＾0＾)┛", "┗(＾0＾)┓", "┏(＾0＾)┛", "┗(＾0＾)┓"],
+        ["٩(^ᗜ^)و", "٩(^ᗜ^)و ♪", "٩(^ᗜ^)و ♪♪", "٩(^ᗜ^)و ♪"],
       ],
     ],
   },
@@ -21976,6 +22043,8 @@ const CAOS_EMOS = {
         ["( ╹ ︵╹)", "( ╹ ︵╹) ."],
         ["(ಥ⌣ಥ)", "(ಥ_ಥ) ｡", "(ಥ⌣ಥ) ｡ﾟ", "(ಥ_ಥ) ｡"],
         ["( ಠ ʖ̯ ಠ)", "( ಠ _ ಠ) ｡", "( ಠ ʖ̯ ಠ) ｡ﾟ", "( ಠ _ ಠ) ｡"],
+        ["(´･_･`)", "(´･︵･`)"],
+        ["( ˘︹˘ )", "( ˘︹˘ ) …"],
       ],
       [
         ["(╥﹏╥)", "(╥_╥) ｡", "(╥﹏╥) ｡ﾟ", "(╥_╥) ｡"],
@@ -21985,6 +22054,8 @@ const CAOS_EMOS = {
         ["ಥ﹏ಥ", "ಥ_ಥ ｡", "ಥ﹏ಥ ｡ﾟ", "ಥ_ಥ ｡"],
         ["ლ(╥﹏╥ლ)", "ლ(╥_╥ლ) ｡", "ლ(╥﹏╥ლ) ｡ﾟ", "ლ(╥_╥ლ) ｡"],
         ["(ᵟຶ︵ ᵟຶ)", "(ᵟຶ_ ᵟຶ) ｡", "(ᵟຶ︵ ᵟຶ) ｡ﾟ", "(ᵟຶ_ ᵟຶ) ｡"],
+        ["(T_T)", "(T︵T)"],
+        ["(｡╯︵╰｡)", "(｡╯︵╰｡) …"],
       ],
       [
         ["＿|￣|○", "＿|￣|○ ."],
@@ -21993,6 +22064,8 @@ const CAOS_EMOS = {
         ["༼ ༎ຶ ෴ ༎ຶ༽", "༼ ༎ຶ _ ༎ຶ༽ ｡", "༼ ༎ຶ ෴ ༎ຶ༽ ｡ﾟ", "༼ ༎ຶ _ ༎ຶ༽ ｡"],
         ["｡°(°¯᷄◠¯᷅°)°｡", "｡°(°¯᷄_¯᷅°)°｡"],
         [".·°՞(っ-ᯅ-ς)՞°·.", "·°՞(っ-ᯅ-ς)՞°·"],
+        ["(πーπ)", "(π︵π)"],
+        ["(；へ：)", "(；︵：)"],
       ],
     ],
   },
@@ -22315,18 +22388,24 @@ const CAOS_EMOS = {
         ["( ◕ ᴗ ◕ )", "( ◕ ‿ ◕ )"],
         ["(・ω・)ﾉ", "(・ᴗ・)ﾉ"],
         ["( ´ ∀ ` )", "( ´ ᴗ ` )"],
+        ["(•̀ᴗ•́)ゞ", "(•̀ᴗ•́)ゞ ✧"],
+        ["( •̀ ω •́ )", "( •̀ ω •́ ) ✧"],
       ],
       [
         ["(ง •̀ᴗ•́)ง ✧", "(ง •̀‿•́)ง ✧"],
         ["☆(◕ᴗ◕)", "☆(◕‿◕)"],
         ["(*•̀ᴗ•́*)و", "(*•̀‿•́*)و"],
         ["( ✧ᴗ✧ )", "( ✧‿✧ )"],
+        ["( ง ˙ᴗ˙ )ง", "( ง ˙ᴗ˙ )ง ✧", "( ง ˙ᴗ˙ )ง ✧˖", "( ง ˙ᴗ˙ )ง ✧"],
+        ["ᕙ(•̀‿•́)ᕗ", "ᕙ(•̀ᴗ•́)ᕗ ✧"],
       ],
       [
         ["٩(ˊᗜˋ)و ✧", "٩(ˊᴗˋ)و ✧"],
         ["☆*:.｡(◕ᴗ◕)", "☆*:.｡(◕‿◕)"],
         ["ヽ(✧ᴗ✧)ノ", "ヽ(✧‿✧)ノ"],
         ["(ﾉ◕ヮ◕)ﾉ ✧", "(ﾉ◕ᴗ◕)ﾉ ✧"],
+        ["٩(•̀ᴗ•́)۶ ✧", "٩(•̀ᴗ•́)۶ ✧˖"],
+        ["ヽ(•̀ω•́ )ゝ ✧", "ヽ(•̀ω•́ )ゝ ✧˖"],
       ],
     ],
   },
@@ -37813,18 +37892,60 @@ const REACTIVE_VOICE = {
       "Deu TABULEIRO! Vence quem chegar primeiro na casa final. Corram.",
       "Tabuleiro, gente. Cada ponto é uma casa. Andem logo.",
       "Sorteei Tabuleiro. Clássico, simples e cruel com quem fica pra trás.",
+      "A roleta falou: TABULEIRO. Cada ponto é um passo. Quem ficar parado vira decoração.",
+      "Tabuleiro! O caminho é longo e eu vou narrar cada tropeço.",
+      "Deu Tabuleiro. Chegou na casa final, ganhou. Simples assim. Ou quase.",
+      "Hoje é corrida. Tabuleiro sorteado, e eu já tenho um palpite de quem fica pra trás.",
+      "Tabuleiro na mesa! Tem bônus a cada dez casas. Cuidado onde vocês param.",
+      "Sorteio feito: Tabuleiro. Avance, Volte e um pouco de sorte. Muita, pra alguns.",
+      "Deu o bom e velho Tabuleiro. Raiz, mas sem a poeira.",
+      "Tabuleiro, minha gente. Quem chegar no fim primeiro leva. O resto leva lição.",
+      "A roleta escolheu Tabuleiro. Eu só obedeço. Às vezes.",
     ],
     pontos: [
       (meta) => `[C.A.O.S.] Deu PONTOS! A meta da mesa é ${meta}. Calculadora na mão.`,
       (meta) => `[C.A.O.S.] Pontos! Quem somar ${meta} primeiro leva. O tabuleiro hoje é só enfeite.`,
       (meta) => `[C.A.O.S.] Sorteei Pontos, meta de ${meta}. Acertar com poucas dicas vale ouro.`,
+      (meta) => `[C.A.O.S.] Deu PONTOS. ${meta} e acabou. Cada dica economizada conta.`,
+      (meta) => `[C.A.O.S.] Pontos na mesa! Meta de ${meta}. O tabuleiro anda, mas não manda em nada.`,
+      (meta) => `[C.A.O.S.] A roleta parou em Pontos. Primeiro a ${meta} vence. Matemática é a nova zoeira.`,
+      (meta) => `[C.A.O.S.] Pontos, gente. ${meta} pra ganhar. O Mestre também pontua, então leiam com carinho.`,
+      (meta) => `[C.A.O.S.] Sorteado: Pontos. Meta de ${meta}. Hoje eu viro contador.`,
+      (meta) => `[C.A.O.S.] Deu Pontos! Quem chegar a ${meta} primeiro leva. Acertar cedo é tudo.`,
+      (meta) => `[C.A.O.S.] Pontos! A casa final hoje é paisagem. O que importa é chegar a ${meta}.`,
+      (meta) => `[C.A.O.S.] Meta da partida: ${meta} pontos. Eu vou somar tudo. E comentar tudo.`,
+      (meta) => `[C.A.O.S.] A roleta decidiu: Pontos. ${meta} pontos e a gente se despede.`,
     ],
     joias: [
       "Deu JOIAS! Quem juntar as quatro vence. E nada de pressa: no máximo duas por rodada.",
       "Joias, gente! Ano, Pessoa, Lugar e Coisa. Duas por rodada, no máximo. Eu conto.",
       "Sorteei Joias. Caçada às quatro pedras, com freio de duas por rodada.",
+      "Deu JOIAS! Quem fechar a coleção primeiro leva. E eu vou estar olhando.",
+      "Joias na mesa. Acertem rápido: aqui vale uma dica a mais pra ganhar a pedra.",
+      "A roleta parou em Joias. Duas por rodada, no máximo. Ganância tem limite.",
+      "Joias, gente! O tabuleiro anda, mas quem manda é a coleção de quatro.",
+      "Sorteei Joias. Hora de garimpar. Com calma: duas por rodada.",
+      "Deu Joias. Quatro pedras, quatro categorias e um C.A.O.S. de olho em todas.",
+      "Joias! Acertou com poucas dicas, ganhou a pedra da categoria. Fácil de explicar, difícil de fazer.",
+      "Caçada às joias começando. Quem completar as quatro leva. Eu fico com o drama.",
+      "Deu Joias. Chegar na casa final hoje não vale nada. Só as pedras.",
     ],
   },
+  // Mestre tocou em Encerrar ({nome} = Mestre). Toda fala lembra do Continuar.
+  botaoEncerrar: [
+    "Atenção, mesa! O Mestre, {nome}, apertou Encerrar. Vocês querem mesmo terminar a partida agora? Se foi sem querer, toquem em Continuar.",
+    "Atenção, mesa! {nome} quer encerrar a partida. Foi de propósito? Se foi sem querer, toquem em Continuar.",
+    "Opa! {nome} apertou Encerrar. Vão parar assim? Se o dedo escorregou, toquem em Continuar.",
+    "Mesa, {nome} pediu pra encerrar. O ranking fica como está agora. Foi sem querer? Toquem em Continuar.",
+    "{nome} apertou Encerrar. Fugindo da derrota ou só cansou? Se foi engano, toquem em Continuar.",
+    "Atenção, mesa! {nome} quer fechar a conta. Se ainda tem jogo pela frente, toquem em Continuar.",
+    "Calma aí! {nome} apertou Encerrar e eu ainda tinha tanta coisa pra falar. Foi sem querer? Continuar.",
+    "{nome} quer terminar por aqui. Quem está na frente agradece. Se foi sem querer, toquem em Continuar.",
+    "Alerta de fim de jogo! {nome} apertou Encerrar. Confirmem, ou toquem em Continuar se foi engano.",
+    "Ouvi direito? {nome} quer encerrar. O placar congela do jeito que está. Se não for isso, toquem em Continuar.",
+    "{nome}, já? A partida estava ficando boa. Se foi o dedo que escorregou, toquem em Continuar.",
+    "Mesa, decisão importante: {nome} quer encerrar. Vale o placar de agora. Se foi sem querer, Continuar.",
+  ],
   // Última rodada ({nome} = quem bateu a meta)
   ultimaRodada: [
     "{nome} bateu a meta! Mas calma: a rodada termina pra todo mundo jogar igual. Última rodada!",
@@ -43684,7 +43805,19 @@ const TUTORIAL_STEPS = [
     sec: 3,
     icon: "🏁",
     title: "Pontos e tabuleiro",
-    text: "A carta vale <b>20</b>. Quem acerta leva <b>20 menos as dicas já lidas</b>, e o Mestre fica com as lidas. Ninguém acertou? Os 20 vão pro Mestre.<br><b>1 ponto = 1 casa</b> no tabuleiro. A condição de vitória aparece no Resumo rápido (normalmente: chegar no fim do tabuleiro). No Hardcore, os pontos valem em dobro.",
+    text: "A carta vale <b>20</b>. Quem acerta leva <b>20 menos as dicas já lidas</b>, e o Mestre fica com as lidas. Ninguém acertou? Os 20 vão pro Mestre.<br><b>1 ponto = 1 casa</b> no tabuleiro. A condição de vitória aparece no Resumo rápido (o padrão é a <b>Moda da Casa</b>, logo a seguir). No Hardcore, os pontos valem em dobro.",
+  },
+  {
+    sec: 3,
+    icon: "🏠",
+    title: "A Moda da Casa",
+    text: "É a condição de vitória padrão (dá pra trocar no cadastro, em <b>🏆 Condição de Vitória</b>). No começo da partida o C.A.O.S. <b>gira uma roleta</b> e sorteia o modo da mesa toda. Nunca repete o da partida anterior:<ul><li>🎲 <b>Tabuleiro</b>: vence quem chegar primeiro na casa final;</li><li>🔢 <b>Pontos</b>: vence quem somar <b>200 pontos</b> (o tabuleiro vira enfeite);</li><li>💎 <b>Joias</b>: vence quem juntar as 4 joias. Aqui a joia vale com <b>1 dica a mais</b> (no Clássico, até 6) e cada um ganha <b>no máximo 2 joias por rodada</b>.</li></ul>Enquanto a roleta gira, o C.A.O.S. fica quieto. Depois ele anuncia o modo, e a partida começa quando a mesa toca em <b>Bora jogar!</b>",
+  },
+  {
+    sec: 3,
+    icon: "🏁",
+    title: "Última rodada",
+    text: "Alguém bateu a meta? O jogo <b>não acaba na hora</b>: a rodada vai até o fim, pra todo mundo jogar o mesmo número de vezes. A rodada termina quando o <b>primeiro Mestre</b> da partida volta a ser Mestre.<br>No fim da rodada, vence quem estiver na frente. Passou o líder na última rodada? A vitória é sua. Nas Joias, se mais de um completar, ganha quem completou primeiro.<br>No Express não tem última rodada: bateu, ganhou.",
   },
   {
     sec: 3,
@@ -43696,7 +43829,7 @@ const TUTORIAL_STEPS = [
     sec: 3,
     icon: "💎",
     title: "Joias",
-    text: "Acertou uma carta com <b>poucas dicas</b> (até 5; no Hardcore e no Express, até 3)? Ganha a <b>joia da categoria</b>: Ano, Pessoa, Lugar ou Coisa.<br>Juntou as <b>4 joias</b>? <b>Vitória na hora!</b> (Com menos de 4 jogadores, a joia é só troféu.)",
+    text: "Joias só valem quando o modo é <b>Joias</b> (sorteado na Moda da Casa ou escolhido como Só Joias) e no Express. Acertou uma carta com <b>poucas dicas</b> (até 5; no Hardcore e no Express, até 3; na Moda da Casa, 1 a mais)? Ganha a <b>joia da categoria</b>: Ano, Pessoa, Lugar ou Coisa.<br>Juntou as <b>4 joias</b>? Bateu a meta (vem a última rodada; no Express, é vitória na hora). Trava: <b>no máximo 2 joias por rodada</b> pra cada um.",
   },
   {
     sec: 3,
@@ -43772,6 +43905,21 @@ const TUTORIAL_STEPS = [
   },
 ];
 const PAUSE_TIPS = [
+  {
+    when: () => WIN_CONDITION === "casa" && CURRENT_MODE !== "express",
+    text: () =>
+      "Moda da Casa: o C.A.O.S. sorteia o modo da mesa no começo (Tabuleiro, Pontos ou Joias) e nunca repete o da partida anterior. Na próxima partida, vem outro.",
+  },
+  {
+    when: () => ultimaRodadaAtiva(),
+    text: () =>
+      "Bateu a meta? A rodada vai até o fim pra todo mundo jogar igual. Quem passar o líder na última rodada leva a vitória.",
+  },
+  {
+    when: () => joiasComTrava(),
+    text: () =>
+      `Modo Joias: no máximo ${JOIAS_POR_RODADA} joias por ${CURRENT_FORMAT === "equipe" ? "equipe" : "jogador"} em cada rodada. A rodada vira quando o primeiro Mestre volta a ser Mestre.`,
+  },
   {
     when: () => palpiteAvailable(),
     text: () =>
@@ -43959,7 +44107,17 @@ const PAUSE_TIPS = [
 ];
 const NOVIDADES = [
   {
-    v: "Beta 1.7.1.3",
+    v: "Beta 1.7.1.4",
+    t: "Som no iPhone, regras da Moda da Casa e rostinhos novos",
+    itens: [
+      "🔊 No iPhone, se o Safari suspender o som (troca de app, tela bloqueada, ligação), o primeiro toque na tela religa o som.",
+      "📖 A Moda da Casa e a última rodada agora estão no tutorial, no Resumo rápido e nas dicas da pausa.",
+      "🙂 Rostinhos novos do C.A.O.S. para alegria, ânimo, raiva, tristeza, carinho, calma e sono.",
+      "🗣️ Falas novas quando o Mestre toca em Encerrar e quando o C.A.O.S. anuncia o modo sorteado.",
+    ],
+  },
+  {
+    v: "Beta 1.7.1.4",
     t: "Sorteio com roleta e última rodada",
     itens: [
       "🎰 O sorteio da Moda da Casa agora gira como a roleta da categoria, com barulhinho. O C.A.O.S. fica quieto enquanto gira, comenta só o modo sorteado e volta a falar quando a mesa toca em Bora jogar!",
@@ -44577,10 +44735,11 @@ function iniciar() {
         "Encerrar",
         "Continuar",
         () => endGame(),
-        caosFalaBotao(
-          "Encerrar",
-          "Vocês querem mesmo terminar a partida agora? Se foi sem querer, toquem em Continuar.",
-        ),
+        getRandomReaction(REACTIVE_VOICE.botaoEncerrar, caosNomeMestre()) ||
+          caosFalaBotao(
+            "Encerrar",
+            "Vocês querem mesmo terminar a partida agora? Se foi sem querer, toquem em Continuar.",
+          ),
       );
       return;
     }
@@ -44857,6 +45016,10 @@ function iniciar() {
     saveGameState();
   });
   document.getElementById("confirmStartBtn").addEventListener("click", beginGameplay);
+  // Som no iPhone: o primeiro toque religa o áudio que o Safari tiver suspendido.
+  ["touchend", "pointerdown", "keydown"].forEach((ev) =>
+    document.addEventListener(ev, audioDestravarNoToque, { capture: true, passive: true }),
+  );
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") {
       caosVoiceCancel();
