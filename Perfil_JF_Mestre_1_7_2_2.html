@@ -4,6 +4,8 @@
   (nunca edite as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.2.2 · 02/10/2026 · "No Mercy Update". Hardcore sem Suave: zoeira Normal (padrão), Ácido ou
+          Nível 0 (humorOptionsForMode, renderHumorPicker, playerHumor, ajustarJogadoresAoModo).
   1.7.2.1 · 02/10/2026 · "Family Friendly Update". Cadastro: Adicionar depois de Cor/Emoji/Zoeira
           (#addAcaoRow); cor/emoji já escolhido avisa de quem é (caosEscolhaTomada). Júnior: zoeira
           Family friendly/Suave/Normal (humor "familia", humorFamilia, caosFamiliaTroca: 1 a 5
@@ -70,7 +72,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Perfil JF">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.2.1</title>
+<title>Perfil JF · Beta 1.7.2.2</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -5248,7 +5250,7 @@ body.claro .caos-pergunta button[data-v="digitar"] {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.2.1 · Family Friendly Update<br>C.A.O.S. 3.6 · Atualizada em 02/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.2.2 · No Mercy Update<br>C.A.O.S. 3.6 · Atualizada em 02/10/2026</div>
     </div>
   </section>
 
@@ -6696,7 +6698,8 @@ function humorEscolhido(p) {
 function playerHumor(p) {
   if (p && p.iniciante) return "suave";
   const h = p && p.humor;
-  if (h === "familia") return "suave";
+  if (h === "familia") return typeof CURRENT_MODE !== "undefined" && CURRENT_MODE === "hardcore" ? "normal" : "suave";
+  if (h === "suave" && typeof CURRENT_MODE !== "undefined" && CURRENT_MODE === "hardcore") return "normal";
   if (h === "zero" && typeof CURRENT_MODE !== "undefined" && CURRENT_MODE === "junior") return "normal";
   return h === "suave" || h === "acido" || h === "zero" ? h : "normal";
 }
@@ -8767,7 +8770,11 @@ function ajustarJogadoresAoModo() {
       }
       if (p.humor === "acido" || p.humor === "zero") p.humor = "normal";
     });
-  } else
+  } else if (CURRENT_MODE === "hardcore")
+    players.forEach((p) => {
+      if (p.humor === "familia" || p.humor === "suave") p.humor = "normal";
+    });
+  else
     players.forEach((p) => {
       if (p.humor === "familia") p.humor = "suave";
     });
@@ -10741,7 +10748,7 @@ function caosEscolhaTomada(tipo, valor) {
   const dono = players.find((p) => (tipo === "cor" ? p.color : p.avatar) === valor);
   if (!dono || Date.now() - caosTomadaAt < 2500) return;
   caosTomadaAt = Date.now();
-  const h = cadHumor || CURRENT_MODE === "junior" ? selectedHumor : "normal";
+  const h = cadHumor || humorPreMarcado() ? selectedHumor : "normal";
   const B = REACTIVE_VOICE.escolhaTomada,
     bank = h === "zero" || h === "acido" ? B.zero : h === "normal" || h === "caos" ? B.normal : B.leve;
   const f = tipo === "cor" ? ["essa cor", "Essa cor", "escolhida", "outra", "a"] : ["esse emoji", "Esse emoji", "escolhido", "outro", "o"];
@@ -10896,8 +10903,14 @@ function iniSair() {
   renderHumorPicker();
   caosLog("iniciante", "saiu do cadastro guiado");
 }
+// Zoeira por modo: Júnior sem Ácido/Nível 0; Hardcore sem Suave (é pra ser pesado).
 function humorOptionsForMode() {
+  if (CURRENT_MODE === "hardcore") return ["normal", "acido", "zero"];
   return CURRENT_MODE === "junior" ? ["familia", "suave", "normal"] : ["suave", "normal", "acido", "zero"];
+}
+// Júnior (Family friendly) e Hardcore (Normal) já vêm com a zoeira marcada; dá pra trocar.
+function humorPreMarcado() {
+  return CURRENT_MODE === "junior" || CURRENT_MODE === "hardcore";
 }
 function renderHumorPicker() {
   const row = document.getElementById("humorPickerRow");
@@ -10912,12 +10925,21 @@ function renderHumorPicker() {
     ? HUMOR_OPTIONS.filter((o) => o.id !== "acido" && o.id !== "zero").map((o) =>
         JR_HINT[o.id] ? { ...o, hint: JR_HINT[o.id] } : o,
       )
-    : HUMOR_OPTIONS.filter((o) => o.id !== "familia");
+    : CURRENT_MODE === "hardcore"
+      ? HUMOR_OPTIONS.filter((o) => o.id !== "familia" && o.id !== "suave").map((o) =>
+          o.id === "caos"
+            ? {
+                ...o,
+                hint: "Ele sorteia como vai tratar você (Normal ou Ácido; nunca Nível 0) e, no meio do jogo, pergunta se você está curtindo. No Hardcore não tem Suave.",
+              }
+            : o,
+        )
+      : HUMOR_OPTIONS.filter((o) => o.id !== "familia");
   if (!opts.some((o) => o.id === selectedHumor)) selectedHumor = junior ? "familia" : "normal";
   row.innerHTML = opts
     .map(
       (o) =>
-        `<button type="button" class="main-btn age-swatch humor-btn${o.id === selectedHumor && (cadMostraSel(cadHumor) || CURRENT_MODE === "junior") ? " on" : ""}" data-humor="${o.id}" style="--hc:${HUMOR_COR[o.id] || "#fbbf24"};">${o.label}</button>`,
+        `<button type="button" class="main-btn age-swatch humor-btn${o.id === selectedHumor && (cadMostraSel(cadHumor) || humorPreMarcado()) ? " on" : ""}" data-humor="${o.id}" style="--hc:${HUMOR_COR[o.id] || "#fbbf24"};">${o.label}</button>`,
     )
     .join("");
   row.querySelectorAll("[data-humor]").forEach((btn) =>
@@ -10929,7 +10951,7 @@ function renderHumorPicker() {
     }),
   );
   const hint = document.getElementById("humorHint");
-  const cur = cadMostraSel(cadHumor) || CURRENT_MODE === "junior" ? opts.find((o) => o.id === selectedHumor) : null;
+  const cur = cadMostraSel(cadHumor) || humorPreMarcado() ? opts.find((o) => o.id === selectedHumor) : null;
   if (hint) hint.textContent = cur ? cur.hint : "Toque numa opção pra escolher a zoeira.";
   row.classList.toggle("tem-escolha", !!cur);
   const ha = document.getElementById("humorAtual");
@@ -12137,7 +12159,11 @@ function admPainel(ov, nivel) {
   const redesenhar = () => admPainel(ov, nivel);
   const sHum = ciSecao(
     "🎚️ Nível de zoeira do C.A.O.S. com cada jogador",
-    CURRENT_MODE === "junior" ? "Júnior: Family friendly, Suave ou Normal" : "💀 Nível 0 = sem dó",
+    CURRENT_MODE === "junior"
+      ? "Júnior: Family friendly, Suave ou Normal"
+      : CURRENT_MODE === "hardcore"
+        ? "Hardcore: Normal, Ácido ou Nível 0 (sem Suave)"
+        : "💀 Nível 0 = sem dó",
   );
   const opts = humorOptionsForMode();
   const lista = document.createElement("div");
@@ -12578,11 +12604,10 @@ function cadPodeAdicionar() {
   const nome = inp ? inp.value.trim() : "";
   if (nome.length < 2) return false;
   if (isJfName(nome) || isAnneName(nome)) return true;
-  const eq = CURRENT_FORMAT === "equipe",
-    jr = CURRENT_MODE === "junior";
+  const eq = CURRENT_FORMAT === "equipe";
   if (!eq && !cadCor) return false;
   if (!cadEmoji) return false;
-  if (!jr && !cadHumor) return false;
+  if (!humorPreMarcado() && !cadHumor) return false;
   if (eq && !cadFaixa) return false;
   return true;
 }
@@ -12592,11 +12617,10 @@ function cadFaltaTexto() {
   if (nome.length < 2) return "Escreva o nome (2 a 15 letras).";
   if (isJfName(nome) || isAnneName(nome)) return "";
   const f = [],
-    eq = CURRENT_FORMAT === "equipe",
-    jr = CURRENT_MODE === "junior";
+    eq = CURRENT_FORMAT === "equipe";
   if (!eq && !cadCor) f.push("cor");
   if (!cadEmoji) f.push("emoji");
-  if (!jr && !cadHumor) f.push("zoeira do C.A.O.S.");
+  if (!humorPreMarcado() && !cadHumor) f.push("zoeira do C.A.O.S.");
   if (eq && !cadFaixa) f.push("faixa de idade");
   return f.length ? "Falta escolher: " + f.join(", ") + (/\.$/.test(f[f.length - 1]) ? "" : ".") : "";
 }
@@ -14771,7 +14795,7 @@ function caosInspectorEstado() {
         );
       })()}</b></div>
       <div class="ci-kv"><span>😄 Alegria · 🎯 confiança · 🔎 curiosidade</span><b class="ci-mono">${caosEixos.alegria.toFixed(1)} · ${caosEixos.confianca.toFixed(1)} · ${caosEixos.curiosidade.toFixed(1)}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.2.1 · C.A.O.S. 3.6</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.2.2 · C.A.O.S. 3.6</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -19060,7 +19084,12 @@ function caosIniFormatura() {
   saveGameState();
 }
 function caosSortearHumor() {
-  const o = CURRENT_MODE === "junior" ? ["familia", "suave", "normal"] : ["suave", "normal", "acido"];
+  const o =
+    CURRENT_MODE === "junior"
+      ? ["familia", "suave", "normal"]
+      : CURRENT_MODE === "hardcore"
+        ? ["normal", "acido"]
+        : ["suave", "normal", "acido"];
   return o[Math.floor(Math.random() * o.length)];
 }
 function caosTempoFala(ms) {
@@ -19532,7 +19561,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.2.1 · C.A.O.S. 3.6)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.2.2 · C.A.O.S. 3.6)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -19826,7 +19855,12 @@ function caosSatisfacaoTalvez() {
     const passo1 = () => {
       d.innerHTML = `<span>🤖 <b>${escapeHtml(nome)}</b>, tá curtindo o jeito que eu tô te tratando?</span><button type="button" data-v="sim">👍 Tô</button><button type="button" data-v="nao">👎 Não</button>`;
     };
-    const ordem = CURRENT_MODE === "junior" ? ["familia", "suave", "normal"] : ["suave", "normal", "acido"];
+    const ordem =
+      CURRENT_MODE === "junior"
+        ? ["familia", "suave", "normal"]
+        : CURRENT_MODE === "hardcore"
+          ? ["normal", "acido"]
+          : ["suave", "normal", "acido"];
     const passo2 = () => {
       const hh = humorEscolhido(p),
         i = hh === "zero" ? ordem.length : ordem.indexOf(hh);
@@ -21792,7 +21826,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.2.1 · C.A.O.S. 3.6");
+  L.push("- **Versão:** Beta 1.7.2.2 · C.A.O.S. 3.6");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -22314,7 +22348,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.2.1 · C.A.O.S. 3.6",
+        versao: "Beta 1.7.2.2 · C.A.O.S. 3.6",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -45059,6 +45093,16 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.2.2",
+    data: "02/10/2026 · 13:06",
+    nome: "No Mercy Update",
+    t: "Hardcore é pra ser pesado: o C.A.O.S. não pega leve.",
+    itens: [
+      "💀 No modo Hardcore a zoeira só tem Normal, Ácido e Nível 0. Não existe Suave, e o Normal já vem marcado no cadastro (é só trocar se quiser mais pesado).",
+      "🔁 Trocou pro Hardcore com alguém no Suave? Essa pessoa passa pro Normal. O C.A.O.S. decide sorteia entre Normal e Ácido.",
+    ],
+  },
   {
     v: "Beta 1.7.2.1",
     data: "02/10/2026 · 12:46",
