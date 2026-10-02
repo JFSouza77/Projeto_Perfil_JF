@@ -307,6 +307,14 @@ async function testarNavegador(arquivo) {
       `\n⚠️  ATENÇÃO: o nome do mestre diz ${versao.replace(/_/g, ".")}, mas o <title> do HTML diz ${carimbo || "(sem versão)"}.` +
         `\n    Confira o histórico/título do mestre antes de publicar.\n`,
     );
+  // A data "Atualizada em" da tela inicial tem que ser a de hoje (horário de Brasília).
+  const hoje = new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo" }).format(new Date());
+  const dataMestre = (mestre.match(/Atualizada em (\d{2}\/\d{2}\/\d{4})/) || [])[1];
+  if (dataMestre !== hoje)
+    console.warn(
+      `\n⚠️  ATENÇÃO: o mestre diz "Atualizada em ${dataMestre || "(sem data)"}", mas hoje (Brasília) é ${hoje}.` +
+        `\n    Atualize a data na tela inicial e no histórico antes de publicar.\n`,
+    );
   const saidas = {
     debug: path.join(PASTA, `Perfil_JF_${versao}_debug.html`),
     compacta: path.join(PASTA, `Perfil_JF_${versao}.html`),
