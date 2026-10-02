@@ -4,6 +4,9 @@
   (nunca edite as saídas à mão).
 
   HISTÓRICO (uma linha por versão)
+  1.7.1.6 · 03/10/2026 · PWA (manifest.json + ícones: instala na tela de início em tela cheia);
+          Compartilhar resultado no fim de jogo; destaque Mestre muralha no resumo; dicas
+          de Mestre na pausa.
   1.7.1.5 · 02/10/2026 · Tela inicial mais limpa: botão Jogar flutua de leve; Novidades e um
           menu ⋮ (Som, Vibrar, Voz + Ajustar voz, Batata) no canto superior direito.
   1.7.1.4 · 02/10/2026 · Som no iPhone religa no primeiro toque depois de o Safari suspender o
@@ -40,8 +43,14 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1a1a2e">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icones/icone-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Perfil JF">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.1.5</title>
+<title>Perfil JF · Beta 1.7.1.6</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -4821,7 +4830,7 @@ body.fx-urgente:after {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.1.5 · C.A.O.S. 3.6<br>Atualizada em 02/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.1.6 · C.A.O.S. 3.6<br>Atualizada em 03/10/2026</div>
     </div>
   </section>
 
@@ -5854,6 +5863,7 @@ const CAOS_COMENT_TOM = {
   rapida: "elogio",
   facil: "elogio",
   mvp: "elogio",
+  muralha: "elogio",
   semdono: "zoeira",
   pulos: "zoeira",
   absurdos: "zoeira",
@@ -5906,6 +5916,8 @@ const MODE_LABELS = {
   oldschool: "Perfil Old School",
 };
 const PAUSE_TIP_MS = 8e3;
+// Endereço público do jogo (vai no texto de Compartilhar resultado).
+const JOGO_URL = "https://jfsouza77.github.io/Projeto_Perfil_JF/";
 const ADM_CRIADOR_HASH = "f10d7ed5";
 const CAOS_PAUSA_DEGRAUS = [
   { s: 40, emo: "tedio", d: [0, -0.5, -0.5] },
@@ -10712,6 +10724,30 @@ function buildStatsHtml() {
         "#fbbf24",
         { t: "mvp", n: mvp.name, v: Math.round(mvp.avg * 10) / 10 },
       );
+    // Mestre muralha: quem leu as cartas que mais pediram dicas (mínimo 2 cartas acertadas)
+    const porMestre = {};
+    validHistory.forEach((h) => {
+      if (!h.mestreName || h.wasBonus) return;
+      const m = (porMestre[h.mestreName] = porMestre[h.mestreName] || { n: 0, d: 0, cor: h.mestreColor });
+      m.n++;
+      m.d += h.cluesUsed;
+    });
+    const mestres = Object.entries(porMestre)
+      .filter(([, m]) => m.n >= 2)
+      .map(([nome, m]) => ({ nome, cor: m.cor, med: Math.round((m.d / m.n) * 10) / 10 }))
+      .sort((a, b) => b.med - a.med);
+    if (mestres.length >= 2 && mestres[0].med > mestres[1].med) {
+      const mu = mestres[0],
+        pm = players.find((x) => x.name === mu.nome);
+      destaques += larga(
+        "🧱",
+        "Mestre muralha",
+        playerNameHtml(mu.nome, mu.cor, pm ? pm.avatar : ""),
+        `as cartas que leu pediram ${caosNumBR(mu.med)} dicas em média`,
+        "#f97316",
+        { t: "muralha", n: mu.nome, v: mu.med },
+      );
+    }
   }
   if (CURRENT_MODE !== "express") destaques += caosAuditoriaHtml();
   return `
@@ -10720,6 +10756,52 @@ function buildStatsHtml() {
       <ul class="stats-list hall-grid">${numeros}${destaques}</ul>
     </div>
   `;
+}
+// Texto curto do resultado (o ranking como aparece na tela) para mandar no WhatsApp etc.
+function resultadoTexto() {
+  const linhas = [...document.querySelectorAll(".final-ranking-list > li")]
+    .map((li) =>
+      li.innerText
+        .replace(/\s*\n\s*/g, " ")
+        .replace(/\s{2,}/g, " ")
+        .trim(),
+    )
+    .filter(Boolean)
+    .slice(0, 8);
+  const w = winCond();
+  const cond =
+    WIN_CONDITION === "casa" && CASA_MODOS.includes(casaSorteado)
+      ? "Moda da Casa: " + { tabuleiro: "Tabuleiro", pontos: "Pontos", joias: "Joias" }[casaSorteado]
+      : (WIN_CONDITIONS[w] || WIN_CONDITIONS.casa).label;
+  const mvp = computeMvp();
+  const cab =
+    "🎲 Perfil JF · " +
+    (MODE_LABELS[CURRENT_MODE] || "Perfil").replace(/^Perfil /, "") +
+    (CURRENT_MODE === "express" ? "" : " · " + cond) +
+    (CURRENT_FORMAT === "equipe" ? " · Equipes" : "");
+  const t = [cab, "", ...linhas];
+  if (mvp) t.push("", "🌟 Estrela da partida: " + mvp.name);
+  t.push("", "Jogue também: " + JOGO_URL);
+  return t.join("\n");
+}
+async function compartilharResultado() {
+  const txt = resultadoTexto();
+  try {
+    if (navigator.share) {
+      await navigator.share({ title: "Perfil JF", text: txt });
+      return;
+    }
+  } catch (e) {
+    if (e && e.name === "AbortError") return;
+  }
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(txt);
+      showToastMessage("📋 Resultado copiado. É só colar no grupo.", null, true);
+      return;
+    }
+  } catch (e) {}
+  caosAvisoModal("Copie o resultado:\n\n" + txt);
 }
 function renderFinalScreen() {
   caosFalaveis = [];
@@ -10866,6 +10948,8 @@ function renderFinalScreen() {
         ${historyHtml}
         <button class="btn-start btn-neo neo-solid neo-still neo-ghost neo-long fim-btn" id="toggleHallBtn" style="--mc:#fbbf24; --mc-glow:rgba(251,191,36,0.3);">${showHall ? "▴ Esconder o Hall da Fama" : "🏆 Hall da Fama"}</button>
         ${showHall ? hallDaFamaHtml() : ""}
+        <button class="btn-start btn-neo neo-solid neo-still neo-ghost neo-long fim-btn" id="compartilharResultadoBtn" style="--mc:#60a5fa; --mc-glow:rgba(96,165,250,0.3);">📲 Compartilhar resultado</button>
+        <div class="fim-sub">o ranking num texto curto, pronto pro WhatsApp</div>
         <button class="btn-start btn-neo neo-solid neo-still neo-ghost neo-long fim-btn" id="exportPartidaBtn" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.3);">📄 Exportar dados da partida</button>
         <div class="fim-sub">arquivo .md com o resumo da partida</div>
         <button class="btn-start btn-neo neo-solid neo-still fim-btn" id="jogarDeNovoBtn" style="--mc:#34d399; --mc-glow:rgba(52,211,153,0.35);">🔁 Jogar de novo</button>
@@ -10890,6 +10974,8 @@ function renderFinalScreen() {
   if (jn) jn.addEventListener("click", jogarDeNovo);
   const exp = document.getElementById("exportPartidaBtn");
   if (exp) exp.addEventListener("click", caosExportarPartidaModal);
+  const comp = document.getElementById("compartilharResultadoBtn");
+  if (comp) comp.addEventListener("click", compartilharResultado);
   document.getElementById("toggleHallBtn").addEventListener("click", () => {
     showHall = !showHall;
     renderFinalScreen();
@@ -14074,7 +14160,7 @@ function caosInspectorEstado() {
         );
       })()}</b></div>
       <div class="ci-kv"><span>😄 Alegria · 🎯 confiança · 🔎 curiosidade</span><b class="ci-mono">${caosEixos.alegria.toFixed(1)} · ${caosEixos.confianca.toFixed(1)} · ${caosEixos.curiosidade.toFixed(1)}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.1.5 · C.A.O.S. 3.6</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.1.6 · C.A.O.S. 3.6</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -18480,6 +18566,11 @@ function caosComentFato(d) {
       return { fr: `${d.x} precisou de ${v} dicas até ${n} acertar`, np: `precisar de ${v} dicas pra ${d.x}` };
     case "mvp":
       return { fr: `${n} fez média de ${v} pontos por acerto`, np: `fazer média de ${v} por acerto` };
+    case "muralha":
+      return {
+        fr: `as cartas lidas por ${n} pediram ${v} dicas em média`,
+        np: `ler cartas que pedem ${v} dicas em média`,
+      };
     case "precoce":
       return { fr: `${n} errou ${v} vezes chutando na 1ª dica`, np: `chutar na 1ª dica ${v} vezes` };
     case "inimizade":
@@ -18830,7 +18921,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.1.5 · C.A.O.S. 3.6)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.1.6 · C.A.O.S. 3.6)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -21085,7 +21176,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.1.5 · C.A.O.S. 3.6");
+  L.push("- **Versão:** Beta 1.7.1.6 · C.A.O.S. 3.6");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -21607,7 +21698,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.1.5 · C.A.O.S. 3.6",
+        versao: "Beta 1.7.1.6 · C.A.O.S. 3.6",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -43999,16 +44090,46 @@ const TUTORIAL_STEPS = [
     sec: 5,
     icon: "🏆",
     title: "Fim de jogo",
-    text: 'Acabou? Aparece o ranking com a <b>resenha do C.A.O.S.</b> (o "juízo final" da partida) e a estrela da partida. Dá pra ver as estatísticas, as cartas que cada um acertou, o <b>🏆 Hall da Fama</b> e tocar em <b>🔁 Jogar de novo</b> com os mesmos jogadores.<br>Também dá pra <b>avaliar as falas do C.A.O.S.</b> (👍/👎) — é assim que ele aprende o que a mesa curte.',
+    text: 'Acabou? Aparece o ranking com a <b>resenha do C.A.O.S.</b> (o "juízo final" da partida) e a estrela da partida. Dá pra ver as estatísticas, as cartas que cada um acertou, o <b>🏆 Hall da Fama</b>, mandar o ranking pro grupo em <b>📲 Compartilhar resultado</b> e tocar em <b>🔁 Jogar de novo</b> com os mesmos jogadores.<br>Também dá pra <b>avaliar as falas do C.A.O.S.</b> (👍/👎) — é assim que ele aprende o que a mesa curte.',
   },
   {
     sec: 5,
     icon: "🎮",
     title: "Pronto!",
-    text: "Isso é tudo. O resto vocês aprendem jogando — e o <b>Resumo rápido</b> das regras está sempre antes da partida e na pausa. Bom jogo, e boa sorte com o C.A.O.S. 😏",
+    text: "Dica: no Safari, toque em Compartilhar → <b>Adicionar à Tela de Início</b> e o jogo vira um app, em tela cheia e funcionando sem internet. Isso é tudo. O resto vocês aprendem jogando — e o <b>Resumo rápido</b> das regras está sempre antes da partida e na pausa. Bom jogo, e boa sorte com o C.A.O.S. 😏",
   },
 ];
 const PAUSE_TIPS = [
+  {
+    when: () => CURRENT_MODE !== "express",
+    text: () => 'Mestre: leia só a categoria, com clareza ("Eu sou UMA PESSOA"). Nada de dar pistas no jeito de falar.',
+  },
+  {
+    when: () => true,
+    text: () => "Mestre: cara de paisagem! Não reaja aos chutes antes de tocar em Acertou ou Errou.",
+  },
+  {
+    when: () => CURRENT_MODE !== "express",
+    text: () => "Mestre: uma pausa dramática antes de ler a dica deixa a mesa mais tensa (e mais divertida).",
+  },
+  {
+    when: () => CURRENT_MODE !== "express",
+    text: () => "Mestre: leia a dica devagar, uma vez só e bem alto. Repetir a pedido vale, mas sem explicar nada.",
+  },
+  {
+    when: () => CURRENT_MODE !== "express",
+    text: () =>
+      "Mestre: esqueceu a resposta? Toque em 👁️ Conferir resposta: ela aparece só por 5 segundos, longe dos olhos da mesa.",
+  },
+  {
+    when: () => true,
+    text: () =>
+      "Mestre: chute com nome incompleto ou apelido vale? Combinem antes da partida, e o Mestre decide com a mesa.",
+  },
+  {
+    when: () => true,
+    text: () => "Mestre: segure o celular inclinado pra você. Tem sempre alguém tentando espiar a tela.",
+  },
   {
     when: () => WIN_CONDITION === "casa" && CURRENT_MODE !== "express",
     text: () =>
@@ -44213,6 +44334,16 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.1.6",
+    t: "Instalar como app e compartilhar o resultado",
+    itens: [
+      "📱 Dá pra instalar o jogo como app: no Safari, Compartilhar → Adicionar à Tela de Início. Ele abre em tela cheia, com ícone próprio, e funciona sem internet.",
+      "📲 No fim da partida, o botão Compartilhar resultado manda o ranking num texto curto (WhatsApp, por exemplo).",
+      "🧱 No resumo da partida, novo destaque: o Mestre muralha (as cartas que ele leu foram as mais difíceis de acertar).",
+      "🎙️ Dicas novas na pausa pra quem é Mestre: ler a categoria com clareza, cara de paisagem, pausa dramática...",
+    ],
+  },
   {
     v: "Beta 1.7.1.5",
     t: "Tela inicial mais limpa",
