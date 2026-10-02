@@ -4247,6 +4247,25 @@ body.claro .nov-nome {
   padding: 4px 0;
   opacity: 0.9;
 }
+.nov-tag {
+  display: block;
+  width: fit-content;
+  margin: 2px auto 5px;
+  padding: 2px 9px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 0.8rem;
+  color: #f5f3ff;
+  background: #7c3aed40;
+  border: 1px solid #a78bfa99;
+  box-shadow: 0 0 8px #8b5cf640;
+}
+body.claro .nov-tag {
+  color: #4c1d95;
+  background: #ede9fe;
+  border-color: #a78bfa;
+  box-shadow: none;
+}
 #btnNovidades {
   position: relative;
 }
@@ -12913,6 +12932,12 @@ function novidadesMarcarChip() {
   }
   c.classList.toggle("tem-novo", visto !== NOVIDADES[0].v);
 }
+// Item das novidades no formato "emoji Título: texto": o título vai numa caixinha de destaque.
+function novItemHtml(x) {
+  const m = /^(\S+\s+)?([^:<"]{2,34}):\s+([\s\S]+)$/u.exec(x);
+  if (!m) return `<li>${x}</li>`;
+  return `<li><span class="nov-tag">${m[1] || ""}${m[2]}</span>${m[3].charAt(0).toUpperCase() + m[3].slice(1)}</li>`;
+}
 function abrirNovidades() {
   document.getElementById("novidadesModal")?.remove();
   const bg = document.createElement("div");
@@ -12920,7 +12945,7 @@ function abrirNovidades() {
   bg.className = "jf-modal-bg";
   bg.innerHTML = `<div class="jf-modal nov-modal" role="dialog" aria-modal="true" aria-labelledby="novTitle">
     <div class="nov-ic">🆕</div><h3 id="novTitle">NOVIDADES</h3><div class="nov-sub">O que mudou nas últimas versões</div>
-    ${NOVIDADES.map((n, i) => `<details class="nov-item"${i === 0 ? " open" : ""}><summary><span class="nov-v">${n.v}</span>${n.nome ? `<span class="nov-nome">${n.nome}</span>` : ""}${n.data ? `<span class="nov-data">📅 ${n.data}</span>` : ""}<span class="nov-t">${n.t}</span></summary><ul>${n.itens.map((x) => `<li>${x}</li>`).join("")}</ul>${n.qol && n.qol.length ? `<div class="nov-qol">🔧 Ajustes e correções (QoL)</div><ul>${n.qol.map((x) => `<li>${x}</li>`).join("")}</ul>` : ""}</details>`).join("")}
+    ${NOVIDADES.map((n, i) => `<details class="nov-item"${i === 0 ? " open" : ""}><summary><span class="nov-v">${n.v}</span>${n.nome ? `<span class="nov-nome">${n.nome}</span>` : ""}${n.data ? `<span class="nov-data">📅 ${n.data}</span>` : ""}<span class="nov-t">${n.t}</span></summary><ul>${n.itens.map(novItemHtml).join("")}</ul>${n.qol && n.qol.length ? `<div class="nov-qol">🔧 Ajustes e correções (QoL)</div><ul>${n.qol.map(novItemHtml).join("")}</ul>` : ""}</details>`).join("")}
     <button type="button" class="btn-start btn-neo neo-solid neo-still" id="novOk" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35); margin-top:14px;">Entendi</button>
   </div>`;
   document.body.appendChild(bg);
@@ -46154,24 +46179,23 @@ const NOVIDADES = [
     nome: "Cards and Rules Update",
     t: "Cartas revisadas uma por uma, 25 cartas novas no Old School, regras mais simples e um verso de carta novinho.",
     itens: [
-      "🃏 Pente fino em todas as cartas: cada dica agora funciona sozinha (as dicas são embaralhadas, então nenhuma depende de outra), sem repetir a mesma informação e sem entregar o nome da resposta.",
-      "📻 Old School ganhou 25 cartas novas de Ano, Coisa e Lugar (como 1960, 1997, Tamagotchi, Fliperama, Atari, Playcenter e Teatro Amazonas). O baralho total agora tem 600 cartas.",
-      "⚖️ Todas as categorias saem na mesma proporção. Antes, PESSOA aparecia em cerca de 35% das cartas e ANO em só 19%, o que deixava a joia de ANO mais difícil. No Hardcore, Ano e Pessoa saem mais (30% cada), como sempre foi a ideia.",
-      "💀 No Hardcore, o C.A.O.S. decide agora sorteia entre Normal, Ácido e Nível 0. Aqui o buraco é mais embaixo!",
-      "📋 Regras reescritas: mais curtas, diretas e na ordem em que as coisas acontecem no jogo, pra quem nunca jogou entender rápido.",
-      "🎴 Verso de carta novo: moldura neon dupla, cantos dourados, o P dentro do ? e o olho do C.A.O.S. Tem versão pro Modo Claro e pro Noturno.",
+      "🃏 Cartas revisadas: pente fino em todas as cartas. Cada dica agora funciona sozinha (as dicas são embaralhadas, então nenhuma depende de outra), sem repetir a mesma informação e sem entregar o nome da resposta.",
+      "📻 Old School maior: 25 cartas novas de Ano, Coisa e Lugar (como 1960, 1997, Tamagotchi, Fliperama, Atari, Playcenter e Teatro Amazonas). O baralho total agora tem 600 cartas.",
+      "⚖️ Categorias equilibradas: todas saem na mesma proporção. Antes, PESSOA aparecia em cerca de 35% das cartas e ANO em só 19%, o que deixava a joia de ANO mais difícil. No Hardcore, Ano e Pessoa saem mais (30% cada), como sempre foi a ideia.",
+      "💀 Hardcore sem dó: o C.A.O.S. decide agora sorteia entre Normal, Ácido e Nível 0. Aqui o buraco é mais embaixo!",
+      "📋 Regras novas: mais curtas, diretas e na ordem em que as coisas acontecem no jogo, pra quem nunca jogou entender rápido.",
+      "🎴 Verso novo da carta: moldura neon dupla, cantos dourados, o P dentro do ? e o olho do C.A.O.S. Tem versão pro Modo Claro e pro Noturno.",
     ],
     qol: [
-      "✍️ Dicas consertadas: fatos errados corrigidos (como Pelé e Edinho, Chaves e Dona Clotilde, a Magali de cabelo preto e vestido amarelo, o Zidane da cabeçada e a Rosinha, que é namorada do Chico Bento e não prima).",
-      "🔤 Saíram dicas que entregavam a resposta por tradução ou sigla (Golden Gate, Ladybug, Cat Noir, IPVA, FGTS...) e as que só faziam conta tipo \"some 1 e chega no ano X\".",
-      "🧒 O aviso do Júnior agora mostra quantas cartas o baralho tem de verdade.",
+      "🎙️ Mestre em destaque: o Mestre da rodada aparece marcado na carta virada, e a roleta da categoria começa com \"Mestre Fulano, diga aos jogadores\". Assim ninguém lê a carta achando que é o Mestre.",
+      "👉 Vez em destaque: o \"Vez de\" ganhou um selo amarelo na carta aberta, pra ninguém se perder de quem é a vez.",
+      "🚫 Cor ou emoji com dono: a tela nega na hora, com sonzinho de \"uh-uh\", vibração, piscada vermelha e o botão tremendo.",
+      "🎴 Carta virada mais limpa: saiu o botão \"Puxou sem querer?\", que não fazia sentido com a carta virada. O descarte de carta difícil continua depois de virar.",
+      "✍️ Fatos corrigidos: Pelé e Edinho, Chaves e Dona Clotilde, a Magali de cabelo preto e vestido amarelo, o Zidane da cabeçada, a Rosinha (namorada do Chico Bento, não prima) e a dublagem do Máscara (Marco Ribeiro; o Guilherme Briggs dublou o Jim Carrey em O Grinch).",
+      "🔤 Dicas que entregavam: saíram as que davam a resposta por tradução ou sigla (Golden Gate, Ladybug, Cat Noir, IPVA, FGTS...) e as que só faziam conta tipo \"some 1 e chega no ano X\".",
+      "🧒 Contagem do Júnior: o aviso agora mostra quantas cartas o baralho tem de verdade.",
       "🎓 Tutorial: a instrução de exemplo agora é \"Volte 2 casas\" (não existe \"Volte 1 casa\").",
-      "👉 O \"Vez de\" ganhou destaque amarelo na carta aberta, pra ninguém se perder de quem é a vez.",
-      "🎴 A carta virada não tem mais o botão \"Puxou sem querer?\" (com ela virada, não fazia sentido). O descarte de carta difícil continua depois de virar.",
-      "🎙️ O Máscara: no Brasil, a dublagem mais reprisada é do Marco Ribeiro. O Guilherme Briggs dublou o Jim Carrey em O Grinch.",
-
-      "🎙️ O Mestre da rodada fica em destaque na carta virada, e a roleta da categoria começa com \"Mestre Fulano, diga aos jogadores\". Assim ninguém lê a carta achando que é a vez dele de ser Mestre.",
-      "🚫 Tocou numa cor ou emoji que já tem dono? A tela nega na hora: sonzinho de \"uh-uh\", vibração, piscada vermelha e o botão treme.",
+      "📰 Novidades: o nome de cada mudança aparece numa caixinha de destaque.",
     ],
   },
   {
