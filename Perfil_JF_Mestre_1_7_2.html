@@ -4895,22 +4895,22 @@ body.noturno .ans-nome {
    Identidade própria, não é o Noturno clareado: papel creme, tinta azul-escura,
    superfícies brancas com sombra suave, cores chapadas e NENHUM brilho neon. */
 body.claro {
-  --bg: #f6f2ea;
-  --card-bg: #ffffff;
+  --bg: #f8edd5;
+  --card-bg: #fffaf0;
   --text-dark: #22263f;
-  --claro-papel: #f6f2ea;
-  --claro-sup: #ffffff;
-  --claro-sup2: #fbf8f2;
-  --claro-borda: #e3dacb;
+  --claro-papel: #f8edd5;
+  --claro-sup: #fffaf0;
+  --claro-sup2: #fdf4e3;
+  --claro-borda: #e8d6b4;
   --claro-txt: #22263f;
   --claro-suave: #5f6276;
   --claro-sombra: 0 2px 10px rgba(60, 45, 25, 0.09);
   --claro-sombra2: 0 6px 18px rgba(60, 45, 25, 0.12);
-  background: radial-gradient(circle at 50% -10%, #fffdf8 0%, #f6f2ea 55%, #efe8db 100%);
+  background: radial-gradient(circle at 50% -10%, #fdf5e4 0%, #f8edd5 55%, #f1e2c3 100%);
   color: var(--claro-txt);
 }
 html.claro {
-  background: #efe8db;
+  background: #f1e2c3;
 }
 /* sem brilho: o neon é coisa da noite */
 body.claro .splash-title.splash-neon,
@@ -4932,10 +4932,7 @@ body:not(.batata-mode).claro .splash-dice {
   filter: drop-shadow(0 6px 8px rgba(60, 45, 25, 0.25));
 }
 body.claro .floating-word {
-  color: #22263f;
-}
-body.claro #floatingWordsContainer {
-  opacity: 0.45;
+  color: #4a3410;
 }
 /* bordas giratórias e brilhos animados ficam só no Noturno */
 body.claro .btn-neo:before,
@@ -4968,7 +4965,7 @@ body.claro .card {
   box-shadow: var(--claro-sombra2);
 }
 body.claro .card.face-down {
-  background: repeating-linear-gradient(45deg, #fbf8f2 0 10px, #f3ede1 10px 20px);
+  background: repeating-linear-gradient(45deg, #fdf4e3 0 10px, #f5e8cf 10px 20px);
   color: var(--claro-txt);
 }
 body.claro .final-ranking-list li.first-place {
@@ -5003,9 +5000,18 @@ body.claro .pause-tip-next {
   border-color: var(--claro-borda);
   background: var(--claro-sup);
 }
-/* fala do C.A.O.S. na abertura: o balão escuro original (no papel, sem transparência) */
+/* fala do C.A.O.S. na abertura: balão claro, carinha no mesmo fundo (sem caixa cinza) */
 body.claro .splash-caos {
-  background: #12122af2;
+  background: var(--claro-sup);
+  box-shadow: var(--claro-sombra);
+}
+body.claro .splash-caos .sc-face {
+  background: transparent;
+  color: color-mix(in srgb, var(--emo-cor, #60a5fa) 70%, #1b1d33);
+  text-shadow: none;
+}
+body.claro .splash-caos .sc-txt {
+  color: var(--claro-txt);
 }
 /* títulos em tinta; os coloridos ficam escurecidos (sem neon) */
 body.claro h3,
@@ -5044,17 +5050,17 @@ body.claro .mode-btn.mc-card {
   border: 1.5px solid var(--claro-borda);
 }
 body.claro .mc-badge:after {
-  background: color-mix(in srgb, var(--mc) 13%, #fff);
+  background: color-mix(in srgb, var(--mc) 13%, var(--claro-sup));
 }
 body.claro .mc-badge {
   color: color-mix(in srgb, var(--mc) 70%, #1b1d33);
-  background: color-mix(in srgb, var(--mc) 40%, #fff);
+  background: color-mix(in srgb, var(--mc) 40%, var(--claro-sup));
 }
 body.claro .mc-icon:after {
-  background: color-mix(in srgb, var(--mc) 11%, #fff);
+  background: color-mix(in srgb, var(--mc) 11%, var(--claro-sup));
 }
 body.claro .mc-icon {
-  background: color-mix(in srgb, var(--mc) 35%, #fff);
+  background: color-mix(in srgb, var(--mc) 35%, var(--claro-sup));
 }
 body.claro .mode-select-wrap.mc-wrap.mode-selected {
   padding: 0;
@@ -5062,7 +5068,7 @@ body.claro .mode-select-wrap.mc-wrap.mode-selected {
   box-shadow: none;
 }
 body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-card {
-  background: color-mix(in srgb, var(--mc) 9%, #fff);
+  background: color-mix(in srgb, var(--mc) 9%, var(--claro-sup));
   border: 2px solid var(--mc);
   box-shadow: 0 6px 18px color-mix(in srgb, var(--mc) 22%, transparent);
 }
@@ -5077,7 +5083,7 @@ body.claro .mode-select-wrap.mc-wrap.mode-dimmed {
 }
 /* botões: principais em cor chapada; secundários brancos com borda colorida */
 body.claro .btn-start.btn-neo {
-  background: color-mix(in srgb, var(--mc, #6d4ad8) 55%, #fff);
+  background: color-mix(in srgb, var(--mc, #6d4ad8) 55%, var(--claro-sup));
   color: color-mix(in srgb, var(--mc, #6d4ad8) 70%, #1b1d33);
   text-shadow: none;
   box-shadow: var(--claro-sombra);
@@ -5086,7 +5092,7 @@ body.claro .btn-start.btn-neo {
 body.claro .btn-neo:after,
 body.claro .btn-neo.neo-ghost:after,
 body.claro .btn-neo.neo-solid.neo-ghost:after {
-  background: color-mix(in srgb, var(--mc, #6d4ad8) 12%, #fff);
+  background: color-mix(in srgb, var(--mc, #6d4ad8) 12%, var(--claro-sup));
 }
 body.claro .btn-neo.neo-solid:not(.neo-ghost):after,
 body.claro .btn-neo.mc-confirm:after {
@@ -5106,17 +5112,17 @@ body.claro .btn-start.btn-neo.splash-go {
 body.claro .splash-menu .chip,
 body.claro .splash-settings .chip {
   color: color-mix(in srgb, var(--cc) 62%, #1b1d33);
-  border-color: color-mix(in srgb, var(--cc) 50%, #fff);
-  background: color-mix(in srgb, var(--cc) 13%, #fff);
+  border-color: color-mix(in srgb, var(--cc) 50%, var(--claro-sup));
+  background: color-mix(in srgb, var(--cc) 13%, var(--claro-sup));
   box-shadow: none;
 }
 body.claro .splash-menu .chip.off,
 body.claro .splash-settings .chip.off {
-  background: color-mix(in srgb, var(--cc) 5%, #fff);
+  background: color-mix(in srgb, var(--cc) 5%, var(--claro-sup));
 }
 body.claro .wincond-btn:not(.on) {
   color: color-mix(in srgb, var(--wc, #6d4ad8) 64%, #1b1d33);
-  background: color-mix(in srgb, var(--wc, #6d4ad8) 12%, #fff);
+  background: color-mix(in srgb, var(--wc, #6d4ad8) 12%, var(--claro-sup));
   box-shadow: none;
 }
 body.claro .wincond-btn.on {
@@ -5125,7 +5131,7 @@ body.claro .wincond-btn.on {
 /* carta: caixas brancas com borda da categoria, sem halo */
 body.claro .answer-header.cat-neon,
 body.claro .pending-box.spotlight-box {
-  background: #fff;
+  background: var(--claro-sup);
   box-shadow: none;
 }
 body.claro .roulette .roulette-reel.landed {
@@ -5133,7 +5139,7 @@ body.claro .roulette .roulette-reel.landed {
 }
 body.claro .ans-nome {
   color: var(--claro-txt);
-  background: color-mix(in srgb, var(--card-glow, #d4a017) 12%, #fff);
+  background: color-mix(in srgb, var(--card-glow, #d4a017) 12%, var(--claro-sup));
 }
 /* janelas em papel (os balões do C.A.O.S. ficam como no Noturno) */
 body.claro .caos-modal-ov,
@@ -5161,11 +5167,11 @@ body.claro .voz-step {
   background: #eaf7fe;
 }
 body.claro .discard-btn {
-  background: color-mix(in srgb, currentColor 8%, #fff);
+  background: color-mix(in srgb, currentColor 8%, var(--claro-sup));
 }
 /* pergunta ao Mestre (Perto/Longe e "tá curtindo?"): caixa de papel com borda roxa */
 body.claro .caos-pergunta {
-  background: #fff;
+  background: var(--claro-sup);
   color: var(--claro-txt);
   border-color: #a78bfa;
   box-shadow: 0 8px 24px rgba(60, 45, 25, 0.18);
@@ -12456,7 +12462,7 @@ function temaAplicar(claro) {
   document.documentElement.classList.toggle("claro", claro);
   try {
     const m = document.querySelector('meta[name="theme-color"]');
-    if (m) m.setAttribute("content", claro ? "#f6f2ea" : "#1a1a2e");
+    if (m) m.setAttribute("content", claro ? "#f8edd5" : "#1a1a2e");
   } catch (e) {}
   updateNoturnoBtn();
 }
@@ -44905,7 +44911,7 @@ const NOVIDADES = [
       "📱 Logo nova: o P de Perfil grande em azul neon e o JF em laranja neon, na mesma letra, dentro da carta dourada. Quem já instalou: apague o atalho e adicione de novo pra ver.",
     ],
     qol: [
-      "☀️ Modo Claro “Papel” com cara própria: fundo creme, tinta azul-escura, cartões brancos com sombra suave, botões de cor chapada e sem brilho neon. Botões de ajuste e botões vazados ganham um fundo suave na própria cor; a pergunta do C.A.O.S. ao Mestre (Perto/Longe) também fica clara; as falas do C.A.O.S. (inclusive a da abertura) ficam no balão escuro de sempre.",
+      "☀️ Modo Claro “Papel” com cara própria: fundo creme âmbar suave, tinta azul-escura, cartões brancos com sombra suave, botões de cor chapada e sem brilho neon. Botões de ajuste e botões vazados ganham um fundo suave na própria cor; a pergunta do C.A.O.S. ao Mestre (Perto/Longe) também fica clara; a fala da abertura fica num balão claro; as demais falas do C.A.O.S. ficam no balão escuro de sempre.",
       "💾 Corrigido: importar um save com outra partida em andamento agora funciona (antes a partida antiga gravava por cima).",
       "✅ Botões de confirmação, Save de Bolso, save corrompido e relatório da partida conferidos um por um.",
       "🧹 Arquivo mais enxuto: código morto e estilos sem uso removidos, fala repetida do C.A.O.S. tirada.",
