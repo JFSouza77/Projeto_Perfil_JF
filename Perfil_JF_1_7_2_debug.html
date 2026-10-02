@@ -5168,6 +5168,23 @@ body.claro .voz-step {
 body.claro .discard-btn {
   background: color-mix(in srgb, currentColor 8%, #fff);
 }
+/* pergunta ao Mestre (Perto/Longe e "tá curtindo?"): caixa de papel com borda roxa */
+body.claro .caos-pergunta {
+  background: #fff;
+  color: var(--claro-txt);
+  border-color: #a78bfa;
+  box-shadow: 0 8px 24px rgba(60, 45, 25, 0.18);
+}
+body.claro .caos-pergunta button {
+  background: #f3effe;
+  border-color: #d6c8fb;
+  color: #3b2a7a;
+}
+body.claro .caos-pergunta button[data-v="digitar"] {
+  background: #5b21b6;
+  border-color: #5b21b6;
+  color: #fff;
+}
 </style>
 </head>
 <body class="noturno">
@@ -26511,7 +26528,7 @@ const NOVIDADES = [
       "📱 Logo nova: o P de Perfil grande em azul neon e o JF em laranja neon, na mesma letra, dentro da carta dourada. Quem já instalou: apague o atalho e adicione de novo pra ver.",
     ],
     qol: [
-      "☀️ Modo Claro “Papel” com cara própria: fundo creme, tinta azul-escura, cartões brancos com sombra suave, botões de cor chapada e sem brilho neon. Botões de ajuste e botões vazados ganham um fundo suave na própria cor; os balões do C.A.O.S. ficam como sempre foram.",
+      "☀️ Modo Claro “Papel” com cara própria: fundo creme, tinta azul-escura, cartões brancos com sombra suave, botões de cor chapada e sem brilho neon. Botões de ajuste e botões vazados ganham um fundo suave na própria cor; a pergunta do C.A.O.S. ao Mestre (Perto/Longe) também fica clara; os balões de fala ficam como sempre foram.",
       "💾 Corrigido: importar um save com outra partida em andamento agora funciona (antes a partida antiga gravava por cima).",
       "✅ Botões de confirmação, Save de Bolso, save corrompido e relatório da partida conferidos um por um.",
       "🧹 Arquivo mais enxuto: código morto e estilos sem uso removidos, fala repetida do C.A.O.S. tirada.",
