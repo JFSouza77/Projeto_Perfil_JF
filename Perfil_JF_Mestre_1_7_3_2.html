@@ -4,6 +4,13 @@
   (nunca edite as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.3.2 · 02/10/2026 · "Cards and Rules Update · Parte 3". Pente fino nas 191 cartas de PESSOA
+          (83 dicas corrigidas ou trocadas: fatos errados, desatualizados e repetidos). Limpeza de
+          CSS morto: regras vazias e declarações sempre sobrescritas por regra igual mais abaixo
+          (fallbacks com color-mix/var/clamp preservados; estilo calculado conferido igual antes/depois).
+          Créditos ao Pedro (musiquinha de vitória e risada do C.A.O.S., 1.7.1.6) nas Novidades.
+          ROTEIRO da 1.7.3: .3 = cartas de LUGAR + falas do C.A.O.S. (cortar as sem graça/encheção);
+          .4 = cartas de ANIMAL e COISA + repetições (cartas e falas) e otimização; aí fecha a 1.7.3.
   1.7.3.1 · 02/10/2026 · "Cards and Rules Update · Parte 2". Pente fino nas 99 cartas de ANO (no
           máximo 3 dicas de conta e 1 que entrega o ano; fatos repetidos trocados; erros corrigidos);
           Modo Claro com identidade (modos e zoeira tingidos, carta virada roxa, pontuação na cor do
@@ -39,7 +46,7 @@
           (? neon + carta com P). Dois visuais: Noturno (padrão) e Claro (body.claro).
           Resposta menor (só o nome, numa caixinha), toque pra esconder antes da 1ª dica.
           Musiquinha de vitória ao acertar (vitoriaCarta); risadinha do C.A.O.S. nas
-          zoeiras (CAOS_RISADA_*). Debug: tempo esgotado
+          zoeiras (CAOS_RISADA_*). As duas foram ideias do Pedro, 11 anos. Debug: tempo esgotado
           não come 5 s do próximo; Express não vira "misto" ao recarregar; Reiniciar
           solta o silêncio do sorteio. Balão do C.A.O.S. no celular: fala na largura toda.
   1.7.1.5 · 01/10/2026 · "Pocket Update". PWA (manifest.json + ícones: instala na tela de início em tela cheia);
@@ -88,7 +95,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Perfil JF">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.3.1</title>
+<title>Perfil JF · Beta 1.7.3.2</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -167,9 +174,9 @@ h2 {
   font-size: 0.9rem;
 }
 .add-player-row button {
-  padding: 10px 14px;
+  
   border: none;
-  border-radius: 8px;
+  
   background: var(--accent2);
   color: #fff;
   font-weight: 700;
@@ -229,12 +236,12 @@ body.claro .scoreboard li + li {
   padding: 20px 18px;
   width: 100%;
   max-width: 420px;
-  box-shadow: 0 8px 24px #00000059;
+  
   min-height: 160px;
 }
 .card.face-down {
-  background: linear-gradient(135deg, var(--accent2), var(--accent));
-  color: #fff;
+  
+  
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -584,15 +591,13 @@ button:disabled,
   position: absolute;
   font-weight: 700;
   color: #fff;
-  opacity: 0.09;
+  
   white-space: nowrap;
   max-width: 46vw;
   overflow-wrap: break-word;
   white-space: normal;
   text-align: center;
   pointer-events: none;
-}
-.fx-shake {
 }
 .fx-pop {
   position: fixed;
@@ -672,8 +677,8 @@ body.fx-urgente:after {
 .splash-tagline {
   font-size: 1rem;
   font-style: italic;
-  color: var(--special);
-  opacity: 0.9;
+  
+  
   z-index: 2;
   margin-bottom: 4px;
   padding: 0 20px;
@@ -764,7 +769,7 @@ body.fx-urgente:after {
   margin-top: 10px;
   padding: 10px 12px;
   border-radius: 12px;
-  background: #ffffff0f;
+  
 }
 .voz-row {
   display: grid;
@@ -782,9 +787,9 @@ body.fx-urgente:after {
 .voz-step {
   height: 36px;
   border-radius: 10px;
-  border: none;
-  background: var(--accent2);
-  color: #fff;
+  
+  
+  
   font-size: 1.2rem;
   font-weight: 800;
   cursor: pointer;
@@ -830,7 +835,7 @@ body.fx-urgente:after {
   border: 1px solid rgba(212, 160, 23, 0.5);
   border-radius: 18px;
   padding: 22px 18px 16px;
-  text-align: center;
+  
 }
 .tut-close {
   position: absolute;
@@ -840,7 +845,7 @@ body.fx-urgente:after {
   border: none;
   color: #fff;
   font-size: 1.2rem;
-  opacity: 0.7;
+  
   cursor: pointer;
 }
 .tut-icon {
@@ -870,10 +875,10 @@ body.fx-urgente:after {
 .tut-btn {
   flex: 1;
   padding: 12px;
-  border: none;
+  
   border-radius: 12px;
-  background: var(--accent);
-  color: #fff;
+  
+  
   font-weight: 800;
   font-size: 0.95rem;
   cursor: pointer;
@@ -931,19 +936,19 @@ body.fx-urgente:after {
   margin-top: 10px;
   padding: 9px;
   border-radius: 10px;
-  border: 1px dashed rgba(212, 160, 23, 0.7);
-  background: transparent;
-  color: #8a6d12;
+  
+  
+  
   font-weight: 700;
   font-size: 0.85rem;
   cursor: pointer;
 }
 .conferir-btn.open {
   border-style: solid;
-  background: #d4a0172e;
+  
   color: var(--text-dark);
-  font-size: 1rem;
-  text-transform: uppercase;
+  
+  
 }
 .roulette {
   text-align: center;
@@ -1073,9 +1078,9 @@ body.claro .turn-info .responder-tag {
 .mesa-btns button {
   flex: 1;
   padding: 10px 6px;
-  border: none;
+  
   border-radius: 10px;
-  font-weight: 700;
+  
   font-size: 0.9rem;
   cursor: pointer;
   color: #fff;
@@ -1096,17 +1101,9 @@ body.claro .turn-info .responder-tag {
   padding: 14px;
   border: none;
   border-radius: 12px;
-  font-weight: 700;
+  
   cursor: pointer;
   font-size: 0.95rem;
-}
-.btn-correct {
-  background: #2ecc71;
-  color: #08321a;
-}
-.btn-wrong {
-  background: #444;
-  color: #fff;
 }
 .number-grid {
   display: grid;
@@ -1125,10 +1122,10 @@ body.claro .turn-info .responder-tag {
   cursor: pointer;
 }
 .number-btn:disabled {
-  background: #4a2020;
-  color: #8a6a6a;
+  
+  
   cursor: default;
-  opacity: 0.7;
+  
 }
 .pending-box {
   background: #ffffff0f;
@@ -1146,7 +1143,7 @@ body.claro .turn-info .responder-tag {
   padding: 14px;
   border: none;
   border-radius: 12px;
-  background: var(--accent);
+  
   color: #fff;
   font-weight: 700;
   cursor: pointer;
@@ -1229,9 +1226,7 @@ body.claro .turn-info .responder-tag {
 }
 .player-name-neon {
   font-weight: 800;
-  text-shadow:
-    0 0 6px currentColor,
-    0 0 2px currentColor;
+  
 }
 .final-ranking-screen {
   width: 100%;
@@ -1352,9 +1347,6 @@ body.claro .turn-info .responder-tag {
   background-image: linear-gradient(90deg, red, orange, #ff0, green, #00f, indigo, violet, red) !important;
   background-size: 200% 100% !important;
   background-position: var(--rgb-pos, 0% 0%) !important;
-}
-body.batata-mode .rgb-name,
-body.batata-mode .rgb-swatch {
 }
 .grad-anim {
   background-size: 200% 100% !important;
@@ -1498,8 +1490,6 @@ button {
   color: #ff3b3b;
   font-weight: 900;
 }
-.timer-blink-on {
-}
 .timeout-overlay {
   background: #2b0f16;
   color: #fff;
@@ -1602,9 +1592,6 @@ button {
   transform: scale(1.3);
   filter: drop-shadow(0 0 8px var(--special));
 }
-.clue-list li,
-.pending-box {
-}
 #miniScoreboard,
 #boardTrack {
   transition:
@@ -1665,7 +1652,7 @@ button {
   align-items: center;
   justify-content: center;
   border-radius: 12px;
-  background: #ffffff0f;
+  
 }
 .mc-body {
   flex: 1;
@@ -1677,24 +1664,24 @@ button {
 .mc-top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  
   gap: 8px;
 }
 .mc-title {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.02rem;
+  
+  
+  
   color: #fff;
 }
 .mc-badge {
   flex: 0 0 auto;
   font-size: 0.68rem;
-  font-weight: 700;
-  padding: 2px 9px;
+  
+  
   border-radius: 999px;
   color: var(--mc);
-  border: 1px solid var(--mc);
-  background: #00000040;
+  
+  
   font-family: ui-monospace, Menlo, Consolas, monospace;
 }
 .mc-desc {
@@ -1720,7 +1707,7 @@ html.os-acess .jf-toast-overlay {
   margin: 0 0 12px;
   padding: 10px;
   border-radius: 12px;
-  border: 1px dashed rgba(251, 191, 36, 0.7);
+  
   background: #fbbf2414;
   color: #fde68a;
   font-weight: 700;
@@ -1860,11 +1847,6 @@ body.batata-mode .mode-select-wrap.mc-wrap.mode-selected {
 body.batata-mode .mode-select-wrap.mc-wrap.mode-selected:before {
   background: var(--mc);
 }
-@media (prefers-reduced-motion: reduce) {
-  .mode-select-wrap.mc-wrap.mode-selected,
-  .mode-select-wrap.mc-wrap.mode-selected:before {
-  }
-}
 .mc-back {
   display: block;
   margin: 14px auto 0;
@@ -1880,10 +1862,10 @@ body.batata-mode .mode-select-wrap.mc-wrap.mode-selected:before {
 .trocar-modo-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  
+  
   margin: -4px 0 12px;
-  padding: 8px 10px;
+  
   border-radius: 10px;
   background: #ffffff0d;
   font-size: 0.82rem;
@@ -1891,9 +1873,9 @@ body.batata-mode .mode-select-wrap.mc-wrap.mode-selected:before {
 .trocar-modo-row button {
   background: none;
   border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #fff;
-  border-radius: 8px;
-  padding: 6px 10px;
+  
+  
+  
   font-size: 0.8rem;
   cursor: pointer;
   white-space: nowrap;
@@ -1915,8 +1897,6 @@ body.batata-mode .mode-select-wrap.mc-wrap.mode-selected:before {
     0 0 4px #22d3ee,
     0 0 9px #22d3ee,
     0 0 14px #d946ef !important;
-}
-body.batata-mode .onyx-swatch {
 }
 .card .onyx-name {
   color: #0a0a12 !important;
@@ -1990,8 +1970,6 @@ body.batata-mode .onyx-swatch {
   background: linear-gradient(270deg, #ff6b6b, #ffd166, #4ecdc4, #a78bfa, #ff6b6b);
   background-size: 400% 400%;
 }
-.mode-select-wrap.mode-selected .mode-btn {
-}
 .jf-toast-overlay.caos-thinking {
   letter-spacing: 3px;
   opacity: 0.85;
@@ -2056,21 +2034,21 @@ body.batata-mode #floatingWordsContainer {
   background: #ffffff12;
   border: 1px solid rgba(212, 160, 23, 0.45);
   border-radius: 14px;
-  text-align: left;
+  
 }
 .pause-tip-head {
   display: flex;
-  justify-content: space-between;
+  
   align-items: center;
   font-weight: 800;
   color: var(--special);
   font-size: 0.95rem;
-  margin-bottom: 8px;
+  
 }
 .pause-tip-count {
   font-weight: 600;
   opacity: 0.6;
-  font-size: 0.75rem;
+  
   color: #fff;
 }
 .pause-tip-text {
@@ -2098,7 +2076,7 @@ body.batata-mode #floatingWordsContainer {
   margin-top: 16px;
   opacity: 0.8;
   font-size: 0.85rem;
-  text-align: left;
+  
 }
 .pause-rules summary {
   cursor: pointer;
@@ -2143,7 +2121,7 @@ body.batata-mode #floatingWordsContainer {
   padding: 12px;
   border-radius: 12px;
   background: #ffffff0d;
-  border: 1px solid rgba(212, 160, 23, 0.45);
+  
 }
 .wincond-title {
   font-weight: 800;
@@ -2159,7 +2137,7 @@ body.batata-mode #floatingWordsContainer {
   padding: 9px 8px;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  background: #ffffff0f;
+  
   color: #fff;
   font-size: 0.85rem;
   font-weight: 700;
@@ -2168,7 +2146,7 @@ body.batata-mode #floatingWordsContainer {
 }
 .wincond-btn.on {
   background: var(--special);
-  color: #1a1a2e;
+  
   border-color: transparent;
 }
 .wincond-btn:disabled {
@@ -2992,21 +2970,18 @@ body.batata-mode .btn-start.btn-neo {
   box-shadow: none;
 }
 .rules-box.resumo-neon {
-  border: 1.5px solid #fff45c;
+  
   box-shadow:
     0 0 calc(6px + 12px * var(--glow-k, 0.5)) #ffec3c80,
     inset 0 0 calc(6px + 10px * var(--glow-k, 0.5)) #ffec3c1f;
 }
 .rules-box.resumo-neon > h3 {
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  
   font-weight: 900;
-  font-size: 1rem;
-  color: #fff700;
-  text-shadow:
-    0 0 3px #fff700,
-    0 0 9px rgba(255, 240, 0, 0.85),
-    0 0 18px rgba(255, 200, 0, 0.6);
+  
+  
+  
 }
 .tut-caps {
   display: flex;
@@ -3019,7 +2994,7 @@ body.batata-mode .btn-start.btn-neo {
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: #ffffff0d;
   color: #e6e6f0;
-  border-radius: 999px;
+  
   padding: 4px 10px;
   font-size: 0.72rem;
   font-weight: 700;
@@ -3049,12 +3024,9 @@ body.batata-mode .btn-start.btn-neo {
   opacity: 0.65;
   margin-bottom: 12px;
 }
-.tut-text {
-  text-align: left;
-}
 .tut-text ul {
   margin: 8px 0 0;
-  padding-left: 20px;
+  
 }
 .tut-text li {
   margin-bottom: 4px;
@@ -3165,7 +3137,7 @@ body.batata-mode .btn-start.btn-neo {
 .ci-neural {
   display: block;
   width: 100%;
-  height: 110px;
+  
 }
 .ci-neural-lbl {
   position: absolute;
@@ -3300,7 +3272,7 @@ body:not(.batata-mode) .btn-start.btn-neo.neo-still {
 }
 .pause-tip-head {
   justify-content: center;
-  gap: 10px;
+  
 }
 .pause-screen .btn-start,
 .pause-screen .sec-row,
@@ -3314,36 +3286,29 @@ body:not(.batata-mode) .btn-start.btn-neo.neo-still {
   isolation: isolate;
   overflow: hidden;
   background: #1f7a70;
-  box-shadow: 0 0 8px #2dd4bf73;
+  
 }
 .number-btn:not(:disabled):before {
   content: "";
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 180%;
+  
   aspect-ratio: 1;
   z-index: -2;
   pointer-events: none;
   will-change: transform;
   transform: translate(-50%, -50%) rotate(calc(var(--grid-rot, 0deg) + var(--ph, 0deg)));
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg 200deg,
-    #5eead4 280deg,
-    #ffffff 310deg,
-    #5eead4 330deg,
-    transparent 360deg
-  );
+  
 }
 .number-btn:not(:disabled):after {
   content: "";
   position: absolute;
-  inset: 2px;
+  
   border-radius: 8px;
   z-index: -1;
   pointer-events: none;
-  background: linear-gradient(160deg, #2a9d8f, #1d6f66);
+  
 }
 .number-btn:disabled {
   background: #2a1f24;
@@ -3566,7 +3531,7 @@ body:not(.batata-mode) .splash-dice {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: -18px 16px 26px;
+  
   padding: 8px 14px 8px 8px;
   border-radius: 999px;
   cursor: pointer;
@@ -3598,20 +3563,20 @@ body:not(.batata-mode) .splash-dice {
 }
 .btn-start.btn-neo.splash-go {
   width: auto;
-  min-width: 230px;
-  padding: 16px 40px;
+  
+  
   z-index: 2;
-  font-size: 1.1rem;
+  
 }
 .btn-start.btn-neo.splash-go2 {
   width: auto;
-  min-width: 230px;
-  margin-top: 14px;
+  
+  
   z-index: 2;
 }
 .splash-settings .chip,
 .splash-menu .chip {
-  background: transparent;
+  
   border-color: #f5c34480;
 }
 .card {
@@ -3665,16 +3630,6 @@ body.claro .cat-selo {
 }
 .number-btn:not(:disabled) {
   box-shadow: none;
-}
-.number-btn:not(:disabled):before {
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg 250deg,
-    rgba(94, 234, 212, 0.55) 310deg,
-    rgba(255, 255, 255, 0.7) 330deg,
-    rgba(94, 234, 212, 0.55) 345deg,
-    transparent 360deg
-  );
 }
 .number-btn:not(:disabled):after {
   inset: 1.5px;
@@ -3751,7 +3706,7 @@ body.batata-mode .ft-ic:after {
     rgba(255, 255, 255, 0.35) 345deg,
     transparent 360deg
   );
-  opacity: 0.55;
+  
 }
 .card .guess-btns > button:after,
 .card .mesa-btns button:after,
@@ -3774,15 +3729,6 @@ body.batata-mode .ft-ic:after {
 }
 .card .btn-correct.duel-def {
   --mc: #2f4fb8;
-}
-.card .btn-wrong {
-  --mc: #4b5263;
-}
-.card .mesa-btns .btn-pular {
-  --mc: #64748b;
-}
-.card .mesa-btns .btn-absurdo {
-  --mc: #7c4ddb;
 }
 .card .continue-btn {
   --mc: #4b5263;
@@ -3829,12 +3775,10 @@ body.batata-mode .card .flip-btn:before {
   pointer-events: none;
 }
 .card.face-down {
-  background: #17132a;
+  
   color: #e9e6f5;
-  border: 1.5px solid rgba(167, 139, 250, 0.55);
-  box-shadow:
-    0 8px 24px #00000059,
-    0 0 18px #a78bfa47;
+  
+  
 }
 .card.face-down .back-icon {
   width: 56px;
@@ -3937,7 +3881,6 @@ body.batata-mode .card .flip-btn:before {
   50% { filter: drop-shadow(0 0 16px #c084fcb3); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .card.face-down .verso-emblema { animation: none; }
 }
 .number-btn:not(:disabled):before {
   width: 150%;
@@ -4010,9 +3953,6 @@ body.batata-mode .spotlight-box:after {
   color: #9a6a00;
   box-shadow: 0 0 10px #facc1547;
 }
-.conferir-btn.open {
-  background: #facc1538;
-}
 .pause-tip-card {
   border-width: 2px;
 }
@@ -4062,11 +4002,6 @@ body.batata-mode .pause-min {
   border-radius: 12px;
   border: 1px solid transparent;
   line-height: 1.45;
-}
-.rules-more li:nth-child(odd),
-.pause-rules li:nth-child(odd) {
-  border-color: #ffffff24;
-  background: #ffffff0b;
 }
 .pause-rules {
   text-align: center;
@@ -4356,8 +4291,8 @@ body.claro .nov-x {
 .nov-item summary {
   cursor: pointer;
   display: flex;
-  align-items: baseline;
-  gap: 10px;
+  
+  
   list-style: none;
 }
 .nov-item summary {
@@ -5120,14 +5055,8 @@ body:not(.batata-mode) .age-btn.on {
 .floating-word {
   opacity: 0;
 }
-.btn-confirm-start {
-}
 body:not(.batata-mode) .btn-confirm-start {
   transform: translateY(var(--mc-float, 0px));
-}
-*,
-*:before,
-*:after {
 }
 body.fx-urgente:after {
   opacity: var(--urg-k, 0.7);
@@ -5502,7 +5431,7 @@ body.claro .mc-back {
   border-radius: 999px;
   background: #ede9fe;
   border: 1px solid #c4b5fd;
-  color: #5b21b6;
+  
   font-weight: 700;
   text-decoration: none;
 }
@@ -5667,12 +5596,6 @@ body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-card {
 }
 body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-title {
   color: color-mix(in srgb, var(--mc) 60%, #1b1d33);
-}
-body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-desc {
-  color: var(--claro-suave);
-}
-body.claro .mode-select-wrap.mc-wrap.mode-dimmed {
-  opacity: 0.55;
 }
 /* 1.7.3.1: no Claro o brilho que gira nas bordas dos botões da carta e da dica vem num tom escuro da cor (o branco sumia no fundo claro e parecia falha) */
 body.claro .card .guess-btns > button:before,
@@ -5905,7 +5828,7 @@ body.claro .caos-pergunta button[data-v="digitar"] {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.3.1 · Cards and Rules Update · Parte 2<br>C.A.O.S. 3.8 · Atualizada em 02/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.3.2 · Cards and Rules Update · Parte 3<br>C.A.O.S. 3.8 · Atualizada em 02/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -15660,7 +15583,7 @@ function caosInspectorEstado() {
         );
       })()}</b></div>
       <div class="ci-kv"><span>😄 Alegria · 🎯 confiança · 🔎 curiosidade</span><b class="ci-mono">${caosEixos.alegria.toFixed(1)} · ${caosEixos.confianca.toFixed(1)} · ${caosEixos.curiosidade.toFixed(1)}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.3.1 · C.A.O.S. 3.8</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.3.2 · C.A.O.S. 3.8</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -20427,7 +20350,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.3.1 · C.A.O.S. 3.8)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.3.2 · C.A.O.S. 3.8)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -22692,7 +22615,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.3.1 · C.A.O.S. 3.8");
+  L.push("- **Versão:** Beta 1.7.3.2 · C.A.O.S. 3.8");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -23214,7 +23137,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.3.1 · C.A.O.S. 3.8",
+        versao: "Beta 1.7.3.2 · C.A.O.S. 3.8",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -24922,8 +24845,8 @@ const ADULT_CARDS = expandDeck([
       "Rodei clipes e fiz parcerias com marcas de tênis famosas",
       "Sou um dos jogadores mais caros da história do futebol",
       "Ultrapassei Pelé como maior artilheiro da história da seleção brasileira",
-      "Atualmente jogo ligado a clubes do Oriente Médio",
-      "Uso a camisa 10, sou ex-Santos, ex-Barcelona, ex-PSG",
+      "Joguei no Al-Hilal, da Arábia Saudita, antes de voltar ao futebol brasileiro",
+      "Fui campeão olímpico com a seleção no Rio de Janeiro, em 2016",
       "Sou um dos maiores ídolos do futebol brasileiro dos últimos 15 anos",
     ],
   },
@@ -24932,7 +24855,7 @@ const ADULT_CARDS = expandDeck([
     a: "Anitta",
     q: [
       "Nasci no Rio de Janeiro, na zona norte da cidade",
-      "Trabalhei como dentista antes de virar cantora, fazendo parte da formação",
+      "Antes da fama, fiz curso técnico de administração e estagiei numa grande mineradora",
       "Fiquei famosa nacionalmente com uma música sobre um 'Show das Poderosas'",
       "Canto principalmente funk, mas já misturei pop, reggaeton e outros ritmos",
       "*Perca sua vez",
@@ -24946,10 +24869,10 @@ const ADULT_CARDS = expandDeck([
       "Sou uma cantora brasileira de funk conhecida internacionalmente",
       "Fiz parcerias musicais com artistas latinos e americanos de grande destaque",
       "Costumo falar abertamente sobre minha vida pessoal nas redes sociais",
-      "Fui a primeira artista latina a atingir o topo do ranking Global do Spotify cantando em português",
+      "Fui a primeira artista brasileira solo a chegar ao topo do ranking global do Spotify",
       "Já lancei músicas cantando em português, espanhol e inglês no mesmo álbum",
-      "Comando um dos trios elétricos mais concorridos do Carnaval de Salvador",
-      "Já processei uma gravadora na justiça para reaver direitos sobre minha própria carreira",
+      "Tenho um bloco de Carnaval próprio que arrasta multidões no Rio de Janeiro",
+      "Briguei na justiça com uma ex-empresária para ter de volta o controle da minha carreira",
       "Assumi publicamente minha bissexualidade em entrevistas e nas redes sociais",
     ],
   },
@@ -25049,16 +24972,16 @@ const ADULT_CARDS = expandDeck([
       "Sobrevivi ao ataque e me tornei ainda mais firme na defesa da educação",
       "Fui levada para o Reino Unido para tratamento médico após o ataque",
       "*Escolha um jogador para avançar 2 casas",
-      "Me tornei uma das ativistas mais jovens a receber um Prêmio Nobel",
+      "Me formei em filosofia, política e economia na Universidade de Oxford",
       "*Escolha um jogador para voltar 2 casas",
-      "Ganhei o Prêmio Nobel da Paz ainda adolescente",
+      "Dividi o Nobel com um ativista indiano que luta contra o trabalho infantil",
       "Sou reconhecida mundialmente por lutar pelo direito à educação feminina",
       "Fundei uma organização para ajudar meninas a terem acesso à escola",
       "A ONU criou um dia com o meu nome, celebrado no dia do meu aniversário",
       "Sou paquistanesa e defensora mundial da educação das meninas",
-      "Sobrevivi a um atentado por defender o direito de meninas estudarem",
+      "Meu pai era dono de uma escola e sempre me incentivou a falar em público",
       "Sou a mais jovem ganhadora do Prêmio Nobel da Paz da história",
-      "Sou uma ativista paquistanesa pela educação feminina",
+      "Meu nome homenageia uma heroína afegã que lutou contra os britânicos",
       "Escrevi um livro contando minha própria história de vida",
     ],
   },
@@ -25095,7 +25018,7 @@ const ADULT_CARDS = expandDeck([
     class: "livre",
     q: [
       "Nasci na ilha da Madeira, em Portugal",
-      "Comecei minha carreira em um clube pequeno antes de ir para um time inglês famoso",
+      "Fui revelado pelo Sporting, de Lisboa, antes de ir para um time inglês famoso",
       "Joguei muitos anos no Manchester United, na Inglaterra",
       "Depois me transferi para o Real Madrid, na Espanha, por valor recorde na época",
       "Tenho uma rivalidade histórica com o argentino Lionel Messi",
@@ -25106,7 +25029,7 @@ const ADULT_CARDS = expandDeck([
       "Joguei também pela Juventus, na Itália",
       "Atualmente jogo em um clube da Arábia Saudita",
       "Fui o primeiro jogador a superar a marca de 900 gols oficiais na carreira",
-      "Já joguei por clubes de quatro países diferentes ao longo da carreira",
+      "Já joguei por clubes de cinco países diferentes ao longo da carreira",
       "Sou extremamente disciplinado com dieta e treinos, mesmo depois de tantos anos de carreira",
       "Tenho uma estátua minha exposta no aeroporto que leva meu nome, na Madeira",
       "*Escolha um jogador para voltar 2 casas",
@@ -25134,12 +25057,12 @@ const ADULT_CARDS = expandDeck([
       "*Avance 1 casa",
       "Atualmente jogo em um clube nos Estados Unidos",
       "Sou conhecido por dribles curtos e precisão nos passes",
-      "Sou argentino e conquistei a Copa do Mundo de 2022",
-      "Mudei-me para o futebol americano perto do fim da minha carreira",
+      "Ganhei a Copa América de 2021 em pleno Maracanã, contra o Brasil",
+      "Ganhei a medalha de ouro olímpica em Pequim, em 2008",
       "*Volte 3 casas",
       "Sou considerado por muitos o melhor jogador de futebol de todos os tempos",
       "Sou discreto e tímido em entrevistas, ao contrário de muitos outros astros do futebol",
-      "Tenho uma doença de crescimento tratada com hormônios ainda na infância",
+      "Meu apelido é La Pulga, a pulga, por ser baixinho",
       "Sou frequentemente citado ao lado de Pelé e Maradona entre os maiores da história",
     ],
   },
@@ -25216,7 +25139,7 @@ const ADULT_CARDS = expandDeck([
       "*Avance 2 casas",
       "Adoro comer um tipo de macarrão japonês servido em caldo quente",
       "Meu bordão é \"dattebayo\", dito no fim das frases",
-      "Sou órfão desde bebê, sacrificado por meus próprios pais para me proteger",
+      "Fiquei órfão no dia em que nasci: meus pais se sacrificaram para me proteger",
       "Tenho um filho chamado Boruto que também vira ninja em uma sequência da história",
       "Sou considerado um herói pela minha vila, depois de anos sendo visto como uma ameaça",
       "Minha voz japonesa original é dublada pela atriz Junko Takeuchi",
@@ -25231,7 +25154,7 @@ const ADULT_CARDS = expandDeck([
       "Sou um personagem fictício, protagonista de uma famosa saga de livros e filmes britânicos",
       "Fiquei órfão ainda bebê, após meus pais serem mortos por um bruxo das trevas",
       "Tenho uma cicatriz em formato de raio na testa",
-      "Descobri que sou um bruxo pouco antes de completar 11 anos",
+      "Descobri que sou bruxo no dia em que completei 11 anos",
       "*Volte 3 casas",
       "A escola de magia e bruxaria onde estudo se chama Hogwarts",
       "Fui selecionado para uma das quatro casas da escola, conhecida por coragem",
@@ -25272,7 +25195,7 @@ const ADULT_CARDS = expandDeck([
       "Apareço estampado em roupas, brinquedos e produtos vendidos no mundo inteiro",
       "Tenho uma estrela só minha na Calçada da Fama de Hollywood",
       "Tenho estátuas e réplicas minhas espalhadas por parques temáticos no mundo todo",
-      "Fui criado em uma época de grande crise econômica nos Estados Unidos",
+      "Meu aniversário oficial é comemorado em 18 de novembro",
       "Minha primeira aparição pública foi em 1928, quase um século atrás",
       "Entrei em domínio público em alguns países décadas depois da minha criação, gerando debates sobre direitos autorais",
     ],
@@ -25295,7 +25218,7 @@ const ADULT_CARDS = expandDeck([
       "Meu maior inimigo é um vilão de rosto pintado de branco, com sorriso permanente",
       "O Comissário Gordon me chama acendendo um sinal no céu",
       "A Mulher-Gato vive entre ser minha inimiga e meu interesse amoroso",
-      "Curiosamente, boa parte da minha galeria de vilões tem algum tipo de doutorado ou formação acadêmica avançada",
+      "Fui criado por Bob Kane e Bill Finger",
       "Tenho um protegido conhecido como Robin que me ajuda em muitas aventuras",
       "Faço parte de um grupo de heróis conhecido como Liga da Justiça",
       "Durante o dia, vivo como um bilionário chamado Bruce Wayne",
@@ -26458,7 +26381,7 @@ const ADULT_CARDS = expandDeck([
       "Fracassei catastroficamente numa invasão de inverno a um imenso país do leste europeu",
       "Fui derrotado de forma definitiva numa batalha travada em solo belga",
       "*Volte 3 casas",
-      "Fui exilado duas vezes em ilhas isoladas no oceano",
+      "Fui exilado duas vezes em ilhas: uma no Mediterrâneo e outra no meio do Atlântico",
       "Morri exilado na ilha de Santa Helena, em 1821",
       "Sou alvo de um mito popular sobre minha baixa estatura, que não era tão incomum pra época",
       "A família real portuguesa fugiu para o Brasil porque eu invadi Portugal",
@@ -26901,25 +26824,25 @@ const ADULT_CARDS = expandDeck([
     cat: "PESSOA",
     a: "Whindersson Nunes",
     q: [
-      "Nasci em Teresina, capital do Piauí",
+      "Nasci numa cidade pequena do interior do Piauí",
       "Comecei fazendo vídeos de humor sozinho no meu quarto, ainda adolescente",
-      "Fiquei famoso primeiro em um site de vídeos curtos chamado Vine",
-      "Migrei minha carreira para o YouTube, onde acumulei milhões de inscritos",
+      "Fiquei famoso com uma paródia que gravei em casa e postei no YouTube em 2013",
+      "Cheguei a ter o maior canal do YouTube no Brasil",
       "*Volte 3 casas",
       "Já fiz shows de stand-up comedy por todo o Brasil",
       "*Volte 2 casas",
       "Sou conhecido por imitar sotaques e criar personagens engraçados",
       "Também canto e já lancei músicas com pegada sertaneja e humorística",
-      "Já fui casado com uma cantora sertaneja muito famosa no Brasil",
+      "Já fui casado com uma cantora pop gaúcha muito famosa",
       "Sou natural do Nordeste brasileiro e sempre valorizo minhas raízes",
       "*Um palpite a qualquer hora",
       "Fui um dos primeiros grandes humoristas a nascer dentro da internet brasileira",
       "Tenho um jeito irreverente de fazer piadas sobre o dia a dia",
       "Sou considerado um dos maiores nomes do humor digital brasileiro",
-      "Fiz sucesso misturando humor com música sertaneja",
+      "Já levei meus shows de stand-up para fora do Brasil",
       "Sou piauiense e um dos maiores youtubers de humor do Brasil",
       "Já falei abertamente sobre saúde mental em entrevistas e vídeos",
-      "Já lotei estádios de futebol para apresentações de stand-up comedy",
+      "Já lotei ginásios e arenas com apresentações de stand-up",
       "Já dirigi e lancei curtas-metragens e clipes musicais, indo além da comédia",
     ],
   },
@@ -26928,26 +26851,26 @@ const ADULT_CARDS = expandDeck([
     a: "Larissa Manoela",
     class: "livre",
     q: [
-      "Nasci em São Paulo e comecei a atuar ainda criança",
-      "Fiquei conhecida nacionalmente em uma novela infantil sobre uma menina levada por uma cegonha",
+      "Nasci em Guarapuava, no Paraná, e comecei a atuar ainda criança",
+      "Fiquei conhecida nacionalmente como a menina rica e mimada de uma novela infantil do SBT",
       "Atuei em diversas novelas voltadas para o público jovem",
-      "Também estrelei filmes como 'As Aventuras de Poliana' e sua continuação",
+      "Estrelei nos cinemas o filme 'Meus 15 Anos'",
       "Sou cantora além de atriz, com músicas ligadas aos personagens que interpretei",
       "Fiquei famosa desde muito nova, sendo uma das crianças mais conhecidas da TV brasileira",
-      "Interpretei personagens como Maria Joaquina e Poliana em produções de sucesso",
+      "Interpretei Maria Joaquina e, depois, as gêmeas Isabela e Manuela em novelas de sucesso",
       "Cresci diante das câmeras e virei uma das atrizes mais seguidas do país",
       "Tenho um grande número de seguidores em redes sociais",
       "Sou conhecida por interpretar protagonistas em tramas voltadas ao público adolescente",
-      "Participei de produções da Rede Globo e depois de plataformas de streaming",
+      "Fiz filmes para plataformas de streaming, como 'Lulli', da Netflix",
       "Sou uma atriz brasileira que cresceu no ramo desde criança",
       "*Escolha um jogador para avançar 2 casas",
       "Sou uma das atrizes mais conhecidas da minha geração no Brasil",
       "Tive uma separação dos meus pais que virou assunto muito comentado na mídia",
       "Assinei contratos publicitários milionários ainda quando era criança, por causa da minha popularidade",
       "Já recebi prêmios de melhor atriz mirim e, depois, de categorias adultas ao longo da carreira",
-      "Também sou dubladora, emprestando minha voz para produções internacionais",
+      "Lancei um livro em formato de diário, contando minha vida de adolescente",
       "Fiz minha estreia na TV ainda muito criança, participando de comerciais",
-      "Estudei em escolas particulares enquanto conciliava gravações e uma rotina de trabalho intensa desde criança",
+      "Fui protagonista da novela Além da Ilusão, na Globo",
     ],
   },
   {
@@ -26987,7 +26910,7 @@ const ADULT_CARDS = expandDeck([
       "Migrei minha carreira para uma plataforma de transmissão ao vivo pela internet",
       "Fiquei conhecido por narrar e comentar jogos de futebol de forma descontraída",
       "Reuni milhões de pessoas assistindo transmissões simultâneas de partidas de futebol",
-      "Sou apaixonado declarado pelo Flamengo, meu time do coração",
+      "Sou torcedor declarado do Vasco da Gama",
       "Fiz lives que quebraram recordes de audiência simultânea na internet brasileira",
       "Sou conhecido pelo apelido carinhoso de 'Casimito' entre os fãs",
       "Tenho uma live diária onde comento notícias, esportes e cultura pop",
@@ -26996,12 +26919,12 @@ const ADULT_CARDS = expandDeck([
       "Fiz parcerias com grandes marcas por causa da minha audiência gigante na internet",
       "Sou um dos criadores de conteúdo mais assistidos do Brasil",
       "Comecei minha carreira de streamer comentando jogos com amigos, de forma bem informal",
-      "Trabalhei em canais como ESPN e Fox Sports antes de migrar para a internet",
+      "Trabalhei no canal Esporte Interativo antes de migrar para a internet",
       "Já recebi jogadores e ex-atletas famosos como convidados em transmissões ao vivo",
       "*Avance 2 casas",
       "*Um palpite a qualquer hora",
       "Fundei minha própria produtora de conteúdo esportivo e de entretenimento",
-      "Sou torcedor histórico e nunca escondi minha paixão clube durante transmissões",
+      "Meu canal transmitiu jogos da Copa do Mundo e das Olimpíadas",
     ],
   },
   {
@@ -27076,7 +26999,7 @@ const ADULT_CARDS = expandDeck([
       "Faço parte de uma das séries de TV mais antigas e longevas da história",
       "*Avance 2 casas",
       "Fui criado por um cartunista que batizou minha família usando nomes de seus próprios parentes",
-      "Já exerci empregos paralelos bizarros, incluindo astronauta e inventor de um removedor de neve",
+      "Já tive empregos paralelos bizarros, como astronauta e motorista de limpa-neve",
       "Minha voz original é feita pelo mesmo dublador há mais de três décadas, um recorde na televisão",
       "*Volte 3 casas",
       "Minha família apareceu pela primeira vez em quadros curtos dentro de outro programa de TV, antes de ganhar série própria",
@@ -27977,7 +27900,7 @@ const ADULT_CARDS = expandDeck([
       "Sou uma figura do folclore brasileiro, não uma criatura real",
       "Tenho apenas uma perna e adoro pregar peças em quem cruza meu caminho",
       "Costumo usar um gorro vermelho que, segundo a lenda, é a fonte dos meus poderes mágicos",
-      "Fumo um cachimbo e sou frequentemente representado como negro ou mulato nas lendas tradicionais",
+      "Fumo um cachimbo e sou tradicionalmente representado como um menino negro",
       "Consigo aparecer e desaparecer através de pequenos redemoinhos de vento e poeira",
       "Sou conhecido por esconder objetos, assustar animais e embaraçar o cabelo das pessoas",
       "*Volte 2 casas",
@@ -28012,7 +27935,7 @@ const ADULT_CARDS = expandDeck([
       "Costumo confundir caçadores fazendo-os andar em círculos dentro da floresta",
       "Sou tema de campanhas educativas sobre preservação ambiental no Brasil",
       "Apareço com frequência ao lado de outras figuras do folclore brasileiro em livros infantis",
-      "Sou descrito, em algumas versões da lenda, como filho da mãe-natureza",
+      "Fui citado já no século 16, numa carta do padre José de Anchieta",
       "Tenho o poder de me tornar invisível quando quero escapar de alguém",
       "Sou temido por caçadores que tentam capturar animais silvestres ilegalmente",
       "Apareço em desenhos animados brasileiros voltados para o público infantil",
@@ -28020,7 +27943,7 @@ const ADULT_CARDS = expandDeck([
       "Minha lenda varia de região para região dentro do vasto território brasileiro",
       "Sou uma figura fictícia usada até hoje para ensinar crianças sobre respeito à natureza",
       "Recuso-me a fazer mal a quem promete nunca mais caçar ou desmatar, segundo algumas versões da lenda",
-      "Sou o protetor lendário das matas brasileiras, com pés virados ao contrário",
+      "Em algumas regiões me confundem com a Caipora, outra protetora da mata",
     ],
   },
   {
@@ -28476,8 +28399,8 @@ const ADULT_CARDS = expandDeck([
       "Morri praticamente esquecido, apesar da importância das minhas contribuições científicas",
       "Fui reconhecido postumamente como um dos maiores gênios da eletricidade",
       "Sonhava com energia gratuita e ilimitada disponível para toda a humanidade",
-      "Minhas ideias inspiraram gerações de engenheiros elétricos depois da minha morte",
-      "Sou celebrado atualmente como símbolo de inovação disruptiva na cultura popular",
+      "Meu sistema de corrente alternada foi usado na usina das Cataratas do Niágara",
+      "Tinha um carinho especial por pombos e cuidava deles no hotel onde morava",
       "Contribuí diretamente para tornar a eletricidade acessível em larga escala",
     ],
   },
@@ -28634,7 +28557,7 @@ const ADULT_CARDS = expandDeck([
       "Costumo competir em provas de solo, salto, trave e barras assimétricas",
       "*Um palpite a qualquer hora",
       "Sou reconhecida por saltos e giros extremamente arriscados e difíceis de executar",
-      "Minha altura, considerada baixa para o esporte, nunca foi obstáculo para minhas conquistas",
+      "Fui campeã olímpica do individual geral no Rio de Janeiro, em 2016",
       "*Escolha um jogador para voltar 2 casas",
       "Sou frequentemente comparada às maiores lendas históricas da ginástica mundial",
       "Fui capa de revistas esportivas de grande circulação nos Estados Unidos",
@@ -28682,7 +28605,7 @@ const ADULT_CARDS = expandDeck([
       "Consigo atingir formas mais poderosas com cabelos que mudam de cor e se arrepiam",
       "Adoro comer em quantidades absurdas, sempre com um apetite gigantesco",
       "Já morri e ressuscitei mais de uma vez ao longo da minha história",
-      "Tenho um filho e um neto que também se tornam guerreiros poderosos",
+      "Tenho filhos e uma neta que também viram guerreiros poderosos",
       "Busco constantemente esferas mágicas espalhadas pelo mundo que realizam desejos",
       "Sou treinado por mestres divinos em locais isolados para superar meus próprios limites",
       "Tenho uma rivalidade amistosa com um príncipe da minha raça alienígena de origem",
@@ -28701,7 +28624,7 @@ const ADULT_CARDS = expandDeck([
     q: [
       "Sou um super-herói fictício criado nos quadrinhos americanos",
       "Na minha identidade civil, sou um jovem fotógrafo e estudante de Nova York",
-      "Ganhei poderes depois de ser picado por um inseto geneticamente alterado",
+      "Ganhei poderes depois de ser picado por um aracnídeo modificado em laboratório",
       "Consigo grudar em paredes e superfícies verticais com as mãos e os pés",
       "Tenho um sentido especial que me avisa sobre perigos antes que eles aconteçam",
       "Criei artesanalmente lançadores de teia que uso presos aos meus pulsos",
@@ -28786,7 +28709,7 @@ const ADULT_CARDS = expandDeck([
       "Perco o controle dos meus poderes durante minha própria cerimônia de coroação",
       "Fujo para as montanhas e construo sozinha um palácio inteiro feito de gelo",
       "Canto uma música sobre aceitar quem sou, que se tornou um enorme sucesso mundial",
-      "Sou coroada rainha depois de reconciliar minha relação com minha irmã mais nova",
+      "No fim da minha segunda aventura, deixo o trono para minha irmã e vou viver na floresta",
       "*Volte 3 casas",
       "Tenho um boneco de neve criado por acidente que ganha vida e se torna meu amigo",
       "Em uma aventura posterior, viajo em busca da origem verdadeira dos meus poderes",
@@ -28874,7 +28797,7 @@ const ADULT_CARDS = expandDeck([
       "Sou extremamente leal aos meus amigos, colocando-os sempre à frente de mim mesmo",
       "Meu bom humor e ingenuidade contrastam com minha força de combate impressionante",
       "Sou protagonista de uma das obras mais longas e vendidas da história dos quadrinhos japoneses",
-      "Meu nome de capitão pirata dá título à obra inteira onde apareço",
+      "Meu avô é um herói da Marinha, justamente a força que caça piratas",
       "Sou considerado um herói pelos meus companheiros, apesar de também ser um pirata caçado pelo governo",
       "Minha jornada me leva a enfrentar governos, outros piratas e criaturas marinhas gigantes",
       "Sou movido por um senso incomum de liberdade e aventura acima de tudo",
@@ -29642,7 +29565,7 @@ const ADULT_CARDS = expandDeck([
       "Meu irmão Theo me sustentou financeiramente durante quase toda a minha carreira",
       "*Volte 2 casas",
       "Pintei com pinceladas grossas e cores muito vibrantes, um estilo bem reconhecível",
-      "Sou o pintor holandês criador da obra 'A Noite Estrelada'",
+      "Pintei Os Comedores de Batata, um quadro escuro sobre uma família camponesa",
       "Meus quadros hoje são vendidos por dezenas de milhões de dólares em leilões",
       "Sou considerado um dos maiores pintores pós-impressionistas da história",
     ],
@@ -29669,8 +29592,8 @@ const ADULT_CARDS = expandDeck([
       "*Avance 1 casa",
       "Fui premiada diversas vezes como atleta do ano por revistas esportivas americanas",
       "O filme King Richard conta a história do meu pai treinando a mim e à minha irmã",
-      "Conquistei uma medalha de ouro olímpica em duplas ao lado da minha irmã",
-      "Sou considerada por muitos a maior tenista da história do esporte",
+      "Ganhei medalhas de ouro olímpicas em duplas ao lado da minha irmã",
+      "Ganhei o ouro olímpico em simples em Londres, em 2012",
     ],
   },
   {
@@ -29988,9 +29911,9 @@ const ADULT_CARDS = expandDeck([
       "Meu maior desafeto na primeira aventura é um lorde baixinho e ambicioso",
       "Meu primeiro filme ganhou o primeiro Oscar de melhor animação da história",
       "Adoro cebolas e costumo comparar minha personalidade complexa a elas",
-      "Minha voz original em inglês foi feita por um ator e comediante escocês",
+      "Minha voz original em inglês é do comediante Mike Myers, com sotaque escocês",
       "*Um palpite a qualquer hora",
-      "Sou dublado no Brasil de forma bem característica em todos os meus filmes",
+      "No Brasil, fui dublado nos primeiros filmes pelo humorista Bussunda",
       "O Gato de Botas virou meu amigo no segundo filme",
       "Frases minhas como 'Ogros são como cebolas' viraram parte da cultura pop",
       "Minha franquia mistura e faz piada com vários contos de fadas clássicos ao mesmo tempo",
@@ -30111,7 +30034,7 @@ const ADULT_CARDS = expandDeck([
       "*Volte 2 casas",
       "Minha capacidade de cura acelerada me deixa praticamente imune a doenças e ao envelhecimento normal",
       "Um governo secreto me submeteu a um experimento que fundiu um metal indestrutível ao meu esqueleto e às garras que saem do meu punho",
-      "Minha primeira aparição nos quadrinhos foi como vilão, antes de me tornar um dos heróis mais amados",
+      "Minha primeira aparição nos quadrinhos foi brigando com o Hulk, antes de virar um dos heróis mais amados",
       "*Escolha um jogador para avançar 2 casas",
       "Tenho pelos grisalhos nas laterais da cabeça, um visual bem reconhecível",
       "Sou considerado um anti-herói, com um passado violento que carrego como um fardo",
@@ -30124,7 +30047,7 @@ const ADULT_CARDS = expandDeck([
       "Minhas três garras de cada mão são feitas de um metal fictício chamado adamantium",
       "Meu codinome de herói é uma referência direta a um animal selvagem parecido com um texugo, conhecido pela ferocidade",
       "Fui interpretado nos cinemas pelo ator Hugh Jackman por quase duas décadas seguidas",
-      "Morri de forma definitiva num dos meus filmes mais aclamados pela crítica, algo raro para personagens de quadrinhos",
+      "O filme Logan, de 2017, mostra minha morte e foi muito elogiado pela crítica",
       "Dentes de Sabre é meu maior rival",
     ],
   },
@@ -31625,7 +31548,7 @@ const ADULT_CARDS = expandDeck([
       "*Escolha um jogador para avançar 2 casas",
       "Minha história em quadrinhos é uma das mais lidas do Brasil",
       "Sou a líder de uma turminha de amigos muito conhecida",
-      "Tenho um irmãozinho que também aparece nos quadrinhos",
+      "Tenho um cachorro chamado Monicão",
       "Meu sobrenome é Sousa, igual ao do meu criador",
       "Fui inspirada numa filha do meu criador",
     ],
@@ -31643,10 +31566,10 @@ const ADULT_CARDS = expandDeck([
       "Adoro inventar planos mirabolantes que quase nunca dão certo",
       "Moro na mesma cidadezinha cheia de personagens de quadrinho",
       "Sou fã de super-heróis e adoro me fantasiar de um deles",
-      "Tenho uma cachorrinha de estimação",
+      "Tenho um cachorro verde e peludo chamado Floquinho",
       "Costumo levar coelhadas quando irrito minha amiga mais forte",
       "*Volte 3 casas",
-      "Sou apaixonado por invenções malucas, quase sempre sem sucesso",
+      "Tenho só cinco fios de cabelo espetados na cabeça",
       "Minha fala trocada é uma marca registrada nos quadrinhos",
       "Fui criado pelo mesmo cartunista da minha amiga mais forte",
       "Apareço em quase todas as histórias da minha turma de amigos",
@@ -31654,7 +31577,7 @@ const ADULT_CARDS = expandDeck([
       "*Perca sua vez",
       "Sou conhecido por armar confusão junto com meus amigos de rua",
       "Meu nome lembra um vegetal que faz chorar de tão forte que é",
-      "Sou fã de desenhar historinhas em quadrinhos dentro da minha própria história",
+      "Vivo tentando pegar o coelhinho da minha amiga pra dar nó nas orelhas dele",
     ],
   },
   {
@@ -31667,12 +31590,12 @@ const ADULT_CARDS = expandDeck([
       "Ando descalço e sempre meio sujo",
       "Sou amigo de uma menina forte que carrega um coelho de pelúcia",
       "Fui criado pelo mesmo cartunista da minha amiga mais forte",
-      "Uso um chapéu de palha puído",
+      "Meu melhor amigo é um menino que troca o R pelo L quando fala",
       "*Um palpite a qualquer hora",
       "Moro na mesma cidadezinha cheia de personagens de quadrinho",
       "Tenho um porquinho de estimação",
       "Fico à vontade brincando na lama",
-      "Adoro pescar e passar o dia ao ar livre",
+      "Adoro inventar brinquedos com sucata e coisas velhas",
       "Costumo evitar qualquer contato com banheira ou chuveiro",
       "Minha melhor amiga vive tentando me obrigar a tomar banho",
       "Apareço em quase todas as histórias da minha turma de amigos",
@@ -31680,7 +31603,7 @@ const ADULT_CARDS = expandDeck([
       "Sou tão sujo que às vezes nem os mosquitos chegam perto",
       "Meu nome vem justamente da sujeira que carrego pelo corpo",
       "Sou o amigo da turma mais famoso por fugir do banho",
-      "Uso uma calça surrada e cheia de remendos",
+      "Ando com um guarda-chuva pra fugir de qualquer gota que cair",
       "Sou tão avesso à água que até chuva me faz correr",
     ],
   },
@@ -31730,7 +31653,7 @@ const ADULT_CARDS = expandDeck([
       "Vivo em histórias cheias de bichos da fazenda",
       "Minha namorada se chama Rosinha",
       "Minha escola fica no meio do mato, numa casinha simples",
-      "Costumo brigar com o professor por não gostar de estudar",
+      "Minha professora se chama Dona Marocas",
       "Moro na Vila Abobrinha",
       "*Avance 2 casas",
       "Represento a vida simples do campo nas histórias em quadrinhos",
@@ -31745,10 +31668,10 @@ const ADULT_CARDS = expandDeck([
     q: [
       "Somos uma dupla de palhaços brasileiros",
       "Fazemos shows e desenhos para o público infantil",
-      "Um de nós usa roupa listrada, o outro usa xadrez",
+      "Fomos criados nos anos 1980 e já passamos por várias gerações de crianças",
       "Cantamos e dançamos músicas animadas para crianças",
       "Somos muito conhecidos em circos e teatros pelo Brasil",
-      "Um de nós tem o nariz vermelho, como todo palhaço",
+      "Um de nós vive tentando animar o outro nas nossas histórias",
       "*Avance 2 casas",
       "Fazemos parte de um circo mágico nas nossas histórias",
       "Temos um desenho animado próprio, além dos shows ao vivo",
@@ -31756,7 +31679,7 @@ const ADULT_CARDS = expandDeck([
       "Um de nós é mais desastrado, o outro mais esperto",
       "Nossos nomes rimam um com o outro",
       "Nossos DVDs venderam milhões de cópias no Brasil",
-      "Cada um de nós usa um chapéu bem colorido e engraçado",
+      "Nosso nome junta duas palavrinhas que parecem um trava-língua",
       "*Volte 2 casas",
       "Fazemos a alegria de crianças em festas de aniversário",
       "Somos personagens interpretados por diferentes atores ao longo dos anos",
@@ -31780,13 +31703,13 @@ const ADULT_CARDS = expandDeck([
       "Sou uma das personagens infantis brasileiras mais assistidas no mundo todo",
       "*Um palpite a qualquer hora",
       "Danço junto com as músicas dos meus vídeos",
-      "Fiz tanto sucesso que ganhei brinquedos, roupas e até filme",
-      "Meu corpo tem bolinhas coloridas espalhadas pelas penas",
+      "Fiz tanto sucesso que ganhei brinquedos, roupas e até programa de TV",
+      "Sou azul, com bolinhas brancas pelo corpo",
       "Tenho o formato de uma ave de fazenda, só que bem mais colorida e estilizada",
       "*Escolha um jogador para avançar 2 casas",
       "Meu nome descreve exatamente a aparência do meu corpo cheio de bolinhas",
       "Meus vídeos costumam ter cenário bem colorido e cheio de bichinhos",
-      "Fiz parceria com outras marcas para lançar brinquedos e roupas",
+      "O Galo Carijó aparece cantando comigo",
       "Minhas músicas são cantigas populares regravadas de um jeito animado",
       "*Escolha um jogador para voltar 2 casas",
       "Sou uma das personagens mais buscadas em plataformas de vídeo para crianças",
@@ -31835,7 +31758,7 @@ const ADULT_CARDS = expandDeck([
       "Sou considerado um dos maiores nomes infantis do YouTube brasileiro",
       "Meu apelido lembra o nome de um jogador de futebol famoso",
       "*Escolha um jogador para avançar 2 casas",
-      "Comecei gravando ainda bem novo, com apenas alguns anos de idade",
+      "Comecei a gravar vídeos ainda adolescente",
       "Faço vídeos animados sobre jogos que fazem sucesso com crianças",
       "Sou uma referência para muita criança que também quer jogar videogame",
       "Meu nome de youtuber é um apelido carinhoso e diminutivo",
@@ -31934,7 +31857,7 @@ const ADULT_CARDS = expandDeck([
     q: [
       "Sou um jogador de futebol brasileiro",
       "Jogo num time gigante da Espanha",
-      "Sou canhoto e gosto de driblar muito",
+      "Sou muito rápido e adoro partir pra cima driblando",
       "Comecei minha carreira num time carioca",
       "Tenho um jeitinho de dançar quando faço gol",
       "Jogo como ponta, quase sempre pelo lado esquerdo do campo",
@@ -31948,7 +31871,7 @@ const ADULT_CARDS = expandDeck([
       "Uso comemorações de gol inspiradas em passos de dança brasileira",
       "*Avance 2 casas",
       "Saí do Brasil ainda adolescente para jogar na Europa",
-      "Sou considerado um dos favoritos a vencer prêmios individuais de melhor jogador do mundo",
+      "Fui eleito o melhor jogador do mundo pela FIFA em 2024",
       "Já sofri racismo dentro de campo e virei voz contra esse tipo de ataque",
       "Fui revelado nas categorias de base do Flamengo, antes de ir pra Europa",
       "Costumo comemorar meus gols dançando com os companheiros de time",
@@ -32082,7 +32005,7 @@ const ADULT_CARDS = expandDeck([
       "Minha frase mais famosa fala sobre ninguém ser deixado para trás",
       "Sou uma criatura pequena, azul e cheia de energia",
       "Comecei como um monstro criado em laboratório, num planeta distante",
-      "Aprendo que família significa que ninguém fica pra trás",
+      "Meu número de experimento é 626",
       "Sou o alienígena azul que vira parte de uma família havaiana",
       "Minha aparência de cachorrinho azul esconde uma força imensa",
       "Fui pensado para ser uma arma, mas virei um bicho de estimação especial",
@@ -32136,7 +32059,7 @@ const ADULT_CARDS = expandDeck([
       "Sou bem desengonçado e minha cabeça às vezes cai do corpo",
       "*Volte 2 casas",
       "Fui criado com a magia de uma das irmãs, ainda quando elas eram crianças",
-      "Elsa me deu vida sem perceber",
+      "Minha frase famosa diz que por algumas pessoas vale a pena derreter",
       "Ganhei uma nuvenzinha de neve particular que me impede de derreter",
       "Tenho um amigo rena que também participa das aventuras",
       "*Volte 3 casas",
@@ -34875,7 +34798,7 @@ const ADULT_CARDS = expandDeck([
       "Participei da Inconfidência Mineira",
       "Nosso movimento era contra a cobrança de impostos da Coroa portuguesa",
       "Fomos traídos por Joaquim Silvério dos Reis",
-      "Fui o único condenado à morte do movimento",
+      "Fui o único condenado do movimento a ser de fato executado",
       "Fui enforcado no Rio de Janeiro em 1792",
       "*Volte 3 casas",
       "O dia da minha morte, 21 de abril, é feriado nacional",
@@ -34950,7 +34873,7 @@ const ADULT_CARDS = expandDeck([
     q: [
       "Sou uma assombração do folclore brasileiro",
       "Dizem que virei o que sou por causa de um namoro proibido com um padre",
-      "No lugar da cabeça, solto fogo pelo pescoço",
+      "Solto labaredas de fogo enquanto galopo pela noite",
       "*Um palpite a qualquer hora",
       "Apareço galopando na noite de quinta para sexta-feira",
       "Meus cascos fazem um barulho assustador nas estradas de terra",
@@ -37098,7 +37021,7 @@ const ADULT_CARDS = expandDeck([
       "Na última temporada, apareço barbudo e cansado",
       "Ganhei meu apelido das pessoas do futuro",
       "Meu desenho ganhou vários prêmios Emmy",
-      "No Brasil, minha voz foi feita por Guilherme Briggs",
+      "Nas minhas aventuras, faço amizade com um escocês grandalhão e barulhento",
       "*Um palpite a qualquer hora",
     ],
   },
@@ -37860,7 +37783,7 @@ const ADULT_CARDS = expandDeck([
       "Fui um dos primeiros astros da Warner",
       "Às vezes sou parceiro do Patolino",
       "Sou tímido e bonzinho",
-      "No Brasil, Manolo Rey é uma das minhas vozes",
+      "Tenho um sobrinho chamado Cicero",
       "Em inglês me chamam de Porky",
       "Sou rosa",
       "Minha primeira aparição foi em 1935, no desenho I Haven't Got a Hat",
@@ -37946,7 +37869,7 @@ const ADULT_CARDS = expandDeck([
       "Somos cachorros que andam em pé",
       "Em inglês nos chamam de Beagle Boys",
       "Moramos em Patópolis",
-      "Somos irmãos",
+      "Aparecemos sempre em bando, nunca sozinhos",
       "Nosso nome parece com arma que dispara muito rápido",
       "*Escolha um jogador para voltar 2 casas",
     ],
@@ -38106,7 +38029,7 @@ const ADULT_CARDS = expandDeck([
       "Também estudamos a língua alemã e fizemos um dicionário",
       "A Disney usou muitas das nossas histórias",
       "Um filme de 2005 com Matt Damon usou nosso nome",
-      "Somos irmãos",
+      "Wilhelm era o mais novo de nós dois",
       "Nossos contos são chamados de contos de fadas",
       "Na Alemanha existe uma Rota dos Contos de Fadas em nossa homenagem",
       "Nosso sobrenome tem cinco letras",
@@ -38207,7 +38130,7 @@ const ADULT_CARDS = expandDeck([
       "Abrimos uma empresa num antigo quartel de bombeiros",
       "Usamos mochilas de prótons",
       "Nunca podemos cruzar os raios",
-      "Prendemos fantasmas em armadilhas",
+      "Guardamos os bichos capturados numa unidade de contenção no porão",
       "Bill Murray e Dan Aykroyd fazem parte da equipe",
       "*Avance 1 casa",
       "Nosso carro é uma ambulância branca chamada Ecto-1",
@@ -38505,7 +38428,7 @@ const ADULT_CARDS = expandDeck([
       "Cantei a música de um filme do 007",
       "*Escolha um jogador para voltar 2 casas",
       "Ganhei dois Oscars de canção original",
-      "Ganhei um Oscar pela música What Was I Made For?, do filme da Barbie",
+      "Meu primeiro álbum se chama When We All Fall Asleep, Where Do We Go?",
       "Usava roupas bem largas",
       "Já pintei o cabelo de verde neon e azul",
       "Tenho síndrome de Tourette",
@@ -38752,7 +38675,7 @@ const ADULT_CARDS = expandDeck([
       "Sou ilustrador",
       "Tenho um canal no YouTube",
       "Faço vozes graves de herói e vozes engraçadas de desenho",
-      "Dublei o Jim Carrey no filme O Grinch",
+      "Também empresto a voz para muitos comerciais e chamadas de TV",
       "Dublei o Cosmo, de Os Padrinhos Mágicos",
       "Dublei o Rei Julien, de Madagascar",
       "*Volte 2 casas",
@@ -38770,7 +38693,7 @@ const ADULT_CARDS = expandDeck([
       "*Escolha um jogador para voltar 2 casas",
       "Dublei o Wolverine nos filmes dos X-Men",
       "O ator Hugh Jackman me homenageou",
-      "Conheci Hugh Jackman num programa de TV em 2017",
+      "Comecei a carreira artística no rádio",
       "Dublei o Esqueleto, vilão do He-Man",
       "Dublei o Freddy Krueger",
       "*Escolha um jogador para avançar 2 casas",
@@ -46664,6 +46587,22 @@ const PAUSE_TIPS = [
 ];
 const NOVIDADES = [
   {
+    v: "Beta 1.7.3.2",
+    data: "02/10/2026 · 20:28",
+    nome: "Cards and Rules Update · Parte 3",
+    t: "Todas as 191 cartas de Pessoa conferidas uma por uma, código mais enxuto e um agradecimento que estava faltando.",
+    itens: [
+      "🧑 Cartas de Pessoa revisadas: as 191 cartas de Pessoa, de todos os modos, foram lidas dica por dica. 83 dicas foram corrigidas ou trocadas por fatos mais certeiros.",
+      "✍️ Fatos corrigidos: a Larissa Manoela é de Guarapuava (PR) e nunca fez a Poliana; o Whindersson não nasceu em Teresina; a Anitta não foi dentista; o Casimiro é vascaíno; o Messi não foi jogar futebol americano; o Neymar já voltou ao Santos; a Elsa não é coroada no fim do filme; e outras.",
+      "🔁 Menos repetição: cartas que repetiam a mesma informação em duas ou três dicas (como a Malala e o Messi) ganharam dicas novas no lugar das repetidas.",
+      "🙌 Créditos ao Pedro: a musiquinha de vitória quando alguém acerta a carta e a risada do C.A.O.S. quando ele zoa foram ideias do Pedro, de 11 anos, que chegaram na 1.7.1.6. Valeu, Pedro!",
+    ],
+    qol: [
+      "🧹 Limpeza no código: saíram regras de visual vazias e mais de 90 linhas de estilo que nunca apareciam na tela (eram sempre substituídas por outras mais abaixo). O jogo fica igualzinho, só mais leve.",
+      "🗺️ Próximas partes: na 1.7.3.3 vêm as cartas de Lugar e um pente fino nas falas do C.A.O.S.; na 1.7.3.4, as cartas de Animal e Coisa e a caça às repetições. Aí a 1.7.3 fecha.",
+    ],
+  },
+  {
     v: "Beta 1.7.3.1",
     data: "02/10/2026 · 18:07",
     nome: "Cards and Rules Update · Parte 2",
@@ -46793,8 +46732,8 @@ const NOVIDADES = [
     itens: [
       "🌙☀️ Dois visuais: o Modo Noturno (o padrão, tudo escuro, inclusive a carta) e o Modo Claro (papel lavanda e cartas brancas). Troque no menu ⋮ do canto de cima.",
       "🙈 A resposta da carta ficou menor: só o nome, numa caixinha própria e em destaque. E agora dá pra tocar nela pra esconder na hora, sem esperar a 1ª dica.",
-      "🎵 Acertou uma carta? Toca uma musiquinha de vitória (ideia do Pedro, 11 anos).",
-      "😂 O C.A.O.S. às vezes dá risada quando zoa: HAHAHA! (ideia do Pedro). Nunca com quem está no Suave ou é iniciante.",
+      "🎵 Acertou uma carta? Toca uma musiquinha de vitória. Ideia do Pedro, 11 anos!",
+      "😂 O C.A.O.S. às vezes dá risada quando zoa: HAHAHA! Nunca com quem está no Suave ou é iniciante. Ideia do Pedro, 11 anos!",
       "📱 Ícone novo do app: o ? neon na frente de uma carta com o P de Perfil. Quem já instalou: apague o atalho e adicione de novo pra ver o ícone novo.",
       "⏰ Quando alguém perde a vez por tempo, o próximo não perde mais 5 segundos durante o aviso de TEMPO ESGOTADO.",
       "💬 No celular, o balão do C.A.O.S. ficou mais fácil de ler: a fala vai embaixo, na largura toda, em vez de espremida do lado do rostinho.",
