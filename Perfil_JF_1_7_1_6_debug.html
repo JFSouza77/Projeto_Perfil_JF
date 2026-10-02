@@ -6,7 +6,10 @@
   HISTÓRICO (uma linha por versão). Numeração: 1.7.1.N; depois do .9 sobe para 1.7.2.
   1.7.1.6 · 01/10/2026 · Números das versões corrigidos (as antigas 1.7.1.2 a 1.7.1.6 são
           1.7.1.1 a 1.7.1.5; arquivos renomeados, conteúdo intacto). Ícone novo do app
-          (? neon + carta). Modo Noturno opcional (carta escura). Debug: tempo esgotado
+          (? neon + carta com P). Dois visuais: Noturno (padrão) e Claro (body.claro).
+          Resposta menor, nome numa caixinha, toque pra esconder antes da 1ª dica.
+          Musiquinha de vitória ao acertar (vitoriaCarta); risadinha do C.A.O.S. nas
+          zoeiras (CAOS_RISADA_*). Debug: tempo esgotado
           não come 5 s do próximo; Express não vira "misto" ao recarregar; Reiniciar
           solta o silêncio do sorteio. Balão do C.A.O.S. no celular: fala na largura toda.
   1.7.1.5 · 01/10/2026 · PWA (manifest.json + ícones: instala na tela de início em tela cheia);
@@ -4836,9 +4839,169 @@ body.fx-urgente:after {
   background: #4c1d95;
   color: #fff;
 }
+/* Resposta da carta: caixa mais baixa; "Eu sou" pequeno e o nome numa caixinha própria */
+.answer-toggle.livre,
+.answer-toggle.open,
+.conferir-btn.open {
+  font-size: 1rem;
+  padding: 8px 10px 10px;
+  line-height: 1.15;
+  text-shadow: none;
+}
+.ans-rotulo {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.75;
+  margin-bottom: 5px;
+}
+.ans-nome {
+  display: inline-block;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 5px 14px 6px;
+  border-radius: 10px;
+  font-size: clamp(1.15rem, 5.4vw, 1.5rem);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  color: #231c3d;
+  background: rgba(212, 160, 23, 0.16);
+  border: 1.5px solid var(--card-glow, var(--special));
+}
+body.noturno .ans-nome {
+  color: #fff;
+  background: #121020;
+  border-color: var(--card-glow, var(--special));
+  text-shadow: 0 0 10px color-mix(in srgb, var(--card-glow, #d4a017) 70%, transparent);
+  box-shadow:
+    inset 0 0 10px color-mix(in srgb, var(--card-glow, #d4a017) 25%, transparent),
+    0 0 8px color-mix(in srgb, var(--card-glow, #d4a017) 35%, transparent);
+}
+/* ===== Modo Claro (Noturno é o padrão): papel lavanda, superfícies brancas, neon só nas bordas ===== */
+body.claro {
+  --bg: #f3f0fa;
+  --card-bg: #ffffff;
+  --text-dark: #231c3d;
+  --claro-sup: #ffffff;
+  --claro-sup2: #f8f5fe;
+  --claro-borda: #dcd3ef;
+  --claro-txt: #231c3d;
+  --claro-suave: #5b5277;
+  background: radial-gradient(circle at 50% 0%, #ffffff 0%, #f3f0fa 45%, #ebe6f7 100%);
+  color: var(--claro-txt);
+}
+/* superfícies que eram vidro escuro ficam brancas */
+body.claro .mode-btn.mc-card,
+body.claro .splash-ico,
+body.claro .splash-menu,
+body.claro .jf-modal,
+body.claro .tut-box,
+body.claro .stats-box,
+body.claro .voz-panel {
+  background: var(--claro-sup);
+  color: var(--claro-txt);
+}
+body.claro .stats-box,
+body.claro .voz-panel {
+  border: 1px solid var(--claro-borda);
+}
+body.claro .mode-btn.mc-card .mc-title,
+body.claro .voz-row,
+body.claro .splash-menu-tit {
+  color: var(--claro-txt);
+}
+body.claro .mode-btn.mc-card .mc-desc,
+body.claro .ft-lb,
+body.claro .pause-tip-count,
+body.claro #vozLista {
+  color: var(--claro-suave);
+}
+body.claro .splash-menu,
+body.claro .jf-modal,
+body.claro .tut-box {
+  box-shadow: 0 12px 32px rgba(60, 40, 110, 0.18);
+}
+body.claro .splash-caos {
+  background: rgba(255, 255, 255, 0.85);
+}
+body.claro .splash-caos .sc-txt {
+  color: var(--claro-txt);
+}
+/* janelas do C.A.O.S. (o estilo vem pronto no próprio elemento) */
+body.claro .caos-modal-ov,
+body.claro .jf-modal-bg,
+body.claro .tut-overlay {
+  background: rgba(35, 28, 61, 0.38) !important;
+}
+body.claro .caos-modal-ov > div {
+  background: var(--claro-sup) !important;
+  color: var(--claro-txt) !important;
+  box-shadow: 0 14px 40px rgba(60, 40, 110, 0.25) !important;
+}
+body.claro .casa-sorteio-tit {
+  color: var(--claro-txt);
+}
+/* textos dourados/ciano claros demais no papel */
+body.claro .splash-tagline,
+body.claro .add-falta,
+body.claro .ini-start,
+body.claro h3 {
+  color: #a15c07;
+  text-shadow: none;
+}
+body.claro .cad-tit,
+body.claro #trocarModoBtn,
+body.claro .tut-btn {
+  color: #0e7490;
+  text-shadow: none;
+}
+body.claro .btn-sec,
+body.claro .pause-tip-next {
+  color: var(--claro-suave);
+  border-color: var(--claro-borda);
+}
+body.claro .hall-zerar {
+  color: #be123c;
+}
+html.claro {
+  background: #ebe6f7;
+}
+body.claro #playerPanel > h2.cad-tit {
+  color: #0e7490;
+  text-shadow: none;
+}
+body.claro .rules-box h3,
+body.claro .rules-box.resumo-neon > h3,
+body.claro .jf-modal h3,
+body.claro .nov-modal h3,
+body.claro .resumo-box h3 {
+  filter: brightness(0.72) saturate(1.35);
+}
+/* chips (Som, Vibrar, Batata...) com a cor escurecida pra ler no branco */
+body.claro .splash-menu .chip,
+body.claro .splash-settings .chip {
+  color: color-mix(in srgb, var(--cc) 62%, #1a1030);
+  border-color: color-mix(in srgb, var(--cc) 75%, #1a1030);
+  box-shadow: none;
+}
+body.claro .splash-caos .sc-face {
+  background: #fff;
+  filter: brightness(0.75) saturate(1.3);
+  text-shadow: none;
+}
+/* nomes neon dos jogadores: mais escuros pra ler no claro */
+body.claro .player-name-neon,
+body.claro .hall-box h3,
+body.claro .stats-box h3 {
+  filter: brightness(0.72) saturate(1.35);
+}
 </style>
 </head>
-<body>
+<body class="noturno">
   
   <section class="splash-screen" id="splashScreen">
     <div class="splash-topo">
@@ -5393,8 +5556,22 @@ const CASA_META_PONTOS = { 2: 200, 3: 200, 4: 200, 5: 200, 6: 200 };
 const CASA_JOIA_DICAS_EXTRA = 1;
 // Último modo sorteado (para não repetir na partida seguinte).
 const CASA_ULTIMO_KEY = "perfil5_casa_ultimo";
-// Modo Noturno ligado neste aparelho ("1").
+// Visual do jogo neste aparelho: "0" = Modo Claro; sem valor ou "1" = Modo Noturno (padrão).
 const NOTURNO_KEY = "perfil5_noturno";
+// Risadinha do C.A.O.S. nas zoeiras: chance por fala, bancos de zoeira e as risadas.
+const CAOS_RISADA_CHANCE = 0.2;
+const CAOS_RISADA_BANCOS =
+  /^(erro|esgotouComResposta|especialVoltou|especialPercaVez|fominha|dicaRepetida|acido|nivelZero|desistiu|implicancia|duploPadrao|bolaCristalErro|absurdo)/;
+const CAOS_RISADAS = [
+  "HAHAHA!",
+  "Hahaha.",
+  "Ha!",
+  "Hehehe...",
+  "HA! Trouxa!",
+  "Hahaha, essa foi longe.",
+  "Ha, se lascou!",
+];
+const CAOS_RISADAS_JUNIOR = ["Hihihi!", "Hehe!", "Hahaha!", "Ops, hihi."];
 // Trava de joias: no máximo esta quantidade por jogador (ou equipe) em cada rodada,
 // sempre que o modo em jogo for Joias (Moda da Casa sorteada em Joias ou "Só Joias").
 const JOIAS_POR_RODADA = 2;
@@ -6221,6 +6398,8 @@ let expressWhoFreeze = null;
 let expressTargetAction = null;
 let rouletteToken = 0;
 let answerRevealUntil = 0;
+// Carta cuja resposta o Mestre já escondeu com um toque (antes da 1ª dica).
+let answerEscondidaCarta = null;
 let answerHideRef = null;
 let answerChecksThisCard = 0;
 var caosTokPrev = {};
@@ -7655,7 +7834,7 @@ function markCorrect(playerIdxOverride) {
   consecutiveExhausted = 0;
   usedAtLeastOnce = true;
   expressStealSavedResponder = null;
-  playSfx("acerto");
+  playSfx("vitoriaCarta");
   celebrateHit();
   vibrar("acerto");
   const realCluesRevealed = revealedOrder.filter((r) => r.item.type === "clue").length;
@@ -9068,10 +9247,20 @@ function releaseWakeLock() {
  * ====================================================================== */
 
 function answerLivre() {
-  return !!currentCard && cardState === "revealed" && CURRENT_MODE !== "express" && revealedOrder.length === 0;
+  return (
+    !!currentCard &&
+    cardState === "revealed" &&
+    CURRENT_MODE !== "express" &&
+    revealedOrder.length === 0 &&
+    answerEscondidaCarta !== currentCard
+  );
+}
+// "Eu sou:" pequeno em cima e o nome numa caixinha própria, em destaque.
+function answerHtml() {
+  return `<span class="ans-rotulo">Eu sou</span><span class="ans-nome">${escapeHtml(currentCard.answer)}</span>`;
 }
 function answerTexto(open) {
-  return answerLivre() || open ? "Eu sou: " + currentCard.answer : "🙈 Resposta escondida — toque pra ver (5 s)";
+  return answerLivre() || open ? answerHtml() : "🙈 Resposta escondida — toque pra ver (5 s)";
 }
 function deckWasUsed() {
   return usedAtLeastOnce;
@@ -9919,7 +10108,7 @@ function render() {
         <div class="number-grid">${grid}</div>`;
     }
     if (pendingIndex !== null && currentCard.clues[pendingIndex].type === "clue") {
-      controlsHtml += `<button type="button" class="conferir-btn" id="conferirBtn">${Date.now() < answerRevealUntil ? "Eu sou: " + currentCard.answer : "👁️ Conferir resposta"}</button>`;
+      controlsHtml += `<button type="button" class="conferir-btn" id="conferirBtn">${Date.now() < answerRevealUntil ? answerHtml() : "👁️ Conferir resposta"}</button>`;
     }
     const historyBlurred = pendingIndex !== null ? "blurred" : "";
     const realCluesCount = revealedOrder.filter((r) => r.item.type === "clue").length;
@@ -10069,7 +10258,7 @@ function startCategoryRoulette() {
 }
 function answerLineHtml() {
   const open = answerLivre() || Date.now() < answerRevealUntil;
-  return `<button type="button" id="answerToggle" class="answer-line-name answer-toggle${open ? " open" : ""}${answerLivre() ? " livre" : ""}">${answerTexto(open)}</button>${answerLivre() ? `<div class="ans-hint" id="ansHint">👀 some quando a 1ª dica for aberta</div>` : ""}`;
+  return `<button type="button" id="answerToggle" class="answer-line-name answer-toggle${open ? " open" : ""}${answerLivre() ? " livre" : ""}">${answerTexto(open)}</button>${answerLivre() ? `<div class="ans-hint" id="ansHint">👆 toque pra esconder · some sozinha na 1ª dica</div>` : ""}`;
 }
 function wireAnswerToggle() {
   ["answerToggle", "conferirBtn"].forEach((id) => {
@@ -10078,7 +10267,15 @@ function wireAnswerToggle() {
   });
 }
 function revealAnswerBriefly() {
-  if (!currentCard || answerLivre()) return;
+  if (!currentCard) return;
+  // resposta à mostra antes da 1ª dica: o toque esconde na hora
+  if (answerLivre()) {
+    answerEscondidaCarta = currentCard;
+    answerRevealUntil = 0;
+    clearTimeout(answerHideRef);
+    refreshAnswerToggle();
+    return;
+  }
   const jaAberta = Date.now() < answerRevealUntil;
   answerRevealUntil = Date.now() + ANSWER_REVEAL_MS;
   refreshAnswerToggle();
@@ -10113,14 +10310,14 @@ function refreshAnswerToggle() {
   if (b) {
     b.classList.toggle("open", open);
     b.classList.toggle("livre", answerLivre());
-    b.textContent = answerTexto(open);
+    b.innerHTML = answerTexto(open);
   }
   const hh = document.getElementById("ansHint");
   if (hh) hh.style.display = answerLivre() ? "" : "none";
   const c = document.getElementById("conferirBtn");
   if (c) {
     c.classList.toggle("open", open);
-    c.textContent = open ? "Eu sou: " + currentCard.answer : "👁️ Conferir resposta";
+    c.innerHTML = open ? answerHtml() : "👁️ Conferir resposta";
   }
 }
 function renderBonusBanner() {
@@ -12064,17 +12261,33 @@ function updateBatataBtn() {
 function updateNoturnoBtn() {
   const btn = document.getElementById("btnNoturno");
   if (!btn) return;
-  const on = document.body.classList.contains("noturno");
-  btn.classList.toggle("off", !on);
-  btn.title = on
-    ? "Modo Noturno LIGADO: carta escura (toque pra desligar)"
-    : "Modo Noturno: carta escura, mais confortável no escuro (toque pra ligar)";
+  const claro = document.body.classList.contains("claro");
+  btn.textContent = claro ? "☀️ Claro" : "🌙 Noturno";
+  btn.style.setProperty("--cc", claro ? "#f59e0b" : "#a5b4fc");
+  btn.title = claro ? "Modo Claro (toque pra voltar ao Noturno)" : "Modo Noturno (toque pra trocar pro Claro)";
+}
+// Dois visuais: Noturno (padrão) e Claro. Guardado em NOTURNO_KEY: "0" = Claro.
+function temaAplicar(claro) {
+  if (claro === undefined) {
+    claro = false;
+    try {
+      claro = JFStore.getItem(NOTURNO_KEY) === "0";
+    } catch (e) {}
+  }
+  document.body.classList.toggle("noturno", !claro);
+  document.body.classList.toggle("claro", claro);
+  document.documentElement.classList.toggle("claro", claro);
+  try {
+    const m = document.querySelector('meta[name="theme-color"]');
+    if (m) m.setAttribute("content", claro ? "#f3f0fa" : "#1a1a2e");
+  } catch (e) {}
+  updateNoturnoBtn();
 }
 function toggleNoturno() {
-  const on = document.body.classList.toggle("noturno");
-  updateNoturnoBtn();
+  const claro = !document.body.classList.contains("claro");
+  temaAplicar(claro);
   try {
-    JFStore.setItem(NOTURNO_KEY, on ? "1" : "0");
+    JFStore.setItem(NOTURNO_KEY, claro ? "0" : "1");
   } catch (e) {}
 }
 function toggleBatataMode() {
@@ -12599,6 +12812,33 @@ function playSfx(type) {
     const now = audioCtx.currentTime;
     if (type === "vitoria") {
       playFanfare(audioCtx);
+      return;
+    }
+    // musiquinha de vitória ao acertar uma carta (3 variações, pra não enjoar)
+    if (type === "vitoriaCarta") {
+      const M = [
+        [
+          [523.25, 0, 0.1],
+          [659.25, 0.09, 0.1],
+          [783.99, 0.18, 0.1],
+          [1046.5, 0.27, 0.38],
+        ],
+        [
+          [783.99, 0, 0.09],
+          [880, 0.08, 0.09],
+          [987.77, 0.16, 0.09],
+          [1174.66, 0.24, 0.36],
+        ],
+        [
+          [523.25, 0, 0.09],
+          [523.25, 0.12, 0.07],
+          [783.99, 0.22, 0.4],
+        ],
+      ][Math.floor(Math.random() * 3)];
+      M.forEach(([f, t, d]) => sfxNote(audioCtx, f, now + t, d, { vol: 0.12 }));
+      const fim = M[M.length - 1][1];
+      [659.25, 783.99].forEach((f) => sfxNote(audioCtx, f, now + fim, 0.42, { vol: 0.045, type: "sine" }));
+      sfxNote(audioCtx, 2093, now + fim + 0.05, 0.25, { vol: 0.025, type: "sine" });
       return;
     }
     if (type === "acerto") {
@@ -13191,7 +13431,7 @@ function getRandomReaction(list, ...args) {
     if (caosIsDisliked(list, text, args)) continue;
     if (typeof text === "string" && text.length > 170 && tries < 4 && list.length > 1) continue;
     if (!caosHasProfanity(text, args)) {
-      const out = caosSelfRoastIfSlang(caosDecorate(text, list), args, list);
+      const out = caosRisada(caosSelfRoastIfSlang(caosDecorate(text, list), args, list), list, args);
       if (out) {
         caosDiagLog(list);
         caosLastPick = { bank: caosBankId(list), key: caosLineKey(list, text, args), text: out };
@@ -13202,6 +13442,19 @@ function getRandomReaction(list, ...args) {
     caosBadIdx.get(list).add(idx);
   }
   return "";
+}
+// Risadinha do C.A.O.S. nas falas de zoeira (ideia do Pedro, 11 anos): às vezes ele ri
+// antes ou depois de zoar. Nunca com quem está no Suave ou é iniciante; no Júnior, risada leve.
+function caosRisada(text, list, args) {
+  if (typeof text !== "string" || text.indexOf(CAOS_PREFIXO) !== 0) return text;
+  if (Math.random() >= CAOS_RISADA_CHANCE) return text;
+  if (!CAOS_RISADA_BANCOS.test(caosBankId(list))) return text;
+  const alvo = typeof args[0] === "string" ? players.find((p) => p.name === args[0]) : null;
+  if (alvo && (alvo.iniciante || playerHumor(alvo) === "suave")) return text;
+  const r = CURRENT_MODE === "junior" ? CAOS_RISADAS_JUNIOR : CAOS_RISADAS;
+  const ri = r[Math.floor(Math.random() * r.length)];
+  const corpo = text.slice(CAOS_PREFIXO.length);
+  return Math.random() < 0.6 ? CAOS_PREFIXO + ri + " " + corpo : text.replace(/\s*$/, "") + " " + ri;
 }
 function caosBankId(list) {
   if (!caosPoolIds) caosPoolIds = caosBuildPoolIds();
@@ -20918,10 +21171,7 @@ function applyStoredPrefs() {
     document.body.classList.toggle("batata-mode", batata);
     updateBatataBtn();
   } catch (e) {}
-  try {
-    document.body.classList.toggle("noturno", JFStore.getItem(NOTURNO_KEY) === "1");
-    updateNoturnoBtn();
-  } catch (e) {}
+  temaAplicar();
   caosHist = null;
   caosCardMem = null;
   caosDiag = null;
@@ -25654,8 +25904,8 @@ const TUTORIAL_STEPS = [
     sec: 2,
     icon: "🙈",
     title: "2. A resposta (só pro Mestre)",
-    text: "Ao virar a carta, a resposta fica <b>à mostra até a 1ª dica ser aberta</b>: é a hora do Mestre memorizar. Depois ela se esconde, e pra conferir de novo é só tocar na faixa ou em <b>👁️ Conferir resposta</b> (aparece por <b>5 segundos</b>). Assim ninguém espia por cima do ombro.<br>Olhou sem querer (ou alguém viu)? Dá pra <b>reembaralhar</b> antes da 1ª dica.",
-    mock: '<div class="answer-line-name answer-toggle livre">Eu sou: Cometa · 👀 some quando a 1ª dica for aberta</div><div class="answer-line-name answer-toggle" style="margin-top:8px;">🙈 Resposta escondida — toque pra ver (5 s)</div>',
+    text: "Ao virar a carta, a resposta fica <b>à mostra até a 1ª dica ser aberta</b>: é a hora do Mestre memorizar. Memorizou? <b>Toque nela pra esconder na hora</b> (bom quando a mesa demora pra escolher a dica). Depois ela se esconde, e pra conferir de novo é só tocar na faixa ou em <b>👁️ Conferir resposta</b> (aparece por <b>5 segundos</b>). Assim ninguém espia por cima do ombro.<br>Olhou sem querer (ou alguém viu)? Dá pra <b>reembaralhar</b> antes da 1ª dica.",
+    mock: '<div class="answer-line-name answer-toggle livre"><span class="ans-rotulo">Eu sou</span><span class="ans-nome">Cometa</span></div><div class="ans-hint">👆 toque pra esconder · some sozinha na 1ª dica</div><div class="answer-line-name answer-toggle" style="margin-top:8px;">🙈 Resposta escondida — toque pra ver (5 s)</div>',
   },
   {
     sec: 2,
@@ -25777,7 +26027,7 @@ const TUTORIAL_STEPS = [
     sec: 5,
     icon: "📳",
     title: "Ajustes do aparelho",
-    text: "Na tela inicial, no menu <b>⋮</b> do canto de cima:<ul><li>🔊 <b>Som</b> liga/desliga os efeitos;</li><li>📳 <b>Vibrar</b> faz o celular tremer nos acertos, erros e sustos;</li><li>🗣️ <b>Voz</b>: o C.A.O.S. fala em voz alta; 🎚️ <b>Ajustar voz</b> muda velocidade, tom e a voz;</li><li>🥔 <b>Batata</b>: tira as animações pesadas (celular fraco ou bateria acabando);</li><li>🌙 <b>Noturno</b>: deixa a carta escura, pra jogar no escuro sem ofuscar.</li></ul>",
+    text: "Na tela inicial, no menu <b>⋮</b> do canto de cima:<ul><li>🔊 <b>Som</b> liga/desliga os efeitos;</li><li>📳 <b>Vibrar</b> faz o celular tremer nos acertos, erros e sustos;</li><li>🗣️ <b>Voz</b>: o C.A.O.S. fala em voz alta; 🎚️ <b>Ajustar voz</b> muda velocidade, tom e a voz;</li><li>🥔 <b>Batata</b>: tira as animações pesadas (celular fraco ou bateria acabando);</li><li>🌙 <b>Noturno</b> / ☀️ <b>Claro</b>: troca o visual do jogo. O Noturno (padrão) é todo escuro; o Claro tem fundo lavanda e cartas brancas.</li></ul>",
     dark: true,
     mock: '<div class="tut-row"><span class="tut-chip" style="--mc:#f5c344;">🔊 Som</span><span class="tut-chip" style="--mc:#f5c344;">📳 Vibrar</span><span class="tut-chip" style="--mc:#f5c344;">🗣️ Voz</span><span class="tut-chip" style="--mc:#f5c344;">🥔 Batata</span></div>',
   },
@@ -26031,10 +26281,13 @@ const PAUSE_TIPS = [
 const NOVIDADES = [
   {
     v: "Beta 1.7.1.6",
-    t: "Modo Noturno, ícone novo e correções",
+    t: "Noturno e Claro, resposta nova, musiquinha e risadas",
     itens: [
-      "🌙 Modo Noturno no menu ⋮ do canto de cima: a carta fica escura, pra jogar no escuro sem ofuscar. Desligado, o jogo fica como sempre foi.",
-      "📱 Ícone novo do app: o ? neon na frente de uma carta. Quem já instalou: apague o atalho e adicione de novo pra ver o ícone novo.",
+      "🌙☀️ Dois visuais: o Modo Noturno (o padrão, tudo escuro, inclusive a carta) e o Modo Claro (papel lavanda e cartas brancas). Troque no menu ⋮ do canto de cima.",
+      "🙈 A resposta da carta ficou menor e o nome vem numa caixinha própria, em destaque. E agora dá pra tocar nela pra esconder na hora, sem esperar a 1ª dica.",
+      "🎵 Acertou uma carta? Toca uma musiquinha de vitória (ideia do Pedro, 11 anos).",
+      "😂 O C.A.O.S. às vezes dá risada quando zoa: HAHAHA! (ideia do Pedro). Nunca com quem está no Suave ou é iniciante.",
+      "📱 Ícone novo do app: o ? neon na frente de uma carta com o P de Perfil. Quem já instalou: apague o atalho e adicione de novo pra ver o ícone novo.",
       "⏰ Quando alguém perde a vez por tempo, o próximo não perde mais 5 segundos durante o aviso de TEMPO ESGOTADO.",
       "💬 No celular, o balão do C.A.O.S. ficou mais fácil de ler: a fala vai embaixo, na largura toda, em vez de espremida do lado do rostinho.",
       "🔢 Os números das versões foram arrumados (as últimas pularam um número).",
@@ -27000,10 +27253,7 @@ function iniciar() {
   renderHumorPicker();
   document.getElementById("btnBatata").addEventListener("click", toggleBatataMode);
   document.getElementById("btnNoturno").addEventListener("click", toggleNoturno);
-  try {
-    document.body.classList.toggle("noturno", JFStore.getItem(NOTURNO_KEY) === "1");
-  } catch (e) {}
-  updateNoturnoBtn();
+  temaAplicar();
   document.getElementById("btnNovidades").addEventListener("click", abrirNovidades);
   // Menu ⋮ da tela inicial: abre/fecha no botão; fecha ao tocar fora dele.
   (function () {
