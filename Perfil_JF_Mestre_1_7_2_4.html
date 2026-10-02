@@ -4,6 +4,9 @@
   (nunca edite as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.2.4 · 02/10/2026 · "Owner Lock Update". Cores exclusivas na paleta com cadeado (COR_EXCLUSIVA,
+          corReservada: RGB do JF, GRAD_PRINCESA da Anne); aviso de cor/emoji com dono sobe o tom
+          por toque (caosTomadaN), sem depender da zoeira.
   1.7.2.3 · 02/10/2026 · "Pause Menu Update". Pausa com tema e voz (pausaAjustesAtualizar,
           pausaVozTrocar); selo da categoria na carta aberta (CAT_SELO_ICONE, .cat-selo);
           .caos-pergunta maior (botões de 44 px).
@@ -75,7 +78,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Perfil JF">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.2.3</title>
+<title>Perfil JF · Beta 1.7.2.4</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -989,6 +992,15 @@ body.fx-urgente:after {
   padding: 0;
   box-sizing: border-box;
   position: relative;
+}
+.color-swatch.reservada::after {
+  content: "🔒";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
 }
 .color-swatch.selected {
   border-color: #fff;
@@ -5280,7 +5292,7 @@ body.claro .caos-pergunta button[data-v="digitar"] {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.2.3 · Pause Menu Update<br>C.A.O.S. 3.6 · Atualizada em 02/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.2.4 · Owner Lock Update<br>C.A.O.S. 3.6 · Atualizada em 02/10/2026</div>
     </div>
   </section>
 
@@ -8680,6 +8692,7 @@ function addPlayer() {
   nicksRepertorioGuardar(name);
   caosMemCadastro(players[players.length - 1]);
   input.value = "";
+  caosTomadaN = 0;
   renderScoreboard();
   renderColorPicker();
   renderAvatarPicker();
@@ -10778,25 +10791,49 @@ function renderAvatarPicker() {
     });
   });
 }
+// Cores com dono fixo: aparecem na paleta com cadeado e só liberam pra quem tem o nome do dono.
+const COR_EXCLUSIVA = {
+  RGB: { de: "do JF", dono: (n) => isJfName(n) },
+  GRAD_PRINCESA: { de: "da Anne", dono: (n) => isAnneName(n) },
+};
+function corReservada(c) {
+  const inp = document.getElementById("playerNameInput"),
+    nome = inp ? inp.value.trim() : "";
+  return !!COR_EXCLUSIVA[c] && !COR_EXCLUSIVA[c].dono(nome);
+}
 // Tocou numa cor ou emoji que já tem dono: o botão não some, o C.A.O.S. explica (no tom da zoeira escolhida).
 let caosTomadaAt = 0;
+// Cada toque repetido sobe o tom: 1º leve, 2º normal, 3º em diante bravo (no Júnior para no normal).
+// Zera quando alguém é adicionado.
+let caosTomadaN = 0;
 function caosEscolhaTomada(tipo, valor) {
-  const dono = players.find((p) => (tipo === "cor" ? p.color : p.avatar) === valor);
-  if (!dono || Date.now() - caosTomadaAt < 2500) return;
+  const exclusiva = tipo === "cor" && COR_EXCLUSIVA[valor];
+  const dono = exclusiva ? null : players.find((p) => (tipo === "cor" ? p.color : p.avatar) === valor);
+  if ((!dono && !exclusiva) || Date.now() - caosTomadaAt < 2500) return;
   caosTomadaAt = Date.now();
-  const h = cadHumor || humorPreMarcado() ? selectedHumor : "normal";
-  const B = REACTIVE_VOICE.escolhaTomada,
-    bank = h === "zero" || h === "acido" ? B.zero : h === "normal" || h === "caos" ? B.normal : B.leve;
-  const f = tipo === "cor" ? ["essa cor", "Essa cor", "escolhida", "outra", "a"] : ["esse emoji", "Esse emoji", "escolhido", "outro", "o"];
-  const txt = getRandomReaction(bank, dono.name, ...f);
+  caosTomadaN++;
+  const nivel = caosTomadaN <= 1 ? "leve" : caosTomadaN === 2 || CURRENT_MODE === "junior" ? "normal" : "zero";
+  caosLog("cadastro", `tocou em ${tipo} com dono (${caosTomadaN}ª vez, tom ${nivel})`);
+  let txt;
+  if (exclusiva) txt = getRandomReaction(REACTIVE_VOICE.escolhaExclusiva[nivel], exclusiva.de);
+  else {
+    const f =
+      tipo === "cor" ? ["essa cor", "Essa cor", "escolhida", "outra", "a"] : ["esse emoji", "Esse emoji", "escolhido", "outro", "o"];
+    txt = getRandomReaction(REACTIVE_VOICE.escolhaTomada[nivel], dono.name, ...f);
+  }
   if (txt) showToastMessage(txt, null, true);
 }
 function renderColorPicker() {
   const row = document.getElementById("colorPickerRow");
   if (!row) return;
   const isBatata = document.body.classList.contains("batata-mode");
-  const availableColors = PLAYER_COLORS.filter((c) => !(isBatata && (c === "RGB" || GRADIENTS[c])));
+  const availableColors = PLAYER_COLORS.slice(0, -1)
+    .concat(["GRAD_PRINCESA", "RGB"])
+    .filter((c) => !(isBatata && (c === "RGB" || GRADIENTS[c])));
   const usedColors = new Set(players.map((p) => p.color));
+  availableColors.forEach((c) => {
+    if (corReservada(c)) usedColors.add(c);
+  });
   if (usedColors.has(selectedColor) || !availableColors.includes(selectedColor)) {
     const free = availableColors.find((c) => !usedColors.has(c));
     if (free) selectedColor = free;
@@ -10804,7 +10841,7 @@ function renderColorPicker() {
   row.innerHTML = availableColors
     .map((c) => {
       const bg = c === "RGB" ? "" : "background:" + playerColorCss(c);
-      return `<button type="button" class="color-swatch ${c === selectedColor && cadMostraSel(cadCor || CURRENT_FORMAT === "equipe") ? "selected" : ""} ${c === "RGB" ? "rgb-swatch" : ""} ${c === "GRAD_ONYX" ? "onyx-swatch" : ""}${usedColors.has(c) ? " tomada" : ""}" data-color="${c}" style="${bg}" ${usedColors.has(c) ? 'aria-disabled="true"' : ""} title="${c === "GRAD_ONYX" ? "Ônix neon" : ""}"></button>`;
+      return `<button type="button" class="color-swatch ${c === selectedColor && cadMostraSel(cadCor || CURRENT_FORMAT === "equipe") ? "selected" : ""} ${c === "RGB" ? "rgb-swatch" : ""} ${c === "GRAD_ONYX" ? "onyx-swatch" : ""}${usedColors.has(c) ? " tomada" : ""}${COR_EXCLUSIVA[c] && usedColors.has(c) && !players.some((p) => p.color === c) ? " reservada" : ""}" data-color="${c}" style="${bg}" ${usedColors.has(c) ? 'aria-disabled="true"' : ""} title="${c === "GRAD_ONYX" ? "Ônix neon" : COR_EXCLUSIVA[c] ? "Cor exclusiva " + COR_EXCLUSIVA[c].de : ""}"></button>`;
     })
     .join("");
   row.querySelectorAll(".color-swatch").forEach((btn) => {
@@ -14870,7 +14907,7 @@ function caosInspectorEstado() {
         );
       })()}</b></div>
       <div class="ci-kv"><span>😄 Alegria · 🎯 confiança · 🔎 curiosidade</span><b class="ci-mono">${caosEixos.alegria.toFixed(1)} · ${caosEixos.confianca.toFixed(1)} · ${caosEixos.curiosidade.toFixed(1)}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.2.3 · C.A.O.S. 3.6</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.2.4 · C.A.O.S. 3.6</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -19382,6 +19419,7 @@ function caosMomentoCritico() {
 function caosTropeco(msg, bank) {
   try {
     if (typeof msg !== "string" || msg.indexOf("[C.A.O.S.]") !== 0 || msg.length > 150 || msg.length < 24) return msg;
+    if (/^escolha(Tomada|Exclusiva)/.test(String(bank || ""))) return msg; // aviso do cadastro: sem tropeço
     const nLog = caosMatchLog ? caosMatchLog.length : 0;
     if (caosTropecos.n >= 5 || nLog - caosTropecos.ult < 8 || caosMomentoCritico() || Math.random() > 0.08) return msg;
     const corpo = msg.slice("[C.A.O.S.]".length).trim(),
@@ -19636,7 +19674,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.2.3 · C.A.O.S. 3.6)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.2.4 · C.A.O.S. 3.6)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -21901,7 +21939,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.2.3 · C.A.O.S. 3.6");
+  L.push("- **Versão:** Beta 1.7.2.4 · C.A.O.S. 3.6");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -22423,7 +22461,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.2.3 · C.A.O.S. 3.6",
+        versao: "Beta 1.7.2.4 · C.A.O.S. 3.6",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -43655,6 +43693,20 @@ const REACTIVE_VOICE = {
     "Calar o locutor do jogo é uma escolha, {nome}. Péssima, mas uma escolha. Voltei.",
     "Fiquei mudo uma carta inteira. Foi a carta mais longa da minha vida. Voltei com saudade de falar mal de vocês.",
   ],
+  escolhaExclusiva: {
+    leve: [
+      (d) => `[C.A.O.S.] Essa cor é exclusiva ${d}. Tem um monte de outras lindas aí, escolhe uma!`,
+      (d) => `[C.A.O.S.] Ops! Essa aí é a cor ${d}, tem cadeado. Escolhe outra.`,
+    ],
+    normal: [
+      (d) => `[C.A.O.S.] Viu o cadeado? Essa cor é ${d}. Só ${d.slice(0, 2) === "da" ? "dela" : "dele"}.`,
+      (d) => `[C.A.O.S.] Cor ${d}, reservada. Não tá indo por isso. Escolhe outra.`,
+    ],
+    zero: [
+      (d) => `[C.A.O.S.] Pela terceira vez: essa cor é ${d}. Tem cadeado desenhado e tudo. Escolhe outra!`,
+      (d) => `[C.A.O.S.] Pode apertar até o dedo cansar: a cor ${d} não sai daí. Escolhe outra, vai.`,
+    ],
+  },
   escolhaTomada: {
     leve: [
       (d, t, T, e, o) => `[C.A.O.S.] Ops! ${T} já é de ${d}. Que tal escolher ${o}?`,
@@ -45171,6 +45223,16 @@ const PAUSE_TIPS = [
 ];
 const NOVIDADES = [
   {
+    v: "Beta 1.7.2.4",
+    data: "02/10/2026 · 13:57",
+    nome: "Owner Lock Update",
+    t: "Cores com dono travadas de verdade e um C.A.O.S. que perde a paciência aos poucos.",
+    itens: [
+      "🔒 A cor RGB do JF e a cor Princesa da Anne aparecem na paleta com cadeado: só liberam pra quem tem o nome do dono.",
+      "😤 Insistiu numa cor ou emoji que já tem dono? O C.A.O.S. sobe o tom a cada toque: começa gentil, depois reclama e no terceiro já perde a paciência (no Júnior ele só reclama).",
+    ],
+  },
+  {
     v: "Beta 1.7.2.3",
     data: "02/10/2026 · 13:28",
     nome: "Pause Menu Update",
@@ -45204,7 +45266,7 @@ const NOVIDADES = [
       "🎭 Cada nível com seu jeito: no Suave ele ri de vez em quando; no Normal quase não fica magoado; no Ácido fica magoado e cobra depois; o Nível 0 torra a paciência.",
       "🥛 Nível 0 que silencia o C.A.O.S. ouve na carta seguinte: \"Foi você que pediu Nível 0. Não aguentou? Bebe leite!\"",
       "➕ Cadastro na ordem certa: o botão Adicionar fica depois de Cor, Emoji e Zoeira, que são o que falta escolher (ideia do Felipe).",
-      "🎨 Tocou numa cor ou emoji que já é de outro jogador? Em vez de o botão só ficar apagado, o C.A.O.S. avisa de quem é, no tom da zoeira escolhida.",
+      "🎨 Tocou numa cor ou emoji que já é de outro jogador? Em vez de o botão só ficar apagado, o C.A.O.S. avisa de quem é.",
     ],
     qol: [
       "🗣️ A voz agora fala número no feminino: \"avançou duas casas\", \"uma dica\" (antes lia \"dois casas\").",
@@ -45832,6 +45894,12 @@ function iniciar() {
   })();
   selectedColor = PLAYER_COLORS[0];
   document.getElementById("playerNameInput").addEventListener("input", caosCadastroFluxo);
+  document.getElementById("playerNameInput").addEventListener("input", () => {
+    try {
+      renderColorPicker();
+      cadPrevs();
+    } catch (e) {}
+  });
   document.getElementById("colorPickerRow").addEventListener("click", (ev) => {
     if (!ev.target.closest(".color-swatch") || ev.target.closest(".tomada")) return;
     setTimeout(() => {
