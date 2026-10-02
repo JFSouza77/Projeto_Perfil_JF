@@ -4391,7 +4391,17 @@ body.claro .nov-nome {
 .nov-drop > summary::-webkit-details-marker {
   display: none;
 }
+/* setinha ao lado do título, na mesma linha (vence a regra que empilha o summary da versão) */
+.nov-item .nov-drop > summary.nov-tag {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 6px;
+  text-align: left;
+}
 .nov-drop > summary::after {
+  font-size: 0.75em;
   content: "▾";
   opacity: 0.7;
 }
