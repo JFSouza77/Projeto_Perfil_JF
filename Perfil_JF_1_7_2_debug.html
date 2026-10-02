@@ -9,7 +9,9 @@
           localhost (teste). Corrigido: importar save com partida em andamento (saveBloqueado).
           Limpeza: variáveis mortas, "reapresentar" desativado, 3 regras CSS sem uso, 1 fala
           repetida. Modo Claro "Papel" (identidade própria: creme âmbar, tinta, sem neon).
-          Versões antes da 1.7 ganharam nome de update nas NOVIDADES.
+          Versões antes da 1.7 ganharam nome de update nas NOVIDADES. Cadastro: Adicionar depois
+          de Cor/Emoji/Zoeira (#addAcaoRow). Júnior: zoeira Family friendly/Suave/Normal
+          (humor "familia", humorFamilia, caosFamiliaTroca); mágoa (vingança) por nível.
           Logo: P grande em azul neon e JF em laranja neon (mesma letra).
   1.7.1.6 · 02/10/2026 · "Day & Night Update". Números das versões corrigidos (as antigas 1.7.1.2 a 1.7.1.6 são
           1.7.1.1 a 1.7.1.5; arquivos renomeados, conteúdo intacto). Ícone novo do app
@@ -4770,6 +4772,9 @@ body.fx-urgente:after {
   font-size: 0.8rem;
   font-weight: 600;
 }
+.add-player-acao {
+  margin: 10px 0 12px;
+}
 .add-falta {
   font-size: 0.78rem;
   opacity: 0.85;
@@ -5358,10 +5363,8 @@ body.claro .caos-pergunta button[data-v="digitar"] {
       <button type="button" id="iniSair" class="ini-sair">Sair do modo iniciante</button>
     </div>
     
-    <div class="add-player-row">
+    <div class="add-player-row" id="addNomeRow">
       <input type="text" id="playerNameInput" placeholder="Nome do jogador" minlength="2" maxlength="15">
-      <button id="addPlayerBtn" disabled>➕ Adicionar</button>
-      <div id="addPlayerFalta" class="add-falta" aria-live="polite"></div>
     </div>
     
     <div class="nick-suggest" id="nickSuggest">
@@ -5384,6 +5387,11 @@ body.claro .caos-pergunta button[data-v="digitar"] {
     <div style="display:none; text-align:center; margin-bottom:8px;" id="ageBracketWrap">
       <div style="opacity:0.75; font-size:0.8rem; margin-bottom:6px;">Faixa etária (usada só pra equilibrar os times no sorteio):</div>
       <div class="color-picker-row" id="ageBracketRow" style="justify-content:center; flex-wrap:wrap; gap:8px;"></div>
+    </div>
+    <!-- Adicionar fica depois de tudo que precisa ser escolhido (nome, cor, emoji, zoeira) -->
+    <div class="add-player-row add-player-acao" id="addAcaoRow">
+      <button id="addPlayerBtn" disabled>➕ Adicionar</button>
+      <div id="addPlayerFalta" class="add-falta" aria-live="polite"></div>
     </div>
     <ul class="scoreboard" id="scoreboard"></ul>
     <div id="playerWarning" style="display:none; margin-top:10px; font-size:0.8rem; color:#ffd166;"></div>
@@ -6192,16 +6200,21 @@ const CAOS_FAMILIAS_MESTRE = ["quebraParede", "cumpliceMestre", "recadoMestre", 
 const EXPRESS_TIMES = { classico: { card: 150, turn: 15 }, hardcore: { card: 90, turn: 10 } };
 const ANSWER_REVEAL_MS = 5e3;
 const INI_ALVOS = {
-  nick: [".add-player-row", "#nickIdeaWrap", "#nickSuggest"],
+  nick: ["#addNomeRow", "#nickIdeaWrap", "#nickSuggest"],
   avatar: ["#avatarBox"],
   cor: ["#colorBox"],
   faixa: ["#ageBracketWrap"],
   humor: ["#humorBox"],
-  pronto: [".add-player-row"],
+  pronto: ["#addAcaoRow"],
 };
 const CAOS_FALA_PESADA_RE =
   /cringe|aura|goleiro|n[aã]o sabe nada|longe demais|burr|idiot|vergonh|pat[eé]tic|rid[ií]cul|desist|lixo|fracass|p[eé]ssim|horr[ií]vel|chor|incompet|nunca vai|in[uú]til|vexame|humilh|tosco|decepc|\bpior\b|mané|otári|lament|coitad|perdedor|feio|chato|cala a boca|some daqui|vergonha/i;
 const HUMOR_OPTIONS = [
+  {
+    id: "familia",
+    label: "🧸 Family friendly",
+    hint: "Só carinho: ele não zoa, torce, incentiva e é gentil o tempo todo.",
+  },
   { id: "suave", label: "🌷 Suave", hint: "Sem ácido, sem cantada, sem gozar erro repetido." },
   { id: "normal", label: "😏 Normal", hint: "A zoeira de sempre." },
   { id: "acido", label: "🌶️ Ácido", hint: "Zoeira mais afiada e mais frequente (nunca palavrão)." },
@@ -6216,8 +6229,8 @@ const HUMOR_OPTIONS = [
     hint: "Sem dó: áspero, implicante e sarcástico o tempo todo — mas sem palavrão, e ainda comemora quando você acerta.",
   },
 ];
-const HUMOR_NOMES = { suave: "🌷 Suave", normal: "😏 Normal", acido: "🌶️ Ácido", zero: "💀 Nível 0" };
-const HUMOR_COR = { suave: "#f9a8d4", normal: "#fbbf24", acido: "#ef4444", zero: "#b91c1c", caos: "#a78bfa" };
+const HUMOR_NOMES = { familia: "🧸 Family friendly", suave: "🌷 Suave", normal: "😏 Normal", acido: "🌶️ Ácido", zero: "💀 Nível 0" };
+const HUMOR_COR = { familia: "#7dd3fc", suave: "#f9a8d4", normal: "#fbbf24", acido: "#ef4444", zero: "#b91c1c", caos: "#a78bfa" };
 const NICKS_GERAL = [
   "Sabe-Tudo",
   "Rei do Palpite",
@@ -6657,9 +6670,20 @@ function isAnneName(n) {
 function isJfName(n) {
   return OWNER_JF_RE.test(nameKeyPlain(n));
 }
+// Níveis de zoeira: Family friendly (só no Júnior: só carinho) < Suave (zoa um pouquinho)
+// < Normal (zoa e implica no limite) < Ácido (implica, briga e fica magoado) < Nível 0 (torra
+// a paciência; você que pediu). Family friendly conta como Suave em todas as travas, e ainda
+// troca qualquer zoeira por incentivo (caosFamiliaTroca).
+function humorFamilia(p) {
+  return !!(p && !p.iniciante && p.humor === "familia" && typeof CURRENT_MODE !== "undefined" && CURRENT_MODE === "junior");
+}
+function humorEscolhido(p) {
+  return humorFamilia(p) ? "familia" : playerHumor(p);
+}
 function playerHumor(p) {
   if (p && p.iniciante) return "suave";
   const h = p && p.humor;
+  if (h === "familia") return "suave";
   if (h === "zero" && typeof CURRENT_MODE !== "undefined" && CURRENT_MODE === "junior") return "normal";
   return h === "suave" || h === "acido" || h === "zero" ? h : "normal";
 }
@@ -8610,7 +8634,7 @@ function addPlayer() {
   updateDrawAvailability();
   saveGameState();
   caosCadastroReset();
-  selectedHumor = CURRENT_MODE === "junior" ? "suave" : "normal";
+  selectedHumor = CURRENT_MODE === "junior" ? "familia" : "normal";
   renderHumorPicker();
   caosWelcomePlayer(players[players.length - 1]);
 }
@@ -8730,7 +8754,10 @@ function ajustarJogadoresAoModo() {
       }
       if (p.humor === "acido" || p.humor === "zero") p.humor = "normal";
     });
-  }
+  } else
+    players.forEach((p) => {
+      if (p.humor === "familia") p.humor = "suave";
+    });
 }
 function jogarDeNovo() {
   const modo = CURRENT_MODE,
@@ -8816,7 +8843,7 @@ function selectMode(mode, expressCategories, flavor) {
   resetTeamSetupUI();
   renderAvatarPicker();
   renderColorPicker();
-  selectedHumor = CURRENT_MODE === "junior" ? "suave" : "normal";
+  selectedHumor = CURRENT_MODE === "junior" ? "familia" : "normal";
   renderHumorPicker();
   if (!starterChosen) {
     document.getElementById("drawStarterBtn").style.display = isEquipe ? "none" : "block";
@@ -10833,35 +10860,28 @@ function iniEncerrar() {
 }
 function iniSair() {
   iniEncerrar();
-  selectedHumor = CURRENT_MODE === "junior" ? "suave" : "normal";
+  selectedHumor = CURRENT_MODE === "junior" ? "familia" : "normal";
   renderHumorPicker();
   caosLog("iniciante", "saiu do cadastro guiado");
 }
 function humorOptionsForMode() {
-  return CURRENT_MODE === "junior" ? ["suave", "normal"] : ["suave", "normal", "acido", "zero"];
+  return CURRENT_MODE === "junior" ? ["familia", "suave", "normal"] : ["suave", "normal", "acido", "zero"];
 }
 function renderHumorPicker() {
   const row = document.getElementById("humorPickerRow");
   if (!row) return;
   const junior = CURRENT_MODE === "junior";
+  const JR_HINT = {
+    suave: "Zoa um pouquinho e dá uma risadinha aqui e ali, mas sempre tranquilo.",
+    normal: "Zoa e implica, mas dentro do limite e sem ficar magoado (versão Júnior: sem ácido e sem cantada).",
+    caos: "Ele sorteia entre Family friendly, Suave e Normal e, no meio do jogo, pergunta se você está curtindo.",
+  };
   const opts = junior
-    ? HUMOR_OPTIONS.filter((o) => o.id !== "acido" && o.id !== "zero")
-        .map((o) =>
-          o.id === "caos"
-            ? { ...o, hint: "Ele sorteia entre Suave e Normal e, no meio do jogo, pergunta se você está curtindo." }
-            : o,
-        )
-        .map((o) =>
-          o.id === "suave"
-            ? { ...o, label: "🌷 Suave (family friendly)" }
-            : {
-                ...o,
-                label: "😊 Normal",
-                hint: "Zoeira do jeito de sempre, só que mais leve (versão Júnior): sem ácido e sem cantada.",
-              },
-        )
-    : HUMOR_OPTIONS;
-  if (!opts.some((o) => o.id === selectedHumor)) selectedHumor = junior ? "suave" : "normal";
+    ? HUMOR_OPTIONS.filter((o) => o.id !== "acido" && o.id !== "zero").map((o) =>
+        JR_HINT[o.id] ? { ...o, hint: JR_HINT[o.id] } : o,
+      )
+    : HUMOR_OPTIONS.filter((o) => o.id !== "familia");
+  if (!opts.some((o) => o.id === selectedHumor)) selectedHumor = junior ? "familia" : "normal";
   row.innerHTML = opts
     .map(
       (o) =>
@@ -12085,7 +12105,7 @@ function admPainel(ov, nivel) {
   const redesenhar = () => admPainel(ov, nivel);
   const sHum = ciSecao(
     "🎚️ Nível de zoeira do C.A.O.S. com cada jogador",
-    CURRENT_MODE === "junior" ? "Júnior: só Suave ou Normal" : "💀 Nível 0 = sem dó",
+    CURRENT_MODE === "junior" ? "Júnior: Family friendly, Suave ou Normal" : "💀 Nível 0 = sem dó",
   );
   const opts = humorOptionsForMode();
   const lista = document.createElement("div");
@@ -12103,7 +12123,7 @@ function admPainel(ov, nivel) {
       o.textContent = HUMOR_NOMES[h];
       sel.appendChild(o);
     });
-    sel.value = playerHumor(p);
+    sel.value = humorEscolhido(p);
     if (p.iniciante) {
       sel.disabled = true;
       sel.title = "Iniciante: Suave até o fim da partida";
@@ -12127,7 +12147,8 @@ function admPainel(ov, nivel) {
       const b = document.createElement("button");
       b.type = "button";
       b.className = "ci-step";
-      b.style.background = h === "zero" ? "#7b1f3a" : h === "acido" ? "#8a4b10" : h === "suave" ? "#2d6b4f" : "#34465a";
+      b.style.background =
+        h === "zero" ? "#7b1f3a" : h === "acido" ? "#8a4b10" : h === "suave" ? "#2d6b4f" : h === "familia" ? "#1f5f7a" : "#34465a";
       b.textContent = "Todos: " + HUMOR_NOMES[h];
       b.addEventListener("click", () => {
         players.forEach((p) => {
@@ -13623,6 +13644,10 @@ function getRandomReaction(list, ...args) {
     const item = list[idx];
     const text = typeof item === "function" ? item(...args) : item;
     if (CURRENT_MODE === "junior" && CAOS_JUNIOR_BLOCK_RE.test(text)) continue;
+    {
+      const fam = caosFamiliaTroca(list, text, args);
+      if (fam !== null) return fam;
+    }
     if (caosIsDisliked(list, text, args)) continue;
     if (typeof text === "string" && text.length > 170 && tries < 4 && list.length > 1) continue;
     if (!caosHasProfanity(text, args)) {
@@ -13639,17 +13664,28 @@ function getRandomReaction(list, ...args) {
   return "";
 }
 // Risadinha do C.A.O.S. nas falas de zoeira (ideia do Pedro, 11 anos): às vezes ele ri
-// antes ou depois de zoar. Nunca com quem está no Suave ou é iniciante; no Júnior, risada leve.
+// antes ou depois de zoar. Nunca com iniciante nem Family friendly; no Suave, só de vez em quando
+// (metade da chance); no Júnior, risada leve.
 function caosRisada(text, list, args) {
   if (typeof text !== "string" || text.indexOf(CAOS_PREFIXO) !== 0) return text;
   if (Math.random() >= CAOS_RISADA_CHANCE) return text;
   if (!CAOS_RISADA_BANCOS.test(caosBankId(list))) return text;
   const alvo = typeof args[0] === "string" ? players.find((p) => p.name === args[0]) : null;
-  if (alvo && (alvo.iniciante || playerHumor(alvo) === "suave")) return text;
+  if (alvo && (alvo.iniciante || humorFamilia(alvo) || (playerHumor(alvo) === "suave" && Math.random() < 0.5))) return text;
   const r = CURRENT_MODE === "junior" ? CAOS_RISADAS_JUNIOR : CAOS_RISADAS;
   const ri = r[Math.floor(Math.random() * r.length)];
   const corpo = text.slice(CAOS_PREFIXO.length);
   return Math.random() < 0.6 ? CAOS_PREFIXO + ri + " " + corpo : text.replace(/\s*$/, "") + " " + ri;
+}
+// Family friendly (Júnior): fala de zoeira ou pesada pra esse jogador vira incentivo.
+function caosFamiliaTroca(list, text, args) {
+  if (CURRENT_MODE !== "junior" || typeof args[0] !== "string" || !REACTIVE_VOICE.familia) return null;
+  const alvo = players.find((p) => p.name === args[0]);
+  if (!humorFamilia(alvo)) return null;
+  const id = caosBankId(list);
+  if (id.indexOf("familia") === 0) return null;
+  if (!CAOS_RISADA_BANCOS.test(id) && !CAOS_FALA_PESADA_RE.test(String(text || ""))) return null;
+  return getRandomReaction(REACTIVE_VOICE.familia.apoio, alvo.name);
 }
 function caosBankId(list) {
   if (!caosPoolIds) caosPoolIds = caosBuildPoolIds();
@@ -13964,7 +14000,9 @@ function caosRegistrarCorte() {
     caosToastAtrasado(() => showToastMessage(fala, null, false, false, true), 250);
 }
 function caosVingancaLine(p) {
-  if (!p || !caosCortes.rancor[p.name] || playerHumor(p) === "suave" || Math.random() >= 0.5) return null;
+  const h = playerHumor(p);
+  if (!p || !caosCortes.rancor[p.name] || h === "suave") return null;
+  if (Math.random() >= (h === "acido" ? 0.75 : h === "normal" ? 0.3 : 0.5)) return null;
   delete caosCortes.rancor[p.name];
   caosLog("vinganca", `${p.name} (cortou ${caosCortes.por[p.name] || 1}x)`);
   return getRandomReaction(REACTIVE_VOICE.caosCortado.vinganca, p.name, caosCortes.por[p.name] || 1);
@@ -17190,7 +17228,7 @@ function caosConsoleEvento(idx, ev) {
       caosSentir("alegria", (ev === "a" ? 1 : 0.7) * (des ? 0.6 : 1), "acerto");
       if (C.seqOk >= 3 && C.seqOk % 2 === 1) caosSentir("alegria", 1.2, "sequência de acertos");
       if (fav) caosSentir("carinho", 0.5, "favorito acertou");
-      if (p && playerHumor(p) === "suave") caosSentir("carinho", 0.6, "acerto de jogador Suave");
+      if (p && playerHumor(p) === "suave") caosSentir("carinho", humorFamilia(p) ? 1 : 0.6, "acerto de jogador Suave");
       C.g.raiva = Math.max(0, (C.g.raiva || 0) - 1.2);
       if (des) caosSentir("nojo", 0.4, "elogio contrariado");
     } else if (ev === "E" || ev === "X") {
@@ -18360,7 +18398,8 @@ function caosWelcomePlayer(p) {
     } else if (n >= 1 && R() < 0.75) {
       bank = B.conhecido;
       args = [name, n];
-    } else if (humor === "zero" && REACTIVE_VOICE.nivelZero && R() < 0.8) bank = REACTIVE_VOICE.nivelZero.boasVindas;
+    } else if (humorFamilia(p) && R() < 0.8) bank = REACTIVE_VOICE.familia.boasVindas;
+    else if (humor === "zero" && REACTIVE_VOICE.nivelZero && R() < 0.8) bank = REACTIVE_VOICE.nivelZero.boasVindas;
     else if (humor === "acido" && R() < 0.5) bank = B.acido;
     else if (humor === "suave" && R() < 0.5) bank = B.suave;
     else if (players.length === 1) bank = B.primeiro;
@@ -18962,7 +19001,7 @@ function caosIniFormatura() {
   saveGameState();
 }
 function caosSortearHumor() {
-  const o = CURRENT_MODE === "junior" ? ["suave", "normal"] : ["suave", "normal", "acido"];
+  const o = CURRENT_MODE === "junior" ? ["familia", "suave", "normal"] : ["suave", "normal", "acido"];
   return o[Math.floor(Math.random() * o.length)];
 }
 function caosTempoFala(ms) {
@@ -19728,9 +19767,9 @@ function caosSatisfacaoTalvez() {
     const passo1 = () => {
       d.innerHTML = `<span>🤖 <b>${escapeHtml(nome)}</b>, tá curtindo o jeito que eu tô te tratando?</span><button type="button" data-v="sim">👍 Tô</button><button type="button" data-v="nao">👎 Não</button>`;
     };
-    const ordem = CURRENT_MODE === "junior" ? ["suave", "normal"] : ["suave", "normal", "acido"];
+    const ordem = CURRENT_MODE === "junior" ? ["familia", "suave", "normal"] : ["suave", "normal", "acido"];
     const passo2 = () => {
-      const hh = playerHumor(p),
+      const hh = humorEscolhido(p),
         i = hh === "zero" ? ordem.length : ordem.indexOf(hh);
       const bts = [];
       if (i < ordem.length - 1) bts.push('<button type="button" data-v="mais">⬆️ Pode pegar mais pesado</button>');
@@ -19746,7 +19785,7 @@ function caosSatisfacaoTalvez() {
       if (!q) return fechar();
       if (v === "nao") return passo2();
       fechar();
-      const hq = playerHumor(q),
+      const hq = humorEscolhido(q),
         i = hq === "zero" ? ordem.length : ordem.indexOf(hq);
       if (v === "mais" && i < ordem.length - 1) q.humor = ordem[i + 1];
       if (v === "menos" && i > 0) q.humor = ordem[i - 1];
@@ -24754,6 +24793,14 @@ const REACTIVE_VOICE = {
   nickRepertorio: [
     '"{nome}" já passou por esta mesa. Nick não tem dono. Pode usar.',
   ],
+  familia: {
+    boasVindas: [
+      "Oi, {nome}! Comigo você tá no Family friendly: só torcida e carinho. Bora se divertir!",
+    ],
+    apoio: [
+      "Tá tudo bem, {nome}! Cada dica deixa a resposta mais fácil. Você consegue!",
+    ],
+  },
   iniciante: {
     boasVindas: [
       (n, jf) =>
@@ -26538,6 +26585,9 @@ const NOVIDADES = [
       "✅ Botões de confirmação, Save de Bolso, save corrompido e relatório da partida conferidos um por um.",
       "🧹 Arquivo mais enxuto: código morto e estilos sem uso removidos, fala repetida do C.A.O.S. tirada.",
       "🏷️ As versões anteriores à 1.7 também ganharam nome de update, igual às mais novas.",
+      "➕ Cadastro na ordem certa: o botão Adicionar agora fica depois de Cor, Emoji e Zoeira, que são o que falta escolher (ideia do Felipe).",
+      "🧸 Zoeira no Júnior com três níveis de verdade: Family friendly (só carinho, nunca zoa), Suave (zoa um pouquinho, com uma risadinha de vez em quando) e Normal (zoa e implica no limite). Antes apareciam dois Normal.",
+      "🎭 Cada nível com seu jeito: no Suave ele ri de vez em quando; no Normal quase não fica magoado; no Ácido fica magoado e cobra depois; o Nível 0 continua torrando a paciência.",
     ],
   },
   {
