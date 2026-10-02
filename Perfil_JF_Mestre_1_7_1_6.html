@@ -7,7 +7,7 @@
   1.7.1.6 · 01/10/2026 · Números das versões corrigidos (as antigas 1.7.1.2 a 1.7.1.6 são
           1.7.1.1 a 1.7.1.5; arquivos renomeados, conteúdo intacto). Ícone novo do app
           (? neon + carta com P). Dois visuais: Noturno (padrão) e Claro (body.claro).
-          Resposta menor, nome numa caixinha, toque pra esconder antes da 1ª dica.
+          Resposta menor (só o nome, numa caixinha), toque pra esconder antes da 1ª dica.
           Musiquinha de vitória ao acertar (vitoriaCarta); risadinha do C.A.O.S. nas
           zoeiras (CAOS_RISADA_*). Debug: tempo esgotado
           não come 5 s do próximo; Express não vira "misto" ao recarregar; Reiniciar
@@ -4841,7 +4841,7 @@ body.fx-urgente:after {
   background: #4c1d95;
   color: #fff;
 }
-/* Resposta da carta: caixa mais baixa; "Eu sou" pequeno e o nome numa caixinha própria */
+/* Resposta da carta: caixa mais baixa, só o nome numa caixinha própria */
 .answer-toggle.livre,
 .answer-toggle.open,
 .conferir-btn.open {
@@ -4849,15 +4849,6 @@ body.fx-urgente:after {
   padding: 8px 10px 10px;
   line-height: 1.15;
   text-shadow: none;
-}
-.ans-rotulo {
-  display: block;
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  opacity: 0.75;
-  margin-bottom: 5px;
 }
 .ans-nome {
   display: inline-block;
@@ -9257,9 +9248,9 @@ function answerLivre() {
     answerEscondidaCarta !== currentCard
   );
 }
-// "Eu sou:" pequeno em cima e o nome numa caixinha própria, em destaque.
+// Só o nome, numa caixinha própria e em destaque (a categoria já está logo acima).
 function answerHtml() {
-  return `<span class="ans-rotulo">Eu sou</span><span class="ans-nome">${escapeHtml(currentCard.answer)}</span>`;
+  return `<span class="ans-nome">${escapeHtml(currentCard.answer)}</span>`;
 }
 function answerTexto(open) {
   return answerLivre() || open ? answerHtml() : "🙈 Resposta escondida — toque pra ver (5 s)";
@@ -44289,7 +44280,7 @@ const TUTORIAL_STEPS = [
     icon: "🙈",
     title: "2. A resposta (só pro Mestre)",
     text: "Ao virar a carta, a resposta fica <b>à mostra até a 1ª dica ser aberta</b>: é a hora do Mestre memorizar. Memorizou? <b>Toque nela pra esconder na hora</b> (bom quando a mesa demora pra escolher a dica). Depois ela se esconde, e pra conferir de novo é só tocar na faixa ou em <b>👁️ Conferir resposta</b> (aparece por <b>5 segundos</b>). Assim ninguém espia por cima do ombro.<br>Olhou sem querer (ou alguém viu)? Dá pra <b>reembaralhar</b> antes da 1ª dica.",
-    mock: '<div class="answer-line-name answer-toggle livre"><span class="ans-rotulo">Eu sou</span><span class="ans-nome">Cometa</span></div><div class="ans-hint">👆 toque pra esconder · some sozinha na 1ª dica</div><div class="answer-line-name answer-toggle" style="margin-top:8px;">🙈 Resposta escondida — toque pra ver (5 s)</div>',
+    mock: '<div class="answer-line-name answer-toggle livre"><span class="ans-nome">Cometa</span></div><div class="ans-hint">👆 toque pra esconder · some sozinha na 1ª dica</div><div class="answer-line-name answer-toggle" style="margin-top:8px;">🙈 Resposta escondida — toque pra ver (5 s)</div>',
   },
   {
     sec: 2,
@@ -44668,7 +44659,7 @@ const NOVIDADES = [
     t: "Noturno e Claro, resposta nova, musiquinha e risadas",
     itens: [
       "🌙☀️ Dois visuais: o Modo Noturno (o padrão, tudo escuro, inclusive a carta) e o Modo Claro (papel lavanda e cartas brancas). Troque no menu ⋮ do canto de cima.",
-      "🙈 A resposta da carta ficou menor e o nome vem numa caixinha própria, em destaque. E agora dá pra tocar nela pra esconder na hora, sem esperar a 1ª dica.",
+      "🙈 A resposta da carta ficou menor: só o nome, numa caixinha própria e em destaque. E agora dá pra tocar nela pra esconder na hora, sem esperar a 1ª dica.",
       "🎵 Acertou uma carta? Toca uma musiquinha de vitória (ideia do Pedro, 11 anos).",
       "😂 O C.A.O.S. às vezes dá risada quando zoa: HAHAHA! (ideia do Pedro). Nunca com quem está no Suave ou é iniciante.",
       "📱 Ícone novo do app: o ? neon na frente de uma carta com o P de Perfil. Quem já instalou: apague o atalho e adicione de novo pra ver o ícone novo.",
