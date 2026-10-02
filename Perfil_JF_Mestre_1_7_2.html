@@ -8,7 +8,8 @@
           voltar do Android pausa a partida, dica de voz por aparelho, sw.js também em
           localhost (teste). Corrigido: importar save com partida em andamento (saveBloqueado).
           Limpeza: variáveis mortas, "reapresentar" desativado, 3 regras CSS sem uso, 1 fala
-          repetida. Modo Claro "Papel" (identidade própria: creme, tinta, sem neon).
+          repetida. Modo Claro "Papel" (identidade própria: creme âmbar, tinta, sem neon).
+          Versões antes da 1.7 ganharam nome de update nas NOVIDADES.
           Logo: P grande em azul neon e JF em laranja neon (mesma letra).
   1.7.1.6 · 02/10/2026 · "Day & Night Update". Números das versões corrigidos (as antigas 1.7.1.2 a 1.7.1.6 são
           1.7.1.1 a 1.7.1.5; arquivos renomeados, conteúdo intacto). Ícone novo do app
@@ -5012,6 +5013,11 @@ body.claro .splash-caos .sc-face {
 }
 body.claro .splash-caos .sc-txt {
   color: var(--claro-txt);
+}
+/* versão e data da abertura: um tom mais escuro pra ler bem no papel */
+body.claro .splash-buildlog {
+  opacity: 0.8;
+  color: var(--claro-suave);
 }
 /* títulos em tinta; os coloridos ficam escurecidos (sem neon) */
 body.claro h3,
@@ -44911,10 +44917,11 @@ const NOVIDADES = [
       "📱 Logo nova: o P de Perfil grande em azul neon e o JF em laranja neon, na mesma letra, dentro da carta dourada. Quem já instalou: apague o atalho e adicione de novo pra ver.",
     ],
     qol: [
-      "☀️ Modo Claro “Papel” com cara própria: fundo creme âmbar suave, tinta azul-escura, cartões brancos com sombra suave, botões de cor chapada e sem brilho neon. Botões de ajuste e botões vazados ganham um fundo suave na própria cor; a pergunta do C.A.O.S. ao Mestre (Perto/Longe) também fica clara; a fala da abertura fica num balão claro; as demais falas do C.A.O.S. ficam no balão escuro de sempre.",
+      "☀️ Modo Claro “Papel” com cara própria: fundo creme âmbar suave, tinta azul-escura, cartões cor de papel com sombra suave, botões de cor chapada e sem brilho neon. Botões de ajuste e botões vazados ganham um fundo suave na própria cor; a pergunta do C.A.O.S. ao Mestre (Perto/Longe) também fica clara; a fala da abertura fica num balão claro; as demais falas do C.A.O.S. ficam no balão escuro de sempre.",
       "💾 Corrigido: importar um save com outra partida em andamento agora funciona (antes a partida antiga gravava por cima).",
       "✅ Botões de confirmação, Save de Bolso, save corrompido e relatório da partida conferidos um por um.",
       "🧹 Arquivo mais enxuto: código morto e estilos sem uso removidos, fala repetida do C.A.O.S. tirada.",
+      "🏷️ As versões anteriores à 1.7 também ganharam nome de update, igual às mais novas.",
     ],
   },
   {
@@ -45002,6 +45009,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.6.5",
+    nome: "Check-in Update",
     t: "Cadastro travado até completar, exportação que funciona e C.A.O.S. mais vivo",
     itens: [
       "➕ O botão Adicionar só libera depois de nome, cor, emoji e zoeira escolhidos (e mostra o que falta).",
@@ -45016,6 +45024,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.6.4",
+    nome: "Surrender Update",
     t: "Desistir da carta, voz sem arrastar e cansaço por tempo",
     itens: [
       '🏳️ Novo botão "Desistir desta carta" (aparece depois da 1ª dica). Pede confirmação, o C.A.O.S. pergunta em voz alta se a mesa concorda e, se sim, ninguém acerta e o Mestre fica com os pontos das dicas reveladas.',
@@ -45028,6 +45037,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.6.3",
+    nome: "Fair Duel Update",
     t: "Duelo de bônus no Modo Equipe respeita a rotação",
     itens: [
       "🔧 Na carta de duelo de bônus, cada equipe agora coloca quem já estava na vez pela rotação. Antes o jogo sorteava outro jogador e pulava quem era a vez (o que fazia sempre o mesmo aparecer).",
@@ -45035,6 +45045,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.6.2",
+    nome: "Spotlight Update",
     t: "Resposta em destaque, roleta com som e um C.A.O.S. que descansa",
     itens: [
       "🎨 A resposta que só o Mestre vê agora aparece grande e na cor da categoria.",
@@ -45048,6 +45059,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.6.1",
+    nome: "Memory Update",
     t: "Ele sente de verdade (e lembra depois de recarregar)",
     itens: [
       "🧠 O humor do C.A.O.S. agora muda de verdade: errar em sequência tira a paciência dele, e o humor passa a acompanhar a emoção que está mandando (frustrado, orgulhoso, entediado).",
@@ -45060,6 +45072,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.6",
+    nome: "Mood Swing Update",
     t: "A emoção muda no meio da fala",
     itens: [
       "🎭 De vez em quando o C.A.O.S. começa a frase de um jeito e termina de outro: o balão troca de cor e de rostinho no meio da fala (raiva que vira tédio, deboche que vira carinho…). É raro de propósito, pra continuar engraçado.",
@@ -45070,6 +45083,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.5",
+    nome: "Feelings Update",
     t: "25 emoções e 300 rostinhos",
     itens: [
       "🥹 4 emoções novas no balão: alívio (acerto depois de uma sequência de erros), inveja (quando o desafeto dele acerta), nostalgia (reencontro com quem já jogou) e esperança (ajudinha pra quem está atrás).",
@@ -45081,6 +45095,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.4",
+    nome: "Emotion Console Update",
     t: "C.A.O.S. 3.0: console de emoções",
     itens: [
       "🎚️ Ele agora tem 10 medidores de emoção (alegria, tristeza, raiva, medo, nojo, ansiedade, tédio, vergonha, curiosidade e carinho), cada um com gatilho e tempo próprios.",
@@ -45092,6 +45107,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.3",
+    nome: "Double Tap Update",
     t: "Tudo com dois toques",
     itens: [
       "👆👆 Dois toques num formato ou modo já entram direto (ou marque e toque no botão). Tocou de novo depois de um tempo? Desmarca.",
@@ -45102,6 +45118,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.2",
+    nome: "Temper Update",
     t: "C.A.O.S. com temperamento",
     itens: [
       '🧠 O humor dele ficou coerente: com paciência sobrando ele não "explode"; fica preocupado.',
