@@ -5346,7 +5346,7 @@ body.claro .card {
 }
 /* 1.7.3.1: carta virada no Claro: o mesmo desenho do Noturno, em tons de lavanda */
 body.claro .card.face-down {
-  background: radial-gradient(ellipse at 50% 32%, #faf5ff 0%, #ede4ff 48%, #dccbfb 100%);
+  background: radial-gradient(ellipse 80% 65% at 50% 36%, #ffffff 0%, #f8f3ff 32%, #ece2fd 66%, #ddcdfb 100%);
   color: #2e1065;
   border: 1.5px solid #8b5cf6;
   box-shadow:
@@ -5481,17 +5481,23 @@ body.claro .mini-scoreboard li {
   background: color-mix(in srgb, var(--pc, #a78bfa) 16%, #fffaf0);
   border: 1.5px solid color-mix(in srgb, var(--pc, #a78bfa) 55%, transparent);
 }
+/* rodapé no Claro: o mesmo neon do Noturno, num tom mais escuro pra aparecer no papel */
+body.claro .ft-btn {
+  --ftd: color-mix(in srgb, var(--ft) 62%, #1b1d33);
+}
 body.claro .ft-ic {
   background: transparent;
-  border-color: color-mix(in srgb, var(--ft) 50%, #1b1d33);
-  color: color-mix(in srgb, var(--ft) 50%, #1b1d33);
-  box-shadow: none;
+  border-color: var(--ftd);
+  color: var(--ftd);
+  box-shadow:
+    0 0 10px color-mix(in srgb, var(--ftd) 45%, transparent),
+    inset 0 0 8px color-mix(in srgb, var(--ftd) 18%, transparent);
 }
 body.claro .ft-pause i {
-  background: color-mix(in srgb, var(--ft) 50%, #1b1d33);
+  background: var(--ftd);
 }
 body.claro .ft-ic:after {
-  display: none;
+  background: conic-gradient(from var(--ft-rot, 0deg), transparent 0deg 290deg, var(--ftd) 340deg, transparent 360deg);
 }
 /* 1.7.3.1: contraste no Modo Claro (textos pastel que sumiam no papel) */
 body.claro #redrawMestreBtn {
@@ -46537,8 +46543,8 @@ const NOVIDADES = [
       "✍️ Fatos corrigidos: anos sem Olimpíada que na verdade tiveram Olimpíada de inverno (2006, 2010, 2014, 2018, 2022), a saída da Rússia da guerra (foi em 1918, não 1917), a Tarsila (não participou da Semana de 22) e a expulsão dos mouros (em 1492 foi a dos judeus).",
       "🎯 Tabuleiro: os números das casas aparecem a cada 20, uma linha liga uma casa à outra, e um toque no tabuleiro abre a versão ampliada, com cada jogador do primeiro ao último, a distância pro líder e quanto falta pra chegar.",
       "📋 Lista de jogadores: uma linha discreta separa cada jogador no cadastro.",
-      "🎴 Carta virada no Claro: o mesmo desenho do Noturno, em tons de lavanda.",
-      "⏯️ Pausar, Reiniciar e Encerrar: no Claro, contorno mais escuro e sem brilho.",
+      "🎴 Carta virada no Claro: o mesmo desenho do Noturno, em tons de lavanda e com o centro mais clarinho.",
+      "⏯️ Pausar, Reiniciar e Encerrar: no Claro, o mesmo neon do Noturno num tom mais escuro.",
     ],
   },
   {
