@@ -4,6 +4,9 @@
   (nunca edite as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.2.3 · 02/10/2026 · "Pause Menu Update". Pausa com tema e voz (pausaAjustesAtualizar,
+          pausaVozTrocar); selo da categoria na carta aberta (CAT_SELO_ICONE, .cat-selo);
+          .caos-pergunta maior (botões de 44 px).
   1.7.2.2 · 02/10/2026 · "No Mercy Update". Hardcore sem Suave: zoeira Normal (padrão), Ácido ou
           Nível 0 (humorOptionsForMode, renderHumorPicker, playerHumor, ajustarJogadoresAoModo).
   1.7.2.1 · 02/10/2026 · "Family Friendly Update". Cadastro: Adicionar depois de Cor/Emoji/Zoeira
@@ -72,7 +75,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Perfil JF">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.2.2</title>
+<title>Perfil JF · Beta 1.7.2.3</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -3035,6 +3038,9 @@ body:not(.batata-mode) .btn-start.btn-neo.neo-still {
   width: 100%;
   margin-top: 30px;
 }
+.sec-row.pause-ajustes {
+  margin-top: 16px;
+}
 .sec-row.sec-col {
   flex-direction: column;
   margin-top: 22px;
@@ -3166,29 +3172,36 @@ body.batata-mode .number-btn:not(:disabled):before {
   gap: 8px;
   flex-wrap: wrap;
   justify-content: center;
-  max-width: min(92vw, 520px);
-  padding: 10px 12px;
-  border-radius: 16px;
+  width: min(94vw, 520px);
+  box-sizing: border-box;
+  padding: 14px 16px;
+  border-radius: 18px;
   background: #0f0f1ef0;
   border: 1.5px solid #a78bfa;
   box-shadow:
     0 8px 24px #00000080,
     0 0 12px #a78bfa59;
   color: #fff;
-  font-size: 0.85rem;
+  font-size: 1rem;
+  gap: 10px;
+}
+.caos-pergunta > span {
+  width: 100%;
+  text-align: center;
 }
 .caos-pergunta button {
   border: 1px solid rgba(255, 255, 255, 0.25);
   background: #ffffff14;
   color: #fff;
   border-radius: 999px;
-  padding: 6px 12px;
+  padding: 11px 18px;
+  min-height: 44px;
   font-weight: 700;
-  font-size: 0.82rem;
+  font-size: 0.98rem;
   cursor: pointer;
 }
 .caos-pergunta .cp-x {
-  padding: 6px 9px;
+  padding: 11px 15px;
   opacity: 0.7;
 }
 .jf-toast-overlay.caos-emo[data-fl="1"]:before {
@@ -3409,6 +3422,23 @@ body:not(.batata-mode) .splash-dice {
 }
 .card.face-down {
   border-color: transparent;
+}
+.cat-selo {
+  display: block;
+  width: fit-content;
+  margin: 0 auto 8px;
+  padding: 5px 16px;
+  border-radius: 999px;
+  background: var(--cat);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--cat) 55%, transparent);
+}
+body.claro .cat-selo {
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--cat) 30%, transparent);
 }
 .answer-header.cat-neon {
   background: #fff;
@@ -5250,7 +5280,7 @@ body.claro .caos-pergunta button[data-v="digitar"] {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.2.2 · No Mercy Update<br>C.A.O.S. 3.6 · Atualizada em 02/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.2.3 · Pause Menu Update<br>C.A.O.S. 3.6 · Atualizada em 02/10/2026</div>
     </div>
   </section>
 
@@ -5349,6 +5379,10 @@ body.claro .caos-pergunta button[data-v="digitar"] {
     </div>
     <button class="btn-start btn-neo neo-solid neo-still" id="pauseResumeBtn" style="--mc:#fbbf24; --mc-glow:rgba(251,191,36,0.35);">▶️ Voltar pro jogo</button>
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost" id="pauseAdmBtn" style="--mc:#e11d48; --mc-glow:rgba(225,29,72,0.28); margin-top:12px;">🛡️ ADM</button> 
+    <div class="sec-row pause-ajustes">
+      <button class="btn-sec" id="pauseTemaBtn" type="button">☀️ Modo Claro</button>
+      <button class="btn-sec" id="pauseVozBtn" type="button">🤐 Calar a voz</button>
+    </div>
     <div class="sec-row sec-col">
       <button class="btn-sec" id="pauseTrocarModoBtn">🔄 Trocar de modo (recomeça com os mesmos jogadores)</button>
       <button class="btn-sec" id="pauseExportBtn">📤 Exportar partida (Save de Bolso)</button>
@@ -5737,6 +5771,8 @@ const GEM_INFO = {
   COISA: { name: "COISA", letter: "C", color: "#a855f7" },
   ANIMAL: { name: "ANIMAL", letter: "A", color: "#f59e0b" },
 };
+// Selo da categoria na carta aberta (ícone + nome, na cor da categoria).
+const CAT_SELO_ICONE = { ANO: "📅", PESSOA: "🧑", LUGAR: "📍", COISA: "📦", ANIMAL: "🐾" };
 const WIN_CONDITIONS = {
   casa: {
     icon: "🏠",
@@ -10372,7 +10408,7 @@ function render() {
     const bonusDuelHtml = currentCard.isBonus ? renderBonusDuelInfo() : "";
     area.innerHTML = `
       ${bonusBannerRevealedHtml}
-      <div class="answer-header cat-neon" style="--cat:${(GEM_INFO[gemCategoryFor(currentCard.category)] || {}).color || "#e94560"};">Diga aos jogadores: "Eu sou ${formatLabelUppercase(CATEGORY_LABELS[gemCategoryFor(currentCard.category)])}."</div>
+      <div class="answer-header cat-neon" style="--cat:${(GEM_INFO[gemCategoryFor(currentCard.category)] || {}).color || "#e94560"};"><span class="cat-selo">${CAT_SELO_ICONE[gemCategoryFor(currentCard.category)] || "🃏"} ${escapeHtml((GEM_INFO[gemCategoryFor(currentCard.category)] || {}).name || gemCategoryFor(currentCard.category))}</span>Diga aos jogadores: "Eu sou ${formatLabelUppercase(CATEGORY_LABELS[gemCategoryFor(currentCard.category)])}."</div>
       ${bonusDuelHtml}
       ${answerLineHtml()}
       <div class="clue-history ${historyBlurred}">
@@ -12531,6 +12567,44 @@ function updateNoturnoBtn() {
   btn.textContent = claro ? "☀️ Claro" : "🌙 Noturno";
   btn.style.setProperty("--cc", claro ? "#f59e0b" : "#a5b4fc");
   btn.title = claro ? "Modo Claro (toque pra voltar ao Noturno)" : "Modo Noturno (toque pra trocar pro Claro)";
+  pausaAjustesAtualizar();
+}
+// Pausa: trocar o visual e calar/ligar a voz sem sair da partida.
+function pausaAjustesAtualizar() {
+  const t = document.getElementById("pauseTemaBtn"),
+    v = document.getElementById("pauseVozBtn");
+  if (t) t.textContent = document.body.classList.contains("claro") ? "🌙 Mudar pro Noturno" : "☀️ Mudar pro Claro";
+  if (v) {
+    v.style.display = CAOS_VOICE_OK ? "" : "none";
+    v.textContent = caosVoiceOn ? "🤐 Calar a voz do C.A.O.S." : "🗣️ Ligar a voz do C.A.O.S.";
+  }
+}
+// Calou a voz na pausa: ele continua nos balões e reclama uma vez, sem encher o saco.
+function pausaVozTrocar() {
+  if (!CAOS_VOICE_OK) return;
+  caosVoiceOn = !caosVoiceOn;
+  try {
+    JFStore.setItem("perfil200_voz", caosVoiceOn ? "1" : "0");
+  } catch (e) {}
+  updateVoiceBtn();
+  pausaAjustesAtualizar();
+  if (caosVoiceOn) {
+    caosSpeakSample("Voz do Caos ligada. Senti falta de mim.");
+    return;
+  }
+  caosVoiceCancel();
+  try {
+    if (!stats || stats.totalDrawn < 1 || gameEnded || caosSilenced || !caosOncePerMatch("voz_calada")) return;
+    caosEmoNudge(2, -1);
+    caosLog("voz", "voz desligada na pausa");
+    const box = document.getElementById("pausaCaos");
+    const txt = getRandomReaction(REACTIVE_VOICE.vozCalada);
+    if (!box || !txt) return;
+    box.style.display = "";
+    box.classList.add("show");
+    caosToastEmo(box, CURRENT_MODE === "junior" ? "deboche" : "tedio", null);
+    box.textContent = String(txt).replace(/[⟦⟧]/g, "");
+  } catch (e) {}
 }
 // Dois visuais: Noturno (padrão) e Claro. Guardado em NOTURNO_KEY: "0" = Claro.
 function temaAplicar(claro) {
@@ -12956,6 +13030,7 @@ function updateVoiceBtn() {
     if (bAj) bAj.style.display = "none";
     return;
   }
+  pausaAjustesAtualizar();
   b.textContent = caosVoiceOn ? "🗣️ Voz" : "🤐 Voz";
   b.classList.toggle("off", !caosVoiceOn);
   b.title = caosVoiceOn ? "Voz do C.A.O.S. ligada (toque pra desligar)" : "Voz do C.A.O.S. desligada (toque pra ligar)";
@@ -14795,7 +14870,7 @@ function caosInspectorEstado() {
         );
       })()}</b></div>
       <div class="ci-kv"><span>😄 Alegria · 🎯 confiança · 🔎 curiosidade</span><b class="ci-mono">${caosEixos.alegria.toFixed(1)} · ${caosEixos.confianca.toFixed(1)} · ${caosEixos.curiosidade.toFixed(1)}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.2.2 · C.A.O.S. 3.6</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.2.3 · C.A.O.S. 3.6</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -19561,7 +19636,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.2.2 · C.A.O.S. 3.6)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.2.3 · C.A.O.S. 3.6)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -21826,7 +21901,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.2.2 · C.A.O.S. 3.6");
+  L.push("- **Versão:** Beta 1.7.2.3 · C.A.O.S. 3.6");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -22348,7 +22423,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.2.2 · C.A.O.S. 3.6",
+        versao: "Beta 1.7.2.3 · C.A.O.S. 3.6",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -43531,6 +43606,8 @@ const REACTIVE_VOICE = {
     "Eu estava te perseguindo, {nome}. Mas essa jogada foi boa demais. Arquivo encerrado.",
   ],
   vozCalada: [
+    "Cansaram de me ouvir? Tá bom. Agora eu só escrevo.",
+    "Tiraram a minha voz. Beleza. Os balões continuam, e eu continuo certo.",
     "Desligaram o meu alto-falante? Tudo bem. Eu continuo digitando, e o meu rancor continua falando por mim.",
     "Me calaram. Covardes. Mas eu ainda tenho teclado.",
     "Sem voz, sem problema. Escrever também incomoda.",
@@ -45094,6 +45171,20 @@ const PAUSE_TIPS = [
 ];
 const NOVIDADES = [
   {
+    v: "Beta 1.7.2.3",
+    data: "02/10/2026 · 13:28",
+    nome: "Pause Menu Update",
+    t: "Pausa com Claro/Noturno e voz, categoria marcada na carta e botões do Perto/Longe maiores.",
+    itens: [
+      "⏸️ Na pausa dá pra trocar entre Modo Claro e Noturno e calar (ou ligar) a voz do C.A.O.S. Sem voz ele continua nos balões e só reclama uma vez: \"Cansaram de me ouvir?\"",
+      "🏷️ A carta aberta mostra um selo com a categoria (📅 ANO, 🧑 PESSOA, 📍 LUGAR, 📦 COISA, 🐾 ANIMAL) na cor dela, no Noturno e no Claro.",
+      "👆 A pergunta do C.A.O.S. ao Mestre (Perto, Longe, Digitar) ficou maior e mais fácil de tocar no celular.",
+    ],
+    qol: [
+      "🎰 Express conferido: roleta da categoria, sons e musiquinha de vitória funcionando como nos outros modos.",
+    ],
+  },
+  {
     v: "Beta 1.7.2.2",
     data: "02/10/2026 · 13:06",
     nome: "No Mercy Update",
@@ -45980,6 +46071,9 @@ function iniciar() {
   document.getElementById("resumeGameBtn").addEventListener("click", resumeGame);
   document.getElementById("pauseResumeBtn").addEventListener("click", resumeGame);
   document.getElementById("pauseExportBtn").addEventListener("click", () => exportSave());
+  document.getElementById("pauseTemaBtn").addEventListener("click", toggleNoturno);
+  document.getElementById("pauseVozBtn").addEventListener("click", pausaVozTrocar);
+  pausaAjustesAtualizar();
   document.getElementById("pauseAdmBtn").addEventListener("click", openAdmPanel);
   document.getElementById("pauseTipNextBtn").addEventListener("click", () => {
     startPauseTipsTimerOnly();
