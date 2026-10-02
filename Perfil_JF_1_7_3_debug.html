@@ -4,7 +4,8 @@
   (nunca edite as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
-  1.7.3 · 02/10/2026 · "Cards and Rules Update". Pente fino nas cartas (dicas independentes,
+  1.7.3 · 02/10/2026 · "Cards and Rules Update". C.A.O.S. sobe pra 3.8 (depois da 3.9 vem a 4.0).
+          Aviso "Em breve: Modo Multiplayer" na abertura (#splashEmBreve; tirar na 1.7.10). Pente fino nas cartas (dicas independentes,
           sem eco, sem vazamento, fatos corrigidos); +25 cartas Old School (600 no total); baralho
           equilibrado por categoria (embaralharEquilibrado); C.A.O.S. decide no Hardcore inclui
           Nível 0; regras reescritas; verso novo da carta (VERSO_EMBLEMA_SVG).
@@ -596,6 +597,49 @@ body.fx-urgente:after {
   margin-top: 14px;
   z-index: 2;
   text-align: center;
+}
+.splash-embreve {
+  z-index: 2;
+  position: relative;
+  margin-top: 14px;
+  padding: 8px 18px 9px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border-radius: 14px;
+  border: 1.5px dashed #facc15;
+  background: #1a1433cc;
+  box-shadow: 0 0 14px #facc1540;
+  animation: emBrevePulsa 2.8s ease-in-out infinite;
+  text-align: center;
+}
+.splash-embreve .eb-selo {
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 1px 9px;
+  border-radius: 999px;
+  background: #facc15;
+  color: #1a1433;
+}
+.splash-embreve .eb-titulo {
+  font-size: 1rem;
+  font-weight: 900;
+  color: #f0abfc;
+  text-shadow: 0 0 8px #d946ef8c;
+}
+.splash-embreve .eb-sub {
+  font-size: 0.74rem;
+  opacity: 0.8;
+}
+@keyframes emBrevePulsa {
+  0%, 100% { box-shadow: 0 0 8px #facc1533; }
+  50% { box-shadow: 0 0 18px #facc1580; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .splash-embreve { animation: none; }
 }
 .splash-settings {
   z-index: 2;
@@ -5257,6 +5301,23 @@ body.claro .splash-caos .sc-face {
 body.claro .splash-caos .sc-txt {
   color: var(--claro-txt);
 }
+body.claro .splash-embreve {
+  background: #fff7e6;
+  border-color: #d97706;
+  box-shadow: 0 4px 12px #b8860b26;
+  animation: none;
+}
+body.claro .splash-embreve .eb-selo {
+  background: #d97706;
+  color: #fff;
+}
+body.claro .splash-embreve .eb-titulo {
+  color: #6d28d9;
+  text-shadow: none;
+}
+body.claro .splash-embreve .eb-sub {
+  color: var(--claro-suave);
+}
 /* versão e data da abertura: um tom mais escuro pra ler bem no papel */
 body.claro .splash-buildlog {
   opacity: 0.8;
@@ -5475,8 +5536,10 @@ body.claro .caos-pergunta button[data-v="digitar"] {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.3 · Cards and Rules Update<br>C.A.O.S. 3.6 · Atualizada em 02/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.3 · Cards and Rules Update<br>C.A.O.S. 3.8 · Atualizada em 02/10/2026</div>
     </div>
+    <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
+    <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
   </section>
 
   
@@ -15168,7 +15231,7 @@ function caosInspectorEstado() {
         );
       })()}</b></div>
       <div class="ci-kv"><span>😄 Alegria · 🎯 confiança · 🔎 curiosidade</span><b class="ci-mono">${caosEixos.alegria.toFixed(1)} · ${caosEixos.confianca.toFixed(1)} · ${caosEixos.curiosidade.toFixed(1)}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.3 · C.A.O.S. 3.6</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.3 · C.A.O.S. 3.8</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -19935,7 +19998,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.3 · C.A.O.S. 3.6)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.3 · C.A.O.S. 3.8)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -22200,7 +22263,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.3 · C.A.O.S. 3.6");
+  L.push("- **Versão:** Beta 1.7.3 · C.A.O.S. 3.8");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -22722,7 +22785,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.3 · C.A.O.S. 3.6",
+        versao: "Beta 1.7.3 · C.A.O.S. 3.8",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -27104,6 +27167,8 @@ const NOVIDADES = [
       "🧒 Contagem do Júnior: o aviso agora mostra quantas cartas o baralho tem de verdade.",
       "🎓 Tutorial: a instrução de exemplo agora é \"Volte 2 casas\" (não existe \"Volte 1 casa\").",
       "📰 Novidades: o nome de cada mudança aparece numa caixinha de destaque.",
+      "🤖 C.A.O.S. 3.8: com as falas novas e as melhorias desta leva, a versão do C.A.O.S. subiu de 3.6 pra 3.8.",
+      "🚧 Em breve: a tela de abertura avisa o que vem por aí, o Modo Multiplayer, online e local.",
     ],
   },
   {
