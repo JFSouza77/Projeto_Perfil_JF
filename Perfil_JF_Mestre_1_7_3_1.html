@@ -6,7 +6,8 @@
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
   1.7.3.1 · 02/10/2026 · "Cards and Rules Update · Parte 2". Pente fino nas 99 cartas de ANO (no
           máximo 3 dicas de conta e 1 que entrega o ano; fatos repetidos trocados; erros corrigidos);
-          contraste do Modo Claro; números do tabuleiro a cada 20 casas; novidades com itens que
+          Modo Claro com identidade (modos e zoeira tingidos, carta virada roxa, pontuação na cor do
+          jogador via corDoJogador, pausa colorida); números do tabuleiro a cada 20 casas; novidades com itens que
           abrem e fecham (.nov-drop, sugestão do Bruno Levanti).
   1.7.3 · 02/10/2026 · "Cards and Rules Update". C.A.O.S. sobe pra 3.8 (depois da 3.9 vem a 4.0).
           Aviso "Em breve: Modo Multiplayer" na abertura (#splashEmBreve; tirar na 1.7.10). Pente fino nas cartas (dicas independentes,
@@ -5257,36 +5258,19 @@ body.claro .card {
   border-radius: 18px;
   box-shadow: var(--claro-sombra2);
 }
+/* 1.7.3.1: carta virada igual ao Noturno (roxo profundo), também no Modo Claro */
 body.claro .card.face-down {
-  background: radial-gradient(ellipse at 50% 32%, #fffaf0 0%, #f8edd5 55%, #efdcb5 100%);
-  color: var(--claro-txt);
-  border-color: #8b5cf6;
+  background: radial-gradient(ellipse at 50% 32%, #3b2380 0%, #1d1240 46%, #110b26 100%);
+  color: #e9e6f5;
+  border: 1.5px solid #8b5cf6;
   box-shadow:
-    0 8px 20px #7a5a2a33,
-    inset 0 0 22px #b8860b1f;
+    0 10px 24px #4c1d9540,
+    inset 0 0 26px #6d28d933;
 }
-body.claro .card.face-down::before {
-  border-color: #7c3aed;
-  box-shadow: none;
-}
-body.claro .card.face-down::after {
-  border-color: #b8860b80;
-}
-body.claro .verso-canto {
-  color: #b8860b;
-  text-shadow: none;
-}
-body.claro .card.face-down .verso-emblema {
-  filter: drop-shadow(0 2px 4px #7c3aed40);
-  animation: none;
-}
-body.claro .verso-emblema .vs-p,
-html.claro .verso-emblema .vs-p {
-  fill: #4c1d95;
-}
-body.claro .verso-frase {
-  color: #7c3aed;
-  text-shadow: none;
+body.claro .card.face-down .mestre-destaque {
+  background: #a78bfa2e;
+  border-color: #c084fc;
+  box-shadow: 0 0 10px #a855f766;
 }
 body.claro .final-ranking-list li.first-place {
   background: #fff7df;
@@ -5319,6 +5303,75 @@ body.claro .btn-sec,
 body.claro .pause-tip-next {
   border-color: var(--claro-borda);
   background: var(--claro-sup);
+}
+/* 1.7.3.1: identidade no Modo Claro: cada coisa com o tom da sua cor, sem neon */
+body.claro .mode-btn.mc-card {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--mc) 24%, #fffaf0),
+    color-mix(in srgb, var(--mc) 10%, #fffaf0)
+  );
+  border: 1.5px solid color-mix(in srgb, var(--mc) 55%, #fffaf0);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--mc) 22%, transparent);
+}
+body.claro .mode-btn.mc-card .mc-title {
+  color: color-mix(in srgb, var(--mc) 45%, #1b1d33);
+}
+body.claro .mode-btn.mc-card .mc-desc {
+  color: #3d3852;
+}
+body.claro .mc-rainbow .mode-btn.mc-card {
+  background: linear-gradient(135deg, #fecaca, #fde68a, #bbf7d0, #bfdbfe, #e9d5ff);
+  border-color: #c4b5fd;
+}
+body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-card {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--mc) 42%, #fffaf0),
+    color-mix(in srgb, var(--mc) 22%, #fffaf0)
+  );
+  border: 2.5px solid color-mix(in srgb, var(--mc) 80%, #1b1d33);
+}
+body.claro .humor-btn {
+  background: color-mix(in srgb, var(--hc) 16%, #fffaf0) !important;
+  border: 1.5px solid color-mix(in srgb, var(--hc) 65%, #1b1d33) !important;
+}
+body.claro .humor-btn.on {
+  background: color-mix(in srgb, var(--hc) 80%, #1b1d33) !important;
+  color: #fff !important;
+}
+body.claro .mc-back {
+  display: block;
+  width: fit-content;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: #ede9fe;
+  border: 1px solid #c4b5fd;
+  color: #5b21b6;
+  font-weight: 700;
+  text-decoration: none;
+}
+body.claro .pause-tip-card {
+  background: linear-gradient(135deg, #f3e8ff, #fdf4ff);
+  border: 1.5px solid #c4b5fd;
+  box-shadow: 0 4px 14px #7c3aed1f;
+}
+body.claro #pauseTemaBtn { --cc: #6366f1; }
+body.claro #pauseVozBtn { --cc: #0d9488; }
+body.claro #pauseTrocarModoBtn { --cc: #d97706; }
+body.claro #pauseExportBtn { --cc: #059669; }
+body.claro #pauseTemaBtn,
+body.claro #pauseVozBtn,
+body.claro #pauseTrocarModoBtn,
+body.claro #pauseExportBtn {
+  background: color-mix(in srgb, var(--cc) 14%, #fffaf0);
+  border: 1.5px solid color-mix(in srgb, var(--cc) 50%, transparent);
+  color: color-mix(in srgb, var(--cc) 60%, #1b1d33);
+  border-radius: 14px;
+}
+body.claro .mini-scoreboard li {
+  background: color-mix(in srgb, var(--pc, #a78bfa) 16%, #fffaf0);
+  border: 1.5px solid color-mix(in srgb, var(--pc, #a78bfa) 55%, transparent);
 }
 /* 1.7.3.1: contraste no Modo Claro (textos pastel que sumiam no papel) */
 body.claro #redrawMestreBtn {
@@ -11006,6 +11059,13 @@ function renderBoardTrack() {
     }
   });
 }
+// Cor sólida que representa o jogador (degradês e RGB viram um tom fixo), pra tingir caixinhas.
+function corDoJogador(c) {
+  if (typeof c === "string" && /^#[0-9a-f]{6}$/i.test(c)) return c;
+  if (c === "RGB") return "#a855f7";
+  const g = typeof c === "string" && GRADIENTS[c] && /#[0-9a-f]{6}/i.exec(GRADIENTS[c]);
+  return g ? g[0] : "#a78bfa";
+}
 function renderMiniScoreboard() {
   const list = document.getElementById("miniScoreboard");
   if (list) {
@@ -11014,7 +11074,7 @@ function renderMiniScoreboard() {
       list.innerHTML = sorted
         .map(
           (p) => `
-        <li>${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${p.score} pt${p.score === 1 ? "" : "s"}${gemBadgesHtml(p)}</li>
+        <li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${p.score} pt${p.score === 1 ? "" : "s"}${gemBadgesHtml(p)}</li>
       `,
         )
         .join("");
@@ -11032,7 +11092,7 @@ function renderMiniScoreboard() {
               : wc === "joias"
                 ? `${gemTotal(teams[id])}/${GEMS_TO_WIN} joias — casa ${teams[id].position}`
                 : `casa ${teams[id].position}/${WINNING_SCORE}`;
-          return `<li>${info.emoji} Equipe ${info.label}: ${txt}${palpiteBadge(id)}${gemBadgesHtml(teams[id])}</li>`;
+          return `<li style="--pc:${corDoJogador(info.color)}">${info.emoji} Equipe ${info.label}: ${txt}${palpiteBadge(id)}${gemBadgesHtml(teams[id])}</li>`;
         })
         .join("");
     } else {
@@ -11048,7 +11108,7 @@ function renderMiniScoreboard() {
                 : wc === "tabuleiro"
                   ? `casa ${p.position}/${WINNING_SCORE}`
                   : `${p.score} pts — casa ${p.position}/${WINNING_SCORE}`;
-          return `<li>${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${txt}${palpiteBadge(String(players.indexOf(p)))}${gemBadgesHtml(p)}</li>`;
+          return `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${txt}${palpiteBadge(String(players.indexOf(p)))}${gemBadgesHtml(p)}</li>`;
         })
         .join("");
     }
@@ -46301,7 +46361,8 @@ const NOVIDADES = [
     itens: [
       "📅 Cartas de Ano revisadas: as 99 cartas passaram pelo pente fino. Cada uma tem no máximo 3 dicas de conta (soma dos dígitos, par ou ímpar, bissexto) e só 1 que entrega o ano de cara. Mais de 450 dicas viraram fatos novos e independentes.",
       "🧮 Contas conferidas: um verificador automático checou todas as somas, bissextos, algarismos romanos e divisões. Saíram as dicas tipo \"venho dois anos depois de\" e \"estou distante X anos de\".",
-      "☀️ Modo Claro mais legível: botões e textos que sumiam no papel ganharam cor (Sortear outro Mestre, opções de zoeira, Resposta escondida, Exportar e Importar, Trocar formato).",
+      "☀️ Modo Claro com identidade: cada modo ganhou um fundo na sua cor (Júnior azul, Clássico verde, Hardcore vermelho, Old School dourado, Express laranja e o Aleatório colorido), a zoeira também, a carta virada usa o mesmo roxo do Noturno, as caixinhas de pontuação ganham a cor de cada jogador e a pausa tem dica e botões coloridos.",
+      "🔎 Contraste no Claro: o que sumia no papel ficou legível (Sortear outro Mestre, Resposta escondida, Exportar e Importar, Trocar formato).",
       "📰 Novidades em caixinhas: cada mudança mostra só o título; é só tocar pra abrir ou fechar a explicação. Ideia do Bruno Levanti!",
     ],
     qol: [
