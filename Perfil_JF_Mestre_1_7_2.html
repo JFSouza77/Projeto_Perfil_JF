@@ -4,13 +4,13 @@
   (nunca edite as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
-  1.7.2 · 02/10/2026 · Android: botão Instalar o app (aviso do Chrome; no iPhone, passo a passo),
+  1.7.2 · 02/10/2026 · "Android Update". Android: botão Instalar o app (aviso do Chrome; no iPhone, passo a passo),
           voltar do Android pausa a partida, dica de voz por aparelho, sw.js também em
           localhost (teste). Corrigido: importar save com partida em andamento (saveBloqueado).
           Limpeza: variáveis mortas, "reapresentar" desativado, 3 regras CSS sem uso, 1 fala
-          repetida. Modo Claro revisto (2ª passada: cartões, botões, nomes, carta virada).
+          repetida. Modo Claro "Papel" (identidade própria: creme, tinta, sem neon).
           Logo: P grande em azul neon e JF em laranja neon (mesma letra).
-  1.7.1.6 · 02/10/2026 · Números das versões corrigidos (as antigas 1.7.1.2 a 1.7.1.6 são
+  1.7.1.6 · 02/10/2026 · "Day & Night Update". Números das versões corrigidos (as antigas 1.7.1.2 a 1.7.1.6 são
           1.7.1.1 a 1.7.1.5; arquivos renomeados, conteúdo intacto). Ícone novo do app
           (? neon + carta com P). Dois visuais: Noturno (padrão) e Claro (body.claro).
           Resposta menor (só o nome, numa caixinha), toque pra esconder antes da 1ª dica.
@@ -18,24 +18,24 @@
           zoeiras (CAOS_RISADA_*). Debug: tempo esgotado
           não come 5 s do próximo; Express não vira "misto" ao recarregar; Reiniciar
           solta o silêncio do sorteio. Balão do C.A.O.S. no celular: fala na largura toda.
-  1.7.1.5 · 01/10/2026 · PWA (manifest.json + ícones: instala na tela de início em tela cheia);
+  1.7.1.5 · 01/10/2026 · "Pocket Update". PWA (manifest.json + ícones: instala na tela de início em tela cheia);
           Compartilhar resultado no fim de jogo; destaque Mestre muralha no resumo; dicas
           de Mestre na pausa.
-  1.7.1.4 · 01/10/2026 · Tela inicial mais limpa: botão Jogar flutua de leve; Novidades e um
+  1.7.1.4 · 01/10/2026 · "Clean Start Update". Tela inicial mais limpa: botão Jogar flutua de leve; Novidades e um
           menu ⋮ (Som, Vibrar, Voz + Ajustar voz, Batata) no canto superior direito.
-  1.7.1.3 · 01/10/2026 · Som no iPhone religa no primeiro toque depois de o Safari suspender o
+  1.7.1.3 · 01/10/2026 · "Voices & Faces Update". Som no iPhone religa no primeiro toque depois de o Safari suspender o
           áudio; Moda da Casa e última rodada nas regras, tutorial e dicas da pausa; rostinhos
           novos do C.A.O.S.; falas novas no Encerrar e no sorteio da Moda da Casa.
-  1.7.1.2 · 01/10/2026 · Sorteio da Moda da Casa com a roleta da categoria (som), C.A.O.S.
+  1.7.1.2 · 01/10/2026 · "Final Round Update". Sorteio da Moda da Casa com a roleta da categoria (som), C.A.O.S.
           calado durante o sorteio (só comenta o resultado); última rodada (ULTIMA_RODADA):
           bateu a meta, a rodada termina e vence quem estiver na frente.
-  1.7.1.1 · 01/10/2026 · Mestre em 9 seções (configuração, estado, regras, turno e rodada, tela,
+  1.7.1.1 · 01/10/2026 · "House Rules Update". Mestre em 9 seções (configuração, estado, regras, turno e rodada, tela,
           voz e som, C.A.O.S., salvamento, utilitários). Moda da Casa: o C.A.O.S. sorteia o
           modo da mesa (tabuleiro/pontos/joias, sem repetir o anterior; saves antigos = "misto");
           meta de pontos 200 e joia com até 6 dicas na Moda da Casa (aprovados pela simulação
           sim.js); joias valem com 2+ jogadores; trava de 2 joias por jogador por rodada
           (rodada = volta do 1º mestre); falas do C.A.O.S. sem colagem fora de contexto.
-  1.7.0 · 01/10/2026 · Mestre legível criado a partir da Beta 1.6.5 sem mudar o jogo:
+  1.7.0 · 01/10/2026 · "Rebuild Update". Mestre legível criado a partir da Beta 1.6.5 sem mudar o jogo:
           índice e seções; funções em cima, estado, dados e iniciar() no fim; 3 funções
           mortas removidas; remendos de rostos/falas consolidados nas tabelas finais;
           23 regras CSS sem uso removidas; console.* atrás de DEBUG; cartas no formato
@@ -3997,6 +3997,34 @@ body.batata-mode .pause-min {
   gap: 10px;
   list-style: none;
 }
+.nov-item summary {
+  flex-wrap: wrap;
+}
+.nov-nome {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: #c4b5fd;
+  border: 1px solid #a78bfa80;
+  white-space: nowrap;
+}
+body.claro .nov-v {
+  color: #5b3fc4;
+}
+body.claro .nov-nome {
+  color: #5b3fc4;
+  border-color: #c9b9ef;
+  background: #f4efff;
+}
+.nov-qol {
+  margin: 10px 0 2px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  opacity: 0.8;
+}
 .nov-item summary::-webkit-details-marker {
   display: none;
 }
@@ -4863,152 +4891,190 @@ body.noturno .ans-nome {
     inset 0 0 10px color-mix(in srgb, var(--card-glow, #d4a017) 25%, transparent),
     0 0 8px color-mix(in srgb, var(--card-glow, #d4a017) 35%, transparent);
 }
-/* ===== Modo Claro (Noturno é o padrão): papel lavanda, superfícies brancas, neon só nas bordas ===== */
+/* ===== Modo Claro "Papel" (Noturno é o padrão) =====
+   Identidade própria, não é o Noturno clareado: papel creme, tinta azul-escura,
+   superfícies brancas com sombra suave, cores chapadas e NENHUM brilho neon. */
 body.claro {
-  --bg: #f3f0fa;
+  --bg: #f6f2ea;
   --card-bg: #ffffff;
-  --text-dark: #231c3d;
+  --text-dark: #22263f;
+  --claro-papel: #f6f2ea;
   --claro-sup: #ffffff;
-  --claro-sup2: #f8f5fe;
-  --claro-borda: #dcd3ef;
-  --claro-txt: #231c3d;
-  --claro-suave: #5b5277;
-  background: radial-gradient(circle at 50% 0%, #ffffff 0%, #f3f0fa 45%, #ebe6f7 100%);
+  --claro-sup2: #fbf8f2;
+  --claro-borda: #e3dacb;
+  --claro-txt: #22263f;
+  --claro-suave: #5f6276;
+  --claro-sombra: 0 2px 10px rgba(60, 45, 25, 0.09);
+  --claro-sombra2: 0 6px 18px rgba(60, 45, 25, 0.12);
+  background: radial-gradient(circle at 50% -10%, #fffdf8 0%, #f6f2ea 55%, #efe8db 100%);
   color: var(--claro-txt);
 }
-/* superfícies que eram vidro escuro ficam brancas */
+html.claro {
+  background: #efe8db;
+}
+/* sem brilho: o neon é coisa da noite */
+body.claro .splash-title.splash-neon,
+body.claro .splash-dice,
+body.claro .player-name-neon,
+body.claro h1,
+body.claro h2,
+body.claro h3,
+body.claro .mc-title,
+body.claro .roulette-reel,
+body.claro .ans-nome,
+body.claro .cad-tit {
+  text-shadow: none !important;
+}
+body.claro .splash-title.splash-neon {
+  filter: none;
+}
+body:not(.batata-mode).claro .splash-dice {
+  filter: drop-shadow(0 6px 8px rgba(60, 45, 25, 0.25));
+}
+body.claro .floating-word {
+  color: #22263f;
+}
+body.claro #floatingWordsContainer {
+  opacity: 0.45;
+}
+/* bordas giratórias e brilhos animados ficam só no Noturno */
+body.claro .btn-neo:before,
+body.claro .mc-badge:before,
+body.claro .mc-icon:before,
+body.claro .mode-select-wrap.mc-wrap.mode-selected:before {
+  display: none;
+}
+/* superfícies */
+body.claro .card,
 body.claro .mode-btn.mc-card,
 body.claro .splash-ico,
 body.claro .splash-menu,
 body.claro .jf-modal,
 body.claro .tut-box,
 body.claro .stats-box,
-body.claro .voz-panel {
+body.claro .voz-panel,
+body.claro .rules-box,
+body.claro .hall-placa,
+body.claro .nov-item,
+body.claro .mini-scoreboard li,
+body.claro .final-ranking-list li {
   background: var(--claro-sup);
   color: var(--claro-txt);
-}
-body.claro .stats-box,
-body.claro .voz-panel {
   border: 1px solid var(--claro-borda);
+  box-shadow: var(--claro-sombra);
+}
+body.claro .card {
+  border-radius: 18px;
+  box-shadow: var(--claro-sombra2);
+}
+body.claro .card.face-down {
+  background: repeating-linear-gradient(45deg, #fbf8f2 0 10px, #f3ede1 10px 20px);
+  color: var(--claro-txt);
+}
+body.claro .final-ranking-list li.first-place {
+  background: #fff7df;
+  border-color: #ecd28f;
+}
+body.claro .nov-item[open] {
+  border-color: #c9b9ef;
+  background: #faf7ff;
+}
+body.claro .mvp-spotlight {
+  color: #9a5b00;
+  background: #fff4dc;
+  border-color: #ecd28f;
 }
 body.claro .mode-btn.mc-card .mc-title,
 body.claro .voz-row,
-body.claro .splash-menu-tit {
+body.claro .splash-menu-tit,
+body.claro .casa-sorteio-tit,
+body.claro .splash-caos .sc-txt {
   color: var(--claro-txt);
 }
 body.claro .mode-btn.mc-card .mc-desc,
 body.claro .ft-lb,
 body.claro .pause-tip-count,
-body.claro #vozLista {
-  color: var(--claro-suave);
-}
-body.claro .splash-menu,
-body.claro .jf-modal,
-body.claro .tut-box {
-  box-shadow: 0 12px 32px rgba(60, 40, 110, 0.18);
-}
-body.claro .splash-caos {
-  background: rgba(255, 255, 255, 0.85);
-}
-body.claro .splash-caos .sc-txt {
-  color: var(--claro-txt);
-}
-/* janelas do C.A.O.S. (o estilo vem pronto no próprio elemento) */
-body.claro .caos-modal-ov,
-body.claro .jf-modal-bg,
-body.claro .tut-overlay {
-  background: rgba(35, 28, 61, 0.38) !important;
-}
-body.claro .caos-modal-ov > div {
-  background: var(--claro-sup) !important;
-  color: var(--claro-txt) !important;
-  box-shadow: 0 14px 40px rgba(60, 40, 110, 0.25) !important;
-}
-body.claro .casa-sorteio-tit {
-  color: var(--claro-txt);
-}
-/* textos dourados/ciano claros demais no papel */
-body.claro .splash-tagline,
-body.claro .add-falta,
-body.claro .ini-start,
-body.claro h3 {
-  color: #a15c07;
-  text-shadow: none;
-}
-body.claro .cad-tit,
-body.claro #trocarModoBtn,
-body.claro .tut-btn {
-  color: #0e7490;
-  text-shadow: none;
-}
+body.claro #vozLista,
 body.claro .btn-sec,
 body.claro .pause-tip-next {
   color: var(--claro-suave);
+}
+body.claro .btn-sec,
+body.claro .pause-tip-next {
   border-color: var(--claro-borda);
+  background: var(--claro-sup);
 }
-body.claro .hall-zerar {
-  color: #be123c;
+body.claro .splash-caos {
+  background: var(--claro-sup);
+  border-color: var(--claro-borda);
+  box-shadow: var(--claro-sombra);
 }
-html.claro {
-  background: #ebe6f7;
-}
-body.claro #playerPanel > h2.cad-tit {
-  color: #0e7490;
+body.claro .splash-caos .sc-face {
+  background: var(--claro-sup2);
+  filter: brightness(0.72) saturate(1.3);
   text-shadow: none;
 }
+/* títulos em tinta; os coloridos ficam escurecidos (sem neon) */
+body.claro h3,
 body.claro .rules-box h3,
 body.claro .rules-box.resumo-neon > h3,
 body.claro .jf-modal h3,
 body.claro .nov-modal h3,
-body.claro .resumo-box h3 {
-  filter: brightness(0.72) saturate(1.35);
-}
-/* chips (Som, Vibrar, Batata...) com a cor escurecida pra ler no branco */
-body.claro .splash-menu .chip,
-body.claro .splash-settings .chip {
-  color: color-mix(in srgb, var(--cc) 62%, #1a1030);
-  border-color: color-mix(in srgb, var(--cc) 75%, #1a1030);
-  box-shadow: none;
-}
-body.claro .splash-caos .sc-face {
-  background: #fff;
-  filter: brightness(0.75) saturate(1.3);
-  text-shadow: none;
-}
-/* títulos neon: mais escuros pra ler no claro */
+body.claro .resumo-box h3,
 body.claro .hall-box h3,
 body.claro .stats-box h3 {
-  filter: brightness(0.72) saturate(1.35);
+  filter: brightness(0.68) saturate(1.4);
 }
-/* ===== Modo Claro, 2ª passada (1.7.2): nada de vidro escuro; cor sólida nos botões,
-   cartões brancos com borda colorida, nomes sem brilho borrado ===== */
-/* cartões de formato/modo */
-body.claro .mode-btn.mc-card {
-  background: #fff;
-  border-color: color-mix(in srgb, var(--mc) 40%, #fff);
-  box-shadow: 0 4px 14px rgba(60, 40, 110, 0.08);
-}
-body.claro .mc-badge:after {
-  background: color-mix(in srgb, var(--mc) 14%, #fff);
-}
-body.claro .mc-badge {
-  color: color-mix(in srgb, var(--mc) 72%, #1a1030);
+body.claro .splash-tagline,
+body.claro .add-falta,
+body.claro .ini-start,
+body.claro #playerWarning {
+  color: #9a5b00 !important;
   text-shadow: none;
 }
+body.claro #playerPanel > h2.cad-tit,
+body.claro #trocarModoBtn,
+body.claro .tut-btn {
+  color: #0e6b84;
+}
+body.claro .hall-zerar {
+  color: #b4123a;
+}
+body.claro .player-name-neon {
+  filter: brightness(0.62) saturate(1.5);
+}
+body.claro .hall-tit {
+  filter: brightness(0.7) saturate(1.3);
+}
+/* cartões de formato e modo: branco; escolhido = borda e fundo da cor do modo */
+body.claro .mode-btn.mc-card {
+  border: 1.5px solid var(--claro-borda);
+}
+body.claro .mc-badge:after {
+  background: color-mix(in srgb, var(--mc) 13%, #fff);
+}
+body.claro .mc-badge {
+  color: color-mix(in srgb, var(--mc) 70%, #1b1d33);
+  background: color-mix(in srgb, var(--mc) 40%, #fff);
+}
 body.claro .mc-icon:after {
-  background: color-mix(in srgb, var(--mc) 12%, #fff);
+  background: color-mix(in srgb, var(--mc) 11%, #fff);
+}
+body.claro .mc-icon {
+  background: color-mix(in srgb, var(--mc) 35%, #fff);
 }
 body.claro .mode-select-wrap.mc-wrap.mode-selected {
-  background: color-mix(in srgb, var(--mc) 30%, #fff);
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--mc) 30%, transparent);
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
 }
 body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-card {
   background: color-mix(in srgb, var(--mc) 9%, #fff);
-  box-shadow: none;
+  border: 2px solid var(--mc);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--mc) 22%, transparent);
 }
 body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-title {
-  color: var(--claro-txt);
-  text-shadow: none;
+  color: color-mix(in srgb, var(--mc) 60%, #1b1d33);
 }
 body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-desc {
   color: var(--claro-suave);
@@ -5016,49 +5082,90 @@ body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-desc {
 body.claro .mode-select-wrap.mc-wrap.mode-dimmed {
   opacity: 0.55;
 }
-/* botões neon: claros (secundários) e cor sólida (principais) */
+/* botões: principais em cor chapada; secundários brancos com borda colorida */
 body.claro .btn-start.btn-neo {
-  color: color-mix(in srgb, var(--mc, #7c3aed) 68%, #1a1030);
+  background: color-mix(in srgb, var(--mc, #6d4ad8) 55%, #fff);
+  color: color-mix(in srgb, var(--mc, #6d4ad8) 70%, #1b1d33);
   text-shadow: none;
-  background: color-mix(in srgb, var(--mc, #7c3aed) 35%, #fff);
-  box-shadow: 0 6px 16px color-mix(in srgb, var(--mc, #7c3aed) 22%, transparent);
+  box-shadow: var(--claro-sombra);
+  filter: none;
 }
 body.claro .btn-neo:after,
 body.claro .btn-neo.neo-ghost:after,
 body.claro .btn-neo.neo-solid.neo-ghost:after {
-  background: color-mix(in srgb, var(--mc, #7c3aed) 9%, #fff);
+  background: #fff;
 }
 body.claro .btn-neo.neo-solid:not(.neo-ghost):after,
 body.claro .btn-neo.mc-confirm:after {
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--mc, #7c3aed) 92%, #fff),
-    color-mix(in srgb, var(--mc, #7c3aed) 82%, #1a1030)
-  );
+  background: color-mix(in srgb, var(--mc, #6d4ad8) 88%, #1b1d33);
 }
 body.claro .btn-start.btn-neo.neo-solid:not(.neo-ghost),
 body.claro .btn-start.btn-neo.mc-confirm {
+  background: color-mix(in srgb, var(--mc, #6d4ad8) 88%, #1b1d33);
   color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--mc, #6d4ad8) 28%, transparent);
 }
-/* nomes dos jogadores: sem o brilho que borra no fundo claro */
-body.claro .player-name-neon {
-  text-shadow: none;
-  filter: brightness(0.62) saturate(1.5);
+body.claro .btn-start.btn-neo.splash-go {
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--mc, #e94560) 30%, transparent);
+  filter: none;
 }
-/* condição de vitória e avisos amarelos */
-body.claro .wincond-btn:not(.on) {
-  color: color-mix(in srgb, var(--wc, #7c3aed) 66%, #1a1030);
+/* chips do menu e da condição de vitória */
+body.claro .splash-menu .chip,
+body.claro .splash-settings .chip {
+  color: color-mix(in srgb, var(--cc) 62%, #1b1d33);
+  border-color: color-mix(in srgb, var(--cc) 55%, #fff);
+  background: #fff;
   box-shadow: none;
 }
-body.claro #playerWarning {
-  color: #a15c07 !important;
+body.claro .wincond-btn:not(.on) {
+  color: color-mix(in srgb, var(--wc, #6d4ad8) 64%, #1b1d33);
+  background: #fff;
+  box-shadow: none;
 }
-/* carta virada pra baixo: branca com borda roxa, em vez do bloco escuro */
-body.claro .card.face-down {
-  background: linear-gradient(160deg, #ffffff, #efe9fb);
+body.claro .wincond-btn.on {
+  box-shadow: none;
+}
+/* carta: caixas brancas com borda da categoria, sem halo */
+body.claro .answer-header.cat-neon,
+body.claro .pending-box.spotlight-box {
+  background: #fff;
+  box-shadow: none;
+}
+body.claro .roulette .roulette-reel.landed {
+  box-shadow: none;
+}
+body.claro .ans-nome {
   color: var(--claro-txt);
-  border: 1.5px solid var(--claro-borda);
+  background: color-mix(in srgb, var(--card-glow, #d4a017) 12%, #fff);
+}
+/* janelas e balões do C.A.O.S. em papel */
+body.claro .caos-modal-ov,
+body.claro .jf-modal-bg,
+body.claro .tut-overlay {
+  background: rgba(45, 35, 20, 0.32) !important;
+}
+body.claro .caos-modal-ov > div {
+  background: var(--claro-sup) !important;
+  color: var(--claro-txt) !important;
+  border-color: var(--claro-borda) !important;
+  box-shadow: var(--claro-sombra2) !important;
+}
+body.claro .jf-toast-overlay.caos-emo {
+  background: #fff;
+  color: var(--claro-txt);
+  box-shadow:
+    0 8px 24px rgba(60, 45, 25, 0.18),
+    0 0 0 1px color-mix(in srgb, var(--emo-cor) 35%, transparent);
+}
+body.claro .jf-toast-overlay.caos-emo:before {
+  background: color-mix(in srgb, var(--emo-cor) 10%, #fff);
+  color: color-mix(in srgb, var(--emo-cor) 70%, #1b1d33);
+  text-shadow: none;
+}
+body.claro .caos-pergunta {
+  background: #fff;
+  color: var(--claro-txt);
+  box-shadow: var(--claro-sombra2);
 }
 </style>
 </head>
@@ -5100,7 +5207,7 @@ body.claro .card.face-down {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.2 · C.A.O.S. 3.6<br>Atualizada em 02/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.2 · Android Update<br>C.A.O.S. 3.6 · Atualizada em 02/10/2026</div>
     </div>
   </section>
 
@@ -12336,7 +12443,7 @@ function temaAplicar(claro) {
   document.documentElement.classList.toggle("claro", claro);
   try {
     const m = document.querySelector('meta[name="theme-color"]');
-    if (m) m.setAttribute("content", claro ? "#f3f0fa" : "#1a1a2e");
+    if (m) m.setAttribute("content", claro ? "#f6f2ea" : "#1a1a2e");
   } catch (e) {}
   updateNoturnoBtn();
 }
@@ -12373,7 +12480,7 @@ function abrirNovidades() {
   bg.className = "jf-modal-bg";
   bg.innerHTML = `<div class="jf-modal nov-modal" role="dialog" aria-modal="true" aria-labelledby="novTitle">
     <div class="nov-ic">🆕</div><h3 id="novTitle">NOVIDADES</h3><div class="nov-sub">O que mudou nas últimas versões</div>
-    ${NOVIDADES.map((n, i) => `<details class="nov-item"${i === 0 ? " open" : ""}><summary><span class="nov-v">${n.v}</span><span class="nov-t">${n.t}</span></summary><ul>${n.itens.map((x) => `<li>${x}</li>`).join("")}</ul></details>`).join("")}
+    ${NOVIDADES.map((n, i) => `<details class="nov-item"${i === 0 ? " open" : ""}><summary><span class="nov-v">${n.v}</span>${n.nome ? `<span class="nov-nome">${n.nome}</span>` : ""}<span class="nov-t">${n.t}</span></summary><ul>${n.itens.map((x) => `<li>${x}</li>`).join("")}</ul>${n.qol && n.qol.length ? `<div class="nov-qol">🔧 Ajustes e correções (QoL)</div><ul>${n.qol.map((x) => `<li>${x}</li>`).join("")}</ul>` : ""}</details>`).join("")}
     <button type="button" class="btn-start btn-neo neo-solid neo-still" id="novOk" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35); margin-top:14px;">Entendi</button>
   </div>`;
   document.body.appendChild(bg);
@@ -44776,19 +44883,24 @@ const PAUSE_TIPS = [
 const NOVIDADES = [
   {
     v: "Beta 1.7.2",
-    t: "Android de verdade, revisão geral e limpeza",
+    nome: "Android Update",
+    t: "O jogo agora funciona de verdade no Android e no iPhone: instala na tela inicial e roda offline, como um jogo normal.",
     itens: [
       "📲 Botão Instalar o app no menu ⋮: no Android o Chrome instala o jogo direto na tela inicial; no iPhone aparece o passo a passo.",
       "🤖 Android: o botão voltar do celular no meio da partida agora abre a pausa em vez de fechar o jogo. Som, vibração e voz conferidos num Android simulado.",
       "🗣️ O painel de voz dá a dica certa pra cada aparelho (no Android, onde baixar vozes em português).",
-      "💾 Corrigido: importar um save com outra partida em andamento agora funciona (antes a partida antiga gravava por cima).",
-      "🧹 Arquivo mais enxuto: código morto e estilos sem uso removidos, falas repetidas do C.A.O.S. tiradas.",
-      "☀️ Modo Claro revisto: cartão escolhido fica claro com a borda colorida, botões principais em cor sólida, nomes sem o brilho que borrava e textos amarelos mais escuros pra ler.",
       "📱 Logo nova: o P de Perfil grande em azul neon e o JF em laranja neon, na mesma letra, dentro da carta dourada. Quem já instalou: apague o atalho e adicione de novo pra ver.",
+    ],
+    qol: [
+      "☀️ Modo Claro “Papel” com cara própria: fundo creme, tinta azul-escura, cartões brancos com sombra suave, botões de cor chapada e nenhum brilho neon (o neon fica pro Noturno).",
+      "💾 Corrigido: importar um save com outra partida em andamento agora funciona (antes a partida antiga gravava por cima).",
+      "✅ Botões de confirmação, Save de Bolso, save corrompido e relatório da partida conferidos um por um.",
+      "🧹 Arquivo mais enxuto: código morto e estilos sem uso removidos, fala repetida do C.A.O.S. tirada.",
     ],
   },
   {
     v: "Beta 1.7.1.6",
+    nome: "Day & Night Update",
     t: "Noturno e Claro, resposta nova, musiquinha e risadas",
     itens: [
       "🌙☀️ Dois visuais: o Modo Noturno (o padrão, tudo escuro, inclusive a carta) e o Modo Claro (papel lavanda e cartas brancas). Troque no menu ⋮ do canto de cima.",
@@ -44803,6 +44915,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.7.1.5",
+    nome: "Pocket Update",
     t: "Instalar como app e compartilhar o resultado",
     itens: [
       "📱 Dá pra instalar o jogo como app: no Safari, Compartilhar → Adicionar à Tela de Início. Ele abre em tela cheia, com ícone próprio, e funciona sem internet.",
@@ -44813,6 +44926,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.7.1.4",
+    nome: "Clean Start Update",
     t: "Tela inicial mais limpa",
     itens: [
       "🎮 O botão Jogar agora flutua de leve na tela (no Modo Batata ele fica parado).",
@@ -44822,6 +44936,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.7.1.3",
+    nome: "Voices & Faces Update",
     t: "Som no iPhone, regras da Moda da Casa e rostinhos novos",
     itens: [
       "🔊 No iPhone, se o Safari suspender o som (troca de app, tela bloqueada, ligação), o primeiro toque na tela religa o som.",
@@ -44832,6 +44947,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.7.1.2",
+    nome: "Final Round Update",
     t: "Sorteio com roleta e última rodada",
     itens: [
       "🎰 O sorteio da Moda da Casa agora gira como a roleta da categoria, com barulhinho. O C.A.O.S. fica quieto enquanto gira, comenta só o modo sorteado e volta a falar quando a mesa toca em Bora jogar!",
@@ -44840,6 +44956,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.7.1.1",
+    nome: "House Rules Update",
     t: "Moda da Casa sorteada pelo C.A.O.S. e trava de joias",
     itens: [
       "🏠 Na Moda da Casa, o C.A.O.S. sorteia no início o modo da mesa toda: Tabuleiro, Pontos ou Joias (sem repetir o da partida anterior).",
@@ -44851,6 +44968,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.7.0",
+    nome: "Rebuild Update",
     t: "Jogo reorganizado, offline, voz masculina e cartas revisadas",
     itens: [
       "📴 Funciona sem internet: no iPhone, adicione à Tela de Início e abra uma vez com internet. Também existe um arquivo offline para baixar.",
