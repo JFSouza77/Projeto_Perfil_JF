@@ -3,19 +3,24 @@
   As versões debug e compacta são geradas pelo build.js:  node build.js
   (nunca edite as saídas à mão).
 
-  HISTÓRICO (uma linha por versão)
-  1.7.1.6 · 03/10/2026 · PWA (manifest.json + ícones: instala na tela de início em tela cheia);
+  HISTÓRICO (uma linha por versão). Numeração: 1.7.1.N; depois do .9 sobe para 1.7.2.
+  1.7.1.6 · 01/10/2026 · Números das versões corrigidos (as antigas 1.7.1.2 a 1.7.1.6 são
+          1.7.1.1 a 1.7.1.5; arquivos renomeados, conteúdo intacto). Ícone novo do app
+          (? neon + carta). Modo Noturno opcional (carta escura). Debug: tempo esgotado
+          não come 5 s do próximo; Express não vira "misto" ao recarregar; Reiniciar
+          solta o silêncio do sorteio. Balão do C.A.O.S. no celular: fala na largura toda.
+  1.7.1.5 · 01/10/2026 · PWA (manifest.json + ícones: instala na tela de início em tela cheia);
           Compartilhar resultado no fim de jogo; destaque Mestre muralha no resumo; dicas
           de Mestre na pausa.
-  1.7.1.5 · 02/10/2026 · Tela inicial mais limpa: botão Jogar flutua de leve; Novidades e um
+  1.7.1.4 · 01/10/2026 · Tela inicial mais limpa: botão Jogar flutua de leve; Novidades e um
           menu ⋮ (Som, Vibrar, Voz + Ajustar voz, Batata) no canto superior direito.
-  1.7.1.4 · 02/10/2026 · Som no iPhone religa no primeiro toque depois de o Safari suspender o
+  1.7.1.3 · 01/10/2026 · Som no iPhone religa no primeiro toque depois de o Safari suspender o
           áudio; Moda da Casa e última rodada nas regras, tutorial e dicas da pausa; rostinhos
           novos do C.A.O.S.; falas novas no Encerrar e no sorteio da Moda da Casa.
-  1.7.1.3 · 01/10/2026 · Sorteio da Moda da Casa com a roleta da categoria (som), C.A.O.S.
+  1.7.1.2 · 01/10/2026 · Sorteio da Moda da Casa com a roleta da categoria (som), C.A.O.S.
           calado durante o sorteio (só comenta o resultado); última rodada (ULTIMA_RODADA):
           bateu a meta, a rodada termina e vence quem estiver na frente.
-  1.7.1.2 · 01/10/2026 · Mestre em 9 seções (configuração, estado, regras, turno e rodada, tela,
+  1.7.1.1 · 01/10/2026 · Mestre em 9 seções (configuração, estado, regras, turno e rodada, tela,
           voz e som, C.A.O.S., salvamento, utilitários). Moda da Casa: o C.A.O.S. sorteia o
           modo da mesa (tabuleiro/pontos/joias, sem repetir o anterior; saves antigos = "misto");
           meta de pontos 200 e joia com até 6 dicas na Moda da Casa (aprovados pela simulação
@@ -4114,9 +4119,29 @@ body.batata-mode .splash-go-flutua {
   grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
-.splash-menu-largo {
-  width: 100%;
+.splash-menu-voz {
   margin-top: 8px;
+}
+/* Modo Noturno (opcional): a carta, única parte clara do jogo, fica escura */
+body.noturno {
+  --card-bg: #1f1d36;
+  --text-dark: #e8e4f4;
+}
+body.noturno .answer-header.cat-neon,
+body.noturno .pending-box.spotlight-box {
+  background: #2a2747;
+}
+body.noturno li.special {
+  background: rgba(212, 160, 23, 0.14);
+}
+body.noturno .clue-num {
+  color: #a5b4fc;
+}
+body.noturno .starter-result,
+body.noturno .conferir-btn.open,
+body.noturno .answer-toggle.livre,
+body.noturno .roulette-reel {
+  background: #2a2747;
 }
 .splash-menu .voz-panel {
   margin-top: 8px;
@@ -4770,6 +4795,25 @@ body.fx-urgente:after {
   flex-direction: column;
   margin-left: 0;
 }
+/* Celular: rostinho, etiqueta e botões numa linha; a fala embaixo, na largura toda
+   (antes a fala ficava espremida com 1 ou 2 palavras por linha) */
+@media (max-width: 520px) {
+  .jf-toast-overlay.caos-emo {
+    flex-wrap: wrap;
+    row-gap: 8px;
+    width: min(90vw, 560px);
+  }
+  .jf-toast-overlay.caos-emo .toast-txt {
+    order: 3;
+    flex: 1 1 100%;
+  }
+  .jf-toast-overlay.caos-emo .toast-acoes,
+  .jf-toast-overlay.caos-emo .toast-dislike {
+    order: 2;
+    flex-direction: row;
+    margin-left: auto;
+  }
+}
 .jf-toast-overlay .toast-skip,
 .jf-toast-overlay .toast-mute {
   display: inline-flex;
@@ -4808,9 +4852,12 @@ body.fx-urgente:after {
           <button id="btnSom" class="chip" style="--cc:#38bdf8;">🔊 Som</button>
           <button id="btnVibra" class="chip" style="--cc:#a78bfa;">📳 Vibrar</button>
           <button id="btnBatata" class="chip" style="--cc:#facc15;" title="Modo Batata: tira animações pesadas (economia de bateria)">🥔 Batata</button>
-          <button id="btnVoz" class="chip" style="--cc:#34d399;">🗣️ Voz</button>
+          <button id="btnNoturno" class="chip" style="--cc:#a5b4fc;" title="Modo Noturno: carta escura, mais confortável no escuro">🌙 Noturno</button>
         </div>
-        <button id="btnVozAjustar" class="chip splash-menu-largo" style="--cc:#fb923c;">🎚️ Ajustar voz</button>
+        <div class="splash-menu-grade splash-menu-voz">
+          <button id="btnVoz" class="chip" style="--cc:#34d399;">🗣️ Voz</button>
+          <button id="btnVozAjustar" class="chip" style="--cc:#fb923c;">🎚️ Ajustar voz</button>
+        </div>
         <div id="vozAjustes" class="voz-panel" style="display:none;">
           <div class="voz-row"><span>⏩ Velocidade</span><button type="button" class="voz-step" data-kind="vel" data-dir="-1">−</button><b id="lblVozVel">1.2x</b><button type="button" class="voz-step" data-kind="vel" data-dir="1">+</button></div>
           <div class="voz-row"><span>🎚️ Tom</span><button type="button" class="voz-step" data-kind="tom" data-dir="-1">−</button><b id="lblVozTom">normal</b><button type="button" class="voz-step" data-kind="tom" data-dir="1">+</button></div>
@@ -4830,7 +4877,7 @@ body.fx-urgente:after {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.1.6 · C.A.O.S. 3.6<br>Atualizada em 03/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.1.6 · C.A.O.S. 3.6<br>Atualizada em 01/10/2026</div>
     </div>
   </section>
 
@@ -5348,6 +5395,8 @@ const CASA_META_PONTOS = { 2: 200, 3: 200, 4: 200, 5: 200, 6: 200 };
 const CASA_JOIA_DICAS_EXTRA = 1;
 // Último modo sorteado (para não repetir na partida seguinte).
 const CASA_ULTIMO_KEY = "perfil5_casa_ultimo";
+// Modo Noturno ligado neste aparelho ("1").
+const NOTURNO_KEY = "perfil5_noturno";
 // Trava de joias: no máximo esta quantidade por jogador (ou equipe) em cada rodada,
 // sempre que o modo em jogo for Joias (Moda da Casa sorteada em Joias ou "Só Joias").
 const JOIAS_POR_RODADA = 2;
@@ -6027,7 +6076,7 @@ let caosLastMoodSeen = null;
 let gemWinner = null;
 let WIN_CONDITION = "casa";
 // Modo sorteado na Moda da Casa: "tabuleiro" | "pontos" | "joias"; null = ainda não sorteou;
-// "misto" = partida salva antes da 1.7.1.2 (segue a regra antiga: tabuleiro + joias).
+// "misto" = partida salva antes da 1.7.1.1 (segue a regra antiga: tabuleiro + joias).
 let casaSorteado = null;
 // Rodada = ciclo até o primeiro mestre voltar a ser mestre (nas equipes: até a 1ª equipe voltar a ler).
 let rodadaAtual = 1;
@@ -7019,6 +7068,8 @@ function nextResponderStep(fromIndex, attemptsLeft) {
 function resetGame() {
   caosVoiceCancel();
   closeActiveToast();
+  caosSorteioSilencio = false;
+  document.querySelectorAll(".casa-sorteio-ov").forEach((o) => o.remove());
   aplicarCorRngSplash();
   clearOverlayTimeout();
   releaseWakeLock();
@@ -7497,6 +7548,8 @@ function onTimerExpired(kind) {
         responderIndex = advanceResponderAfterFailure();
       }
       startTimer("pick");
+      // o aviso de tempo esgotado cobre a tela por 5 s: o próximo não perde esse tempo
+      timerEndAt += 5e3;
       saveGameState();
       showTimeoutOverlay("⏰ TEMPO ESGOTADO!", `${skippedName} demorou pra escolher e perdeu a vez`, () => {
         render();
@@ -12009,6 +12062,22 @@ function updateBatataBtn() {
   btn.title = on
     ? "Modo Batata LIGADO: sem animações pesadas (toque pra desligar)"
     : "Modo Batata: tira animações pesadas, economiza bateria (toque pra ligar)";
+}
+function updateNoturnoBtn() {
+  const btn = document.getElementById("btnNoturno");
+  if (!btn) return;
+  const on = document.body.classList.contains("noturno");
+  btn.classList.toggle("off", !on);
+  btn.title = on
+    ? "Modo Noturno LIGADO: carta escura (toque pra desligar)"
+    : "Modo Noturno: carta escura, mais confortável no escuro (toque pra ligar)";
+}
+function toggleNoturno() {
+  const on = document.body.classList.toggle("noturno");
+  updateNoturnoBtn();
+  try {
+    JFStore.setItem(NOTURNO_KEY, on ? "1" : "0");
+  } catch (e) {}
 }
 function toggleBatataMode() {
   const isBatata = document.body.classList.toggle("batata-mode");
@@ -19904,6 +19973,7 @@ const JFStore = (function () {
           "perfil200_voz_tom",
           "perfil200_voz_nome",
           "perfil200_batata",
+          "perfil5_noturno",
           "perfil200_caos_hist",
           "perfil200_caos_diag",
           "perfil200_caos_conhecidos",
@@ -20500,7 +20570,12 @@ function loadGameState() {
     // Moda da Casa: partida salva antes do sorteio existir segue a regra antiga ("misto").
     casaSorteado = CASA_MODOS.includes(state.casaSorteado)
       ? state.casaSorteado
-      : state.casaSorteado === "misto" || (state.WIN_CONDITION === "casa" && state.starterChosen && !state.gameEnded)
+      : state.casaSorteado === "misto" ||
+          (!("casaSorteado" in state) &&
+            state.WIN_CONDITION === "casa" &&
+            state.CURRENT_MODE !== "express" &&
+            state.starterChosen &&
+            !state.gameEnded)
         ? "misto"
         : null;
     rodadaAtual = Number.isInteger(state.rodadaAtual) && state.rodadaAtual >= 1 ? state.rodadaAtual : 1;
@@ -20844,6 +20919,10 @@ function applyStoredPrefs() {
     const batata = JFStore.getItem("perfil200_batata") === "1";
     document.body.classList.toggle("batata-mode", batata);
     updateBatataBtn();
+  } catch (e) {}
+  try {
+    document.body.classList.toggle("noturno", JFStore.getItem(NOTURNO_KEY) === "1");
+    updateNoturnoBtn();
   } catch (e) {}
   caosHist = null;
   caosCardMem = null;
@@ -44082,7 +44161,7 @@ const TUTORIAL_STEPS = [
     sec: 5,
     icon: "📳",
     title: "Ajustes do aparelho",
-    text: "Na tela inicial, no menu <b>⋮</b> do canto de cima:<ul><li>🔊 <b>Som</b> liga/desliga os efeitos;</li><li>📳 <b>Vibrar</b> faz o celular tremer nos acertos, erros e sustos;</li><li>🗣️ <b>Voz</b>: o C.A.O.S. fala em voz alta; 🎚️ <b>Ajustar voz</b> muda velocidade, tom e a voz;</li><li>🥔 <b>Batata</b>: tira as animações pesadas (celular fraco ou bateria acabando).</li></ul>",
+    text: "Na tela inicial, no menu <b>⋮</b> do canto de cima:<ul><li>🔊 <b>Som</b> liga/desliga os efeitos;</li><li>📳 <b>Vibrar</b> faz o celular tremer nos acertos, erros e sustos;</li><li>🗣️ <b>Voz</b>: o C.A.O.S. fala em voz alta; 🎚️ <b>Ajustar voz</b> muda velocidade, tom e a voz;</li><li>🥔 <b>Batata</b>: tira as animações pesadas (celular fraco ou bateria acabando);</li><li>🌙 <b>Noturno</b>: deixa a carta escura, pra jogar no escuro sem ofuscar.</li></ul>",
     dark: true,
     mock: '<div class="tut-row"><span class="tut-chip" style="--mc:#f5c344;">🔊 Som</span><span class="tut-chip" style="--mc:#f5c344;">📳 Vibrar</span><span class="tut-chip" style="--mc:#f5c344;">🗣️ Voz</span><span class="tut-chip" style="--mc:#f5c344;">🥔 Batata</span></div>',
   },
@@ -44336,6 +44415,17 @@ const PAUSE_TIPS = [
 const NOVIDADES = [
   {
     v: "Beta 1.7.1.6",
+    t: "Modo Noturno, ícone novo e correções",
+    itens: [
+      "🌙 Modo Noturno no menu ⋮ do canto de cima: a carta fica escura, pra jogar no escuro sem ofuscar. Desligado, o jogo fica como sempre foi.",
+      "📱 Ícone novo do app: o ? neon na frente de uma carta. Quem já instalou: apague o atalho e adicione de novo pra ver o ícone novo.",
+      "⏰ Quando alguém perde a vez por tempo, o próximo não perde mais 5 segundos durante o aviso de TEMPO ESGOTADO.",
+      "💬 No celular, o balão do C.A.O.S. ficou mais fácil de ler: a fala vai embaixo, na largura toda, em vez de espremida do lado do rostinho.",
+      "🔢 Os números das versões foram arrumados (as últimas pularam um número).",
+    ],
+  },
+  {
+    v: "Beta 1.7.1.5",
     t: "Instalar como app e compartilhar o resultado",
     itens: [
       "📱 Dá pra instalar o jogo como app: no Safari, Compartilhar → Adicionar à Tela de Início. Ele abre em tela cheia, com ícone próprio, e funciona sem internet.",
@@ -44345,7 +44435,7 @@ const NOVIDADES = [
     ],
   },
   {
-    v: "Beta 1.7.1.5",
+    v: "Beta 1.7.1.4",
     t: "Tela inicial mais limpa",
     itens: [
       "🎮 O botão Jogar agora flutua de leve na tela (no Modo Batata ele fica parado).",
@@ -44354,7 +44444,7 @@ const NOVIDADES = [
     ],
   },
   {
-    v: "Beta 1.7.1.4",
+    v: "Beta 1.7.1.3",
     t: "Som no iPhone, regras da Moda da Casa e rostinhos novos",
     itens: [
       "🔊 No iPhone, se o Safari suspender o som (troca de app, tela bloqueada, ligação), o primeiro toque na tela religa o som.",
@@ -44364,7 +44454,7 @@ const NOVIDADES = [
     ],
   },
   {
-    v: "Beta 1.7.1.3",
+    v: "Beta 1.7.1.2",
     t: "Sorteio com roleta e última rodada",
     itens: [
       "🎰 O sorteio da Moda da Casa agora gira como a roleta da categoria, com barulhinho. O C.A.O.S. fica quieto enquanto gira, comenta só o modo sorteado e volta a falar quando a mesa toca em Bora jogar!",
@@ -44372,7 +44462,7 @@ const NOVIDADES = [
     ],
   },
   {
-    v: "Beta 1.7.1.2",
+    v: "Beta 1.7.1.1",
     t: "Moda da Casa sorteada pelo C.A.O.S. e trava de joias",
     itens: [
       "🏠 Na Moda da Casa, o C.A.O.S. sorteia no início o modo da mesa toda: Tabuleiro, Pontos ou Joias (sem repetir o da partida anterior).",
@@ -45293,6 +45383,11 @@ function iniciar() {
   renderAgeBracketPicker();
   renderHumorPicker();
   document.getElementById("btnBatata").addEventListener("click", toggleBatataMode);
+  document.getElementById("btnNoturno").addEventListener("click", toggleNoturno);
+  try {
+    document.body.classList.toggle("noturno", JFStore.getItem(NOTURNO_KEY) === "1");
+  } catch (e) {}
+  updateNoturnoBtn();
   document.getElementById("btnNovidades").addEventListener("click", abrirNovidades);
   // Menu ⋮ da tela inicial: abre/fecha no botão; fecha ao tocar fora dele.
   (function () {

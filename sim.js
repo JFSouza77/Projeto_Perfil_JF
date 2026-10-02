@@ -41,7 +41,7 @@ const JOIAS = +arg("joias", 4);
 const LIMITE_DICAS_JOIA = +arg("limite", 5);
 const TABULEIRO = +arg("tabuleiro", 200);
 const LIMITE_CARTAS = 400;
-// Última rodada (como no jogo 1.7.1.3+): bateu a meta, a rodada termina; --sem-ultima desliga.
+// Última rodada (como no jogo 1.7.1.2+): bateu a meta, a rodada termina; --sem-ultima desliga.
 const ULTIMA = !process.argv.includes("--sem-ultima");
 const BONUS = 10;
 // Perfis: chance de acerto por chute = perfil × curva(dicas reais já vistas)
