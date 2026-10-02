@@ -874,7 +874,27 @@ body.fx-urgente:after {
   opacity: 0.75;
 }
 .turn-info .responder-tag {
-  font-weight: 700;
+  font-weight: 800;
+  font-size: 1.05rem;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #facc1524;
+  border: 1.5px solid #facc15;
+  box-shadow: 0 0 10px #facc1559;
+  animation: vezPulsa 2.4s ease-in-out infinite;
+}
+@keyframes vezPulsa {
+  0%, 100% { box-shadow: 0 0 6px #facc1540; }
+  50% { box-shadow: 0 0 14px #facc1599; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .turn-info .responder-tag { animation: none; }
+}
+body.claro .turn-info .responder-tag {
+  background: #fef3c7;
+  border-color: #d97706;
+  box-shadow: none;
+  animation: none;
 }
 .mesa-btns {
   display: flex;
@@ -3729,7 +3749,7 @@ body.batata-mode .card .flip-btn:before {
   animation: versoBrilho 3.2s ease-in-out infinite;
 }
 .verso-emblema .vs-p {
-  fill: #fff7ed;
+  fill: #e9d5ff;
 }
 .verso-frase {
   margin-top: -4px;
@@ -5133,8 +5153,9 @@ body.claro .card.face-down .verso-emblema {
   filter: drop-shadow(0 2px 4px #7c3aed40);
   animation: none;
 }
-body.claro .verso-emblema .vs-p {
-  fill: #4c1d95;
+body.claro .verso-emblema .vs-p,
+html.claro .verso-emblema .vs-p {
+  fill: #6d28d9;
 }
 body.claro .verso-frase {
   color: #7c3aed;
@@ -5965,7 +5986,7 @@ const VERSO_EMBLEMA_SVG = `<svg class="back-icon verso-emblema" viewBox="0 0 160
   <path d="M80 2 l5 9 -5 9 -5 -9z M80 140 l5 9 -5 9 -5 -9z M2 80 l9 -5 9 5 -9 5z M140 80 l9 -5 9 5 -9 5z" fill="url(#vsOuro)"/>
   <path d="M55 60 A26 26 0 1 1 92 83 Q81 90 81 102" fill="none" stroke="url(#vsGrad)" stroke-width="12" stroke-linecap="round"/>
   <path d="M55 60 A26 26 0 1 1 92 83 Q81 90 81 102" fill="none" stroke="#fde68a" stroke-opacity=".55" stroke-width="1" stroke-linecap="round"/>
-  <text class="vs-p" x="80" y="70" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="700">P</text>
+  <text class="vs-p" fill="#7c3aed" x="80" y="70" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="700">P</text>
   <g transform="translate(81 121)"><ellipse rx="11" ry="7" fill="url(#vsGrad)"/><ellipse rx="11" ry="7" fill="none" stroke="#fde68a" stroke-opacity=".7" stroke-width="1"/><circle r="3" fill="#fde68a"/></g>
 </svg>`;
 const DECK_LIMITE = { classico: 400, hardcore: 300, oldschool: 240, junior: 250, express: 50 };
@@ -10280,11 +10301,9 @@ function render() {
       <div class="verso-frase">Você sabe dizer quem sou?!</div>
       <div>Carta virada — ${mestreName} é o Mestre, segura o celular e vira quando estiver pronto</div>
       <button class="flip-btn" id="flipBtn">↻ Virar carta</button>
-      <button class="discard-btn" id="discardBtn">✕ Puxou sem querer? Descartar e sortear outra</button>
     `;
     drawBtn.style.display = "none";
     document.getElementById("flipBtn").addEventListener("click", startCategoryRoulette);
-    document.getElementById("discardBtn").addEventListener("click", discardAndDraw);
   } else if (cardState === "revealed") {
     area.className = "card";
     if (timeoutOverlayMessage) {
@@ -12128,10 +12147,9 @@ function buildRulesHtml() {
     li.push(
       `💎 <b>Joias:</b> acerte com até ${c.gemLimit} dicas reais e ganhe a joia da categoria${c.equipe ? " (é da equipe)" : ""}. ${gemsCountForWin() ? (ultimaRodadaAtiva() ? "4 joias = meta batida (a rodada termina e aí sai o vencedor)." : "4 joias = vitória na hora.") : `Com menos de ${GEMS_MIN_PLAYERS} jogadores (Moda da Casa) a joia é só troféu.`}${c.express ? " Com 1 categoria dá pra ter até 4 dela; com 2, até 2 de cada." : " Carta bônus não dá joia."}`,
     );
-  li.push(
-    c.express
-      ? "🙈 <b>Puxou sem querer?</b> Dá pra descartar antes de virar."
-      : "🙈 <b>Olhou sem querer?</b> Reembaralhe antes da 1ª dica. <b>Carta difícil?</b> Descarte até a 5ª dica (no máximo 2 seguidas).",
+  if (!c.express)
+    li.push(
+      "🙈 <b>Olhou sem querer?</b> Reembaralhe antes da 1ª dica. <b>Carta difícil?</b> Descarte até a 5ª dica (no máximo 2 seguidas).",
   );
   if (!c.equipe && !c.express && !c.hard)
     li.push(
@@ -37037,7 +37055,7 @@ const ADULT_CARDS = expandDeck([
       "Faço coisas de desenho animado com o corpo",
       "Minha sequência teve um bebê e não teve Jim Carrey",
       "Tenho dentes enormes",
-      "No Brasil, quem me dublou no filme foi Guilherme Briggs",
+      "No Brasil, Marco Ribeiro me dublou na versão mais reprisada do filme",
       "*Avance 1 casa",
     ],
   },
@@ -38149,7 +38167,7 @@ const ADULT_CARDS = expandDeck([
       "Sou ilustrador",
       "Tenho um canal no YouTube",
       "Faço vozes graves de herói e vozes engraçadas de desenho",
-      "Minha voz fala ao infinito e além",
+      "Dublei o Jim Carrey no filme O Grinch",
       "Dublei o Cosmo, de Os Padrinhos Mágicos",
       "Dublei o Rei Julien, de Madagascar",
       "*Volte 2 casas",
@@ -46078,6 +46096,9 @@ const NOVIDADES = [
       "🔤 Saíram dicas que entregavam a resposta por tradução ou sigla (Golden Gate, Ladybug, Cat Noir, IPVA, FGTS...) e as que só faziam conta tipo \"some 1 e chega no ano X\".",
       "🧒 O aviso do Júnior agora mostra quantas cartas o baralho tem de verdade.",
       "🎓 Tutorial: a instrução de exemplo agora é \"Volte 2 casas\" (não existe \"Volte 1 casa\").",
+      "👉 O \"Vez de\" ganhou destaque amarelo na carta aberta, pra ninguém se perder de quem é a vez.",
+      "🎴 A carta virada não tem mais o botão \"Puxou sem querer?\" (com ela virada, não fazia sentido). O descarte de carta difícil continua depois de virar.",
+      "🎙️ O Máscara: no Brasil, a dublagem mais reprisada é do Marco Ribeiro. O Guilherme Briggs dublou o Jim Carrey em O Grinch.",
     ],
   },
   {
