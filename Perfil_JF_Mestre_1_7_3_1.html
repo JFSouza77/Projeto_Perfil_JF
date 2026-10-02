@@ -4302,6 +4302,40 @@ body.batata-mode .pause-min {
 .nov-modal h3 {
   text-align: center;
 }
+/* 1.7.3.1: X pra fechar as novidades, preso no canto enquanto rola */
+.nov-x {
+  position: sticky;
+  top: 0;
+  float: right;
+  z-index: 3;
+  width: 36px;
+  height: 36px;
+  margin: -4px -4px -36px 0;
+  border-radius: 50%;
+  border: 1.5px solid #a78bfa99;
+  background: #1f1a38;
+  color: #e9d5ff;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 12px #00000059;
+}
+.nov-x:active {
+  transform: scale(0.92);
+}
+body.claro .nov-x {
+  background: #ede9fe;
+  border-color: #c4b5fd;
+  color: #5b21b6;
+  box-shadow: 0 3px 10px #7c3aed26;
+}
+/* menu de ajustes: sem o Vibrar (iPhone), o Claro/Noturno fica sozinho e centralizado */
+.splash-menu-grade.sem-vibra #btnNoturno {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: calc(50% - 4px);
+}
 .nov-sub {
   text-align: center;
   font-size: 0.75rem;
@@ -13397,6 +13431,7 @@ function abrirNovidades() {
   bg.id = "novidadesModal";
   bg.className = "jf-modal-bg";
   bg.innerHTML = `<div class="jf-modal nov-modal" role="dialog" aria-modal="true" aria-labelledby="novTitle">
+    <button type="button" class="nov-x" id="novX" aria-label="Fechar novidades">✕</button>
     <div class="nov-ic">🆕</div><h3 id="novTitle">NOVIDADES</h3><div class="nov-sub">O que mudou nas últimas versões</div>
     ${NOVIDADES.map((n, i) => `<details class="nov-item"${i === 0 ? " open" : ""}><summary><span class="nov-v">${n.v}</span>${n.nome ? `<span class="nov-nome">${n.nome}</span>` : ""}${n.data ? `<span class="nov-data">📅 ${n.data}</span>` : ""}<span class="nov-t">${n.t}</span></summary><ul>${n.itens.map(novItemHtml).join("")}</ul>${n.qol && n.qol.length ? `<div class="nov-qol">🔧 Ajustes e correções (QoL)</div><ul>${n.qol.map(novItemHtml).join("")}</ul>` : ""}</details>`).join("")}
     <button type="button" class="btn-start btn-neo neo-solid neo-still" id="novOk" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35); margin-top:14px;">Entendi</button>
@@ -13404,6 +13439,7 @@ function abrirNovidades() {
   document.body.appendChild(bg);
   const fechar = () => bg.remove();
   bg.querySelector("#novOk").addEventListener("click", fechar);
+  bg.querySelector("#novX").addEventListener("click", fechar);
   bg.addEventListener("click", (ev) => {
     if (ev.target === bg) fechar();
   });
@@ -14035,6 +14071,7 @@ function updateVibraBtn() {
   if (!b) return;
   if (!VIBRA_OK) {
     b.style.display = "none";
+    b.parentElement && b.parentElement.classList.add("sem-vibra");
     return;
   }
   b.textContent = vibraOn ? "📳 Vibrar" : "📴 Vibrar";
@@ -46645,6 +46682,8 @@ const NOVIDADES = [
       "🎴 Carta virada no Claro: o mesmo desenho do Noturno, em tons de lavanda e com o centro mais clarinho.",
       "⏯️ Pausar, Reiniciar e Encerrar: no Claro, o mesmo neon do Noturno num tom mais escuro.",
       "🎰 Modo escolhido: o cartão não perde mais a borda de cima enquanto flutua, e no Claro ele fica com a cor do modo (o Aleatório com o arco-íris correndo).",
+      "❎ Fechar as Novidades: um X no canto, que acompanha a rolagem, nos dois temas.",
+      "☀️ Menu de ajustes: quando o Vibrar não aparece (iPhone), o botão Claro/Noturno fica centralizado.",
       "✨ Brilhos no Claro: a luz que gira nas bordas dos botões da carta vem num tom escuro da própria cor, sem o risco branco; Ver regras completas e Exportar/Importar ficaram legíveis.",
     ],
   },
