@@ -38,6 +38,8 @@ na hora de começar cada fase.
   - fala com `privado = true` (`caosFalarPara`) vai só para o aparelho da pessoa;
   - a voz continua tocando em cada aparelho, e cada pessoa silencia o próprio.
 - As 3 leis da espinha valem também no online: o C.A.O.S. nunca mexe no jogo, nem no do host.
+- **Modo Caos (ideia do JF para a 1.7.10):** é o único modo em que o C.A.O.S. vai ter poder no jogo, e o modo leva o nome dele. A 1ª lei continua valendo em todos os outros modos. No Modo Caos, as ações dele vão passar por uma via própria e explícita, com regras decididas pelo JF, nunca por fora da espinha.
+- **Memória e endereço:** cada endereço tem a sua memória (o site e cada arquivo offline). Na troca para `dicaos.com.br`, levar o save e a memória (Exportar/Importar) e recomendar adicionar o jogo à Tela de Início, porque o Safari apaga dados de site depois de 7 dias sem visita.
 
 ## Cérebro do C.A.O.S.
 - Mapa das camadas, gerador de falas, calibração e limites de memória: ver `docs/CAOS_Cerebro.md`.

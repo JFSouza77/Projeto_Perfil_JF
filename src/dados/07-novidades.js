@@ -14,6 +14,7 @@ const NOVIDADES = [
       "👑 Anne: o C.A.O.S. só diz que sentiu falta quando ela está voltando, e ganhou falas novas pra primeira vez, pra quando ela volta no mesmo dia e pra quando ela some.",
       "👋 Boas-vindas: a fala de quem chega agora sempre traz o nome da pessoa.",
       "🧪 Teste da espinha: um teste novo confere as 3 leis, o saneamento e o canal a cada atualização.",
+      "💾 Memória de longo prazo: o Cérebro mostra o que o C.A.O.S. lembra entre partidas (jogadores, nicks, partidas, recordes, cartas) e onde está gravado. Dica: cada arquivo offline tem memória própria; jogando pelo site adicionado à Tela de Início, a memória fica guardada de vez.",
     ],
   },
   {

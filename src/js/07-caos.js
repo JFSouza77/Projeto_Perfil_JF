@@ -2019,8 +2019,72 @@ function caosInspectorTestarVoz(humor) {
     caosVoiceOn = ligada;
   }
 }
+// 1.7.5.3: o que o C.A.O.S. lembra entre partidas, onde está gravado e se o lugar é seguro.
+// (As abas Ritmo e Decisões mostram só a partida atual; a memória de longo prazo fica aqui.)
+let caosMemPersistida = null;
+function caosMemoriaLongoPrazo() {
+  const sec = ciSecao("🧠 Memória de longo prazo (entre partidas, neste endereço)");
+  const conta = (k, arr) => {
+    try {
+      const v = JSON.parse(JFStore.getItem(k) || (arr ? "[]" : "{}"));
+      return Array.isArray(v) ? v.length : Object.keys(v || {}).length;
+    } catch (e) {
+      return 0;
+    }
+  };
+  let fichas = {},
+    diag = { matches: 0 };
+  try {
+    fichas = fichasTodas() || {};
+  } catch (e) {}
+  try {
+    diag = caosDiagLoad() || diag;
+  } catch (e) {}
+  const nomesFichas = Object.values(fichas)
+    .sort((a, b) => (b.ultimaVez || 0) - (a.ultimaVez || 0))
+    .slice(0, 8)
+    .map((f) => escapeHtml(f.nome || "?") + " (" + (f.partidas || 0) + ")")
+    .join(", ");
+  let st = { camadas: [] };
+  try {
+    st = JFStore.status();
+  } catch (e) {}
+  const prot = location.protocol;
+  const arquivo = prot === "file:" || prot === "blob:" || prot === "content:";
+  if (caosMemPersistida === null && navigator.storage && navigator.storage.persisted)
+    navigator.storage.persisted().then(
+      (v) => (caosMemPersistida = !!v),
+      () => (caosMemPersistida = false),
+    );
+  const avisos = [];
+  if (arquivo)
+    avisos.push(
+      "📁 Você está jogando por um <b>arquivo</b> (aberto pelo Arquivos ou baixado). Cada arquivo tem a sua própria memória, e a pré-visualização do iPhone pode não guardar nada. Pra memória ficar sempre, jogue pelo <b>site</b> e adicione à Tela de Início.",
+    );
+  if (!arquivo && caosMemPersistida === false)
+    avisos.push(
+      "📲 O navegador ainda não garantiu esta memória. No iPhone, o Safari apaga dados de site depois de 7 dias sem visita. Adicionando o jogo à <b>Tela de Início</b>, isso não acontece.",
+    );
+  sec.insertAdjacentHTML(
+    "beforeend",
+    `<div class="ci-card">
+      <div class="ci-kv"><span>👤 Jogadores com ficha</span><b class="ci-mono">${Object.keys(fichas).length}${nomesFichas ? " · " + nomesFichas : ""}</b></div>
+      <div class="ci-kv"><span>📛 Nomes conhecidos · nicks vistos</span><b class="ci-mono">${conta(CAOS_NAMES_KEY)} · ${conta("perfil200_caos_nicks", true)}</b></div>
+      <div class="ci-kv"><span>🎮 Partidas registradas</span><b class="ci-mono">${diag.matches || 0}</b></div>
+      <div class="ci-kv"><span>🏆 Recordes · ⚔️ rivalidades</span><b class="ci-mono">${conta(MEM_RECORDES_KEY)} · ${conta(MEM_RIVAIS_KEY)}</b></div>
+      <div class="ci-kv"><span>🃏 Cartas com histórico</span><b class="ci-mono">${Object.keys((caosCardMem && caosCardMem.porCarta) || {}).length}</b></div>
+      <div class="ci-kv"><span>💾 Onde está gravado</span><b class="ci-mono">${escapeHtml(st.camadas.join(" + ") || "SÓ NA MEMÓRIA (some ao fechar)")} · ${escapeHtml(arquivo ? "arquivo local" : location.host || prot)}</b></div>
+      <div class="ci-kv"><span>🔒 Memória garantida pelo navegador</span><b class="ci-mono">${caosMemPersistida === null ? "conferindo…" : caosMemPersistida ? "sim" : "não"}</b></div>
+      ${avisos.map((a) => `<div class="ci-note">${a}</div>`).join("")}
+      <div class="ci-note">As abas Ritmo e Decisões mostram só a partida atual, por isso começam vazias. O que o C.A.O.S. lembra entre partidas está aqui. Cada endereço (o site, ou cada arquivo offline) tem a sua própria memória.</div>
+    </div>`,
+  );
+  return sec;
+}
 function caosInspectorMemoria() {
   const wrap = document.createElement("div");
+  if (!caosCardMem) caosCardMemLoad();
+  wrap.appendChild(caosMemoriaLongoPrazo());
   if (!caosCardMem) caosCardMemLoad();
   const todas = Object.entries(caosCardMem.porCarta || {})
     .map(([nome, pc]) => {
