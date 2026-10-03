@@ -1,5 +1,17 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.6.5",
+    data: "03/10/2026 · 18:19",
+    nome: "Buttons and Tutorial Update · QoL",
+    t: "Correção pedida pelo JF: com a letra Enorme, o texto não vaza mais pra fora dos botões.",
+    itens: [
+      "🔠 Letra Enorme sem vazar: no painel ♿ Acessibilidade, os botões crescem junto com o texto e a janela rola até o Pronto (no iPhone, a explicação pequena saía pra fora do botão).",
+    ],
+    qol: [
+      "🔍 A auditoria dos botões agora também confere a letra Enorme numa tela do tamanho do iPhone e avisa se algum texto vazar do botão.",
+    ],
+  },
+  {
     v: "Beta 1.7.6.4",
     data: "03/10/2026 · 17:54",
     nome: "Buttons and Tutorial Update · Ajuda do Mestre",
