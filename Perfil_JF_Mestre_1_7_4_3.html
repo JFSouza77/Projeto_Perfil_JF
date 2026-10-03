@@ -161,7 +161,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Perfil JF">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.4.2</title>
+<title>Perfil JF · Beta 1.7.4.3</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -5908,7 +5908,7 @@ body.claro .caos-pergunta button[data-v="digitar"] {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.4.2 · Game Mode Update · Parte 3<br>C.A.O.S. 3.8 · Atualizada em 03/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.4.3 · Game Mode Update · Parte 4<br>C.A.O.S. 3.8 · Atualizada em 03/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -15756,7 +15756,7 @@ function caosInspectorEstado() {
         );
       })()}</b></div>
       <div class="ci-kv"><span>😄 Alegria · 🎯 confiança · 🔎 curiosidade</span><b class="ci-mono">${caosEixos.alegria.toFixed(1)} · ${caosEixos.confianca.toFixed(1)} · ${caosEixos.curiosidade.toFixed(1)}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.4.2 · C.A.O.S. 3.8</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.4.3 · C.A.O.S. 3.8</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -20539,7 +20539,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.4.2 · C.A.O.S. 3.8)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.4.3 · C.A.O.S. 3.8)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -22804,7 +22804,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.4.2 · C.A.O.S. 3.8");
+  L.push("- **Versão:** Beta 1.7.4.3 · C.A.O.S. 3.8");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -23326,7 +23326,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.4.2 · C.A.O.S. 3.8",
+        versao: "Beta 1.7.4.3 · C.A.O.S. 3.8",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -41551,7 +41551,7 @@ const ADULT_CARDS = expandDeck([
     a: "1906",
     q: [
       "Santos Dumont voou com o 14-Bis em Paris",
-      "Os irmãos Kellogg fundaram sua empresa de cereais",
+      "W. K. Kellogg fundou sua empresa de flocos de milho",
       "Um terremoto e um incêndio destruíram São Francisco",
       "Afonso Pena tomou posse como presidente do Brasil",
       "*Avance 1 casa",
@@ -57238,6 +57238,23 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.4.3",
+    data: "__DATA__",
+    nome: "Game Mode Update · Parte 4",
+    t: "Clássico conferido de ponta a ponta, com partidas simuladas, e as cartas de Ano e Pessoa passaram por mais uma revisão.",
+    itens: [
+      "🃏 Clássico conferido: meta de 200 casas, 400 cartas, 90 s pra responder, até 20 dicas com 1 a 4 especiais por carta, Palpite a qualquer hora, joias, casas de bônus e Ajudinha do C.A.O.S. funcionando como planejado.",
+      "🔁 Botões testados na tela: reembaralhar antes da 1ª dica devolve a carta pro baralho, o descarte vale até 2 seguidos (o 3º fica bloqueado), errar passa a vez, desistir aparece depois da 1ª dica e as especiais de casa andam sozinhas quando o tempo de 15 s acaba.",
+      "📅 Cartas de Ano revisadas de novo: as contas das 200 cartas de Ano foram conferidas mais uma vez e os fatos das 101 cartas novas foram relidos um por um.",
+      "👤 Cartas de Pessoa: as 9 novas (Bluey, Peppa Pig, Rapunzel, Mulan, Simba, Popeye, Garfield, Charlie Brown e Ash Ketchum) foram relidas, com as datas de estreia conferidas.",
+    ],
+    qol: [
+      "✍️ Fato ajustado: em 1906, quem fundou a empresa de flocos de milho foi W. K. Kellogg (o irmão dele não entrou no negócio).",
+      "🧪 Partidas simuladas: seis partidas inteiras de Clássico, em Versus e em Equipe, jogadas até o fim.",
+      "🗺️ Roteiro guardado: o plano de organização do código e do multiplayer online ficou salvo no projeto. A organização do código entra na 1.7.5 (C.A.O.S. and Code Update) e o online, na 1.7.10.",
+    ],
+  },
   {
     v: "Beta 1.7.4.2",
     data: "03/10/2026 · 04:32",

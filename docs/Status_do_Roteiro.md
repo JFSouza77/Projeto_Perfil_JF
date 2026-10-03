@@ -1,0 +1,31 @@
+# Status do roteiro de organização e online
+
+Lido em 03/10/2026, na 1.7.4.3. O roteiro original está em `Roteiro_Organizacao_e_Online.md`, sem alterações.
+Ele foi escrito com base na leitura da 1.7.0, então números e nomes precisam ser conferidos de novo
+na hora de começar cada fase.
+
+## Onde cada parte entra (decisão do JF)
+
+| Parte | Versão | Observação |
+|---|---|---|
+| Parte A: organização do código (Fase 0) | **1.7.5 · C.A.O.S. and Code Update** | O Klaus sugeriu a estruturação. Vem junto com o pente fino no cérebro do C.A.O.S. |
+| C.A.O.S.: matrizes de humor, cérebro, humanização, memória e limites, limites de comportamento, testes de estresse, tédio e animação, controle e mistura de emoções | **1.7.5** | |
+| Parte B: multiplayer online (Fases 1 a 6) | **1.7.10** | Vem junto com a retirada do aviso "Em breve: Modo Multiplayer" (#splashEmBreve). |
+| Modo Caos / No Mercy | 1.7.10 ou depois | As regras de joias são decisão do JF. |
+| "Crie/sugira sua carta" (o C.A.O.S. confere se a carta já existe) | Para depois | É uma ideia do JF e ainda não tem data. |
+
+## Itens que já estão resolvidos ou mudaram desde a 1.7.0
+
+- **2.5, versões de 4 números:** o `build.js` já aceita `X_Y_Z` e `X_Y_Z_W` (regex `(\d+(?:_\d+){2,3})`). As saídas de uma versão não sobrescrevem as de outra.
+- **3.9, escape do nome do vencedor:** a tela final já usa `escapeHtml()` no nome (`🏆 ${escapeHtml(sorted[0].name)} venceu!`). Os nomes das equipes vêm de `TEAM_INFO`, que são fixos.
+- **2.6, validação de cartas:** já existe fora do repositório. Os scripts do auditor checam estrutura, vazamento, eco, contas das cartas de Ano e repetidas. Na 1.7.5 eles podem entrar no repositório (só reportam e não corrigem conteúdo).
+- **Tamanho do Mestre:** cresceu bastante desde a 1.7.0. Hoje tem 1000 cartas (eram 600) e cerca de 2,4 MB. O peso das cartas no JS é ainda maior que os ~40% citados no roteiro.
+- **Equilíbrio do baralho:** a 1.7.4.1 corrigiu a ordem de compra (o baralho era comprado ao contrário). Na hora de dividir o motor em arquivos, isso precisa ser mantido.
+- **Express:** na 1.7.4 ganhou especiais de UNO funcionando, descarte e roleta só com as categorias da partida. Continua 100% offline, como decidido.
+
+## Para lembrar na 1.7.5
+
+- Trabalhar numa branch separada, com **equivalência provada** (seção 2.3): o Mestre gerado a partir de `src/` precisa passar no `build.js --testar` e bater nas contagens (cartas, entradas, famílias, grupos e falas).
+- Não mexer no conteúdo das cartas nem das falas durante a reorganização.
+- Não versionar os `*_debug.html`, e decidir com o JF se os `*_offline.html` também saem do repositório (hoje eles ocupam a maior parte do `.git`, com cerca de 145 MB).
+- A regra do Klaus continua valendo: não apagar nem sobrescrever as saídas de versões anteriores. Se elas saírem do repositório, precisam ir antes para Releases.
