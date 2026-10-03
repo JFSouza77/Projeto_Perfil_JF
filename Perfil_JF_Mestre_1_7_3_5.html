@@ -10,6 +10,7 @@
           oldschool, 25 adulto), LUGAR +63 (14 junior, 15 livre, 14 oldschool, 20 adulto), PESSOA +9
           (5 junior, 4 livre). Total 1000 = 200 por categoria. Vistoria: auditar + ano_math nas 1000;
           vazamentos corrigidos (Leão, Rinoceronte e novas), "quatro dígitos" tirado de 2001/2002.
+          Ajuste: .nov-nome (pílula do nome da versão) quebra linha em vez de vazar da caixa no iPhone.
   1.7.3.4 · 02/10/2026 · "Cards and Rules Update · Parte 5 (final)". Pente fino nas 51 cartas de
           ANIMAL e 122 de COISA (95 dicas: fatos, ecos internos e vazamentos). Repetições: falas
           iguais entre grupos (nivelZero × acido etc.) e quase iguais no mesmo grupo cortadas (7);
@@ -4332,7 +4333,12 @@ body.claro .nov-x {
   border-radius: 999px;
   color: #c4b5fd;
   border: 1px solid #a78bfa80;
-  white-space: nowrap;
+  white-space: normal;
+  max-width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 body.claro .nov-v {
   color: #5b3fc4;
@@ -57087,6 +57093,7 @@ const NOVIDADES = [
       "🔍 Vistoria geral: as 1000 cartas passaram de novo pelo verificador (20 dicas por carta, especiais no lugar certo, nenhuma resposta repetida) e as contas das cartas de Ano foram conferidas uma a uma.",
       "🙈 Sem entregar o nome: dezenas de dicas novas e antigas que soltavam um pedaço da resposta foram reescritas (o Leão não cita mais O Rei Leão, o Rinoceronte não diz rinoceronte).",
       "✍️ Fatos conferidos: datas, recordes e curiosidades das cartas novas checados um por um antes de entrar no jogo.",
+      "📐 Título da versão na caixa: nas Novidades, nomes de versão compridos (como a Parte 5 final) agora quebram a linha em vez de vazar para fora do quadro.",
     ],
   },
   {
