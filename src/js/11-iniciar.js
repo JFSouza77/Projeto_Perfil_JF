@@ -634,6 +634,7 @@ function iniciar() {
   document.getElementById("pauseExportBtn").addEventListener("click", () => exportSave());
   document.getElementById("pauseTemaBtn").addEventListener("click", toggleNoturno);
   document.getElementById("pauseVozBtn").addEventListener("click", pausaVozTrocar);
+  document.getElementById("pauseReligarBtn").addEventListener("click", caosReligarCarta);
   pausaAjustesAtualizar();
   document.getElementById("pauseAdmBtn").addEventListener("click", openAdmPanel);
   document.getElementById("pauseTipNextBtn").addEventListener("click", () => {

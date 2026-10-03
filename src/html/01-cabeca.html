@@ -6,6 +6,27 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.5.2 · 03/10/2026 · "C.A.O.S. and Code Update · Parte 3" = C.A.O.S. 4.0 (pedido do JF: versão mais
+          poderosa, recalibrada). Novos geradores: chute (o Mestre digita o chute e ele comenta pelo tipo
+          de erro, categoria e memória: chute repetido na carta, dicas abertas, como a pessoa vai na
+          categoria, carta difícil/fácil; nunca diz se a data é antes ou depois; Suave só a reação),
+          pensamento (fala espontânea em voz alta pelo console de emoções e misturas: "magoado",
+          "saudade"...), religado. Botão na Pausa "🔊 Religar o C.A.O.S. nesta carta" (caosReligarCarta):
+          desfaz o corte do 🔇 sem querer (cortes, rancor, marcação) e a raiva/tristeza; ele volta
+          agradecido. Rostos das 7 misturas (CAOS_MISTURA_ROSTOS; fora do Júnior/Suave); mistura a partir
+          de 70% do limiar (era 80%). ESTABILIZADOR DE HUMOR (pedido do JF: humor oscilava alegria/tristeza):
+          sem sorteio de rosto secundário (pMistura 0), troca só com margem 2 (era 1,4), mínimo 3 falas
+          (era 2), sai abaixo de 2,2 (era 2,5), a emoção que manda cai a 75% do ritmo (segura). Teste:
+          oscilação no cenário caótico 38 → 19 trocas; volta ao calmo aos poucos (6 a 21 cartas).
+          Controle de humor por barras deslizantes na aba Console (era +4 em botões), com "Acalmar
+          tudo". Interface
+          neural da área ADM: anel com os 10 núcleos de emoção (tamanho = intensidade, linha branca =
+          mistura), legenda com mistura/estado/temperamento; aba Estado mostra o gerador (falas montadas
+          na partida, memória) e o silêncio da carta; selo "4.0 · rede neural". Auditor de falas novo
+          (ferramentas/caos_auditar_falas.js): 0 termos do Júnior em listas de Júnior/família/Suave.
+          Repertório estimado: 3409 falas prontas (651 com nome/número variável) + 16 geradores com
+          ~30 mil combinações + geradores de acerto/erro/pulo e do Hall. QoL: conferência das simulações
+          da 1.7.5.1 (6 de 6 partidas até o fim; emoções em partida real).
   1.7.5.1 · 03/10/2026 · "C.A.O.S. and Code Update · Parte 2" = GERADOR DE FALAS + CALIBRAÇÃO DAS EMOÇÕES.
           Pedido do JF: o C.A.O.S. repetia demais (entrada do JF tinha 3 falas). Novo gerador de falas por
           gatilho (js/07b-gerador-de-falas.js + um arquivo por gatilho em dados/08-geradores/): monta a fala
@@ -220,7 +241,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.5.1</title>
+<title>Perfil JF · Beta 1.7.5.2</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

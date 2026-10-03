@@ -43,5 +43,8 @@ dados/08-geradores/10-pausaHumor.js
 dados/08-geradores/11-pausaVolta.js
 dados/08-geradores/12-inicioModo.js
 dados/08-geradores/13-inicioJogadores.js
+dados/08-geradores/14-religado.js
+dados/08-geradores/15-chute.js
+dados/08-geradores/16-pensamento.js
 js/11-iniciar.js
 html/03-fim.html

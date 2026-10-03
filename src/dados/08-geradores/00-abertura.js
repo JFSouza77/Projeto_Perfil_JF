@@ -11,6 +11,7 @@
 //   rabugento/eletrico, estado_<estado do C.A.O.S.>.
 // Variáveis: {nome} {anne} {jf} {pedro} {isabel} {outro} {hora} {dia} {modo} {modoAntes}
 //   {qtd} {tempo} ("3 dias", "ontem") {quando} ("há 3 dias", "ontem") {partidas} {vitorias}.
+// Etiqueta "temNome": a fala é sobre um jogador (vem {nome}).
 // Etiqueta "outro": tem alguém na mesa além de JF, Anne, Pedro e Isabel (vai em {outro}).
 // Jogador comum: nada de palavra com gênero (bem-vindo/bem-vinda, primeiro/primeira, cansado...).
 // Pedaço que pede variável que não existe é pulado.

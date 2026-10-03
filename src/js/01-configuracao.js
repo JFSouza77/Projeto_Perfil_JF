@@ -661,7 +661,11 @@ const CAOS_CONSOLE = {
   curiosidade: { dec: 0.75, teto: 8, ic: "🔎", cor: "#c084fc" },
   carinho: { dec: 0.92, teto: 5, ic: "💗", cor: "#f472b6" },
 };
-const CAOS_CONSOLE_CFG = { limiar: 3.8, saida: 2.5, margem: 1.4, dwell: 2, mistura: 0.6, pMistura: 0.12 };
+// 4.0 (estabilizador de humor, pedido do JF): a emoção que manda só troca se a nova passar
+// 2 pontos na frente (margem 1,4 → 2), fica pelo menos 3 falas (dwell 2 → 3), só sai abaixo de
+// 2,2 (era 2,5) e cai pela metade do ritmo enquanto manda (segura). Sem sorteio de rosto
+// secundário (pMistura 0): o rosto segue a emoção que manda, ou o rosto da mistura quando há.
+const CAOS_CONSOLE_CFG = { limiar: 3.8, saida: 2.2, margem: 2, dwell: 3, mistura: 0.6, pMistura: 0, segura: 0.75 };
 const CAOS_CONSOLE_MISTURAS = [
   ["raiva", "tristeza", "magoado"],
   ["alegria", "ansiedade", "empolgação nervosa"],
