@@ -40,6 +40,11 @@ const N = +(process.argv[2] || 30), file = acharMestre(process.argv[3]);
     { g: 'revanche', quem: null, mesa: ['Ana', 'Beto'], extra: { vars: { nome: 'Ana' } } },
     { g: 'pausaHumor', quem: null, mesa: ['Ana', 'Beto'], extra: { tags: ['d3'], vars: { pausa: '4 minutos' } } },
     { g: 'pausaVolta', quem: null, mesa: ['Ana', 'Beto'], extra: { tags: ['magoado'], vars: { pausa: '3 minutos' } } },
+    { g: 'religado', quem: 0, mesa: ['Ana', 'Beto'] },
+    { g: 'chute', quem: 0, mesa: ['Ana', 'Beto'], extra: { tags: ['tipo_longe', 'cat_LUGAR', 'cartaDificil'], vars: { chute: 'Paris', anos: '0 anos', dicasTxt: '4 dicas', cat: 'Lugar' } } },
+    { g: 'chute', quem: 1, mesa: ['Ana', 'Beto'], extra: { tags: ['tipo_anoPerto', 'cat_ANO', 'chuteRepetido'], vars: { chute: '1995', anos: '6 anos', dicasTxt: '3 dicas', cat: 'Ano', quemAntes: 'Ana' } } },
+    { g: 'pensamento', quem: null, mesa: ['Ana', 'Beto'], extra: { tags: ['emo_raiva', 'mist_magoado', 'temLider'], vars: { lider: 'Ana' } } },
+    { g: 'pensamento', quem: null, mesa: ['Ana', 'Beto'], extra: { tags: ['emo_alegria', 'comecoPartida'] } },
     { g: 'inicioJogadores', quem: null, mesa: ['Ana', 'Beto', 'Caio'], extra: { tags: ['q3'] } },
   ];
   for (const c of casos) {

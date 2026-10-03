@@ -20,7 +20,26 @@ function caosEmoK(emo) {
   if (emo === "tedio") return 1 - p;
   return 0.5;
 }
+// Mistura cujo rosto saiu na última escolha (o balão mostra o nome dela na etiqueta).
+let caosFaceMist = null;
 function caosFaceEscolher(emo, bank) {
+  caosFaceMist = null;
+  // 4.0: com duas emoções altas ao mesmo tempo, às vezes o rosto mostra a mistura
+  try {
+    const C = caosConsole,
+      M = C && C.on && C.mist && CAOS_MISTURA_ROSTOS[C.mist];
+    if (M && emo === C.mostra && !caosSuaveAlvo(bank)) {
+      const mem = Array.isArray(caosFaceUlt["mist:" + C.mist]) ? caosFaceUlt["mist:" + C.mist] : (caosFaceUlt["mist:" + C.mist] = []);
+      let i,
+        g = 0;
+      do i = Math.floor(Math.random() * M.length);
+      while (mem.includes(i) && ++g < 10);
+      mem.push(i);
+      while (mem.length > M.length - 1) mem.shift();
+      caosFaceMist = C.mist;
+      return M[i];
+    }
+  } catch (e) {}
   const E = CAOS_EMOS[emo] || CAOS_EMOS.calmo,
     N = E.niv.length;
   let lv = Math.round(
@@ -361,6 +380,7 @@ function caosMoodTransitionLine() {
 function caosV2Reset() {
   caosVetorTravado = false;
   caosEmo = { tensao: 5, calor: 5, paciencia: 7 };
+  caosGerConta = {};
   caosTemperSortear();
   caosEmoFalaAtual = null;
   caosEmoFalaN = 0;
@@ -741,7 +761,7 @@ function caosToastTexto(toast, texto) {
     const rt = document.createElement("span");
     rt.className = "toast-rotulo";
     rt.setAttribute("aria-hidden", "true");
-    rt.textContent = CAOS_EMOS[toast.dataset.emo].nome;
+    rt.textContent = toast.dataset.mist || CAOS_EMOS[toast.dataset.emo].nome;
     toast.insertBefore(rt, toast.firstChild);
   }
   const ac = document.createElement("span");
@@ -1450,7 +1470,7 @@ function caosInspectorPainel(ov) {
   const head = document.createElement("div");
   head.className = "ci-head";
   head.innerHTML = `<div class="ci-head-icon">🧠</div>
-    <div class="ci-head-txt"><div class="ci-title">Cérebro do C.A.O.S. <span class="ci-badge">5.0.14 reativo</span></div>
+    <div class="ci-head-txt"><div class="ci-title">Cérebro do C.A.O.S. <span class="ci-badge">4.0 · rede neural</span></div>
     <div class="ci-sub">Central de Avaliação e Observação Sistêmica · acesso do criador</div></div>
     <div class="ci-head-btns"><button type="button" class="ci-btn ci-btn-red" id="ciLockBtn">🔒 Trancar</button><button type="button" class="ci-btn" id="ciCloseBtn">Fechar</button></div>`;
   const tabs = document.createElement("div");
@@ -1571,7 +1591,28 @@ function caosInspectorEstado() {
         );
       })()}</b></div>
       <div class="ci-kv"><span>😄 Alegria · 🎯 confiança · 🔎 curiosidade</span><b class="ci-mono">${caosEixos.alegria.toFixed(1)} · ${caosEixos.confianca.toFixed(1)} · ${caosEixos.curiosidade.toFixed(1)}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.5.1 · C.A.O.S. 3.8</b></div>
+      <div class="ci-kv"><span>🧩 Gerador de falas</span><b class="ci-mono">${(() => {
+        const ks = Object.keys(caosGerConta).sort((a, b) => caosGerConta[b] - caosGerConta[a]);
+        const tot = ks.reduce((s, k) => s + caosGerConta[k], 0);
+        let kb = 0;
+        try {
+          kb = ((JFStore.getItem(CAOS_GERADOR_KEY) || "").length / 1024).toFixed(1);
+        } catch (e) {}
+        return (
+          tot +
+          " montada" +
+          (tot === 1 ? "" : "s") +
+          " nesta partida" +
+          (ks.length ? " (" + ks.map((k) => escapeHtml(k) + " " + caosGerConta[k]).join(", ") + ")" : "") +
+          " · " +
+          Object.keys(CAOS_GERADORES).length +
+          " geradores · memória " +
+          kb +
+          " KB"
+        );
+      })()}</b></div>
+      <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.5.2 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -2124,33 +2165,68 @@ function caosInspectorConsole() {
     pintar();
   }, 1e3);
   {
+    // 4.0: controle de humor por barras (deslize pra subir ou baixar cada emoção)
     const inj = document.createElement("div");
     inj.className = "ci-section";
     const tt = document.createElement("div");
     tt.className = "ci-section-title";
-    tt.textContent = "🧪 Injetar emoção (teste)";
+    tt.textContent = "🎛️ Controle de humor (teste)";
     inj.appendChild(tt);
-    const gr = document.createElement("div");
-    gr.className = "ci-grid2";
+    const lista = document.createElement("div");
+    lista.className = "ci-card ci-sliders";
+    const linhas = {};
     Object.keys(CAOS_CONSOLE).forEach((k) => {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "ci-step";
-      b.textContent = CAOS_CONSOLE[k].ic + " +4 " + k;
-      b.style.background = "#334155";
-      b.addEventListener("click", () => {
-        caosSentir(k, 4, "sandbox");
+      const M = CAOS_CONSOLE[k];
+      const row = document.createElement("label");
+      row.className = "ci-slider";
+      row.innerHTML = `<span class="ci-slider-nome">${M.ic} ${k}</span><input type="range" min="0" max="${M.teto}" step="0.1"><b class="ci-mono"></b>`;
+      const inp = row.querySelector("input"),
+        val = row.querySelector("b");
+      inp.style.accentColor = M.cor;
+      inp.value = caosConsole.g[k];
+      val.textContent = (+inp.value).toFixed(1);
+      inp.addEventListener("input", () => {
+        caosConsole.g[k] = Math.max(0, Math.min(M.teto, +inp.value));
+        val.textContent = caosConsole.g[k].toFixed(1);
         caosConsoleAvancar("joia.sandbox");
-        caosLog("sandbox", "injetou " + k);
+      });
+      inp.addEventListener("change", () => {
+        caosLog("sandbox", `${k} ajustado pra ${caosConsole.g[k].toFixed(1)}`);
+        caosConsoleLog(`${M.ic} ${k} = ${caosConsole.g[k].toFixed(1)} (controle)`);
         pintar();
       });
-      gr.appendChild(b);
+      linhas[k] = { inp, val };
+      lista.appendChild(row);
     });
-    inj.appendChild(gr);
+    inj.appendChild(lista);
+    const bts = document.createElement("div");
+    bts.className = "ci-grid2";
+    const zerar = document.createElement("button");
+    zerar.type = "button";
+    zerar.className = "ci-btn";
+    zerar.textContent = "🧘 Acalmar tudo (zera)";
+    zerar.addEventListener("click", () => {
+      Object.keys(caosConsole.g).forEach((k) => (caosConsole.g[k] = 0));
+      caosConsoleAvancar("joia.sandbox");
+      caosLog("sandbox", "acalmou tudo");
+      pintar();
+    });
+    bts.appendChild(zerar);
+    inj.appendChild(bts);
     inj.insertAdjacentHTML(
       "beforeend",
-      '<div class="ci-note">Soma +4 no medidor e reavalia na hora a emoção que manda. O rosto muda na próxima fala. Não mexe em ponto nem em regra.</div>',
+      '<div class="ci-note">Deslize pra subir ou baixar cada emoção. A emoção que manda é a mais alta (acima do limiar) e troca só com margem, então o humor muda de forma estável. O rosto muda na próxima fala. Não mexe em ponto nem em regra.</div>',
     );
+    // as barras acompanham o cérebro (as emoções caem sozinhas com o tempo), menos a que está sendo arrastada
+    const tk2 = setInterval(() => {
+      if (!inj.isConnected) return clearInterval(tk2);
+      Object.keys(linhas).forEach((k) => {
+        const L = linhas[k];
+        if (document.activeElement === L.inp) return;
+        L.inp.value = caosConsole.g[k];
+        L.val.textContent = caosConsole.g[k].toFixed(1);
+      });
+    }, 1e3);
     caixa.appendChild(inj);
   }
   return caixa;
@@ -4047,7 +4123,9 @@ function caosConsoleCarta(novo) {
     const C = caosConsole;
     if (!C) return;
     Object.keys(C.g).forEach((k) => {
-      C.g[k] = Math.max(0, C.g[k] * CAOS_CONSOLE[k].dec);
+      // a emoção que manda cai mais devagar (estabiliza nela e se acalma aos poucos)
+      const dec = k === C.atual ? 1 - (1 - CAOS_CONSOLE[k].dec) * CAOS_CONSOLE_CFG.segura : CAOS_CONSOLE[k].dec;
+      C.g[k] = Math.max(0, C.g[k] * dec);
       if (C.g[k] < 0.05) C.g[k] = 0;
     });
     // 1.7.5.1: tédio de rotina só vem de pulo (antes vinha de todo erro, e erro em série
@@ -4188,7 +4266,8 @@ function caosConsoleMistura() {
     ord = Object.keys(g).sort((a2, b2) => g[b2] - g[a2]),
     a = ord[0],
     b = ord[1];
-  if (!(g[a] >= CAOS_CONSOLE_CFG.limiar * 0.8 && g[b] >= CAOS_CONSOLE_CFG.limiar * 0.8)) return null;
+  // 4.0: mistura a partir de 70% do limiar (antes 80%): as misturas aparecem com mais frequência
+  if (!(g[a] >= CAOS_CONSOLE_CFG.limiar * 0.7 && g[b] >= CAOS_CONSOLE_CFG.limiar * 0.7)) return null;
   const m = CAOS_CONSOLE_MISTURAS.find(([x, y]) => (x === a && y === b) || (x === b && y === a));
   return m ? m[2] : null;
 }
@@ -4224,7 +4303,7 @@ function caosConsoleAvancar(bank) {
     }
     C.dwell++;
     let mostra = C.atual;
-    if (C.atual !== "calmo") {
+    if (C.atual !== "calmo" && F.pMistura > 0) {
       const sec = ord.find((k) => k !== C.atual);
       if (
         sec &&
@@ -4388,6 +4467,7 @@ function caosToastEmo(toast, emo, bank) {
   } catch (e) {}
   if (!E) {
     delete toast.dataset.emo;
+    delete toast.dataset.mist;
     toast._frames = null;
     toast.removeAttribute("data-face");
     toast.style.removeProperty("--emo-cor");
@@ -4396,6 +4476,13 @@ function caosToastEmo(toast, emo, bank) {
   }
   toast.dataset.emo = emo;
   toast._frames = caosFaceEscolher(emo, bank);
+  // rosto de mistura: a etiqueta mostra o nome da mistura (aqui e em caosToastTexto)
+  toast.dataset.mist = caosFaceMist || "";
+  if (caosFaceMist)
+    try {
+      const rt1 = toast.querySelector(".toast-rotulo");
+      if (rt1) rt1.textContent = caosFaceMist;
+    } catch (e) {}
   const f0 = toast._frames[0];
   toast.setAttribute("data-face", f0);
   toast.dataset.fl = toast._frames.some((f) => f.length > 9) ? "1" : "";
@@ -4696,6 +4783,50 @@ function caosNeuralDesenhar(cv, t) {
       return true;
     });
   }
+  // 4.0: anel dos núcleos de emoção (as dez emoções do console). Tamanho = intensidade;
+  // linha brilhante liga as duas emoções que estão se misturando.
+  try {
+    const C = caosConsole;
+    if (C && C.g) {
+      const ks = Object.keys(CAOS_CONSOLE),
+        nucleos = {};
+      const rx = Math.min(W / 2 - 14, R * (W / H > 2 ? 2.6 : 1.4)),
+        ry = R * 0.78;
+      ks.forEach((kk, i) => {
+        const ang = (i / ks.length) * 6.283 - 1.571 + t / 9000;
+        const v = C.g[kk] || 0,
+          x = cx + Math.cos(ang) * rx,
+          y = cy + Math.sin(ang) * ry;
+        nucleos[kk] = [x, y];
+        g.globalAlpha = 0.25 + Math.min(0.75, v / 8);
+        g.fillStyle = CAOS_CONSOLE[kk].cor;
+        g.beginPath();
+        g.arc(x, y, 2 + Math.min(7, v * 0.8) + (kk === C.atual ? 1.5 * k : 0), 0, 6.283);
+        g.fill();
+        if (v >= CAOS_CONSOLE_CFG.saida) {
+          g.globalAlpha = 0.18 + Math.min(0.4, v / 20);
+          g.strokeStyle = CAOS_CONSOLE[kk].cor;
+          g.beginPath();
+          g.moveTo(x, y);
+          g.lineTo(cx, cy);
+          g.stroke();
+        }
+      });
+      if (C.mist) {
+        const ord = ks.slice().sort((a2, b2) => C.g[b2] - C.g[a2]);
+        const [p1, p2] = [nucleos[ord[0]], nucleos[ord[1]]];
+        g.globalAlpha = 0.5 + 0.4 * k;
+        g.lineWidth = 2;
+        g.strokeStyle = "#ffffff";
+        g.beginPath();
+        g.moveTo(p1[0], p1[1]);
+        g.quadraticCurveTo(cx, cy, p2[0], p2[1]);
+        g.stroke();
+        g.lineWidth = 0.6;
+      }
+    }
+  } catch (e) {}
+  g.fillStyle = E.cor;
   const r0 = 14 + 6 * k * E.amp,
     grad = g.createRadialGradient(cx, cy, 0, cx, cy, r0 * 2.2);
   grad.addColorStop(0, "#ffffff");
@@ -4717,8 +4848,10 @@ function caosNeuralDesenhar(cv, t) {
     }
     const lbl = wrap.querySelector(".ci-neural-lbl"),
       fr = cv._frames[Math.floor(t / E.fr) % cv._frames.length];
-    const txt = `${fr}  ${E.nome.toUpperCase()}
-tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}`;
+    const C = caosConsole || {};
+    const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
+tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.0`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }
@@ -5489,9 +5622,50 @@ function maybeAnnounceCardPrediction() {
   showToastMessage(msg, () => drawHidden());
   return true;
 }
+// 1.7.5.2: nome curto das misturas pra etiqueta do gerador de pensamento.
+const CAOS_MISTURA_TAG = {
+  magoado: "magoado",
+  "empolgação nervosa": "empolgacaoNervosa",
+  "riso sem graça": "risoSemGraca",
+  "espiando com receio": "espiandoReceio",
+  "elogio contrariado": "elogioContrariado",
+  saudade: "saudade",
+  acuado: "acuado",
+};
+// Pensamento em voz alta: ele conta como está por dentro (console de emoções).
+function caosPensamentoTexto() {
+  const C = caosConsole;
+  if (!C || !C.on) return "";
+  const tags = ["emo_" + (C.mostraMed || C.atual || "calmo")];
+  if (C.mist && CAOS_MISTURA_TAG[C.mist]) tags.push("mist_" + CAOS_MISTURA_TAG[C.mist]);
+  const vars = {};
+  if (stats.totalDrawn <= 3) tags.push("comecoPartida");
+  const min = caosMinutosPartida();
+  if (min >= 40) {
+    tags.push("partidaLonga");
+    vars.min = String(min);
+  }
+  if (CURRENT_FORMAT !== "equipe" && players.length >= 2) {
+    const ord = players.slice().sort((a, b) => b.score - a.score);
+    if (ord[0].score > ord[1].score) {
+      tags.push("temLider");
+      vars.lider = ord[0].name;
+    }
+  }
+  // com mistura, o pensamento fala da mistura (sem ela, da emoção do momento)
+  if (C.mist && CAOS_MISTURA_TAG[C.mist] && Math.random() < 0.75) tags.shift();
+  return caosGerarFala("pensamento", null, { tags, vars });
+}
 function caosChatterText() {
   const p = players[responderIndex];
   const nome = p ? p.name : "galera";
+  // 4.0: às vezes ele pensa em voz alta (mais quando está sentindo alguma coisa forte)
+  const C = caosConsole;
+  const sentindo = C && C.on && (C.mist || (C.atual && C.atual !== "calmo"));
+  if (Math.random() < (sentindo ? 0.45 : 0.12)) {
+    const t = caosPensamentoTexto();
+    if (t) return t;
+  }
   if (Math.random() < 0.1 && caosOncePerMatch("meta")) return getRandomReaction(REACTIVE_VOICE.meta);
   if (Math.random() < 0.4) return getRandomReaction(REACTIVE_VOICE.espontaneo, nome);
   return caosFamilyLine(nome, "neutro");
@@ -6384,7 +6558,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.5.1 · C.A.O.S. 3.8)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.5.2 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -6907,6 +7081,46 @@ function caosSilenciarCarta() {
   } catch (e) {}
   saveGameState();
 }
+// 1.7.5.2: religar o C.A.O.S. pela Pausa (o 🔇 foi sem querer). Desfaz o corte que o
+// silêncio contou (cortes, rancor, marcação de quem silenciou) e a raiva/tristeza dele,
+// e ele volta agradecido em vez de magoado.
+function caosReligarCarta() {
+  if (!caosMudoCarta || gameEnded) return;
+  const quem = caosMudoPor;
+  caosMudoCarta = false;
+  caosMudoPor = null;
+  try {
+    if (caosCortes.total > 0) caosCortes.total--;
+    if (quem && caosCortes.por[quem] > 0) {
+      caosCortes.por[quem]--;
+      if (!caosCortes.por[quem]) {
+        delete caosCortes.por[quem];
+        delete caosCortes.rancor[quem];
+      }
+    }
+    const qi = quem ? players.findIndex((p) => p.name === quem) : -1;
+    if (qi >= 0 && caosMarked.idx === qi) caosMarked = { idx: null, remaining: 0 };
+    caosEmoNudge(-0.6, 0.5);
+    if (caosConsole) {
+      caosConsole.g.raiva = Math.max(0, (caosConsole.g.raiva || 0) - 2);
+      caosConsole.g.tristeza = Math.max(0, (caosConsole.g.tristeza || 0) - 1.5);
+    }
+    caosSentir("carinho", 2, "religado na pausa");
+    caosLog("silenciado", "religado na pausa por quem clicou sem querer (corte desfeito)");
+  } catch (e) {}
+  const txt =
+    caosGerarFala("religado", quem ? players.find((p) => p.name === quem) : null) ||
+    "[C.A.O.S.] Voltei! Eu sabia que o 🔇 foi sem querer.";
+  const box = document.getElementById("pausaCaos");
+  if (box) {
+    box.style.display = "";
+    box.classList.add("show");
+    caosToastEmo(box, "carinho", null);
+    box.textContent = String(txt).replace(/[⟦⟧]/g, "");
+  }
+  pausaAjustesAtualizar();
+  saveGameState();
+}
 function caosMudoVolta() {
   if (!caosMudoCarta) return;
   caosMudoCarta = false;
@@ -6970,7 +7184,46 @@ function caosChuteResponder(nome, chute) {
   const fraseSuave = suave && B[an.tipo + "Suave"];
   const lista = fraseSuave && fraseSuave.length ? fraseSuave : banco;
   caosEmoNudge(an.tipo === "longe" || an.tipo === "anoEra" ? 0.3 : -0.2, an.tipo === "longe" ? 0 : 0.3);
-  caosFalarDepois(getRandomReaction(lista, nome, g, an.d || 0, an.antes ? "antes" : "depois"));
+  const gerada = caosChuteGerar(p, an, g, cat, fraseSuave && fraseSuave.length);
+  caosFalarDepois(gerada || getRandomReaction(lista, nome, g, an.d || 0, an.antes ? "antes" : "depois"));
+}
+// 1.7.5.2: memória dos chutes da carta (pra lembrar de chute repetido) e o gerador de chute.
+let caosChutesCarta = { carta: -1, lista: [] };
+function caosChuteGerar(p, an, g, cat, suave) {
+  try {
+    if (caosChutesCarta.carta !== stats.totalDrawn) caosChutesCarta = { carta: stats.totalDrawn, lista: [] };
+    const nk = caosChuteNorm(g);
+    const antes = caosChutesCarta.lista.find((c) => c.k === nk);
+    caosChutesCarta.lista.push({ k: nk, nome: p.name });
+    if (caosChutesCarta.lista.length > 30) caosChutesCarta.lista.shift();
+    const tags = ["tipo_" + an.tipo + (suave ? "Suave" : "")];
+    const dicas = revealedOrder.filter((r) => r.item && r.item.type === "clue").length;
+    const vars = {
+      chute: g,
+      anos: an.d === 1 ? "1 ano" : (an.d || 0) + " anos",
+      dicasTxt: dicas === 1 ? "1 dica" : dicas + " dicas",
+      cat: CAOS_CAT_NOME[cat] || cat,
+    };
+    // Suave/iniciante: só a reação, sem comentário extra (que costuma ser zoeira)
+    if (an.tipo !== "igual" && playerHumor(p) !== "suave") {
+      tags.push("cat_" + cat);
+      if (antes && antes.nome === p.name) tags.push("chuteRepetidoMesmo");
+      else if (antes) {
+        tags.push("chuteRepetido");
+        vars.quemAntes = antes.nome;
+      }
+      if (dicas >= 1 && dicas <= 2) tags.push("poucasDicas");
+      if (dicas >= 10) tags.push("muitasDicas");
+      const t = memContaFicha(p) ? fichaTaxa(fichaGet(p.name), cat) : { n: 0 };
+      if (t.n >= 5 && t.taxa >= 0.6) tags.push("forteCat");
+      if (t.n >= 5 && t.taxa <= 0.35) tags.push("fracoCat");
+      if (currentCard && currentCard._caosDificuldade === "dificil") tags.push("cartaDificil");
+      if (currentCard && currentCard._caosDificuldade === "facil") tags.push("cartaFacil");
+    }
+    return caosGerarFala("chute", p, { tags, vars });
+  } catch (e) {
+    return "";
+  }
 }
 function caosChuteDigitar(nome) {
   caosPromptModal("O que " + nome + " chutou? (o C.A.O.S. não ouve, então conta pra ele)", "", (v) => {

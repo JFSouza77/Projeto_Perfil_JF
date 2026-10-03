@@ -344,8 +344,26 @@ body.batata-mode .btn-start.btn-neo {
   white-space: pre-line;
   line-height: 1.35;
 }
+.ci-slider {
+  display: grid;
+  grid-template-columns: 7.2em 1fr 2.6em;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+.ci-slider-nome {
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+.ci-slider input[type="range"] {
+  width: 100%;
+  height: 26px;
+}
+.ci-slider b {
+  text-align: right;
+}
 .ci-neural {
-  height: 120px;
+  height: 150px; /* 4.0: anel dos núcleos de emoção + 3 linhas de legenda */
 }
 .tut-mock .jf-toast-overlay {
   position: static;

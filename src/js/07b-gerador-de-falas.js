@@ -15,6 +15,8 @@ const CAOS_GER_ULTIMAS = 12;
 // Tamanho máximo (em letras) de uma fala montada; maior que isso, ele monta outra.
 const CAOS_GER_MAX = 190;
 let caosGerMem = null;
+// Quantas falas cada gerador montou nesta partida (aparece no Cérebro, na área ADM).
+let caosGerConta = {};
 function caosGerMemoria() {
   if (caosGerMem) return caosGerMem;
   try {
@@ -89,6 +91,7 @@ function caosGerContexto(p) {
   tags.add("temper_" + caosGerTemperamento());
   if (p) {
     vars.nome = p.name;
+    tags.add("temNome");
     const f = p._fichaAntes !== undefined ? p._fichaAntes : fichaGet(p.name);
     if (!f || !(f.partidas > 0)) tags.add("estreia");
     if (f) {
@@ -237,6 +240,7 @@ function caosGerarFala(g, p, extra) {
   caosGerGravar();
   if (!txt) return "";
   txt = CAOS_PREFIXO + txt;
+  caosGerConta[g] = (caosGerConta[g] || 0) + 1;
   caosLastPick = { bank: "gerador." + g, key: "gerador|" + g + "|" + txt.slice(CAOS_PREFIXO.length, CAOS_PREFIXO.length + 49), text: txt };
   caosLog("gerador", g + " · " + [...ctx.tags].filter((t) => !/^(temper_|estado_)/.test(t)).join(", "));
   return txt;

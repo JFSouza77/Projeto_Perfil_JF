@@ -3029,6 +3029,7 @@ function showPauseScreen() {
   document.getElementById("pauseScreen").style.display = "block";
   const rl = document.getElementById("pauseRulesList");
   if (rl) rl.innerHTML = buildRulesHtml();
+  pausaAjustesAtualizar();
   startPauseTips();
 }
 function hidePauseScreen() {
@@ -3202,6 +3203,9 @@ function pausaAjustesAtualizar() {
     v.style.display = CAOS_VOICE_OK ? "" : "none";
     v.textContent = caosVoiceOn ? "🤐 Calar a voz do C.A.O.S." : "🗣️ Ligar a voz do C.A.O.S.";
   }
+  // 1.7.5.2: silenciou sem querer? Religa nesta carta, sem mágoa.
+  const r = document.getElementById("pauseReligarBtn");
+  if (r) r.style.display = caosMudoCarta && !gameEnded ? "" : "none";
 }
 // Calou a voz na pausa: ele continua nos balões e reclama uma vez, sem encher o saco.
 function pausaVozTrocar() {

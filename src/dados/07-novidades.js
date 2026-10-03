@@ -1,5 +1,26 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.5.2",
+    data: "03/10/2026 · 12:56",
+    nome: "C.A.O.S. and Code Update · Parte 3",
+    t: "Chegou o C.A.O.S. 4.0: a versão mais poderosa dele, com o cérebro recalibrado, emoções mais vivas e novas mecânicas.",
+    itens: [
+      "🤖 C.A.O.S. 4.0: depois da reorganização do código, do gerador de falas e da recalibragem das emoções, o C.A.O.S. sobe da 3.8 pra 4.0.",
+      "🗣️ Ele comenta o chute: quando o Mestre digita o que a pessoa chutou, o C.A.O.S. compara com a resposta e comenta conforme a categoria, as dicas abertas e o que ele lembra (se alguém já chutou isso, se a pessoa costuma ir bem na categoria, se a carta derruba muita gente). Sem entregar a resposta.",
+      "💭 Pensamento em voz alta: de vez em quando ele conta como está por dentro: irritado, entediado, empolgado, magoado, com saudade…",
+      "🎭 Divertidamente mais vivos: cada mistura de emoções (magoado, saudade, empolgação nervosa, riso sem graça e outras) ganhou rostinho próprio.",
+      "💊 Humor estável: o C.A.O.S. não pula mais de alegre pra triste e volta do nada. Quando uma emoção sobe, ele estabiliza nela e vai se acalmando aos poucos; só troca quando outra emoção fica claramente mais forte.",
+      "🔊 Religar na Pausa: silenciou o C.A.O.S. sem querer? Na Pausa tem um botão pra religar ele naquela carta, e ele volta agradecido em vez de magoado.",
+    ],
+    qol: [
+      "🧠 Interface neural na área ADM: a rede do Cérebro mostra as dez emoções em volta do núcleo, a mistura do momento, o estado e o temperamento, e o painel conta quantas falas o gerador montou na partida.",
+      "🎛️ Controle de humor por barras: no Console do Cérebro, cada emoção tem uma barra pra subir ou baixar deslizando, e um botão pra acalmar tudo.",
+      "📚 Repertório: mais de 3.400 falas prontas e 16 geradores que montam cerca de 30 mil combinações, sem contar as variações com o nome de cada jogador.",
+      "🔍 Revisão das falas: um auditor novo conferiu todas as falas (nenhum termo proibido nas listas do Júnior e do modo Família).",
+      "🧪 Conferência da 1.7.5.1: as simulações terminaram com 6 de 6 partidas até o fim, sem erro. Na 1.7.5.2, mais 8 de 8.",
+    ],
+  },
+  {
     v: "Beta 1.7.5.1",
     data: "03/10/2026 · 12:25",
     nome: "C.A.O.S. and Code Update · Parte 2",
