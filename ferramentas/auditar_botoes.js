@@ -178,6 +178,13 @@ function medir(tela) {
     await c("#btnAcessibilidade");
     await anotar("painel acessibilidade");
     await c("#acessFechar");
+    await c("#btnTutorial");
+    await anotar("tutorial rápido");
+    for (let i = 0; i < 12 && (await page.locator("#tutManual:visible").count()) === 0; i++) await c("#tutNext");
+    await anotar("tutorial rápido (fim)");
+    await c("#tutManual");
+    await anotar("manual completo");
+    await c("#tutClose");
     await c("#goToRulesBtn");
     await fecharJanelas("regras");
     await anotar("formato");

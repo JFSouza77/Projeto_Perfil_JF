@@ -2573,23 +2573,30 @@ function buildRulesHtml() {
     );
   return li.map((t) => "<li>" + t + "</li>").join("");
 }
-function openTutorial() {
+// Tutorial: "rapido" (menos de 2 minutos, TUTORIAL_RAPIDO) ou "manual" (completo, TUTORIAL_STEPS, por capítulos).
+let tutorialLista = null; // definido ao abrir (os dados do tutorial carregam depois deste arquivo)
+function openTutorial(tipo) {
+  tutorialLista = tipo === "rapido" ? TUTORIAL_RAPIDO : TUTORIAL_STEPS;
   tutorialPos = 0;
   let ov = document.getElementById("tutorialOverlay");
   if (!ov) {
     ov = document.createElement("div");
     ov.id = "tutorialOverlay";
     ov.className = "tut-overlay";
+    ov.setAttribute("role", "dialog");
+    ov.setAttribute("aria-label", "Tutorial");
     ov.innerHTML = `<div class="tut-box">
       <button type="button" class="tut-close" id="tutClose" aria-label="Fechar tutorial">✕</button>
+      <div class="tut-tempo" id="tutTempo"></div>
       <div class="tut-caps" id="tutCaps"></div>
-      <div class="tut-icon" id="tutIcon"></div>
+      <div class="tut-icon" id="tutIcon" aria-hidden="true"></div>
       <div class="tut-title" id="tutTitle"></div>
       <div class="tut-text" id="tutText"></div>
-      <div class="tut-mock card" id="tutMock"></div>
+      <div class="tut-mock card" id="tutMock" aria-hidden="true"></div>
       <div class="tut-prog"><i id="tutProg"></i></div>
-      <div class="tut-count" id="tutCount"></div>
+      <div class="tut-count" id="tutCount" aria-live="polite"></div>
       <div class="tut-nav"><button type="button" class="tut-btn tut-back" id="tutBack">⬅️ Voltar</button><button type="button" class="tut-btn" id="tutNext">Próximo ➡️</button></div>
+      <button type="button" class="tut-btn tut-manual" id="tutManual">📖 Ver o manual completo</button>
     </div>`;
     document.body.appendChild(ov);
     document.getElementById("tutClose").addEventListener("click", closeTutorial);
@@ -2600,18 +2607,20 @@ function openTutorial() {
       }
     });
     document.getElementById("tutNext").addEventListener("click", () => {
-      if (tutorialPos < TUTORIAL_STEPS.length - 1) {
+      if (tutorialPos < tutorialLista.length - 1) {
         tutorialPos++;
         renderTutorial();
       } else closeTutorial();
     });
+    document.getElementById("tutManual").addEventListener("click", () => openTutorial("manual"));
   }
   ov.style.display = "flex";
   renderTutorial();
 }
 function renderTutorial() {
-  const s = TUTORIAL_STEPS[tutorialPos],
-    last = tutorialPos === TUTORIAL_STEPS.length - 1;
+  const rapido = tutorialLista === TUTORIAL_RAPIDO;
+  const s = tutorialLista[tutorialPos],
+    last = tutorialPos === tutorialLista.length - 1;
   document.getElementById("tutIcon").textContent = s.icon;
   document.getElementById("tutTitle").textContent = s.title;
   document.getElementById("tutText").innerHTML = s.text;
@@ -2619,25 +2628,30 @@ function renderTutorial() {
   mock.innerHTML = s.mock || "";
   mock.style.display = s.mock ? "" : "none";
   mock.className = s.dark ? "tut-mock tut-dark" : "tut-mock card";
+  const tempo = document.getElementById("tutTempo");
+  tempo.textContent = rapido ? "⏱️ Tutorial rápido · menos de 2 minutos" : "📖 Manual completo";
   const caps = document.getElementById("tutCaps");
-  caps.innerHTML = TUT_CAPS.map(
-    (c, i) => `<button type="button" data-cap="${i}" class="${i === s.sec ? "on" : ""}">${c}</button>`,
-  ).join("");
+  caps.style.display = rapido ? "none" : "";
+  caps.innerHTML = rapido
+    ? ""
+    : TUT_CAPS.map((c, i) => `<button type="button" data-cap="${i}" class="${i === s.sec ? "on" : ""}">${c}</button>`).join("");
   caps.querySelectorAll("[data-cap]").forEach((btn) =>
     btn.addEventListener("click", () => {
-      const k = TUTORIAL_STEPS.findIndex((x) => x.sec === +btn.dataset.cap);
+      const k = tutorialLista.findIndex((x) => x.sec === +btn.dataset.cap);
       if (k >= 0) {
         tutorialPos = k;
         renderTutorial();
       }
     }),
   );
-  document.getElementById("tutProg").style.width = (((tutorialPos + 1) / TUTORIAL_STEPS.length) * 100).toFixed(1) + "%";
-  document.getElementById("tutCount").textContent = `Passo ${tutorialPos + 1} de ${TUTORIAL_STEPS.length}`;
+  document.getElementById("tutProg").style.width = (((tutorialPos + 1) / tutorialLista.length) * 100).toFixed(1) + "%";
+  document.getElementById("tutCount").textContent = `Passo ${tutorialPos + 1} de ${tutorialLista.length}`;
   const box = document.querySelector("#tutorialOverlay .tut-box");
   if (box) box.scrollTop = 0;
   document.getElementById("tutBack").style.visibility = tutorialPos === 0 ? "hidden" : "visible";
   document.getElementById("tutNext").textContent = last ? "🎮 Bora jogar!" : "Próximo ➡️";
+  // No rápido, o manual completo aparece no último passo.
+  document.getElementById("tutManual").style.display = rapido && last ? "" : "none";
 }
 function closeTutorial() {
   const ov = document.getElementById("tutorialOverlay");

@@ -6,6 +6,13 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.6.2 · 03/10/2026 · "Buttons and Tutorial Update · Parte 3" = TUTORIAL RÁPIDO + MANUAL (pedido do JF).
+          TUTORIAL_RAPIDO (dados/06): 8 passos, 274 palavras (~1min45s), linguagem pra criança, "prints" feitos
+          com as peças do jogo (número, Acertou/Errou, balão do C.A.O.S., código da sala). Abre no Como jogar e
+          no "Nunca jogou?"; no último passo, 📖 Ver o manual completo. openTutorial("rapido"|"manual").
+          Manual (TUTORIAL_STEPS) ganhou o passo Online (1.7.10): ativar, código da sala, rodízio de Mestres,
+          host que cai (2º Mestre assume) e regras/acessibilidade em cada aparelho; ♿ e Levar/Trazer nos Ajustes.
+          📖 Manual completo no menu ⋮ e na Pausa. auditar_botoes.js passa também pelo tutorial e pelo manual.
   1.7.6.1 · 03/10/2026 · "Buttons and Tutorial Update · Parte 2" = AUDITORIA DOS BOTÕES (pedido do JF).
           ferramentas/auditar_botoes.js passa por 13 telas no Noturno e no Claro e mede cada botão:
           toque ≥ 44 px, nome acessível e contraste WCAG AA (4,5:1; 3:1 em texto grande). Antes: 107 toques
@@ -280,7 +287,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.6.1</title>
+<title>Perfil JF · Beta 1.7.6.2</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6381,6 +6388,100 @@ body.claro .discard-btn {
   opacity: 0.85;
   border-style: dashed;
 }
+/* Tutorial rápido (1.7.6 · Parte 3): selo de tempo, botão do manual e o "print" da sala online. */
+.tut-tempo {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #67e8f9;
+  margin: 0 40px 6px 0;
+}
+body.claro .tut-tempo {
+  color: #0e6b84;
+}
+.tut-btn {
+  min-height: 44px;
+}
+.tut-close {
+  min-width: 44px;
+  min-height: 44px;
+  top: 2px;
+  right: 2px;
+}
+.tut-manual {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  border-color: #fde047;
+  color: #fde047;
+  box-shadow: 0 0 10px #fde04733;
+}
+body.claro .tut-manual {
+  color: #7a5a00;
+  border-color: #d4a017;
+}
+.tut-sala {
+  position: relative;
+  text-align: center;
+  padding: 14px 10px 12px;
+  border: 2px dashed #a78bfa;
+  border-radius: 14px;
+  background: #a78bfa14;
+}
+.tut-sala-selo {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #d97706;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+.tut-sala-rot {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+.tut-sala-cod {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  color: #c4b5fd;
+}
+body.claro .tut-sala-cod {
+  color: #5b21b6;
+}
+.tut-sala-sub {
+  font-size: 0.78rem;
+  opacity: 0.8;
+}
+body.claro .tut-close {
+  color: #5b4a2a;
+}
+body.claro .tut-sala-rot,
+body.claro .tut-sala-sub {
+  color: #3b2f5c;
+  opacity: 1;
+}
+.tut-mock .roulette,
+.tut-mock .roulette-phrase {
+  min-height: 0 !important;
+}
+.tut-mock.card {
+  min-height: 0 !important;
+}
+/* Capítulos do manual: toque de 44 px e legíveis no Claro. */
+.tut-caps button {
+  min-height: 44px;
+  font-size: 0.8rem;
+}
+body.claro .tut-caps button:not(.on) {
+  color: #4a3f2a;
+  border-color: rgba(90, 70, 40, 0.35);
+  background: rgba(90, 70, 40, 0.06);
+}
 </style>
 </head>
 <body class="noturno">
@@ -6399,6 +6500,7 @@ body.claro .discard-btn {
         </div>
         <button id="btnInstalar" class="chip splash-menu-instalar" style="--cc:#f472b6; display:none;">📲 Instalar o app</button>
         <button id="btnAcessibilidade" data-fecha-menu class="chip splash-menu-instalar" style="--cc:#60a5fa;" aria-label="Acessibilidade: letra, tempo, voz e contraste">♿ Acessibilidade</button>
+        <button id="btnManual" data-fecha-menu class="chip splash-menu-instalar" style="--cc:#fde047;" aria-label="Manual completo: todas as regras e detalhes">📖 Manual completo</button>
         <div class="splash-menu-grade splash-menu-voz">
           <button id="btnVoz" class="chip" style="--cc:#34d399;">🗣️ Voz</button>
           <button id="btnVozAjustar" class="chip" style="--cc:#fb923c;">🎚️ Ajustar voz</button>
@@ -6427,7 +6529,7 @@ body.claro .discard-btn {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.6.1 · Buttons and Tutorial Update · Parte 2<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.6.2 · Buttons and Tutorial Update · Parte 3<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -6506,7 +6608,7 @@ body.claro .discard-btn {
     
     
     <button class="btn-start btn-neo neo-solid neo-still" id="startGameBtn" style="--mc:#22e07a; --mc-glow:rgba(34,224,122,0.4);">🎮 Vamos começar!</button>
-    <button class="btn-start btn-neo neo-solid neo-still neo-ghost" id="btnTutorial2" style="--mc:#fde047; --mc-glow:rgba(253,224,71,0.3); margin-top:14px;">🎓 Nunca jogou? Ver o tutorial</button>
+    <button class="btn-start btn-neo neo-solid neo-still neo-ghost" id="btnTutorial2" style="--mc:#fde047; --mc-glow:rgba(253,224,71,0.3); margin-top:14px;">🎓 Nunca jogou? Tutorial de 2 minutos</button>
     <button class="btn-start btn-neo neo-solid neo-still" id="resumeGameBtn" style="display:none; --mc:#fbbf24; --mc-glow:rgba(251,191,36,0.35); margin-top:14px;">▶️ Voltar pro jogo</button>
     <div class="sec-row">
       <button class="btn-sec" id="exportSaveBtn" style="--cc:#34d399;">📤 Exportar partida</button>
@@ -6533,6 +6635,7 @@ body.claro .discard-btn {
       <button class="btn-sec" id="pauseVozBtn" type="button">🤐 Calar a voz</button>
     </div>
     <button class="btn-sec" id="pauseAcessBtn" type="button">♿ Acessibilidade (letra, tempo, voz)</button>
+    <button class="btn-sec" id="pauseManualBtn" type="button">📖 Manual completo (todas as regras)</button>
     <button class="btn-sec" id="pauseReligarBtn" type="button" style="display:none;">🔊 Religar o C.A.O.S. nesta carta</button>
     <div class="sec-row sec-col">
       <button class="btn-sec" id="pauseTrocarModoBtn">🔄 Trocar de modo (recomeça com os mesmos jogadores)</button>
@@ -13357,23 +13460,30 @@ function buildRulesHtml() {
     );
   return li.map((t) => "<li>" + t + "</li>").join("");
 }
-function openTutorial() {
+// Tutorial: "rapido" (menos de 2 minutos, TUTORIAL_RAPIDO) ou "manual" (completo, TUTORIAL_STEPS, por capítulos).
+let tutorialLista = null; // definido ao abrir (os dados do tutorial carregam depois deste arquivo)
+function openTutorial(tipo) {
+  tutorialLista = tipo === "rapido" ? TUTORIAL_RAPIDO : TUTORIAL_STEPS;
   tutorialPos = 0;
   let ov = document.getElementById("tutorialOverlay");
   if (!ov) {
     ov = document.createElement("div");
     ov.id = "tutorialOverlay";
     ov.className = "tut-overlay";
+    ov.setAttribute("role", "dialog");
+    ov.setAttribute("aria-label", "Tutorial");
     ov.innerHTML = `<div class="tut-box">
       <button type="button" class="tut-close" id="tutClose" aria-label="Fechar tutorial">✕</button>
+      <div class="tut-tempo" id="tutTempo"></div>
       <div class="tut-caps" id="tutCaps"></div>
-      <div class="tut-icon" id="tutIcon"></div>
+      <div class="tut-icon" id="tutIcon" aria-hidden="true"></div>
       <div class="tut-title" id="tutTitle"></div>
       <div class="tut-text" id="tutText"></div>
-      <div class="tut-mock card" id="tutMock"></div>
+      <div class="tut-mock card" id="tutMock" aria-hidden="true"></div>
       <div class="tut-prog"><i id="tutProg"></i></div>
-      <div class="tut-count" id="tutCount"></div>
+      <div class="tut-count" id="tutCount" aria-live="polite"></div>
       <div class="tut-nav"><button type="button" class="tut-btn tut-back" id="tutBack">⬅️ Voltar</button><button type="button" class="tut-btn" id="tutNext">Próximo ➡️</button></div>
+      <button type="button" class="tut-btn tut-manual" id="tutManual">📖 Ver o manual completo</button>
     </div>`;
     document.body.appendChild(ov);
     document.getElementById("tutClose").addEventListener("click", closeTutorial);
@@ -13384,18 +13494,20 @@ function openTutorial() {
       }
     });
     document.getElementById("tutNext").addEventListener("click", () => {
-      if (tutorialPos < TUTORIAL_STEPS.length - 1) {
+      if (tutorialPos < tutorialLista.length - 1) {
         tutorialPos++;
         renderTutorial();
       } else closeTutorial();
     });
+    document.getElementById("tutManual").addEventListener("click", () => openTutorial("manual"));
   }
   ov.style.display = "flex";
   renderTutorial();
 }
 function renderTutorial() {
-  const s = TUTORIAL_STEPS[tutorialPos],
-    last = tutorialPos === TUTORIAL_STEPS.length - 1;
+  const rapido = tutorialLista === TUTORIAL_RAPIDO;
+  const s = tutorialLista[tutorialPos],
+    last = tutorialPos === tutorialLista.length - 1;
   document.getElementById("tutIcon").textContent = s.icon;
   document.getElementById("tutTitle").textContent = s.title;
   document.getElementById("tutText").innerHTML = s.text;
@@ -13403,25 +13515,30 @@ function renderTutorial() {
   mock.innerHTML = s.mock || "";
   mock.style.display = s.mock ? "" : "none";
   mock.className = s.dark ? "tut-mock tut-dark" : "tut-mock card";
+  const tempo = document.getElementById("tutTempo");
+  tempo.textContent = rapido ? "⏱️ Tutorial rápido · menos de 2 minutos" : "📖 Manual completo";
   const caps = document.getElementById("tutCaps");
-  caps.innerHTML = TUT_CAPS.map(
-    (c, i) => `<button type="button" data-cap="${i}" class="${i === s.sec ? "on" : ""}">${c}</button>`,
-  ).join("");
+  caps.style.display = rapido ? "none" : "";
+  caps.innerHTML = rapido
+    ? ""
+    : TUT_CAPS.map((c, i) => `<button type="button" data-cap="${i}" class="${i === s.sec ? "on" : ""}">${c}</button>`).join("");
   caps.querySelectorAll("[data-cap]").forEach((btn) =>
     btn.addEventListener("click", () => {
-      const k = TUTORIAL_STEPS.findIndex((x) => x.sec === +btn.dataset.cap);
+      const k = tutorialLista.findIndex((x) => x.sec === +btn.dataset.cap);
       if (k >= 0) {
         tutorialPos = k;
         renderTutorial();
       }
     }),
   );
-  document.getElementById("tutProg").style.width = (((tutorialPos + 1) / TUTORIAL_STEPS.length) * 100).toFixed(1) + "%";
-  document.getElementById("tutCount").textContent = `Passo ${tutorialPos + 1} de ${TUTORIAL_STEPS.length}`;
+  document.getElementById("tutProg").style.width = (((tutorialPos + 1) / tutorialLista.length) * 100).toFixed(1) + "%";
+  document.getElementById("tutCount").textContent = `Passo ${tutorialPos + 1} de ${tutorialLista.length}`;
   const box = document.querySelector("#tutorialOverlay .tut-box");
   if (box) box.scrollTop = 0;
   document.getElementById("tutBack").style.visibility = tutorialPos === 0 ? "hidden" : "visible";
   document.getElementById("tutNext").textContent = last ? "🎮 Bora jogar!" : "Próximo ➡️";
+  // No rápido, o manual completo aparece no último passo.
+  document.getElementById("tutManual").style.display = rapido && last ? "" : "none";
 }
 function closeTutorial() {
   const ov = document.getElementById("tutorialOverlay");
@@ -16494,7 +16611,7 @@ function caosInspectorEstado() {
       }</b></div>
       <div class="ci-kv"><span>🦴 Registro da espinha</span><b class="ci-mono">${caosEspinha.log.slice(-5).reverse().map(escapeHtml).join("<br>") || "—"}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.6.1 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.6.2 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -21505,7 +21622,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.6.1 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.6.2 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -24429,7 +24546,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.6.1 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.6.2 · C.A.O.S. 4.0");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -24951,7 +25068,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.6.1 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.6.2 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -58469,7 +58586,7 @@ const TUTORIAL_STEPS = [
     sec: 0,
     icon: "🃏",
     title: "Os modos (e as idades)",
-    text: "O selo neon mostra pra quem é cada modo:<ul><li>🧒 <b>Júnior (6+)</b>: cartas pra criançada, C.A.O.S. mais leve.</li><li>🃏 <b>Clássico (12+)</b>: o Perfil de sempre.</li><li>💀 <b>Hardcore (15+)</b>: só 10 dicas, pontos em dobro, menos tempo.</li><li>📻 <b>Old School (20+)</b>: cartas de quem viveu a época. Tem a versão <b>Acessibilidade</b> (letra maior, mais tempo).</li><li>🔥 <b>Express</b>: rápido, sem tabuleiro.</li><li>🎰 <b>Aleatório</b>: o jogo sorteia.</li></ul>Igual ao formato: toque pra marcar e depois no botão <b>🚀 Iniciar</b>.",
+    text: "O selo neon mostra pra quem é cada modo:<ul><li>🧒 <b>Júnior (6+)</b>: cartas pra criançada, C.A.O.S. mais leve.</li><li>🃏 <b>Clássico (12+)</b>: o Perfil de sempre.</li><li>💀 <b>Hardcore (15+)</b>: só 10 dicas, pontos em dobro, menos tempo.</li><li>📻 <b>Old School (20+)</b>: cartas de quem viveu a época. Tem a versão <b>Acessibilidade</b> (letra maior, mais tempo). E qualquer modo pode ter letra maior e mais tempo pelo ♿ do menu ⋮.</li><li>🔥 <b>Express</b>: rápido, sem tabuleiro.</li><li>🎰 <b>Aleatório</b>: o jogo sorteia.</li></ul>Igual ao formato: toque pra marcar e depois no botão <b>🚀 Iniciar</b>.",
     dark: true,
     mock:
       '<div class="mc-list">' +
@@ -58651,7 +58768,7 @@ const TUTORIAL_STEPS = [
     sec: 5,
     icon: "📳",
     title: "Ajustes do aparelho",
-    text: "Na tela inicial, no menu <b>⋮</b> do canto de cima:<ul><li>🔊 <b>Som</b> liga/desliga os efeitos;</li><li>📳 <b>Vibrar</b> faz o celular tremer nos acertos, erros e sustos;</li><li>🗣️ <b>Voz</b>: o C.A.O.S. fala em voz alta; 🎚️ <b>Ajustar voz</b> muda velocidade, tom e a voz;</li><li>🥔 <b>Batata</b>: tira as animações pesadas (celular fraco ou bateria acabando);</li><li>📲 <b>Instalar o app</b>: põe o jogo na tela inicial (Android e iPhone);</li><li>🌙 <b>Noturno</b> / ☀️ <b>Claro</b>: troca o visual do jogo. O Noturno (padrão) é todo escuro; o Claro tem fundo lavanda e cartas brancas.</li></ul>",
+    text: "Na tela inicial, no menu <b>⋮</b> do canto de cima:<ul><li>🔊 <b>Som</b> liga/desliga os efeitos;</li><li>📳 <b>Vibrar</b> faz o celular tremer nos acertos, erros e sustos;</li><li>🗣️ <b>Voz</b>: o C.A.O.S. fala em voz alta; 🎚️ <b>Ajustar voz</b> muda velocidade, tom e a voz;</li><li>🥔 <b>Batata</b>: tira as animações pesadas (celular fraco ou bateria acabando);</li><li>📲 <b>Instalar o app</b>: põe o jogo na tela inicial (Android e iPhone);</li><li>🌙 <b>Noturno</b> / ☀️ <b>Claro</b>: troca o visual do jogo. O Noturno (padrão) é todo escuro; o Claro tem fundo lavanda e cartas brancas;</li><li>♿ <b>Acessibilidade</b>: letra maior, mais tempo, dicas lidas em voz alta, volume da voz e dos sons, alto contraste e menos movimento. Vale pra todos os modos e também fica na Pausa;</li><li>🧠 <b>Memória do C.A.O.S.</b>: 📤 Levar e 📥 Trazer passam o que ele lembra pra outro aparelho.</li></ul>",
     dark: true,
     mock: '<div class="tut-row"><span class="tut-chip" style="--mc:#f5c344;">🔊 Som</span><span class="tut-chip" style="--mc:#f5c344;">📳 Vibrar</span><span class="tut-chip" style="--mc:#f5c344;">🗣️ Voz</span><span class="tut-chip" style="--mc:#f5c344;">🥔 Batata</span></div>',
   },
@@ -58663,9 +58780,72 @@ const TUTORIAL_STEPS = [
   },
   {
     sec: 5,
+    icon: "🌐",
+    title: "Online (chega na 1.7.10)",
+    text: "No <b>Multiplayer</b>, cada pessoa joga no próprio celular:<ul><li>📡 <b>Ativar:</b> quem cria a sala é o <b>host</b>. O celular dele guarda a partida;</li><li>🔑 <b>Código da sala:</b> o host passa o código e cada um digita no seu celular pra entrar;</li><li>🔄 <b>Rodízio de Mestres:</b> a vez de Mestre passa de celular em celular, na ordem sorteada. Só o celular do Mestre vê a resposta;</li><li>🆘 <b>Se o host cair:</b> quem foi o 2º Mestre da partida vira o novo host (depois o 3º, e assim por diante), sem perder nada;</li><li>📖 <b>Regras e acessibilidade no seu aparelho:</b> cada um abre o Resumo rápido, o Manual e o ♿ no próprio celular, sem atrapalhar ninguém.</li></ul>Enquanto não chega, o jogo é num celular só, passando de mão em mão.",
+    dark: true,
+    mock: '<div class="tut-sala"><span class="tut-sala-selo">🚧 EM BREVE</span><div class="tut-sala-rot">Código da sala</div><div class="tut-sala-cod">K7 · P2</div><div class="tut-sala-sub">Digite no seu celular pra entrar</div></div>',
+  },
+  {
+    sec: 5,
     icon: "🎮",
     title: "Pronto!",
     text: "Dica: dá pra instalar o jogo como app, em tela cheia e funcionando sem internet. No menu <b>⋮</b> da tela inicial, toque em <b>📲 Instalar o app</b> (no Android o Chrome instala direto; no iPhone aparece o passo a passo: Compartilhar → Adicionar à Tela de Início). Isso é tudo. O resto vocês aprendem jogando — e o <b>Resumo rápido</b> das regras está sempre antes da partida e na pausa. Bom jogo, e boa sorte com o C.A.O.S. 😏",
+  },
+];
+// Tutorial rápido (1.7.6): o básico em menos de 2 minutos, com linguagem pra criança.
+// As "prints" são montadas com as próprias peças do jogo (ficam iguais ao jogo e não pesam no arquivo).
+// O manual completo (TUTORIAL_STEPS) continua no fim do tutorial, no menu ⋮ e na Pausa.
+const TUTORIAL_RAPIDO = [
+  {
+    icon: "🎲",
+    title: "O jogo em 10 segundos",
+    text: "Cada carta esconde <b>um segredo</b>: uma pessoa, um lugar, um ano, uma coisa ou um bicho. São <b>20 dicas</b>. Quem descobre com <b>menos dicas</b> ganha <b>mais pontos</b>.",
+    mock: '<div class="roulette" style="padding:6px 0;"><div class="roulette-phrase">"Eu sou <span class="roulette-reel landed">UM LUGAR</span>"</div></div>',
+  },
+  {
+    icon: "🎙️",
+    title: "O Mestre segura o celular",
+    text: "A cada carta, uma pessoa é o <b>Mestre</b>: segura o celular, <b>esconde a tela</b> e lê as dicas em voz alta. Na próxima carta, o celular passa pro lado.",
+    mock: '<div class="answer-line-name answer-toggle">🙈 Resposta escondida — toque pra ver (5 s)</div>',
+  },
+  {
+    icon: "🔢",
+    title: "Escolha um número",
+    text: "Na sua vez, fale um número de <b>1 a 20</b>. O Mestre toca nele e lê a dica. Nenhum número é mais fácil.",
+    mock: '<div class="number-grid" style="grid-template-columns:repeat(5,1fr);"><button class="number-btn" tabindex="-1">1</button><button class="number-btn" tabindex="-1">2</button><button class="number-btn" tabindex="-1" disabled>3</button><button class="number-btn" tabindex="-1">4</button><button class="number-btn" tabindex="-1">5</button></div>',
+  },
+  {
+    icon: "🗣️",
+    title: "Um chute por vez",
+    text: "Ouviu a dica? Dê <b>um chute</b>. O Mestre toca em <b>Acertou</b> ou <b>Errou</b>, e a vez passa pro próximo. Sem ideia? <b>» Pulou</b>.",
+    mock: '<div class="guess-btns" style="flex-direction:column;"><button class="btn-correct" tabindex="-1">✓ Ana acertou</button><button class="btn-wrong" tabindex="-1">✕ Errou</button></div>',
+  },
+  {
+    icon: "🏁",
+    title: "Pontos viram casas",
+    text: "Acertou na 3ª dica? <b>17 pontos</b> (20 menos 3). Cada ponto é <b>uma casa</b> no tabuleiro. Chegou primeiro ao fim? <b>Ganhou!</b>",
+    mock: '<div class="tut-row"><span class="tut-chip on">Dica 1 → 19 pts</span><span class="tut-chip">Dica 3 → 17 pts</span><span class="tut-chip">Dica 10 → 10 pts</span></div>',
+    dark: true,
+  },
+  {
+    icon: "🤖",
+    title: "O C.A.O.S. comenta tudo",
+    text: "O <b>C.A.O.S.</b> é o robô narrador: comenta, brinca e muda de humor, mas <b>nunca mexe nos pontos</b>. No cadastro, cada um escolhe o quanto ele pode zoar (🌷 Suave é o mais gentil).",
+    mock: '<div class="jf-toast-overlay show caos-emo" data-emo="orgulho" data-face="(⌐■_■)" style="--emo-cor:#fbbf24; --emo-bg:rgba(44,32,6,0.96); position:static; transform:none;">[C.A.O.S.] Uma dica só. Respeito.</div>',
+    dark: true,
+  },
+  {
+    icon: "🌐",
+    title: "Jogando online (chega na 1.7.10)",
+    text: "Logo, <b>cada um no seu celular</b>:<ul><li>📡 Um toca em <b>Multiplayer</b> e cria a sala;</li><li>🔑 Os outros digitam o <b>código da sala</b>;</li><li>🔄 O Mestre <b>passa de celular em celular</b>;</li><li>📖 Cada um vê as regras <b>no seu aparelho</b>.</li></ul>",
+    mock: '<div class="tut-sala"><span class="tut-sala-selo">🚧 EM BREVE</span><div class="tut-sala-rot">Código da sala</div><div class="tut-sala-cod">K7 · P2</div><div class="tut-sala-sub">Digite no seu celular pra entrar</div></div>',
+    dark: true,
+  },
+  {
+    icon: "✅",
+    title: "Pronto pra jogar!",
+    text: "O resto vocês aprendem jogando! Dúvida no meio da partida? <b>⏸️ Pausar</b> tem as regras, a ♿ <b>Acessibilidade</b> e o <b>📖 Manual completo</b>. Primeira vez? No cadastro tem <b>🐣 Sou iniciante</b>.",
   },
 ];
 const PAUSE_TIPS = [
@@ -58903,6 +59083,23 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.6.2",
+    data: "03/10/2026 · 17:31",
+    nome: "Buttons and Tutorial Update · Parte 3",
+    t: "Tutorial novo: o básico do jogo em menos de 2 minutos, com desenhos das telas e linguagem que até criança entende.",
+    itens: [
+      "🎓 Tutorial rápido: 8 passos curtos (o jogo, o Mestre, escolher o número, o chute, os pontos, o C.A.O.S., o online e pronto). Abre no 🎓 Como jogar e no \"Nunca jogou?\".",
+      "🖼️ Com as telas de verdade: cada passo mostra o botão ou a tela de que está falando, desenhados com as peças do próprio jogo.",
+      "🌐 Já explica o online (chega na 1.7.10): criar a sala, digitar o código, o Mestre passando de celular em celular e cada um vendo as regras no próprio aparelho.",
+      "📖 Manual completo: o tutorial antigo, com todos os detalhes, agora se chama Manual. Fica no fim do tutorial, no menu ⋮ e na Pausa.",
+    ],
+    qol: [
+      "🆘 No manual: o que acontece se o celular do host cair no online (quem foi o 2º Mestre assume).",
+      "♿ O manual explica a Acessibilidade e o Levar/Trazer a memória do C.A.O.S.",
+      "✕ O botão de fechar o tutorial ficou maior e aparece no tema Claro.",
+    ],
+  },
   {
     v: "Beta 1.7.6.1",
     data: "03/10/2026 · 17:22",
@@ -60936,9 +61133,13 @@ function iniciar() {
     .forEach((cb) => cb.addEventListener("change", updateExpressCheckboxState));
   document.getElementById("btnTutorial").addEventListener("click", () => {
     unlockAudio();
-    openTutorial();
+    openTutorial("rapido");
   });
-  document.getElementById("btnTutorial2").addEventListener("click", openTutorial);
+  document.getElementById("btnTutorial2").addEventListener("click", () => openTutorial("rapido"));
+  ["btnManual", "pauseManualBtn"].forEach((id) => {
+    const b = document.getElementById(id);
+    if (b) b.addEventListener("click", () => openTutorial("manual"));
+  });
   [
     ["classico", "modeBtnClassico"],
     ["hardcore", "modeBtnHardcore"],

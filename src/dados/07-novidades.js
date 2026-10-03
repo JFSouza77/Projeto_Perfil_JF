@@ -1,5 +1,22 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.6.2",
+    data: "03/10/2026 · 17:31",
+    nome: "Buttons and Tutorial Update · Parte 3",
+    t: "Tutorial novo: o básico do jogo em menos de 2 minutos, com desenhos das telas e linguagem que até criança entende.",
+    itens: [
+      "🎓 Tutorial rápido: 8 passos curtos (o jogo, o Mestre, escolher o número, o chute, os pontos, o C.A.O.S., o online e pronto). Abre no 🎓 Como jogar e no \"Nunca jogou?\".",
+      "🖼️ Com as telas de verdade: cada passo mostra o botão ou a tela de que está falando, desenhados com as peças do próprio jogo.",
+      "🌐 Já explica o online (chega na 1.7.10): criar a sala, digitar o código, o Mestre passando de celular em celular e cada um vendo as regras no próprio aparelho.",
+      "📖 Manual completo: o tutorial antigo, com todos os detalhes, agora se chama Manual. Fica no fim do tutorial, no menu ⋮ e na Pausa.",
+    ],
+    qol: [
+      "🆘 No manual: o que acontece se o celular do host cair no online (quem foi o 2º Mestre assume).",
+      "♿ O manual explica a Acessibilidade e o Levar/Trazer a memória do C.A.O.S.",
+      "✕ O botão de fechar o tutorial ficou maior e aparece no tema Claro.",
+    ],
+  },
+  {
     v: "Beta 1.7.6.1",
     data: "03/10/2026 · 17:22",
     nome: "Buttons and Tutorial Update · Parte 2",

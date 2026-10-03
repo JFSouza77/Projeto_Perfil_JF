@@ -27,7 +27,7 @@ const TUTORIAL_STEPS = [
     sec: 0,
     icon: "🃏",
     title: "Os modos (e as idades)",
-    text: "O selo neon mostra pra quem é cada modo:<ul><li>🧒 <b>Júnior (6+)</b>: cartas pra criançada, C.A.O.S. mais leve.</li><li>🃏 <b>Clássico (12+)</b>: o Perfil de sempre.</li><li>💀 <b>Hardcore (15+)</b>: só 10 dicas, pontos em dobro, menos tempo.</li><li>📻 <b>Old School (20+)</b>: cartas de quem viveu a época. Tem a versão <b>Acessibilidade</b> (letra maior, mais tempo).</li><li>🔥 <b>Express</b>: rápido, sem tabuleiro.</li><li>🎰 <b>Aleatório</b>: o jogo sorteia.</li></ul>Igual ao formato: toque pra marcar e depois no botão <b>🚀 Iniciar</b>.",
+    text: "O selo neon mostra pra quem é cada modo:<ul><li>🧒 <b>Júnior (6+)</b>: cartas pra criançada, C.A.O.S. mais leve.</li><li>🃏 <b>Clássico (12+)</b>: o Perfil de sempre.</li><li>💀 <b>Hardcore (15+)</b>: só 10 dicas, pontos em dobro, menos tempo.</li><li>📻 <b>Old School (20+)</b>: cartas de quem viveu a época. Tem a versão <b>Acessibilidade</b> (letra maior, mais tempo). E qualquer modo pode ter letra maior e mais tempo pelo ♿ do menu ⋮.</li><li>🔥 <b>Express</b>: rápido, sem tabuleiro.</li><li>🎰 <b>Aleatório</b>: o jogo sorteia.</li></ul>Igual ao formato: toque pra marcar e depois no botão <b>🚀 Iniciar</b>.",
     dark: true,
     mock:
       '<div class="mc-list">' +
@@ -209,7 +209,7 @@ const TUTORIAL_STEPS = [
     sec: 5,
     icon: "📳",
     title: "Ajustes do aparelho",
-    text: "Na tela inicial, no menu <b>⋮</b> do canto de cima:<ul><li>🔊 <b>Som</b> liga/desliga os efeitos;</li><li>📳 <b>Vibrar</b> faz o celular tremer nos acertos, erros e sustos;</li><li>🗣️ <b>Voz</b>: o C.A.O.S. fala em voz alta; 🎚️ <b>Ajustar voz</b> muda velocidade, tom e a voz;</li><li>🥔 <b>Batata</b>: tira as animações pesadas (celular fraco ou bateria acabando);</li><li>📲 <b>Instalar o app</b>: põe o jogo na tela inicial (Android e iPhone);</li><li>🌙 <b>Noturno</b> / ☀️ <b>Claro</b>: troca o visual do jogo. O Noturno (padrão) é todo escuro; o Claro tem fundo lavanda e cartas brancas.</li></ul>",
+    text: "Na tela inicial, no menu <b>⋮</b> do canto de cima:<ul><li>🔊 <b>Som</b> liga/desliga os efeitos;</li><li>📳 <b>Vibrar</b> faz o celular tremer nos acertos, erros e sustos;</li><li>🗣️ <b>Voz</b>: o C.A.O.S. fala em voz alta; 🎚️ <b>Ajustar voz</b> muda velocidade, tom e a voz;</li><li>🥔 <b>Batata</b>: tira as animações pesadas (celular fraco ou bateria acabando);</li><li>📲 <b>Instalar o app</b>: põe o jogo na tela inicial (Android e iPhone);</li><li>🌙 <b>Noturno</b> / ☀️ <b>Claro</b>: troca o visual do jogo. O Noturno (padrão) é todo escuro; o Claro tem fundo lavanda e cartas brancas;</li><li>♿ <b>Acessibilidade</b>: letra maior, mais tempo, dicas lidas em voz alta, volume da voz e dos sons, alto contraste e menos movimento. Vale pra todos os modos e também fica na Pausa;</li><li>🧠 <b>Memória do C.A.O.S.</b>: 📤 Levar e 📥 Trazer passam o que ele lembra pra outro aparelho.</li></ul>",
     dark: true,
     mock: '<div class="tut-row"><span class="tut-chip" style="--mc:#f5c344;">🔊 Som</span><span class="tut-chip" style="--mc:#f5c344;">📳 Vibrar</span><span class="tut-chip" style="--mc:#f5c344;">🗣️ Voz</span><span class="tut-chip" style="--mc:#f5c344;">🥔 Batata</span></div>',
   },
@@ -221,9 +221,72 @@ const TUTORIAL_STEPS = [
   },
   {
     sec: 5,
+    icon: "🌐",
+    title: "Online (chega na 1.7.10)",
+    text: "No <b>Multiplayer</b>, cada pessoa joga no próprio celular:<ul><li>📡 <b>Ativar:</b> quem cria a sala é o <b>host</b>. O celular dele guarda a partida;</li><li>🔑 <b>Código da sala:</b> o host passa o código e cada um digita no seu celular pra entrar;</li><li>🔄 <b>Rodízio de Mestres:</b> a vez de Mestre passa de celular em celular, na ordem sorteada. Só o celular do Mestre vê a resposta;</li><li>🆘 <b>Se o host cair:</b> quem foi o 2º Mestre da partida vira o novo host (depois o 3º, e assim por diante), sem perder nada;</li><li>📖 <b>Regras e acessibilidade no seu aparelho:</b> cada um abre o Resumo rápido, o Manual e o ♿ no próprio celular, sem atrapalhar ninguém.</li></ul>Enquanto não chega, o jogo é num celular só, passando de mão em mão.",
+    dark: true,
+    mock: '<div class="tut-sala"><span class="tut-sala-selo">🚧 EM BREVE</span><div class="tut-sala-rot">Código da sala</div><div class="tut-sala-cod">K7 · P2</div><div class="tut-sala-sub">Digite no seu celular pra entrar</div></div>',
+  },
+  {
+    sec: 5,
     icon: "🎮",
     title: "Pronto!",
     text: "Dica: dá pra instalar o jogo como app, em tela cheia e funcionando sem internet. No menu <b>⋮</b> da tela inicial, toque em <b>📲 Instalar o app</b> (no Android o Chrome instala direto; no iPhone aparece o passo a passo: Compartilhar → Adicionar à Tela de Início). Isso é tudo. O resto vocês aprendem jogando — e o <b>Resumo rápido</b> das regras está sempre antes da partida e na pausa. Bom jogo, e boa sorte com o C.A.O.S. 😏",
+  },
+];
+// Tutorial rápido (1.7.6): o básico em menos de 2 minutos, com linguagem pra criança.
+// As "prints" são montadas com as próprias peças do jogo (ficam iguais ao jogo e não pesam no arquivo).
+// O manual completo (TUTORIAL_STEPS) continua no fim do tutorial, no menu ⋮ e na Pausa.
+const TUTORIAL_RAPIDO = [
+  {
+    icon: "🎲",
+    title: "O jogo em 10 segundos",
+    text: "Cada carta esconde <b>um segredo</b>: uma pessoa, um lugar, um ano, uma coisa ou um bicho. São <b>20 dicas</b>. Quem descobre com <b>menos dicas</b> ganha <b>mais pontos</b>.",
+    mock: '<div class="roulette" style="padding:6px 0;"><div class="roulette-phrase">"Eu sou <span class="roulette-reel landed">UM LUGAR</span>"</div></div>',
+  },
+  {
+    icon: "🎙️",
+    title: "O Mestre segura o celular",
+    text: "A cada carta, uma pessoa é o <b>Mestre</b>: segura o celular, <b>esconde a tela</b> e lê as dicas em voz alta. Na próxima carta, o celular passa pro lado.",
+    mock: '<div class="answer-line-name answer-toggle">🙈 Resposta escondida — toque pra ver (5 s)</div>',
+  },
+  {
+    icon: "🔢",
+    title: "Escolha um número",
+    text: "Na sua vez, fale um número de <b>1 a 20</b>. O Mestre toca nele e lê a dica. Nenhum número é mais fácil.",
+    mock: '<div class="number-grid" style="grid-template-columns:repeat(5,1fr);"><button class="number-btn" tabindex="-1">1</button><button class="number-btn" tabindex="-1">2</button><button class="number-btn" tabindex="-1" disabled>3</button><button class="number-btn" tabindex="-1">4</button><button class="number-btn" tabindex="-1">5</button></div>',
+  },
+  {
+    icon: "🗣️",
+    title: "Um chute por vez",
+    text: "Ouviu a dica? Dê <b>um chute</b>. O Mestre toca em <b>Acertou</b> ou <b>Errou</b>, e a vez passa pro próximo. Sem ideia? <b>» Pulou</b>.",
+    mock: '<div class="guess-btns" style="flex-direction:column;"><button class="btn-correct" tabindex="-1">✓ Ana acertou</button><button class="btn-wrong" tabindex="-1">✕ Errou</button></div>',
+  },
+  {
+    icon: "🏁",
+    title: "Pontos viram casas",
+    text: "Acertou na 3ª dica? <b>17 pontos</b> (20 menos 3). Cada ponto é <b>uma casa</b> no tabuleiro. Chegou primeiro ao fim? <b>Ganhou!</b>",
+    mock: '<div class="tut-row"><span class="tut-chip on">Dica 1 → 19 pts</span><span class="tut-chip">Dica 3 → 17 pts</span><span class="tut-chip">Dica 10 → 10 pts</span></div>',
+    dark: true,
+  },
+  {
+    icon: "🤖",
+    title: "O C.A.O.S. comenta tudo",
+    text: "O <b>C.A.O.S.</b> é o robô narrador: comenta, brinca e muda de humor, mas <b>nunca mexe nos pontos</b>. No cadastro, cada um escolhe o quanto ele pode zoar (🌷 Suave é o mais gentil).",
+    mock: '<div class="jf-toast-overlay show caos-emo" data-emo="orgulho" data-face="(⌐■_■)" style="--emo-cor:#fbbf24; --emo-bg:rgba(44,32,6,0.96); position:static; transform:none;">[C.A.O.S.] Uma dica só. Respeito.</div>',
+    dark: true,
+  },
+  {
+    icon: "🌐",
+    title: "Jogando online (chega na 1.7.10)",
+    text: "Logo, <b>cada um no seu celular</b>:<ul><li>📡 Um toca em <b>Multiplayer</b> e cria a sala;</li><li>🔑 Os outros digitam o <b>código da sala</b>;</li><li>🔄 O Mestre <b>passa de celular em celular</b>;</li><li>📖 Cada um vê as regras <b>no seu aparelho</b>.</li></ul>",
+    mock: '<div class="tut-sala"><span class="tut-sala-selo">🚧 EM BREVE</span><div class="tut-sala-rot">Código da sala</div><div class="tut-sala-cod">K7 · P2</div><div class="tut-sala-sub">Digite no seu celular pra entrar</div></div>',
+    dark: true,
+  },
+  {
+    icon: "✅",
+    title: "Pronto pra jogar!",
+    text: "O resto vocês aprendem jogando! Dúvida no meio da partida? <b>⏸️ Pausar</b> tem as regras, a ♿ <b>Acessibilidade</b> e o <b>📖 Manual completo</b>. Primeira vez? No cadastro tem <b>🐣 Sou iniciante</b>.",
   },
 ];
 const PAUSE_TIPS = [
