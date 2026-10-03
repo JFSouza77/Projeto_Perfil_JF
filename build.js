@@ -296,6 +296,23 @@ async function testarNavegador(arquivo) {
   return erros.length ? "FALHOU: " + erros.join(" | ") : `ok (${chegou}, sem erro no console)`;
 }
 
+// ------------------------------------------------------------- autoria
+// Registro de versões (docs/Registro_de_Versoes.md): SHA-256 dos arquivos publicados, com data e
+// hora de Brasília, pra provar que uma cópia é idêntica à nossa. Republicar a mesma versão troca a linha dela.
+function registrarVersao(versao, arqs) {
+  const crypto = require("crypto");
+  const reg = path.join(PASTA, "docs", "Registro_de_Versoes.md");
+  const sha = (f) => crypto.createHash("sha256").update(fs.readFileSync(f)).digest("hex");
+  const quando = new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", dateStyle: "short", timeStyle: "short" }).format(new Date());
+  const v = versao.replace(/_/g, ".");
+  const linha = `| ${v} | ${quando} | \`${sha(arqs.mestre)}\` | \`${sha(arqs.compacta)}\` | \`${sha(arqs.offline)}\` |`;
+  let txt = fs.existsSync(reg) ? fs.readFileSync(reg, "utf8") : "";
+  const re = new RegExp("^\\| " + v.replace(/\./g, "\\.") + " \\|.*$", "m");
+  txt = re.test(txt) ? txt.replace(re, linha) : txt.replace(/\n*$/, "\n") + linha + "\n";
+  fs.writeFileSync(reg, txt);
+  console.log(`Registro de versões: ${v} (SHA-256 do mestre, da compacta e do offline) em docs/Registro_de_Versoes.md.`);
+}
+
 // ------------------------------------------------------------------ main
 (async () => {
   // Com src/, o Mestre é montado antes (src/ é a fonte oficial; ver montar.js).
@@ -365,6 +382,7 @@ async function testarNavegador(arquivo) {
   if (ARGS.has("--publicar")) {
     fs.copyFileSync(saidas.compacta, path.join(PASTA, "index.html"));
     console.log("\nindex.html atualizado com a compacta.");
+    registrarVersao(versao, { mestre: mestreArq, compacta: saidas.compacta, offline: saidas.offline });
   }
 })().catch((e) => {
   console.error("\nERRO NO BUILD: " + e.message);

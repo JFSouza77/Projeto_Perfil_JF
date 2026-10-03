@@ -11,6 +11,9 @@ Tudo roda num HTML só, sem servidor. O GitHub Pages publica o `index.html`.
 - Nunca edite à mão o `Perfil_JF_Mestre_*.html` nem as saídas `Perfil_JF_*.html`.
 - As saídas de versões anteriores não são apagadas nem sobrescritas (regra do Klaus).
 
+## Autoria
+© 2026 JF (JFSouza77). Todos os direitos reservados. Ver `AUTORIA.md` e `docs/Registro_de_Versoes.md`.
+
 ## Documentos
 - `docs/Status_do_Roteiro.md`: em que pé está o roteiro (organização na 1.7.5, online na 1.7.10).
 - `docs/Publico_dos_Modos.md`: para quem é cada modo (Old School, Júnior, Clássico).

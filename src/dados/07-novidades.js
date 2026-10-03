@@ -12,6 +12,7 @@ const NOVIDADES = [
     ],
     qol: [
       "🔍 Auditor de cartas: uma ferramenta nova confere as 1000 cartas (20 entradas, especiais, respostas repetidas, contas das cartas de Ano e dicas que entregam a resposta) e só aponta, sem mudar nada. Resultado: nenhum erro.",
+      "🛡️ Autoria guardada: cada versão publicada ganha uma impressão digital registrada no projeto, junto com o histórico completo, pra sempre dar pra provar que o Perfil JF foi criado e planejado pelo JF.",
       "📜 Regras guardadas: ficou registrado o público de cada modo (Old School pra velha guarda dos anos 80, 90 e 2000; Júnior de 2010 pra frente; Clássico pra qualquer idade a partir dos 12) e que carta nova ou removida entra só no log das atualizações de cartas e regras.",
     ],
   },
