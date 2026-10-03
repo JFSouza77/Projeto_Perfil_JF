@@ -4,6 +4,20 @@
   (nunca edite as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.4.4 · 03/10/2026 · "Game Mode Update · Parte 5 (final)" = OLD SCHOOL (auditoria própria). Conferido:
+          baralho 240 (oldschool/os, sem ANIMAL), 25% por categoria, meta 200, palpite, joias, Versus e
+          Equipe; acessibilidade na prática (html 112%, dica em destaque 21,9 px, escolher 45 s,
+          responder 120 s, especial 25 s; padrão 30/90/15); C.A.O.S. comentarista (caosOS: menos
+          famílias bobas, avisos e piadas; oldSchool.nostalgia e mesa.geracao). QoL: releitura das 64
+          cartas Old School novas + busca na web (Copan, Mappin, Torre de TV). Simulações: Old School
+          Versus 4j e Acess. Equipe 6j até o fim. FECHA A 1.7.4.
+          PERGUNTA EM ABERTO AO JF: as 16 cartas oldschool+xh ("só Express Hardcore": 8 dubladores e
+          8 lugares de Vitória/ES) também entram no baralho do Old School (baralhoOldSchool não filtra
+          soExpressHardcore). Manter ou tirar do Old School? PENDENTE: cartas Old School do JF.
+          QoL (pedido do JF): Novidades com neon girando na borda (.nov-modal, conic-gradient com
+          @property --nov-rot animado) e o X (.nov-x) herdando o mesmo ângulo, sincronizado, e
+          pulsando (novPulsa); Claro em lavanda; sem animação no Batata e com movimento reduzido.
+          PRÓXIMO: 1.7.5 "C.A.O.S. and Code Update" (ver docs/Status_do_Roteiro.md).
   1.7.4.3 · 03/10/2026 · "Game Mode Update · Parte 4" = CLÁSSICO. Teste pela tela: reembaralhar devolve a carta
           (devolverAoBaralho), descarte até 2 seguidos (3º bloqueado), erro passa a vez, Desistir após a
           1ª dica, especial de casa no tempo esgotado (15 s) anda sozinha. Simulações: Versus 3/5j
@@ -171,7 +185,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Perfil JF">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.4.3</title>
+<title>Perfil JF · Beta 1.7.4.4</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -4341,6 +4355,116 @@ body.claro .nov-x {
   color: #5b21b6;
   box-shadow: 0 3px 10px #7c3aed26;
 }
+/* 1.7.4.4: Novidades com neon girando na borda da caixa e no X, sincronizados (o X herda o mesmo
+   ângulo --nov-rot da caixa), e o X pulsando de leve. Sem @property (navegador antigo), fica parado. */
+@property --nov-rot {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
+@keyframes novGira {
+  to {
+    --nov-rot: 360deg;
+  }
+}
+@keyframes novPulsa {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow:
+      0 4px 12px #00000059,
+      0 0 6px #a78bfa66;
+  }
+  50% {
+    transform: scale(1.07);
+    box-shadow:
+      0 4px 12px #00000059,
+      0 0 16px #c4b5fdcc;
+  }
+}
+.nov-modal {
+  --nov-fundo: #1c1c33;
+  --nov-fundo-x: #1f1a38;
+  --nov-neon: #a78bfa;
+  --nov-base: rgba(167, 139, 250, 0.3);
+  border: 2px solid transparent;
+  background:
+    linear-gradient(var(--nov-fundo), var(--nov-fundo)) padding-box,
+    conic-gradient(
+        from var(--nov-rot),
+        var(--nov-base) 0deg 150deg,
+        var(--nov-neon) 215deg,
+        #fff 245deg,
+        var(--nov-neon) 275deg,
+        var(--nov-base) 330deg 360deg
+      )
+      border-box;
+  box-shadow:
+    0 20px 60px #00000080,
+    0 0 18px #a78bfa40;
+  animation: novGira 3.6s linear infinite;
+}
+.nov-modal .nov-x {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(var(--nov-fundo-x), var(--nov-fundo-x)) padding-box,
+    conic-gradient(
+        from var(--nov-rot),
+        var(--nov-base) 0deg 150deg,
+        var(--nov-neon) 215deg,
+        #fff 245deg,
+        var(--nov-neon) 275deg,
+        var(--nov-base) 330deg 360deg
+      )
+      border-box;
+  animation: novPulsa 2.4s ease-in-out infinite;
+}
+.nov-modal .nov-x:active {
+  animation: none;
+  transform: scale(0.92);
+}
+body.claro .jf-modal.nov-modal {
+  --nov-fundo: var(--claro-sup);
+  --nov-fundo-x: #ede9fe;
+  --nov-neon: #8b5cf6;
+  --nov-base: rgba(139, 92, 246, 0.28);
+  border: 2px solid transparent;
+  background:
+    linear-gradient(var(--nov-fundo), var(--nov-fundo)) padding-box,
+    conic-gradient(
+        from var(--nov-rot),
+        var(--nov-base) 0deg 150deg,
+        var(--nov-neon) 215deg,
+        #fff 245deg,
+        var(--nov-neon) 275deg,
+        var(--nov-base) 330deg 360deg
+      )
+      border-box;
+}
+body.claro .nov-modal .nov-x {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(var(--nov-fundo-x), var(--nov-fundo-x)) padding-box,
+    conic-gradient(
+        from var(--nov-rot),
+        var(--nov-base) 0deg 150deg,
+        var(--nov-neon) 215deg,
+        #fff 245deg,
+        var(--nov-neon) 275deg,
+        var(--nov-base) 330deg 360deg
+      )
+      border-box;
+}
+body.batata-mode .nov-modal,
+body.batata-mode .nov-modal .nov-x {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nov-modal,
+  .nov-modal .nov-x {
+    animation: none;
+  }
+}
 /* menu de ajustes: sem o Vibrar (iPhone), o Claro/Noturno fica sozinho e centralizado */
 .splash-menu-grade.sem-vibra #btnNoturno {
   grid-column: 1 / -1;
@@ -5918,7 +6042,7 @@ body.claro .caos-pergunta button[data-v="digitar"] {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.4.3 · Game Mode Update · Parte 4<br>C.A.O.S. 3.8 · Atualizada em 03/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.4.4 · Game Mode Update · Parte 5 (final)<br>C.A.O.S. 3.8 · Atualizada em 03/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -15766,7 +15890,7 @@ function caosInspectorEstado() {
         );
       })()}</b></div>
       <div class="ci-kv"><span>😄 Alegria · 🎯 confiança · 🔎 curiosidade</span><b class="ci-mono">${caosEixos.alegria.toFixed(1)} · ${caosEixos.confianca.toFixed(1)} · ${caosEixos.curiosidade.toFixed(1)}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.4.3 · C.A.O.S. 3.8</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.4.4 · C.A.O.S. 3.8</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -20549,7 +20673,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.4.3 · C.A.O.S. 3.8)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.4.4 · C.A.O.S. 3.8)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -22814,7 +22938,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.4.3 · C.A.O.S. 3.8");
+  L.push("- **Versão:** Beta 1.7.4.4 · C.A.O.S. 3.8");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -23336,7 +23460,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.4.3 · C.A.O.S. 3.8",
+        versao: "Beta 1.7.4.4 · C.A.O.S. 3.8",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -57248,6 +57372,24 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.4.4",
+    data: "03/10/2026 · 10:15",
+    nome: "Game Mode Update · Parte 5 (final)",
+    t: "O Old School ganhou uma auditoria só dele, separada do Clássico, e a Game Mode Update fecha: todos os modos foram conferidos um por um.",
+    itens: [
+      "📻 Old School conferido: 240 cartas de quem viveu a época, sem animais, nas quatro categorias equilibradas (cerca de 25% cada), meta de 200 casas, Palpite a qualquer hora e joias, em Versus e em Equipe.",
+      "🔎 Acessibilidade conferida na prática: letra maior em toda a tela (e ainda maior na dica em destaque), 45 s pra escolher a dica, 2 min pra responder e 25 s nas instruções especiais (no padrão são 30 s, 90 s e 15 s).",
+      "🎙️ C.A.O.S. comentarista: no Old School ele continua mais contador de história e menos palhaço, com menos piada boba, menos aviso de tempo e comentários de nostalgia sobre a geração das cartas.",
+      "✅ Game Mode Update completa: Express, Hardcore, Júnior, Clássico e Old School foram conferidos com testes na tela e partidas simuladas do começo ao fim.",
+    ],
+    qol: [
+      "🔍 Cartas Old School novas: as 64 cartas Old School criadas na 1.7.3.5 (Ano, Coisa e Lugar) foram relidas, com conferência na internet dos fatos mais arriscados (Copan, Mappin, Torre de TV de Brasília).",
+      "🧪 Partidas simuladas: Old School padrão em Versus e Old School Acessibilidade em Equipe com 6 jogadores, jogados até o fim na versão final.",
+      "📬 Cartas do JF a caminho: as cartas Old School que o JF vai trazer entram numa próxima atualização, validadas e no lugar das mais fracas.",
+      "✨ Novidades em neon: a caixa de Novidades ganhou o mesmo neon girando na borda dos botões, e o X de fechar pulsa de leve com o neon rodando junto, no mesmo ritmo da borda (sugestão do JF).",
+    ],
+  },
   {
     v: "Beta 1.7.4.3",
     data: "03/10/2026 · 10:08",
