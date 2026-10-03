@@ -29,6 +29,9 @@ na hora de começar cada fase.
 - Público de cada modo (Old School, Júnior, Clássico): ver `docs/Publico_dos_Modos.md`.
 - Onde registrar mudanças de cartas nos logs: ver `docs/Regras_dos_Logs.md`.
 
+## Cérebro do C.A.O.S.
+- Mapa das camadas, gerador de falas, calibração e limites de memória: ver `docs/CAOS_Cerebro.md`.
+
 ## Feito na 1.7.5 · Parte 1 (organização do código)
 
 - `src/` virou a fonte oficial. São 32 partes (html, css, js e dados), com a ordem em `src/ordem.txt` e a explicação em `src/LEIA-ME.md`.

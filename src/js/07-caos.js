@@ -4050,8 +4050,12 @@ function caosConsoleCarta(novo) {
       C.g[k] = Math.max(0, C.g[k] * CAOS_CONSOLE[k].dec);
       if (C.g[k] < 0.05) C.g[k] = 0;
     });
+    // 1.7.5.1: tédio de rotina só vem de pulo (antes vinha de todo erro, e erro em série
+    // deixava o C.A.O.S. entediado em vez de irritado ou magoado). Erro em série longo
+    // (6 ou mais) ainda cansa um pouco: "a mesa empacou".
     if (novo) caosSentir("curiosidade", 2, "categoria nova");
-    else if (C.ultEv === "E" || C.ultEv === "P") caosSentir("tedio", 1.2, "rotina");
+    else if (C.ultEv === "P") caosSentir("tedio", 1.2, "rotina");
+    else if (C.ultEv === "E" && C.seqErr >= 6) caosSentir("tedio", 0.5, "a mesa empacou");
     if (
       typeof gameEnded !== "undefined" &&
       !gameEnded &&
@@ -4096,7 +4100,7 @@ function caosConsoleEvento(idx, ev) {
       caosPacienciaNudge(ev === "X" ? -0.5 : C.seqErr >= 3 ? -0.5 : C.seqErr === 2 ? -0.3 : -0.15);
       caosSentir(
         "raiva",
-        (ev === "X" ? 0.5 : 1) *
+        (ev === "X" ? 0.5 : 1.25) *
           (fav ? 0.5 : des ? 1.3 : 1) *
           (p && playerHumor(p) === "suave" ? 0.5 : 1) *
           (1 / (1 + 0.18 * Math.max(0, (C.g.raiva || 0) - 3))),
@@ -6352,6 +6356,11 @@ function caosRate(entry, val) {
   entry.rated = true;
   if (val === 1) rec.up++;
   if (val === -1) rec.down++;
+  // limite de memória (1.7.5.1): guarda as 500 avaliações mais recentes
+  delete R[entry.key];
+  R[entry.key] = rec;
+  const ks = Object.keys(R);
+  if (ks.length > CAOS_RATINGS_MAX) ks.slice(0, ks.length - CAOS_RATINGS_MAX).forEach((k) => delete R[k]);
   try {
     JFStore.setItem(CAOS_RATINGS_KEY, JSON.stringify(R));
   } catch (e) {}

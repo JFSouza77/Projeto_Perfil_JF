@@ -155,23 +155,28 @@ function caosGerSlot(g, slot, def, ctx, usadas, ja) {
     ordem.push(...baldes);
   }
   if (def.geral) ordem.push("geral");
-  for (const b of ordem) {
-    let lista = (def[b] || []).map((t, i) => ({ t, id: b + ":" + i })).filter((x) => ok(x.t));
-    if (!lista.length) continue;
-    if (ja && ja.size) {
-      const sem = lista.filter((x) => ![...caosGerPalavras(x.t)].some((w) => ja.has(w)));
-      if (sem.length) lista = sem;
-      else if (b !== "geral") continue; // o balde de contexto só repetiria palavra: tenta outro
+  // 1ª passada: só pedaços não usados há pouco (balde de contexto gasto = muda de assunto).
+  // 2ª passada (quando o slot só tem baldes gastos): aceita repetir.
+  for (const repetir of [false, true]) {
+    for (const b of ordem) {
+      let lista = (def[b] || []).map((t, i) => ({ t, id: b + ":" + i })).filter((x) => ok(x.t));
+      if (!lista.length) continue;
+      if (ja && ja.size) {
+        const sem = lista.filter((x) => ![...caosGerPalavras(x.t)].some((w) => ja.has(w)));
+        if (sem.length) lista = sem;
+        else if (b !== "geral" && !repetir) continue; // o balde só repetiria palavra: tenta outro
+      }
+      const livres = lista.filter((x) => !ms.includes(x.id));
+      if (!livres.length && b !== "geral" && !repetir) continue;
+      const pool = livres.length ? livres : lista;
+      const x = pool[Math.floor(Math.random() * pool.length)];
+      ms.push(x.id);
+      const total = Object.values(def).reduce((s2, l) => s2 + l.length, 0);
+      const janela = Math.max(1, Math.min(40, Math.floor(total * 0.7)));
+      while (ms.length > janela) ms.shift();
+      if (b !== "geral") usadas.add(b);
+      return x.t;
     }
-    const livres = lista.filter((x) => !ms.includes(x.id));
-    const pool = livres.length ? livres : lista;
-    const x = pool[Math.floor(Math.random() * pool.length)];
-    ms.push(x.id);
-    const total = Object.values(def).reduce((s, l) => s + l.length, 0);
-    const janela = Math.max(1, Math.min(40, Math.floor(total * 0.7)));
-    while (ms.length > janela) ms.shift();
-    if (b !== "geral") usadas.add(b);
-    return x.t;
   }
   return null;
 }
@@ -219,6 +224,12 @@ function caosGerarFala(g, p, extra) {
     for (const ch of txt) h = (h * 31 + ch.charCodeAt(0)) | 0;
     const chave = (h >>> 0).toString(36);
     if (ult.includes(chave) && tent < 5) continue;
+    // respeita o 👎: fala montada que a mesa não curtiu não volta
+    const nota = caosRatingsLoad()["gerador|" + g + "|" + txt.slice(0, 49)];
+    if (nota && nota.down > nota.up && tent < 5) {
+      txt = "";
+      continue;
+    }
     ult.push(chave);
     while (ult.length > CAOS_GER_ULTIMAS) ult.shift();
     break;
@@ -226,7 +237,7 @@ function caosGerarFala(g, p, extra) {
   caosGerGravar();
   if (!txt) return "";
   txt = CAOS_PREFIXO + txt;
-  caosLastPick = { bank: "gerador." + g, key: "gerador|" + g + "|" + txt.slice(11, 60), text: txt };
+  caosLastPick = { bank: "gerador." + g, key: "gerador|" + g + "|" + txt.slice(CAOS_PREFIXO.length, CAOS_PREFIXO.length + 49), text: txt };
   caosLog("gerador", g + " · " + [...ctx.tags].filter((t) => !/^(temper_|estado_)/.test(t)).join(", "));
   return txt;
 }

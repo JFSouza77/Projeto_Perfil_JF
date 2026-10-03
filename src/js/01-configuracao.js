@@ -354,6 +354,8 @@ const CAOS_JUNIOR_BLOCK_RE =
   /embaixo da cama|puxar o p[ée]|dane-se|burrinh|\bsons[ao]\b|fuzil|tiro foi|dilma|presidenta|mulher sapiens|mandioca|estocar vento|pacto com o al[ée]m|invocar uma entidade|sangue nos olhos|m[áa]rcia sensitiva|processo bonito|exposed|\binss\b|pneu queimado|casos de fam[íi]lia|tela azul da morte|lado sombrio|shinigami|round 6|black mirror|john wick|bodega|cagad/i;
 const CAOS_RATINGS_KEY = "perfil5_caos_avaliacoes";
 const CAOS_MATCHLOG_MAX = 150;
+// Quantas avaliações (👍/👎 das falas) ficam guardadas no aparelho.
+const CAOS_RATINGS_MAX = 500;
 const CAOS_PALAVROES = [
   "porra",
   "caralh\\w*",

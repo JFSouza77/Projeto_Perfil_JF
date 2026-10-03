@@ -6,6 +6,21 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.5.1 · 03/10/2026 · "C.A.O.S. and Code Update · Parte 2" = GERADOR DE FALAS + CALIBRAÇÃO DAS EMOÇÕES.
+          Pedido do JF: o C.A.O.S. repetia demais (entrada do JF tinha 3 falas). Novo gerador de falas por
+          gatilho (js/07b-gerador-de-falas.js + um arquivo por gatilho em dados/08-geradores/): monta a fala
+          juntando pedaços pelo contexto (hora, dia, modo, mesa, memória da pessoa, humor, temperamento e
+          estado do C.A.O.S.), com memória salva dos pedaços usados (perfil5_caos_gerador, ~4 KB), sem repetir
+          assunto nem palavra forte na mesma fala, nem as últimas 12 falas do gatilho, e respeitando o 👎.
+          13 geradores: jfChegou, jfInicio, jfAcerto, jfFim, anneChegou, boasVindas, inicioModo,
+          inicioJogadores, inicioMestre, inicioPrimeiro, revanche, pausaHumor (6 degraus) e pausaVolta.
+          Sem montar, cai na lista antiga. CALIBRAÇÃO (teste de estresse): tédio de "rotina" só depois de
+          pulo (antes vinha de todo erro, e erro em série deixava o C.A.O.S. entediado em vez de irritado);
+          erro em série de 6+ soma um pouco de tédio; raiva por erro 1 → 1,25. Resultado: raiva a partir do
+          5º erro seguido e "magoado" (raiva + tristeza) depois; tédio volta ao calmo em 10–13 cartas (antes
+          nunca voltava). Limite de memória: avaliações 👍/👎 com teto de 500 (CAOS_RATINGS_MAX). Testes no
+          repositório: ferramentas/caos_teste_geradores.js e caos_teste_estresse.js. Mapa do cérebro em
+          docs/CAOS_Cerebro.md. C.A.O.S. continua 3.8.
   1.7.5 · 03/10/2026 · "C.A.O.S. and Code Update · Parte 1" = CÓDIGO ORGANIZADO (Parte A do roteiro, sugestão
           do Klaus). O Mestre virou 32 partes em src/: html/ (cabeça, corpo, fim), css/ (6 partes), js/
           (seções 1 a 9 e 11 do índice) e dados/ (emoções, cartas por categoria em dados/02-cartas/,
@@ -6652,6 +6667,8 @@ const CAOS_JUNIOR_BLOCK_RE =
   /embaixo da cama|puxar o p[ée]|dane-se|burrinh|\bsons[ao]\b|fuzil|tiro foi|dilma|presidenta|mulher sapiens|mandioca|estocar vento|pacto com o al[ée]m|invocar uma entidade|sangue nos olhos|m[áa]rcia sensitiva|processo bonito|exposed|\binss\b|pneu queimado|casos de fam[íi]lia|tela azul da morte|lado sombrio|shinigami|round 6|black mirror|john wick|bodega|cagad/i;
 const CAOS_RATINGS_KEY = "perfil5_caos_avaliacoes";
 const CAOS_MATCHLOG_MAX = 150;
+// Quantas avaliações (👍/👎 das falas) ficam guardadas no aparelho.
+const CAOS_RATINGS_MAX = 500;
 const CAOS_PALAVROES = [
   "porra",
   "caralh\\w*",
@@ -18402,8 +18419,12 @@ function caosConsoleCarta(novo) {
       C.g[k] = Math.max(0, C.g[k] * CAOS_CONSOLE[k].dec);
       if (C.g[k] < 0.05) C.g[k] = 0;
     });
+    // 1.7.5.1: tédio de rotina só vem de pulo (antes vinha de todo erro, e erro em série
+    // deixava o C.A.O.S. entediado em vez de irritado ou magoado). Erro em série longo
+    // (6 ou mais) ainda cansa um pouco: "a mesa empacou".
     if (novo) caosSentir("curiosidade", 2, "categoria nova");
-    else if (C.ultEv === "E" || C.ultEv === "P") caosSentir("tedio", 1.2, "rotina");
+    else if (C.ultEv === "P") caosSentir("tedio", 1.2, "rotina");
+    else if (C.ultEv === "E" && C.seqErr >= 6) caosSentir("tedio", 0.5, "a mesa empacou");
     if (
       typeof gameEnded !== "undefined" &&
       !gameEnded &&
@@ -18448,7 +18469,7 @@ function caosConsoleEvento(idx, ev) {
       caosPacienciaNudge(ev === "X" ? -0.5 : C.seqErr >= 3 ? -0.5 : C.seqErr === 2 ? -0.3 : -0.15);
       caosSentir(
         "raiva",
-        (ev === "X" ? 0.5 : 1) *
+        (ev === "X" ? 0.5 : 1.25) *
           (fav ? 0.5 : des ? 1.3 : 1) *
           (p && playerHumor(p) === "suave" ? 0.5 : 1) *
           (1 / (1 + 0.18 * Math.max(0, (C.g.raiva || 0) - 3))),
@@ -20704,6 +20725,11 @@ function caosRate(entry, val) {
   entry.rated = true;
   if (val === 1) rec.up++;
   if (val === -1) rec.down++;
+  // limite de memória (1.7.5.1): guarda as 500 avaliações mais recentes
+  delete R[entry.key];
+  R[entry.key] = rec;
+  const ks = Object.keys(R);
+  if (ks.length > CAOS_RATINGS_MAX) ks.slice(0, ks.length - CAOS_RATINGS_MAX).forEach((k) => delete R[k]);
   try {
     JFStore.setItem(CAOS_RATINGS_KEY, JSON.stringify(R));
   } catch (e) {}
@@ -21708,23 +21734,28 @@ function caosGerSlot(g, slot, def, ctx, usadas, ja) {
     ordem.push(...baldes);
   }
   if (def.geral) ordem.push("geral");
-  for (const b of ordem) {
-    let lista = (def[b] || []).map((t, i) => ({ t, id: b + ":" + i })).filter((x) => ok(x.t));
-    if (!lista.length) continue;
-    if (ja && ja.size) {
-      const sem = lista.filter((x) => ![...caosGerPalavras(x.t)].some((w) => ja.has(w)));
-      if (sem.length) lista = sem;
-      else if (b !== "geral") continue; // o balde de contexto só repetiria palavra: tenta outro
+  // 1ª passada: só pedaços não usados há pouco (balde de contexto gasto = muda de assunto).
+  // 2ª passada (quando o slot só tem baldes gastos): aceita repetir.
+  for (const repetir of [false, true]) {
+    for (const b of ordem) {
+      let lista = (def[b] || []).map((t, i) => ({ t, id: b + ":" + i })).filter((x) => ok(x.t));
+      if (!lista.length) continue;
+      if (ja && ja.size) {
+        const sem = lista.filter((x) => ![...caosGerPalavras(x.t)].some((w) => ja.has(w)));
+        if (sem.length) lista = sem;
+        else if (b !== "geral" && !repetir) continue; // o balde só repetiria palavra: tenta outro
+      }
+      const livres = lista.filter((x) => !ms.includes(x.id));
+      if (!livres.length && b !== "geral" && !repetir) continue;
+      const pool = livres.length ? livres : lista;
+      const x = pool[Math.floor(Math.random() * pool.length)];
+      ms.push(x.id);
+      const total = Object.values(def).reduce((s2, l) => s2 + l.length, 0);
+      const janela = Math.max(1, Math.min(40, Math.floor(total * 0.7)));
+      while (ms.length > janela) ms.shift();
+      if (b !== "geral") usadas.add(b);
+      return x.t;
     }
-    const livres = lista.filter((x) => !ms.includes(x.id));
-    const pool = livres.length ? livres : lista;
-    const x = pool[Math.floor(Math.random() * pool.length)];
-    ms.push(x.id);
-    const total = Object.values(def).reduce((s, l) => s + l.length, 0);
-    const janela = Math.max(1, Math.min(40, Math.floor(total * 0.7)));
-    while (ms.length > janela) ms.shift();
-    if (b !== "geral") usadas.add(b);
-    return x.t;
   }
   return null;
 }
@@ -21772,6 +21803,12 @@ function caosGerarFala(g, p, extra) {
     for (const ch of txt) h = (h * 31 + ch.charCodeAt(0)) | 0;
     const chave = (h >>> 0).toString(36);
     if (ult.includes(chave) && tent < 5) continue;
+    // respeita o 👎: fala montada que a mesa não curtiu não volta
+    const nota = caosRatingsLoad()["gerador|" + g + "|" + txt.slice(0, 49)];
+    if (nota && nota.down > nota.up && tent < 5) {
+      txt = "";
+      continue;
+    }
     ult.push(chave);
     while (ult.length > CAOS_GER_ULTIMAS) ult.shift();
     break;
@@ -21779,7 +21816,7 @@ function caosGerarFala(g, p, extra) {
   caosGerGravar();
   if (!txt) return "";
   txt = CAOS_PREFIXO + txt;
-  caosLastPick = { bank: "gerador." + g, key: "gerador|" + g + "|" + txt.slice(11, 60), text: txt };
+  caosLastPick = { bank: "gerador." + g, key: "gerador|" + g + "|" + txt.slice(CAOS_PREFIXO.length, CAOS_PREFIXO.length + 49), text: txt };
   caosLog("gerador", g + " · " + [...ctx.tags].filter((t) => !/^(temper_|estado_)/.test(t)).join(", "));
   return txt;
 }
@@ -57673,6 +57710,24 @@ const PAUSE_TIPS = [
 ];
 const NOVIDADES = [
   {
+    v: "Beta 1.7.5.1",
+    data: "03/10/2026 · 12:25",
+    nome: "C.A.O.S. and Code Update · Parte 2",
+    t: "O C.A.O.S. ganhou um gerador de falas: em vez de repetir as mesmas frases, ele monta o que vai dizer pelo momento da partida.",
+    itens: [
+      "🧠 Gerador de falas: cada momento (alguém chega, a partida começa, a pausa demora, a revanche...) tem um gerador próprio que junta pedaços de frase conforme a hora, o dia, o modo, quem está na mesa e o que ele lembra de cada pessoa.",
+      "😎 Chega de \"comporte-se\": a entrada do JF, que tinha 3 falas, agora tem centenas de combinações, e ele lembra da última partida, de quanto tempo faz e de quem está na mesa (Anne, Pedro, Isabel).",
+      "👋 Boas-vindas de verdade: cada jogador é recebido de um jeito, conforme a hora, se é a primeira vez, se voltou hoje, se sumiu, se ganhou ou perdeu a última e o humor escolhido.",
+      "🔁 Memória contra repetição: ele guarda o que já disse em cada momento e evita repetir, mesmo depois de fechar e abrir o jogo. Fala marcada com 👎 não volta.",
+      "😤 Emoções calibradas: errar várias vezes seguidas agora deixa o C.A.O.S. irritado e depois magoado, em vez de entediado, e o tédio passa quando a mesa volta a jogar.",
+    ],
+    qol: [
+      "⏸️ Pausa longa com mais personalidade: os 6 degraus de chateação da pausa e a volta dela também usam o gerador, e ele diz quanto tempo ficou esperando.",
+      "🧪 Testes do cérebro: testes novos de estresse, tédio e animação em cada temperamento do C.A.O.S., e de repetição dos geradores, rodando no motor de verdade.",
+      "💾 Memória com limite: as avaliações 👍/👎 das falas agora têm limite no aparelho (as 500 mais recentes).",
+    ],
+  },
+  {
     v: "Beta 1.7.5",
     data: "03/10/2026 · 10:40",
     nome: "C.A.O.S. and Code Update · Parte 1",
@@ -58744,6 +58799,7 @@ CAOS_GERADORES.inicioModo = {
       "Clássico: todo mundo conhece as regras, ninguém conhece as respostas.",
       "Modo clássico. O feijão com arroz do Perfil. Com pimenta.",
       "Clássico. Nada de surpresas. Fora as que eu vou causar.",
+      "Clássico: o jeito mais honesto de passar vergonha.",
     ],
     modo_hardcore: [
       "Modo Hardcore. Ninguém me avisou que a diversão tinha prazo de validade.",
@@ -58757,24 +58813,33 @@ CAOS_GERADORES.inicioModo = {
       "Modo Express. Piscou, perdeu. Eu não pisco, então estou em vantagem.",
       "Express: cinquenta cartas e nenhuma paciência.",
       "Modo Express. Responde rápido ou passa a vez.",
+      "Express: a carta não espera, e eu também não.",
+      "Express. Aqui pensar demais é luxo.",
     ],
     modo_junior: [
       "Modo Júnior. Vou pegar leve. Talvez. Um pouquinho.",
       "Júnior! Aqui eu comento com cuidado. Mas comento.",
       "Modo Júnior. Hoje eu sou o comentarista mais fofo do mundo.",
       "Júnior: muita torcida, pouca zoeira. Eu consigo. Acho.",
+      "Modo Júnior. Hoje vale mais o sorriso do que o placar.",
+      "Júnior! Vou guardar minhas piadas mais ácidas pra outro dia.",
     ],
     modo_oldschool: [
       "Old School. Mesa de gente grande. Hoje eu mais comento do que zoo.",
       "Modo Old School: cartas de quem viveu a época. Eu prometo me comportar. Na medida do possível.",
       "Old School. Sem animalzinho, sem moleza. Vamos ver quem lembra das coisas.",
       "Old School. Vou puxar da memória coisa que vocês viram na TV de tubo.",
+      "Old School. Quem lembra de fita VHS já sai na frente.",
+      "Modo Old School. Hoje a nostalgia joga junto.",
     ],
     modo_equipe: [
       "Modo Equipe. Ninguém fica sozinho. Nem na culpa.",
       "Equipe: vitória compartilhada e culpa dividida em partes iguais.",
       "Equipe. Agora o erro de um é vergonha de todos.",
       "Modo Equipe. Combinem as respostas. Ou briguem, que eu gosto mais.",
+      "Equipe. Aqui ninguém pode dizer que errou sozinho.",
+      "Modo Equipe. Quero ver quem carrega o time nas costas.",
+      "Equipe: cochicho liberado, desculpa esfarrapada também.",
     ],
   },
   fecho: {

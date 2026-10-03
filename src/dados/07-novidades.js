@@ -1,5 +1,23 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.5.1",
+    data: "03/10/2026 · 12:25",
+    nome: "C.A.O.S. and Code Update · Parte 2",
+    t: "O C.A.O.S. ganhou um gerador de falas: em vez de repetir as mesmas frases, ele monta o que vai dizer pelo momento da partida.",
+    itens: [
+      "🧠 Gerador de falas: cada momento (alguém chega, a partida começa, a pausa demora, a revanche...) tem um gerador próprio que junta pedaços de frase conforme a hora, o dia, o modo, quem está na mesa e o que ele lembra de cada pessoa.",
+      "😎 Chega de \"comporte-se\": a entrada do JF, que tinha 3 falas, agora tem centenas de combinações, e ele lembra da última partida, de quanto tempo faz e de quem está na mesa (Anne, Pedro, Isabel).",
+      "👋 Boas-vindas de verdade: cada jogador é recebido de um jeito, conforme a hora, se é a primeira vez, se voltou hoje, se sumiu, se ganhou ou perdeu a última e o humor escolhido.",
+      "🔁 Memória contra repetição: ele guarda o que já disse em cada momento e evita repetir, mesmo depois de fechar e abrir o jogo. Fala marcada com 👎 não volta.",
+      "😤 Emoções calibradas: errar várias vezes seguidas agora deixa o C.A.O.S. irritado e depois magoado, em vez de entediado, e o tédio passa quando a mesa volta a jogar.",
+    ],
+    qol: [
+      "⏸️ Pausa longa com mais personalidade: os 6 degraus de chateação da pausa e a volta dela também usam o gerador, e ele diz quanto tempo ficou esperando.",
+      "🧪 Testes do cérebro: testes novos de estresse, tédio e animação em cada temperamento do C.A.O.S., e de repetição dos geradores, rodando no motor de verdade.",
+      "💾 Memória com limite: as avaliações 👍/👎 das falas agora têm limite no aparelho (as 500 mais recentes).",
+    ],
+  },
+  {
     v: "Beta 1.7.5",
     data: "03/10/2026 · 10:40",
     nome: "C.A.O.S. and Code Update · Parte 1",
