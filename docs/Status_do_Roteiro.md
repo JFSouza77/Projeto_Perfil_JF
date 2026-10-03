@@ -23,6 +23,9 @@ na hora de começar cada fase.
 - **Equilíbrio do baralho:** a 1.7.4.1 corrigiu a ordem de compra (o baralho era comprado ao contrário). Na hora de dividir o motor em arquivos, isso precisa ser mantido.
 - **Express:** na 1.7.4 ganhou especiais de UNO funcionando, descarte e roleta só com as categorias da partida. Continua 100% offline, como decidido.
 
+## Curadoria de cartas
+- Público de cada modo (Old School, Júnior, Clássico): ver `docs/Publico_dos_Modos.md`.
+
 ## Para lembrar na 1.7.5
 
 - Trabalhar numa branch separada, com **equivalência provada** (seção 2.3): o Mestre gerado a partir de `src/` precisa passar no `build.js --testar` e bater nas contagens (cartas, entradas, famílias, grupos e falas).
