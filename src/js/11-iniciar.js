@@ -554,9 +554,13 @@ function iniciar() {
     .forEach((cb) => cb.addEventListener("change", updateExpressCheckboxState));
   document.getElementById("btnTutorial").addEventListener("click", () => {
     unlockAudio();
-    openTutorial();
+    openTutorial("rapido");
   });
-  document.getElementById("btnTutorial2").addEventListener("click", openTutorial);
+  document.getElementById("btnTutorial2").addEventListener("click", () => openTutorial("rapido"));
+  ["btnManual", "pauseManualBtn"].forEach((id) => {
+    const b = document.getElementById(id);
+    if (b) b.addEventListener("click", () => openTutorial("manual"));
+  });
   [
     ["classico", "modeBtnClassico"],
     ["hardcore", "modeBtnHardcore"],
