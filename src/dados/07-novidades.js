@@ -1,5 +1,24 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.6",
+    data: "03/10/2026 · 17:10",
+    nome: "Buttons and Tutorial Update · Parte 1",
+    t: "Começa a atualização dos botões e do tutorial. Primeira parte: acessibilidade pra todo mundo, em qualquer modo.",
+    itens: [
+      "♿ Acessibilidade em todos os modos: no menu ⋮ da tela inicial (e na Pausa) tem o botão ♿ Acessibilidade. Antes isso era só do Old School Acessibilidade.",
+      "🔠 Letra maior: Normal, Grande ou Enorme.",
+      "⏳ Mais tempo: +15 s pra escolher a dica e +30 s pra responder.",
+      "🔊 Ler as dicas em voz alta: cada dica é lida quando abre.",
+      "🗣️🎵 Volume da voz e dos sons, separados.",
+      "🌗 Alto contraste e 🐢 Menos movimento.",
+    ],
+    qol: [
+      "📱 Vale pra este aparelho: cada celular guarda a sua configuração. No online (1.7.10), cada um ajusta a sua.",
+      "👆 Menu ⋮: tocar num botão que abre janela fecha o menu antes, então o primeiro toque na janela já funciona.",
+      "🌎 Idiomas: o painel já tem o lugar reservado pra outros idiomas numa próxima atualização.",
+    ],
+  },
+  {
     v: "Beta 1.7.5.4",
     data: "03/10/2026 · 16:27",
     nome: "C.A.O.S. and Code Update · QoL",
