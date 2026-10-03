@@ -251,6 +251,7 @@ async function testarNavegador(arquivo) {
   try {
     await fechaModais();
     await clica("#goToRulesBtn", "jogar");
+    await fechaModais(); // aparelho novo: o C.A.O.S. sugere o tutorial (o 1º botão é "Já sei jogar")
     await clica("#btnFormatVersus", "formato");
     await clica("#fmtConfirmBtn", "formato ok");
     await clica("#modeBtnClassico", "modo");
@@ -374,10 +375,19 @@ function registrarVersao(versao, arqs) {
   console.log("\nRemovido na compacta:\n  - " + comp.removido.join("\n  - "));
   console.log(`\nRemovido no debug: ${cM.cartas - cD.cartas} cartas e ${cM.falas - cD.falas} falas (fica a 1ª de cada grupo/família).`);
 
+  let falhou = false;
   if (ARGS.has("--testar")) {
     console.log("\nTeste no navegador:");
-    for (const [n, f] of [["mestre", mestreArq], ["debug", saidas.debug], ["compacta", saidas.compacta], ["offline", saidas.offline]])
-      console.log(`  ${n.padEnd(9)} ${await testarNavegador(f)}`);
+    for (const [n, f] of [["mestre", mestreArq], ["debug", saidas.debug], ["compacta", saidas.compacta], ["offline", saidas.offline]]) {
+      const r = await testarNavegador(f);
+      if (r.startsWith("FALHOU")) falhou = true;
+      console.log(`  ${n.padEnd(9)} ${r}`);
+    }
+  }
+  // Teste falhou: não publica (o index.html do site continua na versão anterior).
+  if (ARGS.has("--publicar") && falhou) {
+    console.error("\nNÃO PUBLICADO: o teste no navegador falhou. Corrija e rode de novo.");
+    process.exit(1);
   }
   if (ARGS.has("--publicar")) {
     fs.copyFileSync(saidas.compacta, path.join(PASTA, "index.html"));

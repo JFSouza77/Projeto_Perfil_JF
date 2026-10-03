@@ -6,6 +6,11 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.6.3 · 03/10/2026 · "Buttons and Tutorial Update · Parte 4" = O C.A.O.S. SUGERE O TUTORIAL (pedido do JF).
+          js/05c-sugestao-tutorial.js (chave nova perfil5_tutorial_visto): "Quer fazer o tutorial? Leva menos de
+          dois minutos." ao tocar em Jogar num aparelho sem fichas na memória e no Sou iniciante; uma vez por sessão
+          e nunca mais depois de abrir o tutorial ou responder "Já sei jogar". Ver o tutorial → ao fechar, segue de
+          onde parou (formato ou cadastro guiado). Na Pausa, 🎓 Primeira vez? fica à vista até o tutorial ser visto.
   1.7.6.2 · 03/10/2026 · "Buttons and Tutorial Update · Parte 3" = TUTORIAL RÁPIDO + MANUAL (pedido do JF).
           TUTORIAL_RAPIDO (dados/06): 8 passos, 274 palavras (~1min45s), linguagem pra criança, "prints" feitos
           com as peças do jogo (número, Acertou/Errou, balão do C.A.O.S., código da sala). Abre no Como jogar e
@@ -287,7 +292,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.6.2</title>
+<title>Perfil JF · Beta 1.7.6.3</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6529,7 +6534,7 @@ body.claro .tut-caps button:not(.on) {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.6.2 · Buttons and Tutorial Update · Parte 3<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.6.3 · Buttons and Tutorial Update · Parte 4<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -6635,6 +6640,7 @@ body.claro .tut-caps button:not(.on) {
       <button class="btn-sec" id="pauseVozBtn" type="button">🤐 Calar a voz</button>
     </div>
     <button class="btn-sec" id="pauseAcessBtn" type="button">♿ Acessibilidade (letra, tempo, voz)</button>
+    <button class="btn-sec" id="pauseTutBtn" type="button" style="display:none; --cc:#22d3ee;">🎓 Primeira vez? Tutorial de 2 minutos</button>
     <button class="btn-sec" id="pauseManualBtn" type="button">📖 Manual completo (todas as regras)</button>
     <button class="btn-sec" id="pauseReligarBtn" type="button" style="display:none;">🔊 Religar o C.A.O.S. nesta carta</button>
     <div class="sec-row sec-col">
@@ -12379,6 +12385,7 @@ function iniRender(aviso) {
 }
 function iniComecar() {
   if (starterChosen || players.length >= MAX_PLAYERS) return;
+  if (tutSugerir("iniciante", iniComecar)) return;
   iniFluxo = { i: 0 };
   if (activeToastState) closeActiveToast();
   selectedHumor = "suave";
@@ -13465,6 +13472,7 @@ let tutorialLista = null; // definido ao abrir (os dados do tutorial carregam de
 function openTutorial(tipo) {
   tutorialLista = tipo === "rapido" ? TUTORIAL_RAPIDO : TUTORIAL_STEPS;
   tutorialPos = 0;
+  tutMarcarVisto("abriu");
   let ov = document.getElementById("tutorialOverlay");
   if (!ov) {
     ov = document.createElement("div");
@@ -13543,6 +13551,8 @@ function renderTutorial() {
 function closeTutorial() {
   const ov = document.getElementById("tutorialOverlay");
   if (ov) ov.style.display = "none";
+  tutPausaAtualizar();
+  tutDepoisDeFechar();
 }
 function selectPendingMode(mode) {
   pendingMode = mode;
@@ -13928,6 +13938,7 @@ function showPauseScreen() {
   const rl = document.getElementById("pauseRulesList");
   if (rl) rl.innerHTML = buildRulesHtml();
   pausaAjustesAtualizar();
+  tutPausaAtualizar();
   startPauseTips();
 }
 function hidePauseScreen() {
@@ -14387,6 +14398,97 @@ function acessPainelAbrir() {
   });
   pintar();
   document.body.appendChild(ov);
+}
+/* ----------------------------------------------------------------------
+ * 5c. O C.A.O.S. SUGERE O TUTORIAL (1.7.6): rede de segurança pra quem nunca jogou.
+ * Pergunta uma vez só: "Quer fazer o tutorial? Leva menos de dois minutos."
+ *  · ao tocar em Jogar, se o aparelho ainda não conhece ninguém (memória do C.A.O.S. vazia);
+ *  · ao tocar em "Sou iniciante" no cadastro;
+ *  · na Pausa, um atalho pro tutorial fica à vista enquanto ele não tiver sido visto.
+ * Depois de abrir o tutorial (por qualquer caminho) ou responder "Já sei jogar", não pergunta mais.
+ * ---------------------------------------------------------------------- */
+const TUT_VISTO_KEY = "perfil5_tutorial_visto";
+let tutSugeridoNaSessao = false;
+let tutAoFechar = null; // o que fazer quando o tutorial sugerido fechar (seguir de onde parou)
+function tutVisto() {
+  try {
+    return !!JFStore.getItem(TUT_VISTO_KEY);
+  } catch (e) {
+    return true;
+  }
+}
+function tutMarcarVisto(como) {
+  try {
+    if (!JFStore.getItem(TUT_VISTO_KEY)) JFStore.setItem(TUT_VISTO_KEY, como + "|" + Date.now());
+  } catch (e) {}
+}
+// Aparelho novo: o C.A.O.S. ainda não tem ficha de ninguém.
+function tutMesaNova() {
+  try {
+    const f = JSON.parse(JFStore.getItem(MEM_FICHAS_KEY) || "{}");
+    return !f || !Object.keys(f).length;
+  } catch (e) {
+    return false;
+  }
+}
+const TUT_SUGESTAO_FALAS = {
+  primeira: "Primeira vez por aqui? Quer fazer o tutorial? Leva menos de dois minutos. Eu espero. Juro que é rápido.",
+  iniciante: "Antes do cadastro: quer ver o tutorial? Leva menos de dois minutos, e aí ninguém fica perdido.",
+};
+// Mostra a pergunta e devolve true; quem chamou para e espera: continuar() roda depois
+// de "Já sei jogar" na hora, ou de "Ver o tutorial" quando o tutorial fechar.
+function tutSugerir(motivo, continuar) {
+  if (tutSugeridoNaSessao || tutVisto()) return false;
+  tutSugeridoNaSessao = true;
+  const fala = TUT_SUGESTAO_FALAS[motivo] || TUT_SUGESTAO_FALAS.primeira;
+  const { ov, box } = caosModalBase();
+  ov.id = "tutSugestao";
+  ov.setAttribute("role", "dialog");
+  ov.setAttribute("aria-label", "Sugestão de tutorial");
+  box.style.borderColor = "#22d3ee";
+  const ic = document.createElement("div");
+  ic.textContent = "🎓";
+  ic.setAttribute("aria-hidden", "true");
+  ic.style.cssText = "font-size:2.6rem;line-height:1;margin-bottom:8px";
+  const row = caosModalRow();
+  const seguir = () => {
+    try {
+      caosVoiceCancel();
+    } catch (e) {}
+    ov.remove();
+  };
+  row.append(
+    caosModalBtn("Já sei jogar", "#444a66", () => {
+      seguir();
+      tutMarcarVisto("recusou");
+      if (continuar) continuar();
+    }),
+    caosModalBtn("🎓 Ver o tutorial", "#0e7490", () => {
+      seguir();
+      tutAoFechar = continuar || null;
+      openTutorial("rapido");
+    }),
+  );
+  box.append(ic, caosModalMsg("🤖 " + fala), row);
+  document.body.appendChild(ov);
+  try {
+    caosFalarNormal("[C.A.O.S.] " + fala);
+  } catch (e) {}
+  return true;
+}
+// Chamado pelo closeTutorial: segue de onde a sugestão parou.
+function tutDepoisDeFechar() {
+  const f = tutAoFechar;
+  tutAoFechar = null;
+  if (f)
+    try {
+      f();
+    } catch (e) {}
+}
+// Atalho na Pausa enquanto o tutorial não foi visto neste aparelho.
+function tutPausaAtualizar() {
+  const b = document.getElementById("pauseTutBtn");
+  if (b) b.style.display = tutVisto() ? "none" : "";
 }
 /* ======================================================================
  * 6. VOZ, SOM E VIBRAÇÃO
@@ -16611,7 +16713,7 @@ function caosInspectorEstado() {
       }</b></div>
       <div class="ci-kv"><span>🦴 Registro da espinha</span><b class="ci-mono">${caosEspinha.log.slice(-5).reverse().map(escapeHtml).join("<br>") || "—"}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.6.2 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.6.3 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -21622,7 +21724,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.6.2 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.6.3 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -24546,7 +24648,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.6.2 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.6.3 · C.A.O.S. 4.0");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -25068,7 +25170,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.6.2 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.6.3 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -59084,6 +59186,21 @@ const PAUSE_TIPS = [
 ];
 const NOVIDADES = [
   {
+    v: "Beta 1.7.6.3",
+    data: "03/10/2026 · 17:41",
+    nome: "Buttons and Tutorial Update · Parte 4",
+    t: "Ninguém fica perdido: o C.A.O.S. oferece o tutorial pra quem está chegando.",
+    itens: [
+      "🎓 \"Quer fazer o tutorial? Leva menos de dois minutos.\": o C.A.O.S. pergunta quando o jogo é aberto pela primeira vez num aparelho e quando alguém toca em 🐣 Sou iniciante.",
+      "↪️ Viu o tutorial? Quando fecha, o jogo segue de onde parou (a escolha do formato ou o cadastro guiado).",
+      "⏸️ Na Pausa aparece 🎓 Primeira vez? Tutorial de 2 minutos, até alguém ver o tutorial neste aparelho.",
+    ],
+    qol: [
+      "🙅 Sem insistência: ele pergunta uma vez só. Depois de ver o tutorial ou responder \"Já sei jogar\", não pergunta mais.",
+      "🐣 Sou iniciante conferido: o cadastro guiado (nome → avatar → cor → zoeira) continua igual e agora pode começar com o tutorial.",
+    ],
+  },
+  {
     v: "Beta 1.7.6.2",
     data: "03/10/2026 · 17:31",
     nome: "Buttons and Tutorial Update · Parte 3",
@@ -61102,6 +61219,7 @@ function iniciar() {
       perguntarPartidaAnterior();
       return;
     }
+    if (tutMesaNova() && tutSugerir("primeira", () => document.getElementById("goToRulesBtn").click())) return;
     document.getElementById("splashScreen").style.display = "none";
     document.getElementById("formatSelectScreen").style.display = "block";
     resetFormatSelectionUI();
@@ -61136,6 +61254,7 @@ function iniciar() {
     openTutorial("rapido");
   });
   document.getElementById("btnTutorial2").addEventListener("click", () => openTutorial("rapido"));
+  document.getElementById("pauseTutBtn").addEventListener("click", () => openTutorial("rapido"));
   ["btnManual", "pauseManualBtn"].forEach((id) => {
     const b = document.getElementById(id);
     if (b) b.addEventListener("click", () => openTutorial("manual"));
