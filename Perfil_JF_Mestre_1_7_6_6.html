@@ -6,6 +6,9 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.6.6 · 03/10/2026 · "Buttons and Tutorial Update · QoL" = NÚMEROS REDONDOS NOS TUTORIAIS (pedido do JF).
+          Manual: 35 passos (novo "Idade e tempo extra" no Cadastro; a frase saiu do passo do Mestre).
+          Rápido: 10 passos (novos "Às vezes é uma surpresa" e "Lê devagar? Tudo bem"), 301 palavras (~1min53s).
   1.7.6.5 · 03/10/2026 · "Buttons and Tutorial Update · QoL" = LETRA ENORME SEM VAZAR (print do JF no iPhone).
           O painel ♿ é uma coluna flex com max-height: com letra Enorme passava da altura e o navegador espremia
           os botões (flex-shrink), o texto vazava. Agora nada encolhe e a caixa rola. auditar_botoes.js ganhou a
@@ -304,7 +307,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.6.5</title>
+<title>Perfil JF · Beta 1.7.6.6</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6600,7 +6603,7 @@ body.claro .idade-btn.on {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.6.5 · Buttons and Tutorial Update · QoL<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.6.6 · Buttons and Tutorial Update · QoL<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -17028,7 +17031,7 @@ function caosInspectorEstado() {
       }</b></div>
       <div class="ci-kv"><span>🦴 Registro da espinha</span><b class="ci-mono">${caosEspinha.log.slice(-5).reverse().map(escapeHtml).join("<br>") || "—"}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.6.5 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.6.6 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -22039,7 +22042,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.6.5 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.6.6 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -24971,7 +24974,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.6.5 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.6.6 · C.A.O.S. 4.0");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -25493,7 +25496,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.6.5 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.6.6 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -59049,6 +59052,14 @@ const TUTORIAL_STEPS = [
   },
   {
     sec: 1,
+    icon: "⏳",
+    title: "Idade e tempo extra",
+    text: "No cadastro dá pra marcar <b>🧒 Menos de 12</b> ou <b>🧑 12 ou mais</b> (é opcional; no Equipe vale a faixa de idade).<br>Ler em voz alta ainda é difícil pra alguns. Por isso, quem tem <b>menos de 12</b> ou é <b>🐣 iniciante</b> ganha <b>tempo extra quando é o Mestre</b>: +20 s pra responder e, no Express, +8 s em cada dica e +40 s na carta.<br>🤖 O C.A.O.S. também repara: se alguém demora bem mais que a mesa pra ler, ele pergunta se pode dar esse tempo extra. Quem decide é a mesa (e o ADM pode ligar ou desligar).",
+    dark: true,
+    mock: '<div class="tut-row"><span class="tut-chip on">🧒 Menos de 12</span><span class="tut-chip">🧑 12 ou mais</span></div>',
+  },
+  {
+    sec: 1,
     icon: "🎲",
     title: "Quem começa?",
     text: "Com todo mundo cadastrado, toque em <b>🎲 Sortear quem começa</b>. Não gostou? Dá pra sortear de novo <b>até 2 vezes</b>. Depois disso a <b>ordem da roda fica fixa</b> até o fim da partida.<br>Quem sair no sorteio é o <b>primeiro Mestre</b>.",
@@ -59057,7 +59068,7 @@ const TUTORIAL_STEPS = [
     sec: 2,
     icon: "🎙️",
     title: "O Mestre",
-    text: "A cada carta, uma pessoa é o <b>Mestre</b>: segura o celular, <b>não mostra a tela</b> pra ninguém e lê tudo em voz alta. Os outros tentam adivinhar. Na carta seguinte, o celular passa pro próximo da roda.<br>⏳ <b>Ler devagar não tem problema:</b> quem marcou <b>🧒 Menos de 12</b> no cadastro ou entrou como <b>🐣 iniciante</b> ganha tempo extra quando é o Mestre. E se o C.A.O.S. perceber que alguém demora pra ler, ele pergunta à mesa se pode dar esse tempo também.",
+    text: "A cada carta, uma pessoa é o <b>Mestre</b>: segura o celular, <b>não mostra a tela</b> pra ninguém e lê tudo em voz alta. Os outros tentam adivinhar. Na carta seguinte, o celular passa pro próximo da roda.",
   },
   {
     sec: 2,
@@ -59218,14 +59229,14 @@ const TUTORIAL_STEPS = [
     text: "Dica: dá pra instalar o jogo como app, em tela cheia e funcionando sem internet. No menu <b>⋮</b> da tela inicial, toque em <b>📲 Instalar o app</b> (no Android o Chrome instala direto; no iPhone aparece o passo a passo: Compartilhar → Adicionar à Tela de Início). Isso é tudo. O resto vocês aprendem jogando — e o <b>Resumo rápido</b> das regras está sempre antes da partida e na pausa. Bom jogo, e boa sorte com o C.A.O.S. 😏",
   },
 ];
-// Tutorial rápido (1.7.6): o básico em menos de 2 minutos, com linguagem pra criança.
+// Tutorial rápido (1.7.6): 10 passos, o básico em menos de 2 minutos, com linguagem pra criança.
 // As "prints" são montadas com as próprias peças do jogo (ficam iguais ao jogo e não pesam no arquivo).
 // O manual completo (TUTORIAL_STEPS) continua no fim do tutorial, no menu ⋮ e na Pausa.
 const TUTORIAL_RAPIDO = [
   {
     icon: "🎲",
     title: "O jogo em 10 segundos",
-    text: "Cada carta esconde <b>um segredo</b>: uma pessoa, um lugar, um ano, uma coisa ou um bicho. São <b>20 dicas</b>. Quem descobre com <b>menos dicas</b> ganha <b>mais pontos</b>.",
+    text: "Cada carta esconde <b>um segredo</b>: pessoa, lugar, ano, coisa ou bicho. São <b>20 dicas</b>. Quem descobre com <b>menos dicas</b> ganha <b>mais pontos</b>.",
     mock: '<div class="roulette" style="padding:6px 0;"><div class="roulette-phrase">"Eu sou <span class="roulette-reel landed">UM LUGAR</span>"</div></div>',
   },
   {
@@ -59247,6 +59258,13 @@ const TUTORIAL_RAPIDO = [
     mock: '<div class="guess-btns" style="flex-direction:column;"><button class="btn-correct" tabindex="-1">✓ Ana acertou</button><button class="btn-wrong" tabindex="-1">✕ Errou</button></div>',
   },
   {
+    icon: "⭐",
+    title: "Às vezes é uma surpresa",
+    text: "Alguns números escondem uma <b>surpresa</b>: andar casas, voltar, perder a vez… O Mestre lê e toca no botão.",
+    mock: '<div class="tut-row"><span class="tut-chip on">⭐ Avance 2 casas</span><span class="tut-chip">⭐ Perca sua vez</span></div>',
+    dark: true,
+  },
+  {
     icon: "🏁",
     title: "Pontos viram casas",
     text: "Acertou na 3ª dica? <b>17 pontos</b> (20 menos 3). Cada ponto é <b>uma casa</b> no tabuleiro. Chegou primeiro ao fim? <b>Ganhou!</b>",
@@ -59256,8 +59274,15 @@ const TUTORIAL_RAPIDO = [
   {
     icon: "🤖",
     title: "O C.A.O.S. comenta tudo",
-    text: "O <b>C.A.O.S.</b> é o robô narrador: comenta, brinca e muda de humor, mas <b>nunca mexe nos pontos</b>. No cadastro, cada um escolhe o quanto ele pode zoar (🌷 Suave é o mais gentil).",
+    text: "O <b>C.A.O.S.</b> é o robô narrador: comenta, brinca e muda de humor, mas <b>nunca mexe nos pontos</b>. Cada um escolhe o quanto ele pode zoar (🌷 Suave é o mais gentil).",
     mock: '<div class="jf-toast-overlay show caos-emo" data-emo="orgulho" data-face="(⌐■_■)" style="--emo-cor:#fbbf24; --emo-bg:rgba(44,32,6,0.96); position:static; transform:none;">[C.A.O.S.] Uma dica só. Respeito.</div>',
+    dark: true,
+  },
+  {
+    icon: "⏳",
+    title: "Lê devagar? Tudo bem",
+    text: "Quem tem <b>menos de 12</b> ou é <b>iniciante</b> ganha <b>tempo extra</b> pra ler quando é o Mestre. Sem pressa!",
+    mock: '<div class="tut-row"><span class="tut-chip on">🧒 Menos de 12</span><span class="tut-chip">🧑 12 ou mais</span></div>',
     dark: true,
   },
   {
@@ -59270,7 +59295,7 @@ const TUTORIAL_RAPIDO = [
   {
     icon: "✅",
     title: "Pronto pra jogar!",
-    text: "O resto vocês aprendem jogando! Dúvida no meio da partida? <b>⏸️ Pausar</b> tem as regras, a ♿ <b>Acessibilidade</b> e o <b>📖 Manual completo</b>. Primeira vez? No cadastro tem <b>🐣 Sou iniciante</b>.",
+    text: "O resto vocês aprendem jogando! Dúvida? <b>⏸️ Pausar</b> tem as regras, a ♿ <b>Acessibilidade</b> e o <b>📖 Manual completo</b>.",
   },
 ];
 const PAUSE_TIPS = [
@@ -59508,6 +59533,17 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.6.6",
+    data: "03/10/2026 · 18:26",
+    nome: "Buttons and Tutorial Update · QoL",
+    t: "Tutoriais com números redondos: 10 passos no rápido e 35 no manual completo.",
+    itens: [
+      "🎓 Tutorial rápido com 10 passos (continua com menos de 2 minutos): entraram ⭐ \"Às vezes é uma surpresa\" (as instruções especiais) e ⏳ \"Lê devagar? Tudo bem\" (o tempo extra do Mestre).",
+      "📖 Manual completo com 35 passos: o tempo extra do Mestre ganhou um passo próprio, \"Idade e tempo extra\", no capítulo Cadastro.",
+    ],
+    qol: [],
+  },
   {
     v: "Beta 1.7.6.5",
     data: "03/10/2026 · 18:19",

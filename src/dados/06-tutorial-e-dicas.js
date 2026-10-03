@@ -65,6 +65,14 @@ const TUTORIAL_STEPS = [
   },
   {
     sec: 1,
+    icon: "⏳",
+    title: "Idade e tempo extra",
+    text: "No cadastro dá pra marcar <b>🧒 Menos de 12</b> ou <b>🧑 12 ou mais</b> (é opcional; no Equipe vale a faixa de idade).<br>Ler em voz alta ainda é difícil pra alguns. Por isso, quem tem <b>menos de 12</b> ou é <b>🐣 iniciante</b> ganha <b>tempo extra quando é o Mestre</b>: +20 s pra responder e, no Express, +8 s em cada dica e +40 s na carta.<br>🤖 O C.A.O.S. também repara: se alguém demora bem mais que a mesa pra ler, ele pergunta se pode dar esse tempo extra. Quem decide é a mesa (e o ADM pode ligar ou desligar).",
+    dark: true,
+    mock: '<div class="tut-row"><span class="tut-chip on">🧒 Menos de 12</span><span class="tut-chip">🧑 12 ou mais</span></div>',
+  },
+  {
+    sec: 1,
     icon: "🎲",
     title: "Quem começa?",
     text: "Com todo mundo cadastrado, toque em <b>🎲 Sortear quem começa</b>. Não gostou? Dá pra sortear de novo <b>até 2 vezes</b>. Depois disso a <b>ordem da roda fica fixa</b> até o fim da partida.<br>Quem sair no sorteio é o <b>primeiro Mestre</b>.",
@@ -73,7 +81,7 @@ const TUTORIAL_STEPS = [
     sec: 2,
     icon: "🎙️",
     title: "O Mestre",
-    text: "A cada carta, uma pessoa é o <b>Mestre</b>: segura o celular, <b>não mostra a tela</b> pra ninguém e lê tudo em voz alta. Os outros tentam adivinhar. Na carta seguinte, o celular passa pro próximo da roda.<br>⏳ <b>Ler devagar não tem problema:</b> quem marcou <b>🧒 Menos de 12</b> no cadastro ou entrou como <b>🐣 iniciante</b> ganha tempo extra quando é o Mestre. E se o C.A.O.S. perceber que alguém demora pra ler, ele pergunta à mesa se pode dar esse tempo também.",
+    text: "A cada carta, uma pessoa é o <b>Mestre</b>: segura o celular, <b>não mostra a tela</b> pra ninguém e lê tudo em voz alta. Os outros tentam adivinhar. Na carta seguinte, o celular passa pro próximo da roda.",
   },
   {
     sec: 2,
@@ -234,14 +242,14 @@ const TUTORIAL_STEPS = [
     text: "Dica: dá pra instalar o jogo como app, em tela cheia e funcionando sem internet. No menu <b>⋮</b> da tela inicial, toque em <b>📲 Instalar o app</b> (no Android o Chrome instala direto; no iPhone aparece o passo a passo: Compartilhar → Adicionar à Tela de Início). Isso é tudo. O resto vocês aprendem jogando — e o <b>Resumo rápido</b> das regras está sempre antes da partida e na pausa. Bom jogo, e boa sorte com o C.A.O.S. 😏",
   },
 ];
-// Tutorial rápido (1.7.6): o básico em menos de 2 minutos, com linguagem pra criança.
+// Tutorial rápido (1.7.6): 10 passos, o básico em menos de 2 minutos, com linguagem pra criança.
 // As "prints" são montadas com as próprias peças do jogo (ficam iguais ao jogo e não pesam no arquivo).
 // O manual completo (TUTORIAL_STEPS) continua no fim do tutorial, no menu ⋮ e na Pausa.
 const TUTORIAL_RAPIDO = [
   {
     icon: "🎲",
     title: "O jogo em 10 segundos",
-    text: "Cada carta esconde <b>um segredo</b>: uma pessoa, um lugar, um ano, uma coisa ou um bicho. São <b>20 dicas</b>. Quem descobre com <b>menos dicas</b> ganha <b>mais pontos</b>.",
+    text: "Cada carta esconde <b>um segredo</b>: pessoa, lugar, ano, coisa ou bicho. São <b>20 dicas</b>. Quem descobre com <b>menos dicas</b> ganha <b>mais pontos</b>.",
     mock: '<div class="roulette" style="padding:6px 0;"><div class="roulette-phrase">"Eu sou <span class="roulette-reel landed">UM LUGAR</span>"</div></div>',
   },
   {
@@ -263,6 +271,13 @@ const TUTORIAL_RAPIDO = [
     mock: '<div class="guess-btns" style="flex-direction:column;"><button class="btn-correct" tabindex="-1">✓ Ana acertou</button><button class="btn-wrong" tabindex="-1">✕ Errou</button></div>',
   },
   {
+    icon: "⭐",
+    title: "Às vezes é uma surpresa",
+    text: "Alguns números escondem uma <b>surpresa</b>: andar casas, voltar, perder a vez… O Mestre lê e toca no botão.",
+    mock: '<div class="tut-row"><span class="tut-chip on">⭐ Avance 2 casas</span><span class="tut-chip">⭐ Perca sua vez</span></div>',
+    dark: true,
+  },
+  {
     icon: "🏁",
     title: "Pontos viram casas",
     text: "Acertou na 3ª dica? <b>17 pontos</b> (20 menos 3). Cada ponto é <b>uma casa</b> no tabuleiro. Chegou primeiro ao fim? <b>Ganhou!</b>",
@@ -272,8 +287,15 @@ const TUTORIAL_RAPIDO = [
   {
     icon: "🤖",
     title: "O C.A.O.S. comenta tudo",
-    text: "O <b>C.A.O.S.</b> é o robô narrador: comenta, brinca e muda de humor, mas <b>nunca mexe nos pontos</b>. No cadastro, cada um escolhe o quanto ele pode zoar (🌷 Suave é o mais gentil).",
+    text: "O <b>C.A.O.S.</b> é o robô narrador: comenta, brinca e muda de humor, mas <b>nunca mexe nos pontos</b>. Cada um escolhe o quanto ele pode zoar (🌷 Suave é o mais gentil).",
     mock: '<div class="jf-toast-overlay show caos-emo" data-emo="orgulho" data-face="(⌐■_■)" style="--emo-cor:#fbbf24; --emo-bg:rgba(44,32,6,0.96); position:static; transform:none;">[C.A.O.S.] Uma dica só. Respeito.</div>',
+    dark: true,
+  },
+  {
+    icon: "⏳",
+    title: "Lê devagar? Tudo bem",
+    text: "Quem tem <b>menos de 12</b> ou é <b>iniciante</b> ganha <b>tempo extra</b> pra ler quando é o Mestre. Sem pressa!",
+    mock: '<div class="tut-row"><span class="tut-chip on">🧒 Menos de 12</span><span class="tut-chip">🧑 12 ou mais</span></div>',
     dark: true,
   },
   {
@@ -286,7 +308,7 @@ const TUTORIAL_RAPIDO = [
   {
     icon: "✅",
     title: "Pronto pra jogar!",
-    text: "O resto vocês aprendem jogando! Dúvida no meio da partida? <b>⏸️ Pausar</b> tem as regras, a ♿ <b>Acessibilidade</b> e o <b>📖 Manual completo</b>. Primeira vez? No cadastro tem <b>🐣 Sou iniciante</b>.",
+    text: "O resto vocês aprendem jogando! Dúvida? <b>⏸️ Pausar</b> tem as regras, a ♿ <b>Acessibilidade</b> e o <b>📖 Manual completo</b>.",
   },
 ];
 const PAUSE_TIPS = [
