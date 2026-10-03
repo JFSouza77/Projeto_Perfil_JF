@@ -1,0 +1,206 @@
+<!--
+  PERFIL JF · ARQUIVO MESTRE (montado a partir de src/). NÃO edite este arquivo à mão.
+  Desde a 1.7.5 a fonte oficial é a pasta src/ (ordem das partes em src/ordem.txt; ver src/LEIA-ME.md).
+  O build.js monta este Mestre e gera as versões debug, compacta e offline:  node build.js
+  (nunca edite o Mestre nem as saídas à mão).
+
+  HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.5 · 03/10/2026 · "C.A.O.S. and Code Update · Parte 1" = CÓDIGO ORGANIZADO (Parte A do roteiro, sugestão
+          do Klaus). O Mestre virou 32 partes em src/: html/ (cabeça, corpo, fim), css/ (6 partes), js/
+          (seções 1 a 9 e 11 do índice) e dados/ (emoções, cartas por categoria em dados/02-cartas/,
+          falas, léxico, apelidos, tutorial, novidades). montar.js junta as partes na ordem de
+          src/ordem.txt; o build.js monta o Mestre sozinho antes de gerar as saídas. EQUIVALÊNCIA
+          PROVADA contra o Mestre 1.7.4.4: todo o texto idêntico, exceto a ordem das cartas em
+          ADULT_CARDS (agora agrupadas por categoria, mesma ordem relativa dentro de cada uma; mesmas
+          1000 cartas, mesmo texto). A ordem não muda o jogo: todo baralho é embaralhado e o save
+          guarda as cartas pelo nome. Novo ferramentas/auditar_cartas.js (só reporta): 0 erros.
+          Regras gravadas em docs/: público de cada modo (Publico_dos_Modos.md) e onde registrar
+          mudanças de cartas nos logs (Regras_dos_Logs.md). Jogo sem mudança de comportamento.
+          PRÓXIMO: Parte 2 = cérebro do C.A.O.S. (C.A.O.S. continua 3.8 até lá).
+  1.7.4.4 · 03/10/2026 · "Game Mode Update · Parte 5 (final)" = OLD SCHOOL (auditoria própria). Conferido:
+          baralho 240 (oldschool/os, sem ANIMAL), 25% por categoria, meta 200, palpite, joias, Versus e
+          Equipe; acessibilidade na prática (html 112%, dica em destaque 21,9 px, escolher 45 s,
+          responder 120 s, especial 25 s; padrão 30/90/15); C.A.O.S. comentarista (caosOS: menos
+          famílias bobas, avisos e piadas; oldSchool.nostalgia e mesa.geracao). QoL: releitura das 64
+          cartas Old School novas + busca na web (Copan, Mappin, Torre de TV). Simulações: Old School
+          Versus 4j e Acess. Equipe 6j até o fim. FECHA A 1.7.4.
+          RESOLVIDO PELO JF: as 16 cartas oldschool+xh (8 dubladores e 8 lugares de Vitória/ES) ficam
+          no Old School também, como já estão. Old School = velha guarda (anos 80/90/2000) e coisas um
+          pouco mais adultas; ver docs/Publico_dos_Modos.md. PENDENTE: cartas Old School do JF.
+          QoL (pedido do JF): Novidades com neon girando na borda (.nov-modal, conic-gradient com
+          @property --nov-rot animado) e o X (.nov-x) herdando o mesmo ângulo, sincronizado, e
+          pulsando (novPulsa); Claro em lavanda; sem animação no Batata e com movimento reduzido.
+          PRÓXIMO: 1.7.5 "C.A.O.S. and Code Update" (ver docs/Status_do_Roteiro.md).
+  1.7.4.3 · 03/10/2026 · "Game Mode Update · Parte 4" = CLÁSSICO. Teste pela tela: reembaralhar devolve a carta
+          (devolverAoBaralho), descarte até 2 seguidos (3º bloqueado), erro passa a vez, Desistir após a
+          1ª dica, especial de casa no tempo esgotado (15 s) anda sozinha. Simulações: Versus 3/5j
+          (casa, joias, pontos) e Equipe 4/6j (casa, tabuleiro) até o fim; 1 travamento da automação
+          por cadastro de 5 de 6 (escolha aleatória de cor/avatar do teste; 6 jogadores entram normal
+          pela tela). QoL: contas das 200 cartas de Ano (ano_math) + releitura das 101 novas; 9
+          Pessoas novas. Kellogg 1906 = W. K. Kellogg. Copan: "mais de 30 andares" (fontes divergem).
+          Roteiro de organização/online salvo em docs/ (Roteiro_Organizacao_e_Online.md e
+          Status_do_Roteiro.md). Decisão do JF: Parte A (código) → 1.7.5 "C.A.O.S. and Code Update",
+          junto com o cérebro do C.A.O.S.; Parte B (online) → 1.7.10.
+  1.7.4.2 · 03/10/2026 · "Game Mode Update · Parte 3" = JÚNIOR. Conferido: meta 150, baralho 250 (junior/livre,
+          sem ANO), resp 90 s, palpite e joias; zoeira familia/suave/normal (padrão familia), avatares
+          de adulto fora, Júnior oculto no Equipe; regras com meta e 250 cartas. Cartas visíveis no
+          Júnior varridas por termos de adulto: Feijoada (caipirinha), Lesma (cerveja), Ostra e
+          Crocodilo ("sexo"), Arraia (morte do Steve Irwin), Bicho-da-seda (pena de morte), Veado (jogo
+          do bicho) trocadas; Peixe-boi "quase não tenho predadores". Falas do C.A.O.S. alcançáveis no
+          Júnior varridas: "Que gostoso" → "Que alegria" (familias.carinho), Hollow Knight "caiu".
+          QoL: releitura das 205 cartas novas visíveis no Júnior (números/recordes/datas). 5 partidas
+          simuladas de Júnior até o fim.
+  1.7.4.1 · 03/10/2026 · "Game Mode Update · Parte 2". BUG GRAVE do baralho: embaralharEquilibrado põe a
+          ordem equilibrada no começo, mas a compra é deck.pop() (do fim) — a categoria maior dominava
+          (Clássico: Coisa+Animal 61%, Lugar 6%; Júnior: Animal 65%). Agora o baralho entra com
+          .reverse(); medido: 25% por categoria (Hardcore 30/30/20/20). Anti-repetição com lim = 2 em
+          todos os modos (nenhuma categoria 3x seguidas; no Express já era 2). Reembaralhar/devolver
+          carta usa devolverAoBaralho (posição aleatória) em vez de deck.push + shuffle do baralho todo.
+          Old School Acessibilidade: especial 25 s (15 + 10). Texto do Equipe inclui Old School.
+          Testes: configuração de cada modo pela interface (tempos, meta, limite do baralho, palpite,
+          joias, entradas por carta, fonte da acessibilidade) e 11 partidas simuladas de Hardcore e
+          Old School (padrão e acess.), Versus e Equipe, todas até o fim.
+          Ícone: modelo novo do JF (neon mais vivo, fundo preto) aplicado em "screen" sobre o azul do
+          ícone antigo ~25% mais escuro (centro 20,18,48 → bordas 9,9,26); maskable com o logo a 80%.
+          ROTEIRO ATUALIZADO (JF): 1.7.4.2 = Júnior; 1.7.4.3 = Clássico; 1.7.4.4 = Old School (auditoria
+          própria, separada do Clássico; o JF vai trazer cartas Old School novas pra validar, trocar as
+          fracas e adaptar). Em cada parte, QoL = revisar as cartas novas da 1.7.3.5 (Ano e Pessoa
+          primeiro: contas e fatos históricos; depois Coisa, Lugar e Animal), conferindo o
+          balanceamento e as classes (júnior/oldschool). 1.7.5 = update do C.A.O.S.: matrizes de humor,
+          cérebro, humanização, memória e limites, limites de comportamento, testes de estresse, tédio
+          e animação, controle e mistura de emoções. IDEIA PARA DEPOIS: "Crie/sugira sua carta" — a
+          pessoa escreve a carta e o C.A.O.S. confere se ela já existe no jogo.
+  1.7.4 · 03/10/2026 · "Game Mode Update · Parte 1" (nome novo pedido pelo JF). Foco: corrigir, acertar e
+          melhorar os modos existentes. Parte 1 = EXPRESS: especial com o tempo da vez esgotado
+          agora aplica o efeito (expressAutoSpecial; antes onTimerExpired("turn") só chamava
+          expressPass e ignorava a especial). Volte 2 = inverter (UNO), Volte 3 = inverter + pular 1
+          (antes invertia e andava 2/3 passos). Aviso do efeito sempre visível (mesmo com C.A.O.S.
+          mudo) + linha .express-roda (sentido, quem joga depois, bloqueados). Descarte no Express
+          (canDiscard exigia pendingIndex === null, impossível no Express). Ajustes pedidos pelo JF:
+          roleta do Express usa expressSelectedCategories (antes currentGemCategories, as 4); e
+          answerLivre vale no Express até revealedOrder.length <= 1 (antes excluía o Express).
+          ROTEIRO da 1.7.4: .1 = Hardcore; .2 = Júnior; .3 = Clássico e Old School; em cada parte,
+          conferir o modo contra o planejado (regras, roletas, tempos, especiais, pontuação).
+  1.7.3.5 · 03/10/2026 · "Cards and Rules Update · Parte 6". Pedido do JF: equilibrar o baralho. +400 cartas
+          (nenhuma removida): ANO +101 (10 oldschool, 25 adulto+os de 1919–1959, 66 adulto de 1066 a
+          1916), ANIMAL +149 (55 junior, 74 livre, 20 adulto), COISA +78 (18 junior, 20 livre, 15
+          oldschool, 25 adulto), LUGAR +63 (14 junior, 15 livre, 14 oldschool, 20 adulto), PESSOA +9
+          (5 junior, 4 livre). Total 1000 = 200 por categoria. Vistoria: auditar + ano_math nas 1000;
+          vazamentos corrigidos (Leão, Rinoceronte e novas), "quatro dígitos" tirado de 2001/2002.
+          Ajuste: .nov-nome (pílula do nome da versão) quebra linha em vez de vazar da caixa no iPhone.
+  1.7.3.4 · 02/10/2026 · "Cards and Rules Update · Parte 5 (final)". Pente fino nas 51 cartas de
+          ANIMAL e 122 de COISA (95 dicas: fatos, ecos internos e vazamentos). Repetições: falas
+          iguais entre grupos (nivelZero × acido etc.) e quase iguais no mesmo grupo cortadas (7);
+          entre cartas, as repetidas são genéricas de propósito. Compacta 1770 → 1754 KB desde a 1.7.3.1.
+          FECHA A 1.7.3: as 600 cartas revisadas. PRÓXIMO: área de Agradecimentos Especiais.
+  1.7.3.3 · 02/10/2026 · "Cards and Rules Update · Parte 4". Pente fino nas 137 cartas de LUGAR (55
+          dicas: fatos, desatualizadas e vazamentos de nome) e nos 9 dubladores (checados por busca;
+          Dublapédia bloqueada pela rede do ambiente). Falas do C.A.O.S.: 202 cortadas (erroSarcasmo
+          257→143, apresentacaoInicial 97→52, acertoRidiculamenteRapido, jogadorLento, espontaneo,
+          reacaoCurta, carinho). Nenhum código usa fala por índice.
+          Dublagem: o JF confirma de cabeça (Briggs fez o Grinch de 2000; Marco Ribeiro faz o Woody
+          desde Toy Story 2; Bianca Alencar canta e faz pontas desde criança; Hinata é da Flávia
+          Narciso; Wendel fez o Speed Racer de As Novas Aventuras; Úrsula ganhou o Prêmio Yamato e
+          começou aos 8 com os irmãos; Briggs fez o Samurai Jack até a 4ª temporada, Ricardo Juarez a
+          5ª; Tatiane fez Zoey 101; Bardavid nas novelas confere). Kate Winslet/Titanic saiu (sem
+          confirmação). Em dúvida de dublagem: perguntar ao JF.
+  1.7.3.2 · 02/10/2026 · "Cards and Rules Update · Parte 3". Pente fino nas 191 cartas de PESSOA
+          (83 dicas corrigidas ou trocadas: fatos errados, desatualizados e repetidos). Limpeza de
+          CSS morto: regras vazias e declarações sempre sobrescritas por regra igual mais abaixo
+          (fallbacks com color-mix/var/clamp preservados; estilo calculado conferido igual antes/depois).
+          Créditos ao Pedro (musiquinha de vitória e risada do C.A.O.S., 1.7.1.6) nas Novidades.
+          ROTEIRO da 1.7.3: .3 = cartas de LUGAR + falas do C.A.O.S. (cortar as sem graça/encheção);
+          .4 = cartas de ANIMAL e COISA + repetições (cartas e falas) e otimização; aí fecha a 1.7.3.
+          DEPOIS de fechar a 1.7.3 (1.7.3.4 pronta): área de AGRADECIMENTOS ESPECIAIS no jogo, com
+          as crianças (Pedro, Isabel), a namorada do JF, Bruno Levanti, Felipe e todo mundo que
+          ajudou de verdade no projeto. Não fazer antes.
+  1.7.3.1 · 02/10/2026 · "Cards and Rules Update · Parte 2". Pente fino nas 99 cartas de ANO (no
+          máximo 3 dicas de conta e 1 que entrega o ano; fatos repetidos trocados; erros corrigidos);
+          Modo Claro com identidade (modos e zoeira tingidos, carta virada roxa, pontuação na cor do
+          jogador via corDoJogador, pausa colorida); números do tabuleiro a cada 20 casas; novidades com itens que
+          abrem e fecham (.nov-drop, sugestão do Bruno Levanti).
+  1.7.3 · 02/10/2026 · "Cards and Rules Update". C.A.O.S. sobe pra 3.8 (depois da 3.9 vem a 4.0).
+          Aviso "Em breve: Modo Multiplayer" na abertura (#splashEmBreve; tirar na 1.7.10). Pente fino nas cartas (dicas independentes,
+          sem eco, sem vazamento, fatos corrigidos); +25 cartas Old School (600 no total); baralho
+          equilibrado por categoria (embaralharEquilibrado); C.A.O.S. decide no Hardcore inclui
+          Nível 0; regras reescritas; verso novo da carta (VERSO_EMBLEMA_SVG).
+  1.7.2.4 · 02/10/2026 · "Owner Lock Update". Cores exclusivas na paleta com cadeado (COR_EXCLUSIVA,
+          corReservada: RGB do JF, GRAD_PRINCESA da Anne); aviso de cor/emoji com dono sobe o tom
+          por toque (caosTomadaN), sem depender da zoeira.
+  1.7.2.3 · 02/10/2026 · "Pause Menu Update". Pausa com tema e voz (pausaAjustesAtualizar,
+          pausaVozTrocar); selo da categoria na carta aberta (CAT_SELO_ICONE, .cat-selo);
+          .caos-pergunta maior (botões de 44 px).
+  1.7.2.2 · 02/10/2026 · "No Mercy Update". Hardcore sem Suave: zoeira Normal (padrão), Ácido ou
+          Nível 0 (humorOptionsForMode, renderHumorPicker, playerHumor, ajustarJogadoresAoModo).
+  1.7.2.1 · 02/10/2026 · "Family Friendly Update". Cadastro: Adicionar depois de Cor/Emoji/Zoeira
+          (#addAcaoRow); cor/emoji já escolhido avisa de quem é (caosEscolhaTomada). Júnior: zoeira
+          Family friendly/Suave/Normal (humor "familia", humorFamilia, caosFamiliaTroca: 1 a 5
+          zoeirinhas leves por partida); mágoa por nível; Nível 0 silenciou → silenciaramVoltaZero.
+          Voz: número no feminino (caosNumFem). Datas nas NOVIDADES (campo data).
+  1.7.2 · 02/10/2026 · "Android Update". Android: botão Instalar o app (aviso do Chrome; no iPhone, passo a passo),
+          voltar do Android pausa a partida, dica de voz por aparelho, sw.js também em
+          localhost (teste). Corrigido: importar save com partida em andamento (saveBloqueado).
+          Limpeza: variáveis mortas, "reapresentar" desativado, 3 regras CSS sem uso, 1 fala
+          repetida. Modo Claro "Papel" (identidade própria: creme âmbar, tinta, sem neon).
+          Versões antes da 1.7 ganharam nome de update nas NOVIDADES.
+          Logo: P grande em azul neon e JF em laranja neon (mesma letra).
+  1.7.1.6 · 02/10/2026 · "Day & Night Update". Números das versões corrigidos (as antigas 1.7.1.2 a 1.7.1.6 são
+          1.7.1.1 a 1.7.1.5; arquivos renomeados, conteúdo intacto). Ícone novo do app
+          (? neon + carta com P). Dois visuais: Noturno (padrão) e Claro (body.claro).
+          Resposta menor (só o nome, numa caixinha), toque pra esconder antes da 1ª dica.
+          Musiquinha de vitória ao acertar (vitoriaCarta); risadinha do C.A.O.S. nas
+          zoeiras (CAOS_RISADA_*). As duas foram ideias do Pedro, 11 anos. Debug: tempo esgotado
+          não come 5 s do próximo; Express não vira "misto" ao recarregar; Reiniciar
+          solta o silêncio do sorteio. Balão do C.A.O.S. no celular: fala na largura toda.
+  1.7.1.5 · 01/10/2026 · "Pocket Update". PWA (manifest.json + ícones: instala na tela de início em tela cheia);
+          Compartilhar resultado no fim de jogo; destaque Mestre muralha no resumo; dicas
+          de Mestre na pausa.
+  1.7.1.4 · 01/10/2026 · "Clean Start Update". Tela inicial mais limpa: botão Jogar flutua de leve; Novidades e um
+          menu ⋮ (Som, Vibrar, Voz + Ajustar voz, Batata) no canto superior direito.
+  1.7.1.3 · 01/10/2026 · "Voices & Faces Update". Som no iPhone religa no primeiro toque depois de o Safari suspender o
+          áudio; Moda da Casa e última rodada nas regras, tutorial e dicas da pausa; rostinhos
+          novos do C.A.O.S.; falas novas no Encerrar e no sorteio da Moda da Casa.
+  1.7.1.2 · 01/10/2026 · "Final Round Update". Sorteio da Moda da Casa com a roleta da categoria (som), C.A.O.S.
+          calado durante o sorteio (só comenta o resultado); última rodada (ULTIMA_RODADA):
+          bateu a meta, a rodada termina e vence quem estiver na frente.
+  1.7.1.1 · 01/10/2026 · "House Rules Update". Mestre em 9 seções (configuração, estado, regras, turno e rodada, tela,
+          voz e som, C.A.O.S., salvamento, utilitários). Moda da Casa: o C.A.O.S. sorteia o
+          modo da mesa (tabuleiro/pontos/joias, sem repetir o anterior; saves antigos = "misto");
+          meta de pontos 200 e joia com até 6 dicas na Moda da Casa (aprovados pela simulação
+          sim.js); joias valem com 2+ jogadores; trava de 2 joias por jogador por rodada
+          (rodada = volta do 1º mestre); falas do C.A.O.S. sem colagem fora de contexto.
+  1.7.0 · 01/10/2026 · "Rebuild Update". Mestre legível criado a partir da Beta 1.6.5 sem mudar o jogo:
+          índice e seções; funções em cima, estado, dados e iniciar() no fim; 3 funções
+          mortas removidas; remendos de rostos/falas consolidados nas tabelas finais;
+          23 regras CSS sem uso removidas; console.* atrás de DEBUG; cartas no formato
+          "texto" / "*especial"; falas sem o prefixo [C.A.O.S.] (aplicado na abertura) e
+          com {nome}; validação de dados na abertura (console + painel Cérebro).
+          Depois da revisão do GPT: Reiniciar cala o C.A.O.S.; falas atrasadas presas à
+          partida (caosToastAtrasado); timers do save validados; alert() -> caosAvisoModal;
+          baralhoSemAnimal -> baralhoClassico; voz masculina quando existe e tom grave automático
+          (no iOS o Safari não expõe vozes baixadas, como o Felipe, para sites);
+          falas para chute igual à resposta; pronomes; 40 dicas de ANO "entre X e Y" e 39
+          cartas fora de 1-4 especiais corrigidas; sobras de animation no CSS removidas;
+          service worker (sw.js) e fonte embutida para jogar offline.
+  1.6.5 · 30/09/2026 · Última versão minificada (C.A.O.S. 3.6), base desta reorganização.
+-->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a1a2e">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icones/icone-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Perfil JF">
+<meta name="format-detection" content="telephone=no">
+<title>Perfil JF · Beta 1.7.5</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+<style>

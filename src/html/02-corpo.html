@@ -1,0 +1,274 @@
+</style>
+</head>
+<body class="noturno">
+  
+  <section class="splash-screen" id="splashScreen">
+    <div class="splash-topo">
+      <button id="btnNovidades" class="splash-ico" type="button" title="O que mudou nas últimas versões" aria-label="Novidades">🆕</button>
+      <button id="btnMenuSplash" class="splash-ico splash-ico-menu" type="button" title="Ajustes" aria-label="Ajustes" aria-expanded="false" aria-controls="splashMenu">⋮</button>
+      <div id="splashMenu" class="splash-menu" hidden>
+        <div class="splash-menu-tit">Ajustes</div>
+        <div class="splash-menu-grade">
+          <button id="btnSom" class="chip" style="--cc:#38bdf8;">🔊 Som</button>
+          <button id="btnVibra" class="chip" style="--cc:#a78bfa;">📳 Vibrar</button>
+          <button id="btnBatata" class="chip" style="--cc:#facc15;" title="Modo Batata: tira animações pesadas (economia de bateria)">🥔 Batata</button>
+          <button id="btnNoturno" class="chip" style="--cc:#a5b4fc;" title="Modo Noturno: carta escura, mais confortável no escuro">🌙 Noturno</button>
+        </div>
+        <button id="btnInstalar" class="chip splash-menu-instalar" style="--cc:#f472b6; display:none;">📲 Instalar o app</button>
+        <div class="splash-menu-grade splash-menu-voz">
+          <button id="btnVoz" class="chip" style="--cc:#34d399;">🗣️ Voz</button>
+          <button id="btnVozAjustar" class="chip" style="--cc:#fb923c;">🎚️ Ajustar voz</button>
+        </div>
+        <div id="vozAjustes" class="voz-panel" style="display:none;">
+          <div class="voz-row"><span>⏩ Velocidade</span><button type="button" class="voz-step" data-kind="vel" data-dir="-1">−</button><b id="lblVozVel">1.2x</b><button type="button" class="voz-step" data-kind="vel" data-dir="1">+</button></div>
+          <div class="voz-row"><span>🎚️ Tom</span><button type="button" class="voz-step" data-kind="tom" data-dir="-1">−</button><b id="lblVozTom">normal</b><button type="button" class="voz-step" data-kind="tom" data-dir="1">+</button></div>
+          <button id="btnVozNome" class="chip" style="width:100%; margin-top:6px;">🎙️ Voz: automática</button>
+          <div id="vozLista" style="font-size:0.7rem; opacity:0.6; margin-top:6px;"></div>
+        </div>
+      </div>
+    </div>
+    <div id="floatingWordsContainer"></div>
+    <div class="splash-dice">🎲</div>
+    <div class="splash-title splash-neon grad-anim">Perfil JF</div> 
+    <div class="splash-tagline">Quantas dicas você vai precisar pra descobrir quem eu sou?</div>
+    <div class="splash-subtitle" id="splashSubtitle">575 cartas</div>
+    
+    <div class="splash-go-flutua"><button class="btn-start btn-neo neo-solid neo-still splash-go" id="goToRulesBtn" style="--mc:#ff1f4b; --mc-glow:rgba(255,31,75,0.55);"><span class="sg-ic">🎮</span><span class="sg-tx">Jogar</span></button></div>
+    <div class="splash-caos" id="splashCaos" role="button" tabindex="0" aria-label="Recado do C.A.O.S. (toque pra outra frase)"><span class="sc-face">(•‿•)</span><span class="sc-txt">Oi!</span></div>
+    <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
+    <div class="splash-settings">
+      <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.5 · C.A.O.S. and Code Update · Parte 1<br>C.A.O.S. 3.8 · Atualizada em 03/10/2026</div>
+    </div>
+    <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
+    <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
+  </section>
+
+  
+  <section class="welcome-screen" id="formatSelectScreen" style="display:none;">
+    <div style="font-size:3rem;">🎲</div>
+    <div class="welcome-title">Versus ou Equipe?</div>
+    <div class="welcome-subtitle">Escolha o formato da partida</div>
+    <div class="mc-list">
+      <div class="mode-select-wrap mc-wrap" id="fmtWrapVersus" style="--mc:#e11d48; --mc-glow:rgba(225,29,72,0.5);"><button class="mode-btn mc-card" id="btnFormatVersus"><span class="mc-icon">⚔️</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Versus</span><span class="mc-badge">Individual</span></span><span class="mc-desc" id="mcDescVersus"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="fmtWrapEquipe" style="--mc:#fbbf24; --mc-glow:rgba(251,191,36,0.45);"><button class="mode-btn mc-card" id="btnFormatEquipe"><span class="mc-icon">🤝</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Equipe</span><span class="mc-badge">Times</span></span><span class="mc-desc" id="mcDescEquipe"></span></span></button></div>
+    </div>
+    <button class="btn-start mc-confirm btn-neo" id="fmtConfirmBtn" style="display:none;">✅ Continuar</button> 
+    <button type="button" class="mc-back" id="fmtBackBtn">← Voltar pro início</button>
+  </section>
+
+  
+  <section class="welcome-screen" id="modeSelectScreen" style="display:none;">
+    <div style="font-size:3rem;">🎲</div>
+    <div class="welcome-title">Escolha o modo</div>
+    <div class="welcome-subtitle">Cada modo tem seu próprio ritmo e regras</div>
+    
+    <div class="mc-list">
+      <div class="mode-select-wrap mc-wrap" id="modeWrapJunior" style="--mc:#38bdf8; --mc-glow:rgba(56,189,248,0.45);"><button class="mode-btn mc-card" id="modeBtnJunior"><span class="mc-icon">🧒</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Júnior</span><span class="mc-badge">6+</span></span><span class="mc-desc" id="mcDescJunior"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="modeWrapClassico" style="--mc:#34d399; --mc-glow:rgba(52,211,153,0.45);"><button class="mode-btn mc-card" id="modeBtnClassico"><span class="mc-icon">🃏</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Clássico</span><span class="mc-badge">12+</span></span><span class="mc-desc" id="mcDescClassico"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="modeWrapHardcore" style="--mc:#f87171; --mc-glow:rgba(248,113,113,0.45);"><button class="mode-btn mc-card" id="modeBtnHardcore"><span class="mc-icon">💀</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Hardcore</span><span class="mc-badge">15+</span></span><span class="mc-desc" id="mcDescHardcore"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="modeWrapOldschool" style="--mc:#d6a15e; --mc-glow:rgba(214,161,94,0.45);"><button class="mode-btn mc-card" id="modeBtnOldschool"><span class="mc-icon">📻</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Old School</span><span class="mc-badge">20+</span></span><span class="mc-desc" id="mcDescOldschool"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="modeWrapExpress" style="--mc:#f97316; --mc-glow:rgba(249,115,22,0.45);"><button class="mode-btn mc-card" id="modeBtnExpress"><span class="mc-icon">🔥</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Express</span><span class="mc-badge">Rápido</span></span><span class="mc-desc" id="mcDescExpress"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap mc-rainbow" id="modeWrapRandom" style="--mc:#fbbf24; --mc-glow:rgba(251,191,36,0.45);"><button class="mode-btn mc-card" id="modeBtnRandom"><span class="mc-icon">🎰</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Modo Aleatório</span><span class="mc-badge">Surpresa</span></span><span class="mc-desc" id="mcDescRandom"></span></span></button></div>
+    </div>
+    <button class="btn-start mc-confirm btn-neo" id="modeConfirmBtn" style="display:none;">🚀 Iniciar</button>
+    <button type="button" class="mc-back" id="modeBackBtn">← Trocar formato (Versus / Equipe)</button>
+    
+    <div id="oldSchoolConfigBox" class="rules-box" style="display:none; margin-top:14px;">
+      <h3>📻 Como a mesa prefere jogar?</h3>
+      <button class="btn-start btn-neo neo-long" id="confirmOldSchoolBtn" style="--mc:#d6a15e; --mc-glow:rgba(214,161,94,0.4); margin-bottom:12px;">📻 Old School (padrão · 90 s pra responder)</button>
+      <button class="btn-start btn-neo neo-long" id="confirmOldSchoolAcessBtn" style="--mc:#94a3b8; --mc-glow:rgba(148,163,184,0.35);">🔎 Old School Acessibilidade (letra maior · 2 min pra responder)</button>
+    </div>
+    
+    <div id="expressConfigBox" class="rules-box xp-box" style="display:none; margin-top:14px;">
+      <h3 class="xp-tit">⚡ Escolha até 2 categorias ⚡</h3>
+      <div class="xp-hint">Não escolheu nenhuma? O jogo sorteia <u>categorias aleatórias</u> pra você.</div>
+      <div class="xp-cats">
+        <label class="xp-cat"><input type="checkbox" class="expressCatChk" value="ANO"> 📅 Ano</label>
+        <label class="xp-cat"><input type="checkbox" class="expressCatChk" value="PESSOA"> 👤 Pessoa</label>
+        <label class="xp-cat"><input type="checkbox" class="expressCatChk" value="LUGAR"> 📍 Lugar</label>
+        <label class="xp-cat"><input type="checkbox" class="expressCatChk" value="COISA"> 📦 Coisa</label>
+      </div>
+      <div class="xp-tit xp-tit2">🌶️ Agora escolha o "tempero" do Express 🌶️</div>
+      <button class="btn-start btn-neo neo-long" id="confirmExpressClassicoBtn" style="--mc:#818cf8; --mc-glow:rgba(129,140,248,0.4); margin-bottom:12px;">🃏 Iniciar Express Clássico <u>(categorias aleatórias)</u> 🃏</button>
+      <button class="btn-start btn-neo neo-long" id="confirmExpressHardcoreBtn" style="--mc:#f97316; --mc-glow:rgba(249,115,22,0.4);">💀 Iniciar Express Hardcore <u>(categorias aleatórias)</u> 💀</button>
+    </div>
+  </section>
+
+  
+  <section class="welcome-screen" id="welcomeScreen" style="display:none;">
+    <div style="font-size:3rem;">🎲</div>
+    <div class="welcome-title" id="welcomeTitle">Perfil JF</div>
+    <div class="welcome-subtitle" id="welcomeSubtitle">Cartas de Ano, Pessoa, Lugar e Coisa</div>
+    <div id="modeNoticeBox" class="bonus-banner" style="display:none; margin:10px 0;"></div>
+    
+
+    
+    
+    <div class="rules-box resumo-neon">
+      <h3>⚡ Resumo rápido ⚡</h3>
+      <ul id="rulesSummaryList"></ul>
+      <details class="rules-more">
+        <summary>📋 Ver regras completas</summary>
+        <ul id="rulesList"></ul>
+      </details>
+    </div>
+
+    
+    
+    <button class="btn-start btn-neo neo-solid neo-still" id="startGameBtn" style="--mc:#22e07a; --mc-glow:rgba(34,224,122,0.4);">🎮 Vamos começar!</button>
+    <button class="btn-start btn-neo neo-solid neo-still neo-ghost" id="btnTutorial2" style="--mc:#fde047; --mc-glow:rgba(253,224,71,0.3); margin-top:14px;">🎓 Nunca jogou? Ver o tutorial</button>
+    <button class="btn-start btn-neo neo-solid neo-still" id="resumeGameBtn" style="display:none; --mc:#fbbf24; --mc-glow:rgba(251,191,36,0.35); margin-top:14px;">▶️ Voltar pro jogo</button>
+    <div class="sec-row">
+      <button class="btn-sec" id="exportSaveBtn" style="--cc:#34d399;">📤 Exportar partida</button>
+      <button class="btn-sec" id="importSaveBtn" style="--cc:#60a5fa;">📥 Importar partida</button>
+    </div>
+  </section>
+
+  
+  <section class="welcome-screen pause-screen" id="pauseScreen" style="display:none;">
+    <div class="pause-icon pause-min" aria-hidden="true"><i></i><i></i></div> 
+    <div class="welcome-title">Jogo pausado</div>
+    <div class="welcome-subtitle">O tempo está congelado. Ninguém perde nada enquanto isso.</div>
+    <div id="pausaCaos" class="jf-toast-overlay pausa-caos" role="status" aria-live="polite" style="display:none;"></div> 
+    <div id="autoPauseBanner" class="bonus-banner" style="display:none; margin:10px 0;">⏸️ O jogo pausou sozinho porque a tela saiu de foco. O tempo está parado — toque em "Voltar pro jogo" quando todo mundo estiver olhando.</div>
+    <div class="pause-tip-card">
+      <div class="pause-tip-head"><span class="pause-tip-title">💡 Dica de jogo</span><span id="pauseTipCount" class="pause-tip-count"></span></div>
+      <div id="pauseTipText" class="pause-tip-text"></div>
+      <button type="button" class="pause-tip-next" id="pauseTipNextBtn">Próxima dica ➡️</button>
+    </div>
+    <button class="btn-start btn-neo neo-solid neo-still" id="pauseResumeBtn" style="--mc:#fbbf24; --mc-glow:rgba(251,191,36,0.35);">▶️ Voltar pro jogo</button>
+    <button class="btn-start btn-neo neo-solid neo-still neo-ghost" id="pauseAdmBtn" style="--mc:#e11d48; --mc-glow:rgba(225,29,72,0.28); margin-top:12px;">🛡️ ADM</button> 
+    <div class="sec-row pause-ajustes">
+      <button class="btn-sec" id="pauseTemaBtn" type="button">☀️ Modo Claro</button>
+      <button class="btn-sec" id="pauseVozBtn" type="button">🤐 Calar a voz</button>
+    </div>
+    <div class="sec-row sec-col">
+      <button class="btn-sec" id="pauseTrocarModoBtn">🔄 Trocar de modo (recomeça com os mesmos jogadores)</button>
+      <button class="btn-sec" id="pauseExportBtn">📤 Exportar partida (Save de Bolso)</button>
+    </div>
+    <details class="pause-rules">
+      <summary>📋 Ver regras completas</summary>
+      <ul id="pauseRulesList"></ul>
+    </details>
+  </section>
+
+  
+  <main id="gameScreen" style="display:none; width:100%; flex-direction:column; align-items:center;">
+
+  <h1>🎲 Perfil JF <span class="caos-status-led" id="caosStatusLed" title="C.A.O.S. pensando"></span></h1>
+
+  
+  <section class="panel" id="playerPanel">
+    
+    <div class="trocar-modo-row"><span class="tm-rot">Modo</span><span id="trocarModoLabel">—</span><button type="button" id="trocarModoBtn">🔄 Escolher outro modo</button></div>
+    <h2 class="cad-tit">Jogadores</h2>
+    
+    <button type="button" id="iniBtn" class="ini-start">🐣 Sou iniciante — Quero ajuda do C.A.O.S.</button>
+    <div id="iniCoach" class="ini-coach" style="display:none;">
+      <div class="ini-coach-top"><b>🤖 C.A.O.S. · modo iniciante</b><span id="iniPasso" class="ini-passo"></span></div>
+      <div id="iniTxt" class="ini-txt"></div>
+      <div class="ini-btns"><button type="button" id="iniVoltar">← Voltar</button><button type="button" id="iniProx">Próximo →</button></div>
+      <button type="button" id="iniSair" class="ini-sair">Sair do modo iniciante</button>
+    </div>
+    
+    <div class="add-player-row" id="addNomeRow">
+      <input type="text" id="playerNameInput" placeholder="Nome do jogador" minlength="2" maxlength="15">
+    </div>
+    
+    <div class="nick-suggest" id="nickSuggest">
+      <div>🤖 O C.A.O.S. sugere: <b id="nickSuggestName"></b></div>
+      <div class="nick-suggest-btns">
+        <button type="button" id="nickSuggestUse" style="background:var(--green); color:#fff;">✅ Quero esse</button>
+        <button type="button" id="nickSuggestOther" style="background:var(--accent2); color:#fff;">🔄 Outro</button>
+        <button type="button" id="nickSuggestClose" style="background:rgba(255,255,255,0.15); color:#fff;">✖️ Não, valeu</button>
+      </div>
+    </div>
+    <div id="nickIdeaWrap" style="text-align:center; margin:0 0 8px;"><button type="button" id="nickIdeaBtn" style="background:none; border:none; color:var(--special); font-size:0.8rem; text-decoration:underline; cursor:pointer;">🎲 Sem ideia de nome? O C.A.O.S. sugere um</button></div>
+    <details class="pick-box" id="colorBox"><summary><span>🎨 Cor</span><span class="pick-prev" id="colorPrev"></span></summary><div class="color-picker-row" id="colorPickerRow"></div></details>
+    <details class="pick-box" id="avatarBox"><summary><span>😀 Emoji</span><span class="pick-prev" id="avatarPrev"></span></summary><div class="avatar-picker-row" id="avatarPickerRow"></div></details>
+    <details class="pick-box" id="humorBox"><summary><span>🎭 Zoeira</span><b class="pick-prev" id="humorAtual"></b></summary>
+    <div style="text-align:center; margin-bottom:8px;" id="humorWrap">
+      <div style="opacity:0.75; font-size:0.8rem; margin-bottom:6px;">Como o C.A.O.S. pode zoar esse jogador?</div>
+      <div class="color-picker-row" id="humorPickerRow" style="justify-content:center; flex-wrap:wrap; gap:8px;"></div>
+      <div id="humorHint" style="opacity:0.6; font-size:0.75rem; margin-top:4px;"></div>
+    </div></details>
+    <div style="display:none; text-align:center; margin-bottom:8px;" id="ageBracketWrap">
+      <div style="opacity:0.75; font-size:0.8rem; margin-bottom:6px;">Faixa etária (usada só pra equilibrar os times no sorteio):</div>
+      <div class="color-picker-row" id="ageBracketRow" style="justify-content:center; flex-wrap:wrap; gap:8px;"></div>
+    </div>
+    <!-- Adicionar fica depois de tudo que precisa ser escolhido (nome, cor, emoji, zoeira) -->
+    <div class="add-player-row add-player-acao" id="addAcaoRow">
+      <button id="addPlayerBtn" disabled>➕ Adicionar</button>
+      <div id="addPlayerFalta" class="add-falta" aria-live="polite"></div>
+    </div>
+    <ul class="scoreboard" id="scoreboard"></ul>
+    <div id="playerWarning" style="display:none; margin-top:10px; font-size:0.8rem; color:#ffd166;"></div>
+    
+    <div id="winCondWrap" class="wincond-wrap" style="display:none;">
+      <details id="winCondBox"><summary class="wincond-title">🏆 Condição de Vitória: <b id="winCondAtual"></b> <span class="hist-seta">▾</span></summary>
+      <div class="wincond-row" id="winCondRow"></div>
+      <div class="wincond-hint" id="winCondHint"></div></details>
+    </div>
+    <button class="main-btn btn-starter" id="drawStarterBtn" style="margin-top:12px; width:100%;">🎲 Sortear quem começa</button>
+
+    <div id="teamSetupSection" style="display:none; margin-top:12px;">
+      <div id="teamCountChoice">
+        <p style="opacity:0.8; font-size:0.85rem; text-align:center;">Quantas equipes?</p>
+        <div style="display:flex; gap:8px; justify-content:center;">
+          <button class="main-btn" id="teamCount2Btn" style="flex:1;">2 equipes</button>
+          <button class="main-btn" id="teamCount3Btn" style="flex:1;">3 equipes</button>
+        </div>
+      </div>
+      <div id="teamRosterPreview" style="display:none; margin-top:10px; font-size:0.85rem;"></div>
+      <div id="teamSubModeChoice" style="display:none; margin-top:10px;">
+        <p style="opacity:0.8; font-size:0.85rem; text-align:center;">Como vai funcionar a resposta?</p>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <button class="main-btn" id="subModeDueloBtn" style="text-align:left;">⚔️ Duelo de Guildas — uma equipe pergunta, uma responde</button>
+          <button class="main-btn" id="subModeFfaBtn" style="text-align:left;">🌀 Mestre vs Todos — as demais competem em ordem</button>
+          <button class="main-btn" id="subModeRandomBtn" style="text-align:left;">🎲 Aleatório — o jogo decide</button>
+        </div>
+      </div>
+      <button class="main-btn btn-starter" id="startTeamsBtn" style="display:none; margin-top:12px; width:100%;">🎲 Sortear quem começa</button>
+    </div>
+  </section>
+
+  
+  <section class="panel" id="orderRevealSection" style="display:none;">
+    <h2>🎲 Ordem de jogo definida!</h2>
+    <ol class="order-list" id="orderList"></ol>
+    <button class="main-btn" id="redrawMestreBtn" style="width:100%; margin:6px 0; font-size:0.85rem; background:rgba(255,255,255,0.08); color:#fff; border:1px solid rgba(255,255,255,0.3);">🔄 Sortear outro Mestre</button>
+    <div class="order-countdown" id="orderCountdown"></div>
+    <button class="btn-confirm-start" id="confirmStartBtn">Começar agora! 🚀</button>
+  </section>
+
+  
+  <div id="playAreaSection" style="display:none; width:100%; flex-direction:column; align-items:center;">
+    <ul class="mini-scoreboard" id="miniScoreboard"></ul>
+    <div class="board-track" id="boardTrack"></div>
+    <div class="deck-info" id="deckInfo">Carregando baralho...</div>
+    <div class="card" id="cardArea">
+      <div class="placeholder">Aperte "Sortear carta" para começar</div>
+    </div>
+
+    <div class="controls" id="drawControls">
+      <button class="main-btn btn-draw" id="drawBtn">🔀 Sortear carta</button>
+    </div>
+    <div class="controls" id="endControls">
+      
+      <button class="main-btn btn-end ft-btn" id="pauseBtn" style="--ft:#fbbf24;"><span class="ft-ic ft-pause"><i></i><i></i></span><span class="ft-lb">Pausar</span></button>
+      <button class="main-btn btn-end ft-btn" id="resetBtn" style="--ft:#93c5fd;"><span class="ft-ic">↺</span><span class="ft-lb">Reiniciar</span></button>
+      <button class="main-btn btn-end ft-btn" id="endGameBtn" style="--ft:#f87171;"><span class="ft-ic">⚑</span><span class="ft-lb">Encerrar</span></button>
+    </div>
+
+    <div id="winnerArea"></div>
+    
+    <div id="expressTargetModal" class="pending-box" style="display:none; position:fixed; top:20%; left:50%; transform:translateX(-50%); z-index:999; max-width:90vw;">
+      <div id="expressTargetTitle" style="text-align:center; font-weight:bold; margin-bottom:10px;"></div>
+      <div id="expressTargetAvatars" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;"></div>
+    </div>
+  </div>
+
+  </main>
+
+<script>
