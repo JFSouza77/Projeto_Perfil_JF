@@ -4,6 +4,15 @@
   (nunca edite as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.4 · 03/10/2026 · "Game Mode Update · Parte 1" (nome novo pedido pelo JF). Foco: corrigir, acertar e
+          melhorar os modos existentes. Parte 1 = EXPRESS: especial com o tempo da vez esgotado
+          agora aplica o efeito (expressAutoSpecial; antes onTimerExpired("turn") só chamava
+          expressPass e ignorava a especial). Volte 2 = inverter (UNO), Volte 3 = inverter + pular 1
+          (antes invertia e andava 2/3 passos). Aviso do efeito sempre visível (mesmo com C.A.O.S.
+          mudo) + linha .express-roda (sentido, quem joga depois, bloqueados). Descarte no Express
+          (canDiscard exigia pendingIndex === null, impossível no Express).
+          ROTEIRO da 1.7.4: .1 = Hardcore; .2 = Júnior; .3 = Clássico e Old School; em cada parte,
+          conferir o modo contra o planejado (regras, roletas, tempos, especiais, pontuação).
   1.7.3.5 · 03/10/2026 · "Cards and Rules Update · Parte 6". Pedido do JF: equilibrar o baralho. +400 cartas
           (nenhuma removida): ANO +101 (10 oldschool, 25 adulto+os de 1919–1959, 66 adulto de 1066 a
           1916), ANIMAL +149 (55 junior, 74 livre, 20 adulto), COISA +78 (18 junior, 20 livre, 15
@@ -121,7 +130,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Perfil JF">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.3.5</title>
+<title>Perfil JF · Beta 1.7.4</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -4324,6 +4333,15 @@ body.claro .nov-x {
 .nov-item summary {
   flex-wrap: wrap;
 }
+.express-roda {
+  text-align: center;
+  font-size: 0.8rem;
+  opacity: 0.85;
+  margin: 6px 0 2px;
+}
+body.claro .express-roda {
+  color: #4c3a8a;
+}
 .nov-nome {
   font-size: 0.72rem;
   font-weight: 800;
@@ -5859,7 +5877,7 @@ body.claro .caos-pergunta button[data-v="digitar"] {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.3.5 · Cards and Rules Update · Parte 6<br>C.A.O.S. 3.8 · Atualizada em 03/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.4 · Game Mode Update · Parte 1<br>C.A.O.S. 3.8 · Atualizada em 03/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -8601,7 +8619,11 @@ function onTimerExpired(kind) {
       markWrong();
     });
   } else if (kind === "turn") {
-    if (CURRENT_MODE === "express" && cardState === "revealed") expressPass();
+    if (CURRENT_MODE === "express" && cardState === "revealed") {
+      const it = pendingIndex !== null && currentCard ? currentCard.clues[pendingIndex] : null;
+      if (it && it.type === "special") expressAutoSpecial(it);
+      else expressPass();
+    }
   } else if (kind === "special") {
     if (pendingIndex === null) return;
     const item = currentCard.clues[pendingIndex];
@@ -9184,20 +9206,89 @@ function expressUnfreezeWho() {
 }
 function expressSkip(steps) {
   if (gameEnded) return;
+  const pulados = [];
   for (let i = 0; i < steps + 1; i++) {
     responderIndex = nextResponderStep(responderIndex);
+    if (i < steps && players[responderIndex]) pulados.push(players[responderIndex].name);
   }
-  maybeShowExpressSpecialFlavor("skip", steps);
+  maybeShowExpressSpecialFlavor("skip", steps, pulados);
   finishExpressSpecialTurn();
 }
+// Volte 2 = inverte o sentido (como o Inverter do UNO: a vez volta pra quem jogou antes);
+// Volte 3 = inverte e ainda pula 1 jogador.
 function expressReverse(steps) {
   if (gameEnded) return;
   playDirection *= -1;
-  for (let i = 0; i < steps; i++) {
+  const pulados = [];
+  const passos = Math.max(1, steps - 1);
+  for (let i = 0; i < passos; i++) {
     responderIndex = nextResponderStep(responderIndex);
+    if (i < passos - 1 && players[responderIndex]) pulados.push(players[responderIndex].name);
   }
-  maybeShowExpressSpecialFlavor("reverse");
+  maybeShowExpressSpecialFlavor("reverse", null, pulados);
   finishExpressSpecialTurn();
+}
+// Express: quem vem depois de idx no sentido atual (sem mexer em bloqueios; só pra mostrar na tela)
+function expressPreverProximo(idx) {
+  if (!players.length) return null;
+  let c = idx;
+  for (let i = 0; i < players.length * 2; i++) {
+    c = (c + playDirection + players.length) % players.length;
+    if (c === mestreIndex || c === idx) continue;
+    if (players[c] && players[c].isBlocked) continue;
+    return c;
+  }
+  return null;
+}
+// os próximos n na roda a partir de idx (só pra mostrar; com poucos jogadores pode repetir gente)
+function expressPreverCadeia(idx, n) {
+  const out = [];
+  const bloq = new Set(players.map((p, i) => (p.isBlocked ? i : -1)).filter((i) => i >= 0));
+  let c = idx;
+  for (let i = 0; i < n; i++) {
+    let k = c;
+    for (let t = 0; t < players.length * 2; t++) {
+      k = (k + playDirection + players.length) % players.length;
+      if (k === mestreIndex) continue;
+      if (bloq.has(k)) {
+        bloq.delete(k); // como no jogo: quem está bloqueado é pulado uma vez
+        continue;
+      }
+      break;
+    }
+    out.push(k);
+    c = k;
+  }
+  return out;
+}
+function expressRodaHtml() {
+  if (CURRENT_MODE !== "express" || CURRENT_FORMAT !== "versus" || !players[responderIndex]) return "";
+  const naEspecial = pendingIndex !== null && currentCard && currentCard.clues[pendingIndex].type === "special";
+  const prox = naEspecial ? null : expressPreverProximo(responderIndex);
+  const bloq = players.filter((p) => p.isBlocked).map((p) => escapeHtml(p.name));
+  return `<div class="express-roda">${playDirection > 0 ? "🔃 Sentido normal" : "🔄 Sentido invertido"}${prox !== null ? ` · depois: <b>${escapeHtml(players[prox].name)}</b>` : ""}${bloq.length ? ` · ⛔ ${bloq.join(", ")} perde a próxima` : ""}</div>`;
+}
+// Express: se o tempo da vez acabar numa instrução especial, o efeito acontece sozinho (antes ela era ignorada)
+function expressAutoSpecial(item) {
+  const txt = (item.text || "").toLowerCase();
+  if (CONTINUE_SAME_PLAYER_SPECIALS.has(item.text)) {
+    continueAfterSpecial();
+    return;
+  }
+  if (txt.includes("escolha um jogador")) {
+    const elegiveis = players.map((p, i) => i).filter((i) => i !== responderIndex && i !== mestreIndex);
+    if (!elegiveis.length) {
+      clearTimer();
+      expressAfterSpecial();
+      return;
+    }
+    expressTargetAction = txt.includes("avan") ? "steal" : "block";
+    resolveExpressTarget(elegiveis[Math.floor(Math.random() * elegiveis.length)]);
+    return;
+  }
+  if (txt.includes("avance")) return expressSkip(txt.includes("2") ? 2 : 1);
+  if (txt.includes("volte")) return expressReverse(txt.includes("3") ? 3 : 2);
+  loseTurnAfterSpecial();
 }
 function finishExpressSpecialTurn() {
   clearTimer();
@@ -10811,18 +10902,19 @@ function render() {
         ) {
           if (txt.includes("avance") && !txt.includes("escolha")) {
             const steps = txt.includes("2") ? 2 : 1;
+            const cad = expressPreverCadeia(responderIndex, steps + 1).map((i) => (players[i] ? escapeHtml(players[i].name) : "?"));
             controlsHtml = `
               <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ⭐ ${item.text}</div>
-              <div style="text-align:center; opacity:0.8; font-size:0.85rem; margin:4px 0 8px;">Estilo UNO: pula ${steps} jogador${steps === 1 ? "" : "es"} na ordem atual.</div>
+              <div style="text-align:center; opacity:0.8; font-size:0.85rem; margin:4px 0 8px;">Estilo UNO: pula ${cad.slice(0, steps).join(" e ")} — a vez vai pra <b>${cad[steps]}</b>.</div>
               ${spotlightTimerHtml}
               <button class="btn-correct btn-acao" onclick="expressSkip(${steps})">⏭️ Pular ${steps} jogador${steps === 1 ? "" : "es"}</button>`;
           } else if (txt.includes("volte") && !txt.includes("escolha")) {
             const steps = txt.includes("3") ? 3 : 2;
             controlsHtml = `
               <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ⭐ ${item.text}</div>
-              <div style="text-align:center; opacity:0.8; font-size:0.85rem; margin:4px 0 8px;">Estilo UNO: inverte o sentido do jogo e anda ${steps} passos pra trás.</div>
+              <div style="text-align:center; opacity:0.8; font-size:0.85rem; margin:4px 0 8px;">${steps === 3 ? "Estilo UNO: inverte o sentido e ainda pula 1 jogador." : "Estilo UNO: inverte o sentido — a vez volta pra quem jogou antes."}</div>
               ${spotlightTimerHtml}
-              <button class="btn-wrong btn-acao" onclick="expressReverse(${steps})">🔁 Inverter e voltar ${steps}</button>`;
+              <button class="btn-wrong btn-acao" onclick="expressReverse(${steps})">🔁 ${steps === 3 ? "Inverter e pular 1" : "Inverter o sentido"}</button>`;
           } else if (txt.includes("escolha um jogador")) {
             const isAvancar = txt.includes("avan");
             controlsHtml = `
@@ -10983,13 +11075,16 @@ function render() {
         <div id="timerDisplay" class="pick-timer">◷ ${secondsLeft()}s</div>
         <div class="number-grid">${grid}</div>`;
     }
+    if (CURRENT_MODE === "express" && pendingIndex !== null && !expressAskWho) controlsHtml += expressRodaHtml();
     if (pendingIndex !== null && currentCard.clues[pendingIndex].type === "clue") {
       controlsHtml += `<button type="button" class="conferir-btn" id="conferirBtn">${Date.now() < answerRevealUntil ? answerHtml() : "👁️ Conferir resposta"}</button>`;
     }
     const historyBlurred = pendingIndex !== null ? "blurred" : "";
     const realCluesCount = revealedOrder.filter((r) => r.item.type === "clue").length;
     const canReshuffle = pendingIndex === null && revealedOrder.length === 0;
-    const canDiscard = pendingIndex === null && realCluesCount <= 5 && consecutiveDiscards < 2;
+    // no Express a 1ª dica abre sozinha (nunca fica sem dica aberta): o descarte vale com a dica na tela
+    const expressPodeDescartar = CURRENT_MODE === "express" && pendingIndex !== null && !expressAskWho && !expressWhoFreeze;
+    const canDiscard = (pendingIndex === null || expressPodeDescartar) && realCluesCount <= 5 && consecutiveDiscards < 2;
     let extraBtnsHtml = "";
     if (canReshuffle) {
       extraBtnsHtml += `<button class="discard-btn" id="reshuffleBtn" style="color:#a78bfa; border-color:rgba(167,139,250,0.4); margin-bottom:8px;">⟲ Olhou sem querer? Reembaralhar e puxar outra</button>`;
@@ -10997,8 +11092,9 @@ function render() {
     if (canDiscard) {
       const chancesLeft = 5 - realCluesCount;
       const discardsLeft = 2 - consecutiveDiscards;
-      const discardText =
-        realCluesCount === 0
+      const discardText = expressPodeDescartar
+        ? `✕ Carta muito difícil? Descartar e puxar outra (${realCluesCount < 5 ? "até a 5ª dica, " : "última chance, "}${discardsLeft} descarte${discardsLeft === 1 ? "" : "s"} seguido${discardsLeft === 1 ? "" : "s"})`
+        : realCluesCount === 0
           ? `✕ Carta muito difícil? Descartar (${discardsLeft} chance${discardsLeft === 1 ? "" : "s"} de descarte)`
           : `✕ Carta muito difícil? Descartar (${chancesLeft} chance${chancesLeft === 1 ? "" : "s"} de dica, ${discardsLeft} de descarte)`;
       extraBtnsHtml += `<button class="discard-btn" id="discardBtn">${discardText}</button>`;
@@ -11029,6 +11125,10 @@ function render() {
     if (pendingIndex !== null) {
       const item = currentCard.clues[pendingIndex];
       if (CURRENT_MODE === "express") wireExpressControls(area);
+      if (canDiscard && CURRENT_MODE === "express") {
+        const db = document.getElementById("discardBtn");
+        if (db) db.addEventListener("click", discardAndDraw);
+      }
       if (item.type === "special") {
         const loseTurnBtn = document.getElementById("loseTurnBtn");
         const continueBtn = document.getElementById("continueSpecialBtn");
@@ -12648,7 +12748,7 @@ function buildRulesHtml() {
   // 6. Detalhes
   if (c.express)
     li.push(
-      "⭐ <b>Especiais (estilo UNO):</b> Avance pula jogadores · Volte inverte o sentido · Escolha um jogador bloqueia ou cede a vez · Perca sua vez passa.",
+      "⭐ <b>Especiais (estilo UNO):</b> Avance 1/2 pula 1/2 jogadores · Volte 2 inverte o sentido · Volte 3 inverte e pula 1 · Escolha um jogador bloqueia ou cede a vez · Perca sua vez passa. Se o tempo acabar, o efeito acontece sozinho.",
     );
   else
     li.push(
@@ -12669,7 +12769,11 @@ function buildRulesHtml() {
   if (!c.express)
     li.push(
       "🙈 <b>Olhou sem querer?</b> Reembaralhe antes da 1ª dica. <b>Carta difícil?</b> Descarte até a 5ª dica (no máximo 2 seguidas).",
-  );
+    );
+  else
+    li.push(
+      "✕ <b>Carta difícil ou o Mestre viu sem querer?</b> Descarte e puxe outra até a 5ª dica (no máximo 2 seguidas).",
+    );
   if (!c.equipe && !c.express && !c.hard)
     li.push(
       "🤖 <b>Ajudinha do C.A.O.S.:</b> no máximo 1 vez por partida, quem estiver bem atrás pode ganhar pontos ou uma carta bônus.",
@@ -15614,7 +15718,7 @@ function caosInspectorEstado() {
         );
       })()}</b></div>
       <div class="ci-kv"><span>😄 Alegria · 🎯 confiança · 🔎 curiosidade</span><b class="ci-mono">${caosEixos.alegria.toFixed(1)} · ${caosEixos.confianca.toFixed(1)} · ${caosEixos.curiosidade.toFixed(1)}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.3.5 · C.A.O.S. 3.8</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.4 · C.A.O.S. 3.8</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -19812,7 +19916,22 @@ function maybeShowExpressSpecialFlavor(kind, a, b) {
   else if (kind === "reverse") msg = getRandomReaction(REACTIVE_VOICE.especialExpressReverse);
   else if (kind === "block") msg = getRandomReaction(REACTIVE_VOICE.especialExpressBlock, a);
   else if (kind === "steal") msg = getRandomReaction(REACTIVE_VOICE.especialExpressSteal, a, b);
-  if (msg) showToastMessage(msg);
+  // o fato vai sempre, mesmo com o C.A.O.S. mudo: a mesa precisa ver o efeito
+  const vez = players[responderIndex] ? players[responderIndex].name : "?";
+  let fato = "";
+  if (kind === "skip") {
+    const nomes = (b || []).slice();
+    fato = nomes.length
+      ? `⏭️ ${nomes.join(" e ")} ${nomes.length > 1 ? "foram pulados" : "foi pulado"} · vez de ${vez}`
+      : `⏭️ A vez pulou · vez de ${vez}`;
+  } else if (kind === "reverse")
+    fato = (b && b.length ? `🔄 Sentido invertido e ${b.join(" e ")} foi pulado` : "🔄 Sentido invertido") + ` · vez de ${vez}`;
+  else if (kind === "block") fato = `⛔ ${a} perde a próxima vez · vez de ${vez}`;
+  else if (kind === "steal") fato = `🎯 ${a} responde a próxima dica no lugar de ${b || "?"}`;
+  if (caosSilenced || !msg) msg = fato;
+  else msg = msg + " — " + fato;
+  if (msg) showToastMessage(msg, null, true);
+  if (fato) fxFloat(fato.split(" · ")[0], "#facc15");
 }
 function caosCadastroFluxo(ev) {
   const inp = document.getElementById("playerNameInput"),
@@ -20381,7 +20500,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.3.5 · C.A.O.S. 3.8)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.4 · C.A.O.S. 3.8)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -22646,7 +22765,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.3.5 · C.A.O.S. 3.8");
+  L.push("- **Versão:** Beta 1.7.4 · C.A.O.S. 3.8");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -23168,7 +23287,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.3.5 · C.A.O.S. 3.8",
+        versao: "Beta 1.7.4 · C.A.O.S. 3.8",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -57076,6 +57195,23 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.4",
+    data: "03/10/2026 · 00:51",
+    nome: "Game Mode Update · Parte 1",
+    t: "Começa a Game Mode Update: os modos de jogo vão ser conferidos um por um. Primeiro, o Express: as jogadas de UNO agora funcionam de verdade e dá pra descartar a carta.",
+    itens: [
+      "⏭️ Especiais de UNO que funcionam: se o tempo da vez acabava numa especial, ela era ignorada e só passava a vez. Agora o efeito acontece sozinho (pula, inverte, bloqueia ou cede a vez), igual quando o Mestre toca no botão.",
+      "🔄 Inverter de verdade: Volte 2 casas agora é o Inverter do UNO (a vez volta pra quem jogou antes) e Volte 3 casas inverte e ainda pula 1. Antes ele andava casas pra trás e, com 3 jogadores, dava no mesmo que não fazer nada.",
+      "👀 Dá pra ver o efeito: depois de cada especial aparece quem foi pulado, quem bloqueou quem e de quem é a vez, mesmo com o C.A.O.S. no mudo. Embaixo do tempo fica o sentido da roda e quem joga depois.",
+      "🎯 Pular com nome: a especial Avance já mostra quem vai ser pulado e pra quem a vez vai antes de tocar no botão.",
+      "✕ Descartar no Express: como a 1ª dica abre sozinha, o botão de descartar nunca aparecia. Agora dá pra descartar e puxar outra carta até a 5ª dica (no máximo 2 seguidas).",
+    ],
+    qol: [
+      "📜 Regras do Express atualizadas: explicam cada especial (Avance, Volte, Escolha um jogador e Perca sua vez), o efeito automático quando o tempo acaba e o descarte.",
+      "🗺️ Roteiro da Game Mode Update: depois do Express vêm o Hardcore, o Júnior e uma conferência do Clássico e do Old School, comparando o que cada modo faz com o que foi planejado.",
+    ],
+  },
   {
     v: "Beta 1.7.3.5",
     data: "03/10/2026 · 00:07",
