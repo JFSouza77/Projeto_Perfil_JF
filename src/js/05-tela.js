@@ -878,7 +878,7 @@ function render() {
     const canDiscard = (pendingIndex === null || expressPodeDescartar) && realCluesCount <= 5 && consecutiveDiscards < 2;
     let extraBtnsHtml = "";
     if (canReshuffle) {
-      extraBtnsHtml += `<button class="discard-btn" id="reshuffleBtn" style="color:#a78bfa; border-color:rgba(167,139,250,0.4); margin-bottom:8px;">⟲ Olhou sem querer? Reembaralhar e puxar outra</button>`;
+      extraBtnsHtml += `<button class="discard-btn" id="reshuffleBtn" style="margin-bottom:8px;">⟲ Olhou sem querer? Reembaralhar e puxar outra</button>`;
     }
     if (canDiscard) {
       const chancesLeft = 5 - realCluesCount;

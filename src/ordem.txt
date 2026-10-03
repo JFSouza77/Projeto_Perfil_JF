@@ -5,6 +5,7 @@ css/03-botoes-e-telas.css
 css/04-verso-hall-novidades.css
 css/05-noturno-e-celular.css
 css/06-modo-claro.css
+css/07-botoes-acessiveis.css
 html/02-corpo.html
 js/01-configuracao.js
 js/02-estado.js

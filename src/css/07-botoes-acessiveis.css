@@ -1,0 +1,102 @@
+/* ----------------------------------------------------------------------
+ * 7. BOTÕES ACESSÍVEIS (1.7.6 · Parte 2): resultado da auditoria dos botões
+ * (ferramentas/auditar_botoes.js). Área de toque de pelo menos 44 px, contraste
+ * mínimo de 4,5:1 no Noturno e no Claro e contorno visível no foco pelo teclado.
+ * ---------------------------------------------------------------------- */
+#btnNovidades,
+#btnMenuSplash {
+  min-width: 44px;
+  min-height: 44px;
+}
+.splash-menu .chip,
+.btn-start,
+.btn-sec,
+.main-btn,
+.number-btn,
+.conferir-btn,
+.discard-btn,
+.pause-tip-next,
+.caos-modal-ov button,
+.card .mesa-btns button,
+.card .continue-btn,
+#fmtBackBtn,
+#trocarModoBtn,
+#addPlayerBtn,
+#iniBtn,
+#drawStarterBtn,
+#redrawMestreBtn,
+#flipBtn,
+#rouletteDoneBtn,
+#reshuffleBtn,
+#btnTutorial2 {
+  min-height: 44px;
+}
+.jf-toast-overlay .toast-skip,
+.jf-toast-overlay .toast-mute {
+  min-width: 44px;
+  min-height: 44px;
+}
+.acess-box input[type="range"] {
+  height: 44px;
+}
+/* Botões com cara de link (texto pequeno): a área de toque cresce sem mudar o desenho. */
+#nickIdeaBtn,
+.remove-player {
+  position: relative;
+}
+#nickIdeaBtn::before,
+.remove-player::before {
+  content: "";
+  position: absolute;
+  inset: -14px -6px;
+}
+#playerNameInput {
+  min-height: 44px;
+}
+/* Foco pelo teclado (ou leitor de tela): contorno azul visível em qualquer botão. */
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 3px solid #60a5fa;
+  outline-offset: 2px;
+}
+/* Contraste no Noturno */
+body:not(.claro) .humor-btn[data-humor="zero"]:not(.on) {
+  color: #f87171 !important;
+  border-color: #ef4444 !important;
+}
+body:not(.claro) .remove-player {
+  color: #ff8a9c;
+}
+body:not(.claro) .conferir-btn:not(.open) {
+  color: #facc15;
+}
+body:not(.claro) .answer-toggle {
+  color: color-mix(in srgb, var(--special) 60%, #fff);
+}
+#reshuffleBtn {
+  color: #a78bfa;
+  border-color: rgba(167, 139, 250, 0.4);
+}
+/* Contraste no Claro */
+body.claro .conferir-btn:not(.open) {
+  color: #6b4a00;
+}
+body.claro .answer-toggle {
+  color: #6b21a8;
+}
+body.claro #reshuffleBtn {
+  color: #5b21b6;
+  border-color: rgba(91, 33, 182, 0.4);
+}
+body.claro .discard-btn {
+  color: #b91c1c;
+  border-color: rgba(185, 28, 28, 0.45);
+}
+/* Botão desligado no menu ⋮: borda tracejada em vez de quase sumir (dá pra ler nos dois temas). */
+.splash-menu .chip.off {
+  opacity: 0.85;
+  border-style: dashed;
+}

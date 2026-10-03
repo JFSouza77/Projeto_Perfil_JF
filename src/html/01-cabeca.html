@@ -6,6 +6,12 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.6.1 · 03/10/2026 · "Buttons and Tutorial Update · Parte 2" = AUDITORIA DOS BOTÕES (pedido do JF).
+          ferramentas/auditar_botoes.js passa por 13 telas no Noturno e no Claro e mede cada botão:
+          toque ≥ 44 px, nome acessível e contraste WCAG AA (4,5:1; 3:1 em texto grande). Antes: 107 toques
+          pequenos, 2 sem nome, 9 contrastes fracos; depois: zero. Correções em css/07-botoes-acessiveis.css
+          (min-height 44, área ampliada nos botões com cara de link, foco visível, cores do Nível 0, remover,
+          Conferir, resposta, Reembaralhar e Descartar), aria-label no nome do jogador, chip desligado tracejado.
   1.7.6 · 03/10/2026 · "Buttons and Tutorial Update · Parte 1" = ACESSIBILIDADE PRA TODOS (pedido do JF).
           Painel ♿ Acessibilidade no menu ⋮ e na Pausa (js/05b-acessibilidade.js, chave perfil5_acessibilidade):
           letra Normal/Grande/Enorme (classes acess-letra-1/2 no <html>), Mais tempo (+15 escolher, +30 responder,
@@ -274,7 +280,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.6</title>
+<title>Perfil JF · Beta 1.7.6.1</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
