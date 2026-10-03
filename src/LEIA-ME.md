@@ -6,6 +6,7 @@ O jogo continua sendo **um HTML só**. Ele é montado juntando estas partes na o
 node build.js --testar --publicar   monta o Mestre, gera debug/compacta/offline, testa e atualiza o index.html
 node montar.js                      só monta o Mestre (Perfil_JF_Mestre_X_Y_Z.html)
 node ferramentas/auditar_cartas.js  confere as cartas (só reporta)
+node ferramentas/caos_teste_geradores.js / caos_teste_estresse.js   testes do C.A.O.S. (só reportam)
 ```
 
 - **Edite só os arquivos de `src/`.** O Mestre e as saídas são gerados, então nunca edite esses à mão.
@@ -27,6 +28,7 @@ node ferramentas/auditar_cartas.js  confere as cartas (só reporta)
 | `js/05-tela.js` | Seção 5: renderização, menus, cadastro, tutorial, painéis e efeitos |
 | `js/06-voz-som-vibracao.js` | Seção 6 |
 | `js/07-caos.js` | Seção 7: motor do C.A.O.S. (falas, humor, rostos, memória e decisões) |
+| `js/07b-gerador-de-falas.js` | Gerador de falas por gatilho (1.7.5.1). O mapa do cérebro está em `docs/CAOS_Cerebro.md` |
 | `js/08-salvamento.js` | Seção 8: armazenamento, salvar/carregar, exportar/importar e fichas |
 | `js/09-utilitarios.js` | Seção 9: texto, cores, sorteio e números |
 | `dados/01-emocoes-do-caos.js` | Início da seção 10: `CAOS_EMOS` |
@@ -36,6 +38,7 @@ node ferramentas/auditar_cartas.js  confere as cartas (só reporta)
 | `dados/05-apelidos-e-comentarios.js` | Apelidos do Júnior, vibração e `CAOS_COMENT` |
 | `dados/06-tutorial-e-dicas.js` | Passos do tutorial e dicas da pausa |
 | `dados/07-novidades.js` | `NOVIDADES` (o log de atualizações que aparece no jogo) |
+| `dados/08-geradores/` | Um arquivo por gatilho do gerador de falas. `00-abertura.js` explica as regras de escrita |
 | `js/11-iniciar.js` | Seção 11: `iniciar()`, que roda por último |
 | `html/03-fim.html` | `</script></body></html>` |
 

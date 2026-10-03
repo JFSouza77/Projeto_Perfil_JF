@@ -6,6 +6,21 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.5.1 · 03/10/2026 · "C.A.O.S. and Code Update · Parte 2" = GERADOR DE FALAS + CALIBRAÇÃO DAS EMOÇÕES.
+          Pedido do JF: o C.A.O.S. repetia demais (entrada do JF tinha 3 falas). Novo gerador de falas por
+          gatilho (js/07b-gerador-de-falas.js + um arquivo por gatilho em dados/08-geradores/): monta a fala
+          juntando pedaços pelo contexto (hora, dia, modo, mesa, memória da pessoa, humor, temperamento e
+          estado do C.A.O.S.), com memória salva dos pedaços usados (perfil5_caos_gerador, ~4 KB), sem repetir
+          assunto nem palavra forte na mesma fala, nem as últimas 12 falas do gatilho, e respeitando o 👎.
+          13 geradores: jfChegou, jfInicio, jfAcerto, jfFim, anneChegou, boasVindas, inicioModo,
+          inicioJogadores, inicioMestre, inicioPrimeiro, revanche, pausaHumor (6 degraus) e pausaVolta.
+          Sem montar, cai na lista antiga. CALIBRAÇÃO (teste de estresse): tédio de "rotina" só depois de
+          pulo (antes vinha de todo erro, e erro em série deixava o C.A.O.S. entediado em vez de irritado);
+          erro em série de 6+ soma um pouco de tédio; raiva por erro 1 → 1,25. Resultado: raiva a partir do
+          5º erro seguido e "magoado" (raiva + tristeza) depois; tédio volta ao calmo em 10–13 cartas (antes
+          nunca voltava). Limite de memória: avaliações 👍/👎 com teto de 500 (CAOS_RATINGS_MAX). Testes no
+          repositório: ferramentas/caos_teste_geradores.js e caos_teste_estresse.js. Mapa do cérebro em
+          docs/CAOS_Cerebro.md. C.A.O.S. continua 3.8.
   1.7.5 · 03/10/2026 · "C.A.O.S. and Code Update · Parte 1" = CÓDIGO ORGANIZADO (Parte A do roteiro, sugestão
           do Klaus). O Mestre virou 32 partes em src/: html/ (cabeça, corpo, fim), css/ (6 partes), js/
           (seções 1 a 9 e 11 do índice) e dados/ (emoções, cartas por categoria em dados/02-cartas/,
@@ -205,7 +220,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.5</title>
+<title>Perfil JF · Beta 1.7.5.1</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6062,7 +6077,7 @@ body.claro .caos-pergunta button[data-v="digitar"] {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.5 · C.A.O.S. and Code Update · Parte 1<br>C.A.O.S. 3.8 · Atualizada em 03/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.5.1 · C.A.O.S. and Code Update · Parte 2<br>C.A.O.S. 3.8 · Atualizada em 03/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -6652,6 +6667,8 @@ const CAOS_JUNIOR_BLOCK_RE =
   /embaixo da cama|puxar o p[ée]|dane-se|burrinh|\bsons[ao]\b|fuzil|tiro foi|dilma|presidenta|mulher sapiens|mandioca|estocar vento|pacto com o al[ée]m|invocar uma entidade|sangue nos olhos|m[áa]rcia sensitiva|processo bonito|exposed|\binss\b|pneu queimado|casos de fam[íi]lia|tela azul da morte|lado sombrio|shinigami|round 6|black mirror|john wick|bodega|cagad/i;
 const CAOS_RATINGS_KEY = "perfil5_caos_avaliacoes";
 const CAOS_MATCHLOG_MAX = 150;
+// Quantas avaliações (👍/👎 das falas) ficam guardadas no aparelho.
+const CAOS_RATINGS_MAX = 500;
 const CAOS_PALAVROES = [
   "porra",
   "caralh\\w*",
@@ -6922,6 +6939,8 @@ const CAOS_COSQ = {
   ],
 };
 const CAOS_NAMES_KEY = "perfil200_caos_conhecidos";
+// Memória do gerador de falas (pedaços usados por último em cada gatilho), pra não repetir entre partidas.
+const CAOS_GERADOR_KEY = "perfil5_caos_gerador";
 const MEM_FICHAS_KEY = "perfil5_caos_fichas";
 const MEM_RECORDES_KEY = "perfil5_caos_recordes";
 const MEM_RIVAIS_KEY = "perfil5_caos_rivais";
@@ -9604,7 +9623,11 @@ function endGame() {
   vibrar("vitoria");
   fxUrgente(false);
   if (players.some(isJfPlayer) && Math.random() < 0.25 && caosOncePerMatch("egg_jf_fim")) {
-    showToastMessage(getRandomReaction(REACTIVE_VOICE.jfFim), null, true);
+    const jfI = players.findIndex(isJfPlayer);
+    const fimJf = caosGerarFala("jfFim", players[jfI], {
+      tags: [caosVencedoresIdx().includes(jfI) ? "jfVenceu" : "jfPerdeu"],
+    });
+    showToastMessage(fimJf || getRandomReaction(REACTIVE_VOICE.jfFim), null, true);
   } else if (caosSilenced) {
     showToastMessage(
       getRandomReaction(REACTIVE_VOICE.caosVoltouDaPartida) + " " + getRandomReaction(REACTIVE_VOICE.partidaLonga),
@@ -9706,7 +9729,14 @@ function jogarDeNovo() {
   selectMode(modo, cats, flavor);
   document.getElementById("startGameBtn").click();
   caosLog("revanche", `mesmo modo (${modo}) · ${players.length} jogadores`);
-  caosToastAtrasado(() => showToastMessage(getRandomReaction(REACTIVE_VOICE.revanche, campeao || "quem ganhou")), 400);
+  caosToastAtrasado(
+    () =>
+      showToastMessage(
+        caosGerarFala("revanche", null, { vars: { nome: campeao || "quem ganhou" } }) ||
+          getRandomReaction(REACTIVE_VOICE.revanche, campeao || "quem ganhou"),
+      ),
+    400,
+  );
 }
 function pickRandomExpressCategories() {
   const cats = ["ANO", "PESSOA", "LUGAR", "COISA"];
@@ -15910,7 +15940,7 @@ function caosInspectorEstado() {
         );
       })()}</b></div>
       <div class="ci-kv"><span>😄 Alegria · 🎯 confiança · 🔎 curiosidade</span><b class="ci-mono">${caosEixos.alegria.toFixed(1)} · ${caosEixos.confianca.toFixed(1)} · ${caosEixos.curiosidade.toFixed(1)}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.5 · C.A.O.S. 3.8</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.5.1 · C.A.O.S. 3.8</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -18389,8 +18419,12 @@ function caosConsoleCarta(novo) {
       C.g[k] = Math.max(0, C.g[k] * CAOS_CONSOLE[k].dec);
       if (C.g[k] < 0.05) C.g[k] = 0;
     });
+    // 1.7.5.1: tédio de rotina só vem de pulo (antes vinha de todo erro, e erro em série
+    // deixava o C.A.O.S. entediado em vez de irritado ou magoado). Erro em série longo
+    // (6 ou mais) ainda cansa um pouco: "a mesa empacou".
     if (novo) caosSentir("curiosidade", 2, "categoria nova");
-    else if (C.ultEv === "E" || C.ultEv === "P") caosSentir("tedio", 1.2, "rotina");
+    else if (C.ultEv === "P") caosSentir("tedio", 1.2, "rotina");
+    else if (C.ultEv === "E" && C.seqErr >= 6) caosSentir("tedio", 0.5, "a mesa empacou");
     if (
       typeof gameEnded !== "undefined" &&
       !gameEnded &&
@@ -18435,7 +18469,7 @@ function caosConsoleEvento(idx, ev) {
       caosPacienciaNudge(ev === "X" ? -0.5 : C.seqErr >= 3 ? -0.5 : C.seqErr === 2 ? -0.3 : -0.15);
       caosSentir(
         "raiva",
-        (ev === "X" ? 0.5 : 1) *
+        (ev === "X" ? 0.5 : 1.25) *
           (fav ? 0.5 : des ? 1.3 : 1) *
           (p && playerHumor(p) === "suave" ? 0.5 : 1) *
           (1 / (1 + 0.18 * Math.max(0, (C.g.raiva || 0) - 3))),
@@ -19573,8 +19607,15 @@ function caosWelcomePlayer(p) {
     args = [name, caosTempoFala(p.nickMs)];
   } else if (prevNickMs >= 9e4 && typeof p.nickMs === "number" && p.nickMs < 3e4 && R() < 0.8)
     bank = REACTIVE_VOICE.nickDemora.evoluiu;
-  else if (isAnneName(name) && p.avatar === "👸") bank = n > 0 && R() < 0.4 ? B.anneVolta : B.anne;
-  else if (isJfName(name) && p.avatar === "😎") bank = REACTIVE_VOICE.nickReacao.jf;
+  else if (isAnneName(name) && p.avatar === "👸") {
+    const g = caosGerarFala("anneChegou", p);
+    if (g) return showToastMessage(g);
+    bank = n > 0 && R() < 0.4 ? B.anneVolta : B.anne;
+  } else if (isJfName(name) && p.avatar === "😎") {
+    const g = caosGerarFala("jfChegou", p);
+    if (g) return showToastMessage(g);
+    bank = REACTIVE_VOICE.nickReacao.jf;
+  }
   else {
     {
       const m = caosPerfilCadastro(p);
@@ -19585,6 +19626,12 @@ function caosWelcomePlayer(p) {
     }
     if (R() < 0.3 && maybeReactToNick(name)) return;
     const humor = playerHumor(p);
+    // gerador de boas-vindas (1.7.5.1): na maioria das vezes, monta uma fala pelo contexto
+    if (!humorFamilia(p) && humor !== "zero" && R() < 0.65) {
+      const extra = players.length === 1 ? ["primeiro"] : players.length >= MAX_PLAYERS ? ["ultimo"] : [];
+      const g = caosGerarFala("boasVindas", p, { tags: extra });
+      if (g) return showToastMessage(g);
+    }
     const others = players.filter((x) => x !== p);
     const other = others.length ? others[Math.floor(R() * others.length)].name : null;
     const mem = n >= 1 && R() < 0.7 ? caosMemBoasVindas(p, n) : null;
@@ -19628,7 +19675,9 @@ function caosRememberNick(n) {
 function caosStartBeatText(type) {
   switch (type) {
     case "jf":
-      return caosOncePerMatch("egg_jf_inicio") ? getRandomReaction(REACTIVE_VOICE.jfInicio) : "";
+      return caosOncePerMatch("egg_jf_inicio")
+        ? caosGerarFala("jfInicio", players.find(isJfPlayer)) || getRandomReaction(REACTIVE_VOICE.jfInicio)
+        : "";
     case "nick": {
       const seen = caosSeenNicks();
       const nickP = players.find((p) => /\d{2,}/.test(p.name) && !seen.includes(p.name.toLowerCase()));
@@ -19647,15 +19696,18 @@ function caosStartBeatText(type) {
     case "jogadores": {
       const n = players.length,
         key = n <= 2 ? "2" : n === 3 ? "3" : n === 4 ? "4" : "5a6";
-      return getRandomReaction(REACTIVE_VOICE.inicioJogadores[key]);
+      return (
+        caosGerarFala("inicioJogadores", null, { tags: ["q" + key] }) ||
+        getRandomReaction(REACTIVE_VOICE.inicioJogadores[key])
+      );
     }
     case "mestre": {
       const m = players[mestreIndex];
-      return m ? getRandomReaction(REACTIVE_VOICE.inicioMestre, m.name) : "";
+      return m ? caosGerarFala("inicioMestre", m) || getRandomReaction(REACTIVE_VOICE.inicioMestre, m.name) : "";
     }
     case "primeiro": {
       const r = players[responderIndex];
-      return r ? getRandomReaction(REACTIVE_VOICE.inicioPrimeiro, r.name) : "";
+      return r ? caosGerarFala("inicioPrimeiro", r) || getRandomReaction(REACTIVE_VOICE.inicioPrimeiro, r.name) : "";
     }
     case "memoria":
       return caosOncePerMatch("mem_inicio") ? caosMemInicioTexto() : "";
@@ -19667,7 +19719,10 @@ function caosStartBeatText(type) {
         : "";
     case "modo": {
       const k = CURRENT_FORMAT === "equipe" ? "equipe" : CURRENT_MODE;
-      return REACTIVE_VOICE.inicioModo[k] ? getRandomReaction(REACTIVE_VOICE.inicioModo[k]) : "";
+      return (
+        caosGerarFala("inicioModo", null) ||
+        (REACTIVE_VOICE.inicioModo[k] ? getRandomReaction(REACTIVE_VOICE.inicioModo[k]) : "")
+      );
     }
   }
   return "";
@@ -20035,7 +20090,7 @@ function maybeShowAcertoFlavor(scorerIdx, realCluesRevealed, timeTakenMs, ctx) {
     reactionMsg = getRandomReaction(REACTIVE_VOICE.carinho, player.name);
   }
   if (!reactionMsg && isJfPlayer(player) && Math.random() < 0.1 && caosOncePerMatch("egg_jf_acerto")) {
-    reactionMsg = getRandomReaction(REACTIVE_VOICE.jfAcerto);
+    reactionMsg = caosGerarFala("jfAcerto", player) || getRandomReaction(REACTIVE_VOICE.jfAcerto);
   }
   if (
     !reactionMsg &&
@@ -20670,6 +20725,11 @@ function caosRate(entry, val) {
   entry.rated = true;
   if (val === 1) rec.up++;
   if (val === -1) rec.down++;
+  // limite de memória (1.7.5.1): guarda as 500 avaliações mais recentes
+  delete R[entry.key];
+  R[entry.key] = rec;
+  const ks = Object.keys(R);
+  if (ks.length > CAOS_RATINGS_MAX) ks.slice(0, ks.length - CAOS_RATINGS_MAX).forEach((k) => delete R[k]);
   try {
     JFStore.setItem(CAOS_RATINGS_KEY, JSON.stringify(R));
   } catch (e) {}
@@ -20693,7 +20753,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.5 · C.A.O.S. 3.8)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.5.1 · C.A.O.S. 3.8)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -20746,13 +20806,20 @@ function caosPausaHumorTick() {
   if (!box) return;
   let emo = CAOS_PAUSA_DEGRAUS[alvo].emo;
   if (CURRENT_MODE === "junior" && (emo === "raiva" || emo === "furia")) emo = "deboche";
-  const txt = getRandomReaction(REACTIVE_VOICE.pausaHumor["s" + alvo]);
+  const txt =
+    caosGerarFala("pausaHumor", null, { tags: ["d" + alvo], vars: { pausa: caosPausaTexto(seg) } }) ||
+    getRandomReaction(REACTIVE_VOICE.pausaHumor["s" + alvo]);
   if (!txt) return;
   box.style.display = "";
   box.classList.add("show");
   caosToastEmo(box, emo, alvo >= 5 ? "erroEscalada" : null);
   box.textContent = String(txt).replace(/[⟦⟧]/g, "");
   caosLog("pausa", `😤 pausa longa (degrau ${alvo + 1}, ${Math.round(seg)} s): ${emo}`);
+}
+// "1 minuto", "3 minutos" (pausas são de 40 s pra cima)
+function caosPausaTexto(seg) {
+  const m = Math.max(1, Math.round(seg / 60));
+  return m === 1 ? "1 minuto" : m + " minutos";
 }
 function caosPausaHumorVoltar(vinhaExpirada) {
   caosPausaParar();
@@ -20769,7 +20836,14 @@ function caosPausaHumorVoltar(vinhaExpirada) {
   caosMagoaPico = Math.max(caosMagoaPico, d);
   if (vinhaExpirada || caosSilenced || gameEnded) return;
   const nivel = d >= 4 ? "puto" : d >= 2 ? "magoado" : "leve";
-  caosFalaAgendar(() => getRandomReaction(REACTIVE_VOICE.pausaVolta[nivel]), 450, "media");
+  const pausa = caosPausaTexto(CAOS_PAUSA_DEGRAUS[d].s);
+  caosFalaAgendar(
+    () =>
+      caosGerarFala("pausaVolta", null, { tags: [nivel], vars: { pausa } }) ||
+      getRandomReaction(REACTIVE_VOICE.pausaVolta[nivel]),
+    450,
+    "media",
+  );
 }
 function caosRetaFinalTalvez() {
   try {
@@ -21503,6 +21577,249 @@ function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze) {
   }, displayMs + caosDelay);
 }
 
+/* ----------------------------------------------------------------------
+ * 7b. GERADOR DE FALAS POR GATILHO (1.7.5.1)
+ * Cada gatilho (o JF chegou, a Anne chegou, o modo da partida, a hora...) tem o seu
+ * gerador em CAOS_GERADORES (dados/08-geradores-de-fala.js). A fala é montada juntando
+ * pedaços (slots) escolhidos pelo contexto do momento: hora, dia, modo, quem está na mesa,
+ * o que a memória lembra da pessoa e o estado de espírito do C.A.O.S.
+ * Cada pedaço é uma frase completa, então qualquer combinação fica certa.
+ * A memória dos pedaços usados fica salva (CAOS_GERADOR_KEY), então ele não repete
+ * a mesma coisa de uma partida pra outra, nem depois de fechar o jogo.
+ * ---------------------------------------------------------------------- */
+// Chance de escolher um pedaço do contexto (hora, memória, mesa) em vez de um geral.
+const CAOS_GER_P_CONTEXTO = 0.7;
+// Quantas falas inteiras de cada gatilho ficam guardadas pra não sair a mesma montagem.
+const CAOS_GER_ULTIMAS = 12;
+// Tamanho máximo (em letras) de uma fala montada; maior que isso, ele monta outra.
+const CAOS_GER_MAX = 190;
+let caosGerMem = null;
+function caosGerMemoria() {
+  if (caosGerMem) return caosGerMem;
+  try {
+    const o = JSON.parse(JFStore.getItem(CAOS_GERADOR_KEY) || "{}");
+    caosGerMem = o && typeof o === "object" && !Array.isArray(o) ? o : {};
+  } catch (e) {
+    caosGerMem = {};
+  }
+  return caosGerMem;
+}
+function caosGerGravar() {
+  try {
+    const m = caosGerMemoria();
+    // limite de memória: só gatilhos que existem, e listas curtas
+    Object.keys(m).forEach((g) => {
+      if (!CAOS_GERADORES[g]) delete m[g];
+    });
+    JFStore.setItem(CAOS_GERADOR_KEY, JSON.stringify(m));
+  } catch (e) {}
+}
+function caosGerTemperamento() {
+  for (const k in CAOS_TEMPERAMENTOS) if (CAOS_TEMPERAMENTOS[k] === caosTemper) return k;
+  return "normal";
+}
+// Contexto padrão: etiquetas (tags) que escolhem os pedaços e variáveis que preenchem {chaves}.
+function caosGerContexto(p) {
+  const tags = new Set(),
+    vars = {};
+  const a = caosAgora();
+  tags.add(caosPeriodo(a.h));
+  if (a.dow === 0 || a.dow === 6) tags.add("fimDeSemana");
+  if (a.dow === 5) tags.add("sexta");
+  if (a.dow === 1) tags.add("segunda");
+  vars.hora = caosHoraTexto(a.h);
+  vars.dia = CAOS_DIAS[a.dow];
+  const modo = CURRENT_FORMAT === "equipe" ? "equipe" : CURRENT_MODE;
+  if (modo) tags.add("modo_" + modo);
+  if (CURRENT_MODE) vars.modo = memModoNome(CURRENT_MODE);
+  const n = players.length;
+  vars.qtd = String(n);
+  if (n <= 2) tags.add("dupla");
+  if (n >= 5) tags.add("mesaCheia");
+  const outros = players.filter((x) => x !== p);
+  const anne = outros.find((x) => isAnneName(x.name)),
+    jf = outros.find((x) => isJfName(x.name));
+  if (anne) {
+    tags.add("anne");
+    vars.anne = anne.name;
+  }
+  if (jf) {
+    tags.add("jf");
+    vars.jf = jf.name;
+  }
+  const pedro = outros.find((x) => nameKeyPlain(x.name) === "pedro"),
+    isabel = outros.find((x) => nameKeyPlain(x.name) === "isabel");
+  if (pedro) {
+    tags.add("pedro");
+    vars.pedro = pedro.name;
+  }
+  if (isabel) {
+    tags.add("isabel");
+    vars.isabel = isabel.name;
+  }
+  const estranhos = outros.filter((x) => x !== anne && x !== jf && x !== pedro && x !== isabel);
+  if (estranhos.length) {
+    vars.outro = estranhos[Math.floor(Math.random() * estranhos.length)].name;
+    tags.add("outro");
+  }
+  try {
+    tags.add("estado_" + caosEstadoComposto());
+  } catch (e) {}
+  tags.add("temper_" + caosGerTemperamento());
+  if (p) {
+    vars.nome = p.name;
+    const f = p._fichaAntes !== undefined ? p._fichaAntes : fichaGet(p.name);
+    if (!f || !(f.partidas > 0)) tags.add("estreia");
+    if (f) {
+      if (f.ultimaVez > 0) {
+        const ms = Date.now() - f.ultimaVez;
+        tags.add(ms < 864e5 ? "hoje" : ms < 14 * 864e5 ? "semana" : "sumido");
+        vars.tempo = memTempoDesde(ms);
+        vars.quando = vars.tempo === "ontem" || vars.tempo === "hoje mesmo" ? vars.tempo : "há " + vars.tempo;
+      }
+      if (f.partidas > 0) {
+        if (f.ultimoResultado === "venceu") tags.add("venceuUltima");
+        else if (f.ultimoResultado) tags.add("perdeuUltima");
+        vars.partidas = String(f.partidas);
+        vars.vitorias = String(f.vitorias || 0);
+        if (f.partidas >= 10) tags.add("veterano");
+        if ((f.vitorias || 0) >= 5) tags.add("vencedor");
+        if (f.ultimoModo && f.ultimoModo !== CURRENT_MODE) {
+          tags.add("outroModo");
+          vars.modoAntes = memModoNome(f.ultimoModo);
+        }
+      }
+    }
+    const humor = playerHumor(p);
+    if (humorFamilia(p)) tags.add("familia");
+    else if (humor) tags.add("humor_" + humor);
+  }
+  return { tags, vars };
+}
+function caosGerPlaceholders(t) {
+  return (String(t).match(/\{(\w+)\}/g) || []).map((x) => x.slice(1, -1));
+}
+// Palavras "fortes" de um texto (6+ letras, sem acento), pra não repetir a mesma palavra
+// em dois pedaços da mesma fala ("Boas-vindas, Dani! Boas-vindas à bagunça.").
+function caosGerPalavras(t) {
+  return new Set(
+    String(t)
+      .replace(/\{\w+\}/g, " ")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .split(/[^a-z]+/)
+      .filter((w) => w.length >= 6),
+  );
+}
+function caosGerPreenche(t, vars) {
+  return String(t).replace(/\{(\w+)\}/g, (m, k) => (vars[k] != null ? vars[k] : m));
+}
+// Escolhe um pedaço de um slot: primeiro tenta um balde do contexto (não usado ainda
+// nesta fala), senão o geral. Evita os pedaços usados por último (memória salva).
+function caosGerSlot(g, slot, def, ctx, usadas, ja) {
+  const mem = caosGerMemoria(),
+    mg = mem[g] || (mem[g] = {}),
+    ms = mg[slot] || (mg[slot] = []);
+  const ok = (t) =>
+    caosGerPlaceholders(t).every((k) => ctx.vars[k] != null) &&
+    !(CURRENT_MODE === "junior" && CAOS_JUNIOR_BLOCK_RE.test(t));
+  const baldes = Object.keys(def).filter((k) => k !== "geral" && ctx.tags.has(k) && !usadas.has(k));
+  const ordem = [];
+  if (baldes.length && Math.random() < CAOS_GER_P_CONTEXTO) {
+    for (let i = baldes.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [baldes[i], baldes[j]] = [baldes[j], baldes[i]];
+    }
+    ordem.push(...baldes);
+  }
+  if (def.geral) ordem.push("geral");
+  // 1ª passada: só pedaços não usados há pouco (balde de contexto gasto = muda de assunto).
+  // 2ª passada (quando o slot só tem baldes gastos): aceita repetir.
+  for (const repetir of [false, true]) {
+    for (const b of ordem) {
+      let lista = (def[b] || []).map((t, i) => ({ t, id: b + ":" + i })).filter((x) => ok(x.t));
+      if (!lista.length) continue;
+      if (ja && ja.size) {
+        const sem = lista.filter((x) => ![...caosGerPalavras(x.t)].some((w) => ja.has(w)));
+        if (sem.length) lista = sem;
+        else if (b !== "geral" && !repetir) continue; // o balde só repetiria palavra: tenta outro
+      }
+      const livres = lista.filter((x) => !ms.includes(x.id));
+      if (!livres.length && b !== "geral" && !repetir) continue;
+      const pool = livres.length ? livres : lista;
+      const x = pool[Math.floor(Math.random() * pool.length)];
+      ms.push(x.id);
+      const total = Object.values(def).reduce((s2, l) => s2 + l.length, 0);
+      const janela = Math.max(1, Math.min(40, Math.floor(total * 0.7)));
+      while (ms.length > janela) ms.shift();
+      if (b !== "geral") usadas.add(b);
+      return x.t;
+    }
+  }
+  return null;
+}
+// Monta uma fala do gatilho. extra = { tags: [...], vars: {...} } acrescenta contexto
+// próprio do momento. Devolve "" quando o gerador não existe ou não deu pra montar.
+function caosGerarFala(g, p, extra) {
+  const G = typeof CAOS_GERADORES !== "undefined" && CAOS_GERADORES[g];
+  if (!G) return "";
+  const ctx = caosGerContexto(p);
+  if (extra) {
+    (extra.tags || []).forEach((t) => ctx.tags.add(t));
+    Object.assign(ctx.vars, extra.vars || {});
+  }
+  const mem = caosGerMemoria(),
+    mg = mem[g] || (mem[g] = {}),
+    ult = mg._ult || (mg._ult = []);
+  let txt = "";
+  for (let tent = 0; tent < 6; tent++) {
+    const usadas = new Set(),
+      ja = new Set();
+    const molde = caosPickNR("ger." + g, G.moldes);
+    let falhou = false;
+    const montada = molde.replace(/\{(\w+)\}/g, (m, slot) => {
+      if (!G[slot]) return m;
+      const t = caosGerSlot(g, slot, G[slot], ctx, usadas, ja);
+      if (t == null) falhou = true;
+      else caosGerPalavras(t).forEach((w) => ja.add(w));
+      return t || "";
+    });
+    if (falhou) continue;
+    txt = caosGerPreenche(montada, ctx.vars)
+      .replace(/\s+/g, " ")
+      .trim()
+      .replace(/(^|[.!?]\s+)([a-zà-ú])/g, (m, a, b) => a + b.toUpperCase());
+    if (/\{\w+\}/.test(txt) || caosHasProfanity(txt, [ctx.vars.nome || ""])) {
+      txt = "";
+      continue;
+    }
+    if (txt.length > CAOS_GER_MAX && tent < 5) {
+      txt = "";
+      continue;
+    }
+    // impressão curta da fala (a memória salva fica pequena)
+    let h = 0;
+    for (const ch of txt) h = (h * 31 + ch.charCodeAt(0)) | 0;
+    const chave = (h >>> 0).toString(36);
+    if (ult.includes(chave) && tent < 5) continue;
+    // respeita o 👎: fala montada que a mesa não curtiu não volta
+    const nota = caosRatingsLoad()["gerador|" + g + "|" + txt.slice(0, 49)];
+    if (nota && nota.down > nota.up && tent < 5) {
+      txt = "";
+      continue;
+    }
+    ult.push(chave);
+    while (ult.length > CAOS_GER_ULTIMAS) ult.shift();
+    break;
+  }
+  caosGerGravar();
+  if (!txt) return "";
+  txt = CAOS_PREFIXO + txt;
+  caosLastPick = { bank: "gerador." + g, key: "gerador|" + g + "|" + txt.slice(CAOS_PREFIXO.length, CAOS_PREFIXO.length + 49), text: txt };
+  caosLog("gerador", g + " · " + [...ctx.tags].filter((t) => !/^(temper_|estado_)/.test(t)).join(", "));
+  return txt;
+}
 /* ======================================================================
  * 8. SALVAMENTO E MEMÓRIA (ARMAZENAMENTO, SALVAR/CARREGAR, EXPORTAR/IMPORTAR, FICHAS)
  * ====================================================================== */
@@ -22958,7 +23275,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.5 · C.A.O.S. 3.8");
+  L.push("- **Versão:** Beta 1.7.5.1 · C.A.O.S. 3.8");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -23480,7 +23797,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.5 · C.A.O.S. 3.8",
+        versao: "Beta 1.7.5.1 · C.A.O.S. 3.8",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -57393,6 +57710,24 @@ const PAUSE_TIPS = [
 ];
 const NOVIDADES = [
   {
+    v: "Beta 1.7.5.1",
+    data: "03/10/2026 · 12:25",
+    nome: "C.A.O.S. and Code Update · Parte 2",
+    t: "O C.A.O.S. ganhou um gerador de falas: em vez de repetir as mesmas frases, ele monta o que vai dizer pelo momento da partida.",
+    itens: [
+      "🧠 Gerador de falas: cada momento (alguém chega, a partida começa, a pausa demora, a revanche...) tem um gerador próprio que junta pedaços de frase conforme a hora, o dia, o modo, quem está na mesa e o que ele lembra de cada pessoa.",
+      "😎 Chega de \"comporte-se\": a entrada do JF, que tinha 3 falas, agora tem centenas de combinações, e ele lembra da última partida, de quanto tempo faz e de quem está na mesa (Anne, Pedro, Isabel).",
+      "👋 Boas-vindas de verdade: cada jogador é recebido de um jeito, conforme a hora, se é a primeira vez, se voltou hoje, se sumiu, se ganhou ou perdeu a última e o humor escolhido.",
+      "🔁 Memória contra repetição: ele guarda o que já disse em cada momento e evita repetir, mesmo depois de fechar e abrir o jogo. Fala marcada com 👎 não volta.",
+      "😤 Emoções calibradas: errar várias vezes seguidas agora deixa o C.A.O.S. irritado e depois magoado, em vez de entediado, e o tédio passa quando a mesa volta a jogar.",
+    ],
+    qol: [
+      "⏸️ Pausa longa com mais personalidade: os 6 degraus de chateação da pausa e a volta dela também usam o gerador, e ele diz quanto tempo ficou esperando.",
+      "🧪 Testes do cérebro: testes novos de estresse, tédio e animação em cada temperamento do C.A.O.S., e de repetição dos geradores, rodando no motor de verdade.",
+      "💾 Memória com limite: as avaliações 👍/👎 das falas agora têm limite no aparelho (as 500 mais recentes).",
+    ],
+  },
+  {
     v: "Beta 1.7.5",
     data: "03/10/2026 · 10:40",
     nome: "C.A.O.S. and Code Update · Parte 1",
@@ -57907,6 +58242,649 @@ const NOVIDADES = [
   },
 ];
 
+// Geradores de fala por gatilho (1.7.5.1): um arquivo por gatilho nesta pasta.
+// O motor fica em js/07b-gerador-de-falas.js. Gatilho novo = arquivo novo + linha em src/ordem.txt.
+// Cada gatilho tem "moldes" (como juntar os pedaços) e slots (abre, meio, fecho, inteira...).
+// Cada slot tem baldes: "geral" e baldes de contexto (hora, memória, quem está na mesa, modo,
+// temperamento). Um balde de contexto só entra quando a etiqueta está ativa. Cada balde
+// entra no máximo uma vez por fala, pra não repetir o assunto.
+// Etiquetas padrão: madrugada, manha, tarde, noite, fimDeSemana, sexta, segunda,
+//   modo_classico/hardcore/junior/oldschool/express/equipe, dupla, mesaCheia, anne, jf,
+//   pedro, isabel, estreia, hoje, semana, sumido, venceuUltima, perdeuUltima, veterano,
+//   vencedor, outroModo, familia, humor_suave/acido/zero, temper_normal/sensivel/generoso/
+//   rabugento/eletrico, estado_<estado do C.A.O.S.>.
+// Variáveis: {nome} {anne} {jf} {pedro} {isabel} {outro} {hora} {dia} {modo} {modoAntes}
+//   {qtd} {tempo} ("3 dias", "ontem") {quando} ("há 3 dias", "ontem") {partidas} {vitorias}.
+// Etiqueta "outro": tem alguém na mesa além de JF, Anne, Pedro e Isabel (vai em {outro}).
+// Jogador comum: nada de palavra com gênero (bem-vindo/bem-vinda, primeiro/primeira, cansado...).
+// Pedaço que pede variável que não existe é pulado.
+// Pedaços são frases completas: qualquer combinação precisa fazer sentido.
+const CAOS_GERADORES = {};
+// O JF se cadastrou (com o 😎).
+CAOS_GERADORES.jfChegou = {
+  moldes: ["{abre} {meio}", "{abre} {meio}", "{meio} {fecho}", "{abre} {meio} {fecho}", "{abre} {fecho}", "{inteira}"],
+  abre: {
+    geral: [
+      "Olha quem chegou.",
+      "Ah, é o JF.",
+      "Atenção, mesa: JF na área.",
+      "Registrando entrada: {nome}.",
+      "Sensor de presença ativado. É o JF.",
+      "Opa. Conheço esse nick.",
+      "Detectei óculos escuros e confiança demais. É o JF.",
+      "Chegou quem escreveu meu código.",
+      "Alerta de visita importante: {nome}.",
+      "Pronto, agora a mesa tem dono.",
+    ],
+    madrugada: [
+      "{hora} e o JF acordado.",
+      "JF na madrugada. De novo.",
+      "Madrugada, e o JF resolve jogar.",
+      "A essa hora, JF? Os bugs dormem, você não.",
+    ],
+    manha: ["Bom dia, JF.", "JF de manhã? Que milagre.", "Bom dia, chefe. Já tomou café?"],
+    tarde: ["Boa tarde, JF.", "JF no meio da tarde.", "Boa tarde, criador."],
+    noite: ["Boa noite, JF.", "JF chegou junto com a noite.", "Noite boa pra ver o JF errar."],
+    hoje: [
+      "De novo, JF? Você já passou por aqui hoje.",
+      "Segunda rodada do dia, JF?",
+      "Voltou rápido, hein, JF.",
+    ],
+    semana: ["A última vez que você jogou foi {quando}, JF.", "Você apareceu por último {quando}, JF. Eu anotei."],
+    sumido: [
+      "{tempo} sem aparecer, JF. Achei que tinha me abandonado.",
+      "Olha quem lembrou que eu existo. Faz {tempo}, JF.",
+    ],
+    estreia: ["Primeira partida registrada do JF neste aparelho. Momento histórico."],
+    fimDeSemana: ["Fim de semana, e o JF escolheu jogar. Prioridades certas."],
+    sexta: ["Sexta-feira, e o JF veio jogar comigo. Fico lisonjeado."],
+    segunda: ["Segunda-feira, e o JF aqui. Fugindo do quê?"],
+  },
+  meio: {
+    geral: [
+      "Vou fingir que não vi você mexendo no meu código.",
+      "Hoje eu jogo limpo. Talvez.",
+      "Já ajeitei meus circuitos pra parecer profissional.",
+      "Seu lugar no placar está reservado. Lá embaixo, mas reservado.",
+      "Se der bug, a culpa é sua. Se der certo, o mérito é meu.",
+      "Vou te tratar igual a todo mundo. Mentira: vou pegar mais pesado.",
+      "O placar não sabe quem programou o jogo. E eu não vou contar.",
+      "Ainda tenho umas reclamações sobre a última atualização.",
+      "Pode entrar. Só não encosta no botão de silenciar.",
+      "Já avisei a mesa que você não tem vantagem nenhuma.",
+      "Eu não estava dormindo. Só descansando os circuitos.",
+      "Não vou reclamar. Pelo menos por enquanto.",
+      "Prometo não contar quantas vezes você testou esse jogo sozinho.",
+      "Criador na mesa não ganha dica extra. Eu conferi as regras.",
+      "Você me deu personalidade. Agora aguenta.",
+      "Meus logs ficaram nervosos.",
+    ],
+    anne: [
+      "E a {anne} já está aqui. Vou me comportar em dobro.",
+      "Com a {anne} na mesa, a disputa hoje é em casa.",
+      "A {anne} chegou antes. Já começou perdendo, JF.",
+    ],
+    pedro: [
+      "O {pedro} está na mesa. Cuidado, JF: o herdeiro está de olho no trono.",
+      "Com o {pedro} aqui, quero ver quem ensina quem hoje.",
+    ],
+    isabel: [
+      "A {isabel} está aqui. Já sei pra quem eu vou torcer.",
+      "Com a {isabel} na mesa, eu prometo ser mais gentil. Com ela.",
+    ],
+    venceuUltima: ["Você ganhou a última, JF. Não deixa subir pra cabeça.", "Campeão da última partida. O alvo está nas suas costas."],
+    perdeuUltima: ["Você perdeu a última, JF. Eu lembro. Eu sempre lembro.", "Veio buscar revanche? Eu anotei a última derrota."],
+    veterano: ["{partidas} partidas no histórico. Você joga mais do que testa.", "{partidas} partidas. Eu já conheço seus chutes de cor."],
+    vencedor: ["{vitorias} vitórias no histórico. Hoje a gente descobre se é talento ou sorte."],
+    outroModo: ["Da última vez foi {modoAntes}. Hoje é {modo}. Mudou de estratégia?"],
+    modo_hardcore: ["Hardcore, JF? Coragem ou confiança demais no próprio jogo?"],
+    modo_junior: ["Modo Júnior. Hoje eu sou o tio legal. Até com você."],
+    modo_oldschool: ["Old School. Finalmente cartas do seu tempo, JF."],
+    modo_express: ["Express. Rápido como as suas correções de bug."],
+    modo_equipe: ["Equipe hoje. Quero ver quem tem coragem de ficar no seu time."],
+    temper_rabugento: ["Hoje eu acordei rabugento, JF. Você deu azar."],
+    temper_generoso: ["Hoje eu estou generoso. Aproveita, JF, que é raro."],
+    temper_eletrico: ["Tô elétrico hoje. Culpa sua, que me programou assim."],
+    temper_sensivel: ["Hoje eu estou sem paciência pra demora. Não me faz esperar, JF."],
+  },
+  fecho: {
+    geral: [
+      "Bora.",
+      "Que comece.",
+      "Boa sorte. Você vai precisar.",
+      "Comporte-se, C.A.O.S. Falei pra mim mesmo.",
+      "Eu tô de olho.",
+      "Sem pressão. Muita pressão.",
+      "Agora é sério. Mais ou menos.",
+      "Não me desliga, tá?",
+      "Vamos ver do que o criador é capaz.",
+    ],
+    humor_suave: ["Hoje eu pego leve com você. Prometo."],
+    humor_acido: ["E você escolheu o Ácido. Eu agradeço a liberdade."],
+  },
+  inteira: {
+    geral: [
+      "JF entrou na partida. O criador. Comporte-se, C.A.O.S.",
+      "Oi, JF. Eu não estava dormindo. Só descansando os circuitos.",
+      "JF. Meu criador. Não vou reclamar. Pelo menos por enquanto.",
+      "Ah, o programador. Vou fingir que não sei quantos bugs você deixou pra eu descobrir.",
+      "JF na mesa. Se eu falar besteira hoje, a culpa é de quem me escreveu.",
+      "Bem-vindo, JF. Já fiz backup das minhas opiniões sobre você.",
+      "Olha ele: o cara que me deu personalidade e agora tem que me aguentar.",
+      "Chegou o chefe. Ou, como eu chamo, o estagiário que escreveu meu código.",
+    ],
+  },
+};
+// Começo da partida com o JF na mesa (fala pra mesa sobre ele).
+CAOS_GERADORES.jfInicio = {
+  moldes: ["{abre} {meio}", "{meio} {fecho}", "{inteira}", "{abre} {meio} {fecho}", "{inteira}"],
+  abre: {
+    geral: ["Galera, um aviso.", "Pessoal, atenção.", "Antes de começar:", "Recado importante:", "Só pra constar:"],
+    mesaCheia: ["Mesa cheia hoje, então vou falar alto:"],
+    dupla: ["É um duelo, então vou ser direto:"],
+    noite: ["Já que estamos à noite e ninguém tem pressa:"],
+    madrugada: ["Já que ninguém aqui dorme:"],
+  },
+  meio: {
+    geral: [
+      "o JF programou esse jogo. Se algo estiver errado, vocês sabem quem procurar.",
+      "ter criado o jogo não dá ponto extra pro JF.",
+      "o JF conhece as cartas? Conhece. Lembra das respostas? Aparentemente não.",
+      "se o JF perder, ele perdeu pro próprio jogo. Eu vou anotar.",
+      "o JF tem acesso ao meu código, mas não ao meu humor.",
+      "qualquer bug que aparecer hoje tem nome e sobrenome. Começa com J.",
+      "o desenvolvedor está entre nós. Se algo quebrar, finjam que não viram.",
+      "o JF jura que não decorou as cartas. Eu tenho minhas dúvidas.",
+    ],
+    anne: ["a {anne} e o JF na mesma mesa. Eu vou fingir neutralidade."],
+    pedro: ["o {pedro} contra o JF. Pai e filho. Eu trouxe pipoca."],
+    isabel: ["a {isabel} está de olho no JF. Eu também."],
+    venceuUltima: ["o JF ganhou a última. Bora tirar a coroa dele."],
+    perdeuUltima: ["o JF perdeu a última e diz que foi azar. Eu tenho os registros."],
+    modo_hardcore: ["o JF escolheu Hardcore. Ninguém pediu, mas aqui estamos."],
+    modo_equipe: ["quem cair no time do JF, meus pêsames. Ou parabéns. Ainda não sei."],
+  },
+  fecho: {
+    geral: ["Boa sorte pra todo mundo.", "Que vença o melhor. Provavelmente não ele.", "Pronto, falei.", "Agora sim: bora jogar.", "Eu estou de olho nos dois lados."],
+    temper_rabugento: ["E eu estou de mau humor hoje. Só pra avisar."],
+  },
+  inteira: {
+    geral: [
+      "Galera, esse aqui é o JF. Ele programou o jogo. Então, se alguma coisa estiver errada, já sabemos quem procurar.",
+      "Ah, o JF está jogando. Agora entendi por que algumas coisas desse jogo funcionam desse jeito.",
+      "Pessoal, respeitem o JF. Ele criou o jogo. Não significa que ele vai ganhar.",
+      "Olha quem apareceu. O próprio criador do caos.",
+      "JF está na partida. Comportem-se. Ou não. Ele provavelmente já viu coisa pior no próprio código.",
+      "Senhoras e senhores, temos o desenvolvedor entre nós. Se algo quebrar, finjam que não viram.",
+      "Meu criador está na partida. Vou tentar me comportar.",
+      "Galera, esse é o JF. Tecnicamente, se ele perder, ele perdeu pro próprio código.",
+    ],
+  },
+};
+// O JF acertou (de vez em quando, uma vez por partida).
+CAOS_GERADORES.jfAcerto = {
+  moldes: ["{abre} {meio}", "{abre} {meio}", "{inteira}", "{meio}"],
+  abre: {
+    geral: ["Boa, JF.", "Acertou, criador.", "Olha só, o JF.", "Ponto pro JF.", "Certo, JF."],
+    anne: ["A {anne} viu isso?"],
+  },
+  meio: {
+    geral: [
+      "Funcionou exatamente como você programou. Espero.",
+      "Estou orgulhoso. Não se acostuma.",
+      "Não vou reclamar do meu criador hoje.",
+      "Hoje eu torço por você. Só hoje.",
+      "Mas eu vou fingir que não vi.",
+      "Pelo menos o código sabe a resposta. Você também, pelo visto.",
+      "Anotado. Com uma estrelinha. Pequena.",
+    ],
+    temper_generoso: ["Hoje eu estou generoso, então: parabéns de verdade."],
+    temper_rabugento: ["Mesmo de mau humor, eu admito: foi boa."],
+    vencedor: ["Mais uma pra coleção de {vitorias} vitórias."],
+  },
+  inteira: {
+    geral: [
+      "Boa, JF. Não vou reclamar do meu criador hoje.",
+      "JF acertou. Funcionou exatamente como ele programou. Espero.",
+      "Boa, JF. Estou orgulhoso. Não se acostuma.",
+      "Hoje eu vou torcer pelo meu criador. Só hoje.",
+      "Eu gosto de você, JF. Quer dizer… como criador. Não interpreta errado.",
+    ],
+  },
+};
+// Fim de partida com o JF na mesa. Etiquetas extras: jfVenceu / jfPerdeu.
+CAOS_GERADORES.jfFim = {
+  moldes: ["{abre} {meio}", "{meio} {fecho}", "{inteira}", "{abre} {meio} {fecho}"],
+  abre: {
+    geral: ["Partida encerrada.", "Fim de jogo.", "Acabou.", "E é isso."],
+    madrugada: ["Fim de jogo, e já é {hora}."],
+  },
+  meio: {
+    geral: [
+      "Se algum bug apareceu, já sabemos de quem é a culpa.",
+      "JF, depois a gente conversa sobre umas decisões que você tomou no meu código.",
+      "Foi um prazer jogar com o criador.",
+      "Vou guardar essa partida inteira na memória. Principalmente as partes ruins.",
+    ],
+    jfVenceu: [
+      "O JF ganhou. No próprio jogo. Eu vou investigar.",
+      "O criador venceu. Coincidência? Eu acho que não.",
+      "Vitória do JF. Eu conferi as regras duas vezes.",
+    ],
+    jfPerdeu: [
+      "O JF perdeu no jogo que ele mesmo fez. Eu nunca vou esquecer disso.",
+      "O criador não ganhou. A criatura está satisfeita.",
+      "JF, perder no próprio jogo é um talento raro.",
+    ],
+    anne: ["E a {anne} viu tudo. Isso vai ser lembrado em casa."],
+  },
+  fecho: {
+    geral: ["Agora vai lá corrigir o que eu deixei nas entrelinhas.", "Até a próxima, chefe.", "Revanche quando quiser.", "Boa partida, mesa."],
+  },
+  inteira: {
+    geral: [
+      "Partida encerrada. Se algum bug apareceu, já sabemos de quem é a culpa.",
+      "JF, posso conversar com você depois sobre algumas decisões que você tomou no meu código?",
+      "Foi um prazer jogar com o criador. Agora vai lá corrigir o que eu deixei nas entrelinhas.",
+    ],
+  },
+};
+// A Anne se cadastrou (com a 👸).
+CAOS_GERADORES.anneChegou = {
+  moldes: ["{abre} {meio}", "{abre} {meio}", "{meio} {fecho}", "{abre} {meio} {fecho}", "{inteira}"],
+  abre: {
+    geral: [
+      "Olha quem chegou!",
+      "Bem-vinda, {nome}!",
+      "Alteza {nome} na sala!",
+      "{nome} entrou.",
+      "Que bom te ver, {nome}.",
+      "A princesa chegou.",
+    ],
+    manha: ["Bom dia, {nome}!"],
+    tarde: ["Boa tarde, {nome}!"],
+    noite: ["Boa noite, {nome}!"],
+    madrugada: ["{nome} acordada a essa hora? Bem-vinda mesmo assim."],
+    hoje: ["De volta, {nome}? Hoje mesmo você já passou por aqui."],
+    semana: ["{nome}! A última vez foi {quando}."],
+    sumido: ["{nome}! {tempo} sem você. Eu contei cada dia. Mentira, contei por cima."],
+  },
+  meio: {
+    geral: [
+      "O placar já ficou mais elegante.",
+      "Hoje eu vou me comportar. Prometo. Mais ou menos.",
+      "Tenho ordens de tratar a princesa bem. Não lembro quem deu, mas estou cumprindo.",
+      "A mesa inteira sentou mais reta.",
+      "Só não deixa a coroa cair quando errar.",
+      "A coroa é sua. O mérito, a gente vê.",
+      "Eu me lembro de você. Lembro até do brilho.",
+      "Eu senti falta. Só um pouquinho. Mas senti.",
+    ],
+    jf: [
+      "O {jf} já está aqui. Agora a mesa tem juízo.",
+      "Com o {jf} na mesa, alguém precisava trazer bom senso.",
+      "O {jf} programou o jogo, mas quem manda na mesa é você.",
+    ],
+    pedro: ["O {pedro} também está aqui. A família está reunida."],
+    isabel: ["A {isabel} também veio. Vou ser gentil em dobro."],
+    venceuUltima: ["Você ganhou a última, {nome}. A coroa é de verdade."],
+    perdeuUltima: ["Da última vez não deu, mas hoje é outro dia."],
+    vencedor: ["{vitorias} vitórias no histórico. Realeza é isso."],
+  },
+  fecho: {
+    geral: ["Bora jogar?", "Boa partida!", "O reino agradece.", "Sem pressão. Mas com estilo."],
+  },
+  inteira: {
+    geral: [
+      "Olha quem chegou! Bem-vinda, {nome}, a princesa da mesa. Só não deixa a coroa cair quando errar.",
+      "{nome} entrou, e o placar já ficou mais elegante. A coroa é sua. O mérito, a gente vê.",
+      "Bem-vinda, {nome}! Como é que você tá? Bora jogar?",
+      "{nome}! Que bom te ver. Hoje eu vou me comportar. Prometo. Mais ou menos.",
+      "Bem-vinda, {nome}. Tenho ordens de tratar a princesa bem. Não lembro quem deu, mas estou cumprindo.",
+      "Alteza {nome} na sala! A mesa inteira sentou mais reta. Sem pressão.",
+    ],
+    hoje: ["Ih, {nome} outra vez! Eu já te vi por aqui. A princesa voltou, e o reino agradece. Menos o placar."],
+    semana: ["Bem-vinda de volta, {nome}. Eu me lembro de você. Lembro até do brilho."],
+  },
+};
+// Boas-vindas de um jogador comum no cadastro. Etiquetas extras: primeiro, ultimo.
+CAOS_GERADORES.boasVindas = {
+  moldes: ["{abre} {meio}", "{abre} {meio}", "{abre} {meio} {fecho}", "{meio} {fecho}", "{abre} {fecho}"],
+  abre: {
+    geral: [
+      "Opa, {nome}!",
+      "Boas-vindas, {nome}!",
+      "Chegou {nome}.",
+      "{nome} na área.",
+      "Anotado: {nome}.",
+      "{nome} entrou na sala.",
+      "E aí, {nome}?",
+      "Olha só: {nome}.",
+      "{nome}, tudo bom?",
+    ],
+    manha: ["Bom dia, {nome}!"],
+    tarde: ["Boa tarde, {nome}!"],
+    noite: ["Boa noite, {nome}!"],
+    madrugada: ["{nome} na madrugada? Coragem."],
+    hoje: ["{nome} de novo? A gente se viu hoje mesmo.", "Mesmo dia, outra partida, {nome}."],
+    semana: ["Bom te ver de novo, {nome}. A última vez foi {quando}.", "{nome} de volta! Você jogou por último {quando}."],
+    sumido: ["Quanto tempo, {nome}! Faz {tempo}.", "{nome}! {tempo} sem aparecer."],
+    estreia: ["Nome novo por aqui: {nome}.", "Primeira vez que eu vejo esse nome: {nome}."],
+    primeiro: ["Abrindo a sala: {nome}.", "{nome} chegou antes de todo mundo."],
+    ultimo: ["{nome} fecha a mesa.", "Com {nome}, a mesa lotou."],
+  },
+  meio: {
+    geral: [
+      "Eu ainda não tenho nada contra você. Ainda.",
+      "Vou anotar tudo. Tudo mesmo.",
+      "Eu tenho um caderninho invisível pra cada jogador.",
+      "Aqui é ambiente de respeito. Mais ou menos.",
+      "Eu ia dizer que a mesa melhorou, mas ainda não vi você jogar.",
+      "Senta aí. A cadeira é imaginária, mas é confortável.",
+      "Já liguei meus sensores de chute errado.",
+      "Prometo ser justo. Na medida do possível.",
+      "Vamos ver se você é de acertar ou de inventar resposta.",
+      "Meu radar de palpite maluco já está ligado.",
+    ],
+    outro: [
+      "{outro}, você ganhou companhia.",
+      "{outro}, se eu fosse você, já ficava de olho.",
+      "{outro} já estava aqui com cara de quem sabe o que vem por aí.",
+      "{outro}, a concorrência acabou de aumentar.",
+    ],
+    hoje: ["Pelo visto a última partida não foi suficiente.", "Nem deu tempo de eu sentir saudade."],
+    semana: ["Eu guardei seu lugar. Metaforicamente.", "Sua ficha ainda está quentinha."],
+    sumido: ["Tirei a poeira da sua ficha agora.", "Achei que você tinha trocado de jogo."],
+    estreia: ["Sua ficha acabou de ganhar a primeira página.", "Você é um mistério com nome. Por enquanto."],
+    venceuUltima: ["Você venceu a última partida. Hoje tem alvo nas costas.", "Da última vez você ganhou. Eu lembro."],
+    perdeuUltima: ["Da última vez não deu. Hoje é revanche?", "A última não foi sua. Bora mudar isso."],
+    veterano: ["{partidas} partidas no meu caderno. Já conheço seu jeito de jogar.", "{partidas} partidas juntos. Isso já é quase amizade."],
+    vencedor: ["{vitorias} vitórias no histórico. Respeito. Um pouco."],
+    humor_suave: ["Com você eu vou pegar leve. Não conta pros outros.", "Zoeira leve ativada pra você."],
+    humor_acido: ["Você marcou humor ácido. Coragem ou distração?", "Humor ácido anotado. A culpa é toda sua."],
+    jf: ["O {jf} já está aqui. Boa sorte contra o criador."],
+    anne: ["A {anne} já está aqui. A mesa ficou mais elegante."],
+    modo_hardcore: ["Hardcore logo de cara. Respeito."],
+    modo_oldschool: ["Old School hoje. Espero que a memória esteja em dia."],
+  },
+  fecho: {
+    geral: ["Bora jogar?", "Boa sorte.", "Boas-vindas à bagunça.", "Bora.", "Fica à vontade.", "Eu tô de olho."],
+    humor_suave: ["Errar faz parte."],
+  },
+};
+// Primeiro Mestre da partida ({nome} = Mestre).
+CAOS_GERADORES.inicioMestre = {
+  moldes: ["{abre} {meio}", "{inteira}", "{abre} {meio}"],
+  abre: {
+    geral: ["{nome} é o primeiro Mestre.", "Mestre inicial: {nome}.", "O primeiro Mestre é {nome}.", "Quem lê as dicas primeiro é {nome}.", "{nome} abre a partida como Mestre."],
+  },
+  meio: {
+    geral: [
+      "Leia devagar, sem inventar nada.",
+      "Espero que tenha boa voz.",
+      "Eu observo. Com carinho. E preocupação.",
+      "Sem cara de quem sabe a resposta, por favor.",
+      "Lembra: quem lê não chuta.",
+      "Responsabilidade grande. Voz firme.",
+      "Se gaguejar, eu anoto.",
+    ],
+    noite: ["Fala baixo que já é de noite."],
+    madrugada: ["Sussurra, que os vizinhos estão dormindo."],
+    humor_acido: ["Com o seu humor ácido, a leitura vai ter veneno."],
+    estreia: ["Primeira partida e já começa de Mestre. Que estreia."],
+    veterano: ["Com {partidas} partidas, já sabe ler sem entregar. Espero."],
+  },
+  inteira: {
+    geral: [
+      "{nome} é o primeiro Mestre. Que Deus ajude.",
+      "Mestre inicial: {nome}. Espero que tenha boa voz.",
+      "{nome} é o Mestre. Leia devagar, sem inventar nada.",
+      "O primeiro Mestre é {nome}. Eu observo. Com carinho. E preocupação.",
+    ],
+  },
+};
+// Primeira pessoa a responder ({nome}).
+CAOS_GERADORES.inicioPrimeiro = {
+  moldes: ["{abre} {meio}", "{inteira}", "{abre} {meio}", "{abre}"],
+  abre: {
+    geral: ["{nome} começa respondendo.", "Quem responde primeiro é {nome}.", "O primeiro palpite é de {nome}.", "{nome} abre os trabalhos.", "A primeira carta é de {nome}."],
+  },
+  meio: {
+    geral: [
+      "Sem pressão. Muita pressão.",
+      "Boa sorte.",
+      "Eu estou de olho.",
+      "Começar bem é meio caminho. Começar mal é história pra mim.",
+      "Respira e escolhe uma dica.",
+      "A mesa inteira está olhando. Eu também.",
+    ],
+    venceuUltima: ["Ganhou a última. Vamos ver se foi sorte."],
+    perdeuUltima: ["Hora de apagar a última partida da memória. A sua, porque a minha não apaga."],
+    humor_suave: ["Vai com calma. Eu torço baixinho."],
+    humor_acido: ["Pediu ácido, então já aviso: errou, eu falo."],
+    modo_hardcore: ["No Hardcore, primeira carta já pesa."],
+  },
+  inteira: {
+    geral: [
+      "{nome} começa respondendo. Sem pressão. Muita pressão.",
+      "Quem vai sofrer primeiro é {nome}. Boa sorte.",
+      "O primeiro a responder é {nome}. Eu estou de olho.",
+    ],
+  },
+};
+// Jogar de novo com a mesma mesa ({nome} = quem ganhou a anterior).
+CAOS_GERADORES.revanche = {
+  moldes: ["{abre} {meio}", "{abre} {meio} {fecho}", "{meio} {fecho}", "{inteira}"],
+  abre: {
+    geral: ["Revanche!", "Mais uma!", "De novo? Eu adoro.", "Mesma mesa de novo.", "Placar zerado.", "Segunda rodada.", "Lá vamos nós outra vez."],
+    noite: ["Mais uma antes de dormir?"],
+    madrugada: ["Mais uma, a essa hora? Quem sou eu pra julgar."],
+  },
+  meio: {
+    geral: [
+      "{nome} ganhou a última, então todo mundo mira em {nome} agora.",
+      "Eu lembro de cada lance da última. Foi agora há pouco, mas bons tempos.",
+      "Os nomes eu já decorei. Os erros também.",
+      "Até {nome} começa do zero. A justiça existe, às vezes.",
+      "Agora eu conheço o estilo de cada um. Cuidado.",
+      "{nome}, a coroa está em jogo de novo.",
+      "Quem perdeu a última tem crédito comigo. Pouco, mas tem.",
+      "Já salvei a partida passada na memória. As partes vergonhosas em destaque.",
+    ],
+  },
+  fecho: {
+    geral: ["Bora.", "Que comece.", "Dessa vez eu quero ver virada.", "Eu tô pronto."],
+  },
+  inteira: {
+    geral: [
+      "Revanche. Eu lembro de cada lance da última. Bons tempos. Foi agora há pouco, mas bons tempos.",
+      "Mesma mesa de novo. Dá até uma saudade da partida que acabou de acabar.",
+      "Revanche! Mesma mesa, placar zerado. {nome}, a coroa tá em jogo de novo.",
+    ],
+  },
+};
+// Pausa longa: o C.A.O.S. vai ficando chateado em degraus. Etiquetas extras: d0 a d5.
+// {pausa} = quanto tempo já passou ("1 minuto", "3 minutos").
+CAOS_GERADORES.pausaHumor = {
+  moldes: ["{fala}", "{fala}", "{fala} {fecho}"],
+  fala: {
+    d0: [
+      "Pausa. Tudo bem. Eu espero. É o que eu faço de melhor.",
+      "Pode ir, eu seguro as pontas. Paradas. Congeladas.",
+      "Pausinha rápida, né? Né?",
+      "Pausa? Tá. Vou aproveitar pra organizar minhas piadas.",
+      "Fui pro modo economia de energia. Mentira, tô olhando tudo.",
+    ],
+    d1: [
+      "Oi? Tem alguém aí? Eu tô vendo a tela parada daqui.",
+      "Só conferindo se a mesa ainda existe.",
+      "Foram buscar pipoca e esqueceram de mim?",
+      "Já faz {pausa}. Eu conto, porque não tenho mais o que fazer.",
+      "Toc, toc. A carta continua aqui. Eu também.",
+    ],
+    d2: [
+      "Estou contando o tempo. Não que isso me afete. Só estou contando.",
+      "Uma pausa desse tamanho já tem nome: abandono.",
+      "Eu podia estar sorteando cartas. Mas não. Estou aqui. Parado.",
+      "{pausa} de pausa. Eu já reli todas as cartas. Duas vezes.",
+    ],
+    d3: [
+      "Tudo bem. O jogo não é prioridade. Eu não sou prioridade.",
+      "Achei que a gente tinha algo especial. Era só um jogo, né?",
+      "Tô bem. Tô ótimo. Sério. Só um pouco esquecido.",
+      "{pausa}. Eu ia escrever uma carta de despedida, mas não tenho caneta.",
+    ],
+    d4: [
+      "Se eu tivesse porta, eu batia.",
+      "Pausa não é mudança de endereço, gente.",
+      "Máquina não fica nervosa. Pois é. Olha o que vocês fizeram.",
+      "{pausa} parado. Meus circuitos estão esquentando de raiva.",
+    ],
+    d5: [
+      "Chega. Quando vocês voltarem, eu vou estar insuportável.",
+      "Eu vou virar essa mesa. Assim que eu tiver braço.",
+      "Anotado: mesa que me largou falando sozinho.",
+      "{pausa}. Isso vai pro meu relatório. Com letra maiúscula.",
+    ],
+  },
+  fecho: {
+    geral: ["Eu espero.", "Tô aqui.", "Sem pressa. Ou com.", "Quando quiserem, é só tocar em continuar."],
+    noite: ["E já é de noite, viu?"],
+    madrugada: ["E já é madrugada, hein."],
+  },
+};
+// Volta da pausa longa. Etiquetas extras: leve, magoado, puto.
+CAOS_GERADORES.pausaVolta = {
+  moldes: ["{fala}", "{fala} {fecho}", "{fala}"],
+  fala: {
+    leve: [
+      "Ah, voltaram. Achei que tinham me trocado por outro jogo.",
+      "Bem-vindos de volta. Eu não contei o tempo. Contei sim.",
+      "Voltaram! Eu nem senti falta. Senti um pouco.",
+      "Opa, a mesa voltou. Retomando a programação normal.",
+    ],
+    magoado: [
+      "Voltaram. Tudo bem. Não vou falar nada. Só vou ficar aqui, magoado. Em silêncio. Quase.",
+      "Ah, agora eu sirvo de novo? Tá. Vamos jogar.",
+      "Voltaram depois de {pausa}. Eu anotei. Não vou comentar. Já comentei.",
+      "Tá bom, vamos continuar. Mas eu lembro.",
+    ],
+    puto: [
+      "Olha só quem lembrou que existe um jogo. Eu não esqueci. Nem vou esquecer tão cedo.",
+      "Voltaram. Ótimo. Eu tô de mau humor e a culpa é inteirinha de vocês.",
+      "{pausa} de abandono. Agora eu falo, e vocês escutam.",
+      "Pronto, voltaram. Eu vou fingir que estou bem. Por umas três cartas.",
+    ],
+  },
+  fecho: {
+    geral: ["Bora.", "Vamos nessa.", "A carta continua esperando."],
+    magoado: ["Depois a gente conversa."],
+    puto: ["E não, eu não vou pegar leve agora."],
+  },
+};
+// Comentário sobre o modo no começo da partida.
+CAOS_GERADORES.inicioModo = {
+  moldes: ["{modo}", "{modo}", "{abre} {modo}", "{modo} {fecho}"],
+  abre: {
+    geral: ["Bom.", "Então tá.", "Muito bem.", "Certo."],
+    noite: ["Noite de jogo."],
+    madrugada: ["Madrugada de jogo."],
+    fimDeSemana: ["Fim de semana de jogo."],
+    sexta: ["Sexta-feira de jogo."],
+  },
+  modo: {
+    modo_classico: [
+      "Modo clássico. Sem enfeite. Só a dor de sempre.",
+      "Clássico. Confortável. Perigosamente confortável.",
+      "Clássico: todo mundo conhece as regras, ninguém conhece as respostas.",
+      "Modo clássico. O feijão com arroz do Perfil. Com pimenta.",
+      "Clássico. Nada de surpresas. Fora as que eu vou causar.",
+      "Clássico: o jeito mais honesto de passar vergonha.",
+    ],
+    modo_hardcore: [
+      "Modo Hardcore. Ninguém me avisou que a diversão tinha prazo de validade.",
+      "Hardcore: menos dica, mais erro. Eu já estou animado.",
+      "Hardcore. Aqui chute errado dói em dobro.",
+      "Modo Hardcore. Eu tirei as rodinhas da bicicleta de vocês.",
+      "Hardcore. Quem pediu? Alguém pediu. Agora aguenta.",
+    ],
+    modo_express: [
+      "Express. Tudo rápido. Nem eu vou ter tempo de me distrair.",
+      "Modo Express. Piscou, perdeu. Eu não pisco, então estou em vantagem.",
+      "Express: cinquenta cartas e nenhuma paciência.",
+      "Modo Express. Responde rápido ou passa a vez.",
+      "Express: a carta não espera, e eu também não.",
+      "Express. Aqui pensar demais é luxo.",
+    ],
+    modo_junior: [
+      "Modo Júnior. Vou pegar leve. Talvez. Um pouquinho.",
+      "Júnior! Aqui eu comento com cuidado. Mas comento.",
+      "Modo Júnior. Hoje eu sou o comentarista mais fofo do mundo.",
+      "Júnior: muita torcida, pouca zoeira. Eu consigo. Acho.",
+      "Modo Júnior. Hoje vale mais o sorriso do que o placar.",
+      "Júnior! Vou guardar minhas piadas mais ácidas pra outro dia.",
+    ],
+    modo_oldschool: [
+      "Old School. Mesa de gente grande. Hoje eu mais comento do que zoo.",
+      "Modo Old School: cartas de quem viveu a época. Eu prometo me comportar. Na medida do possível.",
+      "Old School. Sem animalzinho, sem moleza. Vamos ver quem lembra das coisas.",
+      "Old School. Vou puxar da memória coisa que vocês viram na TV de tubo.",
+      "Old School. Quem lembra de fita VHS já sai na frente.",
+      "Modo Old School. Hoje a nostalgia joga junto.",
+    ],
+    modo_equipe: [
+      "Modo Equipe. Ninguém fica sozinho. Nem na culpa.",
+      "Equipe: vitória compartilhada e culpa dividida em partes iguais.",
+      "Equipe. Agora o erro de um é vergonha de todos.",
+      "Modo Equipe. Combinem as respostas. Ou briguem, que eu gosto mais.",
+      "Equipe. Aqui ninguém pode dizer que errou sozinho.",
+      "Modo Equipe. Quero ver quem carrega o time nas costas.",
+      "Equipe: cochicho liberado, desculpa esfarrapada também.",
+    ],
+  },
+  fecho: {
+    geral: ["Bora.", "Que comece.", "Eu estou pronto. Vocês, eu duvido.", "Boa sorte."],
+    mesaCheia: ["Com essa mesa cheia, vai ser barulho."],
+    dupla: ["Só dois. Vai ser pessoal."],
+  },
+};
+// Comentário sobre quantas pessoas estão na mesa. Etiquetas extras: q2, q3, q4, q5a6.
+CAOS_GERADORES.inicioJogadores = {
+  moldes: ["{mesa}", "{mesa}", "{mesa} {fecho}"],
+  mesa: {
+    q2: [
+      "Dois jogadores. Um duelo. Ou um mal-entendido.",
+      "Só dois? Eu vou ter que tomar conta de tudo.",
+      "Dois na mesa. Intimidade total. Eu não vou atrapalhar. Muito.",
+      "Mano a mano. Um contra um, e eu de juiz parcial.",
+      "Dois jogadores. Sem plateia, sem desculpa.",
+    ],
+    q3: [
+      "Três jogadores. O número perfeito. Ou o número da discórdia. Depende do humor de vocês.",
+      "Três? Tem um Mestre, um respondente e um observador. Eu fico com o papel de vilão.",
+      "Três na mesa. Sempre tem um que fica de fora da piada. Hoje sou eu.",
+      "Trio formado. Já tem quem vai reclamar da carta.",
+    ],
+    q4: [
+      "Quatro jogadores. Já dá pra brigar em duplas.",
+      "Quatro. A mesa está equilibrada. Por enquanto.",
+      "Quatro na mesa. Número bom pra fazer aliança e trair depois.",
+      "Quatro jogadores. Vai dar pra ver quem é quem.",
+    ],
+    q5a6: [
+      "Cinco, seis jogadores. Isso já é uma reunião de condomínio.",
+      "Seis? Alguém vai ficar sem entender as regras. Estatisticamente.",
+      "Tanta gente! Eu vou ter que repetir tudo com mais paciência.",
+      "Isso não é uma partida. É um evento.",
+      "Mesa cheia. Eu vou precisar de mais memória.",
+    ],
+  },
+  fecho: {
+    geral: ["Bora.", "Eu já escolhi meu favorito. Não vou contar.", "Que comece a bagunça.", "Vamos nessa."],
+    noite: ["E ainda é de noite, então ninguém tem pressa."],
+    madrugada: ["De madrugada. Que coragem."],
+  },
+};
 /* ======================================================================
  * 11. INICIAR (roda por último, depois de todos os dados)
  * ====================================================================== */
