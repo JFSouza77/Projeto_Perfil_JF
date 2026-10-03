@@ -238,3 +238,13 @@ body.claro .idade-btn.on {
   width: 44px !important;
   height: 44px !important;
 }
+/* Painel de acessibilidade (1.7.6.5): com letra Enorme o conteúdo passa da altura da tela; a caixa rola
+   em vez de espremer os botões (no iPhone o texto vazava pra fora do botão). */
+.acess-box > *,
+.acess-box .acess-op {
+  flex-shrink: 0;
+}
+.acess-op {
+  height: auto;
+  line-height: 1.25;
+}

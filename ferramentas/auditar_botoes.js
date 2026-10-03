@@ -1,5 +1,5 @@
-// Auditoria dos botões (1.7.6): passa pelas telas do jogo no tema Noturno e no Claro e confere
-// cada botão visível: área de toque (mínimo 44 px), nome acessível e contraste do texto.
+// Auditoria dos botões (1.7.6): passa pelas telas do jogo no Noturno, no Claro e com letra Enorme e confere
+// cada botão visível: área de toque (mínimo 44 px), nome acessível, contraste e texto vazando.
 // Uso: node ferramentas/auditar_botoes.js [Mestre.html] [--json saida.json]
 "use strict";
 const { acharMestre, abrirNavegador } = require("./_navegador");
@@ -77,6 +77,21 @@ function medir(tela) {
     const pai = el.closest("[id]");
     return (pai ? "#" + pai.id + " " : "") + el.tagName.toLowerCase() + (cls.length ? "." + cls.join(".") : "");
   };
+  // Texto vazando: mede só as letras (nós de texto), não o brilho/halo decorativo dos botões neon.
+  const textoVaza = (el, r) => {
+    if (el.tagName === "INPUT" || el.tagName === "SELECT") return false;
+    const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const rg = document.createRange();
+    for (let n = w.nextNode(); n; n = w.nextNode()) {
+      if (!n.textContent.trim()) continue;
+      rg.selectNodeContents(n);
+      for (const t of rg.getClientRects()) {
+        if (t.width < 1) continue;
+        if (t.top < r.top - 2 || t.bottom > r.bottom + 2 || t.left < r.left - 2 || t.right > r.right + 2) return true;
+      }
+    }
+    return false;
+  };
   const els = document.querySelectorAll(
     'button, [role="button"], a[href], input[type="range"], input[type="checkbox"], input[type="text"], input:not([type]), select, .number-btn, .color-swatch, .avatar-swatch',
   );
@@ -128,6 +143,7 @@ function medir(tela) {
       minimo: grande ? 3 : 4.5,
       desativado: !!el.disabled,
       tipo: el.tagName.toLowerCase() + (el.type ? ":" + el.type : ""),
+      vaza: textoVaza(el, r),
       cor: cs.color,
       fundo: bg.indet ? "gradiente/imagem" : `rgb(${Math.round(bg.r)}, ${Math.round(bg.g)}, ${Math.round(bg.b)})`,
     });
@@ -139,8 +155,9 @@ function medir(tela) {
   const navegador = await abrirNavegador();
   const todos = [];
   const erros = [];
-  for (const tema of ["noturno", "claro"]) {
-    const page = await navegador.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
+  for (const tema of ["noturno", "claro", "enorme"]) {
+    // "enorme": letra Enorme na área útil do Safari num iPhone (a barra do navegador come a altura)
+    const page = await navegador.newPage({ viewport: { width: 390, height: tema === "enorme" ? 664 : 844 }, deviceScaleFactor: 1 });
     page.on("pageerror", (e) => erros.push(tema + ": " + e.message));
     await page.route(/fonts\./, (r) => r.abort());
     await page.addInitScript((claro) => {
@@ -149,6 +166,12 @@ function medir(tela) {
       } catch (e) {}
       if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
     }, tema === "claro");
+    if (tema === "enorme")
+      await page.addInitScript(() => {
+        try {
+          localStorage.setItem("perfil5_acessibilidade", JSON.stringify({ letra: 2 }));
+        } catch (e) {}
+      });
     await page.goto("file://" + MESTRE);
     await page.waitForFunction(() => typeof iniciar === "function" && !document.getElementById("goToRulesBtn").disabled);
     await page.evaluate((claro) => typeof temaAplicar === "function" && temaAplicar(claro), tema === "claro");
@@ -255,15 +278,18 @@ function medir(tela) {
   const pequenos = lista.filter((b) => !b.tipo.startsWith("input:text") && (b.w < TOQUE_MIN || b.h < TOQUE_MIN));
   const semNome = lista.filter((b) => !b.nome || !/[\p{L}\p{N}]/u.test(b.nome));
   const baixoContraste = lista.filter((b) => !b.desativado && b.contraste != null && b.contraste < b.minimo);
+  const vazando = lista.filter((b) => b.vaza);
   const linha = (b, extra) => `  ${b.tela.split(" · ")[0].padEnd(7)} ${b.sel.padEnd(42)} ${extra}  "${b.nome}"  [${b.telas.join(", ")}]`;
   console.log(`Auditoria dos botões · ${require("path").basename(MESTRE)}`);
-  console.log(`${lista.length} botões únicos (Noturno + Claro), ${todos.length} medições em ${new Set(todos.map((b) => b.tela)).size} telas.\n`);
+  console.log(`${lista.length} botões únicos (Noturno, Claro e letra Enorme), ${todos.length} medições em ${new Set(todos.map((b) => b.tela)).size} telas.\n`);
   console.log(`Área de toque abaixo de ${TOQUE_MIN} px: ${pequenos.length}`);
   pequenos.forEach((b) => console.log(linha(b, `${b.w}×${b.h}`)));
   console.log(`\nSem nome acessível (só ícone/emoji): ${semNome.length}`);
   semNome.forEach((b) => console.log(linha(b, "")));
   console.log(`\nContraste abaixo do mínimo (${CONTRASTE_MIN}, ou ${CONTRASTE_GRANDE} em texto grande): ${baixoContraste.length}`);
   baixoContraste.forEach((b) => console.log(linha(b, `${b.contraste}:1 (mín ${b.minimo}) ${b.cor} sobre ${b.fundo}`)));
+  console.log(`\nTexto vazando pra fora do botão: ${vazando.length}`);
+  vazando.forEach((b) => console.log(linha(b, `${b.w}×${b.h}`)));
   console.log(erros.length ? "\nErros na página:\n  " + erros.join("\n  ") : "\nSem erro na página.");
   if (SAIDA_JSON) require("fs").writeFileSync(SAIDA_JSON, JSON.stringify(lista, null, 1));
 })();

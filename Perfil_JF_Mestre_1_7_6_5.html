@@ -6,6 +6,11 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.6.5 · 03/10/2026 · "Buttons and Tutorial Update · QoL" = LETRA ENORME SEM VAZAR (print do JF no iPhone).
+          O painel ♿ é uma coluna flex com max-height: com letra Enorme passava da altura e o navegador espremia
+          os botões (flex-shrink), o texto vazava. Agora nada encolhe e a caixa rola. auditar_botoes.js ganhou a
+          rodada "enorme" (letra Enorme, 390×664, área útil do Safari) e a checagem de texto vazando (mede só os
+          nós de texto, não o brilho neon): na 1.7.6.4 acha os 4 botões do print, na 1.7.6.5 zero.
   1.7.6.4 · 03/10/2026 · "Buttons and Tutorial Update · Ajuda do Mestre" = TEMPO EXTRA PRA QUEM LÊ DEVAGAR (pedido do JF,
           testado com a Isabel). js/05d-ajuda-do-mestre.js: idade opcional no cadastro (🧒 Menos de 12 / 🧑 12 ou mais;
           no Equipe vale a faixa 6-12). Mestre menor de 12, iniciante ou aceito pela mesa ganha +20 s pra responder,
@@ -299,7 +304,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.6.4</title>
+<title>Perfil JF · Beta 1.7.6.5</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6538,6 +6543,16 @@ body.claro .idade-btn.on {
   width: 44px !important;
   height: 44px !important;
 }
+/* Painel de acessibilidade (1.7.6.5): com letra Enorme o conteúdo passa da altura da tela; a caixa rola
+   em vez de espremer os botões (no iPhone o texto vazava pra fora do botão). */
+.acess-box > *,
+.acess-box .acess-op {
+  flex-shrink: 0;
+}
+.acess-op {
+  height: auto;
+  line-height: 1.25;
+}
 </style>
 </head>
 <body class="noturno">
@@ -6585,7 +6600,7 @@ body.claro .idade-btn.on {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.6.4 · Buttons and Tutorial Update · Ajuda do Mestre<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.6.5 · Buttons and Tutorial Update · QoL<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -17013,7 +17028,7 @@ function caosInspectorEstado() {
       }</b></div>
       <div class="ci-kv"><span>🦴 Registro da espinha</span><b class="ci-mono">${caosEspinha.log.slice(-5).reverse().map(escapeHtml).join("<br>") || "—"}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.6.4 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.6.5 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -22024,7 +22039,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.6.4 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.6.5 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -24956,7 +24971,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.6.4 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.6.5 · C.A.O.S. 4.0");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -25478,7 +25493,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.6.4 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.6.5 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -59493,6 +59508,18 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.6.5",
+    data: "03/10/2026 · 18:19",
+    nome: "Buttons and Tutorial Update · QoL",
+    t: "Correção pedida pelo JF: com a letra Enorme, o texto não vaza mais pra fora dos botões.",
+    itens: [
+      "🔠 Letra Enorme sem vazar: no painel ♿ Acessibilidade, os botões crescem junto com o texto e a janela rola até o Pronto (no iPhone, a explicação pequena saía pra fora do botão).",
+    ],
+    qol: [
+      "🔍 A auditoria dos botões agora também confere a letra Enorme numa tela do tamanho do iPhone e avisa se algum texto vazar do botão.",
+    ],
+  },
   {
     v: "Beta 1.7.6.4",
     data: "03/10/2026 · 17:54",
