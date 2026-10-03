@@ -4,6 +4,12 @@
   (nunca edite as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.3.5 · 03/10/2026 · "Cards and Rules Update · Parte 6". Pedido do JF: equilibrar o baralho. +400 cartas
+          (nenhuma removida): ANO +101 (10 oldschool, 25 adulto+os de 1919–1959, 66 adulto de 1066 a
+          1916), ANIMAL +149 (55 junior, 74 livre, 20 adulto), COISA +78 (18 junior, 20 livre, 15
+          oldschool, 25 adulto), LUGAR +63 (14 junior, 15 livre, 14 oldschool, 20 adulto), PESSOA +9
+          (5 junior, 4 livre). Total 1000 = 200 por categoria. Vistoria: auditar + ano_math nas 1000;
+          vazamentos corrigidos (Leão, Rinoceronte e novas), "quatro dígitos" tirado de 2001/2002.
   1.7.3.4 · 02/10/2026 · "Cards and Rules Update · Parte 5 (final)". Pente fino nas 51 cartas de
           ANIMAL e 122 de COISA (95 dicas: fatos, ecos internos e vazamentos). Repetições: falas
           iguais entre grupos (nivelZero × acido etc.) e quase iguais no mesmo grupo cortadas (7);
@@ -5847,7 +5853,7 @@ body.claro .caos-pergunta button[data-v="digitar"] {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.3.5 · Cards and Rules Update · Parte 6<br>C.A.O.S. 3.8 · Atualizada em 02/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.3.5 · Cards and Rules Update · Parte 6<br>C.A.O.S. 3.8 · Atualizada em 03/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -48219,7 +48225,7 @@ const ADULT_CARDS = expandDeck([
       "Uma ligação local gastava uma de mim a cada poucos minutos",
       "*Volte 2 casas",
       "Ficava no bolso",
-      "Tinha letras gravadas que indicavam o tipo de ligação",
+      "Precisava ser comprada antes de ir ao orelhão",
       "Fui usada até os anos 90",
       "Hoje sou peça de colecionador",
       "*Volte 3 casas",
@@ -57064,6 +57070,25 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.3.5",
+    data: "03/10/2026 · 00:07",
+    nome: "Cards and Rules Update · Parte 6",
+    t: "400 cartas novas e o baralho equilibrado: agora são 1000 cartas, 200 de cada categoria.",
+    itens: [
+      "⚖️ Baralho equilibrado: Ano, Pessoa, Lugar, Animal e Coisa agora têm exatamente 200 cartas cada. Nenhuma carta antiga saiu.",
+      "📅 101 cartas de Ano: anos que faltavam, de 1066 (a Batalha de Hastings) a 1993, passando pelo Grande Incêndio de Londres (1666), o enforcamento de Tiradentes (1792), o voo do 14-Bis (1906), a inauguração do Cristo Redentor (1931) e o primeiro título mundial do basquete brasileiro (1959).",
+      "🐾 149 cartas de Animal: bichos de casa, de fazenda, do mar e da mata brasileira (lobo-guará, mico-leão-dourado, ariranha, tamanduá e cia.), dinossauros, criaturas da mitologia e até o tardígrado.",
+      "🧸 78 cartas de Coisa: brinquedos (Lego, pipa, pião), comidas (brigadeiro, feijoada, pão de queijo), sentimentos (nostalgia, ansiedade), invenções e, no Old School, Fusca, Kichute, Genius, Mega Drive e a lista telefônica.",
+      "🗺️ 63 cartas de Lugar e 9 de Pessoa: países, cidades, planetas, lugares de desenho (Fenda do Biquíni, Springfield) e clássicos como Mineirão, Hopi Hari e Mappin; e personagens como Bluey, Peppa Pig, Popeye e Ash Ketchum.",
+      "🐣 Júnior mais cheio: o baralho Júnior pulou para mais de 450 cartas, com 180 de Animal.",
+    ],
+    qol: [
+      "🔍 Vistoria geral: as 1000 cartas passaram de novo pelo verificador (20 dicas por carta, especiais no lugar certo, nenhuma resposta repetida) e as contas das cartas de Ano foram conferidas uma a uma.",
+      "🙈 Sem entregar o nome: dezenas de dicas novas e antigas que soltavam um pedaço da resposta foram reescritas (o Leão não cita mais O Rei Leão, o Rinoceronte não diz rinoceronte).",
+      "✍️ Fatos conferidos: datas, recordes e curiosidades das cartas novas checados um por um antes de entrar no jogo.",
+    ],
+  },
   {
     v: "Beta 1.7.3.4",
     data: "02/10/2026 · 22:41",
