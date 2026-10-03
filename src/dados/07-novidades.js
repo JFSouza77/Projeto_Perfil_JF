@@ -1,5 +1,16 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.6.6",
+    data: "03/10/2026 · 18:26",
+    nome: "Buttons and Tutorial Update · QoL",
+    t: "Tutoriais com números redondos: 10 passos no rápido e 35 no manual completo.",
+    itens: [
+      "🎓 Tutorial rápido com 10 passos (continua com menos de 2 minutos): entraram ⭐ \"Às vezes é uma surpresa\" (as instruções especiais) e ⏳ \"Lê devagar? Tudo bem\" (o tempo extra do Mestre).",
+      "📖 Manual completo com 35 passos: o tempo extra do Mestre ganhou um passo próprio, \"Idade e tempo extra\", no capítulo Cadastro.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.6.5",
     data: "03/10/2026 · 18:19",
     nome: "Buttons and Tutorial Update · QoL",
