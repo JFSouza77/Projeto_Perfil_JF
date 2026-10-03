@@ -73,7 +73,7 @@ const TUTORIAL_STEPS = [
     sec: 2,
     icon: "🎙️",
     title: "O Mestre",
-    text: "A cada carta, uma pessoa é o <b>Mestre</b>: segura o celular, <b>não mostra a tela</b> pra ninguém e lê tudo em voz alta. Os outros tentam adivinhar. Na carta seguinte, o celular passa pro próximo da roda.",
+    text: "A cada carta, uma pessoa é o <b>Mestre</b>: segura o celular, <b>não mostra a tela</b> pra ninguém e lê tudo em voz alta. Os outros tentam adivinhar. Na carta seguinte, o celular passa pro próximo da roda.<br>⏳ <b>Ler devagar não tem problema:</b> quem marcou <b>🧒 Menos de 12</b> no cadastro ou entrou como <b>🐣 iniciante</b> ganha tempo extra quando é o Mestre. E se o C.A.O.S. perceber que alguém demora pra ler, ele pergunta à mesa se pode dar esse tempo também.",
   },
   {
     sec: 2,

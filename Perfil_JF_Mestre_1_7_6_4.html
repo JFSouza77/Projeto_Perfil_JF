@@ -6,6 +6,12 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.6.4 · 03/10/2026 · "Buttons and Tutorial Update · Ajuda do Mestre" = TEMPO EXTRA PRA QUEM LÊ DEVAGAR (pedido do JF,
+          testado com a Isabel). js/05d-ajuda-do-mestre.js: idade opcional no cadastro (🧒 Menos de 12 / 🧑 12 ou mais;
+          no Equipe vale a faixa 6-12). Mestre menor de 12, iniciante ou aceito pela mesa ganha +20 s pra responder,
+          +10 s no especial e, no Express, +8 s por dica e +40 s na carta. O C.A.O.S. observa cada Mestre (p.obsM:
+          dicas, estouros e tempo até o veredito); se um fica bem acima da mesa, pergunta à mesa se dá o tempo extra
+          (uma vez por jogador). ADM liga/desliga por jogador. Campos novos no save: idade, mestreAjuda*, obsM.
   1.7.6.3 · 03/10/2026 · "Buttons and Tutorial Update · Parte 4" = O C.A.O.S. SUGERE O TUTORIAL (pedido do JF).
           js/05c-sugestao-tutorial.js (chave nova perfil5_tutorial_visto): "Quer fazer o tutorial? Leva menos de
           dois minutos." ao tocar em Jogar num aparelho sem fichas na memória e no Sou iniciante; uma vez por sessão
@@ -292,7 +298,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.6.3</title>
+<title>Perfil JF · Beta 1.7.6.4</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6487,6 +6493,41 @@ body.claro .tut-caps button:not(.on) {
   border-color: rgba(90, 70, 40, 0.35);
   background: rgba(90, 70, 40, 0.06);
 }
+/* Ajuda do Mestre (1.7.6.4): idade no cadastro. */
+.idade-rot {
+  opacity: 0.85;
+  font-size: 0.8rem;
+  margin-bottom: 6px;
+}
+.idade-rot small {
+  display: block;
+  opacity: 0.8;
+  font-size: 0.72rem;
+}
+.idade-btn {
+  background: transparent !important;
+  color: var(--hc) !important;
+  border: 1.5px solid var(--hc) !important;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--hc) 30%, transparent);
+}
+.idade-btn.on {
+  background: var(--hc) !important;
+  color: #1a1a2e !important;
+}
+.tem-escolha > .idade-btn:not(.on) {
+  opacity: 0.6;
+  box-shadow: none;
+}
+body.claro .idade-btn {
+  background: color-mix(in srgb, var(--hc) 14%, #fffaf0) !important;
+  color: color-mix(in srgb, var(--hc) 45%, #1b1d33) !important;
+  border-color: color-mix(in srgb, var(--hc) 65%, #1b1d33) !important;
+  box-shadow: none;
+}
+body.claro .idade-btn.on {
+  background: color-mix(in srgb, var(--hc) 75%, #1b1d33) !important;
+  color: #fff !important;
+}
 </style>
 </head>
 <body class="noturno">
@@ -6534,7 +6575,7 @@ body.claro .tut-caps button:not(.on) {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.6.3 · Buttons and Tutorial Update · Parte 4<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.6.4 · Buttons and Tutorial Update · Ajuda do Mestre<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -6696,6 +6737,10 @@ body.claro .tut-caps button:not(.on) {
     <div style="display:none; text-align:center; margin-bottom:8px;" id="ageBracketWrap">
       <div style="opacity:0.75; font-size:0.8rem; margin-bottom:6px;">Faixa etária (usada só pra equilibrar os times no sorteio):</div>
       <div class="color-picker-row" id="ageBracketRow" style="justify-content:center; flex-wrap:wrap; gap:8px;"></div>
+    </div>
+    <div style="text-align:center; margin-bottom:8px;" id="idadeWrap">
+      <div class="idade-rot">Idade <small>(opcional · com menos de 12, ganha tempo extra pra ler quando for o Mestre)</small></div>
+      <div class="color-picker-row" id="idadeRow" role="group" aria-label="Idade" style="justify-content:center; flex-wrap:wrap; gap:8px;"></div>
     </div>
     <!-- Adicionar fica depois de tudo que precisa ser escolhido (nome, cor, emoji, zoeira) -->
     <div class="add-player-row add-player-acao" id="addAcaoRow">
@@ -9027,6 +9072,7 @@ function drawHidden() {
   maybeUpdateCaosFatigue();
   caosTalvezVoltar();
   setTimeout(() => caosIniMostrar(players[mestreIndex], "mestre"), 60);
+  setTimeout(mestreAjudaNaCarta, 120);
   cardState = "hidden";
   revealedOrder = [];
   pendingIndex = null;
@@ -9178,9 +9224,9 @@ function startTimer(kind) {
   timerSerial++;
   const durations = {
     pick: PICK_TIME_LIMIT + acessTempoExtra("pick"),
-    response: RESPONSE_TIME_LIMIT + acessTempoExtra("response"),
-    special: SPECIAL_TIME_LIMIT + acessTempoExtra("special"),
-    turn: expressTimes().turn + acessTempoExtra("turn"),
+    response: RESPONSE_TIME_LIMIT + acessTempoExtra("response") + mestreTempoExtra("response"),
+    special: SPECIAL_TIME_LIMIT + acessTempoExtra("special") + mestreTempoExtra("special"),
+    turn: expressTimes().turn + acessTempoExtra("turn") + mestreTempoExtra("turn"),
   };
   timerKind = kind;
   timerEndAt = Date.now() + durations[kind] * 1e3;
@@ -9284,6 +9330,7 @@ function onTimerExpired(kind) {
       });
     }
   } else if (kind === "response") {
+    mestreObsEstouro();
     const skippedName = players[responderIndex] ? escapeHtml(players[responderIndex].name) : "?";
     showTimeoutOverlay("⏰ ACABOU O TEMPO!", `${skippedName} não respondeu a tempo`, () => {
       markWrong();
@@ -9292,7 +9339,10 @@ function onTimerExpired(kind) {
     if (CURRENT_MODE === "express" && cardState === "revealed") {
       const it = pendingIndex !== null && currentCard ? currentCard.clues[pendingIndex] : null;
       if (it && it.type === "special") expressAutoSpecial(it);
-      else expressPass();
+      else {
+        mestreObsEstouro();
+        expressPass();
+      }
     }
   } else if (kind === "special") {
     if (pendingIndex === null) return;
@@ -9362,6 +9412,7 @@ function markCorrect(playerIdxOverride) {
   if (pendingIndex === null || gameEnded) return;
   const item = currentCard.clues[pendingIndex];
   if (item.type !== "clue") return;
+  mestreObsVeredito();
   let scorerIdx = responderIndex;
   if (playerIdxOverride !== void 0 && playerIdxOverride !== null) {
     const allowedScorers = currentCard.isBonus
@@ -9517,6 +9568,7 @@ function markWrong(tipo) {
   if (pendingIndex === null || gameEnded) return;
   const item = currentCard.clues[pendingIndex];
   if (item.type !== "clue") return;
+  mestreObsVeredito();
   clearTimer();
   usedAtLeastOnce = true;
   pendingIndex = null;
@@ -9790,7 +9842,7 @@ function expressRevealNext() {
   return true;
 }
 function startExpressCard() {
-  cardEndAt = Date.now() + expressTimes().card * 1e3;
+  cardEndAt = Date.now() + (expressTimes().card + mestreTempoExtra("card")) * 1e3;
   cardSerial++;
   expressAskWho = false;
   revealedOrder = [];
@@ -9800,6 +9852,7 @@ function startExpressCard() {
 }
 function expressPass() {
   if (CURRENT_MODE !== "express" || cardState !== "revealed" || gameEnded || pendingIndex === null) return;
+  mestreObsVeredito();
   expressAskWho = false;
   streakScorerIdx = null;
   streakCount = 0;
@@ -10030,6 +10083,7 @@ function addPlayer() {
     humor: selectedHumor === "caos" ? caosSortearHumor() : selectedHumor,
     humorCaos: selectedHumor === "caos" || void 0,
     ageBracket: isEquipe ? selectedAgeBracket : null,
+    idade: idadeDoCadastro(isEquipe),
     team: null,
     nickMs: nickWaitStart ? Date.now() - nickWaitStart : null,
     ...(iniFluxo ? { iniciante: true, ini: { dicas: 0, feitas: [], acertou: false } } : {}),
@@ -10040,6 +10094,7 @@ function addPlayer() {
   }
   nickWaitReset();
   hideNickSuggest();
+  idadeLimpar();
   nicksRepertorioGuardar(name);
   caosMemCadastro(players[players.length - 1]);
   input.value = "";
@@ -10270,6 +10325,7 @@ function selectMode(mode, expressCategories, flavor) {
   const isEquipe = CURRENT_FORMAT === "equipe";
   document.getElementById("colorBox").style.display = isEquipe ? "none" : "";
   document.getElementById("ageBracketWrap").style.display = isEquipe ? "block" : "none";
+  idadeMostrar(isEquipe);
   document.getElementById("teamSetupSection").style.display = isEquipe ? "block" : "none";
   resetTeamSetupUI();
   renderAvatarPicker();
@@ -13920,6 +13976,7 @@ Os ${p.score} pontos vão ser divididos: +${parte} pra cada um dos ${resto} que 
       lbl.appendChild(sel);
       sP.appendChild(lbl);
     }
+    admMestreAjudaSecao(sP, redesenhar);
     body.appendChild(sP);
   }
   head.querySelector("#admFechar").addEventListener("click", () => ov.remove());
@@ -14489,6 +14546,236 @@ function tutDepoisDeFechar() {
 function tutPausaAtualizar() {
   const b = document.getElementById("pauseTutBtn");
   if (b) b.style.display = tutVisto() ? "none" : "";
+}
+/* ----------------------------------------------------------------------
+ * 5d. AJUDA DO MESTRE (1.7.6): tempo extra pra quem ainda lê devagar quando é o Mestre.
+ * Nasceu nas partidas do JF com os sobrinhos: a Isabel lê bem, mas ainda agarra em
+ * algumas palavras, e no Express as dicas acabavam antes de a mesa entender a leitura.
+ *
+ * Quem ganha (só quando é o MESTRE da carta):
+ *  · quem marcou 🧒 Menos de 12 no cadastro (no Equipe, a faixa 6-12);
+ *  · quem entrou pelo 🐣 Sou iniciante;
+ *  · quem a mesa aceitou dar, quando o C.A.O.S. percebeu a dificuldade (abaixo), ou pelo ADM.
+ * Quanto: +20 s pra responder, +10 s nas instruções especiais; no Express, +8 s por dica
+ * e +40 s no relógio da carta.
+ *
+ * O C.A.O.S. observa (central de análise da mesa): pra cada Mestre ele anota quanto tempo
+ * cada dica leva até o veredito (Acertou, Errou, Pulou, Absurdo ou Passar) e quantas vezes o
+ * tempo acaba. Se um Mestre fica bem acima do resto da mesa, ele avisa o sistema e pergunta
+ * à mesa, no começo da próxima carta desse Mestre, se pode dar o tempo extra. Quem decide é
+ * a mesa: o C.A.O.S. só observa e sugere (as 3 leis da espinha continuam valendo).
+ * ---------------------------------------------------------------------- */
+const MESTRE_TEMPO_EXTRA = { response: 20, special: 10, turn: 8, card: 40 };
+const IDADE_OPCOES = [
+  { id: "menor", label: "🧒 Menos de 12" },
+  { id: "maior", label: "🧑 12 ou mais" },
+];
+let selectedIdade = null;
+let mestreObsEstourou = false; // o tempo acabou: o veredito que vem logo depois não conta duas vezes
+function jogadorMenor12(p) {
+  return !!p && (p.idade === "menor" || (CURRENT_FORMAT === "equipe" && p.ageBracket === "crianca"));
+}
+function mestreTemAjuda(p) {
+  return !!p && (p.iniciante === true || jogadorMenor12(p) || p.mestreAjuda === true);
+}
+function mestreAtual() {
+  return typeof mestreIndex === "number" && players[mestreIndex] ? players[mestreIndex] : null;
+}
+// Segundos a mais no relógio quando o Mestre da carta tem ajuda.
+function mestreTempoExtra(kind) {
+  if (!starterChosen) return 0;
+  return mestreTemAjuda(mestreAtual()) ? MESTRE_TEMPO_EXTRA[kind] || 0 : 0;
+}
+function mestreAjudaMotivo(p) {
+  if (p.iniciante) return "iniciante";
+  if (jogadorMenor12(p)) return "idade";
+  return "mesa";
+}
+
+/* --- Cadastro: botão de idade (opcional, só no Versus; no Equipe vale a faixa etária) --- */
+function renderIdadePicker() {
+  const row = document.getElementById("idadeRow");
+  if (!row) return;
+  row.innerHTML = IDADE_OPCOES.map(
+    (o) =>
+      `<button type="button" class="main-btn age-swatch idade-btn${o.id === selectedIdade ? " on" : ""}" data-idade="${o.id}" style="--hc:${o.id === "menor" ? "#22d3ee" : "#a78bfa"};" aria-pressed="${o.id === selectedIdade}">${o.label}</button>`,
+  ).join("");
+  row.classList.toggle("tem-escolha", !!selectedIdade);
+  row.querySelectorAll("[data-idade]").forEach((b) =>
+    b.addEventListener("click", () => {
+      // tocar de novo no marcado desmarca (é opcional)
+      selectedIdade = selectedIdade === b.dataset.idade ? null : b.dataset.idade;
+      renderIdadePicker();
+    }),
+  );
+}
+function idadeMostrar(isEquipe) {
+  const w = document.getElementById("idadeWrap");
+  if (w) w.style.display = isEquipe ? "none" : "";
+  renderIdadePicker();
+}
+// Idade do jogador novo (no Equipe, sai da faixa etária).
+function idadeDoCadastro(isEquipe) {
+  if (isEquipe) return selectedAgeBracket ? (selectedAgeBracket === "crianca" ? "menor" : "maior") : null;
+  return selectedIdade;
+}
+function idadeLimpar() {
+  selectedIdade = null;
+  renderIdadePicker();
+}
+
+/* --- Observação do C.A.O.S.: ritmo de cada Mestre --- */
+function mestreObs(p) {
+  if (!p.obsM) p.obsM = { d: 0, e: 0, ms: 0, n: 0 };
+  return p.obsM;
+}
+// Veredito de uma dica (Acertou, Errou, Pulou, Absurdo ou Passar no Express).
+function mestreObsVeredito() {
+  try {
+    if (mestreObsEstourou) {
+      mestreObsEstourou = false;
+      return;
+    }
+    const p = mestreAtual();
+    if (!p || !pendingStartTime) return;
+    const o = mestreObs(p);
+    const ms = Date.now() - pendingStartTime;
+    o.d++;
+    if (ms > 0 && ms < 6e5) {
+      o.ms += ms;
+      o.n++;
+    }
+  } catch (e) {}
+}
+// O tempo da dica acabou sem veredito.
+function mestreObsEstouro() {
+  try {
+    const p = mestreAtual();
+    if (!p) return;
+    const o = mestreObs(p);
+    o.d++;
+    o.e++;
+    mestreObsEstourou = true;
+  } catch (e) {}
+}
+// Esse Mestre está com dificuldade, comparado com o resto da mesa?
+function mestreDificuldade(p) {
+  const o = p && p.obsM;
+  if (!o || o.d < 4) return false;
+  let d = 0,
+    e = 0,
+    ms = 0,
+    n = 0;
+  players.forEach((q) => {
+    if (q === p || !q.obsM || q.obsM.d < 3) return;
+    d += q.obsM.d;
+    e += q.obsM.e;
+    ms += q.obsM.ms;
+    n += q.obsM.n;
+  });
+  const taxa = o.e / o.d;
+  const taxaMesa = d ? e / d : null;
+  const porEstouro = o.e >= 2 && taxa >= 0.4 && (taxaMesa === null ? taxa >= 0.5 : taxa >= Math.max(0.2, taxaMesa * 2));
+  const porDemora = o.n >= 3 && n >= 4 && o.ms / o.n >= (ms / n) * 1.6;
+  return porEstouro || porDemora;
+}
+const MESTRE_AJUDA_FALAS = {
+  idade: (n) => `[C.A.O.S.] ${n}, já que você é mais novinho, toma aí um tempinho extra pra ler a carta. Sem pressa.`,
+  iniciante: (n) => `[C.A.O.S.] ${n}, primeira vez de Mestre? Ganhou um tempinho extra pra ler. Respira e vai.`,
+  mesa: (n) => `[C.A.O.S.] Tempo extra ligado pra ${n}. Pode ler com calma, a mesa espera.`,
+};
+// Começo da carta (drawHidden): avisa quem tem ajuda ou pergunta à mesa se o C.A.O.S. notou dificuldade.
+function mestreAjudaNaCarta() {
+  try {
+    if (gameEnded || !starterChosen || cardState !== "hidden") return;
+    const p = mestreAtual();
+    if (!p) return;
+    if (mestreTemAjuda(p)) {
+      if (p.mestreAjudaAvisado) return;
+      p.mestreAjudaAvisado = true;
+      const fala = MESTRE_AJUDA_FALAS[mestreAjudaMotivo(p)](p.name);
+      caosFalaAgendar(() => fala, p.iniciante ? 4200 : 1600);
+      caosLog("mestreAjuda", `tempo extra de Mestre ativo pra ${p.name} (${mestreAjudaMotivo(p)})`);
+      return;
+    }
+    if (p.mestreAjudaPerguntado || !mestreDificuldade(p)) return;
+    p.mestreAjudaPerguntado = true;
+    const o = p.obsM;
+    caosLog(
+      "mestreAjuda",
+      `observou dificuldade de ${p.name} como Mestre: ${o.e} de ${o.d} dicas sem veredito no tempo, média ${o.n ? Math.round(o.ms / o.n / 1e3) : "?"} s`,
+    );
+    mestreAjudaPerguntar(p);
+  } catch (e) {}
+}
+function mestreAjudaPerguntar(p) {
+  const { ov, box } = caosModalBase();
+  ov.id = "mestreAjudaModal";
+  ov.setAttribute("role", "dialog");
+  ov.setAttribute("aria-label", "Tempo extra pro Mestre");
+  box.style.borderColor = "#22d3ee";
+  const extra =
+    CURRENT_MODE === "express"
+      ? `+${MESTRE_TEMPO_EXTRA.turn} s em cada dica e +${MESTRE_TEMPO_EXTRA.card} s na carta`
+      : `+${MESTRE_TEMPO_EXTRA.response} s pra responder`;
+  const msg = `🤖 Mesa, anotei uma coisa: quando ${p.name} é o Mestre, as dicas demoram mais pra sair e o tempo acaba mais vezes. Ler em voz alta às vezes é difícil mesmo.\n\nVamos dar um tempinho extra pra ${p.name} quando for o Mestre? (${extra})`;
+  const row = caosModalRow();
+  const fechar = () => {
+    try {
+      caosVoiceCancel();
+    } catch (e) {}
+    ov.remove();
+  };
+  row.append(
+    caosModalBtn("Agora não", "#444a66", () => {
+      fechar();
+      caosLog("mestreAjuda", `mesa recusou o tempo extra pra ${p.name}`);
+      saveGameState();
+    }),
+    caosModalBtn("⏳ Dar tempo extra", "#0e7490", () => {
+      fechar();
+      p.mestreAjuda = true;
+      p.mestreAjudaAvisado = true;
+      caosLog("mestreAjuda", `mesa aceitou: tempo extra de Mestre pra ${p.name}`);
+      saveGameState();
+      showToastMessage(MESTRE_AJUDA_FALAS.mesa(p.name), null, true);
+    }),
+  );
+  box.append(caosModalMsg(msg), row);
+  document.body.appendChild(ov);
+  try {
+    caosFalarNormal(`[C.A.O.S.] Mesa, quando ${p.name} é o Mestre, as dicas demoram mais. Vamos dar um tempinho extra?`);
+  } catch (e) {}
+}
+
+/* --- ADM: ligar/desligar o tempo extra de Mestre de cada jogador --- */
+function admMestreAjudaSecao(sec, redesenhar) {
+  if (!players.length) return;
+  const tit = document.createElement("div");
+  tit.className = "ci-note";
+  tit.textContent = "⏳ Tempo extra quando for o Mestre (menos de 12 e iniciante já ganham sozinhos):";
+  sec.appendChild(tit);
+  players.forEach((p) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "ci-btn ci-wide";
+    const auto = p.iniciante || jogadorMenor12(p);
+    const on = mestreTemAjuda(p);
+    b.setAttribute("aria-pressed", String(on));
+    b.textContent = `${on ? "✅" : "⬜"} ${p.name}${auto ? (p.iniciante ? " (iniciante)" : " (menos de 12)") : ""}`;
+    if (auto) {
+      b.disabled = true;
+      b.style.opacity = "0.6";
+    }
+    b.addEventListener("click", () => {
+      p.mestreAjuda = !p.mestreAjuda;
+      p.mestreAjudaPerguntado = true;
+      caosLog("adm", `tempo extra de Mestre ${p.mestreAjuda ? "ligado" : "desligado"} pra ${p.name}`);
+      saveGameState();
+      redesenhar();
+    });
+    sec.appendChild(b);
+  });
 }
 /* ======================================================================
  * 6. VOZ, SOM E VIBRAÇÃO
@@ -16713,7 +17000,7 @@ function caosInspectorEstado() {
       }</b></div>
       <div class="ci-kv"><span>🦴 Registro da espinha</span><b class="ci-mono">${caosEspinha.log.slice(-5).reverse().map(escapeHtml).join("<br>") || "—"}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.6.3 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.6.4 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -21724,7 +22011,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.6.3 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.6.4 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -23590,6 +23877,13 @@ function sanitizeLoadedState(s) {
             }
           : {}),
         ...(p.formado === true ? { formado: true } : {}),
+        ...(p.idade === "menor" || p.idade === "maior" ? { idade: p.idade } : {}),
+        ...(p.mestreAjuda === true ? { mestreAjuda: true } : {}),
+        ...(p.mestreAjudaPerguntado === true ? { mestreAjudaPerguntado: true } : {}),
+        ...(p.mestreAjudaAvisado === true ? { mestreAjudaAvisado: true } : {}),
+        ...(p.obsM && typeof p.obsM === "object"
+          ? { obsM: { d: num(p.obsM.d, 0), e: num(p.obsM.e, 0), ms: num(p.obsM.ms, 0), n: num(p.obsM.n, 0) } }
+          : {}),
         ...(p.humorCaos === true ? { humorCaos: true } : {}),
         ...(p.humorPergunta === true ? { humorPergunta: true } : {}),
         ...(p.emo && typeof p.emo.h === "string" ? { emo: { h: p.emo.h.replace(/[^AaEPX]/g, "").slice(-8) } } : {}),
@@ -23943,6 +24237,7 @@ function loadGameState() {
       const isEquipe = CURRENT_FORMAT === "equipe";
       document.getElementById("colorBox").style.display = isEquipe ? "none" : "";
       document.getElementById("ageBracketWrap").style.display = isEquipe ? "block" : "none";
+      idadeMostrar(isEquipe);
       document.getElementById("teamSetupSection").style.display = isEquipe ? "block" : "none";
       if (isEquipe) {
         if (Object.keys(teams).length > 0) {
@@ -24648,7 +24943,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.6.3 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.6.4 · C.A.O.S. 4.0");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -25170,7 +25465,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.6.3 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.6.4 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -58734,7 +59029,7 @@ const TUTORIAL_STEPS = [
     sec: 2,
     icon: "🎙️",
     title: "O Mestre",
-    text: "A cada carta, uma pessoa é o <b>Mestre</b>: segura o celular, <b>não mostra a tela</b> pra ninguém e lê tudo em voz alta. Os outros tentam adivinhar. Na carta seguinte, o celular passa pro próximo da roda.",
+    text: "A cada carta, uma pessoa é o <b>Mestre</b>: segura o celular, <b>não mostra a tela</b> pra ninguém e lê tudo em voz alta. Os outros tentam adivinhar. Na carta seguinte, o celular passa pro próximo da roda.<br>⏳ <b>Ler devagar não tem problema:</b> quem marcou <b>🧒 Menos de 12</b> no cadastro ou entrou como <b>🐣 iniciante</b> ganha tempo extra quando é o Mestre. E se o C.A.O.S. perceber que alguém demora pra ler, ele pergunta à mesa se pode dar esse tempo também.",
   },
   {
     sec: 2,
@@ -59185,6 +59480,22 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.6.4",
+    data: "03/10/2026 · 17:54",
+    nome: "Buttons and Tutorial Update · Ajuda do Mestre",
+    t: "Ler em voz alta ainda é difícil pra alguns. Agora quem lê mais devagar ganha um tempinho extra quando é o Mestre.",
+    itens: [
+      "🧒 Idade no cadastro: 🧒 Menos de 12 ou 🧑 12 ou mais (é opcional). No Equipe, vale a faixa de idade que já existia.",
+      "⏳ Tempo extra pro Mestre: quem tem menos de 12 ou é iniciante ganha +20 s pra responder quando é o Mestre. No Express, +8 s em cada dica e +40 s na carta.",
+      "🤖 O C.A.O.S. percebe: ele observa quanto tempo cada Mestre leva pra ler e quantas vezes o tempo acaba. Se alguém está com dificuldade, ele pergunta à mesa se pode dar o tempo extra. Quem decide é a mesa.",
+      "🗣️ \"Já que você é mais novinho, toma aí um tempinho extra pra ler a carta.\": o C.A.O.S. avisa na primeira vez que a pessoa vira Mestre.",
+    ],
+    qol: [
+      "🛡️ ADM: liga ou desliga o tempo extra de Mestre de cada jogador.",
+      "📖 O Manual explica o tempo extra no passo do Mestre.",
+    ],
+  },
   {
     v: "Beta 1.7.6.3",
     data: "03/10/2026 · 17:41",

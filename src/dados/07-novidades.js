@@ -1,5 +1,21 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.6.4",
+    data: "03/10/2026 · 17:54",
+    nome: "Buttons and Tutorial Update · Ajuda do Mestre",
+    t: "Ler em voz alta ainda é difícil pra alguns. Agora quem lê mais devagar ganha um tempinho extra quando é o Mestre.",
+    itens: [
+      "🧒 Idade no cadastro: 🧒 Menos de 12 ou 🧑 12 ou mais (é opcional). No Equipe, vale a faixa de idade que já existia.",
+      "⏳ Tempo extra pro Mestre: quem tem menos de 12 ou é iniciante ganha +20 s pra responder quando é o Mestre. No Express, +8 s em cada dica e +40 s na carta.",
+      "🤖 O C.A.O.S. percebe: ele observa quanto tempo cada Mestre leva pra ler e quantas vezes o tempo acaba. Se alguém está com dificuldade, ele pergunta à mesa se pode dar o tempo extra. Quem decide é a mesa.",
+      "🗣️ \"Já que você é mais novinho, toma aí um tempinho extra pra ler a carta.\": o C.A.O.S. avisa na primeira vez que a pessoa vira Mestre.",
+    ],
+    qol: [
+      "🛡️ ADM: liga ou desliga o tempo extra de Mestre de cada jogador.",
+      "📖 O Manual explica o tempo extra no passo do Mestre.",
+    ],
+  },
+  {
     v: "Beta 1.7.6.3",
     data: "03/10/2026 · 17:41",
     nome: "Buttons and Tutorial Update · Parte 4",

@@ -456,6 +456,7 @@ function drawHidden() {
   maybeUpdateCaosFatigue();
   caosTalvezVoltar();
   setTimeout(() => caosIniMostrar(players[mestreIndex], "mestre"), 60);
+  setTimeout(mestreAjudaNaCarta, 120);
   cardState = "hidden";
   revealedOrder = [];
   pendingIndex = null;
@@ -607,9 +608,9 @@ function startTimer(kind) {
   timerSerial++;
   const durations = {
     pick: PICK_TIME_LIMIT + acessTempoExtra("pick"),
-    response: RESPONSE_TIME_LIMIT + acessTempoExtra("response"),
-    special: SPECIAL_TIME_LIMIT + acessTempoExtra("special"),
-    turn: expressTimes().turn + acessTempoExtra("turn"),
+    response: RESPONSE_TIME_LIMIT + acessTempoExtra("response") + mestreTempoExtra("response"),
+    special: SPECIAL_TIME_LIMIT + acessTempoExtra("special") + mestreTempoExtra("special"),
+    turn: expressTimes().turn + acessTempoExtra("turn") + mestreTempoExtra("turn"),
   };
   timerKind = kind;
   timerEndAt = Date.now() + durations[kind] * 1e3;
@@ -713,6 +714,7 @@ function onTimerExpired(kind) {
       });
     }
   } else if (kind === "response") {
+    mestreObsEstouro();
     const skippedName = players[responderIndex] ? escapeHtml(players[responderIndex].name) : "?";
     showTimeoutOverlay("⏰ ACABOU O TEMPO!", `${skippedName} não respondeu a tempo`, () => {
       markWrong();
@@ -721,7 +723,10 @@ function onTimerExpired(kind) {
     if (CURRENT_MODE === "express" && cardState === "revealed") {
       const it = pendingIndex !== null && currentCard ? currentCard.clues[pendingIndex] : null;
       if (it && it.type === "special") expressAutoSpecial(it);
-      else expressPass();
+      else {
+        mestreObsEstouro();
+        expressPass();
+      }
     }
   } else if (kind === "special") {
     if (pendingIndex === null) return;
@@ -791,6 +796,7 @@ function markCorrect(playerIdxOverride) {
   if (pendingIndex === null || gameEnded) return;
   const item = currentCard.clues[pendingIndex];
   if (item.type !== "clue") return;
+  mestreObsVeredito();
   let scorerIdx = responderIndex;
   if (playerIdxOverride !== void 0 && playerIdxOverride !== null) {
     const allowedScorers = currentCard.isBonus
@@ -946,6 +952,7 @@ function markWrong(tipo) {
   if (pendingIndex === null || gameEnded) return;
   const item = currentCard.clues[pendingIndex];
   if (item.type !== "clue") return;
+  mestreObsVeredito();
   clearTimer();
   usedAtLeastOnce = true;
   pendingIndex = null;
@@ -1219,7 +1226,7 @@ function expressRevealNext() {
   return true;
 }
 function startExpressCard() {
-  cardEndAt = Date.now() + expressTimes().card * 1e3;
+  cardEndAt = Date.now() + (expressTimes().card + mestreTempoExtra("card")) * 1e3;
   cardSerial++;
   expressAskWho = false;
   revealedOrder = [];
@@ -1229,6 +1236,7 @@ function startExpressCard() {
 }
 function expressPass() {
   if (CURRENT_MODE !== "express" || cardState !== "revealed" || gameEnded || pendingIndex === null) return;
+  mestreObsVeredito();
   expressAskWho = false;
   streakScorerIdx = null;
   streakCount = 0;
@@ -1459,6 +1467,7 @@ function addPlayer() {
     humor: selectedHumor === "caos" ? caosSortearHumor() : selectedHumor,
     humorCaos: selectedHumor === "caos" || void 0,
     ageBracket: isEquipe ? selectedAgeBracket : null,
+    idade: idadeDoCadastro(isEquipe),
     team: null,
     nickMs: nickWaitStart ? Date.now() - nickWaitStart : null,
     ...(iniFluxo ? { iniciante: true, ini: { dicas: 0, feitas: [], acertou: false } } : {}),
@@ -1469,6 +1478,7 @@ function addPlayer() {
   }
   nickWaitReset();
   hideNickSuggest();
+  idadeLimpar();
   nicksRepertorioGuardar(name);
   caosMemCadastro(players[players.length - 1]);
   input.value = "";
@@ -1699,6 +1709,7 @@ function selectMode(mode, expressCategories, flavor) {
   const isEquipe = CURRENT_FORMAT === "equipe";
   document.getElementById("colorBox").style.display = isEquipe ? "none" : "";
   document.getElementById("ageBracketWrap").style.display = isEquipe ? "block" : "none";
+  idadeMostrar(isEquipe);
   document.getElementById("teamSetupSection").style.display = isEquipe ? "block" : "none";
   resetTeamSetupUI();
   renderAvatarPicker();

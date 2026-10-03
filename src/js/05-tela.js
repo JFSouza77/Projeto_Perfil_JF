@@ -3027,6 +3027,7 @@ Os ${p.score} pontos vão ser divididos: +${parte} pra cada um dos ${resto} que 
       lbl.appendChild(sel);
       sP.appendChild(lbl);
     }
+    admMestreAjudaSecao(sP, redesenhar);
     body.appendChild(sP);
   }
   head.querySelector("#admFechar").addEventListener("click", () => ov.remove());
