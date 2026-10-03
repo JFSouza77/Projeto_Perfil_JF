@@ -1,0 +1,541 @@
+/* ===== Modo Claro "Papel" (Noturno é o padrão) =====
+   Identidade própria, não é o Noturno clareado: papel creme, tinta azul-escura,
+   superfícies brancas com sombra suave, cores chapadas e NENHUM brilho neon. */
+body.claro {
+  --bg: #f8edd5;
+  --card-bg: #fffaf0;
+  --text-dark: #22263f;
+  --claro-papel: #f8edd5;
+  --claro-sup: #fffaf0;
+  --claro-sup2: #fdf4e3;
+  --claro-borda: #e8d6b4;
+  --claro-txt: #22263f;
+  --claro-suave: #5f6276;
+  --claro-sombra: 0 2px 10px rgba(60, 45, 25, 0.09);
+  --claro-sombra2: 0 6px 18px rgba(60, 45, 25, 0.12);
+  background: radial-gradient(circle at 50% -10%, #fdf5e4 0%, #f8edd5 55%, #f1e2c3 100%);
+  color: var(--claro-txt);
+}
+html.claro {
+  background: #f1e2c3;
+}
+/* sem brilho: o neon é coisa da noite */
+body.claro .splash-title.splash-neon,
+body.claro .splash-dice,
+body.claro .player-name-neon,
+body.claro h1,
+body.claro h2,
+body.claro h3,
+body.claro .mc-title,
+body.claro .roulette-reel,
+body.claro .ans-nome,
+body.claro .cad-tit {
+  text-shadow: none !important;
+}
+body.claro .splash-title.splash-neon {
+  filter: none;
+}
+body:not(.batata-mode).claro .splash-dice {
+  filter: drop-shadow(0 6px 8px rgba(60, 45, 25, 0.25));
+}
+body.claro .floating-word {
+  color: #4a3410;
+}
+/* bordas giratórias e brilhos animados ficam só no Noturno */
+body.claro .btn-neo:before,
+body.claro .mc-badge:before,
+body.claro .mc-icon:before,
+body.claro .mode-select-wrap.mc-wrap.mode-selected:before {
+  display: none;
+}
+/* superfícies */
+body.claro .card,
+body.claro .mode-btn.mc-card,
+body.claro .splash-ico,
+body.claro .splash-menu,
+body.claro .jf-modal,
+body.claro .tut-box,
+body.claro .stats-box,
+body.claro .voz-panel,
+body.claro .rules-box,
+body.claro .hall-placa,
+body.claro .nov-item,
+body.claro .mini-scoreboard li,
+body.claro .final-ranking-list li {
+  background: var(--claro-sup);
+  color: var(--claro-txt);
+  border: 1px solid var(--claro-borda);
+  box-shadow: var(--claro-sombra);
+}
+body.claro .card {
+  border-radius: 18px;
+  box-shadow: var(--claro-sombra2);
+}
+/* 1.7.3.1: carta virada no Claro: o mesmo desenho do Noturno, em tons de lavanda */
+body.claro .card.face-down {
+  background: radial-gradient(ellipse 80% 65% at 50% 36%, #ffffff 0%, #f8f3ff 32%, #ece2fd 66%, #ddcdfb 100%);
+  color: #2e1065;
+  border: 1.5px solid #8b5cf6;
+  box-shadow:
+    0 10px 22px #7c3aed33,
+    inset 0 0 24px #a78bfa40;
+}
+body.claro .card.face-down::before {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 8px #a855f740;
+}
+body.claro .card.face-down::after {
+  border-color: #b8860b80;
+}
+body.claro .verso-canto {
+  color: #b8860b;
+  text-shadow: none;
+}
+body.claro .card.face-down .verso-emblema {
+  filter: drop-shadow(0 2px 6px #7c3aed55);
+  animation: none;
+}
+body.claro .verso-emblema .vs-p {
+  fill: #4c1d95;
+}
+body.claro .verso-frase {
+  color: #7c3aed;
+  text-shadow: none;
+}
+body.claro .card.face-down .mestre-destaque {
+  background: #ffffffb3;
+  border-color: #7c3aed;
+  box-shadow: none;
+}
+body.claro .final-ranking-list li.first-place {
+  background: #fff7df;
+  border-color: #ecd28f;
+}
+body.claro .nov-item[open] {
+  border-color: #c9b9ef;
+  background: #faf7ff;
+}
+body.claro .mvp-spotlight {
+  color: #9a5b00;
+  background: #fff4dc;
+  border-color: #ecd28f;
+}
+body.claro .mode-btn.mc-card .mc-title,
+body.claro .voz-row,
+body.claro .splash-menu-tit,
+body.claro .casa-sorteio-tit {
+  color: var(--claro-txt);
+}
+body.claro .mode-btn.mc-card .mc-desc,
+body.claro .ft-lb,
+body.claro .pause-tip-count,
+body.claro #vozLista,
+body.claro .btn-sec,
+body.claro .pause-tip-next {
+  color: var(--claro-suave);
+}
+body.claro .btn-sec,
+body.claro .pause-tip-next {
+  border-color: var(--claro-borda);
+  background: var(--claro-sup);
+}
+/* 1.7.3.1: identidade no Modo Claro: cada coisa com o tom da sua cor, sem neon */
+body.claro .mode-btn.mc-card {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--mc) 24%, #fffaf0),
+    color-mix(in srgb, var(--mc) 10%, #fffaf0)
+  );
+  border: 1.5px solid color-mix(in srgb, var(--mc) 55%, #fffaf0);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--mc) 22%, transparent);
+}
+body.claro .mode-btn.mc-card .mc-title {
+  color: color-mix(in srgb, var(--mc) 45%, #1b1d33);
+}
+body.claro .mode-btn.mc-card .mc-desc {
+  color: #3d3852;
+}
+body.claro .mc-rainbow .mode-btn.mc-card {
+  background: linear-gradient(135deg, #fecaca, #fde68a, #bbf7d0, #bfdbfe, #e9d5ff);
+  border-color: #c4b5fd;
+}
+body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-card {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--mc) 42%, #fffaf0),
+    color-mix(in srgb, var(--mc) 22%, #fffaf0)
+  );
+  border: 2.5px solid color-mix(in srgb, var(--mc) 80%, #1b1d33);
+}
+body.claro .humor-btn {
+  background: color-mix(in srgb, var(--hc) 16%, #fffaf0) !important;
+  border: 1.5px solid color-mix(in srgb, var(--hc) 65%, #1b1d33) !important;
+}
+body.claro .humor-btn.on {
+  background: color-mix(in srgb, var(--hc) 80%, #1b1d33) !important;
+  color: #fff !important;
+}
+body.claro .mc-back {
+  display: block;
+  width: fit-content;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: #ede9fe;
+  border: 1px solid #c4b5fd;
+  
+  font-weight: 700;
+  text-decoration: none;
+}
+body.claro .pause-tip-card {
+  background: linear-gradient(135deg, #f3e8ff, #fdf4ff);
+  border: 1.5px solid #c4b5fd;
+  box-shadow: 0 4px 14px #7c3aed1f;
+}
+body.claro #pauseTemaBtn { --cc: #6366f1; }
+body.claro #pauseVozBtn { --cc: #0d9488; }
+body.claro #pauseTrocarModoBtn { --cc: #d97706; }
+body.claro #pauseExportBtn { --cc: #059669; }
+body.claro #pauseTemaBtn,
+body.claro #pauseVozBtn,
+body.claro #pauseTrocarModoBtn,
+body.claro #pauseExportBtn {
+  background: color-mix(in srgb, var(--cc) 14%, #fffaf0);
+  border: 1.5px solid color-mix(in srgb, var(--cc) 50%, transparent);
+  color: color-mix(in srgb, var(--cc) 60%, #1b1d33);
+  border-radius: 14px;
+}
+body.claro .mini-scoreboard li {
+  background: color-mix(in srgb, var(--pc, #a78bfa) 16%, #fffaf0);
+  border: 1.5px solid color-mix(in srgb, var(--pc, #a78bfa) 55%, transparent);
+}
+/* rodapé no Claro: o mesmo neon do Noturno, num tom mais escuro pra aparecer no papel */
+body.claro .ft-btn {
+  --ftd: color-mix(in srgb, var(--ft) 62%, #1b1d33);
+}
+body.claro .ft-ic {
+  background: transparent;
+  border-color: var(--ftd);
+  color: var(--ftd);
+  box-shadow:
+    0 0 10px color-mix(in srgb, var(--ftd) 45%, transparent),
+    inset 0 0 8px color-mix(in srgb, var(--ftd) 18%, transparent);
+}
+body.claro .ft-pause i {
+  background: var(--ftd);
+}
+body.claro .ft-ic:after {
+  background: conic-gradient(from var(--ft-rot, 0deg), transparent 0deg 290deg, var(--ftd) 340deg, transparent 360deg);
+}
+/* 1.7.3.1: contraste no Modo Claro (textos pastel que sumiam no papel) */
+body.claro #redrawMestreBtn {
+  color: var(--claro-txt) !important;
+  background: var(--claro-sup) !important;
+  border-color: var(--claro-borda) !important;
+}
+body.claro .mc-back {
+  color: #6d28d9;
+  opacity: 1;
+}
+body.claro .humor-btn:not(.on) {
+  color: color-mix(in srgb, var(--hc) 55%, #1b1d33) !important;
+  opacity: 1;
+}
+body.claro .tem-escolha > .humor-btn:not(.on) {
+  opacity: 0.55;
+}
+body.claro .answer-toggle:not(.open):not(.livre) {
+  color: #7a5600;
+  border-color: #c99a1a;
+}
+body.claro .btn-sec[style*="--cc"] {
+  color: color-mix(in srgb, var(--cc) 50%, #1b1d33);
+  border-color: color-mix(in srgb, var(--cc) 60%, transparent);
+}
+/* fala do C.A.O.S. na abertura: balão claro, carinha no mesmo fundo (sem caixa cinza) */
+body.claro .splash-caos {
+  background: var(--claro-sup);
+  box-shadow: var(--claro-sombra);
+}
+body.claro .splash-caos .sc-face {
+  background: transparent;
+  color: color-mix(in srgb, var(--emo-cor, #60a5fa) 70%, #1b1d33);
+  text-shadow: none;
+}
+body.claro .splash-caos .sc-txt {
+  color: var(--claro-txt);
+}
+body.claro .splash-embreve {
+  background: #fff7e6;
+  border-color: #d97706;
+  box-shadow: 0 4px 12px #b8860b26;
+  animation: none;
+}
+body.claro .splash-embreve .eb-selo {
+  background: #d97706;
+  color: #fff;
+}
+body.claro .splash-embreve .eb-titulo {
+  color: #6d28d9;
+  text-shadow: none;
+}
+body.claro .splash-embreve .eb-sub {
+  color: var(--claro-suave);
+}
+/* versão e data da abertura: um tom mais escuro pra ler bem no papel */
+body.claro .splash-buildlog {
+  opacity: 0.8;
+  color: var(--claro-suave);
+}
+/* títulos em tinta; os coloridos ficam escurecidos (sem neon) */
+body.claro h3,
+body.claro .rules-box h3,
+body.claro .rules-box.resumo-neon > h3,
+body.claro .jf-modal h3,
+body.claro .nov-modal h3,
+body.claro .resumo-box h3,
+body.claro .hall-box h3,
+body.claro .stats-box h3 {
+  filter: brightness(0.68) saturate(1.4);
+}
+body.claro .splash-tagline,
+body.claro .add-falta,
+body.claro .ini-start,
+body.claro #playerWarning {
+  color: #9a5b00 !important;
+  text-shadow: none;
+}
+body.claro #playerPanel > h2.cad-tit,
+body.claro #trocarModoBtn,
+body.claro .tut-btn {
+  color: #0e6b84;
+}
+body.claro .hall-zerar {
+  color: #b4123a;
+}
+body.claro .player-name-neon {
+  filter: brightness(0.62) saturate(1.5);
+}
+body.claro .hall-tit {
+  filter: brightness(0.7) saturate(1.3);
+}
+/* cartões de formato e modo: branco; escolhido = borda e fundo da cor do modo */
+body.claro .mode-btn.mc-card {
+  border: 1.5px solid var(--claro-borda);
+}
+body.claro .mc-badge:after {
+  background: color-mix(in srgb, var(--mc) 13%, var(--claro-sup));
+}
+body.claro .mc-badge {
+  color: color-mix(in srgb, var(--mc) 70%, #1b1d33);
+  background: color-mix(in srgb, var(--mc) 40%, var(--claro-sup));
+}
+body.claro .mc-icon:after {
+  background: color-mix(in srgb, var(--mc) 11%, var(--claro-sup));
+}
+body.claro .mc-icon {
+  background: color-mix(in srgb, var(--mc) 35%, var(--claro-sup));
+}
+body.claro .mode-select-wrap.mc-wrap.mode-selected {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-card {
+  background: color-mix(in srgb, var(--mc) 9%, var(--claro-sup));
+  border: 2px solid var(--mc);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--mc) 22%, transparent);
+}
+body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-title {
+  color: color-mix(in srgb, var(--mc) 60%, #1b1d33);
+}
+/* 1.7.3.1: no Claro o brilho que gira nas bordas dos botões da carta e da dica vem num tom escuro da cor (o branco sumia no fundo claro e parecia falha) */
+body.claro .card .guess-btns > button:before,
+body.claro .card .mesa-btns button:before,
+body.claro .card .continue-btn:before,
+body.claro .card .flip-btn:before {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 250deg,
+    color-mix(in srgb, var(--mc) 50%, transparent) 310deg,
+    color-mix(in srgb, var(--mc) 55%, #1b1d33) 332deg,
+    color-mix(in srgb, var(--mc) 50%, transparent) 345deg,
+    transparent 360deg
+  );
+  opacity: 0.9;
+}
+body.claro .spotlight-box:after {
+  background: conic-gradient(
+    from var(--card-rot, 0deg),
+    transparent 0deg 250deg,
+    rgba(190, 40, 70, 0.55) 315deg,
+    #9f1239 335deg,
+    rgba(190, 40, 70, 0.55) 350deg,
+    transparent 360deg
+  );
+}
+body.claro .mode-select-wrap.mc-wrap.mode-dimmed {
+  opacity: 0.62;
+}
+/* 1.7.3.1: "Ver regras completas" no Claro: pílula lilás e regras em faixas visíveis */
+body.claro .pause-rules > summary,
+body.claro .rules-more > summary {
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: #ede9fe;
+  border: 1px solid #c4b5fd;
+  color: #5b21b6;
+  font-weight: 700;
+  opacity: 1;
+}
+body.claro .pause-rules[open] > summary,
+body.claro .rules-more[open] > summary {
+  margin-bottom: 10px;
+}
+body.claro .rules-more li:nth-child(odd),
+body.claro .pause-rules li:nth-child(odd) {
+  border-color: var(--claro-borda);
+  background: var(--claro-sup);
+}
+/* 1.7.3.1: Exportar/Importar da tela de regras: no Claro o texto vinha clareado pro branco */
+body.claro #welcomeScreen .btn-sec {
+  color: color-mix(in srgb, var(--cc, #6d4ad8) 55%, #1b1d33);
+  border-color: color-mix(in srgb, var(--cc, #6d4ad8) 60%, transparent);
+  background: color-mix(in srgb, var(--cc, #6d4ad8) 10%, var(--claro-sup));
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--cc, #6d4ad8) 18%, transparent);
+}
+/* 1.7.3.1: escolhido no Claro mantém a cor do modo (e o arco-íris no Aleatório), com borda forte e brilho suave */
+body.claro .mode-select-wrap.mc-wrap.mode-selected {
+  overflow: visible;
+  border-radius: 16px;
+}
+body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-card {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--mc) 34%, #fffaf0),
+    color-mix(in srgb, var(--mc) 16%, #fffaf0)
+  );
+  border: 2.5px solid color-mix(in srgb, var(--mc) 75%, #1b1d33);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--mc) 22%, transparent),
+    0 10px 24px color-mix(in srgb, var(--mc) 30%, transparent);
+}
+body.claro .mode-select-wrap.mc-wrap.mc-rainbow.mode-selected .mc-card {
+  background: linear-gradient(110deg, #fecaca, #fde68a, #bbf7d0, #bfdbfe, #e9d5ff, #fecaca);
+  background-size: 300% 100%;
+  background-position: var(--neon-pos, 0% 50%) !important;
+  border-color: #8b5cf6;
+  box-shadow:
+    0 0 0 4px #c4b5fd55,
+    0 10px 24px #a78bfa55;
+}
+body.claro .mode-select-wrap.mc-wrap.mode-selected .mc-desc {
+  color: #3d3852;
+}
+/* botões: principais em cor chapada; secundários brancos com borda colorida */
+body.claro .btn-start.btn-neo {
+  background: color-mix(in srgb, var(--mc, #6d4ad8) 55%, var(--claro-sup));
+  color: color-mix(in srgb, var(--mc, #6d4ad8) 70%, #1b1d33);
+  text-shadow: none;
+  box-shadow: var(--claro-sombra);
+  filter: none;
+}
+body.claro .btn-neo:after,
+body.claro .btn-neo.neo-ghost:after,
+body.claro .btn-neo.neo-solid.neo-ghost:after {
+  background: color-mix(in srgb, var(--mc, #6d4ad8) 12%, var(--claro-sup));
+}
+body.claro .btn-neo.neo-solid:not(.neo-ghost):after,
+body.claro .btn-neo.mc-confirm:after {
+  background: color-mix(in srgb, var(--mc, #6d4ad8) 88%, #1b1d33);
+}
+body.claro .btn-start.btn-neo.neo-solid:not(.neo-ghost),
+body.claro .btn-start.btn-neo.mc-confirm {
+  background: color-mix(in srgb, var(--mc, #6d4ad8) 88%, #1b1d33);
+  color: #fff;
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--mc, #6d4ad8) 28%, transparent);
+}
+body.claro .btn-start.btn-neo.splash-go {
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--mc, #e94560) 30%, transparent);
+  filter: none;
+}
+/* chips do menu e da condição de vitória */
+body.claro .splash-menu .chip,
+body.claro .splash-settings .chip {
+  color: color-mix(in srgb, var(--cc) 62%, #1b1d33);
+  border-color: color-mix(in srgb, var(--cc) 50%, var(--claro-sup));
+  background: color-mix(in srgb, var(--cc) 13%, var(--claro-sup));
+  box-shadow: none;
+}
+body.claro .splash-menu .chip.off,
+body.claro .splash-settings .chip.off {
+  background: color-mix(in srgb, var(--cc) 5%, var(--claro-sup));
+}
+body.claro .wincond-btn:not(.on) {
+  color: color-mix(in srgb, var(--wc, #6d4ad8) 64%, #1b1d33);
+  background: color-mix(in srgb, var(--wc, #6d4ad8) 12%, var(--claro-sup));
+  box-shadow: none;
+}
+body.claro .wincond-btn.on {
+  box-shadow: none;
+}
+/* carta: caixas brancas com borda da categoria, sem halo */
+body.claro .answer-header.cat-neon,
+body.claro .pending-box.spotlight-box {
+  background: var(--claro-sup);
+  box-shadow: none;
+}
+body.claro .roulette .roulette-reel.landed {
+  box-shadow: none;
+}
+body.claro .ans-nome {
+  color: var(--claro-txt);
+  background: color-mix(in srgb, var(--card-glow, #d4a017) 12%, var(--claro-sup));
+}
+/* janelas em papel (os balões do C.A.O.S. ficam como no Noturno) */
+body.claro .caos-modal-ov,
+body.claro .jf-modal-bg,
+body.claro .tut-overlay {
+  background: rgba(45, 35, 20, 0.32) !important;
+}
+body.claro .caos-modal-ov > div {
+  background: var(--claro-sup) !important;
+  color: var(--claro-txt) !important;
+  border-color: var(--claro-borda) !important;
+  box-shadow: var(--claro-sombra2) !important;
+}
+/* Claro: botões vazados ganham fundo suave na própria cor */
+body.claro #colorBox {
+  background: #fdf0f6;
+}
+body.claro #avatarBox {
+  background: #f5f1fe;
+}
+body.claro #humorBox {
+  background: #fff8e6;
+}
+body.claro .voz-step {
+  background: #eaf7fe;
+}
+body.claro .discard-btn {
+  background: color-mix(in srgb, currentColor 8%, var(--claro-sup));
+}
+/* pergunta ao Mestre (Perto/Longe e "tá curtindo?"): caixa de papel com borda roxa */
+body.claro .caos-pergunta {
+  background: var(--claro-sup);
+  color: var(--claro-txt);
+  border-color: #a78bfa;
+  box-shadow: 0 8px 24px rgba(60, 45, 25, 0.18);
+}
+body.claro .caos-pergunta button {
+  background: #f3effe;
+  border-color: #d6c8fb;
+  color: #3b2a7a;
+}
+body.claro .caos-pergunta button[data-v="digitar"] {
+  background: #5b21b6;
+  border-color: #5b21b6;
+  color: #fff;
+}

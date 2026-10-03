@@ -25,6 +25,17 @@ na hora de começar cada fase.
 
 ## Curadoria de cartas
 - Público de cada modo (Old School, Júnior, Clássico): ver `docs/Publico_dos_Modos.md`.
+- Onde registrar mudanças de cartas nos logs: ver `docs/Regras_dos_Logs.md`.
+
+## Feito na 1.7.5 · Parte 1 (organização do código)
+
+- `src/` virou a fonte oficial. São 32 partes (html, css, js e dados), com a ordem em `src/ordem.txt` e a explicação em `src/LEIA-ME.md`.
+- `montar.js` junta as partes, e o `build.js` monta o Mestre sozinho antes de gerar as saídas. O Mestre continua no repositório, mas agora é gerado.
+- **Equivalência provada** contra o Mestre 1.7.4.4: o texto é idêntico, exceto a ordem das cartas, que agora ficam agrupadas por categoria (mesmas 1000 cartas, mesmo texto e mesma ordem dentro de cada categoria). O jogo não depende dessa ordem: todo baralho é embaralhado e o save guarda pelo nome.
+- O build e o `--testar` passaram, e também as partidas simuladas na 1.7.5.
+- `ferramentas/auditar_cartas.js` faz a validação das cartas (2.6) e só reporta, sem corrigir conteúdo.
+- **Ainda não feito, porque depende do JF:** tirar `*_debug.html` e `*_offline.html` do repositório. Pela regra do Klaus, as saídas antigas ficam.
+- **Próximos cortes possíveis:** `js/07-caos.js` tem cerca de 7 mil linhas e pode ser dividido junto com o trabalho no cérebro do C.A.O.S. (Parte 2).
 
 ## Para lembrar na 1.7.5
 

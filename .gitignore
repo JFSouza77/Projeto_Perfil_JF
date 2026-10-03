@@ -1,1 +1,4 @@
 node_modules/
+
+# Debug: gerado de novo a cada build, não precisa ir pro repositório (os das versões até a 1.7.4.4 ficam, regra do Klaus)
+Perfil_JF_*_debug.html

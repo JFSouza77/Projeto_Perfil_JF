@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Build do Perfil JF: gera, a partir do arquivo mestre, a versão debug e a compacta.
-// Nunca edite as saídas à mão: edite o mestre e rode de novo.
+// Desde a 1.7.5 a fonte oficial é a pasta src/: o build monta o mestre a partir dela (montar.js)
+// e depois gera as saídas. Nunca edite o mestre nem as saídas à mão: edite src/ e rode de novo.
 //
 //   npm install                 (uma vez: instala terser, csso e acorn)
 //   node build.js               usa o Perfil_JF_Mestre_X_Y_Z.html mais novo da pasta
@@ -23,6 +24,7 @@ const vm = require("vm");
 const acorn = require("acorn");
 const { minify } = require("terser");
 const csso = require("csso");
+const { montar, temSrc } = require("./montar");
 
 const ARGS = new Set(process.argv.slice(2));
 const PASTA = __dirname;
@@ -294,9 +296,33 @@ async function testarNavegador(arquivo) {
   return erros.length ? "FALHOU: " + erros.join(" | ") : `ok (${chegou}, sem erro no console)`;
 }
 
+// ------------------------------------------------------------- autoria
+// Registro de versões (docs/Registro_de_Versoes.md): SHA-256 dos arquivos publicados, com data e
+// hora de Brasília, pra provar que uma cópia é idêntica à nossa. Republicar a mesma versão troca a linha dela.
+function registrarVersao(versao, arqs) {
+  const crypto = require("crypto");
+  const reg = path.join(PASTA, "docs", "Registro_de_Versoes.md");
+  const sha = (f) => crypto.createHash("sha256").update(fs.readFileSync(f)).digest("hex");
+  const quando = new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", dateStyle: "short", timeStyle: "short" }).format(new Date());
+  const v = versao.replace(/_/g, ".");
+  const linha = `| ${v} | ${quando} | \`${sha(arqs.mestre)}\` | \`${sha(arqs.compacta)}\` | \`${sha(arqs.offline)}\` |`;
+  let txt = fs.existsSync(reg) ? fs.readFileSync(reg, "utf8") : "";
+  const re = new RegExp("^\\| " + v.replace(/\./g, "\\.") + " \\|.*$", "m");
+  txt = re.test(txt) ? txt.replace(re, linha) : txt.replace(/\n*$/, "\n") + linha + "\n";
+  fs.writeFileSync(reg, txt);
+  console.log(`Registro de versões: ${v} (SHA-256 do mestre, da compacta e do offline) em docs/Registro_de_Versoes.md.`);
+}
+
 // ------------------------------------------------------------------ main
 (async () => {
-  const mestreArq = acharMestre();
+  // Com src/, o Mestre é montado antes (src/ é a fonte oficial; ver montar.js).
+  const dado = process.argv.slice(2).find((a) => !a.startsWith("--"));
+  let montado = null;
+  if (!dado && temSrc()) {
+    montado = montar();
+    console.log(`Mestre montado a partir de src/ (${montado.partes} partes).`);
+  }
+  const mestreArq = montado ? montado.arquivo : acharMestre();
   const versao = path.basename(mestreArq).match(/(\d+(?:_\d+){2,3})\.html$/)[1];
   const mestre = fs.readFileSync(mestreArq, "utf8");
   console.log(`Mestre usado: ${path.basename(mestreArq)} (versão ${versao.replace(/_/g, ".")})`);
@@ -356,6 +382,7 @@ async function testarNavegador(arquivo) {
   if (ARGS.has("--publicar")) {
     fs.copyFileSync(saidas.compacta, path.join(PASTA, "index.html"));
     console.log("\nindex.html atualizado com a compacta.");
+    registrarVersao(versao, { mestre: mestreArq, compacta: saidas.compacta, offline: saidas.offline });
   }
 })().catch((e) => {
   console.error("\nERRO NO BUILD: " + e.message);
