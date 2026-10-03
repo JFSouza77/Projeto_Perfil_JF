@@ -152,7 +152,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Perfil JF">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.4.1</title>
+<title>Perfil JF · Beta 1.7.4.2</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -5899,7 +5899,7 @@ body.claro .caos-pergunta button[data-v="digitar"] {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.4.1 · Game Mode Update · Parte 2<br>C.A.O.S. 3.8 · Atualizada em 03/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.4.2 · Game Mode Update · Parte 3<br>C.A.O.S. 3.8 · Atualizada em 03/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -15747,7 +15747,7 @@ function caosInspectorEstado() {
         );
       })()}</b></div>
       <div class="ci-kv"><span>😄 Alegria · 🎯 confiança · 🔎 curiosidade</span><b class="ci-mono">${caosEixos.alegria.toFixed(1)} · ${caosEixos.confianca.toFixed(1)} · ${caosEixos.curiosidade.toFixed(1)}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.4.1 · C.A.O.S. 3.8</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.4.2 · C.A.O.S. 3.8</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -20530,7 +20530,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.4.1 · C.A.O.S. 3.8)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.4.2 · C.A.O.S. 3.8)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -22795,7 +22795,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.4.1 · C.A.O.S. 3.8");
+  L.push("- **Versão:** Beta 1.7.4.2 · C.A.O.S. 3.8");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -23317,7 +23317,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.4.1 · C.A.O.S. 3.8",
+        versao: "Beta 1.7.4.2 · C.A.O.S. 3.8",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -44090,7 +44090,7 @@ const ADULT_CARDS = expandDeck([
       "*Escolha um jogador para voltar 2 casas",
       "Meus dentes são trocados a vida toda, como numa esteira",
       "Posso pesar mais de 500 quilos",
-      "Meu único predador é o homem",
+      "Quase não tenho predadores na natureza",
       "Projetos no Brasil me resgatam e me devolvem à natureza",
       "Passo horas comendo todos os dias",
       "Meu nome junta um bicho da água e um da fazenda",
@@ -44220,7 +44220,7 @@ const ADULT_CARDS = expandDeck([
       "*Avance 1 casa",
       "Vivo no mar, mas algumas de nós vivem em rios da Amazônia",
       "Quem entra no mar arrastando os pés me espanta e evita a ferroada",
-      "O caçador de crocodilos Steve Irwin morreu atingido por uma de nós",
+      "Alguns parentes meus pulam bem alto para fora da água",
       "A jamanta é uma das maiores da minha família",
       "*Avance 2 casas",
       "Como mariscos e caranguejos",
@@ -44764,7 +44764,7 @@ const ADULT_CARDS = expandDeck([
       "Meu parente de água salgada é o maior réptil vivo",
       "*Volte 2 casas",
       "Giro na água para arrancar pedaços das presas",
-      "A temperatura dos ovos define o sexo dos meus filhotes",
+      "O calor dos ovos decide se meus filhotes vão ser machos ou fêmeas",
       "Carrego os filhotes na boca",
       "Steve Irwin ficou famoso lidando com animais da minha espécie",
       "Sou de sangue frio",
@@ -45004,7 +45004,7 @@ const ADULT_CARDS = expandDeck([
       "Sou caçado em muitos lugares",
       "No Brasil, o mateiro e o catingueiro são da minha turma",
       "O cervo-do-pantanal é meu parente",
-      "Sou o número 24 do jogo do bicho",
+      "Os chifres dos machos da minha espécie se chamam galhada",
       "*Escolha um jogador para avançar 2 casas",
       "Tenho cascos",
       "Meu couro é usado em roupas",
@@ -45197,7 +45197,7 @@ const ADULT_CARDS = expandDeck([
       "*Volte 2 casas",
       "Chamam pessoas lerdas pelo meu nome",
       "Uma das minhas espécies marinhas rouba pedaços de algas e faz fotossíntese",
-      "Sou atraída por cerveja",
+      "Saio à noite quando o jardim está úmido",
       "Tenho milhares de dentes",
       "Fujo do sol",
       "Os jardineiros não gostam de mim",
@@ -45222,7 +45222,7 @@ const ADULT_CARDS = expandDeck([
       "Abro e fecho a concha",
       "Um grão de areia pode virar pérola dentro de mim",
       "*Escolha um jogador para avançar 2 casas",
-      "Posso mudar de sexo",
+      "Posso trocar de macho para fêmea durante a vida",
       "Vivo em águas rasas",
       "Sou servida em restaurantes chiques",
       "Filtro muitos litros de água por dia",
@@ -45269,7 +45269,7 @@ const ADULT_CARDS = expandDeck([
       "Fui domesticado na China há milhares de anos",
       "Quando adulto, viro uma mariposa que não voa",
       "O fio de um só casulo pode passar de um quilômetro",
-      "Os chineses guardavam meu segredo com pena de morte",
+      "Os chineses guardaram meu segredo por séculos",
       "*Volte 2 casas",
       "Sou uma lagarta",
       "O Paraná é um grande produtor do meu fio no Brasil",
@@ -47867,7 +47867,7 @@ const ADULT_CARDS = expandDeck([
       "*Escolha um jogador para voltar 2 casas",
       "Sou comida às quartas e aos sábados",
       "Levo farofa",
-      "Sou servida com caipirinha",
+      "Costumo vir acompanhada de vinagrete",
       "Tenho linguiça e paio",
       "*Escolha um jogador para avançar 2 casas",
       "Fico horas no fogo",
@@ -51846,7 +51846,7 @@ const REACTIVE_VOICE = {
       "Eu reclamei bastante, mas vocês sabem que eu gosto dessa mesa, né?",
       "Se vocês continuarem acertando assim, vou ter que admitir que gosto de vocês.",
       "Pronto. Um elogio sincero. Aproveitem, não sei quando haverá outro.",
-      "Eu não ouço vocês, mas sinto que a mesa está animada. Pelos botões. Eles estão bem apertados hoje. Que gostoso.",
+      "Eu não ouço vocês, mas sinto que a mesa está animada. Pelos botões. Eles estão bem apertados hoje. Que alegria.",
     ],
     carente: [
       "Já que vocês não precisam de mim, eu vou ali ficar tristezinho no meu canto.",
@@ -52464,7 +52464,7 @@ const REACTIVE_VOICE = {
       "FIFA: {nome} tomou cartão vermelho por essa resposta.",
       "Elden Ring: {nome} entrou numa área muito difícil sem a menor preparação. Volte quando tiver mais nível.",
       "Se a resposta fosse um boss, essa dica seria o tutorial.",
-      "Hollow Knight: {nome} morreu tentando essa resposta. Dessa vez sem perder a moeda.",
+      "Hollow Knight: {nome} caiu tentando essa resposta. Dessa vez sem perder a moeda.",
       "Mestre, eu me sinto num RPG em que o jogador nunca lê a descrição da missão.",
     ],
     tristezaIrritada: [
@@ -57229,6 +57229,23 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.4.2",
+    data: "__DATA__",
+    nome: "Game Mode Update · Parte 3",
+    t: "Júnior conferido de ponta a ponta: regras, zoeira do C.A.O.S., cartas e partidas simuladas. E as cartas novas que aparecem pra criançada passaram por uma revisão a mais.",
+    itens: [
+      "🧒 Júnior conferido: meta de 150 casas, 250 cartas só de Animal, Pessoa, Lugar e Coisa, 90 s pra responder, Palpite a qualquer hora e joias funcionando. A zoeira só oferece Family friendly, Suave e Normal (já vem em Family friendly), os avatares de adulto ficam de fora e o Júnior não aparece no Equipe, como planejado.",
+      "🐾 Animal na medida: com o baralho corrigido na parte anterior, os animais saem numa a cada quatro cartas, e nenhuma categoria aparece mais de duas vezes seguidas.",
+      "🧸 Cartas mais certinhas pra criança: tiramos das cartas que aparecem no Júnior o que não combinava com a idade, como bebida (a feijoada não vem mais com caipirinha e a lesma não gosta mais de cerveja) e dicas pesadas de morte, sem perder a graça das cartas.",
+      "🤖 C.A.O.S. de família: todas as falas que ele pode dizer no Júnior foram varridas atrás de palavras de adulto. Duas falas do grupo Família ganharam palavras mais leves.",
+    ],
+    qol: [
+      "🔍 Revisão das cartas novas: as 205 cartas novas que aparecem no Júnior (Animal, Coisa, Lugar e Pessoa) foram lidas de novo, com atenção especial a números, recordes e datas.",
+      "✍️ Fatos ajustados: o peixe-boi quase não tem predadores (não é só o homem) e o veado ganhou uma dica sobre a galhada no lugar da do jogo do bicho.",
+      "🧪 Partidas simuladas: cinco partidas inteiras de Júnior, com 2 a 6 jogadores e condições de vitória diferentes, jogadas até o fim.",
+    ],
+  },
   {
     v: "Beta 1.7.4.1",
     data: "03/10/2026 · 01:33",
