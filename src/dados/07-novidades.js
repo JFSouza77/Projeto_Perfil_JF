@@ -1,5 +1,22 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.6.1",
+    data: "03/10/2026 · 17:22",
+    nome: "Buttons and Tutorial Update · Parte 2",
+    t: "Conferimos todos os botões do jogo, um por um, no tema Noturno e no Claro. Agora todos são fáceis de tocar e de ler.",
+    itens: [
+      "👆 Botões maiores: todos os botões têm pelo menos o tamanho de um dedo (44 pixels), inclusive as dicas de 1 a 20, o menu ⋮ e a Pausa.",
+      "🎯 Links pequenos (\"Sem ideia de nome?\", \"remover\") ganharam uma área de toque maior, sem mudar o desenho.",
+      "🌗 Mais contraste: o Nível 0, o remover, o Conferir resposta, a resposta da carta, o Reembaralhar e o Descartar ficaram mais fáceis de ler.",
+      "⌨️ Contorno azul em volta do botão escolhido quando se usa teclado ou leitor de tela.",
+    ],
+    qol: [
+      "🔘 Menu ⋮: botão desligado agora tem borda tracejada em vez de ficar quase apagado.",
+      "🗣️ Leitor de tela: o campo do nome do jogador agora tem nome.",
+      "🔍 Auditoria automática: uma ferramenta nova confere os botões a cada atualização (antes 118 problemas, agora nenhum).",
+    ],
+  },
+  {
     v: "Beta 1.7.6",
     data: "03/10/2026 · 17:10",
     nome: "Buttons and Tutorial Update · Parte 1",
