@@ -12,9 +12,17 @@ js/03-regras.js
 js/04-turno-e-rodada.js
 js/05-tela.js
 js/06-voz-som-vibracao.js
-js/07-caos.js
-js/07b-gerador-de-falas.js
-js/07c-espinha-do-caos.js
+js/07-caos/01-nucleo-e-falas.js
+js/07-caos/02-cerebro-adm.js
+js/07-caos/03-memoria-e-mesa.js
+js/07-caos/04-lexico-e-relogio.js
+js/07-caos/05-emocoes-e-rede-neural.js
+js/07-caos/06-humanizacao.js
+js/07-caos/07-momentos-da-partida.js
+js/07-caos/08-hall-janelas-e-pausa.js
+js/07-caos/09-vinculos-silencio-e-balao.js
+js/07-caos/10-gerador-de-falas.js
+js/07-caos/11-espinha.js
 js/08-salvamento.js
 js/09-utilitarios.js
 dados/01-emocoes-do-caos.js
@@ -47,5 +55,6 @@ dados/08-geradores/13-inicioJogadores.js
 dados/08-geradores/14-religado.js
 dados/08-geradores/15-chute.js
 dados/08-geradores/16-pensamento.js
+dados/08-geradores/17-hostCaiu.js
 js/11-iniciar.js
 html/03-fim.html

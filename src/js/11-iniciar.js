@@ -799,6 +799,8 @@ function iniciar() {
   renderHumorPicker();
   document.getElementById("btnBatata").addEventListener("click", toggleBatataMode);
   document.getElementById("btnNoturno").addEventListener("click", toggleNoturno);
+  document.getElementById("btnMemExportar").addEventListener("click", caosMemoriaExportar);
+  document.getElementById("btnMemImportar").addEventListener("click", caosMemoriaImportar);
   temaAplicar();
   document.getElementById("btnNovidades").addEventListener("click", abrirNovidades);
   document.getElementById("btnInstalar").addEventListener("click", instalarApp);

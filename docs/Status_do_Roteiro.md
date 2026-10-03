@@ -31,13 +31,18 @@ na hora de começar cada fase.
 
 ## C.A.O.S. no online (preparado na 1.7.5.3)
 - O C.A.O.S. roda **só no host**, junto com o motor do jogo, e o host manda em tudo (decisão do JF).
-- Toda fala dele passa pelo **canal** (`caosCanalRegistrar` em `src/js/07c-espinha-do-caos.js`), que já anota o destino: os jogadores citados ou a mesa toda.
+- Toda fala dele passa pelo **canal** (`caosCanalRegistrar` em `src/js/07-caos/11-espinha.js`), que já anota o destino: os jogadores citados ou a mesa toda.
 - Na 1.7.10:
   - cada jogador recebe `aparelho` (o id da conexão);
   - a camada `Net` lê o destino de cada fala no canal e entrega no celular certo;
   - fala com `privado = true` (`caosFalarPara`) vai só para o aparelho da pessoa;
   - a voz continua tocando em cada aparelho, e cada pessoa silencia o próprio.
 - As 3 leis da espinha valem também no online: o C.A.O.S. nunca mexe no jogo, nem no do host.
+- **Sucessão de host (decisão do JF):** se o aparelho host cair (bateria, sinal), a partida não morre. O novo host é **quem foi o 2º Mestre da partida**. Se esse também não estiver, vai o 3º Mestre, e assim por diante, seguindo a ordem em que cada um foi Mestre pela primeira vez.
+  - O host copia o estado da partida para os convidados a cada jogada (placar, cartas, joias, turno, memória do C.A.O.S. da partida). Assim o novo host já tem tudo e assume sem perder nada e sem conflito.
+  - O C.A.O.S. anuncia a troca com o gerador `hostCaiu` (`src/dados/08-geradores/17-hostCaiu.js`, que já está pronto e ainda sem uso).
+  - Quando o host antigo volta, ele entra como jogador. O comando não volta para ele no meio da partida.
+  - O cérebro do C.A.O.S. passa junto: no novo host, a espinha e as 3 leis continuam valendo.
 - **Modo Caos (ideia do JF para a 1.7.10):** é o único modo em que o C.A.O.S. vai ter poder no jogo, e o modo leva o nome dele. A 1ª lei continua valendo em todos os outros modos. No Modo Caos, as ações dele vão passar por uma via própria e explícita, com regras decididas pelo JF, nunca por fora da espinha.
 - **Memória e endereço:** cada endereço tem a sua memória (o site e cada arquivo offline). Na troca para `dicaos.com.br`, levar o save e a memória (Exportar/Importar) e recomendar adicionar o jogo à Tela de Início, porque o Safari apaga dados de site depois de 7 dias sem visita.
 

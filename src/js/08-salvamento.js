@@ -1052,6 +1052,105 @@ function exportSave() {
     caosPromptModal("Copie o código do save abaixo:", encoded, () => {}, true);
   }
 }
+// 1.7.5.4: levar a memória do C.A.O.S. pra outro aparelho ou endereço (o site, um arquivo
+// offline, o futuro dicaos.com.br). É um código com tudo o que ele lembra entre partidas:
+// fichas, recordes, rivais, nomes e nicks, cartas, avaliações e a memória do gerador.
+// Trazer substitui a memória deste aparelho (a partida em andamento não é tocada).
+const CAOS_MEMORIA_PREFIXO = "CAOSMEM1.";
+function caosMemoriaChaves() {
+  return [
+    MEM_FICHAS_KEY,
+    MEM_RECORDES_KEY,
+    MEM_RIVAIS_KEY,
+    MEM_ULTIMA_KEY,
+    MEM_BOLA_KEY,
+    MEM_CARTAS_ABSURDO_KEY,
+    CAOS_NAMES_KEY,
+    "perfil200_caos_nicks",
+    NICKS_REPERTORIO_KEY,
+    CAOS_NICKTEMPO_KEY,
+    CAOS_CARDMEM_KEY,
+    CAOS_RATINGS_KEY,
+    CAOS_GERADOR_KEY,
+    CAOS_DIAG_KEY,
+    "perfil5_caos_fimsrecentes",
+  ];
+}
+function caosMemoriaExportar() {
+  const k = {};
+  caosMemoriaChaves().forEach((ch) => {
+    const v = JFStore.getItem(ch);
+    if (v !== null) k[ch] = v;
+  });
+  let nFichas = 0;
+  try {
+    nFichas = Object.keys(JSON.parse(k[MEM_FICHAS_KEY] || "{}")).length;
+  } catch (e) {}
+  if (!Object.keys(k).length) {
+    caosAvisoModal("🧠 O C.A.O.S. ainda não lembra de nada neste aparelho. Joguem umas partidas primeiro.");
+    return;
+  }
+  const pacote = { tipo: "memoria-caos", v: 1, versao: NOVIDADES[0].v, data: Date.now(), k };
+  const code = CAOS_MEMORIA_PREFIXO + btoa(encodeURIComponent(JSON.stringify(pacote)));
+  const msg = `🧠 Memória do C.A.O.S. (${nFichas} jogador${nFichas === 1 ? "" : "es"} com ficha). Cole no outro aparelho em ⋮ → 📥 Trazer.`;
+  const manual = () => caosPromptModal(msg + " Copie o código abaixo:", code, () => {}, true);
+  if (navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(code).then(() => caosAvisoModal(msg + " O código já foi copiado."), manual);
+  else manual();
+}
+function caosMemoriaImportar() {
+  caosPromptModal("Cole aqui o código da memória do C.A.O.S. (começa com CAOSMEM1.):", "", (code) => {
+    if (!code) return;
+    let pacote = null;
+    try {
+      const t = String(code).trim();
+      if (t.indexOf(CAOS_MEMORIA_PREFIXO) !== 0) throw new Error("prefixo");
+      pacote = JSON.parse(decodeURIComponent(atob(t.slice(CAOS_MEMORIA_PREFIXO.length))));
+    } catch (e) {
+      caosAvisoModal("❌ Esse código não é uma memória do C.A.O.S. (ou veio cortado). Confere se copiou inteiro.");
+      return;
+    }
+    if (!pacote || pacote.tipo !== "memoria-caos" || !pacote.k || typeof pacote.k !== "object") {
+      caosAvisoModal("❌ Esse código não é uma memória do C.A.O.S.");
+      return;
+    }
+    const validas = caosMemoriaChaves().filter((ch) => {
+      const v = pacote.k[ch];
+      if (typeof v !== "string") return false;
+      try {
+        JSON.parse(v);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    });
+    let nFichas = 0;
+    try {
+      nFichas = Object.keys(JSON.parse(pacote.k[MEM_FICHAS_KEY] || "{}")).length;
+    } catch (e) {}
+    caosConfirmarModal(
+      `Trazer a memória do C.A.O.S. (${nFichas} jogador${nFichas === 1 ? "" : "es"} com ficha, de ${new Date(pacote.data || 0).toLocaleDateString("pt-BR")})? Ela substitui o que ele lembra neste aparelho. A partida em andamento não muda.`,
+      "Trazer",
+      "Cancelar",
+      () => {
+        validas.forEach((ch) => JFStore.setItem(ch, pacote.k[ch]));
+        try {
+          JFStore.flushNow();
+        } catch (e) {}
+        caosCardMem = null;
+        caosRatings = null;
+        caosDiag = null;
+        caosGerMem = null;
+        caosLog("memoria", "memória trazida: " + validas.length + " partes, " + nFichas + " fichas");
+        showToastMessage(
+          `[C.A.O.S.] Memória restaurada. Lembrei de ${nFichas} jogador${nFichas === 1 ? "" : "es"}. Parece que eu nunca saí daqui.`,
+          null,
+          true,
+        );
+      },
+    );
+  });
+}
 function importSave() {
   caosPromptModal("Cole aqui o código do save que você recebeu:", "", (code) => {
     if (!code) return;
@@ -1453,7 +1552,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.5.3 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.5.4 · C.A.O.S. 4.0");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -1975,7 +2074,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.5.3 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.5.4 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,

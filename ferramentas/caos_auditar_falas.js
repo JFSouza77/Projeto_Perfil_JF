@@ -28,7 +28,7 @@ const JR = vm.runInNewContext("(" + fonte("CAOS_JUNIOR_BLOCK_RE") + ")", ctx);
 const ini = js.indexOf("const CAOS_GERADORES = {};");
 const fim = js.indexOf("\nfunction ", ini);
 vm.runInNewContext(js.slice(ini, fim).replace("const CAOS_GERADORES", "var CAOS_GERADORES"), ctx);
-const VARS_GER = new Set("nome anne jf pedro isabel outro hora dia modo modoAntes qtd tempo quando partidas vitorias chute anos dicasTxt cat quemAntes lider min pausa".split(" "));
+const VARS_GER = new Set("nome anne jf pedro isabel outro hora dia modo modoAntes qtd tempo quando partidas vitorias chute anos dicasTxt cat quemAntes lider min pausa antigo".split(" "));
 const itens = [];
 (function w(o, p) {
   if (Array.isArray(o)) return p === "familiasSorteio" ? null : o.forEach((x) => typeof x === "string" && itens.push({ onde: p, t: x, ger: false }));

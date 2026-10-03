@@ -1,5 +1,5 @@
 // Geradores de fala por gatilho (1.7.5.1): um arquivo por gatilho nesta pasta.
-// O motor fica em js/07b-gerador-de-falas.js. Gatilho novo = arquivo novo + linha em src/ordem.txt.
+// O motor fica em js/07-caos/10-gerador-de-falas.js. Gatilho novo = arquivo novo + linha em src/ordem.txt.
 // Cada gatilho tem "moldes" (como juntar os pedaços) e slots (abre, meio, fecho, inteira...).
 // Cada slot tem baldes: "geral" e baldes de contexto (hora, memória, quem está na mesa, modo,
 // temperamento). Um balde de contexto só entra quando a etiqueta está ativa. Cada balde
