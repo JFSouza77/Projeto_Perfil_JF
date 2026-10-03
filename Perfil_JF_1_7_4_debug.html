@@ -10,7 +10,9 @@
           expressPass e ignorava a especial). Volte 2 = inverter (UNO), Volte 3 = inverter + pular 1
           (antes invertia e andava 2/3 passos). Aviso do efeito sempre visível (mesmo com C.A.O.S.
           mudo) + linha .express-roda (sentido, quem joga depois, bloqueados). Descarte no Express
-          (canDiscard exigia pendingIndex === null, impossível no Express).
+          (canDiscard exigia pendingIndex === null, impossível no Express). Ajustes pedidos pelo JF:
+          roleta do Express usa expressSelectedCategories (antes currentGemCategories, as 4); e
+          answerLivre vale no Express até revealedOrder.length <= 1 (antes excluía o Express).
           ROTEIRO da 1.7.4: .1 = Hardcore; .2 = Júnior; .3 = Clássico e Old School; em cada parte,
           conferir o modo contra o planejado (regras, roletas, tempos, especiais, pontuação).
   1.7.3.5 · 03/10/2026 · "Cards and Rules Update · Parte 6". Pedido do JF: equilibrar o baralho. +400 cartas
@@ -10211,12 +10213,13 @@ function releaseWakeLock() {
  * 5. TELA (RENDERIZAÇÃO, MENUS, CADASTRO, TUTORIAL, PAINÉIS, EFEITOS)
  * ====================================================================== */
 
+// Resposta à mostra pro Mestre memorizar. Nos outros modos, até a 1ª dica ser aberta; no Express a
+// 1ª dica já abre sozinha junto com a carta, então ela fica à mostra até a 2ª dica (ou até o toque).
 function answerLivre() {
   return (
     !!currentCard &&
     cardState === "revealed" &&
-    CURRENT_MODE !== "express" &&
-    revealedOrder.length === 0 &&
+    revealedOrder.length <= (CURRENT_MODE === "express" ? 1 : 0) &&
     answerEscondidaCarta !== currentCard
   );
 }
@@ -11185,8 +11188,13 @@ function mestreDestaqueHtml() {
 function startCategoryRoulette() {
   if (cardState !== "hidden" || !currentCard) return;
   const area = document.getElementById("cardArea");
-  const cats = currentGemCategories();
   const finalCat = gemCategoryFor(currentCard.category);
+  // no Express a roleta só gira entre as categorias da partida (escolhidas ou sorteadas pelo C.A.O.S.)
+  const cats =
+    CURRENT_MODE === "express" && expressSelectedCategories && expressSelectedCategories.length
+      ? expressSelectedCategories.slice()
+      : currentGemCategories();
+  if (!cats.includes(finalCat)) cats.push(finalCat);
   const label = (c) => (CATEGORY_LABELS[c] || c).toUpperCase();
   const token = ++rouletteToken;
   area.className = "card";
@@ -11212,7 +11220,7 @@ function startCategoryRoulette() {
     });
     caosRoletaSom("pouso");
   };
-  if (!visualFxAllowed()) {
+  if (!visualFxAllowed() || cats.length < 2) {
     finish();
     return;
   }
@@ -11237,7 +11245,7 @@ function startCategoryRoulette() {
 }
 function answerLineHtml() {
   const open = answerLivre() || Date.now() < answerRevealUntil;
-  return `<button type="button" id="answerToggle" class="answer-line-name answer-toggle${open ? " open" : ""}${answerLivre() ? " livre" : ""}">${answerTexto(open)}</button>${answerLivre() ? `<div class="ans-hint" id="ansHint">👆 toque pra esconder · some sozinha na 1ª dica</div>` : ""}`;
+  return `<button type="button" id="answerToggle" class="answer-line-name answer-toggle${open ? " open" : ""}${answerLivre() ? " livre" : ""}">${answerTexto(open)}</button>${answerLivre() ? `<div class="ans-hint" id="ansHint">👆 toque pra esconder · some sozinha na ${CURRENT_MODE === "express" ? "2ª" : "1ª"} dica</div>` : ""}`;
 }
 function wireAnswerToggle() {
   ["answerToggle", "conferirBtn"].forEach((id) => {
@@ -27655,6 +27663,8 @@ const NOVIDADES = [
       "👀 Dá pra ver o efeito: depois de cada especial aparece quem foi pulado, quem bloqueou quem e de quem é a vez, mesmo com o C.A.O.S. no mudo. Embaixo do tempo fica o sentido da roda e quem joga depois.",
       "🎯 Pular com nome: a especial Avance já mostra quem vai ser pulado e pra quem a vez vai antes de tocar no botão.",
       "✕ Descartar no Express: como a 1ª dica abre sozinha, o botão de descartar nunca aparecia. Agora dá pra descartar e puxar outra carta até a 5ª dica (no máximo 2 seguidas).",
+      "🎰 Roleta só com as categorias da partida: no Express, a roleta girava passando por Ano, Pessoa, Lugar e Coisa mesmo jogando com uma ou duas. Agora ela só mostra as categorias escolhidas (ou sorteadas pelo C.A.O.S.); com uma categoria só, cai direto nela.",
+      "👁️ Resposta à mostra no Express: a carta já virava com a resposta escondida. Agora ela aparece pro Mestre memorizar, como nos outros modos, e some sozinha quando abre a 2ª dica (a 1ª já abre junto com a carta) ou quando o Mestre toca nela.",
     ],
     qol: [
       "📜 Regras do Express atualizadas: explicam cada especial (Avance, Volte, Escolha um jogador e Perca sua vez), o efeito automático quando o tempo acaba e o descarte.",
