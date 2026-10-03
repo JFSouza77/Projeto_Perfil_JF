@@ -105,6 +105,40 @@ O C.A.O.S. é **caótico leal**: fala o que quiser, do jeito dele, mas dentro de
   - na aba Estado, as falas que o gerador montou na partida, a memória dele e se ele está silenciado na carta.
 - **Auditor de falas:** `node ferramentas/caos_auditar_falas.js`.
 
+## Observador da mesa: ajuda do Mestre (1.7.6.4)
+
+O C.A.O.S. também é a central de observação da mesa (`src/js/05d-ajuda-do-mestre.js`).
+Para cada Mestre ele anota, em `p.obsM`:
+
+- quantas dicas saíram;
+- quanto tempo cada dica levou até o veredito (Acertou, Errou, Pulou, Absurdo ou Passar);
+- quantas vezes o tempo acabou.
+
+Ele pede ajuda pra um Mestre quando esse Mestre tem 4 dicas ou mais anotadas e cai num destes dois casos:
+
+- **Tempo estourando:** o tempo acabou em 40% das dicas ou mais (no mínimo 2 vezes) e no dobro da taxa do resto da mesa.
+- **Demora:** a média por dica é 1,6 vez a do resto da mesa.
+
+Quando isso acontece, ele avisa no Cérebro e pergunta **à mesa**, no começo da próxima carta desse Mestre, se pode dar tempo extra.
+Pergunta uma vez por jogador.
+
+Isso não quebra a 1ª lei: o C.A.O.S. só observa e sugere, e quem liga o tempo extra é a mesa (ou o ADM).
+
+Tempo extra só pra quem está de Mestre, e só para:
+
+- quem marcou 🧒 Menos de 12 (no Equipe, a faixa 6-12);
+- iniciante;
+- quem a mesa aceitou.
+
+Quanto ganha:
+
+| Relógio | Extra |
+|---|---|
+| Responder | +20 s |
+| Especial | +10 s |
+| Express, por dica | +8 s |
+| Express, carta | +40 s |
+
 ## Repertório (estimativa da 1.7.5.2)
 
 | Fonte | Quanto |

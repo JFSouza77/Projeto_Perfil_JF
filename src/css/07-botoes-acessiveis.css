@@ -194,3 +194,47 @@ body.claro .tut-caps button:not(.on) {
   border-color: rgba(90, 70, 40, 0.35);
   background: rgba(90, 70, 40, 0.06);
 }
+/* Ajuda do Mestre (1.7.6.4): idade no cadastro. */
+.idade-rot {
+  opacity: 0.85;
+  font-size: 0.8rem;
+  margin-bottom: 6px;
+}
+.idade-rot small {
+  display: block;
+  opacity: 0.8;
+  font-size: 0.72rem;
+}
+.idade-btn {
+  background: transparent !important;
+  color: var(--hc) !important;
+  border: 1.5px solid var(--hc) !important;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--hc) 30%, transparent);
+}
+.idade-btn.on {
+  background: var(--hc) !important;
+  color: #1a1a2e !important;
+}
+.tem-escolha > .idade-btn:not(.on) {
+  opacity: 0.6;
+  box-shadow: none;
+}
+body.claro .idade-btn {
+  background: color-mix(in srgb, var(--hc) 14%, #fffaf0) !important;
+  color: color-mix(in srgb, var(--hc) 45%, #1b1d33) !important;
+  border-color: color-mix(in srgb, var(--hc) 65%, #1b1d33) !important;
+  box-shadow: none;
+}
+body.claro .idade-btn.on {
+  background: color-mix(in srgb, var(--hc) 75%, #1b1d33) !important;
+  color: #fff !important;
+}
+/* Emojis do cadastro: toque de 44 px. */
+.avatar-swatch {
+  min-width: 44px;
+  min-height: 44px;
+}
+.color-swatch {
+  width: 44px !important;
+  height: 44px !important;
+}

@@ -1326,7 +1326,7 @@ function renderAvatarPicker() {
   row.innerHTML = list
     .map(
       (a) => `
-    <button type="button" class="avatar-swatch ${a === selectedAvatar && cadMostraSel(cadEmoji) ? "selected" : ""}${usedAvatars.has(a) ? " tomada" : ""}" data-avatar="${a}" ${usedAvatars.has(a) ? 'aria-disabled="true"' : ""}>${a}</button>
+    <button type="button" class="avatar-swatch ${a === selectedAvatar && cadMostraSel(cadEmoji) ? "selected" : ""}${usedAvatars.has(a) ? " tomada" : ""}" data-avatar="${a}" aria-label="Emoji ${a}${usedAvatars.has(a) ? " (já escolhido)" : ""}" ${usedAvatars.has(a) ? 'aria-disabled="true"' : ""}>${a}</button>
   `,
     )
     .join("");
@@ -1404,9 +1404,12 @@ function renderColorPicker() {
     if (free) selectedColor = free;
   }
   row.innerHTML = availableColors
-    .map((c) => {
+    .map((c, i) => {
       const bg = c === "RGB" ? "" : "background:" + playerColorCss(c);
-      return `<button type="button" class="color-swatch ${c === selectedColor && cadMostraSel(cadCor || CURRENT_FORMAT === "equipe") ? "selected" : ""} ${c === "RGB" ? "rgb-swatch" : ""} ${c === "GRAD_ONYX" ? "onyx-swatch" : ""}${usedColors.has(c) ? " tomada" : ""}${COR_EXCLUSIVA[c] && usedColors.has(c) && !players.some((p) => p.color === c) ? " reservada" : ""}" data-color="${c}" style="${bg}" ${usedColors.has(c) ? 'aria-disabled="true"' : ""} title="${c === "GRAD_ONYX" ? "Ônix neon" : COR_EXCLUSIVA[c] ? "Cor exclusiva " + COR_EXCLUSIVA[c].de : ""}"></button>`;
+      const rotulo =
+        (c === "GRAD_ONYX" ? "Ônix neon" : COR_EXCLUSIVA[c] ? "Cor exclusiva " + COR_EXCLUSIVA[c].de : "Cor " + (i + 1)) +
+        (usedColors.has(c) ? " (já escolhida)" : "");
+      return `<button type="button" class="color-swatch ${c === selectedColor && cadMostraSel(cadCor || CURRENT_FORMAT === "equipe") ? "selected" : ""} ${c === "RGB" ? "rgb-swatch" : ""} ${c === "GRAD_ONYX" ? "onyx-swatch" : ""}${usedColors.has(c) ? " tomada" : ""}${COR_EXCLUSIVA[c] && usedColors.has(c) && !players.some((p) => p.color === c) ? " reservada" : ""}" data-color="${c}" style="${bg}" aria-label="${rotulo}" ${usedColors.has(c) ? 'aria-disabled="true"' : ""} title="${c === "GRAD_ONYX" ? "Ônix neon" : COR_EXCLUSIVA[c] ? "Cor exclusiva " + COR_EXCLUSIVA[c].de : ""}"></button>`;
     })
     .join("");
   row.querySelectorAll(".color-swatch").forEach((btn) => {
@@ -3027,6 +3030,7 @@ Os ${p.score} pontos vão ser divididos: +${parte} pra cada um dos ${resto} que 
       lbl.appendChild(sel);
       sP.appendChild(lbl);
     }
+    admMestreAjudaSecao(sP, redesenhar);
     body.appendChild(sP);
   }
   head.querySelector("#admFechar").addEventListener("click", () => ov.remove());

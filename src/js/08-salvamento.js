@@ -494,6 +494,13 @@ function sanitizeLoadedState(s) {
             }
           : {}),
         ...(p.formado === true ? { formado: true } : {}),
+        ...(p.idade === "menor" || p.idade === "maior" ? { idade: p.idade } : {}),
+        ...(p.mestreAjuda === true ? { mestreAjuda: true } : {}),
+        ...(p.mestreAjudaPerguntado === true ? { mestreAjudaPerguntado: true } : {}),
+        ...(p.mestreAjudaAvisado === true ? { mestreAjudaAvisado: true } : {}),
+        ...(p.obsM && typeof p.obsM === "object"
+          ? { obsM: { d: num(p.obsM.d, 0), e: num(p.obsM.e, 0), ms: num(p.obsM.ms, 0), n: num(p.obsM.n, 0) } }
+          : {}),
         ...(p.humorCaos === true ? { humorCaos: true } : {}),
         ...(p.humorPergunta === true ? { humorPergunta: true } : {}),
         ...(p.emo && typeof p.emo.h === "string" ? { emo: { h: p.emo.h.replace(/[^AaEPX]/g, "").slice(-8) } } : {}),
@@ -847,6 +854,7 @@ function loadGameState() {
       const isEquipe = CURRENT_FORMAT === "equipe";
       document.getElementById("colorBox").style.display = isEquipe ? "none" : "";
       document.getElementById("ageBracketWrap").style.display = isEquipe ? "block" : "none";
+      idadeMostrar(isEquipe);
       document.getElementById("teamSetupSection").style.display = isEquipe ? "block" : "none";
       if (isEquipe) {
         if (Object.keys(teams).length > 0) {
@@ -1552,7 +1560,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.6.3 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.6.4 · C.A.O.S. 4.0");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -2074,7 +2082,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.6.3 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.6.4 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
