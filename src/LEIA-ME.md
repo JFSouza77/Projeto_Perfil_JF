@@ -27,8 +27,7 @@ node ferramentas/caos_teste_geradores.js / caos_teste_estresse.js   testes do C.
 | `js/04-turno-e-rodada.js` | Seção 4: sorteio de carta, dicas, acerto/erro, especiais, timers, pausa, início e fim |
 | `js/05-tela.js` | Seção 5: renderização, menus, cadastro, tutorial, painéis e efeitos |
 | `js/06-voz-som-vibracao.js` | Seção 6 |
-| `js/07-caos.js` | Seção 7: motor do C.A.O.S. (falas, humor, rostos, memória e decisões) |
-| `js/07b-gerador-de-falas.js` | Gerador de falas por gatilho (1.7.5.1). O mapa do cérebro está em `docs/CAOS_Cerebro.md` |
+| `js/07-caos/` | Seção 7, o C.A.O.S., em 11 partes (o mapa do cérebro está em `docs/CAOS_Cerebro.md`): `01-nucleo-e-falas` (temperamento, vetor de emoção, escolha e decoração das falas), `02-cerebro-adm` (o painel Cérebro da área ADM), `03-memoria-e-mesa` (fichas, recordes, rivais, leitura da mesa e casal), `04-lexico-e-relogio` (gerador de acerto/erro, relógio e tema da carta), `05-emocoes-e-rede-neural` (console de emoções, misturas, escada de rostos e rede neural), `06-humanizacao` (perguntas, implicância, silêncio e animações), `07-momentos-da-partida` (boas-vindas, início, falas espontâneas e efeitos), `08-hall-janelas-e-pausa` (comentários do Hall, janelas e pausa longa), `09-vinculos-silencio-e-balao` (favorito/desafeto, 🔇, chute e o balão `showToastMessage`), `10-gerador-de-falas` e `11-espinha` (as 3 leis e o canal) |
 | `js/08-salvamento.js` | Seção 8: armazenamento, salvar/carregar, exportar/importar e fichas |
 | `js/09-utilitarios.js` | Seção 9: texto, cores, sorteio e números |
 | `dados/01-emocoes-do-caos.js` | Início da seção 10: `CAOS_EMOS` |

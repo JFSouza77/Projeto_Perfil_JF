@@ -20,7 +20,7 @@ Este documento mostra as camadas do cérebro dele, onde cada uma está no códig
 
 Antes, cada gatilho tinha uma lista fixa de falas. A entrada do JF, por exemplo, tinha só 3. Agora cada gatilho pode ter um **gerador**, que monta a fala juntando pedaços conforme o contexto.
 
-- **Motor:** `src/js/07b-gerador-de-falas.js`, função `caosGerarFala(gatilho, jogador, extra)`.
+- **Motor:** `src/js/07-caos/10-gerador-de-falas.js`, função `caosGerarFala(gatilho, jogador, extra)`.
 - **Dados:** um arquivo por gatilho em `src/dados/08-geradores/`. As regras de escrita estão no topo de `00-abertura.js`.
 - **Contexto que o motor lê sozinho:**
   - hora e dia da semana;
@@ -56,7 +56,7 @@ Antes, cada gatilho tinha uma lista fixa de falas. A entrada do JF, por exemplo,
 
 ## A espinha: as 3 leis (1.7.5.3)
 
-O C.A.O.S. é **caótico leal**: fala o que quiser, do jeito dele, mas dentro de três leis que o código faz valer. Ele não tem consciência nem vontade própria, nem acesso ao jogo. Ele observa e comenta. A espinha fica em `src/js/07c-espinha-do-caos.js` e é instalada no `iniciar()`.
+O C.A.O.S. é **caótico leal**: fala o que quiser, do jeito dele, mas dentro de três leis que o código faz valer. Ele não tem consciência nem vontade própria, nem acesso ao jogo. Ele observa e comenta. A espinha fica em `src/js/07-caos/11-espinha.js` e é instalada no `iniciar()`.
 
 1. **Nunca mexe no jogo.** Pontos, casas, joias, equipes, turno, Mestre e carta são da mesa. Antes de cada rotina protegida, a espinha tira uma foto do jogo. Se a rotina mudar algo, a espinha desfaz na hora e anota.
 2. **Nunca fala o que a mesa proibiu.** O Júnior e o Family friendly não recebem fala pesada, o Suave não recebe zoeira, e o 🔇 da carta, a saída da partida e o 👎 são respeitados. Isso é feito pelos filtros do motor e do gerador.

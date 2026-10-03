@@ -817,6 +817,10 @@ body.batata-mode .splash-go-flutua {
 .splash-menu-voz {
   margin-top: 8px;
 }
+/* 1.7.5.4: memória do C.A.O.S. (levar/trazer) no menu ⋮ */
+.splash-menu-sub {
+  margin: 12px 0 6px;
+}
 .splash-menu-instalar {
   width: 100%;
   margin-top: 8px;

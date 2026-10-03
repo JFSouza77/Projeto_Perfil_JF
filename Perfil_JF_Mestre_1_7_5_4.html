@@ -6,6 +6,16 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.5.4 · 03/10/2026 · "C.A.O.S. and Code Update · QoL" = MEMÓRIA PORTÁTIL + C.A.O.S. ORGANIZADO (pedido do JF).
+          Levar/Trazer a memória do C.A.O.S. no menu ⋮ (caosMemoriaExportar/Importar em js/08): código
+          CAOSMEM1. com fichas, recordes, rivais, nomes, nicks, cartas, avaliações, gerador e diagnóstico;
+          trazer substitui a memória do aparelho (com confirmação), a partida em andamento não muda.
+          O C.A.O.S. virou a pasta js/07-caos/ em 11 partes (núcleo, Cérebro ADM, memória e mesa,
+          léxico e relógio, emoções e rede neural, humanização, momentos da partida, Hall/janelas/pausa,
+          vínculos/silêncio/balão, gerador, espinha) com o Mestre IDÊNTICO byte a byte ao de antes.
+          Faxina: nenhuma função morta (só caosFalarPara, guardada pro online); comentários conferidos.
+          Pronto pra 1.7.10: sucessão de host (o 2º Mestre da partida assume; regra do JF) no roteiro
+          e gerador hostCaiu (sem uso até o online).
   1.7.5.3 · 03/10/2026 · "C.A.O.S. and Code Update · Parte 4 (final)" = A ESPINHA DO C.A.O.S. (pedido do JF:
           caótico leal, autônomo sem consciência, blindado). js/07c-espinha-do-caos.js com as 3 leis:
           1) nunca mexe no jogo (foto do estado antes de cada rotina protegida; mudança é desfeita);
@@ -258,7 +268,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.5.3</title>
+<title>Perfil JF · Beta 1.7.5.4</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -4802,6 +4812,10 @@ body.batata-mode .splash-go-flutua {
 .splash-menu-voz {
   margin-top: 8px;
 }
+/* 1.7.5.4: memória do C.A.O.S. (levar/trazer) no menu ⋮ */
+.splash-menu-sub {
+  margin: 12px 0 6px;
+}
 .splash-menu-instalar {
   width: 100%;
   margin-top: 8px;
@@ -6120,6 +6134,11 @@ body.claro .caos-pergunta button[data-v="digitar"] {
           <button id="btnVozNome" class="chip" style="width:100%; margin-top:6px;">🎙️ Voz: automática</button>
           <div id="vozLista" style="font-size:0.7rem; opacity:0.6; margin-top:6px;"></div>
         </div>
+        <div class="splash-menu-tit splash-menu-sub">🧠 Memória do C.A.O.S.</div>
+        <div class="splash-menu-grade splash-menu-mem">
+          <button id="btnMemExportar" class="chip" style="--cc:#22d3ee;" title="Copia um código com tudo o que o C.A.O.S. lembra (fichas, recordes, nicks, rivalidades) pra levar pra outro aparelho ou endereço">📤 Levar</button>
+          <button id="btnMemImportar" class="chip" style="--cc:#c084fc;" title="Cola o código da memória do C.A.O.S. vinda de outro aparelho ou endereço">📥 Trazer</button>
+        </div>
       </div>
     </div>
     <div id="floatingWordsContainer"></div>
@@ -6133,7 +6152,7 @@ body.claro .caos-pergunta button[data-v="digitar"] {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.5.3 · C.A.O.S. and Code Update · Parte 4 (final)<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.5.4 · C.A.O.S. and Code Update · QoL<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -16055,7 +16074,7 @@ function caosInspectorEstado() {
       }</b></div>
       <div class="ci-kv"><span>🦴 Registro da espinha</span><b class="ci-mono">${caosEspinha.log.slice(-5).reverse().map(escapeHtml).join("<br>") || "—"}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.5.3 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.5.4 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -21065,7 +21084,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.5.3 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.5.4 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -23489,6 +23508,105 @@ function exportSave() {
     caosPromptModal("Copie o código do save abaixo:", encoded, () => {}, true);
   }
 }
+// 1.7.5.4: levar a memória do C.A.O.S. pra outro aparelho ou endereço (o site, um arquivo
+// offline, o futuro dicaos.com.br). É um código com tudo o que ele lembra entre partidas:
+// fichas, recordes, rivais, nomes e nicks, cartas, avaliações e a memória do gerador.
+// Trazer substitui a memória deste aparelho (a partida em andamento não é tocada).
+const CAOS_MEMORIA_PREFIXO = "CAOSMEM1.";
+function caosMemoriaChaves() {
+  return [
+    MEM_FICHAS_KEY,
+    MEM_RECORDES_KEY,
+    MEM_RIVAIS_KEY,
+    MEM_ULTIMA_KEY,
+    MEM_BOLA_KEY,
+    MEM_CARTAS_ABSURDO_KEY,
+    CAOS_NAMES_KEY,
+    "perfil200_caos_nicks",
+    NICKS_REPERTORIO_KEY,
+    CAOS_NICKTEMPO_KEY,
+    CAOS_CARDMEM_KEY,
+    CAOS_RATINGS_KEY,
+    CAOS_GERADOR_KEY,
+    CAOS_DIAG_KEY,
+    "perfil5_caos_fimsrecentes",
+  ];
+}
+function caosMemoriaExportar() {
+  const k = {};
+  caosMemoriaChaves().forEach((ch) => {
+    const v = JFStore.getItem(ch);
+    if (v !== null) k[ch] = v;
+  });
+  let nFichas = 0;
+  try {
+    nFichas = Object.keys(JSON.parse(k[MEM_FICHAS_KEY] || "{}")).length;
+  } catch (e) {}
+  if (!Object.keys(k).length) {
+    caosAvisoModal("🧠 O C.A.O.S. ainda não lembra de nada neste aparelho. Joguem umas partidas primeiro.");
+    return;
+  }
+  const pacote = { tipo: "memoria-caos", v: 1, versao: NOVIDADES[0].v, data: Date.now(), k };
+  const code = CAOS_MEMORIA_PREFIXO + btoa(encodeURIComponent(JSON.stringify(pacote)));
+  const msg = `🧠 Memória do C.A.O.S. (${nFichas} jogador${nFichas === 1 ? "" : "es"} com ficha). Cole no outro aparelho em ⋮ → 📥 Trazer.`;
+  const manual = () => caosPromptModal(msg + " Copie o código abaixo:", code, () => {}, true);
+  if (navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(code).then(() => caosAvisoModal(msg + " O código já foi copiado."), manual);
+  else manual();
+}
+function caosMemoriaImportar() {
+  caosPromptModal("Cole aqui o código da memória do C.A.O.S. (começa com CAOSMEM1.):", "", (code) => {
+    if (!code) return;
+    let pacote = null;
+    try {
+      const t = String(code).trim();
+      if (t.indexOf(CAOS_MEMORIA_PREFIXO) !== 0) throw new Error("prefixo");
+      pacote = JSON.parse(decodeURIComponent(atob(t.slice(CAOS_MEMORIA_PREFIXO.length))));
+    } catch (e) {
+      caosAvisoModal("❌ Esse código não é uma memória do C.A.O.S. (ou veio cortado). Confere se copiou inteiro.");
+      return;
+    }
+    if (!pacote || pacote.tipo !== "memoria-caos" || !pacote.k || typeof pacote.k !== "object") {
+      caosAvisoModal("❌ Esse código não é uma memória do C.A.O.S.");
+      return;
+    }
+    const validas = caosMemoriaChaves().filter((ch) => {
+      const v = pacote.k[ch];
+      if (typeof v !== "string") return false;
+      try {
+        JSON.parse(v);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    });
+    let nFichas = 0;
+    try {
+      nFichas = Object.keys(JSON.parse(pacote.k[MEM_FICHAS_KEY] || "{}")).length;
+    } catch (e) {}
+    caosConfirmarModal(
+      `Trazer a memória do C.A.O.S. (${nFichas} jogador${nFichas === 1 ? "" : "es"} com ficha, de ${new Date(pacote.data || 0).toLocaleDateString("pt-BR")})? Ela substitui o que ele lembra neste aparelho. A partida em andamento não muda.`,
+      "Trazer",
+      "Cancelar",
+      () => {
+        validas.forEach((ch) => JFStore.setItem(ch, pacote.k[ch]));
+        try {
+          JFStore.flushNow();
+        } catch (e) {}
+        caosCardMem = null;
+        caosRatings = null;
+        caosDiag = null;
+        caosGerMem = null;
+        caosLog("memoria", "memória trazida: " + validas.length + " partes, " + nFichas + " fichas");
+        showToastMessage(
+          `[C.A.O.S.] Memória restaurada. Lembrei de ${nFichas} jogador${nFichas === 1 ? "" : "es"}. Parece que eu nunca saí daqui.`,
+          null,
+          true,
+        );
+      },
+    );
+  });
+}
 function importSave() {
   caosPromptModal("Cole aqui o código do save que você recebeu:", "", (code) => {
     if (!code) return;
@@ -23890,7 +24008,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.5.3 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.5.4 · C.A.O.S. 4.0");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -24412,7 +24530,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.5.3 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.5.4 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -58365,6 +58483,20 @@ const PAUSE_TIPS = [
 ];
 const NOVIDADES = [
   {
+    v: "Beta 1.7.5.4",
+    data: "03/10/2026 · 16:27",
+    nome: "C.A.O.S. and Code Update · QoL",
+    t: "Ajustes finais antes da 1.7.6: a memória do C.A.O.S. agora viaja com você, e o cérebro dele ficou organizado por dentro.",
+    itens: [
+      "🧠 Leve a memória do C.A.O.S.: no menu ⋮ da tela inicial, 📤 Levar copia um código com tudo o que ele lembra (jogadores, recordes, nicks, rivalidades, cartas) e 📥 Trazer cola esse código em outro aparelho ou endereço.",
+      "🗂️ C.A.O.S. organizado: o código dele foi separado em 11 partes por assunto, sem mudar nada no comportamento (o resultado foi conferido letra por letra).",
+    ],
+    qol: [
+      "🧹 Faxina no cérebro: nenhuma rotina esquecida ou sem uso ficou pra trás.",
+      "🌐 De olho na 1.7.10: se o celular do host cair no online, quem foi o 2º Mestre da partida assume sem perder nada, e o C.A.O.S. já tem as falas pra anunciar a troca.",
+    ],
+  },
+  {
     v: "Beta 1.7.5.3",
     data: "03/10/2026 · 15:21",
     nome: "C.A.O.S. and Code Update · Parte 4 (final)",
@@ -58937,7 +59069,7 @@ const NOVIDADES = [
 ];
 
 // Geradores de fala por gatilho (1.7.5.1): um arquivo por gatilho nesta pasta.
-// O motor fica em js/07b-gerador-de-falas.js. Gatilho novo = arquivo novo + linha em src/ordem.txt.
+// O motor fica em js/07-caos/10-gerador-de-falas.js. Gatilho novo = arquivo novo + linha em src/ordem.txt.
 // Cada gatilho tem "moldes" (como juntar os pedaços) e slots (abre, meio, fecho, inteira...).
 // Cada slot tem baldes: "geral" e baldes de contexto (hora, memória, quem está na mesa, modo,
 // temperamento). Um balde de contexto só entra quando a etiqueta está ativa. Cada balde
@@ -59770,6 +59902,27 @@ CAOS_GERADORES.pensamento = {
     temLider: ["Enquanto isso, {lider} lidera.", "E quem manda no placar agora é {lider}."],
   },
 };
+// PRONTO PRA 1.7.10 (ainda sem uso): o aparelho host caiu e o C.A.O.S. anuncia quem assume.
+// Regra do JF: o novo host é quem foi o 2º Mestre da partida (depois o 3º, e assim por diante),
+// e os poderes de Mestre/host passam sem perder nada da partida.
+// Variáveis extras: {antigo} (quem era o host) {nome} (o novo host).
+CAOS_GERADORES.hostCaiu = {
+  moldes: ["{abre} {meio}", "{abre} {meio} {fecho}", "{meio} {fecho}"],
+  abre: {
+    geral: ["Opa, perdemos o sinal do {antigo}.", "O aparelho do {antigo} saiu da sala.", "Caiu a conexão do host.", "Alerta: o {antigo} sumiu do mapa."],
+  },
+  meio: {
+    geral: [
+      "Calma, nada se perdeu: o {nome} assume como host agora.",
+      "Pela ordem, quem foi o 2º Mestre assume: {nome}, a mesa é sua.",
+      "Passei o comando pro {nome}. Placar, cartas e joias estão intactos.",
+      "{nome} herda a mesa. Eu continuo aqui, do mesmo jeito.",
+    ],
+  },
+  fecho: {
+    geral: ["Bora continuar.", "Quando o {antigo} voltar, entra como jogador.", "Partida segue.", "Ninguém perde nada."],
+  },
+};
 /* ======================================================================
  * 11. INICIAR (roda por último, depois de todos os dados)
  * ====================================================================== */
@@ -60571,6 +60724,8 @@ function iniciar() {
   renderHumorPicker();
   document.getElementById("btnBatata").addEventListener("click", toggleBatataMode);
   document.getElementById("btnNoturno").addEventListener("click", toggleNoturno);
+  document.getElementById("btnMemExportar").addEventListener("click", caosMemoriaExportar);
+  document.getElementById("btnMemImportar").addEventListener("click", caosMemoriaImportar);
   temaAplicar();
   document.getElementById("btnNovidades").addEventListener("click", abrirNovidades);
   document.getElementById("btnInstalar").addEventListener("click", instalarApp);

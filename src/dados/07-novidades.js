@@ -1,5 +1,19 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.5.4",
+    data: "03/10/2026 · 16:27",
+    nome: "C.A.O.S. and Code Update · QoL",
+    t: "Ajustes finais antes da 1.7.6: a memória do C.A.O.S. agora viaja com você, e o cérebro dele ficou organizado por dentro.",
+    itens: [
+      "🧠 Leve a memória do C.A.O.S.: no menu ⋮ da tela inicial, 📤 Levar copia um código com tudo o que ele lembra (jogadores, recordes, nicks, rivalidades, cartas) e 📥 Trazer cola esse código em outro aparelho ou endereço.",
+      "🗂️ C.A.O.S. organizado: o código dele foi separado em 11 partes por assunto, sem mudar nada no comportamento (o resultado foi conferido letra por letra).",
+    ],
+    qol: [
+      "🧹 Faxina no cérebro: nenhuma rotina esquecida ou sem uso ficou pra trás.",
+      "🌐 De olho na 1.7.10: se o celular do host cair no online, quem foi o 2º Mestre da partida assume sem perder nada, e o C.A.O.S. já tem as falas pra anunciar a troca.",
+    ],
+  },
+  {
     v: "Beta 1.7.5.3",
     data: "03/10/2026 · 15:21",
     nome: "C.A.O.S. and Code Update · Parte 4 (final)",
