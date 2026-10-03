@@ -4,6 +4,16 @@
   (nunca edite as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.4.1 · 03/10/2026 · "Game Mode Update · Parte 2". BUG GRAVE do baralho: embaralharEquilibrado põe a
+          ordem equilibrada no começo, mas a compra é deck.pop() (do fim) — a categoria maior dominava
+          (Clássico: Coisa+Animal 61%, Lugar 6%; Júnior: Animal 65%). Agora o baralho entra com
+          .reverse(); medido: 25% por categoria (Hardcore 30/30/20/20). Anti-repetição com lim = 2 em
+          todos os modos (nenhuma categoria 3x seguidas; no Express já era 2). Reembaralhar/devolver
+          carta usa devolverAoBaralho (posição aleatória) em vez de deck.push + shuffle do baralho todo.
+          Old School Acessibilidade: especial 25 s (15 + 10). Texto do Equipe inclui Old School.
+          Testes: configuração de cada modo pela interface (tempos, meta, limite do baralho, palpite,
+          joias, entradas por carta, fonte da acessibilidade) e 11 partidas simuladas de Hardcore e
+          Old School (padrão e acess.), Versus e Equipe, todas até o fim.
   1.7.4 · 03/10/2026 · "Game Mode Update · Parte 1" (nome novo pedido pelo JF). Foco: corrigir, acertar e
           melhorar os modos existentes. Parte 1 = EXPRESS: especial com o tempo da vez esgotado
           agora aplica o efeito (expressAutoSpecial; antes onTimerExpired("turn") só chamava
@@ -132,7 +142,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Perfil JF">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.4</title>
+<title>Perfil JF · Beta 1.7.4.1</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -5879,7 +5889,7 @@ body.claro .caos-pergunta button[data-v="digitar"] {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.4 · Game Mode Update · Parte 1<br>C.A.O.S. 3.8 · Atualizada em 03/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.4.1 · Game Mode Update · Parte 2<br>C.A.O.S. 3.8 · Atualizada em 03/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -8220,10 +8230,12 @@ function resetDeck() {
   pendingStartTime = null;
   timeoutOverlayMessage = null;
   const fonteDeck = allCards.length > deckLimiteModo() ? shuffle(allCards).slice(0, deckLimiteModo()) : allCards;
+  // o baralho é comprado do fim (deck.pop()); o embaralhamento equilibrado põe a ordem boa no começo,
+  // então ele entra invertido. Antes não invertia, e a categoria com mais cartas dominava a partida.
   deck =
     CURRENT_MODE === "express"
       ? shuffle(fonteDeck)
-      : embaralharEquilibrado(fonteDeck, CURRENT_MODE === "hardcore" ? CATEGORY_WEIGHTS_HARDCORE : null);
+      : embaralharEquilibrado(fonteDeck, CURRENT_MODE === "hardcore" ? CATEGORY_WEIGHTS_HARDCORE : null).reverse();
   currentCard = null;
   cardState = "none";
   gameEnded = false;
@@ -8279,8 +8291,7 @@ function reshuffleAndDraw() {
     if (currentCard.isBonus) {
       pendingBonusQueue.unshift({ landerIdx: currentCard.bonusLandedByIdx, opponentIdx: currentCard.bonusMestreIdx });
     }
-    deck.push(cardsByAnswer.get(currentCard.answer) || currentCard);
-    deck = shuffle(deck);
+    devolverAoBaralho(cardsByAnswer.get(currentCard.answer) || currentCard);
   }
   currentCard = null;
   usedAtLeastOnce = true;
@@ -8511,7 +8522,7 @@ function startTimer(kind) {
   const durations = {
     pick: PICK_TIME_LIMIT + (oldSchoolAcess ? 15 : 0),
     response: RESPONSE_TIME_LIMIT,
-    special: SPECIAL_TIME_LIMIT,
+    special: SPECIAL_TIME_LIMIT + (oldSchoolAcess ? 10 : 0),
     turn: expressTimes().turn,
   };
   timerKind = kind;
@@ -10100,8 +10111,7 @@ function admDevolverCarta() {
   if (currentCard) {
     if (currentCard.isBonus && CURRENT_MODE !== "express")
       pendingBonusQueue.unshift({ landerIdx: currentCard.bonusLandedByIdx, opponentIdx: currentCard.bonusMestreIdx });
-    deck.push(cardsByAnswer.get(currentCard.answer) || currentCard);
-    deck = shuffle(deck);
+    devolverAoBaralho(cardsByAnswer.get(currentCard.answer) || currentCard);
   }
   restoreBonusReader();
   currentCard = null;
@@ -10256,6 +10266,7 @@ function rulesCtx() {
     express,
     equipe: CURRENT_FORMAT === "equipe",
     junior: mode === "junior",
+    acess: mode === "oldschool" && oldSchoolAcess,
     hard: mode === "hardcore" || (express && expressFlavor === "hardcore"),
     palpite: mode === "classico" || mode === "junior" || mode === "oldschool",
     gems: gemsEnabled(),
@@ -12485,7 +12496,7 @@ function renderModeCardDescs() {
       : "O jogo sorteia o modo: Júnior, Clássico, Hardcore, Old School ou Express.",
   );
   set("mcDescVersus", `Cada um por si. De ${MIN_PLAYERS} a ${MAX_PLAYERS} jogadores, o Mestre roda a cada carta.`);
-  set("mcDescEquipe", "Times sorteados equilibrando as idades. Exatamente 4 ou 6 jogadores. Só Clássico ou Hardcore.");
+  set("mcDescEquipe", "Times sorteados equilibrando as idades. Exatamente 4 ou 6 jogadores. Clássico, Hardcore ou Old School.");
 }
 function aplicarAcessibilidade() {
   document.documentElement.classList.toggle("os-acess", CURRENT_MODE === "oldschool" && oldSchoolAcess);
@@ -12760,7 +12771,7 @@ function buildRulesHtml() {
     );
   else
     li.push(
-      `⭐ <b>Especiais:</b> Avance/Volte casas, Escolha um jogador (nunca você mesmo), Perca sua vez${c.palpite ? " e Palpite a qualquer hora" : ""}. Contam como dica aberta e <b>passam a vez</b> de quem tirou (menos o Palpite). Em ${SPECIAL_TIME_LIMIT}s sem toque, Avance/Volte valem sozinhos.`,
+      `⭐ <b>Especiais:</b> Avance/Volte casas, Escolha um jogador (nunca você mesmo), Perca sua vez${c.palpite ? " e Palpite a qualquer hora" : ""}. Contam como dica aberta e <b>passam a vez</b> de quem tirou (menos o Palpite). Em ${SPECIAL_TIME_LIMIT + (c.acess ? 10 : 0)}s sem toque, Avance/Volte valem sozinhos.`,
     );
   if (c.palpite)
     li.push(
@@ -15726,7 +15737,7 @@ function caosInspectorEstado() {
         );
       })()}</b></div>
       <div class="ci-kv"><span>😄 Alegria · 🎯 confiança · 🔎 curiosidade</span><b class="ci-mono">${caosEixos.alegria.toFixed(1)} · ${caosEixos.confianca.toFixed(1)} · ${caosEixos.curiosidade.toFixed(1)}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.4 · C.A.O.S. 3.8</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.4.1 · C.A.O.S. 3.8</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -19341,7 +19352,8 @@ function caosBilheteMestre(txt) {
 }
 function caosAntiRepeticao() {
   if (deck.length < 2) return;
-  const lim = CURRENT_MODE === "express" ? 2 : 3,
+  // nenhuma categoria sai mais de 2 vezes seguidas (no Express, com 1 ou 2 categorias, a regra é a de antes)
+  const lim = 2,
     cat = (c) => gemCategoryFor(c.category);
   const cnt = {};
   deck.forEach((c) => {
@@ -20508,7 +20520,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.4 · C.A.O.S. 3.8)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.4.1 · C.A.O.S. 3.8)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -22773,7 +22785,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.4 · C.A.O.S. 3.8");
+  L.push("- **Versão:** Beta 1.7.4.1 · C.A.O.S. 3.8");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -23295,7 +23307,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.4 · C.A.O.S. 3.8",
+        versao: "Beta 1.7.4.1 · C.A.O.S. 3.8",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -23444,6 +23456,10 @@ function isSafeColor(c) {
 // Embaralha dando a cada categoria de joia a mesma chance de sair, seja qual for o
 // tamanho dela no baralho (sem isso PESSOA saía em ~35% das cartas e ANO em ~19%).
 // Com `alvo`, a chance de cada categoria segue as proporções pedidas.
+// devolve uma carta num ponto qualquer do baralho sem reembaralhar tudo (preserva o equilíbrio de categorias)
+function devolverAoBaralho(card) {
+  deck.splice(Math.floor(Math.random() * (deck.length + 1)), 0, card);
+}
 function embaralharEquilibrado(cards, alvo) {
   const n = {};
   cards.forEach((c) => {
@@ -57203,6 +57219,24 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.4.1",
+    data: "03/10/2026 · 01:33",
+    nome: "Game Mode Update · Parte 2",
+    t: "As categorias voltaram a se revezar de verdade: nenhuma sai mais de duas vezes seguidas, e o Júnior tem animal de novo. Hardcore e Old School (com a acessibilidade) conferidos com partidas simuladas.",
+    itens: [
+      "⚖️ Baralho equilibrado de verdade: o jogo montava o baralho equilibrado, mas comprava as cartas na ordem inversa. Resultado: a categoria com mais cartas dominava a partida (no Clássico, Coisa chegava a 60% e Lugar a 6%). Agora cada categoria sai cerca de 25% das vezes (no Hardcore, 30% Ano e Pessoa e 20% Lugar e Coisa, como planejado).",
+      "🔁 No máximo 2 seguidas: nenhuma categoria é sorteada mais de duas vezes seguidas, em todos os modos com tabuleiro. No Express, que joga com uma ou duas categorias escolhidas, fica como era.",
+      "🐾 Animal no Júnior: com o baralho corrigido, os animais aparecem numa a cada quatro cartas, mais ou menos, como as outras categorias.",
+      "♻️ Carta devolvida sem bagunçar: reembaralhar a carta (olhou sem querer) devolvia ela e embaralhava o baralho inteiro, desfazendo o equilíbrio. Agora ela volta num ponto qualquer, sem mexer no resto.",
+      "🔎 Old School Acessibilidade conferida: letra maior em toda a tela e mais ainda na dica em destaque, 45 s pra escolher a dica e 2 min pra responder. E agora as instruções especiais também ganham tempo extra (25 s em vez de 15 s).",
+      "💀 Hardcore conferido: 10 entradas por carta com 1 ou 2 especiais, 60 s pra responder, pontos em dobro, sem Palpite a qualquer hora e sem Ajudinha do C.A.O.S.",
+    ],
+    qol: [
+      "🧪 Partidas simuladas: Hardcore e Old School (padrão e Acessibilidade), em Versus e em Equipe, jogados do começo ao fim sem travar e sem erro.",
+      "📝 Texto do Equipe corrigido: a tela de escolha dizia que o Equipe era só Clássico ou Hardcore, mas o Old School também vale.",
+    ],
+  },
   {
     v: "Beta 1.7.4",
     data: "03/10/2026 · 00:51",
