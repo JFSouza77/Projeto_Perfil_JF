@@ -4,6 +4,16 @@
   (nunca edite as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.4.3 · 03/10/2026 · "Game Mode Update · Parte 4" = CLÁSSICO. Teste pela tela: reembaralhar devolve a carta
+          (devolverAoBaralho), descarte até 2 seguidos (3º bloqueado), erro passa a vez, Desistir após a
+          1ª dica, especial de casa no tempo esgotado (15 s) anda sozinha. Simulações: Versus 3/5j
+          (casa, joias, pontos) e Equipe 4/6j (casa, tabuleiro) até o fim; 1 travamento da automação
+          por cadastro de 5 de 6 (escolha aleatória de cor/avatar do teste; 6 jogadores entram normal
+          pela tela). QoL: contas das 200 cartas de Ano (ano_math) + releitura das 101 novas; 9
+          Pessoas novas. Kellogg 1906 = W. K. Kellogg. Copan: "mais de 30 andares" (fontes divergem).
+          Roteiro de organização/online salvo em docs/ (Roteiro_Organizacao_e_Online.md e
+          Status_do_Roteiro.md). Decisão do JF: Parte A (código) → 1.7.5 "C.A.O.S. and Code Update",
+          junto com o cérebro do C.A.O.S.; Parte B (online) → 1.7.10.
   1.7.4.2 · 03/10/2026 · "Game Mode Update · Parte 3" = JÚNIOR. Conferido: meta 150, baralho 250 (junior/livre,
           sem ANO), resp 90 s, palpite e joias; zoeira familia/suave/normal (padrão familia), avatares
           de adulto fora, Júnior oculto no Equipe; regras com meta e 250 cartas. Cartas visíveis no
@@ -57240,7 +57250,7 @@ const PAUSE_TIPS = [
 const NOVIDADES = [
   {
     v: "Beta 1.7.4.3",
-    data: "__DATA__",
+    data: "03/10/2026 · 10:08",
     nome: "Game Mode Update · Parte 4",
     t: "Clássico conferido de ponta a ponta, com partidas simuladas, e as cartas de Ano e Pessoa passaram por mais uma revisão.",
     itens: [
@@ -57251,7 +57261,8 @@ const NOVIDADES = [
     ],
     qol: [
       "✍️ Fato ajustado: em 1906, quem fundou a empresa de flocos de milho foi W. K. Kellogg (o irmão dele não entrou no negócio).",
-      "🧪 Partidas simuladas: seis partidas inteiras de Clássico, em Versus e em Equipe, jogadas até o fim.",
+      "🧪 Partidas simuladas: partidas inteiras de Clássico em Versus (3 e 5 jogadores) e em Equipe (4 e 6), com Moda da Casa, Joias, Pontos e Tabuleiro, jogadas até o fim.",
+      "🏢 Copan: as fontes não batem no número de andares (32, 35 ou 38), então a dica agora diz que ele tem mais de 30.",
       "🗺️ Roteiro guardado: o plano de organização do código e do multiplayer online ficou salvo no projeto. A organização do código entra na 1.7.5 (C.A.O.S. and Code Update) e o online, na 1.7.10.",
     ],
   },
