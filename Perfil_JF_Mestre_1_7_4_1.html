@@ -4,6 +4,16 @@
   (nunca edite as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.4.1 · 03/10/2026 · "Game Mode Update · Parte 2". BUG GRAVE do baralho: embaralharEquilibrado põe a
+          ordem equilibrada no começo, mas a compra é deck.pop() (do fim) — a categoria maior dominava
+          (Clássico: Coisa+Animal 61%, Lugar 6%; Júnior: Animal 65%). Agora o baralho entra com
+          .reverse(); medido: 25% por categoria (Hardcore 30/30/20/20). Anti-repetição com lim = 2 em
+          todos os modos (nenhuma categoria 3x seguidas; no Express já era 2). Reembaralhar/devolver
+          carta usa devolverAoBaralho (posição aleatória) em vez de deck.push + shuffle do baralho todo.
+          Old School Acessibilidade: especial 25 s (15 + 10). Texto do Equipe inclui Old School.
+          Testes: configuração de cada modo pela interface (tempos, meta, limite do baralho, palpite,
+          joias, entradas por carta, fonte da acessibilidade) e 11 partidas simuladas de Hardcore e
+          Old School (padrão e acess.), Versus e Equipe, todas até o fim.
   1.7.4 · 03/10/2026 · "Game Mode Update · Parte 1" (nome novo pedido pelo JF). Foco: corrigir, acertar e
           melhorar os modos existentes. Parte 1 = EXPRESS: especial com o tempo da vez esgotado
           agora aplica o efeito (expressAutoSpecial; antes onTimerExpired("turn") só chamava
@@ -57211,7 +57221,7 @@ const PAUSE_TIPS = [
 const NOVIDADES = [
   {
     v: "Beta 1.7.4.1",
-    data: "__DATA__",
+    data: "03/10/2026 · 01:33",
     nome: "Game Mode Update · Parte 2",
     t: "As categorias voltaram a se revezar de verdade: nenhuma sai mais de duas vezes seguidas, e o Júnior tem animal de novo. Hardcore e Old School (com a acessibilidade) conferidos com partidas simuladas.",
     itens: [
