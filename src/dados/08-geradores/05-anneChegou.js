@@ -1,0 +1,58 @@
+// A Anne se cadastrou (com a 👸).
+CAOS_GERADORES.anneChegou = {
+  moldes: ["{abre} {meio}", "{abre} {meio}", "{meio} {fecho}", "{abre} {meio} {fecho}", "{inteira}"],
+  abre: {
+    geral: [
+      "Olha quem chegou!",
+      "Bem-vinda, {nome}!",
+      "Alteza {nome} na sala!",
+      "{nome} entrou.",
+      "Que bom te ver, {nome}.",
+      "A princesa chegou.",
+    ],
+    manha: ["Bom dia, {nome}!"],
+    tarde: ["Boa tarde, {nome}!"],
+    noite: ["Boa noite, {nome}!"],
+    madrugada: ["{nome} acordada a essa hora? Bem-vinda mesmo assim."],
+    hoje: ["De volta, {nome}? Hoje mesmo você já passou por aqui."],
+    semana: ["{nome}! A última vez foi {quando}."],
+    sumido: ["{nome}! {tempo} sem você. Eu contei cada dia. Mentira, contei por cima."],
+  },
+  meio: {
+    geral: [
+      "O placar já ficou mais elegante.",
+      "Hoje eu vou me comportar. Prometo. Mais ou menos.",
+      "Tenho ordens de tratar a princesa bem. Não lembro quem deu, mas estou cumprindo.",
+      "A mesa inteira sentou mais reta.",
+      "Só não deixa a coroa cair quando errar.",
+      "A coroa é sua. O mérito, a gente vê.",
+      "Eu me lembro de você. Lembro até do brilho.",
+      "Eu senti falta. Só um pouquinho. Mas senti.",
+    ],
+    jf: [
+      "O {jf} já está aqui. Agora a mesa tem juízo.",
+      "Com o {jf} na mesa, alguém precisava trazer bom senso.",
+      "O {jf} programou o jogo, mas quem manda na mesa é você.",
+    ],
+    pedro: ["O {pedro} também está aqui. A família está reunida."],
+    isabel: ["A {isabel} também veio. Vou ser gentil em dobro."],
+    venceuUltima: ["Você ganhou a última, {nome}. A coroa é de verdade."],
+    perdeuUltima: ["Da última vez não deu, mas hoje é outro dia."],
+    vencedor: ["{vitorias} vitórias no histórico. Realeza é isso."],
+  },
+  fecho: {
+    geral: ["Bora jogar?", "Boa partida!", "O reino agradece.", "Sem pressão. Mas com estilo."],
+  },
+  inteira: {
+    geral: [
+      "Olha quem chegou! Bem-vinda, {nome}, a princesa da mesa. Só não deixa a coroa cair quando errar.",
+      "{nome} entrou, e o placar já ficou mais elegante. A coroa é sua. O mérito, a gente vê.",
+      "Bem-vinda, {nome}! Como é que você tá? Bora jogar?",
+      "{nome}! Que bom te ver. Hoje eu vou me comportar. Prometo. Mais ou menos.",
+      "Bem-vinda, {nome}. Tenho ordens de tratar a princesa bem. Não lembro quem deu, mas estou cumprindo.",
+      "Alteza {nome} na sala! A mesa inteira sentou mais reta. Sem pressão.",
+    ],
+    hoje: ["Ih, {nome} outra vez! Eu já te vi por aqui. A princesa voltou, e o reino agradece. Menos o placar."],
+    semana: ["Bem-vinda de volta, {nome}. Eu me lembro de você. Lembro até do brilho."],
+  },
+};

@@ -13,6 +13,7 @@ js/04-turno-e-rodada.js
 js/05-tela.js
 js/06-voz-som-vibracao.js
 js/07-caos.js
+js/07b-gerador-de-falas.js
 js/08-salvamento.js
 js/09-utilitarios.js
 dados/01-emocoes-do-caos.js
@@ -28,5 +29,19 @@ dados/04-lexico-e-emocoes.js
 dados/05-apelidos-e-comentarios.js
 dados/06-tutorial-e-dicas.js
 dados/07-novidades.js
+dados/08-geradores/00-abertura.js
+dados/08-geradores/01-jfChegou.js
+dados/08-geradores/02-jfInicio.js
+dados/08-geradores/03-jfAcerto.js
+dados/08-geradores/04-jfFim.js
+dados/08-geradores/05-anneChegou.js
+dados/08-geradores/06-boasVindas.js
+dados/08-geradores/07-inicioMestre.js
+dados/08-geradores/08-inicioPrimeiro.js
+dados/08-geradores/09-revanche.js
+dados/08-geradores/10-pausaHumor.js
+dados/08-geradores/11-pausaVolta.js
+dados/08-geradores/12-inicioModo.js
+dados/08-geradores/13-inicioJogadores.js
 js/11-iniciar.js
 html/03-fim.html

@@ -12,6 +12,8 @@ na hora de começar cada fase.
 | C.A.O.S.: matrizes de humor, cérebro, humanização, memória e limites, limites de comportamento, testes de estresse, tédio e animação, controle e mistura de emoções | **1.7.5** | |
 | Parte B: multiplayer online (Fases 1 a 6) | **1.7.10** | Vem junto com a retirada do aviso "Em breve: Modo Multiplayer" (#splashEmBreve). |
 | Modo Caos / No Mercy | 1.7.10 ou depois | As regras de joias são decisão do JF. |
+| Nome novo **DICAOS** e domínio próprio (dicaos.com.br + dicaos.com) | **1.7.10** | Decisão do JF em 03/10/2026: ele compra os domínios por volta de 05–06/10, mas a troca de nome, de domínio e de endereço só acontece junto com o multiplayer, no grande update. Planejar a migração do save (o progresso fica preso ao endereço antigo; usar Exportar/Importar). INPI: "DICAOS" sem conflito numa busca do JF; "CAOS" sozinho tem 602 processos. |
+| Preparação da logística do online (transporte, serviço, contas) | A partir de 05–06/10/2026 | Em paralelo, depois que o JF comprar os domínios. |
 | "Crie/sugira sua carta" (o C.A.O.S. confere se a carta já existe) | Para depois | É uma ideia do JF e ainda não tem data. |
 
 ## Itens que já estão resolvidos ou mudaram desde a 1.7.0

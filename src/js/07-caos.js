@@ -1571,7 +1571,7 @@ function caosInspectorEstado() {
         );
       })()}</b></div>
       <div class="ci-kv"><span>😄 Alegria · 🎯 confiança · 🔎 curiosidade</span><b class="ci-mono">${caosEixos.alegria.toFixed(1)} · ${caosEixos.confianca.toFixed(1)} · ${caosEixos.curiosidade.toFixed(1)}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.5 · C.A.O.S. 3.8</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.5.1 · C.A.O.S. 3.8</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -5234,8 +5234,15 @@ function caosWelcomePlayer(p) {
     args = [name, caosTempoFala(p.nickMs)];
   } else if (prevNickMs >= 9e4 && typeof p.nickMs === "number" && p.nickMs < 3e4 && R() < 0.8)
     bank = REACTIVE_VOICE.nickDemora.evoluiu;
-  else if (isAnneName(name) && p.avatar === "👸") bank = n > 0 && R() < 0.4 ? B.anneVolta : B.anne;
-  else if (isJfName(name) && p.avatar === "😎") bank = REACTIVE_VOICE.nickReacao.jf;
+  else if (isAnneName(name) && p.avatar === "👸") {
+    const g = caosGerarFala("anneChegou", p);
+    if (g) return showToastMessage(g);
+    bank = n > 0 && R() < 0.4 ? B.anneVolta : B.anne;
+  } else if (isJfName(name) && p.avatar === "😎") {
+    const g = caosGerarFala("jfChegou", p);
+    if (g) return showToastMessage(g);
+    bank = REACTIVE_VOICE.nickReacao.jf;
+  }
   else {
     {
       const m = caosPerfilCadastro(p);
@@ -5246,6 +5253,12 @@ function caosWelcomePlayer(p) {
     }
     if (R() < 0.3 && maybeReactToNick(name)) return;
     const humor = playerHumor(p);
+    // gerador de boas-vindas (1.7.5.1): na maioria das vezes, monta uma fala pelo contexto
+    if (!humorFamilia(p) && humor !== "zero" && R() < 0.65) {
+      const extra = players.length === 1 ? ["primeiro"] : players.length >= MAX_PLAYERS ? ["ultimo"] : [];
+      const g = caosGerarFala("boasVindas", p, { tags: extra });
+      if (g) return showToastMessage(g);
+    }
     const others = players.filter((x) => x !== p);
     const other = others.length ? others[Math.floor(R() * others.length)].name : null;
     const mem = n >= 1 && R() < 0.7 ? caosMemBoasVindas(p, n) : null;
@@ -5289,7 +5302,9 @@ function caosRememberNick(n) {
 function caosStartBeatText(type) {
   switch (type) {
     case "jf":
-      return caosOncePerMatch("egg_jf_inicio") ? getRandomReaction(REACTIVE_VOICE.jfInicio) : "";
+      return caosOncePerMatch("egg_jf_inicio")
+        ? caosGerarFala("jfInicio", players.find(isJfPlayer)) || getRandomReaction(REACTIVE_VOICE.jfInicio)
+        : "";
     case "nick": {
       const seen = caosSeenNicks();
       const nickP = players.find((p) => /\d{2,}/.test(p.name) && !seen.includes(p.name.toLowerCase()));
@@ -5308,15 +5323,18 @@ function caosStartBeatText(type) {
     case "jogadores": {
       const n = players.length,
         key = n <= 2 ? "2" : n === 3 ? "3" : n === 4 ? "4" : "5a6";
-      return getRandomReaction(REACTIVE_VOICE.inicioJogadores[key]);
+      return (
+        caosGerarFala("inicioJogadores", null, { tags: ["q" + key] }) ||
+        getRandomReaction(REACTIVE_VOICE.inicioJogadores[key])
+      );
     }
     case "mestre": {
       const m = players[mestreIndex];
-      return m ? getRandomReaction(REACTIVE_VOICE.inicioMestre, m.name) : "";
+      return m ? caosGerarFala("inicioMestre", m) || getRandomReaction(REACTIVE_VOICE.inicioMestre, m.name) : "";
     }
     case "primeiro": {
       const r = players[responderIndex];
-      return r ? getRandomReaction(REACTIVE_VOICE.inicioPrimeiro, r.name) : "";
+      return r ? caosGerarFala("inicioPrimeiro", r) || getRandomReaction(REACTIVE_VOICE.inicioPrimeiro, r.name) : "";
     }
     case "memoria":
       return caosOncePerMatch("mem_inicio") ? caosMemInicioTexto() : "";
@@ -5328,7 +5346,10 @@ function caosStartBeatText(type) {
         : "";
     case "modo": {
       const k = CURRENT_FORMAT === "equipe" ? "equipe" : CURRENT_MODE;
-      return REACTIVE_VOICE.inicioModo[k] ? getRandomReaction(REACTIVE_VOICE.inicioModo[k]) : "";
+      return (
+        caosGerarFala("inicioModo", null) ||
+        (REACTIVE_VOICE.inicioModo[k] ? getRandomReaction(REACTIVE_VOICE.inicioModo[k]) : "")
+      );
     }
   }
   return "";
@@ -5696,7 +5717,7 @@ function maybeShowAcertoFlavor(scorerIdx, realCluesRevealed, timeTakenMs, ctx) {
     reactionMsg = getRandomReaction(REACTIVE_VOICE.carinho, player.name);
   }
   if (!reactionMsg && isJfPlayer(player) && Math.random() < 0.1 && caosOncePerMatch("egg_jf_acerto")) {
-    reactionMsg = getRandomReaction(REACTIVE_VOICE.jfAcerto);
+    reactionMsg = caosGerarFala("jfAcerto", player) || getRandomReaction(REACTIVE_VOICE.jfAcerto);
   }
   if (
     !reactionMsg &&
@@ -6354,7 +6375,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.5 · C.A.O.S. 3.8)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.5.1 · C.A.O.S. 3.8)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -6407,13 +6428,20 @@ function caosPausaHumorTick() {
   if (!box) return;
   let emo = CAOS_PAUSA_DEGRAUS[alvo].emo;
   if (CURRENT_MODE === "junior" && (emo === "raiva" || emo === "furia")) emo = "deboche";
-  const txt = getRandomReaction(REACTIVE_VOICE.pausaHumor["s" + alvo]);
+  const txt =
+    caosGerarFala("pausaHumor", null, { tags: ["d" + alvo], vars: { pausa: caosPausaTexto(seg) } }) ||
+    getRandomReaction(REACTIVE_VOICE.pausaHumor["s" + alvo]);
   if (!txt) return;
   box.style.display = "";
   box.classList.add("show");
   caosToastEmo(box, emo, alvo >= 5 ? "erroEscalada" : null);
   box.textContent = String(txt).replace(/[⟦⟧]/g, "");
   caosLog("pausa", `😤 pausa longa (degrau ${alvo + 1}, ${Math.round(seg)} s): ${emo}`);
+}
+// "1 minuto", "3 minutos" (pausas são de 40 s pra cima)
+function caosPausaTexto(seg) {
+  const m = Math.max(1, Math.round(seg / 60));
+  return m === 1 ? "1 minuto" : m + " minutos";
 }
 function caosPausaHumorVoltar(vinhaExpirada) {
   caosPausaParar();
@@ -6430,7 +6458,14 @@ function caosPausaHumorVoltar(vinhaExpirada) {
   caosMagoaPico = Math.max(caosMagoaPico, d);
   if (vinhaExpirada || caosSilenced || gameEnded) return;
   const nivel = d >= 4 ? "puto" : d >= 2 ? "magoado" : "leve";
-  caosFalaAgendar(() => getRandomReaction(REACTIVE_VOICE.pausaVolta[nivel]), 450, "media");
+  const pausa = caosPausaTexto(CAOS_PAUSA_DEGRAUS[d].s);
+  caosFalaAgendar(
+    () =>
+      caosGerarFala("pausaVolta", null, { tags: [nivel], vars: { pausa } }) ||
+      getRandomReaction(REACTIVE_VOICE.pausaVolta[nivel]),
+    450,
+    "media",
+  );
 }
 function caosRetaFinalTalvez() {
   try {

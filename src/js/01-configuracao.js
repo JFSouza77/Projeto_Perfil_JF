@@ -624,6 +624,8 @@ const CAOS_COSQ = {
   ],
 };
 const CAOS_NAMES_KEY = "perfil200_caos_conhecidos";
+// Memória do gerador de falas (pedaços usados por último em cada gatilho), pra não repetir entre partidas.
+const CAOS_GERADOR_KEY = "perfil5_caos_gerador";
 const MEM_FICHAS_KEY = "perfil5_caos_fichas";
 const MEM_RECORDES_KEY = "perfil5_caos_recordes";
 const MEM_RIVAIS_KEY = "perfil5_caos_rivais";

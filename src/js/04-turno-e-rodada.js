@@ -1517,7 +1517,11 @@ function endGame() {
   vibrar("vitoria");
   fxUrgente(false);
   if (players.some(isJfPlayer) && Math.random() < 0.25 && caosOncePerMatch("egg_jf_fim")) {
-    showToastMessage(getRandomReaction(REACTIVE_VOICE.jfFim), null, true);
+    const jfI = players.findIndex(isJfPlayer);
+    const fimJf = caosGerarFala("jfFim", players[jfI], {
+      tags: [caosVencedoresIdx().includes(jfI) ? "jfVenceu" : "jfPerdeu"],
+    });
+    showToastMessage(fimJf || getRandomReaction(REACTIVE_VOICE.jfFim), null, true);
   } else if (caosSilenced) {
     showToastMessage(
       getRandomReaction(REACTIVE_VOICE.caosVoltouDaPartida) + " " + getRandomReaction(REACTIVE_VOICE.partidaLonga),
@@ -1619,7 +1623,14 @@ function jogarDeNovo() {
   selectMode(modo, cats, flavor);
   document.getElementById("startGameBtn").click();
   caosLog("revanche", `mesmo modo (${modo}) · ${players.length} jogadores`);
-  caosToastAtrasado(() => showToastMessage(getRandomReaction(REACTIVE_VOICE.revanche, campeao || "quem ganhou")), 400);
+  caosToastAtrasado(
+    () =>
+      showToastMessage(
+        caosGerarFala("revanche", null, { vars: { nome: campeao || "quem ganhou" } }) ||
+          getRandomReaction(REACTIVE_VOICE.revanche, campeao || "quem ganhou"),
+      ),
+    400,
+  );
 }
 function pickRandomExpressCategories() {
   const cats = ["ANO", "PESSOA", "LUGAR", "COISA"];
