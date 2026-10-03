@@ -1588,16 +1588,32 @@ button {
   color: #e6e6f0;
   font-weight: 400;
 }
-html.os-acess {
+/* Letra maior: Old School Acessibilidade e "Grande" (1.7.6) usam o mesmo nível; "Enorme" vai além */
+html.os-acess,
+html.acess-letra-1 {
   font-size: 112%;
 }
 html.os-acess .spotlight-box,
-html.os-acess .pending-box {
+html.os-acess .pending-box,
+html.acess-letra-1 .spotlight-box,
+html.acess-letra-1 .pending-box {
   font-size: 1.22rem;
   line-height: 1.45;
 }
-html.os-acess .jf-toast-overlay {
+html.os-acess .jf-toast-overlay,
+html.acess-letra-1 .jf-toast-overlay {
   font-size: 1.05rem;
+}
+html.acess-letra-2 {
+  font-size: 125%;
+}
+html.acess-letra-2 .spotlight-box,
+html.acess-letra-2 .pending-box {
+  font-size: 1.32rem;
+  line-height: 1.45;
+}
+html.acess-letra-2 .jf-toast-overlay {
+  font-size: 1.12rem;
 }
 .ini-start {
   width: 100%;
@@ -2059,4 +2075,148 @@ body.batata-mode #floatingWordsContainer {
   margin-top: 8px;
   text-align: center;
   line-height: 1.35;
+}
+
+/* 1.7.6: alto contraste (texto forte, sem brilho neon nos textos) */
+html.acess-contraste * {
+  text-shadow: none !important;
+}
+html.acess-contraste .welcome-subtitle,
+html.acess-contraste .splash-subtitle,
+html.acess-contraste .splash-tagline,
+html.acess-contraste .splash-buildlog,
+html.acess-contraste .pause-tip-count,
+html.acess-contraste .hall-sub,
+html.acess-contraste .nov-sub,
+html.acess-contraste .ci-note,
+html.acess-contraste .clue-num,
+html.acess-contraste .deck-info,
+html.acess-contraste small {
+  opacity: 1 !important;
+  color: #ffffff !important;
+}
+html.acess-contraste body.claro .welcome-subtitle,
+html.acess-contraste body.claro .splash-subtitle,
+html.acess-contraste body.claro .splash-tagline,
+html.acess-contraste body.claro .splash-buildlog,
+html.acess-contraste body.claro .pause-tip-count,
+html.acess-contraste body.claro .hall-sub,
+html.acess-contraste body.claro .nov-sub,
+html.acess-contraste body.claro .ci-note,
+html.acess-contraste body.claro .clue-num,
+html.acess-contraste body.claro .deck-info,
+html.acess-contraste body.claro small {
+  color: #111111 !important;
+}
+html.acess-contraste button,
+html.acess-contraste .chip {
+  border-width: 2px;
+}
+/* 1.7.6: painel de acessibilidade */
+.acess-ov {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+.acess-box {
+  background: #1a1a2e;
+  color: #fff;
+  border: 1px solid #60a5fa;
+  border-radius: 16px;
+  padding: 18px 16px;
+  max-width: 400px;
+  width: 100%;
+  max-height: 92vh;
+  overflow: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.acess-tit {
+  font-size: 1.25rem;
+  font-weight: 800;
+  text-align: center;
+}
+.acess-sub,
+.acess-nota {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  text-align: center;
+}
+.acess-rot {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.acess-seg {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.acess-op {
+  min-height: 48px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #475569;
+  background: #24243e;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+.acess-seg .acess-op {
+  text-align: center;
+}
+.acess-op small {
+  display: block;
+  font-weight: 400;
+  font-size: 0.78rem;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+.acess-op.on {
+  border-color: #60a5fa;
+  background: #1e3a8a;
+  box-shadow: 0 0 0 2px #60a5fa66;
+}
+.acess-op[disabled] {
+  opacity: 0.45;
+}
+.acess-grupo input[type="range"] {
+  width: 100%;
+  height: 32px;
+  accent-color: #60a5fa;
+}
+.acess-fechar {
+  width: 100%;
+  min-height: 48px;
+  border: 0;
+  border-radius: 12px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+body.claro .acess-box {
+  background: #fdfaf3;
+  color: #1f1d2b;
+}
+body.claro .acess-op {
+  background: #fff;
+  color: #1f1d2b;
+  border-color: #cbd5e1;
+}
+body.claro .acess-op.on {
+  background: #dbeafe;
+  border-color: #2563eb;
 }

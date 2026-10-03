@@ -4,6 +4,11 @@
 
 function iniciar() {
   caosFalasMontar(REACTIVE_VOICE);
+  // acessibilidade do aparelho (letra, contraste) antes de desenhar as telas
+  try {
+    acessCarregar();
+    aplicarAcessibilidade();
+  } catch (e) {}
   // espinha do C.A.O.S.: as 3 leis e o canal de falas (js/07c)
   try {
     caosEspinhaInstalar();
@@ -800,6 +805,8 @@ function iniciar() {
   document.getElementById("btnBatata").addEventListener("click", toggleBatataMode);
   document.getElementById("btnNoturno").addEventListener("click", toggleNoturno);
   document.getElementById("btnMemExportar").addEventListener("click", caosMemoriaExportar);
+  document.getElementById("btnAcessibilidade").addEventListener("click", acessPainelAbrir);
+  document.getElementById("pauseAcessBtn").addEventListener("click", acessPainelAbrir);
   document.getElementById("btnMemImportar").addEventListener("click", caosMemoriaImportar);
   temaAplicar();
   document.getElementById("btnNovidades").addEventListener("click", abrirNovidades);
@@ -834,6 +841,10 @@ function iniciar() {
       bt.setAttribute("aria-expanded", sim ? "true" : "false");
     };
     bt.addEventListener("click", () => abrir(menu.hidden));
+    // botões que abrem janela (acessibilidade, memória) fecham o menu antes, pro 1º toque na janela valer
+    menu.addEventListener("click", (e) => {
+      if (e.target.closest && e.target.closest("[data-fecha-menu]")) abrir(false);
+    });
     document.addEventListener(
       "pointerdown",
       (e) => {

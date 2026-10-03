@@ -346,7 +346,8 @@ function maybeCommentClueNumber(idx) {
 function maybeMicroAmbiente() {
   if (CURRENT_MODE === "express" || caosSilenced || gameEnded || activeToastState || cardState !== "revealed") return;
   if ((timerKind !== "pick" && timerKind !== "response") || microAmbienteSerial === timerSerial) return;
-  const total = timerKind === "pick" ? PICK_TIME_LIMIT + (oldSchoolAcess ? 15 : 0) : RESPONSE_TIME_LIMIT;
+  const total =
+    timerKind === "pick" ? PICK_TIME_LIMIT + acessTempoExtra("pick") : RESPONSE_TIME_LIMIT + acessTempoExtra("response");
   if (total - secondsLeft() < 4 || Date.now() - caosLastSpokeAt < 25e3) return;
   if (Math.random() >= (caosOS() ? 0.01 : 0.03)) return;
   microAmbienteSerial = timerSerial;

@@ -55,6 +55,7 @@ function caosSpeakSample(txt) {
     const v = caosPickVoice();
     if (v) u.voice = v;
     u.rate = Math.min(2, caosVoiceSpeed);
+    u.volume = acessVolVoz();
     u.pitch = Math.max(0.4, Math.min(2, caosTomEfetivo()));
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(u);
@@ -144,6 +145,7 @@ function caosSpeak(msg, humorForcado, onEnd, onPedaco, vir) {
     partes.forEach((chunk, pi) => {
       const u = new SpeechSynthesisUtterance(chunk);
       u.lang = "pt-BR";
+      u.volume = acessVolVoz();
       if (voice) u.voice = voice;
       const end = chunk.slice(-1);
       const stP = hmV && pi >= corteV ? [st0[0] * hmV[0], st0[1] * hmV[1]] : st;
@@ -198,7 +200,7 @@ function caosBip(emo) {
     bp.type = "bandpass";
     bp.frequency.value = 2400;
     bp.Q.value = 0.9;
-    gn.gain.value = 0.05;
+    gn.gain.value = 0.05 * acessVolSom();
     ns.connect(bp);
     bp.connect(gn);
     gn.connect(ac.destination);
@@ -390,7 +392,7 @@ function toggleVoice() {
 }
 function sfxNote(ctx, freq, start, dur, opts) {
   opts = opts || {};
-  const vol = opts.vol || 0.12;
+  const vol = Math.max(1e-4, (opts.vol || 0.12) * acessVolSom());
   const gain = ctx.createGain();
   gain.gain.setValueAtTime(1e-4, start);
   gain.gain.exponentialRampToValueAtTime(vol, start + Math.min(0.03, dur / 3));

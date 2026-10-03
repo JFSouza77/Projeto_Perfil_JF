@@ -606,10 +606,10 @@ function startTimer(kind) {
   clearTimer();
   timerSerial++;
   const durations = {
-    pick: PICK_TIME_LIMIT + (oldSchoolAcess ? 15 : 0),
-    response: RESPONSE_TIME_LIMIT,
-    special: SPECIAL_TIME_LIMIT + (oldSchoolAcess ? 10 : 0),
-    turn: expressTimes().turn,
+    pick: PICK_TIME_LIMIT + acessTempoExtra("pick"),
+    response: RESPONSE_TIME_LIMIT + acessTempoExtra("response"),
+    special: SPECIAL_TIME_LIMIT + acessTempoExtra("special"),
+    turn: expressTimes().turn + acessTempoExtra("turn"),
   };
   timerKind = kind;
   timerEndAt = Date.now() + durations[kind] * 1e3;
@@ -750,6 +750,7 @@ function chooseClue(idx) {
   };
   revealedOrder.push(revealedEntry);
   pendingIndex = idx;
+  acessLerDica(idx + 1, item);
   if (item.type === "special" && isWildcardSpecial(item.text)) {
     revealedEntry.palpiteResult = grantPalpite(responderIndex);
     if (revealedEntry.palpiteResult === "ganhou") caosIniExplica(players[responderIndex], "palpite");
@@ -1208,6 +1209,7 @@ function expressRevealNext() {
   const r = players[responderIndex];
   revealedOrder.push({ index: idx, item, pickedByName: r.name, pickedByColor: r.color, pickedByAvatar: r.avatar });
   pendingIndex = idx;
+  acessLerDica(idx + 1, item);
   pendingStartTime = Date.now();
   startTimer("turn");
   if (item.type === "clue") {

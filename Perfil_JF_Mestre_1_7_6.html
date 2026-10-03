@@ -6,6 +6,12 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.6 · 03/10/2026 · "Buttons and Tutorial Update · Parte 1" = ACESSIBILIDADE PRA TODOS (pedido do JF).
+          Painel ♿ Acessibilidade no menu ⋮ e na Pausa (js/05b-acessibilidade.js, chave perfil5_acessibilidade):
+          letra Normal/Grande/Enorme (classes acess-letra-1/2 no <html>), Mais tempo (+15 escolher, +30 responder,
+          +10 especial, +5 vez), ler as dicas em voz alta, volume da voz e dos sons, alto contraste (acess-contraste)
+          e Menos movimento (= Modo Batata). Vale pra todos os modos; o Old School Acessibilidade continua.
+          Botões do menu ⋮ que abrem janela fecham o menu antes (data-fecha-menu), assim o 1º toque na janela vale.
   1.7.5.4 · 03/10/2026 · "C.A.O.S. and Code Update · QoL" = MEMÓRIA PORTÁTIL + C.A.O.S. ORGANIZADO (pedido do JF).
           Levar/Trazer a memória do C.A.O.S. no menu ⋮ (caosMemoriaExportar/Importar em js/08): código
           CAOSMEM1. com fichas, recordes, rivais, nomes, nicks, cartas, avaliações, gerador e diagnóstico;
@@ -268,7 +274,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.5.4</title>
+<title>Perfil JF · Beta 1.7.6</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1864,16 +1870,32 @@ button {
   color: #e6e6f0;
   font-weight: 400;
 }
-html.os-acess {
+/* Letra maior: Old School Acessibilidade e "Grande" (1.7.6) usam o mesmo nível; "Enorme" vai além */
+html.os-acess,
+html.acess-letra-1 {
   font-size: 112%;
 }
 html.os-acess .spotlight-box,
-html.os-acess .pending-box {
+html.os-acess .pending-box,
+html.acess-letra-1 .spotlight-box,
+html.acess-letra-1 .pending-box {
   font-size: 1.22rem;
   line-height: 1.45;
 }
-html.os-acess .jf-toast-overlay {
+html.os-acess .jf-toast-overlay,
+html.acess-letra-1 .jf-toast-overlay {
   font-size: 1.05rem;
+}
+html.acess-letra-2 {
+  font-size: 125%;
+}
+html.acess-letra-2 .spotlight-box,
+html.acess-letra-2 .pending-box {
+  font-size: 1.32rem;
+  line-height: 1.45;
+}
+html.acess-letra-2 .jf-toast-overlay {
+  font-size: 1.12rem;
 }
 .ini-start {
   width: 100%;
@@ -2335,6 +2357,150 @@ body.batata-mode #floatingWordsContainer {
   margin-top: 8px;
   text-align: center;
   line-height: 1.35;
+}
+
+/* 1.7.6: alto contraste (texto forte, sem brilho neon nos textos) */
+html.acess-contraste * {
+  text-shadow: none !important;
+}
+html.acess-contraste .welcome-subtitle,
+html.acess-contraste .splash-subtitle,
+html.acess-contraste .splash-tagline,
+html.acess-contraste .splash-buildlog,
+html.acess-contraste .pause-tip-count,
+html.acess-contraste .hall-sub,
+html.acess-contraste .nov-sub,
+html.acess-contraste .ci-note,
+html.acess-contraste .clue-num,
+html.acess-contraste .deck-info,
+html.acess-contraste small {
+  opacity: 1 !important;
+  color: #ffffff !important;
+}
+html.acess-contraste body.claro .welcome-subtitle,
+html.acess-contraste body.claro .splash-subtitle,
+html.acess-contraste body.claro .splash-tagline,
+html.acess-contraste body.claro .splash-buildlog,
+html.acess-contraste body.claro .pause-tip-count,
+html.acess-contraste body.claro .hall-sub,
+html.acess-contraste body.claro .nov-sub,
+html.acess-contraste body.claro .ci-note,
+html.acess-contraste body.claro .clue-num,
+html.acess-contraste body.claro .deck-info,
+html.acess-contraste body.claro small {
+  color: #111111 !important;
+}
+html.acess-contraste button,
+html.acess-contraste .chip {
+  border-width: 2px;
+}
+/* 1.7.6: painel de acessibilidade */
+.acess-ov {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+.acess-box {
+  background: #1a1a2e;
+  color: #fff;
+  border: 1px solid #60a5fa;
+  border-radius: 16px;
+  padding: 18px 16px;
+  max-width: 400px;
+  width: 100%;
+  max-height: 92vh;
+  overflow: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.acess-tit {
+  font-size: 1.25rem;
+  font-weight: 800;
+  text-align: center;
+}
+.acess-sub,
+.acess-nota {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  text-align: center;
+}
+.acess-rot {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.acess-seg {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.acess-op {
+  min-height: 48px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #475569;
+  background: #24243e;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+.acess-seg .acess-op {
+  text-align: center;
+}
+.acess-op small {
+  display: block;
+  font-weight: 400;
+  font-size: 0.78rem;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+.acess-op.on {
+  border-color: #60a5fa;
+  background: #1e3a8a;
+  box-shadow: 0 0 0 2px #60a5fa66;
+}
+.acess-op[disabled] {
+  opacity: 0.45;
+}
+.acess-grupo input[type="range"] {
+  width: 100%;
+  height: 32px;
+  accent-color: #60a5fa;
+}
+.acess-fechar {
+  width: 100%;
+  min-height: 48px;
+  border: 0;
+  border-radius: 12px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+body.claro .acess-box {
+  background: #fdfaf3;
+  color: #1f1d2b;
+}
+body.claro .acess-op {
+  background: #fff;
+  color: #1f1d2b;
+  border-color: #cbd5e1;
+}
+body.claro .acess-op.on {
+  background: #dbeafe;
+  border-color: #2563eb;
 }
 .wincond-warn {
   color: #ffd166;
@@ -6124,6 +6290,7 @@ body.claro .caos-pergunta button[data-v="digitar"] {
           <button id="btnNoturno" class="chip" style="--cc:#a5b4fc;" title="Modo Noturno: carta escura, mais confortável no escuro">🌙 Noturno</button>
         </div>
         <button id="btnInstalar" class="chip splash-menu-instalar" style="--cc:#f472b6; display:none;">📲 Instalar o app</button>
+        <button id="btnAcessibilidade" data-fecha-menu class="chip splash-menu-instalar" style="--cc:#60a5fa;" aria-label="Acessibilidade: letra, tempo, voz e contraste">♿ Acessibilidade</button>
         <div class="splash-menu-grade splash-menu-voz">
           <button id="btnVoz" class="chip" style="--cc:#34d399;">🗣️ Voz</button>
           <button id="btnVozAjustar" class="chip" style="--cc:#fb923c;">🎚️ Ajustar voz</button>
@@ -6136,8 +6303,8 @@ body.claro .caos-pergunta button[data-v="digitar"] {
         </div>
         <div class="splash-menu-tit splash-menu-sub">🧠 Memória do C.A.O.S.</div>
         <div class="splash-menu-grade splash-menu-mem">
-          <button id="btnMemExportar" class="chip" style="--cc:#22d3ee;" title="Copia um código com tudo o que o C.A.O.S. lembra (fichas, recordes, nicks, rivalidades) pra levar pra outro aparelho ou endereço">📤 Levar</button>
-          <button id="btnMemImportar" class="chip" style="--cc:#c084fc;" title="Cola o código da memória do C.A.O.S. vinda de outro aparelho ou endereço">📥 Trazer</button>
+          <button id="btnMemExportar" data-fecha-menu class="chip" style="--cc:#22d3ee;" title="Copia um código com tudo o que o C.A.O.S. lembra (fichas, recordes, nicks, rivalidades) pra levar pra outro aparelho ou endereço">📤 Levar</button>
+          <button id="btnMemImportar" data-fecha-menu class="chip" style="--cc:#c084fc;" title="Cola o código da memória do C.A.O.S. vinda de outro aparelho ou endereço">📥 Trazer</button>
         </div>
       </div>
     </div>
@@ -6152,7 +6319,7 @@ body.claro .caos-pergunta button[data-v="digitar"] {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.5.4 · C.A.O.S. and Code Update · QoL<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.6 · Buttons and Tutorial Update · Parte 1<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -6257,6 +6424,7 @@ body.claro .caos-pergunta button[data-v="digitar"] {
       <button class="btn-sec" id="pauseTemaBtn" type="button">☀️ Modo Claro</button>
       <button class="btn-sec" id="pauseVozBtn" type="button">🤐 Calar a voz</button>
     </div>
+    <button class="btn-sec" id="pauseAcessBtn" type="button">♿ Acessibilidade (letra, tempo, voz)</button>
     <button class="btn-sec" id="pauseReligarBtn" type="button" style="display:none;">🔊 Religar o C.A.O.S. nesta carta</button>
     <div class="sec-row sec-col">
       <button class="btn-sec" id="pauseTrocarModoBtn">🔄 Trocar de modo (recomeça com os mesmos jogadores)</button>
@@ -8792,10 +8960,10 @@ function startTimer(kind) {
   clearTimer();
   timerSerial++;
   const durations = {
-    pick: PICK_TIME_LIMIT + (oldSchoolAcess ? 15 : 0),
-    response: RESPONSE_TIME_LIMIT,
-    special: SPECIAL_TIME_LIMIT + (oldSchoolAcess ? 10 : 0),
-    turn: expressTimes().turn,
+    pick: PICK_TIME_LIMIT + acessTempoExtra("pick"),
+    response: RESPONSE_TIME_LIMIT + acessTempoExtra("response"),
+    special: SPECIAL_TIME_LIMIT + acessTempoExtra("special"),
+    turn: expressTimes().turn + acessTempoExtra("turn"),
   };
   timerKind = kind;
   timerEndAt = Date.now() + durations[kind] * 1e3;
@@ -8936,6 +9104,7 @@ function chooseClue(idx) {
   };
   revealedOrder.push(revealedEntry);
   pendingIndex = idx;
+  acessLerDica(idx + 1, item);
   if (item.type === "special" && isWildcardSpecial(item.text)) {
     revealedEntry.palpiteResult = grantPalpite(responderIndex);
     if (revealedEntry.palpiteResult === "ganhou") caosIniExplica(players[responderIndex], "palpite");
@@ -9394,6 +9563,7 @@ function expressRevealNext() {
   const r = players[responderIndex];
   revealedOrder.push({ index: idx, item, pickedByName: r.name, pickedByColor: r.color, pickedByAvatar: r.avatar });
   pendingIndex = idx;
+  acessLerDica(idx + 1, item);
   pendingStartTime = Date.now();
   startTimer("turn");
   if (item.type === "clue") {
@@ -10554,8 +10724,8 @@ function rulesCtx() {
     palpite: mode === "classico" || mode === "junior" || mode === "oldschool",
     gems: gemsEnabled(),
     goal: WINNING_SCORE && WINNING_SCORE > 0 ? WINNING_SCORE : mode === "junior" ? 150 : 200,
-    resp: mode === "oldschool" && oldSchoolAcess ? 120 : RESPONSE_TIME_LIMIT_BY_MODE[mode] || 90,
-    pick: PICK_TIME_LIMIT + (mode === "oldschool" && oldSchoolAcess ? 15 : 0),
+    resp: (mode === "oldschool" && oldSchoolAcess ? 120 : RESPONSE_TIME_LIMIT_BY_MODE[mode] || 90) + acessTempoExtra("response"),
+    pick: PICK_TIME_LIMIT + acessTempoExtra("pick"),
     cats: mode === "junior" ? "Animal, Pessoa, Lugar ou Coisa" : "Ano, Pessoa, Lugar ou Coisa",
     card: Math.floor(xt.card / 60) + ":" + String(xt.card % 60).padStart(2, "0"),
     turn: xt.turn,
@@ -12781,9 +12951,6 @@ function renderModeCardDescs() {
   set("mcDescVersus", `Cada um por si. De ${MIN_PLAYERS} a ${MAX_PLAYERS} jogadores, o Mestre roda a cada carta.`);
   set("mcDescEquipe", "Times sorteados equilibrando as idades. Exatamente 4 ou 6 jogadores. Clássico, Hardcore ou Old School.");
 }
-function aplicarAcessibilidade() {
-  document.documentElement.classList.toggle("os-acess", CURRENT_MODE === "oldschool" && oldSchoolAcess);
-}
 function atualizarRotuloModo() {
   const el = document.getElementById("trocarModoLabel");
   if (!el) return;
@@ -13853,6 +14020,149 @@ function cadAtualizarBotao() {
   } catch (e) {}
 }
 
+/* ----------------------------------------------------------------------
+ * 5b. ACESSIBILIDADE (1.7.6): configuração do aparelho, pra todos os modos.
+ * Antes ela existia só no Old School Acessibilidade. Agora fica no menu ⋮ (e na Pausa):
+ * letra maior (2 níveis), mais tempo pra escolher/responder, ler as dicas em voz alta,
+ * volume da voz e dos sons, alto contraste e menos movimento.
+ * O Old School Acessibilidade continua: ele liga letra grande e mais tempo naquela partida.
+ * ---------------------------------------------------------------------- */
+const ACESS_KEY = "perfil5_acessibilidade";
+// Segundos a mais por tipo de relógio quando "Mais tempo" está ligado.
+const ACESS_TEMPO_EXTRA = { pick: 15, response: 30, special: 10, turn: 5 };
+const ACESS_PADRAO = { letra: 0, tempo: false, lerDicas: false, volVoz: 1, volSom: 1, contraste: false };
+let acessCfg = { ...ACESS_PADRAO };
+function acessCarregar() {
+  try {
+    const o = JSON.parse(JFStore.getItem(ACESS_KEY) || "{}");
+    acessCfg = { ...ACESS_PADRAO, ...(o && typeof o === "object" ? o : {}) };
+    acessCfg.letra = [0, 1, 2].includes(acessCfg.letra) ? acessCfg.letra : 0;
+    ["volVoz", "volSom"].forEach((k) => {
+      const v = Number(acessCfg[k]);
+      acessCfg[k] = Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 1;
+    });
+  } catch (e) {
+    acessCfg = { ...ACESS_PADRAO };
+  }
+}
+function acessSalvar() {
+  try {
+    JFStore.setItem(ACESS_KEY, JSON.stringify(acessCfg));
+  } catch (e) {}
+}
+// Segundos a mais no relógio (o Old School Acessibilidade já vem com mais tempo de resposta).
+function acessTempoExtra(kind) {
+  if (typeof oldSchoolAcess !== "undefined" && oldSchoolAcess)
+    return { pick: 15, response: 0, special: 10, turn: 0 }[kind] || 0;
+  return acessCfg.tempo ? ACESS_TEMPO_EXTRA[kind] || 0 : 0;
+}
+function acessVolVoz() {
+  return acessCfg.volVoz;
+}
+function acessVolSom() {
+  return acessCfg.volSom;
+}
+// Letra e contraste na página inteira (classes no <html>).
+function aplicarAcessibilidade() {
+  const h = document.documentElement;
+  const os = typeof CURRENT_MODE !== "undefined" && CURRENT_MODE === "oldschool" && oldSchoolAcess;
+  h.classList.toggle("os-acess", os);
+  h.classList.toggle("acess-letra-1", acessCfg.letra === 1);
+  h.classList.toggle("acess-letra-2", acessCfg.letra === 2);
+  h.classList.toggle("acess-contraste", !!acessCfg.contraste);
+}
+// Lê a dica em voz alta quando ela abre (usa a voz do aparelho; entra na fila depois do C.A.O.S.).
+function acessLerDica(num, item) {
+  if (!acessCfg.lerDicas || !item || typeof CAOS_VOICE_OK === "undefined" || !CAOS_VOICE_OK) return;
+  try {
+    const especial = item.type === "special";
+    const txt = (especial ? "Instrução especial. " : "Dica " + num + ". ") + String(item.text || "");
+    const u = new SpeechSynthesisUtterance(txt);
+    u.lang = "pt-BR";
+    const v = typeof caosPickVoice === "function" ? caosPickVoice() : null;
+    if (v) u.voice = v;
+    u.rate = 1;
+    u.volume = acessVolVoz();
+    window.speechSynthesis.speak(u);
+  } catch (e) {}
+}
+// Painel de acessibilidade (menu ⋮ da tela inicial e Pausa).
+function acessPainelAbrir() {
+  const antigo = document.getElementById("acessPainel");
+  if (antigo) antigo.remove();
+  const ov = document.createElement("div");
+  ov.id = "acessPainel";
+  ov.className = "caos-modal-ov acess-ov";
+  ov.setAttribute("role", "dialog");
+  ov.setAttribute("aria-label", "Acessibilidade");
+  const box = document.createElement("div");
+  box.className = "acess-box";
+  ov.appendChild(box);
+  const pintar = () => {
+    const sel = (on) => (on ? ' aria-pressed="true" class="acess-op on"' : ' aria-pressed="false" class="acess-op"');
+    box.innerHTML = `<div class="acess-tit">♿ Acessibilidade</div>
+      <div class="acess-sub">Vale pra este aparelho, em todos os modos.</div>
+      <div class="acess-grupo"><div class="acess-rot">🔠 Tamanho da letra</div>
+        <div class="acess-seg" role="group" aria-label="Tamanho da letra">
+          <button type="button" data-letra="0"${sel(acessCfg.letra === 0)}>Normal</button>
+          <button type="button" data-letra="1"${sel(acessCfg.letra === 1)}>Grande</button>
+          <button type="button" data-letra="2"${sel(acessCfg.letra === 2)}>Enorme</button>
+        </div></div>
+      <button type="button" data-tog="tempo"${sel(acessCfg.tempo)}>⏳ Mais tempo <small>+15 s pra escolher a dica, +30 s pra responder</small></button>
+      <button type="button" data-tog="lerDicas"${sel(acessCfg.lerDicas)}${CAOS_VOICE_OK ? "" : " disabled"}>🔊 Ler as dicas em voz alta <small>${CAOS_VOICE_OK ? "cada dica é lida quando abre" : "este aparelho não tem voz"}</small></button>
+      <button type="button" data-tog="contraste"${sel(acessCfg.contraste)}>🌗 Alto contraste <small>texto mais forte, sem brilho neon</small></button>
+      <button type="button" data-tog="calmo"${sel(document.body.classList.contains("batata-mode"))}>🐢 Menos movimento <small>tira animações (o mesmo do Modo Batata)</small></button>
+      <div class="acess-grupo"><label class="acess-rot" for="acessVolVoz">🗣️ Volume da voz <b>${Math.round(acessCfg.volVoz * 100)}%</b></label>
+        <input id="acessVolVoz" type="range" min="0" max="1" step="0.05" value="${acessCfg.volVoz}"></div>
+      <div class="acess-grupo"><label class="acess-rot" for="acessVolSom">🎵 Volume dos sons <b>${Math.round(acessCfg.volSom * 100)}%</b></label>
+        <input id="acessVolSom" type="range" min="0" max="1" step="0.05" value="${acessCfg.volSom}"></div>
+      <div class="acess-nota">🌎 Idioma: Português (Brasil). Outros idiomas vêm numa próxima atualização.</div>
+      <div class="acess-acoes"><button type="button" class="acess-fechar" id="acessFechar">Pronto</button></div>`;
+    box.querySelectorAll("[data-letra]").forEach((b) =>
+      b.addEventListener("click", () => {
+        acessCfg.letra = +b.dataset.letra;
+        acessSalvar();
+        aplicarAcessibilidade();
+        pintar();
+      }),
+    );
+    box.querySelectorAll("[data-tog]").forEach((b) =>
+      b.addEventListener("click", () => {
+        const k = b.dataset.tog;
+        if (k === "calmo") {
+          if (typeof toggleBatataMode === "function") toggleBatataMode();
+        } else {
+          acessCfg[k] = !acessCfg[k];
+          acessSalvar();
+          aplicarAcessibilidade();
+          if (k === "lerDicas" && acessCfg.lerDicas) acessLerDica(1, { type: "clue", text: "Assim as dicas vão ser lidas." });
+        }
+        pintar();
+      }),
+    );
+    [
+      ["acessVolVoz", "volVoz"],
+      ["acessVolSom", "volSom"],
+    ].forEach(([id, k]) => {
+      const inp = box.querySelector("#" + id);
+      inp.addEventListener("input", () => {
+        acessCfg[k] = +inp.value;
+        inp.previousElementSibling.querySelector("b").textContent = Math.round(acessCfg[k] * 100) + "%";
+      });
+      inp.addEventListener("change", () => {
+        acessSalvar();
+        if (k === "volSom" && typeof playSfx === "function") playSfx("vitoriaCarta");
+        if (k === "volVoz") acessLerDica(1, { type: "clue", text: "Volume da voz." });
+      });
+    });
+    box.querySelector("#acessFechar").addEventListener("click", () => ov.remove());
+  };
+  ov.addEventListener("click", (e) => {
+    if (e.target === ov) ov.remove();
+  });
+  pintar();
+  document.body.appendChild(ov);
+}
 /* ======================================================================
  * 6. VOZ, SOM E VIBRAÇÃO
  * ====================================================================== */
@@ -13910,6 +14220,7 @@ function caosSpeakSample(txt) {
     const v = caosPickVoice();
     if (v) u.voice = v;
     u.rate = Math.min(2, caosVoiceSpeed);
+    u.volume = acessVolVoz();
     u.pitch = Math.max(0.4, Math.min(2, caosTomEfetivo()));
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(u);
@@ -13999,6 +14310,7 @@ function caosSpeak(msg, humorForcado, onEnd, onPedaco, vir) {
     partes.forEach((chunk, pi) => {
       const u = new SpeechSynthesisUtterance(chunk);
       u.lang = "pt-BR";
+      u.volume = acessVolVoz();
       if (voice) u.voice = voice;
       const end = chunk.slice(-1);
       const stP = hmV && pi >= corteV ? [st0[0] * hmV[0], st0[1] * hmV[1]] : st;
@@ -14053,7 +14365,7 @@ function caosBip(emo) {
     bp.type = "bandpass";
     bp.frequency.value = 2400;
     bp.Q.value = 0.9;
-    gn.gain.value = 0.05;
+    gn.gain.value = 0.05 * acessVolSom();
     ns.connect(bp);
     bp.connect(gn);
     gn.connect(ac.destination);
@@ -14245,7 +14557,7 @@ function toggleVoice() {
 }
 function sfxNote(ctx, freq, start, dur, opts) {
   opts = opts || {};
-  const vol = opts.vol || 0.12;
+  const vol = Math.max(1e-4, (opts.vol || 0.12) * acessVolSom());
   const gain = ctx.createGain();
   gain.gain.setValueAtTime(1e-4, start);
   gain.gain.exponentialRampToValueAtTime(vol, start + Math.min(0.03, dur / 3));
@@ -16074,7 +16386,7 @@ function caosInspectorEstado() {
       }</b></div>
       <div class="ci-kv"><span>🦴 Registro da espinha</span><b class="ci-mono">${caosEspinha.log.slice(-5).reverse().map(escapeHtml).join("<br>") || "—"}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.5.4 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.6 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -20227,7 +20539,8 @@ function maybeCommentClueNumber(idx) {
 function maybeMicroAmbiente() {
   if (CURRENT_MODE === "express" || caosSilenced || gameEnded || activeToastState || cardState !== "revealed") return;
   if ((timerKind !== "pick" && timerKind !== "response") || microAmbienteSerial === timerSerial) return;
-  const total = timerKind === "pick" ? PICK_TIME_LIMIT + (oldSchoolAcess ? 15 : 0) : RESPONSE_TIME_LIMIT;
+  const total =
+    timerKind === "pick" ? PICK_TIME_LIMIT + acessTempoExtra("pick") : RESPONSE_TIME_LIMIT + acessTempoExtra("response");
   if (total - secondsLeft() < 4 || Date.now() - caosLastSpokeAt < 25e3) return;
   if (Math.random() >= (caosOS() ? 0.01 : 0.03)) return;
   microAmbienteSerial = timerSerial;
@@ -21084,7 +21397,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.5.4 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.6 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -24008,7 +24321,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.5.4 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.6 · C.A.O.S. 4.0");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -24530,7 +24843,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.5.4 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.6 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -58483,6 +58796,25 @@ const PAUSE_TIPS = [
 ];
 const NOVIDADES = [
   {
+    v: "Beta 1.7.6",
+    data: "03/10/2026 · 17:10",
+    nome: "Buttons and Tutorial Update · Parte 1",
+    t: "Começa a atualização dos botões e do tutorial. Primeira parte: acessibilidade pra todo mundo, em qualquer modo.",
+    itens: [
+      "♿ Acessibilidade em todos os modos: no menu ⋮ da tela inicial (e na Pausa) tem o botão ♿ Acessibilidade. Antes isso era só do Old School Acessibilidade.",
+      "🔠 Letra maior: Normal, Grande ou Enorme.",
+      "⏳ Mais tempo: +15 s pra escolher a dica e +30 s pra responder.",
+      "🔊 Ler as dicas em voz alta: cada dica é lida quando abre.",
+      "🗣️🎵 Volume da voz e dos sons, separados.",
+      "🌗 Alto contraste e 🐢 Menos movimento.",
+    ],
+    qol: [
+      "📱 Vale pra este aparelho: cada celular guarda a sua configuração. No online (1.7.10), cada um ajusta a sua.",
+      "👆 Menu ⋮: tocar num botão que abre janela fecha o menu antes, então o primeiro toque na janela já funciona.",
+      "🌎 Idiomas: o painel já tem o lugar reservado pra outros idiomas numa próxima atualização.",
+    ],
+  },
+  {
     v: "Beta 1.7.5.4",
     data: "03/10/2026 · 16:27",
     nome: "C.A.O.S. and Code Update · QoL",
@@ -59929,6 +60261,11 @@ CAOS_GERADORES.hostCaiu = {
 
 function iniciar() {
   caosFalasMontar(REACTIVE_VOICE);
+  // acessibilidade do aparelho (letra, contraste) antes de desenhar as telas
+  try {
+    acessCarregar();
+    aplicarAcessibilidade();
+  } catch (e) {}
   // espinha do C.A.O.S.: as 3 leis e o canal de falas (js/07c)
   try {
     caosEspinhaInstalar();
@@ -60725,6 +61062,8 @@ function iniciar() {
   document.getElementById("btnBatata").addEventListener("click", toggleBatataMode);
   document.getElementById("btnNoturno").addEventListener("click", toggleNoturno);
   document.getElementById("btnMemExportar").addEventListener("click", caosMemoriaExportar);
+  document.getElementById("btnAcessibilidade").addEventListener("click", acessPainelAbrir);
+  document.getElementById("pauseAcessBtn").addEventListener("click", acessPainelAbrir);
   document.getElementById("btnMemImportar").addEventListener("click", caosMemoriaImportar);
   temaAplicar();
   document.getElementById("btnNovidades").addEventListener("click", abrirNovidades);
@@ -60759,6 +61098,10 @@ function iniciar() {
       bt.setAttribute("aria-expanded", sim ? "true" : "false");
     };
     bt.addEventListener("click", () => abrir(menu.hidden));
+    // botões que abrem janela (acessibilidade, memória) fecham o menu antes, pro 1º toque na janela valer
+    menu.addEventListener("click", (e) => {
+      if (e.target.closest && e.target.closest("[data-fecha-menu]")) abrir(false);
+    });
     document.addEventListener(
       "pointerdown",
       (e) => {

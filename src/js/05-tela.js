@@ -48,8 +48,8 @@ function rulesCtx() {
     palpite: mode === "classico" || mode === "junior" || mode === "oldschool",
     gems: gemsEnabled(),
     goal: WINNING_SCORE && WINNING_SCORE > 0 ? WINNING_SCORE : mode === "junior" ? 150 : 200,
-    resp: mode === "oldschool" && oldSchoolAcess ? 120 : RESPONSE_TIME_LIMIT_BY_MODE[mode] || 90,
-    pick: PICK_TIME_LIMIT + (mode === "oldschool" && oldSchoolAcess ? 15 : 0),
+    resp: (mode === "oldschool" && oldSchoolAcess ? 120 : RESPONSE_TIME_LIMIT_BY_MODE[mode] || 90) + acessTempoExtra("response"),
+    pick: PICK_TIME_LIMIT + acessTempoExtra("pick"),
     cats: mode === "junior" ? "Animal, Pessoa, Lugar ou Coisa" : "Ano, Pessoa, Lugar ou Coisa",
     card: Math.floor(xt.card / 60) + ":" + String(xt.card % 60).padStart(2, "0"),
     turn: xt.turn,
@@ -2274,9 +2274,6 @@ function renderModeCardDescs() {
   );
   set("mcDescVersus", `Cada um por si. De ${MIN_PLAYERS} a ${MAX_PLAYERS} jogadores, o Mestre roda a cada carta.`);
   set("mcDescEquipe", "Times sorteados equilibrando as idades. Exatamente 4 ou 6 jogadores. Clássico, Hardcore ou Old School.");
-}
-function aplicarAcessibilidade() {
-  document.documentElement.classList.toggle("os-acess", CURRENT_MODE === "oldschool" && oldSchoolAcess);
 }
 function atualizarRotuloModo() {
   const el = document.getElementById("trocarModoLabel");
