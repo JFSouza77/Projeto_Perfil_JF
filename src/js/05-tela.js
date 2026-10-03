@@ -1492,6 +1492,7 @@ function iniRender(aviso) {
 }
 function iniComecar() {
   if (starterChosen || players.length >= MAX_PLAYERS) return;
+  if (tutSugerir("iniciante", iniComecar)) return;
   iniFluxo = { i: 0 };
   if (activeToastState) closeActiveToast();
   selectedHumor = "suave";
@@ -2578,6 +2579,7 @@ let tutorialLista = null; // definido ao abrir (os dados do tutorial carregam de
 function openTutorial(tipo) {
   tutorialLista = tipo === "rapido" ? TUTORIAL_RAPIDO : TUTORIAL_STEPS;
   tutorialPos = 0;
+  tutMarcarVisto("abriu");
   let ov = document.getElementById("tutorialOverlay");
   if (!ov) {
     ov = document.createElement("div");
@@ -2656,6 +2658,8 @@ function renderTutorial() {
 function closeTutorial() {
   const ov = document.getElementById("tutorialOverlay");
   if (ov) ov.style.display = "none";
+  tutPausaAtualizar();
+  tutDepoisDeFechar();
 }
 function selectPendingMode(mode) {
   pendingMode = mode;
@@ -3041,6 +3045,7 @@ function showPauseScreen() {
   const rl = document.getElementById("pauseRulesList");
   if (rl) rl.innerHTML = buildRulesHtml();
   pausaAjustesAtualizar();
+  tutPausaAtualizar();
   startPauseTips();
 }
 function hidePauseScreen() {

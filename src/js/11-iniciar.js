@@ -523,6 +523,7 @@ function iniciar() {
       perguntarPartidaAnterior();
       return;
     }
+    if (tutMesaNova() && tutSugerir("primeira", () => document.getElementById("goToRulesBtn").click())) return;
     document.getElementById("splashScreen").style.display = "none";
     document.getElementById("formatSelectScreen").style.display = "block";
     resetFormatSelectionUI();
@@ -557,6 +558,7 @@ function iniciar() {
     openTutorial("rapido");
   });
   document.getElementById("btnTutorial2").addEventListener("click", () => openTutorial("rapido"));
+  document.getElementById("pauseTutBtn").addEventListener("click", () => openTutorial("rapido"));
   ["btnManual", "pauseManualBtn"].forEach((id) => {
     const b = document.getElementById(id);
     if (b) b.addEventListener("click", () => openTutorial("manual"));

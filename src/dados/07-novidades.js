@@ -1,5 +1,20 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.6.3",
+    data: "03/10/2026 · 17:41",
+    nome: "Buttons and Tutorial Update · Parte 4",
+    t: "Ninguém fica perdido: o C.A.O.S. oferece o tutorial pra quem está chegando.",
+    itens: [
+      "🎓 \"Quer fazer o tutorial? Leva menos de dois minutos.\": o C.A.O.S. pergunta quando o jogo é aberto pela primeira vez num aparelho e quando alguém toca em 🐣 Sou iniciante.",
+      "↪️ Viu o tutorial? Quando fecha, o jogo segue de onde parou (a escolha do formato ou o cadastro guiado).",
+      "⏸️ Na Pausa aparece 🎓 Primeira vez? Tutorial de 2 minutos, até alguém ver o tutorial neste aparelho.",
+    ],
+    qol: [
+      "🙅 Sem insistência: ele pergunta uma vez só. Depois de ver o tutorial ou responder \"Já sei jogar\", não pergunta mais.",
+      "🐣 Sou iniciante conferido: o cadastro guiado (nome → avatar → cor → zoeira) continua igual e agora pode começar com o tutorial.",
+    ],
+  },
+  {
     v: "Beta 1.7.6.2",
     data: "03/10/2026 · 17:31",
     nome: "Buttons and Tutorial Update · Parte 3",
