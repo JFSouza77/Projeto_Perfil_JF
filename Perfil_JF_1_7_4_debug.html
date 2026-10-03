@@ -8218,10 +8218,12 @@ function resetDeck() {
   pendingStartTime = null;
   timeoutOverlayMessage = null;
   const fonteDeck = allCards.length > deckLimiteModo() ? shuffle(allCards).slice(0, deckLimiteModo()) : allCards;
+  // o baralho é comprado do fim (deck.pop()); o embaralhamento equilibrado põe a ordem boa no começo,
+  // então ele entra invertido. Antes não invertia, e a categoria com mais cartas dominava a partida.
   deck =
     CURRENT_MODE === "express"
       ? shuffle(fonteDeck)
-      : embaralharEquilibrado(fonteDeck, CURRENT_MODE === "hardcore" ? CATEGORY_WEIGHTS_HARDCORE : null);
+      : embaralharEquilibrado(fonteDeck, CURRENT_MODE === "hardcore" ? CATEGORY_WEIGHTS_HARDCORE : null).reverse();
   currentCard = null;
   cardState = "none";
   gameEnded = false;
@@ -8277,8 +8279,7 @@ function reshuffleAndDraw() {
     if (currentCard.isBonus) {
       pendingBonusQueue.unshift({ landerIdx: currentCard.bonusLandedByIdx, opponentIdx: currentCard.bonusMestreIdx });
     }
-    deck.push(cardsByAnswer.get(currentCard.answer) || currentCard);
-    deck = shuffle(deck);
+    devolverAoBaralho(cardsByAnswer.get(currentCard.answer) || currentCard);
   }
   currentCard = null;
   usedAtLeastOnce = true;
@@ -8509,7 +8510,7 @@ function startTimer(kind) {
   const durations = {
     pick: PICK_TIME_LIMIT + (oldSchoolAcess ? 15 : 0),
     response: RESPONSE_TIME_LIMIT,
-    special: SPECIAL_TIME_LIMIT,
+    special: SPECIAL_TIME_LIMIT + (oldSchoolAcess ? 10 : 0),
     turn: expressTimes().turn,
   };
   timerKind = kind;
@@ -10098,8 +10099,7 @@ function admDevolverCarta() {
   if (currentCard) {
     if (currentCard.isBonus && CURRENT_MODE !== "express")
       pendingBonusQueue.unshift({ landerIdx: currentCard.bonusLandedByIdx, opponentIdx: currentCard.bonusMestreIdx });
-    deck.push(cardsByAnswer.get(currentCard.answer) || currentCard);
-    deck = shuffle(deck);
+    devolverAoBaralho(cardsByAnswer.get(currentCard.answer) || currentCard);
   }
   restoreBonusReader();
   currentCard = null;
@@ -10254,6 +10254,7 @@ function rulesCtx() {
     express,
     equipe: CURRENT_FORMAT === "equipe",
     junior: mode === "junior",
+    acess: mode === "oldschool" && oldSchoolAcess,
     hard: mode === "hardcore" || (express && expressFlavor === "hardcore"),
     palpite: mode === "classico" || mode === "junior" || mode === "oldschool",
     gems: gemsEnabled(),
@@ -12483,7 +12484,7 @@ function renderModeCardDescs() {
       : "O jogo sorteia o modo: Júnior, Clássico, Hardcore, Old School ou Express.",
   );
   set("mcDescVersus", `Cada um por si. De ${MIN_PLAYERS} a ${MAX_PLAYERS} jogadores, o Mestre roda a cada carta.`);
-  set("mcDescEquipe", "Times sorteados equilibrando as idades. Exatamente 4 ou 6 jogadores. Só Clássico ou Hardcore.");
+  set("mcDescEquipe", "Times sorteados equilibrando as idades. Exatamente 4 ou 6 jogadores. Clássico, Hardcore ou Old School.");
 }
 function aplicarAcessibilidade() {
   document.documentElement.classList.toggle("os-acess", CURRENT_MODE === "oldschool" && oldSchoolAcess);
@@ -12758,7 +12759,7 @@ function buildRulesHtml() {
     );
   else
     li.push(
-      `⭐ <b>Especiais:</b> Avance/Volte casas, Escolha um jogador (nunca você mesmo), Perca sua vez${c.palpite ? " e Palpite a qualquer hora" : ""}. Contam como dica aberta e <b>passam a vez</b> de quem tirou (menos o Palpite). Em ${SPECIAL_TIME_LIMIT}s sem toque, Avance/Volte valem sozinhos.`,
+      `⭐ <b>Especiais:</b> Avance/Volte casas, Escolha um jogador (nunca você mesmo), Perca sua vez${c.palpite ? " e Palpite a qualquer hora" : ""}. Contam como dica aberta e <b>passam a vez</b> de quem tirou (menos o Palpite). Em ${SPECIAL_TIME_LIMIT + (c.acess ? 10 : 0)}s sem toque, Avance/Volte valem sozinhos.`,
     );
   if (c.palpite)
     li.push(
@@ -19339,7 +19340,8 @@ function caosBilheteMestre(txt) {
 }
 function caosAntiRepeticao() {
   if (deck.length < 2) return;
-  const lim = CURRENT_MODE === "express" ? 2 : 3,
+  // nenhuma categoria sai mais de 2 vezes seguidas (no Express, com 1 ou 2 categorias, a regra é a de antes)
+  const lim = 2,
     cat = (c) => gemCategoryFor(c.category);
   const cnt = {};
   deck.forEach((c) => {
@@ -23442,6 +23444,10 @@ function isSafeColor(c) {
 // Embaralha dando a cada categoria de joia a mesma chance de sair, seja qual for o
 // tamanho dela no baralho (sem isso PESSOA saía em ~35% das cartas e ANO em ~19%).
 // Com `alvo`, a chance de cada categoria segue as proporções pedidas.
+// devolve uma carta num ponto qualquer do baralho sem reembaralhar tudo (preserva o equilíbrio de categorias)
+function devolverAoBaralho(card) {
+  deck.splice(Math.floor(Math.random() * (deck.length + 1)), 0, card);
+}
 function embaralharEquilibrado(cards, alvo) {
   const n = {};
   cards.forEach((c) => {
