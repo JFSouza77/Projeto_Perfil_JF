@@ -17,7 +17,7 @@ O código está público no GitHub para jogar e acompanhar o projeto. Isso **nã
 1. **Histórico do Git** neste repositório: cada mudança tem data, hora, autor e descrição, desde o primeiro commit.
 2. **Saídas de cada versão guardadas:** os arquivos `Perfil_JF_X_Y_Z.html` e `Perfil_JF_X_Y_Z_offline.html` de todas as versões continuam no repositório. Eles nunca são apagados nem sobrescritos (regra do Klaus).
 3. **Registro de versões com impressão digital:** `docs/Registro_de_Versoes.md` guarda o SHA-256 de cada arquivo publicado, com data e hora de Brasília. Qualquer cópia pode ser comparada com esse registro: se o SHA-256 bate, o arquivo é idêntico ao nosso.
-4. **Etiquetas (tags) de versão** no Git, uma por versão publicada a partir da 1.7.5.
+4. **Pull requests no GitHub:** cada versão entrou por um PR mergeado no repositório do JF, com data, descrição e os arquivos daquela versão.
 5. **Documentos de planejamento** em `docs/`: o roteiro, o status, o público de cada modo e as regras dos logs. Eles mostram que o projeto foi pensado e planejado aqui.
 
 ## Antes de publicar em loja (Steam, Google Play, App Store)
