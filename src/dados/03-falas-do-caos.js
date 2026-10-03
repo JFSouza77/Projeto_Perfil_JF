@@ -2145,7 +2145,7 @@ const REACTIVE_VOICE = {
     ],
   },
   nickContagem: {
-    2: ["Dois jogadores. Dá pra jogar, mas a discussão vai ser curta."],
+    2: ["Dois jogadores. Dá pra jogar, mas a discussão vai ser curta.", "Dois jogadores. Mano a mano, e eu de juiz. Parcial, claro."],
     3: ["Três jogadores. O número perfeito. Ou o número da discórdia. Depende de vocês."],
     4: ["Quatro jogadores. Agora dá pra fazer Equipe."],
     5: ["Cinco jogadores. Alguém sempre fica sem parceiro. Eu não me incluo. Nunca me incluem."],

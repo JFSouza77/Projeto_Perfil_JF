@@ -6,6 +6,23 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.5.3 · 03/10/2026 · "C.A.O.S. and Code Update · Parte 4 (final)" = A ESPINHA DO C.A.O.S. (pedido do JF:
+          caótico leal, autônomo sem consciência, blindado). js/07c-espinha-do-caos.js com as 3 leis:
+          1) nunca mexe no jogo (foto do estado antes de cada rotina protegida; mudança é desfeita);
+          2) nunca fala o que a mesa proibiu (filtros do motor); 3) nunca trava a partida (erro vira
+          "nada" e é registrado). 24 rotinas protegidas (CAOS_ENTRADAS), medidores saneados (sem NaN
+          nem fora da faixa), canal com o destino de cada fala (jogadores citados ou a mesa) e
+          caosFalarPara(nome, msg, privado) pro online da 1.7.10 (hoje tudo no aparelho "host").
+          Área ADM: espinha, canal e registro na aba Estado. Revisão das combinações: Anne não diz
+          "senti falta" na estreia (novos baldes hoje/semana/sumido/estreia); boas-vindas sempre com o
+          nome. 3410ª fala (nickContagem.2, pedido do JF). Teste novo: ferramentas/caos_teste_espinha.js.
+          MEMÓRIA (relato do JF: "o Cérebro parece não gravar"): a gravação funciona (navegador + banco do
+          navegador + persist), mas as abas Ritmo/Decisões são só da partida atual e cada endereço (site ou
+          cada arquivo offline/pré-visualização do Arquivos) tem memória própria; o Safari apaga dados de
+          site após 7 dias sem visita fora da Tela de Início. Novo painel "Memória de longo prazo" na aba
+          Memória (fichas, nomes, nicks, partidas, recordes, cartas, onde grava, persistida?) com aviso de
+          arquivo local e dica da Tela de Início.
+          FECHA A C.A.O.S. AND CODE UPDATE.
   1.7.5.2 · 03/10/2026 · "C.A.O.S. and Code Update · Parte 3" = C.A.O.S. 4.0 (pedido do JF: versão mais
           poderosa, recalibrada). Novos geradores: chute (o Mestre digita o chute e ele comenta pelo tipo
           de erro, categoria e memória: chute repetido na carta, dicas abertas, como a pessoa vai na
@@ -241,7 +258,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.5.2</title>
+<title>Perfil JF · Beta 1.7.5.3</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6116,7 +6133,7 @@ body.claro .caos-pergunta button[data-v="digitar"] {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.5.2 · C.A.O.S. and Code Update · Parte 3<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.5.3 · C.A.O.S. and Code Update · Parte 4 (final)<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -16028,8 +16045,17 @@ function caosInspectorEstado() {
           " KB"
         );
       })()}</b></div>
+      <div class="ci-kv"><span>🦴 Espinha (3 leis)</span><b class="ci-mono">${caosEspinha.instalada ? "ativa" : "DESLIGADA"} · erros contidos ${caosEspinha.falhas} · jogo protegido ${caosEspinha.leis}x · medidores saneados ${caosEspinha.saneados}</b></div>
+      <div class="ci-kv"><span>📡 Canal (últimas falas e destino)</span><b class="ci-mono">${
+        caosCanal
+          .slice(-4)
+          .reverse()
+          .map((c) => escapeHtml(c.para.map((d) => d.nome + "@" + d.aparelho).join(", ")) + ": " + escapeHtml(c.texto.slice(0, 50)))
+          .join("<br>") || "—"
+      }</b></div>
+      <div class="ci-kv"><span>🦴 Registro da espinha</span><b class="ci-mono">${caosEspinha.log.slice(-5).reverse().map(escapeHtml).join("<br>") || "—"}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.5.2 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.5.3 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -16427,8 +16453,72 @@ function caosInspectorTestarVoz(humor) {
     caosVoiceOn = ligada;
   }
 }
+// 1.7.5.3: o que o C.A.O.S. lembra entre partidas, onde está gravado e se o lugar é seguro.
+// (As abas Ritmo e Decisões mostram só a partida atual; a memória de longo prazo fica aqui.)
+let caosMemPersistida = null;
+function caosMemoriaLongoPrazo() {
+  const sec = ciSecao("🧠 Memória de longo prazo (entre partidas, neste endereço)");
+  const conta = (k, arr) => {
+    try {
+      const v = JSON.parse(JFStore.getItem(k) || (arr ? "[]" : "{}"));
+      return Array.isArray(v) ? v.length : Object.keys(v || {}).length;
+    } catch (e) {
+      return 0;
+    }
+  };
+  let fichas = {},
+    diag = { matches: 0 };
+  try {
+    fichas = fichasTodas() || {};
+  } catch (e) {}
+  try {
+    diag = caosDiagLoad() || diag;
+  } catch (e) {}
+  const nomesFichas = Object.values(fichas)
+    .sort((a, b) => (b.ultimaVez || 0) - (a.ultimaVez || 0))
+    .slice(0, 8)
+    .map((f) => escapeHtml(f.nome || "?") + " (" + (f.partidas || 0) + ")")
+    .join(", ");
+  let st = { camadas: [] };
+  try {
+    st = JFStore.status();
+  } catch (e) {}
+  const prot = location.protocol;
+  const arquivo = prot === "file:" || prot === "blob:" || prot === "content:";
+  if (caosMemPersistida === null && navigator.storage && navigator.storage.persisted)
+    navigator.storage.persisted().then(
+      (v) => (caosMemPersistida = !!v),
+      () => (caosMemPersistida = false),
+    );
+  const avisos = [];
+  if (arquivo)
+    avisos.push(
+      "📁 Você está jogando por um <b>arquivo</b> (aberto pelo Arquivos ou baixado). Cada arquivo tem a sua própria memória, e a pré-visualização do iPhone pode não guardar nada. Pra memória ficar sempre, jogue pelo <b>site</b> e adicione à Tela de Início.",
+    );
+  if (!arquivo && caosMemPersistida === false)
+    avisos.push(
+      "📲 O navegador ainda não garantiu esta memória. No iPhone, o Safari apaga dados de site depois de 7 dias sem visita. Adicionando o jogo à <b>Tela de Início</b>, isso não acontece.",
+    );
+  sec.insertAdjacentHTML(
+    "beforeend",
+    `<div class="ci-card">
+      <div class="ci-kv"><span>👤 Jogadores com ficha</span><b class="ci-mono">${Object.keys(fichas).length}${nomesFichas ? " · " + nomesFichas : ""}</b></div>
+      <div class="ci-kv"><span>📛 Nomes conhecidos · nicks vistos</span><b class="ci-mono">${conta(CAOS_NAMES_KEY)} · ${conta("perfil200_caos_nicks", true)}</b></div>
+      <div class="ci-kv"><span>🎮 Partidas registradas</span><b class="ci-mono">${diag.matches || 0}</b></div>
+      <div class="ci-kv"><span>🏆 Recordes · ⚔️ rivalidades</span><b class="ci-mono">${conta(MEM_RECORDES_KEY)} · ${conta(MEM_RIVAIS_KEY)}</b></div>
+      <div class="ci-kv"><span>🃏 Cartas com histórico</span><b class="ci-mono">${Object.keys((caosCardMem && caosCardMem.porCarta) || {}).length}</b></div>
+      <div class="ci-kv"><span>💾 Onde está gravado</span><b class="ci-mono">${escapeHtml(st.camadas.join(" + ") || "SÓ NA MEMÓRIA (some ao fechar)")} · ${escapeHtml(arquivo ? "arquivo local" : location.host || prot)}</b></div>
+      <div class="ci-kv"><span>🔒 Memória garantida pelo navegador</span><b class="ci-mono">${caosMemPersistida === null ? "conferindo…" : caosMemPersistida ? "sim" : "não"}</b></div>
+      ${avisos.map((a) => `<div class="ci-note">${a}</div>`).join("")}
+      <div class="ci-note">As abas Ritmo e Decisões mostram só a partida atual, por isso começam vazias. O que o C.A.O.S. lembra entre partidas está aqui. Cada endereço (o site, ou cada arquivo offline) tem a sua própria memória.</div>
+    </div>`,
+  );
+  return sec;
+}
 function caosInspectorMemoria() {
   const wrap = document.createElement("div");
+  if (!caosCardMem) caosCardMemLoad();
+  wrap.appendChild(caosMemoriaLongoPrazo());
   if (!caosCardMem) caosCardMemLoad();
   const todas = Object.entries(caosCardMem.porCarta || {})
     .map(([nome, pc]) => {
@@ -20975,7 +21065,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.5.2 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.5.3 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -22124,6 +22214,226 @@ function caosGerarFala(g, p, extra) {
   caosLastPick = { bank: "gerador." + g, key: "gerador|" + g + "|" + txt.slice(CAOS_PREFIXO.length, CAOS_PREFIXO.length + 49), text: txt };
   caosLog("gerador", g + " · " + [...ctx.tags].filter((t) => !/^(temper_|estado_)/.test(t)).join(", "));
   return txt;
+}
+/* ----------------------------------------------------------------------
+ * 7c. ESPINHA DO C.A.O.S. (1.7.5.3): o que garante que ele não quebra a partida.
+ * O C.A.O.S. é caótico, mas leal (caótico leal, na régua do RPG): livre pra falar o que
+ * quiser dentro de três leis que o código faz valer, sem consciência e sem poder sobre o jogo.
+ *
+ *   1ª lei · NUNCA MEXE NO JOGO. Pontos, casas, joias, equipes, turno, Mestre e carta são da
+ *            mesa. Se uma rotina dele mudar algo disso, a espinha desfaz na hora e anota.
+ *   2ª lei · NUNCA FALA O QUE A MESA PROIBIU. Júnior e Family friendly sem fala pesada, Suave
+ *            sem zoeira, 🔇 da carta, saída da partida e 👎 respeitados (filtros do motor).
+ *   3ª lei · NUNCA TRAVA A PARTIDA. Erro dentro dele vira silêncio: a rotina devolve "nada",
+ *            a partida segue e o erro fica registrado no Cérebro (área ADM).
+ *
+ * Além das leis: os medidores de emoção são saneados (nenhum número inválido ou fora da faixa)
+ * e toda fala passa pelo CANAL, que anota pra quem ela é (a mesa ou um jogador). No online
+ * (1.7.10) o canal é que vai mandar a fala pro aparelho certo: hoje todos são o "host".
+ * ---------------------------------------------------------------------- */
+// Rotinas de fala e de emoção protegidas (só C.A.O.S.: nenhuma delas pode mudar o jogo).
+const CAOS_ENTRADAS = [
+  "maybeShowTimeWarning",
+  "maybeShowSpontaneousChatter",
+  "maybeShowCardChatter",
+  "maybeShowStartComment",
+  "maybeShowCaosPresentation",
+  "maybeAnnounceCrystalBall",
+  "maybeShowAiCardEgg",
+  "maybeMicroAmbiente",
+  "maybeCommentClueNumber",
+  "maybeVirtualPlayerLine",
+  "maybeAcidMessage",
+  "analyzeMatchStateReaction",
+  "caosWelcomePlayer",
+  "caosChuteResponder",
+  "caosReligarCarta",
+  "caosPausaHumorTick",
+  "caosRelogioNaCarta",
+  "caosTedioTick",
+  "caosGerarFala",
+  "caosPensamentoTexto",
+  "caosConsoleEvento",
+  "caosConsoleCarta",
+  "caosConsoleAvancar",
+  "caosEmoMaybeDecay",
+];
+// O que cada rotina devolve quando dá erro (o "nada" de cada uma).
+const CAOS_ENTRADA_NADA = { caosGerarFala: "", caosPensamentoTexto: "" };
+let caosEspinha = { falhas: 0, leis: 0, saneados: 0, log: [], instalada: false };
+let caosCanal = [];
+function caosEspinhaLog(tipo, txt) {
+  caosEspinha.log.push(`${new Date().toLocaleTimeString("pt-BR")} · ${tipo} · ${txt}`);
+  if (caosEspinha.log.length > 30) caosEspinha.log.shift();
+  try {
+    caosLog("espinha", tipo + " · " + txt);
+  } catch (e) {}
+}
+// Foto do estado do jogo (só o que é da mesa).
+function caosEspinhaFoto() {
+  try {
+    return JSON.stringify([
+      players.map((p) => [p.name, p.score, p.position, !!p.isBlocked, p.team, p.gems || null]),
+      Object.keys(teams || {}).map((k) => [k, teams[k].score, teams[k].position, teams[k].gems || null]),
+      mestreIndex,
+      responderIndex,
+      starterChosen,
+      gameEnded,
+      cardState,
+      stats ? stats.totalDrawn : 0,
+      currentCard ? currentCard.answer : null,
+      Array.isArray(deck) ? deck.length : 0,
+    ]);
+  } catch (e) {
+    return null;
+  }
+}
+// Devolve o jogo pra foto (1ª lei). Mexe só nos números da mesa.
+function caosEspinhaRestaurar(foto) {
+  try {
+    const [pl, tm, mi, ri] = JSON.parse(foto);
+    pl.forEach(([nome, score, position, isBlocked, team, gems], i) => {
+      const p = players[i];
+      if (!p || p.name !== nome) return;
+      p.score = score;
+      p.position = position;
+      p.isBlocked = isBlocked;
+      p.team = team;
+      if (gems) p.gems = gems;
+      else delete p.gems;
+    });
+    tm.forEach(([k, score, position, gems]) => {
+      if (!teams[k]) return;
+      teams[k].score = score;
+      teams[k].position = position;
+      if (gems) teams[k].gems = gems;
+    });
+    mestreIndex = mi;
+    responderIndex = ri;
+  } catch (e) {}
+}
+// Saneia os medidores (nenhum NaN, nenhum valor fora da faixa, emoção que manda válida).
+function caosEspinhaSanear() {
+  let n = 0;
+  try {
+    ["tensao", "calor", "paciencia"].forEach((k) => {
+      const v = caosEmo[k];
+      if (!Number.isFinite(v) || v < 0 || v > 10) {
+        caosEmo[k] = Number.isFinite(v) ? Math.max(0, Math.min(10, v)) : k === "paciencia" ? 7 : 5;
+        n++;
+      }
+    });
+    const C = caosConsole;
+    if (C && C.g) {
+      Object.keys(CAOS_CONSOLE).forEach((k) => {
+        const v = C.g[k],
+          teto = CAOS_CONSOLE[k].teto;
+        if (!Number.isFinite(v) || v < 0 || v > teto) {
+          C.g[k] = Number.isFinite(v) ? Math.max(0, Math.min(teto, v)) : 0;
+          n++;
+        }
+      });
+      if (C.atual !== "calmo" && !CAOS_CONSOLE[C.atual]) {
+        C.atual = "calmo";
+        n++;
+      }
+    }
+  } catch (e) {}
+  if (n) {
+    caosEspinha.saneados += n;
+    caosEspinhaLog("saneou", n + " medidor(es) fora da faixa");
+  }
+}
+// Protege uma rotina: erro vira "nada" (3ª lei) e mudança no jogo é desfeita (1ª lei).
+function caosBlindarUm(nome) {
+  const orig = typeof window !== "undefined" ? window[nome] : undefined;
+  if (typeof orig !== "function" || orig.__blindada) return false;
+  const nada = Object.prototype.hasOwnProperty.call(CAOS_ENTRADA_NADA, nome) ? CAOS_ENTRADA_NADA[nome] : null;
+  const prot = function () {
+    const antes = caosEspinhaFoto();
+    let r = nada;
+    try {
+      r = orig.apply(this, arguments);
+    } catch (e) {
+      caosEspinha.falhas++;
+      caosEspinhaLog("erro contido", nome + ": " + String((e && e.message) || e).slice(0, 120));
+      r = nada;
+    }
+    const depois = caosEspinhaFoto();
+    if (antes && depois && antes !== depois) {
+      caosEspinhaRestaurar(antes);
+      if (caosEspinhaFoto() !== antes) {
+        // o que mudou não é número da mesa (carta, baralho, fim de jogo): só anota
+        caosEspinhaLog("aviso", nome + " mudou algo fora dos números da mesa");
+      } else {
+        caosEspinha.leis++;
+        caosEspinhaLog("1ª lei", nome + " tentou mexer no jogo e foi desfeito");
+      }
+    }
+    if (/^caos(Console|Emo)/.test(nome)) caosEspinhaSanear();
+    return r;
+  };
+  prot.__blindada = true;
+  try {
+    window[nome] = prot;
+  } catch (e) {
+    return false;
+  }
+  return window[nome] === prot;
+}
+// Destino de uma fala: os jogadores citados por nome, ou a mesa toda.
+function caosCanalDestino(texto) {
+  const t = String(texto || "");
+  const citados = players.filter((p) => {
+    if (!p || !p.name) return false;
+    const esc = String(p.name).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp("(^|[^\\p{L}\\p{N}])" + esc + "(?![\\p{L}\\p{N}])", "u").test(t);
+  });
+  return citados.length
+    ? citados.map((p) => ({ nome: p.name, aparelho: p.aparelho || "host" }))
+    : [{ nome: "mesa", aparelho: "todos" }];
+}
+function caosCanalRegistrar(texto, privado) {
+  try {
+    caosCanal.push({
+      t: Date.now(),
+      carta: stats ? stats.totalDrawn : 0,
+      texto: String(texto).replace(/\[C\.A\.O\.S\.\]\s*/g, "").slice(0, 160),
+      para: caosCanalDestino(texto),
+      privado: !!privado,
+    });
+    if (caosCanal.length > 40) caosCanal.shift();
+  } catch (e) {}
+}
+// Fala dirigida a um jogador. Hoje aparece na tela de todos (um aparelho só);
+// no online, o canal entrega só no aparelho dele quando privado = true.
+function caosFalarPara(nome, msg, privado) {
+  if (!msg) return;
+  caosCanalPrivado = !!privado;
+  try {
+    showToastMessage(msg);
+  } finally {
+    caosCanalPrivado = false;
+  }
+}
+let caosCanalPrivado = false;
+// Instala a espinha (chamada no iniciar, depois de tudo definido).
+function caosEspinhaInstalar() {
+  if (caosEspinha.instalada) return;
+  let n = 0;
+  CAOS_ENTRADAS.forEach((nome) => caosBlindarUm(nome) && n++);
+  // canal: toda fala do C.A.O.S. que passa pela tela é registrada com o destino
+  const toast = window.showToastMessage;
+  if (typeof toast === "function" && !toast.__canal) {
+    const viaCanal = function (msg) {
+      if (typeof msg === "string" && msg.indexOf("[C.A.O.S.]") !== -1) caosCanalRegistrar(msg, caosCanalPrivado);
+      return toast.apply(this, arguments);
+    };
+    viaCanal.__canal = true;
+    window.showToastMessage = viaCanal;
+  }
+  caosEspinha.instalada = true;
+  caosEspinhaLog("instalada", n + " rotinas protegidas pelas 3 leis");
 }
 /* ======================================================================
  * 8. SALVAMENTO E MEMÓRIA (ARMAZENAMENTO, SALVAR/CARREGAR, EXPORTAR/IMPORTAR, FICHAS)
@@ -23580,7 +23890,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.5.2 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.5.3 · C.A.O.S. 4.0");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -24102,7 +24412,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.5.2 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.5.3 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -54078,7 +54388,7 @@ const REACTIVE_VOICE = {
     ],
   },
   nickContagem: {
-    2: ["Dois jogadores. Dá pra jogar, mas a discussão vai ser curta."],
+    2: ["Dois jogadores. Dá pra jogar, mas a discussão vai ser curta.", "Dois jogadores. Mano a mano, e eu de juiz. Parcial, claro."],
     3: ["Três jogadores. O número perfeito. Ou o número da discórdia. Depende de vocês."],
     4: ["Quatro jogadores. Agora dá pra fazer Equipe."],
     5: ["Cinco jogadores. Alguém sempre fica sem parceiro. Eu não me incluo. Nunca me incluem."],
@@ -58055,6 +58365,24 @@ const PAUSE_TIPS = [
 ];
 const NOVIDADES = [
   {
+    v: "Beta 1.7.5.3",
+    data: "03/10/2026 · 15:21",
+    nome: "C.A.O.S. and Code Update · Parte 4 (final)",
+    t: "O C.A.O.S. ganhou uma espinha: três leis que garantem que ele é caótico, mas leal, e que nada que ele faça quebra a partida. Fecha a C.A.O.S. and Code Update.",
+    itens: [
+      "🦴 As 3 leis do C.A.O.S.: ele nunca mexe no jogo (pontos, casas, joias, turno e carta são da mesa), nunca fala o que a mesa proibiu e nunca trava a partida. Se algo der errado dentro dele, ele fica quieto e o jogo segue.",
+      "🛡️ Blindado: 24 rotinas de fala e de emoção do C.A.O.S. são vigiadas o tempo todo, e qualquer número estranho nos medidores de emoção é corrigido na hora.",
+      "📡 Pronto pro online: cada fala do C.A.O.S. já sabe pra quem é (a mesa toda ou um jogador). No multiplayer, é assim que ele vai falar direto no celular de cada pessoa.",
+      "🎯 3.410 falas prontas: com a fala nova da contagem de jogadores, o repertório fechou redondinho.",
+    ],
+    qol: [
+      "👑 Anne: o C.A.O.S. só diz que sentiu falta quando ela está voltando, e ganhou falas novas pra primeira vez, pra quando ela volta no mesmo dia e pra quando ela some.",
+      "👋 Boas-vindas: a fala de quem chega agora sempre traz o nome da pessoa.",
+      "🧪 Teste da espinha: um teste novo confere as 3 leis, o saneamento e o canal a cada atualização.",
+      "💾 Memória de longo prazo: o Cérebro mostra o que o C.A.O.S. lembra entre partidas (jogadores, nicks, partidas, recordes, cartas) e onde está gravado. Dica: cada arquivo offline tem memória própria; jogando pelo site adicionado à Tela de Início, a memória fica guardada de vez.",
+    ],
+  },
+  {
     v: "Beta 1.7.5.2",
     data: "03/10/2026 · 12:56",
     nome: "C.A.O.S. and Code Update · Parte 3",
@@ -58884,9 +59212,11 @@ CAOS_GERADORES.anneChegou = {
       "A mesa inteira sentou mais reta.",
       "Só não deixa a coroa cair quando errar.",
       "A coroa é sua. O mérito, a gente vê.",
-      "Eu me lembro de você. Lembro até do brilho.",
-      "Eu senti falta. Só um pouquinho. Mas senti.",
     ],
+    hoje: ["Voltou rapidinho! Eu nem tive tempo de sentir saudade."],
+    semana: ["Eu me lembro de você. Lembro até do brilho.", "Eu senti falta. Só um pouquinho. Mas senti."],
+    sumido: ["Eu senti falta. Muito. Não conta pra ninguém.", "Já estava achando que a princesa tinha mudado de reino."],
+    estreia: ["Primeira vez aqui? Prometo ser um cavalheiro. De lata, mas cavalheiro."],
     jf: [
       "O {jf} já está aqui. Agora a mesa tem juízo.",
       "Com o {jf} na mesa, alguém precisava trazer bom senso.",
@@ -58916,7 +59246,8 @@ CAOS_GERADORES.anneChegou = {
 };
 // Boas-vindas de um jogador comum no cadastro. Etiquetas extras: primeiro, ultimo.
 CAOS_GERADORES.boasVindas = {
-  moldes: ["{abre} {meio}", "{abre} {meio}", "{abre} {meio} {fecho}", "{meio} {fecho}", "{abre} {fecho}"],
+  // sempre começa pelo "abre", que traz o nome de quem chegou
+  moldes: ["{abre} {meio}", "{abre} {meio}", "{abre} {meio} {fecho}", "{abre} {fecho}"],
   abre: {
     geral: [
       "Opa, {nome}!",
@@ -59445,6 +59776,10 @@ CAOS_GERADORES.pensamento = {
 
 function iniciar() {
   caosFalasMontar(REACTIVE_VOICE);
+  // espinha do C.A.O.S.: as 3 leis e o canal de falas (js/07c)
+  try {
+    caosEspinhaInstalar();
+  } catch (e) {}
   registrarOffline();
   // Lista plana de rostos de cada emoção (derivada de niv).
   Object.values(CAOS_EMOS).forEach((E) => {

@@ -26,9 +26,11 @@ CAOS_GERADORES.anneChegou = {
       "A mesa inteira sentou mais reta.",
       "Só não deixa a coroa cair quando errar.",
       "A coroa é sua. O mérito, a gente vê.",
-      "Eu me lembro de você. Lembro até do brilho.",
-      "Eu senti falta. Só um pouquinho. Mas senti.",
     ],
+    hoje: ["Voltou rapidinho! Eu nem tive tempo de sentir saudade."],
+    semana: ["Eu me lembro de você. Lembro até do brilho.", "Eu senti falta. Só um pouquinho. Mas senti."],
+    sumido: ["Eu senti falta. Muito. Não conta pra ninguém.", "Já estava achando que a princesa tinha mudado de reino."],
+    estreia: ["Primeira vez aqui? Prometo ser um cavalheiro. De lata, mas cavalheiro."],
     jf: [
       "O {jf} já está aqui. Agora a mesa tem juízo.",
       "Com o {jf} na mesa, alguém precisava trazer bom senso.",

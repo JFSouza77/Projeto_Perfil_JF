@@ -14,6 +14,7 @@ js/05-tela.js
 js/06-voz-som-vibracao.js
 js/07-caos.js
 js/07b-gerador-de-falas.js
+js/07c-espinha-do-caos.js
 js/08-salvamento.js
 js/09-utilitarios.js
 dados/01-emocoes-do-caos.js

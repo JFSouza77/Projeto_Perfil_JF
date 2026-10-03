@@ -4,6 +4,10 @@
 
 function iniciar() {
   caosFalasMontar(REACTIVE_VOICE);
+  // espinha do C.A.O.S.: as 3 leis e o canal de falas (js/07c)
+  try {
+    caosEspinhaInstalar();
+  } catch (e) {}
   registrarOffline();
   // Lista plana de rostos de cada emoção (derivada de niv).
   Object.values(CAOS_EMOS).forEach((E) => {

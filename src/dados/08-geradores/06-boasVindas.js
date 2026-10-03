@@ -1,6 +1,7 @@
 // Boas-vindas de um jogador comum no cadastro. Etiquetas extras: primeiro, ultimo.
 CAOS_GERADORES.boasVindas = {
-  moldes: ["{abre} {meio}", "{abre} {meio}", "{abre} {meio} {fecho}", "{meio} {fecho}", "{abre} {fecho}"],
+  // sempre começa pelo "abre", que traz o nome de quem chegou
+  moldes: ["{abre} {meio}", "{abre} {meio}", "{abre} {meio} {fecho}", "{abre} {fecho}"],
   abre: {
     geral: [
       "Opa, {nome}!",

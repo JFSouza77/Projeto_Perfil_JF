@@ -1,4 +1,4 @@
-# Cérebro do C.A.O.S. 4.0 (mapa da 1.7.5.2)
+# Cérebro do C.A.O.S. 4.0 (mapa da 1.7.5.3)
 
 O C.A.O.S. é o apresentador do jogo. Ele **nunca** pontua e nunca muda turno nem estado da partida: só comenta.
 Este documento mostra as camadas do cérebro dele, onde cada uma está no código e como testar.
@@ -54,6 +54,27 @@ Antes, cada gatilho tinha uma lista fixa de falas. A entrada do JF, por exemplo,
 2. No ponto do código onde a fala acontece, use `caosGerarFala("nome", jogador) || getRandomReaction(listaAntiga, ...)`.
 3. Rode `node ferramentas/caos_teste_geradores.js`.
 
+## A espinha: as 3 leis (1.7.5.3)
+
+O C.A.O.S. é **caótico leal**: fala o que quiser, do jeito dele, mas dentro de três leis que o código faz valer. Ele não tem consciência nem vontade própria, nem acesso ao jogo. Ele observa e comenta. A espinha fica em `src/js/07c-espinha-do-caos.js` e é instalada no `iniciar()`.
+
+1. **Nunca mexe no jogo.** Pontos, casas, joias, equipes, turno, Mestre e carta são da mesa. Antes de cada rotina protegida, a espinha tira uma foto do jogo. Se a rotina mudar algo, a espinha desfaz na hora e anota.
+2. **Nunca fala o que a mesa proibiu.** O Júnior e o Family friendly não recebem fala pesada, o Suave não recebe zoeira, e o 🔇 da carta, a saída da partida e o 👎 são respeitados. Isso é feito pelos filtros do motor e do gerador.
+3. **Nunca trava a partida.** Se der erro dentro dele, a rotina devolve "nada", a partida segue e o erro fica registrado.
+
+**Como isso funciona:**
+- **Proteção:** são 24 rotinas de fala e de emoção protegidas (`CAOS_ENTRADAS`).
+- **Saneamento:** os medidores de emoção são saneados, sem número inválido nem valor fora da faixa.
+- **Acompanhamento:** na área ADM, a aba Estado mostra a espinha, os erros contidos, as vezes em que protegeu o jogo, os saneamentos e o registro.
+
+**Canal (preparação do online):**
+- toda fala do C.A.O.S. passa pelo canal, que anota o destino: os jogadores citados ou a mesa toda;
+- `caosFalarPara(nome, msg, privado)` é a fala dirigida a uma pessoa;
+- hoje todos os jogadores estão no aparelho "host";
+- na 1.7.10, cada jogador vai ter `aparelho`, e o canal entrega a fala no celular certo. As falas privadas vão só para o aparelho da pessoa.
+
+**Teste:** `node ferramentas/caos_teste_espinha.js`.
+
 ## Novo no C.A.O.S. 4.0 (1.7.5.2)
 
 - **Chute comentado:** o Mestre toca em "digitar o chute" e o C.A.O.S. compara o chute com a resposta.
@@ -88,7 +109,7 @@ Antes, cada gatilho tinha uma lista fixa de falas. A entrada do JF, por exemplo,
 
 | Fonte | Quanto |
 |---|---|
-| Falas prontas (`REACTIVE_VOICE`) | 3.409 em 494 listas. 651 delas mudam com nome ou número, então rendem uma variação diferente para cada jogador |
+| Falas prontas (`REACTIVE_VOICE`) | 3.410 em 494 listas. 651 delas mudam com nome ou número, então rendem uma variação diferente para cada jogador |
 | Gerador de acerto, erro e pulo (`CAOS_LEX`) | 238 pedaços, que dão dezenas de milhares de montagens |
 | Comentários do Hall da Fama (`CAOS_COMENT`) | 145 pedaços |
 | Geradores por gatilho (16) | Cerca de 600 pedaços e mais ou menos 30 mil combinações (somando todos os contextos) |
@@ -128,6 +149,7 @@ O teste de estresse mostrou que um **erro em série deixava o C.A.O.S. entediado
 
 ```
 node ferramentas/caos_teste_geradores.js [quantas]   repetição, falas vazias, {chave} sem preencher, memória entre recargas
+node ferramentas/caos_teste_espinha.js               as 3 leis, saneamento e canal
 node ferramentas/caos_auditar_falas.js               auditoria das falas e dos pedaços dos geradores
 node ferramentas/caos_teste_estresse.js              estresse, tédio, animação, montanha-russa, absurdos e partida realista, nos 5 temperamentos
 ```
