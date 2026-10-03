@@ -1611,8 +1611,17 @@ function caosInspectorEstado() {
           " KB"
         );
       })()}</b></div>
+      <div class="ci-kv"><span>🦴 Espinha (3 leis)</span><b class="ci-mono">${caosEspinha.instalada ? "ativa" : "DESLIGADA"} · erros contidos ${caosEspinha.falhas} · jogo protegido ${caosEspinha.leis}x · medidores saneados ${caosEspinha.saneados}</b></div>
+      <div class="ci-kv"><span>📡 Canal (últimas falas e destino)</span><b class="ci-mono">${
+        caosCanal
+          .slice(-4)
+          .reverse()
+          .map((c) => escapeHtml(c.para.map((d) => d.nome + "@" + d.aparelho).join(", ")) + ": " + escapeHtml(c.texto.slice(0, 50)))
+          .join("<br>") || "—"
+      }</b></div>
+      <div class="ci-kv"><span>🦴 Registro da espinha</span><b class="ci-mono">${caosEspinha.log.slice(-5).reverse().map(escapeHtml).join("<br>") || "—"}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.5.2 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.5.3 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -6558,7 +6567,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.5.2 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.5.3 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",

@@ -1,5 +1,22 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.5.3",
+    data: "03/10/2026 · 15:21",
+    nome: "C.A.O.S. and Code Update · Parte 4 (final)",
+    t: "O C.A.O.S. ganhou uma espinha: três leis que garantem que ele é caótico, mas leal, e que nada que ele faça quebra a partida. Fecha a C.A.O.S. and Code Update.",
+    itens: [
+      "🦴 As 3 leis do C.A.O.S.: ele nunca mexe no jogo (pontos, casas, joias, turno e carta são da mesa), nunca fala o que a mesa proibiu e nunca trava a partida. Se algo der errado dentro dele, ele fica quieto e o jogo segue.",
+      "🛡️ Blindado: 24 rotinas de fala e de emoção do C.A.O.S. são vigiadas o tempo todo, e qualquer número estranho nos medidores de emoção é corrigido na hora.",
+      "📡 Pronto pro online: cada fala do C.A.O.S. já sabe pra quem é (a mesa toda ou um jogador). No multiplayer, é assim que ele vai falar direto no celular de cada pessoa.",
+      "🎯 3.410 falas prontas: com a fala nova da contagem de jogadores, o repertório fechou redondinho.",
+    ],
+    qol: [
+      "👑 Anne: o C.A.O.S. só diz que sentiu falta quando ela está voltando, e ganhou falas novas pra primeira vez, pra quando ela volta no mesmo dia e pra quando ela some.",
+      "👋 Boas-vindas: a fala de quem chega agora sempre traz o nome da pessoa.",
+      "🧪 Teste da espinha: um teste novo confere as 3 leis, o saneamento e o canal a cada atualização.",
+    ],
+  },
+  {
     v: "Beta 1.7.5.2",
     data: "03/10/2026 · 12:56",
     nome: "C.A.O.S. and Code Update · Parte 3",

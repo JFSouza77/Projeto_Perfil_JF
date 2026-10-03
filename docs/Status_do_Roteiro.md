@@ -29,6 +29,16 @@ na hora de começar cada fase.
 - Público de cada modo (Old School, Júnior, Clássico): ver `docs/Publico_dos_Modos.md`.
 - Onde registrar mudanças de cartas nos logs: ver `docs/Regras_dos_Logs.md`.
 
+## C.A.O.S. no online (preparado na 1.7.5.3)
+- O C.A.O.S. roda **só no host**, junto com o motor do jogo, e o host manda em tudo (decisão do JF).
+- Toda fala dele passa pelo **canal** (`caosCanalRegistrar` em `src/js/07c-espinha-do-caos.js`), que já anota o destino: os jogadores citados ou a mesa toda.
+- Na 1.7.10:
+  - cada jogador recebe `aparelho` (o id da conexão);
+  - a camada `Net` lê o destino de cada fala no canal e entrega no celular certo;
+  - fala com `privado = true` (`caosFalarPara`) vai só para o aparelho da pessoa;
+  - a voz continua tocando em cada aparelho, e cada pessoa silencia o próprio.
+- As 3 leis da espinha valem também no online: o C.A.O.S. nunca mexe no jogo, nem no do host.
+
 ## Cérebro do C.A.O.S.
 - Mapa das camadas, gerador de falas, calibração e limites de memória: ver `docs/CAOS_Cerebro.md`.
 
