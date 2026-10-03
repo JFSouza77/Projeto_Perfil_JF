@@ -12,6 +12,7 @@
           +10 s no especial e, no Express, +8 s por dica e +40 s na carta. O C.A.O.S. observa cada Mestre (p.obsM:
           dicas, estouros e tempo até o veredito); se um fica bem acima da mesa, pergunta à mesa se dá o tempo extra
           (uma vez por jogador). ADM liga/desliga por jogador. Campos novos no save: idade, mestreAjuda*, obsM.
+          Cores e emojis do cadastro com toque de 44 px e aria-label (a auditoria pegou com o seletor aberto).
   1.7.6.3 · 03/10/2026 · "Buttons and Tutorial Update · Parte 4" = O C.A.O.S. SUGERE O TUTORIAL (pedido do JF).
           js/05c-sugestao-tutorial.js (chave nova perfil5_tutorial_visto): "Quer fazer o tutorial? Leva menos de
           dois minutos." ao tocar em Jogar num aparelho sem fichas na memória e no Sou iniciante; uma vez por sessão
@@ -6528,6 +6529,15 @@ body.claro .idade-btn.on {
   background: color-mix(in srgb, var(--hc) 75%, #1b1d33) !important;
   color: #fff !important;
 }
+/* Emojis do cadastro: toque de 44 px. */
+.avatar-swatch {
+  min-width: 44px;
+  min-height: 44px;
+}
+.color-swatch {
+  width: 44px !important;
+  height: 44px !important;
+}
 </style>
 </head>
 <body class="noturno">
@@ -12275,7 +12285,7 @@ function renderAvatarPicker() {
   row.innerHTML = list
     .map(
       (a) => `
-    <button type="button" class="avatar-swatch ${a === selectedAvatar && cadMostraSel(cadEmoji) ? "selected" : ""}${usedAvatars.has(a) ? " tomada" : ""}" data-avatar="${a}" ${usedAvatars.has(a) ? 'aria-disabled="true"' : ""}>${a}</button>
+    <button type="button" class="avatar-swatch ${a === selectedAvatar && cadMostraSel(cadEmoji) ? "selected" : ""}${usedAvatars.has(a) ? " tomada" : ""}" data-avatar="${a}" aria-label="Emoji ${a}${usedAvatars.has(a) ? " (já escolhido)" : ""}" ${usedAvatars.has(a) ? 'aria-disabled="true"' : ""}>${a}</button>
   `,
     )
     .join("");
@@ -12353,9 +12363,12 @@ function renderColorPicker() {
     if (free) selectedColor = free;
   }
   row.innerHTML = availableColors
-    .map((c) => {
+    .map((c, i) => {
       const bg = c === "RGB" ? "" : "background:" + playerColorCss(c);
-      return `<button type="button" class="color-swatch ${c === selectedColor && cadMostraSel(cadCor || CURRENT_FORMAT === "equipe") ? "selected" : ""} ${c === "RGB" ? "rgb-swatch" : ""} ${c === "GRAD_ONYX" ? "onyx-swatch" : ""}${usedColors.has(c) ? " tomada" : ""}${COR_EXCLUSIVA[c] && usedColors.has(c) && !players.some((p) => p.color === c) ? " reservada" : ""}" data-color="${c}" style="${bg}" ${usedColors.has(c) ? 'aria-disabled="true"' : ""} title="${c === "GRAD_ONYX" ? "Ônix neon" : COR_EXCLUSIVA[c] ? "Cor exclusiva " + COR_EXCLUSIVA[c].de : ""}"></button>`;
+      const rotulo =
+        (c === "GRAD_ONYX" ? "Ônix neon" : COR_EXCLUSIVA[c] ? "Cor exclusiva " + COR_EXCLUSIVA[c].de : "Cor " + (i + 1)) +
+        (usedColors.has(c) ? " (já escolhida)" : "");
+      return `<button type="button" class="color-swatch ${c === selectedColor && cadMostraSel(cadCor || CURRENT_FORMAT === "equipe") ? "selected" : ""} ${c === "RGB" ? "rgb-swatch" : ""} ${c === "GRAD_ONYX" ? "onyx-swatch" : ""}${usedColors.has(c) ? " tomada" : ""}${COR_EXCLUSIVA[c] && usedColors.has(c) && !players.some((p) => p.color === c) ? " reservada" : ""}" data-color="${c}" style="${bg}" aria-label="${rotulo}" ${usedColors.has(c) ? 'aria-disabled="true"' : ""} title="${c === "GRAD_ONYX" ? "Ônix neon" : COR_EXCLUSIVA[c] ? "Cor exclusiva " + COR_EXCLUSIVA[c].de : ""}"></button>`;
     })
     .join("");
   row.querySelectorAll(".color-swatch").forEach((btn) => {
@@ -59494,6 +59507,7 @@ const NOVIDADES = [
     qol: [
       "🛡️ ADM: liga ou desliga o tempo extra de Mestre de cada jogador.",
       "📖 O Manual explica o tempo extra no passo do Mestre.",
+      "🎨 Cadastro: as bolinhas de cor e os emojis ficaram do tamanho de um dedo (44 pixels) e ganharam nome pro leitor de tela.",
     ],
   },
   {

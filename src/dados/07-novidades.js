@@ -13,6 +13,7 @@ const NOVIDADES = [
     qol: [
       "🛡️ ADM: liga ou desliga o tempo extra de Mestre de cada jogador.",
       "📖 O Manual explica o tempo extra no passo do Mestre.",
+      "🎨 Cadastro: as bolinhas de cor e os emojis ficaram do tamanho de um dedo (44 pixels) e ganharam nome pro leitor de tela.",
     ],
   },
   {
