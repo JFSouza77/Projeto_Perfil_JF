@@ -17,6 +17,10 @@ const NOVIDADES = [
       "🤫 O C.A.O.S. não fala mais por cima de avisos: com uma janela aberta (Reiniciar, Encerrar, tutorial, acessibilidade…), ele espera ela fechar. E se ele estiver falando quando a janela abrir, o balão sai da frente.",
       "🃏 O verso da carta agora tem formato de carta de verdade (mais estreito e mais alto), não de quadro.",
       "⏱️ Duração certa: o tempo de partida conta só o tempo jogando. Pausa, app fechado e celular bloqueado ficam de fora (uma partida de 5 cartas tinha dado 628 minutos). O tempo pausado aparece separado nas estatísticas.",
+      "🗺️ Tabuleiro ampliado: agora dá pra rolar a lista de jogadores dentro da janela (antes rolava a tela de trás).",
+      "🔥 Perto ou 🧊 Longe: a pergunta ao Mestre fica 25 segundos na tela, e depois de escolher ainda dá pra digitar o que a pessoa chutou.",
+      "🎤 O C.A.O.S. sabe a hora de parar: quando a piada já fechou, ele não emenda mais nada no fim.",
+      "⏸️ Pausa: todos os botões com a mesma largura.",
     ],
   },
   {

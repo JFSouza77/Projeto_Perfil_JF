@@ -547,11 +547,14 @@ function caosChuteGerar(p, an, g, cat, suave) {
     return "";
   }
 }
-function caosChuteDigitar(nome) {
+// semChute: o que fazer se o Mestre desistir de digitar (ex.: comentar o Perto/Longe que ele escolheu).
+function caosChuteDigitar(nome, semChute) {
   caosPromptModal("O que " + nome + " chutou? (o C.A.O.S. não ouve, então conta pra ele)", "", (v) => {
-    if (v == null) return;
-    const t = String(v).trim();
-    if (!t) return;
+    const t = v == null ? "" : String(v).trim();
+    if (!t) {
+      if (typeof semChute === "function") semChute();
+      return;
+    }
     caosChuteResponder(nome, t);
   });
 }

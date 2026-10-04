@@ -268,3 +268,28 @@ body.claro .idade-btn.on {
   justify-content: center;
   padding: 30px 20px 34px;
 }
+/* Janelas (1.7.6.7): a janela rola por dentro e a página de trás fica parada (no tabuleiro ampliado
+   com 6 jogadores, o dedo rolava a tela de baixo). */
+.jf-modal {
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.caos-modal-ov > div,
+.tut-box,
+.acess-box {
+  overscroll-behavior: contain;
+}
+html:has(.jf-modal-bg),
+html:has(.caos-modal-ov),
+body:has(.jf-modal-bg),
+body:has(.caos-modal-ov) {
+  overflow: hidden;
+}
+/* Pausa: os botões soltos ocupam a largura toda, alinhados com os outros. */
+.pause-screen > .btn-sec {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
