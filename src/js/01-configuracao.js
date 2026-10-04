@@ -862,6 +862,7 @@ const CAOS_COMENT_TOM = {
   rival: "comentario",
   sorteadas: "comentario",
   duracao: "comentario",
+  pausado: "comentario",
   dificil: "comentario",
   laudos: "comentario",
   bola: "eu",

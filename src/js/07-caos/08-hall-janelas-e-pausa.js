@@ -51,6 +51,10 @@ function caosComentFato(d) {
               ? "a partida durou menos de um minuto"
               : `a partida durou ${v} ${pl(d.v, "minuto", "minutos")}`,
       };
+    case "pausado":
+      return {
+        fr: `a mesa ficou ${v} ${pl(d.v, "minuto", "minutos")} na pausa, e isso não entrou na duração`,
+      };
     case "respondidas":
       return {
         fr:

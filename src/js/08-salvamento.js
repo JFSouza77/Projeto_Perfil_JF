@@ -383,6 +383,8 @@ function saveGameState() {
       caosSaidasTensao,
       caosPartidaInicioAt,
       caosPartidaFimAt,
+      tempoJogoMs,
+      tempoPausaMs,
       caosCatSeq,
       caosMesa,
       caosAposta,
@@ -765,6 +767,7 @@ function loadGameState() {
     caosCatSeq = Array.isArray(state.caosCatSeq) ? state.caosCatSeq.filter((c) => typeof c === "string").slice(-6) : [];
     caosPartidaInicioAt = Number.isFinite(state.caosPartidaInicioAt) ? state.caosPartidaInicioAt : null;
     caosPartidaFimAt = Number.isFinite(state.caosPartidaFimAt) ? state.caosPartidaFimAt : null;
+    tempoRestaurar(state);
     caosResenhaTxt = null;
     caosAposta =
       state.caosAposta && typeof state.caosAposta.nome === "string"
