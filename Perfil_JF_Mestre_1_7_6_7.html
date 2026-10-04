@@ -6,6 +6,14 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.6.7 · 03/10/2026 · "Buttons and Tutorial Update · QoL de emergência" = 3 PEDIDOS DO JF DEPOIS DE JOGAR.
+          1) Fala sem nexo: "A dica era X. E mesmo assim, Fulano." ficou "E mesmo assim não foi, Fulano." (e a
+          do número ganhou "não saiu"); a cauda de tropeço "Anota aí que eu hesitei." (não havia hesitação) virou
+          "Tá, essa saiu meio torta. Finge que foi de propósito.". 2) Equipe com 6: 2 equipes de 3 liberado
+          (antes só 3 equipes de 2); o motor já era genérico (rodízio por lista de membros), testado no Hardcore
+          e no Clássico, 16 cartas e casa de bônus. 3) js/05e-tutorial-vitoria.js: "Como se ganha" em 5 passos
+          pra Clássico, Pontos, Só Joias e Moda da Casa, com os números da partida; abre sozinho na 1ª vez de cada
+          condição no aparelho (perfil5_tut_vitoria_vistos), botão no cadastro, na roleta e na Pausa.
   1.7.6.6 · 03/10/2026 · "Buttons and Tutorial Update · QoL" = NÚMEROS REDONDOS NOS TUTORIAIS (pedido do JF).
           Manual: 35 passos (novo "Idade e tempo extra" no Cadastro; a frase saiu do passo do Mestre).
           Rápido: 10 passos (novos "Às vezes é uma surpresa" e "Lê devagar? Tudo bem"), 301 palavras (~1min53s).
@@ -307,7 +315,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.6.6</title>
+<title>Perfil JF · Beta 1.7.6.7</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6556,6 +6564,12 @@ body.claro .idade-btn.on {
   height: auto;
   line-height: 1.25;
 }
+/* Como se ganha (1.7.6.7): botão no cadastro, dentro da condição de vitória. */
+.wincond-tut {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+}
 </style>
 </head>
 <body class="noturno">
@@ -6603,7 +6617,7 @@ body.claro .idade-btn.on {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.6.6 · Buttons and Tutorial Update · QoL<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.6.7 · Buttons and Tutorial Update · QoL de emergência<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -6710,6 +6724,7 @@ body.claro .idade-btn.on {
     </div>
     <button class="btn-sec" id="pauseAcessBtn" type="button">♿ Acessibilidade (letra, tempo, voz)</button>
     <button class="btn-sec" id="pauseTutBtn" type="button" style="display:none; --cc:#22d3ee;">🎓 Primeira vez? Tutorial de 2 minutos</button>
+    <button class="btn-sec" id="pauseVitoriaBtn" type="button">🏆 Como se ganha nesta partida</button>
     <button class="btn-sec" id="pauseManualBtn" type="button">📖 Manual completo (todas as regras)</button>
     <button class="btn-sec" id="pauseReligarBtn" type="button" style="display:none;">🔊 Religar o C.A.O.S. nesta carta</button>
     <div class="sec-row sec-col">
@@ -6763,7 +6778,7 @@ body.claro .idade-btn.on {
       <div id="humorHint" style="opacity:0.6; font-size:0.75rem; margin-top:4px;"></div>
     </div></details>
     <div style="display:none; text-align:center; margin-bottom:8px;" id="ageBracketWrap">
-      <div style="opacity:0.75; font-size:0.8rem; margin-bottom:6px;">Faixa etária (usada só pra equilibrar os times no sorteio):</div>
+      <div style="opacity:0.75; font-size:0.8rem; margin-bottom:6px;">Faixa etária (equilibra os times no sorteio; 6-12 ganha tempo extra quando for o Mestre):</div>
       <div class="color-picker-row" id="ageBracketRow" style="justify-content:center; flex-wrap:wrap; gap:8px;"></div>
     </div>
     <div style="text-align:center; margin-bottom:8px;" id="idadeWrap">
@@ -6792,6 +6807,7 @@ body.claro .idade-btn.on {
           <button class="main-btn" id="teamCount2Btn" style="flex:1;">2 equipes</button>
           <button class="main-btn" id="teamCount3Btn" style="flex:1;">3 equipes</button>
         </div>
+        <p style="opacity:0.7; font-size:0.75rem; text-align:center; margin-top:6px;">4 jogadores: 2 equipes de 2 · 6 jogadores: 2 equipes de 3 ou 3 equipes de 2</p>
       </div>
       <div id="teamRosterPreview" style="display:none; margin-top:10px; font-size:0.85rem;"></div>
       <div id="teamSubModeChoice" style="display:none; margin-top:10px;">
@@ -7726,7 +7742,7 @@ const CAOS_TROPECO = {
     "Não, pera. Deixa assim mesmo.",
     "Eu ia falar mais bonito, mas saiu isso.",
     "Acho que já falei isso hoje. Vale repetir.",
-    "Anota aí que eu hesitei.",
+    "Tá, essa saiu meio torta. Finge que foi de propósito.",
     "Tá, essa não foi minha melhor frase.",
   ],
   interpAcerto: [
@@ -10528,12 +10544,13 @@ function redrawMestre() {
   saveGameState();
 }
 function runTeamFormation(n) {
-  if (n === 2 && players.length !== 4) {
-    caosAvisoModal("2 equipes exige EXATAMENTE 4 jogadores (2 por equipe) — hoje tem " + players.length + ".");
+  // 2 equipes: 4 jogadores (2 + 2) ou 6 (3 + 3). 3 equipes: 6 jogadores (2 + 2 + 2).
+  if (n === 2 && players.length !== 4 && players.length !== 6) {
+    caosAvisoModal("2 equipes precisam de 4 jogadores (2 por equipe) ou 6 (3 por equipe). Hoje tem " + players.length + ".");
     return;
   }
   if (n === 3 && players.length !== 6) {
-    caosAvisoModal("3 equipes exige EXATAMENTE 6 jogadores (2 por equipe) — hoje tem " + players.length + ".");
+    caosAvisoModal("3 equipes precisam de EXATAMENTE 6 jogadores (2 por equipe). Hoje tem " + players.length + ".");
     return;
   }
   formTeamsBalancedByAge(n);
@@ -10584,6 +10601,7 @@ function beginGameplay() {
     p.famLim = 1 + Math.floor(Math.random() * 5);
   });
   casaSortearModo();
+  vitoriaTutInicio();
   syncGameplayPanels();
   updateDrawAvailability();
   renderMiniScoreboard();
@@ -11512,11 +11530,11 @@ function updateDrawAvailability() {
   warning.style.display = enoughPlayers ? "none" : "block";
   warning.textContent =
     CURRENT_FORMAT === "equipe"
-      ? `O Modo Equipe precisa de EXATAMENTE 4 ou 6 jogadores (2 ou 3 por equipe) — agora tem ${players.length}.`
+      ? `O Modo Equipe precisa de EXATAMENTE 4 ou 6 jogadores (com 6: 2 equipes de 3 ou 3 equipes de 2) — agora tem ${players.length}.`
       : `Adicione pelo menos ${MIN_PLAYERS} jogadores para começar (máximo ${MAX_PLAYERS}).`;
   const team2Btn = document.getElementById("teamCount2Btn");
   const team3Btn = document.getElementById("teamCount3Btn");
-  if (team2Btn) team2Btn.disabled = players.length !== 4;
+  if (team2Btn) team2Btn.disabled = players.length !== 4 && players.length !== 6;
   if (team3Btn) team3Btn.disabled = players.length !== 6;
   iniAtualizarBotao();
   renderWinCondPicker();
@@ -13339,7 +13357,16 @@ function casaAnunciar() {
     } catch (e) {}
     desc.innerHTML = winCondRuleText();
     const row = caosModalRow();
-    row.append(caosModalBtn("Bora jogar!", "#1f7a4f", fechar));
+    row.append(
+      caosModalBtn("📖 Como funciona?", "#0e7490", () => {
+        fechar();
+        openTutorial("vitoria:" + final);
+      }),
+      caosModalBtn("Bora jogar!", "#1f7a4f", () => {
+        fechar();
+        vitoriaTutTalvez(final);
+      }),
+    );
     box.append(row);
     renderMiniScoreboard();
     renderWinCondPicker();
@@ -13419,7 +13446,9 @@ function renderWinCondPicker() {
   let aviso = "";
   if (WIN_CONDITION === "casa" && casaSorteado === "misto" && players.length < GEMS_MIN_PLAYERS)
     aviso = `<div class="wincond-warn">Com ${players.length || "menos de " + GEMS_MIN_PLAYERS} jogador${players.length === 1 ? "" : "es"} as joias são só troféu — vale a chegada na casa ${WINNING_SCORE}. Com ${GEMS_MIN_PLAYERS}+ elas também dão vitória.</div>`;
-  hint.innerHTML = `${o.hint}${aviso}${locked ? '<div class="ci-dim">🔒 Travada: a partida já começou.</div>' : ""}`;
+  hint.innerHTML = `${o.hint}${aviso}${locked ? '<div class="ci-dim">🔒 Travada: a partida já começou.</div>' : ""}${vitoriaTutBotaoHtml()}`;
+  const tb = document.getElementById("winCondTutBtn");
+  if (tb) tb.addEventListener("click", () => openTutorial("vitoria:" + (starterChosen ? winCond() : WIN_CONDITION)));
 }
 // Quantas cartas o baralho do modo tem de verdade (o que entra na partida).
 function cartasNoModo() {
@@ -13466,7 +13495,7 @@ function buildRulesHtml() {
   // 2. Quem joga
   li.push(
     c.equipe
-      ? "👥 <b>Equipes:</b> 4 jogadores (2 equipes) ou 6 (3 equipes), sorteadas equilibrando as idades. A cada carta uma equipe lê e outra responde. Com 3 equipes: <b>Duelo de Guildas</b> (uma responde) ou <b>Mestre vs Todos</b> (as outras respondem em ordem)."
+      ? "👥 <b>Equipes:</b> 4 jogadores (2 equipes de 2) ou 6 (2 equipes de 3, ou 3 equipes de 2), sorteadas equilibrando as idades. A cada carta uma equipe lê e outra responde. Com 3 equipes: <b>Duelo de Guildas</b> (uma responde) ou <b>Mestre vs Todos</b> (as outras respondem em ordem)."
       : "👥 <b>Jogadores:</b> de 2 a 6. Sorteiem o primeiro Mestre (dá pra sortear de novo até 2 vezes). Depois a roda segue sempre na mesma ordem.",
   );
   // 3. Cartas
@@ -13554,12 +13583,19 @@ function buildRulesHtml() {
     );
   return li.map((t) => "<li>" + t + "</li>").join("");
 }
-// Tutorial: "rapido" (menos de 2 minutos, TUTORIAL_RAPIDO) ou "manual" (completo, TUTORIAL_STEPS, por capítulos).
+// Tutorial: "rapido" (menos de 2 minutos, TUTORIAL_RAPIDO), "manual" (completo, TUTORIAL_STEPS, por capítulos)
+// ou "vitoria:<condição>" (como se ganha, 5 passos, VITORIA_TUTORIAIS).
 let tutorialLista = null; // definido ao abrir (os dados do tutorial carregam depois deste arquivo)
+let tutorialTipo = "manual";
 function openTutorial(tipo) {
-  tutorialLista = tipo === "rapido" ? TUTORIAL_RAPIDO : TUTORIAL_STEPS;
+  const cond = typeof tipo === "string" && tipo.indexOf("vitoria:") === 0 ? tipo.slice(8) : null;
+  const passosVitoria = cond ? vitoriaTutPassos(cond) : null;
+  if (cond && !passosVitoria) return;
+  tutorialTipo = cond ? tipo : tipo === "rapido" ? "rapido" : "manual";
+  tutorialLista = passosVitoria || (tipo === "rapido" ? TUTORIAL_RAPIDO : TUTORIAL_STEPS);
   tutorialPos = 0;
-  tutMarcarVisto("abriu");
+  if (cond) vitoriaTutMarcar(cond);
+  else tutMarcarVisto("abriu");
   let ov = document.getElementById("tutorialOverlay");
   if (!ov) {
     ov = document.createElement("div");
@@ -13600,7 +13636,8 @@ function openTutorial(tipo) {
   renderTutorial();
 }
 function renderTutorial() {
-  const rapido = tutorialLista === TUTORIAL_RAPIDO;
+  const rapido = tutorialTipo === "rapido";
+  const vitoria = tutorialTipo.indexOf("vitoria:") === 0;
   const s = tutorialLista[tutorialPos],
     last = tutorialPos === tutorialLista.length - 1;
   document.getElementById("tutIcon").textContent = s.icon;
@@ -13611,10 +13648,14 @@ function renderTutorial() {
   mock.style.display = s.mock ? "" : "none";
   mock.className = s.dark ? "tut-mock tut-dark" : "tut-mock card";
   const tempo = document.getElementById("tutTempo");
-  tempo.textContent = rapido ? "⏱️ Tutorial rápido · menos de 2 minutos" : "📖 Manual completo";
+  tempo.textContent = vitoria
+    ? "🏆 Como se ganha: " + vitoriaTutNome(tutorialTipo.slice(8))
+    : rapido
+      ? "⏱️ Tutorial rápido · menos de 2 minutos"
+      : "📖 Manual completo";
   const caps = document.getElementById("tutCaps");
-  caps.style.display = rapido ? "none" : "";
-  caps.innerHTML = rapido
+  caps.style.display = rapido || vitoria ? "none" : "";
+  caps.innerHTML = rapido || vitoria
     ? ""
     : TUT_CAPS.map((c, i) => `<button type="button" data-cap="${i}" class="${i === s.sec ? "on" : ""}">${c}</button>`).join("");
   caps.querySelectorAll("[data-cap]").forEach((btn) =>
@@ -14027,6 +14068,8 @@ function showPauseScreen() {
   if (rl) rl.innerHTML = buildRulesHtml();
   pausaAjustesAtualizar();
   tutPausaAtualizar();
+  const bv = document.getElementById("pauseVitoriaBtn");
+  if (bv) bv.style.display = CURRENT_MODE === "express" ? "none" : "";
   startPauseTips();
 }
 function hidePauseScreen() {
@@ -14807,6 +14850,200 @@ function admMestreAjudaSecao(sec, redesenhar) {
     });
     sec.appendChild(b);
   });
+}
+/* ----------------------------------------------------------------------
+ * 5e. COMO SE GANHA (1.7.6.7): mini tutorial de 5 passos pra cada condição de vitória
+ * (Clássico/Tabuleiro, Pontos, Só Joias e A Moda da Casa), com os números da partida.
+ * Usa a mesma janela do tutorial (openTutorial("vitoria:<condição>")).
+ *  · abre sozinho no começo da partida, na 1ª vez que a condição aparece neste aparelho
+ *    (na Moda da Casa, logo depois da roleta, explicando o modo sorteado);
+ *  · botão "📖 Como funciona?" no cadastro e na roleta; "🏆 Como se ganha" na Pausa.
+ * ---------------------------------------------------------------------- */
+const VITORIA_TUT_KEY = "perfil5_tut_vitoria_vistos";
+function vitoriaEquipe() {
+  return CURRENT_FORMAT === "equipe";
+}
+function vitoriaQuem() {
+  return vitoriaEquipe() ? "a equipe" : "você";
+}
+function vitoriaCasaFinal() {
+  return WINNING_SCORE || 200;
+}
+function vitoriaMetaPontos() {
+  if (WIN_CONDITION === "casa") return CASA_META_PONTOS[Math.max(2, Math.min(6, players.length || 2))];
+  return metaPontos();
+}
+function vitoriaLimiteJoia(cond) {
+  const base = GEM_CLUE_LIMIT[CURRENT_MODE] || 5;
+  return cond === "casa" || (WIN_CONDITION === "casa" && casaSorteado === "joias") ? base + CASA_JOIA_DICAS_EXTRA : base;
+}
+function vitoriaCategoriasJoia() {
+  const ic = { ANO: "📅 Ano", PESSOA: "🧑 Pessoa", LUGAR: "📍 Lugar", COISA: "📦 Coisa", ANIMAL: "🐾 Animal" };
+  return currentGemCategories()
+    .map((c) => ic[c])
+    .join(", ");
+}
+const VITORIA_JOIAS_MOCK =
+  '<div class="tut-row"><span class="tut-chip on">📅 Ano</span><span class="tut-chip on">🧑 Pessoa</span><span class="tut-chip">📍 Lugar</span><span class="tut-chip">📦 Coisa</span></div>';
+// Cada condição: lista de 5 passos montada na hora (os números dependem do modo e da mesa).
+const VITORIA_TUTORIAIS = {
+  tabuleiro: () => [
+    {
+      icon: "🎲",
+      title: "Clássico: uma corrida",
+      text: `É o Perfil de tabuleiro: ganha quem chegar primeiro na <b>casa ${vitoriaCasaFinal()}</b>.${vitoriaEquipe() ? " No Equipe, a equipe anda junta." : ""}`,
+    },
+    {
+      icon: "🏁",
+      title: "Acertou, andou",
+      text: "Acertou na 3ª dica? Anda <b>17 casas</b> (20 menos 3). O Mestre anda as dicas que leu. Ninguém acertou? O Mestre anda 20.",
+      mock: '<div class="tut-row"><span class="tut-chip on">Dica 1 → 19 casas</span><span class="tut-chip">Dica 3 → 17 casas</span></div>',
+      dark: true,
+    },
+    {
+      icon: "⭐",
+      title: "Avance e Volte",
+      text: "Algumas surpresas mexem no tabuleiro: <b>Avance 2 casas</b>, <b>Volte 3 casas</b>… Aqui elas contam de verdade.",
+    },
+    {
+      icon: "🎁",
+      title: "Casa de bônus",
+      text: "A cada 10 casas tem uma <b>casa de bônus</b>. Parou nela? Duelo valendo o dobro contra quem você escolher.",
+    },
+    {
+      icon: "🚫",
+      title: "Sem joias",
+      text: "No Clássico não tem joias, e os pontos não decidem nada: <b>só a casa importa</b>. Corre!",
+    },
+  ],
+  pontos: () => [
+    {
+      icon: "🔢",
+      title: "Pontos: quem somar mais",
+      text: `Ganha quem chegar a <b>${vitoriaMetaPontos()} pontos</b> primeiro${vitoriaEquipe() ? " (soma dos pontos da equipe)" : ""}.`,
+    },
+    {
+      icon: "🧮",
+      title: "Como ganha ponto",
+      text: "A carta vale 20. Quem acerta leva <b>20 menos as dicas lidas</b>. O Mestre leva as dicas lidas. Ninguém acertou? Os 20 vão pro Mestre.",
+    },
+    {
+      icon: "⚡",
+      title: "Arriscar cedo vale",
+      text: "Acertar na 1ª dica dá <b>19 pontos</b>. Na 10ª, só 10. Quanto mais cedo, mais ponto.",
+      mock: '<div class="tut-row"><span class="tut-chip on">Dica 1 → 19 pts</span><span class="tut-chip">Dica 10 → 10 pts</span></div>',
+      dark: true,
+    },
+    {
+      icon: "⭐",
+      title: "Avance e Volte não contam",
+      text: "As surpresas de andar casas mexem só no tabuleiro, e aqui o tabuleiro é <b>só enfeite</b>. Ponto não se perde nem se ganha com elas.",
+    },
+    {
+      icon: "🚫",
+      title: "Sem joias",
+      text: "Em Pontos não tem joias. É só somar e chegar na meta primeiro.",
+    },
+  ],
+  joias: () => [
+    {
+      icon: "💎",
+      title: "O que são as joias",
+      text: `São <b>4 joias</b>, uma de cada categoria: ${vitoriaCategoriasJoia()}.`,
+      mock: VITORIA_JOIAS_MOCK,
+      dark: true,
+    },
+    {
+      icon: "🎯",
+      title: "Como ganhar uma joia",
+      text: `Acerte a carta usando <b>até ${vitoriaLimiteJoia()} dicas</b> e ${vitoriaQuem()} ganha a joia daquela categoria. As surpresas (instruções especiais) não contam como dica.`,
+    },
+    {
+      icon: "🏆",
+      title: "Como vence",
+      text: `Juntou as <b>4 joias</b>, uma de cada categoria? Ganhou! Já tem a joia de uma categoria? Acertar outra igual não dá mais uma. Carta bônus não dá joia.`,
+    },
+    {
+      icon: "🔒",
+      title: "No máximo 2 por rodada",
+      text: `Cada ${vitoriaEquipe() ? "equipe" : "jogador"} ganha <b>no máximo ${JOIAS_POR_RODADA} joias por rodada</b>. Assim ninguém dispara sozinho.`,
+    },
+    {
+      icon: "🎲",
+      title: "E o tabuleiro?",
+      text: `O tabuleiro anda normalmente, mas chegar na casa ${vitoriaCasaFinal()} <b>não vence</b>. Aqui o que vale são as joias.`,
+    },
+  ],
+  casa: () => [
+    {
+      icon: "🏠",
+      title: "A Moda da Casa",
+      text: "No começo da partida o C.A.O.S. <b>gira uma roleta</b> e sorteia como a mesa vai ganhar. Vale pra todo mundo.",
+      mock: '<div class="roulette" style="padding:6px 0;"><div class="roulette-phrase"><span class="roulette-reel landed">💎 JOIAS</span></div></div>',
+    },
+    {
+      icon: "🎲",
+      title: "Pode sair Tabuleiro",
+      text: `Vence quem chegar primeiro na <b>casa ${vitoriaCasaFinal()}</b>.`,
+    },
+    {
+      icon: "🔢",
+      title: "Pode sair Pontos",
+      text: `Vence quem somar <b>${vitoriaMetaPontos()} pontos</b> primeiro. O tabuleiro vira enfeite.`,
+    },
+    {
+      icon: "💎",
+      title: "Pode sair Joias",
+      text: `Vence quem juntar as <b>4 joias</b> (uma por categoria). Na Moda da Casa, cada joia vale acertando com até <b>${vitoriaLimiteJoia("casa")} dicas</b>.`,
+      mock: VITORIA_JOIAS_MOCK,
+      dark: true,
+    },
+    {
+      icon: "🔁",
+      title: "Nunca repete",
+      text: "A roleta nunca repete o modo da partida anterior. Esqueceu qual saiu? Toque em <b>⏸️ Pausar</b> → <b>🏆 Como se ganha</b>.",
+    },
+  ],
+};
+function vitoriaTutNome(cond) {
+  const w = WIN_CONDITIONS[cond];
+  return w ? w.icon + " " + w.label : "";
+}
+function vitoriaTutPassos(cond) {
+  const f = VITORIA_TUTORIAIS[cond];
+  return f ? f() : null;
+}
+function vitoriaTutVistos() {
+  try {
+    const l = JSON.parse(JFStore.getItem(VITORIA_TUT_KEY) || "[]");
+    return Array.isArray(l) ? l : [];
+  } catch (e) {
+    return [];
+  }
+}
+function vitoriaTutMarcar(cond) {
+  try {
+    const l = vitoriaTutVistos();
+    if (!l.includes(cond)) {
+      l.push(cond);
+      JFStore.setItem(VITORIA_TUT_KEY, JSON.stringify(l));
+    }
+  } catch (e) {}
+}
+// Abre sozinho só na 1ª vez de cada condição neste aparelho.
+function vitoriaTutTalvez(cond) {
+  if (CURRENT_MODE === "express" || !VITORIA_TUTORIAIS[cond] || vitoriaTutVistos().includes(cond)) return false;
+  openTutorial("vitoria:" + cond);
+  return true;
+}
+// Começo da partida (beginGameplay). Na Moda da Casa quem chama é a roleta, depois do sorteio.
+function vitoriaTutInicio() {
+  if (CURRENT_MODE === "express" || WIN_CONDITION === "casa") return;
+  setTimeout(() => vitoriaTutTalvez(winCond()), 500);
+}
+// Botão "📖 Como funciona?" do cadastro: explica a condição marcada.
+function vitoriaTutBotaoHtml() {
+  return `<button type="button" class="btn-sec wincond-tut" id="winCondTutBtn">📖 Como funciona? (5 passos)</button>`;
 }
 /* ======================================================================
  * 6. VOZ, SOM E VIBRAÇÃO
@@ -17031,7 +17268,7 @@ function caosInspectorEstado() {
       }</b></div>
       <div class="ci-kv"><span>🦴 Registro da espinha</span><b class="ci-mono">${caosEspinha.log.slice(-5).reverse().map(escapeHtml).join("<br>") || "—"}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.6.6 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.6.7 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -22042,7 +22279,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.6.6 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.6.7 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -24974,7 +25211,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.6.6 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.6.7 · C.A.O.S. 4.0");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -25496,7 +25733,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.6.6 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.6.7 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -55227,7 +55464,7 @@ const REACTIVE_VOICE = {
   ],
   erroComDicaNumero: [
     (name, dica) => `[C.A.O.S.] "${dica}" — tinha até número aí, ${name}. Não adiantou.`,
-    (name, dica) => `[C.A.O.S.] A dica literalmente te deu um número: "${dica}". E mesmo assim.`,
+    (name, dica) => `[C.A.O.S.] A dica literalmente te deu um número: "${dica}". E mesmo assim não saiu.`,
   ],
   erroComDicaCurta: [
     (name, dica) => `[C.A.O.S.] "${dica}" — curtinha, direta, e ainda assim escapou, ${name}.`,
@@ -55235,7 +55472,7 @@ const REACTIVE_VOICE = {
       `[C.A.O.S.] Nem precisou de dica longa: "${dica}" já bastava, ${name}. Bastava pra mim, pelo menos.`,
   ],
   erroComDica: [
-    (name, dica) => `[C.A.O.S.] A dica era "${dica}". E mesmo assim, ${name}.`,
+    (name, dica) => `[C.A.O.S.] A dica era "${dica}". E mesmo assim não foi, ${name}.`,
     (name, dica) => `[C.A.O.S.] "${dica}" foi a dica. Foi essa mesma, ${name}. Você ouviu.`,
     (name, dica) => `[C.A.O.S.] Depois de "${dica}", eu esperava outra resposta, ${name}.`,
     (name, dica) => `[C.A.O.S.] Vamos reler: "${dica}". Tá. Continua.`,
@@ -59002,7 +59239,7 @@ const TUTORIAL_STEPS = [
     sec: 0,
     icon: "⚔️",
     title: "Versus ou Equipe?",
-    text: "<b>Versus</b>: cada um por si, de 2 a 6 pessoas. <b>Equipe</b>: exatamente 4 ou 6 pessoas, e o jogo sorteia os times equilibrando as idades.<br>Tocar num cartão só <b>marca</b> (ele acende e flutua). Pra seguir, toque em <b>✅ Continuar</b> — assim ninguém entra no lugar errado sem querer.",
+    text: "<b>Versus</b>: cada um por si, de 2 a 6 pessoas. <b>Equipe</b>: exatamente 4 ou 6 pessoas (com 6, dá pra fazer 2 equipes de 3 ou 3 equipes de 2), e o jogo sorteia os times equilibrando as idades.<br>Tocar num cartão só <b>marca</b> (ele acende e flutua). Pra seguir, toque em <b>✅ Continuar</b> — assim ninguém entra no lugar errado sem querer.",
     dark: true,
     mock:
       '<div class="mc-list">' +
@@ -59533,6 +59770,23 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.6.7",
+    data: "03/10/2026 · 23:30",
+    nome: "Buttons and Tutorial Update · QoL de emergência",
+    t: "Correções pedidas pelo JF depois de jogar, e um tutorial novo pra cada jeito de ganhar.",
+    itens: [
+      "🏆 Como se ganha: um tutorial de 5 passos pra cada condição de vitória (Clássico, Pontos, Só Joias e A Moda da Casa), com os números da partida. Explica o que são as joias, como ganhar cada uma e como se vence.",
+      "▶️ Ele abre sozinho no começo da partida na primeira vez de cada condição neste aparelho. Na Moda da Casa, aparece logo depois da roleta, explicando o modo sorteado.",
+      "📖 Pra rever: botão \"Como funciona?\" no cadastro (na Condição de Vitória) e na roleta, e \"🏆 Como se ganha nesta partida\" na Pausa.",
+      "👥 Equipe com 6 jogadores: agora dá pra jogar com 2 equipes de 3 (antes só 3 equipes de 2).",
+    ],
+    qol: [
+      "🤖 Fala sem nexo corrigida: \"A dica era... E mesmo assim, Fulano.\" agora termina com \"E mesmo assim não foi, Fulano.\".",
+      "🤖 O C.A.O.S. não diz mais \"Anota aí que eu hesitei.\" depois de uma frase em que ele não hesitou.",
+      "🧒 A faixa etária do Equipe explica que 6-12 também ganha tempo extra quando é o Mestre.",
+    ],
+  },
   {
     v: "Beta 1.7.6.6",
     data: "03/10/2026 · 18:26",
@@ -61643,6 +61897,7 @@ function iniciar() {
   });
   document.getElementById("btnTutorial2").addEventListener("click", () => openTutorial("rapido"));
   document.getElementById("pauseTutBtn").addEventListener("click", () => openTutorial("rapido"));
+  document.getElementById("pauseVitoriaBtn").addEventListener("click", () => openTutorial("vitoria:" + winCond()));
   ["btnManual", "pauseManualBtn"].forEach((id) => {
     const b = document.getElementById(id);
     if (b) b.addEventListener("click", () => openTutorial("manual"));

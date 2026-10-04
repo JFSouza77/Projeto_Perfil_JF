@@ -1884,12 +1884,13 @@ function redrawMestre() {
   saveGameState();
 }
 function runTeamFormation(n) {
-  if (n === 2 && players.length !== 4) {
-    caosAvisoModal("2 equipes exige EXATAMENTE 4 jogadores (2 por equipe) — hoje tem " + players.length + ".");
+  // 2 equipes: 4 jogadores (2 + 2) ou 6 (3 + 3). 3 equipes: 6 jogadores (2 + 2 + 2).
+  if (n === 2 && players.length !== 4 && players.length !== 6) {
+    caosAvisoModal("2 equipes precisam de 4 jogadores (2 por equipe) ou 6 (3 por equipe). Hoje tem " + players.length + ".");
     return;
   }
   if (n === 3 && players.length !== 6) {
-    caosAvisoModal("3 equipes exige EXATAMENTE 6 jogadores (2 por equipe) — hoje tem " + players.length + ".");
+    caosAvisoModal("3 equipes precisam de EXATAMENTE 6 jogadores (2 por equipe). Hoje tem " + players.length + ".");
     return;
   }
   formTeamsBalancedByAge(n);
@@ -1940,6 +1941,7 @@ function beginGameplay() {
     p.famLim = 1 + Math.floor(Math.random() * 5);
   });
   casaSortearModo();
+  vitoriaTutInicio();
   syncGameplayPanels();
   updateDrawAvailability();
   renderMiniScoreboard();

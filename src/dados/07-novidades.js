@@ -1,5 +1,22 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.6.7",
+    data: "03/10/2026 · 23:30",
+    nome: "Buttons and Tutorial Update · QoL de emergência",
+    t: "Correções pedidas pelo JF depois de jogar, e um tutorial novo pra cada jeito de ganhar.",
+    itens: [
+      "🏆 Como se ganha: um tutorial de 5 passos pra cada condição de vitória (Clássico, Pontos, Só Joias e A Moda da Casa), com os números da partida. Explica o que são as joias, como ganhar cada uma e como se vence.",
+      "▶️ Ele abre sozinho no começo da partida na primeira vez de cada condição neste aparelho. Na Moda da Casa, aparece logo depois da roleta, explicando o modo sorteado.",
+      "📖 Pra rever: botão \"Como funciona?\" no cadastro (na Condição de Vitória) e na roleta, e \"🏆 Como se ganha nesta partida\" na Pausa.",
+      "👥 Equipe com 6 jogadores: agora dá pra jogar com 2 equipes de 3 (antes só 3 equipes de 2).",
+    ],
+    qol: [
+      "🤖 Fala sem nexo corrigida: \"A dica era... E mesmo assim, Fulano.\" agora termina com \"E mesmo assim não foi, Fulano.\".",
+      "🤖 O C.A.O.S. não diz mais \"Anota aí que eu hesitei.\" depois de uma frase em que ele não hesitou.",
+      "🧒 A faixa etária do Equipe explica que 6-12 também ganha tempo extra quando é o Mestre.",
+    ],
+  },
+  {
     v: "Beta 1.7.6.6",
     data: "03/10/2026 · 18:26",
     nome: "Buttons and Tutorial Update · QoL",

@@ -45,7 +45,7 @@
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.6.6 · Buttons and Tutorial Update · QoL<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.6.7 · Buttons and Tutorial Update · QoL de emergência<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -152,6 +152,7 @@
     </div>
     <button class="btn-sec" id="pauseAcessBtn" type="button">♿ Acessibilidade (letra, tempo, voz)</button>
     <button class="btn-sec" id="pauseTutBtn" type="button" style="display:none; --cc:#22d3ee;">🎓 Primeira vez? Tutorial de 2 minutos</button>
+    <button class="btn-sec" id="pauseVitoriaBtn" type="button">🏆 Como se ganha nesta partida</button>
     <button class="btn-sec" id="pauseManualBtn" type="button">📖 Manual completo (todas as regras)</button>
     <button class="btn-sec" id="pauseReligarBtn" type="button" style="display:none;">🔊 Religar o C.A.O.S. nesta carta</button>
     <div class="sec-row sec-col">
@@ -205,7 +206,7 @@
       <div id="humorHint" style="opacity:0.6; font-size:0.75rem; margin-top:4px;"></div>
     </div></details>
     <div style="display:none; text-align:center; margin-bottom:8px;" id="ageBracketWrap">
-      <div style="opacity:0.75; font-size:0.8rem; margin-bottom:6px;">Faixa etária (usada só pra equilibrar os times no sorteio):</div>
+      <div style="opacity:0.75; font-size:0.8rem; margin-bottom:6px;">Faixa etária (equilibra os times no sorteio; 6-12 ganha tempo extra quando for o Mestre):</div>
       <div class="color-picker-row" id="ageBracketRow" style="justify-content:center; flex-wrap:wrap; gap:8px;"></div>
     </div>
     <div style="text-align:center; margin-bottom:8px;" id="idadeWrap">
@@ -234,6 +235,7 @@
           <button class="main-btn" id="teamCount2Btn" style="flex:1;">2 equipes</button>
           <button class="main-btn" id="teamCount3Btn" style="flex:1;">3 equipes</button>
         </div>
+        <p style="opacity:0.7; font-size:0.75rem; text-align:center; margin-top:6px;">4 jogadores: 2 equipes de 2 · 6 jogadores: 2 equipes de 3 ou 3 equipes de 2</p>
       </div>
       <div id="teamRosterPreview" style="display:none; margin-top:10px; font-size:0.85rem;"></div>
       <div id="teamSubModeChoice" style="display:none; margin-top:10px;">

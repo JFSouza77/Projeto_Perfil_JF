@@ -248,3 +248,9 @@ body.claro .idade-btn.on {
   height: auto;
   line-height: 1.25;
 }
+/* Como se ganha (1.7.6.7): botão no cadastro, dentro da condição de vitória. */
+.wincond-tut {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+}
