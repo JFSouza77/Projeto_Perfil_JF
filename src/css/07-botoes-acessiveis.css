@@ -254,3 +254,17 @@ body.claro .idade-btn.on {
   width: 100%;
   margin-top: 10px;
 }
+/* Verso da carta (1.7.6.7): formato de carta de verdade (5 × 7, como 63 × 88 mm), não um quadro.
+   Mais estreito e mais alto, centralizado; a altura mínima segue a proporção e cresce se o conteúdo
+   precisar (letra Enorme). */
+.card.face-down {
+  --verso-w: min(300px, 80vw);
+  width: var(--verso-w);
+  max-width: 100%;
+  min-height: calc(var(--verso-w) * 1.4);
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  justify-content: center;
+  padding: 30px 20px 34px;
+}

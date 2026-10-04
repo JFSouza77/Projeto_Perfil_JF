@@ -585,7 +585,33 @@ function closeActiveToast() {
     });
   caosFilaProxima();
 }
-function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze) {
+// Janela aberta que a mesa precisa ler (aviso, confirmação, tutorial, acessibilidade, ADM…):
+// o C.A.O.S. não fala por cima. A roleta da Moda da Casa fica de fora (ela tem a fala dela).
+function caosJanelaImportanteAberta() {
+  try {
+    if (document.querySelector(".caos-modal-ov:not(.casa-sorteio-ov)")) return true;
+    const t = document.getElementById("tutorialOverlay");
+    return !!(t && t.style.display !== "none");
+  } catch (e) {
+    return false;
+  }
+}
+const CAOS_JANELA_ESPERA_MAX_MS = 25e3;
+function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze, _desde) {
+  // Tem janela importante aberta: a fala espera ela fechar (e o jogo segue depois, pelo afterClose).
+  // Se a janela ficar aberta tempo demais, a fala é descartada, mas o afterClose roda.
+  if (msg && caosJanelaImportanteAberta()) {
+    const desde = _desde || Date.now();
+    if (Date.now() - desde > CAOS_JANELA_ESPERA_MAX_MS) {
+      try {
+        caosLog("maestro", "fala descartada: janela aberta tempo demais");
+      } catch (e) {}
+      if (typeof afterClose === "function") afterClose();
+      return;
+    }
+    setTimeout(() => showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze, desde), 600);
+    return;
+  }
   if (caosSorteioSilencio && !bypassSilence) {
     if (typeof afterClose === "function") afterClose();
     return;

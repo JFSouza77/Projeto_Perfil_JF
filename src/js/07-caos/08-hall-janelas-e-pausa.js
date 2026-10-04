@@ -304,7 +304,16 @@ function caosAuditoriaHtml() {
     );
   return h;
 }
+// Abrir uma janela tira o balão do C.A.O.S. da frente (e cala a voz dele): a mesa lê a janela em paz.
+function caosLimparFalaParaJanela() {
+  try {
+    if (!activeToastState) return;
+    caosVoiceCancel();
+    closeActiveToast();
+  } catch (e) {}
+}
 function caosModalBase() {
+  caosLimparFalaParaJanela();
   const ov = document.createElement("div");
   ov.className = "caos-modal-ov";
   ov.style.cssText =
