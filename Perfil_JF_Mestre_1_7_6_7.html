@@ -14,6 +14,11 @@
           e no Clássico, 16 cartas e casa de bônus. 3) js/05e-tutorial-vitoria.js: "Como se ganha" em 5 passos
           pra Clássico, Pontos, Só Joias e Moda da Casa, com os números da partida; abre sozinho na 1ª vez de cada
           condição no aparelho (perfil5_tut_vitoria_vistos), botão no cadastro, na roleta e na Pausa.
+          Refeita na mesma versão com mais 2 pedidos (o JF liberou: a regra do Klaus vale pra mudanças grandes):
+          4) O C.A.O.S. não fala por cima de janela (caosJanelaImportanteAberta: a fala espera a janela fechar,
+          até 25 s; abrir janela ou tutorial tira o balão da frente e cala a voz). A roleta da Moda da Casa
+          continua com a fala dela. 5) Verso da carta em formato de carta: 300 px de largura, altura mínima
+          5 × 7 (0,70), centralizado; cresce com letra Enorme.
   1.7.6.6 · 03/10/2026 · "Buttons and Tutorial Update · QoL" = NÚMEROS REDONDOS NOS TUTORIAIS (pedido do JF).
           Manual: 35 passos (novo "Idade e tempo extra" no Cadastro; a frase saiu do passo do Mestre).
           Rápido: 10 passos (novos "Às vezes é uma surpresa" e "Lê devagar? Tudo bem"), 301 palavras (~1min53s).
@@ -6569,6 +6574,20 @@ body.claro .idade-btn.on {
   display: block;
   width: 100%;
   margin-top: 10px;
+}
+/* Verso da carta (1.7.6.7): formato de carta de verdade (5 × 7, como 63 × 88 mm), não um quadro.
+   Mais estreito e mais alto, centralizado; a altura mínima segue a proporção e cresce se o conteúdo
+   precisar (letra Enorme). */
+.card.face-down {
+  --verso-w: min(300px, 80vw);
+  width: var(--verso-w);
+  max-width: 100%;
+  min-height: calc(var(--verso-w) * 1.4);
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  justify-content: center;
+  padding: 30px 20px 34px;
 }
 </style>
 </head>
@@ -13594,6 +13613,7 @@ function openTutorial(tipo) {
   tutorialTipo = cond ? tipo : tipo === "rapido" ? "rapido" : "manual";
   tutorialLista = passosVitoria || (tipo === "rapido" ? TUTORIAL_RAPIDO : TUTORIAL_STEPS);
   tutorialPos = 0;
+  caosLimparFalaParaJanela();
   if (cond) vitoriaTutMarcar(cond);
   else tutMarcarVisto("abriu");
   let ov = document.getElementById("tutorialOverlay");
@@ -22133,7 +22153,16 @@ function caosAuditoriaHtml() {
     );
   return h;
 }
+// Abrir uma janela tira o balão do C.A.O.S. da frente (e cala a voz dele): a mesa lê a janela em paz.
+function caosLimparFalaParaJanela() {
+  try {
+    if (!activeToastState) return;
+    caosVoiceCancel();
+    closeActiveToast();
+  } catch (e) {}
+}
 function caosModalBase() {
+  caosLimparFalaParaJanela();
   const ov = document.createElement("div");
   ov.className = "caos-modal-ov";
   ov.style.cssText =
@@ -22984,7 +23013,33 @@ function closeActiveToast() {
     });
   caosFilaProxima();
 }
-function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze) {
+// Janela aberta que a mesa precisa ler (aviso, confirmação, tutorial, acessibilidade, ADM…):
+// o C.A.O.S. não fala por cima. A roleta da Moda da Casa fica de fora (ela tem a fala dela).
+function caosJanelaImportanteAberta() {
+  try {
+    if (document.querySelector(".caos-modal-ov:not(.casa-sorteio-ov)")) return true;
+    const t = document.getElementById("tutorialOverlay");
+    return !!(t && t.style.display !== "none");
+  } catch (e) {
+    return false;
+  }
+}
+const CAOS_JANELA_ESPERA_MAX_MS = 25e3;
+function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze, _desde) {
+  // Tem janela importante aberta: a fala espera ela fechar (e o jogo segue depois, pelo afterClose).
+  // Se a janela ficar aberta tempo demais, a fala é descartada, mas o afterClose roda.
+  if (msg && caosJanelaImportanteAberta()) {
+    const desde = _desde || Date.now();
+    if (Date.now() - desde > CAOS_JANELA_ESPERA_MAX_MS) {
+      try {
+        caosLog("maestro", "fala descartada: janela aberta tempo demais");
+      } catch (e) {}
+      if (typeof afterClose === "function") afterClose();
+      return;
+    }
+    setTimeout(() => showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze, desde), 600);
+    return;
+  }
   if (caosSorteioSilencio && !bypassSilence) {
     if (typeof afterClose === "function") afterClose();
     return;
@@ -59785,6 +59840,8 @@ const NOVIDADES = [
       "🤖 Fala sem nexo corrigida: \"A dica era... E mesmo assim, Fulano.\" agora termina com \"E mesmo assim não foi, Fulano.\".",
       "🤖 O C.A.O.S. não diz mais \"Anota aí que eu hesitei.\" depois de uma frase em que ele não hesitou.",
       "🧒 A faixa etária do Equipe explica que 6-12 também ganha tempo extra quando é o Mestre.",
+      "🤫 O C.A.O.S. não fala mais por cima de avisos: com uma janela aberta (Reiniciar, Encerrar, tutorial, acessibilidade…), ele espera ela fechar. E se ele estiver falando quando a janela abrir, o balão sai da frente.",
+      "🃏 O verso da carta agora tem formato de carta de verdade (mais estreito e mais alto), não de quadro.",
     ],
   },
   {

@@ -2599,6 +2599,7 @@ function openTutorial(tipo) {
   tutorialTipo = cond ? tipo : tipo === "rapido" ? "rapido" : "manual";
   tutorialLista = passosVitoria || (tipo === "rapido" ? TUTORIAL_RAPIDO : TUTORIAL_STEPS);
   tutorialPos = 0;
+  caosLimparFalaParaJanela();
   if (cond) vitoriaTutMarcar(cond);
   else tutMarcarVisto("abriu");
   let ov = document.getElementById("tutorialOverlay");

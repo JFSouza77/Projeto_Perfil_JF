@@ -14,6 +14,8 @@ const NOVIDADES = [
       "🤖 Fala sem nexo corrigida: \"A dica era... E mesmo assim, Fulano.\" agora termina com \"E mesmo assim não foi, Fulano.\".",
       "🤖 O C.A.O.S. não diz mais \"Anota aí que eu hesitei.\" depois de uma frase em que ele não hesitou.",
       "🧒 A faixa etária do Equipe explica que 6-12 também ganha tempo extra quando é o Mestre.",
+      "🤫 O C.A.O.S. não fala mais por cima de avisos: com uma janela aberta (Reiniciar, Encerrar, tutorial, acessibilidade…), ele espera ela fechar. E se ele estiver falando quando a janela abrir, o balão sai da frente.",
+      "🃏 O verso da carta agora tem formato de carta de verdade (mais estreito e mais alto), não de quadro.",
     ],
   },
   {
