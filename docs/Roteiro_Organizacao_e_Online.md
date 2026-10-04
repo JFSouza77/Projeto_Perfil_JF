@@ -1,5 +1,7 @@
 # Perfil JF — Roteiro de Organização do Código e Multiplayer Online
 
+> **Histórico (escrito sobre a 1.7.0).** O roteiro em uso é `docs/Roteiro_Multiplayer.md` (conferido na 1.7.6.7).
+
 **Última atualização:** 03/10/2026 às 08:52 (horário de Brasília, pelo servidor)
 **ORIGEM:** Claude (chat do Projeto Perfil) · **MOTIVO:** a pedido do JF
 **Destinatário:** Claude Code (análise). GPT e Gemini podem ler como contexto.

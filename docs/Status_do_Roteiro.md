@@ -1,5 +1,7 @@
 # Status do roteiro de organização e online
 
+> **Atualizado em 04/10/2026 (1.7.6.7):** o planejamento até a 1.7.10 agora está em `docs/Roteiro_Multiplayer.md`. Ele junta a análise do GPT e a do Claude, confere tudo no código e traz os nomes das updates (1.7.7 Foundation Structure · 1.7.8 Actions and Events · 1.7.9 Rooms and Network · 1.7.10 Multiplayer) e o plano da 1.7.7. As decisões do JF abaixo continuam valendo.
+
 Lido em 03/10/2026, na 1.7.4.3. O roteiro original está em `Roteiro_Organizacao_e_Online.md`, sem alterações.
 Ele foi escrito com base na leitura da 1.7.0, então números e nomes precisam ser conferidos de novo
 na hora de começar cada fase.
