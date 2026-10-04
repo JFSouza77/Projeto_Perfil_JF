@@ -1900,7 +1900,7 @@ const REACTIVE_VOICE = {
   ],
   erroComDicaNumero: [
     (name, dica) => `[C.A.O.S.] "${dica}" — tinha até número aí, ${name}. Não adiantou.`,
-    (name, dica) => `[C.A.O.S.] A dica literalmente te deu um número: "${dica}". E mesmo assim.`,
+    (name, dica) => `[C.A.O.S.] A dica literalmente te deu um número: "${dica}". E mesmo assim não saiu.`,
   ],
   erroComDicaCurta: [
     (name, dica) => `[C.A.O.S.] "${dica}" — curtinha, direta, e ainda assim escapou, ${name}.`,
@@ -1908,7 +1908,7 @@ const REACTIVE_VOICE = {
       `[C.A.O.S.] Nem precisou de dica longa: "${dica}" já bastava, ${name}. Bastava pra mim, pelo menos.`,
   ],
   erroComDica: [
-    (name, dica) => `[C.A.O.S.] A dica era "${dica}". E mesmo assim, ${name}.`,
+    (name, dica) => `[C.A.O.S.] A dica era "${dica}". E mesmo assim não foi, ${name}.`,
     (name, dica) => `[C.A.O.S.] "${dica}" foi a dica. Foi essa mesma, ${name}. Você ouviu.`,
     (name, dica) => `[C.A.O.S.] Depois de "${dica}", eu esperava outra resposta, ${name}.`,
     (name, dica) => `[C.A.O.S.] Vamos reler: "${dica}". Tá. Continua.`,

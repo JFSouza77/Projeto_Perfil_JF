@@ -559,6 +559,7 @@ function iniciar() {
   });
   document.getElementById("btnTutorial2").addEventListener("click", () => openTutorial("rapido"));
   document.getElementById("pauseTutBtn").addEventListener("click", () => openTutorial("rapido"));
+  document.getElementById("pauseVitoriaBtn").addEventListener("click", () => openTutorial("vitoria:" + winCond()));
   ["btnManual", "pauseManualBtn"].forEach((id) => {
     const b = document.getElementById(id);
     if (b) b.addEventListener("click", () => openTutorial("manual"));

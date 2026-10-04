@@ -240,6 +240,8 @@ async function testarNavegador(arquivo) {
     await page.waitForTimeout(400);
   };
   const fechaModais = async () => {
+    // tutorial aberto sozinho (aparelho novo: "Como se ganha" no começo da partida) → fecha
+    await page.locator("#tutClose:visible").click({ timeout: 1000 }).catch(() => {});
     for (let i = 0; i < 4; i++) {
       const b = page.locator(".caos-modal-ov button:visible, #novOk:visible, #paNao:visible").first();
       if (!(await b.count())) break;

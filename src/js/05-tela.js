@@ -535,11 +535,11 @@ function updateDrawAvailability() {
   warning.style.display = enoughPlayers ? "none" : "block";
   warning.textContent =
     CURRENT_FORMAT === "equipe"
-      ? `O Modo Equipe precisa de EXATAMENTE 4 ou 6 jogadores (2 ou 3 por equipe) — agora tem ${players.length}.`
+      ? `O Modo Equipe precisa de EXATAMENTE 4 ou 6 jogadores (com 6: 2 equipes de 3 ou 3 equipes de 2) — agora tem ${players.length}.`
       : `Adicione pelo menos ${MIN_PLAYERS} jogadores para começar (máximo ${MAX_PLAYERS}).`;
   const team2Btn = document.getElementById("teamCount2Btn");
   const team3Btn = document.getElementById("teamCount3Btn");
-  if (team2Btn) team2Btn.disabled = players.length !== 4;
+  if (team2Btn) team2Btn.disabled = players.length !== 4 && players.length !== 6;
   if (team3Btn) team3Btn.disabled = players.length !== 6;
   iniAtualizarBotao();
   renderWinCondPicker();
@@ -2362,7 +2362,16 @@ function casaAnunciar() {
     } catch (e) {}
     desc.innerHTML = winCondRuleText();
     const row = caosModalRow();
-    row.append(caosModalBtn("Bora jogar!", "#1f7a4f", fechar));
+    row.append(
+      caosModalBtn("📖 Como funciona?", "#0e7490", () => {
+        fechar();
+        openTutorial("vitoria:" + final);
+      }),
+      caosModalBtn("Bora jogar!", "#1f7a4f", () => {
+        fechar();
+        vitoriaTutTalvez(final);
+      }),
+    );
     box.append(row);
     renderMiniScoreboard();
     renderWinCondPicker();
@@ -2442,7 +2451,9 @@ function renderWinCondPicker() {
   let aviso = "";
   if (WIN_CONDITION === "casa" && casaSorteado === "misto" && players.length < GEMS_MIN_PLAYERS)
     aviso = `<div class="wincond-warn">Com ${players.length || "menos de " + GEMS_MIN_PLAYERS} jogador${players.length === 1 ? "" : "es"} as joias são só troféu — vale a chegada na casa ${WINNING_SCORE}. Com ${GEMS_MIN_PLAYERS}+ elas também dão vitória.</div>`;
-  hint.innerHTML = `${o.hint}${aviso}${locked ? '<div class="ci-dim">🔒 Travada: a partida já começou.</div>' : ""}`;
+  hint.innerHTML = `${o.hint}${aviso}${locked ? '<div class="ci-dim">🔒 Travada: a partida já começou.</div>' : ""}${vitoriaTutBotaoHtml()}`;
+  const tb = document.getElementById("winCondTutBtn");
+  if (tb) tb.addEventListener("click", () => openTutorial("vitoria:" + (starterChosen ? winCond() : WIN_CONDITION)));
 }
 // Quantas cartas o baralho do modo tem de verdade (o que entra na partida).
 function cartasNoModo() {
@@ -2489,7 +2500,7 @@ function buildRulesHtml() {
   // 2. Quem joga
   li.push(
     c.equipe
-      ? "👥 <b>Equipes:</b> 4 jogadores (2 equipes) ou 6 (3 equipes), sorteadas equilibrando as idades. A cada carta uma equipe lê e outra responde. Com 3 equipes: <b>Duelo de Guildas</b> (uma responde) ou <b>Mestre vs Todos</b> (as outras respondem em ordem)."
+      ? "👥 <b>Equipes:</b> 4 jogadores (2 equipes de 2) ou 6 (2 equipes de 3, ou 3 equipes de 2), sorteadas equilibrando as idades. A cada carta uma equipe lê e outra responde. Com 3 equipes: <b>Duelo de Guildas</b> (uma responde) ou <b>Mestre vs Todos</b> (as outras respondem em ordem)."
       : "👥 <b>Jogadores:</b> de 2 a 6. Sorteiem o primeiro Mestre (dá pra sortear de novo até 2 vezes). Depois a roda segue sempre na mesma ordem.",
   );
   // 3. Cartas
@@ -2577,12 +2588,19 @@ function buildRulesHtml() {
     );
   return li.map((t) => "<li>" + t + "</li>").join("");
 }
-// Tutorial: "rapido" (menos de 2 minutos, TUTORIAL_RAPIDO) ou "manual" (completo, TUTORIAL_STEPS, por capítulos).
+// Tutorial: "rapido" (menos de 2 minutos, TUTORIAL_RAPIDO), "manual" (completo, TUTORIAL_STEPS, por capítulos)
+// ou "vitoria:<condição>" (como se ganha, 5 passos, VITORIA_TUTORIAIS).
 let tutorialLista = null; // definido ao abrir (os dados do tutorial carregam depois deste arquivo)
+let tutorialTipo = "manual";
 function openTutorial(tipo) {
-  tutorialLista = tipo === "rapido" ? TUTORIAL_RAPIDO : TUTORIAL_STEPS;
+  const cond = typeof tipo === "string" && tipo.indexOf("vitoria:") === 0 ? tipo.slice(8) : null;
+  const passosVitoria = cond ? vitoriaTutPassos(cond) : null;
+  if (cond && !passosVitoria) return;
+  tutorialTipo = cond ? tipo : tipo === "rapido" ? "rapido" : "manual";
+  tutorialLista = passosVitoria || (tipo === "rapido" ? TUTORIAL_RAPIDO : TUTORIAL_STEPS);
   tutorialPos = 0;
-  tutMarcarVisto("abriu");
+  if (cond) vitoriaTutMarcar(cond);
+  else tutMarcarVisto("abriu");
   let ov = document.getElementById("tutorialOverlay");
   if (!ov) {
     ov = document.createElement("div");
@@ -2623,7 +2641,8 @@ function openTutorial(tipo) {
   renderTutorial();
 }
 function renderTutorial() {
-  const rapido = tutorialLista === TUTORIAL_RAPIDO;
+  const rapido = tutorialTipo === "rapido";
+  const vitoria = tutorialTipo.indexOf("vitoria:") === 0;
   const s = tutorialLista[tutorialPos],
     last = tutorialPos === tutorialLista.length - 1;
   document.getElementById("tutIcon").textContent = s.icon;
@@ -2634,10 +2653,14 @@ function renderTutorial() {
   mock.style.display = s.mock ? "" : "none";
   mock.className = s.dark ? "tut-mock tut-dark" : "tut-mock card";
   const tempo = document.getElementById("tutTempo");
-  tempo.textContent = rapido ? "⏱️ Tutorial rápido · menos de 2 minutos" : "📖 Manual completo";
+  tempo.textContent = vitoria
+    ? "🏆 Como se ganha: " + vitoriaTutNome(tutorialTipo.slice(8))
+    : rapido
+      ? "⏱️ Tutorial rápido · menos de 2 minutos"
+      : "📖 Manual completo";
   const caps = document.getElementById("tutCaps");
-  caps.style.display = rapido ? "none" : "";
-  caps.innerHTML = rapido
+  caps.style.display = rapido || vitoria ? "none" : "";
+  caps.innerHTML = rapido || vitoria
     ? ""
     : TUT_CAPS.map((c, i) => `<button type="button" data-cap="${i}" class="${i === s.sec ? "on" : ""}">${c}</button>`).join("");
   caps.querySelectorAll("[data-cap]").forEach((btn) =>
@@ -3050,6 +3073,8 @@ function showPauseScreen() {
   if (rl) rl.innerHTML = buildRulesHtml();
   pausaAjustesAtualizar();
   tutPausaAtualizar();
+  const bv = document.getElementById("pauseVitoriaBtn");
+  if (bv) bv.style.display = CURRENT_MODE === "express" ? "none" : "";
   startPauseTips();
 }
 function hidePauseScreen() {

@@ -15,7 +15,7 @@ const TUTORIAL_STEPS = [
     sec: 0,
     icon: "⚔️",
     title: "Versus ou Equipe?",
-    text: "<b>Versus</b>: cada um por si, de 2 a 6 pessoas. <b>Equipe</b>: exatamente 4 ou 6 pessoas, e o jogo sorteia os times equilibrando as idades.<br>Tocar num cartão só <b>marca</b> (ele acende e flutua). Pra seguir, toque em <b>✅ Continuar</b> — assim ninguém entra no lugar errado sem querer.",
+    text: "<b>Versus</b>: cada um por si, de 2 a 6 pessoas. <b>Equipe</b>: exatamente 4 ou 6 pessoas (com 6, dá pra fazer 2 equipes de 3 ou 3 equipes de 2), e o jogo sorteia os times equilibrando as idades.<br>Tocar num cartão só <b>marca</b> (ele acende e flutua). Pra seguir, toque em <b>✅ Continuar</b> — assim ninguém entra no lugar errado sem querer.",
     dark: true,
     mock:
       '<div class="mc-list">' +

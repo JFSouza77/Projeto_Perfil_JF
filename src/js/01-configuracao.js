@@ -879,7 +879,7 @@ const CAOS_TROPECO = {
     "Não, pera. Deixa assim mesmo.",
     "Eu ia falar mais bonito, mas saiu isso.",
     "Acho que já falei isso hoje. Vale repetir.",
-    "Anota aí que eu hesitei.",
+    "Tá, essa saiu meio torta. Finge que foi de propósito.",
     "Tá, essa não foi minha melhor frase.",
   ],
   interpAcerto: [
