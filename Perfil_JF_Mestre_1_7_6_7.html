@@ -23,6 +23,10 @@
           buraco > 1 min (app fechado, celular dormindo) não conta. Antes era "agora − início" e pausa acima de
           2 h nem entrava no desconto (uma partida de 5 cartas deu 628 min). Pausado aparece separado nas
           estatísticas. Save novo: tempoJogoMs/tempoPausaMs; save antigo estima com teto de 4 min por carta.
+          7) Último QoL: .jf-modal rola por dentro e a página de trás trava com janela aberta (tabuleiro ampliado
+          com 6 jogadores rolava a tela de baixo). Pergunta Perto/Longe fica 25 s (era 9) e, depois de Perto/Longe,
+          ainda oferece "Digitar o chute" (comenta o chute OU o Perto/Longe, nunca os dois). Tropeço "arrep"
+          não entra em fala que fecha sozinha (caosFalaFechaSozinha). Botões soltos da Pausa na largura toda.
   1.7.6.6 · 03/10/2026 · "Buttons and Tutorial Update · QoL" = NÚMEROS REDONDOS NOS TUTORIAIS (pedido do JF).
           Manual: 35 passos (novo "Idade e tempo extra" no Cadastro; a frase saiu do passo do Mestre).
           Rápido: 10 passos (novos "Às vezes é uma surpresa" e "Lê devagar? Tudo bem"), 301 palavras (~1min53s).
@@ -6592,6 +6596,31 @@ body.claro .idade-btn.on {
   box-sizing: border-box;
   justify-content: center;
   padding: 30px 20px 34px;
+}
+/* Janelas (1.7.6.7): a janela rola por dentro e a página de trás fica parada (no tabuleiro ampliado
+   com 6 jogadores, o dedo rolava a tela de baixo). */
+.jf-modal {
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.caos-modal-ov > div,
+.tut-box,
+.acess-box {
+  overscroll-behavior: contain;
+}
+html:has(.jf-modal-bg),
+html:has(.caos-modal-ov),
+body:has(.jf-modal-bg),
+body:has(.caos-modal-ov) {
+  overflow: hidden;
+}
+/* Pausa: os botões soltos ocupam a largura toda, alinhados com os outros. */
+.pause-screen > .btn-sec {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
 }
 </style>
 </head>
@@ -20761,26 +20790,61 @@ function caosPerguntaTalvez(p, tipo) {
   d.setAttribute("role", "group");
   d.innerHTML = `<span>🤖 Mestre, o chute de <b>${escapeHtml(p.name)}</b> foi…</span><button type="button" data-v="perto">🔥 Perto</button><button type="button" data-v="longe">🧊 Longe</button><button type="button" data-v="digitar">✏️ Digitar</button><button type="button" class="cp-x" data-v="x" aria-label="Fechar">✕</button>`;
   const nome = p.name;
+  let fecharRef = null;
+  const armarFechar = (ms, aoFechar) => {
+    clearTimeout(fecharRef);
+    fecharRef = setTimeout(() => {
+      if (!d.parentNode) return;
+      d.remove();
+      if (aoFechar) aoFechar();
+    }, ms);
+  };
+  // 2º passo (1.7.6.7): depois de Perto/Longe ainda dá pra digitar o chute. Se digitar, o C.A.O.S.
+  // comenta o chute; se não, comenta o Perto/Longe. Nunca os dois seguidos.
+  const segundoPasso = (v) => {
+    caosPerguntaRegistrar(nome, v);
+    const falar = () => caosPerguntaResposta(nome, v, true);
+    d.innerHTML = `<span>${v === "perto" ? "🔥 Perto!" : "🧊 Longe!"} Quer contar o que <b>${escapeHtml(nome)}</b> chutou?</span><button type="button" data-v2="digitar">✏️ Digitar o chute</button><button type="button" data-v2="nao">Não precisa</button>`;
+    d.onclick = (ev) => {
+      const bt = ev.target.closest("button");
+      if (!bt) return;
+      ev.stopPropagation();
+      clearTimeout(fecharRef);
+      d.remove();
+      if (bt.dataset.v2 === "digitar") caosChuteDigitar(nome, falar);
+      else falar();
+    };
+    armarFechar(25e3, falar);
+  };
   d.addEventListener("click", (ev) => {
+    if (d.onclick) return;
     const bt = ev.target.closest("button");
     if (!bt) return;
     ev.stopPropagation();
+    const v = bt.dataset.v;
+    if (v === "perto" || v === "longe") return segundoPasso(v);
+    clearTimeout(fecharRef);
     d.remove();
-    if (bt.dataset.v === "digitar") caosChuteDigitar(nome);
-    else if (bt.dataset.v !== "x") caosPerguntaResposta(nome, bt.dataset.v);
+    if (v === "digitar") caosChuteDigitar(nome);
   });
   document.body.appendChild(d);
-  setTimeout(() => {
-    if (d.parentNode) d.remove();
-  }, 9e3);
+  // Tempo pro Mestre pensar se quer responder (era 9 s).
+  armarFechar(25e3);
 }
-function caosPerguntaResposta(nome, v) {
+// Anota o Perto/Longe (memória da carta e humor), sem falar nada.
+function caosPerguntaRegistrar(nome, v) {
+  const p = players.find((q) => q.name === nome);
+  if (!p) return;
+  caosLog("perguntaMestre", `${nome}: ${v === "perto" ? "🔥 perto" : "🧊 longe"}`);
+  if (v === "perto") caosPertoCont[nome] = (caosPertoCont[nome] || 0) + 1;
+  caosEmoNudge(v === "perto" ? -0.2 : 0.3, v === "perto" ? 0.3 : 0);
+}
+function caosPerguntaResposta(nome, v, jaRegistrado) {
   const p = players.find((q) => q.name === nome);
   if (!p || gameEnded) return;
-  caosLog("perguntaMestre", `${nome}: ${v === "perto" ? "🔥 perto" : "🧊 longe"}`);
+  if (!jaRegistrado) caosPerguntaRegistrar(nome, v);
   const suave = playerHumor(p) === "suave",
     B = REACTIVE_VOICE.perguntaMestre;
-  if (v === "perto") caosPertoCont[nome] = (caosPertoCont[nome] || 0) + 1;
   const bank =
     v === "perto"
       ? suave
@@ -20792,7 +20856,6 @@ function caosPerguntaResposta(nome, v) {
         ? B.longeSuave
         : B.longe;
   const mestre = players[mestreIndex] ? players[mestreIndex].name : "o Mestre";
-  caosEmoNudge(v === "perto" ? -0.2 : 0.3, v === "perto" ? 0.3 : 0);
   caosFalarDepois(getRandomReaction(bank, nome, mestre));
 }
 function caosCatDaCarta(c) {
@@ -22102,6 +22165,11 @@ function caosMomentoCritico() {
     return false;
   }
 }
+function caosFalaFechaSozinha(corpo) {
+  const t = String(corpo || "").trim();
+  if (/[!?]$/.test(t) || /\p{Extended_Pictographic}\uFE0F?\s*$/u.test(t)) return true;
+  return t.split(/(?<=[.!?…])\s+/).filter((x) => x.length > 3).length >= 2;
+}
 function caosTropeco(msg, bank) {
   try {
     if (typeof msg !== "string" || msg.indexOf("[C.A.O.S.]") !== 0 || msg.length > 150 || msg.length < 24) return msg;
@@ -22151,7 +22219,10 @@ function caosTropeco(msg, bank) {
         },
       });
     ops.push({ w: 2, f: () => caosLexPick(CAOS_TROPECO.fio) + " " + corpo });
-    ops.push({ w: 3, f: () => corpo.replace(/\s*$/, "") + " " + caosLexPick(CAOS_TROPECO.arrep) });
+    // Piada que fecha sozinha (preparação + desfecho, ou termina em emoji, ! ou ?): o C.A.O.S. cala a boca
+    // depois dela. Colar "eu ia falar mais bonito…" no fim mata o timing (pedido do JF, 1.7.6.7).
+    if (!caosFalaFechaSozinha(corpo))
+      ops.push({ w: 3, f: () => corpo.replace(/\s*$/, "") + " " + caosLexPick(CAOS_TROPECO.arrep) });
     if (!junior && /^(acerto|gerador\.acerto)/.test(b))
       ops.push({ w: 2, f: () => caosLexPick(CAOS_TROPECO.interpAcerto) + " " + corpo });
     if (!junior && /^(erro|gerador\.erro)/.test(b))
@@ -23041,11 +23112,14 @@ function caosChuteGerar(p, an, g, cat, suave) {
     return "";
   }
 }
-function caosChuteDigitar(nome) {
+// semChute: o que fazer se o Mestre desistir de digitar (ex.: comentar o Perto/Longe que ele escolheu).
+function caosChuteDigitar(nome, semChute) {
   caosPromptModal("O que " + nome + " chutou? (o C.A.O.S. não ouve, então conta pra ele)", "", (v) => {
-    if (v == null) return;
-    const t = String(v).trim();
-    if (!t) return;
+    const t = v == null ? "" : String(v).trim();
+    if (!t) {
+      if (typeof semChute === "function") semChute();
+      return;
+    }
     caosChuteResponder(nome, t);
   });
 }
@@ -59912,6 +59986,10 @@ const NOVIDADES = [
       "🤫 O C.A.O.S. não fala mais por cima de avisos: com uma janela aberta (Reiniciar, Encerrar, tutorial, acessibilidade…), ele espera ela fechar. E se ele estiver falando quando a janela abrir, o balão sai da frente.",
       "🃏 O verso da carta agora tem formato de carta de verdade (mais estreito e mais alto), não de quadro.",
       "⏱️ Duração certa: o tempo de partida conta só o tempo jogando. Pausa, app fechado e celular bloqueado ficam de fora (uma partida de 5 cartas tinha dado 628 minutos). O tempo pausado aparece separado nas estatísticas.",
+      "🗺️ Tabuleiro ampliado: agora dá pra rolar a lista de jogadores dentro da janela (antes rolava a tela de trás).",
+      "🔥 Perto ou 🧊 Longe: a pergunta ao Mestre fica 25 segundos na tela, e depois de escolher ainda dá pra digitar o que a pessoa chutou.",
+      "🎤 O C.A.O.S. sabe a hora de parar: quando a piada já fechou, ele não emenda mais nada no fim.",
+      "⏸️ Pausa: todos os botões com a mesma largura.",
     ],
   },
   {

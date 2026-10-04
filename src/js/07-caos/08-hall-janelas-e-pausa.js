@@ -191,6 +191,11 @@ function caosMomentoCritico() {
     return false;
   }
 }
+function caosFalaFechaSozinha(corpo) {
+  const t = String(corpo || "").trim();
+  if (/[!?]$/.test(t) || /\p{Extended_Pictographic}\uFE0F?\s*$/u.test(t)) return true;
+  return t.split(/(?<=[.!?…])\s+/).filter((x) => x.length > 3).length >= 2;
+}
 function caosTropeco(msg, bank) {
   try {
     if (typeof msg !== "string" || msg.indexOf("[C.A.O.S.]") !== 0 || msg.length > 150 || msg.length < 24) return msg;
@@ -240,7 +245,10 @@ function caosTropeco(msg, bank) {
         },
       });
     ops.push({ w: 2, f: () => caosLexPick(CAOS_TROPECO.fio) + " " + corpo });
-    ops.push({ w: 3, f: () => corpo.replace(/\s*$/, "") + " " + caosLexPick(CAOS_TROPECO.arrep) });
+    // Piada que fecha sozinha (preparação + desfecho, ou termina em emoji, ! ou ?): o C.A.O.S. cala a boca
+    // depois dela. Colar "eu ia falar mais bonito…" no fim mata o timing (pedido do JF, 1.7.6.7).
+    if (!caosFalaFechaSozinha(corpo))
+      ops.push({ w: 3, f: () => corpo.replace(/\s*$/, "") + " " + caosLexPick(CAOS_TROPECO.arrep) });
     if (!junior && /^(acerto|gerador\.acerto)/.test(b))
       ops.push({ w: 2, f: () => caosLexPick(CAOS_TROPECO.interpAcerto) + " " + corpo });
     if (!junior && /^(erro|gerador\.erro)/.test(b))

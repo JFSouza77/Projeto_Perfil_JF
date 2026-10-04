@@ -102,26 +102,61 @@ function caosPerguntaTalvez(p, tipo) {
   d.setAttribute("role", "group");
   d.innerHTML = `<span>🤖 Mestre, o chute de <b>${escapeHtml(p.name)}</b> foi…</span><button type="button" data-v="perto">🔥 Perto</button><button type="button" data-v="longe">🧊 Longe</button><button type="button" data-v="digitar">✏️ Digitar</button><button type="button" class="cp-x" data-v="x" aria-label="Fechar">✕</button>`;
   const nome = p.name;
+  let fecharRef = null;
+  const armarFechar = (ms, aoFechar) => {
+    clearTimeout(fecharRef);
+    fecharRef = setTimeout(() => {
+      if (!d.parentNode) return;
+      d.remove();
+      if (aoFechar) aoFechar();
+    }, ms);
+  };
+  // 2º passo (1.7.6.7): depois de Perto/Longe ainda dá pra digitar o chute. Se digitar, o C.A.O.S.
+  // comenta o chute; se não, comenta o Perto/Longe. Nunca os dois seguidos.
+  const segundoPasso = (v) => {
+    caosPerguntaRegistrar(nome, v);
+    const falar = () => caosPerguntaResposta(nome, v, true);
+    d.innerHTML = `<span>${v === "perto" ? "🔥 Perto!" : "🧊 Longe!"} Quer contar o que <b>${escapeHtml(nome)}</b> chutou?</span><button type="button" data-v2="digitar">✏️ Digitar o chute</button><button type="button" data-v2="nao">Não precisa</button>`;
+    d.onclick = (ev) => {
+      const bt = ev.target.closest("button");
+      if (!bt) return;
+      ev.stopPropagation();
+      clearTimeout(fecharRef);
+      d.remove();
+      if (bt.dataset.v2 === "digitar") caosChuteDigitar(nome, falar);
+      else falar();
+    };
+    armarFechar(25e3, falar);
+  };
   d.addEventListener("click", (ev) => {
+    if (d.onclick) return;
     const bt = ev.target.closest("button");
     if (!bt) return;
     ev.stopPropagation();
+    const v = bt.dataset.v;
+    if (v === "perto" || v === "longe") return segundoPasso(v);
+    clearTimeout(fecharRef);
     d.remove();
-    if (bt.dataset.v === "digitar") caosChuteDigitar(nome);
-    else if (bt.dataset.v !== "x") caosPerguntaResposta(nome, bt.dataset.v);
+    if (v === "digitar") caosChuteDigitar(nome);
   });
   document.body.appendChild(d);
-  setTimeout(() => {
-    if (d.parentNode) d.remove();
-  }, 9e3);
+  // Tempo pro Mestre pensar se quer responder (era 9 s).
+  armarFechar(25e3);
 }
-function caosPerguntaResposta(nome, v) {
+// Anota o Perto/Longe (memória da carta e humor), sem falar nada.
+function caosPerguntaRegistrar(nome, v) {
+  const p = players.find((q) => q.name === nome);
+  if (!p) return;
+  caosLog("perguntaMestre", `${nome}: ${v === "perto" ? "🔥 perto" : "🧊 longe"}`);
+  if (v === "perto") caosPertoCont[nome] = (caosPertoCont[nome] || 0) + 1;
+  caosEmoNudge(v === "perto" ? -0.2 : 0.3, v === "perto" ? 0.3 : 0);
+}
+function caosPerguntaResposta(nome, v, jaRegistrado) {
   const p = players.find((q) => q.name === nome);
   if (!p || gameEnded) return;
-  caosLog("perguntaMestre", `${nome}: ${v === "perto" ? "🔥 perto" : "🧊 longe"}`);
+  if (!jaRegistrado) caosPerguntaRegistrar(nome, v);
   const suave = playerHumor(p) === "suave",
     B = REACTIVE_VOICE.perguntaMestre;
-  if (v === "perto") caosPertoCont[nome] = (caosPertoCont[nome] || 0) + 1;
   const bank =
     v === "perto"
       ? suave
@@ -133,7 +168,6 @@ function caosPerguntaResposta(nome, v) {
         ? B.longeSuave
         : B.longe;
   const mestre = players[mestreIndex] ? players[mestreIndex].name : "o Mestre";
-  caosEmoNudge(v === "perto" ? -0.2 : 0.3, v === "perto" ? 0.3 : 0);
   caosFalarDepois(getRandomReaction(bank, nome, mestre));
 }
 function caosCatDaCarta(c) {
