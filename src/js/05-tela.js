@@ -1801,7 +1801,9 @@ function buildStatsHtml() {
   });
   if (caosPartidaInicioAt) {
     const m = caosMinutosPartida();
-    numeros += mini("⏱️", "Duração", m + " min", "", "#38bdf8", { t: "duracao", v: m });
+    numeros += mini("⏱️", "Duração", m + " min", "só o tempo jogando", "#38bdf8", { t: "duracao", v: m });
+    const mp = tempoMinutosPausa();
+    if (mp >= 1) numeros += mini("⏸️", "Pausado", mp + " min", "fora da duração", "#94a3b8", { t: "pausado", v: mp });
   }
   numeros += mini("✅", "Respondidas", totalAnswered, "cartas acertadas", "#34d399", {
     t: "respondidas",

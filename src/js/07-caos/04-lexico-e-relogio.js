@@ -216,10 +216,9 @@ function caosHoraTexto(h) {
           ? `${h - 12} da tarde`
           : `${h - 12} da noite`;
 }
+// Duração da partida: só o tempo jogando (pausa, app fechado e celular dormindo ficam de fora; ver js/05f).
 function caosMinutosPartida() {
-  return caosPartidaInicioAt
-    ? Math.max(0, Math.floor(((caosPartidaFimAt || Date.now()) - caosPartidaInicioAt) / 6e4))
-    : 0;
+  return caosPartidaInicioAt ? tempoMinutosJogo() : 0;
 }
 function caosRelogioInicioTexto() {
   const a = caosAgora(),

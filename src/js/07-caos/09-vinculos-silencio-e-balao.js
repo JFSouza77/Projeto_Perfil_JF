@@ -363,7 +363,7 @@ function caosMagoaInicio() {
   } catch (e) {}
 }
 function caosMinutosAtivos() {
-  return Math.max(0, (Date.now() - (caosPartidaInicioAt || Date.now()) - (caosPausaAcum || 0)) / 6e4);
+  return caosPartidaInicioAt ? Math.max(0, tempoJogoMs / 6e4) : 0;
 }
 function caosNomeMestre() {
   return players[mestreIndex] ? players[mestreIndex].name : "o Mestre";

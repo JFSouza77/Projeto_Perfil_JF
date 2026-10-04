@@ -418,6 +418,7 @@ function caosMemResetPartida() {
 function caosMesaReset() {
   caosPartidaInicioAt = null;
   caosPausaAcum = 0;
+  tempoZerar();
   caosPartidaFimAt = null;
   caosResenhaTxt = null;
   caosMesa = {

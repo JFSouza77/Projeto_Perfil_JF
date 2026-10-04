@@ -19,6 +19,10 @@
           até 25 s; abrir janela ou tutorial tira o balão da frente e cala a voz). A roleta da Moda da Casa
           continua com a fala dela. 5) Verso da carta em formato de carta: 300 px de largura, altura mínima
           5 × 7 (0,70), centralizado; cresce com letra Enorme.
+          6) Duração da partida = só tempo jogando (js/05f-tempo-de-jogo.js): relógio de 5 s soma jogo ou pausa;
+          buraco > 1 min (app fechado, celular dormindo) não conta. Antes era "agora − início" e pausa acima de
+          2 h nem entrava no desconto (uma partida de 5 cartas deu 628 min). Pausado aparece separado nas
+          estatísticas. Save novo: tempoJogoMs/tempoPausaMs; save antigo estima com teto de 4 min por carta.
   1.7.6.6 · 03/10/2026 · "Buttons and Tutorial Update · QoL" = NÚMEROS REDONDOS NOS TUTORIAIS (pedido do JF).
           Manual: 35 passos (novo "Idade e tempo extra" no Cadastro; a frase saiu do passo do Mestre).
           Rápido: 10 passos (novos "Às vezes é uma surpresa" e "Lê devagar? Tudo bem"), 301 palavras (~1min53s).
@@ -7744,6 +7748,7 @@ const CAOS_COMENT_TOM = {
   rival: "comentario",
   sorteadas: "comentario",
   duracao: "comentario",
+  pausado: "comentario",
   dificil: "comentario",
   laudos: "comentario",
   bola: "eu",
@@ -10173,6 +10178,7 @@ function addPlayer() {
   caosWelcomePlayer(players[players.length - 1]);
 }
 function endGame() {
+  tempoTick();
   if (caosPartidaInicioAt && !caosPartidaFimAt) {
     caosPartidaFimAt = Date.now();
     try {
@@ -10609,7 +10615,10 @@ function beginGameplay() {
     return;
   }
   starterChosen = true;
-  if (!caosPartidaInicioAt) caosPartidaInicioAt = Date.now();
+  if (!caosPartidaInicioAt) {
+    caosPartidaInicioAt = Date.now();
+    tempoZerar();
+  }
   caosDescansoChecar();
   caosMagoaInicio();
   if (!admPrincipalName && players[mestreIndex]) admPrincipalName = players[mestreIndex].name;
@@ -12815,7 +12824,9 @@ function buildStatsHtml() {
   });
   if (caosPartidaInicioAt) {
     const m = caosMinutosPartida();
-    numeros += mini("⏱️", "Duração", m + " min", "", "#38bdf8", { t: "duracao", v: m });
+    numeros += mini("⏱️", "Duração", m + " min", "só o tempo jogando", "#38bdf8", { t: "duracao", v: m });
+    const mp = tempoMinutosPausa();
+    if (mp >= 1) numeros += mini("⏸️", "Pausado", mp + " min", "fora da duração", "#94a3b8", { t: "pausado", v: mp });
   }
   numeros += mini("✅", "Respondidas", totalAnswered, "cartas acertadas", "#34d399", {
     t: "respondidas",
@@ -15065,6 +15076,57 @@ function vitoriaTutInicio() {
 function vitoriaTutBotaoHtml() {
   return `<button type="button" class="btn-sec wincond-tut" id="winCondTutBtn">📖 Como funciona? (5 passos)</button>`;
 }
+/* ----------------------------------------------------------------------
+ * 5f. TEMPO DE JOGO (1.7.6.7): a duração da partida conta só o tempo jogando.
+ * Antes ela era "agora menos a hora do início": pausa longa, app fechado e celular
+ * bloqueado entravam na conta (uma partida de 5 cartas deu 628 minutos).
+ * Agora um relógio soma a cada 5 s: tempo de jogo (partida rolando) ou tempo pausado
+ * (tela de pausa aberta). Buraco maior que 1 minuto entre dois toques do relógio
+ * (celular dormindo, app fechado, aba escondida) não conta pra nenhum dos dois.
+ * O tempo pausado aparece separado nas estatísticas; nunca entra na duração.
+ * ---------------------------------------------------------------------- */
+let tempoJogoMs = 0;
+let tempoPausaMs = 0;
+let tempoUltimoTick = 0;
+const TEMPO_TICK_MS = 5e3;
+const TEMPO_BURACO_MAX_MS = 60e3;
+function tempoTick() {
+  const agora = Date.now();
+  const d = tempoUltimoTick ? agora - tempoUltimoTick : 0;
+  tempoUltimoTick = agora;
+  if (!starterChosen || gameEnded || !caosPartidaInicioAt) return;
+  if (!(d > 0) || d > TEMPO_BURACO_MAX_MS || document.hidden) return;
+  if (typeof pausaEstaAberta === "function" && pausaEstaAberta()) tempoPausaMs += d;
+  else if (!pausedAt && !pausaExpirada) tempoJogoMs += d;
+}
+function tempoZerar() {
+  tempoJogoMs = 0;
+  tempoPausaMs = 0;
+  tempoUltimoTick = Date.now();
+}
+// Save antigo (antes da 1.7.6.7) não tem o relógio: estima pelo jeito velho, sem a pausa
+// registrada e com teto de 4 min por carta (evita herdar um número absurdo).
+function tempoRestaurar(state) {
+  const ok = (v) => typeof v === "number" && isFinite(v) && v >= 0;
+  if (ok(state.tempoJogoMs)) {
+    tempoJogoMs = Math.min(state.tempoJogoMs, 864e5);
+    tempoPausaMs = ok(state.tempoPausaMs) ? Math.min(state.tempoPausaMs, 864e5) : 0;
+  } else if (caosPartidaInicioAt) {
+    const fim = caosPartidaFimAt || (ok(state.savedAt) ? state.savedAt : Date.now());
+    const bruto = Math.max(0, fim - caosPartidaInicioAt - (caosPausaAcum || 0));
+    const teto = Math.max(1, (state.stats && state.stats.totalDrawn) || 1) * 4 * 6e4;
+    tempoJogoMs = Math.min(bruto, teto);
+    tempoPausaMs = 0;
+  } else tempoZerar();
+  tempoUltimoTick = Date.now();
+}
+function tempoMinutosJogo() {
+  return Math.max(0, Math.floor(tempoJogoMs / 6e4));
+}
+function tempoMinutosPausa() {
+  return Math.max(0, Math.floor(tempoPausaMs / 6e4));
+}
+setInterval(tempoTick, TEMPO_TICK_MS);
 /* ======================================================================
  * 6. VOZ, SOM E VIBRAÇÃO
  * ====================================================================== */
@@ -18761,6 +18823,7 @@ function caosMemResetPartida() {
 function caosMesaReset() {
   caosPartidaInicioAt = null;
   caosPausaAcum = 0;
+  tempoZerar();
   caosPartidaFimAt = null;
   caosResenhaTxt = null;
   caosMesa = {
@@ -19541,10 +19604,9 @@ function caosHoraTexto(h) {
           ? `${h - 12} da tarde`
           : `${h - 12} da noite`;
 }
+// Duração da partida: só o tempo jogando (pausa, app fechado e celular dormindo ficam de fora; ver js/05f).
 function caosMinutosPartida() {
-  return caosPartidaInicioAt
-    ? Math.max(0, Math.floor(((caosPartidaFimAt || Date.now()) - caosPartidaInicioAt) / 6e4))
-    : 0;
+  return caosPartidaInicioAt ? tempoMinutosJogo() : 0;
 }
 function caosRelogioInicioTexto() {
   const a = caosAgora(),
@@ -21900,6 +21962,10 @@ function caosComentFato(d) {
               ? "a partida durou menos de um minuto"
               : `a partida durou ${v} ${pl(d.v, "minuto", "minutos")}`,
       };
+    case "pausado":
+      return {
+        fr: `a mesa ficou ${v} ${pl(d.v, "minuto", "minutos")} na pausa, e isso não entrou na duração`,
+      };
     case "respondidas":
       return {
         fr:
@@ -22791,7 +22857,7 @@ function caosMagoaInicio() {
   } catch (e) {}
 }
 function caosMinutosAtivos() {
-  return Math.max(0, (Date.now() - (caosPartidaInicioAt || Date.now()) - (caosPausaAcum || 0)) / 6e4);
+  return caosPartidaInicioAt ? Math.max(0, tempoJogoMs / 6e4) : 0;
 }
 function caosNomeMestre() {
   return players[mestreIndex] ? players[mestreIndex].name : "o Mestre";
@@ -24089,6 +24155,8 @@ function saveGameState() {
       caosSaidasTensao,
       caosPartidaInicioAt,
       caosPartidaFimAt,
+      tempoJogoMs,
+      tempoPausaMs,
       caosCatSeq,
       caosMesa,
       caosAposta,
@@ -24471,6 +24539,7 @@ function loadGameState() {
     caosCatSeq = Array.isArray(state.caosCatSeq) ? state.caosCatSeq.filter((c) => typeof c === "string").slice(-6) : [];
     caosPartidaInicioAt = Number.isFinite(state.caosPartidaInicioAt) ? state.caosPartidaInicioAt : null;
     caosPartidaFimAt = Number.isFinite(state.caosPartidaFimAt) ? state.caosPartidaFimAt : null;
+    tempoRestaurar(state);
     caosResenhaTxt = null;
     caosAposta =
       state.caosAposta && typeof state.caosAposta.nome === "string"
@@ -59842,6 +59911,7 @@ const NOVIDADES = [
       "🧒 A faixa etária do Equipe explica que 6-12 também ganha tempo extra quando é o Mestre.",
       "🤫 O C.A.O.S. não fala mais por cima de avisos: com uma janela aberta (Reiniciar, Encerrar, tutorial, acessibilidade…), ele espera ela fechar. E se ele estiver falando quando a janela abrir, o balão sai da frente.",
       "🃏 O verso da carta agora tem formato de carta de verdade (mais estreito e mais alto), não de quadro.",
+      "⏱️ Duração certa: o tempo de partida conta só o tempo jogando. Pausa, app fechado e celular bloqueado ficam de fora (uma partida de 5 cartas tinha dado 628 minutos). O tempo pausado aparece separado nas estatísticas.",
     ],
   },
   {

@@ -1494,6 +1494,7 @@ function addPlayer() {
   caosWelcomePlayer(players[players.length - 1]);
 }
 function endGame() {
+  tempoTick();
   if (caosPartidaInicioAt && !caosPartidaFimAt) {
     caosPartidaFimAt = Date.now();
     try {
@@ -1930,7 +1931,10 @@ function beginGameplay() {
     return;
   }
   starterChosen = true;
-  if (!caosPartidaInicioAt) caosPartidaInicioAt = Date.now();
+  if (!caosPartidaInicioAt) {
+    caosPartidaInicioAt = Date.now();
+    tempoZerar();
+  }
   caosDescansoChecar();
   caosMagoaInicio();
   if (!admPrincipalName && players[mestreIndex]) admPrincipalName = players[mestreIndex].name;
