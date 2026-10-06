@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Teste da identidade dos jogadores (1.7.7.1 · Foundation Structure Update, Parte 2).
+// Teste da identidade (Foundation Structure Update): jogadores (1.7.7.1), cartas e partida (1.7.7.2).
 // Confere que cada jogador tem um id único que não muda quando alguém sai, quando a partida é
 // salva e restaurada, e que save antigo (versão 11, chaves por posição e por nome) é convertido.
 //   node ferramentas/teste_identidade.js [arquivo.html]
@@ -56,6 +56,30 @@ const ARQ = acharMestre(process.argv[2]);
     // 5) ids novos nunca repetem
     const muitos = new Set(); for (let i = 0; i < 2000; i++) muitos.add(jogadorIdNovo(muitos));
     out.semRepetir = muitos.size === 2000;
+    // 6) cartas com id fixo (1.7.7.2)
+    const idsCartas = ADULT_CARDS.map((c) => c.id);
+    out.cartasComId = idsCartas.every((x) => /^[A-Z]+-\d{4}$/.test(x)) && new Set(idsCartas).size === ADULT_CARDS.length && cartaPorId(idsCartas[7]) === ADULT_CARDS[7];
+    // 7) save antigo que guardou uma resposta que depois foi corrigida: o mapa de respostas antigas acha a carta
+    const c5 = ADULT_CARDS[5], c6 = ADULT_CARDS[6];
+    CARTAS_RESPOSTA_ANTIGA['Resposta Velha'] = c5.id;
+    JFStore.setItem('perfil200_state', JSON.stringify({ ...velho, deck: ['Resposta Velha', c6.answer], allCardsAnswers: ['Resposta Velha', c6.answer] }));
+    loadGameState();
+    out.respostaAntiga = deck.map((c) => c.id).join() === [c5.id, c6.id].join();
+    delete CARTAS_RESPOSTA_ANTIGA['Resposta Velha'];
+    // 8) save novo: a carta é achada pelo id mesmo se a resposta gravada não existir mais
+    saveGameState();
+    const st = JSON.parse(JFStore.getItem('perfil200_state'));
+    out.salvaIds = Array.isArray(st.deckIds) && st.deckIds.join() === [c5.id, c6.id].join();
+    st.deck = ['xxx', 'yyy']; st.allCardsAnswers = ['xxx', 'yyy'];
+    JFStore.setItem('perfil200_state', JSON.stringify(st));
+    loadGameState();
+    out.pelaId = deck.map((c) => c.id).join() === [c5.id, c6.id].join();
+    // 9) matchId: vai pro save, volta igual, e partida nova zera
+    matchId = partidaIdNovo(); const mid = matchId;
+    saveGameState(); matchId = null; loadGameState();
+    out.matchId = partidaIdValido(mid) && matchId === mid;
+    resetDeck();
+    out.matchIdZera = matchId === null;
     JFStore.removeItem('perfil200_state');
     return out;
   });
@@ -68,6 +92,12 @@ const ARQ = acharMestre(process.argv[2]);
     ['Remoção pelo ADM mantém palpite, joias e ADM com a pessoa certa', Object.values(r.remocao).every((v) => v === true)],
     ['Vencedor por joias pelo id', r.vencedor],
     ['2000 ids novos sem repetir', r.semRepetir],
+    ['1000 cartas com id fixo e único', r.cartasComId],
+    ['Save antigo com resposta corrigida acha a carta (mapa)', r.respostaAntiga],
+    ['Save novo guarda o id das cartas', r.salvaIds],
+    ['Carta achada pelo id mesmo sem a resposta', r.pelaId],
+    ['matchId salvo e restaurado', r.matchId],
+    ['Partida nova zera o matchId', r.matchIdZera],
   ];
   linhas.forEach(([n, ok]) => console.log(`${ok ? 'ok    ' : 'FALHOU'}  ${n}`));
   const tudo = linhas.every((l) => l[1]) && !erros.length;

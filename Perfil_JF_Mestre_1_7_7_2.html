@@ -6,6 +6,17 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.7.2 · 05/10/2026 · "Foundation Structure Update · Parte 3" = PARTIDA E CARTAS IDENTIFICADAS.
+          1) As 1000 cartas ganharam id fixo escrito na própria carta (ANO-0001 … ANIMAL-0200), na ordem dos
+          arquivos. O id não sai da resposta (pedido do roteiro do GPT): corrigir uma resposta não muda o id.
+          CARTAS_RESPOSTA_ANTIGA (dados/02-cartas/99-fechamento.js) guarda resposta antiga → id, pra save velho
+          achar a carta depois de uma correção. Número de carta removida não volta. cartaPorId/cartaPorResposta.
+          2) Save grava deckIds, allCardsIds e currentCardId (e ainda as respostas, pra versão anterior abrir);
+          na leitura vale o id; sem id, a resposta passando pelo mapa. Histórico com resposta antiga é convertido.
+          3) matchId ("p_…") nasce no início da partida, vai pro save, volta igual ao retomar; partida nova e
+          Jogar de novo zeram (resetDeck). Aparece no relatório exportado. 4) auditar_cartas confere formato,
+          prefixo da categoria e unicidade do id, e o mapa de respostas antigas. teste_identidade com 6 itens novos.
+          Sem mudança de conteúdo nas cartas (só o id), então nada pro log de cartas.
   1.7.7.1 · 05/10/2026 · "Foundation Structure Update · Parte 2" = IDENTIDADE DOS JOGADORES.
           js/02b-identidade.js: todo jogador ganha id ("j_" + 6 letras) no cadastro; não muda se alguém sai,
           se a ordem muda ou se a partida é salva e restaurada. Passam a usar o id (no Versus; no Equipe a chave
@@ -352,7 +363,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.7.1</title>
+<title>Perfil JF · Beta 1.7.7.2</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6733,7 +6744,7 @@ html.acess-letra-2 .clue-list li {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.7.1 · Foundation Structure Update · Parte 2<br>C.A.O.S. 4.0 · Atualizada em 05/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.7.2 · Foundation Structure Update · Parte 3<br>C.A.O.S. 4.0 · Atualizada em 05/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -8254,6 +8265,21 @@ function jogadorChaveMigrar(k, lista) {
   const i = typeof k === "number" ? k : /^\d+$/.test(String(k)) ? parseInt(k, 10) : -1;
   return i >= 0 && l[i] ? l[i].id : null;
 }
+
+/* --- Partida (1.7.7.2): matchId ---
+ * Nasce quando a partida começa, vai pro save e é preservado quando a partida é retomada.
+ * "Jogar de novo" e partida nova ganham outro. Na 1.7.8 toda ação vai carimbada com ele, e na rede
+ * uma ação de uma partida que já acabou é recusada. */
+let matchId = null;
+const PARTIDA_ID_RE = /^p_[a-z0-9]{8,16}$/;
+function partidaIdNovo() {
+  let s = "p_" + Date.now().toString(36).slice(-6);
+  for (let i = 0; i < 4; i++) s += "abcdefghijkmnpqrstuvwxyz23456789"[Math.floor(Math.random() * 32)];
+  return s;
+}
+function partidaIdValido(id) {
+  return typeof id === "string" && PARTIDA_ID_RE.test(id);
+}
 /* ======================================================================
  * 3. REGRAS (VITÓRIA, PONTOS, JOIAS, TABULEIRO, BARALHO, EQUIPES)
  * ====================================================================== */
@@ -8317,6 +8343,7 @@ function baralhoOldSchool() {
 // Entrada que começa com "*" é instrução especial (ex.: "*Volte 3 casas"); as outras são dicas.
 function expandDeck(compact) {
   return compact.map((c) => ({
+    id: c.id,
     category: c.cat,
     label: CATEGORY_LABELS[c.cat],
     answer: c.a,
@@ -8329,6 +8356,21 @@ function expandDeck(compact) {
 function rebuildCardsIndex() {
   cardsByAnswer = new Map(allCards.map((card) => [card.answer, card]));
 }
+// Cartas pelo id fixo (1.7.7.2). Vale pro baralho inteiro, não só o do modo atual.
+let cartasPorIdMapa = null;
+function cartaPorId(id) {
+  if (!cartasPorIdMapa) cartasPorIdMapa = new Map(ADULT_CARDS.map((c) => [c.id, c]));
+  return cartasPorIdMapa.get(id) || null;
+}
+// Resposta (de agora ou antiga, de save velho) → carta.
+function cartaPorResposta(resp) {
+  if (typeof resp !== "string") return null;
+  const id = CARTAS_RESPOSTA_ANTIGA[resp];
+  if (id) return cartaPorId(id);
+  if (!cartasPorRespostaMapa) cartasPorRespostaMapa = new Map(ADULT_CARDS.map((c) => [c.answer, c]));
+  return cartasPorRespostaMapa.get(resp) || null;
+}
+let cartasPorRespostaMapa = null;
 // Avisos da validação de dados feita na abertura (aparecem no console com DEBUG
 // e no painel Cérebro do C.A.O.S.).
 function avisoDados(msg) {
@@ -9093,6 +9135,7 @@ function resetGame() {
 }
 function resetDeck() {
   caosPartidaSerial++;
+  matchId = null;
   caosCatSeq = [];
   clearTimer();
   clearCardTimer();
@@ -10766,7 +10809,9 @@ function beginGameplay() {
   if (!caosPartidaInicioAt) {
     caosPartidaInicioAt = Date.now();
     tempoZerar();
+    matchId = partidaIdNovo();
   }
+  if (!matchId) matchId = partidaIdNovo(); // save de antes da 1.7.7.2
   caosDescansoChecar();
   caosMagoaInicio();
   jogadoresGarantirIds(players);
@@ -17557,7 +17602,7 @@ function caosInspectorEstado() {
       }</b></div>
       <div class="ci-kv"><span>🦴 Registro da espinha</span><b class="ci-mono">${caosEspinha.log.slice(-5).reverse().map(escapeHtml).join("<br>") || "—"}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.7.1 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.7.2 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -22624,7 +22669,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.7.1 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.7.2 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -24365,6 +24410,10 @@ function saveGameState() {
       saveVersion: SAVE_VERSION,
       savedAt: Date.now(),
       players,
+      // 1.7.7.2: cartas pelo id fixo. A resposta continua indo junto pra versão anterior abrir o save.
+      deckIds: deck.map((c) => c.id),
+      currentCardId: currentCard ? currentCard.id || null : null,
+      matchId,
       deck: deck.map((c) => c.answer),
       currentCardAnswer: currentCard ? currentCard.answer : null,
       currentCardClues: currentCard ? currentCard.clues : null,
@@ -24451,6 +24500,7 @@ function saveGameState() {
       ffaCandidateQueue,
       ffaWrongCount,
       allCardsAnswers: CURRENT_MODE === "express" || CURRENT_MODE === "classico" ? allCards.map((c) => c.answer) : null,
+      allCardsIds: CURRENT_MODE === "express" || CURRENT_MODE === "classico" ? allCards.map((c) => c.id) : null,
       screen: getCurrentScreen(),
     };
     JFStore.setItem("perfil200_state", JSON.stringify(state));
@@ -24569,6 +24619,20 @@ function sanitizeLoadedState(s) {
   if (typeof s.currentCardAnswer !== "string") s.currentCardAnswer = null;
   if (Array.isArray(s.allCardsAnswers)) s.allCardsAnswers = s.allCardsAnswers.filter((a) => typeof a === "string");
   else s.allCardsAnswers = null;
+  // 1.7.7.2: com id, a carta é achada pelo id (resposta corrigida não perde a carta); sem id (save
+  // antigo), pela resposta, passando pelo mapa de respostas antigas. Daqui pra frente vale a resposta atual.
+  const respDoId = (id) => (cartaPorId(id) || {}).answer || null;
+  const respAtual = (a) => (cartaPorResposta(a) || {}).answer || null;
+  const listaAtual = (ids, resps) =>
+    Array.isArray(ids) && ids.length ? ids.map(respDoId).filter(Boolean) : (resps || []).map(respAtual).filter(Boolean);
+  s.deck = listaAtual(s.deckIds, s.deck);
+  if (Array.isArray(s.allCardsAnswers) || Array.isArray(s.allCardsIds))
+    s.allCardsAnswers = listaAtual(s.allCardsIds, s.allCardsAnswers);
+  s.currentCardAnswer = (s.currentCardId && respDoId(s.currentCardId)) || respAtual(s.currentCardAnswer);
+  delete s.deckIds;
+  delete s.allCardsIds;
+  delete s.currentCardId;
+  s.matchId = partidaIdValido(s.matchId) ? s.matchId : null;
   const teams0 = s.teams && typeof s.teams === "object" ? s.teams : {};
   s.teams = {};
   Object.keys(teams0)
@@ -24618,6 +24682,7 @@ function sanitizeLoadedState(s) {
   s.palpiteStock = Math.max(0, PALPITE_STOCK - Object.keys(s.palpiteHolders).length);
   const answers = new Set(ADULT_CARDS.map((c) => c.answer));
   s.history = (Array.isArray(s.history) ? s.history : [])
+    .map((h) => (h && !answers.has(h.answer) && cartaPorResposta(h.answer) ? { ...h, answer: cartaPorResposta(h.answer).answer } : h))
     .filter((h) => h && answers.has(h.answer) && Object.prototype.hasOwnProperty.call(CATEGORY_LABELS, h.category))
     .slice(-150)
     .map((h) => ({
@@ -24665,6 +24730,7 @@ function loadGameState() {
     CURRENT_MODE = state.CURRENT_MODE || "classico";
     WINNING_SCORE = state.WINNING_SCORE === void 0 || state.WINNING_SCORE === null ? 200 : state.WINNING_SCORE;
     admPrincipalId = state.admPrincipalId || null;
+    matchId = state.matchId || null;
     caosCofrinho = state.caosCofrinho || 0;
     WIN_CONDITION = WIN_CONDITIONS[state.WIN_CONDITION] ? state.WIN_CONDITION : "casa";
     RESPONSE_TIME_LIMIT = state.RESPONSE_TIME_LIMIT || RESPONSE_TIME_LIMIT_BY_MODE[CURRENT_MODE] || 90;
@@ -25607,7 +25673,8 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.7.1 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.7.2 · C.A.O.S. 4.0");
+  if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -26129,7 +26196,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.7.1 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.7.2 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -27168,6 +27235,7 @@ const CAOS_MISTURA_ROSTOS = {
 const DARK_COLORS = new Set(["#2b2b2b"]);
 const ADULT_CARDS = expandDeck([
   {
+    id: "ANO-0001",
     cat: "ANO",
     a: "2001",
     q: [
@@ -27194,6 +27262,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0002",
     cat: "ANO",
     a: "2002",
     q: [
@@ -27220,6 +27289,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0003",
     cat: "ANO",
     a: "2003",
     q: [
@@ -27246,6 +27316,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0004",
     cat: "ANO",
     a: "2004",
     q: [
@@ -27272,6 +27343,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0005",
     cat: "ANO",
     a: "2005",
     q: [
@@ -27298,6 +27370,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0006",
     cat: "ANO",
     a: "2006",
     q: [
@@ -27324,6 +27397,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0007",
     cat: "ANO",
     a: "2007",
     q: [
@@ -27350,6 +27424,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0008",
     cat: "ANO",
     a: "2008",
     os: 1,
@@ -27377,6 +27452,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0009",
     cat: "ANO",
     a: "2009",
     q: [
@@ -27403,6 +27479,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0010",
     cat: "ANO",
     a: "2010",
     q: [
@@ -27429,6 +27506,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0011",
     cat: "ANO",
     a: "2011",
     q: [
@@ -27455,6 +27533,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0012",
     cat: "ANO",
     a: "2012",
     q: [
@@ -27481,6 +27560,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0013",
     cat: "ANO",
     a: "2013",
     q: [
@@ -27507,6 +27587,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0014",
     cat: "ANO",
     a: "2014",
     os: 1,
@@ -27534,6 +27615,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0015",
     cat: "ANO",
     a: "2015",
     q: [
@@ -27560,6 +27642,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0016",
     cat: "ANO",
     a: "2016",
     q: [
@@ -27586,6 +27669,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0017",
     cat: "ANO",
     a: "2017",
     q: [
@@ -27612,6 +27696,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0018",
     cat: "ANO",
     a: "2018",
     q: [
@@ -27638,6 +27723,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0019",
     cat: "ANO",
     a: "2019",
     q: [
@@ -27664,6 +27750,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0020",
     cat: "ANO",
     a: "2020",
     os: 1,
@@ -27691,6 +27778,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0021",
     cat: "ANO",
     a: "2021",
     q: [
@@ -27717,6 +27805,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0022",
     cat: "ANO",
     a: "2022",
     q: [
@@ -27743,6 +27832,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0023",
     cat: "ANO",
     a: "2023",
     q: [
@@ -27769,6 +27859,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0024",
     cat: "ANO",
     a: "2024",
     q: [
@@ -27795,6 +27886,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0025",
     cat: "ANO",
     a: "2025",
     q: [
@@ -27821,6 +27913,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0026",
     cat: "ANO",
     a: "1903",
     q: [
@@ -27847,6 +27940,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0027",
     cat: "ANO",
     a: "1914",
     os: 1,
@@ -27874,6 +27968,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0028",
     cat: "ANO",
     a: "1939",
     os: 1,
@@ -27901,6 +27996,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0029",
     cat: "ANO",
     a: "1945",
     os: 1,
@@ -27928,6 +28024,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0030",
     cat: "ANO",
     a: "1955",
     os: 1,
@@ -27955,6 +28052,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0031",
     cat: "ANO",
     a: "1961",
     os: 1,
@@ -27982,6 +28080,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0032",
     cat: "ANO",
     a: "1964",
     os: 1,
@@ -28009,6 +28108,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0033",
     cat: "ANO",
     a: "1968",
     q: [
@@ -28035,6 +28135,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0034",
     cat: "ANO",
     a: "1969",
     os: 1,
@@ -28062,6 +28163,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0035",
     cat: "ANO",
     a: "1977",
     os: 1,
@@ -28089,6 +28191,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0036",
     cat: "ANO",
     a: "1984",
     os: 1,
@@ -28116,6 +28219,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0037",
     cat: "ANO",
     a: "1985",
     q: [
@@ -28142,6 +28246,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0038",
     cat: "ANO",
     a: "1989",
     os: 1,
@@ -28169,6 +28274,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0039",
     cat: "ANO",
     a: "1991",
     q: [
@@ -28195,6 +28301,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0040",
     cat: "ANO",
     a: "1992",
     os: 1,
@@ -28222,6 +28329,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0041",
     cat: "ANO",
     a: "1994",
     os: 1,
@@ -28249,6 +28357,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0042",
     cat: "ANO",
     a: "2000",
     os: 1,
@@ -28276,6 +28385,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0043",
     cat: "ANO",
     a: "1500",
     os: 1,
@@ -28303,6 +28413,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0044",
     cat: "ANO",
     a: "1789",
     os: 1,
@@ -28330,6 +28441,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0045",
     cat: "ANO",
     a: "1822",
     os: 1,
@@ -28357,6 +28469,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0046",
     cat: "ANO",
     a: "1888",
     os: 1,
@@ -28384,6 +28497,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0047",
     cat: "ANO",
     a: "1889",
     q: [
@@ -28410,6 +28524,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0048",
     cat: "ANO",
     a: "1492",
     q: [
@@ -28436,6 +28551,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0049",
     cat: "ANO",
     a: "1215",
     q: [
@@ -28462,6 +28578,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0050",
     cat: "ANO",
     a: "79 d.C.",
     q: [
@@ -28488,6 +28605,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0051",
     cat: "ANO",
     a: "1453",
     q: [
@@ -28514,6 +28632,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0052",
     cat: "ANO",
     a: "1808",
     os: 1,
@@ -28541,6 +28660,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0053",
     cat: "ANO",
     a: "1944",
     q: [
@@ -28567,6 +28687,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0054",
     cat: "ANO",
     a: "476",
     q: [
@@ -28593,6 +28714,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0055",
     cat: "ANO",
     a: "1517",
     q: [
@@ -28619,6 +28741,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0056",
     cat: "ANO",
     a: "1776",
     os: 1,
@@ -28646,6 +28769,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0057",
     cat: "ANO",
     a: "1917",
     q: [
@@ -28672,6 +28796,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0058",
     cat: "ANO",
     a: "1687",
     q: [
@@ -28698,6 +28823,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0059",
     cat: "ANO",
     a: "1572",
     q: [
@@ -28724,6 +28850,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0060",
     cat: "ANO",
     a: "1922",
     os: 1,
@@ -28751,6 +28878,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0061",
     cat: "ANO",
     a: "1932",
     os: 1,
@@ -28778,6 +28906,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0062",
     cat: "ANO",
     a: "1942",
     q: [
@@ -28804,6 +28933,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0063",
     cat: "ANO",
     a: "1952",
     q: [
@@ -28830,6 +28960,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0064",
     cat: "ANO",
     a: "1962",
     q: [
@@ -28856,6 +28987,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0065",
     cat: "ANO",
     a: "44 a.C.",
     q: [
@@ -28882,6 +29014,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0066",
     cat: "ANO",
     a: "1543",
     q: [
@@ -28908,6 +29041,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0067",
     cat: "ANO",
     a: "1863",
     q: [
@@ -28934,6 +29068,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0068",
     cat: "ANO",
     a: "1876",
     q: [
@@ -28960,6 +29095,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0069",
     cat: "ANO",
     a: "1896",
     q: [
@@ -28986,6 +29122,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0070",
     cat: "ANO",
     a: "1912",
     q: [
@@ -29012,6 +29149,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0071",
     cat: "ANO",
     a: "1920",
     q: [
@@ -29038,6 +29176,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0072",
     cat: "ANO",
     a: "1928",
     q: [
@@ -29064,6 +29203,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0073",
     cat: "ANO",
     a: "1937",
     q: [
@@ -29090,6 +29230,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0074",
     cat: "ANO",
     a: "1965",
     q: [
@@ -29116,6 +29257,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0075",
     cat: "ANO",
     a: "1974",
     os: 1,
@@ -29143,6 +29285,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0076",
     cat: "ANO",
     a: "1990",
     q: [
@@ -29169,6 +29312,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0077",
     cat: "ANO",
     a: "1950",
     class: "oldschool",
@@ -29196,6 +29340,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0078",
     cat: "ANO",
     a: "1958",
     class: "oldschool",
@@ -29223,6 +29368,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0079",
     cat: "ANO",
     a: "1970",
     class: "oldschool",
@@ -29250,6 +29396,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0080",
     cat: "ANO",
     a: "1979",
     class: "oldschool",
@@ -29277,6 +29424,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0081",
     cat: "ANO",
     a: "1982",
     class: "oldschool",
@@ -29304,6 +29452,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0082",
     cat: "ANO",
     a: "1986",
     class: "oldschool",
@@ -29331,6 +29480,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0083",
     cat: "ANO",
     a: "1998",
     class: "oldschool",
@@ -29358,6 +29508,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0084",
     cat: "ANO",
     a: "1897",
     class: "oldschool",
@@ -29385,6 +29536,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0085",
     cat: "ANO",
     a: "1908",
     class: "oldschool",
@@ -29412,6 +29564,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0086",
     cat: "ANO",
     a: "1918",
     class: "oldschool",
@@ -29439,6 +29592,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0087",
     cat: "ANO",
     a: "1929",
     class: "oldschool",
@@ -29466,6 +29620,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0088",
     cat: "ANO",
     a: "1966",
     class: "oldschool",
@@ -29493,6 +29648,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0089",
     cat: "ANO",
     a: "1972",
     class: "oldschool",
@@ -29520,6 +29676,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0090",
     cat: "ANO",
     a: "1930",
     class: "oldschool",
@@ -29547,6 +29704,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0091",
     cat: "ANO",
     a: "1954",
     class: "oldschool",
@@ -29574,6 +29732,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0092",
     cat: "ANO",
     a: "1960",
     class: "oldschool",
@@ -29601,6 +29760,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0093",
     cat: "ANO",
     a: "1981",
     class: "oldschool",
@@ -29628,6 +29788,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0094",
     cat: "ANO",
     a: "1983",
     class: "oldschool",
@@ -29655,6 +29816,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0095",
     cat: "ANO",
     a: "1988",
     class: "oldschool",
@@ -29682,6 +29844,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0096",
     cat: "ANO",
     a: "1995",
     class: "oldschool",
@@ -29709,6 +29872,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0097",
     cat: "ANO",
     a: "1996",
     class: "oldschool",
@@ -29736,6 +29900,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0098",
     cat: "ANO",
     a: "1997",
     class: "oldschool",
@@ -29763,6 +29928,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0099",
     cat: "ANO",
     a: "1999",
     class: "oldschool",
@@ -29790,6 +29956,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0100",
     cat: "ANO",
     a: "1980",
     class: "oldschool",
@@ -29817,6 +29984,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0101",
     cat: "ANO",
     a: "1987",
     class: "oldschool",
@@ -29844,6 +30012,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0102",
     cat: "ANO",
     a: "1993",
     class: "oldschool",
@@ -29871,6 +30040,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0103",
     cat: "ANO",
     a: "1975",
     class: "oldschool",
@@ -29898,6 +30068,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0104",
     cat: "ANO",
     a: "1976",
     class: "oldschool",
@@ -29925,6 +30096,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0105",
     cat: "ANO",
     a: "1978",
     class: "oldschool",
@@ -29952,6 +30124,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0106",
     cat: "ANO",
     a: "1971",
     class: "oldschool",
@@ -29979,6 +30152,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0107",
     cat: "ANO",
     a: "1973",
     class: "oldschool",
@@ -30006,6 +30180,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0108",
     cat: "ANO",
     a: "1967",
     class: "oldschool",
@@ -30033,6 +30208,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0109",
     cat: "ANO",
     a: "1963",
     class: "oldschool",
@@ -30060,6 +30236,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0110",
     cat: "ANO",
     a: "1959",
     os: 1,
@@ -30087,6 +30264,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0111",
     cat: "ANO",
     a: "1957",
     os: 1,
@@ -30114,6 +30292,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0112",
     cat: "ANO",
     a: "1956",
     os: 1,
@@ -30141,6 +30320,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0113",
     cat: "ANO",
     a: "1953",
     os: 1,
@@ -30168,6 +30348,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0114",
     cat: "ANO",
     a: "1951",
     os: 1,
@@ -30195,6 +30376,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0115",
     cat: "ANO",
     a: "1949",
     os: 1,
@@ -30222,6 +30404,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0116",
     cat: "ANO",
     a: "1948",
     os: 1,
@@ -30249,6 +30432,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0117",
     cat: "ANO",
     a: "1947",
     os: 1,
@@ -30276,6 +30460,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0118",
     cat: "ANO",
     a: "1946",
     os: 1,
@@ -30303,6 +30488,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0119",
     cat: "ANO",
     a: "1943",
     os: 1,
@@ -30330,6 +30516,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0120",
     cat: "ANO",
     a: "1941",
     os: 1,
@@ -30357,6 +30544,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0121",
     cat: "ANO",
     a: "1940",
     os: 1,
@@ -30384,6 +30572,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0122",
     cat: "ANO",
     a: "1938",
     os: 1,
@@ -30411,6 +30600,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0123",
     cat: "ANO",
     a: "1936",
     os: 1,
@@ -30438,6 +30628,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0124",
     cat: "ANO",
     a: "1935",
     os: 1,
@@ -30465,6 +30656,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0125",
     cat: "ANO",
     a: "1934",
     os: 1,
@@ -30492,6 +30684,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0126",
     cat: "ANO",
     a: "1933",
     os: 1,
@@ -30519,6 +30712,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0127",
     cat: "ANO",
     a: "1931",
     os: 1,
@@ -30546,6 +30740,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0128",
     cat: "ANO",
     a: "1927",
     os: 1,
@@ -30573,6 +30768,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0129",
     cat: "ANO",
     a: "1926",
     os: 1,
@@ -30600,6 +30796,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0130",
     cat: "ANO",
     a: "1925",
     os: 1,
@@ -30627,6 +30824,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0131",
     cat: "ANO",
     a: "1924",
     os: 1,
@@ -30654,6 +30852,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0132",
     cat: "ANO",
     a: "1923",
     os: 1,
@@ -30681,6 +30880,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0133",
     cat: "ANO",
     a: "1921",
     os: 1,
@@ -30708,6 +30908,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0134",
     cat: "ANO",
     a: "1919",
     os: 1,
@@ -30735,6 +30936,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0135",
     cat: "ANO",
     a: "1916",
     q: [
@@ -30761,6 +30963,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0136",
     cat: "ANO",
     a: "1915",
     q: [
@@ -30787,6 +30990,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0137",
     cat: "ANO",
     a: "1913",
     q: [
@@ -30813,6 +31017,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0138",
     cat: "ANO",
     a: "1911",
     q: [
@@ -30839,6 +31044,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0139",
     cat: "ANO",
     a: "1910",
     q: [
@@ -30865,6 +31071,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0140",
     cat: "ANO",
     a: "1909",
     q: [
@@ -30891,6 +31098,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0141",
     cat: "ANO",
     a: "1906",
     q: [
@@ -30917,6 +31125,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0142",
     cat: "ANO",
     a: "1905",
     q: [
@@ -30943,6 +31152,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0143",
     cat: "ANO",
     a: "1904",
     q: [
@@ -30969,6 +31179,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0144",
     cat: "ANO",
     a: "1902",
     q: [
@@ -30995,6 +31206,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0145",
     cat: "ANO",
     a: "1901",
     q: [
@@ -31021,6 +31233,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0146",
     cat: "ANO",
     a: "1900",
     q: [
@@ -31047,6 +31260,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0147",
     cat: "ANO",
     a: "1899",
     q: [
@@ -31073,6 +31287,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0148",
     cat: "ANO",
     a: "1894",
     q: [
@@ -31099,6 +31314,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0149",
     cat: "ANO",
     a: "1891",
     q: [
@@ -31125,6 +31341,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0150",
     cat: "ANO",
     a: "1886",
     q: [
@@ -31151,6 +31368,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0151",
     cat: "ANO",
     a: "1885",
     q: [
@@ -31177,6 +31395,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0152",
     cat: "ANO",
     a: "1879",
     q: [
@@ -31203,6 +31422,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0153",
     cat: "ANO",
     a: "1871",
     q: [
@@ -31229,6 +31449,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0154",
     cat: "ANO",
     a: "1869",
     q: [
@@ -31255,6 +31476,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0155",
     cat: "ANO",
     a: "1865",
     q: [
@@ -31281,6 +31503,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0156",
     cat: "ANO",
     a: "1861",
     q: [
@@ -31307,6 +31530,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0157",
     cat: "ANO",
     a: "1850",
     q: [
@@ -31333,6 +31557,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0158",
     cat: "ANO",
     a: "1848",
     q: [
@@ -31359,6 +31584,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0159",
     cat: "ANO",
     a: "1831",
     q: [
@@ -31385,6 +31611,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0160",
     cat: "ANO",
     a: "1825",
     q: [
@@ -31411,6 +31638,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0161",
     cat: "ANO",
     a: "1824",
     q: [
@@ -31437,6 +31665,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0162",
     cat: "ANO",
     a: "1821",
     q: [
@@ -31463,6 +31692,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0163",
     cat: "ANO",
     a: "1815",
     q: [
@@ -31489,6 +31719,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0164",
     cat: "ANO",
     a: "1804",
     q: [
@@ -31515,6 +31746,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0165",
     cat: "ANO",
     a: "1792",
     q: [
@@ -31541,6 +31773,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0166",
     cat: "ANO",
     a: "1759",
     q: [
@@ -31567,6 +31800,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0167",
     cat: "ANO",
     a: "1755",
     q: [
@@ -31593,6 +31827,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0168",
     cat: "ANO",
     a: "1707",
     q: [
@@ -31619,6 +31854,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0169",
     cat: "ANO",
     a: "1666",
     q: [
@@ -31645,6 +31881,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0170",
     cat: "ANO",
     a: "1649",
     q: [
@@ -31671,6 +31908,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0171",
     cat: "ANO",
     a: "1588",
     q: [
@@ -31697,6 +31935,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0172",
     cat: "ANO",
     a: "1582",
     q: [
@@ -31723,6 +31962,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0173",
     cat: "ANO",
     a: "1534",
     q: [
@@ -31749,6 +31989,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0174",
     cat: "ANO",
     a: "1519",
     q: [
@@ -31775,6 +32016,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0175",
     cat: "ANO",
     a: "1498",
     q: [
@@ -31801,6 +32043,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0176",
     cat: "ANO",
     a: "1494",
     q: [
@@ -31827,6 +32070,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0177",
     cat: "ANO",
     a: "1347",
     q: [
@@ -31853,6 +32097,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0178",
     cat: "ANO",
     a: "1066",
     q: [
@@ -31879,6 +32124,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0179",
     cat: "ANO",
     a: "1610",
     q: [
@@ -31905,6 +32151,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0180",
     cat: "ANO",
     a: "1633",
     q: [
@@ -31931,6 +32178,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0181",
     cat: "ANO",
     a: "1763",
     q: [
@@ -31957,6 +32205,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0182",
     cat: "ANO",
     a: "1783",
     q: [
@@ -31983,6 +32232,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0183",
     cat: "ANO",
     a: "1799",
     q: [
@@ -32009,6 +32259,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0184",
     cat: "ANO",
     a: "1791",
     q: [
@@ -32035,6 +32286,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0185",
     cat: "ANO",
     a: "1859",
     q: [
@@ -32061,6 +32313,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0186",
     cat: "ANO",
     a: "1867",
     q: [
@@ -32087,6 +32340,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0187",
     cat: "ANO",
     a: "1870",
     q: [
@@ -32113,6 +32367,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0188",
     cat: "ANO",
     a: "1883",
     q: [
@@ -32139,6 +32394,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0189",
     cat: "ANO",
     a: "1895",
     q: [
@@ -32165,6 +32421,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0190",
     cat: "ANO",
     a: "1898",
     q: [
@@ -32191,6 +32448,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0191",
     cat: "ANO",
     a: "1890",
     q: [
@@ -32217,6 +32475,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0192",
     cat: "ANO",
     a: "1840",
     q: [
@@ -32243,6 +32502,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0193",
     cat: "ANO",
     a: "1835",
     q: [
@@ -32269,6 +32529,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0194",
     cat: "ANO",
     a: "1864",
     q: [
@@ -32295,6 +32556,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0195",
     cat: "ANO",
     a: "1893",
     q: [
@@ -32321,6 +32583,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0196",
     cat: "ANO",
     a: "1817",
     q: [
@@ -32347,6 +32610,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0197",
     cat: "ANO",
     a: "1834",
     q: [
@@ -32373,6 +32637,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0198",
     cat: "ANO",
     a: "1839",
     q: [
@@ -32399,6 +32664,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0199",
     cat: "ANO",
     a: "1853",
     q: [
@@ -32425,6 +32691,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANO-0200",
     cat: "ANO",
     a: "1857",
     q: [
@@ -32451,6 +32718,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0001",
     cat: "PESSOA",
     a: "Pelé",
     class: "livre",
@@ -32479,6 +32747,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0002",
     cat: "PESSOA",
     a: "Ayrton Senna",
     os: 1,
@@ -32506,6 +32775,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0003",
     cat: "PESSOA",
     a: "Neymar",
     class: "livre",
@@ -32533,6 +32803,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0004",
     cat: "PESSOA",
     a: "Anitta",
     q: [
@@ -32559,6 +32830,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0005",
     cat: "PESSOA",
     a: "Albert Einstein",
     class: "livre",
@@ -32587,6 +32859,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0006",
     cat: "PESSOA",
     a: "Leonardo da Vinci",
     class: "livre",
@@ -32615,6 +32888,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0007",
     cat: "PESSOA",
     a: "Cleópatra",
     os: 1,
@@ -32642,6 +32916,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0008",
     cat: "PESSOA",
     a: "Malala Yousafzai",
     q: [
@@ -32668,6 +32943,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0009",
     cat: "PESSOA",
     a: "Barack Obama",
     os: 1,
@@ -32695,6 +32971,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0010",
     cat: "PESSOA",
     a: "Cristiano Ronaldo",
     class: "livre",
@@ -32722,6 +32999,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0011",
     cat: "PESSOA",
     a: "Lionel Messi",
     class: "livre",
@@ -32749,6 +33027,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0012",
     cat: "PESSOA",
     a: "Michael Jackson",
     os: 1,
@@ -32776,6 +33055,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0013",
     cat: "PESSOA",
     a: "Taylor Swift",
     q: [
@@ -32802,6 +33082,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0014",
     cat: "PESSOA",
     a: "Naruto Uzumaki",
     class: "livre",
@@ -32829,6 +33110,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0015",
     cat: "PESSOA",
     a: "Harry Potter",
     class: "livre",
@@ -32856,6 +33138,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0016",
     cat: "PESSOA",
     a: "Mickey Mouse",
     class: "livre",
@@ -32883,6 +33166,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0017",
     cat: "PESSOA",
     a: "Batman",
     class: "livre",
@@ -32910,6 +33194,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0018",
     cat: "PESSOA",
     a: "Napoleão Bonaparte",
     os: 1,
@@ -32937,6 +33222,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0019",
     cat: "PESSOA",
     a: "Isaac Newton",
     os: 1,
@@ -32964,6 +33250,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0020",
     cat: "PESSOA",
     a: "Marie Curie",
     os: 1,
@@ -32991,6 +33278,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0021",
     cat: "PESSOA",
     a: "William Shakespeare",
     os: 1,
@@ -33018,6 +33306,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0022",
     cat: "PESSOA",
     a: "Abraham Lincoln",
     os: 1,
@@ -33045,6 +33334,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0023",
     cat: "PESSOA",
     a: "Sherlock Holmes",
     os: 1,
@@ -33072,6 +33362,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0024",
     cat: "PESSOA",
     a: "Darth Vader",
     os: 1,
@@ -33099,6 +33390,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0025",
     cat: "PESSOA",
     a: "Mario",
     class: "livre",
@@ -33126,6 +33418,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0026",
     cat: "PESSOA",
     a: "Ronaldinho Gaúcho",
     os: 1,
@@ -33153,6 +33446,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0027",
     cat: "PESSOA",
     a: "Whindersson Nunes",
     q: [
@@ -33179,6 +33473,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0028",
     cat: "PESSOA",
     a: "Larissa Manoela",
     class: "livre",
@@ -33206,6 +33501,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0029",
     cat: "PESSOA",
     a: "Xuxa",
     class: "livre",
@@ -33234,6 +33530,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0030",
     cat: "PESSOA",
     a: "Casimiro",
     q: [
@@ -33260,6 +33557,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0031",
     cat: "PESSOA",
     a: "Chico Xavier",
     os: 1,
@@ -33287,6 +33585,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0032",
     cat: "PESSOA",
     a: "Elon Musk",
     q: [
@@ -33313,6 +33612,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0033",
     cat: "PESSOA",
     a: "Homer Simpson",
     q: [
@@ -33339,6 +33639,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0034",
     cat: "PESSOA",
     a: "Saci-Pererê",
     class: "livre",
@@ -33366,6 +33667,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0035",
     cat: "PESSOA",
     a: "Curupira",
     class: "livre",
@@ -33393,6 +33695,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0036",
     cat: "PESSOA",
     a: "Iara",
     q: [
@@ -33419,6 +33722,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0037",
     cat: "PESSOA",
     a: "Charles Darwin",
     os: 1,
@@ -33446,6 +33750,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0038",
     cat: "PESSOA",
     a: "Nikola Tesla",
     q: [
@@ -33472,6 +33777,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0039",
     cat: "PESSOA",
     a: "Frida Kahlo",
     q: [
@@ -33498,6 +33804,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0040",
     cat: "PESSOA",
     a: "Nelson Mandela",
     os: 1,
@@ -33525,6 +33832,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0041",
     cat: "PESSOA",
     a: "Martin Luther King Jr.",
     os: 1,
@@ -33552,6 +33860,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0042",
     cat: "PESSOA",
     a: "Zumbi dos Palmares",
     os: 1,
@@ -33579,6 +33888,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0043",
     cat: "PESSOA",
     a: "Machado de Assis",
     os: 1,
@@ -33606,6 +33916,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0044",
     cat: "PESSOA",
     a: "Simone Biles",
     q: [
@@ -33632,6 +33943,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0045",
     cat: "PESSOA",
     a: "Beyoncé",
     q: [
@@ -33658,6 +33970,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0046",
     cat: "PESSOA",
     a: "Goku",
     class: "livre",
@@ -33685,6 +33998,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0047",
     cat: "PESSOA",
     a: "Homem-Aranha",
     class: "livre",
@@ -33712,6 +34026,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0048",
     cat: "PESSOA",
     a: "Hermione Granger",
     class: "livre",
@@ -33739,6 +34054,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0049",
     cat: "PESSOA",
     a: "Katniss Everdeen",
     q: [
@@ -33765,6 +34081,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0050",
     cat: "PESSOA",
     a: "Elsa",
     class: "livre",
@@ -33792,6 +34109,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0051",
     cat: "PESSOA",
     a: "Yoda",
     class: "livre",
@@ -33819,6 +34137,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0052",
     cat: "PESSOA",
     a: "Tony Stark",
     q: [
@@ -33845,6 +34164,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0053",
     cat: "PESSOA",
     a: "Luffy",
     q: [
@@ -33871,6 +34191,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0054",
     cat: "PESSOA",
     a: "Mahatma Gandhi",
     os: 1,
@@ -33898,6 +34219,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0055",
     cat: "PESSOA",
     a: "Ludwig van Beethoven",
     os: 1,
@@ -33925,6 +34247,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0056",
     cat: "PESSOA",
     a: "Vincent van Gogh",
     q: [
@@ -33951,6 +34274,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0057",
     cat: "PESSOA",
     a: "Serena Williams",
     q: [
@@ -33977,6 +34301,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0058",
     cat: "PESSOA",
     a: "Ladybug",
     class: "livre",
@@ -34004,6 +34329,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0059",
     cat: "PESSOA",
     a: "Cat Noir",
     class: "livre",
@@ -34031,6 +34357,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0060",
     cat: "PESSOA",
     a: "Peter Pan",
     class: "livre",
@@ -34058,6 +34385,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0061",
     cat: "PESSOA",
     a: "Shrek",
     class: "livre",
@@ -34085,6 +34413,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0062",
     cat: "PESSOA",
     a: "Bob Esponja",
     class: "livre",
@@ -34112,6 +34441,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0063",
     cat: "PESSOA",
     a: "Deadpool",
     q: [
@@ -34138,6 +34468,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0064",
     cat: "PESSOA",
     a: "Wolverine",
     q: [
@@ -34164,6 +34495,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0065",
     cat: "PESSOA",
     a: "Mônica",
     class: "junior",
@@ -34191,6 +34523,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0066",
     cat: "PESSOA",
     a: "Cebolinha",
     class: "junior",
@@ -34218,6 +34551,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0067",
     cat: "PESSOA",
     a: "Cascão",
     class: "junior",
@@ -34245,6 +34579,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0068",
     cat: "PESSOA",
     a: "Magali",
     class: "junior",
@@ -34272,6 +34607,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0069",
     cat: "PESSOA",
     a: "Chico Bento",
     class: "junior",
@@ -34299,6 +34635,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0070",
     cat: "PESSOA",
     a: "Patati Patatá",
     class: "junior",
@@ -34326,6 +34663,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0071",
     cat: "PESSOA",
     a: "Galinha Pintadinha",
     class: "junior",
@@ -34353,6 +34691,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0072",
     cat: "PESSOA",
     a: "Luccas Neto",
     class: "junior",
@@ -34380,6 +34719,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0073",
     cat: "PESSOA",
     a: "Enaldinho",
     class: "junior",
@@ -34407,6 +34747,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0074",
     cat: "PESSOA",
     a: "MrBeast",
     class: "junior",
@@ -34434,6 +34775,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0075",
     cat: "PESSOA",
     a: "Júlia MineGirl",
     class: "junior",
@@ -34461,6 +34803,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0076",
     cat: "PESSOA",
     a: "Rayssa Leal",
     class: "junior",
@@ -34488,6 +34831,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0077",
     cat: "PESSOA",
     a: "Vini Jr.",
     class: "junior",
@@ -34515,6 +34859,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0078",
     cat: "PESSOA",
     a: "Minions",
     class: "junior",
@@ -34542,6 +34887,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0079",
     cat: "PESSOA",
     a: "Gru",
     class: "junior",
@@ -34569,6 +34915,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0080",
     cat: "PESSOA",
     a: "Alegria (Divertida Mente)",
     class: "junior",
@@ -34596,6 +34943,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0081",
     cat: "PESSOA",
     a: "Po",
     class: "junior",
@@ -34623,6 +34971,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0082",
     cat: "PESSOA",
     a: "Stitch",
     class: "junior",
@@ -34650,6 +34999,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0083",
     cat: "PESSOA",
     a: "Moana",
     class: "junior",
@@ -34677,6 +35027,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0084",
     cat: "PESSOA",
     a: "Olaf",
     class: "junior",
@@ -34704,6 +35055,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0085",
     cat: "PESSOA",
     a: "Woody",
     class: "junior",
@@ -34731,6 +35083,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0086",
     cat: "PESSOA",
     a: "Buzz Lightyear",
     class: "junior",
@@ -34758,6 +35111,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0087",
     cat: "PESSOA",
     a: "Sonic",
     class: "junior",
@@ -34785,6 +35139,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0088",
     cat: "PESSOA",
     a: "Pikachu",
     class: "junior",
@@ -34812,6 +35167,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0089",
     cat: "PESSOA",
     a: "Steve (Minecraft)",
     class: "junior",
@@ -34839,6 +35195,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0090",
     cat: "PESSOA",
     a: "Chaves",
     os: 1,
@@ -34866,6 +35223,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0091",
     cat: "PESSOA",
     a: "Chacrinha",
     class: "oldschool",
@@ -34893,6 +35251,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0092",
     cat: "PESSOA",
     a: "Silvio Santos",
     class: "oldschool",
@@ -34920,6 +35279,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0093",
     cat: "PESSOA",
     a: "Hebe Camargo",
     class: "oldschool",
@@ -34947,6 +35307,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0094",
     cat: "PESSOA",
     a: "Elis Regina",
     class: "oldschool",
@@ -34974,6 +35335,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0095",
     cat: "PESSOA",
     a: "Tom Jobim",
     class: "oldschool",
@@ -35001,6 +35363,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0096",
     cat: "PESSOA",
     a: "Raul Seixas",
     class: "oldschool",
@@ -35028,6 +35391,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0097",
     cat: "PESSOA",
     a: "Cazuza",
     class: "oldschool",
@@ -35055,6 +35419,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0098",
     cat: "PESSOA",
     a: "Carmen Miranda",
     class: "oldschool",
@@ -35082,6 +35447,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0099",
     cat: "PESSOA",
     a: "Santos Dumont",
     class: "oldschool",
@@ -35109,6 +35475,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0100",
     cat: "PESSOA",
     a: "Tiradentes",
     class: "oldschool",
@@ -35136,6 +35503,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0101",
     cat: "PESSOA",
     a: "Dom Pedro II",
     class: "oldschool",
@@ -35163,6 +35531,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0102",
     cat: "PESSOA",
     a: "Renato Aragão",
     class: "oldschool",
@@ -35190,6 +35559,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0103",
     cat: "PESSOA",
     a: "Mula sem cabeça",
     class: "oldschool",
@@ -35217,6 +35587,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0104",
     cat: "PESSOA",
     a: "Lula",
     class: "oldschool",
@@ -35244,6 +35615,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0105",
     cat: "PESSOA",
     a: "Jair Bolsonaro",
     class: "oldschool",
@@ -35271,6 +35643,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0106",
     cat: "PESSOA",
     a: "Fernandinho Beira-Mar",
     class: "oldschool",
@@ -35298,6 +35671,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0107",
     cat: "PESSOA",
     a: "Mamonas Assassinas",
     class: "oldschool",
@@ -35325,6 +35699,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0108",
     cat: "PESSOA",
     a: "Os Trapalhões",
     class: "oldschool",
@@ -35352,6 +35727,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0109",
     cat: "PESSOA",
     a: "Looney Tunes",
     class: "oldschool",
@@ -35379,6 +35755,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0110",
     cat: "PESSOA",
     a: "Cuca",
     class: "oldschool",
@@ -35406,6 +35783,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0111",
     cat: "PESSOA",
     a: "Scooby-Doo",
     class: "livre",
@@ -35434,6 +35812,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0112",
     cat: "PESSOA",
     a: "Robin",
     class: "livre",
@@ -35461,6 +35840,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0113",
     cat: "PESSOA",
     a: "Jimmy Neutron",
     class: "livre",
@@ -35488,6 +35868,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0114",
     cat: "PESSOA",
     a: "Danny Phantom",
     class: "livre",
@@ -35515,6 +35896,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0115",
     cat: "PESSOA",
     a: "Super Choque",
     class: "livre",
@@ -35542,6 +35924,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0116",
     cat: "PESSOA",
     a: "Jovens Titãs",
     class: "livre",
@@ -35569,6 +35952,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0117",
     cat: "PESSOA",
     a: "Severus Snape",
     q: [
@@ -35595,6 +35979,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0118",
     cat: "PESSOA",
     a: "Finn",
     class: "livre",
@@ -35622,6 +36007,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0119",
     cat: "PESSOA",
     a: "Jake",
     class: "livre",
@@ -35649,6 +36035,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0120",
     cat: "PESSOA",
     a: "Marceline",
     q: [
@@ -35675,6 +36062,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0121",
     cat: "PESSOA",
     a: "Princesa Jujuba",
     class: "livre",
@@ -35702,6 +36090,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0122",
     cat: "PESSOA",
     a: "Meninas Superpoderosas",
     class: "livre",
@@ -35729,6 +36118,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0123",
     cat: "PESSOA",
     a: "Samurai Jack",
     class: "livre",
@@ -35756,6 +36146,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0124",
     cat: "PESSOA",
     a: "Tartarugas Ninja",
     class: "livre",
@@ -35783,6 +36174,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0125",
     cat: "PESSOA",
     a: "Pato Donald",
     class: "livre",
@@ -35811,6 +36203,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0126",
     cat: "PESSOA",
     a: "Pateta",
     class: "livre",
@@ -35839,6 +36232,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0127",
     cat: "PESSOA",
     a: "Jean Grey",
     q: [
@@ -35865,6 +36259,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0128",
     cat: "PESSOA",
     a: "Ciclope",
     q: [
@@ -35891,6 +36286,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0129",
     cat: "PESSOA",
     a: "Professor Xavier",
     q: [
@@ -35917,6 +36313,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0130",
     cat: "PESSOA",
     a: "Magneto",
     q: [
@@ -35943,6 +36340,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0131",
     cat: "PESSOA",
     a: "Gandalf",
     q: [
@@ -35969,6 +36367,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0132",
     cat: "PESSOA",
     a: "Mestre dos Magos",
     os: 1,
@@ -35996,6 +36395,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0133",
     cat: "PESSOA",
     a: "Capitão Nemo",
     os: 1,
@@ -36023,6 +36423,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0134",
     cat: "PESSOA",
     a: "Júlio Verne",
     os: 1,
@@ -36050,6 +36451,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0135",
     cat: "PESSOA",
     a: "Pequeno Príncipe",
     class: "livre",
@@ -36078,6 +36480,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0136",
     cat: "PESSOA",
     a: "Dora Aventureira",
     class: "livre",
@@ -36105,6 +36508,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0137",
     cat: "PESSOA",
     a: "Raposo",
     class: "livre",
@@ -36132,6 +36536,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0138",
     cat: "PESSOA",
     a: "Padrinhos Mágicos",
     class: "livre",
@@ -36159,6 +36564,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0139",
     cat: "PESSOA",
     a: "Mistério S.A.",
     class: "livre",
@@ -36187,6 +36593,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0140",
     cat: "PESSOA",
     a: "Os Flintstones",
     class: "livre",
@@ -36215,6 +36622,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0141",
     cat: "PESSOA",
     a: "Os Jetsons",
     class: "livre",
@@ -36243,6 +36651,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0142",
     cat: "PESSOA",
     a: "Pantera Cor-de-Rosa",
     class: "livre",
@@ -36271,6 +36680,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0143",
     cat: "PESSOA",
     a: "O Máscara",
     os: 1,
@@ -36298,6 +36708,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0144",
     cat: "PESSOA",
     a: "Penadinho",
     class: "livre",
@@ -36325,6 +36736,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0145",
     cat: "PESSOA",
     a: "Gasparzinho",
     class: "livre",
@@ -36353,6 +36765,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0146",
     cat: "PESSOA",
     a: "Pica-Pau",
     class: "livre",
@@ -36381,6 +36794,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0147",
     cat: "PESSOA",
     a: "Leôncio",
     class: "livre",
@@ -36409,6 +36823,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0148",
     cat: "PESSOA",
     a: "Zeca Urubu",
     class: "livre",
@@ -36437,6 +36852,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0149",
     cat: "PESSOA",
     a: "Zé Carioca",
     class: "livre",
@@ -36465,6 +36881,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0150",
     cat: "PESSOA",
     a: "Tio Patinhas",
     class: "livre",
@@ -36493,6 +36910,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0151",
     cat: "PESSOA",
     a: "Gaguinho",
     class: "livre",
@@ -36521,6 +36939,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0152",
     cat: "PESSOA",
     a: "Olívia Palito",
     class: "livre",
@@ -36549,6 +36968,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0153",
     cat: "PESSOA",
     a: "Brutus",
     class: "livre",
@@ -36577,6 +36997,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0154",
     cat: "PESSOA",
     a: "Irmãos Metralha",
     class: "livre",
@@ -36605,6 +37026,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0155",
     cat: "PESSOA",
     a: "Pinguins de Madagascar",
     class: "livre",
@@ -36632,6 +37054,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0156",
     cat: "PESSOA",
     a: "Malévola",
     class: "livre",
@@ -36659,6 +37082,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0157",
     cat: "PESSOA",
     a: "Medusa",
     q: [
@@ -36685,6 +37109,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0158",
     cat: "PESSOA",
     a: "Quasímodo",
     class: "livre",
@@ -36712,6 +37137,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0159",
     cat: "PESSOA",
     a: "João e o Pé de Feijão",
     class: "livre",
@@ -36739,6 +37165,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0160",
     cat: "PESSOA",
     a: "Irmãos Grimm",
     class: "livre",
@@ -36767,6 +37194,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0161",
     cat: "PESSOA",
     a: "Mauricio de Sousa",
     class: "livre",
@@ -36795,6 +37223,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0162",
     cat: "PESSOA",
     a: "Monteiro Lobato",
     class: "livre",
@@ -36823,6 +37252,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0163",
     cat: "PESSOA",
     a: "Princesa Kaguya",
     q: [
@@ -36849,6 +37279,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0164",
     cat: "PESSOA",
     a: "Caça-Fantasmas",
     os: 1,
@@ -36876,6 +37307,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0165",
     cat: "PESSOA",
     a: "Rita Lee",
     os: 1,
@@ -36903,6 +37335,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0166",
     cat: "PESSOA",
     a: "Sandy & Junior",
     os: 1,
@@ -36930,6 +37363,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0167",
     cat: "PESSOA",
     a: "Zé Ramalho",
     class: "oldschool",
@@ -36957,6 +37391,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0168",
     cat: "PESSOA",
     a: "Chico Buarque",
     os: 1,
@@ -36984,6 +37419,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0169",
     cat: "PESSOA",
     a: "Beatles",
     os: 1,
@@ -37011,6 +37447,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0170",
     cat: "PESSOA",
     a: "Rolling Stones",
     class: "oldschool",
@@ -37038,6 +37475,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0171",
     cat: "PESSOA",
     a: "Ramones",
     class: "oldschool",
@@ -37065,6 +37503,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0172",
     cat: "PESSOA",
     a: "Turma do Balão Mágico",
     class: "oldschool",
@@ -37092,6 +37531,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0173",
     cat: "PESSOA",
     a: "Justin Bieber",
     q: [
@@ -37118,6 +37558,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0174",
     cat: "PESSOA",
     a: "Ariana Grande",
     q: [
@@ -37144,6 +37585,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0175",
     cat: "PESSOA",
     a: "Billie Eilish",
     q: [
@@ -37170,6 +37612,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0176",
     cat: "PESSOA",
     a: "Salvador Dalí",
     os: 1,
@@ -37197,6 +37640,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0177",
     cat: "PESSOA",
     a: "Jack, o Estripador",
     os: 1,
@@ -37224,6 +37668,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0178",
     cat: "PESSOA",
     a: "Genghis Khan",
     os: 1,
@@ -37251,6 +37696,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0179",
     cat: "PESSOA",
     a: "Átila, o Huno",
     os: 1,
@@ -37278,6 +37724,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0180",
     cat: "PESSOA",
     a: "Adolf Hitler",
     os: 1,
@@ -37305,6 +37752,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0181",
     cat: "PESSOA",
     a: "Rimuru Tempest",
     q: [
@@ -37331,6 +37779,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0182",
     cat: "PESSOA",
     a: "Jörmungandr",
     q: [
@@ -37357,6 +37806,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0183",
     cat: "PESSOA",
     a: "Yamata no Orochi",
     class: "hardcore",
@@ -37384,6 +37834,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0184",
     cat: "PESSOA",
     a: "Guilherme Briggs",
     class: "oldschool",
@@ -37412,6 +37863,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0185",
     cat: "PESSOA",
     a: "Isaac Bardavid",
     class: "oldschool",
@@ -37440,6 +37892,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0186",
     cat: "PESSOA",
     a: "Úrsula Bezerra",
     class: "oldschool",
@@ -37468,6 +37921,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0187",
     cat: "PESSOA",
     a: "Wendel Bezerra",
     class: "oldschool",
@@ -37496,6 +37950,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0188",
     cat: "PESSOA",
     a: "Tatiane Keplmair",
     class: "oldschool",
@@ -37524,6 +37979,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0189",
     cat: "PESSOA",
     a: "Bianca Alencar",
     class: "oldschool",
@@ -37552,6 +38008,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0190",
     cat: "PESSOA",
     a: "Mauro Ramos",
     class: "oldschool",
@@ -37580,6 +38037,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0191",
     cat: "PESSOA",
     a: "Manolo Rey",
     class: "oldschool",
@@ -37608,6 +38066,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0192",
     cat: "PESSOA",
     a: "Peppa Pig",
     class: "junior",
@@ -37635,6 +38094,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0193",
     cat: "PESSOA",
     a: "Bluey",
     class: "junior",
@@ -37662,6 +38122,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0194",
     cat: "PESSOA",
     a: "Rapunzel",
     class: "junior",
@@ -37689,6 +38150,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0195",
     cat: "PESSOA",
     a: "Mulan",
     class: "junior",
@@ -37716,6 +38178,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0196",
     cat: "PESSOA",
     a: "Simba",
     class: "junior",
@@ -37743,6 +38206,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0197",
     cat: "PESSOA",
     a: "Popeye",
     class: "livre",
@@ -37770,6 +38234,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0198",
     cat: "PESSOA",
     a: "Garfield",
     class: "livre",
@@ -37797,6 +38262,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0199",
     cat: "PESSOA",
     a: "Charlie Brown",
     class: "livre",
@@ -37824,6 +38290,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "PESSOA-0200",
     cat: "PESSOA",
     a: "Ash Ketchum",
     class: "livre",
@@ -37851,6 +38318,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0001",
     cat: "LUGAR",
     a: "Cristo Redentor",
     class: "livre",
@@ -37879,6 +38347,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0002",
     cat: "LUGAR",
     a: "Torre Eiffel",
     class: "livre",
@@ -37907,6 +38376,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0003",
     cat: "LUGAR",
     a: "Muralha da China",
     class: "livre",
@@ -37935,6 +38405,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0004",
     cat: "LUGAR",
     a: "Estátua da Liberdade",
     class: "livre",
@@ -37963,6 +38434,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0005",
     cat: "LUGAR",
     a: "Taj Mahal",
     os: 1,
@@ -37990,6 +38462,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0006",
     cat: "LUGAR",
     a: "Monte Everest",
     class: "livre",
@@ -38017,6 +38490,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0007",
     cat: "LUGAR",
     a: "Floresta Amazônica",
     class: "livre",
@@ -38044,6 +38518,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0008",
     cat: "LUGAR",
     a: "Rio de Janeiro",
     class: "livre",
@@ -38071,6 +38546,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0009",
     cat: "LUGAR",
     a: "Nova York",
     class: "livre",
@@ -38098,6 +38574,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0010",
     cat: "LUGAR",
     a: "Paris",
     class: "livre",
@@ -38125,6 +38602,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0011",
     cat: "LUGAR",
     a: "Veneza",
     os: 1,
@@ -38152,6 +38630,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0012",
     cat: "LUGAR",
     a: "Disney World",
     class: "livre",
@@ -38179,6 +38658,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0013",
     cat: "LUGAR",
     a: "Ilha de Páscoa",
     os: 1,
@@ -38206,6 +38686,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0014",
     cat: "LUGAR",
     a: "Grand Canyon",
     q: [
@@ -38232,6 +38713,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0015",
     cat: "LUGAR",
     a: "Tóquio",
     q: [
@@ -38258,6 +38740,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0016",
     cat: "LUGAR",
     a: "Hogwarts",
     class: "livre",
@@ -38285,6 +38768,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0017",
     cat: "LUGAR",
     a: "Nárnia",
     q: [
@@ -38311,6 +38795,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0018",
     cat: "LUGAR",
     a: "Egito",
     class: "livre",
@@ -38338,6 +38823,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0019",
     cat: "LUGAR",
     a: "Roma",
     os: 1,
@@ -38365,6 +38851,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0020",
     cat: "LUGAR",
     a: "Gotham City",
     q: [
@@ -38391,6 +38878,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0021",
     cat: "LUGAR",
     a: "Mordor",
     q: [
@@ -38417,6 +38905,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0022",
     cat: "LUGAR",
     a: "Wakanda",
     q: [
@@ -38443,6 +38932,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0023",
     cat: "LUGAR",
     a: "Atlântida",
     q: [
@@ -38469,6 +38959,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0024",
     cat: "LUGAR",
     a: "Las Vegas",
     os: 1,
@@ -38496,6 +38987,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0025",
     cat: "LUGAR",
     a: "Polo Norte",
     class: "livre",
@@ -38523,6 +39015,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0026",
     cat: "LUGAR",
     a: "Coliseu",
     os: 1,
@@ -38550,6 +39043,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0027",
     cat: "LUGAR",
     a: "Machu Picchu",
     os: 1,
@@ -38577,6 +39071,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0028",
     cat: "LUGAR",
     a: "Pirâmides de Gizé",
     class: "livre",
@@ -38605,6 +39100,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0029",
     cat: "LUGAR",
     a: "Big Ben",
     class: "livre",
@@ -38632,6 +39128,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0030",
     cat: "LUGAR",
     a: "Chernobyl",
     os: 1,
@@ -38659,6 +39156,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0031",
     cat: "LUGAR",
     a: "Deserto do Saara",
     class: "livre",
@@ -38686,6 +39184,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0032",
     cat: "LUGAR",
     a: "Antártida",
     class: "livre",
@@ -38713,6 +39212,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0033",
     cat: "LUGAR",
     a: "Vaticano",
     os: 1,
@@ -38740,6 +39240,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0034",
     cat: "LUGAR",
     a: "Salvador",
     os: 1,
@@ -38767,6 +39268,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0035",
     cat: "LUGAR",
     a: "Amsterdã",
     q: [
@@ -38793,6 +39295,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0036",
     cat: "LUGAR",
     a: "Dubai",
     q: [
@@ -38819,6 +39322,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0037",
     cat: "LUGAR",
     a: "Sydney",
     q: [
@@ -38845,6 +39349,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0038",
     cat: "LUGAR",
     a: "Groenlândia",
     q: [
@@ -38871,6 +39376,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0039",
     cat: "LUGAR",
     a: "Monte Fuji",
     q: [
@@ -38897,6 +39403,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0040",
     cat: "LUGAR",
     a: "Grande Barreira de Corais",
     class: "livre",
@@ -38924,6 +39431,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0041",
     cat: "LUGAR",
     a: "Berlim",
     q: [
@@ -38950,6 +39458,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0042",
     cat: "LUGAR",
     a: "Havaí",
     q: [
@@ -38976,6 +39485,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0043",
     cat: "LUGAR",
     a: "Bali",
     q: [
@@ -39002,6 +39512,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0044",
     cat: "LUGAR",
     a: "Área 51",
     os: 1,
@@ -39029,6 +39540,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0045",
     cat: "LUGAR",
     a: "Chichen Itzá",
     os: 1,
@@ -39056,6 +39568,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0046",
     cat: "LUGAR",
     a: "Cataratas do Iguaçu",
     class: "livre",
@@ -39084,6 +39597,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0047",
     cat: "LUGAR",
     a: "Mar Vermelho",
     q: [
@@ -39110,6 +39624,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0048",
     cat: "LUGAR",
     a: "Terra do Nunca",
     class: "livre",
@@ -39137,6 +39652,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0049",
     cat: "LUGAR",
     a: "Disneylândia",
     q: [
@@ -39163,6 +39679,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0050",
     cat: "LUGAR",
     a: "Campinas",
     q: [
@@ -39189,6 +39706,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0051",
     cat: "LUGAR",
     a: "Stonehenge",
     os: 1,
@@ -39216,6 +39734,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0052",
     cat: "LUGAR",
     a: "Petra",
     os: 1,
@@ -39243,6 +39762,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0053",
     cat: "LUGAR",
     a: "Ilhas Galápagos",
     q: [
@@ -39269,6 +39789,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0054",
     cat: "LUGAR",
     a: "Yellowstone",
     q: [
@@ -39295,6 +39816,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0055",
     cat: "LUGAR",
     a: "Cataratas do Niágara",
     class: "junior",
@@ -39322,6 +39844,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0056",
     cat: "LUGAR",
     a: "Fernando de Noronha",
     class: "junior",
@@ -39350,6 +39873,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0057",
     cat: "LUGAR",
     a: "Porto Seguro",
     class: "junior",
@@ -39377,6 +39901,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0058",
     cat: "LUGAR",
     a: "São Paulo",
     class: "junior",
@@ -39404,6 +39929,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0059",
     cat: "LUGAR",
     a: "Praia",
     class: "junior",
@@ -39431,6 +39957,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0060",
     cat: "LUGAR",
     a: "Cachoeira",
     class: "junior",
@@ -39458,6 +39985,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0061",
     cat: "LUGAR",
     a: "Museu",
     class: "junior",
@@ -39485,6 +40013,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0062",
     cat: "LUGAR",
     a: "Circo",
     class: "junior",
@@ -39512,6 +40041,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0063",
     cat: "LUGAR",
     a: "McDonald's",
     class: "junior",
@@ -39539,6 +40069,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0064",
     cat: "LUGAR",
     a: "Escola",
     class: "junior",
@@ -39566,6 +40097,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0065",
     cat: "LUGAR",
     a: "Padaria",
     class: "junior",
@@ -39593,6 +40125,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0066",
     cat: "LUGAR",
     a: "Farmácia",
     class: "junior",
@@ -39620,6 +40153,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0067",
     cat: "LUGAR",
     a: "Hospital",
     class: "junior",
@@ -39647,6 +40181,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0068",
     cat: "LUGAR",
     a: "Sorveteria",
     class: "junior",
@@ -39674,6 +40209,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0069",
     cat: "LUGAR",
     a: "Pizzaria",
     class: "junior",
@@ -39701,6 +40237,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0070",
     cat: "LUGAR",
     a: "Itália",
     class: "junior",
@@ -39728,6 +40265,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0071",
     cat: "LUGAR",
     a: "Beto Carrero World",
     class: "junior",
@@ -39756,6 +40294,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0072",
     cat: "LUGAR",
     a: "Vulcão",
     class: "junior",
@@ -39783,6 +40322,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0073",
     cat: "LUGAR",
     a: "Supermercado",
     class: "junior",
@@ -39810,6 +40350,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0074",
     cat: "LUGAR",
     a: "Japão",
     class: "junior",
@@ -39837,6 +40378,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0075",
     cat: "LUGAR",
     a: "China",
     class: "junior",
@@ -39864,6 +40406,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0076",
     cat: "LUGAR",
     a: "Estados Unidos",
     class: "junior",
@@ -39891,6 +40434,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0077",
     cat: "LUGAR",
     a: "Maracanã",
     class: "junior",
@@ -39919,6 +40463,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0078",
     cat: "LUGAR",
     a: "Aquário",
     class: "junior",
@@ -39946,6 +40491,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0079",
     cat: "LUGAR",
     a: "Shopping",
     class: "junior",
@@ -39973,6 +40519,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0080",
     cat: "LUGAR",
     a: "Ilha de Madagascar",
     class: "junior",
@@ -40000,6 +40547,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0081",
     cat: "LUGAR",
     a: "Sítio do Picapau Amarelo",
     class: "junior",
@@ -40028,6 +40576,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0082",
     cat: "LUGAR",
     a: "Batcaverna",
     class: "junior",
@@ -40055,6 +40604,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0083",
     cat: "LUGAR",
     a: "Sol",
     class: "junior",
@@ -40082,6 +40632,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0084",
     cat: "LUGAR",
     a: "Lua",
     class: "junior",
@@ -40109,6 +40660,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0085",
     cat: "LUGAR",
     a: "Torre de Pisa",
     os: 1,
@@ -40136,6 +40688,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0086",
     cat: "LUGAR",
     a: "Brasília",
     class: "oldschool",
@@ -40163,6 +40716,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0087",
     cat: "LUGAR",
     a: "Pantanal",
     class: "oldschool",
@@ -40190,6 +40744,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0088",
     cat: "LUGAR",
     a: "Lençóis Maranhenses",
     class: "oldschool",
@@ -40217,6 +40772,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0089",
     cat: "LUGAR",
     a: "Ouro Preto",
     class: "oldschool",
@@ -40244,6 +40800,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0090",
     cat: "LUGAR",
     a: "Pelourinho",
     class: "oldschool",
@@ -40271,6 +40828,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0091",
     cat: "LUGAR",
     a: "Copacabana",
     class: "oldschool",
@@ -40298,6 +40856,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0092",
     cat: "LUGAR",
     a: "Chapada Diamantina",
     class: "oldschool",
@@ -40325,6 +40884,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0093",
     cat: "LUGAR",
     a: "Avenida Paulista",
     class: "oldschool",
@@ -40352,6 +40912,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0094",
     cat: "LUGAR",
     a: "Santuário de Aparecida",
     class: "oldschool",
@@ -40379,6 +40940,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0095",
     cat: "LUGAR",
     a: "Serra Pelada",
     class: "oldschool",
@@ -40406,6 +40968,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0096",
     cat: "LUGAR",
     a: "Bonito",
     class: "oldschool",
@@ -40433,6 +40996,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0097",
     cat: "LUGAR",
     a: "Gramado",
     class: "oldschool",
@@ -40460,6 +41024,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0098",
     cat: "LUGAR",
     a: "Alcatraz",
     class: "oldschool",
@@ -40487,6 +41052,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0099",
     cat: "LUGAR",
     a: "Palácio Anchieta",
     class: "oldschool",
@@ -40514,6 +41080,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0100",
     cat: "LUGAR",
     a: "Torre de Babel",
     class: "oldschool",
@@ -40541,6 +41108,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0101",
     cat: "LUGAR",
     a: "Muralhas de Jericó",
     class: "oldschool",
@@ -40568,6 +41136,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0102",
     cat: "LUGAR",
     a: "Jardins Suspensos da Babilônia",
     class: "oldschool",
@@ -40595,6 +41164,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0103",
     cat: "LUGAR",
     a: "Biblioteca de Alexandria",
     class: "oldschool",
@@ -40622,6 +41192,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0104",
     cat: "LUGAR",
     a: "Teatro Amazonas",
     class: "oldschool",
@@ -40649,6 +41220,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0105",
     cat: "LUGAR",
     a: "Elevador Lacerda",
     class: "oldschool",
@@ -40676,6 +41248,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0106",
     cat: "LUGAR",
     a: "Playcenter",
     class: "oldschool",
@@ -40703,6 +41276,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0107",
     cat: "LUGAR",
     a: "Estádio do Pacaembu",
     class: "oldschool",
@@ -40730,6 +41304,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0108",
     cat: "LUGAR",
     a: "Mercado Municipal de São Paulo",
     class: "oldschool",
@@ -40757,6 +41332,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0109",
     cat: "LUGAR",
     a: "Ilha Fiscal",
     class: "oldschool",
@@ -40784,6 +41360,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0110",
     cat: "LUGAR",
     a: "Parque da Mônica",
     class: "oldschool",
@@ -40811,6 +41388,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0111",
     cat: "LUGAR",
     a: "Krypton",
     class: "livre",
@@ -40838,6 +41416,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0112",
     cat: "LUGAR",
     a: "Oa",
     class: "hardcore",
@@ -40865,6 +41444,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0113",
     cat: "LUGAR",
     a: "Tempest",
     class: "hardcore",
@@ -40892,6 +41472,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0114",
     cat: "LUGAR",
     a: "Convento da Penha",
     class: "oldschool",
@@ -40920,6 +41501,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0115",
     cat: "LUGAR",
     a: "Morro da Urca",
     os: 1,
@@ -40947,6 +41529,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0116",
     cat: "LUGAR",
     a: "Arena Castelão",
     q: [
@@ -40973,6 +41556,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0117",
     cat: "LUGAR",
     a: "Terceira Ponte",
     class: "oldschool",
@@ -41001,6 +41585,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0118",
     cat: "LUGAR",
     a: "Ponte Rio-Niterói",
     os: 1,
@@ -41028,6 +41613,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0119",
     cat: "LUGAR",
     a: "Ponte Golden Gate",
     q: [
@@ -41054,6 +41640,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0120",
     cat: "LUGAR",
     a: "Tower Bridge",
     q: [
@@ -41080,6 +41667,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0121",
     cat: "LUGAR",
     a: "Catedral de Notre-Dame",
     os: 1,
@@ -41107,6 +41695,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0122",
     cat: "LUGAR",
     a: "Shibuya",
     q: [
@@ -41133,6 +41722,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0123",
     cat: "LUGAR",
     a: "Salão Oval",
     q: [
@@ -41159,6 +41749,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0124",
     cat: "LUGAR",
     a: "Miami",
     q: [
@@ -41185,6 +41776,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0125",
     cat: "LUGAR",
     a: "Ciudad del Este",
     os: 1,
@@ -41212,6 +41804,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0126",
     cat: "LUGAR",
     a: "Marco das Três Fronteiras",
     q: [
@@ -41238,6 +41831,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0127",
     cat: "LUGAR",
     a: "Baía de Guanabara",
     os: 1,
@@ -41265,6 +41859,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0128",
     cat: "LUGAR",
     a: "Parque Ibirapuera",
     q: [
@@ -41291,6 +41886,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0129",
     cat: "LUGAR",
     a: "Central Park",
     q: [
@@ -41317,6 +41913,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0130",
     cat: "LUGAR",
     a: "Parque Moscoso",
     class: "oldschool",
@@ -41345,6 +41942,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0131",
     cat: "LUGAR",
     a: "Parque Pedra da Cebola",
     class: "oldschool",
@@ -41373,6 +41971,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0132",
     cat: "LUGAR",
     a: "Rua da Lama",
     class: "oldschool",
@@ -41401,6 +42000,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0133",
     cat: "LUGAR",
     a: "Gruta da Onça",
     class: "oldschool",
@@ -41429,6 +42029,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0134",
     cat: "LUGAR",
     a: "Fucape",
     class: "oldschool",
@@ -41457,6 +42058,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0135",
     cat: "LUGAR",
     a: "UFES",
     class: "oldschool",
@@ -41485,6 +42087,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0136",
     cat: "LUGAR",
     a: "UFRJ",
     os: 1,
@@ -41512,6 +42115,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0137",
     cat: "LUGAR",
     a: "Herbert Richers",
     os: 1,
@@ -41539,6 +42143,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0138",
     cat: "LUGAR",
     a: "Zoológico",
     class: "junior",
@@ -41566,6 +42171,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0139",
     cat: "LUGAR",
     a: "Parque de diversões",
     class: "junior",
@@ -41593,6 +42199,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0140",
     cat: "LUGAR",
     a: "Biblioteca",
     class: "junior",
@@ -41620,6 +42227,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0141",
     cat: "LUGAR",
     a: "Fazenda",
     class: "junior",
@@ -41647,6 +42255,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0142",
     cat: "LUGAR",
     a: "Castelo",
     class: "junior",
@@ -41674,6 +42283,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0143",
     cat: "LUGAR",
     a: "Floresta",
     class: "junior",
@@ -41701,6 +42311,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0144",
     cat: "LUGAR",
     a: "Deserto",
     class: "junior",
@@ -41728,6 +42339,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0145",
     cat: "LUGAR",
     a: "Ilha",
     class: "junior",
@@ -41755,6 +42367,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0146",
     cat: "LUGAR",
     a: "Montanha",
     class: "junior",
@@ -41782,6 +42395,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0147",
     cat: "LUGAR",
     a: "Cinema",
     class: "junior",
@@ -41809,6 +42423,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0148",
     cat: "LUGAR",
     a: "Aeroporto",
     class: "junior",
@@ -41836,6 +42451,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0149",
     cat: "LUGAR",
     a: "Piscina",
     class: "junior",
@@ -41863,6 +42479,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0150",
     cat: "LUGAR",
     a: "Marte",
     class: "junior",
@@ -41890,6 +42507,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0151",
     cat: "LUGAR",
     a: "Quartel de bombeiros",
     class: "junior",
@@ -41917,6 +42535,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0152",
     cat: "LUGAR",
     a: "Londres",
     class: "livre",
@@ -41944,6 +42563,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0153",
     cat: "LUGAR",
     a: "Austrália",
     class: "livre",
@@ -41971,6 +42591,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0154",
     cat: "LUGAR",
     a: "Canadá",
     class: "livre",
@@ -41998,6 +42619,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0155",
     cat: "LUGAR",
     a: "México",
     class: "livre",
@@ -42025,6 +42647,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0156",
     cat: "LUGAR",
     a: "Argentina",
     class: "livre",
@@ -42052,6 +42675,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0157",
     cat: "LUGAR",
     a: "Portugal",
     class: "livre",
@@ -42079,6 +42703,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0158",
     cat: "LUGAR",
     a: "Índia",
     class: "livre",
@@ -42106,6 +42731,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0159",
     cat: "LUGAR",
     a: "Grécia",
     class: "livre",
@@ -42133,6 +42759,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0160",
     cat: "LUGAR",
     a: "Pão de Açúcar",
     class: "livre",
@@ -42160,6 +42787,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0161",
     cat: "LUGAR",
     a: "Florianópolis",
     class: "livre",
@@ -42187,6 +42815,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0162",
     cat: "LUGAR",
     a: "Saturno",
     class: "livre",
@@ -42214,6 +42843,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0163",
     cat: "LUGAR",
     a: "Monte Olimpo",
     class: "livre",
@@ -42241,6 +42871,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0164",
     cat: "LUGAR",
     a: "Fenda do Biquíni",
     class: "livre",
@@ -42268,6 +42899,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0165",
     cat: "LUGAR",
     a: "Springfield",
     class: "livre",
@@ -42295,6 +42927,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0166",
     cat: "LUGAR",
     a: "Reino Tão Tão Distante",
     class: "livre",
@@ -42322,6 +42955,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0167",
     cat: "LUGAR",
     a: "Mineirão",
     class: "oldschool",
@@ -42349,6 +42983,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0168",
     cat: "LUGAR",
     a: "Morumbi",
     class: "oldschool",
@@ -42376,6 +43011,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0169",
     cat: "LUGAR",
     a: "Torre de TV de Brasília",
     class: "oldschool",
@@ -42403,6 +43039,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0170",
     cat: "LUGAR",
     a: "Museu do Ipiranga",
     class: "oldschool",
@@ -42430,6 +43067,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0171",
     cat: "LUGAR",
     a: "Theatro Municipal do Rio de Janeiro",
     class: "oldschool",
@@ -42457,6 +43095,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0172",
     cat: "LUGAR",
     a: "Edifício Copan",
     class: "oldschool",
@@ -42484,6 +43123,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0173",
     cat: "LUGAR",
     a: "Viaduto do Chá",
     class: "oldschool",
@@ -42511,6 +43151,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0174",
     cat: "LUGAR",
     a: "Sambódromo da Marquês de Sapucaí",
     class: "oldschool",
@@ -42538,6 +43179,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0175",
     cat: "LUGAR",
     a: "Jardim Botânico do Rio de Janeiro",
     class: "oldschool",
@@ -42565,6 +43207,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0176",
     cat: "LUGAR",
     a: "Hopi Hari",
     class: "oldschool",
@@ -42592,6 +43235,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0177",
     cat: "LUGAR",
     a: "Mappin",
     class: "oldschool",
@@ -42619,6 +43263,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0178",
     cat: "LUGAR",
     a: "Ilha do Mel",
     class: "oldschool",
@@ -42646,6 +43291,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0179",
     cat: "LUGAR",
     a: "Mercado Ver-o-Peso",
     class: "oldschool",
@@ -42673,6 +43319,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0180",
     cat: "LUGAR",
     a: "Lagoa Rodrigo de Freitas",
     class: "oldschool",
@@ -42700,6 +43347,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0181",
     cat: "LUGAR",
     a: "Istambul",
     q: [
@@ -42726,6 +43374,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0182",
     cat: "LUGAR",
     a: "Moscou",
     q: [
@@ -42752,6 +43401,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0183",
     cat: "LUGAR",
     a: "Barcelona",
     q: [
@@ -42778,6 +43428,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0184",
     cat: "LUGAR",
     a: "Kyoto",
     q: [
@@ -42804,6 +43455,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0185",
     cat: "LUGAR",
     a: "Singapura",
     q: [
@@ -42830,6 +43482,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0186",
     cat: "LUGAR",
     a: "Islândia",
     q: [
@@ -42856,6 +43509,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0187",
     cat: "LUGAR",
     a: "Patagônia",
     q: [
@@ -42882,6 +43536,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0188",
     cat: "LUGAR",
     a: "Cuba",
     q: [
@@ -42908,6 +43563,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0189",
     cat: "LUGAR",
     a: "Jerusalém",
     q: [
@@ -42934,6 +43590,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0190",
     cat: "LUGAR",
     a: "Meca",
     q: [
@@ -42960,6 +43617,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0191",
     cat: "LUGAR",
     a: "Angkor Wat",
     q: [
@@ -42986,6 +43644,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0192",
     cat: "LUGAR",
     a: "Acrópole",
     q: [
@@ -43012,6 +43671,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0193",
     cat: "LUGAR",
     a: "Sagrada Família",
     q: [
@@ -43038,6 +43698,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0194",
     cat: "LUGAR",
     a: "Louvre",
     q: [
@@ -43064,6 +43725,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0195",
     cat: "LUGAR",
     a: "Kremlin",
     q: [
@@ -43090,6 +43752,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0196",
     cat: "LUGAR",
     a: "Monte Rushmore",
     q: [
@@ -43116,6 +43779,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0197",
     cat: "LUGAR",
     a: "Times Square",
     q: [
@@ -43142,6 +43806,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0198",
     cat: "LUGAR",
     a: "Hollywood",
     q: [
@@ -43168,6 +43833,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0199",
     cat: "LUGAR",
     a: "Salar de Uyuni",
     q: [
@@ -43194,6 +43860,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "LUGAR-0200",
     cat: "LUGAR",
     a: "Recife",
     q: [
@@ -43220,6 +43887,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0001",
     cat: "COISA",
     a: "Smartphone",
     class: "livre",
@@ -43247,6 +43915,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0002",
     cat: "COISA",
     a: "Internet",
     os: 1,
@@ -43274,6 +43943,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0003",
     cat: "COISA",
     a: "Bicicleta",
     class: "livre",
@@ -43301,6 +43971,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0004",
     cat: "COISA",
     a: "Avião",
     class: "livre",
@@ -43328,6 +43999,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0005",
     cat: "COISA",
     a: "Televisão",
     class: "livre",
@@ -43356,6 +44028,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0006",
     cat: "COISA",
     a: "Computador",
     class: "livre",
@@ -43383,6 +44056,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0007",
     cat: "COISA",
     a: "Livro",
     class: "livre",
@@ -43410,6 +44084,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0008",
     cat: "COISA",
     a: "Dinheiro",
     class: "livre",
@@ -43438,6 +44113,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0009",
     cat: "COISA",
     a: "Relógio",
     class: "livre",
@@ -43466,6 +44142,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0010",
     cat: "COISA",
     a: "Guarda-chuva",
     class: "livre",
@@ -43493,6 +44170,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0011",
     cat: "COISA",
     a: "Fone de ouvido",
     class: "livre",
@@ -43520,6 +44198,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0012",
     cat: "COISA",
     a: "Controle de videogame",
     class: "livre",
@@ -43547,6 +44226,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0013",
     cat: "COISA",
     a: "Óculos",
     class: "livre",
@@ -43574,6 +44254,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0014",
     cat: "COISA",
     a: "Chave",
     class: "livre",
@@ -43601,6 +44282,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0015",
     cat: "COISA",
     a: "Bola de futebol",
     class: "livre",
@@ -43628,6 +44310,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0016",
     cat: "COISA",
     a: "Violão",
     class: "livre",
@@ -43655,6 +44338,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0017",
     cat: "COISA",
     a: "Saudade",
     os: 1,
@@ -43682,6 +44366,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0018",
     cat: "COISA",
     a: "Medo",
     os: 1,
@@ -43709,6 +44394,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0019",
     cat: "COISA",
     a: "Ciúme",
     os: 1,
@@ -43736,6 +44422,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0020",
     cat: "COISA",
     a: "Sonho",
     os: 1,
@@ -43763,6 +44450,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0021",
     cat: "COISA",
     a: "Memória",
     os: 1,
@@ -43790,6 +44478,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0022",
     cat: "COISA",
     a: "Sorte",
     os: 1,
@@ -43817,6 +44506,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0023",
     cat: "COISA",
     a: "Visão",
     q: [
@@ -43843,6 +44533,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0024",
     cat: "COISA",
     a: "Olfato",
     q: [
@@ -43869,6 +44560,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0025",
     cat: "COISA",
     a: "Lobisomem",
     os: 1,
@@ -43896,6 +44588,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0026",
     cat: "COISA",
     a: "Sereia",
     class: "livre",
@@ -43924,6 +44617,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0027",
     cat: "COISA",
     a: "Xadrez",
     class: "livre",
@@ -43952,6 +44646,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0028",
     cat: "COISA",
     a: "Truco",
     os: 1,
@@ -43979,6 +44674,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0029",
     cat: "COISA",
     a: "Minecraft",
     class: "livre",
@@ -44006,6 +44702,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0030",
     cat: "COISA",
     a: "Pokémon",
     class: "livre",
@@ -44033,6 +44730,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0031",
     cat: "COISA",
     a: "Big Brother Brasil",
     os: 1,
@@ -44060,6 +44758,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0032",
     cat: "COISA",
     a: "Netflix",
     class: "livre",
@@ -44087,6 +44786,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0033",
     cat: "COISA",
     a: "Instagram",
     q: [
@@ -44113,6 +44813,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0034",
     cat: "COISA",
     a: "O Rei Leão",
     class: "livre",
@@ -44140,6 +44841,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0035",
     cat: "COISA",
     a: "Extintor de incêndio",
     os: 1,
@@ -44167,6 +44869,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0036",
     cat: "COISA",
     a: "Excalibur",
     os: 1,
@@ -44194,6 +44897,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0037",
     cat: "COISA",
     a: "Piano",
     class: "livre",
@@ -44222,6 +44926,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0038",
     cat: "COISA",
     a: "Foguete espacial",
     class: "livre",
@@ -44249,6 +44954,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0039",
     cat: "COISA",
     a: "iPhone",
     q: [
@@ -44275,6 +44981,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0040",
     cat: "COISA",
     a: "Bitcoin",
     os: 1,
@@ -44302,6 +45009,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0041",
     cat: "COISA",
     a: "PIX",
     os: 1,
@@ -44329,6 +45037,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0042",
     cat: "COISA",
     a: "CNH",
     os: 1,
@@ -44356,6 +45065,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0043",
     cat: "COISA",
     a: "Omnitrix",
     q: [
@@ -44382,6 +45092,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0044",
     cat: "COISA",
     a: "Cometa",
     class: "livre",
@@ -44409,6 +45120,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0045",
     cat: "COISA",
     a: "Constelações",
     os: 1,
@@ -44436,6 +45148,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0046",
     cat: "COISA",
     a: "Colher",
     class: "junior",
@@ -44463,6 +45176,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0047",
     cat: "COISA",
     a: "Abajur",
     class: "junior",
@@ -44490,6 +45204,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0048",
     cat: "COISA",
     a: "Janela",
     class: "junior",
@@ -44517,6 +45232,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0049",
     cat: "COISA",
     a: "PlayStation",
     class: "junior",
@@ -44544,6 +45260,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0050",
     cat: "COISA",
     a: "Mochila",
     class: "junior",
@@ -44571,6 +45288,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0051",
     cat: "COISA",
     a: "Travesseiro",
     class: "junior",
@@ -44598,6 +45316,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0052",
     cat: "COISA",
     a: "Lancheira",
     class: "junior",
@@ -44625,6 +45344,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0053",
     cat: "COISA",
     a: "Escorregador",
     class: "junior",
@@ -44652,6 +45372,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0054",
     cat: "COISA",
     a: "Táxi",
     class: "junior",
@@ -44679,6 +45400,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0055",
     cat: "COISA",
     a: "Fogueira",
     class: "junior",
@@ -44706,6 +45428,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0056",
     cat: "COISA",
     a: "Escova de dente",
     class: "junior",
@@ -44733,6 +45456,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0057",
     cat: "COISA",
     a: "Sorvete",
     class: "junior",
@@ -44760,6 +45484,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0058",
     cat: "COISA",
     a: "Pipoca",
     class: "junior",
@@ -44787,6 +45512,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0059",
     cat: "COISA",
     a: "Algodão-doce",
     class: "junior",
@@ -44814,6 +45540,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0060",
     cat: "COISA",
     a: "Sanduíche",
     class: "junior",
@@ -44841,6 +45568,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0061",
     cat: "COISA",
     a: "Fogo",
     class: "junior",
@@ -44868,6 +45596,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0062",
     cat: "COISA",
     a: "Gelo",
     class: "junior",
@@ -44895,6 +45624,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0063",
     cat: "COISA",
     a: "Geladeira",
     class: "junior",
@@ -44922,6 +45652,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0064",
     cat: "COISA",
     a: "Aspirador de pó",
     class: "junior",
@@ -44949,6 +45680,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0065",
     cat: "COISA",
     a: "Coração",
     class: "junior",
@@ -44976,6 +45708,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0066",
     cat: "COISA",
     a: "Cérebro",
     class: "junior",
@@ -45003,6 +45736,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0067",
     cat: "COISA",
     a: "Tesoura",
     class: "junior",
@@ -45030,6 +45764,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0068",
     cat: "COISA",
     a: "Vassoura",
     class: "junior",
@@ -45057,6 +45792,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0069",
     cat: "COISA",
     a: "Árvore",
     class: "junior",
@@ -45084,6 +45820,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0070",
     cat: "COISA",
     a: "Fruta",
     class: "junior",
@@ -45111,6 +45848,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0071",
     cat: "COISA",
     a: "Banana",
     class: "junior",
@@ -45138,6 +45876,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0072",
     cat: "COISA",
     a: "Chocolate",
     os: 1,
@@ -45165,6 +45904,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0073",
     cat: "COISA",
     a: "WhatsApp",
     os: 1,
@@ -45192,6 +45932,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0074",
     cat: "COISA",
     a: "Espelho",
     os: 1,
@@ -45219,6 +45960,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0075",
     cat: "COISA",
     a: "Chuva",
     q: [
@@ -45245,6 +45987,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0076",
     cat: "COISA",
     a: "Bicho-papão",
     class: "oldschool",
@@ -45272,6 +46015,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0077",
     cat: "COISA",
     a: "Boi da Cara Preta",
     class: "oldschool",
@@ -45299,6 +46043,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0078",
     cat: "COISA",
     a: "Fita K7",
     class: "oldschool",
@@ -45326,6 +46071,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0079",
     cat: "COISA",
     a: "Tamagotchi",
     class: "oldschool",
@@ -45353,6 +46099,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0080",
     cat: "COISA",
     a: "Walkman",
     class: "oldschool",
@@ -45380,6 +46127,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0081",
     cat: "COISA",
     a: "Pager",
     class: "oldschool",
@@ -45407,6 +46155,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0082",
     cat: "COISA",
     a: "Fliperama",
     class: "oldschool",
@@ -45434,6 +46183,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0083",
     cat: "COISA",
     a: "Tazo",
     class: "oldschool",
@@ -45461,6 +46211,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0084",
     cat: "COISA",
     a: "Mimeógrafo",
     class: "oldschool",
@@ -45488,6 +46239,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0085",
     cat: "COISA",
     a: "Disco de vinil",
     class: "oldschool",
@@ -45515,6 +46267,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0086",
     cat: "COISA",
     a: "Atari",
     class: "oldschool",
@@ -45542,6 +46295,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0087",
     cat: "COISA",
     a: "Orelhão",
     class: "oldschool",
@@ -45569,6 +46323,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0088",
     cat: "COISA",
     a: "Disquete",
     class: "oldschool",
@@ -45596,6 +46351,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0089",
     cat: "COISA",
     a: "IPVA",
     class: "oldschool",
@@ -45623,6 +46379,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0090",
     cat: "COISA",
     a: "FGTS",
     class: "oldschool",
@@ -45650,6 +46407,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0091",
     cat: "COISA",
     a: "Máquina de escrever",
     class: "oldschool",
@@ -45677,6 +46435,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0092",
     cat: "COISA",
     a: "Videocassete",
     class: "oldschool",
@@ -45704,6 +46463,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0093",
     cat: "COISA",
     a: "Enciclopédia Barsa",
     class: "oldschool",
@@ -45731,6 +46491,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0094",
     cat: "COISA",
     a: "Telegrama",
     class: "oldschool",
@@ -45758,6 +46519,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0095",
     cat: "COISA",
     a: "Carnê do Baú",
     class: "oldschool",
@@ -45785,6 +46547,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0096",
     cat: "COISA",
     a: "COVID-19",
     class: "oldschool",
@@ -45812,6 +46575,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0097",
     cat: "COISA",
     a: "Peste negra",
     class: "oldschool",
@@ -45839,6 +46603,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0098",
     cat: "COISA",
     a: "Doença da vaca louca",
     class: "oldschool",
@@ -45866,6 +46631,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0099",
     cat: "COISA",
     a: "Ebola",
     class: "oldschool",
@@ -45893,6 +46659,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0100",
     cat: "COISA",
     a: "Mais Você",
     os: 1,
@@ -45920,6 +46687,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0101",
     cat: "COISA",
     a: "Encontro com Fátima Bernardes",
     class: "oldschool",
@@ -45947,6 +46715,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0102",
     cat: "COISA",
     a: "Jornal Nacional",
     os: 1,
@@ -45974,6 +46743,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0103",
     cat: "COISA",
     a: "Programa do Ratinho",
     class: "oldschool",
@@ -46001,6 +46771,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0104",
     cat: "COISA",
     a: "A Praça é Nossa",
     class: "oldschool",
@@ -46028,6 +46799,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0105",
     cat: "COISA",
     a: "Mjölnir",
     class: "livre",
@@ -46055,6 +46827,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0106",
     cat: "COISA",
     a: "Escudo do Capitão América",
     class: "livre",
@@ -46082,6 +46855,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0107",
     cat: "COISA",
     a: "Tridente de Poseidon",
     class: "livre",
@@ -46109,6 +46883,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0108",
     cat: "COISA",
     a: "Capa da invisibilidade",
     class: "livre",
@@ -46136,6 +46911,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0109",
     cat: "COISA",
     a: "Nautilus",
     q: [
@@ -46162,6 +46938,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0110",
     cat: "COISA",
     a: "Planeta dos Macacos",
     os: 1,
@@ -46189,6 +46966,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0111",
     cat: "COISA",
     a: "Orquestra",
     class: "livre",
@@ -46216,6 +46994,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0112",
     cat: "COISA",
     a: "Dicionário",
     class: "livre",
@@ -46243,6 +47022,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0113",
     cat: "COISA",
     a: "Casablanca",
     class: "oldschool",
@@ -46270,6 +47050,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0114",
     cat: "COISA",
     a: "Hanna-Barbera",
     os: 1,
@@ -46297,6 +47078,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0115",
     cat: "COISA",
     a: "Lagoa Azul",
     class: "oldschool",
@@ -46324,6 +47106,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0116",
     cat: "COISA",
     a: "Sessão da Tarde",
     os: 1,
@@ -46351,6 +47134,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0117",
     cat: "COISA",
     a: "Natal",
     class: "livre",
@@ -46378,6 +47162,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0118",
     cat: "COISA",
     a: "Free Willy",
     os: 1,
@@ -46405,6 +47190,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0119",
     cat: "COISA",
     a: "Bom Dia & Cia",
     os: 1,
@@ -46432,6 +47218,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0120",
     cat: "COISA",
     a: "Café",
     class: "livre",
@@ -46459,6 +47246,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0121",
     cat: "COISA",
     a: "Bússola",
     class: "livre",
@@ -46486,6 +47274,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0122",
     cat: "COISA",
     a: "Semáforo",
     class: "livre",
@@ -46513,6 +47302,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0123",
     cat: "COISA",
     a: "Lápis",
     class: "junior",
@@ -46540,6 +47330,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0124",
     cat: "COISA",
     a: "Pipa",
     class: "junior",
@@ -46567,6 +47358,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0125",
     cat: "COISA",
     a: "Patinete",
     class: "junior",
@@ -46594,6 +47386,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0126",
     cat: "COISA",
     a: "Bexiga",
     class: "junior",
@@ -46621,6 +47414,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0127",
     cat: "COISA",
     a: "Bolo de aniversário",
     class: "junior",
@@ -46648,6 +47442,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0128",
     cat: "COISA",
     a: "Ovo de Páscoa",
     class: "junior",
@@ -46675,6 +47470,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0129",
     cat: "COISA",
     a: "Arco-íris",
     class: "junior",
@@ -46702,6 +47498,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0130",
     cat: "COISA",
     a: "Lego",
     class: "junior",
@@ -46729,6 +47526,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0131",
     cat: "COISA",
     a: "Ursinho de pelúcia",
     class: "junior",
@@ -46756,6 +47554,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0132",
     cat: "COISA",
     a: "Chinelo",
     class: "junior",
@@ -46783,6 +47582,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0133",
     cat: "COISA",
     a: "Giz de cera",
     class: "junior",
@@ -46810,6 +47610,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0134",
     cat: "COISA",
     a: "Castelo de areia",
     class: "junior",
@@ -46837,6 +47638,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0135",
     cat: "COISA",
     a: "Pião",
     class: "junior",
@@ -46864,6 +47666,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0136",
     cat: "COISA",
     a: "Sabonete",
     class: "junior",
@@ -46891,6 +47694,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0137",
     cat: "COISA",
     a: "Brigadeiro",
     class: "junior",
@@ -46918,6 +47722,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0138",
     cat: "COISA",
     a: "Cama elástica",
     class: "junior",
@@ -46945,6 +47750,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0139",
     cat: "COISA",
     a: "Massinha de modelar",
     class: "junior",
@@ -46972,6 +47778,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0140",
     cat: "COISA",
     a: "Bolha de sabão",
     class: "junior",
@@ -46999,6 +47806,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0141",
     cat: "COISA",
     a: "Lâmpada",
     class: "livre",
@@ -47026,6 +47834,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0142",
     cat: "COISA",
     a: "Guitarra",
     class: "livre",
@@ -47053,6 +47862,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0143",
     cat: "COISA",
     a: "Skate",
     class: "livre",
@@ -47080,6 +47890,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0144",
     cat: "COISA",
     a: "Câmera fotográfica",
     class: "livre",
@@ -47107,6 +47918,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0145",
     cat: "COISA",
     a: "Microfone",
     class: "livre",
@@ -47134,6 +47946,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0146",
     cat: "COISA",
     a: "Paraquedas",
     class: "livre",
@@ -47161,6 +47974,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0147",
     cat: "COISA",
     a: "Telescópio",
     class: "livre",
@@ -47188,6 +48002,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0148",
     cat: "COISA",
     a: "Microscópio",
     class: "livre",
@@ -47215,6 +48030,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0149",
     cat: "COISA",
     a: "Ímã",
     class: "livre",
@@ -47242,6 +48058,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0150",
     cat: "COISA",
     a: "Pizza",
     class: "livre",
@@ -47269,6 +48086,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0151",
     cat: "COISA",
     a: "Feijoada",
     class: "livre",
@@ -47296,6 +48114,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0152",
     cat: "COISA",
     a: "Carnaval",
     class: "livre",
@@ -47323,6 +48142,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0153",
     cat: "COISA",
     a: "Cubo mágico",
     class: "livre",
@@ -47350,6 +48170,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0154",
     cat: "COISA",
     a: "Robô",
     class: "livre",
@@ -47377,6 +48198,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0155",
     cat: "COISA",
     a: "Submarino",
     class: "livre",
@@ -47404,6 +48226,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0156",
     cat: "COISA",
     a: "Helicóptero",
     class: "livre",
@@ -47431,6 +48254,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0157",
     cat: "COISA",
     a: "Balão de ar quente",
     class: "livre",
@@ -47458,6 +48282,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0158",
     cat: "COISA",
     a: "Dominó",
     class: "livre",
@@ -47485,6 +48310,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0159",
     cat: "COISA",
     a: "Pão de queijo",
     class: "livre",
@@ -47512,6 +48338,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0160",
     cat: "COISA",
     a: "Arco e flecha",
     class: "livre",
@@ -47539,6 +48366,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0161",
     cat: "COISA",
     a: "Fax",
     class: "oldschool",
@@ -47566,6 +48394,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0162",
     cat: "COISA",
     a: "Discman",
     class: "oldschool",
@@ -47593,6 +48422,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0163",
     cat: "COISA",
     a: "Game Boy",
     class: "oldschool",
@@ -47620,6 +48450,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0164",
     cat: "COISA",
     a: "Polaroid",
     class: "oldschool",
@@ -47647,6 +48478,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0165",
     cat: "COISA",
     a: "Nokia 3310",
     class: "oldschool",
@@ -47674,6 +48506,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0166",
     cat: "COISA",
     a: "Super Nintendo",
     class: "oldschool",
@@ -47701,6 +48534,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0167",
     cat: "COISA",
     a: "Mega Drive",
     class: "oldschool",
@@ -47728,6 +48562,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0168",
     cat: "COISA",
     a: "Bambolê",
     class: "oldschool",
@@ -47755,6 +48590,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0169",
     cat: "COISA",
     a: "Ioiô",
     class: "oldschool",
@@ -47782,6 +48618,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0170",
     cat: "COISA",
     a: "Ficha telefônica",
     class: "oldschool",
@@ -47809,6 +48646,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0171",
     cat: "COISA",
     a: "Lista telefônica",
     class: "oldschool",
@@ -47836,6 +48674,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0172",
     cat: "COISA",
     a: "Kichute",
     class: "oldschool",
@@ -47863,6 +48702,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0173",
     cat: "COISA",
     a: "Fusca",
     class: "oldschool",
@@ -47890,6 +48730,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0174",
     cat: "COISA",
     a: "Banco Imobiliário",
     class: "oldschool",
@@ -47917,6 +48758,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0175",
     cat: "COISA",
     a: "Genius",
     class: "oldschool",
@@ -47944,6 +48786,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0176",
     cat: "COISA",
     a: "Inflação",
     q: [
@@ -47970,6 +48813,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0177",
     cat: "COISA",
     a: "Democracia",
     q: [
@@ -47996,6 +48840,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0178",
     cat: "COISA",
     a: "Imposto de Renda",
     q: [
@@ -48022,6 +48867,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0179",
     cat: "COISA",
     a: "Cartão de crédito",
     q: [
@@ -48048,6 +48894,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0180",
     cat: "COISA",
     a: "Vinho",
     q: [
@@ -48074,6 +48921,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0181",
     cat: "COISA",
     a: "Caipirinha",
     q: [
@@ -48100,6 +48948,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0182",
     cat: "COISA",
     a: "Tatuagem",
     q: [
@@ -48126,6 +48975,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0183",
     cat: "COISA",
     a: "Constituição",
     q: [
@@ -48152,6 +49002,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0184",
     cat: "COISA",
     a: "Ansiedade",
     q: [
@@ -48178,6 +49029,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0185",
     cat: "COISA",
     a: "Nostalgia",
     q: [
@@ -48204,6 +49056,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0186",
     cat: "COISA",
     a: "Felicidade",
     q: [
@@ -48230,6 +49083,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0187",
     cat: "COISA",
     a: "Inveja",
     q: [
@@ -48256,6 +49110,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0188",
     cat: "COISA",
     a: "Gravidade",
     q: [
@@ -48282,6 +49137,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0189",
     cat: "COISA",
     a: "Eclipse",
     q: [
@@ -48308,6 +49164,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0190",
     cat: "COISA",
     a: "Buraco negro",
     q: [
@@ -48334,6 +49191,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0191",
     cat: "COISA",
     a: "Inteligência artificial",
     q: [
@@ -48360,6 +49218,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0192",
     cat: "COISA",
     a: "Wi-Fi",
     q: [
@@ -48386,6 +49245,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0193",
     cat: "COISA",
     a: "Senha",
     q: [
@@ -48412,6 +49272,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0194",
     cat: "COISA",
     a: "Boleto",
     q: [
@@ -48438,6 +49299,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0195",
     cat: "COISA",
     a: "Currículo",
     q: [
@@ -48464,6 +49326,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0196",
     cat: "COISA",
     a: "Aposentadoria",
     q: [
@@ -48490,6 +49353,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0197",
     cat: "COISA",
     a: "Ressaca",
     q: [
@@ -48516,6 +49380,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0198",
     cat: "COISA",
     a: "Fofoca",
     q: [
@@ -48542,6 +49407,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0199",
     cat: "COISA",
     a: "Spoiler",
     q: [
@@ -48568,6 +49434,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "COISA-0200",
     cat: "COISA",
     a: "Meme",
     q: [
@@ -48594,6 +49461,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0001",
     cat: "ANIMAL",
     a: "Cachorro",
     class: "livre",
@@ -48621,6 +49489,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0002",
     cat: "ANIMAL",
     a: "Gato",
     class: "livre",
@@ -48648,6 +49517,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0003",
     cat: "ANIMAL",
     a: "Elefante",
     class: "livre",
@@ -48675,6 +49545,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0004",
     cat: "ANIMAL",
     a: "Golfinho",
     class: "livre",
@@ -48702,6 +49573,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0005",
     cat: "ANIMAL",
     a: "Panda",
     class: "livre",
@@ -48729,6 +49601,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0006",
     cat: "ANIMAL",
     a: "Águia",
     class: "livre",
@@ -48756,6 +49629,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0007",
     cat: "ANIMAL",
     a: "Tubarão",
     class: "livre",
@@ -48783,6 +49657,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0008",
     cat: "ANIMAL",
     a: "Borboleta",
     class: "livre",
@@ -48810,6 +49685,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0009",
     cat: "ANIMAL",
     a: "Polvo",
     class: "livre",
@@ -48837,6 +49713,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0010",
     cat: "ANIMAL",
     a: "Boto",
     class: "livre",
@@ -48864,6 +49741,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0011",
     cat: "ANIMAL",
     a: "Dragão",
     class: "livre",
@@ -48891,6 +49769,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0012",
     cat: "ANIMAL",
     a: "Unicórnio",
     class: "livre",
@@ -48918,6 +49797,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0013",
     cat: "ANIMAL",
     a: "Fênix",
     class: "livre",
@@ -48945,6 +49825,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0014",
     cat: "ANIMAL",
     a: "Leão",
     class: "junior",
@@ -48972,6 +49853,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0015",
     cat: "ANIMAL",
     a: "Tigre",
     class: "junior",
@@ -48999,6 +49881,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0016",
     cat: "ANIMAL",
     a: "Girafa",
     class: "junior",
@@ -49026,6 +49909,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0017",
     cat: "ANIMAL",
     a: "Zebra",
     class: "junior",
@@ -49053,6 +49937,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0018",
     cat: "ANIMAL",
     a: "Macaco",
     class: "junior",
@@ -49080,6 +49965,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0019",
     cat: "ANIMAL",
     a: "Gorila",
     class: "junior",
@@ -49107,6 +49993,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0020",
     cat: "ANIMAL",
     a: "Urso-polar",
     class: "junior",
@@ -49134,6 +50021,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0021",
     cat: "ANIMAL",
     a: "Coala",
     class: "junior",
@@ -49161,6 +50049,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0022",
     cat: "ANIMAL",
     a: "Canguru",
     class: "junior",
@@ -49188,6 +50077,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0023",
     cat: "ANIMAL",
     a: "Pinguim",
     class: "junior",
@@ -49215,6 +50105,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0024",
     cat: "ANIMAL",
     a: "Baleia",
     class: "junior",
@@ -49242,6 +50133,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0025",
     cat: "ANIMAL",
     a: "Tartaruga",
     class: "junior",
@@ -49269,6 +50161,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0026",
     cat: "ANIMAL",
     a: "Jabuti",
     class: "junior",
@@ -49296,6 +50189,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0027",
     cat: "ANIMAL",
     a: "Cavalo",
     class: "junior",
@@ -49323,6 +50217,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0028",
     cat: "ANIMAL",
     a: "Vaca",
     class: "junior",
@@ -49350,6 +50245,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0029",
     cat: "ANIMAL",
     a: "Coruja",
     class: "junior",
@@ -49377,6 +50273,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0030",
     cat: "ANIMAL",
     a: "Arara",
     class: "junior",
@@ -49404,6 +50301,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0031",
     cat: "ANIMAL",
     a: "Abelha",
     class: "junior",
@@ -49431,6 +50329,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0032",
     cat: "ANIMAL",
     a: "Preguiça",
     class: "junior",
@@ -49458,6 +50357,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0033",
     cat: "ANIMAL",
     a: "Capivara",
     class: "junior",
@@ -49485,6 +50385,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0034",
     cat: "ANIMAL",
     a: "Jacaré",
     class: "junior",
@@ -49512,6 +50413,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0035",
     cat: "ANIMAL",
     a: "Porco",
     class: "junior",
@@ -49539,6 +50441,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0036",
     cat: "ANIMAL",
     a: "Papagaio",
     class: "junior",
@@ -49566,6 +50469,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0037",
     cat: "ANIMAL",
     a: "Tucano",
     class: "junior",
@@ -49593,6 +50497,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0038",
     cat: "ANIMAL",
     a: "Beija-flor",
     class: "junior",
@@ -49620,6 +50525,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0039",
     cat: "ANIMAL",
     a: "Formiga",
     class: "junior",
@@ -49647,6 +50553,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0040",
     cat: "ANIMAL",
     a: "Aranha",
     class: "junior",
@@ -49674,6 +50581,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0041",
     cat: "ANIMAL",
     a: "Sapo",
     class: "junior",
@@ -49701,6 +50609,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0042",
     cat: "ANIMAL",
     a: "Camelo",
     class: "junior",
@@ -49728,6 +50637,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0043",
     cat: "ANIMAL",
     a: "Rinoceronte",
     class: "junior",
@@ -49755,6 +50665,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0044",
     cat: "ANIMAL",
     a: "Hipopótamo",
     class: "junior",
@@ -49782,6 +50693,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0045",
     cat: "ANIMAL",
     a: "Raposa",
     class: "junior",
@@ -49809,6 +50721,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0046",
     cat: "ANIMAL",
     a: "Lobo",
     class: "junior",
@@ -49836,6 +50749,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0047",
     cat: "ANIMAL",
     a: "Coelho",
     class: "junior",
@@ -49863,6 +50777,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0048",
     cat: "ANIMAL",
     a: "Esquilo",
     class: "junior",
@@ -49890,6 +50805,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0049",
     cat: "ANIMAL",
     a: "Morcego",
     class: "junior",
@@ -49917,6 +50833,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0050",
     cat: "ANIMAL",
     a: "Onça-pintada",
     class: "junior",
@@ -49944,6 +50861,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0051",
     cat: "ANIMAL",
     a: "Orca",
     class: "junior",
@@ -49971,6 +50889,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0052",
     cat: "ANIMAL",
     a: "Galinha",
     class: "junior",
@@ -49998,6 +50917,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0053",
     cat: "ANIMAL",
     a: "Pato",
     class: "junior",
@@ -50025,6 +50945,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0054",
     cat: "ANIMAL",
     a: "Ovelha",
     class: "junior",
@@ -50052,6 +50973,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0055",
     cat: "ANIMAL",
     a: "Cabra",
     class: "junior",
@@ -50079,6 +51001,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0056",
     cat: "ANIMAL",
     a: "Burro",
     class: "junior",
@@ -50106,6 +51029,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0057",
     cat: "ANIMAL",
     a: "Rato",
     class: "junior",
@@ -50133,6 +51057,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0058",
     cat: "ANIMAL",
     a: "Hamster",
     class: "junior",
@@ -50160,6 +51085,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0059",
     cat: "ANIMAL",
     a: "Peixe-palhaço",
     class: "junior",
@@ -50187,6 +51113,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0060",
     cat: "ANIMAL",
     a: "Cavalo-marinho",
     class: "junior",
@@ -50214,6 +51141,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0061",
     cat: "ANIMAL",
     a: "Estrela-do-mar",
     class: "junior",
@@ -50241,6 +51169,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0062",
     cat: "ANIMAL",
     a: "Caranguejo",
     class: "junior",
@@ -50268,6 +51197,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0063",
     cat: "ANIMAL",
     a: "Joaninha",
     class: "junior",
@@ -50295,6 +51225,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0064",
     cat: "ANIMAL",
     a: "Minhoca",
     class: "junior",
@@ -50322,6 +51253,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0065",
     cat: "ANIMAL",
     a: "Caracol",
     class: "junior",
@@ -50349,6 +51281,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0066",
     cat: "ANIMAL",
     a: "Grilo",
     class: "junior",
@@ -50376,6 +51309,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0067",
     cat: "ANIMAL",
     a: "Vaga-lume",
     class: "junior",
@@ -50403,6 +51337,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0068",
     cat: "ANIMAL",
     a: "Cobra",
     class: "junior",
@@ -50430,6 +51365,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0069",
     cat: "ANIMAL",
     a: "Camaleão",
     class: "junior",
@@ -50457,6 +51393,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0070",
     cat: "ANIMAL",
     a: "Avestruz",
     class: "junior",
@@ -50484,6 +51421,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0071",
     cat: "ANIMAL",
     a: "Flamingo",
     class: "junior",
@@ -50511,6 +51449,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0072",
     cat: "ANIMAL",
     a: "Pavão",
     class: "junior",
@@ -50538,6 +51477,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0073",
     cat: "ANIMAL",
     a: "Cisne",
     class: "junior",
@@ -50565,6 +51505,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0074",
     cat: "ANIMAL",
     a: "Peru",
     class: "junior",
@@ -50592,6 +51533,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0075",
     cat: "ANIMAL",
     a: "Pombo",
     class: "junior",
@@ -50619,6 +51561,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0076",
     cat: "ANIMAL",
     a: "Lhama",
     class: "junior",
@@ -50646,6 +51589,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0077",
     cat: "ANIMAL",
     a: "Tamanduá",
     class: "junior",
@@ -50673,6 +51617,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0078",
     cat: "ANIMAL",
     a: "Tatu",
     class: "junior",
@@ -50700,6 +51645,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0079",
     cat: "ANIMAL",
     a: "Mico-leão-dourado",
     class: "junior",
@@ -50727,6 +51673,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0080",
     cat: "ANIMAL",
     a: "Lontra",
     class: "junior",
@@ -50754,6 +51701,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0081",
     cat: "ANIMAL",
     a: "Castor",
     class: "junior",
@@ -50781,6 +51729,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0082",
     cat: "ANIMAL",
     a: "Ouriço",
     class: "junior",
@@ -50808,6 +51757,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0083",
     cat: "ANIMAL",
     a: "Guaxinim",
     class: "junior",
@@ -50835,6 +51785,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0084",
     cat: "ANIMAL",
     a: "Guepardo",
     class: "junior",
@@ -50862,6 +51813,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0085",
     cat: "ANIMAL",
     a: "Rena",
     class: "junior",
@@ -50889,6 +51841,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0086",
     cat: "ANIMAL",
     a: "Foca",
     class: "junior",
@@ -50916,6 +51869,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0087",
     cat: "ANIMAL",
     a: "Morsa",
     class: "junior",
@@ -50943,6 +51897,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0088",
     cat: "ANIMAL",
     a: "Peixe-boi",
     class: "junior",
@@ -50970,6 +51925,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0089",
     cat: "ANIMAL",
     a: "Água-viva",
     class: "junior",
@@ -50997,6 +51953,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0090",
     cat: "ANIMAL",
     a: "Gafanhoto",
     class: "junior",
@@ -51024,6 +51981,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0091",
     cat: "ANIMAL",
     a: "Ema",
     class: "junior",
@@ -51051,6 +52009,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0092",
     cat: "ANIMAL",
     a: "Leopardo",
     class: "junior",
@@ -51078,6 +52037,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0093",
     cat: "ANIMAL",
     a: "Arraia",
     class: "junior",
@@ -51105,6 +52065,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0094",
     cat: "ANIMAL",
     a: "Piranha",
     class: "junior",
@@ -51132,6 +52093,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0095",
     cat: "ANIMAL",
     a: "Ornitorrinco",
     class: "junior",
@@ -51159,6 +52121,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0096",
     cat: "ANIMAL",
     a: "Suricato",
     class: "junior",
@@ -51186,6 +52149,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0097",
     cat: "ANIMAL",
     a: "Lêmure",
     class: "junior",
@@ -51213,6 +52177,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0098",
     cat: "ANIMAL",
     a: "Chimpanzé",
     class: "junior",
@@ -51240,6 +52205,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0099",
     cat: "ANIMAL",
     a: "Orangotango",
     class: "junior",
@@ -51267,6 +52233,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0100",
     cat: "ANIMAL",
     a: "Lobo-guará",
     class: "junior",
@@ -51294,6 +52261,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0101",
     cat: "ANIMAL",
     a: "Bem-te-vi",
     class: "junior",
@@ -51321,6 +52289,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0102",
     cat: "ANIMAL",
     a: "João-de-barro",
     class: "junior",
@@ -51348,6 +52317,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0103",
     cat: "ANIMAL",
     a: "Tiranossauro",
     class: "junior",
@@ -51375,6 +52345,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0104",
     cat: "ANIMAL",
     a: "Mamute",
     class: "junior",
@@ -51402,6 +52373,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0105",
     cat: "ANIMAL",
     a: "Camarão",
     class: "junior",
@@ -51429,6 +52401,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0106",
     cat: "ANIMAL",
     a: "Iguana",
     class: "junior",
@@ -51456,6 +52429,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0107",
     cat: "ANIMAL",
     a: "Lagosta",
     class: "livre",
@@ -51483,6 +52457,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0108",
     cat: "ANIMAL",
     a: "Barata",
     class: "livre",
@@ -51510,6 +52485,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0109",
     cat: "ANIMAL",
     a: "Mosquito",
     class: "livre",
@@ -51537,6 +52513,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0110",
     cat: "ANIMAL",
     a: "Mosca",
     class: "livre",
@@ -51564,6 +52541,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0111",
     cat: "ANIMAL",
     a: "Libélula",
     class: "livre",
@@ -51591,6 +52569,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0112",
     cat: "ANIMAL",
     a: "Lagartixa",
     class: "livre",
@@ -51618,6 +52597,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0113",
     cat: "ANIMAL",
     a: "Crocodilo",
     class: "livre",
@@ -51645,6 +52625,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0114",
     cat: "ANIMAL",
     a: "Gaivota",
     class: "livre",
@@ -51672,6 +52653,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0115",
     cat: "ANIMAL",
     a: "Pelicano",
     class: "livre",
@@ -51699,6 +52681,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0116",
     cat: "ANIMAL",
     a: "Urubu",
     class: "livre",
@@ -51726,6 +52709,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0117",
     cat: "ANIMAL",
     a: "Porco-espinho",
     class: "livre",
@@ -51753,6 +52737,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0118",
     cat: "ANIMAL",
     a: "Gambá",
     class: "livre",
@@ -51780,6 +52765,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0119",
     cat: "ANIMAL",
     a: "Hiena",
     class: "livre",
@@ -51807,6 +52793,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0120",
     cat: "ANIMAL",
     a: "Javali",
     class: "livre",
@@ -51834,6 +52821,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0121",
     cat: "ANIMAL",
     a: "Alce",
     class: "livre",
@@ -51861,6 +52849,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0122",
     cat: "ANIMAL",
     a: "Veado",
     class: "livre",
@@ -51888,6 +52877,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0123",
     cat: "ANIMAL",
     a: "Bisão",
     class: "livre",
@@ -51915,6 +52905,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0124",
     cat: "ANIMAL",
     a: "Búfalo",
     class: "livre",
@@ -51942,6 +52933,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0125",
     cat: "ANIMAL",
     a: "Leão-marinho",
     class: "livre",
@@ -51969,6 +52961,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0126",
     cat: "ANIMAL",
     a: "Salmão",
     class: "livre",
@@ -51996,6 +52989,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0127",
     cat: "ANIMAL",
     a: "Escorpião",
     class: "livre",
@@ -52023,6 +53017,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0128",
     cat: "ANIMAL",
     a: "Centopeia",
     class: "livre",
@@ -52050,6 +53045,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0129",
     cat: "ANIMAL",
     a: "Lesma",
     class: "livre",
@@ -52077,6 +53073,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0130",
     cat: "ANIMAL",
     a: "Ostra",
     class: "livre",
@@ -52104,6 +53101,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0131",
     cat: "ANIMAL",
     a: "Mariposa",
     class: "livre",
@@ -52131,6 +53129,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0132",
     cat: "ANIMAL",
     a: "Bicho-da-seda",
     class: "livre",
@@ -52158,6 +53157,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0133",
     cat: "ANIMAL",
     a: "Ariranha",
     class: "livre",
@@ -52185,6 +53185,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0134",
     cat: "ANIMAL",
     a: "Quero-quero",
     class: "livre",
@@ -52212,6 +53213,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0135",
     cat: "ANIMAL",
     a: "Sabiá",
     class: "livre",
@@ -52239,6 +53241,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0136",
     cat: "ANIMAL",
     a: "Seriema",
     class: "livre",
@@ -52266,6 +53269,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0137",
     cat: "ANIMAL",
     a: "Gavião",
     class: "livre",
@@ -52293,6 +53297,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0138",
     cat: "ANIMAL",
     a: "Falcão",
     class: "livre",
@@ -52320,6 +53325,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0139",
     cat: "ANIMAL",
     a: "Albatroz",
     class: "livre",
@@ -52347,6 +53353,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0140",
     cat: "ANIMAL",
     a: "Kiwi",
     class: "livre",
@@ -52374,6 +53381,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0141",
     cat: "ANIMAL",
     a: "Dodô",
     class: "livre",
@@ -52401,6 +53409,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0142",
     cat: "ANIMAL",
     a: "Velociraptor",
     class: "livre",
@@ -52428,6 +53437,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0143",
     cat: "ANIMAL",
     a: "Triceratops",
     class: "livre",
@@ -52455,6 +53465,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0144",
     cat: "ANIMAL",
     a: "Pterodáctilo",
     class: "livre",
@@ -52482,6 +53493,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0145",
     cat: "ANIMAL",
     a: "Tigre-dentes-de-sabre",
     class: "livre",
@@ -52509,6 +53521,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0146",
     cat: "ANIMAL",
     a: "Pégaso",
     class: "livre",
@@ -52536,6 +53549,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0147",
     cat: "ANIMAL",
     a: "Grifo",
     class: "livre",
@@ -52563,6 +53577,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0148",
     cat: "ANIMAL",
     a: "Kraken",
     class: "livre",
@@ -52590,6 +53605,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0149",
     cat: "ANIMAL",
     a: "Cérbero",
     class: "livre",
@@ -52617,6 +53633,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0150",
     cat: "ANIMAL",
     a: "Hidra",
     class: "livre",
@@ -52644,6 +53661,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0151",
     cat: "ANIMAL",
     a: "Boitatá",
     class: "livre",
@@ -52671,6 +53689,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0152",
     cat: "ANIMAL",
     a: "Monstro do Lago Ness",
     class: "livre",
@@ -52698,6 +53717,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0153",
     cat: "ANIMAL",
     a: "Basilisco",
     class: "livre",
@@ -52725,6 +53745,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0154",
     cat: "ANIMAL",
     a: "Louva-a-deus",
     class: "livre",
@@ -52752,6 +53773,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0155",
     cat: "ANIMAL",
     a: "Bicho-pau",
     class: "livre",
@@ -52779,6 +53801,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0156",
     cat: "ANIMAL",
     a: "Cupim",
     class: "livre",
@@ -52806,6 +53829,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0157",
     cat: "ANIMAL",
     a: "Pulga",
     class: "livre",
@@ -52833,6 +53857,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0158",
     cat: "ANIMAL",
     a: "Piolho",
     class: "livre",
@@ -52860,6 +53885,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0159",
     cat: "ANIMAL",
     a: "Vespa",
     class: "livre",
@@ -52887,6 +53913,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0160",
     cat: "ANIMAL",
     a: "Cigarra",
     class: "livre",
@@ -52914,6 +53941,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0161",
     cat: "ANIMAL",
     a: "Besouro",
     class: "livre",
@@ -52941,6 +53969,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0162",
     cat: "ANIMAL",
     a: "Quati",
     class: "livre",
@@ -52968,6 +53997,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0163",
     cat: "ANIMAL",
     a: "Anta",
     class: "livre",
@@ -52995,6 +54025,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0164",
     cat: "ANIMAL",
     a: "Cutia",
     class: "livre",
@@ -53022,6 +54053,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0165",
     cat: "ANIMAL",
     a: "Jaguatirica",
     class: "livre",
@@ -53049,6 +54081,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0166",
     cat: "ANIMAL",
     a: "Harpia",
     class: "livre",
@@ -53076,6 +54109,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0167",
     cat: "ANIMAL",
     a: "Condor",
     class: "livre",
@@ -53103,6 +54137,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0168",
     cat: "ANIMAL",
     a: "Bugio",
     class: "livre",
@@ -53130,6 +54165,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0169",
     cat: "ANIMAL",
     a: "Sagui",
     class: "livre",
@@ -53157,6 +54193,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0170",
     cat: "ANIMAL",
     a: "Chinchila",
     class: "livre",
@@ -53184,6 +54221,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0171",
     cat: "ANIMAL",
     a: "Furão",
     class: "livre",
@@ -53211,6 +54249,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0172",
     cat: "ANIMAL",
     a: "Toupeira",
     class: "livre",
@@ -53238,6 +54277,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0173",
     cat: "ANIMAL",
     a: "Coiote",
     class: "livre",
@@ -53265,6 +54305,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0174",
     cat: "ANIMAL",
     a: "Panda-vermelho",
     class: "livre",
@@ -53292,6 +54333,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0175",
     cat: "ANIMAL",
     a: "Texugo",
     class: "livre",
@@ -53319,6 +54361,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0176",
     cat: "ANIMAL",
     a: "Pirarucu",
     class: "livre",
@@ -53346,6 +54389,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0177",
     cat: "ANIMAL",
     a: "Poraquê",
     class: "livre",
@@ -53373,6 +54417,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0178",
     cat: "ANIMAL",
     a: "Baiacu",
     class: "livre",
@@ -53400,6 +54445,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0179",
     cat: "ANIMAL",
     a: "Beluga",
     class: "livre",
@@ -53427,6 +54473,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0180",
     cat: "ANIMAL",
     a: "Cachalote",
     class: "livre",
@@ -53454,6 +54501,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0181",
     cat: "ANIMAL",
     a: "Tardígrado",
     q: [
@@ -53480,6 +54528,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0182",
     cat: "ANIMAL",
     a: "Axolote",
     q: [
@@ -53506,6 +54555,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0183",
     cat: "ANIMAL",
     a: "Pangolim",
     q: [
@@ -53532,6 +54582,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0184",
     cat: "ANIMAL",
     a: "Ocapi",
     q: [
@@ -53558,6 +54609,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0185",
     cat: "ANIMAL",
     a: "Narval",
     q: [
@@ -53584,6 +54636,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0186",
     cat: "ANIMAL",
     a: "Diabo-da-tasmânia",
     q: [
@@ -53610,6 +54663,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0187",
     cat: "ANIMAL",
     a: "Vombate",
     q: [
@@ -53636,6 +54690,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0188",
     cat: "ANIMAL",
     a: "Equidna",
     q: [
@@ -53662,6 +54717,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0189",
     cat: "ANIMAL",
     a: "Casuar",
     q: [
@@ -53688,6 +54744,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0190",
     cat: "ANIMAL",
     a: "Dragão-de-komodo",
     q: [
@@ -53714,6 +54771,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0191",
     cat: "ANIMAL",
     a: "Lince",
     q: [
@@ -53740,6 +54798,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0192",
     cat: "ANIMAL",
     a: "Caravela-portuguesa",
     q: [
@@ -53766,6 +54825,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0193",
     cat: "ANIMAL",
     a: "Sanguessuga",
     q: [
@@ -53792,6 +54852,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0194",
     cat: "ANIMAL",
     a: "Lampreia",
     q: [
@@ -53818,6 +54879,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0195",
     cat: "ANIMAL",
     a: "Celacanto",
     q: [
@@ -53844,6 +54906,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0196",
     cat: "ANIMAL",
     a: "Mandril",
     q: [
@@ -53870,6 +54933,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0197",
     cat: "ANIMAL",
     a: "Uacari",
     q: [
@@ -53896,6 +54960,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0198",
     cat: "ANIMAL",
     a: "Carrapato",
     q: [
@@ -53922,6 +54987,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0199",
     cat: "ANIMAL",
     a: "Tamboril",
     q: [
@@ -53948,6 +55014,7 @@ const ADULT_CARDS = expandDeck([
     ],
   },
   {
+    id: "ANIMAL-0200",
     cat: "ANIMAL",
     a: "Gnu",
     q: [
@@ -53974,6 +55041,12 @@ const ADULT_CARDS = expandDeck([
     ],
   },
 ]);
+// Resposta antiga → id da carta (1.7.7.2). O id de cada carta é fixo e escrito na própria carta
+// (ANO-0001, PESSOA-0001…): ele nunca sai da resposta e nunca muda. Quando a resposta de uma carta
+// for corrigida, a resposta antiga entra aqui, pra um save antigo (que guardava pela resposta)
+// continuar achando a carta. Carta nova ganha o próximo número da categoria; número de carta
+// removida não é reaproveitado.
+const CARTAS_RESPOSTA_ANTIGA = {};
 const JF_ALL_AVATARS = new Set([...AVATARS, ...AVATARS_EXTRA, ...AVATARS_KIDS, ...AVATAR_EXCLUSIVE]);
 const CAOS_PALAVROES_RE = new RegExp("(^|[^a-z0-9])(" + CAOS_PALAVROES.join("|") + ")(?![a-z0-9])");
 const CAOS_GIRIAS_RE = new RegExp(
@@ -60182,6 +61255,18 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.7.2",
+    data: "05/10/2026 · 22:50",
+    nome: "Foundation Structure Update · Parte 3",
+    t: "Cada carta e cada partida agora têm uma identidade fixa. É mais uma peça da base pro online.",
+    itens: [
+      "🃏 As 1000 cartas ganharam um código fixo (como ANO-0001). Se um dia a resposta de uma carta for corrigida, a partida salva continua achando a carta certa.",
+      "🎲 Cada partida ganha um código próprio quando começa. Ele fica igual quando você retoma a partida salva, e muda quando começa uma nova. Aparece no relatório exportado.",
+      "💾 Partidas salvas em versões anteriores continuam abrindo normalmente.",
+    ],
+    qol: [],
+  },
   {
     v: "Beta 1.7.7.1",
     data: "05/10/2026 · 22:38",

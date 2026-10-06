@@ -1,4 +1,5 @@
   {
+    id: "ANIMAL-0001",
     cat: "ANIMAL",
     a: "Cachorro",
     class: "livre",
@@ -26,6 +27,7 @@
     ],
   },
   {
+    id: "ANIMAL-0002",
     cat: "ANIMAL",
     a: "Gato",
     class: "livre",
@@ -53,6 +55,7 @@
     ],
   },
   {
+    id: "ANIMAL-0003",
     cat: "ANIMAL",
     a: "Elefante",
     class: "livre",
@@ -80,6 +83,7 @@
     ],
   },
   {
+    id: "ANIMAL-0004",
     cat: "ANIMAL",
     a: "Golfinho",
     class: "livre",
@@ -107,6 +111,7 @@
     ],
   },
   {
+    id: "ANIMAL-0005",
     cat: "ANIMAL",
     a: "Panda",
     class: "livre",
@@ -134,6 +139,7 @@
     ],
   },
   {
+    id: "ANIMAL-0006",
     cat: "ANIMAL",
     a: "Águia",
     class: "livre",
@@ -161,6 +167,7 @@
     ],
   },
   {
+    id: "ANIMAL-0007",
     cat: "ANIMAL",
     a: "Tubarão",
     class: "livre",
@@ -188,6 +195,7 @@
     ],
   },
   {
+    id: "ANIMAL-0008",
     cat: "ANIMAL",
     a: "Borboleta",
     class: "livre",
@@ -215,6 +223,7 @@
     ],
   },
   {
+    id: "ANIMAL-0009",
     cat: "ANIMAL",
     a: "Polvo",
     class: "livre",
@@ -242,6 +251,7 @@
     ],
   },
   {
+    id: "ANIMAL-0010",
     cat: "ANIMAL",
     a: "Boto",
     class: "livre",
@@ -269,6 +279,7 @@
     ],
   },
   {
+    id: "ANIMAL-0011",
     cat: "ANIMAL",
     a: "Dragão",
     class: "livre",
@@ -296,6 +307,7 @@
     ],
   },
   {
+    id: "ANIMAL-0012",
     cat: "ANIMAL",
     a: "Unicórnio",
     class: "livre",
@@ -323,6 +335,7 @@
     ],
   },
   {
+    id: "ANIMAL-0013",
     cat: "ANIMAL",
     a: "Fênix",
     class: "livre",
@@ -350,6 +363,7 @@
     ],
   },
   {
+    id: "ANIMAL-0014",
     cat: "ANIMAL",
     a: "Leão",
     class: "junior",
@@ -377,6 +391,7 @@
     ],
   },
   {
+    id: "ANIMAL-0015",
     cat: "ANIMAL",
     a: "Tigre",
     class: "junior",
@@ -404,6 +419,7 @@
     ],
   },
   {
+    id: "ANIMAL-0016",
     cat: "ANIMAL",
     a: "Girafa",
     class: "junior",
@@ -431,6 +447,7 @@
     ],
   },
   {
+    id: "ANIMAL-0017",
     cat: "ANIMAL",
     a: "Zebra",
     class: "junior",
@@ -458,6 +475,7 @@
     ],
   },
   {
+    id: "ANIMAL-0018",
     cat: "ANIMAL",
     a: "Macaco",
     class: "junior",
@@ -485,6 +503,7 @@
     ],
   },
   {
+    id: "ANIMAL-0019",
     cat: "ANIMAL",
     a: "Gorila",
     class: "junior",
@@ -512,6 +531,7 @@
     ],
   },
   {
+    id: "ANIMAL-0020",
     cat: "ANIMAL",
     a: "Urso-polar",
     class: "junior",
@@ -539,6 +559,7 @@
     ],
   },
   {
+    id: "ANIMAL-0021",
     cat: "ANIMAL",
     a: "Coala",
     class: "junior",
@@ -566,6 +587,7 @@
     ],
   },
   {
+    id: "ANIMAL-0022",
     cat: "ANIMAL",
     a: "Canguru",
     class: "junior",
@@ -593,6 +615,7 @@
     ],
   },
   {
+    id: "ANIMAL-0023",
     cat: "ANIMAL",
     a: "Pinguim",
     class: "junior",
@@ -620,6 +643,7 @@
     ],
   },
   {
+    id: "ANIMAL-0024",
     cat: "ANIMAL",
     a: "Baleia",
     class: "junior",
@@ -647,6 +671,7 @@
     ],
   },
   {
+    id: "ANIMAL-0025",
     cat: "ANIMAL",
     a: "Tartaruga",
     class: "junior",
@@ -674,6 +699,7 @@
     ],
   },
   {
+    id: "ANIMAL-0026",
     cat: "ANIMAL",
     a: "Jabuti",
     class: "junior",
@@ -701,6 +727,7 @@
     ],
   },
   {
+    id: "ANIMAL-0027",
     cat: "ANIMAL",
     a: "Cavalo",
     class: "junior",
@@ -728,6 +755,7 @@
     ],
   },
   {
+    id: "ANIMAL-0028",
     cat: "ANIMAL",
     a: "Vaca",
     class: "junior",
@@ -755,6 +783,7 @@
     ],
   },
   {
+    id: "ANIMAL-0029",
     cat: "ANIMAL",
     a: "Coruja",
     class: "junior",
@@ -782,6 +811,7 @@
     ],
   },
   {
+    id: "ANIMAL-0030",
     cat: "ANIMAL",
     a: "Arara",
     class: "junior",
@@ -809,6 +839,7 @@
     ],
   },
   {
+    id: "ANIMAL-0031",
     cat: "ANIMAL",
     a: "Abelha",
     class: "junior",
@@ -836,6 +867,7 @@
     ],
   },
   {
+    id: "ANIMAL-0032",
     cat: "ANIMAL",
     a: "Preguiça",
     class: "junior",
@@ -863,6 +895,7 @@
     ],
   },
   {
+    id: "ANIMAL-0033",
     cat: "ANIMAL",
     a: "Capivara",
     class: "junior",
@@ -890,6 +923,7 @@
     ],
   },
   {
+    id: "ANIMAL-0034",
     cat: "ANIMAL",
     a: "Jacaré",
     class: "junior",
@@ -917,6 +951,7 @@
     ],
   },
   {
+    id: "ANIMAL-0035",
     cat: "ANIMAL",
     a: "Porco",
     class: "junior",
@@ -944,6 +979,7 @@
     ],
   },
   {
+    id: "ANIMAL-0036",
     cat: "ANIMAL",
     a: "Papagaio",
     class: "junior",
@@ -971,6 +1007,7 @@
     ],
   },
   {
+    id: "ANIMAL-0037",
     cat: "ANIMAL",
     a: "Tucano",
     class: "junior",
@@ -998,6 +1035,7 @@
     ],
   },
   {
+    id: "ANIMAL-0038",
     cat: "ANIMAL",
     a: "Beija-flor",
     class: "junior",
@@ -1025,6 +1063,7 @@
     ],
   },
   {
+    id: "ANIMAL-0039",
     cat: "ANIMAL",
     a: "Formiga",
     class: "junior",
@@ -1052,6 +1091,7 @@
     ],
   },
   {
+    id: "ANIMAL-0040",
     cat: "ANIMAL",
     a: "Aranha",
     class: "junior",
@@ -1079,6 +1119,7 @@
     ],
   },
   {
+    id: "ANIMAL-0041",
     cat: "ANIMAL",
     a: "Sapo",
     class: "junior",
@@ -1106,6 +1147,7 @@
     ],
   },
   {
+    id: "ANIMAL-0042",
     cat: "ANIMAL",
     a: "Camelo",
     class: "junior",
@@ -1133,6 +1175,7 @@
     ],
   },
   {
+    id: "ANIMAL-0043",
     cat: "ANIMAL",
     a: "Rinoceronte",
     class: "junior",
@@ -1160,6 +1203,7 @@
     ],
   },
   {
+    id: "ANIMAL-0044",
     cat: "ANIMAL",
     a: "Hipopótamo",
     class: "junior",
@@ -1187,6 +1231,7 @@
     ],
   },
   {
+    id: "ANIMAL-0045",
     cat: "ANIMAL",
     a: "Raposa",
     class: "junior",
@@ -1214,6 +1259,7 @@
     ],
   },
   {
+    id: "ANIMAL-0046",
     cat: "ANIMAL",
     a: "Lobo",
     class: "junior",
@@ -1241,6 +1287,7 @@
     ],
   },
   {
+    id: "ANIMAL-0047",
     cat: "ANIMAL",
     a: "Coelho",
     class: "junior",
@@ -1268,6 +1315,7 @@
     ],
   },
   {
+    id: "ANIMAL-0048",
     cat: "ANIMAL",
     a: "Esquilo",
     class: "junior",
@@ -1295,6 +1343,7 @@
     ],
   },
   {
+    id: "ANIMAL-0049",
     cat: "ANIMAL",
     a: "Morcego",
     class: "junior",
@@ -1322,6 +1371,7 @@
     ],
   },
   {
+    id: "ANIMAL-0050",
     cat: "ANIMAL",
     a: "Onça-pintada",
     class: "junior",
@@ -1349,6 +1399,7 @@
     ],
   },
   {
+    id: "ANIMAL-0051",
     cat: "ANIMAL",
     a: "Orca",
     class: "junior",
@@ -1376,6 +1427,7 @@
     ],
   },
   {
+    id: "ANIMAL-0052",
     cat: "ANIMAL",
     a: "Galinha",
     class: "junior",
@@ -1403,6 +1455,7 @@
     ],
   },
   {
+    id: "ANIMAL-0053",
     cat: "ANIMAL",
     a: "Pato",
     class: "junior",
@@ -1430,6 +1483,7 @@
     ],
   },
   {
+    id: "ANIMAL-0054",
     cat: "ANIMAL",
     a: "Ovelha",
     class: "junior",
@@ -1457,6 +1511,7 @@
     ],
   },
   {
+    id: "ANIMAL-0055",
     cat: "ANIMAL",
     a: "Cabra",
     class: "junior",
@@ -1484,6 +1539,7 @@
     ],
   },
   {
+    id: "ANIMAL-0056",
     cat: "ANIMAL",
     a: "Burro",
     class: "junior",
@@ -1511,6 +1567,7 @@
     ],
   },
   {
+    id: "ANIMAL-0057",
     cat: "ANIMAL",
     a: "Rato",
     class: "junior",
@@ -1538,6 +1595,7 @@
     ],
   },
   {
+    id: "ANIMAL-0058",
     cat: "ANIMAL",
     a: "Hamster",
     class: "junior",
@@ -1565,6 +1623,7 @@
     ],
   },
   {
+    id: "ANIMAL-0059",
     cat: "ANIMAL",
     a: "Peixe-palhaço",
     class: "junior",
@@ -1592,6 +1651,7 @@
     ],
   },
   {
+    id: "ANIMAL-0060",
     cat: "ANIMAL",
     a: "Cavalo-marinho",
     class: "junior",
@@ -1619,6 +1679,7 @@
     ],
   },
   {
+    id: "ANIMAL-0061",
     cat: "ANIMAL",
     a: "Estrela-do-mar",
     class: "junior",
@@ -1646,6 +1707,7 @@
     ],
   },
   {
+    id: "ANIMAL-0062",
     cat: "ANIMAL",
     a: "Caranguejo",
     class: "junior",
@@ -1673,6 +1735,7 @@
     ],
   },
   {
+    id: "ANIMAL-0063",
     cat: "ANIMAL",
     a: "Joaninha",
     class: "junior",
@@ -1700,6 +1763,7 @@
     ],
   },
   {
+    id: "ANIMAL-0064",
     cat: "ANIMAL",
     a: "Minhoca",
     class: "junior",
@@ -1727,6 +1791,7 @@
     ],
   },
   {
+    id: "ANIMAL-0065",
     cat: "ANIMAL",
     a: "Caracol",
     class: "junior",
@@ -1754,6 +1819,7 @@
     ],
   },
   {
+    id: "ANIMAL-0066",
     cat: "ANIMAL",
     a: "Grilo",
     class: "junior",
@@ -1781,6 +1847,7 @@
     ],
   },
   {
+    id: "ANIMAL-0067",
     cat: "ANIMAL",
     a: "Vaga-lume",
     class: "junior",
@@ -1808,6 +1875,7 @@
     ],
   },
   {
+    id: "ANIMAL-0068",
     cat: "ANIMAL",
     a: "Cobra",
     class: "junior",
@@ -1835,6 +1903,7 @@
     ],
   },
   {
+    id: "ANIMAL-0069",
     cat: "ANIMAL",
     a: "Camaleão",
     class: "junior",
@@ -1862,6 +1931,7 @@
     ],
   },
   {
+    id: "ANIMAL-0070",
     cat: "ANIMAL",
     a: "Avestruz",
     class: "junior",
@@ -1889,6 +1959,7 @@
     ],
   },
   {
+    id: "ANIMAL-0071",
     cat: "ANIMAL",
     a: "Flamingo",
     class: "junior",
@@ -1916,6 +1987,7 @@
     ],
   },
   {
+    id: "ANIMAL-0072",
     cat: "ANIMAL",
     a: "Pavão",
     class: "junior",
@@ -1943,6 +2015,7 @@
     ],
   },
   {
+    id: "ANIMAL-0073",
     cat: "ANIMAL",
     a: "Cisne",
     class: "junior",
@@ -1970,6 +2043,7 @@
     ],
   },
   {
+    id: "ANIMAL-0074",
     cat: "ANIMAL",
     a: "Peru",
     class: "junior",
@@ -1997,6 +2071,7 @@
     ],
   },
   {
+    id: "ANIMAL-0075",
     cat: "ANIMAL",
     a: "Pombo",
     class: "junior",
@@ -2024,6 +2099,7 @@
     ],
   },
   {
+    id: "ANIMAL-0076",
     cat: "ANIMAL",
     a: "Lhama",
     class: "junior",
@@ -2051,6 +2127,7 @@
     ],
   },
   {
+    id: "ANIMAL-0077",
     cat: "ANIMAL",
     a: "Tamanduá",
     class: "junior",
@@ -2078,6 +2155,7 @@
     ],
   },
   {
+    id: "ANIMAL-0078",
     cat: "ANIMAL",
     a: "Tatu",
     class: "junior",
@@ -2105,6 +2183,7 @@
     ],
   },
   {
+    id: "ANIMAL-0079",
     cat: "ANIMAL",
     a: "Mico-leão-dourado",
     class: "junior",
@@ -2132,6 +2211,7 @@
     ],
   },
   {
+    id: "ANIMAL-0080",
     cat: "ANIMAL",
     a: "Lontra",
     class: "junior",
@@ -2159,6 +2239,7 @@
     ],
   },
   {
+    id: "ANIMAL-0081",
     cat: "ANIMAL",
     a: "Castor",
     class: "junior",
@@ -2186,6 +2267,7 @@
     ],
   },
   {
+    id: "ANIMAL-0082",
     cat: "ANIMAL",
     a: "Ouriço",
     class: "junior",
@@ -2213,6 +2295,7 @@
     ],
   },
   {
+    id: "ANIMAL-0083",
     cat: "ANIMAL",
     a: "Guaxinim",
     class: "junior",
@@ -2240,6 +2323,7 @@
     ],
   },
   {
+    id: "ANIMAL-0084",
     cat: "ANIMAL",
     a: "Guepardo",
     class: "junior",
@@ -2267,6 +2351,7 @@
     ],
   },
   {
+    id: "ANIMAL-0085",
     cat: "ANIMAL",
     a: "Rena",
     class: "junior",
@@ -2294,6 +2379,7 @@
     ],
   },
   {
+    id: "ANIMAL-0086",
     cat: "ANIMAL",
     a: "Foca",
     class: "junior",
@@ -2321,6 +2407,7 @@
     ],
   },
   {
+    id: "ANIMAL-0087",
     cat: "ANIMAL",
     a: "Morsa",
     class: "junior",
@@ -2348,6 +2435,7 @@
     ],
   },
   {
+    id: "ANIMAL-0088",
     cat: "ANIMAL",
     a: "Peixe-boi",
     class: "junior",
@@ -2375,6 +2463,7 @@
     ],
   },
   {
+    id: "ANIMAL-0089",
     cat: "ANIMAL",
     a: "Água-viva",
     class: "junior",
@@ -2402,6 +2491,7 @@
     ],
   },
   {
+    id: "ANIMAL-0090",
     cat: "ANIMAL",
     a: "Gafanhoto",
     class: "junior",
@@ -2429,6 +2519,7 @@
     ],
   },
   {
+    id: "ANIMAL-0091",
     cat: "ANIMAL",
     a: "Ema",
     class: "junior",
@@ -2456,6 +2547,7 @@
     ],
   },
   {
+    id: "ANIMAL-0092",
     cat: "ANIMAL",
     a: "Leopardo",
     class: "junior",
@@ -2483,6 +2575,7 @@
     ],
   },
   {
+    id: "ANIMAL-0093",
     cat: "ANIMAL",
     a: "Arraia",
     class: "junior",
@@ -2510,6 +2603,7 @@
     ],
   },
   {
+    id: "ANIMAL-0094",
     cat: "ANIMAL",
     a: "Piranha",
     class: "junior",
@@ -2537,6 +2631,7 @@
     ],
   },
   {
+    id: "ANIMAL-0095",
     cat: "ANIMAL",
     a: "Ornitorrinco",
     class: "junior",
@@ -2564,6 +2659,7 @@
     ],
   },
   {
+    id: "ANIMAL-0096",
     cat: "ANIMAL",
     a: "Suricato",
     class: "junior",
@@ -2591,6 +2687,7 @@
     ],
   },
   {
+    id: "ANIMAL-0097",
     cat: "ANIMAL",
     a: "Lêmure",
     class: "junior",
@@ -2618,6 +2715,7 @@
     ],
   },
   {
+    id: "ANIMAL-0098",
     cat: "ANIMAL",
     a: "Chimpanzé",
     class: "junior",
@@ -2645,6 +2743,7 @@
     ],
   },
   {
+    id: "ANIMAL-0099",
     cat: "ANIMAL",
     a: "Orangotango",
     class: "junior",
@@ -2672,6 +2771,7 @@
     ],
   },
   {
+    id: "ANIMAL-0100",
     cat: "ANIMAL",
     a: "Lobo-guará",
     class: "junior",
@@ -2699,6 +2799,7 @@
     ],
   },
   {
+    id: "ANIMAL-0101",
     cat: "ANIMAL",
     a: "Bem-te-vi",
     class: "junior",
@@ -2726,6 +2827,7 @@
     ],
   },
   {
+    id: "ANIMAL-0102",
     cat: "ANIMAL",
     a: "João-de-barro",
     class: "junior",
@@ -2753,6 +2855,7 @@
     ],
   },
   {
+    id: "ANIMAL-0103",
     cat: "ANIMAL",
     a: "Tiranossauro",
     class: "junior",
@@ -2780,6 +2883,7 @@
     ],
   },
   {
+    id: "ANIMAL-0104",
     cat: "ANIMAL",
     a: "Mamute",
     class: "junior",
@@ -2807,6 +2911,7 @@
     ],
   },
   {
+    id: "ANIMAL-0105",
     cat: "ANIMAL",
     a: "Camarão",
     class: "junior",
@@ -2834,6 +2939,7 @@
     ],
   },
   {
+    id: "ANIMAL-0106",
     cat: "ANIMAL",
     a: "Iguana",
     class: "junior",
@@ -2861,6 +2967,7 @@
     ],
   },
   {
+    id: "ANIMAL-0107",
     cat: "ANIMAL",
     a: "Lagosta",
     class: "livre",
@@ -2888,6 +2995,7 @@
     ],
   },
   {
+    id: "ANIMAL-0108",
     cat: "ANIMAL",
     a: "Barata",
     class: "livre",
@@ -2915,6 +3023,7 @@
     ],
   },
   {
+    id: "ANIMAL-0109",
     cat: "ANIMAL",
     a: "Mosquito",
     class: "livre",
@@ -2942,6 +3051,7 @@
     ],
   },
   {
+    id: "ANIMAL-0110",
     cat: "ANIMAL",
     a: "Mosca",
     class: "livre",
@@ -2969,6 +3079,7 @@
     ],
   },
   {
+    id: "ANIMAL-0111",
     cat: "ANIMAL",
     a: "Libélula",
     class: "livre",
@@ -2996,6 +3107,7 @@
     ],
   },
   {
+    id: "ANIMAL-0112",
     cat: "ANIMAL",
     a: "Lagartixa",
     class: "livre",
@@ -3023,6 +3135,7 @@
     ],
   },
   {
+    id: "ANIMAL-0113",
     cat: "ANIMAL",
     a: "Crocodilo",
     class: "livre",
@@ -3050,6 +3163,7 @@
     ],
   },
   {
+    id: "ANIMAL-0114",
     cat: "ANIMAL",
     a: "Gaivota",
     class: "livre",
@@ -3077,6 +3191,7 @@
     ],
   },
   {
+    id: "ANIMAL-0115",
     cat: "ANIMAL",
     a: "Pelicano",
     class: "livre",
@@ -3104,6 +3219,7 @@
     ],
   },
   {
+    id: "ANIMAL-0116",
     cat: "ANIMAL",
     a: "Urubu",
     class: "livre",
@@ -3131,6 +3247,7 @@
     ],
   },
   {
+    id: "ANIMAL-0117",
     cat: "ANIMAL",
     a: "Porco-espinho",
     class: "livre",
@@ -3158,6 +3275,7 @@
     ],
   },
   {
+    id: "ANIMAL-0118",
     cat: "ANIMAL",
     a: "Gambá",
     class: "livre",
@@ -3185,6 +3303,7 @@
     ],
   },
   {
+    id: "ANIMAL-0119",
     cat: "ANIMAL",
     a: "Hiena",
     class: "livre",
@@ -3212,6 +3331,7 @@
     ],
   },
   {
+    id: "ANIMAL-0120",
     cat: "ANIMAL",
     a: "Javali",
     class: "livre",
@@ -3239,6 +3359,7 @@
     ],
   },
   {
+    id: "ANIMAL-0121",
     cat: "ANIMAL",
     a: "Alce",
     class: "livre",
@@ -3266,6 +3387,7 @@
     ],
   },
   {
+    id: "ANIMAL-0122",
     cat: "ANIMAL",
     a: "Veado",
     class: "livre",
@@ -3293,6 +3415,7 @@
     ],
   },
   {
+    id: "ANIMAL-0123",
     cat: "ANIMAL",
     a: "Bisão",
     class: "livre",
@@ -3320,6 +3443,7 @@
     ],
   },
   {
+    id: "ANIMAL-0124",
     cat: "ANIMAL",
     a: "Búfalo",
     class: "livre",
@@ -3347,6 +3471,7 @@
     ],
   },
   {
+    id: "ANIMAL-0125",
     cat: "ANIMAL",
     a: "Leão-marinho",
     class: "livre",
@@ -3374,6 +3499,7 @@
     ],
   },
   {
+    id: "ANIMAL-0126",
     cat: "ANIMAL",
     a: "Salmão",
     class: "livre",
@@ -3401,6 +3527,7 @@
     ],
   },
   {
+    id: "ANIMAL-0127",
     cat: "ANIMAL",
     a: "Escorpião",
     class: "livre",
@@ -3428,6 +3555,7 @@
     ],
   },
   {
+    id: "ANIMAL-0128",
     cat: "ANIMAL",
     a: "Centopeia",
     class: "livre",
@@ -3455,6 +3583,7 @@
     ],
   },
   {
+    id: "ANIMAL-0129",
     cat: "ANIMAL",
     a: "Lesma",
     class: "livre",
@@ -3482,6 +3611,7 @@
     ],
   },
   {
+    id: "ANIMAL-0130",
     cat: "ANIMAL",
     a: "Ostra",
     class: "livre",
@@ -3509,6 +3639,7 @@
     ],
   },
   {
+    id: "ANIMAL-0131",
     cat: "ANIMAL",
     a: "Mariposa",
     class: "livre",
@@ -3536,6 +3667,7 @@
     ],
   },
   {
+    id: "ANIMAL-0132",
     cat: "ANIMAL",
     a: "Bicho-da-seda",
     class: "livre",
@@ -3563,6 +3695,7 @@
     ],
   },
   {
+    id: "ANIMAL-0133",
     cat: "ANIMAL",
     a: "Ariranha",
     class: "livre",
@@ -3590,6 +3723,7 @@
     ],
   },
   {
+    id: "ANIMAL-0134",
     cat: "ANIMAL",
     a: "Quero-quero",
     class: "livre",
@@ -3617,6 +3751,7 @@
     ],
   },
   {
+    id: "ANIMAL-0135",
     cat: "ANIMAL",
     a: "Sabiá",
     class: "livre",
@@ -3644,6 +3779,7 @@
     ],
   },
   {
+    id: "ANIMAL-0136",
     cat: "ANIMAL",
     a: "Seriema",
     class: "livre",
@@ -3671,6 +3807,7 @@
     ],
   },
   {
+    id: "ANIMAL-0137",
     cat: "ANIMAL",
     a: "Gavião",
     class: "livre",
@@ -3698,6 +3835,7 @@
     ],
   },
   {
+    id: "ANIMAL-0138",
     cat: "ANIMAL",
     a: "Falcão",
     class: "livre",
@@ -3725,6 +3863,7 @@
     ],
   },
   {
+    id: "ANIMAL-0139",
     cat: "ANIMAL",
     a: "Albatroz",
     class: "livre",
@@ -3752,6 +3891,7 @@
     ],
   },
   {
+    id: "ANIMAL-0140",
     cat: "ANIMAL",
     a: "Kiwi",
     class: "livre",
@@ -3779,6 +3919,7 @@
     ],
   },
   {
+    id: "ANIMAL-0141",
     cat: "ANIMAL",
     a: "Dodô",
     class: "livre",
@@ -3806,6 +3947,7 @@
     ],
   },
   {
+    id: "ANIMAL-0142",
     cat: "ANIMAL",
     a: "Velociraptor",
     class: "livre",
@@ -3833,6 +3975,7 @@
     ],
   },
   {
+    id: "ANIMAL-0143",
     cat: "ANIMAL",
     a: "Triceratops",
     class: "livre",
@@ -3860,6 +4003,7 @@
     ],
   },
   {
+    id: "ANIMAL-0144",
     cat: "ANIMAL",
     a: "Pterodáctilo",
     class: "livre",
@@ -3887,6 +4031,7 @@
     ],
   },
   {
+    id: "ANIMAL-0145",
     cat: "ANIMAL",
     a: "Tigre-dentes-de-sabre",
     class: "livre",
@@ -3914,6 +4059,7 @@
     ],
   },
   {
+    id: "ANIMAL-0146",
     cat: "ANIMAL",
     a: "Pégaso",
     class: "livre",
@@ -3941,6 +4087,7 @@
     ],
   },
   {
+    id: "ANIMAL-0147",
     cat: "ANIMAL",
     a: "Grifo",
     class: "livre",
@@ -3968,6 +4115,7 @@
     ],
   },
   {
+    id: "ANIMAL-0148",
     cat: "ANIMAL",
     a: "Kraken",
     class: "livre",
@@ -3995,6 +4143,7 @@
     ],
   },
   {
+    id: "ANIMAL-0149",
     cat: "ANIMAL",
     a: "Cérbero",
     class: "livre",
@@ -4022,6 +4171,7 @@
     ],
   },
   {
+    id: "ANIMAL-0150",
     cat: "ANIMAL",
     a: "Hidra",
     class: "livre",
@@ -4049,6 +4199,7 @@
     ],
   },
   {
+    id: "ANIMAL-0151",
     cat: "ANIMAL",
     a: "Boitatá",
     class: "livre",
@@ -4076,6 +4227,7 @@
     ],
   },
   {
+    id: "ANIMAL-0152",
     cat: "ANIMAL",
     a: "Monstro do Lago Ness",
     class: "livre",
@@ -4103,6 +4255,7 @@
     ],
   },
   {
+    id: "ANIMAL-0153",
     cat: "ANIMAL",
     a: "Basilisco",
     class: "livre",
@@ -4130,6 +4283,7 @@
     ],
   },
   {
+    id: "ANIMAL-0154",
     cat: "ANIMAL",
     a: "Louva-a-deus",
     class: "livre",
@@ -4157,6 +4311,7 @@
     ],
   },
   {
+    id: "ANIMAL-0155",
     cat: "ANIMAL",
     a: "Bicho-pau",
     class: "livre",
@@ -4184,6 +4339,7 @@
     ],
   },
   {
+    id: "ANIMAL-0156",
     cat: "ANIMAL",
     a: "Cupim",
     class: "livre",
@@ -4211,6 +4367,7 @@
     ],
   },
   {
+    id: "ANIMAL-0157",
     cat: "ANIMAL",
     a: "Pulga",
     class: "livre",
@@ -4238,6 +4395,7 @@
     ],
   },
   {
+    id: "ANIMAL-0158",
     cat: "ANIMAL",
     a: "Piolho",
     class: "livre",
@@ -4265,6 +4423,7 @@
     ],
   },
   {
+    id: "ANIMAL-0159",
     cat: "ANIMAL",
     a: "Vespa",
     class: "livre",
@@ -4292,6 +4451,7 @@
     ],
   },
   {
+    id: "ANIMAL-0160",
     cat: "ANIMAL",
     a: "Cigarra",
     class: "livre",
@@ -4319,6 +4479,7 @@
     ],
   },
   {
+    id: "ANIMAL-0161",
     cat: "ANIMAL",
     a: "Besouro",
     class: "livre",
@@ -4346,6 +4507,7 @@
     ],
   },
   {
+    id: "ANIMAL-0162",
     cat: "ANIMAL",
     a: "Quati",
     class: "livre",
@@ -4373,6 +4535,7 @@
     ],
   },
   {
+    id: "ANIMAL-0163",
     cat: "ANIMAL",
     a: "Anta",
     class: "livre",
@@ -4400,6 +4563,7 @@
     ],
   },
   {
+    id: "ANIMAL-0164",
     cat: "ANIMAL",
     a: "Cutia",
     class: "livre",
@@ -4427,6 +4591,7 @@
     ],
   },
   {
+    id: "ANIMAL-0165",
     cat: "ANIMAL",
     a: "Jaguatirica",
     class: "livre",
@@ -4454,6 +4619,7 @@
     ],
   },
   {
+    id: "ANIMAL-0166",
     cat: "ANIMAL",
     a: "Harpia",
     class: "livre",
@@ -4481,6 +4647,7 @@
     ],
   },
   {
+    id: "ANIMAL-0167",
     cat: "ANIMAL",
     a: "Condor",
     class: "livre",
@@ -4508,6 +4675,7 @@
     ],
   },
   {
+    id: "ANIMAL-0168",
     cat: "ANIMAL",
     a: "Bugio",
     class: "livre",
@@ -4535,6 +4703,7 @@
     ],
   },
   {
+    id: "ANIMAL-0169",
     cat: "ANIMAL",
     a: "Sagui",
     class: "livre",
@@ -4562,6 +4731,7 @@
     ],
   },
   {
+    id: "ANIMAL-0170",
     cat: "ANIMAL",
     a: "Chinchila",
     class: "livre",
@@ -4589,6 +4759,7 @@
     ],
   },
   {
+    id: "ANIMAL-0171",
     cat: "ANIMAL",
     a: "Furão",
     class: "livre",
@@ -4616,6 +4787,7 @@
     ],
   },
   {
+    id: "ANIMAL-0172",
     cat: "ANIMAL",
     a: "Toupeira",
     class: "livre",
@@ -4643,6 +4815,7 @@
     ],
   },
   {
+    id: "ANIMAL-0173",
     cat: "ANIMAL",
     a: "Coiote",
     class: "livre",
@@ -4670,6 +4843,7 @@
     ],
   },
   {
+    id: "ANIMAL-0174",
     cat: "ANIMAL",
     a: "Panda-vermelho",
     class: "livre",
@@ -4697,6 +4871,7 @@
     ],
   },
   {
+    id: "ANIMAL-0175",
     cat: "ANIMAL",
     a: "Texugo",
     class: "livre",
@@ -4724,6 +4899,7 @@
     ],
   },
   {
+    id: "ANIMAL-0176",
     cat: "ANIMAL",
     a: "Pirarucu",
     class: "livre",
@@ -4751,6 +4927,7 @@
     ],
   },
   {
+    id: "ANIMAL-0177",
     cat: "ANIMAL",
     a: "Poraquê",
     class: "livre",
@@ -4778,6 +4955,7 @@
     ],
   },
   {
+    id: "ANIMAL-0178",
     cat: "ANIMAL",
     a: "Baiacu",
     class: "livre",
@@ -4805,6 +4983,7 @@
     ],
   },
   {
+    id: "ANIMAL-0179",
     cat: "ANIMAL",
     a: "Beluga",
     class: "livre",
@@ -4832,6 +5011,7 @@
     ],
   },
   {
+    id: "ANIMAL-0180",
     cat: "ANIMAL",
     a: "Cachalote",
     class: "livre",
@@ -4859,6 +5039,7 @@
     ],
   },
   {
+    id: "ANIMAL-0181",
     cat: "ANIMAL",
     a: "Tardígrado",
     q: [
@@ -4885,6 +5066,7 @@
     ],
   },
   {
+    id: "ANIMAL-0182",
     cat: "ANIMAL",
     a: "Axolote",
     q: [
@@ -4911,6 +5093,7 @@
     ],
   },
   {
+    id: "ANIMAL-0183",
     cat: "ANIMAL",
     a: "Pangolim",
     q: [
@@ -4937,6 +5120,7 @@
     ],
   },
   {
+    id: "ANIMAL-0184",
     cat: "ANIMAL",
     a: "Ocapi",
     q: [
@@ -4963,6 +5147,7 @@
     ],
   },
   {
+    id: "ANIMAL-0185",
     cat: "ANIMAL",
     a: "Narval",
     q: [
@@ -4989,6 +5174,7 @@
     ],
   },
   {
+    id: "ANIMAL-0186",
     cat: "ANIMAL",
     a: "Diabo-da-tasmânia",
     q: [
@@ -5015,6 +5201,7 @@
     ],
   },
   {
+    id: "ANIMAL-0187",
     cat: "ANIMAL",
     a: "Vombate",
     q: [
@@ -5041,6 +5228,7 @@
     ],
   },
   {
+    id: "ANIMAL-0188",
     cat: "ANIMAL",
     a: "Equidna",
     q: [
@@ -5067,6 +5255,7 @@
     ],
   },
   {
+    id: "ANIMAL-0189",
     cat: "ANIMAL",
     a: "Casuar",
     q: [
@@ -5093,6 +5282,7 @@
     ],
   },
   {
+    id: "ANIMAL-0190",
     cat: "ANIMAL",
     a: "Dragão-de-komodo",
     q: [
@@ -5119,6 +5309,7 @@
     ],
   },
   {
+    id: "ANIMAL-0191",
     cat: "ANIMAL",
     a: "Lince",
     q: [
@@ -5145,6 +5336,7 @@
     ],
   },
   {
+    id: "ANIMAL-0192",
     cat: "ANIMAL",
     a: "Caravela-portuguesa",
     q: [
@@ -5171,6 +5363,7 @@
     ],
   },
   {
+    id: "ANIMAL-0193",
     cat: "ANIMAL",
     a: "Sanguessuga",
     q: [
@@ -5197,6 +5390,7 @@
     ],
   },
   {
+    id: "ANIMAL-0194",
     cat: "ANIMAL",
     a: "Lampreia",
     q: [
@@ -5223,6 +5417,7 @@
     ],
   },
   {
+    id: "ANIMAL-0195",
     cat: "ANIMAL",
     a: "Celacanto",
     q: [
@@ -5249,6 +5444,7 @@
     ],
   },
   {
+    id: "ANIMAL-0196",
     cat: "ANIMAL",
     a: "Mandril",
     q: [
@@ -5275,6 +5471,7 @@
     ],
   },
   {
+    id: "ANIMAL-0197",
     cat: "ANIMAL",
     a: "Uacari",
     q: [
@@ -5301,6 +5498,7 @@
     ],
   },
   {
+    id: "ANIMAL-0198",
     cat: "ANIMAL",
     a: "Carrapato",
     q: [
@@ -5327,6 +5525,7 @@
     ],
   },
   {
+    id: "ANIMAL-0199",
     cat: "ANIMAL",
     a: "Tamboril",
     q: [
@@ -5353,6 +5552,7 @@
     ],
   },
   {
+    id: "ANIMAL-0200",
     cat: "ANIMAL",
     a: "Gnu",
     q: [

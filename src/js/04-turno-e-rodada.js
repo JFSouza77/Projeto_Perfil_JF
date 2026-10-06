@@ -262,6 +262,7 @@ function resetGame() {
 }
 function resetDeck() {
   caosPartidaSerial++;
+  matchId = null;
   caosCatSeq = [];
   clearTimer();
   clearCardTimer();
@@ -1935,7 +1936,9 @@ function beginGameplay() {
   if (!caosPartidaInicioAt) {
     caosPartidaInicioAt = Date.now();
     tempoZerar();
+    matchId = partidaIdNovo();
   }
+  if (!matchId) matchId = partidaIdNovo(); // save de antes da 1.7.7.2
   caosDescansoChecar();
   caosMagoaInicio();
   jogadoresGarantirIds(players);

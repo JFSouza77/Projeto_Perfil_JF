@@ -340,6 +340,10 @@ function saveGameState() {
       saveVersion: SAVE_VERSION,
       savedAt: Date.now(),
       players,
+      // 1.7.7.2: cartas pelo id fixo. A resposta continua indo junto pra versão anterior abrir o save.
+      deckIds: deck.map((c) => c.id),
+      currentCardId: currentCard ? currentCard.id || null : null,
+      matchId,
       deck: deck.map((c) => c.answer),
       currentCardAnswer: currentCard ? currentCard.answer : null,
       currentCardClues: currentCard ? currentCard.clues : null,
@@ -426,6 +430,7 @@ function saveGameState() {
       ffaCandidateQueue,
       ffaWrongCount,
       allCardsAnswers: CURRENT_MODE === "express" || CURRENT_MODE === "classico" ? allCards.map((c) => c.answer) : null,
+      allCardsIds: CURRENT_MODE === "express" || CURRENT_MODE === "classico" ? allCards.map((c) => c.id) : null,
       screen: getCurrentScreen(),
     };
     JFStore.setItem("perfil200_state", JSON.stringify(state));
@@ -544,6 +549,20 @@ function sanitizeLoadedState(s) {
   if (typeof s.currentCardAnswer !== "string") s.currentCardAnswer = null;
   if (Array.isArray(s.allCardsAnswers)) s.allCardsAnswers = s.allCardsAnswers.filter((a) => typeof a === "string");
   else s.allCardsAnswers = null;
+  // 1.7.7.2: com id, a carta é achada pelo id (resposta corrigida não perde a carta); sem id (save
+  // antigo), pela resposta, passando pelo mapa de respostas antigas. Daqui pra frente vale a resposta atual.
+  const respDoId = (id) => (cartaPorId(id) || {}).answer || null;
+  const respAtual = (a) => (cartaPorResposta(a) || {}).answer || null;
+  const listaAtual = (ids, resps) =>
+    Array.isArray(ids) && ids.length ? ids.map(respDoId).filter(Boolean) : (resps || []).map(respAtual).filter(Boolean);
+  s.deck = listaAtual(s.deckIds, s.deck);
+  if (Array.isArray(s.allCardsAnswers) || Array.isArray(s.allCardsIds))
+    s.allCardsAnswers = listaAtual(s.allCardsIds, s.allCardsAnswers);
+  s.currentCardAnswer = (s.currentCardId && respDoId(s.currentCardId)) || respAtual(s.currentCardAnswer);
+  delete s.deckIds;
+  delete s.allCardsIds;
+  delete s.currentCardId;
+  s.matchId = partidaIdValido(s.matchId) ? s.matchId : null;
   const teams0 = s.teams && typeof s.teams === "object" ? s.teams : {};
   s.teams = {};
   Object.keys(teams0)
@@ -593,6 +612,7 @@ function sanitizeLoadedState(s) {
   s.palpiteStock = Math.max(0, PALPITE_STOCK - Object.keys(s.palpiteHolders).length);
   const answers = new Set(ADULT_CARDS.map((c) => c.answer));
   s.history = (Array.isArray(s.history) ? s.history : [])
+    .map((h) => (h && !answers.has(h.answer) && cartaPorResposta(h.answer) ? { ...h, answer: cartaPorResposta(h.answer).answer } : h))
     .filter((h) => h && answers.has(h.answer) && Object.prototype.hasOwnProperty.call(CATEGORY_LABELS, h.category))
     .slice(-150)
     .map((h) => ({
@@ -640,6 +660,7 @@ function loadGameState() {
     CURRENT_MODE = state.CURRENT_MODE || "classico";
     WINNING_SCORE = state.WINNING_SCORE === void 0 || state.WINNING_SCORE === null ? 200 : state.WINNING_SCORE;
     admPrincipalId = state.admPrincipalId || null;
+    matchId = state.matchId || null;
     caosCofrinho = state.caosCofrinho || 0;
     WIN_CONDITION = WIN_CONDITIONS[state.WIN_CONDITION] ? state.WIN_CONDITION : "casa";
     RESPONSE_TIME_LIMIT = state.RESPONSE_TIME_LIMIT || RESPONSE_TIME_LIMIT_BY_MODE[CURRENT_MODE] || 90;
@@ -1582,7 +1603,8 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.7.1 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.7.2 · C.A.O.S. 4.0");
+  if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -2104,7 +2126,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.7.1 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.7.2 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,

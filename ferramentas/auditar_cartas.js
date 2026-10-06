@@ -32,6 +32,12 @@ function lerCartas() {
   return cartas;
 }
 
+function lerRespostasAntigas() {
+  const txt = fs.readFileSync(path.join(PASTA_CARTAS, "99-fechamento.js"), "utf8");
+  const m = txt.match(/const CARTAS_RESPOSTA_ANTIGA = (\{[\s\S]*?\});/);
+  return m ? vm.runInNewContext("(" + m[1] + ")") : {};
+}
+
 const ESPECIAIS = [
   "perca sua vez", "um palpite a qualquer hora", "avance 1 casa", "avance 2 casas", "volte 2 casas", "volte 3 casas",
   "escolha um jogador para voltar 2 casas", "escolha um jogador para avançar 2 casas",
@@ -75,6 +81,21 @@ function auditar(cartas) {
   const respostas = new Map();
   cartas.forEach((c) => respostas.set(norm(c.a), (respostas.get(norm(c.a)) || 0) + 1));
   respostas.forEach((n, a) => n > 1 && erros.push({ carta: a, tipo: "repetida", msg: `resposta aparece em ${n} cartas` }));
+  // id fixo (1.7.7.2): CATEGORIA-0001, único, com o prefixo da categoria da carta
+  const ids = new Map();
+  cartas.forEach((c) => {
+    if (typeof c.id !== "string" || !/^[A-Z]+-\d{4}$/.test(c.id)) erro(c, "id", `id ausente ou fora do formato CATEGORIA-0001: ${c.id}`);
+    else if (c.id.split("-")[0] !== c.cat) erro(c, "id", `id ${c.id} não é da categoria ${c.cat}`);
+    if (c.id) ids.set(c.id, (ids.get(c.id) || 0) + 1);
+  });
+  ids.forEach((n, id) => n > 1 && erros.push({ carta: id, tipo: "id", msg: `id aparece em ${n} cartas` }));
+  // mapa de respostas antigas: cada id tem que existir, e a resposta antiga não pode ser resposta atual
+  const antigas = lerRespostasAntigas();
+  const atuais = new Set(cartas.map((c) => c.a));
+  Object.keys(antigas).forEach((r) => {
+    if (!ids.has(antigas[r])) erros.push({ carta: r, tipo: "id", msg: `resposta antiga aponta pra id que não existe: ${antigas[r]}` });
+    if (atuais.has(r)) erros.push({ carta: r, tipo: "id", msg: "resposta antiga ainda é resposta de uma carta" });
+  });
 
   for (const c of cartas) {
     const q = c.q || [];

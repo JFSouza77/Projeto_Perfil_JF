@@ -1,4 +1,5 @@
   {
+    id: "COISA-0001",
     cat: "COISA",
     a: "Smartphone",
     class: "livre",
@@ -26,6 +27,7 @@
     ],
   },
   {
+    id: "COISA-0002",
     cat: "COISA",
     a: "Internet",
     os: 1,
@@ -53,6 +55,7 @@
     ],
   },
   {
+    id: "COISA-0003",
     cat: "COISA",
     a: "Bicicleta",
     class: "livre",
@@ -80,6 +83,7 @@
     ],
   },
   {
+    id: "COISA-0004",
     cat: "COISA",
     a: "Avião",
     class: "livre",
@@ -107,6 +111,7 @@
     ],
   },
   {
+    id: "COISA-0005",
     cat: "COISA",
     a: "Televisão",
     class: "livre",
@@ -135,6 +140,7 @@
     ],
   },
   {
+    id: "COISA-0006",
     cat: "COISA",
     a: "Computador",
     class: "livre",
@@ -162,6 +168,7 @@
     ],
   },
   {
+    id: "COISA-0007",
     cat: "COISA",
     a: "Livro",
     class: "livre",
@@ -189,6 +196,7 @@
     ],
   },
   {
+    id: "COISA-0008",
     cat: "COISA",
     a: "Dinheiro",
     class: "livre",
@@ -217,6 +225,7 @@
     ],
   },
   {
+    id: "COISA-0009",
     cat: "COISA",
     a: "Relógio",
     class: "livre",
@@ -245,6 +254,7 @@
     ],
   },
   {
+    id: "COISA-0010",
     cat: "COISA",
     a: "Guarda-chuva",
     class: "livre",
@@ -272,6 +282,7 @@
     ],
   },
   {
+    id: "COISA-0011",
     cat: "COISA",
     a: "Fone de ouvido",
     class: "livre",
@@ -299,6 +310,7 @@
     ],
   },
   {
+    id: "COISA-0012",
     cat: "COISA",
     a: "Controle de videogame",
     class: "livre",
@@ -326,6 +338,7 @@
     ],
   },
   {
+    id: "COISA-0013",
     cat: "COISA",
     a: "Óculos",
     class: "livre",
@@ -353,6 +366,7 @@
     ],
   },
   {
+    id: "COISA-0014",
     cat: "COISA",
     a: "Chave",
     class: "livre",
@@ -380,6 +394,7 @@
     ],
   },
   {
+    id: "COISA-0015",
     cat: "COISA",
     a: "Bola de futebol",
     class: "livre",
@@ -407,6 +422,7 @@
     ],
   },
   {
+    id: "COISA-0016",
     cat: "COISA",
     a: "Violão",
     class: "livre",
@@ -434,6 +450,7 @@
     ],
   },
   {
+    id: "COISA-0017",
     cat: "COISA",
     a: "Saudade",
     os: 1,
@@ -461,6 +478,7 @@
     ],
   },
   {
+    id: "COISA-0018",
     cat: "COISA",
     a: "Medo",
     os: 1,
@@ -488,6 +506,7 @@
     ],
   },
   {
+    id: "COISA-0019",
     cat: "COISA",
     a: "Ciúme",
     os: 1,
@@ -515,6 +534,7 @@
     ],
   },
   {
+    id: "COISA-0020",
     cat: "COISA",
     a: "Sonho",
     os: 1,
@@ -542,6 +562,7 @@
     ],
   },
   {
+    id: "COISA-0021",
     cat: "COISA",
     a: "Memória",
     os: 1,
@@ -569,6 +590,7 @@
     ],
   },
   {
+    id: "COISA-0022",
     cat: "COISA",
     a: "Sorte",
     os: 1,
@@ -596,6 +618,7 @@
     ],
   },
   {
+    id: "COISA-0023",
     cat: "COISA",
     a: "Visão",
     q: [
@@ -622,6 +645,7 @@
     ],
   },
   {
+    id: "COISA-0024",
     cat: "COISA",
     a: "Olfato",
     q: [
@@ -648,6 +672,7 @@
     ],
   },
   {
+    id: "COISA-0025",
     cat: "COISA",
     a: "Lobisomem",
     os: 1,
@@ -675,6 +700,7 @@
     ],
   },
   {
+    id: "COISA-0026",
     cat: "COISA",
     a: "Sereia",
     class: "livre",
@@ -703,6 +729,7 @@
     ],
   },
   {
+    id: "COISA-0027",
     cat: "COISA",
     a: "Xadrez",
     class: "livre",
@@ -731,6 +758,7 @@
     ],
   },
   {
+    id: "COISA-0028",
     cat: "COISA",
     a: "Truco",
     os: 1,
@@ -758,6 +786,7 @@
     ],
   },
   {
+    id: "COISA-0029",
     cat: "COISA",
     a: "Minecraft",
     class: "livre",
@@ -785,6 +814,7 @@
     ],
   },
   {
+    id: "COISA-0030",
     cat: "COISA",
     a: "Pokémon",
     class: "livre",
@@ -812,6 +842,7 @@
     ],
   },
   {
+    id: "COISA-0031",
     cat: "COISA",
     a: "Big Brother Brasil",
     os: 1,
@@ -839,6 +870,7 @@
     ],
   },
   {
+    id: "COISA-0032",
     cat: "COISA",
     a: "Netflix",
     class: "livre",
@@ -866,6 +898,7 @@
     ],
   },
   {
+    id: "COISA-0033",
     cat: "COISA",
     a: "Instagram",
     q: [
@@ -892,6 +925,7 @@
     ],
   },
   {
+    id: "COISA-0034",
     cat: "COISA",
     a: "O Rei Leão",
     class: "livre",
@@ -919,6 +953,7 @@
     ],
   },
   {
+    id: "COISA-0035",
     cat: "COISA",
     a: "Extintor de incêndio",
     os: 1,
@@ -946,6 +981,7 @@
     ],
   },
   {
+    id: "COISA-0036",
     cat: "COISA",
     a: "Excalibur",
     os: 1,
@@ -973,6 +1009,7 @@
     ],
   },
   {
+    id: "COISA-0037",
     cat: "COISA",
     a: "Piano",
     class: "livre",
@@ -1001,6 +1038,7 @@
     ],
   },
   {
+    id: "COISA-0038",
     cat: "COISA",
     a: "Foguete espacial",
     class: "livre",
@@ -1028,6 +1066,7 @@
     ],
   },
   {
+    id: "COISA-0039",
     cat: "COISA",
     a: "iPhone",
     q: [
@@ -1054,6 +1093,7 @@
     ],
   },
   {
+    id: "COISA-0040",
     cat: "COISA",
     a: "Bitcoin",
     os: 1,
@@ -1081,6 +1121,7 @@
     ],
   },
   {
+    id: "COISA-0041",
     cat: "COISA",
     a: "PIX",
     os: 1,
@@ -1108,6 +1149,7 @@
     ],
   },
   {
+    id: "COISA-0042",
     cat: "COISA",
     a: "CNH",
     os: 1,
@@ -1135,6 +1177,7 @@
     ],
   },
   {
+    id: "COISA-0043",
     cat: "COISA",
     a: "Omnitrix",
     q: [
@@ -1161,6 +1204,7 @@
     ],
   },
   {
+    id: "COISA-0044",
     cat: "COISA",
     a: "Cometa",
     class: "livre",
@@ -1188,6 +1232,7 @@
     ],
   },
   {
+    id: "COISA-0045",
     cat: "COISA",
     a: "Constelações",
     os: 1,
@@ -1215,6 +1260,7 @@
     ],
   },
   {
+    id: "COISA-0046",
     cat: "COISA",
     a: "Colher",
     class: "junior",
@@ -1242,6 +1288,7 @@
     ],
   },
   {
+    id: "COISA-0047",
     cat: "COISA",
     a: "Abajur",
     class: "junior",
@@ -1269,6 +1316,7 @@
     ],
   },
   {
+    id: "COISA-0048",
     cat: "COISA",
     a: "Janela",
     class: "junior",
@@ -1296,6 +1344,7 @@
     ],
   },
   {
+    id: "COISA-0049",
     cat: "COISA",
     a: "PlayStation",
     class: "junior",
@@ -1323,6 +1372,7 @@
     ],
   },
   {
+    id: "COISA-0050",
     cat: "COISA",
     a: "Mochila",
     class: "junior",
@@ -1350,6 +1400,7 @@
     ],
   },
   {
+    id: "COISA-0051",
     cat: "COISA",
     a: "Travesseiro",
     class: "junior",
@@ -1377,6 +1428,7 @@
     ],
   },
   {
+    id: "COISA-0052",
     cat: "COISA",
     a: "Lancheira",
     class: "junior",
@@ -1404,6 +1456,7 @@
     ],
   },
   {
+    id: "COISA-0053",
     cat: "COISA",
     a: "Escorregador",
     class: "junior",
@@ -1431,6 +1484,7 @@
     ],
   },
   {
+    id: "COISA-0054",
     cat: "COISA",
     a: "Táxi",
     class: "junior",
@@ -1458,6 +1512,7 @@
     ],
   },
   {
+    id: "COISA-0055",
     cat: "COISA",
     a: "Fogueira",
     class: "junior",
@@ -1485,6 +1540,7 @@
     ],
   },
   {
+    id: "COISA-0056",
     cat: "COISA",
     a: "Escova de dente",
     class: "junior",
@@ -1512,6 +1568,7 @@
     ],
   },
   {
+    id: "COISA-0057",
     cat: "COISA",
     a: "Sorvete",
     class: "junior",
@@ -1539,6 +1596,7 @@
     ],
   },
   {
+    id: "COISA-0058",
     cat: "COISA",
     a: "Pipoca",
     class: "junior",
@@ -1566,6 +1624,7 @@
     ],
   },
   {
+    id: "COISA-0059",
     cat: "COISA",
     a: "Algodão-doce",
     class: "junior",
@@ -1593,6 +1652,7 @@
     ],
   },
   {
+    id: "COISA-0060",
     cat: "COISA",
     a: "Sanduíche",
     class: "junior",
@@ -1620,6 +1680,7 @@
     ],
   },
   {
+    id: "COISA-0061",
     cat: "COISA",
     a: "Fogo",
     class: "junior",
@@ -1647,6 +1708,7 @@
     ],
   },
   {
+    id: "COISA-0062",
     cat: "COISA",
     a: "Gelo",
     class: "junior",
@@ -1674,6 +1736,7 @@
     ],
   },
   {
+    id: "COISA-0063",
     cat: "COISA",
     a: "Geladeira",
     class: "junior",
@@ -1701,6 +1764,7 @@
     ],
   },
   {
+    id: "COISA-0064",
     cat: "COISA",
     a: "Aspirador de pó",
     class: "junior",
@@ -1728,6 +1792,7 @@
     ],
   },
   {
+    id: "COISA-0065",
     cat: "COISA",
     a: "Coração",
     class: "junior",
@@ -1755,6 +1820,7 @@
     ],
   },
   {
+    id: "COISA-0066",
     cat: "COISA",
     a: "Cérebro",
     class: "junior",
@@ -1782,6 +1848,7 @@
     ],
   },
   {
+    id: "COISA-0067",
     cat: "COISA",
     a: "Tesoura",
     class: "junior",
@@ -1809,6 +1876,7 @@
     ],
   },
   {
+    id: "COISA-0068",
     cat: "COISA",
     a: "Vassoura",
     class: "junior",
@@ -1836,6 +1904,7 @@
     ],
   },
   {
+    id: "COISA-0069",
     cat: "COISA",
     a: "Árvore",
     class: "junior",
@@ -1863,6 +1932,7 @@
     ],
   },
   {
+    id: "COISA-0070",
     cat: "COISA",
     a: "Fruta",
     class: "junior",
@@ -1890,6 +1960,7 @@
     ],
   },
   {
+    id: "COISA-0071",
     cat: "COISA",
     a: "Banana",
     class: "junior",
@@ -1917,6 +1988,7 @@
     ],
   },
   {
+    id: "COISA-0072",
     cat: "COISA",
     a: "Chocolate",
     os: 1,
@@ -1944,6 +2016,7 @@
     ],
   },
   {
+    id: "COISA-0073",
     cat: "COISA",
     a: "WhatsApp",
     os: 1,
@@ -1971,6 +2044,7 @@
     ],
   },
   {
+    id: "COISA-0074",
     cat: "COISA",
     a: "Espelho",
     os: 1,
@@ -1998,6 +2072,7 @@
     ],
   },
   {
+    id: "COISA-0075",
     cat: "COISA",
     a: "Chuva",
     q: [
@@ -2024,6 +2099,7 @@
     ],
   },
   {
+    id: "COISA-0076",
     cat: "COISA",
     a: "Bicho-papão",
     class: "oldschool",
@@ -2051,6 +2127,7 @@
     ],
   },
   {
+    id: "COISA-0077",
     cat: "COISA",
     a: "Boi da Cara Preta",
     class: "oldschool",
@@ -2078,6 +2155,7 @@
     ],
   },
   {
+    id: "COISA-0078",
     cat: "COISA",
     a: "Fita K7",
     class: "oldschool",
@@ -2105,6 +2183,7 @@
     ],
   },
   {
+    id: "COISA-0079",
     cat: "COISA",
     a: "Tamagotchi",
     class: "oldschool",
@@ -2132,6 +2211,7 @@
     ],
   },
   {
+    id: "COISA-0080",
     cat: "COISA",
     a: "Walkman",
     class: "oldschool",
@@ -2159,6 +2239,7 @@
     ],
   },
   {
+    id: "COISA-0081",
     cat: "COISA",
     a: "Pager",
     class: "oldschool",
@@ -2186,6 +2267,7 @@
     ],
   },
   {
+    id: "COISA-0082",
     cat: "COISA",
     a: "Fliperama",
     class: "oldschool",
@@ -2213,6 +2295,7 @@
     ],
   },
   {
+    id: "COISA-0083",
     cat: "COISA",
     a: "Tazo",
     class: "oldschool",
@@ -2240,6 +2323,7 @@
     ],
   },
   {
+    id: "COISA-0084",
     cat: "COISA",
     a: "Mimeógrafo",
     class: "oldschool",
@@ -2267,6 +2351,7 @@
     ],
   },
   {
+    id: "COISA-0085",
     cat: "COISA",
     a: "Disco de vinil",
     class: "oldschool",
@@ -2294,6 +2379,7 @@
     ],
   },
   {
+    id: "COISA-0086",
     cat: "COISA",
     a: "Atari",
     class: "oldschool",
@@ -2321,6 +2407,7 @@
     ],
   },
   {
+    id: "COISA-0087",
     cat: "COISA",
     a: "Orelhão",
     class: "oldschool",
@@ -2348,6 +2435,7 @@
     ],
   },
   {
+    id: "COISA-0088",
     cat: "COISA",
     a: "Disquete",
     class: "oldschool",
@@ -2375,6 +2463,7 @@
     ],
   },
   {
+    id: "COISA-0089",
     cat: "COISA",
     a: "IPVA",
     class: "oldschool",
@@ -2402,6 +2491,7 @@
     ],
   },
   {
+    id: "COISA-0090",
     cat: "COISA",
     a: "FGTS",
     class: "oldschool",
@@ -2429,6 +2519,7 @@
     ],
   },
   {
+    id: "COISA-0091",
     cat: "COISA",
     a: "Máquina de escrever",
     class: "oldschool",
@@ -2456,6 +2547,7 @@
     ],
   },
   {
+    id: "COISA-0092",
     cat: "COISA",
     a: "Videocassete",
     class: "oldschool",
@@ -2483,6 +2575,7 @@
     ],
   },
   {
+    id: "COISA-0093",
     cat: "COISA",
     a: "Enciclopédia Barsa",
     class: "oldschool",
@@ -2510,6 +2603,7 @@
     ],
   },
   {
+    id: "COISA-0094",
     cat: "COISA",
     a: "Telegrama",
     class: "oldschool",
@@ -2537,6 +2631,7 @@
     ],
   },
   {
+    id: "COISA-0095",
     cat: "COISA",
     a: "Carnê do Baú",
     class: "oldschool",
@@ -2564,6 +2659,7 @@
     ],
   },
   {
+    id: "COISA-0096",
     cat: "COISA",
     a: "COVID-19",
     class: "oldschool",
@@ -2591,6 +2687,7 @@
     ],
   },
   {
+    id: "COISA-0097",
     cat: "COISA",
     a: "Peste negra",
     class: "oldschool",
@@ -2618,6 +2715,7 @@
     ],
   },
   {
+    id: "COISA-0098",
     cat: "COISA",
     a: "Doença da vaca louca",
     class: "oldschool",
@@ -2645,6 +2743,7 @@
     ],
   },
   {
+    id: "COISA-0099",
     cat: "COISA",
     a: "Ebola",
     class: "oldschool",
@@ -2672,6 +2771,7 @@
     ],
   },
   {
+    id: "COISA-0100",
     cat: "COISA",
     a: "Mais Você",
     os: 1,
@@ -2699,6 +2799,7 @@
     ],
   },
   {
+    id: "COISA-0101",
     cat: "COISA",
     a: "Encontro com Fátima Bernardes",
     class: "oldschool",
@@ -2726,6 +2827,7 @@
     ],
   },
   {
+    id: "COISA-0102",
     cat: "COISA",
     a: "Jornal Nacional",
     os: 1,
@@ -2753,6 +2855,7 @@
     ],
   },
   {
+    id: "COISA-0103",
     cat: "COISA",
     a: "Programa do Ratinho",
     class: "oldschool",
@@ -2780,6 +2883,7 @@
     ],
   },
   {
+    id: "COISA-0104",
     cat: "COISA",
     a: "A Praça é Nossa",
     class: "oldschool",
@@ -2807,6 +2911,7 @@
     ],
   },
   {
+    id: "COISA-0105",
     cat: "COISA",
     a: "Mjölnir",
     class: "livre",
@@ -2834,6 +2939,7 @@
     ],
   },
   {
+    id: "COISA-0106",
     cat: "COISA",
     a: "Escudo do Capitão América",
     class: "livre",
@@ -2861,6 +2967,7 @@
     ],
   },
   {
+    id: "COISA-0107",
     cat: "COISA",
     a: "Tridente de Poseidon",
     class: "livre",
@@ -2888,6 +2995,7 @@
     ],
   },
   {
+    id: "COISA-0108",
     cat: "COISA",
     a: "Capa da invisibilidade",
     class: "livre",
@@ -2915,6 +3023,7 @@
     ],
   },
   {
+    id: "COISA-0109",
     cat: "COISA",
     a: "Nautilus",
     q: [
@@ -2941,6 +3050,7 @@
     ],
   },
   {
+    id: "COISA-0110",
     cat: "COISA",
     a: "Planeta dos Macacos",
     os: 1,
@@ -2968,6 +3078,7 @@
     ],
   },
   {
+    id: "COISA-0111",
     cat: "COISA",
     a: "Orquestra",
     class: "livre",
@@ -2995,6 +3106,7 @@
     ],
   },
   {
+    id: "COISA-0112",
     cat: "COISA",
     a: "Dicionário",
     class: "livre",
@@ -3022,6 +3134,7 @@
     ],
   },
   {
+    id: "COISA-0113",
     cat: "COISA",
     a: "Casablanca",
     class: "oldschool",
@@ -3049,6 +3162,7 @@
     ],
   },
   {
+    id: "COISA-0114",
     cat: "COISA",
     a: "Hanna-Barbera",
     os: 1,
@@ -3076,6 +3190,7 @@
     ],
   },
   {
+    id: "COISA-0115",
     cat: "COISA",
     a: "Lagoa Azul",
     class: "oldschool",
@@ -3103,6 +3218,7 @@
     ],
   },
   {
+    id: "COISA-0116",
     cat: "COISA",
     a: "Sessão da Tarde",
     os: 1,
@@ -3130,6 +3246,7 @@
     ],
   },
   {
+    id: "COISA-0117",
     cat: "COISA",
     a: "Natal",
     class: "livre",
@@ -3157,6 +3274,7 @@
     ],
   },
   {
+    id: "COISA-0118",
     cat: "COISA",
     a: "Free Willy",
     os: 1,
@@ -3184,6 +3302,7 @@
     ],
   },
   {
+    id: "COISA-0119",
     cat: "COISA",
     a: "Bom Dia & Cia",
     os: 1,
@@ -3211,6 +3330,7 @@
     ],
   },
   {
+    id: "COISA-0120",
     cat: "COISA",
     a: "Café",
     class: "livre",
@@ -3238,6 +3358,7 @@
     ],
   },
   {
+    id: "COISA-0121",
     cat: "COISA",
     a: "Bússola",
     class: "livre",
@@ -3265,6 +3386,7 @@
     ],
   },
   {
+    id: "COISA-0122",
     cat: "COISA",
     a: "Semáforo",
     class: "livre",
@@ -3292,6 +3414,7 @@
     ],
   },
   {
+    id: "COISA-0123",
     cat: "COISA",
     a: "Lápis",
     class: "junior",
@@ -3319,6 +3442,7 @@
     ],
   },
   {
+    id: "COISA-0124",
     cat: "COISA",
     a: "Pipa",
     class: "junior",
@@ -3346,6 +3470,7 @@
     ],
   },
   {
+    id: "COISA-0125",
     cat: "COISA",
     a: "Patinete",
     class: "junior",
@@ -3373,6 +3498,7 @@
     ],
   },
   {
+    id: "COISA-0126",
     cat: "COISA",
     a: "Bexiga",
     class: "junior",
@@ -3400,6 +3526,7 @@
     ],
   },
   {
+    id: "COISA-0127",
     cat: "COISA",
     a: "Bolo de aniversário",
     class: "junior",
@@ -3427,6 +3554,7 @@
     ],
   },
   {
+    id: "COISA-0128",
     cat: "COISA",
     a: "Ovo de Páscoa",
     class: "junior",
@@ -3454,6 +3582,7 @@
     ],
   },
   {
+    id: "COISA-0129",
     cat: "COISA",
     a: "Arco-íris",
     class: "junior",
@@ -3481,6 +3610,7 @@
     ],
   },
   {
+    id: "COISA-0130",
     cat: "COISA",
     a: "Lego",
     class: "junior",
@@ -3508,6 +3638,7 @@
     ],
   },
   {
+    id: "COISA-0131",
     cat: "COISA",
     a: "Ursinho de pelúcia",
     class: "junior",
@@ -3535,6 +3666,7 @@
     ],
   },
   {
+    id: "COISA-0132",
     cat: "COISA",
     a: "Chinelo",
     class: "junior",
@@ -3562,6 +3694,7 @@
     ],
   },
   {
+    id: "COISA-0133",
     cat: "COISA",
     a: "Giz de cera",
     class: "junior",
@@ -3589,6 +3722,7 @@
     ],
   },
   {
+    id: "COISA-0134",
     cat: "COISA",
     a: "Castelo de areia",
     class: "junior",
@@ -3616,6 +3750,7 @@
     ],
   },
   {
+    id: "COISA-0135",
     cat: "COISA",
     a: "Pião",
     class: "junior",
@@ -3643,6 +3778,7 @@
     ],
   },
   {
+    id: "COISA-0136",
     cat: "COISA",
     a: "Sabonete",
     class: "junior",
@@ -3670,6 +3806,7 @@
     ],
   },
   {
+    id: "COISA-0137",
     cat: "COISA",
     a: "Brigadeiro",
     class: "junior",
@@ -3697,6 +3834,7 @@
     ],
   },
   {
+    id: "COISA-0138",
     cat: "COISA",
     a: "Cama elástica",
     class: "junior",
@@ -3724,6 +3862,7 @@
     ],
   },
   {
+    id: "COISA-0139",
     cat: "COISA",
     a: "Massinha de modelar",
     class: "junior",
@@ -3751,6 +3890,7 @@
     ],
   },
   {
+    id: "COISA-0140",
     cat: "COISA",
     a: "Bolha de sabão",
     class: "junior",
@@ -3778,6 +3918,7 @@
     ],
   },
   {
+    id: "COISA-0141",
     cat: "COISA",
     a: "Lâmpada",
     class: "livre",
@@ -3805,6 +3946,7 @@
     ],
   },
   {
+    id: "COISA-0142",
     cat: "COISA",
     a: "Guitarra",
     class: "livre",
@@ -3832,6 +3974,7 @@
     ],
   },
   {
+    id: "COISA-0143",
     cat: "COISA",
     a: "Skate",
     class: "livre",
@@ -3859,6 +4002,7 @@
     ],
   },
   {
+    id: "COISA-0144",
     cat: "COISA",
     a: "Câmera fotográfica",
     class: "livre",
@@ -3886,6 +4030,7 @@
     ],
   },
   {
+    id: "COISA-0145",
     cat: "COISA",
     a: "Microfone",
     class: "livre",
@@ -3913,6 +4058,7 @@
     ],
   },
   {
+    id: "COISA-0146",
     cat: "COISA",
     a: "Paraquedas",
     class: "livre",
@@ -3940,6 +4086,7 @@
     ],
   },
   {
+    id: "COISA-0147",
     cat: "COISA",
     a: "Telescópio",
     class: "livre",
@@ -3967,6 +4114,7 @@
     ],
   },
   {
+    id: "COISA-0148",
     cat: "COISA",
     a: "Microscópio",
     class: "livre",
@@ -3994,6 +4142,7 @@
     ],
   },
   {
+    id: "COISA-0149",
     cat: "COISA",
     a: "Ímã",
     class: "livre",
@@ -4021,6 +4170,7 @@
     ],
   },
   {
+    id: "COISA-0150",
     cat: "COISA",
     a: "Pizza",
     class: "livre",
@@ -4048,6 +4198,7 @@
     ],
   },
   {
+    id: "COISA-0151",
     cat: "COISA",
     a: "Feijoada",
     class: "livre",
@@ -4075,6 +4226,7 @@
     ],
   },
   {
+    id: "COISA-0152",
     cat: "COISA",
     a: "Carnaval",
     class: "livre",
@@ -4102,6 +4254,7 @@
     ],
   },
   {
+    id: "COISA-0153",
     cat: "COISA",
     a: "Cubo mágico",
     class: "livre",
@@ -4129,6 +4282,7 @@
     ],
   },
   {
+    id: "COISA-0154",
     cat: "COISA",
     a: "Robô",
     class: "livre",
@@ -4156,6 +4310,7 @@
     ],
   },
   {
+    id: "COISA-0155",
     cat: "COISA",
     a: "Submarino",
     class: "livre",
@@ -4183,6 +4338,7 @@
     ],
   },
   {
+    id: "COISA-0156",
     cat: "COISA",
     a: "Helicóptero",
     class: "livre",
@@ -4210,6 +4366,7 @@
     ],
   },
   {
+    id: "COISA-0157",
     cat: "COISA",
     a: "Balão de ar quente",
     class: "livre",
@@ -4237,6 +4394,7 @@
     ],
   },
   {
+    id: "COISA-0158",
     cat: "COISA",
     a: "Dominó",
     class: "livre",
@@ -4264,6 +4422,7 @@
     ],
   },
   {
+    id: "COISA-0159",
     cat: "COISA",
     a: "Pão de queijo",
     class: "livre",
@@ -4291,6 +4450,7 @@
     ],
   },
   {
+    id: "COISA-0160",
     cat: "COISA",
     a: "Arco e flecha",
     class: "livre",
@@ -4318,6 +4478,7 @@
     ],
   },
   {
+    id: "COISA-0161",
     cat: "COISA",
     a: "Fax",
     class: "oldschool",
@@ -4345,6 +4506,7 @@
     ],
   },
   {
+    id: "COISA-0162",
     cat: "COISA",
     a: "Discman",
     class: "oldschool",
@@ -4372,6 +4534,7 @@
     ],
   },
   {
+    id: "COISA-0163",
     cat: "COISA",
     a: "Game Boy",
     class: "oldschool",
@@ -4399,6 +4562,7 @@
     ],
   },
   {
+    id: "COISA-0164",
     cat: "COISA",
     a: "Polaroid",
     class: "oldschool",
@@ -4426,6 +4590,7 @@
     ],
   },
   {
+    id: "COISA-0165",
     cat: "COISA",
     a: "Nokia 3310",
     class: "oldschool",
@@ -4453,6 +4618,7 @@
     ],
   },
   {
+    id: "COISA-0166",
     cat: "COISA",
     a: "Super Nintendo",
     class: "oldschool",
@@ -4480,6 +4646,7 @@
     ],
   },
   {
+    id: "COISA-0167",
     cat: "COISA",
     a: "Mega Drive",
     class: "oldschool",
@@ -4507,6 +4674,7 @@
     ],
   },
   {
+    id: "COISA-0168",
     cat: "COISA",
     a: "Bambolê",
     class: "oldschool",
@@ -4534,6 +4702,7 @@
     ],
   },
   {
+    id: "COISA-0169",
     cat: "COISA",
     a: "Ioiô",
     class: "oldschool",
@@ -4561,6 +4730,7 @@
     ],
   },
   {
+    id: "COISA-0170",
     cat: "COISA",
     a: "Ficha telefônica",
     class: "oldschool",
@@ -4588,6 +4758,7 @@
     ],
   },
   {
+    id: "COISA-0171",
     cat: "COISA",
     a: "Lista telefônica",
     class: "oldschool",
@@ -4615,6 +4786,7 @@
     ],
   },
   {
+    id: "COISA-0172",
     cat: "COISA",
     a: "Kichute",
     class: "oldschool",
@@ -4642,6 +4814,7 @@
     ],
   },
   {
+    id: "COISA-0173",
     cat: "COISA",
     a: "Fusca",
     class: "oldschool",
@@ -4669,6 +4842,7 @@
     ],
   },
   {
+    id: "COISA-0174",
     cat: "COISA",
     a: "Banco Imobiliário",
     class: "oldschool",
@@ -4696,6 +4870,7 @@
     ],
   },
   {
+    id: "COISA-0175",
     cat: "COISA",
     a: "Genius",
     class: "oldschool",
@@ -4723,6 +4898,7 @@
     ],
   },
   {
+    id: "COISA-0176",
     cat: "COISA",
     a: "Inflação",
     q: [
@@ -4749,6 +4925,7 @@
     ],
   },
   {
+    id: "COISA-0177",
     cat: "COISA",
     a: "Democracia",
     q: [
@@ -4775,6 +4952,7 @@
     ],
   },
   {
+    id: "COISA-0178",
     cat: "COISA",
     a: "Imposto de Renda",
     q: [
@@ -4801,6 +4979,7 @@
     ],
   },
   {
+    id: "COISA-0179",
     cat: "COISA",
     a: "Cartão de crédito",
     q: [
@@ -4827,6 +5006,7 @@
     ],
   },
   {
+    id: "COISA-0180",
     cat: "COISA",
     a: "Vinho",
     q: [
@@ -4853,6 +5033,7 @@
     ],
   },
   {
+    id: "COISA-0181",
     cat: "COISA",
     a: "Caipirinha",
     q: [
@@ -4879,6 +5060,7 @@
     ],
   },
   {
+    id: "COISA-0182",
     cat: "COISA",
     a: "Tatuagem",
     q: [
@@ -4905,6 +5087,7 @@
     ],
   },
   {
+    id: "COISA-0183",
     cat: "COISA",
     a: "Constituição",
     q: [
@@ -4931,6 +5114,7 @@
     ],
   },
   {
+    id: "COISA-0184",
     cat: "COISA",
     a: "Ansiedade",
     q: [
@@ -4957,6 +5141,7 @@
     ],
   },
   {
+    id: "COISA-0185",
     cat: "COISA",
     a: "Nostalgia",
     q: [
@@ -4983,6 +5168,7 @@
     ],
   },
   {
+    id: "COISA-0186",
     cat: "COISA",
     a: "Felicidade",
     q: [
@@ -5009,6 +5195,7 @@
     ],
   },
   {
+    id: "COISA-0187",
     cat: "COISA",
     a: "Inveja",
     q: [
@@ -5035,6 +5222,7 @@
     ],
   },
   {
+    id: "COISA-0188",
     cat: "COISA",
     a: "Gravidade",
     q: [
@@ -5061,6 +5249,7 @@
     ],
   },
   {
+    id: "COISA-0189",
     cat: "COISA",
     a: "Eclipse",
     q: [
@@ -5087,6 +5276,7 @@
     ],
   },
   {
+    id: "COISA-0190",
     cat: "COISA",
     a: "Buraco negro",
     q: [
@@ -5113,6 +5303,7 @@
     ],
   },
   {
+    id: "COISA-0191",
     cat: "COISA",
     a: "Inteligência artificial",
     q: [
@@ -5139,6 +5330,7 @@
     ],
   },
   {
+    id: "COISA-0192",
     cat: "COISA",
     a: "Wi-Fi",
     q: [
@@ -5165,6 +5357,7 @@
     ],
   },
   {
+    id: "COISA-0193",
     cat: "COISA",
     a: "Senha",
     q: [
@@ -5191,6 +5384,7 @@
     ],
   },
   {
+    id: "COISA-0194",
     cat: "COISA",
     a: "Boleto",
     q: [
@@ -5217,6 +5411,7 @@
     ],
   },
   {
+    id: "COISA-0195",
     cat: "COISA",
     a: "Currículo",
     q: [
@@ -5243,6 +5438,7 @@
     ],
   },
   {
+    id: "COISA-0196",
     cat: "COISA",
     a: "Aposentadoria",
     q: [
@@ -5269,6 +5465,7 @@
     ],
   },
   {
+    id: "COISA-0197",
     cat: "COISA",
     a: "Ressaca",
     q: [
@@ -5295,6 +5492,7 @@
     ],
   },
   {
+    id: "COISA-0198",
     cat: "COISA",
     a: "Fofoca",
     q: [
@@ -5321,6 +5519,7 @@
     ],
   },
   {
+    id: "COISA-0199",
     cat: "COISA",
     a: "Spoiler",
     q: [
@@ -5347,6 +5546,7 @@
     ],
   },
   {
+    id: "COISA-0200",
     cat: "COISA",
     a: "Meme",
     q: [

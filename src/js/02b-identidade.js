@@ -51,3 +51,18 @@ function jogadorChaveMigrar(k, lista) {
   const i = typeof k === "number" ? k : /^\d+$/.test(String(k)) ? parseInt(k, 10) : -1;
   return i >= 0 && l[i] ? l[i].id : null;
 }
+
+/* --- Partida (1.7.7.2): matchId ---
+ * Nasce quando a partida começa, vai pro save e é preservado quando a partida é retomada.
+ * "Jogar de novo" e partida nova ganham outro. Na 1.7.8 toda ação vai carimbada com ele, e na rede
+ * uma ação de uma partida que já acabou é recusada. */
+let matchId = null;
+const PARTIDA_ID_RE = /^p_[a-z0-9]{8,16}$/;
+function partidaIdNovo() {
+  let s = "p_" + Date.now().toString(36).slice(-6);
+  for (let i = 0; i < 4; i++) s += "abcdefghijkmnpqrstuvwxyz23456789"[Math.floor(Math.random() * 32)];
+  return s;
+}
+function partidaIdValido(id) {
+  return typeof id === "string" && PARTIDA_ID_RE.test(id);
+}
