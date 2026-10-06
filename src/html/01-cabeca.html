@@ -6,6 +6,15 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.7.3 · 05/10/2026 · "Foundation Structure Update · Parte 4" = ESPINHA COMPLETA.
+          A foto da 1ª lei (caosEspinhaFoto) passou a vigiar e desfazer também: fichas de palpite e estoque,
+          joias da rodada, vencedor por joias, fila da casa de bônus, dicas abertas (dica a mais sai), dica
+          pendente, modo sorteado da Moda da Casa, rodada, última rodada, vez das equipes (e cursor de cada
+          equipe) e sentido. Jogador é achado pelo id, e assento trocado volta pra ordem da foto. Relógios:
+          o balão congela o relógio enquanto fala (soma tempo), então a regra é "pode dar tempo, nunca tirar":
+          relógio encurtado volta. Carta, baralho, início e fim seguem só vigiados (anota, não desfaz).
+          caos_teste_espinha: rotina falsa mexe em tudo isso e a espinha desfaz tudo (+ dar tempo continua
+          podendo). Conferido no código: nenhuma rotina protegida mexe nesses dados por direito.
   1.7.7.2 · 05/10/2026 · "Foundation Structure Update · Parte 3" = PARTIDA E CARTAS IDENTIFICADAS.
           1) As 1000 cartas ganharam id fixo escrito na própria carta (ANO-0001 … ANIMAL-0200), na ordem dos
           arquivos. O id não sai da resposta (pedido do roteiro do GPT): corrigir uma resposta não muda o id.
@@ -363,7 +372,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.7.2</title>
+<title>Perfil JF · Beta 1.7.7.3</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -1,5 +1,16 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.7.3",
+    data: "05/10/2026 · 23:11",
+    nome: "Foundation Structure Update · Parte 4",
+    t: "A espinha do C.A.O.S. ficou completa: ele continua podendo zoar à vontade, mas não encosta em nada que decide a partida.",
+    itens: [
+      "🦴 A 1ª lei do C.A.O.S. (nunca mexe no jogo) agora protege tudo que decide a partida: fichas de palpite, joias da rodada, quem venceu por joias, a casa de bônus, as dicas abertas, a rodada e o modo sorteado da Moda da Casa.",
+      "⏱️ Relógio: o C.A.O.S. pode dar tempo (o balão segura o relógio enquanto ele fala), mas nunca pode tirar.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.7.2",
     data: "05/10/2026 · 22:50",
     nome: "Foundation Structure Update · Parte 3",
