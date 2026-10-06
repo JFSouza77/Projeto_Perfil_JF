@@ -6,6 +6,17 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.7.2 · 05/10/2026 · "Foundation Structure Update · Parte 3" = PARTIDA E CARTAS IDENTIFICADAS.
+          1) As 1000 cartas ganharam id fixo escrito na própria carta (ANO-0001 … ANIMAL-0200), na ordem dos
+          arquivos. O id não sai da resposta (pedido do roteiro do GPT): corrigir uma resposta não muda o id.
+          CARTAS_RESPOSTA_ANTIGA (dados/02-cartas/99-fechamento.js) guarda resposta antiga → id, pra save velho
+          achar a carta depois de uma correção. Número de carta removida não volta. cartaPorId/cartaPorResposta.
+          2) Save grava deckIds, allCardsIds e currentCardId (e ainda as respostas, pra versão anterior abrir);
+          na leitura vale o id; sem id, a resposta passando pelo mapa. Histórico com resposta antiga é convertido.
+          3) matchId ("p_…") nasce no início da partida, vai pro save, volta igual ao retomar; partida nova e
+          Jogar de novo zeram (resetDeck). Aparece no relatório exportado. 4) auditar_cartas confere formato,
+          prefixo da categoria e unicidade do id, e o mapa de respostas antigas. teste_identidade com 6 itens novos.
+          Sem mudança de conteúdo nas cartas (só o id), então nada pro log de cartas.
   1.7.7.1 · 05/10/2026 · "Foundation Structure Update · Parte 2" = IDENTIDADE DOS JOGADORES.
           js/02b-identidade.js: todo jogador ganha id ("j_" + 6 letras) no cadastro; não muda se alguém sai,
           se a ordem muda ou se a partida é salva e restaurada. Passam a usar o id (no Versus; no Equipe a chave
@@ -352,7 +363,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.7.1</title>
+<title>Perfil JF · Beta 1.7.7.2</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

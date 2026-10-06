@@ -61,6 +61,7 @@ function baralhoOldSchool() {
 // Entrada que começa com "*" é instrução especial (ex.: "*Volte 3 casas"); as outras são dicas.
 function expandDeck(compact) {
   return compact.map((c) => ({
+    id: c.id,
     category: c.cat,
     label: CATEGORY_LABELS[c.cat],
     answer: c.a,
@@ -73,6 +74,21 @@ function expandDeck(compact) {
 function rebuildCardsIndex() {
   cardsByAnswer = new Map(allCards.map((card) => [card.answer, card]));
 }
+// Cartas pelo id fixo (1.7.7.2). Vale pro baralho inteiro, não só o do modo atual.
+let cartasPorIdMapa = null;
+function cartaPorId(id) {
+  if (!cartasPorIdMapa) cartasPorIdMapa = new Map(ADULT_CARDS.map((c) => [c.id, c]));
+  return cartasPorIdMapa.get(id) || null;
+}
+// Resposta (de agora ou antiga, de save velho) → carta.
+function cartaPorResposta(resp) {
+  if (typeof resp !== "string") return null;
+  const id = CARTAS_RESPOSTA_ANTIGA[resp];
+  if (id) return cartaPorId(id);
+  if (!cartasPorRespostaMapa) cartasPorRespostaMapa = new Map(ADULT_CARDS.map((c) => [c.answer, c]));
+  return cartasPorRespostaMapa.get(resp) || null;
+}
+let cartasPorRespostaMapa = null;
 // Avisos da validação de dados feita na abertura (aparecem no console com DEBUG
 // e no painel Cérebro do C.A.O.S.).
 function avisoDados(msg) {

@@ -1,5 +1,17 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.7.2",
+    data: "05/10/2026 · 22:50",
+    nome: "Foundation Structure Update · Parte 3",
+    t: "Cada carta e cada partida agora têm uma identidade fixa. É mais uma peça da base pro online.",
+    itens: [
+      "🃏 As 1000 cartas ganharam um código fixo (como ANO-0001). Se um dia a resposta de uma carta for corrigida, a partida salva continua achando a carta certa.",
+      "🎲 Cada partida ganha um código próprio quando começa. Ele fica igual quando você retoma a partida salva, e muda quando começa uma nova. Aparece no relatório exportado.",
+      "💾 Partidas salvas em versões anteriores continuam abrindo normalmente.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.7.1",
     data: "05/10/2026 · 22:38",
     nome: "Foundation Structure Update · Parte 2",

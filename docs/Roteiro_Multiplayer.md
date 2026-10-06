@@ -149,7 +149,8 @@ Cada parte sai publicada sozinha, como nas updates anteriores. Em todas valem as
 - **Feito:** `js/02b-identidade.js`, save v12 e `ferramentas/teste_identidade.js`. As 2 referências por nome que decidem regra (1º Mestre da rodada e ADM principal) viraram id. As outras 3 (`ultimaRodadaQuem`, `caosMudoPor`, `pickedByName`) são só texto mostrado na tela e continuam pelo nome. A conversão achou um defeito antigo: as joias da rodada não eram remapeadas quando o ADM tirava alguém.
 - **Teste:** remover jogador pelo ADM, reordenar, salvar e restaurar, conferindo que cada `id` continua no mesmo jogador e que palpite, joias e Mestre ficam com a pessoa certa.
 
-### Parte 3 · 1.7.7.2 · Partida e cartas identificadas
+### Parte 3 · 1.7.7.2 · Partida e cartas identificadas (publicada)
+- **Feito:** ids `ANO-0001` … `ANIMAL-0200`, mapa `CARTAS_RESPOSTA_ANTIGA`, save com `deckIds`/`currentCardId`/`matchId`, auditor e `teste_identidade` conferindo.
 - `matchId` nasce no início da partida, vai pro save e é preservado no "Jogar de novo" como uma partida nova.
 - Toda carta ganha `id` **explícito e imutável**, escrito na própria carta (ex.: `ANO-0001`). Ele **não** sai da resposta (pedido do roteiro "Extractor Upgrade" do GPT): se uma resposta for corrigida, o `id` não muda. Um mapa resposta → `id` faz a migração do save antigo, que guardava pela resposta.
 - O auditor de cartas passa a conferir que os `id` são únicos.

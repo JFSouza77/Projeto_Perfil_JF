@@ -1,4 +1,5 @@
   {
+    id: "LUGAR-0001",
     cat: "LUGAR",
     a: "Cristo Redentor",
     class: "livre",
@@ -27,6 +28,7 @@
     ],
   },
   {
+    id: "LUGAR-0002",
     cat: "LUGAR",
     a: "Torre Eiffel",
     class: "livre",
@@ -55,6 +57,7 @@
     ],
   },
   {
+    id: "LUGAR-0003",
     cat: "LUGAR",
     a: "Muralha da China",
     class: "livre",
@@ -83,6 +86,7 @@
     ],
   },
   {
+    id: "LUGAR-0004",
     cat: "LUGAR",
     a: "Estátua da Liberdade",
     class: "livre",
@@ -111,6 +115,7 @@
     ],
   },
   {
+    id: "LUGAR-0005",
     cat: "LUGAR",
     a: "Taj Mahal",
     os: 1,
@@ -138,6 +143,7 @@
     ],
   },
   {
+    id: "LUGAR-0006",
     cat: "LUGAR",
     a: "Monte Everest",
     class: "livre",
@@ -165,6 +171,7 @@
     ],
   },
   {
+    id: "LUGAR-0007",
     cat: "LUGAR",
     a: "Floresta Amazônica",
     class: "livre",
@@ -192,6 +199,7 @@
     ],
   },
   {
+    id: "LUGAR-0008",
     cat: "LUGAR",
     a: "Rio de Janeiro",
     class: "livre",
@@ -219,6 +227,7 @@
     ],
   },
   {
+    id: "LUGAR-0009",
     cat: "LUGAR",
     a: "Nova York",
     class: "livre",
@@ -246,6 +255,7 @@
     ],
   },
   {
+    id: "LUGAR-0010",
     cat: "LUGAR",
     a: "Paris",
     class: "livre",
@@ -273,6 +283,7 @@
     ],
   },
   {
+    id: "LUGAR-0011",
     cat: "LUGAR",
     a: "Veneza",
     os: 1,
@@ -300,6 +311,7 @@
     ],
   },
   {
+    id: "LUGAR-0012",
     cat: "LUGAR",
     a: "Disney World",
     class: "livre",
@@ -327,6 +339,7 @@
     ],
   },
   {
+    id: "LUGAR-0013",
     cat: "LUGAR",
     a: "Ilha de Páscoa",
     os: 1,
@@ -354,6 +367,7 @@
     ],
   },
   {
+    id: "LUGAR-0014",
     cat: "LUGAR",
     a: "Grand Canyon",
     q: [
@@ -380,6 +394,7 @@
     ],
   },
   {
+    id: "LUGAR-0015",
     cat: "LUGAR",
     a: "Tóquio",
     q: [
@@ -406,6 +421,7 @@
     ],
   },
   {
+    id: "LUGAR-0016",
     cat: "LUGAR",
     a: "Hogwarts",
     class: "livre",
@@ -433,6 +449,7 @@
     ],
   },
   {
+    id: "LUGAR-0017",
     cat: "LUGAR",
     a: "Nárnia",
     q: [
@@ -459,6 +476,7 @@
     ],
   },
   {
+    id: "LUGAR-0018",
     cat: "LUGAR",
     a: "Egito",
     class: "livre",
@@ -486,6 +504,7 @@
     ],
   },
   {
+    id: "LUGAR-0019",
     cat: "LUGAR",
     a: "Roma",
     os: 1,
@@ -513,6 +532,7 @@
     ],
   },
   {
+    id: "LUGAR-0020",
     cat: "LUGAR",
     a: "Gotham City",
     q: [
@@ -539,6 +559,7 @@
     ],
   },
   {
+    id: "LUGAR-0021",
     cat: "LUGAR",
     a: "Mordor",
     q: [
@@ -565,6 +586,7 @@
     ],
   },
   {
+    id: "LUGAR-0022",
     cat: "LUGAR",
     a: "Wakanda",
     q: [
@@ -591,6 +613,7 @@
     ],
   },
   {
+    id: "LUGAR-0023",
     cat: "LUGAR",
     a: "Atlântida",
     q: [
@@ -617,6 +640,7 @@
     ],
   },
   {
+    id: "LUGAR-0024",
     cat: "LUGAR",
     a: "Las Vegas",
     os: 1,
@@ -644,6 +668,7 @@
     ],
   },
   {
+    id: "LUGAR-0025",
     cat: "LUGAR",
     a: "Polo Norte",
     class: "livre",
@@ -671,6 +696,7 @@
     ],
   },
   {
+    id: "LUGAR-0026",
     cat: "LUGAR",
     a: "Coliseu",
     os: 1,
@@ -698,6 +724,7 @@
     ],
   },
   {
+    id: "LUGAR-0027",
     cat: "LUGAR",
     a: "Machu Picchu",
     os: 1,
@@ -725,6 +752,7 @@
     ],
   },
   {
+    id: "LUGAR-0028",
     cat: "LUGAR",
     a: "Pirâmides de Gizé",
     class: "livre",
@@ -753,6 +781,7 @@
     ],
   },
   {
+    id: "LUGAR-0029",
     cat: "LUGAR",
     a: "Big Ben",
     class: "livre",
@@ -780,6 +809,7 @@
     ],
   },
   {
+    id: "LUGAR-0030",
     cat: "LUGAR",
     a: "Chernobyl",
     os: 1,
@@ -807,6 +837,7 @@
     ],
   },
   {
+    id: "LUGAR-0031",
     cat: "LUGAR",
     a: "Deserto do Saara",
     class: "livre",
@@ -834,6 +865,7 @@
     ],
   },
   {
+    id: "LUGAR-0032",
     cat: "LUGAR",
     a: "Antártida",
     class: "livre",
@@ -861,6 +893,7 @@
     ],
   },
   {
+    id: "LUGAR-0033",
     cat: "LUGAR",
     a: "Vaticano",
     os: 1,
@@ -888,6 +921,7 @@
     ],
   },
   {
+    id: "LUGAR-0034",
     cat: "LUGAR",
     a: "Salvador",
     os: 1,
@@ -915,6 +949,7 @@
     ],
   },
   {
+    id: "LUGAR-0035",
     cat: "LUGAR",
     a: "Amsterdã",
     q: [
@@ -941,6 +976,7 @@
     ],
   },
   {
+    id: "LUGAR-0036",
     cat: "LUGAR",
     a: "Dubai",
     q: [
@@ -967,6 +1003,7 @@
     ],
   },
   {
+    id: "LUGAR-0037",
     cat: "LUGAR",
     a: "Sydney",
     q: [
@@ -993,6 +1030,7 @@
     ],
   },
   {
+    id: "LUGAR-0038",
     cat: "LUGAR",
     a: "Groenlândia",
     q: [
@@ -1019,6 +1057,7 @@
     ],
   },
   {
+    id: "LUGAR-0039",
     cat: "LUGAR",
     a: "Monte Fuji",
     q: [
@@ -1045,6 +1084,7 @@
     ],
   },
   {
+    id: "LUGAR-0040",
     cat: "LUGAR",
     a: "Grande Barreira de Corais",
     class: "livre",
@@ -1072,6 +1112,7 @@
     ],
   },
   {
+    id: "LUGAR-0041",
     cat: "LUGAR",
     a: "Berlim",
     q: [
@@ -1098,6 +1139,7 @@
     ],
   },
   {
+    id: "LUGAR-0042",
     cat: "LUGAR",
     a: "Havaí",
     q: [
@@ -1124,6 +1166,7 @@
     ],
   },
   {
+    id: "LUGAR-0043",
     cat: "LUGAR",
     a: "Bali",
     q: [
@@ -1150,6 +1193,7 @@
     ],
   },
   {
+    id: "LUGAR-0044",
     cat: "LUGAR",
     a: "Área 51",
     os: 1,
@@ -1177,6 +1221,7 @@
     ],
   },
   {
+    id: "LUGAR-0045",
     cat: "LUGAR",
     a: "Chichen Itzá",
     os: 1,
@@ -1204,6 +1249,7 @@
     ],
   },
   {
+    id: "LUGAR-0046",
     cat: "LUGAR",
     a: "Cataratas do Iguaçu",
     class: "livre",
@@ -1232,6 +1278,7 @@
     ],
   },
   {
+    id: "LUGAR-0047",
     cat: "LUGAR",
     a: "Mar Vermelho",
     q: [
@@ -1258,6 +1305,7 @@
     ],
   },
   {
+    id: "LUGAR-0048",
     cat: "LUGAR",
     a: "Terra do Nunca",
     class: "livre",
@@ -1285,6 +1333,7 @@
     ],
   },
   {
+    id: "LUGAR-0049",
     cat: "LUGAR",
     a: "Disneylândia",
     q: [
@@ -1311,6 +1360,7 @@
     ],
   },
   {
+    id: "LUGAR-0050",
     cat: "LUGAR",
     a: "Campinas",
     q: [
@@ -1337,6 +1387,7 @@
     ],
   },
   {
+    id: "LUGAR-0051",
     cat: "LUGAR",
     a: "Stonehenge",
     os: 1,
@@ -1364,6 +1415,7 @@
     ],
   },
   {
+    id: "LUGAR-0052",
     cat: "LUGAR",
     a: "Petra",
     os: 1,
@@ -1391,6 +1443,7 @@
     ],
   },
   {
+    id: "LUGAR-0053",
     cat: "LUGAR",
     a: "Ilhas Galápagos",
     q: [
@@ -1417,6 +1470,7 @@
     ],
   },
   {
+    id: "LUGAR-0054",
     cat: "LUGAR",
     a: "Yellowstone",
     q: [
@@ -1443,6 +1497,7 @@
     ],
   },
   {
+    id: "LUGAR-0055",
     cat: "LUGAR",
     a: "Cataratas do Niágara",
     class: "junior",
@@ -1470,6 +1525,7 @@
     ],
   },
   {
+    id: "LUGAR-0056",
     cat: "LUGAR",
     a: "Fernando de Noronha",
     class: "junior",
@@ -1498,6 +1554,7 @@
     ],
   },
   {
+    id: "LUGAR-0057",
     cat: "LUGAR",
     a: "Porto Seguro",
     class: "junior",
@@ -1525,6 +1582,7 @@
     ],
   },
   {
+    id: "LUGAR-0058",
     cat: "LUGAR",
     a: "São Paulo",
     class: "junior",
@@ -1552,6 +1610,7 @@
     ],
   },
   {
+    id: "LUGAR-0059",
     cat: "LUGAR",
     a: "Praia",
     class: "junior",
@@ -1579,6 +1638,7 @@
     ],
   },
   {
+    id: "LUGAR-0060",
     cat: "LUGAR",
     a: "Cachoeira",
     class: "junior",
@@ -1606,6 +1666,7 @@
     ],
   },
   {
+    id: "LUGAR-0061",
     cat: "LUGAR",
     a: "Museu",
     class: "junior",
@@ -1633,6 +1694,7 @@
     ],
   },
   {
+    id: "LUGAR-0062",
     cat: "LUGAR",
     a: "Circo",
     class: "junior",
@@ -1660,6 +1722,7 @@
     ],
   },
   {
+    id: "LUGAR-0063",
     cat: "LUGAR",
     a: "McDonald's",
     class: "junior",
@@ -1687,6 +1750,7 @@
     ],
   },
   {
+    id: "LUGAR-0064",
     cat: "LUGAR",
     a: "Escola",
     class: "junior",
@@ -1714,6 +1778,7 @@
     ],
   },
   {
+    id: "LUGAR-0065",
     cat: "LUGAR",
     a: "Padaria",
     class: "junior",
@@ -1741,6 +1806,7 @@
     ],
   },
   {
+    id: "LUGAR-0066",
     cat: "LUGAR",
     a: "Farmácia",
     class: "junior",
@@ -1768,6 +1834,7 @@
     ],
   },
   {
+    id: "LUGAR-0067",
     cat: "LUGAR",
     a: "Hospital",
     class: "junior",
@@ -1795,6 +1862,7 @@
     ],
   },
   {
+    id: "LUGAR-0068",
     cat: "LUGAR",
     a: "Sorveteria",
     class: "junior",
@@ -1822,6 +1890,7 @@
     ],
   },
   {
+    id: "LUGAR-0069",
     cat: "LUGAR",
     a: "Pizzaria",
     class: "junior",
@@ -1849,6 +1918,7 @@
     ],
   },
   {
+    id: "LUGAR-0070",
     cat: "LUGAR",
     a: "Itália",
     class: "junior",
@@ -1876,6 +1946,7 @@
     ],
   },
   {
+    id: "LUGAR-0071",
     cat: "LUGAR",
     a: "Beto Carrero World",
     class: "junior",
@@ -1904,6 +1975,7 @@
     ],
   },
   {
+    id: "LUGAR-0072",
     cat: "LUGAR",
     a: "Vulcão",
     class: "junior",
@@ -1931,6 +2003,7 @@
     ],
   },
   {
+    id: "LUGAR-0073",
     cat: "LUGAR",
     a: "Supermercado",
     class: "junior",
@@ -1958,6 +2031,7 @@
     ],
   },
   {
+    id: "LUGAR-0074",
     cat: "LUGAR",
     a: "Japão",
     class: "junior",
@@ -1985,6 +2059,7 @@
     ],
   },
   {
+    id: "LUGAR-0075",
     cat: "LUGAR",
     a: "China",
     class: "junior",
@@ -2012,6 +2087,7 @@
     ],
   },
   {
+    id: "LUGAR-0076",
     cat: "LUGAR",
     a: "Estados Unidos",
     class: "junior",
@@ -2039,6 +2115,7 @@
     ],
   },
   {
+    id: "LUGAR-0077",
     cat: "LUGAR",
     a: "Maracanã",
     class: "junior",
@@ -2067,6 +2144,7 @@
     ],
   },
   {
+    id: "LUGAR-0078",
     cat: "LUGAR",
     a: "Aquário",
     class: "junior",
@@ -2094,6 +2172,7 @@
     ],
   },
   {
+    id: "LUGAR-0079",
     cat: "LUGAR",
     a: "Shopping",
     class: "junior",
@@ -2121,6 +2200,7 @@
     ],
   },
   {
+    id: "LUGAR-0080",
     cat: "LUGAR",
     a: "Ilha de Madagascar",
     class: "junior",
@@ -2148,6 +2228,7 @@
     ],
   },
   {
+    id: "LUGAR-0081",
     cat: "LUGAR",
     a: "Sítio do Picapau Amarelo",
     class: "junior",
@@ -2176,6 +2257,7 @@
     ],
   },
   {
+    id: "LUGAR-0082",
     cat: "LUGAR",
     a: "Batcaverna",
     class: "junior",
@@ -2203,6 +2285,7 @@
     ],
   },
   {
+    id: "LUGAR-0083",
     cat: "LUGAR",
     a: "Sol",
     class: "junior",
@@ -2230,6 +2313,7 @@
     ],
   },
   {
+    id: "LUGAR-0084",
     cat: "LUGAR",
     a: "Lua",
     class: "junior",
@@ -2257,6 +2341,7 @@
     ],
   },
   {
+    id: "LUGAR-0085",
     cat: "LUGAR",
     a: "Torre de Pisa",
     os: 1,
@@ -2284,6 +2369,7 @@
     ],
   },
   {
+    id: "LUGAR-0086",
     cat: "LUGAR",
     a: "Brasília",
     class: "oldschool",
@@ -2311,6 +2397,7 @@
     ],
   },
   {
+    id: "LUGAR-0087",
     cat: "LUGAR",
     a: "Pantanal",
     class: "oldschool",
@@ -2338,6 +2425,7 @@
     ],
   },
   {
+    id: "LUGAR-0088",
     cat: "LUGAR",
     a: "Lençóis Maranhenses",
     class: "oldschool",
@@ -2365,6 +2453,7 @@
     ],
   },
   {
+    id: "LUGAR-0089",
     cat: "LUGAR",
     a: "Ouro Preto",
     class: "oldschool",
@@ -2392,6 +2481,7 @@
     ],
   },
   {
+    id: "LUGAR-0090",
     cat: "LUGAR",
     a: "Pelourinho",
     class: "oldschool",
@@ -2419,6 +2509,7 @@
     ],
   },
   {
+    id: "LUGAR-0091",
     cat: "LUGAR",
     a: "Copacabana",
     class: "oldschool",
@@ -2446,6 +2537,7 @@
     ],
   },
   {
+    id: "LUGAR-0092",
     cat: "LUGAR",
     a: "Chapada Diamantina",
     class: "oldschool",
@@ -2473,6 +2565,7 @@
     ],
   },
   {
+    id: "LUGAR-0093",
     cat: "LUGAR",
     a: "Avenida Paulista",
     class: "oldschool",
@@ -2500,6 +2593,7 @@
     ],
   },
   {
+    id: "LUGAR-0094",
     cat: "LUGAR",
     a: "Santuário de Aparecida",
     class: "oldschool",
@@ -2527,6 +2621,7 @@
     ],
   },
   {
+    id: "LUGAR-0095",
     cat: "LUGAR",
     a: "Serra Pelada",
     class: "oldschool",
@@ -2554,6 +2649,7 @@
     ],
   },
   {
+    id: "LUGAR-0096",
     cat: "LUGAR",
     a: "Bonito",
     class: "oldschool",
@@ -2581,6 +2677,7 @@
     ],
   },
   {
+    id: "LUGAR-0097",
     cat: "LUGAR",
     a: "Gramado",
     class: "oldschool",
@@ -2608,6 +2705,7 @@
     ],
   },
   {
+    id: "LUGAR-0098",
     cat: "LUGAR",
     a: "Alcatraz",
     class: "oldschool",
@@ -2635,6 +2733,7 @@
     ],
   },
   {
+    id: "LUGAR-0099",
     cat: "LUGAR",
     a: "Palácio Anchieta",
     class: "oldschool",
@@ -2662,6 +2761,7 @@
     ],
   },
   {
+    id: "LUGAR-0100",
     cat: "LUGAR",
     a: "Torre de Babel",
     class: "oldschool",
@@ -2689,6 +2789,7 @@
     ],
   },
   {
+    id: "LUGAR-0101",
     cat: "LUGAR",
     a: "Muralhas de Jericó",
     class: "oldschool",
@@ -2716,6 +2817,7 @@
     ],
   },
   {
+    id: "LUGAR-0102",
     cat: "LUGAR",
     a: "Jardins Suspensos da Babilônia",
     class: "oldschool",
@@ -2743,6 +2845,7 @@
     ],
   },
   {
+    id: "LUGAR-0103",
     cat: "LUGAR",
     a: "Biblioteca de Alexandria",
     class: "oldschool",
@@ -2770,6 +2873,7 @@
     ],
   },
   {
+    id: "LUGAR-0104",
     cat: "LUGAR",
     a: "Teatro Amazonas",
     class: "oldschool",
@@ -2797,6 +2901,7 @@
     ],
   },
   {
+    id: "LUGAR-0105",
     cat: "LUGAR",
     a: "Elevador Lacerda",
     class: "oldschool",
@@ -2824,6 +2929,7 @@
     ],
   },
   {
+    id: "LUGAR-0106",
     cat: "LUGAR",
     a: "Playcenter",
     class: "oldschool",
@@ -2851,6 +2957,7 @@
     ],
   },
   {
+    id: "LUGAR-0107",
     cat: "LUGAR",
     a: "Estádio do Pacaembu",
     class: "oldschool",
@@ -2878,6 +2985,7 @@
     ],
   },
   {
+    id: "LUGAR-0108",
     cat: "LUGAR",
     a: "Mercado Municipal de São Paulo",
     class: "oldschool",
@@ -2905,6 +3013,7 @@
     ],
   },
   {
+    id: "LUGAR-0109",
     cat: "LUGAR",
     a: "Ilha Fiscal",
     class: "oldschool",
@@ -2932,6 +3041,7 @@
     ],
   },
   {
+    id: "LUGAR-0110",
     cat: "LUGAR",
     a: "Parque da Mônica",
     class: "oldschool",
@@ -2959,6 +3069,7 @@
     ],
   },
   {
+    id: "LUGAR-0111",
     cat: "LUGAR",
     a: "Krypton",
     class: "livre",
@@ -2986,6 +3097,7 @@
     ],
   },
   {
+    id: "LUGAR-0112",
     cat: "LUGAR",
     a: "Oa",
     class: "hardcore",
@@ -3013,6 +3125,7 @@
     ],
   },
   {
+    id: "LUGAR-0113",
     cat: "LUGAR",
     a: "Tempest",
     class: "hardcore",
@@ -3040,6 +3153,7 @@
     ],
   },
   {
+    id: "LUGAR-0114",
     cat: "LUGAR",
     a: "Convento da Penha",
     class: "oldschool",
@@ -3068,6 +3182,7 @@
     ],
   },
   {
+    id: "LUGAR-0115",
     cat: "LUGAR",
     a: "Morro da Urca",
     os: 1,
@@ -3095,6 +3210,7 @@
     ],
   },
   {
+    id: "LUGAR-0116",
     cat: "LUGAR",
     a: "Arena Castelão",
     q: [
@@ -3121,6 +3237,7 @@
     ],
   },
   {
+    id: "LUGAR-0117",
     cat: "LUGAR",
     a: "Terceira Ponte",
     class: "oldschool",
@@ -3149,6 +3266,7 @@
     ],
   },
   {
+    id: "LUGAR-0118",
     cat: "LUGAR",
     a: "Ponte Rio-Niterói",
     os: 1,
@@ -3176,6 +3294,7 @@
     ],
   },
   {
+    id: "LUGAR-0119",
     cat: "LUGAR",
     a: "Ponte Golden Gate",
     q: [
@@ -3202,6 +3321,7 @@
     ],
   },
   {
+    id: "LUGAR-0120",
     cat: "LUGAR",
     a: "Tower Bridge",
     q: [
@@ -3228,6 +3348,7 @@
     ],
   },
   {
+    id: "LUGAR-0121",
     cat: "LUGAR",
     a: "Catedral de Notre-Dame",
     os: 1,
@@ -3255,6 +3376,7 @@
     ],
   },
   {
+    id: "LUGAR-0122",
     cat: "LUGAR",
     a: "Shibuya",
     q: [
@@ -3281,6 +3403,7 @@
     ],
   },
   {
+    id: "LUGAR-0123",
     cat: "LUGAR",
     a: "Salão Oval",
     q: [
@@ -3307,6 +3430,7 @@
     ],
   },
   {
+    id: "LUGAR-0124",
     cat: "LUGAR",
     a: "Miami",
     q: [
@@ -3333,6 +3457,7 @@
     ],
   },
   {
+    id: "LUGAR-0125",
     cat: "LUGAR",
     a: "Ciudad del Este",
     os: 1,
@@ -3360,6 +3485,7 @@
     ],
   },
   {
+    id: "LUGAR-0126",
     cat: "LUGAR",
     a: "Marco das Três Fronteiras",
     q: [
@@ -3386,6 +3512,7 @@
     ],
   },
   {
+    id: "LUGAR-0127",
     cat: "LUGAR",
     a: "Baía de Guanabara",
     os: 1,
@@ -3413,6 +3540,7 @@
     ],
   },
   {
+    id: "LUGAR-0128",
     cat: "LUGAR",
     a: "Parque Ibirapuera",
     q: [
@@ -3439,6 +3567,7 @@
     ],
   },
   {
+    id: "LUGAR-0129",
     cat: "LUGAR",
     a: "Central Park",
     q: [
@@ -3465,6 +3594,7 @@
     ],
   },
   {
+    id: "LUGAR-0130",
     cat: "LUGAR",
     a: "Parque Moscoso",
     class: "oldschool",
@@ -3493,6 +3623,7 @@
     ],
   },
   {
+    id: "LUGAR-0131",
     cat: "LUGAR",
     a: "Parque Pedra da Cebola",
     class: "oldschool",
@@ -3521,6 +3652,7 @@
     ],
   },
   {
+    id: "LUGAR-0132",
     cat: "LUGAR",
     a: "Rua da Lama",
     class: "oldschool",
@@ -3549,6 +3681,7 @@
     ],
   },
   {
+    id: "LUGAR-0133",
     cat: "LUGAR",
     a: "Gruta da Onça",
     class: "oldschool",
@@ -3577,6 +3710,7 @@
     ],
   },
   {
+    id: "LUGAR-0134",
     cat: "LUGAR",
     a: "Fucape",
     class: "oldschool",
@@ -3605,6 +3739,7 @@
     ],
   },
   {
+    id: "LUGAR-0135",
     cat: "LUGAR",
     a: "UFES",
     class: "oldschool",
@@ -3633,6 +3768,7 @@
     ],
   },
   {
+    id: "LUGAR-0136",
     cat: "LUGAR",
     a: "UFRJ",
     os: 1,
@@ -3660,6 +3796,7 @@
     ],
   },
   {
+    id: "LUGAR-0137",
     cat: "LUGAR",
     a: "Herbert Richers",
     os: 1,
@@ -3687,6 +3824,7 @@
     ],
   },
   {
+    id: "LUGAR-0138",
     cat: "LUGAR",
     a: "Zoológico",
     class: "junior",
@@ -3714,6 +3852,7 @@
     ],
   },
   {
+    id: "LUGAR-0139",
     cat: "LUGAR",
     a: "Parque de diversões",
     class: "junior",
@@ -3741,6 +3880,7 @@
     ],
   },
   {
+    id: "LUGAR-0140",
     cat: "LUGAR",
     a: "Biblioteca",
     class: "junior",
@@ -3768,6 +3908,7 @@
     ],
   },
   {
+    id: "LUGAR-0141",
     cat: "LUGAR",
     a: "Fazenda",
     class: "junior",
@@ -3795,6 +3936,7 @@
     ],
   },
   {
+    id: "LUGAR-0142",
     cat: "LUGAR",
     a: "Castelo",
     class: "junior",
@@ -3822,6 +3964,7 @@
     ],
   },
   {
+    id: "LUGAR-0143",
     cat: "LUGAR",
     a: "Floresta",
     class: "junior",
@@ -3849,6 +3992,7 @@
     ],
   },
   {
+    id: "LUGAR-0144",
     cat: "LUGAR",
     a: "Deserto",
     class: "junior",
@@ -3876,6 +4020,7 @@
     ],
   },
   {
+    id: "LUGAR-0145",
     cat: "LUGAR",
     a: "Ilha",
     class: "junior",
@@ -3903,6 +4048,7 @@
     ],
   },
   {
+    id: "LUGAR-0146",
     cat: "LUGAR",
     a: "Montanha",
     class: "junior",
@@ -3930,6 +4076,7 @@
     ],
   },
   {
+    id: "LUGAR-0147",
     cat: "LUGAR",
     a: "Cinema",
     class: "junior",
@@ -3957,6 +4104,7 @@
     ],
   },
   {
+    id: "LUGAR-0148",
     cat: "LUGAR",
     a: "Aeroporto",
     class: "junior",
@@ -3984,6 +4132,7 @@
     ],
   },
   {
+    id: "LUGAR-0149",
     cat: "LUGAR",
     a: "Piscina",
     class: "junior",
@@ -4011,6 +4160,7 @@
     ],
   },
   {
+    id: "LUGAR-0150",
     cat: "LUGAR",
     a: "Marte",
     class: "junior",
@@ -4038,6 +4188,7 @@
     ],
   },
   {
+    id: "LUGAR-0151",
     cat: "LUGAR",
     a: "Quartel de bombeiros",
     class: "junior",
@@ -4065,6 +4216,7 @@
     ],
   },
   {
+    id: "LUGAR-0152",
     cat: "LUGAR",
     a: "Londres",
     class: "livre",
@@ -4092,6 +4244,7 @@
     ],
   },
   {
+    id: "LUGAR-0153",
     cat: "LUGAR",
     a: "Austrália",
     class: "livre",
@@ -4119,6 +4272,7 @@
     ],
   },
   {
+    id: "LUGAR-0154",
     cat: "LUGAR",
     a: "Canadá",
     class: "livre",
@@ -4146,6 +4300,7 @@
     ],
   },
   {
+    id: "LUGAR-0155",
     cat: "LUGAR",
     a: "México",
     class: "livre",
@@ -4173,6 +4328,7 @@
     ],
   },
   {
+    id: "LUGAR-0156",
     cat: "LUGAR",
     a: "Argentina",
     class: "livre",
@@ -4200,6 +4356,7 @@
     ],
   },
   {
+    id: "LUGAR-0157",
     cat: "LUGAR",
     a: "Portugal",
     class: "livre",
@@ -4227,6 +4384,7 @@
     ],
   },
   {
+    id: "LUGAR-0158",
     cat: "LUGAR",
     a: "Índia",
     class: "livre",
@@ -4254,6 +4412,7 @@
     ],
   },
   {
+    id: "LUGAR-0159",
     cat: "LUGAR",
     a: "Grécia",
     class: "livre",
@@ -4281,6 +4440,7 @@
     ],
   },
   {
+    id: "LUGAR-0160",
     cat: "LUGAR",
     a: "Pão de Açúcar",
     class: "livre",
@@ -4308,6 +4468,7 @@
     ],
   },
   {
+    id: "LUGAR-0161",
     cat: "LUGAR",
     a: "Florianópolis",
     class: "livre",
@@ -4335,6 +4496,7 @@
     ],
   },
   {
+    id: "LUGAR-0162",
     cat: "LUGAR",
     a: "Saturno",
     class: "livre",
@@ -4362,6 +4524,7 @@
     ],
   },
   {
+    id: "LUGAR-0163",
     cat: "LUGAR",
     a: "Monte Olimpo",
     class: "livre",
@@ -4389,6 +4552,7 @@
     ],
   },
   {
+    id: "LUGAR-0164",
     cat: "LUGAR",
     a: "Fenda do Biquíni",
     class: "livre",
@@ -4416,6 +4580,7 @@
     ],
   },
   {
+    id: "LUGAR-0165",
     cat: "LUGAR",
     a: "Springfield",
     class: "livre",
@@ -4443,6 +4608,7 @@
     ],
   },
   {
+    id: "LUGAR-0166",
     cat: "LUGAR",
     a: "Reino Tão Tão Distante",
     class: "livre",
@@ -4470,6 +4636,7 @@
     ],
   },
   {
+    id: "LUGAR-0167",
     cat: "LUGAR",
     a: "Mineirão",
     class: "oldschool",
@@ -4497,6 +4664,7 @@
     ],
   },
   {
+    id: "LUGAR-0168",
     cat: "LUGAR",
     a: "Morumbi",
     class: "oldschool",
@@ -4524,6 +4692,7 @@
     ],
   },
   {
+    id: "LUGAR-0169",
     cat: "LUGAR",
     a: "Torre de TV de Brasília",
     class: "oldschool",
@@ -4551,6 +4720,7 @@
     ],
   },
   {
+    id: "LUGAR-0170",
     cat: "LUGAR",
     a: "Museu do Ipiranga",
     class: "oldschool",
@@ -4578,6 +4748,7 @@
     ],
   },
   {
+    id: "LUGAR-0171",
     cat: "LUGAR",
     a: "Theatro Municipal do Rio de Janeiro",
     class: "oldschool",
@@ -4605,6 +4776,7 @@
     ],
   },
   {
+    id: "LUGAR-0172",
     cat: "LUGAR",
     a: "Edifício Copan",
     class: "oldschool",
@@ -4632,6 +4804,7 @@
     ],
   },
   {
+    id: "LUGAR-0173",
     cat: "LUGAR",
     a: "Viaduto do Chá",
     class: "oldschool",
@@ -4659,6 +4832,7 @@
     ],
   },
   {
+    id: "LUGAR-0174",
     cat: "LUGAR",
     a: "Sambódromo da Marquês de Sapucaí",
     class: "oldschool",
@@ -4686,6 +4860,7 @@
     ],
   },
   {
+    id: "LUGAR-0175",
     cat: "LUGAR",
     a: "Jardim Botânico do Rio de Janeiro",
     class: "oldschool",
@@ -4713,6 +4888,7 @@
     ],
   },
   {
+    id: "LUGAR-0176",
     cat: "LUGAR",
     a: "Hopi Hari",
     class: "oldschool",
@@ -4740,6 +4916,7 @@
     ],
   },
   {
+    id: "LUGAR-0177",
     cat: "LUGAR",
     a: "Mappin",
     class: "oldschool",
@@ -4767,6 +4944,7 @@
     ],
   },
   {
+    id: "LUGAR-0178",
     cat: "LUGAR",
     a: "Ilha do Mel",
     class: "oldschool",
@@ -4794,6 +4972,7 @@
     ],
   },
   {
+    id: "LUGAR-0179",
     cat: "LUGAR",
     a: "Mercado Ver-o-Peso",
     class: "oldschool",
@@ -4821,6 +5000,7 @@
     ],
   },
   {
+    id: "LUGAR-0180",
     cat: "LUGAR",
     a: "Lagoa Rodrigo de Freitas",
     class: "oldschool",
@@ -4848,6 +5028,7 @@
     ],
   },
   {
+    id: "LUGAR-0181",
     cat: "LUGAR",
     a: "Istambul",
     q: [
@@ -4874,6 +5055,7 @@
     ],
   },
   {
+    id: "LUGAR-0182",
     cat: "LUGAR",
     a: "Moscou",
     q: [
@@ -4900,6 +5082,7 @@
     ],
   },
   {
+    id: "LUGAR-0183",
     cat: "LUGAR",
     a: "Barcelona",
     q: [
@@ -4926,6 +5109,7 @@
     ],
   },
   {
+    id: "LUGAR-0184",
     cat: "LUGAR",
     a: "Kyoto",
     q: [
@@ -4952,6 +5136,7 @@
     ],
   },
   {
+    id: "LUGAR-0185",
     cat: "LUGAR",
     a: "Singapura",
     q: [
@@ -4978,6 +5163,7 @@
     ],
   },
   {
+    id: "LUGAR-0186",
     cat: "LUGAR",
     a: "Islândia",
     q: [
@@ -5004,6 +5190,7 @@
     ],
   },
   {
+    id: "LUGAR-0187",
     cat: "LUGAR",
     a: "Patagônia",
     q: [
@@ -5030,6 +5217,7 @@
     ],
   },
   {
+    id: "LUGAR-0188",
     cat: "LUGAR",
     a: "Cuba",
     q: [
@@ -5056,6 +5244,7 @@
     ],
   },
   {
+    id: "LUGAR-0189",
     cat: "LUGAR",
     a: "Jerusalém",
     q: [
@@ -5082,6 +5271,7 @@
     ],
   },
   {
+    id: "LUGAR-0190",
     cat: "LUGAR",
     a: "Meca",
     q: [
@@ -5108,6 +5298,7 @@
     ],
   },
   {
+    id: "LUGAR-0191",
     cat: "LUGAR",
     a: "Angkor Wat",
     q: [
@@ -5134,6 +5325,7 @@
     ],
   },
   {
+    id: "LUGAR-0192",
     cat: "LUGAR",
     a: "Acrópole",
     q: [
@@ -5160,6 +5352,7 @@
     ],
   },
   {
+    id: "LUGAR-0193",
     cat: "LUGAR",
     a: "Sagrada Família",
     q: [
@@ -5186,6 +5379,7 @@
     ],
   },
   {
+    id: "LUGAR-0194",
     cat: "LUGAR",
     a: "Louvre",
     q: [
@@ -5212,6 +5406,7 @@
     ],
   },
   {
+    id: "LUGAR-0195",
     cat: "LUGAR",
     a: "Kremlin",
     q: [
@@ -5238,6 +5433,7 @@
     ],
   },
   {
+    id: "LUGAR-0196",
     cat: "LUGAR",
     a: "Monte Rushmore",
     q: [
@@ -5264,6 +5460,7 @@
     ],
   },
   {
+    id: "LUGAR-0197",
     cat: "LUGAR",
     a: "Times Square",
     q: [
@@ -5290,6 +5487,7 @@
     ],
   },
   {
+    id: "LUGAR-0198",
     cat: "LUGAR",
     a: "Hollywood",
     q: [
@@ -5316,6 +5514,7 @@
     ],
   },
   {
+    id: "LUGAR-0199",
     cat: "LUGAR",
     a: "Salar de Uyuni",
     q: [
@@ -5342,6 +5541,7 @@
     ],
   },
   {
+    id: "LUGAR-0200",
     cat: "LUGAR",
     a: "Recife",
     q: [
