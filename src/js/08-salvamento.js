@@ -398,7 +398,9 @@ function saveGameState() {
       WIN_CONDITION,
       casaSorteado,
       rodadaAtual,
-      primeiroMestreNome,
+      primeiroMestreId,
+      // nome também, pra uma versão anterior à 1.7.7.1 ainda abrir este save
+      primeiroMestreNome: (jogadorPorId(primeiroMestreId) || {}).name || null,
       joiasRodada,
       ultimaRodada,
       ultimaRodadaQuem,
@@ -406,7 +408,8 @@ function saveGameState() {
       caosRitmoLog,
       caosEmoHist,
       caosExtra: caosExtraSalvar(),
-      admPrincipalName,
+      admPrincipalId,
+      admPrincipalName: (jogadorPorId(admPrincipalId) || {}).name || null,
       caosCofrinho,
       CURRENT_MODE,
       WINNING_SCORE,
@@ -471,6 +474,7 @@ function sanitizeLoadedState(s) {
           if (n > 0) gems[c] = Math.min(GEMS_TO_WIN, Math.floor(n));
         });
       return {
+        id: p.id,
         name,
         score: num(p.score, 0),
         position: num(p.position, 0),
@@ -510,6 +514,22 @@ function sanitizeLoadedState(s) {
       };
     });
   const nP = s.players.length;
+  // 1.7.7.1: todo jogador com id único. Save antigo (até a versão 11) ganha id aqui, e as chaves
+  // que eram posição ("0", "1"…) ou nome viram o id do jogador.
+  jogadoresGarantirIds(s.players);
+  const idPorNome = (nome) => {
+    const q = typeof nome === "string" ? s.players.find((p) => p.name === nome) : null;
+    return q ? q.id : null;
+  };
+  const idOk = (id) => jogadorIdValido(id) && s.players.some((p) => p.id === id);
+  s.primeiroMestreId = idOk(s.primeiroMestreId) ? s.primeiroMestreId : idPorNome(s.primeiroMestreNome);
+  s.admPrincipalId = idOk(s.admPrincipalId) ? s.admPrincipalId : idPorNome(s.admPrincipalName);
+  const jr = s.joiasRodada && typeof s.joiasRodada === "object" ? s.joiasRodada : {};
+  s.joiasRodada = {};
+  Object.keys(jr).forEach((k) => {
+    const k2 = s.CURRENT_FORMAT === "equipe" ? (TEAM_INFO[k] ? k : null) : jogadorChaveMigrar(k, s.players);
+    if (k2) s.joiasRodada[k2] = jr[k];
+  });
   const idxOk = (v) => Number.isInteger(v) && v >= 0 && v < nP;
   ["mestreIndex", "responderIndex", "expressStealSavedResponder", "bonusOrigMestreIdx"].forEach((k) => {
     if (!idxOk(s[k])) s[k] = null;
@@ -567,8 +587,8 @@ function sanitizeLoadedState(s) {
   s.palpiteHolders = {};
   Object.keys(ph).forEach((k) => {
     const n = Math.floor(num(ph[k], 0));
-    const ok = s.CURRENT_FORMAT === "equipe" ? !!s.teams[k] : idxOk(parseInt(k, 10));
-    if (ok && n > 0) s.palpiteHolders[k] = 1;
+    const k2 = s.CURRENT_FORMAT === "equipe" ? (s.teams[k] ? k : null) : jogadorChaveMigrar(k, s.players);
+    if (k2 && n > 0) s.palpiteHolders[k2] = 1;
   });
   s.palpiteStock = Math.max(0, PALPITE_STOCK - Object.keys(s.palpiteHolders).length);
   const answers = new Set(ADULT_CARDS.map((c) => c.answer));
@@ -591,12 +611,11 @@ function sanitizeLoadedState(s) {
     .filter((c) => ["ANO", "PESSOA", "LUGAR", "COISA"].includes(c))
     .slice(0, 2);
   if (!["none", "hidden", "revealed", "bonusChoice"].includes(s.cardState)) s.cardState = "none";
-  if (s.gemWinner && !(s.gemWinner.kind === "team" ? s.teams[s.gemWinner.id] : idxOk(s.gemWinner.id)))
-    s.gemWinner = null;
+  if (s.gemWinner && s.gemWinner.kind === "player")
+    s.gemWinner = { kind: "player", id: jogadorChaveMigrar(s.gemWinner.id, s.players) };
+  if (s.gemWinner && !(s.gemWinner.kind === "team" ? s.teams[s.gemWinner.id] : s.gemWinner.id)) s.gemWinner = null;
   if (s.equipeSubMode !== "duelo" && s.equipeSubMode !== "ffa") s.equipeSubMode = "duelo";
   if (s.playDirection !== 1 && s.playDirection !== -1) s.playDirection = 1;
-  if (typeof s.admPrincipalName !== "string" || !s.players.some((p) => p.name === s.admPrincipalName))
-    s.admPrincipalName = null;
   s.caosCofrinho = Math.max(0, Math.floor(num(s.caosCofrinho, 0)));
 }
 function loadGameState() {
@@ -620,7 +639,7 @@ function loadGameState() {
     players = state.players || [];
     CURRENT_MODE = state.CURRENT_MODE || "classico";
     WINNING_SCORE = state.WINNING_SCORE === void 0 || state.WINNING_SCORE === null ? 200 : state.WINNING_SCORE;
-    admPrincipalName = state.admPrincipalName || null;
+    admPrincipalId = state.admPrincipalId || null;
     caosCofrinho = state.caosCofrinho || 0;
     WIN_CONDITION = WIN_CONDITIONS[state.WIN_CONDITION] ? state.WIN_CONDITION : "casa";
     RESPONSE_TIME_LIMIT = state.RESPONSE_TIME_LIMIT || RESPONSE_TIME_LIMIT_BY_MODE[CURRENT_MODE] || 90;
@@ -789,7 +808,7 @@ function loadGameState() {
         ? "misto"
         : null;
     rodadaAtual = Number.isInteger(state.rodadaAtual) && state.rodadaAtual >= 1 ? state.rodadaAtual : 1;
-    primeiroMestreNome = typeof state.primeiroMestreNome === "string" ? state.primeiroMestreNome.slice(0, 15) : null;
+    primeiroMestreId = state.primeiroMestreId || null;
     ultimaRodada = state.ultimaRodada === true;
     ultimaRodadaQuem = typeof state.ultimaRodadaQuem === "string" ? state.ultimaRodadaQuem.slice(0, 30) : "";
     joiasRodada = {};
@@ -797,7 +816,7 @@ function loadGameState() {
       Object.keys(state.joiasRodada).forEach((k) => {
         const v = state.joiasRodada[k];
         if (typeof v === "number" && Number.isFinite(v))
-          joiasRodada[String(k).slice(0, 10)] = Math.max(0, Math.min(JOIAS_POR_RODADA, Math.floor(v)));
+          joiasRodada[String(k).slice(0, 12)] = Math.max(0, Math.min(JOIAS_POR_RODADA, Math.floor(v)));
       });
     cardEndAt = saveNum(state.cardEndAt) || null;
     if (state.expressWhoFreeze && typeof state.expressWhoFreeze === "object" && CURRENT_MODE === "express") {
@@ -1563,7 +1582,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.7 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.7.1 · C.A.O.S. 4.0");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -1622,7 +1641,7 @@ function caosPartidaMarkdown() {
   } else {
     const pv = (p) => rankValue(p);
     const ord = [...players].sort((a, b) => pv(b) - pv(a));
-    const gp = gemWinner && gemWinner.kind === "player" && players[gemWinner.id] ? players[gemWinner.id] : null;
+    const gp = gemWinner && gemWinner.kind === "player" ? jogadorPorId(gemWinner.id) : null;
     if (gp) {
       ord.splice(ord.indexOf(gp), 1);
       ord.unshift(gp);
@@ -2085,7 +2104,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.7 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.7.1 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,

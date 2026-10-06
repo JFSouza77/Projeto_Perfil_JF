@@ -121,8 +121,8 @@ function playerNameHtml(name, color, avatar) {
 function showGemToast(r) {
   caosLastAchievementCard = stats.totalDrawn;
   playSfx("joia");
-  if (CURRENT_FORMAT !== "equipe" && players[r.key])
-    caosIniExplica(players[r.key], "joia", (GEM_INFO[r.cat] || {}).name || r.cat);
+  if (CURRENT_FORMAT !== "equipe" && jogadorPorId(r.key))
+    caosIniExplica(jogadorPorId(r.key), "joia", (GEM_INFO[r.cat] || {}).name || r.cat);
   vibrar("joia");
   {
     const gi = GEM_INFO[r.cat];
@@ -136,7 +136,7 @@ function showGemToast(r) {
   }
   const info = GEM_INFO[r.cat];
   const equipe = CURRENT_FORMAT === "equipe";
-  const who = equipe ? "Equipe " + TEAM_INFO[r.key].label : players[r.key].name;
+  const who = equipe ? "Equipe " + TEAM_INFO[r.key].label : (jogadorPorId(r.key) || { name: "?" }).name;
   let msg;
   if (r.trofeu) {
     msg = equipe
@@ -1289,7 +1289,7 @@ function renderMiniScoreboard() {
                 : wc === "tabuleiro"
                   ? `casa ${p.position}/${WINNING_SCORE}`
                   : `${p.score} pts — casa ${p.position}/${WINNING_SCORE}`;
-          return `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${txt}${palpiteBadge(String(players.indexOf(p)))}${gemBadgesHtml(p)}</li>`;
+          return `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${txt}${palpiteBadge(p.id)}${gemBadgesHtml(p)}</li>`;
         })
         .join("");
     }
@@ -2033,7 +2033,7 @@ function renderFinalScreen() {
   } else {
     const pv = (p) => rankValue(p);
     const sorted = [...players].sort((a, b) => pv(b) - pv(a));
-    const gemPlayer = gemWinner && gemWinner.kind === "player" && players[gemWinner.id] ? players[gemWinner.id] : null;
+    const gemPlayer = gemWinner && gemWinner.kind === "player" ? jogadorPorId(gemWinner.id) : null;
     if (gemPlayer) {
       sorted.splice(sorted.indexOf(gemPlayer), 1);
       sorted.unshift(gemPlayer);
@@ -2796,7 +2796,7 @@ function admHash(s) {
   return h.toString(16).padStart(8, "0");
 }
 function admPrincipalIdx() {
-  return admPrincipalName ? players.findIndex((p) => p.name === admPrincipalName) : -1;
+  return jogadorIdxPorId(admPrincipalId);
 }
 function admPrincipalNaVez() {
   const i = admPrincipalIdx();
@@ -3066,14 +3066,14 @@ Os ${p.score} pontos vão ser divididos: +${parte} pra cada um dos ${resto} que 
       sel.className = "ci-input";
       players.forEach((p) => {
         const o = document.createElement("option");
-        o.value = p.name;
+        o.value = p.id;
         o.textContent = p.name;
         sel.appendChild(o);
       });
-      sel.value = admPrincipalName || "";
+      sel.value = admPrincipalId || "";
       sel.addEventListener("change", () => {
-        admPrincipalName = sel.value;
-        caosLog("adm", `ADM principal → ${sel.value}`);
+        admPrincipalId = sel.value;
+        caosLog("adm", `ADM principal → ${(jogadorPorId(sel.value) || {}).name || "?"}`);
         saveGameState();
         redesenhar();
       });

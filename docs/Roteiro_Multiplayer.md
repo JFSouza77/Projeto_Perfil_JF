@@ -140,12 +140,13 @@ Cada parte sai publicada sozinha, como nas updates anteriores. Em todas valem as
 ### Parte 1 · 1.7.7 · Correções da revisão (publicada)
 - Saiu primeiro o que a revisão do JF + GPT + Google AI Studio apontou e o código confirmou, sem mudar regra: toque duplo, voltar do Android com janela aberta, preferências de acessibilidade à prova de valor estranho, anúncio da vez pro leitor de tela, espaço entre Acertou e Errou, letra Enorme em 320 px, Absurdo explicado e o `package.json` (ver a seção 6).
 
-### Parte 2 · 1.7.7.1 · Identidade dos jogadores
+### Parte 2 · 1.7.7.1 · Identidade dos jogadores (publicada)
 - Todo jogador ganha `id` (exemplo: `j_k7p2qa`) no cadastro. Ele não muda se alguém sair, se a ordem mudar ou se a partida for salva e restaurada.
 - O save sobe pra versão 12. Save antigo ganha `id` ao abrir, sem perder nada.
 - As 5 coisas guardadas pelo nome passam a guardar o `id`. Na leitura de save antigo, o nome ainda é aceito.
 - As estruturas chaveadas por posição (fichas de palpite, joias da rodada, memória curta do C.A.O.S. por jogador) passam a usar o `id`. Isso encolhe o remapeamento manual da remoção pelo ADM.
 - Nesta parte, `mestreIndex` e `responderIndex` continuam sendo posição (são "assento"). A conversão deles fica pra 1.7.8, junto com as ações.
+- **Feito:** `js/02b-identidade.js`, save v12 e `ferramentas/teste_identidade.js`. As 2 referências por nome que decidem regra (1º Mestre da rodada e ADM principal) viraram id. As outras 3 (`ultimaRodadaQuem`, `caosMudoPor`, `pickedByName`) são só texto mostrado na tela e continuam pelo nome. A conversão achou um defeito antigo: as joias da rodada não eram remapeadas quando o ADM tirava alguém.
 - **Teste:** remover jogador pelo ADM, reordenar, salvar e restaurar, conferindo que cada `id` continua no mesmo jogador e que palpite, joias e Mestre ficam com a pessoa certa.
 
 ### Parte 3 · 1.7.7.2 · Partida e cartas identificadas

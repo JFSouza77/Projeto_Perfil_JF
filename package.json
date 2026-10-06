@@ -7,7 +7,7 @@
     "testar": "node build.js --testar",
     "publicar": "node build.js --testar --publicar",
     "simular": "node ferramentas/caos_teste_estresse.js",
-    "testes": "node ferramentas/caos_teste_espinha.js && node ferramentas/caos_teste_geradores.js && node ferramentas/caos_teste_estresse.js",
+    "testes": "node ferramentas/teste_identidade.js && node ferramentas/caos_teste_espinha.js && node ferramentas/caos_teste_geradores.js && node ferramentas/caos_teste_estresse.js",
     "auditar": "node ferramentas/auditar_cartas.js && node ferramentas/auditar_botoes.js"
   },
   "devDependencies": {

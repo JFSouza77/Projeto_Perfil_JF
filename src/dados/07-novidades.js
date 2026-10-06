@@ -1,5 +1,19 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.7.1",
+    data: "05/10/2026 · 22:38",
+    nome: "Foundation Structure Update · Parte 2",
+    t: "Cada jogador agora tem uma identidade própria no jogo. Ninguém vê, mas é a base pra jogar online.",
+    itens: [
+      "🪪 Todo jogador ganha uma identidade (um código interno) no cadastro. Ela não muda se alguém sair, se a ordem mudar ou se a partida for salva e aberta de novo.",
+      "🃏 Fichas de palpite, joias da rodada e o vencedor por joias agora ficam presos à pessoa, não à posição na mesa.",
+      "💾 Partidas salvas em versões anteriores continuam abrindo normalmente: cada jogador ganha a identidade na hora.",
+    ],
+    qol: [
+      "💎 Corrigido: quando o ADM tirava alguém da partida, a trava de 2 joias por rodada podia passar pro jogador do lado.",
+    ],
+  },
+  {
     v: "Beta 1.7.7",
     data: "05/10/2026 · 22:23",
     nome: "Foundation Structure Update · Parte 1",

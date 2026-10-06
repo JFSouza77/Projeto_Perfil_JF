@@ -103,7 +103,7 @@ function advanceResponderAfterFailure() {
 function rodadaIniciar() {
   rodadaAtual = 1;
   joiasRodada = {};
-  primeiroMestreNome = players[mestreIndex] ? players[mestreIndex].name : null;
+  primeiroMestreId = jogadorIdDe(mestreIndex);
 }
 // Depois que o mestre muda: se voltou ao primeiro mestre (equipes: à 1ª equipe), começa nova rodada.
 function rodadaChecarVirada() {
@@ -113,11 +113,11 @@ function rodadaChecarVirada() {
   }
   const m = players[mestreIndex];
   if (!m) return;
-  if (!primeiroMestreNome || !players.some((p) => p.name === primeiroMestreNome)) {
-    primeiroMestreNome = m.name;
+  if (!primeiroMestreId || jogadorIdxPorId(primeiroMestreId) < 0) {
+    primeiroMestreId = m.id;
     return;
   }
-  if (m.name === primeiroMestreNome) rodadaVirar();
+  if (m.id === primeiroMestreId) rodadaVirar();
 }
 function rodadaVirar() {
   rodadaAtual++;
@@ -128,8 +128,8 @@ function rodadaVirar() {
 function rodadaNoComeco() {
   if (CURRENT_FORMAT === "equipe") return !!teamOrder.length && teamRoundIndex % teamOrder.length === 0;
   const m = players[mestreIndex];
-  if (!m || !primeiroMestreNome) return true;
-  return m.name === primeiroMestreNome;
+  if (!m || !primeiroMestreId) return true;
+  return m.id === primeiroMestreId;
 }
 // A última rodada vale agora? (Express encerra na hora, como sempre)
 function ultimaRodadaAtiva() {
@@ -142,7 +142,7 @@ function ultimaRodadaComecar() {
   let quem = "";
   if (gemWinner)
     quem =
-      gemWinner.kind === "team" ? "Equipe " + TEAM_INFO[gemWinner.id].label : (players[gemWinner.id] || {}).name || "";
+      gemWinner.kind === "team" ? "Equipe " + TEAM_INFO[gemWinner.id].label : (jogadorPorId(gemWinner.id) || {}).name || "";
   else if (eq) {
     const id = [...teamOrder].sort((a, b) => rankValue(teams[b], b) - rankValue(teams[a], a))[0];
     quem = id ? "Equipe " + TEAM_INFO[id].label : "";
@@ -286,7 +286,7 @@ function resetDeck() {
   caosAcidLastIdx = null;
   caosLastAchievementCard = -99;
   caosCofrinho = 0;
-  admPrincipalName = null;
+  admPrincipalId = null;
   admMsgPendente = [];
   caosFatiguePlan = rollCaosFatiguePlan();
   caosSpontaneousCounter = 0;
@@ -332,7 +332,7 @@ function resetDeck() {
   gemWinner = null;
   casaSorteado = null;
   rodadaAtual = 1;
-  primeiroMestreNome = null;
+  primeiroMestreId = null;
   joiasRodada = {};
   ultimaRodada = false;
   ultimaRodadaQuem = "";
@@ -1458,6 +1458,7 @@ function addPlayer() {
   undoTeamFormation();
   const isEquipe = CURRENT_FORMAT === "equipe";
   players.push({
+    id: jogadorIdNovo(),
     name,
     score: 0,
     position: 0,
@@ -1567,7 +1568,7 @@ function voltarParaSelecaoDeModo(meioDaPartida) {
   mestreIndex = null;
   responderIndex = null;
   gameEnded = false;
-  if (typeof admPrincipalName !== "undefined") admPrincipalName = null;
+  if (typeof admPrincipalId !== "undefined") admPrincipalId = null;
   resetDeck();
   ["gameScreen", "welcomeScreen", "formatSelectScreen", "splashScreen"].forEach((id) => {
     document.getElementById(id).style.display = "none";
@@ -1937,7 +1938,8 @@ function beginGameplay() {
   }
   caosDescansoChecar();
   caosMagoaInicio();
-  if (!admPrincipalName && players[mestreIndex]) admPrincipalName = players[mestreIndex].name;
+  jogadoresGarantirIds(players);
+  if (!admPrincipalId && players[mestreIndex]) admPrincipalId = players[mestreIndex].id;
   rodadaIniciar();
   voltarGuardar();
   players.forEach((p) => {
@@ -2249,14 +2251,12 @@ function admRemoverJogador(r) {
   let novoMestre = mestreIndex;
   if (mestreIndex === r) novoMestre = nextIndex(r);
   const remap = (i) => (i === null || i === void 0 || i < 0 ? i : i === r ? null : i > r ? i - 1 : i);
-  const ph = {};
-  Object.keys(palpiteHolders).forEach((k) => {
-    const i = parseInt(k, 10),
-      n = palpiteHolders[k];
-    if (i === r) palpiteStock = Math.min(PALPITE_STOCK, palpiteStock + n);
-    else ph[String(remap(i))] = n;
-  });
-  palpiteHolders = ph;
+  // fichas de palpite e joias da rodada são por id (1.7.7.1): só sai a de quem saiu, sem remapear
+  if (palpiteHolders[saiu.id]) {
+    palpiteStock = Math.min(PALPITE_STOCK, palpiteStock + palpiteHolders[saiu.id]);
+    delete palpiteHolders[saiu.id];
+  }
+  delete joiasRodada[saiu.id];
   pendingBonusQueue = pendingBonusQueue.map((e) => ({
     landerIdx: remap(e.landerIdx),
     opponentIdx: e.opponentIdx === null ? null : remap(e.opponentIdx),
@@ -2303,7 +2303,8 @@ function admRemoverJogador(r) {
       if (CURRENT_MODE !== "express") p.position += parte;
     });
   if (sobra > 0) caosCofrinho += sobra;
-  if (admPrincipalName === saiu.name) admPrincipalName = players[mestreIndex] ? players[mestreIndex].name : null;
+  if (admPrincipalId === saiu.id) admPrincipalId = jogadorIdDe(mestreIndex);
+  if (primeiroMestreId === saiu.id) primeiroMestreId = jogadorIdDe(mestreIndex);
   caosLog("adm", `${saiu.name} removido · +${parte} pra cada · cofrinho +${sobra}`);
   admFala(getRandomReaction(REACTIVE_VOICE.admSaida, saiu.name));
   if (sobra > 0) admFala(getRandomReaction(REACTIVE_VOICE.caosCofrinho, sobra));

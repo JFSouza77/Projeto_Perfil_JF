@@ -20,7 +20,7 @@
 const DEBUG = true;
 // Valores de temporizador vindos do save (que pode ter sido editado à mão).
 const TIMER_KINDS = ["pick", "response", "special", "turn"];
-const SAVE_VERSION = 11;
+const SAVE_VERSION = 12; // 12 (1.7.7.1): jogador com id; palpite, joias da rodada, vencedor por joias, 1º Mestre e ADM principal por id
 const MIN_PLAYERS = 2;
 const MAX_PLAYERS = 6;
 const CAOS_EMO_GRAVE = {

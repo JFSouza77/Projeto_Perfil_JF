@@ -334,7 +334,7 @@ function caosMemTemInicio() {
 }
 function caosVencedoresIdx() {
   if (!players.length) return [];
-  if (gemWinner && gemWinner.kind === "player" && players[gemWinner.id]) return [gemWinner.id];
+  if (gemWinner && gemWinner.kind === "player" && jogadorIdxPorId(gemWinner.id) >= 0) return [jogadorIdxPorId(gemWinner.id)];
   if (CURRENT_FORMAT === "equipe") {
     let alvo = null;
     if (gemWinner && gemWinner.kind === "team") alvo = gemWinner.id;
@@ -648,8 +648,9 @@ function caosMesaNaCarta() {
   }
   if (typeof palpiteHolders === "object" && rankValue(lider) >= W * 0.75) {
     const donoIdx = Object.keys(palpiteHolders)
-      .map(Number)
-      .find((i) => palpiteHolders[i] > 0 && players[i]);
+      .filter((k) => palpiteHolders[k] > 0)
+      .map((k) => jogadorIdxPorId(k))
+      .find((i) => i >= 0);
     if (
       donoIdx !== void 0 &&
       playerHumor(players[donoIdx]) !== "suave" &&

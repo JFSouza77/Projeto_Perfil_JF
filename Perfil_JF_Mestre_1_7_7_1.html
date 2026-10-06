@@ -6,6 +6,16 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.7.1 · 05/10/2026 · "Foundation Structure Update · Parte 2" = IDENTIDADE DOS JOGADORES.
+          js/02b-identidade.js: todo jogador ganha id ("j_" + 6 letras) no cadastro; não muda se alguém sai,
+          se a ordem muda ou se a partida é salva e restaurada. Passam a usar o id (no Versus; no Equipe a chave
+          segue sendo a equipe): fichas de palpite, joias da rodada, vencedor por joias, 1º Mestre da rodada
+          (primeiroMestreId) e ADM principal (admPrincipalId). mestreIndex/responderIndex seguem posição (1.7.8).
+          Save v12; save antigo ganha id ao abrir e tem as chaves convertidas (posição → id, nome → id); o save
+          novo ainda escreve primeiroMestreNome/admPrincipalName pra versão anterior abrir. A remoção pelo ADM
+          não remapeia mais as fichas de palpite: só sai a ficha de quem saiu. Defeito corrigido: as joias da
+          rodada não eram remapeadas na remoção (a trava de 2 por rodada passava pro vizinho). Novo teste:
+          ferramentas/teste_identidade.js (save antigo, salvar/restaurar, remoção, vencedor, ids únicos).
   1.7.7 · 05/10/2026 · "Foundation Structure Update · Parte 1" = CORREÇÕES DA REVISÃO (GPT + GOOGLE AI STUDIO).
           A revisão do JF, do GPT e do Google AI Studio (1.7.0 a 1.7.6.x) foi conferida no código; entrou o que
           era correção verificável, sem mudar regra. 1) Toque duplo: por 400 ms depois de um veredito ou de um
@@ -342,7 +352,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.7</title>
+<title>Perfil JF · Beta 1.7.7.1</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6723,7 +6733,7 @@ html.acess-letra-2 .clue-list li {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.7 · Foundation Structure Update · Parte 1<br>C.A.O.S. 4.0 · Atualizada em 05/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.7.1 · Foundation Structure Update · Parte 2<br>C.A.O.S. 4.0 · Atualizada em 05/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -6989,7 +6999,7 @@ html.acess-letra-2 .clue-list li {
 const DEBUG = true;
 // Valores de temporizador vindos do save (que pode ter sido editado à mão).
 const TIMER_KINDS = ["pick", "response", "special", "turn"];
-const SAVE_VERSION = 11;
+const SAVE_VERSION = 12; // 12 (1.7.7.1): jogador com id; palpite, joias da rodada, vencedor por joias, 1º Mestre e ADM principal por id
 const MIN_PLAYERS = 2;
 const MAX_PLAYERS = 6;
 const CAOS_EMO_GRAVE = {
@@ -7990,8 +8000,8 @@ let WIN_CONDITION = "casa";
 let casaSorteado = null;
 // Rodada = ciclo até o primeiro mestre voltar a ser mestre (nas equipes: até a 1ª equipe voltar a ler).
 let rodadaAtual = 1;
-let primeiroMestreNome = null;
-let joiasRodada = {}; // joias ganhas na rodada atual, por jogador (índice) ou equipe (id)
+let primeiroMestreId = null; // id de quem abriu a rodada (1.7.7.1; antes guardava o nome)
+let joiasRodada = {}; // joias ganhas na rodada atual, por jogador (id) ou equipe (id da equipe)
 let ultimaRodada = false; // true = alguém bateu a meta e a rodada está terminando
 let ultimaRodadaQuem = ""; // quem bateu a meta primeiro (nome do jogador ou da equipe)
 let saveBloqueado = false; // true depois de importar um save (até recarregar)
@@ -8169,7 +8179,7 @@ let pauseTipOrder = [];
 let pauseTipPos = 0;
 let pauseTipTimer = null;
 let caosCofrinho = 0;
-let admPrincipalName = null;
+let admPrincipalId = null; // id do ADM principal (1.7.7.1; antes guardava o nome)
 let admCriadorLogado = false;
 let admMsgPendente = [];
 var caosPausaInicio = null;
@@ -8191,6 +8201,59 @@ var caosPausaAcum = 0;
 var caosMudoCarta = false;
 var caosMudoPor = null;
 
+/* ----------------------------------------------------------------------
+ * 2b. IDENTIDADE DOS JOGADORES (1.7.7.1 · Foundation Structure Update, Parte 2)
+ * Todo jogador ganha um id (ex.: "j_k7p2qa") no cadastro. Ele não muda quando alguém sai,
+ * quando a ordem muda ou quando a partida é salva e restaurada. É a base do online:
+ * na rede, "o jogador 2" não quer dizer nada; "j_k7p2qa" quer dizer sempre a mesma pessoa.
+ *
+ * Nesta parte passam a usar o id (no Versus; no Equipe a chave continua sendo a equipe):
+ *  · fichas de palpite (palpiteHolders) e joias da rodada (joiasRodada);
+ *  · vencedor por joias (gemWinner.id);
+ *  · quem abriu a rodada (primeiroMestreId) e o ADM principal (admPrincipalId).
+ * mestreIndex e responderIndex continuam sendo posição ("assento"); viram id na 1.7.8.
+ * Save antigo (até a versão 11) ganha id ao abrir e tem as chaves convertidas.
+ * ---------------------------------------------------------------------- */
+const JOGADOR_ID_RE = /^j_[a-z0-9]{6,12}$/;
+function jogadorIdNovo(usados) {
+  const em = usados || new Set(players.map((p) => p && p.id));
+  for (let t = 0; t < 50; t++) {
+    let s = "j_";
+    for (let i = 0; i < 6; i++) s += "abcdefghijkmnpqrstuvwxyz23456789"[Math.floor(Math.random() * 32)];
+    if (!em.has(s)) return s;
+  }
+  return "j_" + Date.now().toString(36);
+}
+function jogadorIdValido(id) {
+  return typeof id === "string" && JOGADOR_ID_RE.test(id);
+}
+// Garante id único em cada jogador da lista (save antigo, id repetido ou estragado).
+function jogadoresGarantirIds(lista) {
+  const usados = new Set();
+  (lista || []).forEach((p) => {
+    if (!p) return;
+    if (!jogadorIdValido(p.id) || usados.has(p.id)) p.id = jogadorIdNovo(usados);
+    usados.add(p.id);
+  });
+}
+function jogadorIdxPorId(id) {
+  if (id === null || id === void 0) return -1;
+  return players.findIndex((p) => p && p.id === id);
+}
+function jogadorPorId(id) {
+  const i = jogadorIdxPorId(id);
+  return i >= 0 ? players[i] : null;
+}
+function jogadorIdDe(idx) {
+  return players[idx] ? players[idx].id : null;
+}
+// Converte uma chave de save antigo (posição "0", "1"…) no id do jogador; id válido passa direto.
+function jogadorChaveMigrar(k, lista) {
+  const l = lista || players;
+  if (jogadorIdValido(k)) return l.some((p) => p.id === k) ? k : null;
+  const i = typeof k === "number" ? k : /^\d+$/.test(String(k)) ? parseInt(k, 10) : -1;
+  return i >= 0 && l[i] ? l[i].id : null;
+}
 /* ======================================================================
  * 3. REGRAS (VITÓRIA, PONTOS, JOIAS, TABULEIRO, BARALHO, EQUIPES)
  * ====================================================================== */
@@ -8411,7 +8474,7 @@ function entityDisplay(id) {
   if (CURRENT_FORMAT === "equipe" && TEAM_INFO[id]) {
     return { name: "Equipe " + TEAM_INFO[id].label, color: TEAM_INFO[id].color, avatar: TEAM_INFO[id].emoji };
   }
-  const p = players[id];
+  const p = jogadorIdValido(id) ? jogadorPorId(id) : players[id];
   return p ? { name: p.name, color: p.color, avatar: p.avatar } : { name: "?", color: "#888", avatar: "" };
 }
 function checkBonusLanding(playerIdx, oldPosition, newPosition) {
@@ -8545,7 +8608,8 @@ function awardGemIfEarned(scorerIdx, realCluesRevealed) {
   if (!holder) return null;
   holder.gems = holder.gems || {};
   if ((holder.gems[cat] || 0) >= gemCapFor()) return null;
-  const key = CURRENT_FORMAT === "equipe" ? players[scorerIdx].team : scorerIdx;
+  // chave da trava e do vencedor: a equipe, ou o id do jogador (1.7.7.1; antes era a posição)
+  const key = CURRENT_FORMAT === "equipe" ? players[scorerIdx].team : players[scorerIdx].id;
   if (joiasComTrava() && (joiasRodada[String(key)] || 0) >= JOIAS_POR_RODADA) {
     joiasTravaAvisar(scorerIdx);
     return null;
@@ -8569,7 +8633,7 @@ function palpiteAvailable() {
 function palpiteKeyOf(playerIdx) {
   const p = players[playerIdx];
   if (!p) return null;
-  return CURRENT_FORMAT === "equipe" ? p.team : String(playerIdx);
+  return CURRENT_FORMAT === "equipe" ? p.team : p.id;
 }
 function palpiteCount(key) {
   return (key !== null && key !== void 0 && palpiteHolders[key]) || 0;
@@ -8601,13 +8665,13 @@ function palpiteEligibleHolders() {
 function palpiteEligibleScorers() {
   const keys = palpiteEligibleHolders();
   if (CURRENT_FORMAT === "equipe") return players.map((p, i) => i).filter((i) => keys.includes(players[i].team));
-  return keys.map((k) => parseInt(k));
+  return keys.map((k) => jogadorIdxPorId(k)).filter((i) => i >= 0);
 }
 function palpiteHit(key) {
   if (pendingIndex === null || gameEnded || !palpiteEligibleHolders().includes(key)) return;
   const t = CURRENT_FORMAT === "equipe" ? teams[key] : null;
-  const idx = t ? (t.members && t.members.length ? t.members[t.memberCursor % t.members.length] : null) : parseInt(key);
-  if (idx === null || idx === void 0) return;
+  const idx = t ? (t.members && t.members.length ? t.members[t.memberCursor % t.members.length] : null) : jogadorIdxPorId(key);
+  if (idx === null || idx === void 0 || idx < 0) return;
   markCorrect(idx);
 }
 function palpiteMiss(key) {
@@ -8870,7 +8934,7 @@ function advanceResponderAfterFailure() {
 function rodadaIniciar() {
   rodadaAtual = 1;
   joiasRodada = {};
-  primeiroMestreNome = players[mestreIndex] ? players[mestreIndex].name : null;
+  primeiroMestreId = jogadorIdDe(mestreIndex);
 }
 // Depois que o mestre muda: se voltou ao primeiro mestre (equipes: à 1ª equipe), começa nova rodada.
 function rodadaChecarVirada() {
@@ -8880,11 +8944,11 @@ function rodadaChecarVirada() {
   }
   const m = players[mestreIndex];
   if (!m) return;
-  if (!primeiroMestreNome || !players.some((p) => p.name === primeiroMestreNome)) {
-    primeiroMestreNome = m.name;
+  if (!primeiroMestreId || jogadorIdxPorId(primeiroMestreId) < 0) {
+    primeiroMestreId = m.id;
     return;
   }
-  if (m.name === primeiroMestreNome) rodadaVirar();
+  if (m.id === primeiroMestreId) rodadaVirar();
 }
 function rodadaVirar() {
   rodadaAtual++;
@@ -8895,8 +8959,8 @@ function rodadaVirar() {
 function rodadaNoComeco() {
   if (CURRENT_FORMAT === "equipe") return !!teamOrder.length && teamRoundIndex % teamOrder.length === 0;
   const m = players[mestreIndex];
-  if (!m || !primeiroMestreNome) return true;
-  return m.name === primeiroMestreNome;
+  if (!m || !primeiroMestreId) return true;
+  return m.id === primeiroMestreId;
 }
 // A última rodada vale agora? (Express encerra na hora, como sempre)
 function ultimaRodadaAtiva() {
@@ -8909,7 +8973,7 @@ function ultimaRodadaComecar() {
   let quem = "";
   if (gemWinner)
     quem =
-      gemWinner.kind === "team" ? "Equipe " + TEAM_INFO[gemWinner.id].label : (players[gemWinner.id] || {}).name || "";
+      gemWinner.kind === "team" ? "Equipe " + TEAM_INFO[gemWinner.id].label : (jogadorPorId(gemWinner.id) || {}).name || "";
   else if (eq) {
     const id = [...teamOrder].sort((a, b) => rankValue(teams[b], b) - rankValue(teams[a], a))[0];
     quem = id ? "Equipe " + TEAM_INFO[id].label : "";
@@ -9053,7 +9117,7 @@ function resetDeck() {
   caosAcidLastIdx = null;
   caosLastAchievementCard = -99;
   caosCofrinho = 0;
-  admPrincipalName = null;
+  admPrincipalId = null;
   admMsgPendente = [];
   caosFatiguePlan = rollCaosFatiguePlan();
   caosSpontaneousCounter = 0;
@@ -9099,7 +9163,7 @@ function resetDeck() {
   gemWinner = null;
   casaSorteado = null;
   rodadaAtual = 1;
-  primeiroMestreNome = null;
+  primeiroMestreId = null;
   joiasRodada = {};
   ultimaRodada = false;
   ultimaRodadaQuem = "";
@@ -10225,6 +10289,7 @@ function addPlayer() {
   undoTeamFormation();
   const isEquipe = CURRENT_FORMAT === "equipe";
   players.push({
+    id: jogadorIdNovo(),
     name,
     score: 0,
     position: 0,
@@ -10334,7 +10399,7 @@ function voltarParaSelecaoDeModo(meioDaPartida) {
   mestreIndex = null;
   responderIndex = null;
   gameEnded = false;
-  if (typeof admPrincipalName !== "undefined") admPrincipalName = null;
+  if (typeof admPrincipalId !== "undefined") admPrincipalId = null;
   resetDeck();
   ["gameScreen", "welcomeScreen", "formatSelectScreen", "splashScreen"].forEach((id) => {
     document.getElementById(id).style.display = "none";
@@ -10704,7 +10769,8 @@ function beginGameplay() {
   }
   caosDescansoChecar();
   caosMagoaInicio();
-  if (!admPrincipalName && players[mestreIndex]) admPrincipalName = players[mestreIndex].name;
+  jogadoresGarantirIds(players);
+  if (!admPrincipalId && players[mestreIndex]) admPrincipalId = players[mestreIndex].id;
   rodadaIniciar();
   voltarGuardar();
   players.forEach((p) => {
@@ -11016,14 +11082,12 @@ function admRemoverJogador(r) {
   let novoMestre = mestreIndex;
   if (mestreIndex === r) novoMestre = nextIndex(r);
   const remap = (i) => (i === null || i === void 0 || i < 0 ? i : i === r ? null : i > r ? i - 1 : i);
-  const ph = {};
-  Object.keys(palpiteHolders).forEach((k) => {
-    const i = parseInt(k, 10),
-      n = palpiteHolders[k];
-    if (i === r) palpiteStock = Math.min(PALPITE_STOCK, palpiteStock + n);
-    else ph[String(remap(i))] = n;
-  });
-  palpiteHolders = ph;
+  // fichas de palpite e joias da rodada são por id (1.7.7.1): só sai a de quem saiu, sem remapear
+  if (palpiteHolders[saiu.id]) {
+    palpiteStock = Math.min(PALPITE_STOCK, palpiteStock + palpiteHolders[saiu.id]);
+    delete palpiteHolders[saiu.id];
+  }
+  delete joiasRodada[saiu.id];
   pendingBonusQueue = pendingBonusQueue.map((e) => ({
     landerIdx: remap(e.landerIdx),
     opponentIdx: e.opponentIdx === null ? null : remap(e.opponentIdx),
@@ -11070,7 +11134,8 @@ function admRemoverJogador(r) {
       if (CURRENT_MODE !== "express") p.position += parte;
     });
   if (sobra > 0) caosCofrinho += sobra;
-  if (admPrincipalName === saiu.name) admPrincipalName = players[mestreIndex] ? players[mestreIndex].name : null;
+  if (admPrincipalId === saiu.id) admPrincipalId = jogadorIdDe(mestreIndex);
+  if (primeiroMestreId === saiu.id) primeiroMestreId = jogadorIdDe(mestreIndex);
   caosLog("adm", `${saiu.name} removido · +${parte} pra cada · cofrinho +${sobra}`);
   admFala(getRandomReaction(REACTIVE_VOICE.admSaida, saiu.name));
   if (sobra > 0) admFala(getRandomReaction(REACTIVE_VOICE.caosCofrinho, sobra));
@@ -11227,8 +11292,8 @@ function playerNameHtml(name, color, avatar) {
 function showGemToast(r) {
   caosLastAchievementCard = stats.totalDrawn;
   playSfx("joia");
-  if (CURRENT_FORMAT !== "equipe" && players[r.key])
-    caosIniExplica(players[r.key], "joia", (GEM_INFO[r.cat] || {}).name || r.cat);
+  if (CURRENT_FORMAT !== "equipe" && jogadorPorId(r.key))
+    caosIniExplica(jogadorPorId(r.key), "joia", (GEM_INFO[r.cat] || {}).name || r.cat);
   vibrar("joia");
   {
     const gi = GEM_INFO[r.cat];
@@ -11242,7 +11307,7 @@ function showGemToast(r) {
   }
   const info = GEM_INFO[r.cat];
   const equipe = CURRENT_FORMAT === "equipe";
-  const who = equipe ? "Equipe " + TEAM_INFO[r.key].label : players[r.key].name;
+  const who = equipe ? "Equipe " + TEAM_INFO[r.key].label : (jogadorPorId(r.key) || { name: "?" }).name;
   let msg;
   if (r.trofeu) {
     msg = equipe
@@ -12395,7 +12460,7 @@ function renderMiniScoreboard() {
                 : wc === "tabuleiro"
                   ? `casa ${p.position}/${WINNING_SCORE}`
                   : `${p.score} pts — casa ${p.position}/${WINNING_SCORE}`;
-          return `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${txt}${palpiteBadge(String(players.indexOf(p)))}${gemBadgesHtml(p)}</li>`;
+          return `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${txt}${palpiteBadge(p.id)}${gemBadgesHtml(p)}</li>`;
         })
         .join("");
     }
@@ -13139,7 +13204,7 @@ function renderFinalScreen() {
   } else {
     const pv = (p) => rankValue(p);
     const sorted = [...players].sort((a, b) => pv(b) - pv(a));
-    const gemPlayer = gemWinner && gemWinner.kind === "player" && players[gemWinner.id] ? players[gemWinner.id] : null;
+    const gemPlayer = gemWinner && gemWinner.kind === "player" ? jogadorPorId(gemWinner.id) : null;
     if (gemPlayer) {
       sorted.splice(sorted.indexOf(gemPlayer), 1);
       sorted.unshift(gemPlayer);
@@ -13902,7 +13967,7 @@ function admHash(s) {
   return h.toString(16).padStart(8, "0");
 }
 function admPrincipalIdx() {
-  return admPrincipalName ? players.findIndex((p) => p.name === admPrincipalName) : -1;
+  return jogadorIdxPorId(admPrincipalId);
 }
 function admPrincipalNaVez() {
   const i = admPrincipalIdx();
@@ -14172,14 +14237,14 @@ Os ${p.score} pontos vão ser divididos: +${parte} pra cada um dos ${resto} que 
       sel.className = "ci-input";
       players.forEach((p) => {
         const o = document.createElement("option");
-        o.value = p.name;
+        o.value = p.id;
         o.textContent = p.name;
         sel.appendChild(o);
       });
-      sel.value = admPrincipalName || "";
+      sel.value = admPrincipalId || "";
       sel.addEventListener("change", () => {
-        admPrincipalName = sel.value;
-        caosLog("adm", `ADM principal → ${sel.value}`);
+        admPrincipalId = sel.value;
+        caosLog("adm", `ADM principal → ${(jogadorPorId(sel.value) || {}).name || "?"}`);
         saveGameState();
         redesenhar();
       });
@@ -17492,7 +17557,7 @@ function caosInspectorEstado() {
       }</b></div>
       <div class="ci-kv"><span>🦴 Registro da espinha</span><b class="ci-mono">${caosEspinha.log.slice(-5).reverse().map(escapeHtml).join("<br>") || "—"}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.7 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.7.1 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -18881,7 +18946,7 @@ function caosMemTemInicio() {
 }
 function caosVencedoresIdx() {
   if (!players.length) return [];
-  if (gemWinner && gemWinner.kind === "player" && players[gemWinner.id]) return [gemWinner.id];
+  if (gemWinner && gemWinner.kind === "player" && jogadorIdxPorId(gemWinner.id) >= 0) return [jogadorIdxPorId(gemWinner.id)];
   if (CURRENT_FORMAT === "equipe") {
     let alvo = null;
     if (gemWinner && gemWinner.kind === "team") alvo = gemWinner.id;
@@ -19195,8 +19260,9 @@ function caosMesaNaCarta() {
   }
   if (typeof palpiteHolders === "object" && rankValue(lider) >= W * 0.75) {
     const donoIdx = Object.keys(palpiteHolders)
-      .map(Number)
-      .find((i) => palpiteHolders[i] > 0 && players[i]);
+      .filter((k) => palpiteHolders[k] > 0)
+      .map((k) => jogadorIdxPorId(k))
+      .find((i) => i >= 0);
     if (
       donoIdx !== void 0 &&
       playerHumor(players[donoIdx]) !== "suave" &&
@@ -22558,7 +22624,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.7 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.7.1 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -24357,7 +24423,9 @@ function saveGameState() {
       WIN_CONDITION,
       casaSorteado,
       rodadaAtual,
-      primeiroMestreNome,
+      primeiroMestreId,
+      // nome também, pra uma versão anterior à 1.7.7.1 ainda abrir este save
+      primeiroMestreNome: (jogadorPorId(primeiroMestreId) || {}).name || null,
       joiasRodada,
       ultimaRodada,
       ultimaRodadaQuem,
@@ -24365,7 +24433,8 @@ function saveGameState() {
       caosRitmoLog,
       caosEmoHist,
       caosExtra: caosExtraSalvar(),
-      admPrincipalName,
+      admPrincipalId,
+      admPrincipalName: (jogadorPorId(admPrincipalId) || {}).name || null,
       caosCofrinho,
       CURRENT_MODE,
       WINNING_SCORE,
@@ -24430,6 +24499,7 @@ function sanitizeLoadedState(s) {
           if (n > 0) gems[c] = Math.min(GEMS_TO_WIN, Math.floor(n));
         });
       return {
+        id: p.id,
         name,
         score: num(p.score, 0),
         position: num(p.position, 0),
@@ -24469,6 +24539,22 @@ function sanitizeLoadedState(s) {
       };
     });
   const nP = s.players.length;
+  // 1.7.7.1: todo jogador com id único. Save antigo (até a versão 11) ganha id aqui, e as chaves
+  // que eram posição ("0", "1"…) ou nome viram o id do jogador.
+  jogadoresGarantirIds(s.players);
+  const idPorNome = (nome) => {
+    const q = typeof nome === "string" ? s.players.find((p) => p.name === nome) : null;
+    return q ? q.id : null;
+  };
+  const idOk = (id) => jogadorIdValido(id) && s.players.some((p) => p.id === id);
+  s.primeiroMestreId = idOk(s.primeiroMestreId) ? s.primeiroMestreId : idPorNome(s.primeiroMestreNome);
+  s.admPrincipalId = idOk(s.admPrincipalId) ? s.admPrincipalId : idPorNome(s.admPrincipalName);
+  const jr = s.joiasRodada && typeof s.joiasRodada === "object" ? s.joiasRodada : {};
+  s.joiasRodada = {};
+  Object.keys(jr).forEach((k) => {
+    const k2 = s.CURRENT_FORMAT === "equipe" ? (TEAM_INFO[k] ? k : null) : jogadorChaveMigrar(k, s.players);
+    if (k2) s.joiasRodada[k2] = jr[k];
+  });
   const idxOk = (v) => Number.isInteger(v) && v >= 0 && v < nP;
   ["mestreIndex", "responderIndex", "expressStealSavedResponder", "bonusOrigMestreIdx"].forEach((k) => {
     if (!idxOk(s[k])) s[k] = null;
@@ -24526,8 +24612,8 @@ function sanitizeLoadedState(s) {
   s.palpiteHolders = {};
   Object.keys(ph).forEach((k) => {
     const n = Math.floor(num(ph[k], 0));
-    const ok = s.CURRENT_FORMAT === "equipe" ? !!s.teams[k] : idxOk(parseInt(k, 10));
-    if (ok && n > 0) s.palpiteHolders[k] = 1;
+    const k2 = s.CURRENT_FORMAT === "equipe" ? (s.teams[k] ? k : null) : jogadorChaveMigrar(k, s.players);
+    if (k2 && n > 0) s.palpiteHolders[k2] = 1;
   });
   s.palpiteStock = Math.max(0, PALPITE_STOCK - Object.keys(s.palpiteHolders).length);
   const answers = new Set(ADULT_CARDS.map((c) => c.answer));
@@ -24550,12 +24636,11 @@ function sanitizeLoadedState(s) {
     .filter((c) => ["ANO", "PESSOA", "LUGAR", "COISA"].includes(c))
     .slice(0, 2);
   if (!["none", "hidden", "revealed", "bonusChoice"].includes(s.cardState)) s.cardState = "none";
-  if (s.gemWinner && !(s.gemWinner.kind === "team" ? s.teams[s.gemWinner.id] : idxOk(s.gemWinner.id)))
-    s.gemWinner = null;
+  if (s.gemWinner && s.gemWinner.kind === "player")
+    s.gemWinner = { kind: "player", id: jogadorChaveMigrar(s.gemWinner.id, s.players) };
+  if (s.gemWinner && !(s.gemWinner.kind === "team" ? s.teams[s.gemWinner.id] : s.gemWinner.id)) s.gemWinner = null;
   if (s.equipeSubMode !== "duelo" && s.equipeSubMode !== "ffa") s.equipeSubMode = "duelo";
   if (s.playDirection !== 1 && s.playDirection !== -1) s.playDirection = 1;
-  if (typeof s.admPrincipalName !== "string" || !s.players.some((p) => p.name === s.admPrincipalName))
-    s.admPrincipalName = null;
   s.caosCofrinho = Math.max(0, Math.floor(num(s.caosCofrinho, 0)));
 }
 function loadGameState() {
@@ -24579,7 +24664,7 @@ function loadGameState() {
     players = state.players || [];
     CURRENT_MODE = state.CURRENT_MODE || "classico";
     WINNING_SCORE = state.WINNING_SCORE === void 0 || state.WINNING_SCORE === null ? 200 : state.WINNING_SCORE;
-    admPrincipalName = state.admPrincipalName || null;
+    admPrincipalId = state.admPrincipalId || null;
     caosCofrinho = state.caosCofrinho || 0;
     WIN_CONDITION = WIN_CONDITIONS[state.WIN_CONDITION] ? state.WIN_CONDITION : "casa";
     RESPONSE_TIME_LIMIT = state.RESPONSE_TIME_LIMIT || RESPONSE_TIME_LIMIT_BY_MODE[CURRENT_MODE] || 90;
@@ -24748,7 +24833,7 @@ function loadGameState() {
         ? "misto"
         : null;
     rodadaAtual = Number.isInteger(state.rodadaAtual) && state.rodadaAtual >= 1 ? state.rodadaAtual : 1;
-    primeiroMestreNome = typeof state.primeiroMestreNome === "string" ? state.primeiroMestreNome.slice(0, 15) : null;
+    primeiroMestreId = state.primeiroMestreId || null;
     ultimaRodada = state.ultimaRodada === true;
     ultimaRodadaQuem = typeof state.ultimaRodadaQuem === "string" ? state.ultimaRodadaQuem.slice(0, 30) : "";
     joiasRodada = {};
@@ -24756,7 +24841,7 @@ function loadGameState() {
       Object.keys(state.joiasRodada).forEach((k) => {
         const v = state.joiasRodada[k];
         if (typeof v === "number" && Number.isFinite(v))
-          joiasRodada[String(k).slice(0, 10)] = Math.max(0, Math.min(JOIAS_POR_RODADA, Math.floor(v)));
+          joiasRodada[String(k).slice(0, 12)] = Math.max(0, Math.min(JOIAS_POR_RODADA, Math.floor(v)));
       });
     cardEndAt = saveNum(state.cardEndAt) || null;
     if (state.expressWhoFreeze && typeof state.expressWhoFreeze === "object" && CURRENT_MODE === "express") {
@@ -25522,7 +25607,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.7 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.7.1 · C.A.O.S. 4.0");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -25581,7 +25666,7 @@ function caosPartidaMarkdown() {
   } else {
     const pv = (p) => rankValue(p);
     const ord = [...players].sort((a, b) => pv(b) - pv(a));
-    const gp = gemWinner && gemWinner.kind === "player" && players[gemWinner.id] ? players[gemWinner.id] : null;
+    const gp = gemWinner && gemWinner.kind === "player" ? jogadorPorId(gemWinner.id) : null;
     if (gp) {
       ord.splice(ord.indexOf(gp), 1);
       ord.unshift(gp);
@@ -26044,7 +26129,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.7 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.7.1 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -60097,6 +60182,20 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.7.1",
+    data: "05/10/2026 · 22:38",
+    nome: "Foundation Structure Update · Parte 2",
+    t: "Cada jogador agora tem uma identidade própria no jogo. Ninguém vê, mas é a base pra jogar online.",
+    itens: [
+      "🪪 Todo jogador ganha uma identidade (um código interno) no cadastro. Ela não muda se alguém sair, se a ordem mudar ou se a partida for salva e aberta de novo.",
+      "🃏 Fichas de palpite, joias da rodada e o vencedor por joias agora ficam presos à pessoa, não à posição na mesa.",
+      "💾 Partidas salvas em versões anteriores continuam abrindo normalmente: cada jogador ganha a identidade na hora.",
+    ],
+    qol: [
+      "💎 Corrigido: quando o ADM tirava alguém da partida, a trava de 2 joias por rodada podia passar pro jogador do lado.",
+    ],
+  },
   {
     v: "Beta 1.7.7",
     data: "05/10/2026 · 22:23",
