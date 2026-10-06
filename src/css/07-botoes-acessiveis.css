@@ -293,3 +293,43 @@ body:has(.caos-modal-ov) {
   width: 100%;
   box-sizing: border-box;
 }
+
+/* 1.7.7 (revisão GPT/Google): mais espaço entre Acertou e Errou, pra não errar o botão no susto */
+.card .guess-btns {
+  gap: 14px;
+}
+/* Letra Grande/Enorme: dica, número e resposta quebram a palavra em vez de vazar da carta */
+.clue-list li,
+.answer-header,
+.pending-box,
+.spotlight-box {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+html.acess-letra-1 .clue-list li,
+html.os-acess .clue-list li,
+html.acess-letra-2 .clue-list li {
+  line-height: 1.5;
+}
+/* Grade de números em tela estreita (320-360 px) com letra Enorme: 5 colunas cabem, sem vazar */
+.number-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+@media (max-width: 360px) {
+  html.acess-letra-2 .number-grid {
+    gap: 6px;
+  }
+  html.acess-letra-2 .number-btn {
+    font-size: 0.95rem;
+    padding: 12px 0;
+  }
+}
+/* Texto só pra leitor de tela (anúncio da vez) */
+.so-leitor {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
