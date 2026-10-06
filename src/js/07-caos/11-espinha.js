@@ -52,32 +52,55 @@ function caosEspinhaLog(tipo, txt) {
     caosLog("espinha", tipo + " · " + txt);
   } catch (e) {}
 }
-// Foto do estado do jogo (só o que é da mesa).
+// Foto do estado do jogo (só o que é da mesa). 1.7.7.3: espinha completa. Além de pontos, casas,
+// joias, equipes, Mestre e quem responde, vigia fichas de palpite, joias da rodada, vencedor por joias,
+// fila da casa de bônus, dicas abertas, dica pendente, modo sorteado da Moda da Casa, rodada, última
+// rodada, sentido e vez das equipes. Jogador é achado pelo id (não pela posição).
+// Relógios: o balão do C.A.O.S. congela o relógio enquanto fala (soma tempo, por cortesia). Por isso
+// a regra dos relógios é "pode dar tempo, nunca tirar": se o fim de um relógio chegar mais perto, volta.
 function caosEspinhaFoto() {
   try {
-    return JSON.stringify([
-      players.map((p) => [p.name, p.score, p.position, !!p.isBlocked, p.team, p.gems || null]),
-      Object.keys(teams || {}).map((k) => [k, teams[k].score, teams[k].position, teams[k].gems || null]),
-      mestreIndex,
-      responderIndex,
-      starterChosen,
-      gameEnded,
-      cardState,
-      stats ? stats.totalDrawn : 0,
-      currentCard ? currentCard.answer : null,
-      Array.isArray(deck) ? deck.length : 0,
-    ]);
+    return JSON.stringify({
+      pl: players.map((p) => [p.id || p.name, p.score, p.position, !!p.isBlocked, p.team, p.gems || null]),
+      tm: Object.keys(teams || {}).map((k) => [k, teams[k].score, teams[k].position, teams[k].gems || null, teams[k].memberCursor]),
+      mi: mestreIndex,
+      ri: responderIndex,
+      ph: palpiteHolders,
+      ps: palpiteStock,
+      jr: joiasRodada,
+      gw: gemWinner,
+      bq: pendingBonusQueue,
+      ro: revealedOrder.map((r) => r.index),
+      pi: pendingIndex,
+      cs: casaSorteado,
+      ra: rodadaAtual,
+      ur: ultimaRodada,
+      tri: teamRoundIndex,
+      pd: playDirection,
+      // só vigiados (não dá pra desfazer com segurança): mudou, fica anotado
+      vg: [starterChosen, gameEnded, cardState, stats ? stats.totalDrawn : 0, currentCard ? currentCard.id || currentCard.answer : null, Array.isArray(deck) ? deck.length : 0],
+    });
   } catch (e) {
     return null;
   }
 }
-// Devolve o jogo pra foto (1ª lei). Mexe só nos números da mesa.
-function caosEspinhaRestaurar(foto) {
+// Relógios fora da foto: a comparação é "não pode encurtar".
+function caosEspinhaRelogios() {
+  return { t: timerEndAt, c: cardEndAt };
+}
+const caosEspinhaCopia = (v) => (v === null || v === undefined ? v : JSON.parse(JSON.stringify(v)));
+// Devolve o jogo pra foto (1ª lei). Mexe só no que é da mesa.
+function caosEspinhaRestaurar(foto, relogios) {
   try {
-    const [pl, tm, mi, ri] = JSON.parse(foto);
-    pl.forEach(([nome, score, position, isBlocked, team, gems], i) => {
-      const p = players[i];
-      if (!p || p.name !== nome) return;
+    const f = JSON.parse(foto);
+    // mesmos jogadores em outra ordem (assento trocado): volta pra ordem da foto
+    const chaves = f.pl.map((x) => x[0]);
+    const chaveDe = (q) => q && (q.id || q.name);
+    if (players.length === chaves.length && players.some((q, i) => chaveDe(q) !== chaves[i]) && players.every((q) => chaves.includes(chaveDe(q))))
+      players.sort((a, b) => chaves.indexOf(chaveDe(a)) - chaves.indexOf(chaveDe(b)));
+    f.pl.forEach(([chave, score, position, isBlocked, team, gems], i) => {
+      const p = players.find((q) => q && (q.id || q.name) === chave) || (players[i] && players[i].name === chave ? players[i] : null);
+      if (!p) return;
       p.score = score;
       p.position = position;
       p.isBlocked = isBlocked;
@@ -85,15 +108,38 @@ function caosEspinhaRestaurar(foto) {
       if (gems) p.gems = gems;
       else delete p.gems;
     });
-    tm.forEach(([k, score, position, gems]) => {
+    f.tm.forEach(([k, score, position, gems, cursor]) => {
       if (!teams[k]) return;
       teams[k].score = score;
       teams[k].position = position;
       if (gems) teams[k].gems = gems;
+      if (cursor !== undefined) teams[k].memberCursor = cursor;
     });
-    mestreIndex = mi;
-    responderIndex = ri;
+    mestreIndex = f.mi;
+    responderIndex = f.ri;
+    palpiteHolders = caosEspinhaCopia(f.ph) || {};
+    palpiteStock = f.ps;
+    joiasRodada = caosEspinhaCopia(f.jr) || {};
+    gemWinner = caosEspinhaCopia(f.gw);
+    pendingBonusQueue = caosEspinhaCopia(f.bq) || [];
+    // dica aberta a mais sai; dica que sumiu não dá pra recriar (fica anotada pela foto)
+    if (revealedOrder.length > f.ro.length && revealedOrder.slice(0, f.ro.length).every((r, i) => r.index === f.ro[i]))
+      revealedOrder.length = f.ro.length;
+    pendingIndex = f.pi;
+    casaSorteado = f.cs;
+    rodadaAtual = f.ra;
+    ultimaRodada = f.ur;
+    teamRoundIndex = f.tri;
+    playDirection = f.pd;
+    if (relogios) {
+      if (relogios.t && timerEndAt && timerEndAt < relogios.t) timerEndAt = relogios.t;
+      if (relogios.c && cardEndAt && cardEndAt < relogios.c) cardEndAt = relogios.c;
+    }
   } catch (e) {}
+}
+// Algum relógio ficou mais curto do que estava?
+function caosEspinhaRelogioEncurtou(antes) {
+  return !!antes && ((antes.t && timerEndAt && timerEndAt < antes.t) || (antes.c && cardEndAt && cardEndAt < antes.c));
 }
 // Saneia os medidores (nenhum NaN, nenhum valor fora da faixa, emoção que manda válida).
 function caosEspinhaSanear() {
@@ -134,6 +180,7 @@ function caosBlindarUm(nome) {
   const nada = Object.prototype.hasOwnProperty.call(CAOS_ENTRADA_NADA, nome) ? CAOS_ENTRADA_NADA[nome] : null;
   const prot = function () {
     const antes = caosEspinhaFoto();
+    const relAntes = caosEspinhaRelogios();
     let r = nada;
     try {
       r = orig.apply(this, arguments);
@@ -143,8 +190,8 @@ function caosBlindarUm(nome) {
       r = nada;
     }
     const depois = caosEspinhaFoto();
-    if (antes && depois && antes !== depois) {
-      caosEspinhaRestaurar(antes);
+    if (antes && depois && (antes !== depois || caosEspinhaRelogioEncurtou(relAntes))) {
+      caosEspinhaRestaurar(antes, relAntes);
       if (caosEspinhaFoto() !== antes) {
         // o que mudou não é número da mesa (carta, baralho, fim de jogo): só anota
         caosEspinhaLog("aviso", nome + " mudou algo fora dos números da mesa");

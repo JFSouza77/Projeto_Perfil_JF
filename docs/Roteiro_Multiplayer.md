@@ -155,7 +155,8 @@ Cada parte sai publicada sozinha, como nas updates anteriores. Em todas valem as
 - Toda carta ganha `id` **explícito e imutável**, escrito na própria carta (ex.: `ANO-0001`). Ele **não** sai da resposta (pedido do roteiro "Extractor Upgrade" do GPT): se uma resposta for corrigida, o `id` não muda. Um mapa resposta → `id` faz a migração do save antigo, que guardava pela resposta.
 - O auditor de cartas passa a conferir que os `id` são únicos.
 
-### Parte 4 · 1.7.7.3 · Espinha completa
+### Parte 4 · 1.7.7.3 · Espinha completa (publicada)
+- **Feito:** tudo da lista abaixo, mais vez/cursor das equipes e sentido. Relógios com a regra "pode dar tempo, nunca tirar" (o balão congela o relógio enquanto fala). Carta, baralho, início e fim continuam só vigiados.
 - A foto da espinha passa a vigiar também: fichas de palpite, joias da rodada, vencedor por joias, fila da casa de bônus, dicas abertas, relógios, modo sorteado da Moda da Casa, rodada e última rodada.
 - A restauração acha o jogador pelo `id`.
 - **Teste:** uma rotina falsa tenta mexer em cada um desses dados, e a espinha precisa desfazer tudo.
