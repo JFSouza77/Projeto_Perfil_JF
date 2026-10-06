@@ -6,6 +6,16 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.7.1 · 05/10/2026 · "Foundation Structure Update · Parte 2" = IDENTIDADE DOS JOGADORES.
+          js/02b-identidade.js: todo jogador ganha id ("j_" + 6 letras) no cadastro; não muda se alguém sai,
+          se a ordem muda ou se a partida é salva e restaurada. Passam a usar o id (no Versus; no Equipe a chave
+          segue sendo a equipe): fichas de palpite, joias da rodada, vencedor por joias, 1º Mestre da rodada
+          (primeiroMestreId) e ADM principal (admPrincipalId). mestreIndex/responderIndex seguem posição (1.7.8).
+          Save v12; save antigo ganha id ao abrir e tem as chaves convertidas (posição → id, nome → id); o save
+          novo ainda escreve primeiroMestreNome/admPrincipalName pra versão anterior abrir. A remoção pelo ADM
+          não remapeia mais as fichas de palpite: só sai a ficha de quem saiu. Defeito corrigido: as joias da
+          rodada não eram remapeadas na remoção (a trava de 2 por rodada passava pro vizinho). Novo teste:
+          ferramentas/teste_identidade.js (save antigo, salvar/restaurar, remoção, vencedor, ids únicos).
   1.7.7 · 05/10/2026 · "Foundation Structure Update · Parte 1" = CORREÇÕES DA REVISÃO (GPT + GOOGLE AI STUDIO).
           A revisão do JF, do GPT e do Google AI Studio (1.7.0 a 1.7.6.x) foi conferida no código; entrou o que
           era correção verificável, sem mudar regra. 1) Toque duplo: por 400 ms depois de um veredito ou de um
@@ -342,7 +352,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.7</title>
+<title>Perfil JF · Beta 1.7.7.1</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

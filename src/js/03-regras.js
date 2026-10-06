@@ -218,7 +218,7 @@ function entityDisplay(id) {
   if (CURRENT_FORMAT === "equipe" && TEAM_INFO[id]) {
     return { name: "Equipe " + TEAM_INFO[id].label, color: TEAM_INFO[id].color, avatar: TEAM_INFO[id].emoji };
   }
-  const p = players[id];
+  const p = jogadorIdValido(id) ? jogadorPorId(id) : players[id];
   return p ? { name: p.name, color: p.color, avatar: p.avatar } : { name: "?", color: "#888", avatar: "" };
 }
 function checkBonusLanding(playerIdx, oldPosition, newPosition) {
@@ -352,7 +352,8 @@ function awardGemIfEarned(scorerIdx, realCluesRevealed) {
   if (!holder) return null;
   holder.gems = holder.gems || {};
   if ((holder.gems[cat] || 0) >= gemCapFor()) return null;
-  const key = CURRENT_FORMAT === "equipe" ? players[scorerIdx].team : scorerIdx;
+  // chave da trava e do vencedor: a equipe, ou o id do jogador (1.7.7.1; antes era a posição)
+  const key = CURRENT_FORMAT === "equipe" ? players[scorerIdx].team : players[scorerIdx].id;
   if (joiasComTrava() && (joiasRodada[String(key)] || 0) >= JOIAS_POR_RODADA) {
     joiasTravaAvisar(scorerIdx);
     return null;
@@ -376,7 +377,7 @@ function palpiteAvailable() {
 function palpiteKeyOf(playerIdx) {
   const p = players[playerIdx];
   if (!p) return null;
-  return CURRENT_FORMAT === "equipe" ? p.team : String(playerIdx);
+  return CURRENT_FORMAT === "equipe" ? p.team : p.id;
 }
 function palpiteCount(key) {
   return (key !== null && key !== void 0 && palpiteHolders[key]) || 0;
@@ -408,13 +409,13 @@ function palpiteEligibleHolders() {
 function palpiteEligibleScorers() {
   const keys = palpiteEligibleHolders();
   if (CURRENT_FORMAT === "equipe") return players.map((p, i) => i).filter((i) => keys.includes(players[i].team));
-  return keys.map((k) => parseInt(k));
+  return keys.map((k) => jogadorIdxPorId(k)).filter((i) => i >= 0);
 }
 function palpiteHit(key) {
   if (pendingIndex === null || gameEnded || !palpiteEligibleHolders().includes(key)) return;
   const t = CURRENT_FORMAT === "equipe" ? teams[key] : null;
-  const idx = t ? (t.members && t.members.length ? t.members[t.memberCursor % t.members.length] : null) : parseInt(key);
-  if (idx === null || idx === void 0) return;
+  const idx = t ? (t.members && t.members.length ? t.members[t.memberCursor % t.members.length] : null) : jogadorIdxPorId(key);
+  if (idx === null || idx === void 0 || idx < 0) return;
   markCorrect(idx);
 }
 function palpiteMiss(key) {
