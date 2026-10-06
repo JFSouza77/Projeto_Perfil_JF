@@ -1563,7 +1563,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.6.7 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.7 · C.A.O.S. 4.0");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -2085,7 +2085,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.6.7 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.7 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -2189,7 +2189,23 @@ function voltarGuardar() {
     if (!window.history.state || !window.history.state.perfilJF) window.history.pushState({ perfilJF: 1 }, "");
   } catch (e) {}
 }
+// 1.7.7 (revisão GPT/Google): com uma janela aberta, o voltar cuida dela primeiro.
+// O tutorial fecha; as outras janelas pedem uma decisão, então o voltar só não deixa sair
+// do jogo nem pausar por baixo delas.
+function voltarJanelaAberta() {
+  const tut = document.getElementById("tutorialOverlay");
+  if (tut && tut.style.display !== "none" && getComputedStyle(tut).display !== "none") {
+    const x = document.getElementById("tutClose");
+    if (x) x.click();
+    return true;
+  }
+  return !!document.querySelector(".caos-modal-ov, .jf-modal-bg");
+}
 function voltarApertado() {
+  if (starterChosen && !gameEnded && voltarJanelaAberta()) {
+    voltarGuardar();
+    return;
+  }
   if (starterChosen && !gameEnded && document.getElementById("gameScreen").style.display !== "none") {
     voltarGuardar();
     if (!pausaEstaAberta()) pauseGame();

@@ -13,7 +13,16 @@ let acessCfg = { ...ACESS_PADRAO };
 function acessCarregar() {
   try {
     const o = JSON.parse(JFStore.getItem(ACESS_KEY) || "{}");
-    acessCfg = { ...ACESS_PADRAO, ...(o && typeof o === "object" ? o : {}) };
+    // 1.7.7 (revisão GPT): só as chaves conhecidas, cada uma no tipo certo. "false" em texto,
+    // número no lugar de booleano ou lixo de versão velha voltam pro padrão.
+    const ok = o && typeof o === "object" && !Array.isArray(o) ? o : {};
+    acessCfg = { ...ACESS_PADRAO };
+    Object.keys(ACESS_PADRAO).forEach((k) => {
+      if (k in ok) acessCfg[k] = ok[k];
+    });
+    ["tempo", "lerDicas", "contraste"].forEach((k) => {
+      acessCfg[k] = acessCfg[k] === true;
+    });
     acessCfg.letra = [0, 1, 2].includes(acessCfg.letra) ? acessCfg.letra : 0;
     ["volVoz", "volSom"].forEach((k) => {
       const v = Number(acessCfg[k]);
@@ -141,3 +150,29 @@ function acessPainelAbrir() {
   pintar();
   document.body.appendChild(ov);
 }
+
+/* --- Toque duplo (1.7.7, revisão GPT/Google) ---
+ * Depois de um veredito (Acertou, Errou, Pulou, Absurdo, Passar) ou de escolher um número, a
+ * tela se redesenha na hora. O 2º toque de um toque duplo, ou um dedo que tremeu, caía no botão
+ * que nasceu no mesmo lugar (Errou e logo em seguida um número da grade). Por 400 ms depois de
+ * um desses toques, outro toque nesses mesmos botões é ignorado. Ninguém escolhe de propósito
+ * tão rápido; quem toca duas vezes sem querer não perde a vez. */
+const TOQUE_JOGO_SEL =
+  "#correctBtn, #wrongBtn, #pularBtn, #absurdoBtn, #expressCorrectBtn, #expressNextBtn, .number-btn, [data-scorer], .palpite-hit, .palpite-miss";
+const TOQUE_TRAVA_MS = 400;
+let toqueJogoUltimo = 0;
+document.addEventListener(
+  "click",
+  (e) => {
+    const alvo = e.target && e.target.closest ? e.target.closest(TOQUE_JOGO_SEL) : null;
+    if (!alvo) return;
+    const agora = Date.now();
+    if (agora - toqueJogoUltimo < TOQUE_TRAVA_MS) {
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      return;
+    }
+    toqueJogoUltimo = agora;
+  },
+  true,
+);

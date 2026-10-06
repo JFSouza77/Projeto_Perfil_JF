@@ -108,7 +108,7 @@ const TUTORIAL_STEPS = [
     sec: 2,
     icon: "🗣️",
     title: "4. Um palpite só",
-    text: "Depois de ouvir a dica, o jogador dá <b>um</b> palpite. O Mestre toca em <b>Acertou</b> ou <b>Errou</b>. Errou? A vez passa pro próximo, que escolhe outro número.<br>O jogador não tinha palpite nenhum? <b>» Pulou</b>. O chute foi uma atrocidade? <b>⚠︎ Absurdo</b>. Pro jogo, os dois são iguais ao Errou. Mas o C.A.O.S. fica sabendo… e ele não esquece.",
+    text: "Depois de ouvir a dica, o jogador dá <b>um</b> palpite. O Mestre toca em <b>Acertou</b> ou <b>Errou</b>. Errou? A vez passa pro próximo, que escolhe outro número.<br>O jogador não tinha palpite nenhum? <b>» Pulou</b>. O chute não tinha nada a ver com a dica? <b>⚠︎ Absurdo</b> (é o chute que foi absurdo, não a dica). Pro jogo, os dois são iguais ao Errou. Mas o C.A.O.S. fica sabendo… e ele não esquece.",
     mock: '<div class="guess-btns" style="flex-direction:column;"><button class="btn-correct">✓ Fulano acertou</button><button class="btn-wrong">✕ Errou</button><div class="mesa-btns"><button class="btn-pular">» Pulou</button><button class="btn-absurdo">⚠︎ Absurdo</button></div></div>',
   },
   {

@@ -137,7 +137,10 @@ Cada parte sai publicada sozinha, como nas updates anteriores. Em todas valem as
 - os testes atuais continuam passando, e cada parte ganha o seu teste;
 - save de versão antiga continua abrindo.
 
-### Parte 1 · 1.7.7 · Identidade dos jogadores
+### Parte 1 · 1.7.7 · Correções da revisão (publicada)
+- Saiu primeiro o que a revisão do JF + GPT + Google AI Studio apontou e o código confirmou, sem mudar regra: toque duplo, voltar do Android com janela aberta, preferências de acessibilidade à prova de valor estranho, anúncio da vez pro leitor de tela, espaço entre Acertou e Errou, letra Enorme em 320 px, Absurdo explicado e o `package.json` (ver a seção 6).
+
+### Parte 2 · 1.7.7.1 · Identidade dos jogadores
 - Todo jogador ganha `id` (exemplo: `j_k7p2qa`) no cadastro. Ele não muda se alguém sair, se a ordem mudar ou se a partida for salva e restaurada.
 - O save sobe pra versão 12. Save antigo ganha `id` ao abrir, sem perder nada.
 - As 5 coisas guardadas pelo nome passam a guardar o `id`. Na leitura de save antigo, o nome ainda é aceito.
@@ -145,23 +148,23 @@ Cada parte sai publicada sozinha, como nas updates anteriores. Em todas valem as
 - Nesta parte, `mestreIndex` e `responderIndex` continuam sendo posição (são "assento"). A conversão deles fica pra 1.7.8, junto com as ações.
 - **Teste:** remover jogador pelo ADM, reordenar, salvar e restaurar, conferindo que cada `id` continua no mesmo jogador e que palpite, joias e Mestre ficam com a pessoa certa.
 
-### Parte 2 · 1.7.7.1 · Partida e cartas identificadas
+### Parte 3 · 1.7.7.2 · Partida e cartas identificadas
 - `matchId` nasce no início da partida, vai pro save e é preservado no "Jogar de novo" como uma partida nova.
-- Toda carta ganha `id` estável (categoria + resposta normalizada, por exemplo `ANO:2001`). O save passa a guardar `id`; save antigo, salvo pela resposta, continua abrindo.
+- Toda carta ganha `id` **explícito e imutável**, escrito na própria carta (ex.: `ANO-0001`). Ele **não** sai da resposta (pedido do roteiro "Extractor Upgrade" do GPT): se uma resposta for corrigida, o `id` não muda. Um mapa resposta → `id` faz a migração do save antigo, que guardava pela resposta.
 - O auditor de cartas passa a conferir que os `id` são únicos.
 
-### Parte 3 · 1.7.7.2 · Espinha completa
+### Parte 4 · 1.7.7.3 · Espinha completa
 - A foto da espinha passa a vigiar também: fichas de palpite, joias da rodada, vencedor por joias, fila da casa de bônus, dicas abertas, relógios, modo sorteado da Moda da Casa, rodada e última rodada.
 - A restauração acha o jogador pelo `id`.
 - **Teste:** uma rotina falsa tenta mexer em cada um desses dados, e a espinha precisa desfazer tudo.
 
-### Parte 4 · 1.7.7.3 · Sorteios e inventário do estado
-- Os sorteios que **decidem o jogo** passam por uma função única (`sorteioRegra`), sem mudar o comportamento. Na 1.7.9 é ela que vai deixar o host sortear e os outros aparelhos receberem o resultado. Os sorteios de **enfeite** (falas, emoções) continuam como estão.
+### Parte 5 · 1.7.7.4 · Sorteios e inventário do estado
+- Os sorteios que **decidem o jogo** passam por uma função única (`sorteioRegra`), sem mudar o comportamento. Ela aceita uma semente nos testes, pra repetir a mesma partida. Na 1.7.9 é ela que vai deixar o host sortear e os outros aparelhos receberem o resultado. Os sorteios de **enfeite** (falas, emoções) continuam como estão.
 - Novo `docs/Estado_da_Partida.md`: o que é estado de regra, o que é do C.A.O.S. e o que é só da tela.
 - As variáveis de regra que não vão pro save passam a ir: `consecutiveExhausted`, `streakCount`, `streakScorerIdx`, `starterDrawCount` e `cardWrongCount`.
 
-### Parte 5 · 1.7.7.4 · Simulador e QoL
-- Novo `ferramentas/simular_partidas.js`: partidas inteiras automáticas em todos os modos e formatos (Versus, Equipe 2×2, 2×3 e 3×2), conferindo regras que nunca podem quebrar:
+### Parte 6 · 1.7.7.5 · Simulador e QoL
+- Novo `ferramentas/simular_partidas.js` (vira o `npm run simular`), com semente e limite de passos (nunca roda pra sempre): partidas inteiras automáticas em todos os modos e formatos (Versus, Equipe 2×2, 2×3 e 3×2), conferindo regras que nunca podem quebrar:
   - placar nunca negativo;
   - joias sempre ≤ 4;
   - todo jogador continua com o mesmo `id`;
@@ -182,3 +185,35 @@ Cada parte sai publicada sozinha, como nas updates anteriores. Em todas valem as
 5. **O que acontece se nenhum jogador puder assumir como host:** pausar e esperar? Encerrar salvando?
 6. **Arquivos offline antigos:** mandar pra Releases e tirar do repositório?
 7. **Nomes dos Agradecimentos Especiais.**
+
+---
+
+## 6. Revisão do JF + GPT + Google AI Studio (1.7.0 a 1.7.6.x)
+
+Conferida no código em 05/10/2026. Três destinos:
+
+**Entrou na 1.7.7 (correção, sem mudar regra):**
+- Toque duplo no veredito ou no número (trava de 400 ms só nesses botões).
+- Voltar do Android: janela aberta tem prioridade (tutorial fecha; as outras seguram o voltar).
+- Preferências de acessibilidade: só chaves conhecidas, booleanos de verdade, volume 0-1.
+- Leitor de tela anuncia a vez e o Mestre.
+- Acertou/Errou com 14 px de espaço; letra Enorme sem vazar em 320 px; Absurdo explicado ("o chute é que foi absurdo").
+- `package.json`: "simular" apontava pra um arquivo que não existe.
+
+**Já estava feito (a revisão não viu ou era de versão anterior):** empate na Última Rodada já é anunciado; falas atrasadas já são descartadas quando a partida muda; `prefers-reduced-motion` já é respeitado nas animações; letra Grande/Enorme já crescia a lista de dicas (tudo em rem).
+
+**Entra nas próximas partes da 1.7.7 (roteiro "Extractor Upgrade" do GPT):** `id` imutável de carta com mapa de migração; `matchId`; simulador com semente; `docs/Estado_da_Partida.md`; separar a foto da espinha, o save e o futuro retrato da partida (GameSnapshot, 1.7.8).
+
+**Fica pra decisão do JF (muda regra ou é produto):**
+1. Desempate na Última Rodada.
+2. Desfazer o último veredito.
+3. Tempo extra individual pra quem **responde** (hoje o extra é de quem é Mestre).
+4. Karaokê: destacar a palavra que a voz está lendo.
+5. C.A.O.S. narrando o tutorial.
+6. Contraste "quente" (tema alternativo ao alto contraste).
+7. Animação de contagem dos pontos e virada de carta.
+8. Indicador fixo de "já ganhou 2 joias nesta rodada".
+9. 4ª Lei do C.A.O.S. (respeitar quem está lendo) e tom por idade.
+10. Firebase / serviço do online (comparação na 1.7.8), árbitro de paz, resumo depois da pausa, troféus.
+
+**Nome da update:** o roteiro do GPT chama a 1.7.7 de "Extractor Upgrade". Mantido "Foundation Structure Update", o nome aprovado pelo JF.

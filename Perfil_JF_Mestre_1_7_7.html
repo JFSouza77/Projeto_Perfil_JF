@@ -6,6 +6,20 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.7 · 05/10/2026 · "Foundation Structure Update · Parte 1" = CORREÇÕES DA REVISÃO (GPT + GOOGLE AI STUDIO).
+          A revisão do JF, do GPT e do Google AI Studio (1.7.0 a 1.7.6.x) foi conferida no código; entrou o que
+          era correção verificável, sem mudar regra. 1) Toque duplo: por 400 ms depois de um veredito ou de um
+          número, outro toque nesses botões é ignorado (o 2º toque caía no número que nascia no lugar do Errou).
+          2) Voltar do Android com janela aberta: o tutorial fecha; as outras janelas seguram o voltar (antes
+          pausava por baixo delas). 3) Preferências de acessibilidade: só chaves conhecidas, booleanos de
+          verdade ("false" em texto não liga mais nada), volume limitado a 0-1. 4) Leitor de tela anuncia a
+          vez ("Vez de X. Mestre: Y.", região só-leitor). 5) Acertou/Errou com 14 px de espaço; dica e resposta
+          quebram palavra longa com letra Grande/Enorme; grade de números cabe em 320 px com Enorme (testado:
+          botões 47×46). 6) Absurdo explicado: "o chute é que foi absurdo, não a dica" (manual, title e
+          aria-label); "atrocidade" saiu do manual. 7) package.json: "simular" apontava pra um sim.js que não
+          existe; agora roda o teste de estresse, e ganhou "publicar", "testes" e "auditar".
+          Ideias da revisão que mudam regra (desempate, desfazer, tempo extra de quem responde, karaokê…)
+          ficaram no Roteiro_Multiplayer.md pra decisão do JF.
   1.7.6.7 · 03/10/2026 · "Buttons and Tutorial Update · QoL de emergência" = 3 PEDIDOS DO JF DEPOIS DE JOGAR.
           1) Fala sem nexo: "A dica era X. E mesmo assim, Fulano." ficou "E mesmo assim não foi, Fulano." (e a
           do número ganhou "não saiu"); a cauda de tropeço "Anota aí que eu hesitei." (não havia hesitação) virou
@@ -328,7 +342,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.6.7</title>
+<title>Perfil JF · Beta 1.7.7</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6622,6 +6636,46 @@ body:has(.caos-modal-ov) {
   width: 100%;
   box-sizing: border-box;
 }
+
+/* 1.7.7 (revisão GPT/Google): mais espaço entre Acertou e Errou, pra não errar o botão no susto */
+.card .guess-btns {
+  gap: 14px;
+}
+/* Letra Grande/Enorme: dica, número e resposta quebram a palavra em vez de vazar da carta */
+.clue-list li,
+.answer-header,
+.pending-box,
+.spotlight-box {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+html.acess-letra-1 .clue-list li,
+html.os-acess .clue-list li,
+html.acess-letra-2 .clue-list li {
+  line-height: 1.5;
+}
+/* Grade de números em tela estreita (320-360 px) com letra Enorme: 5 colunas cabem, sem vazar */
+.number-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+@media (max-width: 360px) {
+  html.acess-letra-2 .number-grid {
+    gap: 6px;
+  }
+  html.acess-letra-2 .number-btn {
+    font-size: 0.95rem;
+    padding: 12px 0;
+  }
+}
+/* Texto só pra leitor de tela (anúncio da vez) */
+.so-leitor {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
 </style>
 </head>
 <body class="noturno">
@@ -6669,7 +6723,7 @@ body:has(.caos-modal-ov) {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.6.7 · Buttons and Tutorial Update · QoL de emergência<br>C.A.O.S. 4.0 · Atualizada em 03/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.7 · Foundation Structure Update · Parte 1<br>C.A.O.S. 4.0 · Atualizada em 05/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -11596,7 +11650,31 @@ function updateDrawAvailability() {
   iniAtualizarBotao();
   renderWinCondPicker();
 }
+// 1.7.7 (revisão Google AI Studio): leitor de tela anuncia a troca de vez (região escondida, só pra leitor).
+let vezAnunciada = "";
+function anunciarVez() {
+  try {
+    if (!starterChosen || gameEnded || cardState !== "revealed" || typeof responderIndex !== "number") return;
+    const r = players[responderIndex];
+    const m = players[mestreIndex];
+    if (!r) return;
+    const txt = `Vez de ${r.name}${m ? ". Mestre: " + m.name : ""}.`;
+    if (txt === vezAnunciada) return;
+    vezAnunciada = txt;
+    let el = document.getElementById("anuncioVez");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "anuncioVez";
+      el.className = "so-leitor";
+      el.setAttribute("role", "status");
+      el.setAttribute("aria-live", "polite");
+      document.body.appendChild(el);
+    }
+    el.textContent = txt;
+  } catch (e) {}
+}
 function render() {
+  anunciarVez();
   const area = document.getElementById("cardArea");
   const drawBtn = document.getElementById("drawBtn");
   const miniScore = document.getElementById("miniScoreboard");
@@ -11901,7 +11979,7 @@ function render() {
           <div class="guess-btns" style="flex-direction:column;">
             ${correctButtonsHtml}
             <button class="btn-wrong" id="wrongBtn">✕ Errou</button>
-            ${'<div class="mesa-btns"><button type="button" class="btn-pular" id="pularBtn" title="A pessoa não tinha palpite: passa a vez sem contar como erro">» Pulou</button><button type="button" class="btn-absurdo" id="absurdoBtn" title="Errou feio: conta como erro e o C.A.O.S. fica sabendo">⚠︎ Absurdo</button></div>'}
+            ${'<div class="mesa-btns"><button type="button" class="btn-pular" id="pularBtn" title="A pessoa não tinha palpite: passa a vez sem contar como erro" aria-label="Pulou: não tinha palpite, passa a vez">» Pulou</button><button type="button" class="btn-absurdo" id="absurdoBtn" title="O chute foi absurdo (nada a ver com a dica): conta como erro e o C.A.O.S. fica sabendo" aria-label="Absurdo: o chute não tinha nada a ver, conta como erro">⚠︎ Absurdo</button></div>'}
           </div>
           ${palpiteHtml}`;
       }
@@ -14462,7 +14540,16 @@ let acessCfg = { ...ACESS_PADRAO };
 function acessCarregar() {
   try {
     const o = JSON.parse(JFStore.getItem(ACESS_KEY) || "{}");
-    acessCfg = { ...ACESS_PADRAO, ...(o && typeof o === "object" ? o : {}) };
+    // 1.7.7 (revisão GPT): só as chaves conhecidas, cada uma no tipo certo. "false" em texto,
+    // número no lugar de booleano ou lixo de versão velha voltam pro padrão.
+    const ok = o && typeof o === "object" && !Array.isArray(o) ? o : {};
+    acessCfg = { ...ACESS_PADRAO };
+    Object.keys(ACESS_PADRAO).forEach((k) => {
+      if (k in ok) acessCfg[k] = ok[k];
+    });
+    ["tempo", "lerDicas", "contraste"].forEach((k) => {
+      acessCfg[k] = acessCfg[k] === true;
+    });
     acessCfg.letra = [0, 1, 2].includes(acessCfg.letra) ? acessCfg.letra : 0;
     ["volVoz", "volSom"].forEach((k) => {
       const v = Number(acessCfg[k]);
@@ -14590,6 +14677,32 @@ function acessPainelAbrir() {
   pintar();
   document.body.appendChild(ov);
 }
+
+/* --- Toque duplo (1.7.7, revisão GPT/Google) ---
+ * Depois de um veredito (Acertou, Errou, Pulou, Absurdo, Passar) ou de escolher um número, a
+ * tela se redesenha na hora. O 2º toque de um toque duplo, ou um dedo que tremeu, caía no botão
+ * que nasceu no mesmo lugar (Errou e logo em seguida um número da grade). Por 400 ms depois de
+ * um desses toques, outro toque nesses mesmos botões é ignorado. Ninguém escolhe de propósito
+ * tão rápido; quem toca duas vezes sem querer não perde a vez. */
+const TOQUE_JOGO_SEL =
+  "#correctBtn, #wrongBtn, #pularBtn, #absurdoBtn, #expressCorrectBtn, #expressNextBtn, .number-btn, [data-scorer], .palpite-hit, .palpite-miss";
+const TOQUE_TRAVA_MS = 400;
+let toqueJogoUltimo = 0;
+document.addEventListener(
+  "click",
+  (e) => {
+    const alvo = e.target && e.target.closest ? e.target.closest(TOQUE_JOGO_SEL) : null;
+    if (!alvo) return;
+    const agora = Date.now();
+    if (agora - toqueJogoUltimo < TOQUE_TRAVA_MS) {
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      return;
+    }
+    toqueJogoUltimo = agora;
+  },
+  true,
+);
 /* ----------------------------------------------------------------------
  * 5c. O C.A.O.S. SUGERE O TUTORIAL (1.7.6): rede de segurança pra quem nunca jogou.
  * Pergunta uma vez só: "Quer fazer o tutorial? Leva menos de dois minutos."
@@ -17379,7 +17492,7 @@ function caosInspectorEstado() {
       }</b></div>
       <div class="ci-kv"><span>🦴 Registro da espinha</span><b class="ci-mono">${caosEspinha.log.slice(-5).reverse().map(escapeHtml).join("<br>") || "—"}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.6.7 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.7 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -22445,7 +22558,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.6.7 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.7 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -25409,7 +25522,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.6.7 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.7 · C.A.O.S. 4.0");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
   if (minutos !== null) L.push("- **Duração:** " + minutos + " min");
@@ -25931,7 +26044,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.6.7 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.7 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -26035,7 +26148,23 @@ function voltarGuardar() {
     if (!window.history.state || !window.history.state.perfilJF) window.history.pushState({ perfilJF: 1 }, "");
   } catch (e) {}
 }
+// 1.7.7 (revisão GPT/Google): com uma janela aberta, o voltar cuida dela primeiro.
+// O tutorial fecha; as outras janelas pedem uma decisão, então o voltar só não deixa sair
+// do jogo nem pausar por baixo delas.
+function voltarJanelaAberta() {
+  const tut = document.getElementById("tutorialOverlay");
+  if (tut && tut.style.display !== "none" && getComputedStyle(tut).display !== "none") {
+    const x = document.getElementById("tutClose");
+    if (x) x.click();
+    return true;
+  }
+  return !!document.querySelector(".caos-modal-ov, .jf-modal-bg");
+}
 function voltarApertado() {
+  if (starterChosen && !gameEnded && voltarJanelaAberta()) {
+    voltarGuardar();
+    return;
+  }
   if (starterChosen && !gameEnded && document.getElementById("gameScreen").style.display !== "none") {
     voltarGuardar();
     if (!pausaEstaAberta()) pauseGame();
@@ -59530,7 +59659,7 @@ const TUTORIAL_STEPS = [
     sec: 2,
     icon: "🗣️",
     title: "4. Um palpite só",
-    text: "Depois de ouvir a dica, o jogador dá <b>um</b> palpite. O Mestre toca em <b>Acertou</b> ou <b>Errou</b>. Errou? A vez passa pro próximo, que escolhe outro número.<br>O jogador não tinha palpite nenhum? <b>» Pulou</b>. O chute foi uma atrocidade? <b>⚠︎ Absurdo</b>. Pro jogo, os dois são iguais ao Errou. Mas o C.A.O.S. fica sabendo… e ele não esquece.",
+    text: "Depois de ouvir a dica, o jogador dá <b>um</b> palpite. O Mestre toca em <b>Acertou</b> ou <b>Errou</b>. Errou? A vez passa pro próximo, que escolhe outro número.<br>O jogador não tinha palpite nenhum? <b>» Pulou</b>. O chute não tinha nada a ver com a dica? <b>⚠︎ Absurdo</b> (é o chute que foi absurdo, não a dica). Pro jogo, os dois são iguais ao Errou. Mas o C.A.O.S. fica sabendo… e ele não esquece.",
     mock: '<div class="guess-btns" style="flex-direction:column;"><button class="btn-correct">✓ Fulano acertou</button><button class="btn-wrong">✕ Errou</button><div class="mesa-btns"><button class="btn-pular">» Pulou</button><button class="btn-absurdo">⚠︎ Absurdo</button></div></div>',
   },
   {
@@ -59968,6 +60097,23 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.7",
+    data: "05/10/2026 · 22:23",
+    nome: "Foundation Structure Update · Parte 1",
+    t: "Começa a fundação do multiplayer. Primeiro, as correções da revisão completa feita pelo JF com o GPT e o Google AI Studio.",
+    itens: [
+      "👆 Toque duplo não estraga mais a jogada: se o dedo tocar duas vezes no Errou, o segundo toque não abre um número sem querer.",
+      "↩️ Botão voltar do Android: com uma janela aberta, ele cuida da janela primeiro (o tutorial fecha) em vez de pausar o jogo por baixo.",
+      "🦻 Leitor de tela (VoiceOver/TalkBack) agora avisa de quem é a vez e quem é o Mestre.",
+    ],
+    qol: [
+      "✋ Mais espaço entre Acertou e Errou, pra ninguém tocar no botão errado no susto.",
+      "🔠 Letra Grande e Enorme: dicas e respostas longas quebram a linha certinho, e a grade de números cabe até em celular pequeno.",
+      "⚠︎ Absurdo explicado: é o chute que foi absurdo (nada a ver com a dica), não a dica.",
+      "⚙️ As preferências de acessibilidade ficaram mais à prova de erro: um valor estranho salvo no aparelho volta pro padrão em vez de ligar uma opção sozinho.",
+    ],
+  },
   {
     v: "Beta 1.7.6.7",
     data: "03/10/2026 · 23:30",

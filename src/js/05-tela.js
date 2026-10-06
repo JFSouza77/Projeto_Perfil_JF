@@ -544,7 +544,31 @@ function updateDrawAvailability() {
   iniAtualizarBotao();
   renderWinCondPicker();
 }
+// 1.7.7 (revisão Google AI Studio): leitor de tela anuncia a troca de vez (região escondida, só pra leitor).
+let vezAnunciada = "";
+function anunciarVez() {
+  try {
+    if (!starterChosen || gameEnded || cardState !== "revealed" || typeof responderIndex !== "number") return;
+    const r = players[responderIndex];
+    const m = players[mestreIndex];
+    if (!r) return;
+    const txt = `Vez de ${r.name}${m ? ". Mestre: " + m.name : ""}.`;
+    if (txt === vezAnunciada) return;
+    vezAnunciada = txt;
+    let el = document.getElementById("anuncioVez");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "anuncioVez";
+      el.className = "so-leitor";
+      el.setAttribute("role", "status");
+      el.setAttribute("aria-live", "polite");
+      document.body.appendChild(el);
+    }
+    el.textContent = txt;
+  } catch (e) {}
+}
 function render() {
+  anunciarVez();
   const area = document.getElementById("cardArea");
   const drawBtn = document.getElementById("drawBtn");
   const miniScore = document.getElementById("miniScoreboard");
@@ -849,7 +873,7 @@ function render() {
           <div class="guess-btns" style="flex-direction:column;">
             ${correctButtonsHtml}
             <button class="btn-wrong" id="wrongBtn">✕ Errou</button>
-            ${'<div class="mesa-btns"><button type="button" class="btn-pular" id="pularBtn" title="A pessoa não tinha palpite: passa a vez sem contar como erro">» Pulou</button><button type="button" class="btn-absurdo" id="absurdoBtn" title="Errou feio: conta como erro e o C.A.O.S. fica sabendo">⚠︎ Absurdo</button></div>'}
+            ${'<div class="mesa-btns"><button type="button" class="btn-pular" id="pularBtn" title="A pessoa não tinha palpite: passa a vez sem contar como erro" aria-label="Pulou: não tinha palpite, passa a vez">» Pulou</button><button type="button" class="btn-absurdo" id="absurdoBtn" title="O chute foi absurdo (nada a ver com a dica): conta como erro e o C.A.O.S. fica sabendo" aria-label="Absurdo: o chute não tinha nada a ver, conta como erro">⚠︎ Absurdo</button></div>'}
           </div>
           ${palpiteHtml}`;
       }

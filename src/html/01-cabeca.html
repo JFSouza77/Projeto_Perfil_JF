@@ -6,6 +6,20 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.7 · 05/10/2026 · "Foundation Structure Update · Parte 1" = CORREÇÕES DA REVISÃO (GPT + GOOGLE AI STUDIO).
+          A revisão do JF, do GPT e do Google AI Studio (1.7.0 a 1.7.6.x) foi conferida no código; entrou o que
+          era correção verificável, sem mudar regra. 1) Toque duplo: por 400 ms depois de um veredito ou de um
+          número, outro toque nesses botões é ignorado (o 2º toque caía no número que nascia no lugar do Errou).
+          2) Voltar do Android com janela aberta: o tutorial fecha; as outras janelas seguram o voltar (antes
+          pausava por baixo delas). 3) Preferências de acessibilidade: só chaves conhecidas, booleanos de
+          verdade ("false" em texto não liga mais nada), volume limitado a 0-1. 4) Leitor de tela anuncia a
+          vez ("Vez de X. Mestre: Y.", região só-leitor). 5) Acertou/Errou com 14 px de espaço; dica e resposta
+          quebram palavra longa com letra Grande/Enorme; grade de números cabe em 320 px com Enorme (testado:
+          botões 47×46). 6) Absurdo explicado: "o chute é que foi absurdo, não a dica" (manual, title e
+          aria-label); "atrocidade" saiu do manual. 7) package.json: "simular" apontava pra um sim.js que não
+          existe; agora roda o teste de estresse, e ganhou "publicar", "testes" e "auditar".
+          Ideias da revisão que mudam regra (desempate, desfazer, tempo extra de quem responde, karaokê…)
+          ficaram no Roteiro_Multiplayer.md pra decisão do JF.
   1.7.6.7 · 03/10/2026 · "Buttons and Tutorial Update · QoL de emergência" = 3 PEDIDOS DO JF DEPOIS DE JOGAR.
           1) Fala sem nexo: "A dica era X. E mesmo assim, Fulano." ficou "E mesmo assim não foi, Fulano." (e a
           do número ganhou "não saiu"); a cauda de tropeço "Anota aí que eu hesitei." (não havia hesitação) virou
@@ -328,7 +342,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.6.7</title>
+<title>Perfil JF · Beta 1.7.7</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -1,5 +1,22 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.7",
+    data: "05/10/2026 · 22:23",
+    nome: "Foundation Structure Update · Parte 1",
+    t: "Começa a fundação do multiplayer. Primeiro, as correções da revisão completa feita pelo JF com o GPT e o Google AI Studio.",
+    itens: [
+      "👆 Toque duplo não estraga mais a jogada: se o dedo tocar duas vezes no Errou, o segundo toque não abre um número sem querer.",
+      "↩️ Botão voltar do Android: com uma janela aberta, ele cuida da janela primeiro (o tutorial fecha) em vez de pausar o jogo por baixo.",
+      "🦻 Leitor de tela (VoiceOver/TalkBack) agora avisa de quem é a vez e quem é o Mestre.",
+    ],
+    qol: [
+      "✋ Mais espaço entre Acertou e Errou, pra ninguém tocar no botão errado no susto.",
+      "🔠 Letra Grande e Enorme: dicas e respostas longas quebram a linha certinho, e a grade de números cabe até em celular pequeno.",
+      "⚠︎ Absurdo explicado: é o chute que foi absurdo (nada a ver com a dica), não a dica.",
+      "⚙️ As preferências de acessibilidade ficaram mais à prova de erro: um valor estranho salvo no aparelho volta pro padrão em vez de ligar uma opção sozinho.",
+    ],
+  },
+  {
     v: "Beta 1.7.6.7",
     data: "03/10/2026 · 23:30",
     nome: "Buttons and Tutorial Update · QoL de emergência",

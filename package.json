@@ -5,7 +5,10 @@
   "scripts": {
     "build": "node build.js",
     "testar": "node build.js --testar",
-    "simular": "node sim.js"
+    "publicar": "node build.js --testar --publicar",
+    "simular": "node ferramentas/caos_teste_estresse.js",
+    "testes": "node ferramentas/caos_teste_espinha.js && node ferramentas/caos_teste_geradores.js && node ferramentas/caos_teste_estresse.js",
+    "auditar": "node ferramentas/auditar_cartas.js && node ferramentas/auditar_botoes.js"
   },
   "devDependencies": {
     "acorn": "^8.15.0",
