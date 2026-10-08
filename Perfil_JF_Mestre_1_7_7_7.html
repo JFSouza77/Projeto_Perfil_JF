@@ -6,6 +6,12 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.7.7 · 08/10/2026 · "Foundation Structure Update · Computador" = TELA DE COMPUTADOR (OPERA GX / CHROME).
+          css/08-computador.css (sugestão do GPT a partir de um print do JF): com mouse e janela de pelo menos
+          900×640, sai o zoom 1.2 do body e a tela passa a usar a largura do monitor, com limites de leitura
+          (painéis até 1100-1240 px, carta até 960 px, verso 360 px, lista de dicas 76 caracteres, janelas até
+          720-900 px e com rolagem própria). Celular e tablet não mudam. Conferido em 1366×768 e 1920×1080
+          (antes e depois): sem rolagem lateral; a carta inteira com Pausar/Reiniciar/Encerrar cabe na tela.
   1.7.7.6 · 08/10/2026 · "Foundation Structure Update · QoL da revisão" = DOCUMENTOS DO GPT (ROTEIRO, MESTRE E C.A.O.S.).
           1) Fala do tempo extra do Mestre neutra (sem "já que você é mais novinho"). 2) Splash: "Preparando as
           cartas…" no lugar do "575 cartas" fixo; recado do C.A.O.S. com Enter/Espaço; palavras flutuantes e dado
@@ -400,7 +406,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.7.6</title>
+<title>Perfil JF · Beta 1.7.7.7</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6734,6 +6740,130 @@ html.acess-letra-2 .clue-list li {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+/* 1.7.7.7 · Computador (Opera GX / Chrome). Sugestão do GPT a partir de um print do JF.
+ * Antes, no computador o jogo inteiro era ampliado com zoom 1.2 (regra em 01-base.css): a coluna
+ * de celular só ficava maior. Agora o zoom sai e a tela usa a largura do monitor de verdade, com
+ * limites pra leitura não ficar comprida demais. Vale só com mouse e janela de pelo menos 900×640;
+ * celular e tablet não mudam. */
+@media (min-width: 900px) and (min-height: 640px) and (hover: hover) {
+  body {
+    zoom: 1 !important;
+    width: 100%;
+    min-height: 100vh;
+    padding: 24px clamp(24px, 3vw, 64px) 64px;
+    align-items: center;
+    font-size: 17px;
+  }
+  .splash-screen,
+  #gameScreen {
+    width: min(100%, 1440px) !important;
+    max-width: 1440px !important;
+    margin-inline: auto;
+  }
+  .welcome-screen {
+    width: min(100%, 980px) !important;
+    max-width: 980px !important;
+    margin-inline: auto;
+    padding: 24px clamp(20px, 3vw, 48px) 48px;
+  }
+  .welcome-title {
+    font-size: clamp(1.8rem, 2.2vw, 2.5rem);
+  }
+  .welcome-subtitle {
+    font-size: 1.05rem;
+    line-height: 1.55;
+  }
+  #gameScreen {
+    padding-inline: clamp(0px, 1vw, 16px);
+  }
+  #gameScreen > h1 {
+    width: 100%;
+    max-width: 1240px;
+    font-size: clamp(1.6rem, 2vw, 2.1rem);
+    margin: 8px auto 20px;
+  }
+  #playerPanel,
+  #orderRevealSection,
+  #playAreaSection {
+    width: min(100%, 1240px) !important;
+    max-width: 1240px !important;
+  }
+  .panel {
+    width: 100%;
+    max-width: 1100px;
+    padding: 22px 26px;
+  }
+  .card {
+    width: 100%;
+    max-width: 960px;
+    padding: clamp(24px, 2vw, 36px);
+  }
+  .card.face-down {
+    --verso-w: min(360px, 28vw);
+    width: var(--verso-w);
+    max-width: 100%;
+    min-height: calc(var(--verso-w) * 1.4);
+  }
+  .clue-list {
+    width: 100%;
+    max-width: 76ch;
+    margin-inline: auto;
+  }
+  .clue-list li {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    padding: 12px 0;
+  }
+  .answer-header {
+    font-size: clamp(1.1rem, 1.3vw, 1.35rem);
+    line-height: 1.45;
+  }
+  .controls,
+  .board-track {
+    width: 100%;
+    max-width: 960px;
+  }
+  .mini-scoreboard {
+    width: 100%;
+    max-width: 1120px;
+  }
+  .jf-modal-bg {
+    padding: 32px;
+  }
+  .jf-modal {
+    width: min(720px, calc(100vw - 96px));
+    max-width: 720px;
+    max-height: calc(100dvh - 64px);
+    padding: 32px 36px;
+  }
+  .jf-modal.nov-modal {
+    width: min(900px, calc(100vw - 96px));
+    max-width: 900px;
+    max-height: calc(100dvh - 64px);
+    padding: 30px 36px;
+  }
+  .nov-modal .nov-item {
+    max-width: 76ch;
+    margin-inline: auto;
+  }
+  .nov-modal p {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  .tut-box,
+  .acess-box {
+    width: min(760px, calc(100vw - 96px));
+    max-width: 760px;
+    max-height: calc(100dvh - 64px);
+    padding: 30px 36px;
+  }
+  .caos-modal-ov > div {
+    width: min(760px, calc(100vw - 96px)) !important;
+    max-width: 760px !important;
+    max-height: calc(100dvh - 64px);
+    overflow-y: auto;
+  }
+}
 </style>
 </head>
 <body class="noturno">
@@ -6781,7 +6911,7 @@ html.acess-letra-2 .clue-list li {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.7.6 · Foundation Structure Update · QoL da revisão<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.7.7 · Foundation Structure Update · Computador<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -17674,7 +17804,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🦴 Registro da espinha</span><b class="ci-mono">${caosEspinha.log.slice(-5).reverse().map(escapeHtml).join("<br>") || "—"}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.7.6 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.7.7 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -22741,7 +22871,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.7.6 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.7.7 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -25881,7 +26011,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.7.6 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.7.7 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -26404,7 +26534,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.7.6 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.7.7 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -61463,6 +61593,18 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.7.7",
+    data: "08/10/2026 · 16:46",
+    nome: "Foundation Structure Update · Computador",
+    t: "Jogar no computador ficou mais confortável.",
+    itens: [
+      "🖥️ No computador (Opera GX, Chrome e outros), o jogo usa a largura da tela de verdade, em vez de só ampliar a versão de celular. A carta, as regras e as janelas ficam mais largas e fáceis de ler, e a carta inteira cabe na tela sem rolar.",
+    ],
+    qol: [
+      "📱 No celular e no tablet, nada mudou.",
+    ],
+  },
   {
     v: "Beta 1.7.7.6",
     data: "08/10/2026 · 16:04",

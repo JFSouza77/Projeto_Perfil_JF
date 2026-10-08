@@ -6,6 +6,7 @@ css/04-verso-hall-novidades.css
 css/05-noturno-e-celular.css
 css/06-modo-claro.css
 css/07-botoes-acessiveis.css
+css/08-computador.css
 html/02-corpo.html
 js/01-configuracao.js
 js/02-estado.js

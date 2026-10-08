@@ -282,7 +282,7 @@ Os documentos ficam com o JF e não entram no repositório, porque citam pessoas
 
 ### 7.4 Precisa do JF (decisão ou teste no aparelho)
 
-1. **Layout no computador (Opera GX / Chrome):** existe `zoom: 1.2` no `body` a partir de 900 px de largura com mouse. Em 1280×720, 1366×768, 1280×800 e 1920×1080 não há rolagem lateral nem botão cortado; só o rodapé da splash fica abaixo da dobra. Para corrigir o que você viu, preciso de print, tamanho da janela, zoom do navegador e escala do Windows.
+1. **Layout no computador (Opera GX / Chrome):** resolvido na 1.7.7.7 com a sugestão do GPT (`css/08-computador.css`): sem zoom 1.2, e a tela usa a largura do monitor com limites de leitura.
 2. **Idade:** a faixa "menos de 12" não muda baralho nem humor (confirmado). O GPT sugere a opção "Prefiro não informar". Hoje, não tocar em nada já significa isso.
 3. **Baralho por idade ou preset de sala:** é só hipótese. Precisa de classificação editorial das cartas (familiaridade separada de dificuldade) e da sua aprovação.
 4. **Provocação de cadastro para quem escolhe Suave:** o GPT recomenda só com opt-in e nunca em sala aberta.

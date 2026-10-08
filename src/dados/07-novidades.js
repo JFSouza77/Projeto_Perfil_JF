@@ -1,5 +1,17 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.7.7",
+    data: "08/10/2026 · 16:46",
+    nome: "Foundation Structure Update · Computador",
+    t: "Jogar no computador ficou mais confortável.",
+    itens: [
+      "🖥️ No computador (Opera GX, Chrome e outros), o jogo usa a largura da tela de verdade, em vez de só ampliar a versão de celular. A carta, as regras e as janelas ficam mais largas e fáceis de ler, e a carta inteira cabe na tela sem rolar.",
+    ],
+    qol: [
+      "📱 No celular e no tablet, nada mudou.",
+    ],
+  },
+  {
     v: "Beta 1.7.7.6",
     data: "08/10/2026 · 16:04",
     nome: "Foundation Structure Update · QoL da revisão",
