@@ -1,8 +1,23 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.7.8",
+    data: "08/10/2026 · 17:40",
+    nome: "Foundation and Structure Update · Final",
+    t: "Fim da Foundation and Structure Update: a base pro online está pronta. Os últimos ajustes que o JF pediu.",
+    itens: [
+      "🔒 Joias: quem já ganhou as 2 joias da rodada aparece com um cadeado no placar. Assim todo mundo sabe que a próxima joia dele só vem na rodada seguinte.",
+      "🔊 Tutorial: o botão \"Ouvir este passo\" faz o C.A.O.S. ler o passo em voz alta, pra quem aprende melhor ouvindo.",
+      "🃏 A carta agora vira com uma animação curtinha (desligada no Modo Batata e pra quem pede menos movimento no aparelho).",
+    ],
+    qol: [
+      "🃏 Cartas revisadas: Enciclopédia Barsa, Carnê do Baú, Super Choque e Escova de dente tinham uma dica que entregava a resposta; 1945 tinha dicas de conta demais.",
+      "🤖 Uma fala do C.A.O.S. que aparecia em dois lugares ganhou uma substituta nova.",
+    ],
+  },
+  {
     v: "Beta 1.7.7.7",
     data: "08/10/2026 · 16:46",
-    nome: "Foundation Structure Update · Computador",
+    nome: "Foundation and Structure Update · Computador",
     t: "Jogar no computador ficou mais confortável.",
     itens: [
       "🖥️ No computador (Opera GX, Chrome e outros), o jogo usa a largura da tela de verdade, em vez de só ampliar a versão de celular. A carta, as regras e as janelas ficam mais largas e fáceis de ler, e a carta inteira cabe na tela sem rolar.",
@@ -14,7 +29,7 @@ const NOVIDADES = [
   {
     v: "Beta 1.7.7.6",
     data: "08/10/2026 · 16:04",
-    nome: "Foundation Structure Update · QoL da revisão",
+    nome: "Foundation and Structure Update · QoL da revisão",
     t: "Ajustes pedidos nas revisões do JF com o GPT: mais cuidado com quem joga e com os dados da partida.",
     itens: [
       "⏳ Quando o Mestre ganha tempo extra, o C.A.O.S. avisa sem dizer o motivo pra mesa toda.",
@@ -29,8 +44,8 @@ const NOVIDADES = [
   {
     v: "Beta 1.7.7.5",
     data: "08/10/2026 · 15:52",
-    nome: "Foundation Structure Update · Parte 6",
-    t: "Última parte da Foundation Structure Update: a base do online está pronta. Agora o jogo testa partidas inteiras sozinho.",
+    nome: "Foundation and Structure Update · Parte 6",
+    t: "Última parte da Foundation and Structure Update: a base do online está pronta. Agora o jogo testa partidas inteiras sozinho.",
     itens: [
       "🤖 Um simulador joga partidas inteiras sozinho, em todos os modos e formatos (Versus e Equipe 2×2, 2×3 e 3×2), e confere a cada jogada que nenhuma regra quebrou.",
       "✅ Nas 14 partidas simuladas, ninguém ficou com ponto negativo nem com joia demais, toda partida terminou e o C.A.O.S. não encostou no jogo nenhuma vez.",
@@ -41,7 +56,7 @@ const NOVIDADES = [
   {
     v: "Beta 1.7.7.4",
     data: "08/10/2026 · 15:37",
-    nome: "Foundation Structure Update · Parte 5",
+    nome: "Foundation and Structure Update · Parte 5",
     t: "Os sorteios que decidem a partida agora passam por um lugar só. É assim que, no online, um aparelho vai sortear por todos.",
     itens: [
       "🎲 Embaralhar o baralho, sortear o modo da Moda da Casa, o primeiro Mestre e o alvo das surpresas: tudo passa por um sorteio único do jogo. Pra quem joga, nada muda.",
@@ -52,7 +67,7 @@ const NOVIDADES = [
   {
     v: "Beta 1.7.7.3",
     data: "05/10/2026 · 23:11",
-    nome: "Foundation Structure Update · Parte 4",
+    nome: "Foundation and Structure Update · Parte 4",
     t: "A espinha do C.A.O.S. ficou completa: ele continua podendo zoar à vontade, mas não encosta em nada que decide a partida.",
     itens: [
       "🦴 A 1ª lei do C.A.O.S. (nunca mexe no jogo) agora protege tudo que decide a partida: fichas de palpite, joias da rodada, quem venceu por joias, a casa de bônus, as dicas abertas, a rodada e o modo sorteado da Moda da Casa.",
@@ -63,7 +78,7 @@ const NOVIDADES = [
   {
     v: "Beta 1.7.7.2",
     data: "05/10/2026 · 22:50",
-    nome: "Foundation Structure Update · Parte 3",
+    nome: "Foundation and Structure Update · Parte 3",
     t: "Cada carta e cada partida agora têm uma identidade fixa. É mais uma peça da base pro online.",
     itens: [
       "🃏 As 1000 cartas ganharam um código fixo (como ANO-0001). Se um dia a resposta de uma carta for corrigida, a partida salva continua achando a carta certa.",
@@ -75,7 +90,7 @@ const NOVIDADES = [
   {
     v: "Beta 1.7.7.1",
     data: "05/10/2026 · 22:38",
-    nome: "Foundation Structure Update · Parte 2",
+    nome: "Foundation and Structure Update · Parte 2",
     t: "Cada jogador agora tem uma identidade própria no jogo. Ninguém vê, mas é a base pra jogar online.",
     itens: [
       "🪪 Todo jogador ganha uma identidade (um código interno) no cadastro. Ela não muda se alguém sair, se a ordem mudar ou se a partida for salva e aberta de novo.",
@@ -89,7 +104,7 @@ const NOVIDADES = [
   {
     v: "Beta 1.7.7",
     data: "05/10/2026 · 22:23",
-    nome: "Foundation Structure Update · Parte 1",
+    nome: "Foundation and Structure Update · Parte 1",
     t: "Começa a fundação do multiplayer. Primeiro, as correções da revisão completa feita pelo JF com o GPT e o Google AI Studio.",
     itens: [
       "👆 Toque duplo não estraga mais a jogada: se o dedo tocar duas vezes no Errou, o segundo toque não abre um número sem querer.",

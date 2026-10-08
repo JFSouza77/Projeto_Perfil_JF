@@ -6,13 +6,21 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
-  1.7.7.7 · 08/10/2026 · "Foundation Structure Update · Computador" = TELA DE COMPUTADOR (OPERA GX / CHROME).
+  1.7.7.8 · 08/10/2026 · "Foundation and Structure Update · Final" = DECISÕES DO JF E FECHAMENTO DA 1.7.7.
+          Nome confirmado pelo JF: Foundation and Structure Update (trocado em todo lugar). 1) Placar: 🔒 em quem
+          já levou as 2 joias da rodada (joiasTravaBadge, só quando a trava vale). 2) Tutorial: 🔊 "Ouvir este
+          passo" (lê título e texto com a voz do aparelho, só ao tocar; trocar de passo ou fechar cala). 3) Virada
+          da carta com animação de 0,38 s (sem no Batata e com movimento reduzido). QoL de cartas: Enciclopédia
+          Barsa, Carnê do Baú, Super Choque e Escova de dente com dica que trazia a resposta; 1945 com 4 dicas de
+          conta (Sou ímpar → Anne Frank). Fala do Ácido repetida de outra lista trocada. Desempate, desfazer,
+          tempo extra pra quem responde e karaokê: decididos no Roteiro_Multiplayer seção 8.
+  1.7.7.7 · 08/10/2026 · "Foundation and Structure Update · Computador" = TELA DE COMPUTADOR (OPERA GX / CHROME).
           css/08-computador.css (sugestão do GPT a partir de um print do JF): com mouse e janela de pelo menos
           900×640, sai o zoom 1.2 do body e a tela passa a usar a largura do monitor, com limites de leitura
           (painéis até 1100-1240 px, carta até 960 px, verso 360 px, lista de dicas 76 caracteres, janelas até
           720-900 px e com rolagem própria). Celular e tablet não mudam. Conferido em 1366×768 e 1920×1080
           (antes e depois): sem rolagem lateral; a carta inteira com Pausar/Reiniciar/Encerrar cabe na tela.
-  1.7.7.6 · 08/10/2026 · "Foundation Structure Update · QoL da revisão" = DOCUMENTOS DO GPT (ROTEIRO, MESTRE E C.A.O.S.).
+  1.7.7.6 · 08/10/2026 · "Foundation and Structure Update · QoL da revisão" = DOCUMENTOS DO GPT (ROTEIRO, MESTRE E C.A.O.S.).
           1) Fala do tempo extra do Mestre neutra (sem "já que você é mais novinho"). 2) Splash: "Preparando as
           cartas…" no lugar do "575 cartas" fixo; recado do C.A.O.S. com Enter/Espaço; palavras flutuantes e dado
           aria-hidden. 3) Importar save: limite de 2 milhões de caracteres e importSaveConferir (versão, jogadores,
@@ -21,7 +29,7 @@
           unhandledrejection) registrados só no aparelho, com tipo e hora, mostrados no Cérebro. 6) Espinha: rotina
           que devolver Promise é anotada e a rejeição contida. Medido: desktop 1280×720 a 1920×1080 sem rolagem
           lateral nem botão cortado (zoom 1.2 fica até o JF mandar o caso do Opera GX). Roteiro_Multiplayer seção 7.
-  1.7.7.5 · 08/10/2026 · "Foundation Structure Update · Parte 6" = SIMULADOR (FIM DA 1.7.7).
+  1.7.7.5 · 08/10/2026 · "Foundation and Structure Update · Parte 6" = SIMULADOR (FIM DA 1.7.7).
           ferramentas/simular_partidas.js (npm run simular): 14 partidas inteiras automáticas tocando nos
           botões da mesa (Versus 2/3/4/6 em Clássico, Hardcore, Júnior, Old School e Express; Tabuleiro,
           Pontos, Joias e Moda da Casa; Equipe 2×2, 2×3, 3×2 Duelo e 3×2 Todos), com semente e limite de
@@ -31,7 +39,7 @@
           balões (repetição exata vem com a fila de ações da 1.7.8). Status_do_Roteiro e Roteiro_Multiplayer
           atualizados: a 1.7.7 terminou. Avisos do auditor de cartas e fala repetida ficam pro JF decidir.
           Sem mudança no jogo nesta parte.
-  1.7.7.4 · 08/10/2026 · "Foundation Structure Update · Parte 5" = SORTEIOS E INVENTÁRIO DO ESTADO.
+  1.7.7.4 · 08/10/2026 · "Foundation and Structure Update · Parte 5" = SORTEIOS E INVENTÁRIO DO ESTADO.
           1) js/02c-sorteio.js: todo sorteio que decide o jogo passa por sorteioRegra() (embaralhar e devolver
           carta, especiais do Hardcore, modo da Moda da Casa, categorias e modo sorteados, alvo automático das
           surpresas, 1º Mestre, evento de misericórdia, Duelo/Todos). Hoje é o mesmo Math.random; nos testes,
@@ -40,7 +48,7 @@
           starterDrawCount, cardWrongCount e sorteioContagem (antes se perdiam ao recarregar).
           3) docs/Estado_da_Partida.md: as 258 variáveis separadas em regra, C.A.O.S. e tela, e o que vai pro
           save; base do retrato da partida da 1.7.8. teste_identidade com sorteio e save das variáveis novas.
-  1.7.7.3 · 05/10/2026 · "Foundation Structure Update · Parte 4" = ESPINHA COMPLETA.
+  1.7.7.3 · 05/10/2026 · "Foundation and Structure Update · Parte 4" = ESPINHA COMPLETA.
           A foto da 1ª lei (caosEspinhaFoto) passou a vigiar e desfazer também: fichas de palpite e estoque,
           joias da rodada, vencedor por joias, fila da casa de bônus, dicas abertas (dica a mais sai), dica
           pendente, modo sorteado da Moda da Casa, rodada, última rodada, vez das equipes (e cursor de cada
@@ -49,7 +57,7 @@
           relógio encurtado volta. Carta, baralho, início e fim seguem só vigiados (anota, não desfaz).
           caos_teste_espinha: rotina falsa mexe em tudo isso e a espinha desfaz tudo (+ dar tempo continua
           podendo). Conferido no código: nenhuma rotina protegida mexe nesses dados por direito.
-  1.7.7.2 · 05/10/2026 · "Foundation Structure Update · Parte 3" = PARTIDA E CARTAS IDENTIFICADAS.
+  1.7.7.2 · 05/10/2026 · "Foundation and Structure Update · Parte 3" = PARTIDA E CARTAS IDENTIFICADAS.
           1) As 1000 cartas ganharam id fixo escrito na própria carta (ANO-0001 … ANIMAL-0200), na ordem dos
           arquivos. O id não sai da resposta (pedido do roteiro do GPT): corrigir uma resposta não muda o id.
           CARTAS_RESPOSTA_ANTIGA (dados/02-cartas/99-fechamento.js) guarda resposta antiga → id, pra save velho
@@ -60,7 +68,7 @@
           Jogar de novo zeram (resetDeck). Aparece no relatório exportado. 4) auditar_cartas confere formato,
           prefixo da categoria e unicidade do id, e o mapa de respostas antigas. teste_identidade com 6 itens novos.
           Sem mudança de conteúdo nas cartas (só o id), então nada pro log de cartas.
-  1.7.7.1 · 05/10/2026 · "Foundation Structure Update · Parte 2" = IDENTIDADE DOS JOGADORES.
+  1.7.7.1 · 05/10/2026 · "Foundation and Structure Update · Parte 2" = IDENTIDADE DOS JOGADORES.
           js/02b-identidade.js: todo jogador ganha id ("j_" + 6 letras) no cadastro; não muda se alguém sai,
           se a ordem muda ou se a partida é salva e restaurada. Passam a usar o id (no Versus; no Equipe a chave
           segue sendo a equipe): fichas de palpite, joias da rodada, vencedor por joias, 1º Mestre da rodada
@@ -70,7 +78,7 @@
           não remapeia mais as fichas de palpite: só sai a ficha de quem saiu. Defeito corrigido: as joias da
           rodada não eram remapeadas na remoção (a trava de 2 por rodada passava pro vizinho). Novo teste:
           ferramentas/teste_identidade.js (save antigo, salvar/restaurar, remoção, vencedor, ids únicos).
-  1.7.7 · 05/10/2026 · "Foundation Structure Update · Parte 1" = CORREÇÕES DA REVISÃO (GPT + GOOGLE AI STUDIO).
+  1.7.7 · 05/10/2026 · "Foundation and Structure Update · Parte 1" = CORREÇÕES DA REVISÃO (GPT + GOOGLE AI STUDIO).
           A revisão do JF, do GPT e do Google AI Studio (1.7.0 a 1.7.6.x) foi conferida no código; entrou o que
           era correção verificável, sem mudar regra. 1) Toque duplo: por 400 ms depois de um veredito ou de um
           número, outro toque nesses botões é ignorado (o 2º toque caía no número que nascia no lugar do Errou).
@@ -406,7 +414,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.7.7</title>
+<title>Perfil JF · Beta 1.7.7.8</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

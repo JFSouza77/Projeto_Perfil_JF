@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Simulador de partidas inteiras (1.7.7.5 · Foundation Structure Update, Parte 6).
+// Simulador de partidas inteiras (1.7.7.5 · Foundation and Structure Update, Parte 6).
 // Joga partidas completas e automáticas no Mestre, em todos os modos e formatos (Versus;
 // Equipe 2×2, 2×3 e 3×2), tocando nos mesmos botões que a mesa toca. Ele usa semente (o sorteio
 // de regra do jogo e as escolhas do "jogador robô") e tem limite de passos, então nunca roda pra sempre.

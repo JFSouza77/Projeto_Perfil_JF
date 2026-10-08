@@ -6,13 +6,21 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
-  1.7.7.7 · 08/10/2026 · "Foundation Structure Update · Computador" = TELA DE COMPUTADOR (OPERA GX / CHROME).
+  1.7.7.8 · 08/10/2026 · "Foundation and Structure Update · Final" = DECISÕES DO JF E FECHAMENTO DA 1.7.7.
+          Nome confirmado pelo JF: Foundation and Structure Update (trocado em todo lugar). 1) Placar: 🔒 em quem
+          já levou as 2 joias da rodada (joiasTravaBadge, só quando a trava vale). 2) Tutorial: 🔊 "Ouvir este
+          passo" (lê título e texto com a voz do aparelho, só ao tocar; trocar de passo ou fechar cala). 3) Virada
+          da carta com animação de 0,38 s (sem no Batata e com movimento reduzido). QoL de cartas: Enciclopédia
+          Barsa, Carnê do Baú, Super Choque e Escova de dente com dica que trazia a resposta; 1945 com 4 dicas de
+          conta (Sou ímpar → Anne Frank). Fala do Ácido repetida de outra lista trocada. Desempate, desfazer,
+          tempo extra pra quem responde e karaokê: decididos no Roteiro_Multiplayer seção 8.
+  1.7.7.7 · 08/10/2026 · "Foundation and Structure Update · Computador" = TELA DE COMPUTADOR (OPERA GX / CHROME).
           css/08-computador.css (sugestão do GPT a partir de um print do JF): com mouse e janela de pelo menos
           900×640, sai o zoom 1.2 do body e a tela passa a usar a largura do monitor, com limites de leitura
           (painéis até 1100-1240 px, carta até 960 px, verso 360 px, lista de dicas 76 caracteres, janelas até
           720-900 px e com rolagem própria). Celular e tablet não mudam. Conferido em 1366×768 e 1920×1080
           (antes e depois): sem rolagem lateral; a carta inteira com Pausar/Reiniciar/Encerrar cabe na tela.
-  1.7.7.6 · 08/10/2026 · "Foundation Structure Update · QoL da revisão" = DOCUMENTOS DO GPT (ROTEIRO, MESTRE E C.A.O.S.).
+  1.7.7.6 · 08/10/2026 · "Foundation and Structure Update · QoL da revisão" = DOCUMENTOS DO GPT (ROTEIRO, MESTRE E C.A.O.S.).
           1) Fala do tempo extra do Mestre neutra (sem "já que você é mais novinho"). 2) Splash: "Preparando as
           cartas…" no lugar do "575 cartas" fixo; recado do C.A.O.S. com Enter/Espaço; palavras flutuantes e dado
           aria-hidden. 3) Importar save: limite de 2 milhões de caracteres e importSaveConferir (versão, jogadores,
@@ -21,7 +29,7 @@
           unhandledrejection) registrados só no aparelho, com tipo e hora, mostrados no Cérebro. 6) Espinha: rotina
           que devolver Promise é anotada e a rejeição contida. Medido: desktop 1280×720 a 1920×1080 sem rolagem
           lateral nem botão cortado (zoom 1.2 fica até o JF mandar o caso do Opera GX). Roteiro_Multiplayer seção 7.
-  1.7.7.5 · 08/10/2026 · "Foundation Structure Update · Parte 6" = SIMULADOR (FIM DA 1.7.7).
+  1.7.7.5 · 08/10/2026 · "Foundation and Structure Update · Parte 6" = SIMULADOR (FIM DA 1.7.7).
           ferramentas/simular_partidas.js (npm run simular): 14 partidas inteiras automáticas tocando nos
           botões da mesa (Versus 2/3/4/6 em Clássico, Hardcore, Júnior, Old School e Express; Tabuleiro,
           Pontos, Joias e Moda da Casa; Equipe 2×2, 2×3, 3×2 Duelo e 3×2 Todos), com semente e limite de
@@ -31,7 +39,7 @@
           balões (repetição exata vem com a fila de ações da 1.7.8). Status_do_Roteiro e Roteiro_Multiplayer
           atualizados: a 1.7.7 terminou. Avisos do auditor de cartas e fala repetida ficam pro JF decidir.
           Sem mudança no jogo nesta parte.
-  1.7.7.4 · 08/10/2026 · "Foundation Structure Update · Parte 5" = SORTEIOS E INVENTÁRIO DO ESTADO.
+  1.7.7.4 · 08/10/2026 · "Foundation and Structure Update · Parte 5" = SORTEIOS E INVENTÁRIO DO ESTADO.
           1) js/02c-sorteio.js: todo sorteio que decide o jogo passa por sorteioRegra() (embaralhar e devolver
           carta, especiais do Hardcore, modo da Moda da Casa, categorias e modo sorteados, alvo automático das
           surpresas, 1º Mestre, evento de misericórdia, Duelo/Todos). Hoje é o mesmo Math.random; nos testes,
@@ -40,7 +48,7 @@
           starterDrawCount, cardWrongCount e sorteioContagem (antes se perdiam ao recarregar).
           3) docs/Estado_da_Partida.md: as 258 variáveis separadas em regra, C.A.O.S. e tela, e o que vai pro
           save; base do retrato da partida da 1.7.8. teste_identidade com sorteio e save das variáveis novas.
-  1.7.7.3 · 05/10/2026 · "Foundation Structure Update · Parte 4" = ESPINHA COMPLETA.
+  1.7.7.3 · 05/10/2026 · "Foundation and Structure Update · Parte 4" = ESPINHA COMPLETA.
           A foto da 1ª lei (caosEspinhaFoto) passou a vigiar e desfazer também: fichas de palpite e estoque,
           joias da rodada, vencedor por joias, fila da casa de bônus, dicas abertas (dica a mais sai), dica
           pendente, modo sorteado da Moda da Casa, rodada, última rodada, vez das equipes (e cursor de cada
@@ -49,7 +57,7 @@
           relógio encurtado volta. Carta, baralho, início e fim seguem só vigiados (anota, não desfaz).
           caos_teste_espinha: rotina falsa mexe em tudo isso e a espinha desfaz tudo (+ dar tempo continua
           podendo). Conferido no código: nenhuma rotina protegida mexe nesses dados por direito.
-  1.7.7.2 · 05/10/2026 · "Foundation Structure Update · Parte 3" = PARTIDA E CARTAS IDENTIFICADAS.
+  1.7.7.2 · 05/10/2026 · "Foundation and Structure Update · Parte 3" = PARTIDA E CARTAS IDENTIFICADAS.
           1) As 1000 cartas ganharam id fixo escrito na própria carta (ANO-0001 … ANIMAL-0200), na ordem dos
           arquivos. O id não sai da resposta (pedido do roteiro do GPT): corrigir uma resposta não muda o id.
           CARTAS_RESPOSTA_ANTIGA (dados/02-cartas/99-fechamento.js) guarda resposta antiga → id, pra save velho
@@ -60,7 +68,7 @@
           Jogar de novo zeram (resetDeck). Aparece no relatório exportado. 4) auditar_cartas confere formato,
           prefixo da categoria e unicidade do id, e o mapa de respostas antigas. teste_identidade com 6 itens novos.
           Sem mudança de conteúdo nas cartas (só o id), então nada pro log de cartas.
-  1.7.7.1 · 05/10/2026 · "Foundation Structure Update · Parte 2" = IDENTIDADE DOS JOGADORES.
+  1.7.7.1 · 05/10/2026 · "Foundation and Structure Update · Parte 2" = IDENTIDADE DOS JOGADORES.
           js/02b-identidade.js: todo jogador ganha id ("j_" + 6 letras) no cadastro; não muda se alguém sai,
           se a ordem muda ou se a partida é salva e restaurada. Passam a usar o id (no Versus; no Equipe a chave
           segue sendo a equipe): fichas de palpite, joias da rodada, vencedor por joias, 1º Mestre da rodada
@@ -70,7 +78,7 @@
           não remapeia mais as fichas de palpite: só sai a ficha de quem saiu. Defeito corrigido: as joias da
           rodada não eram remapeadas na remoção (a trava de 2 por rodada passava pro vizinho). Novo teste:
           ferramentas/teste_identidade.js (save antigo, salvar/restaurar, remoção, vencedor, ids únicos).
-  1.7.7 · 05/10/2026 · "Foundation Structure Update · Parte 1" = CORREÇÕES DA REVISÃO (GPT + GOOGLE AI STUDIO).
+  1.7.7 · 05/10/2026 · "Foundation and Structure Update · Parte 1" = CORREÇÕES DA REVISÃO (GPT + GOOGLE AI STUDIO).
           A revisão do JF, do GPT e do Google AI Studio (1.7.0 a 1.7.6.x) foi conferida no código; entrou o que
           era correção verificável, sem mudar regra. 1) Toque duplo: por 400 ms depois de um veredito ou de um
           número, outro toque nesses botões é ignorado (o 2º toque caía no número que nascia no lugar do Errou).
@@ -406,7 +414,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.7.7</title>
+<title>Perfil JF · Beta 1.7.7.8</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6740,6 +6748,43 @@ html.acess-letra-2 .clue-list li {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+/* 1.7.7.8: ouvir o passo do tutorial, cadeado das 2 joias e virada da carta */
+.tut-ouvir {
+  display: block;
+  width: 100%;
+  margin: 6px 0 8px;
+  border-color: #22d3ee;
+  color: #67e8f9;
+}
+body.claro .tut-ouvir {
+  color: #0e7490;
+  border-color: #0e7490;
+}
+.joia-trava {
+  font-size: 0.9em;
+  margin-left: 2px;
+}
+@keyframes carta-virando {
+  from {
+    transform: perspective(900px) rotateY(80deg);
+    opacity: 0.4;
+  }
+  to {
+    transform: perspective(900px) rotateY(0deg);
+    opacity: 1;
+  }
+}
+.card.virando {
+  animation: carta-virando 0.38s ease-out;
+}
+body.batata-mode .card.virando {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .card.virando {
+    animation: none;
+  }
+}
 /* 1.7.7.7 · Computador (Opera GX / Chrome). Sugestão do GPT a partir de um print do JF.
  * Antes, no computador o jogo inteiro era ampliado com zoom 1.2 (regra em 01-base.css): a coluna
  * de celular só ficava maior. Agora o zoom sai e a tela usa a largura do monitor de verdade, com
@@ -6911,7 +6956,7 @@ html.acess-letra-2 .clue-list li {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.7.7 · Foundation Structure Update · Computador<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.7.8 · Foundation and Structure Update · Final<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -8380,7 +8425,7 @@ var caosMudoCarta = false;
 var caosMudoPor = null;
 
 /* ----------------------------------------------------------------------
- * 2b. IDENTIDADE DOS JOGADORES (1.7.7.1 · Foundation Structure Update, Parte 2)
+ * 2b. IDENTIDADE DOS JOGADORES (1.7.7.1 · Foundation and Structure Update, Parte 2)
  * Todo jogador ganha um id (ex.: "j_k7p2qa") no cadastro. Ele não muda quando alguém sai,
  * quando a ordem muda ou quando a partida é salva e restaurada. É a base do online:
  * na rede, "o jogador 2" não quer dizer nada; "j_k7p2qa" quer dizer sempre a mesma pessoa.
@@ -8448,7 +8493,7 @@ function partidaIdValido(id) {
   return typeof id === "string" && PARTIDA_ID_RE.test(id);
 }
 /* ----------------------------------------------------------------------
- * 2c. SORTEIO DE REGRA (1.7.7.4 · Foundation Structure Update, Parte 5)
+ * 2c. SORTEIO DE REGRA (1.7.7.4 · Foundation and Structure Update, Parte 5)
  * Todo sorteio que DECIDE o jogo passa por aqui: embaralhar o baralho, devolver carta ao
  * baralho, quantas instruções especiais no Hardcore, modo da Moda da Casa, categorias e modo
  * sorteados, alvo automático das surpresas, 1º Mestre, evento de misericórdia e Duelo/Todos.
@@ -9042,6 +9087,11 @@ function jfPlayerIndex() {
 function isEnigmaName(n) {
   return /^(o\s*)?enigmatico([^a-z]|$)/.test(nameKeyPlain(n));
 }
+// 1.7.7.8: cadeado no placar pra quem já levou as 2 joias desta rodada (a trava fica visível, não é surpresa).
+function joiasTravaBadge(key) {
+  if (!joiasComTrava() || (joiasRodada[String(key)] || 0) < JOIAS_POR_RODADA) return "";
+  return ` <span class="joia-trava" title="Já ganhou ${JOIAS_POR_RODADA} joias nesta rodada: a próxima só na rodada que vem" aria-label="joias desta rodada completas">🔒</span>`;
+}
 function gemBadgesHtml(holder) {
   const g = holder && holder.gems ? holder.gems : null;
   if (!g) return "";
@@ -9567,6 +9617,16 @@ function flipCard() {
   caosSatisfacaoTalvez();
   caosEixosCarta();
   render();
+  // 1.7.7.8: a carta vira com uma animação curta (só enfeite: a carta já está aberta e clicável)
+  try {
+    const a = document.getElementById("cardArea");
+    if (a) {
+      a.classList.remove("virando");
+      void a.offsetWidth;
+      a.classList.add("virando");
+      a.addEventListener("animationend", () => a.classList.remove("virando"), { once: true });
+    }
+  } catch (e) {}
   saveGameState();
 }
 function checkWinnerThenDraw() {
@@ -12671,7 +12731,7 @@ function renderMiniScoreboard() {
       list.innerHTML = sorted
         .map(
           (p) => `
-        <li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${p.score} pt${p.score === 1 ? "" : "s"}${gemBadgesHtml(p)}</li>
+        <li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${p.score} pt${p.score === 1 ? "" : "s"}${gemBadgesHtml(p)}${joiasTravaBadge(CURRENT_FORMAT === "equipe" ? p.team : p.id)}</li>
       `,
         )
         .join("");
@@ -12689,7 +12749,7 @@ function renderMiniScoreboard() {
               : wc === "joias"
                 ? `${gemTotal(teams[id])}/${GEMS_TO_WIN} joias — casa ${teams[id].position}`
                 : `casa ${teams[id].position}/${WINNING_SCORE}`;
-          return `<li style="--pc:${corDoJogador(info.color)}">${info.emoji} Equipe ${info.label}: ${txt}${palpiteBadge(id)}${gemBadgesHtml(teams[id])}</li>`;
+          return `<li style="--pc:${corDoJogador(info.color)}">${info.emoji} Equipe ${info.label}: ${txt}${palpiteBadge(id)}${gemBadgesHtml(teams[id])}${joiasTravaBadge(id)}</li>`;
         })
         .join("");
     } else {
@@ -12705,7 +12765,7 @@ function renderMiniScoreboard() {
                 : wc === "tabuleiro"
                   ? `casa ${p.position}/${WINNING_SCORE}`
                   : `${p.score} pts — casa ${p.position}/${WINNING_SCORE}`;
-          return `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${txt}${palpiteBadge(p.id)}${gemBadgesHtml(p)}</li>`;
+          return `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${txt}${palpiteBadge(p.id)}${gemBadgesHtml(p)}${joiasTravaBadge(p.id)}</li>`;
         })
         .join("");
     }
@@ -14061,6 +14121,7 @@ function openTutorial(tipo) {
       <div class="tut-mock card" id="tutMock" aria-hidden="true"></div>
       <div class="tut-prog"><i id="tutProg"></i></div>
       <div class="tut-count" id="tutCount" aria-live="polite"></div>
+      <button type="button" class="tut-btn tut-ouvir" id="tutOuvir">🔊 Ouvir este passo</button>
       <div class="tut-nav"><button type="button" class="tut-btn tut-back" id="tutBack">⬅️ Voltar</button><button type="button" class="tut-btn" id="tutNext">Próximo ➡️</button></div>
       <button type="button" class="tut-btn tut-manual" id="tutManual">📖 Ver o manual completo</button>
     </div>`;
@@ -14079,11 +14140,48 @@ function openTutorial(tipo) {
       } else closeTutorial();
     });
     document.getElementById("tutManual").addEventListener("click", () => openTutorial("manual"));
+    document.getElementById("tutOuvir").addEventListener("click", tutOuvirPasso);
   }
   ov.style.display = "flex";
   renderTutorial();
 }
+// 1.7.7.8 (ideia do JF, revisão do GPT): o C.A.O.S. lê o passo em voz alta, só quando a pessoa toca.
+// Nunca vira o passo sozinho; trocar de passo ou fechar o tutorial cala a leitura.
+let tutFalando = false;
+function tutCalar() {
+  if (!tutFalando) return;
+  tutFalando = false;
+  try {
+    window.speechSynthesis.cancel();
+  } catch (e) {}
+}
+function tutOuvirPasso() {
+  const s = tutorialLista && tutorialLista[tutorialPos];
+  if (!s || typeof CAOS_VOICE_OK === "undefined" || !CAOS_VOICE_OK) return;
+  try {
+    caosVoiceCancel();
+    window.speechSynthesis.cancel();
+    const tmp = document.createElement("div");
+    tmp.innerHTML = s.text;
+    const u = new SpeechSynthesisUtterance(s.title + ". " + tmp.textContent.replace(/\s+/g, " ").trim());
+    u.lang = "pt-BR";
+    const v = typeof caosPickVoice === "function" ? caosPickVoice() : null;
+    if (v) u.voice = v;
+    u.rate = 1;
+    u.volume = typeof acessVolVoz === "function" ? acessVolVoz() : 1;
+    u.onend = u.onerror = () => {
+      tutFalando = false;
+    };
+    tutFalando = true;
+    window.speechSynthesis.speak(u);
+  } catch (e) {
+    tutFalando = false;
+  }
+}
 function renderTutorial() {
+  tutCalar();
+  const ouvir = document.getElementById("tutOuvir");
+  if (ouvir) ouvir.style.display = typeof CAOS_VOICE_OK !== "undefined" && CAOS_VOICE_OK ? "" : "none";
   const rapido = tutorialTipo === "rapido";
   const vitoria = tutorialTipo.indexOf("vitoria:") === 0;
   const s = tutorialLista[tutorialPos],
@@ -14125,6 +14223,7 @@ function renderTutorial() {
   document.getElementById("tutManual").style.display = rapido && last ? "" : "none";
 }
 function closeTutorial() {
+  tutCalar();
   const ov = document.getElementById("tutorialOverlay");
   if (ov) ov.style.display = "none";
   tutPausaAtualizar();
@@ -15450,7 +15549,7 @@ const VITORIA_TUTORIAIS = {
     {
       icon: "🔒",
       title: "No máximo 2 por rodada",
-      text: `Cada ${vitoriaEquipe() ? "equipe" : "jogador"} ganha <b>no máximo ${JOIAS_POR_RODADA} joias por rodada</b>. Assim ninguém dispara sozinho.`,
+      text: `Cada ${vitoriaEquipe() ? "equipe" : "jogador"} ganha <b>no máximo ${JOIAS_POR_RODADA} joias por rodada</b> (quando completa, aparece um 🔒 no placar). Assim ninguém dispara sozinho.`,
     },
     {
       icon: "🎲",
@@ -17804,7 +17903,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🦴 Registro da espinha</span><b class="ci-mono">${caosEspinha.log.slice(-5).reverse().map(escapeHtml).join("<br>") || "—"}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.7.7 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.7.8 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -22871,7 +22970,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.7.7 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.7.8 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -26011,7 +26110,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.7.7 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.7.8 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -26534,7 +26633,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.7.7 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.7.8 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -28342,7 +28441,7 @@ const ADULT_CARDS = expandDeck([
       "Vi o lançamento de duas bombas atômicas sobre cidades japonesas, encerrando um conflito mundial",
       "Getúlio Vargas foi deposto pelos militares",
       "Vi a Alemanha nazista se render às forças aliadas na Europa em maio",
-      "Sou ímpar",
+      "Anne Frank morreu num campo de concentração, poucas semanas antes da libertação",
       "Meus dígitos somam exatamente 19",
       "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "Franklin Roosevelt morreu pouco antes do fim da guerra",
@@ -36239,7 +36338,7 @@ const ADULT_CARDS = expandDeck([
     a: "Super Choque",
     class: "livre",
     q: [
-      "Sou um super-herói adolescente",
+      "Sou um herói adolescente dos desenhos animados",
       "Nasci nos quadrinhos da Milestone, uma editora criada por artistas negros",
       "Meu desenho estreou em 2000",
       "*Volte 2 casas",
@@ -45790,7 +45889,7 @@ const ADULT_CARDS = expandDeck([
       "Sou o objeto que garante um sorriso mais saudável",
       "Sou indispensável na rotina de higiene de qualquer criança",
       "Sou trocada logo depois de uma gripe forte, por recomendação médica",
-      "Fico ao lado da pasta de dente, na maioria dos banheiros",
+      "Divido o copinho da pia com outras iguais a mim, uma para cada pessoa da casa",
     ],
   },
   {
@@ -46822,7 +46921,7 @@ const ADULT_CARDS = expandDeck([
       "A internet e a Wikipédia me tiraram do dia a dia",
       "Pesquisar em mim levava tempo e paciência",
       "Sou lembrada com carinho por quem estudou antes da internet",
-      "Sou uma enciclopédia",
+      "Fui a obra de consulta da família inteira, de A a Z",
       "Meu nome é uma palavra curta, que parece sobrenome",
       "*Avance 2 casas",
       "*Volte 3 casas",
@@ -46878,7 +46977,7 @@ const ADULT_CARDS = expandDeck([
       "As lojas ligadas a mim acabaram vendidas para uma grande rede varejista",
       "Para muita família, eu era a forma de juntar dinheiro",
       "Sou lembrado com nostalgia por quem viu a TV dos anos 1980 e 1990",
-      "Sou um carnê",
+      "Sou de papel e cabia na carteira ou na bolsa",
       "Meu nome tem um objeto onde se guardam tesouros",
       "Cada parcela paga era autenticada no próprio livrinho",
       "*Escolha um jogador para voltar 2 casas",
@@ -58045,7 +58144,7 @@ const REACTIVE_VOICE = {
     "Pô, {nome}, essa jogada foi meio sonsa, hein?",
     "Nossa, {nome}, que coisa burrinha. Mas é com carinho.",
     "Puts, não acredito que você errou isso, {nome}. Fala sério, estava tão fácil...",
-    "EU ESPERAVA TÃO POUCO DE VOCÊ, {nome}, e mesmo assim você conseguiu me decepcionar.",
+    "EU APOSTEI EM VOCÊ, {nome}. Perdi a aposta, perdi a fé e perdi a carta.",
     "VOCÊ É A VERGONHA DA PROFISSÃO, {nome}! Bota o avental e vai pra casa!",
   ],
   jfInicio: [
@@ -61594,9 +61693,24 @@ const PAUSE_TIPS = [
 ];
 const NOVIDADES = [
   {
+    v: "Beta 1.7.7.8",
+    data: "08/10/2026 · 17:40",
+    nome: "Foundation and Structure Update · Final",
+    t: "Fim da Foundation and Structure Update: a base pro online está pronta. Os últimos ajustes que o JF pediu.",
+    itens: [
+      "🔒 Joias: quem já ganhou as 2 joias da rodada aparece com um cadeado no placar. Assim todo mundo sabe que a próxima joia dele só vem na rodada seguinte.",
+      "🔊 Tutorial: o botão \"Ouvir este passo\" faz o C.A.O.S. ler o passo em voz alta, pra quem aprende melhor ouvindo.",
+      "🃏 A carta agora vira com uma animação curtinha (desligada no Modo Batata e pra quem pede menos movimento no aparelho).",
+    ],
+    qol: [
+      "🃏 Cartas revisadas: Enciclopédia Barsa, Carnê do Baú, Super Choque e Escova de dente tinham uma dica que entregava a resposta; 1945 tinha dicas de conta demais.",
+      "🤖 Uma fala do C.A.O.S. que aparecia em dois lugares ganhou uma substituta nova.",
+    ],
+  },
+  {
     v: "Beta 1.7.7.7",
     data: "08/10/2026 · 16:46",
-    nome: "Foundation Structure Update · Computador",
+    nome: "Foundation and Structure Update · Computador",
     t: "Jogar no computador ficou mais confortável.",
     itens: [
       "🖥️ No computador (Opera GX, Chrome e outros), o jogo usa a largura da tela de verdade, em vez de só ampliar a versão de celular. A carta, as regras e as janelas ficam mais largas e fáceis de ler, e a carta inteira cabe na tela sem rolar.",
@@ -61608,7 +61722,7 @@ const NOVIDADES = [
   {
     v: "Beta 1.7.7.6",
     data: "08/10/2026 · 16:04",
-    nome: "Foundation Structure Update · QoL da revisão",
+    nome: "Foundation and Structure Update · QoL da revisão",
     t: "Ajustes pedidos nas revisões do JF com o GPT: mais cuidado com quem joga e com os dados da partida.",
     itens: [
       "⏳ Quando o Mestre ganha tempo extra, o C.A.O.S. avisa sem dizer o motivo pra mesa toda.",
@@ -61623,8 +61737,8 @@ const NOVIDADES = [
   {
     v: "Beta 1.7.7.5",
     data: "08/10/2026 · 15:52",
-    nome: "Foundation Structure Update · Parte 6",
-    t: "Última parte da Foundation Structure Update: a base do online está pronta. Agora o jogo testa partidas inteiras sozinho.",
+    nome: "Foundation and Structure Update · Parte 6",
+    t: "Última parte da Foundation and Structure Update: a base do online está pronta. Agora o jogo testa partidas inteiras sozinho.",
     itens: [
       "🤖 Um simulador joga partidas inteiras sozinho, em todos os modos e formatos (Versus e Equipe 2×2, 2×3 e 3×2), e confere a cada jogada que nenhuma regra quebrou.",
       "✅ Nas 14 partidas simuladas, ninguém ficou com ponto negativo nem com joia demais, toda partida terminou e o C.A.O.S. não encostou no jogo nenhuma vez.",
@@ -61635,7 +61749,7 @@ const NOVIDADES = [
   {
     v: "Beta 1.7.7.4",
     data: "08/10/2026 · 15:37",
-    nome: "Foundation Structure Update · Parte 5",
+    nome: "Foundation and Structure Update · Parte 5",
     t: "Os sorteios que decidem a partida agora passam por um lugar só. É assim que, no online, um aparelho vai sortear por todos.",
     itens: [
       "🎲 Embaralhar o baralho, sortear o modo da Moda da Casa, o primeiro Mestre e o alvo das surpresas: tudo passa por um sorteio único do jogo. Pra quem joga, nada muda.",
@@ -61646,7 +61760,7 @@ const NOVIDADES = [
   {
     v: "Beta 1.7.7.3",
     data: "05/10/2026 · 23:11",
-    nome: "Foundation Structure Update · Parte 4",
+    nome: "Foundation and Structure Update · Parte 4",
     t: "A espinha do C.A.O.S. ficou completa: ele continua podendo zoar à vontade, mas não encosta em nada que decide a partida.",
     itens: [
       "🦴 A 1ª lei do C.A.O.S. (nunca mexe no jogo) agora protege tudo que decide a partida: fichas de palpite, joias da rodada, quem venceu por joias, a casa de bônus, as dicas abertas, a rodada e o modo sorteado da Moda da Casa.",
@@ -61657,7 +61771,7 @@ const NOVIDADES = [
   {
     v: "Beta 1.7.7.2",
     data: "05/10/2026 · 22:50",
-    nome: "Foundation Structure Update · Parte 3",
+    nome: "Foundation and Structure Update · Parte 3",
     t: "Cada carta e cada partida agora têm uma identidade fixa. É mais uma peça da base pro online.",
     itens: [
       "🃏 As 1000 cartas ganharam um código fixo (como ANO-0001). Se um dia a resposta de uma carta for corrigida, a partida salva continua achando a carta certa.",
@@ -61669,7 +61783,7 @@ const NOVIDADES = [
   {
     v: "Beta 1.7.7.1",
     data: "05/10/2026 · 22:38",
-    nome: "Foundation Structure Update · Parte 2",
+    nome: "Foundation and Structure Update · Parte 2",
     t: "Cada jogador agora tem uma identidade própria no jogo. Ninguém vê, mas é a base pra jogar online.",
     itens: [
       "🪪 Todo jogador ganha uma identidade (um código interno) no cadastro. Ela não muda se alguém sair, se a ordem mudar ou se a partida for salva e aberta de novo.",
@@ -61683,7 +61797,7 @@ const NOVIDADES = [
   {
     v: "Beta 1.7.7",
     data: "05/10/2026 · 22:23",
-    nome: "Foundation Structure Update · Parte 1",
+    nome: "Foundation and Structure Update · Parte 1",
     t: "Começa a fundação do multiplayer. Primeiro, as correções da revisão completa feita pelo JF com o GPT e o Google AI Studio.",
     itens: [
       "👆 Toque duplo não estraga mais a jogada: se o dedo tocar duas vezes no Errou, o segundo toque não abre um número sem querer.",

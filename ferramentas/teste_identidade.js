@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Teste da fundação (Foundation Structure Update): jogadores (1.7.7.1), cartas e partida (1.7.7.2),
+// Teste da fundação (Foundation and Structure Update): jogadores (1.7.7.1), cartas e partida (1.7.7.2),
 // sorteio de regra com semente e variáveis de regra no save (1.7.7.4).
 // Confere que cada jogador tem um id único que não muda quando alguém sai, quando a partida é
 // salva e restaurada, e que save antigo (versão 11, chaves por posição e por nome) é convertido.

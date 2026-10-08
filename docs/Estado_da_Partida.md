@@ -1,6 +1,6 @@
 # Estado da Partida
 
-Inventário do estado global do jogo (`src/js/02-estado.js` e módulos 02b/02c), feito na **1.7.7.4 · Foundation Structure Update, Parte 5**.
+Inventário do estado global do jogo (`src/js/02-estado.js` e módulos 02b/02c), feito na **1.7.7.4 · Foundation and Structure Update, Parte 5**.
 
 Este documento serve para separar três coisas que hoje vivem misturadas:
 
