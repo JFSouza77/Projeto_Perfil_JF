@@ -357,6 +357,8 @@ function saveGameState() {
       deckIds: deck.map((c) => c.id),
       currentCardId: currentCard ? currentCard.id || null : null,
       matchId,
+      partidaRevisao,
+      acoesLog,
       deck: deck.map((c) => c.answer),
       currentCardAnswer: currentCard ? currentCard.answer : null,
       currentCardClues: currentCard ? currentCard.clues : null,
@@ -681,6 +683,7 @@ function loadGameState() {
     WINNING_SCORE = state.WINNING_SCORE === void 0 || state.WINNING_SCORE === null ? 200 : state.WINNING_SCORE;
     admPrincipalId = state.admPrincipalId || null;
     matchId = state.matchId || null;
+    acoesRestaurar(state);
     caosCofrinho = state.caosCofrinho || 0;
     WIN_CONDITION = WIN_CONDITIONS[state.WIN_CONDITION] ? state.WIN_CONDITION : "casa";
     RESPONSE_TIME_LIMIT = state.RESPONSE_TIME_LIMIT || RESPONSE_TIME_LIMIT_BY_MODE[CURRENT_MODE] || 90;
@@ -1657,7 +1660,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.7.8 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.8 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2180,7 +2183,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.7.8 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.8 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,

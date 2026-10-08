@@ -323,3 +323,42 @@ Os documentos ficam com o JF e não entram no repositório, porque citam pessoas
 - **Duelo com 2 equipes:** continua como sempre foi (JF).
 
 **A 1.7.7 está fechada. Próxima: 1.7.8 · Actions and Events.**
+
+---
+
+## 9. Plano da 1.7.8 · Actions and Events Update
+
+Cada parte sai publicada sozinha. Em todas, o jogo local continua igual para quem joga, e cada parte ganha o seu teste.
+
+### Parte 1 · 1.7.8 · Fronteira de ações (publicada)
+- `js/05g-acoes.js`:
+  - 24 ações com nome (`sacarCarta`, `virarCarta`, `escolherDica`, `acertou`, `errou`, `palpiteAcertou`, `especialSeguir`, `expressPassar`, `tempoAcabou`, `pausar`, `encerrar`…);
+  - uma casca em volta das funções do motor, como a da espinha. Só a chamada de fora vira ação; o que o motor chama por dentro não conta de novo.
+- **Revisão** (`partidaRevisao`): sobe a cada ação que mudou o estado.
+- **Registro** (`acoesLog`): guarda as últimas 300 ações, cada uma com quem era Mestre, quem estava na vez (pelo id) e a origem (toque, sistema ou comando).
+- **`dispatchAction`:** recusa partida errada, revisão obsoleta, comando repetido (`commandId`) e ação fora de hora.
+- **Teste:** `ferramentas/teste_acoes.js`. O simulador também confere que a revisão só cresce.
+
+### Parte 2 · 1.7.8.1 · Retrato da partida (GameSnapshot)
+- `retratoPartida(papel)` com `matchId` e revisão.
+- A **projeção pública** nunca leva a resposta nem as dicas fechadas. A **projeção do Mestre** leva a resposta.
+- O retrato é separado do save.
+- **Teste:** procurar a resposta da carta dentro do retrato público.
+
+### Parte 3 · 1.7.8.2 · Desfazer o último veredito
+- ↩️ por alguns segundos depois de Acertou, Errou, Pulou ou Absurdo.
+- Volta o estado de regra para antes da ação (pontos, joias, vez, palpite) e a revisão anota o desfazer.
+- **Teste:** desfazer deixa tudo igual ao retrato anterior.
+
+### Parte 4 · 1.7.8.3 · Ensaio em duas abas (BroadcastChannel)
+- Uma aba "telão" só olha: recebe a projeção pública a cada revisão e mostra placar, dica aberta e vez.
+- **Não prova** rede, segurança nem reconexão; é só o ensaio do fluxo.
+- **Teste:** duas abas com a mesma revisão, e o telão sem a resposta.
+
+### Parte 5 · 1.7.8.4 · Ids das dicas e eventos do C.A.O.S.
+- `clueId` estável por dica (`ANO-0001-C07`), separado da ordem mostrada, com migração do save.
+- O C.A.O.S. passa a receber **eventos tipados**: evento, fatos permitidos, público (mesa, Mestre ou jogador por id) e fala ou silêncio. O canal deixa de achar o destinatário pelo nome dentro do texto.
+
+### Parte 6 · 1.7.8.5 · Replay e QoL
+- O simulador grava as ações e as repete numa partida nova com a mesma semente, chegando ao mesmo estado. Isso fecha o "reproduzir a falha pela semente".
+- QoL do que aparecer.

@@ -20,6 +20,7 @@ js/05c-sugestao-tutorial.js
 js/05d-ajuda-do-mestre.js
 js/05e-tutorial-vitoria.js
 js/05f-tempo-de-jogo.js
+js/05g-acoes.js
 js/06-voz-som-vibracao.js
 js/07-caos/01-nucleo-e-falas.js
 js/07-caos/02-cerebro-adm.js

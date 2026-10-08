@@ -6,6 +6,14 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.8 · 08/10/2026 · "Actions and Events Update · Parte 1" = FRONTEIRA DE AÇÕES.
+          js/05g-acoes.js: 24 ações com nome por cima das funções do motor (casca como a da espinha, instalada
+          no iniciar antes de ligar os botões). Só a chamada de fora vira ação (profundidade); a revisão
+          (partidaRevisao) sobe quando a foto da espinha muda; acoesLog guarda as últimas 300 com Mestre e vez
+          por id, origem (toque/sistema/comando) e tempo. Save leva revisão e registro; resetDeck zera.
+          dispatchAction(cmd): recusa ação desconhecida, partida errada, revisão obsoleta, fora de hora; commandId
+          repetido não aplica duas vezes. Cérebro mostra as últimas ações. ferramentas/teste_acoes.js (13 itens) e
+          simulador conferindo que a revisão só cresce. Plano da 1.7.8 no Roteiro_Multiplayer seção 9.
   1.7.7.8 · 08/10/2026 · "Foundation and Structure Update · Final" = DECISÕES DO JF E FECHAMENTO DA 1.7.7.
           Nome confirmado pelo JF: Foundation and Structure Update (trocado em todo lugar). 1) Placar: 🔒 em quem
           já levou as 2 joias da rodada (joiasTravaBadge, só quando a trava vale). 2) Tutorial: 🔊 "Ouvir este
@@ -414,7 +422,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.7.8</title>
+<title>Perfil JF · Beta 1.7.8</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6956,7 +6964,7 @@ body.batata-mode .card.virando {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.7.8 · Foundation and Structure Update · Final<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.8 · Actions and Events Update · Parte 1<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -9386,6 +9394,7 @@ function resetDeck() {
   caosPartidaSerial++;
   matchId = null;
   sorteioContagem = 0;
+  acoesZerar();
   caosCatSeq = [];
   clearTimer();
   clearCardTimer();
@@ -15679,6 +15688,208 @@ function tempoMinutosPausa() {
   return Math.max(0, Math.floor(tempoPausaMs / 6e4));
 }
 setInterval(tempoTick, TEMPO_TICK_MS);
+/* ----------------------------------------------------------------------
+ * 5g. AÇÕES E EVENTOS (1.7.8 · Actions and Events Update, Parte 1)
+ * Toda jogada que muda a partida é uma AÇÃO com nome: sacar carta, virar, escolher número,
+ * Acertou, Errou, Pulou, Absurdo, palpite, instrução especial, pausar, encerrar…
+ *
+ *  · FRONTEIRA: as funções do motor que os botões chamam ganham uma "casca" (como a espinha
+ *    faz com o C.A.O.S.). A chamada de fora (o toque, o relógio) vira uma ação registrada;
+ *    o que o motor chama por dentro não conta de novo. O jogo não muda: a casca só observa.
+ *  · REVISÃO: cada ação que mudou o estado da partida sobe a revisão (partidaRevisao). Ação que
+ *    não mudou nada (botão tocado fora de hora) não sobe.
+ *  · LOG: as últimas ações ficam no save (acoesLog), com quem era Mestre e quem estava na vez,
+ *    pelo id. É a base do "desfazer", do replay e da rede.
+ *  · COMANDO: dispatchAction({ type, data, commandId, matchId, expectedRevision, actorId }) é a
+ *    porta que a rede vai usar (1.7.9). Ela confere a partida, a revisão esperada, se o comando
+ *    já foi aplicado (commandId repetido não aplica duas vezes) e se a ação cabe agora.
+ *    Na 1.7.9 quem diz o actorId é a sessão do servidor, nunca o próprio aparelho.
+ * ---------------------------------------------------------------------- */
+const ACOES = {
+  sacarCarta: { fn: "drawHidden", pode: () => acoesEmJogo() && cardState === "none" },
+  virarCarta: { fn: "flipCard", pode: () => acoesEmJogo() && cardState === "hidden" },
+  roletaCategoria: { fn: "startCategoryRoulette", pode: () => acoesEmJogo() && cardState === "hidden" },
+  escolherDica: { fn: "chooseClue", pode: (idx) => acoesEmJogo() && acoesDicaLivre(idx) },
+  acertou: { fn: "markCorrect", pode: (idx) => acoesComDica() && (idx === undefined || !!players[idx]) },
+  errou: { fn: "markWrong", pode: (tipo) => acoesComDica() && [undefined, null, "pular", "absurdo"].includes(tipo) },
+  palpiteAcertou: { fn: "palpiteHit", pode: () => acoesComDica() },
+  palpiteErrou: { fn: "palpiteMiss", pode: () => acoesComDica() },
+  especialSeguir: { fn: "continueAfterSpecial", pode: () => acoesComDica() },
+  especialPerdeVez: { fn: "loseTurnAfterSpecial", pode: () => acoesComDica() },
+  moverJogador: { fn: "applySpecialMove", pode: () => acoesEmJogo() },
+  moverEquipe: { fn: "applyTeamSpecialMove", pode: () => acoesEmJogo() },
+  bonusAdversario: { fn: "chooseBonusOpponent", pode: () => acoesEmJogo() && cardState === "bonusChoice" },
+  descartarCarta: { fn: "discardAndDraw", pode: () => acoesEmJogo() },
+  reembaralharDicas: { fn: "reshuffleAndDraw", pode: () => acoesEmJogo() },
+  desistirCarta: { fn: "pedirDesistirCarta", pode: () => acoesEmJogo() },
+  expressPassar: { fn: "expressPass", pode: () => acoesEmJogo() && CURRENT_MODE === "express" },
+  expressPular: { fn: "expressSkip", pode: () => acoesEmJogo() && CURRENT_MODE === "express" },
+  expressInverter: { fn: "expressReverse", pode: () => acoesEmJogo() && CURRENT_MODE === "express" },
+  expressAlvo: { fn: "resolveExpressTarget", pode: () => acoesEmJogo() && CURRENT_MODE === "express" },
+  tempoAcabou: { fn: "onTimerExpired", pode: () => acoesEmJogo() },
+  pausar: { fn: "pauseGame", pode: () => acoesEmJogo() },
+  continuar: { fn: "resumeGame", pode: () => starterChosen && !gameEnded },
+  encerrar: { fn: "endGame", pode: () => acoesEmJogo() },
+};
+const ACOES_LOG_MAX = 300;
+const ACOES_COMANDOS_MAX = 200;
+let partidaRevisao = 0;
+let acoesLog = [];
+let acoesComandosVistos = [];
+let acoesProfundidade = 0;
+let acoesOrigemAtual = null; // "comando" quando a ação veio do dispatchAction
+let acoesInstaladas = false;
+const ACOES_POR_FN = {};
+Object.keys(ACOES).forEach((t) => (ACOES_POR_FN[ACOES[t].fn] = t));
+
+function acoesEmJogo() {
+  return starterChosen && !gameEnded;
+}
+function acoesComDica() {
+  return acoesEmJogo() && cardState === "revealed" && pendingIndex !== null;
+}
+function acoesDicaLivre(idx) {
+  return (
+    cardState === "revealed" &&
+    pendingIndex === null &&
+    !!currentCard &&
+    Number.isInteger(idx) &&
+    idx >= 0 &&
+    idx < currentCard.clues.length &&
+    !revealedOrder.some((r) => r.index === idx)
+  );
+}
+// Só dados simples vão pro log (números, textos curtos, null).
+function acoesDados(args) {
+  return Array.prototype.slice.call(args, 0, 4).map((v) =>
+    v === undefined ? null : typeof v === "number" || typeof v === "boolean" || v === null ? v : String(v).slice(0, 24),
+  );
+}
+function acoesOrigem() {
+  if (acoesOrigemAtual) return acoesOrigemAtual;
+  try {
+    const ev = window.event;
+    if (ev && ev.isTrusted && /^(click|keydown|keyup|pointerup|touchend)$/.test(ev.type)) return "toque";
+  } catch (e) {}
+  return "sistema";
+}
+function acoesRegistrar(tipo, args, origem) {
+  partidaRevisao++;
+  acoesLog.push({
+    r: partidaRevisao,
+    a: tipo,
+    d: acoesDados(args),
+    o: origem,
+    m: jogadorIdDe(mestreIndex),
+    v: jogadorIdDe(responderIndex),
+    t: caosPartidaInicioAt ? Math.max(0, Date.now() - caosPartidaInicioAt) : 0,
+  });
+  if (acoesLog.length > ACOES_LOG_MAX) acoesLog.splice(0, acoesLog.length - ACOES_LOG_MAX);
+}
+// Casca de uma função do motor: só a chamada de fora conta como ação.
+function acoesEnvolver(fnNome) {
+  const orig = window[fnNome];
+  if (typeof orig !== "function" || orig.__acao) return false;
+  const tipo = ACOES_POR_FN[fnNome];
+  const casca = function () {
+    if (acoesProfundidade > 0) return orig.apply(this, arguments);
+    const origem = acoesOrigem();
+    const antes = caosEspinhaFoto();
+    acoesProfundidade++;
+    try {
+      return orig.apply(this, arguments);
+    } finally {
+      acoesProfundidade--;
+      try {
+        if (antes !== caosEspinhaFoto()) acoesRegistrar(tipo, arguments, origem);
+      } catch (e) {}
+    }
+  };
+  casca.__acao = true;
+  try {
+    window[fnNome] = casca;
+  } catch (e) {
+    return false;
+  }
+  return window[fnNome] === casca;
+}
+function acoesInstalar() {
+  if (acoesInstaladas) return;
+  let n = 0;
+  Object.keys(ACOES).forEach((t) => acoesEnvolver(ACOES[t].fn) && n++);
+  acoesInstaladas = true;
+  try {
+    caosLog("acoes", `fronteira de ações instalada em ${n} de ${Object.keys(ACOES).length} funções`);
+  } catch (e) {}
+}
+// Partida nova: revisão e log do zero.
+function acoesZerar() {
+  partidaRevisao = 0;
+  acoesLog = [];
+  acoesComandosVistos = [];
+}
+function acoesRestaurar(state) {
+  partidaRevisao = Number.isInteger(state.partidaRevisao) && state.partidaRevisao >= 0 ? state.partidaRevisao : 0;
+  acoesLog = Array.isArray(state.acoesLog)
+    ? state.acoesLog
+        .filter((x) => x && typeof x === "object" && typeof x.a === "string" && ACOES[x.a] && Number.isInteger(x.r))
+        .slice(-ACOES_LOG_MAX)
+        .map((x) => ({
+          r: x.r,
+          a: x.a,
+          d: Array.isArray(x.d) ? acoesDados(x.d) : [],
+          o: x.o === "toque" || x.o === "comando" ? x.o : "sistema",
+          m: jogadorIdValido(x.m) ? x.m : null,
+          v: jogadorIdValido(x.v) ? x.v : null,
+          t: typeof x.t === "number" && isFinite(x.t) ? x.t : 0,
+        }))
+    : [];
+  acoesComandosVistos = [];
+}
+// A porta dos comandos (rede na 1.7.9; testes e ferramentas hoje).
+function dispatchAction(cmd) {
+  const c = cmd && typeof cmd === "object" ? cmd : {};
+  const def = ACOES[c.type];
+  if (!def) return { ok: false, motivo: "acao_desconhecida" };
+  if (c.matchId !== undefined && c.matchId !== matchId) return { ok: false, motivo: "partida_errada", revisao: partidaRevisao };
+  if (c.commandId !== undefined) {
+    if (typeof c.commandId !== "string" || !c.commandId || c.commandId.length > 64)
+      return { ok: false, motivo: "comando_invalido" };
+    if (acoesComandosVistos.includes(c.commandId)) return { ok: true, duplicado: true, revisao: partidaRevisao };
+  }
+  if (c.expectedRevision !== undefined && c.expectedRevision !== partidaRevisao)
+    return { ok: false, motivo: "revisao_obsoleta", revisao: partidaRevisao };
+  const dados = Array.isArray(c.data) ? c.data : c.data === undefined ? [] : [c.data];
+  let pode = false;
+  try {
+    pode = !!def.pode.apply(null, dados);
+  } catch (e) {
+    pode = false;
+  }
+  if (!pode) return { ok: false, motivo: "fora_de_hora", revisao: partidaRevisao };
+  const antes = partidaRevisao;
+  acoesOrigemAtual = "comando";
+  try {
+    window[def.fn].apply(null, dados);
+  } catch (e) {
+    return { ok: false, motivo: "erro", revisao: partidaRevisao };
+  } finally {
+    acoesOrigemAtual = null;
+  }
+  if (c.commandId !== undefined) {
+    acoesComandosVistos.push(c.commandId);
+    if (acoesComandosVistos.length > ACOES_COMANDOS_MAX) acoesComandosVistos.shift();
+  }
+  return partidaRevisao > antes ? { ok: true, revisao: partidaRevisao } : { ok: false, motivo: "sem_efeito", revisao: partidaRevisao };
+}
+// Resumo pro Cérebro (ADM).
+function acoesResumo() {
+  const ult = acoesLog
+    .slice(-5)
+    .reverse()
+    .map((x) => `#${x.r} ${x.a}${x.d.length ? "(" + x.d.join(", ") + ")" : ""} · ${x.o}`);
+  return { revisao: partidaRevisao, total: acoesLog.length, ultimas: ult };
+}
 /* ======================================================================
  * 6. VOZ, SOM E VIBRAÇÃO
  * ====================================================================== */
@@ -17901,9 +18112,10 @@ function caosInspectorEstado() {
           .join("<br>") || "—"
       }</b></div>
       <div class="ci-kv"><span>🦴 Registro da espinha</span><b class="ci-mono">${caosEspinha.log.slice(-5).reverse().map(escapeHtml).join("<br>") || "—"}</b></div>
+      <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.7.8 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.8 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -22970,7 +23182,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.7.8 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.8 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -24810,6 +25022,8 @@ function saveGameState() {
       deckIds: deck.map((c) => c.id),
       currentCardId: currentCard ? currentCard.id || null : null,
       matchId,
+      partidaRevisao,
+      acoesLog,
       deck: deck.map((c) => c.answer),
       currentCardAnswer: currentCard ? currentCard.answer : null,
       currentCardClues: currentCard ? currentCard.clues : null,
@@ -25134,6 +25348,7 @@ function loadGameState() {
     WINNING_SCORE = state.WINNING_SCORE === void 0 || state.WINNING_SCORE === null ? 200 : state.WINNING_SCORE;
     admPrincipalId = state.admPrincipalId || null;
     matchId = state.matchId || null;
+    acoesRestaurar(state);
     caosCofrinho = state.caosCofrinho || 0;
     WIN_CONDITION = WIN_CONDITIONS[state.WIN_CONDITION] ? state.WIN_CONDITION : "casa";
     RESPONSE_TIME_LIMIT = state.RESPONSE_TIME_LIMIT || RESPONSE_TIME_LIMIT_BY_MODE[CURRENT_MODE] || 90;
@@ -26110,7 +26325,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.7.8 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.8 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -26633,7 +26848,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.7.8 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.8 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -61693,6 +61908,20 @@ const PAUSE_TIPS = [
 ];
 const NOVIDADES = [
   {
+    v: "Beta 1.7.8",
+    data: "08/10/2026 · 17:53",
+    nome: "Actions and Events Update · Parte 1",
+    t: "Começa a 1.7.8: cada jogada agora é uma ação com nome, registrada na ordem. É a língua que os aparelhos vão falar no online.",
+    itens: [
+      "🎬 Sacar, virar, escolher número, Acertou, Errou, Pulou, Absurdo, palpite, surpresas e pausa: cada jogada vira uma ação registrada, com quem era o Mestre e de quem era a vez.",
+      "🔢 A partida ganhou um contador de revisão: ele sobe a cada jogada que muda alguma coisa. No online, um aparelho atrasado não consegue aplicar uma jogada velha.",
+      "🛡️ Uma jogada repetida (dois envios do mesmo toque) não conta duas vezes.",
+    ],
+    qol: [
+      "🧪 Pra quem joga, nada muda: é tudo por baixo.",
+    ],
+  },
+  {
     v: "Beta 1.7.7.8",
     data: "08/10/2026 · 17:40",
     nome: "Foundation and Structure Update · Final",
@@ -63398,6 +63627,7 @@ function iniciar() {
   // espinha do C.A.O.S.: as 3 leis e o canal de falas (js/07c)
   try {
     caosEspinhaInstalar();
+    acoesInstalar(); // 1.7.8: antes de ligar os botões, pra nenhum guardar a função sem a casca
   } catch (e) {}
   registrarOffline();
   // Lista plana de rostos de cada emoção (derivada de niv).

@@ -12,6 +12,7 @@ function iniciar() {
   // espinha do C.A.O.S.: as 3 leis e o canal de falas (js/07c)
   try {
     caosEspinhaInstalar();
+    acoesInstalar(); // 1.7.8: antes de ligar os botões, pra nenhum guardar a função sem a casca
   } catch (e) {}
   registrarOffline();
   // Lista plana de rostos de cada emoção (derivada de niv).
