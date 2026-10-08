@@ -146,7 +146,11 @@ function mestreAjudaNaCarta() {
       if (p.mestreAjudaAvisado) return;
       p.mestreAjudaAvisado = true;
       const fala = MESTRE_AJUDA_FALAS[mestreAjudaMotivo(p)](p.name);
-      caosFalaAgendar(() => fala, p.iniciante ? 4200 : 1600);
+      // 1.7.8.4: fala dirigida ao Mestre (privada no online), pelo id
+      caosFalaAgendar(() => {
+        caosFalarPara(p.id, fala, true);
+        return null;
+      }, p.iniciante ? 4200 : 1600);
       caosLog("mestreAjuda", `tempo extra de Mestre ativo pra ${p.name} (${mestreAjudaMotivo(p)})`);
       return;
     }

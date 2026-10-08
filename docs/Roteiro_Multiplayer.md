@@ -370,7 +370,18 @@ Cada parte sai publicada sozinha. Em todas, o jogo local continua igual para que
 - **Não prova** rede, segurança nem reconexão; é só o ensaio do fluxo.
 - **Teste:** duas abas com a mesma revisão, e o telão sem a resposta.
 
-### Parte 5 · 1.7.8.4 · Ids das dicas e eventos do C.A.O.S.
+### Parte 5 · 1.7.8.4 · Ids das dicas e eventos do C.A.O.S. (publicada)
+- **Ids das dicas:**
+  - cada dica tem id fixo pela posição no arquivo-fonte (`ANO-0001-C07`); são 20 mil ids únicos;
+  - regra: nunca reordenar nem apagar entradas;
+  - o save acha a dica pelo id (texto corrigido não perde a dica);
+  - o `clueId` só vai no retrato do Mestre, porque ele começa com o id da carta.
+- **Falas como eventos:**
+  - cada fala no canal tem `eventId` único, `matchId`, revisão e destino (`explicito`, `mesa` ou `nome`);
+  - `caosFalarPara(id, fala, privado)` dá o destinatário pelo id;
+  - achar pelo nome no texto ficou só como diagnóstico; na rede, fala sem destino explícito vai para a mesa;
+  - a primeira fala dirigida é o aviso do tempo extra, privado para o Mestre.
+- **Fica para depois (conteúdo, sem pressa):** passar as outras falas dirigidas para `caosFalarPara`, uma família por vez, e o inventário editorial (fala autossuficiente, fatos exigidos).
 - `clueId` estável por dica (`ANO-0001-C07`), separado da ordem mostrada, com migração do save.
 - O C.A.O.S. passa a receber **eventos tipados**: evento, fatos permitidos, público (mesa, Mestre ou jogador por id) e fala ou silêncio. O canal deixa de achar o destinatário pelo nome dentro do texto.
 
