@@ -1,5 +1,19 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.8",
+    data: "08/10/2026 · 17:53",
+    nome: "Actions and Events Update · Parte 1",
+    t: "Começa a 1.7.8: cada jogada agora é uma ação com nome, registrada na ordem. É a língua que os aparelhos vão falar no online.",
+    itens: [
+      "🎬 Sacar, virar, escolher número, Acertou, Errou, Pulou, Absurdo, palpite, surpresas e pausa: cada jogada vira uma ação registrada, com quem era o Mestre e de quem era a vez.",
+      "🔢 A partida ganhou um contador de revisão: ele sobe a cada jogada que muda alguma coisa. No online, um aparelho atrasado não consegue aplicar uma jogada velha.",
+      "🛡️ Uma jogada repetida (dois envios do mesmo toque) não conta duas vezes.",
+    ],
+    qol: [
+      "🧪 Pra quem joga, nada muda: é tudo por baixo.",
+    ],
+  },
+  {
     v: "Beta 1.7.7.8",
     data: "08/10/2026 · 17:40",
     nome: "Foundation and Structure Update · Final",

@@ -264,6 +264,7 @@ function resetDeck() {
   caosPartidaSerial++;
   matchId = null;
   sorteioContagem = 0;
+  acoesZerar();
   caosCatSeq = [];
   clearTimer();
   clearCardTimer();

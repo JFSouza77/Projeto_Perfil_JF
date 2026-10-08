@@ -180,6 +180,11 @@ async function jogar(b, cen, semente) {
           if (g > GEMS_TO_WIN) quebra(`equipe ${k} com ${g} joias`);
         });
         if (players.map((p) => p.id).join() !== ids) quebra("id de jogador mudou");
+        // 1.7.8: a revisão da partida só cresce, e o registro de ações acompanha
+        if (typeof partidaRevisao === "number") {
+          if (partidaRevisao < (window.__revAnt || 0)) quebra(`revisão voltou (${window.__revAnt} → ${partidaRevisao})`);
+          window.__revAnt = partidaRevisao;
+        }
         if (!gameEnded && starterChosen && !players[mestreIndex]) quebra(`Mestre inválido (${mestreIndex})`);
         if (!gameEnded && starterChosen && cardState === "revealed" && !players[responderIndex]) quebra(`vez inválida (${responderIndex})`);
       }
@@ -193,6 +198,7 @@ async function jogar(b, cen, semente) {
         falhasCaos: caosEspinha.falhas,
         espinhaLog: caosEspinha.log.filter((l) => !/instalada/.test(l)).slice(-3),
         sorteios: sorteioContagem,
+        revisao: typeof partidaRevisao === "number" ? partidaRevisao : 0,
         vencedor: (() => {
           try {
             return caosVencedoresIdx().map((i) => players[i].name).join("+") || "?";
@@ -220,7 +226,7 @@ async function jogar(b, cen, semente) {
     const ok = r.terminou && !r.quebras.length && !r.erros.length && r.leis === 0;
     tudoOk = tudoOk && ok;
     console.log(
-      `${ok ? "ok    " : "FALHOU"}  ${cen.nome.padEnd(30)} ${String(r.cartas).padStart(3)} cartas · ${String(r.passos).padStart(4)} passos · ${r.sorteios} sorteios · vence: ${r.vencedor} (${r.cond})`,
+      `${ok ? "ok    " : "FALHOU"}  ${cen.nome.padEnd(30)} ${String(r.cartas).padStart(3)} cartas · ${String(r.passos).padStart(4)} passos · ${r.sorteios} sorteios · rev ${r.revisao} · vence: ${r.vencedor} (${r.cond})`,
     );
     if (!r.terminou) console.log(`        não terminou em ${PASSOS} passos · ações: ${JSON.stringify(r.acoes)}`);
     r.quebras.forEach((q) => console.log("        regra quebrada: " + q));

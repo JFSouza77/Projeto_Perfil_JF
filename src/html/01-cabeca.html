@@ -6,6 +6,14 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.8 · 08/10/2026 · "Actions and Events Update · Parte 1" = FRONTEIRA DE AÇÕES.
+          js/05g-acoes.js: 24 ações com nome por cima das funções do motor (casca como a da espinha, instalada
+          no iniciar antes de ligar os botões). Só a chamada de fora vira ação (profundidade); a revisão
+          (partidaRevisao) sobe quando a foto da espinha muda; acoesLog guarda as últimas 300 com Mestre e vez
+          por id, origem (toque/sistema/comando) e tempo. Save leva revisão e registro; resetDeck zera.
+          dispatchAction(cmd): recusa ação desconhecida, partida errada, revisão obsoleta, fora de hora; commandId
+          repetido não aplica duas vezes. Cérebro mostra as últimas ações. ferramentas/teste_acoes.js (13 itens) e
+          simulador conferindo que a revisão só cresce. Plano da 1.7.8 no Roteiro_Multiplayer seção 9.
   1.7.7.8 · 08/10/2026 · "Foundation and Structure Update · Final" = DECISÕES DO JF E FECHAMENTO DA 1.7.7.
           Nome confirmado pelo JF: Foundation and Structure Update (trocado em todo lugar). 1) Placar: 🔒 em quem
           já levou as 2 joias da rodada (joiasTravaBadge, só quando a trava vale). 2) Tutorial: 🔊 "Ouvir este
@@ -414,7 +422,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.7.8</title>
+<title>Perfil JF · Beta 1.7.8</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
