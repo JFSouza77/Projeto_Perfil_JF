@@ -6,6 +6,14 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.8.3 · 08/10/2026 · "Actions and Events Update · Parte 4" = TELÃO (ENSAIO EM DUAS ABAS).
+          js/05h-telao.js: a aba do jogo publica retratoPartida("mesa") por BroadcastChannel ("perfiljf-telao") a
+          cada ação (acoesAoMudar) e quando o telão pede. A aba aberta com #telao não carrega a partida (startApp
+          pula o loadGameState), fica com saveBloqueado e só desenha: rodada, revisão, Mestre, vez, relógio,
+          categoria, dicas abertas (a da vez em destaque) e placar pela condição de vitória. Ignora revisão
+          menor da mesma partida e protocolo desconhecido; tudo com escapeHtml. Botão "📺 Abrir telão" no painel
+          ADM. ferramentas/teste_telao.js: servidor http local + duas abas (BroadcastChannel não liga file://).
+          Não prova rede, segurança nem reconexão: é o ensaio do fluxo ação → retrato → outra tela.
   1.7.8.2 · 08/10/2026 · "Actions and Events Update · Parte 3" = DESFAZER O ÚLTIMO VEREDITO.
           js/05g-acoes.js: antes de Acertou, Errou/Pulou/Absurdo e palpite, a fronteira tira uma cópia em memória
           do estado de regra (jogadores, equipes, vez, Mestre, carta, dicas, baralho, histórico, estatísticas,
@@ -437,7 +445,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.8.2</title>
+<title>Perfil JF · Beta 1.7.8.3</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6831,6 +6839,71 @@ body.claro .desfazer-btn {
   color: #7a5a00;
   border-color: #d4a017;
 }
+/* 1.7.8.3: telão (aba que só olha a partida) */
+.telao {
+  width: min(100%, 1100px);
+  margin: 0 auto;
+  color: #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.telao-espera {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+  padding: 40px 12px;
+}
+.telao-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 1.3rem;
+  opacity: 0.9;
+}
+.telao-vez {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  text-align: center;
+}
+.telao-vez > div,
+.telao-carta,
+.telao-placar {
+  background: #ffffff10;
+  border: 1px solid #ffffff22;
+  border-radius: 16px;
+  padding: 14px 16px;
+}
+.telao-vez b {
+  font-size: 1.5rem;
+}
+.telao-cat {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+.telao-dicas li {
+  font-size: 1.35rem;
+  line-height: 1.5;
+  padding: 6px 0;
+}
+.telao-dicas li.telao-agora {
+  color: #fde68a;
+  font-weight: 800;
+}
+.telao-placar ol {
+  margin: 0;
+  padding-left: 1.4em;
+}
+.telao-placar li {
+  font-size: 1.3rem;
+  padding: 4px 0;
+}
+.telao-placar li span {
+  margin-right: 12px;
+}
 /* 1.7.7.7 · Computador (Opera GX / Chrome). Sugestão do GPT a partir de um print do JF.
  * Antes, no computador o jogo inteiro era ampliado com zoom 1.2 (regra em 01-base.css): a coluna
  * de celular só ficava maior. Agora o zoom sai e a tela usa a largura do monitor de verdade, com
@@ -7002,7 +7075,7 @@ body.claro .desfazer-btn {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.8.2 · Actions and Events Update · Parte 3<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.8.3 · Actions and Events Update · Parte 4<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -14643,6 +14716,15 @@ Os ${p.score} pontos vão ser divididos: +${parte} pra cada um dos ${resto} que 
       sP.appendChild(lbl);
     }
     admMestreAjudaSecao(sP, redesenhar);
+    // 1.7.8.3: ensaio em duas abas
+    if (typeof telaoAbrirAba === "function" && typeof BroadcastChannel === "function") {
+      const tb = document.createElement("button");
+      tb.type = "button";
+      tb.className = "ci-btn ci-wide";
+      tb.textContent = "📺 Abrir telão (outra aba, só olha a partida)";
+      tb.addEventListener("click", telaoAbrirAba);
+      sP.appendChild(tb);
+    }
     body.appendChild(sP);
   }
   head.querySelector("#admFechar").addEventListener("click", () => ov.remove());
@@ -16183,6 +16265,144 @@ function desfazerUltimo() {
   saveGameState();
   showToastMessage("↩️ Desfeito: " + o.nome + ". Pode marcar de novo.", null, true, null, true);
   return true;
+}
+/* ----------------------------------------------------------------------
+ * 5h. TELÃO · ENSAIO EM DUAS ABAS (1.7.8.3 · Actions and Events Update, Parte 4)
+ * Ensaio do online dentro de um aparelho só: a aba do jogo manda o RETRATO PÚBLICO da partida
+ * (sem resposta, sem dica fechada) por BroadcastChannel a cada ação; uma segunda aba, aberta com
+ * "#telao" no endereço, só olha: mostra placar, Mestre, vez, categoria, dicas abertas e relógio.
+ *  · O telão não carrega a partida, não roda o motor e não grava nada (saveBloqueado).
+ *  · Ele ignora retrato velho (revisão menor da mesma partida) e de protocolo desconhecido.
+ *  · Isto NÃO prova rede, segurança, latência nem reconexão: as duas abas estão no mesmo navegador.
+ *    É o ensaio do fluxo "ação → retrato → outra tela", que a 1.7.9 leva pra rede.
+ * Abre pelo painel ADM ("📺 Abrir telão"). Útil também com um segundo monitor no computador.
+ * ---------------------------------------------------------------------- */
+const TELAO_CANAL = "perfiljf-telao";
+let telaoCanal = null;
+let telaoUltimo = null; // último retrato mostrado no telão
+let telaoRelogioTimer = null;
+function telaoModo() {
+  try {
+    return /(^|[#&])telao($|&)/.test(String(location.hash || "").replace(/^#/, ""));
+  } catch (e) {
+    return false;
+  }
+}
+function telaoAbrirCanal() {
+  if (telaoCanal || typeof BroadcastChannel !== "function") return telaoCanal;
+  try {
+    telaoCanal = new BroadcastChannel(TELAO_CANAL);
+  } catch (e) {
+    telaoCanal = null;
+  }
+  return telaoCanal;
+}
+
+/* --- Lado do jogo: publica o retrato público --- */
+function telaoPublicar() {
+  const c = telaoCanal;
+  if (!c || !starterChosen) return;
+  try {
+    c.postMessage({ tipo: "retrato", retrato: retratoPartida("mesa") });
+  } catch (e) {}
+}
+function telaoLigarJogo() {
+  if (telaoModo() || !telaoAbrirCanal()) return;
+  telaoCanal.onmessage = (ev) => {
+    const m = ev && ev.data;
+    if (m && m.tipo === "pedir") telaoPublicar();
+  };
+  acoesAoMudar(() => telaoPublicar());
+}
+function telaoAbrirAba() {
+  try {
+    const url = String(location.href).split("#")[0] + "#telao";
+    window.open(url, "_blank");
+    setTimeout(telaoPublicar, 800);
+  } catch (e) {}
+}
+
+/* --- Lado do telão: só mostra --- */
+function telaoIniciar() {
+  try {
+    saveBloqueado = true; // o telão nunca grava a partida
+  } catch (e) {}
+  document.title = "📺 Telão · Perfil JF";
+  ["splashScreen", "welcomeScreen", "gameScreen"].forEach((id) => {
+    const e = document.getElementById(id);
+    if (e) e.style.display = "none";
+  });
+  let box = document.getElementById("telao");
+  if (!box) {
+    box = document.createElement("main");
+    box.id = "telao";
+    box.className = "telao";
+    box.setAttribute("aria-live", "polite");
+    document.body.appendChild(box);
+  }
+  box.innerHTML = '<div class="telao-espera">📺 Telão do Perfil JF<br><small>Esperando a partida na outra aba…</small></div>';
+  if (!telaoAbrirCanal()) {
+    box.innerHTML = '<div class="telao-espera">Este navegador não tem como receber a partida da outra aba.</div>';
+    return;
+  }
+  telaoCanal.onmessage = (ev) => {
+    const m = ev && ev.data;
+    if (!m || m.tipo !== "retrato") return;
+    const r = m.retrato;
+    if (!r || r.protocolo !== RETRATO_PROTOCOLO || r.papel !== "mesa") return;
+    if (telaoUltimo && telaoUltimo.matchId === r.matchId && r.revisao < telaoUltimo.revisao) return;
+    telaoUltimo = r;
+    telaoDesenhar(r);
+  };
+  try {
+    telaoCanal.postMessage({ tipo: "pedir" });
+  } catch (e) {}
+  telaoRelogioTimer = setInterval(telaoRelogio, 500);
+}
+const TELAO_CAT = { ANO: "📅 Ano", PESSOA: "🧑 Pessoa", LUGAR: "📍 Lugar", COISA: "📦 Coisa", ANIMAL: "🐾 Animal" };
+function telaoDesenhar(r) {
+  const box = document.getElementById("telao");
+  if (!box) return;
+  const nome = (id) => {
+    const j = r.jogadores.find((p) => p.id === id);
+    return j ? escapeHtml((j.avatar ? j.avatar + " " : "") + j.nome) : "—";
+  };
+  const placar = [...r.jogadores]
+    .sort((a, b) => (r.vitoria === "pontos" ? b.pontos - a.pontos : b.casa - a.casa))
+    .map((j) => {
+      const joias = Object.keys(j.joias || {}).length;
+      const val = r.vitoria === "pontos" ? j.pontos + " pts" : r.vitoria === "joias" ? joias + "/4 joias" : "casa " + j.casa;
+      return `<li><span>${nome(j.id)}</span><b>${escapeHtml(val)}</b></li>`;
+    })
+    .join("");
+  const c = r.carta;
+  const dicas = c
+    ? c.abertas
+        .map((d) => `<li${d.pos === c.pendente ? ' class="telao-agora"' : ""}>${d.tipo === "special" ? "⭐ " : ""}${escapeHtml(d.texto)}</li>`)
+        .join("")
+    : "";
+  box.innerHTML = `
+    <header class="telao-topo"><b>📺 Perfil JF</b><span>rodada ${r.rodada}${r.ultimaRodada ? " · última" : ""} · revisão ${r.revisao}</span></header>
+    ${r.fim ? '<div class="telao-espera">🏁 Fim de partida</div>' : ""}
+    <section class="telao-vez">
+      <div>🎙️ Mestre<br><b>${nome(r.mestreId)}</b></div>
+      <div>👉 Vez de<br><b>${nome(r.vezId)}</b></div>
+      <div>⏱️ <b id="telaoRelogio">—</b></div>
+    </section>
+    ${c ? `<section class="telao-carta"><div class="telao-cat">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)} · ${c.abertas.length} de ${c.totalDicas} dicas</div><ol class="telao-dicas">${dicas || "<li>Nenhuma dica aberta ainda</li>"}</ol></section>` : ""}
+    <section class="telao-placar"><ol>${placar}</ol></section>`;
+  telaoRelogio();
+}
+function telaoRelogio() {
+  const el = document.getElementById("telaoRelogio");
+  if (!el || !telaoUltimo) return;
+  const rel = telaoUltimo.relogio || {};
+  if (rel.pausado) {
+    el.textContent = "pausado";
+    return;
+  }
+  const fim = rel.fimEm || rel.cartaFimEm;
+  el.textContent = fim ? Math.max(0, Math.ceil((fim - Date.now()) / 1000)) + " s" : "—";
 }
 /* ======================================================================
  * 6. VOZ, SOM E VIBRAÇÃO
@@ -18409,7 +18629,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.8.2 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.8.3 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -23476,7 +23696,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.8.2 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.8.3 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -26619,7 +26839,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.8.2 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.8.3 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -27142,7 +27362,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.8.2 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.8.3 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -62202,6 +62422,19 @@ const PAUSE_TIPS = [
 ];
 const NOVIDADES = [
   {
+    v: "Beta 1.7.8.3",
+    data: "08/10/2026 · 18:39",
+    nome: "Actions and Events Update · Parte 4",
+    t: "Primeiro ensaio de duas telas: uma aba joga, a outra só assiste.",
+    itens: [
+      "📺 Telão: numa segunda aba (ou num segundo monitor do computador), a mesa vê o placar, quem é o Mestre, de quem é a vez, as dicas já abertas e o relógio, tudo ao vivo.",
+      "🙈 O telão nunca mostra a resposta, só o que a mesa toda pode ver. E ele só assiste: não mexe na partida.",
+    ],
+    qol: [
+      "🔑 Por enquanto o telão abre pelo painel ADM (📺 Abrir telão). É o ensaio do online, que liga aparelhos diferentes.",
+    ],
+  },
+  {
     v: "Beta 1.7.8.2",
     data: "08/10/2026 · 18:29",
     nome: "Actions and Events Update · Parte 3",
@@ -64889,7 +65122,14 @@ function iniciar() {
     aplicarCorRngSplash();
     JFStore.boot().then(() => {
       applyStoredPrefs();
+      // 1.7.8.3: aba "telão" (#telao) só olha a partida da outra aba: não carrega nem grava
+      if (typeof telaoModo === "function" && telaoModo()) {
+        document.querySelectorAll(".caos-modal-ov, .jf-modal-bg").forEach((o) => o.remove());
+        telaoIniciar();
+        return;
+      }
       loadGameState();
+      if (typeof telaoLigarJogo === "function") telaoLigarJogo();
       updateModeNotice();
       renderStorageStatus();
       if (playBtn) playBtn.disabled = false;

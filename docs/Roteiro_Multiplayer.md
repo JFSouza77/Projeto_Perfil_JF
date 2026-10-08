@@ -358,7 +358,14 @@ Cada parte sai publicada sozinha. Em todas, o jogo local continua igual para que
 - Volta o estado de regra para antes da ação (pontos, joias, vez, palpite) e a revisão anota o desfazer.
 - **Teste:** desfazer deixa tudo igual ao retrato anterior.
 
-### Parte 4 · 1.7.8.3 · Ensaio em duas abas (BroadcastChannel)
+### Parte 4 · 1.7.8.3 · Ensaio em duas abas (BroadcastChannel) (publicada)
+- **Feito:** `js/05h-telao.js`.
+  - A aba do jogo publica o retrato público a cada ação (e quando alguém pede).
+  - A aba `#telao` mostra placar, Mestre, vez, categoria, dicas abertas e relógio.
+  - O telão não carrega a partida, não roda o motor nem grava (`saveBloqueado`).
+  - Ele ignora retrato velho e de protocolo desconhecido.
+  - Abre pelo painel ADM ("📺 Abrir telão"); serve também para um segundo monitor no computador.
+- **Teste:** `ferramentas/teste_telao.js`, com duas abas de verdade num servidor http local.
 - Uma aba "telão" só olha: recebe a projeção pública a cada revisão e mostra placar, dica aberta e vez.
 - **Não prova** rede, segurança nem reconexão; é só o ensaio do fluxo.
 - **Teste:** duas abas com a mesma revisão, e o telão sem a resposta.

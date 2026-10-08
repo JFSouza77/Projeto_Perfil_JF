@@ -6,6 +6,14 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.8.3 · 08/10/2026 · "Actions and Events Update · Parte 4" = TELÃO (ENSAIO EM DUAS ABAS).
+          js/05h-telao.js: a aba do jogo publica retratoPartida("mesa") por BroadcastChannel ("perfiljf-telao") a
+          cada ação (acoesAoMudar) e quando o telão pede. A aba aberta com #telao não carrega a partida (startApp
+          pula o loadGameState), fica com saveBloqueado e só desenha: rodada, revisão, Mestre, vez, relógio,
+          categoria, dicas abertas (a da vez em destaque) e placar pela condição de vitória. Ignora revisão
+          menor da mesma partida e protocolo desconhecido; tudo com escapeHtml. Botão "📺 Abrir telão" no painel
+          ADM. ferramentas/teste_telao.js: servidor http local + duas abas (BroadcastChannel não liga file://).
+          Não prova rede, segurança nem reconexão: é o ensaio do fluxo ação → retrato → outra tela.
   1.7.8.2 · 08/10/2026 · "Actions and Events Update · Parte 3" = DESFAZER O ÚLTIMO VEREDITO.
           js/05g-acoes.js: antes de Acertou, Errou/Pulou/Absurdo e palpite, a fronteira tira uma cópia em memória
           do estado de regra (jogadores, equipes, vez, Mestre, carta, dicas, baralho, histórico, estatísticas,
@@ -437,7 +445,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.8.2</title>
+<title>Perfil JF · Beta 1.7.8.3</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

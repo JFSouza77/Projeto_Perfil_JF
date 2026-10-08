@@ -954,7 +954,14 @@ function iniciar() {
     aplicarCorRngSplash();
     JFStore.boot().then(() => {
       applyStoredPrefs();
+      // 1.7.8.3: aba "telão" (#telao) só olha a partida da outra aba: não carrega nem grava
+      if (typeof telaoModo === "function" && telaoModo()) {
+        document.querySelectorAll(".caos-modal-ov, .jf-modal-bg").forEach((o) => o.remove());
+        telaoIniciar();
+        return;
+      }
       loadGameState();
+      if (typeof telaoLigarJogo === "function") telaoLigarJogo();
       updateModeNotice();
       renderStorageStatus();
       if (playBtn) playBtn.disabled = false;

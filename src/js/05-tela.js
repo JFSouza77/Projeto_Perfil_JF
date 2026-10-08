@@ -3120,6 +3120,15 @@ Os ${p.score} pontos vão ser divididos: +${parte} pra cada um dos ${resto} que 
       sP.appendChild(lbl);
     }
     admMestreAjudaSecao(sP, redesenhar);
+    // 1.7.8.3: ensaio em duas abas
+    if (typeof telaoAbrirAba === "function" && typeof BroadcastChannel === "function") {
+      const tb = document.createElement("button");
+      tb.type = "button";
+      tb.className = "ci-btn ci-wide";
+      tb.textContent = "📺 Abrir telão (outra aba, só olha a partida)";
+      tb.addEventListener("click", telaoAbrirAba);
+      sP.appendChild(tb);
+    }
     body.appendChild(sP);
   }
   head.querySelector("#admFechar").addEventListener("click", () => ov.remove());

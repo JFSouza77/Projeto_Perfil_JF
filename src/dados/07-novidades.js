@@ -1,5 +1,18 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.8.3",
+    data: "08/10/2026 · 18:39",
+    nome: "Actions and Events Update · Parte 4",
+    t: "Primeiro ensaio de duas telas: uma aba joga, a outra só assiste.",
+    itens: [
+      "📺 Telão: numa segunda aba (ou num segundo monitor do computador), a mesa vê o placar, quem é o Mestre, de quem é a vez, as dicas já abertas e o relógio, tudo ao vivo.",
+      "🙈 O telão nunca mostra a resposta, só o que a mesa toda pode ver. E ele só assiste: não mexe na partida.",
+    ],
+    qol: [
+      "🔑 Por enquanto o telão abre pelo painel ADM (📺 Abrir telão). É o ensaio do online, que liga aparelhos diferentes.",
+    ],
+  },
+  {
     v: "Beta 1.7.8.2",
     data: "08/10/2026 · 18:29",
     nome: "Actions and Events Update · Parte 3",
