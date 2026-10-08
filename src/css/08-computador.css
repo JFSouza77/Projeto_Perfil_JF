@@ -1,0 +1,124 @@
+/* 1.7.7.7 · Computador (Opera GX / Chrome). Sugestão do GPT a partir de um print do JF.
+ * Antes, no computador o jogo inteiro era ampliado com zoom 1.2 (regra em 01-base.css): a coluna
+ * de celular só ficava maior. Agora o zoom sai e a tela usa a largura do monitor de verdade, com
+ * limites pra leitura não ficar comprida demais. Vale só com mouse e janela de pelo menos 900×640;
+ * celular e tablet não mudam. */
+@media (min-width: 900px) and (min-height: 640px) and (hover: hover) {
+  body {
+    zoom: 1 !important;
+    width: 100%;
+    min-height: 100vh;
+    padding: 24px clamp(24px, 3vw, 64px) 64px;
+    align-items: center;
+    font-size: 17px;
+  }
+  .splash-screen,
+  #gameScreen {
+    width: min(100%, 1440px) !important;
+    max-width: 1440px !important;
+    margin-inline: auto;
+  }
+  .welcome-screen {
+    width: min(100%, 980px) !important;
+    max-width: 980px !important;
+    margin-inline: auto;
+    padding: 24px clamp(20px, 3vw, 48px) 48px;
+  }
+  .welcome-title {
+    font-size: clamp(1.8rem, 2.2vw, 2.5rem);
+  }
+  .welcome-subtitle {
+    font-size: 1.05rem;
+    line-height: 1.55;
+  }
+  #gameScreen {
+    padding-inline: clamp(0px, 1vw, 16px);
+  }
+  #gameScreen > h1 {
+    width: 100%;
+    max-width: 1240px;
+    font-size: clamp(1.6rem, 2vw, 2.1rem);
+    margin: 8px auto 20px;
+  }
+  #playerPanel,
+  #orderRevealSection,
+  #playAreaSection {
+    width: min(100%, 1240px) !important;
+    max-width: 1240px !important;
+  }
+  .panel {
+    width: 100%;
+    max-width: 1100px;
+    padding: 22px 26px;
+  }
+  .card {
+    width: 100%;
+    max-width: 960px;
+    padding: clamp(24px, 2vw, 36px);
+  }
+  .card.face-down {
+    --verso-w: min(360px, 28vw);
+    width: var(--verso-w);
+    max-width: 100%;
+    min-height: calc(var(--verso-w) * 1.4);
+  }
+  .clue-list {
+    width: 100%;
+    max-width: 76ch;
+    margin-inline: auto;
+  }
+  .clue-list li {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    padding: 12px 0;
+  }
+  .answer-header {
+    font-size: clamp(1.1rem, 1.3vw, 1.35rem);
+    line-height: 1.45;
+  }
+  .controls,
+  .board-track {
+    width: 100%;
+    max-width: 960px;
+  }
+  .mini-scoreboard {
+    width: 100%;
+    max-width: 1120px;
+  }
+  .jf-modal-bg {
+    padding: 32px;
+  }
+  .jf-modal {
+    width: min(720px, calc(100vw - 96px));
+    max-width: 720px;
+    max-height: calc(100dvh - 64px);
+    padding: 32px 36px;
+  }
+  .jf-modal.nov-modal {
+    width: min(900px, calc(100vw - 96px));
+    max-width: 900px;
+    max-height: calc(100dvh - 64px);
+    padding: 30px 36px;
+  }
+  .nov-modal .nov-item {
+    max-width: 76ch;
+    margin-inline: auto;
+  }
+  .nov-modal p {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  .tut-box,
+  .acess-box {
+    width: min(760px, calc(100vw - 96px));
+    max-width: 760px;
+    max-height: calc(100dvh - 64px);
+    padding: 30px 36px;
+  }
+  .caos-modal-ov > div {
+    width: min(760px, calc(100vw - 96px)) !important;
+    max-width: 760px !important;
+    max-height: calc(100dvh - 64px);
+    overflow-y: auto;
+  }
+}
