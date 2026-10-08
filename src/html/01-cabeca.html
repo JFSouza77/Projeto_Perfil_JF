@@ -6,6 +6,13 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.8.1 · 08/10/2026 · "Actions and Events Update · Parte 2" = RETRATO DA PARTIDA (GAMESNAPSHOT).
+          retratoPartida("mesa" | "mestre") em js/05g-acoes.js: protocolo, matchId, revisão, modo, vitória, rodada,
+          jogadores por id (pontos, casa, joias, equipe), equipes, Mestre e vez por id, carta (categoria, dicas
+          abertas com quem pediu, dica pendente), palpites, joias da rodada, vencedor e relógio. Projeção pública
+          sem resposta, sem id da carta (o catálogo está no jogo: o id entregaria) e sem dica fechada; a do Mestre
+          leva resposta e id. Sem idade, humor nem falas. acoesAoMudar(fn) avisa a cada ação. teste_acoes com
+          6 itens novos; simulador confere a cada 10 passos que o retrato público não leva a resposta.
   1.7.8 · 08/10/2026 · "Actions and Events Update · Parte 1" = FRONTEIRA DE AÇÕES.
           js/05g-acoes.js: 24 ações com nome por cima das funções do motor (casca como a da espinha, instalada
           no iniciar antes de ligar os botões). Só a chamada de fora vira ação (profundidade); a revisão
@@ -422,7 +429,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.8</title>
+<title>Perfil JF · Beta 1.7.8.1</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

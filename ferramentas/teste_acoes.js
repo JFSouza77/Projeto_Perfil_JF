@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Teste das ações (1.7.8 · Actions and Events Update, Parte 1).
+// Teste das ações (1.7.8 · Actions and Events Update, Parte 1) e do retrato da partida (1.7.8.1).
 // Confere a fronteira de ações: toque vira ação registrada (sem contar de novo o que o motor chama
 // por dentro), a revisão só sobe quando o estado muda, e dispatchAction recusa partida errada,
 // revisão obsoleta, comando repetido e ação fora de hora. Revisão e registro vão pro save.
@@ -92,6 +92,22 @@ const ARQ = acharMestre(process.argv[2]);
     const revDepois = partidaRevisao;
     const c2 = dispatchAction({ type: 'escolherDica', data: [livre], commandId: 'cmd-1', matchId, expectedRevision: revDepois - 1 });
     out.duplicadoNaoAplica = c2.ok && c2.duplicado === true && partidaRevisao === revDepois;
+    // 4b) retrato da partida (1.7.8.1): o público nunca leva resposta, id da carta nem dica fechada
+    fechar();
+    const pub = JSON.stringify(retratoPartida('mesa'));
+    const mes = retratoPartida('mestre');
+    const fechadas = currentCard.clues.filter((c, i) => !revealedOrder.some((x) => x.index === i)).map((c) => c.text);
+    out.retratoSemResposta = !pub.includes(currentCard.answer) && !pub.includes(currentCard.id) && fechadas.every((t) => !pub.includes(t));
+    out.retratoAbertas = JSON.parse(pub).carta.abertas.length === revealedOrder.length && revealedOrder.every((x) => pub.includes(x.item.text));
+    out.retratoMestre = mes.carta.resposta === currentCard.answer && mes.carta.id === currentCard.id && mes.revisao === partidaRevisao && JSON.parse(pub).revisao === partidaRevisao;
+    out.retratoIds = mes.jogadores.every((j) => jogadorIdValido(j.id)) && mes.mestreId === players[mestreIndex].id;
+    out.retratoSemCadastro = !/"idade"|"humor"|"ageBracket"/.test(pub);
+    out.retratoTamanho = pub.length;
+    // aviso de mudança chega a cada ação
+    let avisos = 0;
+    acoesAoMudar(() => avisos++);
+    if (pendingIndex !== null) { toqueJogoUltimo = 0; markWrong(); fechar(); }
+    out.avisou = avisos >= 1;
     // 5) save e retomada guardam revisão e registro
     saveGameState();
     const revSalva = partidaRevisao, nSalvo = acoesLog.length;
@@ -117,6 +133,12 @@ const ARQ = acharMestre(process.argv[2]);
     ['Comando fora de hora recusado', r.foraDeHora === 'fora_de_hora'],
     ['Comando válido aplica (origem comando)', r.comandoOk],
     ['Comando repetido não aplica duas vezes', r.duplicadoNaoAplica],
+    ['Retrato público sem resposta, sem id da carta e sem dica fechada', r.retratoSemResposta],
+    ['Retrato público com as dicas abertas', r.retratoAbertas],
+    ['Retrato do Mestre com a resposta; os dois com a revisão atual', r.retratoMestre],
+    ['Retrato com jogadores pelo id', r.retratoIds],
+    ['Retrato sem dado de cadastro (idade, humor)', r.retratoSemCadastro],
+    ['Aviso de mudança a cada ação', r.avisou],
     ['Revisão e registro vão pro save', r.salvou],
     ['Partida nova zera revisão e registro', r.zerou],
   ];

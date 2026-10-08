@@ -339,7 +339,8 @@ Cada parte sai publicada sozinha. Em todas, o jogo local continua igual para que
 - **`dispatchAction`:** recusa partida errada, revisão obsoleta, comando repetido (`commandId`) e ação fora de hora.
 - **Teste:** `ferramentas/teste_acoes.js`. O simulador também confere que a revisão só cresce.
 
-### Parte 2 · 1.7.8.1 · Retrato da partida (GameSnapshot)
+### Parte 2 · 1.7.8.1 · Retrato da partida (GameSnapshot) (publicada)
+- **Feito:** `retratoPartida("mesa" | "mestre")` em `js/05g-acoes.js` e `acoesAoMudar(fn)`, que avisa a cada ação. O público também não leva o **id da carta**: o catálogo está dentro do jogo, então o id entregaria a resposta. O retrato não leva idade, humor nem fala do C.A.O.S. O simulador confere a cada 10 passos que o retrato público nunca leva a resposta.
 - `retratoPartida(papel)` com `matchId` e revisão.
 - A **projeção pública** nunca leva a resposta nem as dicas fechadas. A **projeção do Mestre** leva a resposta.
 - O retrato é separado do save.

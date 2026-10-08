@@ -95,6 +95,7 @@ function acoesRegistrar(tipo, args, origem) {
     t: caosPartidaInicioAt ? Math.max(0, Date.now() - caosPartidaInicioAt) : 0,
   });
   if (acoesLog.length > ACOES_LOG_MAX) acoesLog.splice(0, acoesLog.length - ACOES_LOG_MAX);
+  if (typeof acoesAvisar === "function") acoesAvisar(acoesLog[acoesLog.length - 1]);
 }
 // Casca de uma função do motor: só a chamada de fora conta como ação.
 function acoesEnvolver(fnNome) {
@@ -199,4 +200,90 @@ function acoesResumo() {
     .reverse()
     .map((x) => `#${x.r} ${x.a}${x.d.length ? "(" + x.d.join(", ") + ")" : ""} · ${x.o}`);
   return { revisao: partidaRevisao, total: acoesLog.length, ultimas: ult };
+}
+
+/* --- Retrato da partida / GameSnapshot (1.7.8.1 · Parte 2) ---
+ * O que vai pros outros aparelhos no online: só o estado de regra, separado do save.
+ *  · papel "mesa" (projeção pública): placar, vez, dicas JÁ ABERTAS, relógio. Nunca leva a
+ *    resposta nem as dicas fechadas da carta.
+ *  · papel "mestre": o mesmo, mais a resposta da carta (quem lê precisa dela).
+ * Não leva fala do C.A.O.S., preferência do aparelho (tema, letra, volume) nem dado de cadastro
+ * que não é de regra (idade, humor). Leva matchId e revisão: quem recebe sabe se está atrasado. */
+const RETRATO_PROTOCOLO = 1;
+function retratoPartida(papel) {
+  const mestre = papel === "mestre";
+  const eq = CURRENT_FORMAT === "equipe";
+  const joias = (h) => {
+    const g = (h && h.gems) || {};
+    const o = {};
+    Object.keys(g).forEach((c) => g[c] > 0 && (o[c] = g[c]));
+    return o;
+  };
+  const carta = currentCard
+    ? {
+        // o id da carta só pro Mestre: com o catálogo dentro do jogo, o id entregaria a resposta
+        ...(mestre ? { id: currentCard.id || null } : {}),
+        categoria: currentCard.category,
+        totalDicas: currentCard.clues.length,
+        abertas: revealedOrder.map((r) => ({
+          pos: r.index,
+          tipo: r.item.type,
+          texto: r.item.text,
+          pedidaPor: (players.find((p) => p.name === r.pickedByName) || {}).id || null,
+        })),
+        pendente: pendingIndex === null ? null : pendingIndex,
+        ...(mestre ? { resposta: currentCard.answer } : {}),
+      }
+    : null;
+  return {
+    protocolo: RETRATO_PROTOCOLO,
+    papel: mestre ? "mestre" : "mesa",
+    matchId,
+    revisao: partidaRevisao,
+    conteudo: ADULT_CARDS.length,
+    modo: CURRENT_MODE,
+    formato: CURRENT_FORMAT,
+    vitoria: winCond(),
+    meta: { casa: WINNING_SCORE, pontos: typeof metaPontos === "function" ? metaPontos() : null },
+    rodada: rodadaAtual,
+    ultimaRodada,
+    iniciada: starterChosen,
+    fim: gameEnded,
+    estadoCarta: cardState,
+    jogadores: players.map((p) => ({
+      id: p.id,
+      nome: p.name,
+      cor: p.color,
+      avatar: p.avatar,
+      pontos: p.score,
+      casa: p.position,
+      bloqueado: !!p.isBlocked,
+      equipe: p.team || null,
+      joias: joias(p),
+    })),
+    equipes: eq
+      ? teamOrder.map((id) => ({ id, casa: teams[id].position, joias: joias(teams[id]), membros: (teams[id].members || []).map(jogadorIdDe) }))
+      : [],
+    mestreId: jogadorIdDe(mestreIndex),
+    vezId: jogadorIdDe(responderIndex),
+    carta,
+    palpites: { ...palpiteHolders },
+    estoquePalpite: palpiteStock,
+    joiasRodada: { ...joiasRodada },
+    vencedorJoias: gemWinner ? { tipo: gemWinner.kind, id: gemWinner.id } : null,
+    relogio: { tipo: timerKind || null, fimEm: timerEndAt || null, cartaFimEm: cardEndAt || null, pausado: !!pausedAt },
+  };
+}
+
+/* --- Avisos de mudança (pro ensaio em duas abas da Parte 4 e, depois, pra rede) --- */
+const acoesOuvintes = [];
+function acoesAoMudar(fn) {
+  if (typeof fn === "function") acoesOuvintes.push(fn);
+}
+function acoesAvisar(entrada) {
+  acoesOuvintes.forEach((fn) => {
+    try {
+      fn(entrada);
+    } catch (e) {}
+  });
 }
