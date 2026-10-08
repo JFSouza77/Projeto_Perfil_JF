@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------
- * 2b. IDENTIDADE DOS JOGADORES (1.7.7.1 · Foundation Structure Update, Parte 2)
+ * 2b. IDENTIDADE DOS JOGADORES (1.7.7.1 · Foundation and Structure Update, Parte 2)
  * Todo jogador ganha um id (ex.: "j_k7p2qa") no cadastro. Ele não muda quando alguém sai,
  * quando a ordem muda ou quando a partida é salva e restaurada. É a base do online:
  * na rede, "o jogador 2" não quer dizer nada; "j_k7p2qa" quer dizer sempre a mesma pessoa.

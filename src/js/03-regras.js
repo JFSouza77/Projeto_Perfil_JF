@@ -561,6 +561,11 @@ function jfPlayerIndex() {
 function isEnigmaName(n) {
   return /^(o\s*)?enigmatico([^a-z]|$)/.test(nameKeyPlain(n));
 }
+// 1.7.7.8: cadeado no placar pra quem já levou as 2 joias desta rodada (a trava fica visível, não é surpresa).
+function joiasTravaBadge(key) {
+  if (!joiasComTrava() || (joiasRodada[String(key)] || 0) < JOIAS_POR_RODADA) return "";
+  return ` <span class="joia-trava" title="Já ganhou ${JOIAS_POR_RODADA} joias nesta rodada: a próxima só na rodada que vem" aria-label="joias desta rodada completas">🔒</span>`;
+}
 function gemBadgesHtml(holder) {
   const g = holder && holder.gems ? holder.gems : null;
   if (!g) return "";

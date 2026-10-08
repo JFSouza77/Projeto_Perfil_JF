@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------
- * 2c. SORTEIO DE REGRA (1.7.7.4 · Foundation Structure Update, Parte 5)
+ * 2c. SORTEIO DE REGRA (1.7.7.4 · Foundation and Structure Update, Parte 5)
  * Todo sorteio que DECIDE o jogo passa por aqui: embaralhar o baralho, devolver carta ao
  * baralho, quantas instruções especiais no Hardcore, modo da Moda da Casa, categorias e modo
  * sorteados, alvo automático das surpresas, 1º Mestre, evento de misericórdia e Duelo/Todos.

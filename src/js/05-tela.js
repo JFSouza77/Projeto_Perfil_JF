@@ -1255,7 +1255,7 @@ function renderMiniScoreboard() {
       list.innerHTML = sorted
         .map(
           (p) => `
-        <li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${p.score} pt${p.score === 1 ? "" : "s"}${gemBadgesHtml(p)}</li>
+        <li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${p.score} pt${p.score === 1 ? "" : "s"}${gemBadgesHtml(p)}${joiasTravaBadge(CURRENT_FORMAT === "equipe" ? p.team : p.id)}</li>
       `,
         )
         .join("");
@@ -1273,7 +1273,7 @@ function renderMiniScoreboard() {
               : wc === "joias"
                 ? `${gemTotal(teams[id])}/${GEMS_TO_WIN} joias — casa ${teams[id].position}`
                 : `casa ${teams[id].position}/${WINNING_SCORE}`;
-          return `<li style="--pc:${corDoJogador(info.color)}">${info.emoji} Equipe ${info.label}: ${txt}${palpiteBadge(id)}${gemBadgesHtml(teams[id])}</li>`;
+          return `<li style="--pc:${corDoJogador(info.color)}">${info.emoji} Equipe ${info.label}: ${txt}${palpiteBadge(id)}${gemBadgesHtml(teams[id])}${joiasTravaBadge(id)}</li>`;
         })
         .join("");
     } else {
@@ -1289,7 +1289,7 @@ function renderMiniScoreboard() {
                 : wc === "tabuleiro"
                   ? `casa ${p.position}/${WINNING_SCORE}`
                   : `${p.score} pts — casa ${p.position}/${WINNING_SCORE}`;
-          return `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${txt}${palpiteBadge(p.id)}${gemBadgesHtml(p)}</li>`;
+          return `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${txt}${palpiteBadge(p.id)}${gemBadgesHtml(p)}${joiasTravaBadge(p.id)}</li>`;
         })
         .join("");
     }
@@ -2645,6 +2645,7 @@ function openTutorial(tipo) {
       <div class="tut-mock card" id="tutMock" aria-hidden="true"></div>
       <div class="tut-prog"><i id="tutProg"></i></div>
       <div class="tut-count" id="tutCount" aria-live="polite"></div>
+      <button type="button" class="tut-btn tut-ouvir" id="tutOuvir">🔊 Ouvir este passo</button>
       <div class="tut-nav"><button type="button" class="tut-btn tut-back" id="tutBack">⬅️ Voltar</button><button type="button" class="tut-btn" id="tutNext">Próximo ➡️</button></div>
       <button type="button" class="tut-btn tut-manual" id="tutManual">📖 Ver o manual completo</button>
     </div>`;
@@ -2663,11 +2664,48 @@ function openTutorial(tipo) {
       } else closeTutorial();
     });
     document.getElementById("tutManual").addEventListener("click", () => openTutorial("manual"));
+    document.getElementById("tutOuvir").addEventListener("click", tutOuvirPasso);
   }
   ov.style.display = "flex";
   renderTutorial();
 }
+// 1.7.7.8 (ideia do JF, revisão do GPT): o C.A.O.S. lê o passo em voz alta, só quando a pessoa toca.
+// Nunca vira o passo sozinho; trocar de passo ou fechar o tutorial cala a leitura.
+let tutFalando = false;
+function tutCalar() {
+  if (!tutFalando) return;
+  tutFalando = false;
+  try {
+    window.speechSynthesis.cancel();
+  } catch (e) {}
+}
+function tutOuvirPasso() {
+  const s = tutorialLista && tutorialLista[tutorialPos];
+  if (!s || typeof CAOS_VOICE_OK === "undefined" || !CAOS_VOICE_OK) return;
+  try {
+    caosVoiceCancel();
+    window.speechSynthesis.cancel();
+    const tmp = document.createElement("div");
+    tmp.innerHTML = s.text;
+    const u = new SpeechSynthesisUtterance(s.title + ". " + tmp.textContent.replace(/\s+/g, " ").trim());
+    u.lang = "pt-BR";
+    const v = typeof caosPickVoice === "function" ? caosPickVoice() : null;
+    if (v) u.voice = v;
+    u.rate = 1;
+    u.volume = typeof acessVolVoz === "function" ? acessVolVoz() : 1;
+    u.onend = u.onerror = () => {
+      tutFalando = false;
+    };
+    tutFalando = true;
+    window.speechSynthesis.speak(u);
+  } catch (e) {
+    tutFalando = false;
+  }
+}
 function renderTutorial() {
+  tutCalar();
+  const ouvir = document.getElementById("tutOuvir");
+  if (ouvir) ouvir.style.display = typeof CAOS_VOICE_OK !== "undefined" && CAOS_VOICE_OK ? "" : "none";
   const rapido = tutorialTipo === "rapido";
   const vitoria = tutorialTipo.indexOf("vitoria:") === 0;
   const s = tutorialLista[tutorialPos],
@@ -2709,6 +2747,7 @@ function renderTutorial() {
   document.getElementById("tutManual").style.display = rapido && last ? "" : "none";
 }
 function closeTutorial() {
+  tutCalar();
   const ov = document.getElementById("tutorialOverlay");
   if (ov) ov.style.display = "none";
   tutPausaAtualizar();

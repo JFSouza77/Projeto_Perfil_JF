@@ -2658,7 +2658,7 @@ const REACTIVE_VOICE = {
     "Pô, {nome}, essa jogada foi meio sonsa, hein?",
     "Nossa, {nome}, que coisa burrinha. Mas é com carinho.",
     "Puts, não acredito que você errou isso, {nome}. Fala sério, estava tão fácil...",
-    "EU ESPERAVA TÃO POUCO DE VOCÊ, {nome}, e mesmo assim você conseguiu me decepcionar.",
+    "EU APOSTEI EM VOCÊ, {nome}. Perdi a aposta, perdi a fé e perdi a carta.",
     "VOCÊ É A VERGONHA DA PROFISSÃO, {nome}! Bota o avental e vai pra casa!",
   ],
   jfInicio: [

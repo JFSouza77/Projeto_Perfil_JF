@@ -22,7 +22,7 @@
 
 | Versão | Nome | Em uma frase |
 |---|---|---|
-| **1.7.7** | **Foundation Structure Update** | Fortalecer o que já existe: identidade dos jogadores, da partida e das cartas, espinha mais completa, mapa dos sorteios, documentação e simulador. |
+| **1.7.7** | **Foundation and Structure Update** | Fortalecer o que já existe: identidade dos jogadores, da partida e das cartas, espinha mais completa, mapa dos sorteios, documentação e simulador. |
 | **1.7.8** | **Actions and Events Update** | Preparar o motor pra receber pedidos e anunciar acontecimentos: ações, eventos, snapshot, filtro por papel e "online de mentira" com duas abas. |
 | **1.7.9** | **Rooms and Network Update** | Construir a rede: salas e código da sala, protocolo, reconexão, troca de host, relógio sincronizado, versão igual em todos os aparelhos e beta fechado. |
 | **1.7.10** | **Multiplayer Update** | Lançar o online, o nome DICAOS e o domínio próprio, com a mudança de endereço (save e memória). |
@@ -130,7 +130,7 @@ São os 18 itens do GPT mais 4 que só a análise do Claude trouxe.
 
 ---
 
-## 4. Plano da 1.7.7 · Foundation Structure Update
+## 4. Plano da 1.7.7 · Foundation and Structure Update
 
 Cada parte sai publicada sozinha, como nas updates anteriores. Em todas valem as mesmas regras:
 - **o jogo não muda pra quem joga** (exceto onde corrige um defeito);
@@ -223,7 +223,7 @@ Conferida no código em 05/10/2026. Três destinos:
 9. 4ª Lei do C.A.O.S. (respeitar quem está lendo) e tom por idade.
 10. Firebase / serviço do online (comparação na 1.7.8), árbitro de paz, resumo depois da pausa, troféus.
 
-**Nome da update:** o roteiro do GPT chama a 1.7.7 de "Extractor Upgrade". Mantido "Foundation Structure Update", o nome aprovado pelo JF.
+**Nome da update:** confirmado pelo JF em 08/10/2026: **Foundation and Structure Update**. "Extractor Upgrade" foi só o nome de trabalho do replanejamento do JF com o GPT e o Google AI Studio.
 
 ---
 
@@ -298,3 +298,28 @@ Os documentos ficam com o JF e não entram no repositório, porque citam pessoas
    - serviço autoritativo ou host casual;
    - teto de custo;
    - migração para o domínio DICAOS (o navegador trata como outro endereço, então o save precisa de Exportar/Importar).
+
+---
+
+## 8. Decisões do JF sobre a 1.7.7 (08/10/2026) e fechamento
+
+- **Nome:** Foundation and Structure Update.
+- **Cartas e falas (JF deixou com o Claude):**
+  - 5 cartas corrigidas no QoL da 1.7.7.8. Barsa, Carnê do Baú, Super Choque e Escova de dente tinham a resposta numa dica. 1945 tinha 4 dicas de conta.
+  - Os 18 avisos que sobraram foram mantidos de propósito. "Sou um escudo" e parecidas funcionam como dica de categoria; "ilhas" e "nunca" são palavras comuns; os ecos são fatos diferentes.
+  - A fala repetida do Ácido foi trocada por uma nova.
+- **Ideias que mudavam regra (JF deixou com o Claude, "o mais equilibrado"):**
+  - **Entrou:**
+    - 🔒 no placar para quem já ganhou as 2 joias da rodada (a trava fica visível);
+    - 🔊 "Ouvir este passo" no tutorial, só ao tocar;
+    - virada de carta curta (sem animação no Modo Batata e com movimento reduzido).
+  - **Desempate da Última Rodada:** continua "Empate entre…". Empatar com a mesma regra para todos é justo, e um desempate novo mudaria o resultado de partidas.
+  - **Desfazer o último veredito:** vai para a 1.7.8. Com a fila de ações, desfazer vira "voltar uma ação" sem risco de deixar ponto, joia e vez desencontrados.
+  - **Tempo extra para quem responde:** não entra. Quem responde ouve a dica, não lê. "Mais tempo" da acessibilidade e o tempo extra do Mestre já cobrem.
+  - **Karaokê na leitura:** não entra agora. As vozes do iPhone não avisam de forma confiável qual palavra estão lendo.
+  - **Contraste quente:** não entra. O Alto contraste já existe.
+  - **Animação de pontos:** não entra. A virada de carta já dá o retorno visual sem atrasar a jogada.
+  - **4ª Lei / tom por idade:** não entra, seguindo o GPT. O humor continua sendo escolha de cada pessoa.
+- **Duelo com 2 equipes:** continua como sempre foi (JF).
+
+**A 1.7.7 está fechada. Próxima: 1.7.8 · Actions and Events.**

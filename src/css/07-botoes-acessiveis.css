@@ -333,3 +333,40 @@ html.acess-letra-2 .clue-list li {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+/* 1.7.7.8: ouvir o passo do tutorial, cadeado das 2 joias e virada da carta */
+.tut-ouvir {
+  display: block;
+  width: 100%;
+  margin: 6px 0 8px;
+  border-color: #22d3ee;
+  color: #67e8f9;
+}
+body.claro .tut-ouvir {
+  color: #0e7490;
+  border-color: #0e7490;
+}
+.joia-trava {
+  font-size: 0.9em;
+  margin-left: 2px;
+}
+@keyframes carta-virando {
+  from {
+    transform: perspective(900px) rotateY(80deg);
+    opacity: 0.4;
+  }
+  to {
+    transform: perspective(900px) rotateY(0deg);
+    opacity: 1;
+  }
+}
+.card.virando {
+  animation: carta-virando 0.38s ease-out;
+}
+body.batata-mode .card.virando {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .card.virando {
+    animation: none;
+  }
+}

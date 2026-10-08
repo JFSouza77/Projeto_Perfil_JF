@@ -768,7 +768,7 @@
       "Vi o lançamento de duas bombas atômicas sobre cidades japonesas, encerrando um conflito mundial",
       "Getúlio Vargas foi deposto pelos militares",
       "Vi a Alemanha nazista se render às forças aliadas na Europa em maio",
-      "Sou ímpar",
+      "Anne Frank morreu num campo de concentração, poucas semanas antes da libertação",
       "Meus dígitos somam exatamente 19",
       "Não fui um ano bissexto: meu fevereiro teve só 28 dias",
       "Franklin Roosevelt morreu pouco antes do fim da guerra",

@@ -113,7 +113,7 @@ const VITORIA_TUTORIAIS = {
     {
       icon: "🔒",
       title: "No máximo 2 por rodada",
-      text: `Cada ${vitoriaEquipe() ? "equipe" : "jogador"} ganha <b>no máximo ${JOIAS_POR_RODADA} joias por rodada</b>. Assim ninguém dispara sozinho.`,
+      text: `Cada ${vitoriaEquipe() ? "equipe" : "jogador"} ganha <b>no máximo ${JOIAS_POR_RODADA} joias por rodada</b> (quando completa, aparece um 🔒 no placar). Assim ninguém dispara sozinho.`,
     },
     {
       icon: "🎲",

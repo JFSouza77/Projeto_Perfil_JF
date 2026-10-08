@@ -495,6 +495,16 @@ function flipCard() {
   caosSatisfacaoTalvez();
   caosEixosCarta();
   render();
+  // 1.7.7.8: a carta vira com uma animação curta (só enfeite: a carta já está aberta e clicável)
+  try {
+    const a = document.getElementById("cardArea");
+    if (a) {
+      a.classList.remove("virando");
+      void a.offsetWidth;
+      a.classList.add("virando");
+      a.addEventListener("animationend", () => a.classList.remove("virando"), { once: true });
+    }
+  } catch (e) {}
   saveGameState();
 }
 function checkWinnerThenDraw() {

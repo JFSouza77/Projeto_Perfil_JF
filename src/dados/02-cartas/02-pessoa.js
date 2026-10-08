@@ -3182,7 +3182,7 @@
     a: "Super Choque",
     class: "livre",
     q: [
-      "Sou um super-herói adolescente",
+      "Sou um herói adolescente dos desenhos animados",
       "Nasci nos quadrinhos da Milestone, uma editora criada por artistas negros",
       "Meu desenho estreou em 2000",
       "*Volte 2 casas",
