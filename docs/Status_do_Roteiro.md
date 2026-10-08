@@ -1,5 +1,15 @@
 # Status do roteiro de organização e online
 
+> **Atualizado em 08/10/2026 (1.7.7.5): a 1.7.7 · Foundation Structure Update está completa.** Saiu em 6 partes:
+> - **1.7.7:** correções da revisão do GPT e do Google AI Studio.
+> - **1.7.7.1:** id dos jogadores.
+> - **1.7.7.2:** id das cartas e `matchId`.
+> - **1.7.7.3:** espinha completa.
+> - **1.7.7.4:** sorteio de regra e `docs/Estado_da_Partida.md`.
+> - **1.7.7.5:** simulador de partidas inteiras (`npm run simular`).
+>
+> A próxima é a 1.7.8 · Actions and Events. Antes dela vêm os retornos do JF sobre a 1.7.7.
+
 > **Atualizado em 04/10/2026 (1.7.6.7):** o planejamento até a 1.7.10 agora está em `docs/Roteiro_Multiplayer.md`. Ele junta a análise do GPT e a do Claude, confere tudo no código e traz os nomes das updates (1.7.7 Foundation Structure · 1.7.8 Actions and Events · 1.7.9 Rooms and Network · 1.7.10 Multiplayer) e o plano da 1.7.7. As decisões do JF abaixo continuam valendo.
 
 Lido em 03/10/2026, na 1.7.4.3. O roteiro original está em `Roteiro_Organizacao_e_Online.md`, sem alterações.

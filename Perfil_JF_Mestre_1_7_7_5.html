@@ -6,6 +6,16 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.7.5 · 08/10/2026 · "Foundation Structure Update · Parte 6" = SIMULADOR (FIM DA 1.7.7).
+          ferramentas/simular_partidas.js (npm run simular): 14 partidas inteiras automáticas tocando nos
+          botões da mesa (Versus 2/3/4/6 em Clássico, Hardcore, Júnior, Old School e Express; Tabuleiro,
+          Pontos, Joias e Moda da Casa; Equipe 2×2, 2×3, 3×2 Duelo e 3×2 Todos), com semente e limite de
+          passos. Confere a cada passo: placar e casa nunca negativos, joias ≤ 4, id dos jogadores igual,
+          Mestre e vez válidos, a partida termina, sem erro na página e espinha sem precisar desfazer nada.
+          Resultado: 14/14. A semente fixa os sorteios de regra; a ordem exata ainda varia com o tempo dos
+          balões (repetição exata vem com a fila de ações da 1.7.8). Status_do_Roteiro e Roteiro_Multiplayer
+          atualizados: a 1.7.7 terminou. Avisos do auditor de cartas e fala repetida ficam pro JF decidir.
+          Sem mudança no jogo nesta parte.
   1.7.7.4 · 08/10/2026 · "Foundation Structure Update · Parte 5" = SORTEIOS E INVENTÁRIO DO ESTADO.
           1) js/02c-sorteio.js: todo sorteio que decide o jogo passa por sorteioRegra() (embaralhar e devolver
           carta, especiais do Hardcore, modo da Moda da Casa, categorias e modo sorteados, alvo automático das
@@ -381,7 +391,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.7.4</title>
+<title>Perfil JF · Beta 1.7.7.5</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6762,7 +6772,7 @@ html.acess-letra-2 .clue-list li {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.7.4 · Foundation Structure Update · Parte 5<br>C.A.O.S. 4.0 · Atualizada em 05/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.7.5 · Foundation Structure Update · Parte 6<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -17653,7 +17663,7 @@ function caosInspectorEstado() {
       }</b></div>
       <div class="ci-kv"><span>🦴 Registro da espinha</span><b class="ci-mono">${caosEspinha.log.slice(-5).reverse().map(escapeHtml).join("<br>") || "—"}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.7.4 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.7.5 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -22720,7 +22730,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.7.4 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.7.5 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -25786,7 +25796,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.7.4 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.7.5 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -26309,7 +26319,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.7.4 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.7.5 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -61368,6 +61378,18 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.7.5",
+    data: "08/10/2026 · 15:52",
+    nome: "Foundation Structure Update · Parte 6",
+    t: "Última parte da Foundation Structure Update: a base do online está pronta. Agora o jogo testa partidas inteiras sozinho.",
+    itens: [
+      "🤖 Um simulador joga partidas inteiras sozinho, em todos os modos e formatos (Versus e Equipe 2×2, 2×3 e 3×2), e confere a cada jogada que nenhuma regra quebrou.",
+      "✅ Nas 14 partidas simuladas, ninguém ficou com ponto negativo nem com joia demais, toda partida terminou e o C.A.O.S. não encostou no jogo nenhuma vez.",
+      "🧱 Com isso, a 1.7.7 está completa: jogadores, cartas e partidas com identidade, espinha completa, sorteio único e o mapa do estado do jogo. A próxima é a 1.7.8 · Actions and Events.",
+    ],
+    qol: [],
+  },
   {
     v: "Beta 1.7.7.4",
     data: "08/10/2026 · 15:37",

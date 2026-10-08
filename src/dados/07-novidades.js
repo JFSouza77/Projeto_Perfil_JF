@@ -1,5 +1,17 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.7.5",
+    data: "08/10/2026 · 15:52",
+    nome: "Foundation Structure Update · Parte 6",
+    t: "Última parte da Foundation Structure Update: a base do online está pronta. Agora o jogo testa partidas inteiras sozinho.",
+    itens: [
+      "🤖 Um simulador joga partidas inteiras sozinho, em todos os modos e formatos (Versus e Equipe 2×2, 2×3 e 3×2), e confere a cada jogada que nenhuma regra quebrou.",
+      "✅ Nas 14 partidas simuladas, ninguém ficou com ponto negativo nem com joia demais, toda partida terminou e o C.A.O.S. não encostou no jogo nenhuma vez.",
+      "🧱 Com isso, a 1.7.7 está completa: jogadores, cartas e partidas com identidade, espinha completa, sorteio único e o mapa do estado do jogo. A próxima é a 1.7.8 · Actions and Events.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.7.4",
     data: "08/10/2026 · 15:37",
     nome: "Foundation Structure Update · Parte 5",
