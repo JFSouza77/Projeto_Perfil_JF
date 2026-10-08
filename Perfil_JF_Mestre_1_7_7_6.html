@@ -6,6 +6,15 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.7.6 · 08/10/2026 · "Foundation Structure Update · QoL da revisão" = DOCUMENTOS DO GPT (ROTEIRO, MESTRE E C.A.O.S.).
+          1) Fala do tempo extra do Mestre neutra (sem "já que você é mais novinho"). 2) Splash: "Preparando as
+          cartas…" no lugar do "575 cartas" fixo; recado do C.A.O.S. com Enter/Espaço; palavras flutuantes e dado
+          aria-hidden. 3) Importar save: limite de 2 milhões de caracteres e importSaveConferir (versão, jogadores,
+          tipos; versão futura recusada) antes de substituir. 4) JFStore.flushNow() devolve Promise que espera o
+          IndexedDB confirmar (teto 1,5 s); o import espera antes de recarregar. 5) Erros soltos (error e
+          unhandledrejection) registrados só no aparelho, com tipo e hora, mostrados no Cérebro. 6) Espinha: rotina
+          que devolver Promise é anotada e a rejeição contida. Medido: desktop 1280×720 a 1920×1080 sem rolagem
+          lateral nem botão cortado (zoom 1.2 fica até o JF mandar o caso do Opera GX). Roteiro_Multiplayer seção 7.
   1.7.7.5 · 08/10/2026 · "Foundation Structure Update · Parte 6" = SIMULADOR (FIM DA 1.7.7).
           ferramentas/simular_partidas.js (npm run simular): 14 partidas inteiras automáticas tocando nos
           botões da mesa (Versus 2/3/4/6 em Clássico, Hardcore, Júnior, Old School e Express; Tabuleiro,
@@ -391,7 +400,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.7.5</title>
+<title>Perfil JF · Beta 1.7.7.6</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6761,18 +6770,18 @@ html.acess-letra-2 .clue-list li {
         </div>
       </div>
     </div>
-    <div id="floatingWordsContainer"></div>
-    <div class="splash-dice">🎲</div>
+    <div id="floatingWordsContainer" aria-hidden="true"></div>
+    <div class="splash-dice" aria-hidden="true">🎲</div>
     <div class="splash-title splash-neon grad-anim">Perfil JF</div> 
     <div class="splash-tagline">Quantas dicas você vai precisar pra descobrir quem eu sou?</div>
-    <div class="splash-subtitle" id="splashSubtitle">575 cartas</div>
+    <div class="splash-subtitle" id="splashSubtitle">Preparando as cartas…</div>
     
     <div class="splash-go-flutua"><button class="btn-start btn-neo neo-solid neo-still splash-go" id="goToRulesBtn" style="--mc:#ff1f4b; --mc-glow:rgba(255,31,75,0.55);"><span class="sg-ic">🎮</span><span class="sg-tx">Jogar</span></button></div>
     <div class="splash-caos" id="splashCaos" role="button" tabindex="0" aria-label="Recado do C.A.O.S. (toque pra outra frase)"><span class="sc-face">(•‿•)</span><span class="sc-txt">Oi!</span></div>
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.7.5 · Foundation Structure Update · Parte 6<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.7.6 · Foundation Structure Update · QoL da revisão<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -15098,7 +15107,8 @@ function mestreDificuldade(p) {
   return porEstouro || porDemora;
 }
 const MESTRE_AJUDA_FALAS = {
-  idade: (n) => `[C.A.O.S.] ${n}, já que você é mais novinho, toma aí um tempinho extra pra ler a carta. Sem pressa.`,
+  // 1.7.7.6 (revisão GPT): sem dizer o motivo em voz alta. A idade é de quem marcou, não da mesa.
+  idade: (n) => `[C.A.O.S.] ${n}, você tem um tempinho extra pra ler a carta. Sem pressa.`,
   iniciante: (n) => `[C.A.O.S.] ${n}, primeira vez de Mestre? Ganhou um tempinho extra pra ler. Respira e vai.`,
   mesa: (n) => `[C.A.O.S.] Tempo extra ligado pra ${n}. Pode ler com calma, a mesa espera.`,
 };
@@ -17662,8 +17672,9 @@ function caosInspectorEstado() {
           .join("<br>") || "—"
       }</b></div>
       <div class="ci-kv"><span>🦴 Registro da espinha</span><b class="ci-mono">${caosEspinha.log.slice(-5).reverse().map(escapeHtml).join("<br>") || "—"}</b></div>
+      <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.7.5 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.7.6 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -22730,7 +22741,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.7.5 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.7.6 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -24112,6 +24123,15 @@ function caosBlindarUm(nome) {
       }
     }
     if (/^caos(Console|Emo)/.test(nome)) caosEspinhaSanear();
+    // 1.7.7.6: as rotinas protegidas são síncronas. Se uma passar a devolver Promise, a foto acima
+    // não cobre o que ela faz depois; fica anotado e a rejeição não vira erro solto.
+    if (r && typeof r.then === "function") {
+      caosEspinhaLog("aviso", nome + " devolveu Promise: a espinha só vigia a parte síncrona");
+      r.then(null, (e) => {
+        caosEspinha.falhas++;
+        caosEspinhaLog("erro contido", nome + " (assíncrono): " + String((e && e.name) || "erro").slice(0, 40));
+      });
+    }
     return r;
   };
   prot.__blindada = true;
@@ -24175,6 +24195,32 @@ function caosEspinhaInstalar() {
   }
   caosEspinha.instalada = true;
   caosEspinhaLog("instalada", n + " rotinas protegidas pelas 3 leis");
+}
+
+/* --- Erros fora das rotinas vigiadas (1.7.7.6, revisão GPT) ---
+ * Antes, um erro fora da espinha só aparecia no console (e o DEBUG fica desligado). Agora fica
+ * registrado aqui, só neste aparelho, pra área ADM (Cérebro) mostrar. Guarda apenas o tipo do erro
+ * e a hora: nada de nome de jogador, carta, resposta, texto do erro ou caminho de arquivo. Nunca é
+ * enviado pra lugar nenhum e não esconde o erro do console. */
+const caosErrosPagina = [];
+function caosErroPaginaRegistrar(tipo, erro) {
+  try {
+    const codigo = erro && typeof erro.name === "string" ? erro.name.slice(0, 40) : typeof erro === "string" ? "Erro" : "ErroDesconhecido";
+    caosErrosPagina.push({ tipo, codigo, quando: Date.now() });
+    if (caosErrosPagina.length > 20) caosErrosPagina.shift();
+  } catch (e) {}
+}
+try {
+  window.addEventListener("error", (e) => caosErroPaginaRegistrar("erro", e && e.error));
+  window.addEventListener("unhandledrejection", (e) => caosErroPaginaRegistrar("promessa", e && e.reason));
+} catch (e) {}
+function caosErrosPaginaResumo() {
+  if (!caosErrosPagina.length) return "nenhum";
+  return caosErrosPagina
+    .slice(-5)
+    .reverse()
+    .map((x) => escapeHtml(`${new Date(x.quando).toLocaleTimeString("pt-BR")} · ${x.tipo} · ${x.codigo}`))
+    .join("<br>");
 }
 /* ======================================================================
  * 8. SALVAMENTO E MEMÓRIA (ARMAZENAMENTO, SALVAR/CARREGAR, EXPORTAR/IMPORTAR, FICHAS)
@@ -24244,14 +24290,21 @@ const JFStore = (function () {
       }
     });
   }
+  // 1.7.7.6: devolve uma Promise que resolve quando a gravação foi confirmada (ou falhou).
   function idbPut(key, value) {
-    if (!idb) return;
-    try {
-      const tx = idb.transaction("kv", "readwrite");
-      const st = tx.objectStore("kv");
-      if (value === null) st.delete(key);
-      else st.put(value, key);
-    } catch (e) {}
+    if (!idb) return Promise.resolve(false);
+    return new Promise((ok) => {
+      try {
+        const tx = idb.transaction("kv", "readwrite");
+        const st = tx.objectStore("kv");
+        tx.oncomplete = () => ok(true);
+        tx.onerror = tx.onabort = () => ok(false);
+        if (value === null) st.delete(key);
+        else st.put(value, key);
+      } catch (e) {
+        ok(false);
+      }
+    });
   }
   async function claudeGet(key) {
     try {
@@ -24266,8 +24319,9 @@ const JFStore = (function () {
     flushTimer = null;
     const items = [...pending.entries()];
     pending.clear();
+    const gravacoes = [];
     items.forEach(([k, v]) => {
-      idbPut(k, v);
+      gravacoes.push(idbPut(k, v));
       if (hasClaudeStorage) {
         try {
           const p =
@@ -24286,6 +24340,7 @@ const JFStore = (function () {
         } catch (e) {}
       }
     });
+    return Promise.all(gravacoes);
   }
   function schedule(key, value) {
     pending.set(key, value);
@@ -24328,11 +24383,15 @@ const JFStore = (function () {
       }
       schedule(key, null);
     },
+    // Grava agora. Devolve uma Promise que espera o banco do navegador confirmar (no máximo 1,5 s);
+    // quem não precisa esperar pode ignorar o retorno, como antes.
     flushNow() {
+      let p = Promise.resolve();
       if (flushTimer) {
         clearTimeout(flushTimer);
-        flush();
+        p = flush();
       }
+      return Promise.race([p, new Promise((r) => setTimeout(r, 1500))]);
     },
     boot() {
       const work = (async () => {
@@ -25401,17 +25460,40 @@ function importSave() {
     importSaveAplicar(code);
   });
 }
+// 1.7.7.6 (revisão GPT): o código é conferido antes de substituir a partida deste aparelho:
+// tamanho máximo, versão, quantidade de jogadores e tipos. Depois ele ainda passa pelo
+// saneamento normal (sanitizeLoadedState) ao abrir.
+const IMPORT_SAVE_MAX = 2e6; // caracteres do código (um save real fica bem abaixo disso)
+function importSaveConferir(parsed) {
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return "Esse código não parece ser um save do Perfil JF.";
+  if (!Array.isArray(parsed.players) || parsed.players.length < 1 || parsed.players.length > MAX_PLAYERS)
+    return "Esse código não parece ser um save do Perfil JF.";
+  if (!parsed.players.every((p) => p && typeof p === "object" && typeof p.name === "string"))
+    return "Os jogadores desse código estão estragados.";
+  if (parsed.saveVersion !== undefined && !(Number.isInteger(parsed.saveVersion) && parsed.saveVersion >= 1))
+    return "A versão desse save não é válida.";
+  if (Number.isInteger(parsed.saveVersion) && parsed.saveVersion > SAVE_VERSION)
+    return "Esse save veio de uma versão mais nova do jogo. Atualize o jogo neste aparelho e tente de novo.";
+  if (parsed.deck !== undefined && !Array.isArray(parsed.deck)) return "O baralho desse código está estragado.";
+  return "";
+}
 function importSaveAplicar(code) {
   let decoded, parsed;
+  const txt = String(code || "").trim();
+  if (!txt || txt.length > IMPORT_SAVE_MAX) {
+    caosAvisoModal("❌ Código inválido: vazio ou grande demais. Confere se copiou o código certo.");
+    return;
+  }
   try {
-    decoded = decodeURIComponent(atob(code.trim()));
+    decoded = decodeURIComponent(atob(txt));
     parsed = JSON.parse(decoded);
   } catch (e) {
     caosAvisoModal("❌ Código inválido ou corrompido. Confere se copiou o código inteiro.");
     return;
   }
-  if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.players)) {
-    caosAvisoModal("❌ Esse código não parece ser um save do Perfil JF.");
+  const problema = importSaveConferir(parsed);
+  if (problema) {
+    caosAvisoModal("❌ " + problema + " Nada foi alterado neste aparelho.");
     return;
   }
   let existing = null;
@@ -25424,8 +25506,11 @@ function importSaveAplicar(code) {
     parsed.savedAt = Date.now();
     saveBloqueado = true;
     JFStore.setItem("perfil200_state", JSON.stringify(parsed));
-    JFStore.flushNow();
-    caosAvisoModal("✅ Jogo importado! A página vai recarregar pra continuar de onde parou.", () => location.reload());
+    // espera o banco do navegador confirmar antes de recarregar
+    const pronto = Promise.resolve(JFStore.flushNow()).catch(() => {});
+    caosAvisoModal("✅ Jogo importado! A página vai recarregar pra continuar de onde parou.", () =>
+      pronto.then(() => location.reload()),
+    );
   };
   if (existing && Array.isArray(existing.players) && existing.players.length > 0 && !existing.gameEnded) {
     caosConfirmarModal(
@@ -25796,7 +25881,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.7.5 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.7.6 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -26319,7 +26404,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.7.5 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.7.6 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -61379,6 +61464,21 @@ const PAUSE_TIPS = [
 ];
 const NOVIDADES = [
   {
+    v: "Beta 1.7.7.6",
+    data: "08/10/2026 · 16:04",
+    nome: "Foundation Structure Update · QoL da revisão",
+    t: "Ajustes pedidos nas revisões do JF com o GPT: mais cuidado com quem joga e com os dados da partida.",
+    itens: [
+      "⏳ Quando o Mestre ganha tempo extra, o C.A.O.S. avisa sem dizer o motivo pra mesa toda.",
+      "💾 Importar uma partida ficou mais seguro: um código estragado, gigante ou de uma versão mais nova do jogo é recusado sem apagar a partida deste aparelho.",
+    ],
+    qol: [
+      "🎲 A tela inicial mostra \"Preparando as cartas…\" até contar o baralho, em vez de um número antigo por um instante.",
+      "⌨️ O recado do C.A.O.S. na tela inicial responde ao teclado (Enter ou Espaço), e o leitor de tela pula as palavras decorativas.",
+      "🧯 Erros inesperados da página ficam anotados só neste aparelho (sem nomes nem cartas) pra ajudar a achar problemas.",
+    ],
+  },
+  {
     v: "Beta 1.7.7.5",
     data: "08/10/2026 · 15:52",
     nome: "Foundation Structure Update · Parte 6",
@@ -63092,6 +63192,12 @@ function iniciar() {
     el.addEventListener("click", () => {
       caosSplashAt = 0;
       caosSplashMostrar(el, ++caosSplashIdx);
+    });
+    // 1.7.7.6: é um botão pra teclado também (Enter ou Espaço)
+    el.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      e.preventDefault();
+      el.click();
     });
   })();
   (function caosPulinho() {

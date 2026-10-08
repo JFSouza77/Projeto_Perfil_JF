@@ -6,6 +6,15 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.7.6 · 08/10/2026 · "Foundation Structure Update · QoL da revisão" = DOCUMENTOS DO GPT (ROTEIRO, MESTRE E C.A.O.S.).
+          1) Fala do tempo extra do Mestre neutra (sem "já que você é mais novinho"). 2) Splash: "Preparando as
+          cartas…" no lugar do "575 cartas" fixo; recado do C.A.O.S. com Enter/Espaço; palavras flutuantes e dado
+          aria-hidden. 3) Importar save: limite de 2 milhões de caracteres e importSaveConferir (versão, jogadores,
+          tipos; versão futura recusada) antes de substituir. 4) JFStore.flushNow() devolve Promise que espera o
+          IndexedDB confirmar (teto 1,5 s); o import espera antes de recarregar. 5) Erros soltos (error e
+          unhandledrejection) registrados só no aparelho, com tipo e hora, mostrados no Cérebro. 6) Espinha: rotina
+          que devolver Promise é anotada e a rejeição contida. Medido: desktop 1280×720 a 1920×1080 sem rolagem
+          lateral nem botão cortado (zoom 1.2 fica até o JF mandar o caso do Opera GX). Roteiro_Multiplayer seção 7.
   1.7.7.5 · 08/10/2026 · "Foundation Structure Update · Parte 6" = SIMULADOR (FIM DA 1.7.7).
           ferramentas/simular_partidas.js (npm run simular): 14 partidas inteiras automáticas tocando nos
           botões da mesa (Versus 2/3/4/6 em Clássico, Hardcore, Júnior, Old School e Express; Tabuleiro,
@@ -391,7 +400,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.7.5</title>
+<title>Perfil JF · Beta 1.7.7.6</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

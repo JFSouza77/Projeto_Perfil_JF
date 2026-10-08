@@ -224,3 +224,77 @@ Conferida no código em 05/10/2026. Três destinos:
 10. Firebase / serviço do online (comparação na 1.7.8), árbitro de paz, resumo depois da pausa, troféus.
 
 **Nome da update:** o roteiro do GPT chama a 1.7.7 de "Extractor Upgrade". Mantido "Foundation Structure Update", o nome aprovado pelo JF.
+
+---
+
+## 7. Documentos do GPT recebidos depois da 1.7.7 (conferidos em 08/10/2026)
+
+Recebidos do JF:
+- `ROTEIRO_1.7.7_Extractor_Upgrade.md`;
+- `MESTRE_PAVIMENTACAO_MULTIPLAYER_1.7.0_a_1.7.10.md`, que junta os planos por versão e as revisões pt1 a pt7;
+- `ROTEIRO_MELHORIAS_CAOS_MULTIPLAYER.md`, o roteiro vivo do C.A.O.S.
+
+Os documentos ficam com o JF e não entram no repositório, porque citam pessoas da família. Aqui fica só o que foi feito com eles.
+
+### 7.1 Já feito na 1.7.7 (os documentos foram escritos olhando a 1.7.6.7 e a 1.7.7.3)
+
+| Pedido | Onde |
+|---|---|
+| `playerId`, migração do save v11 e remoção pelo ADM testada | 1.7.7.1 |
+| `matchId` e id imutável de carta com mapa de respostas antigas | 1.7.7.2 |
+| Auditor checando a unicidade dos ids | 1.7.7.2 |
+| Inventário do estado, com foto, save e retrato separados | 1.7.7.4 (`docs/Estado_da_Partida.md`) |
+| `sorteioRegra` com semente | 1.7.7.4 |
+| Simulador com semente e limite de passos; `npm run simular` | 1.7.7.5 |
+| Absurdo explicado ("o chute é que foi absurdo") e "atrocidade" fora do manual | 1.7.7 |
+| Toque duplo | 1.7.7 |
+| `aria-live` da vez | 1.7.7 |
+| Letra Enorme a 320 px | 1.7.7 |
+
+### 7.2 Feito na 1.7.7.6 (QoL da revisão)
+
+- **Tempo extra do Mestre:** a fala não diz mais "já que você é mais novinho". Agora é neutra: "você tem um tempinho extra pra ler a carta".
+- **Splash:**
+  - mostra "Preparando as cartas…" até o jogo contar as cartas (antes dizia "575 cartas" por um instante);
+  - o recado do C.A.O.S. responde a Enter e Espaço;
+  - as palavras flutuantes e o dado são decorativos para o leitor de tela.
+- **Importar save:**
+  - limite de tamanho;
+  - conferência de versão, jogadores e tipos antes de substituir a partida;
+  - save de versão mais nova do jogo é recusado sem mexer em nada.
+- **Gravação:** `JFStore.flushNow()` espera o banco do navegador confirmar a gravação (no máximo 1,5 s), e o import espera essa confirmação antes de recarregar.
+- **Erros soltos da página** (`error` e `unhandledrejection`):
+  - ficam registrados só neste aparelho, com o tipo e a hora (sem nome, carta, resposta ou texto);
+  - aparecem no Cérebro (ADM).
+- **Espinha:** se uma rotina protegida devolver Promise, isso fica anotado e a rejeição é contida.
+
+### 7.3 Para a 1.7.8 (Actions and Events), como os próprios documentos sugerem
+
+- `dispatchAction`, com `commandId`, `matchId`, `actorId` e `expectedRevision`.
+- `GameSnapshot` separado do save, e projeção pública sem resposta.
+- Ensaio em duas abas com `BroadcastChannel`.
+- **`clueId` estável por dica** (ideia do JF):
+  - id escrito na fonte (ex.: `ANO-0001-C07`), separado da ordem mostrada (`displayIndex`);
+  - migração do save que hoje guarda a posição da dica.
+- **Evento tipado do C.A.O.S.:** evento → fatos permitidos → seleção → fallback ou silêncio, com público explícito. O canal hoje acha o destinatário pelo nome dentro do texto; isso é só diagnóstico e não serve para a rede.
+- **Inventário editorial das falas:** composição segura, fala atômica, pública, privada ou que depende de fatos. Sem reescrever a personalidade.
+- **Regra para o online:** o C.A.O.S. não deduz leitura, idade, atenção ou intenção a partir de tempo, erro ou latência. A observação do Mestre (`mestreDificuldade`) continua só na mesa presencial; no online, o tempo extra é pedido pela pessoa ou é regra da sala.
+
+### 7.4 Precisa do JF (decisão ou teste no aparelho)
+
+1. **Layout no computador (Opera GX / Chrome):** existe `zoom: 1.2` no `body` a partir de 900 px de largura com mouse. Em 1280×720, 1366×768, 1280×800 e 1920×1080 não há rolagem lateral nem botão cortado; só o rodapé da splash fica abaixo da dobra. Para corrigir o que você viu, preciso de print, tamanho da janela, zoom do navegador e escala do Windows.
+2. **Idade:** a faixa "menos de 12" não muda baralho nem humor (confirmado). O GPT sugere a opção "Prefiro não informar". Hoje, não tocar em nada já significa isso.
+3. **Baralho por idade ou preset de sala:** é só hipótese. Precisa de classificação editorial das cartas (familiaridade separada de dificuldade) e da sua aprovação.
+4. **Provocação de cadastro para quem escolhe Suave:** o GPT recomenda só com opt-in e nunca em sala aberta.
+5. **Idiomas** (`pt-BR`, `pt-PT`, `en`, `es`): infraestrutura candidata para a 1.7.9, com uma amostra pequena e revisada. As cartas não são traduzidas automaticamente.
+6. **Ideias de produto:**
+   - tela de carregamento (ideia da sobrinha): a splash já cobre a inicialização; medir antes;
+   - "Continuar / Nova partida" na splash;
+   - tabuleiro virtual completo;
+   - narração do tutorial pelo C.A.O.S.;
+   - transição da carta virando.
+7. **Online:**
+   - salas privadas por código no lançamento, sem matchmaking público;
+   - serviço autoritativo ou host casual;
+   - teto de custo;
+   - migração para o domínio DICAOS (o navegador trata como outro endereço, então o save precisa de Exportar/Importar).

@@ -131,7 +131,8 @@ function mestreDificuldade(p) {
   return porEstouro || porDemora;
 }
 const MESTRE_AJUDA_FALAS = {
-  idade: (n) => `[C.A.O.S.] ${n}, já que você é mais novinho, toma aí um tempinho extra pra ler a carta. Sem pressa.`,
+  // 1.7.7.6 (revisão GPT): sem dizer o motivo em voz alta. A idade é de quem marcou, não da mesa.
+  idade: (n) => `[C.A.O.S.] ${n}, você tem um tempinho extra pra ler a carta. Sem pressa.`,
   iniciante: (n) => `[C.A.O.S.] ${n}, primeira vez de Mestre? Ganhou um tempinho extra pra ler. Respira e vai.`,
   mesa: (n) => `[C.A.O.S.] Tempo extra ligado pra ${n}. Pode ler com calma, a mesa espera.`,
 };

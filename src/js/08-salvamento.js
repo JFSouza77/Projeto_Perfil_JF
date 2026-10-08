@@ -66,14 +66,21 @@ const JFStore = (function () {
       }
     });
   }
+  // 1.7.7.6: devolve uma Promise que resolve quando a gravação foi confirmada (ou falhou).
   function idbPut(key, value) {
-    if (!idb) return;
-    try {
-      const tx = idb.transaction("kv", "readwrite");
-      const st = tx.objectStore("kv");
-      if (value === null) st.delete(key);
-      else st.put(value, key);
-    } catch (e) {}
+    if (!idb) return Promise.resolve(false);
+    return new Promise((ok) => {
+      try {
+        const tx = idb.transaction("kv", "readwrite");
+        const st = tx.objectStore("kv");
+        tx.oncomplete = () => ok(true);
+        tx.onerror = tx.onabort = () => ok(false);
+        if (value === null) st.delete(key);
+        else st.put(value, key);
+      } catch (e) {
+        ok(false);
+      }
+    });
   }
   async function claudeGet(key) {
     try {
@@ -88,8 +95,9 @@ const JFStore = (function () {
     flushTimer = null;
     const items = [...pending.entries()];
     pending.clear();
+    const gravacoes = [];
     items.forEach(([k, v]) => {
-      idbPut(k, v);
+      gravacoes.push(idbPut(k, v));
       if (hasClaudeStorage) {
         try {
           const p =
@@ -108,6 +116,7 @@ const JFStore = (function () {
         } catch (e) {}
       }
     });
+    return Promise.all(gravacoes);
   }
   function schedule(key, value) {
     pending.set(key, value);
@@ -150,11 +159,15 @@ const JFStore = (function () {
       }
       schedule(key, null);
     },
+    // Grava agora. Devolve uma Promise que espera o banco do navegador confirmar (no máximo 1,5 s);
+    // quem não precisa esperar pode ignorar o retorno, como antes.
     flushNow() {
+      let p = Promise.resolve();
       if (flushTimer) {
         clearTimeout(flushTimer);
-        flush();
+        p = flush();
       }
+      return Promise.race([p, new Promise((r) => setTimeout(r, 1500))]);
     },
     boot() {
       const work = (async () => {
@@ -1223,17 +1236,40 @@ function importSave() {
     importSaveAplicar(code);
   });
 }
+// 1.7.7.6 (revisão GPT): o código é conferido antes de substituir a partida deste aparelho:
+// tamanho máximo, versão, quantidade de jogadores e tipos. Depois ele ainda passa pelo
+// saneamento normal (sanitizeLoadedState) ao abrir.
+const IMPORT_SAVE_MAX = 2e6; // caracteres do código (um save real fica bem abaixo disso)
+function importSaveConferir(parsed) {
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return "Esse código não parece ser um save do Perfil JF.";
+  if (!Array.isArray(parsed.players) || parsed.players.length < 1 || parsed.players.length > MAX_PLAYERS)
+    return "Esse código não parece ser um save do Perfil JF.";
+  if (!parsed.players.every((p) => p && typeof p === "object" && typeof p.name === "string"))
+    return "Os jogadores desse código estão estragados.";
+  if (parsed.saveVersion !== undefined && !(Number.isInteger(parsed.saveVersion) && parsed.saveVersion >= 1))
+    return "A versão desse save não é válida.";
+  if (Number.isInteger(parsed.saveVersion) && parsed.saveVersion > SAVE_VERSION)
+    return "Esse save veio de uma versão mais nova do jogo. Atualize o jogo neste aparelho e tente de novo.";
+  if (parsed.deck !== undefined && !Array.isArray(parsed.deck)) return "O baralho desse código está estragado.";
+  return "";
+}
 function importSaveAplicar(code) {
   let decoded, parsed;
+  const txt = String(code || "").trim();
+  if (!txt || txt.length > IMPORT_SAVE_MAX) {
+    caosAvisoModal("❌ Código inválido: vazio ou grande demais. Confere se copiou o código certo.");
+    return;
+  }
   try {
-    decoded = decodeURIComponent(atob(code.trim()));
+    decoded = decodeURIComponent(atob(txt));
     parsed = JSON.parse(decoded);
   } catch (e) {
     caosAvisoModal("❌ Código inválido ou corrompido. Confere se copiou o código inteiro.");
     return;
   }
-  if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.players)) {
-    caosAvisoModal("❌ Esse código não parece ser um save do Perfil JF.");
+  const problema = importSaveConferir(parsed);
+  if (problema) {
+    caosAvisoModal("❌ " + problema + " Nada foi alterado neste aparelho.");
     return;
   }
   let existing = null;
@@ -1246,8 +1282,11 @@ function importSaveAplicar(code) {
     parsed.savedAt = Date.now();
     saveBloqueado = true;
     JFStore.setItem("perfil200_state", JSON.stringify(parsed));
-    JFStore.flushNow();
-    caosAvisoModal("✅ Jogo importado! A página vai recarregar pra continuar de onde parou.", () => location.reload());
+    // espera o banco do navegador confirmar antes de recarregar
+    const pronto = Promise.resolve(JFStore.flushNow()).catch(() => {});
+    caosAvisoModal("✅ Jogo importado! A página vai recarregar pra continuar de onde parou.", () =>
+      pronto.then(() => location.reload()),
+    );
   };
   if (existing && Array.isArray(existing.players) && existing.players.length > 0 && !existing.gameEnded) {
     caosConfirmarModal(
@@ -1618,7 +1657,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.7.5 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.7.6 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2141,7 +2180,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.7.5 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.7.6 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
