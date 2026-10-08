@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Teste das ações (1.7.8 · Actions and Events Update, Parte 1) e do retrato da partida (1.7.8.1).
+// Teste das ações (1.7.8 · Actions and Events Update, Parte 1) do retrato da partida (1.7.8.1) e do desfazer (1.7.8.2).
 // Confere a fronteira de ações: toque vira ação registrada (sem contar de novo o que o motor chama
 // por dentro), a revisão só sobe quando o estado muda, e dispatchAction recusa partida errada,
 // revisão obsoleta, comando repetido e ação fora de hora. Revisão e registro vão pro save.
@@ -13,7 +13,8 @@ const ARQ = acharMestre(process.argv[2]);
   page.on('pageerror', (e) => erros.push(e.message));
   await page.route(/fonts\./, (r) => r.abort());
   await page.addInitScript(() => {
-    window.setTimeout = ((st) => (fn, ms, ...a) => st(fn, Math.min(Number(ms) || 0, 5), ...a))(window.setTimeout.bind(window));
+    // esperas do jogo encurtadas (balões, animações); o prazo de 8 s do desfazer fica de verdade
+    window.setTimeout = ((st) => (fn, ms, ...a) => st(fn, Number(ms) >= 7000 ? ms : Math.min(Number(ms) || 0, 5), ...a))(window.setTimeout.bind(window));
     try {
       localStorage.setItem('perfil5_tutorial_visto', 'x');
       localStorage.setItem('perfil5_tut_vitoria_vistos', JSON.stringify(['casa', 'tabuleiro', 'pontos', 'joias']));
@@ -108,6 +109,34 @@ const ARQ = acharMestre(process.argv[2]);
     acoesAoMudar(() => avisos++);
     if (pendingIndex !== null) { toqueJogoUltimo = 0; markWrong(); fechar(); }
     out.avisou = avisos >= 1;
+    // 4c) desfazer o último veredito (1.7.8.2)
+    fechar();
+    if (cardState === 'revealed' && pendingIndex === null) {
+      const li = currentCard.clues.findIndex((c, i) => c.type === 'clue' && !revealedOrder.some((x) => x.index === i));
+      if (li >= 0) chooseClue(li);
+      fechar();
+    }
+    const semRelogio = (o) => { const c = JSON.parse(JSON.stringify(o)); delete c.revisao; delete c.relogio; return JSON.stringify(c); };
+    const antesAcerto = semRelogio(retratoPartida('mestre'));
+    const histAntes = history.length, deckAntes = deck.length, revAntesD = partidaRevisao;
+    toqueJogoUltimo = 0;
+    if (document.getElementById('correctBtn')) document.getElementById('correctBtn').click();
+    await espera(30); fechar();
+    out.ofereceuDesfazer = !!document.getElementById('desfazerBtn') && !!desfazerOferta && semRelogio(retratoPartida('mestre')) !== antesAcerto;
+    document.getElementById('desfazerBtn') && document.getElementById('desfazerBtn').click();
+    await espera(30); fechar();
+    out.desfezIgual = semRelogio(retratoPartida('mestre')) === antesAcerto && history.length === histAntes && deck.length === deckAntes;
+    out.desfazerNoRegistro = partidaRevisao === revAntesD + 2 && acoesLog[acoesLog.length - 1].a === 'desfazer' && !document.getElementById('desfazerBtn');
+    out.relogioVoltou = !!timerKind && !!timerEndAt;
+    // outra jogada fecha a janela do desfazer
+    toqueJogoUltimo = 0;
+    if (document.getElementById('wrongBtn')) document.getElementById('wrongBtn').click();
+    await espera(30); fechar();
+    const tinha = !!desfazerOferta;
+    const livre2 = currentCard.clues.findIndex((c, i) => !revealedOrder.some((x) => x.index === i));
+    if (pendingIndex === null && livre2 >= 0) chooseClue(livre2);
+    out.outraJogadaFecha = tinha && !desfazerOferta && !document.getElementById('desfazerBtn');
+    fechar();
     // 5) save e retomada guardam revisão e registro
     saveGameState();
     const revSalva = partidaRevisao, nSalvo = acoesLog.length;
@@ -139,6 +168,11 @@ const ARQ = acharMestre(process.argv[2]);
     ['Retrato com jogadores pelo id', r.retratoIds],
     ['Retrato sem dado de cadastro (idade, humor)', r.retratoSemCadastro],
     ['Aviso de mudança a cada ação', r.avisou],
+    ['Acertou oferece ↩️ Desfazer', r.ofereceuDesfazer],
+    ['Desfazer volta pontos, vez, carta, baralho e histórico ao de antes', r.desfezIgual],
+    ['Desfazer é uma ação registrada e o botão some', r.desfazerNoRegistro],
+    ['Desfazer devolve o relógio da dica', r.relogioVoltou],
+    ['Outra jogada fecha a janela do desfazer', r.outraJogadaFecha],
     ['Revisão e registro vão pro save', r.salvou],
     ['Partida nova zera revisão e registro', r.zerou],
   ];

@@ -346,7 +346,14 @@ Cada parte sai publicada sozinha. Em todas, o jogo local continua igual para que
 - O retrato é separado do save.
 - **Teste:** procurar a resposta da carta dentro do retrato público.
 
-### Parte 3 · 1.7.8.2 · Desfazer o último veredito
+### Parte 3 · 1.7.8.2 · Desfazer o último veredito (publicada)
+- **Feito:**
+  - vereditos que podem ser desfeitos: Acertou, Errou, Pulou, Absurdo e os palpites;
+  - o ↩️ fica 8 s no alto da tela (embaixo aparece a pergunta Perto/Longe), acima do balão e abaixo das janelas;
+  - volta pontos, joias, palpite, vez, Mestre, carta, dicas, baralho, histórico, estatísticas e o relógio com o tempo que faltava;
+  - não aparece se o veredito acabou a partida;
+  - o desfazer também é uma ação e sobe a revisão; as falas do C.A.O.S. não voltam.
+- **Teste:** o simulador usa o desfazer em 10% dos vereditos e as 14 partidas terminam sem quebrar regra.
 - ↩️ por alguns segundos depois de Acertou, Errou, Pulou ou Absurdo.
 - Volta o estado de regra para antes da ação (pontos, joias, vez, palpite) e a revisão anota o desfazer.
 - **Teste:** desfazer deixa tudo igual ao retrato anterior.

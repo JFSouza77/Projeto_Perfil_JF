@@ -40,6 +40,7 @@ const ACOES = {
   pausar: { fn: "pauseGame", pode: () => acoesEmJogo() },
   continuar: { fn: "resumeGame", pode: () => starterChosen && !gameEnded },
   encerrar: { fn: "endGame", pode: () => acoesEmJogo() },
+  desfazer: { fn: "desfazerUltimo", pode: () => acoesEmJogo() && !!desfazerOferta },
 };
 const ACOES_LOG_MAX = 300;
 const ACOES_COMANDOS_MAX = 200;
@@ -106,13 +107,18 @@ function acoesEnvolver(fnNome) {
     if (acoesProfundidade > 0) return orig.apply(this, arguments);
     const origem = acoesOrigem();
     const antes = caosEspinhaFoto();
+    const fotoDesfazer = DESFAZER_TIPOS.includes(tipo) ? desfazerFotografar() : null;
     acoesProfundidade++;
     try {
       return orig.apply(this, arguments);
     } finally {
       acoesProfundidade--;
       try {
-        if (antes !== caosEspinhaFoto()) acoesRegistrar(tipo, arguments, origem);
+        if (antes !== caosEspinhaFoto()) {
+          acoesRegistrar(tipo, arguments, origem);
+          if (fotoDesfazer && !gameEnded) desfazerOferecer(tipo, arguments, fotoDesfazer);
+          else if (tipo !== "desfazer") desfazerLimpar();
+        }
       } catch (e) {}
     }
   };
@@ -286,4 +292,167 @@ function acoesAvisar(entrada) {
       fn(entrada);
     } catch (e) {}
   });
+}
+
+/* --- Desfazer o último veredito (1.7.8.2 · Parte 3) ---
+ * Tocou Acertou em vez de Errou? Por 8 segundos aparece "↩️ Desfazer". Ele devolve o estado de regra
+ * de antes do veredito: pontos, casas, joias, palpites, vez, Mestre, carta, dicas, baralho, histórico,
+ * estatísticas e relógio (com o tempo que faltava). Só o último veredito; qualquer outra jogada fecha
+ * a janela. Não aparece se o veredito acabou a partida. O que o C.A.O.S. falou não volta (ele lembra).
+ * O desfazer é uma ação também: a revisão sobe e o registro mostra "desfazer". */
+const DESFAZER_TIPOS = ["acertou", "errou", "palpiteAcertou", "palpiteErrou"];
+const DESFAZER_MS = 8000;
+let desfazerOferta = null;
+let desfazerTimer = null;
+const desfazerCopia = (v) => (v === undefined || v === null ? v : JSON.parse(JSON.stringify(v)));
+function desfazerFotografar() {
+  const agora = Date.now();
+  return {
+    players: desfazerCopia(players),
+    teams: desfazerCopia(teams),
+    teamOrder: [...teamOrder],
+    teamRoundIndex,
+    ffaCandidateQueue: desfazerCopia(ffaCandidateQueue),
+    ffaWrongCount,
+    mestreIndex,
+    responderIndex,
+    playDirection,
+    currentCard: currentCard ? { ...currentCard, clues: [...currentCard.clues] } : null,
+    deck: [...deck],
+    revealedOrder: revealedOrder.map((r) => ({ ...r })),
+    pendingIndex,
+    cardState,
+    pendingBonusQueue: desfazerCopia(pendingBonusQueue),
+    palpiteHolders: desfazerCopia(palpiteHolders),
+    palpiteStock,
+    joiasRodada: desfazerCopia(joiasRodada),
+    gemWinner: desfazerCopia(gemWinner),
+    history: desfazerCopia(history),
+    stats: desfazerCopia(stats),
+    rodadaAtual,
+    primeiroMestreId,
+    ultimaRodada,
+    ultimaRodadaQuem,
+    mercyEventUsed,
+    consecutiveDiscards,
+    consecutiveExhausted,
+    streakScorerIdx,
+    streakCount,
+    cardWrongCount,
+    expressAskWho,
+    expressStealSavedResponder,
+    expressWhoFreeze: desfazerCopia(expressWhoFreeze),
+    expressTargetAction,
+    bonusOrigMestreIdx,
+    usedAtLeastOnce,
+    timerKind,
+    timerResta: timerEndAt ? Math.max(1000, timerEndAt - agora) : null,
+    cartaResta: cardEndAt ? Math.max(1000, cardEndAt - agora) : null,
+  };
+}
+function desfazerAplicar(f) {
+  players = f.players;
+  teams = f.teams;
+  teamOrder = f.teamOrder;
+  teamRoundIndex = f.teamRoundIndex;
+  ffaCandidateQueue = f.ffaCandidateQueue;
+  ffaWrongCount = f.ffaWrongCount;
+  mestreIndex = f.mestreIndex;
+  responderIndex = f.responderIndex;
+  playDirection = f.playDirection;
+  currentCard = f.currentCard;
+  deck = f.deck;
+  revealedOrder = f.revealedOrder;
+  pendingIndex = f.pendingIndex;
+  cardState = f.cardState;
+  pendingBonusQueue = f.pendingBonusQueue;
+  palpiteHolders = f.palpiteHolders;
+  palpiteStock = f.palpiteStock;
+  joiasRodada = f.joiasRodada;
+  gemWinner = f.gemWinner;
+  history = f.history;
+  stats = f.stats;
+  rodadaAtual = f.rodadaAtual;
+  primeiroMestreId = f.primeiroMestreId;
+  ultimaRodada = f.ultimaRodada;
+  ultimaRodadaQuem = f.ultimaRodadaQuem;
+  mercyEventUsed = f.mercyEventUsed;
+  consecutiveDiscards = f.consecutiveDiscards;
+  consecutiveExhausted = f.consecutiveExhausted;
+  streakScorerIdx = f.streakScorerIdx;
+  streakCount = f.streakCount;
+  cardWrongCount = f.cardWrongCount;
+  expressAskWho = f.expressAskWho;
+  expressStealSavedResponder = f.expressStealSavedResponder;
+  expressWhoFreeze = f.expressWhoFreeze;
+  expressTargetAction = f.expressTargetAction;
+  bonusOrigMestreIdx = f.bonusOrigMestreIdx;
+  usedAtLeastOnce = f.usedAtLeastOnce;
+  // relógio: volta com o tempo que faltava na hora do veredito
+  clearTimer();
+  if (f.timerKind && f.timerResta) {
+    timerKind = f.timerKind;
+    timerEndAt = Date.now() + f.timerResta;
+    resumeTimerInterval();
+  }
+  cardEndAt = f.cartaResta ? Date.now() + f.cartaResta : null;
+  pendingStartTime = Date.now();
+  // o que o veredito deixou agendado (ex.: seguir depois do balão) não vale mais
+  cartaSeq++;
+}
+function desfazerNome(tipo, args) {
+  if (tipo === "acertou") {
+    const p = players[args && args[0] !== undefined ? args[0] : responderIndex];
+    return "Acertou" + (p ? " (" + p.name + ")" : "");
+  }
+  if (tipo === "errou") return args && args[0] === "pular" ? "Pulou" : args && args[0] === "absurdo" ? "Absurdo" : "Errou";
+  if (tipo === "palpiteAcertou") return "Palpite certo";
+  return "Palpite errado";
+}
+function desfazerOferecer(tipo, args, foto) {
+  desfazerLimpar();
+  desfazerOferta = { tipo, foto, nome: desfazerNome(tipo, args), ate: Date.now() + DESFAZER_MS };
+  try {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.id = "desfazerBtn";
+    b.className = "desfazer-btn";
+    b.textContent = "↩️ Desfazer: " + desfazerOferta.nome;
+    b.setAttribute("aria-label", "Desfazer o último veredito: " + desfazerOferta.nome);
+    b.addEventListener("click", () => desfazerUltimo());
+    document.body.appendChild(b);
+  } catch (e) {}
+  desfazerTimer = setTimeout(desfazerLimpar, DESFAZER_MS);
+}
+function desfazerLimpar() {
+  desfazerOferta = null;
+  if (desfazerTimer) clearTimeout(desfazerTimer);
+  desfazerTimer = null;
+  try {
+    const b = document.getElementById("desfazerBtn");
+    if (b) b.remove();
+  } catch (e) {}
+}
+function desfazerUltimo() {
+  const o = desfazerOferta;
+  if (!o || gameEnded || Date.now() > o.ate) {
+    desfazerLimpar();
+    return false;
+  }
+  desfazerLimpar();
+  try {
+    if (typeof activeToastState !== "undefined" && activeToastState) closeActiveToast();
+  } catch (e) {}
+  desfazerAplicar(o.foto);
+  try {
+    caosLog("acoes", "desfeito: " + o.nome);
+  } catch (e) {}
+  render();
+  renderScoreboard();
+  renderMiniScoreboard();
+  updateDeckInfo();
+  updateDrawAvailability();
+  saveGameState();
+  showToastMessage("↩️ Desfeito: " + o.nome + ". Pode marcar de novo.", null, true, null, true);
+  return true;
 }
