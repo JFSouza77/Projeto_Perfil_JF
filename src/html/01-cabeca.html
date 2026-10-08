@@ -6,6 +6,16 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.7.5 · 08/10/2026 · "Foundation Structure Update · Parte 6" = SIMULADOR (FIM DA 1.7.7).
+          ferramentas/simular_partidas.js (npm run simular): 14 partidas inteiras automáticas tocando nos
+          botões da mesa (Versus 2/3/4/6 em Clássico, Hardcore, Júnior, Old School e Express; Tabuleiro,
+          Pontos, Joias e Moda da Casa; Equipe 2×2, 2×3, 3×2 Duelo e 3×2 Todos), com semente e limite de
+          passos. Confere a cada passo: placar e casa nunca negativos, joias ≤ 4, id dos jogadores igual,
+          Mestre e vez válidos, a partida termina, sem erro na página e espinha sem precisar desfazer nada.
+          Resultado: 14/14. A semente fixa os sorteios de regra; a ordem exata ainda varia com o tempo dos
+          balões (repetição exata vem com a fila de ações da 1.7.8). Status_do_Roteiro e Roteiro_Multiplayer
+          atualizados: a 1.7.7 terminou. Avisos do auditor de cartas e fala repetida ficam pro JF decidir.
+          Sem mudança no jogo nesta parte.
   1.7.7.4 · 08/10/2026 · "Foundation Structure Update · Parte 5" = SORTEIOS E INVENTÁRIO DO ESTADO.
           1) js/02c-sorteio.js: todo sorteio que decide o jogo passa por sorteioRegra() (embaralhar e devolver
           carta, especiais do Hardcore, modo da Moda da Casa, categorias e modo sorteados, alvo automático das
@@ -381,7 +391,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.7.4</title>
+<title>Perfil JF · Beta 1.7.7.5</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

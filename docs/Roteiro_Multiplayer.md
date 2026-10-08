@@ -167,7 +167,10 @@ Cada parte sai publicada sozinha, como nas updates anteriores. Em todas valem as
 - Novo `docs/Estado_da_Partida.md`: o que é estado de regra, o que é do C.A.O.S. e o que é só da tela.
 - As variáveis de regra que não vão pro save passam a ir: `consecutiveExhausted`, `streakCount`, `streakScorerIdx`, `starterDrawCount` e `cardWrongCount`.
 
-### Parte 6 · 1.7.7.5 · Simulador e QoL
+### Parte 6 · 1.7.7.5 · Simulador e QoL (publicada)
+- **Feito:** `ferramentas/simular_partidas.js` com 14 cenários (Versus 2, 3, 4 e 6; Clássico, Hardcore, Júnior, Old School e Express; Tabuleiro, Pontos, Joias e Moda da Casa; Equipe 2×2, 2×3, 3×2 Duelo e 3×2 Todos). Todas as partidas terminam sem quebrar nenhuma regra, e a espinha não precisou desfazer nada.
+- A semente fixa os sorteios de regra, mas não garante repetir exatamente a mesma partida: o tempo dos balões muda a ordem das ações do robô. Uma partida repetível de verdade vem com as ações da 1.7.8 (uma fila de comandos não depende do tempo da tela).
+- **Fica para o JF:** os 23 avisos do auditor de cartas e a fala repetida. Mexer em carta e em fala é conteúdo; os avisos são pistas e não erros. Vão para a próxima Cards and Rules Update ou para um QoL de falas, se o JF quiser.
 - Novo `ferramentas/simular_partidas.js` (vira o `npm run simular`), com semente e limite de passos (nunca roda pra sempre): partidas inteiras automáticas em todos os modos e formatos (Versus, Equipe 2×2, 2×3 e 3×2), conferindo regras que nunca podem quebrar:
   - placar nunca negativo;
   - joias sempre ≤ 4;
