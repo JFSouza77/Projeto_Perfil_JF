@@ -7,7 +7,8 @@
 //   placar e casa nunca negativos · joias de cada um ≤ 4 · todo jogador com o mesmo id ·
 //   Mestre e vez sempre num jogador que existe · a partida termina · nenhum erro na página ·
 //   a espinha do C.A.O.S. nunca precisou desfazer nada (ele não encostou no jogo).
-//   node ferramentas/simular_partidas.js [mestre.html] [--semente=N] [--so=nome] [--passos=N]
+//   node ferramentas/simular_partidas.js [mestre.html] [--semente=N] [--so=nome] [--passos=N] [--replay]
+// Com --replay, cada partida é repetida a partir das ações gravadas e tem que chegar ao mesmo estado.
 // As esperas do jogo (balões, animações) são encurtadas pra 5 ms só dentro do simulador.
 // A semente fixa os sorteios de regra e as escolhas do robô, mas a partida exata ainda pode variar
 // um pouco entre execuções: se um balão ainda está aberto ou não quando o robô age depende do tempo.
@@ -22,6 +23,7 @@ const ARQ = acharMestre(argv.find((x) => !x.startsWith("--")));
 const SEMENTE = parseInt(opt("semente", "2026"), 10);
 const SO = opt("so", "");
 const PASSOS = parseInt(opt("passos", "6000"), 10);
+const REPLAY = argv.includes("--replay");
 
 const N = (n) => ["Ana", "Beto", "Caio", "Duda", "Edu", "Fabi"].slice(0, n);
 const CENARIOS = [
@@ -41,42 +43,27 @@ const CENARIOS = [
   { nome: "equipe-3x2-todos-joias", formato: "equipe", modo: "classico", cond: "joias", jog: 6, equipes: 3, sub: "ffa" },
 ].filter((c) => !SO || c.nome.includes(SO));
 
-async function jogar(b, cen, semente) {
-  const page = await b.newPage({ viewport: { width: 390, height: 844 } });
-  const erros = [];
-  page.on("pageerror", (e) => erros.push(e.message));
-  await page.route(/fonts\./, (r) => r.abort());
-  await page.addInitScript(() => {
-    // esperas curtas: o jogo inteiro roda em segundos
-    const st = window.setTimeout.bind(window);
-    window.__esperaReal = st;
-    window.setTimeout = (fn, ms, ...a) => st(fn, Number(ms) >= 7000 ? ms : Math.min(Number(ms) || 0, 5), ...a);
-    try {
-      localStorage.setItem("perfil5_tutorial_visto", "x");
-      localStorage.setItem("perfil5_tut_vitoria_vistos", JSON.stringify(["casa", "tabuleiro", "pontos", "joias"]));
-    } catch (e) {}
-    if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
+// Monta a mesa na página (a mesma pro jogo e pro replay): semente, jogadores (com os ids dados no
+// replay), modo, condição, equipes e começo da partida. Grava cada ação em window.__grav.
+function montarMesa({ cen, semente, nomes, ids }) {
+  window.__grav = [];
+  // impressão digital do estado de regra depois de cada ação (pra achar a 1ª divergência no replay)
+  window.__hash = (t) => {
+    let h = 2166136261;
+    for (let i = 0; i < t.length; i++) h = Math.imul(h ^ t.charCodeAt(i), 16777619);
+    return (h >>> 0).toString(36);
+  };
+  window.__grav_h = {};
+  acoesAoMudar((e) => {
+    window.__grav.push({ r: e.r, a: e.a, d: e.d, h: window.__hash(caosEspinhaFoto() + "|" + sorteioContagem) });
+    window.__grav_h[e.r] = window.__hash(caosEspinhaFoto() + "|" + sorteioContagem);
   });
-  await page.goto("file://" + ARQ);
-  await page.waitForFunction(() => typeof sorteioSemear === "function" && !document.getElementById("goToRulesBtn").disabled);
-  const r = await page.evaluate(
-    async ({ cen, semente, nomes, PASSOS }) => {
-      const espera = () => new Promise((ok) => window.__esperaReal(ok, 0));
-      // robô com semente própria (as escolhas dele) e sorteio de regra do jogo com semente
-      let s = semente >>> 0;
-      const rnd = () => {
-        s = (s + 0x6d2b79f5) >>> 0;
-        let t = s;
-        t = Math.imul(t ^ (t >>> 15), t | 1);
-        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-      };
       sorteioSemear(semente * 7 + 1);
       document.querySelectorAll(".caos-modal-ov, #novidadesModal").forEach((o) => o.remove());
       // mesa montada como no cadastro
       CURRENT_FORMAT = cen.formato;
       players = nomes.map((n, i) => ({
-        id: jogadorIdNovo(),
+        id: ids ? ids[i] : jogadorIdNovo(),
         name: n,
         score: 0,
         position: 0,
@@ -108,6 +95,41 @@ async function jogar(b, cen, semente) {
       const pa = document.getElementById("playAreaSection");
       if (pa) pa.style.display = "block";
       beginGameplay();
+  return players.map((p) => p.id);
+}
+
+async function jogar(b, cen, semente) {
+  const page = await b.newPage({ viewport: { width: 390, height: 844 } });
+  const erros = [];
+  page.on("pageerror", (e) => erros.push(e.message));
+  await page.route(/fonts\./, (r) => r.abort());
+  await page.addInitScript(() => {
+    // esperas curtas: o jogo inteiro roda em segundos
+    const st = window.setTimeout.bind(window);
+    window.__esperaReal = st;
+    window.setTimeout = (fn, ms, ...a) => st(fn, Number(ms) >= 7000 ? ms : Math.min(Number(ms) || 0, 5), ...a);
+    try {
+      localStorage.setItem("perfil5_tutorial_visto", "x");
+      localStorage.setItem("perfil5_tut_vitoria_vistos", JSON.stringify(["casa", "tabuleiro", "pontos", "joias"]));
+    } catch (e) {}
+    if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
+  });
+  await page.goto("file://" + ARQ);
+  await page.waitForFunction(() => typeof sorteioSemear === "function" && !document.getElementById("goToRulesBtn").disabled);
+  await page.evaluate(montarMesa, { cen, semente, nomes: N(cen.jog), ids: null });
+  const r = await page.evaluate(
+    async ({ cen, semente, nomes, PASSOS }) => {
+      const espera = () => new Promise((ok) => window.__esperaReal(ok, 0));
+      // robô com semente própria (as escolhas dele) e sorteio de regra do jogo com semente
+      let s = semente >>> 0;
+      const rnd = () => {
+        s = (s + 0x6d2b79f5) >>> 0;
+        let t = s;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+      // a mesa já foi montada por montarMesa (mesma função usada no replay)
       const ids = players.map((p) => p.id).join();
       const quebras = [];
       const quebra = (m) => quebras.length < 10 && quebras.push(`passo ${passo}: ${m}`);
@@ -216,11 +238,97 @@ async function jogar(b, cen, semente) {
           }
         })(),
         cond: winCond(),
+        // pro replay: as ações gravadas, os ids e o retrato final (sem relógio)
+        gravacao: window.__grav,
+        ids: players.map((p) => p.id),
+        final: (() => {
+          const f = retratoPartida("mestre");
+          delete f.relogio;
+          delete f.matchId; // o replay é outra partida: o matchId é novo
+          return JSON.stringify(f);
+        })(),
       };
     },
     { cen, semente, nomes: N(cen.jog), PASSOS },
   );
   await page.close();
+  r.erros = erros;
+  return r;
+}
+
+// Replay (1.7.8.5): partida nova com a mesma semente e os mesmos ids; repete as ações gravadas, na
+// ordem. Ação que o próprio jogo dispara sozinho (ex.: sacar a carta depois do balão) já chega pela
+// revisão: se a revisão já alcançou a da ação gravada, ela não é repetida. No fim, o retrato tem que
+// ser idêntico ao da partida original.
+async function replay(b, cen, semente, original) {
+  const page = await b.newPage({ viewport: { width: 390, height: 844 } });
+  const erros = [];
+  page.on("pageerror", (e) => erros.push(e.message));
+  await page.route(/fonts\./, (r) => r.abort());
+  await page.addInitScript(() => {
+    const st = window.setTimeout.bind(window);
+    window.__esperaReal = st;
+    window.setTimeout = (fn, ms, ...a) => st(fn, Number(ms) >= 7000 ? ms : Math.min(Number(ms) || 0, 5), ...a);
+    try {
+      localStorage.setItem("perfil5_tutorial_visto", "x");
+      localStorage.setItem("perfil5_tut_vitoria_vistos", JSON.stringify(["casa", "tabuleiro", "pontos", "joias"]));
+    } catch (e) {}
+    if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
+  });
+  await page.goto("file://" + ARQ);
+  await page.waitForFunction(() => typeof sorteioSemear === "function" && !document.getElementById("goToRulesBtn").disabled);
+  await page.evaluate(montarMesa, { cen, semente, nomes: N(cen.jog), ids: original.ids });
+  if (process.env.DBG) await page.evaluate(() => (window.__DBG = 1));
+  const r = await page.evaluate(async (grav) => {
+    const espera = () => new Promise((ok) => window.__esperaReal(ok, 0));
+    // deixa o jogo assentar: balões fecham, janelas somem, o que estava agendado roda
+    const assentar = async () => {
+      for (let i = 0; i < 12; i++) {
+        await espera();
+        if (activeToastState) closeActiveToast();
+        document.querySelectorAll(".caos-modal-ov, .casa-sorteio-ov, #tutorialOverlay").forEach((o) => o.remove());
+      }
+    };
+    let divergiu = null;
+    let avisoMeio = null;
+    let repetidas = 0;
+    let consumidas = 0; // ações do próprio replay já casadas com a gravação
+    const AUTOMATICAS = ["sacarCarta", "tempoAcabou", "encerrar"]; // o jogo também faz sozinho
+    for (const e of grav) {
+      await assentar();
+      // o replay já fez sozinho uma ação deste tipo? (ex.: sacar a carta depois do balão)
+      const proprias = window.__grav;
+      let casou = false;
+      while (consumidas < proprias.length) {
+        const x = proprias[consumidas++];
+        if (x.a === e.a) {
+          casou = true;
+          break;
+        }
+      }
+      if (casou) continue;
+      const res = dispatchAction({ type: e.a, data: e.d.map((x) => (x === null ? undefined : x)) });
+      consumidas = window.__grav.length;
+      if (res.ok) {
+        repetidas++;
+        continue;
+      }
+      if (AUTOMATICAS.includes(e.a) && (res.motivo === "fora_de_hora" || res.motivo === "sem_efeito")) continue; // já tinha acontecido dentro de outra ação
+      divergiu = `ação ${e.r} (${e.a} ${JSON.stringify(e.d)}): ${res.motivo}` + (window.__DBG ? " · " + JSON.stringify({ cs: cardState, pi: pendingIndex, antes: grav.filter((x) => x.r > e.r - 6 && x.r <= e.r).map((x) => x.r + x.a + JSON.stringify(x.d)) }) : "");
+      break;
+    }
+    await assentar();
+    const f = retratoPartida("mestre");
+    delete f.relogio;
+          delete f.matchId; // o replay é outra partida: o matchId é novo
+    return { divergiu, avisoMeio, repetidas, final: JSON.stringify(f) };
+  }, original.gravacao);
+  await page.close();
+  r.igual = !r.divergiu && r.final === original.final;
+  if (!r.igual && !r.divergiu) {
+    const A = JSON.parse(original.final), B = JSON.parse(r.final);
+    r.divergiu = "estado final diferente em: " + Object.keys(A).filter((k) => JSON.stringify(A[k]) !== JSON.stringify(B[k])).map((k) => k + (process.env.DBG ? "=" + JSON.stringify(A[k]).slice(0, 160) + " ≠ " + JSON.stringify(B[k]).slice(0, 160) : "")).join(", ");
+  }
   r.erros = erros;
   return r;
 }
@@ -242,6 +350,12 @@ async function jogar(b, cen, semente) {
     r.erros.slice(0, 3).forEach((e) => console.log("        erro na página: " + e));
     if (r.leis) console.log(`        espinha desfez ${r.leis} vez(es): ${r.espinhaLog.join(" | ")}`);
     if (r.falhasCaos) console.log(`        (C.A.O.S. teve ${r.falhasCaos} erro(s) contido(s) pela 3ª lei)`);
+    if (REPLAY && r.terminou) {
+      const rp = await replay(b, cen, SEMENTE + i, r);
+      const okR = rp.igual && !rp.erros.length;
+      tudoOk = tudoOk && okR;
+      console.log(`        replay: ${okR ? "ok, mesmo estado final" : "DIVERGIU"} (${rp.repetidas} ações repetidas de ${r.gravacao.length})${rp.divergiu ? " · " + rp.divergiu : ""}${rp.avisoMeio && !rp.igual ? " · 1º estado diferente: " + rp.avisoMeio : ""}${rp.erros.length ? " · erro: " + rp.erros[0] : ""}`);
+    }
   }
   console.log(tudoOk ? "\nSIMULAÇÃO OK" : "\nSIMULAÇÃO COM PROBLEMA");
   await b.close();

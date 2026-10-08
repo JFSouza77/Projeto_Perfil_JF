@@ -78,7 +78,7 @@ function caosEspinhaFoto() {
       tri: teamRoundIndex,
       pd: playDirection,
       // só vigiados (não dá pra desfazer com segurança): mudou, fica anotado
-      vg: [starterChosen, gameEnded, cardState, stats ? stats.totalDrawn : 0, currentCard ? currentCard.id || currentCard.answer : null, Array.isArray(deck) ? deck.length : 0],
+      vg: [starterChosen, gameEnded, cardState, stats ? stats.totalDrawn : 0, currentCard ? currentCard.id || currentCard.answer : null, Array.isArray(deck) ? deck.length : 0, typeof expressTargetAction !== "undefined" ? expressTargetAction : null],
     });
   } catch (e) {
     return null;
