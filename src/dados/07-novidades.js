@@ -1,5 +1,18 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.8.2",
+    data: "08/10/2026 · 18:29",
+    nome: "Actions and Events Update · Parte 3",
+    t: "Tocou no botão errado? Agora dá pra desfazer.",
+    itens: [
+      "↩️ Depois de Acertou, Errou, Pulou, Absurdo ou palpite, aparece \"Desfazer\" no alto da tela por 8 segundos. Ele volta tudo como estava: pontos, joias, vez, carta e relógio.",
+      "🎯 Só o último veredito pode ser desfeito, e o botão some assim que alguém faz outra jogada. Se o veredito acabou a partida, não tem volta.",
+    ],
+    qol: [
+      "🤖 O que o C.A.O.S. falou não volta: ele lembra de tudo.",
+    ],
+  },
+  {
     v: "Beta 1.7.8.1",
     data: "08/10/2026 · 18:05",
     nome: "Actions and Events Update · Parte 2",

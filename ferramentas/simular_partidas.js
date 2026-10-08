@@ -50,7 +50,7 @@ async function jogar(b, cen, semente) {
     // esperas curtas: o jogo inteiro roda em segundos
     const st = window.setTimeout.bind(window);
     window.__esperaReal = st;
-    window.setTimeout = (fn, ms, ...a) => st(fn, Math.min(Number(ms) || 0, 5), ...a);
+    window.setTimeout = (fn, ms, ...a) => st(fn, Number(ms) >= 7000 ? ms : Math.min(Number(ms) || 0, 5), ...a);
     try {
       localStorage.setItem("perfil5_tutorial_visto", "x");
       localStorage.setItem("perfil5_tut_vitoria_vistos", JSON.stringify(["casa", "tabuleiro", "pontos", "joias"]));
@@ -125,6 +125,10 @@ async function jogar(b, cen, semente) {
         if (activeToastState) {
           closeActiveToast();
           feito = "balao";
+        } else if (document.getElementById("desfazerBtn") && desfazerOferta && window.__ofertaVista !== desfazerOferta && ((window.__ofertaVista = desfazerOferta), rnd() < 0.1)) {
+          // 1.7.8.2: o robô às vezes se arrepende do veredito (botão fixo: offsetParent é null)
+          tocar(document.getElementById("desfazerBtn"));
+          feito = "desfazer";
         } else if (vis("#tutClose").length) {
           tocar(vis("#tutClose")[0]);
           feito = "tutorial";
@@ -231,7 +235,7 @@ async function jogar(b, cen, semente) {
     const ok = r.terminou && !r.quebras.length && !r.erros.length && r.leis === 0;
     tudoOk = tudoOk && ok;
     console.log(
-      `${ok ? "ok    " : "FALHOU"}  ${cen.nome.padEnd(30)} ${String(r.cartas).padStart(3)} cartas · ${String(r.passos).padStart(4)} passos · ${r.sorteios} sorteios · rev ${r.revisao} · vence: ${r.vencedor} (${r.cond})`,
+      `${ok ? "ok    " : "FALHOU"}  ${cen.nome.padEnd(30)} ${String(r.cartas).padStart(3)} cartas · ${String(r.passos).padStart(4)} passos · ${r.sorteios} sorteios · rev ${r.revisao} · ${r.acoes.desfazer || 0} desfazer · vence: ${r.vencedor} (${r.cond})`,
     );
     if (!r.terminou) console.log(`        não terminou em ${PASSOS} passos · ações: ${JSON.stringify(r.acoes)}`);
     r.quebras.forEach((q) => console.log("        regra quebrada: " + q));

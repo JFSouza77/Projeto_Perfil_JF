@@ -6,6 +6,14 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.8.2 · 08/10/2026 · "Actions and Events Update · Parte 3" = DESFAZER O ÚLTIMO VEREDITO.
+          js/05g-acoes.js: antes de Acertou, Errou/Pulou/Absurdo e palpite, a fronteira tira uma cópia em memória
+          do estado de regra (jogadores, equipes, vez, Mestre, carta, dicas, baralho, histórico, estatísticas,
+          palpite, joias, rodada, sequência, relógio com o tempo que faltava). Depois do veredito aparece
+          "↩️ Desfazer: <veredito>" por 8 s, no alto (embaixo fica a pergunta Perto/Longe), acima do balão e
+          abaixo das janelas. Qualquer outra jogada fecha; não aparece se o veredito acabou a partida. Desfazer é
+          ação ("desfazer", sobe a revisão) e cartaSeq++ cancela o que o veredito tinha agendado. Falas do C.A.O.S.
+          não voltam. Manual (passo dos vereditos) cita o Desfazer. teste_acoes +5 itens; simulador desfaz 10%.
   1.7.8.1 · 08/10/2026 · "Actions and Events Update · Parte 2" = RETRATO DA PARTIDA (GAMESNAPSHOT).
           retratoPartida("mesa" | "mestre") em js/05g-acoes.js: protocolo, matchId, revisão, modo, vitória, rodada,
           jogadores por id (pontos, casa, joias, equipe), equipes, Mestre e vez por id, carta (categoria, dicas
@@ -429,7 +437,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.8.1</title>
+<title>Perfil JF · Beta 1.7.8.2</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

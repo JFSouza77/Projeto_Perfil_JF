@@ -6,6 +6,14 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.8.2 · 08/10/2026 · "Actions and Events Update · Parte 3" = DESFAZER O ÚLTIMO VEREDITO.
+          js/05g-acoes.js: antes de Acertou, Errou/Pulou/Absurdo e palpite, a fronteira tira uma cópia em memória
+          do estado de regra (jogadores, equipes, vez, Mestre, carta, dicas, baralho, histórico, estatísticas,
+          palpite, joias, rodada, sequência, relógio com o tempo que faltava). Depois do veredito aparece
+          "↩️ Desfazer: <veredito>" por 8 s, no alto (embaixo fica a pergunta Perto/Longe), acima do balão e
+          abaixo das janelas. Qualquer outra jogada fecha; não aparece se o veredito acabou a partida. Desfazer é
+          ação ("desfazer", sobe a revisão) e cartaSeq++ cancela o que o veredito tinha agendado. Falas do C.A.O.S.
+          não voltam. Manual (passo dos vereditos) cita o Desfazer. teste_acoes +5 itens; simulador desfaz 10%.
   1.7.8.1 · 08/10/2026 · "Actions and Events Update · Parte 2" = RETRATO DA PARTIDA (GAMESNAPSHOT).
           retratoPartida("mesa" | "mestre") em js/05g-acoes.js: protocolo, matchId, revisão, modo, vitória, rodada,
           jogadores por id (pontos, casa, joias, equipe), equipes, Mestre e vez por id, carta (categoria, dicas
@@ -429,7 +437,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.8.1</title>
+<title>Perfil JF · Beta 1.7.8.2</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6800,6 +6808,29 @@ body.batata-mode .card.virando {
     animation: none;
   }
 }
+/* 1.7.8.2: botão Desfazer o último veredito (8 s). Fica no alto: embaixo aparece a pergunta Perto/Longe. */
+.desfazer-btn {
+  position: fixed;
+  left: 50%;
+  top: calc(12px + env(safe-area-inset-top, 0px));
+  transform: translateX(-50%);
+  z-index: 10001; /* acima do balão do C.A.O.S. (10000), abaixo das janelas (10002) */
+  min-height: 48px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 2px solid #fbbf24;
+  background: #1f1b2e;
+  color: #fde68a;
+  font-weight: 800;
+  font-size: 1rem;
+  box-shadow: 0 6px 22px #0009;
+  max-width: calc(100vw - 32px);
+}
+body.claro .desfazer-btn {
+  background: #fffbeb;
+  color: #7a5a00;
+  border-color: #d4a017;
+}
 /* 1.7.7.7 · Computador (Opera GX / Chrome). Sugestão do GPT a partir de um print do JF.
  * Antes, no computador o jogo inteiro era ampliado com zoom 1.2 (regra em 01-base.css): a coluna
  * de celular só ficava maior. Agora o zoom sai e a tela usa a largura do monitor de verdade, com
@@ -6971,7 +7002,7 @@ body.batata-mode .card.virando {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.8.1 · Actions and Events Update · Parte 2<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.8.2 · Actions and Events Update · Parte 3<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -15737,6 +15768,7 @@ const ACOES = {
   pausar: { fn: "pauseGame", pode: () => acoesEmJogo() },
   continuar: { fn: "resumeGame", pode: () => starterChosen && !gameEnded },
   encerrar: { fn: "endGame", pode: () => acoesEmJogo() },
+  desfazer: { fn: "desfazerUltimo", pode: () => acoesEmJogo() && !!desfazerOferta },
 };
 const ACOES_LOG_MAX = 300;
 const ACOES_COMANDOS_MAX = 200;
@@ -15803,13 +15835,18 @@ function acoesEnvolver(fnNome) {
     if (acoesProfundidade > 0) return orig.apply(this, arguments);
     const origem = acoesOrigem();
     const antes = caosEspinhaFoto();
+    const fotoDesfazer = DESFAZER_TIPOS.includes(tipo) ? desfazerFotografar() : null;
     acoesProfundidade++;
     try {
       return orig.apply(this, arguments);
     } finally {
       acoesProfundidade--;
       try {
-        if (antes !== caosEspinhaFoto()) acoesRegistrar(tipo, arguments, origem);
+        if (antes !== caosEspinhaFoto()) {
+          acoesRegistrar(tipo, arguments, origem);
+          if (fotoDesfazer && !gameEnded) desfazerOferecer(tipo, arguments, fotoDesfazer);
+          else if (tipo !== "desfazer") desfazerLimpar();
+        }
       } catch (e) {}
     }
   };
@@ -15983,6 +16020,169 @@ function acoesAvisar(entrada) {
       fn(entrada);
     } catch (e) {}
   });
+}
+
+/* --- Desfazer o último veredito (1.7.8.2 · Parte 3) ---
+ * Tocou Acertou em vez de Errou? Por 8 segundos aparece "↩️ Desfazer". Ele devolve o estado de regra
+ * de antes do veredito: pontos, casas, joias, palpites, vez, Mestre, carta, dicas, baralho, histórico,
+ * estatísticas e relógio (com o tempo que faltava). Só o último veredito; qualquer outra jogada fecha
+ * a janela. Não aparece se o veredito acabou a partida. O que o C.A.O.S. falou não volta (ele lembra).
+ * O desfazer é uma ação também: a revisão sobe e o registro mostra "desfazer". */
+const DESFAZER_TIPOS = ["acertou", "errou", "palpiteAcertou", "palpiteErrou"];
+const DESFAZER_MS = 8000;
+let desfazerOferta = null;
+let desfazerTimer = null;
+const desfazerCopia = (v) => (v === undefined || v === null ? v : JSON.parse(JSON.stringify(v)));
+function desfazerFotografar() {
+  const agora = Date.now();
+  return {
+    players: desfazerCopia(players),
+    teams: desfazerCopia(teams),
+    teamOrder: [...teamOrder],
+    teamRoundIndex,
+    ffaCandidateQueue: desfazerCopia(ffaCandidateQueue),
+    ffaWrongCount,
+    mestreIndex,
+    responderIndex,
+    playDirection,
+    currentCard: currentCard ? { ...currentCard, clues: [...currentCard.clues] } : null,
+    deck: [...deck],
+    revealedOrder: revealedOrder.map((r) => ({ ...r })),
+    pendingIndex,
+    cardState,
+    pendingBonusQueue: desfazerCopia(pendingBonusQueue),
+    palpiteHolders: desfazerCopia(palpiteHolders),
+    palpiteStock,
+    joiasRodada: desfazerCopia(joiasRodada),
+    gemWinner: desfazerCopia(gemWinner),
+    history: desfazerCopia(history),
+    stats: desfazerCopia(stats),
+    rodadaAtual,
+    primeiroMestreId,
+    ultimaRodada,
+    ultimaRodadaQuem,
+    mercyEventUsed,
+    consecutiveDiscards,
+    consecutiveExhausted,
+    streakScorerIdx,
+    streakCount,
+    cardWrongCount,
+    expressAskWho,
+    expressStealSavedResponder,
+    expressWhoFreeze: desfazerCopia(expressWhoFreeze),
+    expressTargetAction,
+    bonusOrigMestreIdx,
+    usedAtLeastOnce,
+    timerKind,
+    timerResta: timerEndAt ? Math.max(1000, timerEndAt - agora) : null,
+    cartaResta: cardEndAt ? Math.max(1000, cardEndAt - agora) : null,
+  };
+}
+function desfazerAplicar(f) {
+  players = f.players;
+  teams = f.teams;
+  teamOrder = f.teamOrder;
+  teamRoundIndex = f.teamRoundIndex;
+  ffaCandidateQueue = f.ffaCandidateQueue;
+  ffaWrongCount = f.ffaWrongCount;
+  mestreIndex = f.mestreIndex;
+  responderIndex = f.responderIndex;
+  playDirection = f.playDirection;
+  currentCard = f.currentCard;
+  deck = f.deck;
+  revealedOrder = f.revealedOrder;
+  pendingIndex = f.pendingIndex;
+  cardState = f.cardState;
+  pendingBonusQueue = f.pendingBonusQueue;
+  palpiteHolders = f.palpiteHolders;
+  palpiteStock = f.palpiteStock;
+  joiasRodada = f.joiasRodada;
+  gemWinner = f.gemWinner;
+  history = f.history;
+  stats = f.stats;
+  rodadaAtual = f.rodadaAtual;
+  primeiroMestreId = f.primeiroMestreId;
+  ultimaRodada = f.ultimaRodada;
+  ultimaRodadaQuem = f.ultimaRodadaQuem;
+  mercyEventUsed = f.mercyEventUsed;
+  consecutiveDiscards = f.consecutiveDiscards;
+  consecutiveExhausted = f.consecutiveExhausted;
+  streakScorerIdx = f.streakScorerIdx;
+  streakCount = f.streakCount;
+  cardWrongCount = f.cardWrongCount;
+  expressAskWho = f.expressAskWho;
+  expressStealSavedResponder = f.expressStealSavedResponder;
+  expressWhoFreeze = f.expressWhoFreeze;
+  expressTargetAction = f.expressTargetAction;
+  bonusOrigMestreIdx = f.bonusOrigMestreIdx;
+  usedAtLeastOnce = f.usedAtLeastOnce;
+  // relógio: volta com o tempo que faltava na hora do veredito
+  clearTimer();
+  if (f.timerKind && f.timerResta) {
+    timerKind = f.timerKind;
+    timerEndAt = Date.now() + f.timerResta;
+    resumeTimerInterval();
+  }
+  cardEndAt = f.cartaResta ? Date.now() + f.cartaResta : null;
+  pendingStartTime = Date.now();
+  // o que o veredito deixou agendado (ex.: seguir depois do balão) não vale mais
+  cartaSeq++;
+}
+function desfazerNome(tipo, args) {
+  if (tipo === "acertou") {
+    const p = players[args && args[0] !== undefined ? args[0] : responderIndex];
+    return "Acertou" + (p ? " (" + p.name + ")" : "");
+  }
+  if (tipo === "errou") return args && args[0] === "pular" ? "Pulou" : args && args[0] === "absurdo" ? "Absurdo" : "Errou";
+  if (tipo === "palpiteAcertou") return "Palpite certo";
+  return "Palpite errado";
+}
+function desfazerOferecer(tipo, args, foto) {
+  desfazerLimpar();
+  desfazerOferta = { tipo, foto, nome: desfazerNome(tipo, args), ate: Date.now() + DESFAZER_MS };
+  try {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.id = "desfazerBtn";
+    b.className = "desfazer-btn";
+    b.textContent = "↩️ Desfazer: " + desfazerOferta.nome;
+    b.setAttribute("aria-label", "Desfazer o último veredito: " + desfazerOferta.nome);
+    b.addEventListener("click", () => desfazerUltimo());
+    document.body.appendChild(b);
+  } catch (e) {}
+  desfazerTimer = setTimeout(desfazerLimpar, DESFAZER_MS);
+}
+function desfazerLimpar() {
+  desfazerOferta = null;
+  if (desfazerTimer) clearTimeout(desfazerTimer);
+  desfazerTimer = null;
+  try {
+    const b = document.getElementById("desfazerBtn");
+    if (b) b.remove();
+  } catch (e) {}
+}
+function desfazerUltimo() {
+  const o = desfazerOferta;
+  if (!o || gameEnded || Date.now() > o.ate) {
+    desfazerLimpar();
+    return false;
+  }
+  desfazerLimpar();
+  try {
+    if (typeof activeToastState !== "undefined" && activeToastState) closeActiveToast();
+  } catch (e) {}
+  desfazerAplicar(o.foto);
+  try {
+    caosLog("acoes", "desfeito: " + o.nome);
+  } catch (e) {}
+  render();
+  renderScoreboard();
+  renderMiniScoreboard();
+  updateDeckInfo();
+  updateDrawAvailability();
+  saveGameState();
+  showToastMessage("↩️ Desfeito: " + o.nome + ". Pode marcar de novo.", null, true, null, true);
+  return true;
 }
 /* ======================================================================
  * 6. VOZ, SOM E VIBRAÇÃO
@@ -18209,7 +18409,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.8.1 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.8.2 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -23276,7 +23476,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.8.1 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.8.2 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -26419,7 +26619,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.8.1 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.8.2 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -26942,7 +27142,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.8.1 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.8.2 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -61563,7 +61763,7 @@ const TUTORIAL_STEPS = [
     sec: 2,
     icon: "🗣️",
     title: "4. Um palpite só",
-    text: "Depois de ouvir a dica, o jogador dá <b>um</b> palpite. O Mestre toca em <b>Acertou</b> ou <b>Errou</b>. Errou? A vez passa pro próximo, que escolhe outro número.<br>O jogador não tinha palpite nenhum? <b>» Pulou</b>. O chute não tinha nada a ver com a dica? <b>⚠︎ Absurdo</b> (é o chute que foi absurdo, não a dica). Pro jogo, os dois são iguais ao Errou. Mas o C.A.O.S. fica sabendo… e ele não esquece.",
+    text: "Depois de ouvir a dica, o jogador dá <b>um</b> palpite. O Mestre toca em <b>Acertou</b> ou <b>Errou</b>. Errou? A vez passa pro próximo, que escolhe outro número.<br>O jogador não tinha palpite nenhum? <b>» Pulou</b>. O chute não tinha nada a ver com a dica? <b>⚠︎ Absurdo</b> (é o chute que foi absurdo, não a dica). Pro jogo, os dois são iguais ao Errou. Mas o C.A.O.S. fica sabendo… e ele não esquece.<br>Tocou no botão errado? Por 8 segundos aparece <b>↩️ Desfazer</b>.",
     mock: '<div class="guess-btns" style="flex-direction:column;"><button class="btn-correct">✓ Fulano acertou</button><button class="btn-wrong">✕ Errou</button><div class="mesa-btns"><button class="btn-pular">» Pulou</button><button class="btn-absurdo">⚠︎ Absurdo</button></div></div>',
   },
   {
@@ -62001,6 +62201,19 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.8.2",
+    data: "08/10/2026 · 18:29",
+    nome: "Actions and Events Update · Parte 3",
+    t: "Tocou no botão errado? Agora dá pra desfazer.",
+    itens: [
+      "↩️ Depois de Acertou, Errou, Pulou, Absurdo ou palpite, aparece \"Desfazer\" no alto da tela por 8 segundos. Ele volta tudo como estava: pontos, joias, vez, carta e relógio.",
+      "🎯 Só o último veredito pode ser desfeito, e o botão some assim que alguém faz outra jogada. Se o veredito acabou a partida, não tem volta.",
+    ],
+    qol: [
+      "🤖 O que o C.A.O.S. falou não volta: ele lembra de tudo.",
+    ],
+  },
   {
     v: "Beta 1.7.8.1",
     data: "08/10/2026 · 18:05",

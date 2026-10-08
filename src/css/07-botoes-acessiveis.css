@@ -370,3 +370,26 @@ body.batata-mode .card.virando {
     animation: none;
   }
 }
+/* 1.7.8.2: botão Desfazer o último veredito (8 s). Fica no alto: embaixo aparece a pergunta Perto/Longe. */
+.desfazer-btn {
+  position: fixed;
+  left: 50%;
+  top: calc(12px + env(safe-area-inset-top, 0px));
+  transform: translateX(-50%);
+  z-index: 10001; /* acima do balão do C.A.O.S. (10000), abaixo das janelas (10002) */
+  min-height: 48px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 2px solid #fbbf24;
+  background: #1f1b2e;
+  color: #fde68a;
+  font-weight: 800;
+  font-size: 1rem;
+  box-shadow: 0 6px 22px #0009;
+  max-width: calc(100vw - 32px);
+}
+body.claro .desfazer-btn {
+  background: #fffbeb;
+  color: #7a5a00;
+  border-color: #d4a017;
+}
