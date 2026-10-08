@@ -385,6 +385,16 @@ Cada parte sai publicada sozinha. Em todas, o jogo local continua igual para que
 - `clueId` estável por dica (`ANO-0001-C07`), separado da ordem mostrada, com migração do save.
 - O C.A.O.S. passa a receber **eventos tipados**: evento, fatos permitidos, público (mesa, Mestre ou jogador por id) e fala ou silêncio. O canal deixa de achar o destinatário pelo nome dentro do texto.
 
-### Parte 6 · 1.7.8.5 · Replay e QoL
-- O simulador grava as ações e as repete numa partida nova com a mesma semente, chegando ao mesmo estado. Isso fecha o "reproduzir a falha pela semente".
-- QoL do que aparecer.
+### Parte 6 · 1.7.8.5 · Replay e QoL (publicada)
+- `npm run simular:replay` (ou `node ferramentas/simular_partidas.js --replay --semente=N`):
+  - grava as ações de cada cenário;
+  - repete numa partida nova com a mesma semente via `dispatchAction`;
+  - compara o retrato do Mestre no fim. `DBG=1` mostra os detalhes.
+- **Achados do replay (corrigidos):**
+  - o evento de piedade dependia do balão estar fechado, e por isso gastava o sorteio de regra em hora diferente. Agora ele não espera e mostra com prioridade;
+  - o alvo do Express mudava o estado fora de uma ação. Agora é a ação `expressMirar` e entra na foto da espinha;
+  - o evento do clique ia para os dados da ação. Agora vira `null`.
+- **Limite conhecido:**
+  - a revisão pode diferir em 1 ou 2 quando uma ação automática (sacar, tempo, encerrar) já veio embutida em outra no replay;
+  - o estado da partida é o mesmo, e o replay anota essa diferença;
+  - o replay roda num navegador só e não prova rede.

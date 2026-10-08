@@ -295,7 +295,9 @@ async function replay(b, cen, semente, original) {
     let consumidas = 0; // ações do próprio replay já casadas com a gravação
     const AUTOMATICAS = ["sacarCarta", "tempoAcabou", "encerrar"]; // o jogo também faz sozinho
     for (const e of grav) {
-      await assentar();
+      // o Desfazer foi tocado logo depois do veredito: assentar antes deixaria o jogo seguir (sacar a
+      // próxima carta) e a oferta sumir, coisa que na partida gravada não aconteceu
+      if (e.a !== "desfazer") await assentar();
       // o replay já fez sozinho uma ação deste tipo? (ex.: sacar a carta depois do balão)
       const proprias = window.__grav;
       let casou = false;
@@ -324,7 +326,11 @@ async function replay(b, cen, semente, original) {
     return { divergiu, avisoMeio, repetidas, final: JSON.stringify(f) };
   }, original.gravacao);
   await page.close();
-  r.igual = !r.divergiu && r.final === original.final;
+  // a revisão conta ações aceitas; ação automática que no replay já veio embutida em outra (sacar,
+  // tempo, encerrar) não soma de novo. Se o estado é o mesmo, a diferença só no contador é anotada.
+  const semRev = (s) => { const o = JSON.parse(s); r.rev = (r.rev || []).concat(o.revisao); delete o.revisao; return JSON.stringify(o); };
+  r.igual = !r.divergiu && semRev(r.final) === semRev(original.final);
+  if (r.igual && r.rev[0] !== r.rev[1]) r.notaRev = `revisão ${r.rev[1]} no original, ${r.rev[0]} no replay (automáticas embutidas)`;
   if (!r.igual && !r.divergiu) {
     const A = JSON.parse(original.final), B = JSON.parse(r.final);
     r.divergiu = "estado final diferente em: " + Object.keys(A).filter((k) => JSON.stringify(A[k]) !== JSON.stringify(B[k])).map((k) => k + (process.env.DBG ? "=" + JSON.stringify(A[k]).slice(0, 160) + " ≠ " + JSON.stringify(B[k]).slice(0, 160) : "")).join(", ");
@@ -354,7 +360,7 @@ async function replay(b, cen, semente, original) {
       const rp = await replay(b, cen, SEMENTE + i, r);
       const okR = rp.igual && !rp.erros.length;
       tudoOk = tudoOk && okR;
-      console.log(`        replay: ${okR ? "ok, mesmo estado final" : "DIVERGIU"} (${rp.repetidas} ações repetidas de ${r.gravacao.length})${rp.divergiu ? " · " + rp.divergiu : ""}${rp.avisoMeio && !rp.igual ? " · 1º estado diferente: " + rp.avisoMeio : ""}${rp.erros.length ? " · erro: " + rp.erros[0] : ""}`);
+      console.log(`        replay: ${okR ? "ok, mesmo estado final" : "DIVERGIU"} (${rp.repetidas} ações repetidas de ${r.gravacao.length})${rp.divergiu ? " · " + rp.divergiu : ""}${rp.avisoMeio && !rp.igual ? " · 1º estado diferente: " + rp.avisoMeio : ""}${rp.notaRev ? " · " + rp.notaRev : ""}${rp.erros.length ? " · erro: " + rp.erros[0] : ""}`);
     }
   }
   console.log(tudoOk ? "\nSIMULAÇÃO OK" : "\nSIMULAÇÃO COM PROBLEMA");

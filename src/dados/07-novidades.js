@@ -1,5 +1,19 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.8.5",
+    data: "08/10/2026 · 19:51",
+    nome: "Actions and Events Update · Parte 6",
+    t: "Fechamento da 1.7.8: uma partida gravada agora pode ser repetida jogada por jogada, chegando ao mesmo resultado.",
+    itens: [
+      "🔁 O simulador grava cada ação e repete a partida do zero com a mesma sorte. Isso deixa qualquer problema achado reproduzível.",
+      "🕊️ O evento de piedade aparece mesmo quando já tem um balão do C.A.O.S. na tela, em vez de às vezes não aparecer.",
+      "🎯 No Express, a escolha do alvo de Roubo e Bloqueio agora é registrada como as outras jogadas.",
+    ],
+    qol: [
+      "🧪 Pra quem joga, quase nada muda. É a base pro online da 1.7.9.",
+    ],
+  },
+  {
     v: "Beta 1.7.8.4",
     data: "08/10/2026 · 18:50",
     nome: "Actions and Events Update · Parte 5",
