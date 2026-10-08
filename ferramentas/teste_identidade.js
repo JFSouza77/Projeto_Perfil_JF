@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Teste da identidade (Foundation Structure Update): jogadores (1.7.7.1), cartas e partida (1.7.7.2).
+// Teste da fundação (Foundation Structure Update): jogadores (1.7.7.1), cartas e partida (1.7.7.2),
+// sorteio de regra com semente e variáveis de regra no save (1.7.7.4).
 // Confere que cada jogador tem um id único que não muda quando alguém sai, quando a partida é
 // salva e restaurada, e que save antigo (versão 11, chaves por posição e por nome) é convertido.
 //   node ferramentas/teste_identidade.js [arquivo.html]
@@ -80,6 +81,21 @@ const ARQ = acharMestre(process.argv[2]);
     out.matchId = partidaIdValido(mid) && matchId === mid;
     resetDeck();
     out.matchIdZera = matchId === null;
+    // 10) sorteio de regra com semente (1.7.7.4): a mesma semente repete a mesma partida
+    const seq = () => [sorteioRegra(), sorteioRegra(), sorteioRegra()].join();
+    sorteioSemear(42); const s1 = seq() + '|' + shuffle(ADULT_CARDS.slice(0, 30)).map((c) => c.id).join() + '|' + embaralharEquilibrado(ADULT_CARDS.slice(0, 60)).map((c) => c.id).join();
+    sorteioSemear(42); const s2 = seq() + '|' + shuffle(ADULT_CARDS.slice(0, 30)).map((c) => c.id).join() + '|' + embaralharEquilibrado(ADULT_CARDS.slice(0, 60)).map((c) => c.id).join();
+    sorteioSemear(7); const s3 = seq();
+    sorteioSemear(null);
+    out.semente = s1 === s2 && s3 !== s1.split('|')[0] && sorteioSemente === null;
+    // 11) variáveis de regra que não iam pro save (1.7.7.4)
+    JFStore.setItem('perfil200_state', JSON.stringify(velho)); loadGameState();
+    streakScorerIdx = 2; streakCount = 3; consecutiveExhausted = 1; starterDrawCount = 2; cardWrongCount = 4;
+    const dono = players[2].id;
+    saveGameState();
+    streakScorerIdx = null; streakCount = 0; consecutiveExhausted = 0; starterDrawCount = 0; cardWrongCount = 0;
+    loadGameState();
+    out.regraSalva = players[streakScorerIdx] && players[streakScorerIdx].id === dono && streakCount === 3 && consecutiveExhausted === 1 && starterDrawCount === 2 && cardWrongCount === 4;
     JFStore.removeItem('perfil200_state');
     return out;
   });
@@ -98,6 +114,8 @@ const ARQ = acharMestre(process.argv[2]);
     ['Carta achada pelo id mesmo sem a resposta', r.pelaId],
     ['matchId salvo e restaurado', r.matchId],
     ['Partida nova zera o matchId', r.matchIdZera],
+    ['Sorteio de regra com semente repete a partida', r.semente],
+    ['Sequência, esgotadas, sorteio do Mestre e erros da carta vão pro save', r.regraSalva],
   ];
   linhas.forEach(([n, ok]) => console.log(`${ok ? 'ok    ' : 'FALHOU'}  ${n}`));
   const tudo = linhas.every((l) => l[1]) && !erros.length;

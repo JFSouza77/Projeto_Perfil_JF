@@ -24,7 +24,7 @@ function isSafeColor(c) {
 // Com `alvo`, a chance de cada categoria segue as proporções pedidas.
 // devolve uma carta num ponto qualquer do baralho sem reembaralhar tudo (preserva o equilíbrio de categorias)
 function devolverAoBaralho(card) {
-  deck.splice(Math.floor(Math.random() * (deck.length + 1)), 0, card);
+  deck.splice(sorteioIndice(deck.length + 1), 0, card);
 }
 function embaralharEquilibrado(cards, alvo) {
   const n = {};
@@ -38,7 +38,7 @@ function embaralharEquilibrado(cards, alvo) {
     peso[g] = (alvo ? alvo[g] || 0.0001 : 1 / cats.length) / n[g];
   });
   return cards
-    .map((c) => ({ c, key: -Math.log(Math.random()) / peso[gemCategoryFor(c.category)] }))
+    .map((c) => ({ c, key: -Math.log(1 - sorteioRegra()) / peso[gemCategoryFor(c.category)] }))
     .sort((a, b) => a.key - b.key)
     .map((x) => x.c);
 }
@@ -50,7 +50,7 @@ function escapeHtml(text) {
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = sorteioIndice(i + 1);
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;

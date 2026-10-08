@@ -171,7 +171,7 @@ function casaSortearModo() {
     ultimo = JFStore.getItem(CASA_ULTIMO_KEY) || "";
   } catch (e) {}
   const opcoes = CASA_MODOS.filter((m) => m !== ultimo);
-  casaSorteado = opcoes[Math.floor(Math.random() * opcoes.length)];
+  casaSorteado = sorteioItem(opcoes);
   try {
     JFStore.setItem(CASA_ULTIMO_KEY, casaSorteado);
   } catch (e) {}
@@ -263,6 +263,7 @@ function resetGame() {
 function resetDeck() {
   caosPartidaSerial++;
   matchId = null;
+  sorteioContagem = 0;
   caosCatSeq = [];
   clearTimer();
   clearCardTimer();
@@ -667,12 +668,12 @@ function autoResolveMoveSpecial(item) {
     if (CURRENT_FORMAT === "equipe") {
       const pool2 = teamOrder.filter((id) => id !== myTeam);
       if (!pool2.length) return false;
-      applyTeamSpecialMove(pool2[Math.floor(Math.random() * pool2.length)], moveVal, true);
+      applyTeamSpecialMove(sorteioItem(pool2), moveVal, true);
       return true;
     }
     const pool =
       palpiteParticipants() < 3 ? [mestreIndex] : players.map((p, i) => i).filter((i) => i !== responderIndex);
-    const alvo = pool[Math.floor(Math.random() * pool.length)];
+    const alvo = sorteioItem(pool);
     if (alvo === void 0 || alvo === null || !players[alvo]) return false;
     applySpecialMove(alvo, moveVal);
     return true;
@@ -1393,7 +1394,7 @@ function expressAutoSpecial(item) {
       return;
     }
     expressTargetAction = txt.includes("avan") ? "steal" : "block";
-    resolveExpressTarget(elegiveis[Math.floor(Math.random() * elegiveis.length)]);
+    resolveExpressTarget(sorteioItem(elegiveis));
     return;
   }
   if (txt.includes("avance")) return expressSkip(txt.includes("2") ? 2 : 1);
@@ -1649,7 +1650,7 @@ function jogarDeNovo() {
 }
 function pickRandomExpressCategories() {
   const cats = ["ANO", "PESSOA", "LUGAR", "COISA"];
-  const count = Math.random() < 0.5 ? 1 : 2;
+  const count = sorteioRegra() < 0.5 ? 1 : 2;
   return shuffle(cats).slice(0, count);
 }
 function selectMode(mode, expressCategories, flavor) {
@@ -1839,7 +1840,7 @@ function pickStarterMestreVersus() {
   const jf = jfPlayerIndex();
   if (starterDrawCount >= STARTER_MAX_DRAWS && jf >= 0) return jf;
   const pool = players.map((p, i) => i).filter((i) => starterDrawCount <= 1 || i !== mestreIndex || players.length < 2);
-  return pool[Math.floor(Math.random() * pool.length)];
+  return sorteioItem(pool);
 }
 function drawEquipeOrder() {
   const ids = Object.keys(teams);
@@ -2095,7 +2096,7 @@ function eligibleMercyTargets() {
 function pickWeightedMercyTarget(leader, pool) {
   const weights = pool.map((p) => Math.max(1, leader.score - p.score));
   const total = weights.reduce((a, b) => a + b, 0);
-  let roll = Math.random() * total;
+  let roll = sorteioRegra() * total;
   for (let i = 0; i < pool.length; i++) {
     roll -= weights[i];
     if (roll <= 0) return pool[i];
@@ -2111,13 +2112,13 @@ function maybeTriggerMercyEvent() {
   const leader = players.reduce((a, b) => (b.score > a.score ? b : a));
   const closestGap = leader.score - Math.max(...pool.map((p) => p.score));
   if (closestGap < WINNING_SCORE * 0.15) return;
-  if (Math.random() > 0.15) return;
+  if (sorteioRegra() > 0.15) return;
   const target = pickWeightedMercyTarget(leader, pool);
   if (!target) return;
   mercyEventUsed = true;
   const targetIdx = players.indexOf(target);
-  if (players.length < 3 || Math.random() < 0.5) {
-    const roll = 1 + Math.floor(Math.random() * 10);
+  if (players.length < 3 || sorteioRegra() < 0.5) {
+    const roll = 1 + sorteioIndice(10);
     const bonusPoints = roll * 2;
     creditPoints(targetIdx, bonusPoints);
     renderMiniScoreboard();

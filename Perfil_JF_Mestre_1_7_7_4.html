@@ -6,6 +6,15 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.7.4 · 08/10/2026 · "Foundation Structure Update · Parte 5" = SORTEIOS E INVENTÁRIO DO ESTADO.
+          1) js/02c-sorteio.js: todo sorteio que decide o jogo passa por sorteioRegra() (embaralhar e devolver
+          carta, especiais do Hardcore, modo da Moda da Casa, categorias e modo sorteados, alvo automático das
+          surpresas, 1º Mestre, evento de misericórdia, Duelo/Todos). Hoje é o mesmo Math.random; nos testes,
+          sorteioSemear(n) repete a sequência (mulberry32). Enfeite (falas, cores, animação) segue no Math.random.
+          2) Save passa a guardar consecutiveExhausted, streakCount, streakScorerIdx (pelo id: streakId),
+          starterDrawCount, cardWrongCount e sorteioContagem (antes se perdiam ao recarregar).
+          3) docs/Estado_da_Partida.md: as 258 variáveis separadas em regra, C.A.O.S. e tela, e o que vai pro
+          save; base do retrato da partida da 1.7.8. teste_identidade com sorteio e save das variáveis novas.
   1.7.7.3 · 05/10/2026 · "Foundation Structure Update · Parte 4" = ESPINHA COMPLETA.
           A foto da 1ª lei (caosEspinhaFoto) passou a vigiar e desfazer também: fichas de palpite e estoque,
           joias da rodada, vencedor por joias, fila da casa de bônus, dicas abertas (dica a mais sai), dica
@@ -372,7 +381,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.7.3</title>
+<title>Perfil JF · Beta 1.7.7.4</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6753,7 +6762,7 @@ html.acess-letra-2 .clue-list li {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.7.3 · Foundation Structure Update · Parte 4<br>C.A.O.S. 4.0 · Atualizada em 05/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.7.4 · Foundation Structure Update · Parte 5<br>C.A.O.S. 4.0 · Atualizada em 05/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -8289,6 +8298,38 @@ function partidaIdNovo() {
 function partidaIdValido(id) {
   return typeof id === "string" && PARTIDA_ID_RE.test(id);
 }
+/* ----------------------------------------------------------------------
+ * 2c. SORTEIO DE REGRA (1.7.7.4 · Foundation Structure Update, Parte 5)
+ * Todo sorteio que DECIDE o jogo passa por aqui: embaralhar o baralho, devolver carta ao
+ * baralho, quantas instruções especiais no Hardcore, modo da Moda da Casa, categorias e modo
+ * sorteados, alvo automático das surpresas, 1º Mestre, evento de misericórdia e Duelo/Todos.
+ * Os sorteios de ENFEITE (falas, emoções, cores, confete, animação das roletas) continuam no
+ * Math.random de sempre.
+ *  · Hoje: sorteioRegra() é o mesmo Math.random (o jogo não muda).
+ *  · Testes: sorteioSemear(n) liga uma sequência fixa (mulberry32), pra repetir a mesma partida.
+ *  · 1.7.9: o host sorteia e manda o resultado; os outros aparelhos não sorteiam regra.
+ * ---------------------------------------------------------------------- */
+let sorteioSemente = null; // null = Math.random; número = sequência fixa (só testes)
+let sorteioContagem = 0; // quantos sorteios de regra a partida já fez (ajuda a comparar partidas)
+function sorteioSemear(n) {
+  sorteioSemente = n === null || n === undefined ? null : n >>> 0;
+}
+function sorteioRegra() {
+  sorteioContagem++;
+  if (sorteioSemente === null) return Math.random();
+  // mulberry32
+  sorteioSemente = (sorteioSemente + 0x6d2b79f5) >>> 0;
+  let t = sorteioSemente;
+  t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+}
+function sorteioIndice(n) {
+  return Math.floor(sorteioRegra() * n);
+}
+function sorteioItem(lista) {
+  return lista[sorteioIndice(lista.length)];
+}
 /* ======================================================================
  * 3. REGRAS (VITÓRIA, PONTOS, JOIAS, TABULEIRO, BARALHO, EQUIPES)
  * ====================================================================== */
@@ -8739,7 +8780,7 @@ function deckLimiteModo() {
 function buildHardcoreClueSet(shuffledClues) {
   const reals = shuffledClues.filter((c) => c.type === "clue");
   const specials = shuffledClues.filter((c) => c.type === "special");
-  const specialCount = Math.min(specials.length, Math.random() < 0.5 ? 1 : 2);
+  const specialCount = Math.min(specials.length, sorteioRegra() < 0.5 ? 1 : 2);
   const chosenSpecials = shuffle(specials).slice(0, specialCount);
   const chosenReals = shuffle(reals).slice(0, 10 - chosenSpecials.length);
   return shuffle([...chosenReals, ...chosenSpecials]);
@@ -9053,7 +9094,7 @@ function casaSortearModo() {
     ultimo = JFStore.getItem(CASA_ULTIMO_KEY) || "";
   } catch (e) {}
   const opcoes = CASA_MODOS.filter((m) => m !== ultimo);
-  casaSorteado = opcoes[Math.floor(Math.random() * opcoes.length)];
+  casaSorteado = sorteioItem(opcoes);
   try {
     JFStore.setItem(CASA_ULTIMO_KEY, casaSorteado);
   } catch (e) {}
@@ -9145,6 +9186,7 @@ function resetGame() {
 function resetDeck() {
   caosPartidaSerial++;
   matchId = null;
+  sorteioContagem = 0;
   caosCatSeq = [];
   clearTimer();
   clearCardTimer();
@@ -9549,12 +9591,12 @@ function autoResolveMoveSpecial(item) {
     if (CURRENT_FORMAT === "equipe") {
       const pool2 = teamOrder.filter((id) => id !== myTeam);
       if (!pool2.length) return false;
-      applyTeamSpecialMove(pool2[Math.floor(Math.random() * pool2.length)], moveVal, true);
+      applyTeamSpecialMove(sorteioItem(pool2), moveVal, true);
       return true;
     }
     const pool =
       palpiteParticipants() < 3 ? [mestreIndex] : players.map((p, i) => i).filter((i) => i !== responderIndex);
-    const alvo = pool[Math.floor(Math.random() * pool.length)];
+    const alvo = sorteioItem(pool);
     if (alvo === void 0 || alvo === null || !players[alvo]) return false;
     applySpecialMove(alvo, moveVal);
     return true;
@@ -10275,7 +10317,7 @@ function expressAutoSpecial(item) {
       return;
     }
     expressTargetAction = txt.includes("avan") ? "steal" : "block";
-    resolveExpressTarget(elegiveis[Math.floor(Math.random() * elegiveis.length)]);
+    resolveExpressTarget(sorteioItem(elegiveis));
     return;
   }
   if (txt.includes("avance")) return expressSkip(txt.includes("2") ? 2 : 1);
@@ -10531,7 +10573,7 @@ function jogarDeNovo() {
 }
 function pickRandomExpressCategories() {
   const cats = ["ANO", "PESSOA", "LUGAR", "COISA"];
-  const count = Math.random() < 0.5 ? 1 : 2;
+  const count = sorteioRegra() < 0.5 ? 1 : 2;
   return shuffle(cats).slice(0, count);
 }
 function selectMode(mode, expressCategories, flavor) {
@@ -10721,7 +10763,7 @@ function pickStarterMestreVersus() {
   const jf = jfPlayerIndex();
   if (starterDrawCount >= STARTER_MAX_DRAWS && jf >= 0) return jf;
   const pool = players.map((p, i) => i).filter((i) => starterDrawCount <= 1 || i !== mestreIndex || players.length < 2);
-  return pool[Math.floor(Math.random() * pool.length)];
+  return sorteioItem(pool);
 }
 function drawEquipeOrder() {
   const ids = Object.keys(teams);
@@ -10977,7 +11019,7 @@ function eligibleMercyTargets() {
 function pickWeightedMercyTarget(leader, pool) {
   const weights = pool.map((p) => Math.max(1, leader.score - p.score));
   const total = weights.reduce((a, b) => a + b, 0);
-  let roll = Math.random() * total;
+  let roll = sorteioRegra() * total;
   for (let i = 0; i < pool.length; i++) {
     roll -= weights[i];
     if (roll <= 0) return pool[i];
@@ -10993,13 +11035,13 @@ function maybeTriggerMercyEvent() {
   const leader = players.reduce((a, b) => (b.score > a.score ? b : a));
   const closestGap = leader.score - Math.max(...pool.map((p) => p.score));
   if (closestGap < WINNING_SCORE * 0.15) return;
-  if (Math.random() > 0.15) return;
+  if (sorteioRegra() > 0.15) return;
   const target = pickWeightedMercyTarget(leader, pool);
   if (!target) return;
   mercyEventUsed = true;
   const targetIdx = players.indexOf(target);
-  if (players.length < 3 || Math.random() < 0.5) {
-    const roll = 1 + Math.floor(Math.random() * 10);
+  if (players.length < 3 || sorteioRegra() < 0.5) {
+    const roll = 1 + sorteioIndice(10);
     const bonusPoints = roll * 2;
     creditPoints(targetIdx, bonusPoints);
     renderMiniScoreboard();
@@ -17611,7 +17653,7 @@ function caosInspectorEstado() {
       }</b></div>
       <div class="ci-kv"><span>🦴 Registro da espinha</span><b class="ci-mono">${caosEspinha.log.slice(-5).reverse().map(escapeHtml).join("<br>") || "—"}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.7.3 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.7.4 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -22678,7 +22720,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.7.3 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.7.4 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -24502,6 +24544,13 @@ function saveGameState() {
       pausedAt,
       pausaExpirada,
       consecutiveDiscards,
+      // 1.7.7.4: variáveis de regra que não iam pro save (ver docs/Estado_da_Partida.md)
+      consecutiveExhausted,
+      streakId: jogadorIdDe(streakScorerIdx),
+      streakCount,
+      starterDrawCount,
+      cardWrongCount,
+      sorteioContagem,
       showHistory,
       showStats,
       pendingBonusQueue,
@@ -24907,6 +24956,14 @@ function loadGameState() {
     )
       pausaExpirada = true;
     consecutiveDiscards = state.consecutiveDiscards || 0;
+    const inteiro = (v, max) => (Number.isInteger(v) && v >= 0 ? Math.min(v, max) : 0);
+    consecutiveExhausted = inteiro(state.consecutiveExhausted, 99);
+    streakScorerIdx = state.streakId ? jogadorIdxPorId(state.streakId) : -1;
+    if (streakScorerIdx < 0) streakScorerIdx = null;
+    streakCount = streakScorerIdx === null ? 0 : inteiro(state.streakCount, 999);
+    starterDrawCount = inteiro(state.starterDrawCount, 99);
+    cardWrongCount = inteiro(state.cardWrongCount, 999);
+    sorteioContagem = inteiro(state.sorteioContagem, 1e9);
     showHistory = state.showHistory || false;
     showStats = state.showStats || false;
     pendingBonusQueue = state.pendingBonusQueue || [];
@@ -25729,7 +25786,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.7.3 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.7.4 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -26252,7 +26309,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.7.3 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.7.4 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -26419,7 +26476,7 @@ function isSafeColor(c) {
 // Com `alvo`, a chance de cada categoria segue as proporções pedidas.
 // devolve uma carta num ponto qualquer do baralho sem reembaralhar tudo (preserva o equilíbrio de categorias)
 function devolverAoBaralho(card) {
-  deck.splice(Math.floor(Math.random() * (deck.length + 1)), 0, card);
+  deck.splice(sorteioIndice(deck.length + 1), 0, card);
 }
 function embaralharEquilibrado(cards, alvo) {
   const n = {};
@@ -26433,7 +26490,7 @@ function embaralharEquilibrado(cards, alvo) {
     peso[g] = (alvo ? alvo[g] || 0.0001 : 1 / cats.length) / n[g];
   });
   return cards
-    .map((c) => ({ c, key: -Math.log(Math.random()) / peso[gemCategoryFor(c.category)] }))
+    .map((c) => ({ c, key: -Math.log(1 - sorteioRegra()) / peso[gemCategoryFor(c.category)] }))
     .sort((a, b) => a.key - b.key)
     .map((x) => x.c);
 }
@@ -26445,7 +26502,7 @@ function escapeHtml(text) {
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = sorteioIndice(i + 1);
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
@@ -61312,6 +61369,17 @@ const PAUSE_TIPS = [
 ];
 const NOVIDADES = [
   {
+    v: "Beta 1.7.7.4",
+    data: "08/10/2026 · 15:37",
+    nome: "Foundation Structure Update · Parte 5",
+    t: "Os sorteios que decidem a partida agora passam por um lugar só. É assim que, no online, um aparelho vai sortear por todos.",
+    itens: [
+      "🎲 Embaralhar o baralho, sortear o modo da Moda da Casa, o primeiro Mestre e o alvo das surpresas: tudo passa por um sorteio único do jogo. Pra quem joga, nada muda.",
+      "💾 Recarregar a página no meio da partida não perde mais a sequência de acertos, a contagem de cartas esgotadas nem os erros da carta em jogo.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.7.3",
     data: "05/10/2026 · 23:11",
     nome: "Foundation Structure Update · Parte 4",
@@ -63540,9 +63608,9 @@ function iniciar() {
         CURRENT_FORMAT === "equipe"
           ? ["classico", "hardcore", "oldschool"]
           : ["classico", "hardcore", "express", "junior", "oldschool"];
-      const chosen = options[Math.floor(Math.random() * options.length)];
+      const chosen = sorteioItem(options);
       if (chosen === "express") {
-        const flavor = Math.random() < 0.5 ? "classico" : "hardcore";
+        const flavor = sorteioRegra() < 0.5 ? "classico" : "hardcore";
         selectMode("express", pickRandomExpressCategories(), flavor);
       } else {
         selectMode(chosen);
@@ -63695,7 +63763,7 @@ function iniciar() {
     saveGameState();
   });
   document.getElementById("subModeRandomBtn").addEventListener("click", () => {
-    equipeSubMode = Math.random() < 0.5 ? "duelo" : "ffa";
+    equipeSubMode = sorteioRegra() < 0.5 ? "duelo" : "ffa";
     paintSubModeChoice("random");
     saveGameState();
   });
