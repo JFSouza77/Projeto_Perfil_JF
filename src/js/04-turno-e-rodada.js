@@ -2117,7 +2117,8 @@ function pickWeightedMercyTarget(leader, pool) {
 function maybeTriggerMercyEvent() {
   if (mercyEventUsed || gameEnded) return;
   if (CURRENT_MODE === "express" || CURRENT_MODE === "hardcore" || CURRENT_FORMAT !== "versus") return;
-  if (activeToastState) return;
+  // 1.7.8.5: a regra não depende mais de ter balão na tela (antes, com balão aberto ela nem sorteava,
+  // e a mesma partida podia dar resultado diferente conforme o tempo da tela). O aviso vem com prioridade.
   const pool = eligibleMercyTargets();
   if (pool.length === 0) return;
   const leader = players.reduce((a, b) => (b.score > a.score ? b : a));
@@ -2159,11 +2160,11 @@ function maybeTriggerMercyEvent() {
         return;
       }
     }
-    showToastMessage(getRandomReaction(REACTIVE_VOICE.mercyPontos, target.name, bonusPoints) + msgCofrinho);
+    showToastMessage(getRandomReaction(REACTIVE_VOICE.mercyPontos, target.name, bonusPoints) + msgCofrinho, null, true, true);
   } else {
     pendingBonusQueue.push({ landerIdx: targetIdx, opponentIdx: null });
     playSfx("agonia");
-    showToastMessage(getRandomReaction(REACTIVE_VOICE.mercyBonus, target.name));
+    showToastMessage(getRandomReaction(REACTIVE_VOICE.mercyBonus, target.name), null, true, true);
   }
   saveGameState();
 }

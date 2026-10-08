@@ -6,6 +6,13 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.8.5 · 08/10/2026 · "Actions and Events Update · Parte 6" = REPLAY E QOL (fecha a 1.7.8).
+          O simulador grava as ações (acoesAoMudar) e, com --replay, repete numa partida nova com a mesma
+          semente via dispatchAction, comparando o retrato do Mestre no fim. O replay achou 3 acoplamentos e
+          eles foram corrigidos: evento de piedade não espera mais o balão (mostra com prioridade), alvo do
+          Express (expressMirar) virou ação e entra na foto da espinha, e o evento do clique não vai mais para
+          os dados da ação. Limite conhecido: a revisão pode diferir em 1 ou 2 quando uma ação automática
+          (sacar, tempo, encerrar) já veio embutida em outra; o estado da partida é o mesmo.
   1.7.8.4 · 08/10/2026 · "Actions and Events Update · Parte 5" = IDS DAS DICAS E FALAS COMO EVENTOS.
           expandDeck dá id fixo a cada dica pela posição no arquivo (ANO-0001-C07; 20 mil únicos). Regra no
           99-fechamento: nunca reordenar nem apagar entradas. O save acha a dica pelo id (depois pelo texto, save
@@ -453,7 +460,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.8.4</title>
+<title>Perfil JF · Beta 1.7.8.5</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

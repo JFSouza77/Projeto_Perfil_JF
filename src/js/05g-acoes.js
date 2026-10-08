@@ -35,6 +35,7 @@ const ACOES = {
   expressPassar: { fn: "expressPass", pode: () => acoesEmJogo() && CURRENT_MODE === "express" },
   expressPular: { fn: "expressSkip", pode: () => acoesEmJogo() && CURRENT_MODE === "express" },
   expressInverter: { fn: "expressReverse", pode: () => acoesEmJogo() && CURRENT_MODE === "express" },
+  expressMirar: { fn: "openExpressTargetPopup", pode: (tipo) => acoesComDica() && CURRENT_MODE === "express" && (tipo === "steal" || tipo === "block") },
   expressAlvo: { fn: "resolveExpressTarget", pode: () => acoesEmJogo() && CURRENT_MODE === "express" },
   tempoAcabou: { fn: "onTimerExpired", pode: () => acoesEmJogo() },
   pausar: { fn: "pauseGame", pode: () => acoesEmJogo() },
@@ -72,8 +73,13 @@ function acoesDicaLivre(idx) {
 }
 // Só dados simples vão pro log (números, textos curtos, null).
 function acoesDados(args) {
+  // objeto (ex.: o evento do clique, quando a função é ligada direto no botão) não é dado da ação
   return Array.prototype.slice.call(args, 0, 4).map((v) =>
-    v === undefined ? null : typeof v === "number" || typeof v === "boolean" || v === null ? v : String(v).slice(0, 24),
+    v === undefined || v === null || typeof v === "object" || typeof v === "function"
+      ? null
+      : typeof v === "number" || typeof v === "boolean"
+        ? v
+        : String(v).slice(0, 24),
   );
 }
 function acoesOrigem() {
