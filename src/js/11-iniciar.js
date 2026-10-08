@@ -600,9 +600,9 @@ function iniciar() {
         CURRENT_FORMAT === "equipe"
           ? ["classico", "hardcore", "oldschool"]
           : ["classico", "hardcore", "express", "junior", "oldschool"];
-      const chosen = options[Math.floor(Math.random() * options.length)];
+      const chosen = sorteioItem(options);
       if (chosen === "express") {
-        const flavor = Math.random() < 0.5 ? "classico" : "hardcore";
+        const flavor = sorteioRegra() < 0.5 ? "classico" : "hardcore";
         selectMode("express", pickRandomExpressCategories(), flavor);
       } else {
         selectMode(chosen);
@@ -755,7 +755,7 @@ function iniciar() {
     saveGameState();
   });
   document.getElementById("subModeRandomBtn").addEventListener("click", () => {
-    equipeSubMode = Math.random() < 0.5 ? "duelo" : "ffa";
+    equipeSubMode = sorteioRegra() < 0.5 ? "duelo" : "ffa";
     paintSubModeChoice("random");
     saveGameState();
   });

@@ -10,6 +10,7 @@ html/02-corpo.html
 js/01-configuracao.js
 js/02-estado.js
 js/02b-identidade.js
+js/02c-sorteio.js
 js/03-regras.js
 js/04-turno-e-rodada.js
 js/05-tela.js

@@ -448,7 +448,7 @@ function deckLimiteModo() {
 function buildHardcoreClueSet(shuffledClues) {
   const reals = shuffledClues.filter((c) => c.type === "clue");
   const specials = shuffledClues.filter((c) => c.type === "special");
-  const specialCount = Math.min(specials.length, Math.random() < 0.5 ? 1 : 2);
+  const specialCount = Math.min(specials.length, sorteioRegra() < 0.5 ? 1 : 2);
   const chosenSpecials = shuffle(specials).slice(0, specialCount);
   const chosenReals = shuffle(reals).slice(0, 10 - chosenSpecials.length);
   return shuffle([...chosenReals, ...chosenSpecials]);

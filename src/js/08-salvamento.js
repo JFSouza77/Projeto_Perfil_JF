@@ -376,6 +376,13 @@ function saveGameState() {
       pausedAt,
       pausaExpirada,
       consecutiveDiscards,
+      // 1.7.7.4: variáveis de regra que não iam pro save (ver docs/Estado_da_Partida.md)
+      consecutiveExhausted,
+      streakId: jogadorIdDe(streakScorerIdx),
+      streakCount,
+      starterDrawCount,
+      cardWrongCount,
+      sorteioContagem,
       showHistory,
       showStats,
       pendingBonusQueue,
@@ -781,6 +788,14 @@ function loadGameState() {
     )
       pausaExpirada = true;
     consecutiveDiscards = state.consecutiveDiscards || 0;
+    const inteiro = (v, max) => (Number.isInteger(v) && v >= 0 ? Math.min(v, max) : 0);
+    consecutiveExhausted = inteiro(state.consecutiveExhausted, 99);
+    streakScorerIdx = state.streakId ? jogadorIdxPorId(state.streakId) : -1;
+    if (streakScorerIdx < 0) streakScorerIdx = null;
+    streakCount = streakScorerIdx === null ? 0 : inteiro(state.streakCount, 999);
+    starterDrawCount = inteiro(state.starterDrawCount, 99);
+    cardWrongCount = inteiro(state.cardWrongCount, 999);
+    sorteioContagem = inteiro(state.sorteioContagem, 1e9);
     showHistory = state.showHistory || false;
     showStats = state.showStats || false;
     pendingBonusQueue = state.pendingBonusQueue || [];
@@ -1603,7 +1618,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.7.3 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.7.4 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2126,7 +2141,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.7.3 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.7.4 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,

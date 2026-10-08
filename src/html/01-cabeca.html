@@ -6,6 +6,15 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.7.4 · 08/10/2026 · "Foundation Structure Update · Parte 5" = SORTEIOS E INVENTÁRIO DO ESTADO.
+          1) js/02c-sorteio.js: todo sorteio que decide o jogo passa por sorteioRegra() (embaralhar e devolver
+          carta, especiais do Hardcore, modo da Moda da Casa, categorias e modo sorteados, alvo automático das
+          surpresas, 1º Mestre, evento de misericórdia, Duelo/Todos). Hoje é o mesmo Math.random; nos testes,
+          sorteioSemear(n) repete a sequência (mulberry32). Enfeite (falas, cores, animação) segue no Math.random.
+          2) Save passa a guardar consecutiveExhausted, streakCount, streakScorerIdx (pelo id: streakId),
+          starterDrawCount, cardWrongCount e sorteioContagem (antes se perdiam ao recarregar).
+          3) docs/Estado_da_Partida.md: as 258 variáveis separadas em regra, C.A.O.S. e tela, e o que vai pro
+          save; base do retrato da partida da 1.7.8. teste_identidade com sorteio e save das variáveis novas.
   1.7.7.3 · 05/10/2026 · "Foundation Structure Update · Parte 4" = ESPINHA COMPLETA.
           A foto da 1ª lei (caosEspinhaFoto) passou a vigiar e desfazer também: fichas de palpite e estoque,
           joias da rodada, vencedor por joias, fila da casa de bônus, dicas abertas (dica a mais sai), dica
@@ -372,7 +381,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.7.3</title>
+<title>Perfil JF · Beta 1.7.7.4</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -1,5 +1,16 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.7.4",
+    data: "08/10/2026 · 15:37",
+    nome: "Foundation Structure Update · Parte 5",
+    t: "Os sorteios que decidem a partida agora passam por um lugar só. É assim que, no online, um aparelho vai sortear por todos.",
+    itens: [
+      "🎲 Embaralhar o baralho, sortear o modo da Moda da Casa, o primeiro Mestre e o alvo das surpresas: tudo passa por um sorteio único do jogo. Pra quem joga, nada muda.",
+      "💾 Recarregar a página no meio da partida não perde mais a sequência de acertos, a contagem de cartas esgotadas nem os erros da carta em jogo.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.7.3",
     data: "05/10/2026 · 23:11",
     nome: "Foundation Structure Update · Parte 4",

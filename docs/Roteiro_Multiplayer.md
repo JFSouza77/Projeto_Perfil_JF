@@ -161,7 +161,8 @@ Cada parte sai publicada sozinha, como nas updates anteriores. Em todas valem as
 - A restauração acha o jogador pelo `id`.
 - **Teste:** uma rotina falsa tenta mexer em cada um desses dados, e a espinha precisa desfazer tudo.
 
-### Parte 5 · 1.7.7.4 · Sorteios e inventário do estado
+### Parte 5 · 1.7.7.4 · Sorteios e inventário do estado (publicada)
+- **Feito:** `js/02c-sorteio.js` (`sorteioRegra`, `sorteioSemear`), `docs/Estado_da_Partida.md` e as 5 variáveis de regra no save (a sequência guardada pelo id).
 - Os sorteios que **decidem o jogo** passam por uma função única (`sorteioRegra`), sem mudar o comportamento. Ela aceita uma semente nos testes, pra repetir a mesma partida. Na 1.7.9 é ela que vai deixar o host sortear e os outros aparelhos receberem o resultado. Os sorteios de **enfeite** (falas, emoções) continuam como estão.
 - Novo `docs/Estado_da_Partida.md`: o que é estado de regra, o que é do C.A.O.S. e o que é só da tela.
 - As variáveis de regra que não vão pro save passam a ir: `consecutiveExhausted`, `streakCount`, `streakScorerIdx`, `starterDrawCount` e `cardWrongCount`.
