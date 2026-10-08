@@ -96,6 +96,9 @@ const ARQ = acharMestre(process.argv[2]);
     streakScorerIdx = null; streakCount = 0; consecutiveExhausted = 0; starterDrawCount = 0; cardWrongCount = 0;
     loadGameState();
     out.regraSalva = players[streakScorerIdx] && players[streakScorerIdx].id === dono && streakCount === 3 && consecutiveExhausted === 1 && starterDrawCount === 2 && cardWrongCount === 4;
+    // 12) importar: um save de verdade passa na conferência; um de versão futura não (1.7.7.6)
+    const real = JSON.parse(JFStore.getItem('perfil200_state'));
+    out.importa = importSaveConferir(real) === '' && importSaveConferir({ ...real, saveVersion: SAVE_VERSION + 1 }) !== '';
     JFStore.removeItem('perfil200_state');
     return out;
   });
@@ -116,6 +119,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['Partida nova zera o matchId', r.matchIdZera],
     ['Sorteio de regra com semente repete a partida', r.semente],
     ['Sequência, esgotadas, sorteio do Mestre e erros da carta vão pro save', r.regraSalva],
+    ['Importar: save real passa, versão futura é recusada', r.importa],
   ];
   linhas.forEach(([n, ok]) => console.log(`${ok ? 'ok    ' : 'FALHOU'}  ${n}`));
   const tudo = linhas.every((l) => l[1]) && !erros.length;

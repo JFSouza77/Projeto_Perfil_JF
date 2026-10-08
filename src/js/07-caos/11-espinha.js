@@ -201,6 +201,15 @@ function caosBlindarUm(nome) {
       }
     }
     if (/^caos(Console|Emo)/.test(nome)) caosEspinhaSanear();
+    // 1.7.7.6: as rotinas protegidas são síncronas. Se uma passar a devolver Promise, a foto acima
+    // não cobre o que ela faz depois; fica anotado e a rejeição não vira erro solto.
+    if (r && typeof r.then === "function") {
+      caosEspinhaLog("aviso", nome + " devolveu Promise: a espinha só vigia a parte síncrona");
+      r.then(null, (e) => {
+        caosEspinha.falhas++;
+        caosEspinhaLog("erro contido", nome + " (assíncrono): " + String((e && e.name) || "erro").slice(0, 40));
+      });
+    }
     return r;
   };
   prot.__blindada = true;
@@ -264,4 +273,30 @@ function caosEspinhaInstalar() {
   }
   caosEspinha.instalada = true;
   caosEspinhaLog("instalada", n + " rotinas protegidas pelas 3 leis");
+}
+
+/* --- Erros fora das rotinas vigiadas (1.7.7.6, revisão GPT) ---
+ * Antes, um erro fora da espinha só aparecia no console (e o DEBUG fica desligado). Agora fica
+ * registrado aqui, só neste aparelho, pra área ADM (Cérebro) mostrar. Guarda apenas o tipo do erro
+ * e a hora: nada de nome de jogador, carta, resposta, texto do erro ou caminho de arquivo. Nunca é
+ * enviado pra lugar nenhum e não esconde o erro do console. */
+const caosErrosPagina = [];
+function caosErroPaginaRegistrar(tipo, erro) {
+  try {
+    const codigo = erro && typeof erro.name === "string" ? erro.name.slice(0, 40) : typeof erro === "string" ? "Erro" : "ErroDesconhecido";
+    caosErrosPagina.push({ tipo, codigo, quando: Date.now() });
+    if (caosErrosPagina.length > 20) caosErrosPagina.shift();
+  } catch (e) {}
+}
+try {
+  window.addEventListener("error", (e) => caosErroPaginaRegistrar("erro", e && e.error));
+  window.addEventListener("unhandledrejection", (e) => caosErroPaginaRegistrar("promessa", e && e.reason));
+} catch (e) {}
+function caosErrosPaginaResumo() {
+  if (!caosErrosPagina.length) return "nenhum";
+  return caosErrosPagina
+    .slice(-5)
+    .reverse()
+    .map((x) => escapeHtml(`${new Date(x.quando).toLocaleTimeString("pt-BR")} · ${x.tipo} · ${x.codigo}`))
+    .join("<br>");
 }

@@ -1,5 +1,20 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.7.6",
+    data: "08/10/2026 · 16:04",
+    nome: "Foundation Structure Update · QoL da revisão",
+    t: "Ajustes pedidos nas revisões do JF com o GPT: mais cuidado com quem joga e com os dados da partida.",
+    itens: [
+      "⏳ Quando o Mestre ganha tempo extra, o C.A.O.S. avisa sem dizer o motivo pra mesa toda.",
+      "💾 Importar uma partida ficou mais seguro: um código estragado, gigante ou de uma versão mais nova do jogo é recusado sem apagar a partida deste aparelho.",
+    ],
+    qol: [
+      "🎲 A tela inicial mostra \"Preparando as cartas…\" até contar o baralho, em vez de um número antigo por um instante.",
+      "⌨️ O recado do C.A.O.S. na tela inicial responde ao teclado (Enter ou Espaço), e o leitor de tela pula as palavras decorativas.",
+      "🧯 Erros inesperados da página ficam anotados só neste aparelho (sem nomes nem cartas) pra ajudar a achar problemas.",
+    ],
+  },
+  {
     v: "Beta 1.7.7.5",
     data: "08/10/2026 · 15:52",
     nome: "Foundation Structure Update · Parte 6",

@@ -63,6 +63,12 @@ function iniciar() {
       caosSplashAt = 0;
       caosSplashMostrar(el, ++caosSplashIdx);
     });
+    // 1.7.7.6: é um botão pra teclado também (Enter ou Espaço)
+    el.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      e.preventDefault();
+      el.click();
+    });
   })();
   (function caosPulinho() {
     const ALVO = "button, .chip, .splash-caos";
