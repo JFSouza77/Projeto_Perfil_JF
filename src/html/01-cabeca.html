@@ -6,6 +6,14 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.8.4 · 08/10/2026 · "Actions and Events Update · Parte 5" = IDS DAS DICAS E FALAS COMO EVENTOS.
+          expandDeck dá id fixo a cada dica pela posição no arquivo (ANO-0001-C07; 20 mil únicos). Regra no
+          99-fechamento: nunca reordenar nem apagar entradas. O save acha a dica pelo id (depois pelo texto, save
+          antigo). retratoPartida("mestre") leva clueId das dicas abertas; o público não (começa com o id da
+          carta). Canal do C.A.O.S.: cada fala vira evento (eventId único, matchId, revisão, destino explicito |
+          mesa | nome); caosFalarPara(id, fala, privado) dá destinatário pelo id; o achado pelo nome no texto
+          fica só como diagnóstico. Aviso do tempo extra do Mestre passa a ser fala privada pra ele, pelo id.
+          teste_acoes com 7 itens novos (31 no total).
   1.7.8.3 · 08/10/2026 · "Actions and Events Update · Parte 4" = TELÃO (ENSAIO EM DUAS ABAS).
           js/05h-telao.js: a aba do jogo publica retratoPartida("mesa") por BroadcastChannel ("perfiljf-telao") a
           cada ação (acoesAoMudar) e quando o telão pede. A aba aberta com #telao não carrega a partida (startApp
@@ -445,7 +453,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.8.3</title>
+<title>Perfil JF · Beta 1.7.8.4</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

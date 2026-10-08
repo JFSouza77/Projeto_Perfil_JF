@@ -68,7 +68,13 @@ function expandDeck(compact) {
     classificacao: c.class || "adulto",
     oldschool: !!c.os || c.class === "oldschool",
     soExpressHardcore: !!c.xh || c.class === "hardcore",
-    clues: c.q.map((t) => (t[0] === "*" ? { type: "special", text: t.slice(1) } : { type: "clue", text: t })),
+    // 1.7.8.4: cada dica tem id fixo (ANO-0001-C07 = 7ª entrada da carta no arquivo-fonte). A ordem
+    // mostrada na partida (embaralhada) é outra coisa: o índice na carta em jogo. Regra das cartas:
+    // nunca reordenar nem apagar entradas no arquivo; corrigir o texto mantém o id.
+    clues: c.q.map((t, i) => {
+      const id = c.id ? c.id + "-C" + String(i + 1).padStart(2, "0") : null;
+      return t[0] === "*" ? { id, type: "special", text: t.slice(1) } : { id, type: "clue", text: t };
+    }),
   }));
 }
 function rebuildCardsIndex() {

@@ -220,7 +220,10 @@ function caosBlindarUm(nome) {
   }
   return window[nome] === prot;
 }
-// Destino de uma fala: os jogadores citados por nome, ou a mesa toda.
+// Destino de uma fala (1.7.8.4: com id).
+//  · EXPLÍCITO: quem fala com alguém diz pra quem (caosFalarPara, pelo id). É o que vale na rede.
+//  · PELO NOME: sem destino explícito, o canal procura nomes no texto. Isso é só diagnóstico (um
+//    apelido dentro de outro nome engana); na 1.7.9 a fala sem destino explícito vai pra mesa.
 function caosCanalDestino(texto) {
   const t = String(texto || "");
   const citados = players.filter((p) => {
@@ -229,30 +232,47 @@ function caosCanalDestino(texto) {
     return new RegExp("(^|[^\\p{L}\\p{N}])" + esc + "(?![\\p{L}\\p{N}])", "u").test(t);
   });
   return citados.length
-    ? citados.map((p) => ({ nome: p.name, aparelho: p.aparelho || "host" }))
-    : [{ nome: "mesa", aparelho: "todos" }];
+    ? citados.map((p) => ({ id: p.id || null, nome: p.name, aparelho: p.aparelho || "host" }))
+    : [{ id: null, nome: "mesa", aparelho: "todos" }];
 }
+let caosCanalSeq = 0;
+let caosCanalDestinoExplicito = null; // { ids: [...] } enquanto caosFalarPara entrega a fala
 function caosCanalRegistrar(texto, privado) {
   try {
+    const exp = caosCanalDestinoExplicito;
+    const para = exp
+      ? exp.ids.map((id) => {
+          const p = jogadorPorId(id);
+          return { id, nome: p ? p.name : "?", aparelho: (p && p.aparelho) || "host" };
+        })
+      : caosCanalDestino(texto);
     caosCanal.push({
+      // evento da fala: id único na partida (a rede usa pra não entregar duas vezes)
+      eventId: (typeof matchId === "string" && matchId ? matchId : "local") + ":f" + ++caosCanalSeq,
+      matchId: typeof matchId === "string" ? matchId : null,
+      revisao: typeof partidaRevisao === "number" ? partidaRevisao : 0,
       t: Date.now(),
       carta: stats ? stats.totalDrawn : 0,
       texto: String(texto).replace(/\[C\.A\.O\.S\.\]\s*/g, "").slice(0, 160),
-      para: caosCanalDestino(texto),
-      privado: !!privado,
+      para,
+      destino: exp ? "explicito" : para[0].id ? "nome" : "mesa",
+      privado: !!(privado || (exp && exp.privado)),
     });
     if (caosCanal.length > 40) caosCanal.shift();
   } catch (e) {}
 }
-// Fala dirigida a um jogador. Hoje aparece na tela de todos (um aparelho só);
-// no online, o canal entrega só no aparelho dele quando privado = true.
-function caosFalarPara(nome, msg, privado) {
+// Fala dirigida a um jogador (pelo id; aceita o nome por compatibilidade). Hoje aparece na tela de
+// todos (um aparelho só); no online, com privado = true, o canal entrega só no aparelho dele.
+function caosFalarPara(quem, msg, privado) {
   if (!msg) return;
+  const p = jogadorPorId(quem) || players.find((q) => q && q.name === quem) || null;
   caosCanalPrivado = !!privado;
+  caosCanalDestinoExplicito = p && p.id ? { ids: [p.id], privado: !!privado } : null;
   try {
     showToastMessage(msg);
   } finally {
     caosCanalPrivado = false;
+    caosCanalDestinoExplicito = null;
   }
 }
 let caosCanalPrivado = false;

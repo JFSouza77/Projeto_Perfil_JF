@@ -729,20 +729,22 @@ function loadGameState() {
       currentCard = state.currentCard;
     } else if (state.currentCardAnswer) {
       const rawCardOnLoad = cardsByAnswer.get(state.currentCardAnswer) || null;
-      const realClueKeys = rawCardOnLoad ? new Set(rawCardOnLoad.clues.map((c) => c.type + "|" + c.text)) : null;
+      // 1.7.8.4: a dica salva é achada pelo id (texto corrigido não perde a dica); sem id (save antigo), pelo texto
+      const porId = rawCardOnLoad ? new Map(rawCardOnLoad.clues.map((c) => [c.id, c])) : null;
+      const porTexto = rawCardOnLoad ? new Map(rawCardOnLoad.clues.map((c) => [c.type + "|" + c.text, c])) : null;
+      const acharDica = (c) => (c && c.id && porId.get(c.id)) || (c && porTexto.get(c.type + "|" + c.text)) || null;
+      const dicasSalvas = rawCardOnLoad && Array.isArray(state.currentCardClues) ? state.currentCardClues.map(acharDica) : [];
       const savedCluesOk = !!(
         rawCardOnLoad &&
-        Array.isArray(state.currentCardClues) &&
-        state.currentCardClues.length > 0 &&
-        state.currentCardClues.length <= rawCardOnLoad.clues.length &&
-        state.currentCardClues.every((c) => c && realClueKeys.has(c.type + "|" + c.text))
+        dicasSalvas.length > 0 &&
+        dicasSalvas.length <= rawCardOnLoad.clues.length &&
+        dicasSalvas.every(Boolean) &&
+        new Set(dicasSalvas).size === dicasSalvas.length
       );
       currentCard = rawCardOnLoad
         ? {
             ...rawCardOnLoad,
-            clues: savedCluesOk
-              ? state.currentCardClues.map((c) => ({ type: c.type, text: c.text }))
-              : shuffle(rawCardOnLoad.clues),
+            clues: savedCluesOk ? dicasSalvas : shuffle(rawCardOnLoad.clues),
           }
         : null;
       if (currentCard && !savedCluesOk) {
@@ -1660,7 +1662,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.8.3 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.8.4 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2183,7 +2185,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.8.3 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.8.4 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Teste das ações (1.7.8 · Actions and Events Update, Parte 1) do retrato da partida (1.7.8.1) e do desfazer (1.7.8.2).
+// Teste das ações (1.7.8 · Actions and Events Update, Parte 1) do retrato da partida (1.7.8.1) do desfazer (1.7.8.2), dos ids das dicas e dos eventos de fala (1.7.8.4).
 // Confere a fronteira de ações: toque vira ação registrada (sem contar de novo o que o motor chama
 // por dentro), a revisão só sobe quando o estado muda, e dispatchAction recusa partida errada,
 // revisão obsoleta, comando repetido e ação fora de hora. Revisão e registro vão pro save.
@@ -137,6 +137,38 @@ const ARQ = acharMestre(process.argv[2]);
     if (pendingIndex === null && livre2 >= 0) chooseClue(livre2);
     out.outraJogadaFecha = tinha && !desfazerOferta && !document.getElementById('desfazerBtn');
     fechar();
+    // 4d) ids das dicas (1.7.8.4)
+    const todosIds = ADULT_CARDS.flatMap((c) => c.clues.map((d) => d.id));
+    out.dicasComId = todosIds.length === ADULT_CARDS.length * 20 && new Set(todosIds).size === todosIds.length && todosIds.every((x) => /^[A-Z]+-\d{4}-C\d{2}$/.test(x));
+    const pubD = retratoPartida('mesa'), mesD = retratoPartida('mestre');
+    out.clueIdSoMestre = pubD.carta.abertas.every((d) => d.clueId === undefined) && mesD.carta.abertas.every((d) => /-C\d{2}$/.test(d.clueId || ''));
+    // texto da dica corrigido depois do save: a retomada acha a dica pelo id
+    fechar();
+    saveGameState();
+    const abertaIdx = revealedOrder.length ? revealedOrder[0].index : 0;
+    const dicaRaw = cardsByAnswer.get(currentCard.answer).clues.find((d) => d.id === currentCard.clues[abertaIdx].id);
+    const textoVelho = dicaRaw.text;
+    const nAbertas = revealedOrder.length;
+    dicaRaw.text = textoVelho + ' (corrigida)';
+    loadGameState();
+    out.dicaPeloId = revealedOrder.length === nAbertas && currentCard.clues[abertaIdx].text === textoVelho + ' (corrigida)';
+    dicaRaw.text = textoVelho;
+    fechar();
+    // 4e) falas como eventos com destino (1.7.8.4)
+    caosFalarPara(players[0].id, '[C.A.O.S.] teste dirigido', true);
+    const fDir = caosCanal[caosCanal.length - 1];
+    if (activeToastState) closeActiveToast();
+    showToastMessage('[C.A.O.S.] Mesa animada hoje.');
+    const fMesa = caosCanal[caosCanal.length - 1];
+    if (activeToastState) closeActiveToast();
+    showToastMessage('[C.A.O.S.] Boa, ' + players[1].name + '.');
+    const fNome = caosCanal[caosCanal.length - 1];
+    if (activeToastState) closeActiveToast();
+    out.falaExplicita = fDir && fDir.destino === 'explicito' && fDir.para[0].id === players[0].id && fDir.privado === true;
+    out.falaMesa = fMesa && fMesa.destino === 'mesa' && fMesa.para[0].nome === 'mesa';
+    out.falaNome = fNome && fNome.destino === 'nome' && fNome.para[0].id === players[1].id;
+    const evs = caosCanal.map((x) => x.eventId);
+    out.falaEvento = evs.every(Boolean) && new Set(evs).size === evs.length && fDir.matchId === matchId && typeof fDir.revisao === 'number';
     // 5) save e retomada guardam revisão e registro
     saveGameState();
     const revSalva = partidaRevisao, nSalvo = acoesLog.length;
@@ -173,6 +205,13 @@ const ARQ = acharMestre(process.argv[2]);
     ['Desfazer é uma ação registrada e o botão some', r.desfazerNoRegistro],
     ['Desfazer devolve o relógio da dica', r.relogioVoltou],
     ['Outra jogada fecha a janela do desfazer', r.outraJogadaFecha],
+    ['20 mil dicas com id fixo e único (ANO-0001-C07)', r.dicasComId],
+    ['Id da dica só no retrato do Mestre', r.clueIdSoMestre],
+    ['Dica com texto corrigido é achada pelo id ao retomar', r.dicaPeloId],
+    ['Fala dirigida vai pelo id, privada', r.falaExplicita],
+    ['Fala sem destino vai pra mesa', r.falaMesa],
+    ['Nome no texto vira só diagnóstico (com id)', r.falaNome],
+    ['Cada fala é um evento único com partida e revisão', r.falaEvento],
     ['Revisão e registro vão pro save', r.salvou],
     ['Partida nova zera revisão e registro', r.zerou],
   ];

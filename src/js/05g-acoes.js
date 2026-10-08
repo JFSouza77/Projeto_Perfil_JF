@@ -232,6 +232,8 @@ function retratoPartida(papel) {
         categoria: currentCard.category,
         totalDicas: currentCard.clues.length,
         abertas: revealedOrder.map((r) => ({
+          // o id da dica começa com o id da carta: só pro Mestre (no público entregaria a resposta)
+          ...(mestre ? { clueId: r.item.id || null } : {}),
           pos: r.index,
           tipo: r.item.type,
           texto: r.item.text,

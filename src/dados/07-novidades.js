@@ -1,5 +1,18 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.8.4",
+    data: "08/10/2026 · 18:50",
+    nome: "Actions and Events Update · Parte 5",
+    t: "Cada dica e cada fala do C.A.O.S. agora têm identidade própria: o online vai saber exatamente qual dica abriu e pra quem é cada fala.",
+    itens: [
+      "🏷️ As 20 mil dicas ganharam um código fixo. Se o texto de uma dica for corrigido, a partida salva continua achando a dica certa.",
+      "🤖 Cada fala do C.A.O.S. tem um destino: a mesa toda ou um jogador. O aviso de tempo extra do Mestre já é só pra ele.",
+    ],
+    qol: [
+      "🧪 Pra quem joga, nada muda: é tudo por baixo.",
+    ],
+  },
+  {
     v: "Beta 1.7.8.3",
     data: "08/10/2026 · 18:39",
     nome: "Actions and Events Update · Parte 4",
