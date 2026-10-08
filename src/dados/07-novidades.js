@@ -1,5 +1,18 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.8.1",
+    data: "08/10/2026 · 18:05",
+    nome: "Actions and Events Update · Parte 2",
+    t: "O jogo agora sabe montar um retrato da partida pra mandar a outros aparelhos, e o retrato da mesa nunca leva a resposta da carta.",
+    itens: [
+      "🖼️ Retrato da partida: placar, vez, dicas abertas e relógio, do jeito que cada aparelho vai receber no online.",
+      "🙈 O retrato da mesa nunca leva a resposta nem as dicas que ainda não foram abertas. Só o do Mestre leva a resposta.",
+    ],
+    qol: [
+      "🧪 Pra quem joga, nada muda: é tudo por baixo.",
+    ],
+  },
+  {
     v: "Beta 1.7.8",
     data: "08/10/2026 · 17:53",
     nome: "Actions and Events Update · Parte 1",

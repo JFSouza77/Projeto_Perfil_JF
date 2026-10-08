@@ -121,6 +121,6 @@ Nada disto vai para o retrato da rede:
 |---|---|---|
 | **Save** | retomar a partida neste aparelho | `saveGameState` / `loadGameState` |
 | **Foto da espinha** | desfazer o que o C.A.O.S. mexer, dentro de uma rotina | `caosEspinhaFoto` |
-| **Retrato da partida** (GameSnapshot) | mandar o estado de regra para os outros aparelhos | 1.7.8: só a seção 1 deste documento |
+| **Retrato da partida** (GameSnapshot) | mandar o estado de regra para os outros aparelhos | `retratoPartida("mesa" \| "mestre")` (1.7.8.1): só regra; o público sem resposta, sem id da carta e sem dica fechada |
 
 O retrato da 1.7.8 nasce da seção 1, e cada ação (`dispatchAction`) leva `matchId`, `actorId` (o id do jogador) e a revisão esperada.
