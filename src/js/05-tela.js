@@ -2740,6 +2740,8 @@ function openTutorial(tipo) {
   tutorialTipo = cond ? tipo : tipo === "rapido" ? "rapido" : "manual";
   tutorialLista = passosVitoria || (tipo === "rapido" ? TUTORIAL_RAPIDO : TUTORIAL_STEPS);
   tutorialPos = 0;
+  // 1.7.9.12: "manual:online" abre o manual direto no capítulo do online
+  if (tipo === "manual:online") tutorialPos = Math.max(0, TUTORIAL_STEPS.findIndex((x) => x.sec === TUT_CAPS.indexOf("Online")));
   caosLimparFalaParaJanela();
   if (cond) vitoriaTutMarcar(cond);
   else tutMarcarVisto("abriu");

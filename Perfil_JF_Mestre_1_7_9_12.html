@@ -6,6 +6,13 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.9.12 · 09/10/2026 · "Rooms and Network Update · Manual do online" = ONLINE EXPLICADO EM TODO LUGAR.
+          Pedido do JF ("se bobear, nem eu vou saber abrir uma sala online"). TUT_CAPS ganhou o capítulo Online (sec 6,
+          5 passos + Pronto!): como funciona, abrir a sala (host), entrar pelo link, quem toca o quê, se a conexão
+          cair. openTutorial("manual:online") abre direto nele: botão do aviso da tela inicial, "❓ Como funciona"
+          na janela da sala e na tela do convidado. Tutorial rápido aponta pro capítulo. PAUSE_TIPS: 3 dicas do online.
+          Linha da versão da tela inicial estava presa na 1.7.9.11 (a troca procurava pela linha 48, que mudou com a
+          tela de carregamento): agora o build recusa publicar se a tela inicial e o mestre não baterem.
   1.7.9.11 · 09/10/2026 · "Rooms and Network Update · Troca de host" = TELA DE CARREGAMENTO, TROCA DE HOST, PLACAR NO CELULAR.
           · Relato do JF: no iPhone não aparecia tela de carregamento. O iOS só mostra abertura com imagem no
             tamanho exato (apple-touch-startup-image): 11 imagens em icones/abertura-*.jpg (752 KB no total,
@@ -608,7 +615,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.9.11</title>
+<title>Perfil JF · Beta 1.7.9.12</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2912,6 +2919,12 @@ body.claro .acess-op.on {
     animation: none;
     opacity: 0.7;
   }
+}
+/* 1.7.9.12: o aviso do online virou botão (abre o passo a passo) */
+button.splash-embreve {
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
 }
 .wincond-warn {
   color: #ffd166;
@@ -8422,6 +8435,20 @@ body.claro .rede-voto-host {
   background: #fffffff0;
   color: #1e1b4b;
 }
+
+/* 1.7.9.12 · "Como funciona o online" na tela do convidado */
+.rede-como {
+  display: block;
+  margin: 14px auto 6px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid #22d3ee88;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
 </style>
 </head>
 <body class="noturno">
@@ -8478,10 +8505,10 @@ body.claro .rede-voto-host {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.11 · Rooms and Network Update · Troca de host<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.12 · Rooms and Network Update · Manual do online<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
-    <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Na partida: ⏸️ Pausar → 🌐 Jogar online</span></div>
+    <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Como jogar online (passo a passo)"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Na partida: ⏸️ Pausar → 🌐 Jogar online · toque pra ver como</span></button>
   </section>
 
   
@@ -9618,7 +9645,7 @@ const CAOS_TROPECO = {
   interpErro: ["Espera, isso foi acerto? … Não. Não foi.", "Pera, acertou? … Não. Ok, eu tinha entendido errado."],
 };
 const FORMAT_WRAP_IDS = { versus: "fmtWrapVersus", equipe: "fmtWrapEquipe" };
-const TUT_CAPS = ["Começo", "Cadastro", "A carta", "Pontos", "C.A.O.S.", "Extras"];
+const TUT_CAPS = ["Começo", "Cadastro", "A carta", "Pontos", "C.A.O.S.", "Extras", "Online"]; // 1.7.9.12: + Online
 const MODE_WRAP_IDS = {
   classico: "modeWrapClassico",
   hardcore: "modeWrapHardcore",
@@ -15745,6 +15772,8 @@ function openTutorial(tipo) {
   tutorialTipo = cond ? tipo : tipo === "rapido" ? "rapido" : "manual";
   tutorialLista = passosVitoria || (tipo === "rapido" ? TUTORIAL_RAPIDO : TUTORIAL_STEPS);
   tutorialPos = 0;
+  // 1.7.9.12: "manual:online" abre o manual direto no capítulo do online
+  if (tipo === "manual:online") tutorialPos = Math.max(0, TUTORIAL_STEPS.findIndex((x) => x.sec === TUT_CAPS.indexOf("Online")));
   caosLimparFalaParaJanela();
   if (cond) vitoriaTutMarcar(cond);
   else tutMarcarVisto("abriu");
@@ -20268,7 +20297,8 @@ function redeConvidadoIniciar(sala) {
     redeConvidadoTiques();
   }, 500);
 }
-const REDE_SAIR = '<button type="button" class="telao-sair" onclick="redeSairDaSala()">✕ Sair da sala</button>';
+const REDE_SAIR =
+  '<button type="button" class="rede-como" onclick="openTutorial(\'manual:online\')">❓ Como funciona o online</button><button type="button" class="telao-sair" onclick="redeSairDaSala()">✕ Sair da sala</button>';
 function redeSairDaSala() {
   try {
     if (rede) {
@@ -20457,7 +20487,7 @@ function redePainelHost() {
     if (!ov.isConnected && ov._montado) return;
     if (!rede || rede.papel !== "host") {
       const temNet = redeTemInternet();
-      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Jogar online</h3><p>Abra uma sala: cada jogador entra pelo link no próprio celular, escolhe quem é e joga de lá. Este aparelho continua com a partida.</p>${
+      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Jogar online</h3><p>Abra uma sala: cada jogador entra pelo link no próprio celular, escolhe quem é e joga de lá. Este aparelho continua com a partida.</p><button type="button" class="chip" id="redeComo">❓ Como funciona (passo a passo)</button>${
         temNet ? `<button type="button" class="btn-start btn-neo neo-solid neo-still" id="redeAbrirNet" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">Abrir sala pela internet</button>` : `<p><small>Este navegador não tem como abrir sala pela internet.</small></p>`
       }<button type="button" class="chip" id="redeAbrirLocal">Ensaio neste navegador (abas)</button><button type="button" class="chip" id="redeOk" style="margin-top:10px">Fechar</button></div>`;
       const net = ov.querySelector("#redeAbrirNet");
@@ -20466,6 +20496,10 @@ function redePainelHost() {
           redeAbrirSala("internet");
           pintar();
         });
+      ov.querySelector("#redeComo").addEventListener("click", () => {
+        ov.remove();
+        openTutorial("manual:online");
+      });
       ov.querySelector("#redeAbrirLocal").addEventListener("click", () => {
         redeAbrirSala("local");
         pintar();
@@ -20484,7 +20518,7 @@ function redePainelHost() {
         navigator.share ? '<button type="button" class="chip" id="redeCompartilhar">📤 Compartilhar</button>' : ""
       }<label class="rede-rot-eu">Quem joga neste aparelho? <select id="redeEu">${opcoesEu}</select></label><ul class="rede-lista">${lugares}</ul>${
         rede.modo === "local" ? '<button type="button" class="chip" id="redeAbrirAba">Abrir uma aba de convidado</button>' : ""
-      }<button type="button" class="chip" id="redeFecharSala">Fechar a sala</button><button type="button" class="chip" id="redeOk" style="margin-top:10px">Fechar</button></div>`;
+      }<button type="button" class="chip" id="redeComoSala">❓ Como funciona</button><button type="button" class="chip" id="redeFecharSala">Fechar a sala</button><button type="button" class="chip" id="redeOk" style="margin-top:10px">Fechar</button></div>`;
       ov.querySelector("#redeCopiar").addEventListener("click", (e) => {
         try {
           navigator.clipboard.writeText(redeLinkDaSala());
@@ -20501,6 +20535,10 @@ function redePainelHost() {
       });
       const ab = ov.querySelector("#redeAbrirAba");
       if (ab) ab.addEventListener("click", () => window.open(redeLinkDaSala(), "_blank"));
+      ov.querySelector("#redeComoSala").addEventListener("click", () => {
+        ov.remove();
+        openTutorial("manual:online");
+      });
       ov.querySelector("#redeFecharSala").addEventListener("click", () => {
         redeFechar();
         pintar();
@@ -22775,7 +22813,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.9.11 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.9.12 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -27845,7 +27883,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.9.11 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.9.12 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -31019,7 +31057,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.9.11 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.9.12 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -31542,7 +31580,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.9.11 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.9.12 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -66358,21 +66396,50 @@ const TUTORIAL_STEPS = [
     title: "Fim de jogo",
     text: 'Acabou? Aparece o ranking com a <b>resenha do C.A.O.S.</b> (o "juízo final" da partida) e a estrela da partida. Dá pra ver as estatísticas, as cartas que cada um acertou, o <b>🏆 Hall da Fama</b>, mandar o ranking pro grupo em <b>📲 Compartilhar resultado</b> e tocar em <b>🔁 Jogar de novo</b> com os mesmos jogadores.<br>Também dá pra <b>avaliar as falas do C.A.O.S.</b> (👍/👎) — é assim que ele aprende o que a mesa curte.',
   },
+
+  // 1.7.9.12 (pedido do JF: "se bobear, nem eu vou saber abrir uma sala online"): capítulo do online.
   {
-    sec: 5,
+    sec: 6,
     icon: "🌐",
-    title: "Online (beta)",
-    text: "No online, cada pessoa joga no próprio celular:<ul><li>📡 <b>Abrir a sala:</b> no aparelho que tem a partida, toque em <b>⏸️ Pausar → 🌐 Jogar online</b>. Esse aparelho é o <b>host</b>: ele guarda a partida;</li><li>🔗 <b>Entrar:</b> o host manda o link da sala; cada um abre no seu celular e escolhe quem é;</li><li>🔒 <b>Só o Mestre vê a resposta</b>, no celular dele. Quem está na vez escolhe o número no próprio celular;</li><li>🗳️ <b>Descartar e Desistir</b> viram votação da mesa;</li><li>🔄 <b>Caiu ou fechou?</b> Abra o link de novo: volta pro mesmo lugar. Se o host recarregar, a sala volta sozinha.</li></ul>Ainda é beta: em alguma rede de celular a conexão pode não abrir. No mesmo Wi-Fi costuma funcionar sempre.",
+    title: "Jogar online: como funciona",
+    text: "No online, <b>cada pessoa joga no próprio celular</b>, na mesma sala ou cada um na sua casa (com uma chamada de voz, por exemplo).<ul><li>📱 <b>Um aparelho é o host:</b> é nele que a partida é montada e fica guardada. Pode ser o celular de quem joga ou um tablet/computador só pra mesa;</li><li>🔗 <b>Os outros entram por um link</b> e escolhem quem são. Eles não precisam montar nada;</li><li>🔒 <b>Só o celular do Mestre vê a resposta.</b> Quem está na vez escolhe o número da dica no próprio celular.</li></ul>Ainda é <b>beta</b>: no mesmo Wi-Fi funciona melhor. Os próximos passos ensinam a abrir e a entrar.",
     dark: true,
-    mock: '<div class="tut-sala"><span class="tut-sala-selo">🧪 BETA</span><div class="tut-sala-rot">Sala</div><div class="tut-sala-cod">K7P2</div><div class="tut-sala-sub">Abra o link no seu celular pra entrar</div></div>',
+    mock: '<div class="tut-sala"><span class="tut-sala-selo">🧪 BETA</span><div class="tut-sala-rot">Sala</div><div class="tut-sala-cod">K7P2</div><div class="tut-sala-sub">1 host · cada um no seu celular</div></div>',
   },
   {
-    sec: 5,
+    sec: 6,
+    icon: "📡",
+    title: "Abrir uma sala (no aparelho do host)",
+    text: "<ol><li>Monte a partida <b>normalmente</b> nesse aparelho: formato, modo e o <b>cadastro de todo mundo</b> (inclusive quem vai jogar de outro celular). Sorteie quem começa;</li><li>Com a partida na tela, toque em <b>⏸️ Pausar</b>;</li><li>Toque em <b>🌐 Jogar online (beta)</b> e depois em <b>Abrir sala pela internet</b>;</li><li>Espere aparecer <b>🟢 Sala aberta</b> (leva uns segundos);</li><li>Em <b>Quem joga neste aparelho?</b>, escolha o seu nome (ou \"ninguém\", se o aparelho fica só na mesa);</li><li>Toque em <b>📋 Copiar link</b> ou <b>📤 Compartilhar</b> e mande no grupo;</li><li>Feche a janela e toque em <b>▶️ Voltar pro jogo</b>.</li></ol>Pra ver quem já entrou, é só abrir <b>🌐 Jogar online</b> de novo.",
+    dark: true,
+    mock: '<div class="tut-sala"><div class="tut-sala-rot">🌐 Sala K7P2</div><div class="tut-sala-sub">🟢 Sala aberta</div><div class="tut-sala-sub">📋 Copiar link · 📤 Compartilhar</div></div>',
+  },
+  {
+    sec: 6,
+    icon: "🔗",
+    title: "Entrar na sala (no seu celular)",
+    text: "<ol><li>Abra o <b>link</b> que o host mandou (no Safari ou no Chrome);</li><li>Na tela <b>Quem é você?</b>, toque no seu nome;</li><li>Pronto: aparece o placar, a carta e os <b>botões do seu papel</b>.</li></ol>Se aparecer <b>\"Esse jogador já está na sala\"</b>, outra pessoa escolheu esse nome: confira com a mesa. Se aparecer <b>\"versão diferente\"</b>, recarregue a página pra atualizar o jogo.<br>💡 Deixe o jogo <b>aberto na tela</b>: se o celular bloquear ou você trocar de app, a conexão pode cair (é só abrir o link de novo).",
+    dark: true,
+    mock: '<div class="tut-sala"><div class="tut-sala-rot">🌐 Sala K7P2</div><div class="tut-sala-cod" style="font-size:1.1rem">Quem é você?</div><div class="tut-sala-sub">🦊 Ana · 🐼 Beto · 🐸 Caio</div></div>',
+  },
+  {
+    sec: 6,
+    icon: "🎙️",
+    title: "Quem toca o quê",
+    text: "Cada celular só mostra o que é seu:<ul><li>🎙️ <b>Mestre:</b> vê a resposta (\"🔒 Só você vê\"), vira a carta, dá o veredito (Acertou, Errou, Pulou), resolve as instruções especiais e o palpite;</li><li>👉 <b>Quem está na vez:</b> escolhe o número da dica;</li><li>🏟️ <b>Quem caiu na casa de bônus:</b> escolhe contra quem é o duelo;</li><li>⏸️ <b>Qualquer um</b> pode pausar e continuar;</li><li>🗳️ <b>Descartar e Desistir</b> viram votação: o Mestre pede e a mesa vota no celular;</li><li>📱 <b>O host</b> controla tudo pelo aparelho dele e é o único que toca em <b>Próxima carta</b> no intervalo.</li></ul>",
+  },
+  {
+    sec: 6,
+    icon: "🆘",
+    title: "Se a conexão cair",
+    text: "<ul><li>🔄 <b>Caiu ou fechou sem querer?</b> Abra o link de novo: você volta pro mesmo lugar;</li><li>📱 <b>O host recarregou?</b> A sala volta sozinha, com o mesmo código, e todo mundo se reconecta;</li><li>👑 <b>O host sumiu de vez?</b> Em uns 15 segundos, quem foi o <b>2º Mestre</b> da partida assume a sala, sem perder nada. Se o host voltar, entra como jogador;</li><li>📶 <b>Não abriu?</b> Tente todos no <b>mesmo Wi-Fi</b>. Em algumas redes 4G/5G a conexão direta é bloqueada.</li></ul>Pra sair da sala, toque em <b>✕ Sair da sala</b>, no fim da tela.",
+  },
+  {
+    sec: 6,
     icon: "🎮",
     title: "Pronto!",
     text: "Dica: dá pra instalar o jogo como app, em tela cheia e funcionando sem internet. No menu <b>⋮</b> da tela inicial, toque em <b>📲 Instalar o app</b> (no Android o Chrome instala direto; no iPhone aparece o passo a passo: Compartilhar → Adicionar à Tela de Início). Isso é tudo. O resto vocês aprendem jogando — e o <b>Resumo rápido</b> das regras está sempre antes da partida e na pausa. Bom jogo, e boa sorte com o C.A.O.S. 😏",
-  },
-];
+  },];
 // Tutorial rápido (1.7.6): 10 passos, o básico em menos de 2 minutos, com linguagem pra criança.
 // As "prints" são montadas com as próprias peças do jogo (ficam iguais ao jogo e não pesam no arquivo).
 // O manual completo (TUTORIAL_STEPS) continua no fim do tutorial, no menu ⋮ e na Pausa.
@@ -66432,7 +66499,7 @@ const TUTORIAL_RAPIDO = [
   {
     icon: "🌐",
     title: "Jogando online (beta)",
-    text: "Dá pra jogar <b>cada um no seu celular</b>:<ul><li>📡 Na partida, <b>⏸️ Pausar → 🌐 Jogar online</b> abre a sala;</li><li>🔗 Os outros abrem o <b>link da sala</b> e escolhem quem são;</li><li>🔒 Só o celular do <b>Mestre</b> vê a resposta.</li></ul>",
+    text: "Dá pra jogar <b>cada um no seu celular</b>:<ul><li>📡 Na partida, <b>⏸️ Pausar → 🌐 Jogar online → Abrir sala</b>;</li><li>📋 <b>Copie o link</b> e mande no grupo;</li><li>🔗 Cada um abre o link e <b>escolhe quem é</b>;</li><li>🔒 Só o celular do <b>Mestre</b> vê a resposta.</li></ul>O passo a passo completo está no <b>📖 Manual</b>, capítulo <b>Online</b>.",
     mock: '<div class="tut-sala"><span class="tut-sala-selo">🧪 BETA</span><div class="tut-sala-rot">Sala</div><div class="tut-sala-cod">K7P2</div><div class="tut-sala-sub">Abra o link no seu celular pra entrar</div></div>',
     dark: true,
   },
@@ -66443,6 +66510,19 @@ const TUTORIAL_RAPIDO = [
   },
 ];
 const PAUSE_TIPS = [
+  // 1.7.9.12: dicas do online
+  {
+    when: () => typeof rede === "undefined" || !rede,
+    text: () => "Dá pra jogar cada um no seu celular: toque em 🌐 Jogar online aqui na pausa. O passo a passo está no 📖 Manual, capítulo Online.",
+  },
+  {
+    when: () => typeof rede !== "undefined" && !!rede && rede.papel === "host",
+    text: () => "Chegou mais alguém? 🌐 Jogar online → 📋 Copiar link e mande pra pessoa. Ela escolhe o nome dela e entra na hora.",
+  },
+  {
+    when: () => typeof rede !== "undefined" && !!rede && rede.papel === "host",
+    text: () => "Online: deixe este aparelho com o jogo aberto na tela. Se ele bloquear por muito tempo, quem foi o 2º Mestre assume a sala.",
+  },
   {
     when: () => CURRENT_MODE !== "express",
     text: () => 'Mestre: leia só a categoria, com clareza ("Eu sou UMA PESSOA"). Nada de dar pistas no jeito de falar.',
@@ -66683,6 +66763,18 @@ const PAUSE_TIPS = [
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.9.12",
+    data: "09/10/2026 · 20:09",
+    nome: "Rooms and Network Update · Manual do online",
+    t: "O online ganhou passo a passo: no manual, nas dicas e em cada tela da sala.",
+    itens: [
+      "📖 Capítulo Online no manual: como funciona, como abrir a sala no aparelho do host, como entrar pelo link, quem toca o quê e o que fazer se a conexão cair.",
+      "❓ Como funciona em todo lugar: o aviso do online na tela inicial, a janela da sala e a tela de quem entra pelo link abrem direto o passo a passo.",
+      "💡 Dicas da pausa: a pausa lembra que dá pra jogar online e, com a sala aberta, como chamar mais gente.",
+    ],
+    qol: [],
+  },
   {
     v: "Beta 1.7.9.11",
     data: "09/10/2026 · 19:44",
@@ -69456,6 +69548,11 @@ function iniciar() {
   document.getElementById("btnMemExportar").addEventListener("click", caosMemoriaExportar);
   document.getElementById("btnAcessibilidade").addEventListener("click", acessPainelAbrir);
   document.getElementById("pauseAcessBtn").addEventListener("click", acessPainelAbrir);
+  {
+    // 1.7.9.12: o aviso do online na tela inicial abre o passo a passo
+    const eb = document.getElementById("splashEmBreve");
+    if (eb) eb.addEventListener("click", () => openTutorial("manual:online"));
+  }
   {
     const on = document.getElementById("pauseOnlineBtn");
     if (on) on.addEventListener("click", () => typeof redePainelHost === "function" && redePainelHost());

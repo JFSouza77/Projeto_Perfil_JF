@@ -826,6 +826,11 @@ function iniciar() {
   document.getElementById("btnAcessibilidade").addEventListener("click", acessPainelAbrir);
   document.getElementById("pauseAcessBtn").addEventListener("click", acessPainelAbrir);
   {
+    // 1.7.9.12: o aviso do online na tela inicial abre o passo a passo
+    const eb = document.getElementById("splashEmBreve");
+    if (eb) eb.addEventListener("click", () => openTutorial("manual:online"));
+  }
+  {
     const on = document.getElementById("pauseOnlineBtn");
     if (on) on.addEventListener("click", () => typeof redePainelHost === "function" && redePainelHost());
   }

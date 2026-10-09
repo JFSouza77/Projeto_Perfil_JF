@@ -227,21 +227,50 @@ const TUTORIAL_STEPS = [
     title: "Fim de jogo",
     text: 'Acabou? Aparece o ranking com a <b>resenha do C.A.O.S.</b> (o "juízo final" da partida) e a estrela da partida. Dá pra ver as estatísticas, as cartas que cada um acertou, o <b>🏆 Hall da Fama</b>, mandar o ranking pro grupo em <b>📲 Compartilhar resultado</b> e tocar em <b>🔁 Jogar de novo</b> com os mesmos jogadores.<br>Também dá pra <b>avaliar as falas do C.A.O.S.</b> (👍/👎) — é assim que ele aprende o que a mesa curte.',
   },
+
+  // 1.7.9.12 (pedido do JF: "se bobear, nem eu vou saber abrir uma sala online"): capítulo do online.
   {
-    sec: 5,
+    sec: 6,
     icon: "🌐",
-    title: "Online (beta)",
-    text: "No online, cada pessoa joga no próprio celular:<ul><li>📡 <b>Abrir a sala:</b> no aparelho que tem a partida, toque em <b>⏸️ Pausar → 🌐 Jogar online</b>. Esse aparelho é o <b>host</b>: ele guarda a partida;</li><li>🔗 <b>Entrar:</b> o host manda o link da sala; cada um abre no seu celular e escolhe quem é;</li><li>🔒 <b>Só o Mestre vê a resposta</b>, no celular dele. Quem está na vez escolhe o número no próprio celular;</li><li>🗳️ <b>Descartar e Desistir</b> viram votação da mesa;</li><li>🔄 <b>Caiu ou fechou?</b> Abra o link de novo: volta pro mesmo lugar. Se o host recarregar, a sala volta sozinha.</li></ul>Ainda é beta: em alguma rede de celular a conexão pode não abrir. No mesmo Wi-Fi costuma funcionar sempre.",
+    title: "Jogar online: como funciona",
+    text: "No online, <b>cada pessoa joga no próprio celular</b>, na mesma sala ou cada um na sua casa (com uma chamada de voz, por exemplo).<ul><li>📱 <b>Um aparelho é o host:</b> é nele que a partida é montada e fica guardada. Pode ser o celular de quem joga ou um tablet/computador só pra mesa;</li><li>🔗 <b>Os outros entram por um link</b> e escolhem quem são. Eles não precisam montar nada;</li><li>🔒 <b>Só o celular do Mestre vê a resposta.</b> Quem está na vez escolhe o número da dica no próprio celular.</li></ul>Ainda é <b>beta</b>: no mesmo Wi-Fi funciona melhor. Os próximos passos ensinam a abrir e a entrar.",
     dark: true,
-    mock: '<div class="tut-sala"><span class="tut-sala-selo">🧪 BETA</span><div class="tut-sala-rot">Sala</div><div class="tut-sala-cod">K7P2</div><div class="tut-sala-sub">Abra o link no seu celular pra entrar</div></div>',
+    mock: '<div class="tut-sala"><span class="tut-sala-selo">🧪 BETA</span><div class="tut-sala-rot">Sala</div><div class="tut-sala-cod">K7P2</div><div class="tut-sala-sub">1 host · cada um no seu celular</div></div>',
   },
   {
-    sec: 5,
+    sec: 6,
+    icon: "📡",
+    title: "Abrir uma sala (no aparelho do host)",
+    text: "<ol><li>Monte a partida <b>normalmente</b> nesse aparelho: formato, modo e o <b>cadastro de todo mundo</b> (inclusive quem vai jogar de outro celular). Sorteie quem começa;</li><li>Com a partida na tela, toque em <b>⏸️ Pausar</b>;</li><li>Toque em <b>🌐 Jogar online (beta)</b> e depois em <b>Abrir sala pela internet</b>;</li><li>Espere aparecer <b>🟢 Sala aberta</b> (leva uns segundos);</li><li>Em <b>Quem joga neste aparelho?</b>, escolha o seu nome (ou \"ninguém\", se o aparelho fica só na mesa);</li><li>Toque em <b>📋 Copiar link</b> ou <b>📤 Compartilhar</b> e mande no grupo;</li><li>Feche a janela e toque em <b>▶️ Voltar pro jogo</b>.</li></ol>Pra ver quem já entrou, é só abrir <b>🌐 Jogar online</b> de novo.",
+    dark: true,
+    mock: '<div class="tut-sala"><div class="tut-sala-rot">🌐 Sala K7P2</div><div class="tut-sala-sub">🟢 Sala aberta</div><div class="tut-sala-sub">📋 Copiar link · 📤 Compartilhar</div></div>',
+  },
+  {
+    sec: 6,
+    icon: "🔗",
+    title: "Entrar na sala (no seu celular)",
+    text: "<ol><li>Abra o <b>link</b> que o host mandou (no Safari ou no Chrome);</li><li>Na tela <b>Quem é você?</b>, toque no seu nome;</li><li>Pronto: aparece o placar, a carta e os <b>botões do seu papel</b>.</li></ol>Se aparecer <b>\"Esse jogador já está na sala\"</b>, outra pessoa escolheu esse nome: confira com a mesa. Se aparecer <b>\"versão diferente\"</b>, recarregue a página pra atualizar o jogo.<br>💡 Deixe o jogo <b>aberto na tela</b>: se o celular bloquear ou você trocar de app, a conexão pode cair (é só abrir o link de novo).",
+    dark: true,
+    mock: '<div class="tut-sala"><div class="tut-sala-rot">🌐 Sala K7P2</div><div class="tut-sala-cod" style="font-size:1.1rem">Quem é você?</div><div class="tut-sala-sub">🦊 Ana · 🐼 Beto · 🐸 Caio</div></div>',
+  },
+  {
+    sec: 6,
+    icon: "🎙️",
+    title: "Quem toca o quê",
+    text: "Cada celular só mostra o que é seu:<ul><li>🎙️ <b>Mestre:</b> vê a resposta (\"🔒 Só você vê\"), vira a carta, dá o veredito (Acertou, Errou, Pulou), resolve as instruções especiais e o palpite;</li><li>👉 <b>Quem está na vez:</b> escolhe o número da dica;</li><li>🏟️ <b>Quem caiu na casa de bônus:</b> escolhe contra quem é o duelo;</li><li>⏸️ <b>Qualquer um</b> pode pausar e continuar;</li><li>🗳️ <b>Descartar e Desistir</b> viram votação: o Mestre pede e a mesa vota no celular;</li><li>📱 <b>O host</b> controla tudo pelo aparelho dele e é o único que toca em <b>Próxima carta</b> no intervalo.</li></ul>",
+  },
+  {
+    sec: 6,
+    icon: "🆘",
+    title: "Se a conexão cair",
+    text: "<ul><li>🔄 <b>Caiu ou fechou sem querer?</b> Abra o link de novo: você volta pro mesmo lugar;</li><li>📱 <b>O host recarregou?</b> A sala volta sozinha, com o mesmo código, e todo mundo se reconecta;</li><li>👑 <b>O host sumiu de vez?</b> Em uns 15 segundos, quem foi o <b>2º Mestre</b> da partida assume a sala, sem perder nada. Se o host voltar, entra como jogador;</li><li>📶 <b>Não abriu?</b> Tente todos no <b>mesmo Wi-Fi</b>. Em algumas redes 4G/5G a conexão direta é bloqueada.</li></ul>Pra sair da sala, toque em <b>✕ Sair da sala</b>, no fim da tela.",
+  },
+  {
+    sec: 6,
     icon: "🎮",
     title: "Pronto!",
     text: "Dica: dá pra instalar o jogo como app, em tela cheia e funcionando sem internet. No menu <b>⋮</b> da tela inicial, toque em <b>📲 Instalar o app</b> (no Android o Chrome instala direto; no iPhone aparece o passo a passo: Compartilhar → Adicionar à Tela de Início). Isso é tudo. O resto vocês aprendem jogando — e o <b>Resumo rápido</b> das regras está sempre antes da partida e na pausa. Bom jogo, e boa sorte com o C.A.O.S. 😏",
-  },
-];
+  },];
 // Tutorial rápido (1.7.6): 10 passos, o básico em menos de 2 minutos, com linguagem pra criança.
 // As "prints" são montadas com as próprias peças do jogo (ficam iguais ao jogo e não pesam no arquivo).
 // O manual completo (TUTORIAL_STEPS) continua no fim do tutorial, no menu ⋮ e na Pausa.
@@ -301,7 +330,7 @@ const TUTORIAL_RAPIDO = [
   {
     icon: "🌐",
     title: "Jogando online (beta)",
-    text: "Dá pra jogar <b>cada um no seu celular</b>:<ul><li>📡 Na partida, <b>⏸️ Pausar → 🌐 Jogar online</b> abre a sala;</li><li>🔗 Os outros abrem o <b>link da sala</b> e escolhem quem são;</li><li>🔒 Só o celular do <b>Mestre</b> vê a resposta.</li></ul>",
+    text: "Dá pra jogar <b>cada um no seu celular</b>:<ul><li>📡 Na partida, <b>⏸️ Pausar → 🌐 Jogar online → Abrir sala</b>;</li><li>📋 <b>Copie o link</b> e mande no grupo;</li><li>🔗 Cada um abre o link e <b>escolhe quem é</b>;</li><li>🔒 Só o celular do <b>Mestre</b> vê a resposta.</li></ul>O passo a passo completo está no <b>📖 Manual</b>, capítulo <b>Online</b>.",
     mock: '<div class="tut-sala"><span class="tut-sala-selo">🧪 BETA</span><div class="tut-sala-rot">Sala</div><div class="tut-sala-cod">K7P2</div><div class="tut-sala-sub">Abra o link no seu celular pra entrar</div></div>',
     dark: true,
   },
@@ -312,6 +341,19 @@ const TUTORIAL_RAPIDO = [
   },
 ];
 const PAUSE_TIPS = [
+  // 1.7.9.12: dicas do online
+  {
+    when: () => typeof rede === "undefined" || !rede,
+    text: () => "Dá pra jogar cada um no seu celular: toque em 🌐 Jogar online aqui na pausa. O passo a passo está no 📖 Manual, capítulo Online.",
+  },
+  {
+    when: () => typeof rede !== "undefined" && !!rede && rede.papel === "host",
+    text: () => "Chegou mais alguém? 🌐 Jogar online → 📋 Copiar link e mande pra pessoa. Ela escolhe o nome dela e entra na hora.",
+  },
+  {
+    when: () => typeof rede !== "undefined" && !!rede && rede.papel === "host",
+    text: () => "Online: deixe este aparelho com o jogo aberto na tela. Se ele bloquear por muito tempo, quem foi o 2º Mestre assume a sala.",
+  },
   {
     when: () => CURRENT_MODE !== "express",
     text: () => 'Mestre: leia só a categoria, com clareza ("Eu sou UMA PESSOA"). Nada de dar pistas no jeito de falar.',
