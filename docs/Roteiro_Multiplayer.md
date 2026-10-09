@@ -453,6 +453,29 @@ Base: a revisão externa da 1.7.8.9 (10 achados), cada um conferido no código.
   - **(a) Partida casual:** todo mundo recebe o jogo inteiro. Quem souber mexer nas ferramentas do navegador acha a resposta, mas pela tela normal ninguém vê. É o mesmo nível de um jogo de tabuleiro, em que dá pra espiar a carta.
   - **(b) Sigilo de verdade:** o catálogo fica só no aparelho do host (ou num servidor), e cada carta vai só pro celular do Mestre na hora. Custa mais trabalho e exige que os convidados recebam uma versão do jogo sem as cartas.
 
+### Parte 3 · 1.7.9.7 · Sala, protocolo, papéis e relógio (publicada)
+- **`05k-rede.js`:** o host abre a sala pelo ADM (código de 4 letras); o convidado entra por `#sala=ABCD`, escolhe quem é e vê o retrato público com os botões do seu papel.
+- **Envelope e validação:** protocolo, sala, sessão e número em sequência. Mensagem malformada, de outra sala ou protocolo, grande demais, repetida ou atrasada é jogada fora.
+- **Ator pela sessão e papel conferido pelo host** (`redePodeComandar`), antes da porta de sempre (`dispatchAction`):
+  - veredito, virar, sacar, descartar e desistir: só o Mestre;
+  - escolher a dica: quem está na vez (ou o Mestre);
+  - duelo de bônus: quem caiu na casa;
+  - pausar e continuar: qualquer um;
+  - tempo acabou, ADM e encerrar: só o host.
+- **Travas de privacidade feitas:** 1 (convidado não roda a partida), 2 (convidado não desembaralha o catálogo na versão publicada), 3 (resposta só pro Mestre, apagada quando a carta acaba ou ele deixa de ser Mestre), 4 (retrato sem resposta e sem ids) e 5 (convidado não grava).
+- **Reconexão:** id do jogador + chave do aparelho. O mesmo aparelho volta na hora; outro não toma um lugar online (só depois de 15 s sem notícia ou de um "tchau").
+- **Relógio:** ping/pong, fica a medida de menor atraso; o convidado conta o tempo pelo relógio do host. Só o host decide que o tempo acabou.
+- **Teste:** `ferramentas/teste_rede.js` (`npm run rede`).
+- **Transporte:** hoje só o local (BroadcastChannel: abas do mesmo navegador). O protocolo não depende dele.
+
+### Falta pra rede de verdade (próximas partes)
+- **Escolher o serviço que liga os celulares (decisão do JF).** Recomendação: **WebRTC com PeerJS** (gratuito, sem conta, funciona no Safari do iPhone; o host vira o "servidor" da sala). Plano B se alguma rede bloquear: um serviço de mensagens em tempo real com conta gratuita (ex.: Ably ou Supabase Realtime). Só o transporte muda; o protocolo fica.
+- **Tela do convidado completa:** Express (Passar, Acertou com "quem acertou"), especiais de mover casas e de alvo, escolha do duelo de bônus, palpite.
+- **Descartar por votação** (registrado na 1.7.8.7).
+- **Lugar do host:** o aparelho do host também é um jogador (hoje ele toca tudo, como no jogo local).
+- **Pacote de recuperação e troca de host** (sucessão: o 2º Mestre assume).
+- **Versão igual em todos os aparelhos** (aviso de nova versão).
+
 ### Decisão do JF · Privacidade das respostas (09/10/2026)
 - **Escolha: (a), com o máximo de travas da (b).** Fica aberta a (b) completa depois, se precisar.
 - **Já feito (1.7.9.1):** cartas embaralhadas no arquivo publicado.

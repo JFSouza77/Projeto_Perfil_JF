@@ -6,6 +6,14 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.9.7",
+    data: "09/10/2026 · 17:24",
+    nome: "Rooms and Network Update · Parte 3",
+    t: "Começou a fundação do online: salas com código, cada um no seu papel e a resposta só no celular de quem lê. Por enquanto, o ensaio funciona com abas do mesmo navegador.",
+    itens: [],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.9.6",
     data: "09/10/2026 · 16:59",
     nome: "Rooms and Network Update · Board Update 5",

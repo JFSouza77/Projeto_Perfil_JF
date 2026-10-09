@@ -964,6 +964,13 @@ function iniciar() {
         telaoIniciar();
         return;
       }
+      // 1.7.9.7: #sala=ABCD entra como convidado (não carrega nem grava partida, não roda o motor)
+      const salaConvidado = typeof redeSalaDoEndereco === "function" ? redeSalaDoEndereco() : null;
+      if (salaConvidado) {
+        document.querySelectorAll(".caos-modal-ov, .jf-modal-bg").forEach((o) => o.remove());
+        redeConvidadoIniciar(salaConvidado);
+        return;
+      }
       loadGameState();
       if (typeof telaoLigarJogo === "function") telaoLigarJogo();
       updateModeNotice();

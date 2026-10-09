@@ -8,6 +8,7 @@ css/06-modo-claro.css
 css/07-botoes-acessiveis.css
 css/08-computador.css
 css/09-tabuleiro.css
+css/10-rede.css
 html/02-corpo.html
 js/01-configuracao.js
 js/02-estado.js
@@ -25,6 +26,7 @@ js/05g-acoes.js
 js/05h-telao.js
 js/05i-tabuleiro.js
 js/05j-lobby-placar.js
+js/05k-rede.js
 js/06-voz-som-vibracao.js
 js/07-caos/01-nucleo-e-falas.js
 js/07-caos/02-cerebro-adm.js
