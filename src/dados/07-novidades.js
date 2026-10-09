@@ -6,6 +6,19 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.9.3",
+    data: "09/10/2026 · 12:57",
+    nome: "Rooms and Network Update · Board Update 2",
+    t: "O tabuleiro ganhou cara de tabuleiro de verdade.",
+    itens: [
+      "🧱 Casas em blocos: as casinhas viraram blocos coloridos colados numa pista larga, como nos tabuleiros de papelão.",
+      "❓ Casas de bônus com interrogação: e a cada 10 casinhas o número da casa aparece dentro do bloco.",
+      "🆕 Formas novas: Oval, Labirinto e Zigue-zague. A Espiral ficou mais espaçada, e o Coração saiu.",
+      "🚩 Saída e Chegada: as plaquinhas aparecem no tabuleiro, sempre no lugar mais livre.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.9.2",
     data: "09/10/2026 · 11:58",
     nome: "Rooms and Network Update · Board Update",

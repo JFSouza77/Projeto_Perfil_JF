@@ -474,3 +474,10 @@ Base: a revisão externa da 1.7.8.9 (10 achados), cada um conferido no código.
 - **Testes:**
   - `teste_telao` confere a forma e os peões no telão;
   - `teste_acoes` confere que a forma volta igual ao recarregar e muda numa partida nova.
+
+### Board Update 2 · 1.7.9.3 (publicada)
+- **Referências do JF:** fotos dos tabuleiros de verdade (Perfil 3, 4, 5, 6, 7, 8 e Júnior).
+- **Mudanças:**
+  - casas em blocos numa pista larga, com cores alternadas e degradê no Júnior;
+  - "?" no bônus e número dentro do bloco;
+  - entraram Oval, Labirinto e Zigue-zague; saiu o Coração; a Espiral ficou mais espaçada.
