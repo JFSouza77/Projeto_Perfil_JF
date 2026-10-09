@@ -230,6 +230,7 @@ async function rodar(b, modo, porta) {
     tabLobbyAbrir();
   });
   conf("Intervalo aparece no celular, sem botão de seguir", await esperar(gV, () => !!rede.retrato.intervalo && !!document.querySelector(".rede-intervalo") && !document.getElementById("tbLobbyPular")));
+  conf("No intervalo, o celular mostra o placar (Pontos) a partir do retrato", await gV.evaluate(() => !!document.querySelector(".rede-lobby .lp-lista") && document.querySelectorAll(".rede-lobby .lp-linha").length === rede.retrato.jogadores.length));
   await H(() => tabLobbyFechar());
   conf("Host segue: o aviso some", await esperar(gV, () => !rede.retrato.intervalo));
   conf("Convidado não grava a partida", await gM.evaluate(() => saveBloqueado === true));
@@ -241,8 +242,31 @@ async function rodar(b, modo, porta) {
   const mestreAgora = await H(() => jogadorIdDe(mestreIndex));
   const gMestre = mestreAgora === ids.vez ? gV : mestreAgora === ids.mestre ? gM : null;
   if (gMestre) conf("Depois da volta, o Mestre recebe a resposta de novo", await esperar(gMestre, () => !!rede.segredo && !!rede.segredo.resposta, null, 15000));
-  for (const pg of [gM, gV, gC]) await pg.close();
+  // 14) troca de host: o host some de vez; o sucessor (2º Mestre: Beto) assume a mesma sala
+  {
+    const okV = await esperar(gV, (id) => rede.retrato.sucessor === id && !!rede.recuperacao, ids.vez, 15000);
+    const okM = await esperar(gM, () => rede.recuperacao === null, null, 5000);
+    if (!okV || !okM) {
+      const dv = await gV.evaluate(() => ({ suc: rede.retrato.sucessor, eu: rede.eu, rec: !!rede.recuperacao }));
+      const dh = await H(() => ({ hostEu: rede.hostEu, on: Object.keys(rede.assentos).filter((k) => redeOnline(rede.assentos[k])), pm: primeiroMestreId, rec: rede.recEnviada }));
+      const dm = await gM.evaluate(() => ({ rec: !!rede.recuperacao, suc: rede.retrato.sucessor, eu: rede.eu, est: rede.estado }));
+      console.log("[sucessor]", modo, JSON.stringify(dv), JSON.stringify(dh), JSON.stringify(dm));
+    }
+    conf("O host aponta o sucessor (2º Mestre) e manda o pacote só pra ele", okV && okM);
+  }
+  const revTroca = await H(() => partidaRevisao);
+  const placarTroca = await H(() => JSON.stringify(players.map((p) => [p.id, p.score, p.position])));
   await host.close();
+  conf("O outro celular avisa que o host sumiu e quem assume", await esperar(gM, () => !!document.querySelector(".rede-conexao") && /assume/.test(document.querySelector(".rede-conexao").textContent), null, 15000));
+  conf("O sucessor assume: vira host da MESMA sala", await esperar(gV, (s) => typeof rede !== "undefined" && rede && rede.papel === "host" && rede.sala === s && rede.transporte.estado === "aberta", sala, 60000));
+  conf("Nada se perdeu: mesma revisão e o mesmo placar", (await gV.evaluate(() => partidaRevisao)) === revTroca && (await gV.evaluate(() => JSON.stringify(players.map((p) => [p.id, p.score, p.position])))) === placarTroca);
+  conf("O novo host joga com o próprio jogador (Beto)", (await gV.evaluate(() => rede.hostEu)) === ids.vez);
+  conf("O outro celular se reconecta ao novo host sozinho", await esperar(gM, () => rede.estado === "dentro" && !!rede.painel && Date.now() - rede.ultimoHost < 5000, null, 40000));
+  // o host antigo volta: descobre que já tem host e entra como jogador
+  const velhoHost = await abrir("");
+  conf("O host antigo volta e entra como jogador (não briga pela sala)", await esperar(velhoHost, (s) => typeof rede !== "undefined" && rede && rede.papel === "convidado" && rede.sala === s, sala, 40000));
+  await velhoHost.close();
+  for (const pg of [gM, gV, gC]) await pg.close();
   await ctx.close();
   return { ok, erros };
 }

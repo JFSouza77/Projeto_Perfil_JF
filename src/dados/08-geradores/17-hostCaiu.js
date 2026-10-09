@@ -1,4 +1,4 @@
-// PRONTO PRA 1.7.10 (ainda sem uso): o aparelho host caiu e o C.A.O.S. anuncia quem assume.
+// Usado desde a 1.7.9.11 (troca de host, 05k-rede.js): o aparelho host caiu e o C.A.O.S. anuncia quem assume.
 // Regra do JF: o novo host é quem foi o 2º Mestre da partida (depois o 3º, e assim por diante),
 // e os poderes de Mestre/host passam sem perder nada da partida.
 // Variáveis extras: {antigo} (quem era o host) {nome} (o novo host).

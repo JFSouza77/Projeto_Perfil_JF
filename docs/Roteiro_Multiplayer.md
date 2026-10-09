@@ -485,12 +485,31 @@ Base: a revisão externa da 1.7.8.9 (10 achados), cada um conferido no código.
 - **Onde abre:** ⏸️ Pausar → 🌐 Jogar online (beta). Também no painel do ADM.
 - **Teste:** `ferramentas/teste_rede.js` roda o mesmo roteiro em abas e pela internet, com um servidor PeerJS local (pacote `peer`, só pra teste). São 74 conferências.
 
+### 1.7.9.11 · Troca de host e tela de carregamento (publicada)
+- **Decisão do JF:** seguir com 1.7.9.x até fechar a estrutura da rede, e só então lançar a 1.7.10.
+- **Troca de host** (regra do JF: o 2º Mestre assume, depois o 3º…):
+  - o host manda o pacote de recuperação (o save completo) só pro sucessor, a cada mudança;
+  - com 15 s sem notícia do host, o sucessor recarrega como host com o pacote e reabre a mesma sala;
+  - o C.A.O.S. anuncia quem assumiu (gerador `hostCaiu`);
+  - os outros se reconectam sozinhos;
+  - o host antigo que voltar entra como jogador (sondagem antes de reabrir).
+- **Placar do intervalo no celular de cada um:** abas Pontos e Joias a partir do retrato.
+- **Tela de carregamento** (relato do JF: no iPhone não aparecia): imagens de abertura do iOS e tela de carregamento dentro do jogo.
+
 ### Pra 1.7.10 (Multiplayer Update · lançamento)
-- **Troca de host** (sucessão: o 2º Mestre assume) com o pacote de recuperação. Hoje, se o host fechar de vez, a partida para (se ele recarregar, volta).
-- **Servidor de retransmissão (TURN)** pras redes de celular que bloqueiam conexão direta. Hoje usa só o STUN padrão do PeerJS: no mesmo Wi-Fi funciona, em algumas redes 4G/5G pode não abrir.
-- **Lobby completo no celular de cada um** (abas Pontos e Joias a partir do retrato). Hoje o celular mostra o aviso do intervalo e o tabuleiro.
+- **Servidor de retransmissão (TURN)** pras redes de celular que bloqueiam conexão direta (precisa escolher um serviço; o gratuito pede conta). Hoje usa só o STUN padrão do PeerJS.
 - **Nome DICAOS, domínio próprio e mudança de endereço** (save e memória).
-- Teste com a família em celulares de verdade (beta fechado).
+- **Beta fechado com a família**, em celulares de verdade, no Wi-Fi e no 4G/5G.
+
+### Lista de lançamento da 1.7.10 (conferir no dia)
+- **Tela inicial (splash):**
+  - o aviso "🧪 Beta · Jogar online" vira o botão de verdade do Multiplayer (e sai o "beta");
+  - nome e título novos, se for DICAOS;
+  - linha da versão.
+- **Imagens de abertura do iPhone e ícone:** gerar de novo se o nome ou o ícone mudarem (`node ferramentas/gerar_aberturas.js`).
+- **Tutorial:** tirar o "beta" dos cartões do online.
+- **Manifest e título** (`manifest.json`, `<title>`), se o nome mudar.
+- **Avisar no NOVIDADES** que quem já instalou no iPhone pode precisar tirar o ícone da tela de início e pôr de novo pra ver a abertura nova.
 
 ### Decisão do JF · Privacidade das respostas (09/10/2026)
 - **Escolha: (a), com o máximo de travas da (b).** Fica aberta a (b) completa depois, se precisar.

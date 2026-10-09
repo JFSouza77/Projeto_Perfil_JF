@@ -30,6 +30,11 @@
  *    (por sala). Se cair ou recarregar, ele pede o mesmo lugar com a chave e volta na hora. Sem a
  *    chave, ninguém toma um lugar que ainda está online. Se o HOST recarregar, a sala volta com o
  *    mesmo código (perfil5_rede_host) e os convidados se reconectam sozinhos.
+ *  · TROCA DE HOST (1.7.9.11, regra do JF: o 2º Mestre da partida assume, depois o 3º…): o host manda o
+ *    PACOTE DE RECUPERAÇÃO (o save completo) só pro sucessor, a cada mudança. Se os celulares ficarem
+ *    15 s sem notícia do host, o sucessor recarrega como host com esse pacote e reabre a MESMA sala; os
+ *    outros se reconectam sozinhos e o C.A.O.S. anuncia quem assumiu. O host antigo que voltar descobre
+ *    que já tem host (sondagem) e entra como jogador.
  *  · VERSÃO: quem entra com outra versão do jogo é recusado, com o aviso pra atualizar.
  *  · RELÓGIO: o convidado mede a diferença pro relógio do host (ping/pong, fica a medida de menor
  *    atraso) e conta o tempo por ela. Quem decide que o tempo acabou é só o host.
@@ -41,9 +46,11 @@
  *        mensagem "para" alguém chega em todas as abas e o convidado ignora o que não é dele.
  * ---------------------------------------------------------------------- */
 const REDE_PROTOCOLO = 1;
-const REDE_MAX_LETRAS = 64 * 1024;
+const REDE_MAX_LETRAS = 640 * 1024; // só o pacote de recuperação chega perto disso
+const REDE_MAX_NORMAL = 64 * 1024; // o resto das mensagens
 const REDE_DO_CONVIDADO = ["oi", "cmd", "ping", "tchau", "voto"];
-const REDE_DO_HOST = ["bemvindo", "escolha", "recusa", "retrato", "segredo", "resp", "pong", "painel"];
+const REDE_DO_HOST = ["bemvindo", "escolha", "recusa", "retrato", "segredo", "resp", "pong", "painel", "recuperacao"];
+const REDE_HOST_SUMIU_MS = 15000; // sem notícia do host há mais que isso: o sucessor assume
 const REDE_ONLINE_MS = 15000; // sem notícia há mais que isso: o convidado conta como fora
 const REDE_LETRAS_SALA = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // sem I e O (não confundem com 1 e 0)
 const REDE_SITE = "https://jfsouza77.github.io/Projeto_Perfil_JF/"; // link pros convidados (o host pode estar no offline)
@@ -59,6 +66,7 @@ const JOGO_VERSAO = (() => {
     return "?";
   }
 })();
+let redeInsistirId = false; // reabrindo a sala depois de assumir: espera o id da sala ficar livre
 let redeOuvindo = false; // a escuta das ações (acoesAoMudar) é registrada uma vez só
 let rede = null; // { papel: "host" | "convidado", sala, sessao, transporte, seq, ultimoSeq: {} , ... }
 
@@ -207,7 +215,7 @@ function redeTransportePeerHost(sala) {
     peer.on("error", (e) => {
       const tipo = (e && e.type) || "erro";
       // o id da sala ainda está preso no servidor (o host acabou de recarregar): tenta de novo
-      if (tipo === "unavailable-id" && tentativas < 6 && !fechado) {
+      if (tipo === "unavailable-id" && tentativas < (redeInsistirId ? 45 : 6) && !fechado) {
         tentativas++;
         try {
           peer.destroy();
@@ -280,6 +288,17 @@ function redeTransportePeerConvidado(sala) {
     },
     aoReceber(fn) {
       receber = fn;
+    },
+    // a conexão parece viva mas o host sumiu (o WebRTC pode demorar a perceber): abre outra
+    reconectar() {
+      if (fechado) return;
+      const c = conn;
+      conn = null;
+      try {
+        c && c.close();
+      } catch (e) {}
+      t.estado = "reconectando";
+      tentarDeNovo(200);
     },
     fechar() {
       fechado = true;
@@ -398,6 +417,7 @@ function redeValidar(bruto) {
     return recusar("formato");
   }
   if (!m || typeof m !== "object" || Array.isArray(m)) return recusar("formato");
+  if (m.t !== "recuperacao" && bruto.length > REDE_MAX_NORMAL) return recusar("grande_demais");
   if (m.p !== REDE_PROTOCOLO) return recusar("protocolo");
   if (m.sala !== rede.sala) return recusar("outra_sala");
   if (!redeSessaoValida(m.de)) return recusar("sessao");
@@ -430,6 +450,7 @@ function redeValidar(bruto) {
     segredo: () => Number.isInteger(m.revisao) && (m.resposta === null || txt(m.resposta, 120)),
     resp: () => typeof m.commandId === "string" && typeof m.ok === "boolean",
     pong: () => typeof m.t0 === "number" && typeof m.th === "number" && isFinite(m.th),
+    recuperacao: () => txt(m.estado, REDE_MAX_LETRAS) && Number.isInteger(m.revisao) && (m.matchId === null || txt(m.matchId, 64)),
     painel: () =>
       Number.isInteger(m.revisao) && Array.isArray(m.opcoes) && m.opcoes.length <= 40 &&
       m.opcoes.every((o) => o && typeof o.a === "string" && !!ACOES[o.a] && Array.isArray(o.d) && o.d.length <= 4 && o.d.every(redeEhPrimitivo) && txt(o.t, 80) && (o.c === undefined || txt(o.c, 12)) && (o.g === undefined || txt(o.g, 60))),
@@ -478,9 +499,18 @@ function redeAbrirSalaCom(fab, modo, salaFixa) {
     segredoEnviado: null,
     paineis: {},
     votacao: null,
+    recEnviada: null, // revisão e sucessor do último pacote de recuperação
+    recQuando: 0,
     batida: null,
   };
   transporte.aoReceber((bruto) => {
+    // outro aparelho já é host desta sala (só acontece no ensaio local): este passa a jogador
+    if (typeof bruto === "string" && bruto.includes('"t":"retrato"')) {
+      try {
+        const o = JSON.parse(bruto);
+        if (o && o.t === "retrato" && o.sala === rede.sala && o.de !== rede.sessao) return redeHostRebaixar();
+      } catch (e) {}
+    }
     const msg = redeValidar(bruto);
     if (msg) redeHostReceber(msg);
   });
@@ -505,6 +535,8 @@ function redeAbrirSalaCom(fab, modo, salaFixa) {
   return sala;
 }
 // Partida carregada depois de recarregar: se havia sala aberta há pouco, ela volta com o mesmo código.
+// Antes, uma sondagem: se outro aparelho já é host da sala (assumiu enquanto este estava fora), este
+// entra como jogador.
 function redeHostRetomar() {
   if (rede || redeSalaDoEndereco()) return false;
   let s = null;
@@ -513,9 +545,91 @@ function redeHostRetomar() {
   } catch (e) {}
   if (!s || !redeSalaValida(s.sala) || !(Date.now() - (s.quando || 0) < 2 * 3600e3)) return false;
   if (!starterChosen || gameEnded) return false;
-  const sala = redeAbrirSala(s.modo, s.sala);
-  if (sala && jogadorIdValido(s.eu) && jogadorIdxPorId(s.eu) >= 0) rede.hostEu = s.eu;
-  return !!sala;
+  const modo = s.modo === "local" ? "local" : "internet";
+  redeSondar(s.sala, modo, (existe) => {
+    if (rede) return;
+    if (existe) {
+      try {
+        JFStore.removeItem(REDE_HOST_KEY);
+      } catch (e) {}
+      return redeIrPraSala(s.sala, modo);
+    }
+    redeInsistirId = !!s.assumiu;
+    const sala = redeAbrirSala(modo, s.sala);
+    if (!sala) return;
+    if (jogadorIdValido(s.eu) && jogadorIdxPorId(s.eu) >= 0) rede.hostEu = s.eu;
+    redeHostGuardar();
+    if (s.assumiu) {
+      // o C.A.O.S. anuncia a troca (gerador hostCaiu, pronto desde a 1.7.5.1)
+      try {
+        const nome = (jogadorPorId(s.eu) || {}).name || "alguém";
+        const fala = typeof caosGerarFala === "function" ? caosGerarFala("hostCaiu", null, { antigo: s.antigo || "host", nome }) : "";
+        showToastMessage(fala ? "[C.A.O.S.] " + fala : `[C.A.O.S.] ${nome} assumiu a sala. Nada se perdeu.`, null, true);
+        caosLog("rede", `assumiu a sala ${s.sala} no lugar de ${s.antigo || "?"}`);
+      } catch (e) {}
+    }
+  });
+  return true;
+}
+// Pergunta se a sala já tem host (um ping; quem responde é o host). Local: 2,5 s; internet: 8 s.
+function redeSondar(sala, modo, cb) {
+  let feito = false;
+  const fim = (v) => {
+    if (feito) return;
+    feito = true;
+    try {
+      limpar();
+    } catch (e) {}
+    cb(v);
+  };
+  let limpar = () => {};
+  const sessao = "s_sonda" + redeAleatorio(6);
+  const ping = JSON.stringify({ p: REDE_PROTOCOLO, t: "ping", sala, de: sessao, seq: 1, t0: Date.now() });
+  const ouviu = (d) => {
+    try {
+      const o = JSON.parse(d);
+      if (o && o.sala === sala && (o.t === "pong" || o.t === "retrato") && o.de !== sessao) fim(true);
+    } catch (e) {}
+  };
+  if (modo === "local") {
+    if (typeof BroadcastChannel !== "function") return fim(false);
+    const bc = new BroadcastChannel("perfiljf-sala-" + sala);
+    bc.onmessage = (ev) => ouviu(ev && ev.data);
+    bc.postMessage(ping);
+    limpar = () => bc.close();
+    setTimeout(() => fim(false), 2500);
+    return;
+  }
+  if (!redeTemInternet()) return fim(false);
+  let peer;
+  try {
+    peer = new Peer(undefined, redePeerConfig());
+  } catch (e) {
+    return fim(false);
+  }
+  limpar = () => peer.destroy();
+  peer.on("open", () => {
+    const c = peer.connect(REDE_PEER_PREFIXO + sala.toLowerCase(), { reliable: true });
+    c.on("open", () => fim(true));
+  });
+  peer.on("error", () => fim(false));
+  setTimeout(() => fim(false), 8000);
+}
+function redeIrPraSala(sala, modo) {
+  try {
+    location.hash = "sala=" + sala + (modo === "local" ? "&local" : "");
+    location.reload();
+  } catch (e) {}
+}
+// Outro aparelho é host desta sala: este deixa de ser e entra como jogador.
+function redeHostRebaixar() {
+  if (!rede || rede.papel !== "host") return;
+  const sala = rede.sala, modo = rede.modo;
+  try {
+    caosLog("rede", "outro aparelho é host da sala " + sala + ": este entra como jogador");
+  } catch (e) {}
+  redeFechar();
+  redeIrPraSala(sala, modo);
 }
 function redeFechar() {
   if (!rede) return;
@@ -696,6 +810,37 @@ function redeOpcoes(jid) {
   add("pausar", [], "⏸️ Pausar", "", "Mais");
   return op;
 }
+// Sucessor (regra do JF): na ordem dos Mestres da partida (a partir do 2º, contando do primeiro Mestre),
+// o primeiro jogador que está na sala, online, e não é o próprio host.
+function redeSucessor() {
+  if (!rede || rede.papel !== "host" || !players.length) return null;
+  let ini = jogadorIdxPorId(primeiroMestreId);
+  if (ini < 0) ini = 0;
+  for (let k = 1; k <= players.length; k++) {
+    const p = players[(ini + k) % players.length];
+    if (p && p.id !== rede.hostEu && redeOnline(rede.assentos[p.id])) return p.id;
+  }
+  return null;
+}
+// Pacote de recuperação: o save completo, só pro sucessor (no máximo a cada 3 s, ou quando ele muda).
+function redeHostRecuperacao(forcar) {
+  const suc = redeSucessor();
+  const a = suc && rede.assentos[suc];
+  if (!a || !starterChosen || gameEnded) return;
+  const chave = suc + "|" + partidaRevisao;
+  if (rede.recEnviada === chave && !forcar) return;
+  if (!forcar && rede.recEnviada && rede.recEnviada.startsWith(suc + "|") && Date.now() - rede.recQuando < 3000) return;
+  let estado = null;
+  try {
+    saveGameState();
+    estado = JFStore.getItem("perfil200_state");
+  } catch (e) {}
+  if (!estado) return;
+  if (redeEnviar("recuperacao", { estado, revisao: partidaRevisao, matchId: matchId || null }, a.sessao)) {
+    rede.recEnviada = chave;
+    rede.recQuando = Date.now();
+  }
+}
 // Retrato público pra todos, o painel de cada um e a resposta só pro Mestre.
 function redeHostPublicar(forcar) {
   if (!rede || rede.papel !== "host") return;
@@ -704,7 +849,10 @@ function redeHostPublicar(forcar) {
   // extras da sala (não fazem parte do retrato da partida): intervalo e votação
   r.intervalo = typeof tabLobbyFimEm === "function" ? tabLobbyFimEm() : null;
   r.votacao = rede.votacao ? redeVotacaoPublica() : null;
+  r.sucessor = redeSucessor();
+  r.hostNome = rede.hostEu ? (jogadorPorId(rede.hostEu) || {}).name || null : null;
   redeEnviar("retrato", { r });
+  redeHostRecuperacao(false);
   Object.keys(rede.assentos).forEach((jid) => {
     const a = rede.assentos[jid];
     if (!redeOnline(a)) return;
@@ -850,6 +998,10 @@ function redeEntrarSala(sala, transporteFabrica) {
     pendentes: {}, // commandId → { msg, tentativas, quando }
     respostas: {}, // commandId → resultado
     votei: {},
+    hostSessao: null, // sessão do host (mudou: outro aparelho assumiu; me apresento de novo)
+    ultimoHost: Date.now(), // última notícia do host
+    recuperacao: null, // pacote de recuperação (só se eu for o sucessor)
+    assumindo: false,
     relogio: { dif: 0, atraso: Infinity, amostras: 0 },
     aoMudar: null,
   };
@@ -879,6 +1031,13 @@ function redeEntrarSala(sala, transporteFabrica) {
   return true;
 }
 function redeConvidadoReceber(m) {
+  rede.ultimoHost = Date.now();
+  if (rede.hostSessao && m.de !== rede.hostSessao) {
+    // outro aparelho virou host da sala: me apresento de novo pra ele
+    rede.hostSessao = m.de;
+    rede.ultimoSeq = { [m.de]: rede.ultimoSeq[m.de] || 0 };
+    if (rede.estado === "dentro") rede.oi();
+  } else if (!rede.hostSessao) rede.hostSessao = m.de;
   const avisar = () => {
     if (typeof rede.aoMudar === "function")
       try {
@@ -925,12 +1084,19 @@ function redeConvidadoReceber(m) {
     rede.retrato = r;
     // trava 3: a resposta sai da memória quando a carta acaba ou quando não sou mais o Mestre
     if (rede.segredo && (r.mestreId !== rede.eu || !r.carta || r.fim || r.matchId !== rede.segredo.matchId)) rede.segredo = null;
+    // o pacote de recuperação só fica com quem é o sucessor agora
+    if (rede.recuperacao && r.sucessor !== rede.eu) rede.recuperacao = null;
     return avisar();
   }
   if (m.t === "painel") {
     if (rede.painel && m.revisao < rede.painel.revisao) return;
     rede.painel = { revisao: m.revisao, opcoes: m.opcoes };
     return avisar();
+  }
+  if (m.t === "recuperacao") {
+    // só guarda se o retrato mais recente diz que eu sou o sucessor (mensagem fora de ordem não fica)
+    if (rede.retrato && rede.retrato.sucessor === rede.eu) rede.recuperacao = { estado: m.estado, revisao: m.revisao, matchId: m.matchId };
+    return;
   }
   if (m.t === "segredo") {
     const r = rede.retrato;
@@ -942,6 +1108,39 @@ function redeConvidadoReceber(m) {
     rede.respostas[m.commandId] = { ok: m.ok, motivo: m.motivo, revisao: m.revisao };
     return avisar();
   }
+}
+// O host caiu e eu sou o sucessor: guardo a partida do pacote e recarrego como host da mesma sala.
+function redeAssumir() {
+  if (!rede || rede.papel !== "convidado" || !rede.recuperacao || rede.assumindo) return false;
+  rede.assumindo = true;
+  const sala = rede.sala, modo = rede.transporte.tipo === "local" ? "local" : "internet";
+  const antigo = (rede.retrato && rede.retrato.hostNome) || "host";
+  try {
+    caosLog("rede", "o host sumiu: este aparelho assume a sala " + sala);
+  } catch (e) {}
+  try {
+    JFStore.setItem("perfil200_state", rede.recuperacao.estado);
+    JFStore.setItem(REDE_HOST_KEY, JSON.stringify({ sala, modo, eu: rede.eu, quando: Date.now(), assumiu: true, antigo }));
+  } catch (e) {}
+  const ir = () => {
+    try {
+      clearInterval(rede.pingTimer);
+      rede.transporte.fechar();
+    } catch (e) {}
+    try {
+      window.history.replaceState(null, "", String(location.href).split("#")[0]);
+    } catch (e) {}
+    location.reload();
+  };
+  try {
+    const f = JFStore.flushNow && JFStore.flushNow();
+    if (f && typeof f.then === "function") f.then(ir, ir);
+    else ir();
+  } catch (e) {
+    ir();
+  }
+  redeConvidadoDesenhar();
+  return true;
 }
 // Escolher quem eu sou na sala.
 function redeEscolherLugar(jid) {
@@ -1051,6 +1250,20 @@ const REDE_CONEXAO = {
 // A cada meio segundo: contagem do intervalo e da votação (sem redesenhar a tela toda).
 function redeConvidadoTiques() {
   if (!rede || !rede.retrato) return;
+  // o host sumiu: se eu sou o sucessor (e tenho o pacote), assumo; senão, aviso e espero
+  const sumiu = rede.estado === "dentro" && Date.now() - rede.ultimoHost > REDE_HOST_SUMIU_MS;
+  if (sumiu && !rede.assumindo && rede.retrato.sucessor === rede.eu && rede.recuperacao) return redeAssumir();
+  if (rede.recuperacao && rede.retrato.sucessor !== rede.eu) rede.recuperacao = null;
+  // sem notícia do host: a cada 10 s, força uma conexão nova (o novo host pode já estar na sala)
+  if (sumiu && typeof rede.transporte.reconectar === "function" && Date.now() - (rede.ultimaReconexao || 0) > 10000) {
+    rede.ultimaReconexao = Date.now();
+    rede.transporte.reconectar();
+  }
+  const aviso = rede.estado === "dentro" && Date.now() - rede.ultimoHost > 8000;
+  if (aviso !== !!rede.avisoSumiu) {
+    rede.avisoSumiu = aviso;
+    redeConvidadoDesenhar();
+  }
   const r = rede.retrato;
   const s = (ate) => Math.max(0, Math.ceil((ate - redeAgora()) / 1000));
   const iv = document.getElementById("redeIntervaloSeg");
@@ -1062,7 +1275,12 @@ function redeConvidadoDesenhar() {
   const box = document.getElementById("telao");
   if (!box || !rede) return;
   const t = rede.transporte || {};
-  const conexao = t.estado && t.estado !== "aberta" && REDE_CONEXAO[t.estado] ? `<div class="rede-conexao">${REDE_CONEXAO[t.estado]}</div>` : "";
+  let conexao = t.estado && t.estado !== "aberta" && REDE_CONEXAO[t.estado] ? `<div class="rede-conexao">${REDE_CONEXAO[t.estado]}</div>` : "";
+  if (rede.assumindo) conexao = `<div class="rede-conexao">👑 O host caiu: este aparelho está assumindo a sala…</div>`;
+  else if (rede.avisoSumiu && rede.retrato) {
+    const suc = rede.retrato.sucessor && rede.retrato.jogadores.find((j) => j.id === rede.retrato.sucessor);
+    conexao = `<div class="rede-conexao">🔌 Sem notícia do host…${suc ? ` Se ele não voltar, ${escapeHtml(suc.nome)} assume a sala.` : ""}</div>`;
+  }
   const sala = `<div class="rede-sala">🌐 Sala <b>${rede.sala}</b></div>${conexao}`;
   if (rede.estado === "escolhendo") {
     const l = rede.lugares
@@ -1107,6 +1325,13 @@ function redeConvidadoDesenhar() {
       if (o) redeMandar(o.a, ...o.d);
     }),
   );
+  barra.querySelectorAll("[data-aba-rede]").forEach((b) =>
+    b.addEventListener("click", () => {
+      rede.abaLobby = b.dataset.abaRede;
+      redeConvidadoDesenhar();
+    }),
+  );
+  barra.querySelectorAll(".lp-barra[data-ate]").forEach((x) => (x.style.width = x.dataset.ate + "%"));
   barra.querySelectorAll("[data-dica]").forEach((b) => b.addEventListener("click", () => redeMandar("escolherDica", +b.dataset.dica)));
   barra.querySelectorAll("[data-voto]").forEach((b) => b.addEventListener("click", () => redeVotarConvidado(b.dataset.voto === "1") && redeConvidadoDesenhar()));
   redeConvidadoTiques();
@@ -1116,7 +1341,17 @@ function redeBotoesHtml() {
   const papel = redeMeuPapel();
   let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 sua vez" : ""}</div>`;
   if (r.fim) return h;
-  if (r.intervalo) h += `<div class="rede-intervalo">⏸️ Intervalo entre as cartas: dá uma olhada no tabuleiro. O host segue em <b id="redeIntervaloSeg">…</b> s.</div>`;
+  if (r.intervalo) {
+    // 1.7.9.11: o placar do intervalo no celular de cada um (Pontos e Joias; o tabuleiro está logo abaixo)
+    h += `<div class="rede-intervalo">⏸️ Intervalo entre as cartas. O host segue em <b id="redeIntervaloSeg">…</b> s.</div>`;
+    try {
+      const ctx = lobbyContextoDoRetrato(r);
+      const abas = ["pontos"].concat(ctx.temJoias ? ["joias"] : []);
+      const aba = abas.includes(rede.abaLobby) ? rede.abaLobby : r.vitoria === "joias" && ctx.temJoias ? "joias" : "pontos";
+      h += `<div class="lb-abas rede-lobby-abas">${abas.map((a) => `<button type="button" class="lb-aba${a === aba ? " on" : ""}" data-aba-rede="${a}">${LOBBY_ABAS[a].ic} ${LOBBY_ABAS[a].nome}</button>`).join("")}</div>`;
+      h += `<div class="rede-lobby">${aba === "joias" ? lobbyJoiasHtml(null, ctx) : lobbyPontosHtml(null, ctx)}</div>`;
+    } catch (e) {}
+  }
   const v = r.votacao;
   if (v) {
     const ja = rede.votei[v.id] !== undefined || (v.votaram || []).includes(rede.eu);

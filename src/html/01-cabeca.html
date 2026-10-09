@@ -6,6 +6,21 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.9.11 · 09/10/2026 · "Rooms and Network Update · Troca de host" = TELA DE CARREGAMENTO, TROCA DE HOST, PLACAR NO CELULAR.
+          · Relato do JF: no iPhone não aparecia tela de carregamento. O iOS só mostra abertura com imagem no
+            tamanho exato (apple-touch-startup-image): 11 imagens em icones/abertura-*.jpg (752 KB no total,
+            ferramentas/gerar_aberturas.js). E #carregando no corpo: aparece na hora, sai no fim do JFStore.boot
+            (mínimo ~0,9 s, sem bloquear toque); o CSS esconde sozinho em 15 s se algo der errado.
+          · Troca de host (regra do JF: o 2º Mestre assume, depois o 3º…): redeSucessor (ordem dos Mestres a partir
+            do primeiroMestreId, só quem está online e não é o host); pacote de recuperação (o save completo) só pro
+            sucessor, a cada mudança (no máximo a cada 3 s; limite de mensagem 640 KB só pra esse tipo); o celular só
+            guarda o pacote enquanto é o sucessor. 15 s sem notícia do host: o sucessor grava o pacote, recarrega
+            como host e reabre a MESMA sala (espera o id ficar livre); o C.A.O.S. anuncia (gerador hostCaiu). Os
+            outros se reapresentam ao novo host (sessão do host mudou) e forçam conexão nova a cada 10 s sem notícia.
+            Host que volta faz uma sondagem: se a sala já tem host, entra como jogador (no ensaio local, host que vê
+            outro host também passa a jogador).
+          · Intervalo no celular: abas Pontos e Joias a partir do retrato (lobbyContextoDoRetrato).
+          · teste_rede: 90 conferências (abas e internet), com a troca de host e o host antigo voltando.
   1.7.9.10 · 09/10/2026 · "Rooms and Network Update · Final" = O ONLINE DE VERDADE (BETA) E O FIM DA 1.7.9.
           Decisões do JF: PeerJS; no online só o host segue o intervalo; tudo numa atualização só (a última da 1.7.9).
           · Transporte INTERNET: PeerJS 1.5.5 embutido (05l-peerjs.js, MIT). O host é um Peer com o id da sala e
@@ -574,6 +589,18 @@
 <meta name="theme-color" content="#1a1a2e">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icones/icone-180.png">
+<!-- 1.7.9.11: abertura do iPhone (o iOS só mostra tela de carregamento com imagem no tamanho exato; ferramentas/gerar_aberturas.js) -->
+<link rel="apple-touch-startup-image" media="screen and (device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icones/abertura-1320x2868.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icones/abertura-1206x2622.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icones/abertura-1290x2796.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icones/abertura-1179x2556.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icones/abertura-1284x2778.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icones/abertura-1170x2532.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icones/abertura-1125x2436.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icones/abertura-1242x2688.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="icones/abertura-828x1792.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icones/abertura-1242x2208.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="icones/abertura-750x1334.jpg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -581,7 +608,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.9.10</title>
+<title>Perfil JF · Beta 1.7.9.11</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

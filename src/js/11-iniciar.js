@@ -956,11 +956,26 @@ function iniciar() {
 
   setTimeout(cadAtualizarBotao, 0);
 
+  // 1.7.9.11: tira a tela de carregamento (fica pelo menos ~0,9 s, pra dar tempo de ver; já não bloqueia toques)
+  function carregandoSair() {
+    const c = document.getElementById("carregando");
+    if (!c) return;
+    c.style.pointerEvents = "none";
+    let jaFoi = 0;
+    try {
+      jaFoi = performance.now();
+    } catch (e) {}
+    setTimeout(() => {
+      c.classList.add("saindo");
+      setTimeout(() => c.remove(), 400);
+    }, Math.max(0, 900 - jaFoi));
+  }
   (function startApp() {
     const playBtn = document.getElementById("goToRulesBtn");
     if (playBtn) playBtn.disabled = true;
     aplicarCorRngSplash();
     JFStore.boot().then(() => {
+      carregandoSair();
       applyStoredPrefs();
       // 1.7.8.3: aba "telão" (#telao) só olha a partida da outra aba: não carrega nem grava
       if (typeof telaoModo === "function" && telaoModo()) {
