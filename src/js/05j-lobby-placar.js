@@ -5,6 +5,7 @@
  *  · Pontos: "corrida de barras" com pódio (1º, 2º e 3º em degraus) e quanto cada um ganhou na carta.
  *  · Joias: cada jogador (ou equipe) com a sua coroa, um encaixe por joia; a joia ganha na carta
  *    entra brilhando, e embaixo diz o que falta. Só aparece quando a partida dá joias.
+ *    1.7.9.8: cada joia tem o seu formato (joiaHtml, 03-regras.js) e o seu encaixe, em ordem alfabética.
  * É só tela, como o lobby: lê o placar, não muda nada.
  * ---------------------------------------------------------------------- */
 const LOBBY_ABAS = {
@@ -125,16 +126,16 @@ function lobbyJoiasHtml(antes) {
   const linhas = ents
     .map((e) => {
       const ant = antes && antes.gems && antes.gems[e.k];
+      // 1.7.9.8: cada categoria tem o seu encaixe (em ordem alfabética), no formato da joia dela;
+      // o encaixe vazio mostra a sombra da joia que falta
       const encaixes = [];
-      cats.forEach((c) => {
+      joiasEmOrdem(cats).forEach((c) => {
         const novas = ant ? Math.max(0, e.gems[c] - (ant[c] || 0)) : 0;
-        for (let i = 0; i < e.gems[c]; i++)
-          encaixes.push(
-            `<span class="lj-joia${i >= e.gems[c] - novas ? " lj-nova" : ""}" style="--gc:${GEM_INFO[c].color}" title="${nomeCat(c)}">${GEM_INFO[c].letter}</span>`,
-          );
+        if (!e.gems[c] && cap === 1) encaixes.push(joiaHtml(c, "lj-joia lj-oca", ""));
+        for (let i = 0; i < e.gems[c]; i++) encaixes.push(joiaHtml(c, "lj-joia" + (i >= e.gems[c] - novas ? " lj-nova" : "")));
       });
-      while (encaixes.length < GEMS_TO_WIN) encaixes.push('<span class="lj-joia lj-oca" aria-hidden="true"></span>');
-      const faltam = cap === 1 ? cats.filter((c) => !e.gems[c]) : [];
+      while (encaixes.length < GEMS_TO_WIN) encaixes.push('<span class="joia-f lj-joia lj-oca jf-vazia" aria-hidden="true"></span>');
+      const faltam = cap === 1 ? joiasEmOrdem(cats).filter((c) => !e.gems[c]) : [];
       const quase = vale && e.total === GEMS_TO_WIN - 1;
       const pe =
         e.total >= GEMS_TO_WIN

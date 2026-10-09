@@ -572,15 +572,23 @@ function joiasTravaBadge(key) {
   if (!joiasComTrava() || (joiasRodada[String(key)] || 0) < JOIAS_POR_RODADA) return "";
   return ` <span class="joia-trava" title="Já ganhou ${JOIAS_POR_RODADA} joias nesta rodada: a próxima só na rodada que vem" aria-label="joias desta rodada completas">🔒</span>`;
 }
+// 1.7.9.8 (ideia do JF): cada joia tem o seu formato, além da cor, e elas aparecem sempre em
+// ordem alfabética (Ano, Coisa, Lugar, Pessoa; no Júnior, Animal, Coisa, Lugar, Pessoa).
+const JOIA_FORMA = { ANO: "hexágono", COISA: "esmeralda", LUGAR: "losango", PESSOA: "redonda", ANIMAL: "triângulo" };
+function joiasEmOrdem(cats) {
+  return cats.slice().sort((a, b) => GEM_INFO[a].name.localeCompare(GEM_INFO[b].name, "pt-BR"));
+}
+function joiaHtml(cat, cls, txt) {
+  const i = GEM_INFO[cat];
+  if (!i) return "";
+  return `<span class="joia-f jf-${cat}${cls ? " " + cls : ""}" style="--gc:${i.color}" title="Joia de ${i.name} (${JOIA_FORMA[cat] || "joia"})">${txt === undefined ? i.letter : txt}</span>`;
+}
 function gemBadgesHtml(holder) {
   const g = holder && holder.gems ? holder.gems : null;
   if (!g) return "";
-  return currentGemCategories()
+  return joiasEmOrdem(currentGemCategories())
     .filter((c) => g[c] > 0)
-    .map((c) => {
-      const i = GEM_INFO[c];
-      return ` <span class="gem" style="color:${i.color}" title="Joia de ${i.name}">◆${i.letter}${g[c] > 1 ? "×" + g[c] : ""}</span>`;
-    })
+    .map((c) => ` <span class="gem">${joiaHtml(c, "joia-mini")}${g[c] > 1 ? "×" + g[c] : ""}</span>`)
     .join("");
 }
 function palpiteBadge(key) {
