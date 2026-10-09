@@ -194,11 +194,14 @@ const ARQ = acharMestre(process.argv[2]);
     out.comandoDuravel = okp.ok === true && de.duplicado === true && acoesLog.some((x) => x.c === 'teste-duravel-1');
     if (pausedAt) { resumeGame(); fechar(); }
     // 5) save e retomada guardam revisão e registro
+    tabFormaAtual();
+    const formaSalva = tabForma;
     saveGameState();
     const revSalva = partidaRevisao, nSalvo = acoesLog.length;
     partidaRevisao = 0; acoesLog = [];
     loadGameState();
     out.salvou = partidaRevisao === revSalva && acoesLog.length === nSalvo;
+    out.formaVoltou = !!formaSalva && tabForma === formaSalva;
     // a fala ganha o pedaço da sessão no eventId (recarregar não repete eventId)
     out.eventoSessao = caosCanal.length > 0 && caosCanal.every((x) => /:[a-z0-9]{1,6}:f\d+$/.test(x.eventId));
     // tirar jogador pelo ADM é uma ação registrada
@@ -207,7 +210,8 @@ const ARQ = acharMestre(process.argv[2]);
     out.removerRegistra = players.length === nP - 1 ? partidaRevisao > ra && acoesLog[acoesLog.length - 1].a === 'admRemover' : 'não removeu: ' + msgRem;
     // 6) partida nova zera
     resetDeck();
-    out.zerou = partidaRevisao === 0 && acoesLog.length === 0;
+    out.zerou = partidaRevisao === 0 && acoesLog.length === 0 && tabForma === null;
+    out.formaNova = !!tabFormaAtual() && tabForma !== formaSalva;
     JFStore.removeItem('perfil200_state');
     return out;
   });
@@ -253,6 +257,8 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.9: eventId da fala com o pedaço da sessão', r.eventoSessao],
     ['1.7.9: tirar jogador pelo ADM é ação registrada', r.removerRegistra === true],
     ['Partida nova zera revisão e registro', r.zerou],
+    ['1.7.9.2: a forma do tabuleiro volta igual ao recarregar', r.formaVoltou],
+    ['1.7.9.2: partida nova sorteia outra forma de tabuleiro', r.formaNova],
   ];
   linhas.forEach(([n, ok]) => console.log(`${ok ? 'ok    ' : 'FALHOU'}  ${n}`));
   const tudo = linhas.every((l) => l[1]) && !erros.length;

@@ -1232,52 +1232,11 @@ function renderBoardTrack() {
   if (!track) return;
   if (CURRENT_MODE === "express" || players.length === 0) {
     track.innerHTML = "";
+    delete track.dataset.tab;
     return;
   }
-  let bonusMarks = "";
-  for (let pos = BONUS_HOUSE_INTERVAL; pos < WINNING_SCORE; pos += BONUS_HOUSE_INTERVAL) {
-    const pct = (pos / WINNING_SCORE) * 100;
-    bonusMarks += `<div class="board-bonus-mark" style="left:${pct}%"></div>`;
-    // número só a cada 20 casas em tabuleiros grandes, pra não embolar na tela do celular
-    if (pos % (WINNING_SCORE >= 150 ? 20 : 10) === 0)
-      bonusMarks += `<div class="board-bonus-label" style="left:${pct}%">${pos}</div>`;
-  }
-  let tokens;
-  if (CURRENT_FORMAT === "equipe") {
-    tokens = teamOrder
-      .map((id, i) => {
-        const t = teams[id];
-        const info = TEAM_INFO[id];
-        const pct = Math.max(0, Math.min(100, (t.position / WINNING_SCORE) * 100));
-        const verticalOffset = i % 2 === 0 ? -10 : 10;
-        return `<div class="board-token" style="left:${pct}%; top:calc(50% + ${verticalOffset}px); background:${info.color};" title="Equipe ${info.label}: ${t.position} casa">${info.emoji}</div>`;
-      })
-      .join("");
-  } else {
-    tokens = players
-      .map((p, i) => {
-        const pct = Math.max(0, Math.min(100, (p.position / WINNING_SCORE) * 100));
-        const label = p.avatar || (p.name ? p.name[0].toUpperCase() : "?");
-        const verticalOffset = i % 2 === 0 ? -10 : 10;
-        return `<div class="board-token${p.color === "GRAD_ONYX" ? " onyx-swatch" : ""}${GRADIENTS[p.color] && p.color !== "GRAD_ONYX" ? " grad-anim" : ""}" style="left:${pct}%; top:calc(50% + ${verticalOffset}px); background:${GRADIENTS[p.color] && p.color !== "GRAD_ONYX" ? caosGradLoop(p.color) : playerColorCss(p.color)};${p.color === "GRAD_ONYX" ? " color:#fff;" : ""}" title="${escapeHtml(p.name)}: ${p.score} pts, casa ${p.position}">${label}</div>`;
-      })
-      .join("");
-  }
-  track.innerHTML = `<div class="board-track-line"></div>${bonusMarks}${tokens}
-    <div class="board-endpoints"><span>Casa 0</span><span class="board-hint">🔍 toque pra ampliar</span><span>Casa ${WINNING_SCORE}${boardCountsForWin() ? "" : " · não vale vitória"}</span></div>`;
-  const chaves =
-    CURRENT_FORMAT === "equipe"
-      ? teamOrder.map((id) => ["t" + id, teams[id].position])
-      : players.map((p) => ["p" + p.name, p.position]);
-  const els = track.querySelectorAll(".board-token");
-  chaves.forEach(([k, pos], i) => {
-    const antes = caosTokPrev[k];
-    caosTokPrev[k] = pos;
-    if (antes !== void 0 && antes !== pos && els[i] && !document.body.classList.contains("batata-mode")) {
-      els[i].classList.add("pulando");
-      els[i].dataset.t0 = Date.now();
-    }
-  });
+  // 1.7.9.2 (Board Update): tabuleiro desenhado (05i-tabuleiro.js) no lugar da linha com pontinhos
+  tabRenderTrilha(track);
 }
 // Tabuleiro ampliado: cada jogador (ou equipe) numa linha, do primeiro ao último, com a
 // distância pro líder e quanto falta pra chegar.
@@ -1319,8 +1278,9 @@ function abrirTabuleiroGrande() {
   const bg = document.createElement("div");
   bg.id = "tabuleiroModal";
   bg.className = "jf-modal-bg";
-  bg.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true" aria-labelledby="tgTitle"><h3 id="tgTitle">🗺️ Tabuleiro</h3><div class="nov-sub">Quem está na frente e quem está atrás</div><ul class="tg-list">${linhas}</ul><button type="button" class="btn-start btn-neo neo-solid neo-still" id="tgOk" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35); margin-top:10px;">Fechar</button></div>`;
+  bg.innerHTML = `<div class="jf-modal tb-modal" role="dialog" aria-modal="true" aria-labelledby="tgTitle"><h3 id="tgTitle">🗺️ Tabuleiro</h3>${tabHtmlGrande()}<div class="nov-sub">Quem está na frente e quem está atrás</div><ul class="tg-list">${linhas}</ul><button type="button" class="btn-start btn-neo neo-solid neo-still" id="tgOk" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35); margin-top:10px;">Fechar</button></div>`;
   document.body.appendChild(bg);
+  tabPreencherGrande();
   const fechar = () => bg.remove();
   bg.querySelector("#tgOk").addEventListener("click", fechar);
   bg.addEventListener("click", (ev) => {

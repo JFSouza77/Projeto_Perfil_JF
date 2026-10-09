@@ -134,8 +134,10 @@ function telaoDesenhar(r) {
       <div>⏱️ <b id="telaoRelogio">—</b></div>
     </section>
     ${c ? `<section class="telao-carta"><div class="telao-cat">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)} · ${c.abertas.length} de ${c.totalDicas} dicas</div><ol class="telao-dicas">${dicas || "<li>Nenhuma dica aberta ainda</li>"}</ol></section>` : ""}
+    ${tabHtmlTelao(r)}
     <section class="telao-placar"><ol>${placar}</ol></section>
     ${TELAO_SAIR}`;
+  tabPecasTelao(r); // 1.7.9.2: o mesmo tabuleiro do jogo
   telaoRelogio();
 }
 function telaoRelogio() {
