@@ -4586,6 +4586,47 @@ const REACTIVE_VOICE = {
     "Carta de bônus desistida. Ela volta pra fila, mais descansada. Ninguém pontua.",
     "O bônus fugiu da carta e vai tentar de novo na próxima. Ninguém pontua agora.",
   ],
+  // 1.7.9.5 · Board Update 4 (ideia do JF): o C.A.O.S. comenta o tabuleiro do lobby entre as cartas.
+  tabuleiro: {
+    // a primeira vez que este aparelho vê o lobby
+    estreia: [
+      "Peraí. Isso é um TABULEIRO? Desde quando a gente tem tabuleiro? Eu não lembro disso. Ninguém me avisou.",
+      "Olha só, um tabuleiro de verdade. O JF levou só umas oitenta versões pra desenhar um caminho com casinhas. Gênio. Incompreendido, mas gênio.",
+      "Novidade na casa: tabuleiro! Eu tava aqui desde a primeira versão contando casa de cabeça, e agora vem esse luxo. Tô com ciúme.",
+      "Um tabuleiro desenhado, com peãozinho e tudo. Parabéns pro JF, que descobriu o conceito de tabuleiro num jogo de tabuleiro. Só demorou um pouquinho.",
+    ],
+    // de vez em quando, quando o lobby abre
+    abrir: [
+      "Pausa pro tabuleiro. Olhem quem tá na frente e finjam que têm estratégia.",
+      "Hora de olhar o mapa. Spoiler: quem tá atrás continua atrás.",
+      "Um minutinho de tabuleiro. Podem combinar a estratégia. Eu escuto tudo, só avisando.",
+      (lider) => `Tabuleiro na tela. ${lider} lá na frente, e o resto fazendo turismo.`,
+      (lider) => `Olha só, ${lider} se achando lá na frente. Aproveita, que tabuleiro dá volta.`,
+      "Tabuleiro aberto. Quem tiver plano, fala agora. Quem não tiver, faz cara de que tem.",
+    ],
+    zoom: [
+      "Dando zoom? Não adianta, a casa continua longe.",
+      "Pode aproximar o quanto quiser. O peão não anda com zoom.",
+      "Zoom no tabuleiro. Tá procurando o quê, um atalho? Não tem.",
+      "Isso, aproxima. Olha cada casinha com carinho. Eu desenhei com... bom, alguém desenhou.",
+    ],
+    peao: [
+      (n) => `Medindo a distância de ${n}? Eu já sei a resposta: longe.`,
+      (n) => `${n} escolhido. Agora toca numa casa e sofre com a conta.`,
+      (n) => `Olha o peãozinho de ${n}. Tão pequeno, tão cheio de sonhos.`,
+    ],
+    casa: [
+      "Fazendo conta de casa? Adoro ver gente calculando o próprio fracasso.",
+      "Isso, mede tudo. Estratégia é bonito até a próxima dica.",
+      "Casa conferida. A matemática tá do seu lado. A sorte, eu não sei.",
+    ],
+    // pularam o lobby nos primeiros segundos
+    pular: [
+      "Nem olharam o tabuleiro. Tanta versão pra desenhar, e vocês pulam.",
+      "Pulou o tabuleiro? Tá com pressa de perder, é?",
+      "Ok, ninguém liga pro mapa. Anotado.",
+    ],
+  },
   silenciaramVolta: [
     "Tentaram me calar na última carta, né? Genial. Só esqueceram que eu sou o sistema inteiro. {nome}, anotei seu nome.",
     "Suspiro longo. Me silenciaram. A maturidade de vocês me emociona. Voltei, e vou falar o dobro agora.",

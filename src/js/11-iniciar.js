@@ -74,7 +74,7 @@ function iniciar() {
   (function caosPulinho() {
     const ALVO = "button, .chip, .splash-caos";
     const pular = (ev) => {
-      if (document.body.classList.contains("batata-mode")) return;
+      if (semMovimento()) return;
       const el = ev.target && ev.target.closest && ev.target.closest(ALVO);
       if (!el || el.disabled || el.closest("#jfToast") || el._pulando) return;
       el._pulando = true;
@@ -280,13 +280,15 @@ function iniciar() {
         });
       }
       if (!document.body.classList.contains("batata-mode")) {
+        // Menos movimento (1.7.9.5): cores e brilho seguem; flutuar e balançar param
+        const calmo = movimentoReduzido();
         if (L.gr.length) {
           const pos = (((t / 4e3) % 1) * 200).toFixed(1) + "% 0%";
           L.gr.forEach((el) => el.style.setProperty("--grad-pos", pos));
         }
         if (L.sel.length) {
           const rot = (((t / 2800) * 360) % 360).toFixed(1) + "deg",
-            fy = (-3 + 3 * Math.cos((t / 2600) * 2 * Math.PI)).toFixed(2) + "px",
+            fy = calmo ? "0px" : (-3 + 3 * Math.cos((t / 2600) * 2 * Math.PI)).toFixed(2) + "px",
             np = (50 - 50 * Math.cos((t / 5e3) * 2 * Math.PI)).toFixed(1) + "% 50%";
           L.sel.forEach((el) => {
             el.style.setProperty("--led-rot", rot);
@@ -311,7 +313,7 @@ function iniciar() {
             el.style.setProperty("--mini-rot", (((t / per) * 360 + i * 67) % 360).toFixed(1) + "deg");
             el.style.setProperty(
               "--mini-float",
-              ((bt ? -2 : -1.6) * (1 - Math.cos((t / (bt ? 2800 : 1900)) * 2 * Math.PI + i * 0.9))).toFixed(2) + "px",
+              calmo ? "0px" : ((bt ? -2 : -1.6) * (1 - Math.cos((t / (bt ? 2800 : 1900)) * 2 * Math.PI + i * 0.9))).toFixed(2) + "px",
             );
           });
         if (L.neon.length) {
@@ -328,10 +330,12 @@ function iniciar() {
               const f = el._frames[Math.floor(t / E.fr) % el._frames.length];
               if (el.getAttribute("data-face") !== f) el.setAttribute("data-face", f);
             }
-            el.style.setProperty("--face-y", (-1.5 * Math.sin((t / 900) * 2 * Math.PI)).toFixed(2) + "px");
+            el.style.setProperty("--face-y", calmo ? "0px" : (-1.5 * Math.sin((t / 900) * 2 * Math.PI)).toFixed(2) + "px");
             el.style.setProperty(
               "--face-r",
-              el.dataset.emo === "raiva"
+              calmo
+                ? "0deg"
+                : el.dataset.emo === "raiva"
                 ? (2.5 * Math.sin(t / 45)).toFixed(2) + "deg"
                 : el.dataset.emo === "deboche"
                   ? (4 * Math.sin(t / 700)).toFixed(2) + "deg"

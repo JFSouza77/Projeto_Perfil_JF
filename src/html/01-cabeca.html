@@ -6,6 +6,18 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.9.5 · 09/10/2026 · "Rooms and Network Update · Board Update 4" = ZOOM, RÉGUA, C.A.O.S. NO TABULEIRO E MENOS MOVIMENTO ≠ BATATA.
+          Pedido do JF. (1) Na partida, nada de tabuleiro grande: o "toque pra ampliar" volta a ser só a lista (o
+          desenho só no lobby). (2) Lobby: zoom (pinça, + e −, rodinha, toque duplo; com zoom, um dedo arrasta;
+          o peão cresce menos que o desenho) e régua (toca no peão, toca na casa: casa, bônus e distância).
+          tabZoomInstalar; caixa com overflow: clip (o foco num botão rolava o desenho); o brilho do botão
+          "Próxima carta" vazava e criava rolagem pro lado. (3) C.A.O.S. comenta o tabuleiro
+          (REACTIVE_VOICE.tabuleiro: estreia na 1ª vez do aparelho, abrir às vezes, um toque por lobby em metade
+          deles, pular nos 3 primeiros segundos). (4) Correção do JF: "Menos movimento" é acessibilidade e não é
+          o Modo Batata. Agora é acessCfg.calmo (html.acess-calmo + prefers-reduced-motion, movimentoReduzido()):
+          tira só o que mexe (caosAnimar com transform/top/left, pulinho do toque, flutuar, rosto balançando,
+          flip da carta, peão andando, confete caindo vira confete que some); neon, brilho e cores ficam. O
+          Batata continua desligando tudo. semMovimento() = um ou outro.
   1.7.9.4 · 09/10/2026 · "Rooms and Network Update · Board Update 3" = LOBBY DO TABULEIRO ENTRE AS CARTAS.
           Ideia do JF. Na partida volta a linha com pontinhos (renderBoardTrack como antes da 1.7.9.2); o
           tabuleiro desenhado fica no "toque pra ampliar" e vira uma tela de espera entre as cartas
@@ -526,7 +538,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.9.4</title>
+<title>Perfil JF · Beta 1.7.9.5</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

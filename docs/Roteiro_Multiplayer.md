@@ -494,3 +494,16 @@ Base: a revisão externa da 1.7.8.9 (10 achados), cada um conferido no código.
   - não abre no Express, no Descartar nem no fim da partida;
   - liga/desliga por aparelho (`perfil5_tab_lobby`).
 - **No online (a fazer):** cada aparelho abre o seu lobby a partir do retrato. Falta decidir se o "Próxima carta" de um vale pra mesa toda (sugestão: o host ou o Mestre da vez pula pra todos; os outros só fecham a própria tela).
+
+### Board Update 4 · 1.7.9.5 (publicada)
+- Na partida só a linha com pontinhos; o tabuleiro grande fica no lobby, com zoom e régua de casas.
+- O C.A.O.S. comenta o tabuleiro (estreia, abrir, toques, pular).
+- Menos movimento (acessibilidade) separado do Modo Batata (desempenho).
+
+### Ideias pra depois (não é prioridade, decisão do JF)
+O tabuleiro aparece em todas as condições de vitória (nas de pontos e joias ele avisa "não vale vitória"). Pra Pontos e Joias terem algo tão bonito quanto o tabuleiro:
+- **Pontos · "Corrida de barras":** no lobby, as barras de cada jogador sobem como num gráfico de corrida, com o pódio (1º, 2º, 3º) em degraus e quanto cada um ganhou na carta.
+- **Pontos · "Escada":** cada 10 pontos é um degrau; o peão sobe a escada até o topo (a meta).
+- **Joias · "Coroa":** cada jogador tem uma coroa com um encaixe por categoria; a joia ganha na carta voa pro encaixe e brilha. Quem está a uma joia de completar ganha um aviso.
+- **Joias · "Cofre":** um cofre com as joias de todos, separado por cor, mostrando quem está mais perto de fechar o conjunto.
+- **Lobby com abas:** Tabuleiro / Pontos / Joias, abrindo direto na aba da condição de vitória da partida.
