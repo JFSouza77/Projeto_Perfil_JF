@@ -6,6 +6,24 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.9.10",
+    data: "09/10/2026 · 18:47",
+    nome: "Rooms and Network Update · Final",
+    t: "Chegou o online (beta): cada um joga no próprio celular!",
+    itens: [
+      "🌐 Jogar online: na partida, toque em Pausar e depois em Jogar online. Esse aparelho abre a sala e guarda a partida. Mande o link pra mesa: cada um abre no seu celular e escolhe quem é.",
+      "🔒 Resposta só pro Mestre: só o celular de quem lê a carta mostra a resposta. Quem está na vez escolhe o número da dica no próprio celular.",
+      "🎙️ Botões de cada um: o Mestre dá o veredito, resolve as especiais e o palpite pelo celular dele. Cada celular só mostra o que aquela pessoa pode tocar.",
+      "🗳️ Votação da mesa: no online, Descartar e Desistir viram votação. O Mestre pede, a mesa vota no celular e a maioria decide.",
+      "⏸️ Intervalo do host: entre as cartas, só quem hospeda toca em Próxima carta. Os outros veem o aviso e o tabuleiro no próprio celular.",
+      "🔄 Caiu ou recarregou: é só abrir o link de novo pra voltar pro mesmo lugar. Se quem hospeda recarregar, a sala volta sozinha com o mesmo código.",
+      "🆕 Versão igual pra todos: quem estiver com outra versão do jogo recebe o aviso pra atualizar antes de entrar.",
+    ],
+    qol: [
+      "🧪 Beta: em algumas redes de celular a conexão pode não abrir. No mesmo Wi-Fi costuma funcionar sempre.",
+    ],
+  },
+  {
     v: "Beta 1.7.9.9",
     data: "09/10/2026 · 18:15",
     nome: "Rooms and Network Update · VAR do C.A.O.S.",

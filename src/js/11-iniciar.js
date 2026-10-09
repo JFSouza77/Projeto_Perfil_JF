@@ -825,6 +825,10 @@ function iniciar() {
   document.getElementById("btnMemExportar").addEventListener("click", caosMemoriaExportar);
   document.getElementById("btnAcessibilidade").addEventListener("click", acessPainelAbrir);
   document.getElementById("pauseAcessBtn").addEventListener("click", acessPainelAbrir);
+  {
+    const on = document.getElementById("pauseOnlineBtn");
+    if (on) on.addEventListener("click", () => typeof redePainelHost === "function" && redePainelHost());
+  }
   document.getElementById("btnMemImportar").addEventListener("click", caosMemoriaImportar);
   temaAplicar();
   document.getElementById("btnNovidades").addEventListener("click", abrirNovidades);
@@ -972,6 +976,8 @@ function iniciar() {
         return;
       }
       loadGameState();
+      // 1.7.9.10: o host recarregou com a sala aberta: ela volta com o mesmo código
+      if (typeof redeHostRetomar === "function") redeHostRetomar();
       if (typeof telaoLigarJogo === "function") telaoLigarJogo();
       updateModeNotice();
       renderStorageStatus();

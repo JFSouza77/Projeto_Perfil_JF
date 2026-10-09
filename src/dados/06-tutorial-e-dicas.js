@@ -230,10 +230,10 @@ const TUTORIAL_STEPS = [
   {
     sec: 5,
     icon: "🌐",
-    title: "Online (chega na 1.7.10)",
-    text: "No <b>Multiplayer</b>, cada pessoa joga no próprio celular:<ul><li>📡 <b>Ativar:</b> quem cria a sala é o <b>host</b>. O celular dele guarda a partida;</li><li>🔑 <b>Código da sala:</b> o host passa o código e cada um digita no seu celular pra entrar;</li><li>🔄 <b>Rodízio de Mestres:</b> a vez de Mestre passa de celular em celular, na ordem sorteada. Só o celular do Mestre vê a resposta;</li><li>🆘 <b>Se o host cair:</b> quem foi o 2º Mestre da partida vira o novo host (depois o 3º, e assim por diante), sem perder nada;</li><li>📖 <b>Regras e acessibilidade no seu aparelho:</b> cada um abre o Resumo rápido, o Manual e o ♿ no próprio celular, sem atrapalhar ninguém.</li></ul>Enquanto não chega, o jogo é num celular só, passando de mão em mão.",
+    title: "Online (beta)",
+    text: "No online, cada pessoa joga no próprio celular:<ul><li>📡 <b>Abrir a sala:</b> no aparelho que tem a partida, toque em <b>⏸️ Pausar → 🌐 Jogar online</b>. Esse aparelho é o <b>host</b>: ele guarda a partida;</li><li>🔗 <b>Entrar:</b> o host manda o link da sala; cada um abre no seu celular e escolhe quem é;</li><li>🔒 <b>Só o Mestre vê a resposta</b>, no celular dele. Quem está na vez escolhe o número no próprio celular;</li><li>🗳️ <b>Descartar e Desistir</b> viram votação da mesa;</li><li>🔄 <b>Caiu ou fechou?</b> Abra o link de novo: volta pro mesmo lugar. Se o host recarregar, a sala volta sozinha.</li></ul>Ainda é beta: em alguma rede de celular a conexão pode não abrir. No mesmo Wi-Fi costuma funcionar sempre.",
     dark: true,
-    mock: '<div class="tut-sala"><span class="tut-sala-selo">🚧 EM BREVE</span><div class="tut-sala-rot">Código da sala</div><div class="tut-sala-cod">K7 · P2</div><div class="tut-sala-sub">Digite no seu celular pra entrar</div></div>',
+    mock: '<div class="tut-sala"><span class="tut-sala-selo">🧪 BETA</span><div class="tut-sala-rot">Sala</div><div class="tut-sala-cod">K7P2</div><div class="tut-sala-sub">Abra o link no seu celular pra entrar</div></div>',
   },
   {
     sec: 5,
@@ -300,9 +300,9 @@ const TUTORIAL_RAPIDO = [
   },
   {
     icon: "🌐",
-    title: "Jogando online (chega na 1.7.10)",
-    text: "Logo, <b>cada um no seu celular</b>:<ul><li>📡 Um toca em <b>Multiplayer</b> e cria a sala;</li><li>🔑 Os outros digitam o <b>código da sala</b>;</li><li>🔄 O Mestre <b>passa de celular em celular</b>;</li><li>📖 Cada um vê as regras <b>no seu aparelho</b>.</li></ul>",
-    mock: '<div class="tut-sala"><span class="tut-sala-selo">🚧 EM BREVE</span><div class="tut-sala-rot">Código da sala</div><div class="tut-sala-cod">K7 · P2</div><div class="tut-sala-sub">Digite no seu celular pra entrar</div></div>',
+    title: "Jogando online (beta)",
+    text: "Dá pra jogar <b>cada um no seu celular</b>:<ul><li>📡 Na partida, <b>⏸️ Pausar → 🌐 Jogar online</b> abre a sala;</li><li>🔗 Os outros abrem o <b>link da sala</b> e escolhem quem são;</li><li>🔒 Só o celular do <b>Mestre</b> vê a resposta.</li></ul>",
+    mock: '<div class="tut-sala"><span class="tut-sala-selo">🧪 BETA</span><div class="tut-sala-rot">Sala</div><div class="tut-sala-cod">K7P2</div><div class="tut-sala-sub">Abra o link no seu celular pra entrar</div></div>',
     dark: true,
   },
   {

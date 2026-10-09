@@ -468,13 +468,29 @@ Base: a revisão externa da 1.7.8.9 (10 achados), cada um conferido no código.
 - **Teste:** `ferramentas/teste_rede.js` (`npm run rede`).
 - **Transporte:** hoje só o local (BroadcastChannel: abas do mesmo navegador). O protocolo não depende dele.
 
-### Falta pra rede de verdade (próximas partes)
-- **Escolher o serviço que liga os celulares (decisão do JF).** Recomendação: **WebRTC com PeerJS** (gratuito, sem conta, funciona no Safari do iPhone; o host vira o "servidor" da sala). Plano B se alguma rede bloquear: um serviço de mensagens em tempo real com conta gratuita (ex.: Ably ou Supabase Realtime). Só o transporte muda; o protocolo fica.
-- **Tela do convidado completa:** Express (Passar, Acertou com "quem acertou"), especiais de mover casas e de alvo, escolha do duelo de bônus, palpite.
-- **Descartar por votação** (registrado na 1.7.8.7).
-- **Lugar do host:** o aparelho do host também é um jogador (hoje ele toca tudo, como no jogo local).
-- **Pacote de recuperação e troca de host** (sucessão: o 2º Mestre assume).
-- **Versão igual em todos os aparelhos** (aviso de nova versão).
+### Final · 1.7.9.10 · O online de verdade (beta) (publicada)
+- **Decisões do JF:** PeerJS; no online só o host toca "Próxima carta"; tudo numa atualização só, a última da 1.7.9.
+- **Transporte internet:** PeerJS 1.5.5 embutido no jogo (`05l-peerjs.js`, licença MIT). O host é um Peer com o id da sala (`perfiljf-sala-abcd`) e cada convidado abre uma conexão direta com ele. O servidor público do PeerJS só apresenta um ao outro.
+  - A conexão fica presa à primeira sessão que falou por ela: ninguém se passa por outro.
+  - Mensagem "para" alguém vai só pra ele.
+  - O convidado reconecta sozinho e se apresenta de novo com a chave do aparelho.
+  - O ensaio local continua: `#sala=ABCD&local`.
+- **Painel calculado pelo host** (`redeOpcoes`): cada celular recebe só os botões que aquela pessoa pode tocar (veredito, especiais de mover e de alvo, Express, duelo de bônus, palpite, desfazer, descartar, desistir). O host confere de novo cada toque.
+- **Votação do Descartar e do Desistir:** com 2 ou mais votantes (lugares online e o jogador do host), o pedido abre votação. O Mestre conta como sim, a maioria aprova, em 20 s vale o que foi votado e empate não passa. O host aplica pela porta de ações.
+- **Desistir virou ação de verdade:** antes a confirmação da janela mudava a partida fora da porta (sem revisão nem registro).
+- **Lugar do host:** o painel da sala escolhe quem joga no aparelho do host; ele vota por esse jogador.
+- **Versão igual:** quem entra com outra versão é recusado, com o aviso pra atualizar.
+- **Intervalo:** vai no retrato da sala; os celulares mostram o aviso e o tabuleiro, só o host segue.
+- **Host recarregou:** a sala volta com o mesmo código (`perfil5_rede_host`, até 2 h) e os celulares voltam sozinhos.
+- **Onde abre:** ⏸️ Pausar → 🌐 Jogar online (beta). Também no painel do ADM.
+- **Teste:** `ferramentas/teste_rede.js` roda o mesmo roteiro em abas e pela internet, com um servidor PeerJS local (pacote `peer`, só pra teste). São 74 conferências.
+
+### Pra 1.7.10 (Multiplayer Update · lançamento)
+- **Troca de host** (sucessão: o 2º Mestre assume) com o pacote de recuperação. Hoje, se o host fechar de vez, a partida para (se ele recarregar, volta).
+- **Servidor de retransmissão (TURN)** pras redes de celular que bloqueiam conexão direta. Hoje usa só o STUN padrão do PeerJS: no mesmo Wi-Fi funciona, em algumas redes 4G/5G pode não abrir.
+- **Lobby completo no celular de cada um** (abas Pontos e Joias a partir do retrato). Hoje o celular mostra o aviso do intervalo e o tabuleiro.
+- **Nome DICAOS, domínio próprio e mudança de endereço** (save e memória).
+- Teste com a família em celulares de verdade (beta fechado).
 
 ### Decisão do JF · Privacidade das respostas (09/10/2026)
 - **Escolha: (a), com o máximo de travas da (b).** Fica aberta a (b) completa depois, se precisar.

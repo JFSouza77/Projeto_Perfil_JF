@@ -1,7 +1,11 @@
 /* ----------------------------------------------------------------------
- * 5k. REDE: SALA, PROTOCOLO, PAPÉIS E RELÓGIO (1.7.9.7 · Rooms and Network Update, Parte 3)
- * A base do online. Um aparelho HOSPEDA a sala (roda a partida, como sempre); os outros ENTRAM
- * como convidados: escolhem quem são, recebem o retrato público e mandam comandos.
+ * 5k. REDE: SALA, PROTOCOLO, PAPÉIS E RELÓGIO
+ * 1.7.9.7 (Parte 3): a base. 1.7.9.10 (Final): a internet de verdade (PeerJS), o painel de cada
+ * jogador calculado pelo host, a votação do Descartar e do Desistir, o lugar do host, a versão
+ * igual em todos e a sala que volta quando o host recarrega.
+ *
+ * Um aparelho HOSPEDA a sala (roda a partida, como sempre); os outros ENTRAM como convidados:
+ * escolhem quem são, recebem o retrato público e mandam comandos.
  *
  *  · HOST MANDA EM TUDO: o convidado não roda o motor, não carrega nem grava partida e não
  *    desembaralha as cartas (redeSemCatalogo). Ele só mostra o retrato público que chega.
@@ -9,30 +13,52 @@
  *    e um número em sequência. Mensagem de outra sala, de outro protocolo, repetida, velha,
  *    grande demais ou malformada é jogada fora (redeValidar), sem travar nada.
  *  · ATOR PELA SESSÃO: quem mandou o comando é a sessão que entrou na sala e ocupou um lugar
- *    (redeAssentos), nunca o que a mensagem diz. O host confere o papel (redePodeComandar):
- *    só o Mestre dá veredito, só quem está na vez (ou o Mestre) escolhe a dica, quem caiu na casa
- *    de bônus escolhe o duelo, qualquer um pausa, e o que é do relógio ou do ADM só o host faz.
- *    Depois disso vem a porta de sempre (dispatchAction): partida, revisão, comando repetido, regra.
- *  · RESPOSTA SÓ PRO MESTRE: o retrato da mesa nunca tem resposta. A resposta vai numa mensagem
- *    "segredo" endereçada à sessão do Mestre da vez, e o convidado apaga quando a carta acaba ou
+ *    (rede.assentos), nunca o que a mensagem diz. O host confere o papel (redePodeComandar) e
+ *    depois vem a porta de sempre (dispatchAction): partida, revisão, comando repetido, regra.
+ *  · PAINEL: o host calcula os botões de cada jogador (redeOpcoes: veredito, especiais de mover e
+ *    de alvo, Express, duelo de bônus, palpite, desfazer, descartar, desistir) e manda só pra ele.
+ *    O celular do convidado só desenha; a mesma regra da tela do host vale pra todo mundo.
+ *  · RESPOSTA SÓ PRO MESTRE: o retrato da mesa nunca tem resposta. A resposta vai na mensagem
+ *    "segredo", endereçada à sessão do Mestre da vez, e o convidado apaga quando a carta acaba ou
  *    quando deixa de ser Mestre.
+ *  · VOTAÇÃO (decisão do JF): numa sala com gente, Descartar e Desistir viram votação da mesa. O
+ *    Mestre pede (conta como sim), cada um vota no seu celular (o host também, se tiver lugar),
+ *    e a maioria decide. Em 20 s vale o que foi votado; empate não passa.
+ *  · INTERVALO (decisão do JF): no online só o host toca "Próxima carta". Os convidados veem o
+ *    aviso do intervalo e o tabuleiro no próprio celular.
  *  · RECONEXÃO: o convidado guarda o id do jogador que escolheu e uma CHAVE secreta do aparelho
- *    (por sala). Se cair ou recarregar, ele pede o mesmo lugar com a chave e volta na hora, com o
- *    retrato atual. Sem a chave, ninguém toma um lugar que ainda está online.
+ *    (por sala). Se cair ou recarregar, ele pede o mesmo lugar com a chave e volta na hora. Sem a
+ *    chave, ninguém toma um lugar que ainda está online. Se o HOST recarregar, a sala volta com o
+ *    mesmo código (perfil5_rede_host) e os convidados se reconectam sozinhos.
+ *  · VERSÃO: quem entra com outra versão do jogo é recusado, com o aviso pra atualizar.
  *  · RELÓGIO: o convidado mede a diferença pro relógio do host (ping/pong, fica a medida de menor
  *    atraso) e conta o tempo por ela. Quem decide que o tempo acabou é só o host.
- *  · TRANSPORTE TROCÁVEL: o protocolo não sabe por onde a mensagem vai. Hoje existe o transporte
- *    LOCAL (BroadcastChannel: abas do mesmo navegador, o ensaio). O transporte entre celulares
- *    (internet) entra quando o JF escolher o serviço (Roteiro, seção 10). No local, a mensagem
- *    "para" alguém chega em todas as abas e o convidado ignora o que não é dele; na internet ela
- *    vai só pra quem é.
+ *  · TRANSPORTE: o protocolo não sabe por onde a mensagem vai.
+ *      - INTERNET (padrão): PeerJS (WebRTC), embutido no jogo (05l-peerjs.js). O host é o "servidor"
+ *        da sala: cada convidado abre uma conexão direta com ele. O servidor público do PeerJS só
+ *        apresenta um ao outro; a partida não passa por ele.
+ *      - LOCAL (ensaio): BroadcastChannel, abas do mesmo navegador (#sala=ABCD&local). Aqui a
+ *        mensagem "para" alguém chega em todas as abas e o convidado ignora o que não é dele.
  * ---------------------------------------------------------------------- */
 const REDE_PROTOCOLO = 1;
 const REDE_MAX_LETRAS = 64 * 1024;
-const REDE_DO_CONVIDADO = ["oi", "cmd", "ping", "tchau"];
-const REDE_DO_HOST = ["bemvindo", "escolha", "recusa", "retrato", "segredo", "resp", "pong"];
+const REDE_DO_CONVIDADO = ["oi", "cmd", "ping", "tchau", "voto"];
+const REDE_DO_HOST = ["bemvindo", "escolha", "recusa", "retrato", "segredo", "resp", "pong", "painel"];
 const REDE_ONLINE_MS = 15000; // sem notícia há mais que isso: o convidado conta como fora
 const REDE_LETRAS_SALA = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // sem I e O (não confundem com 1 e 0)
+const REDE_SITE = "https://jfsouza77.github.io/Projeto_Perfil_JF/"; // link pros convidados (o host pode estar no offline)
+const REDE_PEER_PREFIXO = "perfiljf-sala-";
+const REDE_HOST_KEY = "perfil5_rede_host";
+const REDE_VOTO_MS = 20000;
+// Versão do jogo (do <title>, lido antes de qualquer tela mudar o título).
+const JOGO_VERSAO = (() => {
+  try {
+    if (typeof window.__JOGO_VERSAO === "string") return window.__JOGO_VERSAO; // (teste de versão diferente)
+    return (String(document.title).match(/(\d+(?:\.\d+){2,3})/) || [])[1] || "?";
+  } catch (e) {
+    return "?";
+  }
+})();
 let redeOuvindo = false; // a escuta das ações (acoesAoMudar) é registrada uma vez só
 let rede = null; // { papel: "host" | "convidado", sala, sessao, transporte, seq, ultimoSeq: {} , ... }
 
@@ -69,6 +95,13 @@ function redeSalaDoEndereco() {
     return null;
   }
 }
+function redeModoDoEndereco() {
+  try {
+    return /(?:^|[#&])local(?:&|$)/.test(String(location.hash || "")) ? "local" : "internet";
+  } catch (e) {
+    return "internet";
+  }
+}
 // Trava de privacidade 2: o convidado não abre o catálogo de cartas (a versão publicada só
 // desembaralha as cartas quando isto é falso; ver embaralharCartas no build.js).
 function redeSemCatalogo() {
@@ -78,10 +111,13 @@ function redeSemCatalogo() {
 function redeAgora() {
   return Date.now() + (rede && rede.papel === "convidado" ? rede.relogio.dif : 0);
 }
+function redeTemInternet() {
+  return typeof Peer === "function" && typeof RTCPeerConnection === "function";
+}
 
-/* --- Transporte --- */
+/* --- Transportes --- */
 // Local: BroadcastChannel (abas do mesmo navegador). As mensagens viajam como texto (JSON), igual
-// iriam pela internet, pra validação valer do mesmo jeito.
+// pela internet, pra validação valer do mesmo jeito.
 function redeTransporteLocal(sala) {
   if (typeof BroadcastChannel !== "function") return null;
   let bc;
@@ -92,6 +128,7 @@ function redeTransporteLocal(sala) {
   }
   const t = {
     tipo: "local",
+    estado: "aberta",
     enviar(texto) {
       try {
         bc.postMessage(texto);
@@ -108,6 +145,225 @@ function redeTransporteLocal(sala) {
   };
   return t;
 }
+// Configuração do PeerJS (o teste aponta pra um servidor local por window.__REDE_PEER_CONFIG).
+function redePeerConfig() {
+  const extra = (typeof window !== "undefined" && window.__REDE_PEER_CONFIG) || {};
+  return Object.assign({ debug: 0 }, extra);
+}
+function redeMudouEstado(t) {
+  try {
+    if (typeof t.aoEstado === "function") t.aoEstado(t.estado, t.erro);
+  } catch (e) {}
+}
+// Internet, lado do host: um Peer com o id da sala; cada convidado abre uma conexão com ele.
+function redeTransportePeerHost(sala) {
+  if (!redeTemInternet()) return null;
+  const porSessao = new Map(); // sessão → conexão (pra mensagem "para" alguém ir só pra ele)
+  const todas = new Set();
+  let receber = () => {};
+  let peer = null, tentativas = 0, fechado = false;
+  const t = {
+    tipo: "internet",
+    estado: "conectando",
+    erro: null,
+    aoEstado: null,
+    enviar(texto, para) {
+      const manda = (c) => {
+        try {
+          if (c.open) c.send(texto);
+        } catch (e) {}
+      };
+      if (para) {
+        const c = porSessao.get(para);
+        if (c) manda(c);
+        return;
+      }
+      todas.forEach(manda);
+    },
+    aoReceber(fn) {
+      receber = fn;
+    },
+    fechar() {
+      fechado = true;
+      try {
+        peer && peer.destroy();
+      } catch (e) {}
+    },
+  };
+  const abrir = () => {
+    try {
+      peer = new Peer(REDE_PEER_PREFIXO + sala.toLowerCase(), redePeerConfig());
+    } catch (e) {
+      t.estado = "erro";
+      t.erro = "peer";
+      redeMudouEstado(t);
+      return;
+    }
+    peer.on("open", () => {
+      t.estado = "aberta";
+      t.erro = null;
+      redeMudouEstado(t);
+    });
+    peer.on("error", (e) => {
+      const tipo = (e && e.type) || "erro";
+      // o id da sala ainda está preso no servidor (o host acabou de recarregar): tenta de novo
+      if (tipo === "unavailable-id" && tentativas < 6 && !fechado) {
+        tentativas++;
+        try {
+          peer.destroy();
+        } catch (x) {}
+        setTimeout(abrir, 2500);
+        return;
+      }
+      if (tipo === "peer-unavailable") return; // um convidado sumiu: não é erro da sala
+      t.erro = tipo;
+      if (t.estado !== "aberta") t.estado = "erro";
+      redeMudouEstado(t);
+    });
+    // perdeu o servidor de apresentação: as conexões abertas continuam; tenta voltar pra receber novos
+    peer.on("disconnected", () => {
+      if (fechado) return;
+      setTimeout(() => {
+        try {
+          if (!fechado && peer.disconnected && !peer.destroyed) peer.reconnect();
+        } catch (e) {}
+      }, 1500);
+    });
+    peer.on("connection", (c) => {
+      todas.add(c);
+      c.on("data", (d) => {
+        if (typeof d !== "string") return;
+        // a conexão fica presa à primeira sessão que falou por ela (ninguém se passa por outro)
+        let de = null;
+        try {
+          de = JSON.parse(d).de;
+        } catch (e) {}
+        if (!c._sessao && redeSessaoValida(de)) {
+          c._sessao = de;
+          porSessao.set(de, c);
+        }
+        if (c._sessao && de !== c._sessao) return;
+        receber(d);
+      });
+      const tirar = () => {
+        todas.delete(c);
+        if (c._sessao && porSessao.get(c._sessao) === c) porSessao.delete(c._sessao);
+      };
+      c.on("close", tirar);
+      c.on("error", tirar);
+    });
+  };
+  abrir();
+  return t;
+}
+// Internet, lado do convidado: uma conexão com o host, que volta sozinha se cair.
+function redeTransportePeerConvidado(sala) {
+  if (!redeTemInternet()) return null;
+  let receber = () => {};
+  let peer = null, conn = null, fechado = false, agendado = null;
+  const fila = [];
+  const t = {
+    tipo: "internet",
+    estado: "conectando",
+    erro: null,
+    aoEstado: null,
+    aoAbrir: null,
+    enviar(texto) {
+      if (conn && conn.open) {
+        try {
+          conn.send(texto);
+          return;
+        } catch (e) {}
+      }
+      fila.push(texto);
+      if (fila.length > 40) fila.shift();
+    },
+    aoReceber(fn) {
+      receber = fn;
+    },
+    fechar() {
+      fechado = true;
+      clearTimeout(agendado);
+      try {
+        peer && peer.destroy();
+      } catch (e) {}
+    },
+  };
+  const tentarDeNovo = (ms) => {
+    if (fechado) return;
+    clearTimeout(agendado);
+    agendado = setTimeout(conectar, ms);
+  };
+  const conectar = () => {
+    if (fechado || !peer || peer.destroyed) return;
+    if (peer.disconnected) {
+      try {
+        peer.reconnect();
+      } catch (e) {}
+      return tentarDeNovo(2000);
+    }
+    let c;
+    try {
+      c = peer.connect(REDE_PEER_PREFIXO + sala.toLowerCase(), { reliable: true });
+    } catch (e) {
+      return tentarDeNovo(3000);
+    }
+    conn = c;
+    c.on("open", () => {
+      t.estado = "aberta";
+      t.erro = null;
+      while (fila.length) {
+        try {
+          c.send(fila.shift());
+        } catch (e) {
+          break;
+        }
+      }
+      redeMudouEstado(t);
+      try {
+        if (typeof t.aoAbrir === "function") t.aoAbrir();
+      } catch (e) {}
+    });
+    c.on("data", (d) => typeof d === "string" && receber(d));
+    const caiu = () => {
+      if (conn !== c) return;
+      conn = null;
+      if (fechado) return;
+      t.estado = "reconectando";
+      redeMudouEstado(t);
+      tentarDeNovo(2000);
+    };
+    c.on("close", caiu);
+    c.on("error", caiu);
+  };
+  try {
+    peer = new Peer(undefined, redePeerConfig());
+  } catch (e) {
+    t.estado = "erro";
+    t.erro = "peer";
+    return t;
+  }
+  peer.on("open", () => conectar());
+  peer.on("error", (e) => {
+    const tipo = (e && e.type) || "erro";
+    // a sala não existe (ainda) ou o host está recarregando: insiste devagar
+    if (tipo === "peer-unavailable") {
+      t.estado = "sem_sala";
+      t.erro = tipo;
+      redeMudouEstado(t);
+      return tentarDeNovo(3000);
+    }
+    t.erro = tipo;
+    redeMudouEstado(t);
+    tentarDeNovo(4000);
+  });
+  peer.on("disconnected", () => tentarDeNovo(1500));
+  return t;
+}
+function redeFabrica(modo, papel) {
+  if (modo === "local") return redeTransporteLocal;
+  return papel === "host" ? redeTransportePeerHost : redeTransportePeerConvidado;
+}
 
 /* --- Envelope --- */
 function redeEnviar(tipo, dados, para) {
@@ -121,7 +377,7 @@ function redeEnviar(tipo, dados, para) {
     return false;
   }
   if (texto.length > REDE_MAX_LETRAS) return false;
-  rede.transporte.enviar(texto);
+  rede.transporte.enviar(texto, para);
   rede.enviadas = (rede.enviadas || 0) + 1;
   return true;
 }
@@ -154,22 +410,29 @@ function redeValidar(bruto) {
   // ordem: de cada sessão, só mensagem mais nova que a última (repetida ou atrasada sai)
   const ult = rede.ultimoSeq[m.de] || 0;
   if (m.seq <= ult) return recusar("repetida");
+  const txt = (v, n) => typeof v === "string" && v.length <= n;
   // conteúdo de cada tipo
   const ok = {
-    oi: () => (m.jogadorId === undefined || m.jogadorId === null || jogadorIdValido(m.jogadorId)) && typeof m.chave === "string" && /^[a-z0-9]{12,32}$/.test(m.chave),
+    oi: () =>
+      (m.jogadorId === undefined || m.jogadorId === null || jogadorIdValido(m.jogadorId)) &&
+      typeof m.chave === "string" && /^[a-z0-9]{12,32}$/.test(m.chave) && txt(m.versao, 20),
     cmd: () =>
       typeof m.commandId === "string" && /^[A-Za-z0-9_:-]{4,64}$/.test(m.commandId) && typeof m.acao === "string" && !!ACOES[m.acao] &&
       Array.isArray(m.dados) && m.dados.length <= 4 && m.dados.every(redeEhPrimitivo) &&
       (m.rev === undefined || Number.isInteger(m.rev)) && (m.matchId === undefined || m.matchId === null || typeof m.matchId === "string"),
     ping: () => typeof m.t0 === "number" && isFinite(m.t0),
     tchau: () => true,
+    voto: () => txt(m.votacao, 40) && typeof m.sim === "boolean",
     bemvindo: () => jogadorIdValido(m.jogadorId),
     escolha: () => Array.isArray(m.lugares) && m.lugares.length <= 12 && m.lugares.every((l) => l && jogadorIdValido(l.id) && typeof l.nome === "string"),
-    recusa: () => typeof m.motivo === "string" && m.motivo.length <= 40,
+    recusa: () => txt(m.motivo, 40) && (m.versao === undefined || txt(m.versao, 20)),
     retrato: () => m.r && typeof m.r === "object" && m.r.protocolo === RETRATO_PROTOCOLO && m.r.papel === "mesa" && Number.isInteger(m.r.revisao) && Array.isArray(m.r.jogadores),
-    segredo: () => Number.isInteger(m.revisao) && (m.resposta === null || (typeof m.resposta === "string" && m.resposta.length <= 120)),
+    segredo: () => Number.isInteger(m.revisao) && (m.resposta === null || txt(m.resposta, 120)),
     resp: () => typeof m.commandId === "string" && typeof m.ok === "boolean",
     pong: () => typeof m.t0 === "number" && typeof m.th === "number" && isFinite(m.th),
+    painel: () =>
+      Number.isInteger(m.revisao) && Array.isArray(m.opcoes) && m.opcoes.length <= 40 &&
+      m.opcoes.every((o) => o && typeof o.a === "string" && !!ACOES[o.a] && Array.isArray(o.d) && o.d.length <= 4 && o.d.every(redeEhPrimitivo) && txt(o.t, 80) && (o.c === undefined || txt(o.c, 12)) && (o.g === undefined || txt(o.g, 60))),
   }[m.t];
   let certo = false;
   try {
@@ -183,15 +446,27 @@ function redeValidar(bruto) {
 }
 
 /* =====================  HOST  ===================== */
-// Lugar de cada jogador: { [jogadorId]: { sessao, visto } }
-function redeAbrirSala(transporteFabrica) {
+function redeHostGuardar() {
+  try {
+    if (rede && rede.papel === "host")
+      JFStore.setItem(REDE_HOST_KEY, JSON.stringify({ sala: rede.sala, modo: rede.modo, eu: rede.hostEu || null, quando: Date.now() }));
+  } catch (e) {}
+}
+// Abre a sala. modo "internet" (padrão, PeerJS) ou "local" (ensaio em abas). salaFixa: reabrir
+// a mesma sala depois de recarregar.
+function redeAbrirSala(modo, salaFixa) {
+  if (typeof modo === "function") return redeAbrirSalaCom(modo, "local", salaFixa); // (testes antigos)
+  const m = modo === "local" || !redeTemInternet() ? "local" : "internet";
+  return redeAbrirSalaCom(redeFabrica(m, "host"), m, salaFixa);
+}
+function redeAbrirSalaCom(fab, modo, salaFixa) {
   if (rede) redeFechar();
-  const sala = redeCodigoSala();
-  const fab = typeof transporteFabrica === "function" ? transporteFabrica : redeTransporteLocal;
+  const sala = redeSalaValida(salaFixa) ? salaFixa : redeCodigoSala();
   const transporte = fab(sala);
   if (!transporte) return null;
   rede = {
     papel: "host",
+    modo,
     sala,
     sessao: "s_" + redeAleatorio(10),
     transporte,
@@ -199,31 +474,54 @@ function redeAbrirSala(transporteFabrica) {
     ultimoSeq: {},
     recusadas: {},
     assentos: {},
+    hostEu: null, // o jogador que está no aparelho do host (vota por ele)
     segredoEnviado: null,
+    paineis: {},
+    votacao: null,
     batida: null,
   };
   transporte.aoReceber((bruto) => {
-    const m = redeValidar(bruto);
-    if (m) redeHostReceber(m);
+    const msg = redeValidar(bruto);
+    if (msg) redeHostReceber(msg);
   });
+  transporte.aoEstado = () => {
+    const p = document.getElementById("redePainel");
+    if (p && typeof p._pintar === "function") p._pintar();
+  };
   if (!redeOuvindo) {
     acoesAoMudar(() => rede && rede.papel === "host" && redeHostPublicar());
     redeOuvindo = true;
   }
-  // batida: retrato de novo a cada 4 s (quem perdeu uma mensagem se acerta) e confere quem caiu
+  // batida: retrato de novo a cada 4 s (quem perdeu uma mensagem se acerta) e confere a votação
   rede.batida = setInterval(() => {
     if (!rede || rede.papel !== "host") return;
+    redeVotacaoConferir();
     redeHostPublicar(true);
   }, 4000);
+  redeHostGuardar();
   try {
     caosLog("rede", `sala ${sala} aberta (${transporte.tipo})`);
   } catch (e) {}
   return sala;
 }
+// Partida carregada depois de recarregar: se havia sala aberta há pouco, ela volta com o mesmo código.
+function redeHostRetomar() {
+  if (rede || redeSalaDoEndereco()) return false;
+  let s = null;
+  try {
+    s = JSON.parse(JFStore.getItem(REDE_HOST_KEY) || "null");
+  } catch (e) {}
+  if (!s || !redeSalaValida(s.sala) || !(Date.now() - (s.quando || 0) < 2 * 3600e3)) return false;
+  if (!starterChosen || gameEnded) return false;
+  const sala = redeAbrirSala(s.modo, s.sala);
+  if (sala && jogadorIdValido(s.eu) && jogadorIdxPorId(s.eu) >= 0) rede.hostEu = s.eu;
+  return !!sala;
+}
 function redeFechar() {
   if (!rede) return;
   try {
     if (rede.papel === "convidado") redeEnviar("tchau", {});
+    if (rede.papel === "host") JFStore.removeItem(REDE_HOST_KEY);
   } catch (e) {}
   clearInterval(rede.batida);
   clearInterval(rede.pingTimer);
@@ -243,7 +541,7 @@ function redeOnline(a) {
 }
 function redeLugaresLivres() {
   return players
-    .filter((p) => !redeOnline(rede.assentos[p.id]))
+    .filter((p) => !redeOnline(rede.assentos[p.id]) && p.id !== rede.hostEu)
     .map((p) => ({ id: p.id, nome: String(p.name).slice(0, 24), avatar: p.avatar || null }));
 }
 function redeHostReceber(m) {
@@ -256,11 +554,14 @@ function redeHostReceber(m) {
     return;
   }
   if (m.t === "cmd") return redeHostComando(m, a);
+  if (m.t === "voto") return a && redeVotar(a, m.votacao, m.sim);
 }
 function redeHostOi(m) {
+  if (m.versao !== JOGO_VERSAO) return redeEnviar("recusa", { motivo: "versao_diferente", versao: JOGO_VERSAO }, m.de);
   if (!players.length) return redeEnviar("recusa", { motivo: "sem_partida" }, m.de);
   const pedido = m.jogadorId && jogadorIdxPorId(m.jogadorId) >= 0 ? m.jogadorId : null;
   if (!pedido) return redeEnviar("escolha", { lugares: redeLugaresLivres() }, m.de);
+  if (pedido === rede.hostEu) return redeEnviar("recusa", { motivo: "lugar_ocupado" }, m.de);
   const atual = rede.assentos[pedido];
   // o mesmo aparelho voltando (mesma chave) recupera o lugar na hora; outro só depois que ele cair
   if (atual && atual.sessao !== m.de && redeOnline(atual) && atual.chave !== m.chave) return redeEnviar("recusa", { motivo: "lugar_ocupado" }, m.de);
@@ -269,12 +570,15 @@ function redeHostOi(m) {
   if (antigo && antigo !== pedido) delete rede.assentos[antigo];
   const volta = !!atual;
   rede.assentos[pedido] = { sessao: m.de, visto: Date.now(), chave: m.chave };
+  delete rede.paineis[pedido];
   redeEnviar("bemvindo", { jogadorId: pedido, matchId: matchId || null, volta }, m.de);
   try {
     caosLog("rede", `${(jogadorPorId(pedido) || {}).name || "?"} ${volta ? "voltou pra" : "entrou na"} sala`);
   } catch (e) {}
   rede.segredoEnviado = null; // o Mestre pode ter acabado de chegar: manda a resposta de novo
   redeHostPublicar(true);
+  const p = document.getElementById("redePainel");
+  if (p && typeof p._pintar === "function") p._pintar();
 }
 // Quem pode mandar o quê (o host confere antes da porta de sempre).
 const REDE_SO_MESTRE = [
@@ -303,6 +607,13 @@ function redeHostComando(m, jid) {
   const responder = (ok, motivo) => redeEnviar("resp", { commandId: m.commandId, ok, motivo: motivo || null, revisao: partidaRevisao }, m.de);
   if (!jid) return responder(false, "sem_lugar");
   if (!redePodeComandar(m.acao, jid)) return responder(false, "sem_permissao");
+  // Descartar e Desistir pedidos pelo celular viram votação da mesa (se houver mais gente na sala)
+  if ((m.acao === "descartarCarta" || m.acao === "desistirCarta") && redeVotacaoPrecisa()) {
+    const def = ACOES[m.acao];
+    if (!def.pode()) return responder(false, "fora_de_hora");
+    const ok = redeVotacaoAbrir(m.acao === "descartarCarta" ? "descartar" : "desistir", jid);
+    return responder(ok, ok ? "votacao" : "fora_de_hora");
+  }
   const r = dispatchAction({
     type: m.acao,
     data: m.dados,
@@ -314,11 +625,95 @@ function redeHostComando(m, jid) {
   responder(!!r.ok, r.ok ? (r.duplicado ? "duplicado" : null) : r.motivo);
   if (!r.ok || r.duplicado) redeHostPublicar(true); // quem errou a revisão recebe o retrato atual
 }
-// Retrato público pra todos e a resposta só pro Mestre (se ele está na sala).
+
+/* --- Painel de cada jogador: os botões que ele pode tocar agora (o host calcula) --- */
+function redeOpcoes(jid) {
+  const op = [];
+  const add = (a, d, t, c, g) => op.push({ a, d: d || [], t, ...(c ? { c } : {}), ...(g ? { g } : {}) });
+  if (!starterChosen || gameEnded || jogadorIdxPorId(jid) < 0) return op;
+  if (pausedAt) {
+    add("continuar", [], "▶️ Continuar");
+    return op;
+  }
+  const ehMestre = jogadorIdDe(mestreIndex) === jid;
+  const nome = (i) => (players[i] ? (players[i].avatar ? players[i].avatar + " " : "") + players[i].name : "?");
+  if (cardState === "bonusChoice" && redePodeComandar("bonusAdversario", jid)) {
+    const e = pendingBonusQueue[0];
+    if (CURRENT_FORMAT === "equipe")
+      teamOrder.filter((id) => id !== e.landerIdx).forEach((id) => add("bonusAdversario", [id], `${TEAM_INFO[id].emoji} Equipe ${TEAM_INFO[id].label}`, "", "🏟️ Contra quem é o duelo?"));
+    else players.forEach((p, i) => i !== e.landerIdx && add("bonusAdversario", [i], nome(i), "", "🏟️ Contra quem é o duelo?"));
+  }
+  if (ehMestre) {
+    if (cardState === "none") add("sacarCarta", [], "🃏 Puxar carta", "ok");
+    if (cardState === "hidden") add("virarCarta", [], "👀 Ver carta", "ok");
+    if (cardState === "revealed" && pendingIndex !== null && currentCard) {
+      const item = currentCard.clues[pendingIndex], txt = String(item.text || "").toLowerCase();
+      const resp = responderIndex;
+      if (item.type === "special") {
+        if (CURRENT_MODE === "express") {
+          if (expressTargetAction) players.forEach((p, i) => i !== resp && i !== mestreIndex && add("expressAlvo", [i], nome(i), "", "🎯 Escolha o jogador"));
+          else if (txt.includes("avance") && !txt.includes("escolha")) add("expressPular", [txt.includes("2") ? 2 : 1], "⏭️ Pular jogador", "ok");
+          else if (txt.includes("volte") && !txt.includes("escolha")) add("expressInverter", [txt.includes("3") ? 3 : 2], "🔁 Inverter o sentido", "nao");
+          else if (txt.includes("escolha um jogador")) add("expressMirar", [txt.includes("avan") ? "steal" : "block"], "🎯 Escolher jogador", "ok");
+          else add("especialPerdeVez", [], "➡️ Passar a vez", "nao");
+        } else if (isWildcardSpecial(item.text)) {
+          if (specialIsVoid(item)) add("especialSeguir", [], "→ Continuar, escolhe outra dica", "ok");
+          else add("especialPerdeVez", [], "→ Passar a vez", "nao");
+        } else if (CONTINUE_SAME_PLAYER_SPECIALS.has(item.text)) add("especialSeguir", [], "→ Continuar, escolhe outra dica", "ok");
+        else {
+          const mv = acoesMovimento();
+          if (mv && !mv.escolha) add("moverJogador", [resp, mv.n], `${mv.n > 0 ? "➡️ Avançar" : "⬅️ Voltar"} ${Math.abs(mv.n)} casa${Math.abs(mv.n) === 1 ? "" : "s"} e passar a vez`, mv.n > 0 ? "ok" : "nao");
+          else if (mv && mv.escolha) {
+            const g = `Quem vai ${mv.n > 0 ? "avançar" : "voltar"} ${Math.abs(mv.n)} casas?`;
+            if (CURRENT_FORMAT === "equipe") {
+              const minha = players[resp] && players[resp].team;
+              teamOrder.filter((id) => id !== minha).forEach((id) => add("moverEquipe", [id, mv.n, true], `${TEAM_INFO[id].emoji} Equipe ${TEAM_INFO[id].label}`, "", g));
+            } else if (palpiteParticipants() < 3) add("moverJogador", [mestreIndex, mv.n], `${nome(mestreIndex)} (o Mestre)`, "", g);
+            else players.forEach((p, i) => i !== resp && add("moverJogador", [i, mv.n], nome(i), "", g));
+          } else add("especialPerdeVez", [], "➡️ Vez consumida, passa pro próximo", "nao");
+        }
+      } else if (CURRENT_MODE === "express") {
+        players.forEach((p, i) => i !== mestreIndex && add("acertou", [i], "✓ " + nome(i), "ok", "Quem acertou?"));
+        add("expressPassar", [], "➡️ Próxima dica", "nao");
+      } else {
+        add("acertou", [resp], `✓ ${players[resp] ? players[resp].name : "?"} acertou`, "ok");
+        add("errou", [], "✕ Errou", "nao");
+        add("errou", ["pular"], "» Pulou");
+        add("errou", ["absurdo"], "⚠︎ Absurdo");
+        palpiteEligibleHolders().forEach((k) => {
+          const d = entityDisplay(k);
+          add("palpiteAcertou", [k], `🃏 Palpite de ${d.name}: acertou`, "ok", "Palpite a qualquer hora");
+          add("palpiteErrou", [k], `🃏 Palpite de ${d.name}: errou`, "nao", "Palpite a qualquer hora");
+        });
+      }
+    }
+    if (cardState === "revealed" && CURRENT_MODE !== "express") {
+      if (podeDescartarCarta()) add("descartarCarta", [], redeVotacaoPrecisa() ? "🗑️ Descartar (a mesa vota)" : "🗑️ Descartar", "", "Mais");
+      if (podeDesistirCarta()) add("desistirCarta", [], redeVotacaoPrecisa() ? "🏳️ Desistir (a mesa vota)" : "🏳️ Desistir", "", "Mais");
+    }
+    if (desfazerOferta) add("desfazer", [], "↩️ Desfazer: " + desfazerOferta.nome, "", "Mais");
+  }
+  add("pausar", [], "⏸️ Pausar", "", "Mais");
+  return op;
+}
+// Retrato público pra todos, o painel de cada um e a resposta só pro Mestre.
 function redeHostPublicar(forcar) {
   if (!rede || rede.papel !== "host") return;
   if (!starterChosen && !forcar) return;
-  redeEnviar("retrato", { r: retratoPartida("mesa") });
+  const r = retratoPartida("mesa");
+  // extras da sala (não fazem parte do retrato da partida): intervalo e votação
+  r.intervalo = typeof tabLobbyFimEm === "function" ? tabLobbyFimEm() : null;
+  r.votacao = rede.votacao ? redeVotacaoPublica() : null;
+  redeEnviar("retrato", { r });
+  Object.keys(rede.assentos).forEach((jid) => {
+    const a = rede.assentos[jid];
+    if (!redeOnline(a)) return;
+    const opcoes = redeOpcoes(jid);
+    const chave = JSON.stringify(opcoes) + "|" + partidaRevisao;
+    if (!forcar && rede.paineis[jid] === chave) return;
+    rede.paineis[jid] = chave;
+    redeEnviar("painel", { revisao: partidaRevisao, opcoes }, a.sessao);
+  });
   const mid = jogadorIdDe(mestreIndex);
   const a = mid && rede.assentos[mid];
   const resposta = currentCard && cardState !== "none" && !gameEnded ? currentCard.answer : null;
@@ -329,12 +724,104 @@ function redeHostPublicar(forcar) {
   }
 }
 
+/* --- Votação do Descartar e do Desistir (decisão do JF) --- */
+// Quem vota: os lugares online da sala e o jogador do host (se ele escolheu um).
+function redeVotantes() {
+  if (!rede || rede.papel !== "host") return [];
+  const v = Object.keys(rede.assentos).filter((jid) => redeOnline(rede.assentos[jid]) && jogadorIdxPorId(jid) >= 0);
+  if (rede.hostEu && jogadorIdxPorId(rede.hostEu) >= 0 && !v.includes(rede.hostEu)) v.push(rede.hostEu);
+  return v;
+}
+// Vale votação quando tem mais alguém na sala além de quem pede.
+function redeVotacaoPrecisa() {
+  return !!rede && rede.papel === "host" && redeVotantes().length >= 2;
+}
+function redeVotacaoAbrir(tipo, pedidoPor) {
+  if (!rede || rede.papel !== "host" || rede.votacao) return false;
+  rede.votacao = { id: "v_" + redeAleatorio(8), tipo, pedidoPor, rev: partidaRevisao, carta: cartaSeq, ate: Date.now() + REDE_VOTO_MS, votos: {} };
+  rede.votacao.votos[pedidoPor] = true; // quem pede já é um sim
+  try {
+    const m = jogadorPorId(pedidoPor) || players[mestreIndex] || { name: "O Mestre" };
+    showToastMessage(
+      tipo === "descartar"
+        ? `[C.A.O.S.] ${m.name} quer DESCARTAR esta carta porque achou difícil demais. Todos de acordo? Votem no celular.`
+        : `[C.A.O.S.] ${m.name} quer DESISTIR desta carta. Todos de acordo? Votem no celular.`,
+      null,
+      true,
+    );
+  } catch (e) {}
+  redeVotacaoHostMostrar();
+  redeHostPublicar(true);
+  return true;
+}
+function redeVotar(jid, id, sim) {
+  const v = rede && rede.votacao;
+  if (!v || v.id !== id || !redeVotantes().includes(jid)) return;
+  v.votos[jid] = !!sim;
+  redeVotacaoConferir();
+  redeHostPublicar(true);
+}
+function redeVotacaoPublica() {
+  const v = rede.votacao, vs = Object.values(v.votos);
+  return { id: v.id, tipo: v.tipo, pedidoPor: v.pedidoPor, ate: v.ate, sim: vs.filter((x) => x).length, nao: vs.filter((x) => !x).length, total: redeVotantes().length, votaram: Object.keys(v.votos) };
+}
+// Fecha a votação quando dá maioria, quando todos votaram ou quando o tempo acaba.
+function redeVotacaoConferir() {
+  const v = rede && rede.votacao;
+  if (!v) return;
+  const total = Math.max(1, redeVotantes().length), vs = Object.values(v.votos);
+  const sim = vs.filter((x) => x).length, nao = vs.filter((x) => !x).length;
+  const mudou = gameEnded || cartaSeq !== v.carta;
+  let fim = null;
+  if (mudou) fim = "cancelada";
+  else if (sim * 2 > total) fim = "aprovada";
+  else if (nao * 2 >= total || sim + nao >= total) fim = "recusada";
+  else if (Date.now() > v.ate) fim = sim > nao ? "aprovada" : "recusada";
+  if (!fim) return;
+  rede.votacao = null;
+  document.getElementById("redeVotoHost")?.remove();
+  if (fim === "aprovada") {
+    // a mesa decidiu: o host aplica pela porta de sempre
+    const r = dispatchAction({ type: v.tipo === "descartar" ? "descartarCarta" : "desistirCarta", actorId: v.pedidoPor });
+    if (!r.ok) fim = "recusada";
+  }
+  try {
+    if (fim === "recusada") showToastMessage(`[C.A.O.S.] A mesa disse NÃO. A carta fica. ${sim} a ${nao}.`, null, true);
+    if (fim === "aprovada") showToastMessage(`[C.A.O.S.] Aprovado pela mesa, ${sim} a ${nao}. ${v.tipo === "descartar" ? "Carta descartada." : "Carta desistida."}`, null, true);
+    caosLog("rede", `votação de ${v.tipo}: ${fim} (${sim} sim, ${nao} não)`);
+  } catch (e) {}
+  redeHostPublicar(true);
+}
+// No aparelho do host: a janelinha de voto (se o host tem um jogador e ainda não votou).
+function redeVotacaoHostMostrar() {
+  document.getElementById("redeVotoHost")?.remove();
+  const v = rede && rede.votacao;
+  if (!v || !rede.hostEu || v.votos[rede.hostEu] !== undefined) return;
+  const box = document.createElement("div");
+  box.id = "redeVotoHost";
+  box.className = "rede-voto-host";
+  box.innerHTML = `<div>🗳️ ${v.tipo === "descartar" ? "Descartar" : "Desistir de"} esta carta?</div><button type="button" data-sim="1">👍 Sim</button><button type="button" data-sim="0">👎 Não</button>`;
+  box.querySelectorAll("[data-sim]").forEach((b) =>
+    b.addEventListener("click", () => {
+      box.remove();
+      if (rede && rede.votacao && rede.hostEu) redeVotar(rede.hostEu, rede.votacao.id, b.dataset.sim === "1");
+    }),
+  );
+  document.body.appendChild(box);
+}
+// Botões Descartar/Desistir da tela do host: com gente na sala, viram votação.
+function redeVotacaoTalvez(tipo) {
+  if (!redeVotacaoPrecisa()) return false;
+  const mid = jogadorIdDe(mestreIndex);
+  return redeVotacaoAbrir(tipo, mid) || true;
+}
+
 /* =====================  CONVIDADO  ===================== */
 const REDE_EU_KEY = "perfil5_rede_eu_"; // + sala: o jogador que este aparelho escolheu
 function redeEntrarSala(sala, transporteFabrica) {
   if (!redeSalaValida(sala)) return false;
   if (rede) redeFechar();
-  const fab = typeof transporteFabrica === "function" ? transporteFabrica : redeTransporteLocal;
+  const fab = typeof transporteFabrica === "function" ? transporteFabrica : redeFabrica(redeModoDoEndereco(), "convidado");
   const transporte = fab(sala);
   if (!transporte) return false;
   // quem eu sou nesta sala: { id, chave } (a aba primeiro; depois o aparelho)
@@ -356,18 +843,26 @@ function redeEntrarSala(sala, transporteFabrica) {
     estado: "entrando", // entrando | escolhendo | dentro | recusado
     retrato: null,
     segredo: null, // { revisao, resposta }
+    painel: null, // { revisao, opcoes }
     lugares: [],
     motivo: null,
+    versaoHost: null,
     pendentes: {}, // commandId → { msg, tentativas, quando }
     respostas: {}, // commandId → resultado
+    votei: {},
     relogio: { dif: 0, atraso: Infinity, amostras: 0 },
     aoMudar: null,
   };
+  const oi = () => redeEnviar("oi", { jogadorId: rede.eu, chave: rede.chave, versao: JOGO_VERSAO });
+  rede.oi = oi;
   transporte.aoReceber((bruto) => {
     const m = redeValidar(bruto);
     if (m) redeConvidadoReceber(m);
   });
-  redeEnviar("oi", { jogadorId: rede.eu, chave: rede.chave });
+  // a conexão voltou (internet): se apresenta de novo pro host
+  transporte.aoAbrir = () => rede && rede.papel === "convidado" && oi();
+  transporte.aoEstado = () => rede && typeof rede.aoMudar === "function" && rede.aoMudar("conexao");
+  oi();
   // fechou a aba ou saiu da página: avisa o host (o lugar fica livre na hora)
   try {
     window.addEventListener("pagehide", () => rede && rede.papel === "convidado" && redeEnviar("tchau", {}));
@@ -378,7 +873,7 @@ function redeEntrarSala(sala, transporteFabrica) {
     if (!rede || rede.papel !== "convidado") return;
     n++;
     if (n <= 4 || n % 10 === 0) redeEnviar("ping", { t0: Date.now() });
-    if (rede.estado === "entrando" && n % 6 === 0) redeEnviar("oi", { jogadorId: rede.eu, chave: rede.chave });
+    if (rede.estado === "entrando" && n % 6 === 0) oi();
     redeReenviar();
   }, 500);
   return true;
@@ -406,9 +901,10 @@ function redeConvidadoReceber(m) {
     return avisar();
   }
   if (m.t === "recusa") {
-    if (m.motivo === "lugar_ocupado" || m.motivo === "sem_partida") {
+    if (["lugar_ocupado", "sem_partida", "versao_diferente"].includes(m.motivo)) {
       rede.estado = "recusado";
       rede.motivo = m.motivo;
+      rede.versaoHost = m.versao || null;
       if (m.motivo === "lugar_ocupado") rede.eu = null;
     }
     return avisar();
@@ -431,6 +927,11 @@ function redeConvidadoReceber(m) {
     if (rede.segredo && (r.mestreId !== rede.eu || !r.carta || r.fim || r.matchId !== rede.segredo.matchId)) rede.segredo = null;
     return avisar();
   }
+  if (m.t === "painel") {
+    if (rede.painel && m.revisao < rede.painel.revisao) return;
+    rede.painel = { revisao: m.revisao, opcoes: m.opcoes };
+    return avisar();
+  }
   if (m.t === "segredo") {
     const r = rede.retrato;
     rede.segredo = m.resposta ? { revisao: m.revisao, resposta: m.resposta, matchId: r ? r.matchId : null } : null;
@@ -447,7 +948,7 @@ function redeEscolherLugar(jid) {
   if (!rede || rede.papel !== "convidado" || !jogadorIdValido(jid)) return false;
   rede.eu = jid;
   rede.estado = "entrando";
-  return redeEnviar("oi", { jogadorId: jid, chave: rede.chave });
+  return redeEnviar("oi", { jogadorId: jid, chave: rede.chave, versao: JOGO_VERSAO });
 }
 // Mandar um comando pro host. O mesmo commandId vai de novo se a resposta não vier (o host aplica
 // uma vez só).
@@ -459,6 +960,12 @@ function redeMandar(acao, ...dados) {
   rede.pendentes[commandId] = { msg, tentativas: 1, quando: Date.now() };
   redeEnviar("cmd", msg);
   return commandId;
+}
+function redeVotarConvidado(sim) {
+  const v = rede && rede.retrato && rede.retrato.votacao;
+  if (!v || rede.votei[v.id] !== undefined) return false;
+  rede.votei[v.id] = !!sim;
+  return redeEnviar("voto", { votacao: v.id, sim: !!sim });
 }
 function redeReenviar() {
   if (!rede || rede.papel !== "convidado") return;
@@ -475,14 +982,14 @@ function redeReenviar() {
     redeEnviar("cmd", p.msg);
   });
 }
-// O que este convidado pode tocar agora (a mesma regra que o host confere).
+// O que este convidado é agora.
 function redeMeuPapel() {
   const r = rede && rede.retrato;
   if (!r || !rede.eu) return { mestre: false, vez: false };
   return { mestre: r.mestreId === rede.eu, vez: r.vezId === rede.eu };
 }
 
-/* --- Tela do convidado: o retrato (como o telão) e os botões do meu papel --- */
+/* --- Tela do convidado: o retrato (como o telão) e os botões do meu painel --- */
 function redeConvidadoIniciar(sala) {
   try {
     saveBloqueado = true; // trava 5: o convidado nunca grava a partida
@@ -501,12 +1008,15 @@ function redeConvidadoIniciar(sala) {
     document.body.appendChild(box);
   }
   if (!redeEntrarSala(sala)) {
-    box.innerHTML = `<div class="telao-espera">Este navegador não consegue entrar na sala.</div>${REDE_SAIR}`;
+    box.innerHTML = `<div class="telao-espera">Este navegador não consegue entrar na sala${redeModoDoEndereco() === "internet" ? " pela internet" : ""}.</div>${REDE_SAIR}`;
     return;
   }
   rede.aoMudar = () => redeConvidadoDesenhar();
   redeConvidadoDesenhar();
-  telaoRelogioTimer = setInterval(telaoRelogio, 500);
+  telaoRelogioTimer = setInterval(() => {
+    telaoRelogio();
+    redeConvidadoTiques();
+  }, 500);
 }
 const REDE_SAIR = '<button type="button" class="telao-sair" onclick="redeSairDaSala()">✕ Sair da sala</button>';
 function redeSairDaSala() {
@@ -525,15 +1035,35 @@ function redeSairDaSala() {
 const REDE_MOTIVOS = {
   lugar_ocupado: "Esse jogador já está na sala em outro aparelho.",
   sem_partida: "O host ainda não cadastrou os jogadores. Espere e tente de novo.",
+  versao_diferente: "Seu jogo está numa versão diferente da do host.",
   sem_permissao: "Isso não é com você agora.",
   fora_de_hora: "Agora não dá.",
   revisao_obsoleta: "A partida andou enquanto você tocava. Tente de novo.",
   sem_resposta: "O host não respondeu. Confira a conexão.",
+  votacao: "Pedido enviado: a mesa vai votar.",
 };
+const REDE_CONEXAO = {
+  conectando: "🔌 Conectando…",
+  sem_sala: "🔎 Procurando a sala… (o host está com ela aberta?)",
+  reconectando: "🔌 A conexão caiu. Reconectando…",
+  erro: "⚠️ Sem conexão com o servidor da sala. Tentando de novo…",
+};
+// A cada meio segundo: contagem do intervalo e da votação (sem redesenhar a tela toda).
+function redeConvidadoTiques() {
+  if (!rede || !rede.retrato) return;
+  const r = rede.retrato;
+  const s = (ate) => Math.max(0, Math.ceil((ate - redeAgora()) / 1000));
+  const iv = document.getElementById("redeIntervaloSeg");
+  if (iv && r.intervalo) iv.textContent = s(r.intervalo);
+  const vs = document.getElementById("redeVotoSeg");
+  if (vs && r.votacao) vs.textContent = s(r.votacao.ate);
+}
 function redeConvidadoDesenhar() {
   const box = document.getElementById("telao");
   if (!box || !rede) return;
-  const sala = `<div class="rede-sala">🌐 Sala <b>${rede.sala}</b></div>`;
+  const t = rede.transporte || {};
+  const conexao = t.estado && t.estado !== "aberta" && REDE_CONEXAO[t.estado] ? `<div class="rede-conexao">${REDE_CONEXAO[t.estado]}</div>` : "";
+  const sala = `<div class="rede-sala">🌐 Sala <b>${rede.sala}</b></div>${conexao}`;
   if (rede.estado === "escolhendo") {
     const l = rede.lugares
       .map((p) => `<button type="button" class="rede-lugar" data-id="${escapeHtml(p.id)}">${escapeHtml((p.avatar ? p.avatar + " " : "") + p.nome)}</button>`)
@@ -543,10 +1073,15 @@ function redeConvidadoDesenhar() {
     return;
   }
   if (rede.estado === "recusado") {
-    box.innerHTML = `${sala}<div class="telao-espera">${escapeHtml(REDE_MOTIVOS[rede.motivo] || "Não deu pra entrar.")}<br><button type="button" class="rede-lugar" id="redeDeNovo">Tentar de novo</button></div>${REDE_SAIR}`;
+    const ver =
+      rede.motivo === "versao_diferente"
+        ? `<br><small>Host: Beta ${escapeHtml(rede.versaoHost || "?")} · Você: Beta ${escapeHtml(JOGO_VERSAO)}. Recarregue a página pra atualizar.</small>`
+        : "";
+    box.innerHTML = `${sala}<div class="telao-espera">${escapeHtml(REDE_MOTIVOS[rede.motivo] || "Não deu pra entrar.")}${ver}<br><button type="button" class="rede-lugar" id="redeDeNovo">${rede.motivo === "versao_diferente" ? "🔄 Recarregar" : "Tentar de novo"}</button></div>${REDE_SAIR}`;
     box.querySelector("#redeDeNovo").addEventListener("click", () => {
+      if (rede.motivo === "versao_diferente") return location.reload();
       rede.estado = "entrando";
-      redeEnviar("oi", { jogadorId: rede.eu, chave: rede.chave });
+      rede.oi();
     });
     return;
   }
@@ -566,67 +1101,120 @@ function redeConvidadoDesenhar() {
   const topo = box.querySelector(".telao-vez");
   if (topo) topo.after(barra);
   else box.appendChild(barra);
-  barra.querySelectorAll("[data-acao]").forEach((b) =>
+  barra.querySelectorAll("[data-op]").forEach((b) =>
     b.addEventListener("click", () => {
-      const dados = b.dataset.dado === undefined ? [] : [b.dataset.tipo === "num" ? Number(b.dataset.dado) : b.dataset.dado];
-      redeMandar(b.dataset.acao, ...dados);
+      const o = rede.painel && rede.painel.opcoes[+b.dataset.op];
+      if (o) redeMandar(o.a, ...o.d);
     }),
   );
+  barra.querySelectorAll("[data-dica]").forEach((b) => b.addEventListener("click", () => redeMandar("escolherDica", +b.dataset.dica)));
+  barra.querySelectorAll("[data-voto]").forEach((b) => b.addEventListener("click", () => redeVotarConvidado(b.dataset.voto === "1") && redeConvidadoDesenhar()));
+  redeConvidadoTiques();
 }
 function redeBotoesHtml() {
   const r = rede.retrato, eu = r.jogadores.find((j) => j.id === rede.eu);
   const papel = redeMeuPapel();
-  const b = (acao, txt, dado, tipo) =>
-    `<button type="button" class="rede-btn" data-acao="${acao}"${dado === undefined ? "" : ` data-dado="${escapeHtml(String(dado))}" data-tipo="${tipo || "txt"}"`}>${txt}</button>`;
   let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 sua vez" : ""}</div>`;
   if (r.fim) return h;
-  if (r.relogio && r.relogio.pausado) return h + `<div class="rede-acoes">${b("continuar", "▶️ Continuar")}</div>`;
-  const c = r.carta, acoes = [];
+  if (r.intervalo) h += `<div class="rede-intervalo">⏸️ Intervalo entre as cartas: dá uma olhada no tabuleiro. O host segue em <b id="redeIntervaloSeg">…</b> s.</div>`;
+  const v = r.votacao;
+  if (v) {
+    const ja = rede.votei[v.id] !== undefined || (v.votaram || []).includes(rede.eu);
+    const quem = (r.jogadores.find((j) => j.id === v.pedidoPor) || { nome: "O Mestre" }).nome;
+    h += `<div class="rede-votacao">🗳️ ${escapeHtml(quem)} quer ${v.tipo === "descartar" ? "descartar" : "desistir de"} esta carta. <b>${v.sim}</b> sim · <b>${v.nao}</b> não · <b id="redeVotoSeg">…</b> s${ja ? "<div><small>Seu voto foi.</small></div>" : `<div class="rede-acoes"><button type="button" class="rede-btn rede-ok" data-voto="1">👍 Sim</button><button type="button" class="rede-btn rede-nao" data-voto="0">👎 Não</button></div>`}</div>`;
+  }
   if (papel.mestre && rede.segredo && rede.segredo.resposta)
     h += `<div class="rede-segredo">🔒 Só você vê: <b>${escapeHtml(rede.segredo.resposta)}</b></div>`;
-  if (papel.mestre) {
-    if (r.estadoCarta === "none") acoes.push(b("sacarCarta", "🃏 Puxar carta"));
-    if (r.estadoCarta === "hidden") acoes.push(b("virarCarta", "👀 Ver carta"));
-    if (r.estadoCarta === "revealed" && c && c.pendente !== null && c.pendente !== undefined) {
-      const it = c.abertas.find((d) => d.pos === c.pendente);
-      if (it && it.tipo === "special") acoes.push(b("especialSeguir", "⭐ Seguir"), b("especialPerdeVez", "⛔ Perde a vez"));
-      else acoes.push(b("acertou", "✓ Acertou"), b("errou", "✗ Errou"), b("errou", "» Pulou", "pular"));
-    }
-  }
-  if ((papel.vez || papel.mestre) && r.estadoCarta === "revealed" && c && (c.pendente === null || c.pendente === undefined)) {
+  const c = r.carta;
+  if ((papel.vez || papel.mestre) && r.estadoCarta === "revealed" && c && (c.pendente === null || c.pendente === undefined) && !(r.relogio && r.relogio.pausado)) {
     const abertas = new Set(c.abertas.map((d) => d.pos));
     const nums = [];
-    for (let i = 0; i < c.totalDicas; i++) if (!abertas.has(i)) nums.push(b("escolherDica", String(i + 1), i, "num"));
+    for (let i = 0; i < c.totalDicas; i++) if (!abertas.has(i)) nums.push(`<button type="button" class="rede-btn" data-dica="${i}">${i + 1}</button>`);
     if (nums.length) h += `<div class="rede-rot">Escolha uma dica:</div><div class="rede-nums">${nums.join("")}</div>`;
   }
-  acoes.push(b("pausar", "⏸️ Pausar"));
+  // os botões que o host mandou pra mim, em grupos
+  const ops = (rede.painel && rede.painel.opcoes) || [];
+  const grupos = [];
+  ops.forEach((o, i) => {
+    const g = o.g || "";
+    let gr = grupos.find((x) => x.g === g);
+    if (!gr) grupos.push((gr = { g, itens: [] }));
+    gr.itens.push(`<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`);
+  });
+  grupos.sort((a, b) => (a.g === "Mais") - (b.g === "Mais"));
+  grupos.forEach((gr) => {
+    if (gr.g) h += `<div class="rede-rot">${escapeHtml(gr.g === "Mais" ? "" : gr.g)}</div>`;
+    h += `<div class="rede-acoes${gr.g === "Mais" ? " rede-mais" : ""}">${gr.itens.join("")}</div>`;
+  });
   const ult = Object.values(rede.respostas).slice(-1)[0];
-  const aviso = ult && !ult.ok && REDE_MOTIVOS[ult.motivo] ? `<div class="rede-aviso">${escapeHtml(REDE_MOTIVOS[ult.motivo])}</div>` : "";
-  return h + `<div class="rede-acoes">${acoes.join("")}</div>` + aviso;
+  const aviso = ult && (!ult.ok || ult.motivo === "votacao") && REDE_MOTIVOS[ult.motivo] ? `<div class="rede-aviso">${escapeHtml(REDE_MOTIVOS[ult.motivo])}</div>` : "";
+  return h + aviso;
 }
 
 /* --- Painel do host (ADM) --- */
 function redeLinkDaSala() {
-  return String(location.href).split("#")[0] + "#sala=" + (rede ? rede.sala : "");
+  if (!rede) return "";
+  const base = /^https?:/.test(location.protocol) && rede.modo === "internet" ? String(location.href).split("#")[0] : rede.modo === "internet" ? REDE_SITE : String(location.href).split("#")[0];
+  return base + "#sala=" + rede.sala + (rede.modo === "local" ? "&local" : "");
 }
+const REDE_ESTADO_HOST = {
+  conectando: "🟡 Abrindo a sala no servidor…",
+  aberta: "🟢 Sala aberta",
+  erro: "🔴 Não deu pra abrir a sala pela internet",
+};
 function redePainelHost() {
   document.getElementById("redePainel")?.remove();
   const ov = document.createElement("div");
   ov.id = "redePainel";
   ov.className = "jf-modal-bg";
   const pintar = () => {
+    if (!ov.isConnected && ov._montado) return;
     if (!rede || rede.papel !== "host") {
-      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Sala (ensaio)</h3><p>Abre uma sala neste navegador. Cada jogador entra pelo link numa outra aba (no online de verdade, cada um no seu celular).</p><button type="button" class="btn-start btn-neo neo-solid neo-still" id="redeAbrir" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">Abrir sala</button><button type="button" class="chip" id="redeOk" style="margin-top:10px">Fechar</button></div>`;
-      ov.querySelector("#redeAbrir").addEventListener("click", () => {
-        redeAbrirSala();
+      const temNet = redeTemInternet();
+      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Jogar online</h3><p>Abra uma sala: cada jogador entra pelo link no próprio celular, escolhe quem é e joga de lá. Este aparelho continua com a partida.</p>${
+        temNet ? `<button type="button" class="btn-start btn-neo neo-solid neo-still" id="redeAbrirNet" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">Abrir sala pela internet</button>` : `<p><small>Este navegador não tem como abrir sala pela internet.</small></p>`
+      }<button type="button" class="chip" id="redeAbrirLocal">Ensaio neste navegador (abas)</button><button type="button" class="chip" id="redeOk" style="margin-top:10px">Fechar</button></div>`;
+      const net = ov.querySelector("#redeAbrirNet");
+      if (net)
+        net.addEventListener("click", () => {
+          redeAbrirSala("internet");
+          pintar();
+        });
+      ov.querySelector("#redeAbrirLocal").addEventListener("click", () => {
+        redeAbrirSala("local");
         pintar();
       });
     } else {
+      const est = rede.transporte.estado || "aberta";
       const lugares = players
-        .map((p) => `<li>${escapeHtml((p.avatar ? p.avatar + " " : "") + p.name)} · ${redeOnline(rede.assentos[p.id]) ? "🟢 na sala" : rede.assentos[p.id] ? "🟠 caiu" : "⚪ fora"}</li>`)
+        .map((p) => {
+          const s = p.id === rede.hostEu ? "📱 neste aparelho" : redeOnline(rede.assentos[p.id]) ? "🟢 na sala" : rede.assentos[p.id] ? "🟠 caiu" : "⚪ fora";
+          return `<li>${escapeHtml((p.avatar ? p.avatar + " " : "") + p.name)} · ${s}</li>`;
+        })
         .join("");
-      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Sala ${rede.sala}</h3><p>Link pra entrar:<br><code class="rede-link">${escapeHtml(redeLinkDaSala())}</code></p><ul class="rede-lista">${lugares}</ul><button type="button" class="chip" id="redeAbrirAba">Abrir uma aba de convidado</button><button type="button" class="chip" id="redeFecharSala">Fechar a sala</button><button type="button" class="chip" id="redeOk" style="margin-top:10px">Fechar</button></div>`;
-      ov.querySelector("#redeAbrirAba").addEventListener("click", () => window.open(redeLinkDaSala(), "_blank"));
+      const opcoesEu = `<option value="">ninguém (o aparelho é só a mesa)</option>` + players.map((p) => `<option value="${escapeHtml(p.id)}"${p.id === rede.hostEu ? " selected" : ""}>${escapeHtml(p.name)}</option>`).join("");
+      const erro = est === "erro" ? `<p class="rede-aviso">${REDE_ESTADO_HOST.erro}${rede.transporte.erro ? " (" + escapeHtml(rede.transporte.erro) + ")" : ""}. Confira a internet e tente de novo, ou use o ensaio em abas.</p>` : "";
+      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Sala ${rede.sala}</h3><div class="rede-estado">${rede.modo === "local" ? "🧪 Ensaio em abas deste navegador" : REDE_ESTADO_HOST[est] || est}</div>${erro}<p>Link pra entrar:<br><code class="rede-link">${escapeHtml(redeLinkDaSala())}</code></p><button type="button" class="chip" id="redeCopiar">📋 Copiar link</button>${
+        navigator.share ? '<button type="button" class="chip" id="redeCompartilhar">📤 Compartilhar</button>' : ""
+      }<label class="rede-rot-eu">Quem joga neste aparelho? <select id="redeEu">${opcoesEu}</select></label><ul class="rede-lista">${lugares}</ul>${
+        rede.modo === "local" ? '<button type="button" class="chip" id="redeAbrirAba">Abrir uma aba de convidado</button>' : ""
+      }<button type="button" class="chip" id="redeFecharSala">Fechar a sala</button><button type="button" class="chip" id="redeOk" style="margin-top:10px">Fechar</button></div>`;
+      ov.querySelector("#redeCopiar").addEventListener("click", (e) => {
+        try {
+          navigator.clipboard.writeText(redeLinkDaSala());
+          e.target.textContent = "✅ Copiado";
+        } catch (x) {}
+      });
+      const sh = ov.querySelector("#redeCompartilhar");
+      if (sh) sh.addEventListener("click", () => navigator.share({ title: "Perfil JF · Sala " + rede.sala, text: "Entra na minha sala do Perfil JF:", url: redeLinkDaSala() }).catch(() => {}));
+      ov.querySelector("#redeEu").addEventListener("change", (e) => {
+        rede.hostEu = jogadorIdValido(e.target.value) ? e.target.value : null;
+        if (rede.hostEu) delete rede.assentos[rede.hostEu];
+        redeHostGuardar();
+        pintar();
+      });
+      const ab = ov.querySelector("#redeAbrirAba");
+      if (ab) ab.addEventListener("click", () => window.open(redeLinkDaSala(), "_blank"));
       ov.querySelector("#redeFecharSala").addEventListener("click", () => {
         redeFechar();
         pintar();
@@ -634,6 +1222,8 @@ function redePainelHost() {
     }
     ov.querySelector("#redeOk").addEventListener("click", () => ov.remove());
   };
+  ov._pintar = pintar;
   pintar();
+  ov._montado = true;
   document.body.appendChild(ov);
 }

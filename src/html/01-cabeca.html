@@ -6,6 +6,22 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.9.10 · 09/10/2026 · "Rooms and Network Update · Final" = O ONLINE DE VERDADE (BETA) E O FIM DA 1.7.9.
+          Decisões do JF: PeerJS; no online só o host segue o intervalo; tudo numa atualização só (a última da 1.7.9).
+          · Transporte INTERNET: PeerJS 1.5.5 embutido (05l-peerjs.js, MIT). O host é um Peer com o id da sala e
+            recebe uma conexão de cada convidado; a conexão fica presa à 1ª sessão que falou por ela; "para" vai só
+            pra quem é. O convidado reconecta sozinho (fila de mensagens; oi de novo com a chave). Ensaio local
+            continua (#sala=ABCD&local). Link do site quando o host está no offline.
+          · Painel calculado pelo host (redeOpcoes): veredito, especiais de mover (fixo, escolha, só 2), Express
+            (pular, inverter, mirar, alvo, quem acertou), duelo de bônus, palpite, desfazer, descartar, desistir.
+          · Votação do Descartar/Desistir (decisão do JF): com 2+ votantes (lugares online + o jogador do host),
+            o pedido abre votação; maioria aprova, 20 s, empate não passa; o host aplica pela porta. Botões da tela
+            do host também votam. Desistir passou a ser a ação de verdade (antes a confirmação mudava a partida
+            fora da porta, sem revisão).
+          · Lugar do host (quem joga neste aparelho), versão igual (recusa com aviso), intervalo no retrato da sala
+            (tabLobbyFimEm; os celulares veem o aviso), sala volta quando o host recarrega (perfil5_rede_host).
+          · "🌐 Jogar online (beta)" na pausa; tutorial e tela inicial atualizados. teste_rede: o mesmo roteiro em
+            abas e pela internet (servidor PeerJS local), 74 conferências.
   1.7.9.9 · 09/10/2026 · "Rooms and Network Update · VAR do C.A.O.S." = O DESFAZER VIRA VAR.
           Ideia do JF. desfazerFalaVar (05g-acoes.js) + REACTIVE_VOICE.var (acerto, erro, palpite): o aviso do
           Desfazer vira narração de árbitro de vídeo, com o Mestre que pediu e quem perdeu o ponto. Com o C.A.O.S.
@@ -565,7 +581,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.9.9</title>
+<title>Perfil JF · Beta 1.7.9.10</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -12,6 +12,7 @@ O código está público no GitHub para jogar e acompanhar o projeto. Isso **nã
   - Klaus sugeriu a organização do código, que entrou na 1.7.5.
   - Pedro (11 anos) teve a ideia da risadinha do C.A.O.S.
 - A lista completa de agradecimentos vai entrar na área "Agradecimentos Especiais" do jogo.
+- **Biblioteca de terceiros:** o online (desde a 1.7.9.10) usa o **PeerJS** (licença MIT, © Michelle Bu e Eric Zhang), embutido no jogo com a licença original junto. Nenhuma parte do jogo depende de outro código de terceiros.
 
 ## Como provar a autoria
 1. **Histórico do Git** neste repositório: cada mudança tem data, hora, autor e descrição, desde o primeiro commit.

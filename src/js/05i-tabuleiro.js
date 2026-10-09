@@ -543,6 +543,7 @@ const TAB_LOBBY_SEG = 60;
 const TAB_LOBBY_KEY = "perfil5_tab_lobby";
 let tabLobbyPendente = false; // uma carta acabou (checkWinnerThenDraw): abre quando a próxima estiver pronta
 let tabLobbyRelogio = null;
+let tabLobbyFim = 0; // quando o intervalo acaba (vai pros celulares da sala: só o host segue)
 let tabLobbyAntes = null; // casa de cada peça no lobby anterior (pra mostrar quanto andou)
 let tabLobbyAntesVelho = null; // o de antes do último lobby (o Desfazer volta pra ele)
 
@@ -624,6 +625,8 @@ function tabLobbyAbrir() {
   }, 280);
   let fim = Date.now() + TAB_LOBBY_SEG * 1000,
     antesTique = Date.now();
+  tabLobbyFim = fim;
+  if (typeof redeHostPublicar === "function") redeHostPublicar(true);
   tabLobbyRelogio = setInterval(() => {
     const t = Date.now(),
       passou = t - antesTique;
@@ -632,6 +635,7 @@ function tabLobbyAbrir() {
     // aba escondida ou pausa: o relógio do lobby espera junto
     if (document.hidden || (typeof pausaEstaAberta === "function" && pausaEstaAberta())) {
       fim += passou;
+      tabLobbyFim = fim;
       return;
     }
     const resta = Math.max(0, fim - t);
@@ -687,7 +691,14 @@ function tabCaosNoTabuleiro(tipo) {
 function tabLobbyFechar() {
   clearInterval(tabLobbyRelogio);
   tabLobbyRelogio = null;
+  const aberto = !!document.getElementById("tabLobby");
   document.getElementById("tabLobby")?.remove();
+  tabLobbyFim = 0;
+  if (aberto && typeof redeHostPublicar === "function") redeHostPublicar(true);
+}
+// Fim do intervalo (pro retrato da sala), ou null quando não tem intervalo aberto.
+function tabLobbyFimEm() {
+  return tabLobbyFim && document.getElementById("tabLobby") ? tabLobbyFim : null;
 }
 // Desfazer o veredito: o lobby fecha e a conta de "quanto andou" volta pro lobby de antes.
 function tabLobbyDesfeito() {
