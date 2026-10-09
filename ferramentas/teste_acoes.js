@@ -140,6 +140,15 @@ const ARQ = acharMestre(process.argv[2]);
     }
     await espera(60);
     out.lobbySoTela = partidaRevisao === revLobby && !!document.getElementById('desfazerBtn') && +getComputedStyle(document.getElementById('tabLobby')).zIndex < +getComputedStyle(document.getElementById('desfazerBtn')).zIndex;
+    // 1.7.9.9: o C.A.O.S. narra o Desfazer como VAR (calado, só o aviso simples)
+    {
+      const fFala = desfazerFalaVar({ tipo: 'acertou', nome: 'Acertou (Ana)', quem: 'Ana' });
+      const silAntes = caosSilenced;
+      caosSilenced = true;
+      const fCalado = desfazerFalaVar({ tipo: 'errou', nome: 'Errou', quem: null });
+      caosSilenced = silAntes;
+      out.desfazerVar = (silAntes || /VAR|anulad/i.test(fFala)) && /Pode marcar de novo/.test(fFala) && fCalado === '↩️ Desfeito: Errou. Pode marcar de novo.';
+    }
     document.getElementById('desfazerBtn') && document.getElementById('desfazerBtn').click();
     await espera(30); fechar();
     out.lobbyDesfeito = !document.getElementById('tabLobby');
@@ -192,7 +201,11 @@ const ARQ = acharMestre(process.argv[2]);
     fechar();
     const revPorta = partidaRevisao;
     out.semReembaralhar = dispatchAction({ type: 'reembaralharDicas' }).motivo === 'acao_desconhecida';
+    // sem dica pendente (a carta sorteada às vezes deixa uma especial de mover aberta, e aí mover vale)
+    const piMover = pendingIndex;
+    pendingIndex = null;
     out.moverSemEspecial = dispatchAction({ type: 'moverJogador', data: [0, 5] }).motivo === 'fora_de_hora' && dispatchAction({ type: 'moverJogador', data: [responderIndex, 2] }).motivo === 'fora_de_hora' && dispatchAction({ type: 'moverEquipe', data: ['A', 2] }).motivo === 'fora_de_hora';
+    pendingIndex = piMover;
     // cenário em que a tela mostra o Descartar (carta aberta, sem dica pendente, 0 descartes seguidos)
     const salvoD = { cs: cardState, pi: pendingIndex, cd: consecutiveDiscards };
     cardState = 'revealed'; pendingIndex = null; consecutiveDiscards = 0;
@@ -295,6 +308,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.9.4: o tabuleiro abre entre as cartas, com a próxima já escondida', r.lobbyAbriu],
     ['1.7.9.4: o lobby é só tela (não mexe na partida) e fica abaixo do Desfazer', r.lobbySoTela],
     ['1.7.9.4: desfazer o veredito fecha o lobby', r.lobbyDesfeito],
+    ['1.7.9.9: o Desfazer vira fala de VAR do C.A.O.S. (calado: aviso simples)', r.desfazerVar],
     ['1.7.9.6: lobby com abas (Tabuleiro, Pontos e Joias quando a partida dá joias), abrindo na que decide', r.lobbyAbas],
     ['1.7.9.5: na partida o "toque pra ampliar" mostra só a lista, sem o tabuleiro grande', r.ampliarSemDesenho],
     ['1.7.9.5: Menos movimento (acessibilidade) e Modo Batata são coisas separadas', r.calmoSeparado],

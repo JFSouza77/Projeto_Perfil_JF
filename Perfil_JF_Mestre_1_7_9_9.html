@@ -6,6 +6,10 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.9.9 · 09/10/2026 · "Rooms and Network Update · VAR do C.A.O.S." = O DESFAZER VIRA VAR.
+          Ideia do JF. desfazerFalaVar (05g-acoes.js) + REACTIVE_VOICE.var (acerto, erro, palpite): o aviso do
+          Desfazer vira narração de árbitro de vídeo, com o Mestre que pediu e quem perdeu o ponto. Com o C.A.O.S.
+          calado fica o aviso simples de antes. Sempre termina com "Pode marcar de novo".
   1.7.9.8 · 09/10/2026 · "Rooms and Network Update · Board Update 6" = JOIAS COM FORMATO PRÓPRIO.
           Ideia do JF. joiaHtml/joiasEmOrdem (03-regras.js): cada categoria tem forma além da cor (Ano hexágono,
           Coisa esmeralda, Lugar losango, Pessoa redonda, Animal triângulo, por clip-path) e a ordem é alfabética.
@@ -561,7 +565,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.9.8</title>
+<title>Perfil JF · Beta 1.7.9.9</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -8240,7 +8244,7 @@ body.claro .rede-link {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.8 · Rooms and Network Update · Board Update 6<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.9 · Rooms and Network Update · VAR do C.A.O.S.<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -17645,7 +17649,8 @@ function desfazerNome(tipo, args) {
 }
 function desfazerOferecer(tipo, args, foto) {
   desfazerLimpar();
-  desfazerOferta = { tipo, foto, nome: desfazerNome(tipo, args), ate: Date.now() + DESFAZER_MS };
+  const quem = tipo === "acertou" ? (players[args && args[0] !== undefined ? args[0] : responderIndex] || {}).name || null : null;
+  desfazerOferta = { tipo, foto, nome: desfazerNome(tipo, args), quem, ate: Date.now() + DESFAZER_MS };
   try {
     const b = document.createElement("button");
     b.type = "button";
@@ -17687,8 +17692,21 @@ function desfazerUltimo() {
   updateDeckInfo();
   updateDrawAvailability();
   saveGameState();
-  showToastMessage("↩️ Desfeito: " + o.nome + ". Pode marcar de novo.", null, true, null, true);
+  showToastMessage(desfazerFalaVar(o), null, true, null, true);
   return true;
+}
+// 1.7.9.9 (ideia do JF): o C.A.O.S. narra o Desfazer como o VAR do futebol. Calado, só o aviso.
+function desfazerFalaVar(o) {
+  const simples = "↩️ Desfeito: " + o.nome + ". Pode marcar de novo.";
+  try {
+    if (caosSilenced || !REACTIVE_VOICE.var) return simples;
+    const banco = o.tipo === "acertou" ? REACTIVE_VOICE.var.acerto : o.tipo === "errou" ? REACTIVE_VOICE.var.erro : REACTIVE_VOICE.var.palpite;
+    const m = (players[mestreIndex] || {}).name || "O Mestre";
+    const fala = getRandomReaction(banco, m, o.quem || "alguém", o.nome);
+    return fala ? fala + " ↩️ Pode marcar de novo." : simples;
+  } catch (e) {
+    return simples;
+  }
 }
 /* ----------------------------------------------------------------------
  * 5h. TELÃO · ENSAIO EM DUAS ABAS (1.7.8.3 · Actions and Events Update, Parte 4)
@@ -21604,7 +21622,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.9.8 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.9.9 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -26674,7 +26692,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.9.8 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.9.9 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -29848,7 +29866,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.9.8 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.9.9 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -30371,7 +30389,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.9.8 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.9.9 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -63813,6 +63831,31 @@ const REACTIVE_VOICE = {
     "Carta de bônus desistida. Ela volta pra fila, mais descansada. Ninguém pontua.",
     "O bônus fugiu da carta e vai tentar de novo na próxima. Ninguém pontua agora.",
   ],
+  // 1.7.9.9 (ideia do JF): o Desfazer vira "chamaram o VAR". m = Mestre (quem pediu), q = quem tinha
+  // acertado, t = o veredito anulado (Errou, Pulou, Absurdo).
+  var: {
+    acerto: [
+      (m, q) => `📺 Opa! ${m} chamou o VAR! Após uma análise minuciosa... o ponto de ${q} foi ANULADO.`,
+      (m, q) => `🟥 Cartão vermelho pro ponto de ${q}! O VAR anulou. Não pode, não.`,
+      (m, q) => `📺 Revisão do VAR: ${m} viu alguma coisa estranha no lance. Ponto de ${q} anulado, volta tudo.`,
+      (m, q) => `Vixe. Parece que alguém não cumpriu as regras. O VAR anulou o acerto de ${q}.`,
+      (m, q) => `📺 Segura a comemoração, ${q}! Checagem do VAR em andamento... anulado.`,
+      (m, q) => `O VAR foi chamado e o lance de ${q} não valeu. A torcida vaia, eu aplaudo.`,
+      (m, q) => `📺 Linhas traçadas, replay em câmera lenta, e... impedimento! Ponto de ${q} anulado.`,
+    ],
+    erro: [
+      (m, q, t) => `📺 ${m} chamou o VAR! Após análise minuciosa, o "${t}" foi anulado. A jogada volta.`,
+      (m, q, t) => `🟨 O VAR voltou o lance: "${t}" anulado. Alguém aí ganhou uma segunda chance.`,
+      (m, q, t) => `Revisão do VAR concluída: não foi "${t}" coisa nenhuma. Volta tudo.`,
+      (m, q, t) => `📺 Árbitro de vídeo em ação. O "${t}" foi anulado. Respira e marca de novo.`,
+      (m, q, t) => `📺 Opa, opa, opa! O VAR achou um erro no erro. "${t}" anulado.`,
+    ],
+    palpite: [
+      (m) => `📺 VAR no palpite! ${m} pediu revisão e o palpite foi anulado.`,
+      () => `🟥 Palpite anulado pelo VAR. Nem sempre a ficha cai, né?`,
+      () => `📺 O VAR olhou o palpite de todos os ângulos e mandou voltar. Anulado.`,
+    ],
+  },
   // 1.7.9.5 · Board Update 4 (ideia do JF): o C.A.O.S. comenta o tabuleiro do lobby entre as cartas.
   tabuleiro: {
     // a primeira vez que este aparelho vê o lobby
@@ -65487,6 +65530,16 @@ const PAUSE_TIPS = [
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.9.9",
+    data: "09/10/2026 · 18:15",
+    nome: "Rooms and Network Update · VAR do C.A.O.S.",
+    t: "Desfez o veredito? Chamaram o VAR.",
+    itens: [
+      "📺 Chama o VAR: quando o Mestre desfaz um veredito, o C.A.O.S. narra como árbitro de vídeo. Análise minuciosa, cartão vermelho, ponto anulado, segunda chance pra quem errou.",
+    ],
+    qol: [],
+  },
   {
     v: "Beta 1.7.9.8",
     data: "09/10/2026 · 17:56",
