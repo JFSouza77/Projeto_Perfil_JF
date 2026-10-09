@@ -6,6 +6,14 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.8.9 · 08/10/2026 · "Actions and Events Update · Parte 10" = DEBUG ANTES DO ONLINE.
+          ferramentas/teste_macaco.js: toca em botões ao acaso (como um dedo, só no que está por cima), confere
+          regras a cada 25 toques e recarrega a cada 200 exigindo a mesma partida. Achou: a roleta da categoria
+          se perdia em qualquer render() (pausa e volta, balão que fecha) e o Mestre tinha que virar de novo;
+          agora roletaCarta lembra e o render() redesenha a roleta pousada. A cópia das costas no giro levava
+          id="cardArea" (dois #cardArea na tela por um instante). Sonda do desfazer: 200 vereditos desfeitos em
+          7 cenários + Express, espinha idêntica. "Próxima" do Express segue sem desfazer (abre a dica seguinte
+          na tela). docs/Instrucoes_Debug_Externo.md: roteiro para revisão por outra IA.
   1.7.8.8 · 08/10/2026 · "Actions and Events Update · Parte 9" = CRÉDITOS DE VOLTA NAS NOVIDADES.
           Ideias de pessoas de verdade voltam com o nome (Pedro, Felipe, Bruno Levanti, Klaus) e os jogadores
           citados (Anne, Pedro, Isabel). O criador e as IAs seguem fora das novidades.
@@ -479,7 +487,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.8.8</title>
+<title>Perfil JF · Beta 1.7.8.9</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -7306,7 +7314,7 @@ body.claro .caos-mbtn.caos-mbtn-sec {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.8.8 · Actions and Events Update · Parte 9<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.8.9 · Actions and Events Update · Parte 10<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -8717,6 +8725,7 @@ let expressAskWho = false;
 let expressWhoFreeze = null;
 let expressTargetAction = null;
 let rouletteToken = 0;
+let roletaCarta = null; // 1.7.8.9: carta cuja roleta já foi aberta (render() redesenha a roleta, não as costas)
 let answerRevealUntil = 0;
 // Carta cuja resposta o Mestre já escondeu com um toque (antes da 1ª dica).
 let answerEscondidaCarta = null;
@@ -9867,6 +9876,7 @@ function reshuffleAndDraw() {
   drawHidden();
 }
 function drawHidden() {
+  roletaCarta = null;
   clearTimer();
   clearCardTimer();
   if (gameEnded) return;
@@ -9964,6 +9974,7 @@ function flipCard() {
   if (cardState !== "hidden") return;
   document.getElementById("caosPergunta")?.remove();
   const fraseTopo = cartaFraseAntes();
+  roletaCarta = null;
   cardState = "revealed";
   if (CURRENT_MODE === "express") startExpressCard();
   else startTimer("pick");
@@ -12463,6 +12474,9 @@ function render() {
         : '<div class="placeholder">Aperte "Sortear carta" para começar</div>';
     drawBtn.style.display = deck.length > 0 && hasEnoughPlayersForFormat() && starterChosen ? "block" : "none";
     drawBtn.textContent = "🔀 Sortear carta";
+  } else if (cardState === "hidden" && roletaCarta && roletaCarta === currentCard) {
+    drawBtn.style.display = "none";
+    roletaDesenhar(true);
   } else if (cardState === "hidden") {
     area.className = "card face-down";
     const mestreBadge = mestreDestaqueHtml();
@@ -12853,6 +12867,7 @@ function cartaCostasSaindo(area) {
     const r = area.getBoundingClientRect();
     if (!r.width || !r.height) return;
     const c = area.cloneNode(true);
+    c.removeAttribute("id"); // nada de dois #cardArea na tela
     c.querySelectorAll("[id]").forEach((e) => e.removeAttribute("id"));
     c.setAttribute("aria-hidden", "true");
     c.classList.add("flip-sai");
@@ -12901,8 +12916,15 @@ function cartaFraseSobe(topoAntes) {
     setTimeout(() => (h.style.transition = ""), 1100);
   } catch (e) {}
 }
+// 1.7.8.9: a roleta é lembrada pela carta. Antes, qualquer render() no meio dela (pausa e volta, balão
+// que fecha) redesenhava as costas e o Mestre tinha que virar de novo. Agora o render() redesenha a
+// roleta já pousada na categoria. (roletaCarta mora em 02-estado.js)
 function startCategoryRoulette() {
+  roletaDesenhar(false);
+}
+function roletaDesenhar(jaPousada) {
   if (cardState !== "hidden" || !currentCard) return;
+  roletaCarta = currentCard;
   const area = document.getElementById("cardArea");
   const finalCat = gemCategoryFor(currentCard.category);
   // no Express a roleta só gira entre as categorias da partida (escolhidas ou sorteadas pelo C.A.O.S.)
@@ -12913,7 +12935,7 @@ function startCategoryRoulette() {
   if (!cats.includes(finalCat)) cats.push(finalCat);
   const label = (c) => (CATEGORY_LABELS[c] || c).toUpperCase();
   const token = ++rouletteToken;
-  const virar = cartaAnimar();
+  const virar = !jaPousada && cartaAnimar();
   if (virar) cartaCostasSaindo(area);
   area.className = "card";
   area.style.setProperty("--card-glow", (GEM_INFO[finalCat] || {}).color || "#a78bfa");
@@ -12937,9 +12959,9 @@ function startCategoryRoulette() {
     btn.addEventListener("click", () => {
       if (token === rouletteToken) flipCard();
     });
-    caosRoletaSom("pouso");
+    if (!jaPousada) caosRoletaSom("pouso");
   };
-  if (!visualFxAllowed() || cats.length < 2) {
+  if (jaPousada || !visualFxAllowed() || cats.length < 2) {
     finish();
     return;
   }
@@ -18998,7 +19020,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.8.8 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.8.9 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -24065,7 +24087,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.8.8 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.8.9 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -27230,7 +27252,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.8.8 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.8.9 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -27753,7 +27775,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.8.8 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.8.9 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -62821,6 +62843,18 @@ const PAUSE_TIPS = [
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.8.9",
+    data: "08/10/2026 · 23:06",
+    nome: "Actions and Events Update · Parte 10",
+    t: "Faxina antes do online.",
+    itens: [
+      "🎰 Roleta não some mais: se a partida for pausada ou a tela se atualizar no meio da roleta da categoria, ela volta já parada na categoria certa, em vez de voltar pras costas da carta.",
+    ],
+    qol: [
+      "🃏 Giro da carta mais limpo: a animação do Ver carta não deixa mais uma cópia da carta escondida na tela.",
+    ],
+  },
   {
     v: "Beta 1.7.8.8",
     data: "08/10/2026 · 22:02",

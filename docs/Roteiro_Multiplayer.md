@@ -405,3 +405,13 @@ Cada parte sai publicada sozinha. Em todas, o jogo local continua igual para que
   - o C.A.O.S. anuncia em voz alta: "O Mestre quer descartar porque achou a carta muito difícil. Todos de acordo?";
   - o Mestre tem que convencer a mesa sem entregar a carta (ex.: "é um ano que nem eu conheço");
   - a mesa decide.
+
+### Debug antes da 1.7.9 (1.7.8.9)
+- **Teste do macaco** (`ferramentas/teste_macaco.js`): partida montada pela semente (12 cenários) e toques ao acaso como um dedo. Confere regras a cada 25 toques e recarrega a cada 200 exigindo a mesma partida, sem internet. Rodar nas versões grandes.
+- **Achado e corrigido:** a roleta da categoria se perdia em qualquer `render()` (pausa e volta, balão que fecha) e o Mestre tinha que virar de novo.
+- **Desfazer:** 200 vereditos desfeitos em 7 cenários mais o Express, com a espinha idêntica.
+- **Decisão:** o "Próxima" do Express não tem desfazer, porque ele já abre a dica seguinte na tela.
+- **Para a 1.7.9:**
+  - o "✓ Acertou" do Express só abre a pergunta "Quem acertou?" (`expressAskWho`, congela o relógio) fora de uma ação. No online, isso é tela só do Mestre: não vai pro retrato, e o relógio congelado precisa ir junto com a revisão;
+  - o `expressTargetAction` não é salvo: se recarregar com a janela do alvo aberta, a especial é escolhida de novo.
+- **Revisão externa:** `docs/Instrucoes_Debug_Externo.md`.

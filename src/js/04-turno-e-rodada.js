@@ -387,6 +387,7 @@ function reshuffleAndDraw() {
   drawHidden();
 }
 function drawHidden() {
+  roletaCarta = null;
   clearTimer();
   clearCardTimer();
   if (gameEnded) return;
@@ -484,6 +485,7 @@ function flipCard() {
   if (cardState !== "hidden") return;
   document.getElementById("caosPergunta")?.remove();
   const fraseTopo = cartaFraseAntes();
+  roletaCarta = null;
   cardState = "revealed";
   if (CURRENT_MODE === "express") startExpressCard();
   else startTimer("pick");
