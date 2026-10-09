@@ -613,18 +613,16 @@ body.claro .tb-zoom .tb-peao.tb-sel {
   font-size: 1.2rem;
 }
 .lj-joia {
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
-  clip-path: polygon(50% 0, 100% 38%, 82% 100%, 18% 100%, 0 38%);
-  background: linear-gradient(160deg, color-mix(in srgb, var(--gc) 55%, #fff), var(--gc) 60%, color-mix(in srgb, var(--gc) 70%, #000));
-  color: #fff;
-  font-weight: 900;
-  font-size: 0.78rem;
-  text-shadow: 0 1px 2px #0008;
+  width: 32px;
+  height: 32px;
+  font-size: 0.8rem;
 }
 .lj-joia.lj-oca {
+  background: color-mix(in srgb, var(--gc, #ffffff) 22%, transparent);
+  color: transparent;
+  text-shadow: none;
+}
+.lj-joia.jf-vazia {
   background: #ffffff1a;
 }
 .lj-joia.lj-nova {
@@ -680,9 +678,55 @@ body.claro .lb-aba.on {
   color: #fff;
 }
 body.claro .lp-trilho,
-body.claro .lj-joia.lj-oca {
+body.claro .lj-joia.jf-vazia {
   background: #0000001a;
 }
 body.claro .lp-bloco {
   background: color-mix(in srgb, var(--pc, #a78bfa) 30%, #fff);
+}
+
+/* ---- 1.7.9.8 · cada joia com o seu formato (ideia do JF) ----
+   Ano: hexágono · Coisa: esmeralda (cantos cortados) · Lugar: losango · Pessoa: redonda · Animal: triângulo */
+.joia-f {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  background: linear-gradient(150deg, color-mix(in srgb, var(--gc) 50%, #fff), var(--gc) 55%, color-mix(in srgb, var(--gc) 65%, #000));
+  color: #fff;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 1px 2px #0008;
+}
+.jf-ANO {
+  clip-path: polygon(25% 4%, 75% 4%, 100% 50%, 75% 96%, 25% 96%, 0 50%);
+}
+.jf-COISA {
+  clip-path: polygon(28% 0, 72% 0, 100% 28%, 100% 72%, 72% 100%, 28% 100%, 0 72%, 0 28%);
+}
+.jf-LUGAR {
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+.jf-PESSOA {
+  clip-path: circle(48% at 50% 50%);
+}
+.jf-ANIMAL {
+  clip-path: polygon(50% 2%, 98% 94%, 2% 94%);
+  padding-top: 28%;
+  box-sizing: border-box;
+}
+.jf-vazia {
+  clip-path: circle(42% at 50% 50%);
+}
+/* no placar: joias pequenas, na linha do texto */
+.joia-f.joia-mini {
+  width: 1.7em;
+  height: 1.7em;
+  font-size: 0.72em;
+  vertical-align: -0.35em;
+  margin-left: 1px;
+}
+.joia-f.joia-mini.jf-ANIMAL {
+  padding-top: 0.5em;
 }

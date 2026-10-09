@@ -6,6 +6,18 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.9.8",
+    data: "09/10/2026 · 17:56",
+    nome: "Rooms and Network Update · Board Update 6",
+    t: "As joias ganharam formato próprio.",
+    itens: [
+      "💎 Cada joia com o seu formato: Ano é hexágono, Coisa é esmeralda, Lugar é losango, Pessoa é redonda e, no Júnior, Animal é triângulo. Dá pra reconhecer pela forma, não só pela cor.",
+      "🔤 Sempre na mesma ordem: as joias aparecem em ordem alfabética, no placar e na coroa.",
+      "👑 Coroa com encaixes: no intervalo entre as cartas, cada categoria tem o seu lugar na coroa, e o lugar vazio mostra a sombra da joia que falta.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.9.7",
     data: "09/10/2026 · 17:24",
     nome: "Rooms and Network Update · Parte 3",

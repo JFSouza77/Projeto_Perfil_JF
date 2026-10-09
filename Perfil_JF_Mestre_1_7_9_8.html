@@ -6,6 +6,11 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.9.8 · 09/10/2026 · "Rooms and Network Update · Board Update 6" = JOIAS COM FORMATO PRÓPRIO.
+          Ideia do JF. joiaHtml/joiasEmOrdem (03-regras.js): cada categoria tem forma além da cor (Ano hexágono,
+          Coisa esmeralda, Lugar losango, Pessoa redonda, Animal triângulo, por clip-path) e a ordem é alfabética.
+          Vale no placar (gemBadgesHtml) e na coroa do lobby, que agora tem um encaixe por categoria, com a sombra
+          da joia que falta.
   1.7.9.7 · 09/10/2026 · "Rooms and Network Update · Parte 3" = SALA, PROTOCOLO, PAPÉIS E RELÓGIO (FUNDAÇÃO DA REDE).
           05k-rede.js + 10-rede.css. Host autoritativo: abre a sala (código de 4 letras sem I/O) pelo ADM; convidado
           entra por #sala=ABCD, escolhe quem é, recebe o retrato público e manda comandos. Envelope (protocolo,
@@ -556,7 +561,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.9.7</title>
+<title>Perfil JF · Beta 1.7.9.8</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -7973,18 +7978,16 @@ body.claro .tb-zoom .tb-peao.tb-sel {
   font-size: 1.2rem;
 }
 .lj-joia {
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
-  clip-path: polygon(50% 0, 100% 38%, 82% 100%, 18% 100%, 0 38%);
-  background: linear-gradient(160deg, color-mix(in srgb, var(--gc) 55%, #fff), var(--gc) 60%, color-mix(in srgb, var(--gc) 70%, #000));
-  color: #fff;
-  font-weight: 900;
-  font-size: 0.78rem;
-  text-shadow: 0 1px 2px #0008;
+  width: 32px;
+  height: 32px;
+  font-size: 0.8rem;
 }
 .lj-joia.lj-oca {
+  background: color-mix(in srgb, var(--gc, #ffffff) 22%, transparent);
+  color: transparent;
+  text-shadow: none;
+}
+.lj-joia.jf-vazia {
   background: #ffffff1a;
 }
 .lj-joia.lj-nova {
@@ -8040,11 +8043,57 @@ body.claro .lb-aba.on {
   color: #fff;
 }
 body.claro .lp-trilho,
-body.claro .lj-joia.lj-oca {
+body.claro .lj-joia.jf-vazia {
   background: #0000001a;
 }
 body.claro .lp-bloco {
   background: color-mix(in srgb, var(--pc, #a78bfa) 30%, #fff);
+}
+
+/* ---- 1.7.9.8 · cada joia com o seu formato (ideia do JF) ----
+   Ano: hexágono · Coisa: esmeralda (cantos cortados) · Lugar: losango · Pessoa: redonda · Animal: triângulo */
+.joia-f {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  background: linear-gradient(150deg, color-mix(in srgb, var(--gc) 50%, #fff), var(--gc) 55%, color-mix(in srgb, var(--gc) 65%, #000));
+  color: #fff;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 1px 2px #0008;
+}
+.jf-ANO {
+  clip-path: polygon(25% 4%, 75% 4%, 100% 50%, 75% 96%, 25% 96%, 0 50%);
+}
+.jf-COISA {
+  clip-path: polygon(28% 0, 72% 0, 100% 28%, 100% 72%, 72% 100%, 28% 100%, 0 72%, 0 28%);
+}
+.jf-LUGAR {
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+.jf-PESSOA {
+  clip-path: circle(48% at 50% 50%);
+}
+.jf-ANIMAL {
+  clip-path: polygon(50% 2%, 98% 94%, 2% 94%);
+  padding-top: 28%;
+  box-sizing: border-box;
+}
+.jf-vazia {
+  clip-path: circle(42% at 50% 50%);
+}
+/* no placar: joias pequenas, na linha do texto */
+.joia-f.joia-mini {
+  width: 1.7em;
+  height: 1.7em;
+  font-size: 0.72em;
+  vertical-align: -0.35em;
+  margin-left: 1px;
+}
+.joia-f.joia-mini.jf-ANIMAL {
+  padding-top: 0.5em;
 }
 /* 1.7.9.7 · Rede: tela do convidado (em cima do telão) e painel da sala */
 .rede-sala {
@@ -8191,7 +8240,7 @@ body.claro .rede-link {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.7 · Rooms and Network Update · Parte 3<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.8 · Rooms and Network Update · Board Update 6<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -10336,15 +10385,23 @@ function joiasTravaBadge(key) {
   if (!joiasComTrava() || (joiasRodada[String(key)] || 0) < JOIAS_POR_RODADA) return "";
   return ` <span class="joia-trava" title="Já ganhou ${JOIAS_POR_RODADA} joias nesta rodada: a próxima só na rodada que vem" aria-label="joias desta rodada completas">🔒</span>`;
 }
+// 1.7.9.8 (ideia do JF): cada joia tem o seu formato, além da cor, e elas aparecem sempre em
+// ordem alfabética (Ano, Coisa, Lugar, Pessoa; no Júnior, Animal, Coisa, Lugar, Pessoa).
+const JOIA_FORMA = { ANO: "hexágono", COISA: "esmeralda", LUGAR: "losango", PESSOA: "redonda", ANIMAL: "triângulo" };
+function joiasEmOrdem(cats) {
+  return cats.slice().sort((a, b) => GEM_INFO[a].name.localeCompare(GEM_INFO[b].name, "pt-BR"));
+}
+function joiaHtml(cat, cls, txt) {
+  const i = GEM_INFO[cat];
+  if (!i) return "";
+  return `<span class="joia-f jf-${cat}${cls ? " " + cls : ""}" style="--gc:${i.color}" title="Joia de ${i.name} (${JOIA_FORMA[cat] || "joia"})">${txt === undefined ? i.letter : txt}</span>`;
+}
 function gemBadgesHtml(holder) {
   const g = holder && holder.gems ? holder.gems : null;
   if (!g) return "";
-  return currentGemCategories()
+  return joiasEmOrdem(currentGemCategories())
     .filter((c) => g[c] > 0)
-    .map((c) => {
-      const i = GEM_INFO[c];
-      return ` <span class="gem" style="color:${i.color}" title="Joia de ${i.name}">◆${i.letter}${g[c] > 1 ? "×" + g[c] : ""}</span>`;
-    })
+    .map((c) => ` <span class="gem">${joiaHtml(c, "joia-mini")}${g[c] > 1 ? "×" + g[c] : ""}</span>`)
     .join("");
 }
 function palpiteBadge(key) {
@@ -18503,6 +18560,7 @@ function tabPecasTelao(r) {
  *  · Pontos: "corrida de barras" com pódio (1º, 2º e 3º em degraus) e quanto cada um ganhou na carta.
  *  · Joias: cada jogador (ou equipe) com a sua coroa, um encaixe por joia; a joia ganha na carta
  *    entra brilhando, e embaixo diz o que falta. Só aparece quando a partida dá joias.
+ *    1.7.9.8: cada joia tem o seu formato (joiaHtml, 03-regras.js) e o seu encaixe, em ordem alfabética.
  * É só tela, como o lobby: lê o placar, não muda nada.
  * ---------------------------------------------------------------------- */
 const LOBBY_ABAS = {
@@ -18623,16 +18681,16 @@ function lobbyJoiasHtml(antes) {
   const linhas = ents
     .map((e) => {
       const ant = antes && antes.gems && antes.gems[e.k];
+      // 1.7.9.8: cada categoria tem o seu encaixe (em ordem alfabética), no formato da joia dela;
+      // o encaixe vazio mostra a sombra da joia que falta
       const encaixes = [];
-      cats.forEach((c) => {
+      joiasEmOrdem(cats).forEach((c) => {
         const novas = ant ? Math.max(0, e.gems[c] - (ant[c] || 0)) : 0;
-        for (let i = 0; i < e.gems[c]; i++)
-          encaixes.push(
-            `<span class="lj-joia${i >= e.gems[c] - novas ? " lj-nova" : ""}" style="--gc:${GEM_INFO[c].color}" title="${nomeCat(c)}">${GEM_INFO[c].letter}</span>`,
-          );
+        if (!e.gems[c] && cap === 1) encaixes.push(joiaHtml(c, "lj-joia lj-oca", ""));
+        for (let i = 0; i < e.gems[c]; i++) encaixes.push(joiaHtml(c, "lj-joia" + (i >= e.gems[c] - novas ? " lj-nova" : "")));
       });
-      while (encaixes.length < GEMS_TO_WIN) encaixes.push('<span class="lj-joia lj-oca" aria-hidden="true"></span>');
-      const faltam = cap === 1 ? cats.filter((c) => !e.gems[c]) : [];
+      while (encaixes.length < GEMS_TO_WIN) encaixes.push('<span class="joia-f lj-joia lj-oca jf-vazia" aria-hidden="true"></span>');
+      const faltam = cap === 1 ? joiasEmOrdem(cats).filter((c) => !e.gems[c]) : [];
       const quase = vale && e.total === GEMS_TO_WIN - 1;
       const pe =
         e.total >= GEMS_TO_WIN
@@ -21546,7 +21604,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.9.7 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.9.8 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -26616,7 +26674,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.9.7 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.9.8 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -29790,7 +29848,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.9.7 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.9.8 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -30313,7 +30371,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.9.7 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.9.8 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -65429,6 +65487,18 @@ const PAUSE_TIPS = [
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.9.8",
+    data: "09/10/2026 · 17:56",
+    nome: "Rooms and Network Update · Board Update 6",
+    t: "As joias ganharam formato próprio.",
+    itens: [
+      "💎 Cada joia com o seu formato: Ano é hexágono, Coisa é esmeralda, Lugar é losango, Pessoa é redonda e, no Júnior, Animal é triângulo. Dá pra reconhecer pela forma, não só pela cor.",
+      "🔤 Sempre na mesma ordem: as joias aparecem em ordem alfabética, no placar e na coroa.",
+      "👑 Coroa com encaixes: no intervalo entre as cartas, cada categoria tem o seu lugar na coroa, e o lugar vazio mostra a sombra da joia que falta.",
+    ],
+    qol: [],
+  },
   {
     v: "Beta 1.7.9.7",
     data: "09/10/2026 · 17:24",
