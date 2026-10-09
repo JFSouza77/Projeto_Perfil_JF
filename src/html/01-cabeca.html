@@ -6,6 +6,14 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.8.9 · 08/10/2026 · "Actions and Events Update · Parte 10" = DEBUG ANTES DO ONLINE.
+          ferramentas/teste_macaco.js: toca em botões ao acaso (como um dedo, só no que está por cima), confere
+          regras a cada 25 toques e recarrega a cada 200 exigindo a mesma partida. Achou: a roleta da categoria
+          se perdia em qualquer render() (pausa e volta, balão que fecha) e o Mestre tinha que virar de novo;
+          agora roletaCarta lembra e o render() redesenha a roleta pousada. A cópia das costas no giro levava
+          id="cardArea" (dois #cardArea na tela por um instante). Sonda do desfazer: 200 vereditos desfeitos em
+          7 cenários + Express, espinha idêntica. "Próxima" do Express segue sem desfazer (abre a dica seguinte
+          na tela). docs/Instrucoes_Debug_Externo.md: roteiro para revisão por outra IA.
   1.7.8.8 · 08/10/2026 · "Actions and Events Update · Parte 9" = CRÉDITOS DE VOLTA NAS NOVIDADES.
           Ideias de pessoas de verdade voltam com o nome (Pedro, Felipe, Bruno Levanti, Klaus) e os jogadores
           citados (Anne, Pedro, Isabel). O criador e as IAs seguem fora das novidades.
@@ -479,7 +487,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.8.8</title>
+<title>Perfil JF · Beta 1.7.8.9</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

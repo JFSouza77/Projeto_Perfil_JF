@@ -8,6 +8,7 @@
     "publicar": "node build.js --testar --publicar",
     "simular": "node ferramentas/simular_partidas.js",
     "simular:replay": "node ferramentas/simular_partidas.js --replay",
+    "macaco": "node ferramentas/teste_macaco.js",
     "testes": "node ferramentas/teste_identidade.js && node ferramentas/teste_acoes.js && node ferramentas/teste_telao.js && node ferramentas/caos_teste_espinha.js && node ferramentas/caos_teste_geradores.js && node ferramentas/caos_teste_estresse.js",
     "auditar": "node ferramentas/auditar_cartas.js && node ferramentas/auditar_botoes.js"
   },

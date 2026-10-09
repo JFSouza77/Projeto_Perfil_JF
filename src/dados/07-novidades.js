@@ -6,6 +6,18 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.8.9",
+    data: "08/10/2026 · 23:06",
+    nome: "Actions and Events Update · Parte 10",
+    t: "Faxina antes do online.",
+    itens: [
+      "🎰 Roleta não some mais: se a partida for pausada ou a tela se atualizar no meio da roleta da categoria, ela volta já parada na categoria certa, em vez de voltar pras costas da carta.",
+    ],
+    qol: [
+      "🃏 Giro da carta mais limpo: a animação do Ver carta não deixa mais uma cópia da carta escondida na tela.",
+    ],
+  },
+  {
     v: "Beta 1.7.8.8",
     data: "08/10/2026 · 22:02",
     nome: "Actions and Events Update · Parte 9",

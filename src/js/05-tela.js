@@ -634,6 +634,9 @@ function render() {
         : '<div class="placeholder">Aperte "Sortear carta" para começar</div>';
     drawBtn.style.display = deck.length > 0 && hasEnoughPlayersForFormat() && starterChosen ? "block" : "none";
     drawBtn.textContent = "🔀 Sortear carta";
+  } else if (cardState === "hidden" && roletaCarta && roletaCarta === currentCard) {
+    drawBtn.style.display = "none";
+    roletaDesenhar(true);
   } else if (cardState === "hidden") {
     area.className = "card face-down";
     const mestreBadge = mestreDestaqueHtml();
@@ -1024,6 +1027,7 @@ function cartaCostasSaindo(area) {
     const r = area.getBoundingClientRect();
     if (!r.width || !r.height) return;
     const c = area.cloneNode(true);
+    c.removeAttribute("id"); // nada de dois #cardArea na tela
     c.querySelectorAll("[id]").forEach((e) => e.removeAttribute("id"));
     c.setAttribute("aria-hidden", "true");
     c.classList.add("flip-sai");
@@ -1072,8 +1076,15 @@ function cartaFraseSobe(topoAntes) {
     setTimeout(() => (h.style.transition = ""), 1100);
   } catch (e) {}
 }
+// 1.7.8.9: a roleta é lembrada pela carta. Antes, qualquer render() no meio dela (pausa e volta, balão
+// que fecha) redesenhava as costas e o Mestre tinha que virar de novo. Agora o render() redesenha a
+// roleta já pousada na categoria. (roletaCarta mora em 02-estado.js)
 function startCategoryRoulette() {
+  roletaDesenhar(false);
+}
+function roletaDesenhar(jaPousada) {
   if (cardState !== "hidden" || !currentCard) return;
+  roletaCarta = currentCard;
   const area = document.getElementById("cardArea");
   const finalCat = gemCategoryFor(currentCard.category);
   // no Express a roleta só gira entre as categorias da partida (escolhidas ou sorteadas pelo C.A.O.S.)
@@ -1084,7 +1095,7 @@ function startCategoryRoulette() {
   if (!cats.includes(finalCat)) cats.push(finalCat);
   const label = (c) => (CATEGORY_LABELS[c] || c).toUpperCase();
   const token = ++rouletteToken;
-  const virar = cartaAnimar();
+  const virar = !jaPousada && cartaAnimar();
   if (virar) cartaCostasSaindo(area);
   area.className = "card";
   area.style.setProperty("--card-glow", (GEM_INFO[finalCat] || {}).color || "#a78bfa");
@@ -1108,9 +1119,9 @@ function startCategoryRoulette() {
     btn.addEventListener("click", () => {
       if (token === rouletteToken) flipCard();
     });
-    caosRoletaSom("pouso");
+    if (!jaPousada) caosRoletaSom("pouso");
   };
-  if (!visualFxAllowed() || cats.length < 2) {
+  if (jaPousada || !visualFxAllowed() || cats.length < 2) {
     finish();
     return;
   }
