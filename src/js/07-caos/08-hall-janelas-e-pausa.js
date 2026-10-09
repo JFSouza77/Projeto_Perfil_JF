@@ -336,14 +336,14 @@ function caosModalBase() {
   ov.appendChild(box);
   return { ov, box };
 }
+// 1.7.8.7 (feedback do JF: "bem feinhos"): botão das janelas com cara de botão do jogo. A cor de
+// cada um continua vindo de quem chama; o visual (relevo, brilho, toque) mora no CSS (.caos-mbtn).
 function caosModalBtn(t, bg, fn) {
   const b = document.createElement("button");
   b.type = "button";
+  b.className = "caos-mbtn";
   b.textContent = t;
-  b.style.cssText =
-    "flex:1;padding:12px 8px;border:0;border-radius:10px;font-size:1rem;font-weight:700;color:#fff;background:" +
-    bg +
-    ";cursor:pointer";
+  b.style.setProperty("--mb", bg);
   b.addEventListener("click", fn);
   return b;
 }
@@ -355,7 +355,7 @@ function caosModalMsg(t) {
 }
 function caosModalRow() {
   const r = document.createElement("div");
-  r.style.cssText = "display:flex;gap:10px";
+  r.className = "caos-mrow";
   return r;
 }
 function caosConfirmarModal(msg, txtSim, txtNao, onSim) {
@@ -471,7 +471,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.8.6 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.8.7 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",

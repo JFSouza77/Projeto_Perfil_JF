@@ -306,6 +306,11 @@ body:has(.caos-modal-ov) {
   overflow-wrap: anywhere;
   hyphens: auto;
 }
+/* 1.7.8.7: "Eu sou um LU-GAR" quebrava a palavra com hífen mesmo cabendo na linha de baixo */
+.answer-header {
+  hyphens: manual;
+  overflow-wrap: break-word;
+}
 html.acess-letra-1 .clue-list li,
 html.os-acess .clue-list li,
 html.acess-letra-2 .clue-list li {
@@ -350,38 +355,51 @@ body.claro .tut-ouvir {
   margin-left: 2px;
 }
 /* 1.7.8.6: "Ver carta" gira a carta (costas saem, roleta entra); "Falei!" desliza a frase pro topo */
+/* 1.7.8.7 (feedback: "mais sutil, mais leve"): giro mais lento, com a carta levantando de leve no meio
+   (sobe, gira, assenta) e uma sombra que acompanha. Meia volta pra cada lado, ~0,9 s no total. */
 @keyframes carta-flip-sai {
-  from {
-    transform: perspective(900px) rotateY(0deg);
+  0% {
+    transform: perspective(1400px) rotateY(0deg) scale(1);
+    filter: brightness(1);
   }
-  to {
-    transform: perspective(900px) rotateY(90deg);
+  100% {
+    transform: perspective(1400px) rotateY(90deg) scale(1.05);
+    filter: brightness(0.75);
   }
 }
 @keyframes carta-flip-entra {
-  from {
-    transform: perspective(900px) rotateY(-90deg);
+  0% {
+    transform: perspective(1400px) rotateY(-90deg) scale(1.05);
+    filter: brightness(0.75);
   }
-  to {
-    transform: perspective(900px) rotateY(0deg);
+  70% {
+    transform: perspective(1400px) rotateY(4deg) scale(1.015);
+    filter: brightness(1);
+  }
+  100% {
+    transform: perspective(1400px) rotateY(0deg) scale(1);
+    filter: brightness(1);
   }
 }
 @keyframes carta-aparece {
   from {
     opacity: 0;
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
+    transform: none;
   }
 }
 .card.flip-sai {
-  animation: carta-flip-sai 0.22s ease-in forwards;
+  animation: carta-flip-sai 0.42s cubic-bezier(0.45, 0, 0.75, 0.4) forwards;
+  box-shadow: 0 24px 48px #0008;
 }
 .card.flip-entra {
-  animation: carta-flip-entra 0.26s ease-out 0.2s both;
+  animation: carta-flip-entra 0.55s cubic-bezier(0.2, 0.7, 0.3, 1) 0.4s both;
 }
 .card.revelando > :not(.answer-header) {
-  animation: carta-aparece 0.45s ease-out 0.15s both;
+  animation: carta-aparece 0.8s ease-out 0.35s both;
 }
 body.batata-mode .card.flip-sai,
 body.batata-mode .card.flip-entra,
@@ -565,4 +583,75 @@ body.claro .desfazer-btn {
 .pause-mais > .btn-sec {
   width: 100%;
   margin: 0 0 8px;
+}
+
+/* 1.7.8.7 (feedback): botões das janelas do C.A.O.S. (Moda da Casa, avisos, perguntas) */
+.caos-mrow {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+.caos-mbtn {
+  --mb: #334155;
+  flex: 1;
+  min-height: 56px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--mb) 55%, #fff 45%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--mb) 78%, #fff 22%) 0%, var(--mb) 55%, color-mix(in srgb, var(--mb) 80%, #000 20%) 100%);
+  color: #fff;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  text-shadow: 0 1px 2px #0006;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 #ffffff40,
+    0 6px 18px color-mix(in srgb, var(--mb) 45%, transparent),
+    0 2px 0 color-mix(in srgb, var(--mb) 60%, #000 40%);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    filter 0.12s ease;
+}
+.caos-mbtn:hover {
+  filter: brightness(1.08);
+}
+.caos-mbtn:active {
+  transform: translateY(2px) scale(0.98);
+  box-shadow:
+    inset 0 1px 0 #ffffff30,
+    0 2px 8px color-mix(in srgb, var(--mb) 35%, transparent);
+}
+.caos-mbtn:focus-visible {
+  outline: 3px solid #fde68a;
+  outline-offset: 3px;
+}
+/* tela bem estreita: um botão embaixo do outro */
+@media (max-width: 360px) {
+  .caos-mrow {
+    flex-direction: column;
+  }
+}.caos-mrow-pilha {
+  flex-direction: column;
+  gap: 10px;
+}
+.caos-mrow-pilha .caos-mbtn:first-child {
+  min-height: 62px;
+  font-size: 1.2rem;
+}
+.caos-mbtn.caos-mbtn-sec {
+  min-height: 48px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--mb) 16%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--mb) 70%, #fff 30%);
+  color: color-mix(in srgb, var(--mb) 35%, #fff 65%);
+  text-shadow: none;
+  box-shadow: none;
+}
+body.claro .caos-mbtn.caos-mbtn-sec {
+  color: color-mix(in srgb, var(--mb) 80%, #000 20%);
 }

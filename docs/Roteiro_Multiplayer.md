@@ -398,3 +398,10 @@ Cada parte sai publicada sozinha. Em todas, o jogo local continua igual para que
   - a revisão pode diferir em 1 ou 2 quando uma ação automática (sacar, tempo, encerrar) já veio embutida em outra no replay;
   - o estado da partida é o mesmo, e o replay anota essa diferença;
   - o replay roda num navegador só e não prova rede.
+
+### Decisão para a 1.7.9 · Descartar por votação (registrada em 1.7.8.7)
+- O "Reembaralhar" (antes da 1ª dica, sem limite) saiu na 1.7.8.7: fazia o mesmo que o Descartar. Trocar a carta é só pelo **Descartar** (até a 5ª dica, no máximo 2 seguidas).
+- No online, o Descartar vira **votação da mesa**, como já acontece no Encerrar e no Desistir:
+  - o C.A.O.S. anuncia em voz alta: "O Mestre quer descartar porque achou a carta muito difícil. Todos de acordo?";
+  - o Mestre tem que convencer a mesa sem entregar a carta (ex.: "é um ano que nem eu conheço");
+  - a mesa decide.
