@@ -6,6 +6,21 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.9.11",
+    data: "09/10/2026 · 19:44",
+    nome: "Rooms and Network Update · Troca de host",
+    t: "Tela de carregamento no iPhone, troca de host e o placar do intervalo no celular de cada um.",
+    itens: [
+      "📱 Tela de carregamento: ao abrir o jogo aparece a tela com o ícone e a barrinha enquanto tudo carrega. No iPhone ela aparece desde o toque no ícone.",
+      "👑 Troca de host: se o aparelho que hospeda a sala cair de vez, quem foi o 2º Mestre da partida assume a mesma sala, sem perder nada. O C.A.O.S. avisa quem assumiu.",
+      "🔙 O host antigo volta como jogador: se ele abrir o jogo de novo, entra na sala no lugar dele, sem brigar pelo comando.",
+      "🏆 Placar no intervalo: entre as cartas, cada celular mostra também os Pontos e as Joias, além do tabuleiro.",
+    ],
+    qol: [
+      "🔌 Reconexão mais esperta: se a conexão com o host parecer viva mas não chegar nada, o celular abre uma conexão nova sozinho.",
+    ],
+  },
+  {
     v: "Beta 1.7.9.10",
     data: "09/10/2026 · 18:47",
     nome: "Rooms and Network Update · Final",

@@ -1,6 +1,15 @@
 </style>
 </head>
 <body class="noturno">
+  <!-- 1.7.9.11 (relato do JF: no iPhone não aparecia tela de carregamento): aparece na hora, com a mesma
+       cara da abertura do iPhone, e sai quando o jogo está pronto (carregandoSair, 11-iniciar.js). Se algo
+       der errado, o próprio CSS esconde depois de 15 s. -->
+  <div id="carregando" class="carregando" role="status" aria-label="Carregando o jogo">
+    <img src="icones/icone-192.png" alt="" class="carregando-ic" onerror="this.remove()">
+    <div class="carregando-nome">Perfil JF</div>
+    <div class="carregando-barra"><i></i></div>
+    <div class="carregando-txt">Embaralhando as cartas…</div>
+  </div>
   
   <section class="splash-screen" id="splashScreen">
     <div class="splash-topo">
@@ -45,7 +54,7 @@
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.10 · Rooms and Network Update · Final<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.11 · Rooms and Network Update · Troca de host<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Na partida: ⏸️ Pausar → 🌐 Jogar online</span></div>

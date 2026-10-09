@@ -86,10 +86,11 @@ function lobbyGanhoSelo(d) {
 }
 
 /* --- Pontos: corrida de barras com pódio --- */
-function lobbyPontosHtml(antes) {
-  const ents = lobbyEntidades().sort((a, b) => b.pts - a.pts);
-  const valePontos = winCond() === "pontos";
-  const meta = valePontos ? metaPontos() : 0;
+// ctx (1.7.9.11): no celular do convidado os dados vêm do retrato (lobbyContextoDoRetrato)
+function lobbyPontosHtml(antes, ctx) {
+  const ents = (ctx ? ctx.ents.slice() : lobbyEntidades()).sort((a, b) => b.pts - a.pts);
+  const valePontos = ctx ? ctx.vitoria === "pontos" : winCond() === "pontos";
+  const meta = valePontos ? (ctx ? ctx.metaPts : metaPontos()) : 0;
   const escala = Math.max(meta, ...ents.map((e) => e.pts), 1);
   const ant = (e) => (antes && antes.pts && typeof antes.pts[e.k] === "number" ? antes.pts[e.k] : null);
   // pódio: 2º, 1º, 3º (só com pontos de verdade)
@@ -109,17 +110,17 @@ function lobbyPontosHtml(antes) {
     })
     .join("");
   const cab = valePontos
-    ? `🎯 Vence quem chegar a <b>${meta} pontos</b>${CURRENT_FORMAT === "equipe" ? " (soma da equipe)" : ""}.`
+    ? `🎯 Vence quem chegar a <b>${meta} pontos</b>${(ctx ? ctx.equipe : CURRENT_FORMAT === "equipe") ? " (soma da equipe)" : ""}.`
     : "Nesta partida os pontos não decidem quem vence. Valem pela glória.";
   return `<div class="lp-cab">${cab}</div>${podio}<ul class="lp-lista">${barras}</ul>`;
 }
 
 /* --- Joias: a coroa de cada um --- */
-function lobbyJoiasHtml(antes) {
-  const cats = currentGemCategories();
-  const vale = gemsCountForWin();
-  const cap = gemCapFor();
-  const ents = lobbyEntidades()
+function lobbyJoiasHtml(antes, ctx) {
+  const cats = ctx ? ctx.cats : currentGemCategories();
+  const vale = ctx ? ctx.valeJoias : gemsCountForWin();
+  const cap = ctx ? 1 : gemCapFor();
+  const ents = (ctx ? ctx.ents.slice() : lobbyEntidades())
     .map((e) => ({ ...e, total: cats.reduce((s, c) => s + e.gems[c], 0) }))
     .sort((a, b) => b.total - a.total);
   const nomeCat = (c) => `${CAT_SELO_ICONE[c] || "💎"} ${c.charAt(0) + c.slice(1).toLowerCase()}`;
@@ -184,4 +185,43 @@ function lobbyAbasInstalar(ov) {
   );
   const ini = ov.querySelector(".lb-aba.on");
   mostrar(ini ? ini.dataset.aba : "tabuleiro");
+}
+
+// 1.7.9.11: o mesmo placar no celular de cada um (sala online), a partir do retrato público.
+function lobbyContextoDoRetrato(r) {
+  const cats = r.modo === "junior" ? ["ANIMAL", "PESSOA", "LUGAR", "COISA"] : ["ANO", "PESSOA", "LUGAR", "COISA"];
+  const gemas = (o) => Object.fromEntries(cats.map((c) => [c, (o && o[c]) || 0]));
+  const equipe = r.formato === "equipe" && Array.isArray(r.equipes) && r.equipes.length > 0;
+  const ents = equipe
+    ? r.equipes.map((e) => {
+        const info = TEAM_INFO[e.id] || { emoji: "●", label: e.id, color: "#888888" };
+        return {
+          k: "t" + e.id,
+          nome: `${info.emoji} Equipe ${escapeHtml(info.label)}`,
+          cor: corDoJogador(info.color),
+          tok: info.emoji,
+          pos: e.casa || 0,
+          pts: r.jogadores.filter((j) => j.equipe === e.id).reduce((s, j) => s + (j.pontos || 0), 0),
+          gems: gemas(e.joias),
+        };
+      })
+    : r.jogadores.map((j) => ({
+        k: "p" + j.id,
+        nome: playerNameHtml(j.nome, j.cor, j.avatar),
+        cor: corDoJogador(j.cor),
+        tok: escapeHtml(j.avatar || (j.nome ? j.nome[0].toUpperCase() : "?")),
+        pos: j.casa || 0,
+        pts: j.pontos || 0,
+        gems: gemas(j.joias),
+      }));
+  const w = r.vitoria;
+  return {
+    ents,
+    equipe,
+    cats,
+    vitoria: w,
+    metaPts: (r.meta && r.meta.pontos) || 0,
+    temJoias: w !== "pontos" && w !== "tabuleiro",
+    valeJoias: w === "joias" || w === "express" || (w === "casa" && r.jogadores.length >= GEMS_MIN_PLAYERS),
+  };
 }

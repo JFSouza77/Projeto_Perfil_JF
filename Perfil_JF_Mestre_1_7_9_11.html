@@ -6,6 +6,21 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.9.11 · 09/10/2026 · "Rooms and Network Update · Troca de host" = TELA DE CARREGAMENTO, TROCA DE HOST, PLACAR NO CELULAR.
+          · Relato do JF: no iPhone não aparecia tela de carregamento. O iOS só mostra abertura com imagem no
+            tamanho exato (apple-touch-startup-image): 11 imagens em icones/abertura-*.jpg (752 KB no total,
+            ferramentas/gerar_aberturas.js). E #carregando no corpo: aparece na hora, sai no fim do JFStore.boot
+            (mínimo ~0,9 s, sem bloquear toque); o CSS esconde sozinho em 15 s se algo der errado.
+          · Troca de host (regra do JF: o 2º Mestre assume, depois o 3º…): redeSucessor (ordem dos Mestres a partir
+            do primeiroMestreId, só quem está online e não é o host); pacote de recuperação (o save completo) só pro
+            sucessor, a cada mudança (no máximo a cada 3 s; limite de mensagem 640 KB só pra esse tipo); o celular só
+            guarda o pacote enquanto é o sucessor. 15 s sem notícia do host: o sucessor grava o pacote, recarrega
+            como host e reabre a MESMA sala (espera o id ficar livre); o C.A.O.S. anuncia (gerador hostCaiu). Os
+            outros se reapresentam ao novo host (sessão do host mudou) e forçam conexão nova a cada 10 s sem notícia.
+            Host que volta faz uma sondagem: se a sala já tem host, entra como jogador (no ensaio local, host que vê
+            outro host também passa a jogador).
+          · Intervalo no celular: abas Pontos e Joias a partir do retrato (lobbyContextoDoRetrato).
+          · teste_rede: 90 conferências (abas e internet), com a troca de host e o host antigo voltando.
   1.7.9.10 · 09/10/2026 · "Rooms and Network Update · Final" = O ONLINE DE VERDADE (BETA) E O FIM DA 1.7.9.
           Decisões do JF: PeerJS; no online só o host segue o intervalo; tudo numa atualização só (a última da 1.7.9).
           · Transporte INTERNET: PeerJS 1.5.5 embutido (05l-peerjs.js, MIT). O host é um Peer com o id da sala e
@@ -574,6 +589,18 @@
 <meta name="theme-color" content="#1a1a2e">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icones/icone-180.png">
+<!-- 1.7.9.11: abertura do iPhone (o iOS só mostra tela de carregamento com imagem no tamanho exato; ferramentas/gerar_aberturas.js) -->
+<link rel="apple-touch-startup-image" media="screen and (device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icones/abertura-1320x2868.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icones/abertura-1206x2622.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icones/abertura-1290x2796.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icones/abertura-1179x2556.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icones/abertura-1284x2778.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icones/abertura-1170x2532.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icones/abertura-1125x2436.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icones/abertura-1242x2688.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="icones/abertura-828x1792.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icones/abertura-1242x2208.jpg">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="icones/abertura-750x1334.jpg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -581,7 +608,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.9.10</title>
+<title>Perfil JF · Beta 1.7.9.11</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2808,6 +2835,83 @@ body.claro .acess-op {
 body.claro .acess-op.on {
   background: #dbeafe;
   border-color: #2563eb;
+}
+
+/* 1.7.9.11 · tela de carregamento (a mesma cara da abertura do iPhone) */
+.carregando {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(120% 80% at 50% 38%, #24204a 0%, #12112a 55%, #0b0a1c 100%);
+  color: #fff;
+  transition: opacity 0.35s ease-out;
+  animation: carregandoTrava 0s linear 15s forwards;
+}
+@keyframes carregandoTrava {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+.carregando.saindo {
+  opacity: 0;
+  pointer-events: none;
+}
+.carregando-ic {
+  width: min(46vw, 220px);
+  height: min(46vw, 220px);
+  border-radius: 22%;
+  filter: drop-shadow(0 0 22px #ff2fa055);
+}
+.carregando-nome {
+  margin-top: 3.5vh;
+  font-family: var(--font-display, inherit);
+  font-weight: 800;
+  font-size: min(8.5vw, 40px);
+  letter-spacing: 1px;
+  text-shadow: 0 0 12px #ff2fa0aa, 0 0 26px #ff2fa055;
+}
+.carregando-barra {
+  width: min(52vw, 240px);
+  height: 6px;
+  margin-top: 2.4vh;
+  border-radius: 999px;
+  background: #ffffff1f;
+  overflow: hidden;
+}
+.carregando-barra i {
+  display: block;
+  width: 40%;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ff2fa0, #22d3ee);
+  animation: carregandoVai 1.1s ease-in-out infinite;
+}
+@keyframes carregandoVai {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+.carregando-txt {
+  margin-top: 1.4vh;
+  color: #c4b5fd;
+  font-size: min(3.8vw, 16px);
+  opacity: 0.85;
+}
+@media (prefers-reduced-motion: reduce) {
+  .carregando-barra i {
+    width: 100%;
+    animation: none;
+    opacity: 0.7;
+  }
 }
 .wincond-warn {
   color: #ffd166;
@@ -8321,6 +8425,15 @@ body.claro .rede-voto-host {
 </style>
 </head>
 <body class="noturno">
+  <!-- 1.7.9.11 (relato do JF: no iPhone não aparecia tela de carregamento): aparece na hora, com a mesma
+       cara da abertura do iPhone, e sai quando o jogo está pronto (carregandoSair, 11-iniciar.js). Se algo
+       der errado, o próprio CSS esconde depois de 15 s. -->
+  <div id="carregando" class="carregando" role="status" aria-label="Carregando o jogo">
+    <img src="icones/icone-192.png" alt="" class="carregando-ic" onerror="this.remove()">
+    <div class="carregando-nome">Perfil JF</div>
+    <div class="carregando-barra"><i></i></div>
+    <div class="carregando-txt">Embaralhando as cartas…</div>
+  </div>
   
   <section class="splash-screen" id="splashScreen">
     <div class="splash-topo">
@@ -8365,7 +8478,7 @@ body.claro .rede-voto-host {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.10 · Rooms and Network Update · Final<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.11 · Rooms and Network Update · Troca de host<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Na partida: ⏸️ Pausar → 🌐 Jogar online</span></div>
@@ -18797,10 +18910,11 @@ function lobbyGanhoSelo(d) {
 }
 
 /* --- Pontos: corrida de barras com pódio --- */
-function lobbyPontosHtml(antes) {
-  const ents = lobbyEntidades().sort((a, b) => b.pts - a.pts);
-  const valePontos = winCond() === "pontos";
-  const meta = valePontos ? metaPontos() : 0;
+// ctx (1.7.9.11): no celular do convidado os dados vêm do retrato (lobbyContextoDoRetrato)
+function lobbyPontosHtml(antes, ctx) {
+  const ents = (ctx ? ctx.ents.slice() : lobbyEntidades()).sort((a, b) => b.pts - a.pts);
+  const valePontos = ctx ? ctx.vitoria === "pontos" : winCond() === "pontos";
+  const meta = valePontos ? (ctx ? ctx.metaPts : metaPontos()) : 0;
   const escala = Math.max(meta, ...ents.map((e) => e.pts), 1);
   const ant = (e) => (antes && antes.pts && typeof antes.pts[e.k] === "number" ? antes.pts[e.k] : null);
   // pódio: 2º, 1º, 3º (só com pontos de verdade)
@@ -18820,17 +18934,17 @@ function lobbyPontosHtml(antes) {
     })
     .join("");
   const cab = valePontos
-    ? `🎯 Vence quem chegar a <b>${meta} pontos</b>${CURRENT_FORMAT === "equipe" ? " (soma da equipe)" : ""}.`
+    ? `🎯 Vence quem chegar a <b>${meta} pontos</b>${(ctx ? ctx.equipe : CURRENT_FORMAT === "equipe") ? " (soma da equipe)" : ""}.`
     : "Nesta partida os pontos não decidem quem vence. Valem pela glória.";
   return `<div class="lp-cab">${cab}</div>${podio}<ul class="lp-lista">${barras}</ul>`;
 }
 
 /* --- Joias: a coroa de cada um --- */
-function lobbyJoiasHtml(antes) {
-  const cats = currentGemCategories();
-  const vale = gemsCountForWin();
-  const cap = gemCapFor();
-  const ents = lobbyEntidades()
+function lobbyJoiasHtml(antes, ctx) {
+  const cats = ctx ? ctx.cats : currentGemCategories();
+  const vale = ctx ? ctx.valeJoias : gemsCountForWin();
+  const cap = ctx ? 1 : gemCapFor();
+  const ents = (ctx ? ctx.ents.slice() : lobbyEntidades())
     .map((e) => ({ ...e, total: cats.reduce((s, c) => s + e.gems[c], 0) }))
     .sort((a, b) => b.total - a.total);
   const nomeCat = (c) => `${CAT_SELO_ICONE[c] || "💎"} ${c.charAt(0) + c.slice(1).toLowerCase()}`;
@@ -18896,6 +19010,45 @@ function lobbyAbasInstalar(ov) {
   const ini = ov.querySelector(".lb-aba.on");
   mostrar(ini ? ini.dataset.aba : "tabuleiro");
 }
+
+// 1.7.9.11: o mesmo placar no celular de cada um (sala online), a partir do retrato público.
+function lobbyContextoDoRetrato(r) {
+  const cats = r.modo === "junior" ? ["ANIMAL", "PESSOA", "LUGAR", "COISA"] : ["ANO", "PESSOA", "LUGAR", "COISA"];
+  const gemas = (o) => Object.fromEntries(cats.map((c) => [c, (o && o[c]) || 0]));
+  const equipe = r.formato === "equipe" && Array.isArray(r.equipes) && r.equipes.length > 0;
+  const ents = equipe
+    ? r.equipes.map((e) => {
+        const info = TEAM_INFO[e.id] || { emoji: "●", label: e.id, color: "#888888" };
+        return {
+          k: "t" + e.id,
+          nome: `${info.emoji} Equipe ${escapeHtml(info.label)}`,
+          cor: corDoJogador(info.color),
+          tok: info.emoji,
+          pos: e.casa || 0,
+          pts: r.jogadores.filter((j) => j.equipe === e.id).reduce((s, j) => s + (j.pontos || 0), 0),
+          gems: gemas(e.joias),
+        };
+      })
+    : r.jogadores.map((j) => ({
+        k: "p" + j.id,
+        nome: playerNameHtml(j.nome, j.cor, j.avatar),
+        cor: corDoJogador(j.cor),
+        tok: escapeHtml(j.avatar || (j.nome ? j.nome[0].toUpperCase() : "?")),
+        pos: j.casa || 0,
+        pts: j.pontos || 0,
+        gems: gemas(j.joias),
+      }));
+  const w = r.vitoria;
+  return {
+    ents,
+    equipe,
+    cats,
+    vitoria: w,
+    metaPts: (r.meta && r.meta.pontos) || 0,
+    temJoias: w !== "pontos" && w !== "tabuleiro",
+    valeJoias: w === "joias" || w === "express" || (w === "casa" && r.jogadores.length >= GEMS_MIN_PLAYERS),
+  };
+}
 /* ----------------------------------------------------------------------
  * 5k. REDE: SALA, PROTOCOLO, PAPÉIS E RELÓGIO
  * 1.7.9.7 (Parte 3): a base. 1.7.9.10 (Final): a internet de verdade (PeerJS), o painel de cada
@@ -18928,6 +19081,11 @@ function lobbyAbasInstalar(ov) {
  *    (por sala). Se cair ou recarregar, ele pede o mesmo lugar com a chave e volta na hora. Sem a
  *    chave, ninguém toma um lugar que ainda está online. Se o HOST recarregar, a sala volta com o
  *    mesmo código (perfil5_rede_host) e os convidados se reconectam sozinhos.
+ *  · TROCA DE HOST (1.7.9.11, regra do JF: o 2º Mestre da partida assume, depois o 3º…): o host manda o
+ *    PACOTE DE RECUPERAÇÃO (o save completo) só pro sucessor, a cada mudança. Se os celulares ficarem
+ *    15 s sem notícia do host, o sucessor recarrega como host com esse pacote e reabre a MESMA sala; os
+ *    outros se reconectam sozinhos e o C.A.O.S. anuncia quem assumiu. O host antigo que voltar descobre
+ *    que já tem host (sondagem) e entra como jogador.
  *  · VERSÃO: quem entra com outra versão do jogo é recusado, com o aviso pra atualizar.
  *  · RELÓGIO: o convidado mede a diferença pro relógio do host (ping/pong, fica a medida de menor
  *    atraso) e conta o tempo por ela. Quem decide que o tempo acabou é só o host.
@@ -18939,9 +19097,11 @@ function lobbyAbasInstalar(ov) {
  *        mensagem "para" alguém chega em todas as abas e o convidado ignora o que não é dele.
  * ---------------------------------------------------------------------- */
 const REDE_PROTOCOLO = 1;
-const REDE_MAX_LETRAS = 64 * 1024;
+const REDE_MAX_LETRAS = 640 * 1024; // só o pacote de recuperação chega perto disso
+const REDE_MAX_NORMAL = 64 * 1024; // o resto das mensagens
 const REDE_DO_CONVIDADO = ["oi", "cmd", "ping", "tchau", "voto"];
-const REDE_DO_HOST = ["bemvindo", "escolha", "recusa", "retrato", "segredo", "resp", "pong", "painel"];
+const REDE_DO_HOST = ["bemvindo", "escolha", "recusa", "retrato", "segredo", "resp", "pong", "painel", "recuperacao"];
+const REDE_HOST_SUMIU_MS = 15000; // sem notícia do host há mais que isso: o sucessor assume
 const REDE_ONLINE_MS = 15000; // sem notícia há mais que isso: o convidado conta como fora
 const REDE_LETRAS_SALA = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // sem I e O (não confundem com 1 e 0)
 const REDE_SITE = "https://jfsouza77.github.io/Projeto_Perfil_JF/"; // link pros convidados (o host pode estar no offline)
@@ -18957,6 +19117,7 @@ const JOGO_VERSAO = (() => {
     return "?";
   }
 })();
+let redeInsistirId = false; // reabrindo a sala depois de assumir: espera o id da sala ficar livre
 let redeOuvindo = false; // a escuta das ações (acoesAoMudar) é registrada uma vez só
 let rede = null; // { papel: "host" | "convidado", sala, sessao, transporte, seq, ultimoSeq: {} , ... }
 
@@ -19105,7 +19266,7 @@ function redeTransportePeerHost(sala) {
     peer.on("error", (e) => {
       const tipo = (e && e.type) || "erro";
       // o id da sala ainda está preso no servidor (o host acabou de recarregar): tenta de novo
-      if (tipo === "unavailable-id" && tentativas < 6 && !fechado) {
+      if (tipo === "unavailable-id" && tentativas < (redeInsistirId ? 45 : 6) && !fechado) {
         tentativas++;
         try {
           peer.destroy();
@@ -19178,6 +19339,17 @@ function redeTransportePeerConvidado(sala) {
     },
     aoReceber(fn) {
       receber = fn;
+    },
+    // a conexão parece viva mas o host sumiu (o WebRTC pode demorar a perceber): abre outra
+    reconectar() {
+      if (fechado) return;
+      const c = conn;
+      conn = null;
+      try {
+        c && c.close();
+      } catch (e) {}
+      t.estado = "reconectando";
+      tentarDeNovo(200);
     },
     fechar() {
       fechado = true;
@@ -19296,6 +19468,7 @@ function redeValidar(bruto) {
     return recusar("formato");
   }
   if (!m || typeof m !== "object" || Array.isArray(m)) return recusar("formato");
+  if (m.t !== "recuperacao" && bruto.length > REDE_MAX_NORMAL) return recusar("grande_demais");
   if (m.p !== REDE_PROTOCOLO) return recusar("protocolo");
   if (m.sala !== rede.sala) return recusar("outra_sala");
   if (!redeSessaoValida(m.de)) return recusar("sessao");
@@ -19328,6 +19501,7 @@ function redeValidar(bruto) {
     segredo: () => Number.isInteger(m.revisao) && (m.resposta === null || txt(m.resposta, 120)),
     resp: () => typeof m.commandId === "string" && typeof m.ok === "boolean",
     pong: () => typeof m.t0 === "number" && typeof m.th === "number" && isFinite(m.th),
+    recuperacao: () => txt(m.estado, REDE_MAX_LETRAS) && Number.isInteger(m.revisao) && (m.matchId === null || txt(m.matchId, 64)),
     painel: () =>
       Number.isInteger(m.revisao) && Array.isArray(m.opcoes) && m.opcoes.length <= 40 &&
       m.opcoes.every((o) => o && typeof o.a === "string" && !!ACOES[o.a] && Array.isArray(o.d) && o.d.length <= 4 && o.d.every(redeEhPrimitivo) && txt(o.t, 80) && (o.c === undefined || txt(o.c, 12)) && (o.g === undefined || txt(o.g, 60))),
@@ -19376,9 +19550,18 @@ function redeAbrirSalaCom(fab, modo, salaFixa) {
     segredoEnviado: null,
     paineis: {},
     votacao: null,
+    recEnviada: null, // revisão e sucessor do último pacote de recuperação
+    recQuando: 0,
     batida: null,
   };
   transporte.aoReceber((bruto) => {
+    // outro aparelho já é host desta sala (só acontece no ensaio local): este passa a jogador
+    if (typeof bruto === "string" && bruto.includes('"t":"retrato"')) {
+      try {
+        const o = JSON.parse(bruto);
+        if (o && o.t === "retrato" && o.sala === rede.sala && o.de !== rede.sessao) return redeHostRebaixar();
+      } catch (e) {}
+    }
     const msg = redeValidar(bruto);
     if (msg) redeHostReceber(msg);
   });
@@ -19403,6 +19586,8 @@ function redeAbrirSalaCom(fab, modo, salaFixa) {
   return sala;
 }
 // Partida carregada depois de recarregar: se havia sala aberta há pouco, ela volta com o mesmo código.
+// Antes, uma sondagem: se outro aparelho já é host da sala (assumiu enquanto este estava fora), este
+// entra como jogador.
 function redeHostRetomar() {
   if (rede || redeSalaDoEndereco()) return false;
   let s = null;
@@ -19411,9 +19596,91 @@ function redeHostRetomar() {
   } catch (e) {}
   if (!s || !redeSalaValida(s.sala) || !(Date.now() - (s.quando || 0) < 2 * 3600e3)) return false;
   if (!starterChosen || gameEnded) return false;
-  const sala = redeAbrirSala(s.modo, s.sala);
-  if (sala && jogadorIdValido(s.eu) && jogadorIdxPorId(s.eu) >= 0) rede.hostEu = s.eu;
-  return !!sala;
+  const modo = s.modo === "local" ? "local" : "internet";
+  redeSondar(s.sala, modo, (existe) => {
+    if (rede) return;
+    if (existe) {
+      try {
+        JFStore.removeItem(REDE_HOST_KEY);
+      } catch (e) {}
+      return redeIrPraSala(s.sala, modo);
+    }
+    redeInsistirId = !!s.assumiu;
+    const sala = redeAbrirSala(modo, s.sala);
+    if (!sala) return;
+    if (jogadorIdValido(s.eu) && jogadorIdxPorId(s.eu) >= 0) rede.hostEu = s.eu;
+    redeHostGuardar();
+    if (s.assumiu) {
+      // o C.A.O.S. anuncia a troca (gerador hostCaiu, pronto desde a 1.7.5.1)
+      try {
+        const nome = (jogadorPorId(s.eu) || {}).name || "alguém";
+        const fala = typeof caosGerarFala === "function" ? caosGerarFala("hostCaiu", null, { antigo: s.antigo || "host", nome }) : "";
+        showToastMessage(fala ? "[C.A.O.S.] " + fala : `[C.A.O.S.] ${nome} assumiu a sala. Nada se perdeu.`, null, true);
+        caosLog("rede", `assumiu a sala ${s.sala} no lugar de ${s.antigo || "?"}`);
+      } catch (e) {}
+    }
+  });
+  return true;
+}
+// Pergunta se a sala já tem host (um ping; quem responde é o host). Local: 2,5 s; internet: 8 s.
+function redeSondar(sala, modo, cb) {
+  let feito = false;
+  const fim = (v) => {
+    if (feito) return;
+    feito = true;
+    try {
+      limpar();
+    } catch (e) {}
+    cb(v);
+  };
+  let limpar = () => {};
+  const sessao = "s_sonda" + redeAleatorio(6);
+  const ping = JSON.stringify({ p: REDE_PROTOCOLO, t: "ping", sala, de: sessao, seq: 1, t0: Date.now() });
+  const ouviu = (d) => {
+    try {
+      const o = JSON.parse(d);
+      if (o && o.sala === sala && (o.t === "pong" || o.t === "retrato") && o.de !== sessao) fim(true);
+    } catch (e) {}
+  };
+  if (modo === "local") {
+    if (typeof BroadcastChannel !== "function") return fim(false);
+    const bc = new BroadcastChannel("perfiljf-sala-" + sala);
+    bc.onmessage = (ev) => ouviu(ev && ev.data);
+    bc.postMessage(ping);
+    limpar = () => bc.close();
+    setTimeout(() => fim(false), 2500);
+    return;
+  }
+  if (!redeTemInternet()) return fim(false);
+  let peer;
+  try {
+    peer = new Peer(undefined, redePeerConfig());
+  } catch (e) {
+    return fim(false);
+  }
+  limpar = () => peer.destroy();
+  peer.on("open", () => {
+    const c = peer.connect(REDE_PEER_PREFIXO + sala.toLowerCase(), { reliable: true });
+    c.on("open", () => fim(true));
+  });
+  peer.on("error", () => fim(false));
+  setTimeout(() => fim(false), 8000);
+}
+function redeIrPraSala(sala, modo) {
+  try {
+    location.hash = "sala=" + sala + (modo === "local" ? "&local" : "");
+    location.reload();
+  } catch (e) {}
+}
+// Outro aparelho é host desta sala: este deixa de ser e entra como jogador.
+function redeHostRebaixar() {
+  if (!rede || rede.papel !== "host") return;
+  const sala = rede.sala, modo = rede.modo;
+  try {
+    caosLog("rede", "outro aparelho é host da sala " + sala + ": este entra como jogador");
+  } catch (e) {}
+  redeFechar();
+  redeIrPraSala(sala, modo);
 }
 function redeFechar() {
   if (!rede) return;
@@ -19594,6 +19861,37 @@ function redeOpcoes(jid) {
   add("pausar", [], "⏸️ Pausar", "", "Mais");
   return op;
 }
+// Sucessor (regra do JF): na ordem dos Mestres da partida (a partir do 2º, contando do primeiro Mestre),
+// o primeiro jogador que está na sala, online, e não é o próprio host.
+function redeSucessor() {
+  if (!rede || rede.papel !== "host" || !players.length) return null;
+  let ini = jogadorIdxPorId(primeiroMestreId);
+  if (ini < 0) ini = 0;
+  for (let k = 1; k <= players.length; k++) {
+    const p = players[(ini + k) % players.length];
+    if (p && p.id !== rede.hostEu && redeOnline(rede.assentos[p.id])) return p.id;
+  }
+  return null;
+}
+// Pacote de recuperação: o save completo, só pro sucessor (no máximo a cada 3 s, ou quando ele muda).
+function redeHostRecuperacao(forcar) {
+  const suc = redeSucessor();
+  const a = suc && rede.assentos[suc];
+  if (!a || !starterChosen || gameEnded) return;
+  const chave = suc + "|" + partidaRevisao;
+  if (rede.recEnviada === chave && !forcar) return;
+  if (!forcar && rede.recEnviada && rede.recEnviada.startsWith(suc + "|") && Date.now() - rede.recQuando < 3000) return;
+  let estado = null;
+  try {
+    saveGameState();
+    estado = JFStore.getItem("perfil200_state");
+  } catch (e) {}
+  if (!estado) return;
+  if (redeEnviar("recuperacao", { estado, revisao: partidaRevisao, matchId: matchId || null }, a.sessao)) {
+    rede.recEnviada = chave;
+    rede.recQuando = Date.now();
+  }
+}
 // Retrato público pra todos, o painel de cada um e a resposta só pro Mestre.
 function redeHostPublicar(forcar) {
   if (!rede || rede.papel !== "host") return;
@@ -19602,7 +19900,10 @@ function redeHostPublicar(forcar) {
   // extras da sala (não fazem parte do retrato da partida): intervalo e votação
   r.intervalo = typeof tabLobbyFimEm === "function" ? tabLobbyFimEm() : null;
   r.votacao = rede.votacao ? redeVotacaoPublica() : null;
+  r.sucessor = redeSucessor();
+  r.hostNome = rede.hostEu ? (jogadorPorId(rede.hostEu) || {}).name || null : null;
   redeEnviar("retrato", { r });
+  redeHostRecuperacao(false);
   Object.keys(rede.assentos).forEach((jid) => {
     const a = rede.assentos[jid];
     if (!redeOnline(a)) return;
@@ -19748,6 +20049,10 @@ function redeEntrarSala(sala, transporteFabrica) {
     pendentes: {}, // commandId → { msg, tentativas, quando }
     respostas: {}, // commandId → resultado
     votei: {},
+    hostSessao: null, // sessão do host (mudou: outro aparelho assumiu; me apresento de novo)
+    ultimoHost: Date.now(), // última notícia do host
+    recuperacao: null, // pacote de recuperação (só se eu for o sucessor)
+    assumindo: false,
     relogio: { dif: 0, atraso: Infinity, amostras: 0 },
     aoMudar: null,
   };
@@ -19777,6 +20082,13 @@ function redeEntrarSala(sala, transporteFabrica) {
   return true;
 }
 function redeConvidadoReceber(m) {
+  rede.ultimoHost = Date.now();
+  if (rede.hostSessao && m.de !== rede.hostSessao) {
+    // outro aparelho virou host da sala: me apresento de novo pra ele
+    rede.hostSessao = m.de;
+    rede.ultimoSeq = { [m.de]: rede.ultimoSeq[m.de] || 0 };
+    if (rede.estado === "dentro") rede.oi();
+  } else if (!rede.hostSessao) rede.hostSessao = m.de;
   const avisar = () => {
     if (typeof rede.aoMudar === "function")
       try {
@@ -19823,12 +20135,19 @@ function redeConvidadoReceber(m) {
     rede.retrato = r;
     // trava 3: a resposta sai da memória quando a carta acaba ou quando não sou mais o Mestre
     if (rede.segredo && (r.mestreId !== rede.eu || !r.carta || r.fim || r.matchId !== rede.segredo.matchId)) rede.segredo = null;
+    // o pacote de recuperação só fica com quem é o sucessor agora
+    if (rede.recuperacao && r.sucessor !== rede.eu) rede.recuperacao = null;
     return avisar();
   }
   if (m.t === "painel") {
     if (rede.painel && m.revisao < rede.painel.revisao) return;
     rede.painel = { revisao: m.revisao, opcoes: m.opcoes };
     return avisar();
+  }
+  if (m.t === "recuperacao") {
+    // só guarda se o retrato mais recente diz que eu sou o sucessor (mensagem fora de ordem não fica)
+    if (rede.retrato && rede.retrato.sucessor === rede.eu) rede.recuperacao = { estado: m.estado, revisao: m.revisao, matchId: m.matchId };
+    return;
   }
   if (m.t === "segredo") {
     const r = rede.retrato;
@@ -19840,6 +20159,39 @@ function redeConvidadoReceber(m) {
     rede.respostas[m.commandId] = { ok: m.ok, motivo: m.motivo, revisao: m.revisao };
     return avisar();
   }
+}
+// O host caiu e eu sou o sucessor: guardo a partida do pacote e recarrego como host da mesma sala.
+function redeAssumir() {
+  if (!rede || rede.papel !== "convidado" || !rede.recuperacao || rede.assumindo) return false;
+  rede.assumindo = true;
+  const sala = rede.sala, modo = rede.transporte.tipo === "local" ? "local" : "internet";
+  const antigo = (rede.retrato && rede.retrato.hostNome) || "host";
+  try {
+    caosLog("rede", "o host sumiu: este aparelho assume a sala " + sala);
+  } catch (e) {}
+  try {
+    JFStore.setItem("perfil200_state", rede.recuperacao.estado);
+    JFStore.setItem(REDE_HOST_KEY, JSON.stringify({ sala, modo, eu: rede.eu, quando: Date.now(), assumiu: true, antigo }));
+  } catch (e) {}
+  const ir = () => {
+    try {
+      clearInterval(rede.pingTimer);
+      rede.transporte.fechar();
+    } catch (e) {}
+    try {
+      window.history.replaceState(null, "", String(location.href).split("#")[0]);
+    } catch (e) {}
+    location.reload();
+  };
+  try {
+    const f = JFStore.flushNow && JFStore.flushNow();
+    if (f && typeof f.then === "function") f.then(ir, ir);
+    else ir();
+  } catch (e) {
+    ir();
+  }
+  redeConvidadoDesenhar();
+  return true;
 }
 // Escolher quem eu sou na sala.
 function redeEscolherLugar(jid) {
@@ -19949,6 +20301,20 @@ const REDE_CONEXAO = {
 // A cada meio segundo: contagem do intervalo e da votação (sem redesenhar a tela toda).
 function redeConvidadoTiques() {
   if (!rede || !rede.retrato) return;
+  // o host sumiu: se eu sou o sucessor (e tenho o pacote), assumo; senão, aviso e espero
+  const sumiu = rede.estado === "dentro" && Date.now() - rede.ultimoHost > REDE_HOST_SUMIU_MS;
+  if (sumiu && !rede.assumindo && rede.retrato.sucessor === rede.eu && rede.recuperacao) return redeAssumir();
+  if (rede.recuperacao && rede.retrato.sucessor !== rede.eu) rede.recuperacao = null;
+  // sem notícia do host: a cada 10 s, força uma conexão nova (o novo host pode já estar na sala)
+  if (sumiu && typeof rede.transporte.reconectar === "function" && Date.now() - (rede.ultimaReconexao || 0) > 10000) {
+    rede.ultimaReconexao = Date.now();
+    rede.transporte.reconectar();
+  }
+  const aviso = rede.estado === "dentro" && Date.now() - rede.ultimoHost > 8000;
+  if (aviso !== !!rede.avisoSumiu) {
+    rede.avisoSumiu = aviso;
+    redeConvidadoDesenhar();
+  }
   const r = rede.retrato;
   const s = (ate) => Math.max(0, Math.ceil((ate - redeAgora()) / 1000));
   const iv = document.getElementById("redeIntervaloSeg");
@@ -19960,7 +20326,12 @@ function redeConvidadoDesenhar() {
   const box = document.getElementById("telao");
   if (!box || !rede) return;
   const t = rede.transporte || {};
-  const conexao = t.estado && t.estado !== "aberta" && REDE_CONEXAO[t.estado] ? `<div class="rede-conexao">${REDE_CONEXAO[t.estado]}</div>` : "";
+  let conexao = t.estado && t.estado !== "aberta" && REDE_CONEXAO[t.estado] ? `<div class="rede-conexao">${REDE_CONEXAO[t.estado]}</div>` : "";
+  if (rede.assumindo) conexao = `<div class="rede-conexao">👑 O host caiu: este aparelho está assumindo a sala…</div>`;
+  else if (rede.avisoSumiu && rede.retrato) {
+    const suc = rede.retrato.sucessor && rede.retrato.jogadores.find((j) => j.id === rede.retrato.sucessor);
+    conexao = `<div class="rede-conexao">🔌 Sem notícia do host…${suc ? ` Se ele não voltar, ${escapeHtml(suc.nome)} assume a sala.` : ""}</div>`;
+  }
   const sala = `<div class="rede-sala">🌐 Sala <b>${rede.sala}</b></div>${conexao}`;
   if (rede.estado === "escolhendo") {
     const l = rede.lugares
@@ -20005,6 +20376,13 @@ function redeConvidadoDesenhar() {
       if (o) redeMandar(o.a, ...o.d);
     }),
   );
+  barra.querySelectorAll("[data-aba-rede]").forEach((b) =>
+    b.addEventListener("click", () => {
+      rede.abaLobby = b.dataset.abaRede;
+      redeConvidadoDesenhar();
+    }),
+  );
+  barra.querySelectorAll(".lp-barra[data-ate]").forEach((x) => (x.style.width = x.dataset.ate + "%"));
   barra.querySelectorAll("[data-dica]").forEach((b) => b.addEventListener("click", () => redeMandar("escolherDica", +b.dataset.dica)));
   barra.querySelectorAll("[data-voto]").forEach((b) => b.addEventListener("click", () => redeVotarConvidado(b.dataset.voto === "1") && redeConvidadoDesenhar()));
   redeConvidadoTiques();
@@ -20014,7 +20392,17 @@ function redeBotoesHtml() {
   const papel = redeMeuPapel();
   let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 sua vez" : ""}</div>`;
   if (r.fim) return h;
-  if (r.intervalo) h += `<div class="rede-intervalo">⏸️ Intervalo entre as cartas: dá uma olhada no tabuleiro. O host segue em <b id="redeIntervaloSeg">…</b> s.</div>`;
+  if (r.intervalo) {
+    // 1.7.9.11: o placar do intervalo no celular de cada um (Pontos e Joias; o tabuleiro está logo abaixo)
+    h += `<div class="rede-intervalo">⏸️ Intervalo entre as cartas. O host segue em <b id="redeIntervaloSeg">…</b> s.</div>`;
+    try {
+      const ctx = lobbyContextoDoRetrato(r);
+      const abas = ["pontos"].concat(ctx.temJoias ? ["joias"] : []);
+      const aba = abas.includes(rede.abaLobby) ? rede.abaLobby : r.vitoria === "joias" && ctx.temJoias ? "joias" : "pontos";
+      h += `<div class="lb-abas rede-lobby-abas">${abas.map((a) => `<button type="button" class="lb-aba${a === aba ? " on" : ""}" data-aba-rede="${a}">${LOBBY_ABAS[a].ic} ${LOBBY_ABAS[a].nome}</button>`).join("")}</div>`;
+      h += `<div class="rede-lobby">${aba === "joias" ? lobbyJoiasHtml(null, ctx) : lobbyPontosHtml(null, ctx)}</div>`;
+    } catch (e) {}
+  }
   const v = r.votacao;
   if (v) {
     const ja = rede.votei[v.id] !== undefined || (v.votaram || []).includes(rede.eu);
@@ -22387,7 +22775,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.9.10 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.9.11 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -27457,7 +27845,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.9.10 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.9.11 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -30631,7 +31019,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.9.10 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.9.11 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -31154,7 +31542,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.9.10 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.9.11 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -66296,6 +66684,21 @@ const PAUSE_TIPS = [
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.9.11",
+    data: "09/10/2026 · 19:44",
+    nome: "Rooms and Network Update · Troca de host",
+    t: "Tela de carregamento no iPhone, troca de host e o placar do intervalo no celular de cada um.",
+    itens: [
+      "📱 Tela de carregamento: ao abrir o jogo aparece a tela com o ícone e a barrinha enquanto tudo carrega. No iPhone ela aparece desde o toque no ícone.",
+      "👑 Troca de host: se o aparelho que hospeda a sala cair de vez, quem foi o 2º Mestre da partida assume a mesma sala, sem perder nada. O C.A.O.S. avisa quem assumiu.",
+      "🔙 O host antigo volta como jogador: se ele abrir o jogo de novo, entra na sala no lugar dele, sem brigar pelo comando.",
+      "🏆 Placar no intervalo: entre as cartas, cada celular mostra também os Pontos e as Joias, além do tabuleiro.",
+    ],
+    qol: [
+      "🔌 Reconexão mais esperta: se a conexão com o host parecer viva mas não chegar nada, o celular abre uma conexão nova sozinho.",
+    ],
+  },
+  {
     v: "Beta 1.7.9.10",
     data: "09/10/2026 · 18:47",
     nome: "Rooms and Network Update · Final",
@@ -68205,7 +68608,7 @@ CAOS_GERADORES.pensamento = {
     temLider: ["Enquanto isso, {lider} lidera.", "E quem manda no placar agora é {lider}."],
   },
 };
-// PRONTO PRA 1.7.10 (ainda sem uso): o aparelho host caiu e o C.A.O.S. anuncia quem assume.
+// Usado desde a 1.7.9.11 (troca de host, 05k-rede.js): o aparelho host caiu e o C.A.O.S. anuncia quem assume.
 // Regra do JF: o novo host é quem foi o 2º Mestre da partida (depois o 3º, e assim por diante),
 // e os poderes de Mestre/host passam sem perder nada da partida.
 // Variáveis extras: {antigo} (quem era o host) {nome} (o novo host).
@@ -69184,11 +69587,26 @@ function iniciar() {
 
   setTimeout(cadAtualizarBotao, 0);
 
+  // 1.7.9.11: tira a tela de carregamento (fica pelo menos ~0,9 s, pra dar tempo de ver; já não bloqueia toques)
+  function carregandoSair() {
+    const c = document.getElementById("carregando");
+    if (!c) return;
+    c.style.pointerEvents = "none";
+    let jaFoi = 0;
+    try {
+      jaFoi = performance.now();
+    } catch (e) {}
+    setTimeout(() => {
+      c.classList.add("saindo");
+      setTimeout(() => c.remove(), 400);
+    }, Math.max(0, 900 - jaFoi));
+  }
   (function startApp() {
     const playBtn = document.getElementById("goToRulesBtn");
     if (playBtn) playBtn.disabled = true;
     aplicarCorRngSplash();
     JFStore.boot().then(() => {
+      carregandoSair();
       applyStoredPrefs();
       // 1.7.8.3: aba "telão" (#telao) só olha a partida da outra aba: não carrega nem grava
       if (typeof telaoModo === "function" && telaoModo()) {
