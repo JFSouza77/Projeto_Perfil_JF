@@ -8,6 +8,8 @@
  *    (2 no Clássico, 1,5 no Júnior). Os números do tabuleiro são as casas de verdade (20, 40… 200).
  *  · A forma sai no começo da partida, vai no save (tabForma) e no retrato (telão e online): todo
  *    aparelho desenha o mesmo tabuleiro. Não repete a forma da partida anterior neste aparelho.
+ *  · 1.7.9.4: na partida volta a linha com pontinhos; o desenho aparece no "toque pra ampliar" e no
+ *    lobby entre as cartas (tabLobbyAbrir, mais abaixo).
  *  · Tudo em SVG feito aqui (nada pra baixar). Modo Batata e "menos movimento" tiram a animação.
  * ---------------------------------------------------------------------- */
 const TAB_CASAS = 100;
@@ -342,13 +344,14 @@ function tabPecasDaPartida() {
   if (CURRENT_FORMAT === "equipe")
     return teamOrder.map((id) => {
       const t = teams[id], info = TEAM_INFO[id];
-      return { k: "t" + id, idx: tabIdx(t.position, meta), html: info.emoji, style: `background:${info.color}`, titulo: `Equipe ${info.label}: casa ${t.position}` };
+      return { k: "t" + id, pos: t.position, idx: tabIdx(t.position, meta), html: info.emoji, style: `background:${info.color}`, titulo: `Equipe ${info.label}: casa ${t.position}` };
     });
   return players.map((p) => {
     const label = escapeHtml(p.avatar || (p.name ? p.name[0].toUpperCase() : "?"));
     const grad = GRADIENTS[p.color];
     return {
       k: "p" + (p.id || p.name),
+      pos: p.position,
       idx: tabIdx(p.position, meta),
       html: label,
       cls: (p.color === "GRAD_ONYX" ? "onyx-swatch" : "") + (grad && p.color !== "GRAD_ONYX" ? " grad-anim" : ""),
@@ -357,30 +360,132 @@ function tabPecasDaPartida() {
     };
   });
 }
-// Tela da partida (substitui a linha com pontinhos). Desenha uma vez por forma/tema/meta; depois
-// só mexe nos peões.
-function tabRenderTrilha(track) {
-  const forma = tabFormaAtual(), meta = WINNING_SCORE, tema = tabTema(CURRENT_MODE);
-  const chave = [forma, meta, tema].join("|");
-  if (track.dataset.tab !== chave) {
-    track.dataset.tab = chave;
-    track.innerHTML = `<div class="tb-caixa tb-tema-${tema}" id="tabCaixaMini">${tabSvg({ forma, meta, modo: CURRENT_MODE, emPe: false })}<div class="tb-pecas"></div></div>
-      <div class="tb-legenda"><span>${TAB_FORMAS[forma].ic} Tabuleiro ${TAB_FORMAS[forma].nome}</span><span class="board-hint">🔍 toque pra ampliar</span><span>${boardCountsForWin() ? "Chegada: casa " + meta : "não vale vitória"}</span></div>`;
-  }
-  tabPosicionarPecas(track.querySelector(".tb-caixa"), forma, false, tabPecasDaPartida(), tabAnimar());
-}
-// Tabuleiro grande (janela do "toque pra ampliar"): em pé no celular, deitado no computador.
-function tabHtmlGrande() {
+// Tabuleiro grande: em pé no celular, deitado no computador. Vai no "toque pra ampliar" e no lobby.
+function tabHtmlGrande(id) {
   const forma = tabFormaAtual(), tema = tabTema(CURRENT_MODE);
   const emPe = window.innerWidth < 700;
-  return `<div class="tb-caixa tb-grande tb-tema-${tema}${emPe ? " tb-em-pe" : ""}" id="tabCaixaGrande">${tabSvg({ forma, meta: WINNING_SCORE, modo: CURRENT_MODE, emPe })}<div class="tb-pecas"></div></div>
-    <div class="tb-legenda tb-legenda-grande">${TAB_FORMAS[forma].ic} Tabuleiro ${TAB_FORMAS[forma].nome} · ${TAB_CASAS} casinhas, cada uma vale ${(WINNING_SCORE / TAB_CASAS).toLocaleString("pt-BR")} casa${WINNING_SCORE / TAB_CASAS === 1 ? "" : "s"}</div>`;
+  return `<div class="tb-caixa tb-grande tb-tema-${tema}${emPe ? " tb-em-pe" : ""}" id="${id || "tabCaixaGrande"}">${tabSvg({ forma, meta: WINNING_SCORE, modo: CURRENT_MODE, emPe })}<div class="tb-pecas"></div></div>
+    <div class="tb-legenda tb-legenda-grande">${TAB_FORMAS[forma].ic} Tabuleiro ${TAB_FORMAS[forma].nome} · ${TAB_CASAS} casinhas, cada uma vale ${(WINNING_SCORE / TAB_CASAS).toLocaleString("pt-BR")} casa${WINNING_SCORE / TAB_CASAS === 1 ? "" : "s"}${boardCountsForWin() ? "" : " · não vale vitória"}</div>`;
 }
 function tabPreencherGrande() {
   const caixa = document.getElementById("tabCaixaGrande");
   if (!caixa) return;
   Object.keys(tabPrevIdx).forEach((k) => k.startsWith("tabCaixaGrande") && delete tabPrevIdx[k]);
   tabPosicionarPecas(caixa, tabFormaAtual(), caixa.classList.contains("tb-em-pe"), tabPecasDaPartida(), false);
+}
+
+/* --- 1.7.9.4 · Board Update 3: LOBBY ENTRE AS CARTAS (ideia do JF) ---
+ * Na partida volta a linha com pontinhos (renderBoardTrack). O tabuleiro grande vira uma tela de
+ * espera: quando uma carta acaba e os pontos/casas já foram contados, ele abre por 1 minuto antes da
+ * próxima carta (com "Próxima carta ▶" pra pular). Os peões andam o que andaram na carta, a lista
+ * mostra quem está na frente e quanto cada um andou, e a mesa tem tempo de conversar e montar
+ * estratégia. No online cada aparelho abre o seu.
+ *  · É só tela: a próxima carta já foi sorteada (escondida) por baixo; nada da partida muda aqui,
+ *    nada vai no save nem no registro de ações. Desfazer o veredito fecha o lobby.
+ *  · Não abre no Express (não tem tabuleiro), no Descartar, nem quando a partida acaba.
+ *  · Dá pra desligar no "toque pra ampliar" (vale pra este aparelho). */
+const TAB_LOBBY_SEG = 60;
+const TAB_LOBBY_KEY = "perfil5_tab_lobby";
+let tabLobbyPendente = false; // uma carta acabou (checkWinnerThenDraw): abre quando a próxima estiver pronta
+let tabLobbyRelogio = null;
+let tabLobbyAntes = null; // casa de cada peça no lobby anterior (pra mostrar quanto andou)
+let tabLobbyAntesVelho = null; // o de antes do último lobby (o Desfazer volta pra ele)
+
+function tabLobbyLigado() {
+  try {
+    return JFStore.getItem(TAB_LOBBY_KEY) !== "0";
+  } catch (e) {
+    return true;
+  }
+}
+function tabLobbyLigar(on) {
+  try {
+    JFStore.setItem(TAB_LOBBY_KEY, on ? "1" : "0");
+  } catch (e) {}
+  if (!on) tabLobbyFechar();
+}
+function tabLobbyCasas() {
+  const o = {};
+  tabPecasDaPartida().forEach((p) => (o[p.k] = p.pos));
+  return o;
+}
+// Partida nova: esquece o lobby anterior e as posições desenhadas.
+function tabLobbyZerar() {
+  tabLobbyPendente = false;
+  tabLobbyAntes = tabLobbyAntesVelho = null;
+  tabLobbyFechar();
+  Object.keys(tabPrevIdx).forEach((k) => delete tabPrevIdx[k]);
+}
+// Chamado quando a próxima carta ficou pronta (drawHidden) ou na escolha do duelo de bônus.
+function tabLobbyTalvez() {
+  if (!tabLobbyPendente) return;
+  tabLobbyPendente = false;
+  if (gameEnded || !starterChosen || CURRENT_MODE === "express" || !players.length || !tabLobbyLigado()) return;
+  if (cardState !== "hidden" && cardState !== "bonusChoice") return;
+  tabLobbyAbrir();
+}
+function tabLobbyAbrir() {
+  tabLobbyFechar();
+  const agora = tabLobbyCasas();
+  // primeira carta da partida: todo mundo saiu da casa 0
+  const antes = tabLobbyAntes || (stats.totalDrawn <= 2 ? Object.fromEntries(Object.keys(agora).map((k) => [k, 0])) : null);
+  tabLobbyAntesVelho = tabLobbyAntes;
+  tabLobbyAntes = agora;
+  let prox = "";
+  if (cardState === "bonusChoice") prox = "🏟️ Casa de bônus! Depois do tabuleiro, escolham o duelo.";
+  else {
+    const m = players[mestreIndex];
+    if (m) prox = `📖 Próximo Mestre: ${playerNameHtml(m.name, m.color, m.avatar)}`;
+  }
+  if (typeof ultimaRodada !== "undefined" && ultimaRodada) prox += `<div class="tb-lobby-ultima">⏳ Última rodada!</div>`;
+  const ov = document.createElement("div");
+  ov.id = "tabLobby";
+  ov.className = "jf-modal-bg tb-lobby-bg";
+  ov.innerHTML = `<div class="jf-modal tb-modal tb-lobby" role="dialog" aria-modal="true" aria-labelledby="tbLobbyTit">
+    <div class="tb-lobby-topo"><h3 id="tbLobbyTit">🗺️ Antes da próxima carta</h3><button type="button" class="btn-neo neo-solid neo-still tb-lobby-pular" id="tbLobbyPular" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35);">Próxima carta ▶</button></div>
+    <div class="tb-lobby-tempo" aria-hidden="true"><div class="tb-lobby-barra" id="tbLobbyBarra"></div></div>
+    <div class="tb-lobby-sub"><b id="tbLobbySeg">${TAB_LOBBY_SEG}</b> s pra ver o tabuleiro e combinar a estratégia</div>
+    <div class="tb-lobby-prox">${prox}</div>
+    ${tabHtmlGrande("tabCaixaLobby")}
+    <ul class="tg-list">${tabuleiroLinhasHtml(antes)}</ul>
+  </div>`;
+  document.body.appendChild(ov);
+  ov.querySelector("#tbLobbyPular").addEventListener("click", tabLobbyFechar);
+  const caixa = ov.querySelector("#tabCaixaLobby");
+  // os peões entram um instante depois, pra andança aparecer (sai de onde estavam no lobby anterior)
+  setTimeout(() => {
+    if (caixa.isConnected) tabPosicionarPecas(caixa, tabFormaAtual(), caixa.classList.contains("tb-em-pe"), tabPecasDaPartida(), tabAnimar());
+  }, 280);
+  let fim = Date.now() + TAB_LOBBY_SEG * 1000,
+    antesTique = Date.now();
+  tabLobbyRelogio = setInterval(() => {
+    const t = Date.now(),
+      passou = t - antesTique;
+    antesTique = t;
+    if (!ov.isConnected || gameEnded || (cardState !== "hidden" && cardState !== "bonusChoice")) return tabLobbyFechar();
+    // aba escondida ou pausa: o relógio do lobby espera junto
+    if (document.hidden || (typeof pausaEstaAberta === "function" && pausaEstaAberta())) {
+      fim += passou;
+      return;
+    }
+    const resta = Math.max(0, fim - t);
+    const seg = ov.querySelector("#tbLobbySeg"),
+      barra = ov.querySelector("#tbLobbyBarra");
+    if (seg) seg.textContent = String(Math.ceil(resta / 1000));
+    if (barra) barra.style.width = ((resta / (TAB_LOBBY_SEG * 1000)) * 100).toFixed(1) + "%";
+    if (resta <= 0) tabLobbyFechar();
+  }, 250);
+}
+function tabLobbyFechar() {
+  clearInterval(tabLobbyRelogio);
+  tabLobbyRelogio = null;
+  document.getElementById("tabLobby")?.remove();
+}
+// Desfazer o veredito: o lobby fecha e a conta de "quanto andou" volta pro lobby de antes.
+function tabLobbyDesfeito() {
+  tabLobbyPendente = false;
+  if (document.getElementById("tabLobby")) tabLobbyAntes = tabLobbyAntesVelho;
+  tabLobbyFechar();
 }
 // Telão: o mesmo desenho, a partir do retrato público.
 function tabHtmlTelao(r) {

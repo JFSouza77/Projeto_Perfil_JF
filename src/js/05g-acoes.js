@@ -456,6 +456,7 @@ function desfazerCaosAplicar(c) {
   } catch (e) {}
 }
 function desfazerAplicar(f) {
+  tabLobbyDesfeito(); // 1.7.9.4: o veredito voltou, o lobby do tabuleiro fecha
   players = f.players;
   teams = f.teams;
   teamOrder = f.teamOrder;

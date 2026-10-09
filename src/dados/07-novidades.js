@@ -6,6 +6,21 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.9.4",
+    data: "09/10/2026 · 14:07",
+    nome: "Rooms and Network Update · Board Update 3",
+    t: "Entre uma carta e outra, a mesa para pra olhar o tabuleiro.",
+    itens: [
+      "🗺️ Tabuleiro entre as cartas: quando a carta acaba e as casas já foram contadas, o tabuleiro grande abre por 1 minuto antes da próxima. Dá pra ver quem está na frente e combinar a estratégia.",
+      "♟️ Quanto cada um andou: os peões andam o que andaram na carta, e a lista mostra quantas casas cada um subiu ou desceu.",
+      "⏭️ Próxima carta: não quer esperar? O botão Próxima carta pula na hora.",
+      "📍 Linha com pontinhos de volta: durante a carta volta a linha simples com os peões. Tocando nela, o tabuleiro desenhado abre grande.",
+    ],
+    qol: [
+      "🔕 Desligar o tabuleiro entre cartas: no tabuleiro grande tem o botão pra desligar ou ligar de novo, neste aparelho.",
+    ],
+  },
+  {
     v: "Beta 1.7.9.3",
     data: "09/10/2026 · 12:57",
     nome: "Rooms and Network Update · Board Update 2",

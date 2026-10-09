@@ -6,6 +6,15 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.9.4 · 09/10/2026 · "Rooms and Network Update · Board Update 3" = LOBBY DO TABULEIRO ENTRE AS CARTAS.
+          Ideia do JF. Na partida volta a linha com pontinhos (renderBoardTrack como antes da 1.7.9.2); o
+          tabuleiro desenhado fica no "toque pra ampliar" e vira uma tela de espera entre as cartas
+          (tabLobbyAbrir): checkWinnerThenDraw marca a carta como acabada e, quando a próxima já está
+          escondida (drawHidden) ou na escolha do duelo de bônus, o lobby abre por 60 s (pausa e aba
+          escondida param o relógio) com "Próxima carta ▶", o próximo Mestre, os peões andando desde o
+          lobby anterior e a lista com +N/−N casas. Só tela: não vai no save nem no registro de ações.
+          Desfazer o veredito fecha o lobby (fica abaixo do botão Desfazer). Não abre no Express, no
+          Descartar nem no fim. Liga/desliga por aparelho (perfil5_tab_lobby) no tabuleiro grande.
   1.7.9.3 · 09/10/2026 · "Rooms and Network Update · Board Update 2" = TABULEIRO COM CARA DE TABULEIRO.
           Feedback do JF com fotos dos tabuleiros de verdade (Perfil 3, 4, 5, 6, 7, 8 e Júnior). Casas viram
           blocos colados numa pista larga (largura calculada pra não encostar na volta vizinha; o Oito tem
@@ -517,7 +526,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.9.3</title>
+<title>Perfil JF · Beta 1.7.9.4</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -7297,12 +7306,8 @@ body.claro .caos-mbtn.caos-mbtn-sec {
     overflow-y: auto;
   }
 }
-/* 1.7.9.2 · Board Update: tabuleiro desenhado (forma sorteada por partida, tema do modo) */
-.board-track {
-  height: auto;
-  max-width: 460px;
-  margin: 6px 0 12px;
-}
+/* 1.7.9.2 · Board Update: tabuleiro desenhado (forma sorteada por partida, tema do modo).
+   1.7.9.4: na partida volta a linha com pontinhos; o desenho fica no "toque pra ampliar" e no lobby. */
 .tb-caixa {
   --tb-fundo: radial-gradient(120% 90% at 30% 20%, #2e1f5e 0%, #15102e 70%);
   --tb-trilha: #8b5cf6;
@@ -7552,6 +7557,113 @@ body.claro .tb-tema-oldschool {
   stroke: #000a;
   stroke-width: 0.45px;
 }
+
+/* ---- 1.7.9.4 · lobby entre as cartas ---- */
+/* abaixo do Desfazer (10001) e das janelas (10002): dá pra desfazer o veredito com o lobby aberto */
+.jf-modal-bg.tb-lobby-bg {
+  z-index: 10000;
+  align-items: flex-start;
+  overflow-y: auto;
+  /* em cima fica o botão Desfazer (8 s depois do veredito): o lobby começa abaixo dele */
+  padding: calc(env(safe-area-inset-top) + 78px) 12px calc(env(safe-area-inset-bottom) + 24px);
+  animation: tbLobbyEntra 0.35s ease-out;
+}
+#tabuleiroModal {
+  align-items: flex-start;
+  overflow-y: auto;
+}
+#tabuleiroModal .jf-modal {
+  margin: auto 0;
+}
+@keyframes tbLobbyEntra {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.tb-lobby {
+  width: min(480px, 100%);
+  margin: auto 0;
+  padding: 14px 14px 16px;
+}
+.tb-lobby-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.tb-lobby-topo h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  text-align: left;
+}
+.tb-lobby-pular {
+  flex: none;
+  padding: 9px 14px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  border-radius: 12px;
+}
+.tb-lobby-tempo {
+  height: 5px;
+  margin: 10px 0 6px;
+  border-radius: 999px;
+  background: #ffffff1f;
+  overflow: hidden;
+}
+.tb-lobby-barra {
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #a78bfa, #fbbf24);
+  transition: width 0.25s linear;
+}
+.tb-lobby-sub {
+  font-size: 0.78rem;
+  opacity: 0.8;
+}
+.tb-lobby-prox {
+  margin: 8px 0 2px;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+.tb-lobby-ultima {
+  margin-top: 4px;
+  color: #fbbf24;
+}
+.tb-lobby .tb-grande.tb-em-pe {
+  height: min(54vh, 520px);
+}
+.tg-andou {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 900;
+  background: #ffffff1f;
+  vertical-align: 1px;
+}
+.tg-andou.tg-subiu {
+  background: #16a34a;
+  color: #fff;
+}
+.tg-andou.tg-desceu {
+  background: #dc2626;
+  color: #fff;
+}
+.tb-lobby-chip {
+  display: block;
+  margin: 10px auto 0;
+}
+body.claro .tb-lobby-tempo {
+  background: #0000001a;
+}
+body.claro .tg-andou:not(.tg-subiu):not(.tg-desceu) {
+  background: #0000001a;
+}
 </style>
 </head>
 <body class="noturno">
@@ -7599,7 +7711,7 @@ body.claro .tb-tema-oldschool {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.3 · Rooms and Network Update · Board Update 2<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.4 · Rooms and Network Update · Board Update 3<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -10038,6 +10150,7 @@ function resetDeck() {
   caosPartidaSerial++;
   matchId = null;
   tabForma = null; // 1.7.9.2: partida nova, tabuleiro novo
+  tabLobbyZerar(); // 1.7.9.4
   sorteioContagem = 0;
   acoesZerar();
   caosCatSeq = [];
@@ -10229,11 +10342,13 @@ function drawHidden() {
   renderMiniScoreboard();
   render();
   saveGameState();
+  tabLobbyTalvez();
 }
 function beginBonusChoice() {
   cardState = "bonusChoice";
   render();
   saveGameState();
+  tabLobbyTalvez();
 }
 function chooseBonusOpponent(idx) {
   if (cardState !== "bonusChoice" || pendingBonusQueue.length === 0) return;
@@ -10265,6 +10380,7 @@ function flipCard() {
   saveGameState();
 }
 function checkWinnerThenDraw() {
+  tabLobbyPendente = true; // 1.7.9.4: a carta acabou; o lobby do tabuleiro abre quando a próxima estiver pronta
   renderScoreboard();
   renderMiniScoreboard();
   if (ultimaRodadaAtiva() && (ultimaRodada || gemWinner || victoryReached())) {
@@ -13344,25 +13460,70 @@ function renderBoardTrack() {
   if (!track) return;
   if (CURRENT_MODE === "express" || players.length === 0) {
     track.innerHTML = "";
-    delete track.dataset.tab;
     return;
   }
-  // 1.7.9.2 (Board Update): tabuleiro desenhado (05i-tabuleiro.js) no lugar da linha com pontinhos
-  tabRenderTrilha(track);
+  // 1.7.9.4 (pedido do JF): na partida volta a linha com pontinhos; o tabuleiro desenhado fica no
+  // "toque pra ampliar" e no lobby entre as cartas (tabLobbyAbrir, 05i-tabuleiro.js)
+  let bonusMarks = "";
+  for (let pos = BONUS_HOUSE_INTERVAL; pos < WINNING_SCORE; pos += BONUS_HOUSE_INTERVAL) {
+    const pct = (pos / WINNING_SCORE) * 100;
+    bonusMarks += `<div class="board-bonus-mark" style="left:${pct}%"></div>`;
+    // número só a cada 20 casas em tabuleiros grandes, pra não embolar na tela do celular
+    if (pos % (WINNING_SCORE >= 150 ? 20 : 10) === 0)
+      bonusMarks += `<div class="board-bonus-label" style="left:${pct}%">${pos}</div>`;
+  }
+  let tokens;
+  if (CURRENT_FORMAT === "equipe") {
+    tokens = teamOrder
+      .map((id, i) => {
+        const t = teams[id];
+        const info = TEAM_INFO[id];
+        const pct = Math.max(0, Math.min(100, (t.position / WINNING_SCORE) * 100));
+        const verticalOffset = i % 2 === 0 ? -10 : 10;
+        return `<div class="board-token" style="left:${pct}%; top:calc(50% + ${verticalOffset}px); background:${info.color};" title="Equipe ${info.label}: ${t.position} casa">${info.emoji}</div>`;
+      })
+      .join("");
+  } else {
+    tokens = players
+      .map((p, i) => {
+        const pct = Math.max(0, Math.min(100, (p.position / WINNING_SCORE) * 100));
+        const label = p.avatar || (p.name ? p.name[0].toUpperCase() : "?");
+        const verticalOffset = i % 2 === 0 ? -10 : 10;
+        return `<div class="board-token${p.color === "GRAD_ONYX" ? " onyx-swatch" : ""}${GRADIENTS[p.color] && p.color !== "GRAD_ONYX" ? " grad-anim" : ""}" style="left:${pct}%; top:calc(50% + ${verticalOffset}px); background:${GRADIENTS[p.color] && p.color !== "GRAD_ONYX" ? caosGradLoop(p.color) : playerColorCss(p.color)};${p.color === "GRAD_ONYX" ? " color:#fff;" : ""}" title="${escapeHtml(p.name)}: ${p.score} pts, casa ${p.position}">${label}</div>`;
+      })
+      .join("");
+  }
+  track.innerHTML = `<div class="board-track-line"></div>${bonusMarks}${tokens}
+    <div class="board-endpoints"><span>Casa 0</span><span class="board-hint">🔍 toque pra ampliar</span><span>Casa ${WINNING_SCORE}${boardCountsForWin() ? "" : " · não vale vitória"}</span></div>`;
+  const chaves =
+    CURRENT_FORMAT === "equipe"
+      ? teamOrder.map((id) => ["t" + id, teams[id].position])
+      : players.map((p) => ["p" + p.name, p.position]);
+  const els = track.querySelectorAll(".board-token");
+  chaves.forEach(([k, pos], i) => {
+    const antes = caosTokPrev[k];
+    caosTokPrev[k] = pos;
+    if (antes !== void 0 && antes !== pos && els[i] && !document.body.classList.contains("batata-mode")) {
+      els[i].classList.add("pulando");
+      els[i].dataset.t0 = Date.now();
+    }
+  });
 }
 // Tabuleiro ampliado: cada jogador (ou equipe) numa linha, do primeiro ao último, com a
-// distância pro líder e quanto falta pra chegar.
-function abrirTabuleiroGrande() {
-  if (CURRENT_MODE === "express" || !players.length) return;
+// distância pro líder e quanto falta pra chegar. antes (opcional, 1.7.9.4): casa de cada peça no
+// lobby anterior, pra mostrar quanto cada um andou nesta carta.
+function tabuleiroLinhasHtml(antes) {
   const ents =
     CURRENT_FORMAT === "equipe"
       ? teamOrder.map((id) => ({
+          k: "t" + id,
           nome: `${TEAM_INFO[id].emoji} Equipe ${TEAM_INFO[id].label}`,
           pos: teams[id].position,
           cor: corDoJogador(TEAM_INFO[id].color),
           tok: TEAM_INFO[id].emoji,
         }))
       : players.map((p) => ({
+          k: "p" + (p.id || p.name),
           nome: playerNameHtml(p.name, p.color, p.avatar),
           pos: p.position,
           cor: corDoJogador(p.color),
@@ -13370,11 +13531,11 @@ function abrirTabuleiroGrande() {
         }));
   ents.sort((a, b) => b.pos - a.pos);
   const meta = WINNING_SCORE,
-    lider = ents[0].pos;
+    lider = ents.length ? ents[0].pos : 0;
   let ticks = "";
   for (let pos = BONUS_HOUSE_INTERVAL; pos < meta; pos += BONUS_HOUSE_INTERVAL) ticks += `<i style="left:${(pos / meta) * 100}%"></i>`;
   const casas = (n) => `${n} ${n === 1 ? "casa" : "casas"}`;
-  const linhas = ents
+  return ents
     .map((e, i) => {
       const pct = Math.max(0, Math.min(100, (e.pos / meta) * 100));
       const dist =
@@ -13383,16 +13544,34 @@ function abrirTabuleiroGrande() {
             ? "🏁 Empatado na frente"
             : "🏁 Na frente"
           : `a ${casas(lider - e.pos)} do líder`;
-      return `<li class="tg-row" style="--pc:${e.cor}"><div class="tg-top"><span>${i + 1}º ${e.nome}</span><span>casa ${e.pos}/${meta}</span></div><div class="tg-bar"><div class="tg-fill" style="width:${pct}%"></div>${ticks}<span class="tg-tok" style="left:${pct}%">${e.tok}</span></div><div class="tg-dist">${dist} · faltam ${casas(Math.max(0, meta - e.pos))} pra chegar</div></li>`;
+      const andou = antes && typeof antes[e.k] === "number" ? e.pos - antes[e.k] : null;
+      const selo =
+        andou === null ? "" : `<span class="tg-andou${andou > 0 ? " tg-subiu" : andou < 0 ? " tg-desceu" : ""}">${andou > 0 ? "+" + andou : andou < 0 ? String(andou) : "="}</span>`;
+      return `<li class="tg-row" style="--pc:${e.cor}"><div class="tg-top"><span>${i + 1}º ${e.nome}${selo}</span><span>casa ${e.pos}/${meta}</span></div><div class="tg-bar"><div class="tg-fill" style="width:${pct}%"></div>${ticks}<span class="tg-tok" style="left:${pct}%">${e.tok}</span></div><div class="tg-dist">${dist} · faltam ${casas(Math.max(0, meta - e.pos))} pra chegar</div></li>`;
     })
     .join("");
+}
+function abrirTabuleiroGrande() {
+  if (CURRENT_MODE === "express" || !players.length) return;
+  const linhas = tabuleiroLinhasHtml(null);
   document.getElementById("tabuleiroModal")?.remove();
   const bg = document.createElement("div");
   bg.id = "tabuleiroModal";
   bg.className = "jf-modal-bg";
-  bg.innerHTML = `<div class="jf-modal tb-modal" role="dialog" aria-modal="true" aria-labelledby="tgTitle"><h3 id="tgTitle">🗺️ Tabuleiro</h3>${tabHtmlGrande()}<div class="nov-sub">Quem está na frente e quem está atrás</div><ul class="tg-list">${linhas}</ul><button type="button" class="btn-start btn-neo neo-solid neo-still" id="tgOk" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35); margin-top:10px;">Fechar</button></div>`;
+  bg.innerHTML = `<div class="jf-modal tb-modal" role="dialog" aria-modal="true" aria-labelledby="tgTitle"><h3 id="tgTitle">🗺️ Tabuleiro</h3>${tabHtmlGrande()}<div class="nov-sub">Quem está na frente e quem está atrás</div><ul class="tg-list">${linhas}</ul><button type="button" class="chip tb-lobby-chip" id="tgLobby"></button><button type="button" class="btn-start btn-neo neo-solid neo-still" id="tgOk" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35); margin-top:10px;">Fechar</button></div>`;
   document.body.appendChild(bg);
   tabPreencherGrande();
+  const chip = bg.querySelector("#tgLobby");
+  const pintarChip = () => {
+    const on = tabLobbyLigado();
+    chip.textContent = on ? "🗺️ Tabuleiro entre as cartas: ligado" : "🗺️ Tabuleiro entre as cartas: desligado";
+    chip.classList.toggle("off", !on);
+  };
+  pintarChip();
+  chip.addEventListener("click", () => {
+    tabLobbyLigar(!tabLobbyLigado());
+    pintarChip();
+  });
   const fechar = () => bg.remove();
   bg.querySelector("#tgOk").addEventListener("click", fechar);
   bg.addEventListener("click", (ev) => {
@@ -16832,6 +17011,7 @@ function desfazerCaosAplicar(c) {
   } catch (e) {}
 }
 function desfazerAplicar(f) {
+  tabLobbyDesfeito(); // 1.7.9.4: o veredito voltou, o lobby do tabuleiro fecha
   players = f.players;
   teams = f.teams;
   teamOrder = f.teamOrder;
@@ -17101,6 +17281,8 @@ function telaoRelogio() {
  *    (2 no Clássico, 1,5 no Júnior). Os números do tabuleiro são as casas de verdade (20, 40… 200).
  *  · A forma sai no começo da partida, vai no save (tabForma) e no retrato (telão e online): todo
  *    aparelho desenha o mesmo tabuleiro. Não repete a forma da partida anterior neste aparelho.
+ *  · 1.7.9.4: na partida volta a linha com pontinhos; o desenho aparece no "toque pra ampliar" e no
+ *    lobby entre as cartas (tabLobbyAbrir, mais abaixo).
  *  · Tudo em SVG feito aqui (nada pra baixar). Modo Batata e "menos movimento" tiram a animação.
  * ---------------------------------------------------------------------- */
 const TAB_CASAS = 100;
@@ -17435,13 +17617,14 @@ function tabPecasDaPartida() {
   if (CURRENT_FORMAT === "equipe")
     return teamOrder.map((id) => {
       const t = teams[id], info = TEAM_INFO[id];
-      return { k: "t" + id, idx: tabIdx(t.position, meta), html: info.emoji, style: `background:${info.color}`, titulo: `Equipe ${info.label}: casa ${t.position}` };
+      return { k: "t" + id, pos: t.position, idx: tabIdx(t.position, meta), html: info.emoji, style: `background:${info.color}`, titulo: `Equipe ${info.label}: casa ${t.position}` };
     });
   return players.map((p) => {
     const label = escapeHtml(p.avatar || (p.name ? p.name[0].toUpperCase() : "?"));
     const grad = GRADIENTS[p.color];
     return {
       k: "p" + (p.id || p.name),
+      pos: p.position,
       idx: tabIdx(p.position, meta),
       html: label,
       cls: (p.color === "GRAD_ONYX" ? "onyx-swatch" : "") + (grad && p.color !== "GRAD_ONYX" ? " grad-anim" : ""),
@@ -17450,30 +17633,132 @@ function tabPecasDaPartida() {
     };
   });
 }
-// Tela da partida (substitui a linha com pontinhos). Desenha uma vez por forma/tema/meta; depois
-// só mexe nos peões.
-function tabRenderTrilha(track) {
-  const forma = tabFormaAtual(), meta = WINNING_SCORE, tema = tabTema(CURRENT_MODE);
-  const chave = [forma, meta, tema].join("|");
-  if (track.dataset.tab !== chave) {
-    track.dataset.tab = chave;
-    track.innerHTML = `<div class="tb-caixa tb-tema-${tema}" id="tabCaixaMini">${tabSvg({ forma, meta, modo: CURRENT_MODE, emPe: false })}<div class="tb-pecas"></div></div>
-      <div class="tb-legenda"><span>${TAB_FORMAS[forma].ic} Tabuleiro ${TAB_FORMAS[forma].nome}</span><span class="board-hint">🔍 toque pra ampliar</span><span>${boardCountsForWin() ? "Chegada: casa " + meta : "não vale vitória"}</span></div>`;
-  }
-  tabPosicionarPecas(track.querySelector(".tb-caixa"), forma, false, tabPecasDaPartida(), tabAnimar());
-}
-// Tabuleiro grande (janela do "toque pra ampliar"): em pé no celular, deitado no computador.
-function tabHtmlGrande() {
+// Tabuleiro grande: em pé no celular, deitado no computador. Vai no "toque pra ampliar" e no lobby.
+function tabHtmlGrande(id) {
   const forma = tabFormaAtual(), tema = tabTema(CURRENT_MODE);
   const emPe = window.innerWidth < 700;
-  return `<div class="tb-caixa tb-grande tb-tema-${tema}${emPe ? " tb-em-pe" : ""}" id="tabCaixaGrande">${tabSvg({ forma, meta: WINNING_SCORE, modo: CURRENT_MODE, emPe })}<div class="tb-pecas"></div></div>
-    <div class="tb-legenda tb-legenda-grande">${TAB_FORMAS[forma].ic} Tabuleiro ${TAB_FORMAS[forma].nome} · ${TAB_CASAS} casinhas, cada uma vale ${(WINNING_SCORE / TAB_CASAS).toLocaleString("pt-BR")} casa${WINNING_SCORE / TAB_CASAS === 1 ? "" : "s"}</div>`;
+  return `<div class="tb-caixa tb-grande tb-tema-${tema}${emPe ? " tb-em-pe" : ""}" id="${id || "tabCaixaGrande"}">${tabSvg({ forma, meta: WINNING_SCORE, modo: CURRENT_MODE, emPe })}<div class="tb-pecas"></div></div>
+    <div class="tb-legenda tb-legenda-grande">${TAB_FORMAS[forma].ic} Tabuleiro ${TAB_FORMAS[forma].nome} · ${TAB_CASAS} casinhas, cada uma vale ${(WINNING_SCORE / TAB_CASAS).toLocaleString("pt-BR")} casa${WINNING_SCORE / TAB_CASAS === 1 ? "" : "s"}${boardCountsForWin() ? "" : " · não vale vitória"}</div>`;
 }
 function tabPreencherGrande() {
   const caixa = document.getElementById("tabCaixaGrande");
   if (!caixa) return;
   Object.keys(tabPrevIdx).forEach((k) => k.startsWith("tabCaixaGrande") && delete tabPrevIdx[k]);
   tabPosicionarPecas(caixa, tabFormaAtual(), caixa.classList.contains("tb-em-pe"), tabPecasDaPartida(), false);
+}
+
+/* --- 1.7.9.4 · Board Update 3: LOBBY ENTRE AS CARTAS (ideia do JF) ---
+ * Na partida volta a linha com pontinhos (renderBoardTrack). O tabuleiro grande vira uma tela de
+ * espera: quando uma carta acaba e os pontos/casas já foram contados, ele abre por 1 minuto antes da
+ * próxima carta (com "Próxima carta ▶" pra pular). Os peões andam o que andaram na carta, a lista
+ * mostra quem está na frente e quanto cada um andou, e a mesa tem tempo de conversar e montar
+ * estratégia. No online cada aparelho abre o seu.
+ *  · É só tela: a próxima carta já foi sorteada (escondida) por baixo; nada da partida muda aqui,
+ *    nada vai no save nem no registro de ações. Desfazer o veredito fecha o lobby.
+ *  · Não abre no Express (não tem tabuleiro), no Descartar, nem quando a partida acaba.
+ *  · Dá pra desligar no "toque pra ampliar" (vale pra este aparelho). */
+const TAB_LOBBY_SEG = 60;
+const TAB_LOBBY_KEY = "perfil5_tab_lobby";
+let tabLobbyPendente = false; // uma carta acabou (checkWinnerThenDraw): abre quando a próxima estiver pronta
+let tabLobbyRelogio = null;
+let tabLobbyAntes = null; // casa de cada peça no lobby anterior (pra mostrar quanto andou)
+let tabLobbyAntesVelho = null; // o de antes do último lobby (o Desfazer volta pra ele)
+
+function tabLobbyLigado() {
+  try {
+    return JFStore.getItem(TAB_LOBBY_KEY) !== "0";
+  } catch (e) {
+    return true;
+  }
+}
+function tabLobbyLigar(on) {
+  try {
+    JFStore.setItem(TAB_LOBBY_KEY, on ? "1" : "0");
+  } catch (e) {}
+  if (!on) tabLobbyFechar();
+}
+function tabLobbyCasas() {
+  const o = {};
+  tabPecasDaPartida().forEach((p) => (o[p.k] = p.pos));
+  return o;
+}
+// Partida nova: esquece o lobby anterior e as posições desenhadas.
+function tabLobbyZerar() {
+  tabLobbyPendente = false;
+  tabLobbyAntes = tabLobbyAntesVelho = null;
+  tabLobbyFechar();
+  Object.keys(tabPrevIdx).forEach((k) => delete tabPrevIdx[k]);
+}
+// Chamado quando a próxima carta ficou pronta (drawHidden) ou na escolha do duelo de bônus.
+function tabLobbyTalvez() {
+  if (!tabLobbyPendente) return;
+  tabLobbyPendente = false;
+  if (gameEnded || !starterChosen || CURRENT_MODE === "express" || !players.length || !tabLobbyLigado()) return;
+  if (cardState !== "hidden" && cardState !== "bonusChoice") return;
+  tabLobbyAbrir();
+}
+function tabLobbyAbrir() {
+  tabLobbyFechar();
+  const agora = tabLobbyCasas();
+  // primeira carta da partida: todo mundo saiu da casa 0
+  const antes = tabLobbyAntes || (stats.totalDrawn <= 2 ? Object.fromEntries(Object.keys(agora).map((k) => [k, 0])) : null);
+  tabLobbyAntesVelho = tabLobbyAntes;
+  tabLobbyAntes = agora;
+  let prox = "";
+  if (cardState === "bonusChoice") prox = "🏟️ Casa de bônus! Depois do tabuleiro, escolham o duelo.";
+  else {
+    const m = players[mestreIndex];
+    if (m) prox = `📖 Próximo Mestre: ${playerNameHtml(m.name, m.color, m.avatar)}`;
+  }
+  if (typeof ultimaRodada !== "undefined" && ultimaRodada) prox += `<div class="tb-lobby-ultima">⏳ Última rodada!</div>`;
+  const ov = document.createElement("div");
+  ov.id = "tabLobby";
+  ov.className = "jf-modal-bg tb-lobby-bg";
+  ov.innerHTML = `<div class="jf-modal tb-modal tb-lobby" role="dialog" aria-modal="true" aria-labelledby="tbLobbyTit">
+    <div class="tb-lobby-topo"><h3 id="tbLobbyTit">🗺️ Antes da próxima carta</h3><button type="button" class="btn-neo neo-solid neo-still tb-lobby-pular" id="tbLobbyPular" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35);">Próxima carta ▶</button></div>
+    <div class="tb-lobby-tempo" aria-hidden="true"><div class="tb-lobby-barra" id="tbLobbyBarra"></div></div>
+    <div class="tb-lobby-sub"><b id="tbLobbySeg">${TAB_LOBBY_SEG}</b> s pra ver o tabuleiro e combinar a estratégia</div>
+    <div class="tb-lobby-prox">${prox}</div>
+    ${tabHtmlGrande("tabCaixaLobby")}
+    <ul class="tg-list">${tabuleiroLinhasHtml(antes)}</ul>
+  </div>`;
+  document.body.appendChild(ov);
+  ov.querySelector("#tbLobbyPular").addEventListener("click", tabLobbyFechar);
+  const caixa = ov.querySelector("#tabCaixaLobby");
+  // os peões entram um instante depois, pra andança aparecer (sai de onde estavam no lobby anterior)
+  setTimeout(() => {
+    if (caixa.isConnected) tabPosicionarPecas(caixa, tabFormaAtual(), caixa.classList.contains("tb-em-pe"), tabPecasDaPartida(), tabAnimar());
+  }, 280);
+  let fim = Date.now() + TAB_LOBBY_SEG * 1000,
+    antesTique = Date.now();
+  tabLobbyRelogio = setInterval(() => {
+    const t = Date.now(),
+      passou = t - antesTique;
+    antesTique = t;
+    if (!ov.isConnected || gameEnded || (cardState !== "hidden" && cardState !== "bonusChoice")) return tabLobbyFechar();
+    // aba escondida ou pausa: o relógio do lobby espera junto
+    if (document.hidden || (typeof pausaEstaAberta === "function" && pausaEstaAberta())) {
+      fim += passou;
+      return;
+    }
+    const resta = Math.max(0, fim - t);
+    const seg = ov.querySelector("#tbLobbySeg"),
+      barra = ov.querySelector("#tbLobbyBarra");
+    if (seg) seg.textContent = String(Math.ceil(resta / 1000));
+    if (barra) barra.style.width = ((resta / (TAB_LOBBY_SEG * 1000)) * 100).toFixed(1) + "%";
+    if (resta <= 0) tabLobbyFechar();
+  }, 250);
+}
+function tabLobbyFechar() {
+  clearInterval(tabLobbyRelogio);
+  tabLobbyRelogio = null;
+  document.getElementById("tabLobby")?.remove();
+}
+// Desfazer o veredito: o lobby fecha e a conta de "quanto andou" volta pro lobby de antes.
+function tabLobbyDesfeito() {
+  tabLobbyPendente = false;
+  if (document.getElementById("tabLobby")) tabLobbyAntes = tabLobbyAntesVelho;
+  tabLobbyFechar();
 }
 // Telão: o mesmo desenho, a partir do retrato público.
 function tabHtmlTelao(r) {
@@ -19713,7 +19998,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.9.3 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.9.4 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -24780,7 +25065,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.9.3 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.9.4 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -26491,6 +26776,8 @@ const JFStore = (function () {
           "perfil5_splash_h",
           "perfil5_caos_descanso",
           "perfil5_caos_fimsrecentes",
+          "perfil5_tab_ultima",
+          "perfil5_tab_lobby",
         ].forEach((k) => keys.add(k));
         for (const k of keys) {
           let best = api.getItem(k);
@@ -27951,7 +28238,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.9.3 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.9.4 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -28474,7 +28761,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.9.3 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.9.4 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -63542,6 +63829,21 @@ const PAUSE_TIPS = [
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.9.4",
+    data: "09/10/2026 · 14:07",
+    nome: "Rooms and Network Update · Board Update 3",
+    t: "Entre uma carta e outra, a mesa para pra olhar o tabuleiro.",
+    itens: [
+      "🗺️ Tabuleiro entre as cartas: quando a carta acaba e as casas já foram contadas, o tabuleiro grande abre por 1 minuto antes da próxima. Dá pra ver quem está na frente e combinar a estratégia.",
+      "♟️ Quanto cada um andou: os peões andam o que andaram na carta, e a lista mostra quantas casas cada um subiu ou desceu.",
+      "⏭️ Próxima carta: não quer esperar? O botão Próxima carta pula na hora.",
+      "📍 Linha com pontinhos de volta: durante a carta volta a linha simples com os peões. Tocando nela, o tabuleiro desenhado abre grande.",
+    ],
+    qol: [
+      "🔕 Desligar o tabuleiro entre cartas: no tabuleiro grande tem o botão pra desligar ou ligar de novo, neste aparelho.",
+    ],
+  },
   {
     v: "Beta 1.7.9.3",
     data: "09/10/2026 · 12:57",

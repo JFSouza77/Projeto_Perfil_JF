@@ -20,7 +20,8 @@ let x = SEM >>> 0; const rnd = () => ((x = (x * 1664525 + 1013904223) >>> 0) / 4
   const page = await ctx.newPage();
   const erros = [], avisos = [];
   page.on('pageerror', (e) => erros.push(e.message.slice(0, 160)));
-  page.on('console', (m) => { if (m.type() === 'error') avisos.push(m.text().slice(0, 160)); });
+  // a internet está cortada de propósito (route acima): a fonte do Google que não carrega não é falha do jogo
+  page.on('console', (m) => { if (m.type() === 'error' && !(/^Failed to load resource/.test(m.text()) && /^https?:/.test((m.location() || {}).url || ''))) avisos.push(m.text().slice(0, 160)); });
   page.on('dialog', (d) => d.dismiss().catch(() => {}));
   page.on('popup', (p) => p.close().catch(() => {}));
   await page.addInitScript(() => {

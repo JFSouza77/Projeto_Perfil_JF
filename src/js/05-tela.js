@@ -1232,25 +1232,70 @@ function renderBoardTrack() {
   if (!track) return;
   if (CURRENT_MODE === "express" || players.length === 0) {
     track.innerHTML = "";
-    delete track.dataset.tab;
     return;
   }
-  // 1.7.9.2 (Board Update): tabuleiro desenhado (05i-tabuleiro.js) no lugar da linha com pontinhos
-  tabRenderTrilha(track);
+  // 1.7.9.4 (pedido do JF): na partida volta a linha com pontinhos; o tabuleiro desenhado fica no
+  // "toque pra ampliar" e no lobby entre as cartas (tabLobbyAbrir, 05i-tabuleiro.js)
+  let bonusMarks = "";
+  for (let pos = BONUS_HOUSE_INTERVAL; pos < WINNING_SCORE; pos += BONUS_HOUSE_INTERVAL) {
+    const pct = (pos / WINNING_SCORE) * 100;
+    bonusMarks += `<div class="board-bonus-mark" style="left:${pct}%"></div>`;
+    // número só a cada 20 casas em tabuleiros grandes, pra não embolar na tela do celular
+    if (pos % (WINNING_SCORE >= 150 ? 20 : 10) === 0)
+      bonusMarks += `<div class="board-bonus-label" style="left:${pct}%">${pos}</div>`;
+  }
+  let tokens;
+  if (CURRENT_FORMAT === "equipe") {
+    tokens = teamOrder
+      .map((id, i) => {
+        const t = teams[id];
+        const info = TEAM_INFO[id];
+        const pct = Math.max(0, Math.min(100, (t.position / WINNING_SCORE) * 100));
+        const verticalOffset = i % 2 === 0 ? -10 : 10;
+        return `<div class="board-token" style="left:${pct}%; top:calc(50% + ${verticalOffset}px); background:${info.color};" title="Equipe ${info.label}: ${t.position} casa">${info.emoji}</div>`;
+      })
+      .join("");
+  } else {
+    tokens = players
+      .map((p, i) => {
+        const pct = Math.max(0, Math.min(100, (p.position / WINNING_SCORE) * 100));
+        const label = p.avatar || (p.name ? p.name[0].toUpperCase() : "?");
+        const verticalOffset = i % 2 === 0 ? -10 : 10;
+        return `<div class="board-token${p.color === "GRAD_ONYX" ? " onyx-swatch" : ""}${GRADIENTS[p.color] && p.color !== "GRAD_ONYX" ? " grad-anim" : ""}" style="left:${pct}%; top:calc(50% + ${verticalOffset}px); background:${GRADIENTS[p.color] && p.color !== "GRAD_ONYX" ? caosGradLoop(p.color) : playerColorCss(p.color)};${p.color === "GRAD_ONYX" ? " color:#fff;" : ""}" title="${escapeHtml(p.name)}: ${p.score} pts, casa ${p.position}">${label}</div>`;
+      })
+      .join("");
+  }
+  track.innerHTML = `<div class="board-track-line"></div>${bonusMarks}${tokens}
+    <div class="board-endpoints"><span>Casa 0</span><span class="board-hint">🔍 toque pra ampliar</span><span>Casa ${WINNING_SCORE}${boardCountsForWin() ? "" : " · não vale vitória"}</span></div>`;
+  const chaves =
+    CURRENT_FORMAT === "equipe"
+      ? teamOrder.map((id) => ["t" + id, teams[id].position])
+      : players.map((p) => ["p" + p.name, p.position]);
+  const els = track.querySelectorAll(".board-token");
+  chaves.forEach(([k, pos], i) => {
+    const antes = caosTokPrev[k];
+    caosTokPrev[k] = pos;
+    if (antes !== void 0 && antes !== pos && els[i] && !document.body.classList.contains("batata-mode")) {
+      els[i].classList.add("pulando");
+      els[i].dataset.t0 = Date.now();
+    }
+  });
 }
 // Tabuleiro ampliado: cada jogador (ou equipe) numa linha, do primeiro ao último, com a
-// distância pro líder e quanto falta pra chegar.
-function abrirTabuleiroGrande() {
-  if (CURRENT_MODE === "express" || !players.length) return;
+// distância pro líder e quanto falta pra chegar. antes (opcional, 1.7.9.4): casa de cada peça no
+// lobby anterior, pra mostrar quanto cada um andou nesta carta.
+function tabuleiroLinhasHtml(antes) {
   const ents =
     CURRENT_FORMAT === "equipe"
       ? teamOrder.map((id) => ({
+          k: "t" + id,
           nome: `${TEAM_INFO[id].emoji} Equipe ${TEAM_INFO[id].label}`,
           pos: teams[id].position,
           cor: corDoJogador(TEAM_INFO[id].color),
           tok: TEAM_INFO[id].emoji,
         }))
       : players.map((p) => ({
+          k: "p" + (p.id || p.name),
           nome: playerNameHtml(p.name, p.color, p.avatar),
           pos: p.position,
           cor: corDoJogador(p.color),
@@ -1258,11 +1303,11 @@ function abrirTabuleiroGrande() {
         }));
   ents.sort((a, b) => b.pos - a.pos);
   const meta = WINNING_SCORE,
-    lider = ents[0].pos;
+    lider = ents.length ? ents[0].pos : 0;
   let ticks = "";
   for (let pos = BONUS_HOUSE_INTERVAL; pos < meta; pos += BONUS_HOUSE_INTERVAL) ticks += `<i style="left:${(pos / meta) * 100}%"></i>`;
   const casas = (n) => `${n} ${n === 1 ? "casa" : "casas"}`;
-  const linhas = ents
+  return ents
     .map((e, i) => {
       const pct = Math.max(0, Math.min(100, (e.pos / meta) * 100));
       const dist =
@@ -1271,16 +1316,34 @@ function abrirTabuleiroGrande() {
             ? "🏁 Empatado na frente"
             : "🏁 Na frente"
           : `a ${casas(lider - e.pos)} do líder`;
-      return `<li class="tg-row" style="--pc:${e.cor}"><div class="tg-top"><span>${i + 1}º ${e.nome}</span><span>casa ${e.pos}/${meta}</span></div><div class="tg-bar"><div class="tg-fill" style="width:${pct}%"></div>${ticks}<span class="tg-tok" style="left:${pct}%">${e.tok}</span></div><div class="tg-dist">${dist} · faltam ${casas(Math.max(0, meta - e.pos))} pra chegar</div></li>`;
+      const andou = antes && typeof antes[e.k] === "number" ? e.pos - antes[e.k] : null;
+      const selo =
+        andou === null ? "" : `<span class="tg-andou${andou > 0 ? " tg-subiu" : andou < 0 ? " tg-desceu" : ""}">${andou > 0 ? "+" + andou : andou < 0 ? String(andou) : "="}</span>`;
+      return `<li class="tg-row" style="--pc:${e.cor}"><div class="tg-top"><span>${i + 1}º ${e.nome}${selo}</span><span>casa ${e.pos}/${meta}</span></div><div class="tg-bar"><div class="tg-fill" style="width:${pct}%"></div>${ticks}<span class="tg-tok" style="left:${pct}%">${e.tok}</span></div><div class="tg-dist">${dist} · faltam ${casas(Math.max(0, meta - e.pos))} pra chegar</div></li>`;
     })
     .join("");
+}
+function abrirTabuleiroGrande() {
+  if (CURRENT_MODE === "express" || !players.length) return;
+  const linhas = tabuleiroLinhasHtml(null);
   document.getElementById("tabuleiroModal")?.remove();
   const bg = document.createElement("div");
   bg.id = "tabuleiroModal";
   bg.className = "jf-modal-bg";
-  bg.innerHTML = `<div class="jf-modal tb-modal" role="dialog" aria-modal="true" aria-labelledby="tgTitle"><h3 id="tgTitle">🗺️ Tabuleiro</h3>${tabHtmlGrande()}<div class="nov-sub">Quem está na frente e quem está atrás</div><ul class="tg-list">${linhas}</ul><button type="button" class="btn-start btn-neo neo-solid neo-still" id="tgOk" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35); margin-top:10px;">Fechar</button></div>`;
+  bg.innerHTML = `<div class="jf-modal tb-modal" role="dialog" aria-modal="true" aria-labelledby="tgTitle"><h3 id="tgTitle">🗺️ Tabuleiro</h3>${tabHtmlGrande()}<div class="nov-sub">Quem está na frente e quem está atrás</div><ul class="tg-list">${linhas}</ul><button type="button" class="chip tb-lobby-chip" id="tgLobby"></button><button type="button" class="btn-start btn-neo neo-solid neo-still" id="tgOk" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35); margin-top:10px;">Fechar</button></div>`;
   document.body.appendChild(bg);
   tabPreencherGrande();
+  const chip = bg.querySelector("#tgLobby");
+  const pintarChip = () => {
+    const on = tabLobbyLigado();
+    chip.textContent = on ? "🗺️ Tabuleiro entre as cartas: ligado" : "🗺️ Tabuleiro entre as cartas: desligado";
+    chip.classList.toggle("off", !on);
+  };
+  pintarChip();
+  chip.addEventListener("click", () => {
+    tabLobbyLigar(!tabLobbyLigado());
+    pintarChip();
+  });
   const fechar = () => bg.remove();
   bg.querySelector("#tgOk").addEventListener("click", fechar);
   bg.addEventListener("click", (ev) => {

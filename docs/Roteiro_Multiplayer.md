@@ -481,3 +481,16 @@ Base: a revisão externa da 1.7.8.9 (10 achados), cada um conferido no código.
   - casas em blocos numa pista larga, com cores alternadas e degradê no Júnior;
   - "?" no bônus e número dentro do bloco;
   - entraram Oval, Labirinto e Zigue-zague; saiu o Coração; a Espiral ficou mais espaçada.
+
+### Board Update 3 · 1.7.9.4 (publicada)
+- **Ideia do JF:** o tabuleiro grande vira um lobby entre as cartas.
+- **Na partida** volta a linha com pontinhos. O tabuleiro desenhado aparece no "toque pra ampliar" e no lobby.
+- **Lobby:**
+  - abre quando a carta acaba e as casas já foram contadas (`checkWinnerThenDraw` marca, `drawHidden` ou a escolha do duelo abrem);
+  - fica aberto 1 minuto, com "Próxima carta ▶" pra pular; a pausa e a aba escondida param o relógio;
+  - mostra o próximo Mestre, os peões andando desde o lobby anterior e a lista com quanto cada um andou;
+  - é só tela: a próxima carta já está sorteada e escondida por baixo, e nada vai no save nem no registro de ações;
+  - Desfazer o veredito fecha o lobby;
+  - não abre no Express, no Descartar nem no fim da partida;
+  - liga/desliga por aparelho (`perfil5_tab_lobby`).
+- **No online (a fazer):** cada aparelho abre o seu lobby a partir do retrato. Falta decidir se o "Próxima carta" de um vale pra mesa toda (sugestão: o host ou o Mestre da vez pula pra todos; os outros só fecham a própria tela).
