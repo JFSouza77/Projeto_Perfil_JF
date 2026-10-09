@@ -263,6 +263,7 @@ function resetGame() {
 function resetDeck() {
   caosPartidaSerial++;
   matchId = null;
+  tabForma = null; // 1.7.9.2: partida nova, tabuleiro novo
   sorteioContagem = 0;
   acoesZerar();
   caosCatSeq = [];

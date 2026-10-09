@@ -1,0 +1,225 @@
+/* 1.7.9.2 · Board Update: tabuleiro desenhado (forma sorteada por partida, tema do modo) */
+.board-track {
+  height: auto;
+  max-width: 460px;
+  margin: 6px 0 12px;
+}
+.tb-caixa {
+  --tb-fundo: radial-gradient(120% 90% at 30% 20%, #2e1f5e 0%, #15102e 70%);
+  --tb-trilha: #8b5cf6;
+  --tb-brilho: #c4b5fd;
+  --tb-casa: #ede9fe;
+  --tb-borda: #6d28d9;
+  --tb-bonus: #fbbf24;
+  --tb-num: #ddd6fe;
+  --tb-halo: #15102e;
+  --tb-ponta: #fbbf24;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 100 / 56;
+  border-radius: 18px;
+  background: var(--tb-fundo);
+  border: 1px solid color-mix(in srgb, var(--tb-trilha) 55%, transparent);
+  box-shadow:
+    0 0 18px color-mix(in srgb, var(--tb-trilha) 30%, transparent),
+    inset 0 0 24px #0006;
+}
+.tb-caixa .tb-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.tb-trilha-luz {
+  fill: none;
+  stroke: var(--tb-brilho);
+  stroke-width: 4.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.22;
+}
+.tb-trilha {
+  fill: none;
+  stroke: var(--tb-trilha);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.9;
+}
+.tb-casa {
+  fill: var(--tb-casa);
+  stroke: var(--tb-borda);
+  stroke-width: 0.35;
+}
+.tb-casa.tb-dez {
+  stroke-width: 0.6;
+}
+.tb-casa.tb-bonus {
+  fill: var(--tb-bonus);
+  stroke: #fff8;
+  filter: drop-shadow(0 0 0.8px var(--tb-bonus));
+}
+.tb-num {
+  font-size: 2.3px;
+  font-weight: 800;
+  fill: var(--tb-num);
+  text-anchor: middle;
+  dominant-baseline: central;
+  paint-order: stroke;
+  stroke: var(--tb-halo);
+  stroke-width: 0.7px;
+  font-family: inherit;
+}
+.tb-ponta {
+  fill: var(--tb-ponta);
+  stroke: #fff;
+  stroke-width: 0.4;
+  filter: drop-shadow(0 0 1.2px var(--tb-ponta));
+}
+.tb-ponta-ic {
+  font-size: 2.6px;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.tb-pecas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.board-token.tb-peao {
+  top: 0;
+  width: 22px;
+  height: 22px;
+  margin-left: -11px;
+  margin-top: -11px;
+  font-size: 0.78rem;
+  border-width: 2px;
+  transition: none;
+  z-index: 3;
+}
+.tb-legenda {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: 0.66rem;
+  opacity: 0.78;
+}
+.tb-legenda-grande {
+  justify-content: center;
+  margin: 8px 0 2px;
+  font-size: 0.8rem;
+}
+
+/* tabuleiro grande (toque pra ampliar) */
+.tb-grande {
+  margin: 10px auto 0;
+}
+.tb-grande.tb-em-pe {
+  aspect-ratio: 60 / 100;
+  width: auto;
+  height: min(62vh, 560px);
+  max-width: 100%;
+}
+.tb-grande .board-token.tb-peao {
+  width: 28px;
+  height: 28px;
+  margin-left: -14px;
+  margin-top: -14px;
+  font-size: 0.95rem;
+}
+
+/* ---- temas por modo ---- */
+.tb-tema-hardcore {
+  --tb-fundo: radial-gradient(120% 90% at 30% 20%, #3f0b0b 0%, #120404 72%);
+  --tb-trilha: #dc2626;
+  --tb-brilho: #f87171;
+  --tb-casa: #fee2e2;
+  --tb-borda: #7f1d1d;
+  --tb-bonus: #f59e0b;
+  --tb-num: #fecaca;
+  --tb-halo: #120404;
+  --tb-ponta: #ef4444;
+}
+.tb-tema-junior {
+  --tb-fundo: radial-gradient(120% 90% at 30% 20%, #1d4ed8 0%, #0b2447 75%);
+  --tb-trilha: #fde047;
+  --tb-brilho: #ffffff;
+  --tb-casa: #fef08a;
+  --tb-borda: #ffffff;
+  --tb-bonus: #f472b6;
+  --tb-num: #fef9c3;
+  --tb-halo: #0b2447;
+  --tb-ponta: #34d399;
+}
+.tb-tema-oldschool {
+  --tb-fundo: repeating-linear-gradient(100deg, #6b4423 0 14px, #5d3a1d 14px 30px, #6f4826 30px 44px);
+  --tb-trilha: #e9cf9c;
+  --tb-brilho: #fff3d6;
+  --tb-casa: #f8ecd2;
+  --tb-borda: #7c4a1e;
+  --tb-bonus: #d97706;
+  --tb-num: #fff3d6;
+  --tb-halo: #4a2d14;
+  --tb-ponta: #b45309;
+}
+.tb-tema-oldschool .tb-trilha {
+  stroke-dasharray: 3.2 1.4;
+}
+
+/* ---- tema Claro ---- */
+body.claro .tb-caixa {
+  --tb-fundo: radial-gradient(120% 90% at 30% 20%, #f7f2ff 0%, #e6dcff 75%);
+  --tb-casa: #ffffff;
+  --tb-num: #4c1d95;
+  --tb-halo: #f7f2ff;
+  box-shadow: 0 2px 10px #0002;
+}
+body.claro .tb-tema-hardcore {
+  --tb-fundo: radial-gradient(120% 90% at 30% 20%, #fff1f1 0%, #fecaca 80%);
+  --tb-num: #7f1d1d;
+  --tb-halo: #fff1f1;
+}
+body.claro .tb-tema-junior {
+  --tb-fundo: radial-gradient(120% 90% at 30% 20%, #e0f2fe 0%, #bae6fd 80%);
+  --tb-trilha: #f59e0b;
+  --tb-num: #0c4a6e;
+  --tb-halo: #e0f2fe;
+}
+body.claro .tb-tema-oldschool {
+  --tb-fundo: repeating-linear-gradient(100deg, #e8d3a8 0 14px, #dfc797 14px 30px, #ecd8b0 30px 44px);
+  --tb-trilha: #8b5a2b;
+  --tb-num: #4a2d14;
+  --tb-halo: #f3e3c3;
+}
+
+/* computador e telão: o tabuleiro não precisa ocupar a largura toda */
+@media (min-width: 900px) and (min-height: 640px) and (hover: hover) {
+  .board-track .tb-caixa {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .board-track .tb-legenda {
+    max-width: 640px;
+    margin: 6px auto 0;
+  }
+  .board-token.tb-peao {
+    width: 28px;
+    height: 28px;
+    margin-left: -14px;
+    margin-top: -14px;
+    font-size: 0.95rem;
+  }
+}
+.telao-tabuleiro .tb-caixa {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.telao-tabuleiro .board-token.tb-peao {
+  width: 34px;
+  height: 34px;
+  margin-left: -17px;
+  margin-top: -17px;
+  font-size: 1.15rem;
+}

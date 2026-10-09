@@ -465,3 +465,12 @@ Base: a revisão externa da 1.7.8.9 (10 achados), cada um conferido no código.
   4. **O retrato público continua sem id da carta e sem id da dica,** o que já é verdade desde a 1.7.8.4.
   5. **O save do convidado não guarda carta nem resposta.** Só o host salva a partida.
 - **O que sobra:** quem souber depurar o jogo no navegador do host ou do Mestre da vez. É o mesmo que espiar a carta na mão de quem lê.
+
+### Board Update · 1.7.9.2 (publicada)
+- **Ideia do JF:** um tabuleiro de verdade, com cara do jogo original e forma diferente a cada partida.
+- **100 casinhas** (decisão do JF), cada uma valendo `meta/100`. A regra continua em casas/pontos (`WINNING_SCORE`).
+- **Forma:** 7 formas, sorteadas por partida. O `tabForma` vai no save e no retrato (`tabuleiro`), então telão e online desenham igual.
+- **Tema por modo**, peões que andam casa por casa e tabuleiro grande em pé no celular.
+- **Testes:**
+  - `teste_telao` confere a forma e os peões no telão;
+  - `teste_acoes` confere que a forma volta igual ao recarregar e muda numa partida nova.

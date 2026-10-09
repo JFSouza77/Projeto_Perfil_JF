@@ -320,6 +320,7 @@ function retratoPartida(papel) {
     formato: CURRENT_FORMAT,
     vitoria: winCond(),
     meta: { casa: WINNING_SCORE, pontos: typeof metaPontos === "function" ? metaPontos() : null },
+    tabuleiro: CURRENT_MODE === "express" ? null : tabFormaAtual(), // 1.7.9.2: todo aparelho desenha a mesma forma
     rodada: rodadaAtual,
     ultimaRodada,
     iniciada: starterChosen,

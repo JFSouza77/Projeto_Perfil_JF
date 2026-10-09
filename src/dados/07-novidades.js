@@ -6,6 +6,23 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.9.2",
+    data: "09/10/2026 · 11:58",
+    nome: "Rooms and Network Update · Board Update",
+    t: "Chegou o tabuleiro de verdade!",
+    itens: [
+      "🗺️ Tabuleiro desenhado: a linha com pontinhos virou um caminho com 100 casinhas, casas de bônus destacadas, largada e chegada.",
+      "🎲 Forma nova a cada partida: Oito, Serpente, Espiral, Coração, Onda, Circuito ou Estrela, sem repetir a da partida anterior.",
+      "🎨 A cara de cada modo: neon no Clássico, vermelho no Hardcore, colorido no Júnior e madeira no Old School, no Noturno e no Claro.",
+      "♟️ Peões que andam: cada jogador é um peão com o seu avatar e anda casa por casa quando avança ou volta.",
+      "🔍 Tabuleiro grande: tocando no tabuleiro, ele abre grande. No celular fica em pé, e o Oito vira um 8 de verdade.",
+      "📺 No telão também: a segunda tela mostra o mesmo tabuleiro, com a mesma forma.",
+    ],
+    qol: [
+      "🐢 Sem enjoo: no Modo Batata e com menos movimento, os peões vão direto pra casa, sem andar.",
+    ],
+  },
+  {
     v: "Beta 1.7.9.1",
     data: "09/10/2026 · 11:38",
     nome: "Rooms and Network Update · Parte 2",

@@ -69,7 +69,8 @@ const ARQ = acharMestre(process.argv[2]);
   });
   await telao.waitForTimeout(600);
   const j = await jogo.evaluate(() => ({ rev: partidaRevisao, resposta: currentCard.answer, abertas: revealedOrder.map((x) => x.item.text), mestre: players[mestreIndex].name, vez: players[responderIndex].name, fechadas: currentCard.clues.filter((c, i) => !revealedOrder.some((x) => x.index === i)).map((c) => c.text) }));
-  const t = await telao.evaluate(() => ({ txt: document.getElementById('telao').innerText, rev: telaoUltimo && telaoUltimo.revisao, bloqueado: saveBloqueado, iniciou: starterChosen }));
+  const t = await telao.evaluate(() => ({ txt: document.getElementById('telao').innerText, rev: telaoUltimo && telaoUltimo.revisao, bloqueado: saveBloqueado, iniciou: starterChosen, pecas: document.querySelectorAll('#tabCaixaTelao .tb-peao').length, forma: telaoUltimo && telaoUltimo.tabuleiro }));
+  const formaJogo = await jogo.evaluate(() => tabForma);
   // retrato velho é ignorado
   await jogo.evaluate(() => { const r = retratoPartida('mesa'); r.revisao = 1; r.jogadores[0].nome = 'VELHO'; telaoCanal.postMessage({ tipo: 'retrato', retrato: r }); });
   await telao.waitForTimeout(300);
@@ -90,6 +91,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['Telão ignora retrato velho', !t2.includes('VELHO')],
     ['Telão não carrega a partida e não grava (saveBloqueado)', t.bloqueado === true && t.iniciou === false],
     ['O save continua sendo só do jogo', savedAt(saveDepois) >= savedAt(saveAntes)],
+    ['Telão mostra o tabuleiro do jogo, com a mesma forma e um peão por jogador (1.7.9.2)', t.pecas === 3 && t.forma === formaJogo],
     ['Telão tem botão de sair, e ele volta pro jogo normal', temSair && saiu],
   ];
   linhas.forEach(([n, ok]) => console.log(`${ok ? 'ok    ' : 'FALHOU'}  ${n}`));
