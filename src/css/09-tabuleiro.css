@@ -14,6 +14,8 @@
   --tb-num: #ddd6fe;
   --tb-halo: #15102e;
   --tb-ponta: #fbbf24;
+  --tb-c1: #f97316; /* laranja e azul, cara de Perfil 5 */
+  --tb-c2: #2563eb;
   position: relative;
   width: 100%;
   aspect-ratio: 100 / 56;
@@ -33,34 +35,51 @@
 .tb-trilha-luz {
   fill: none;
   stroke: var(--tb-brilho);
-  stroke-width: 4.4;
   stroke-linecap: round;
   stroke-linejoin: round;
-  opacity: 0.22;
+  opacity: 0.18;
 }
-.tb-trilha {
+/* 1.7.9.3: pista larga com blocos colados (como os tabuleiros de verdade) */
+.tb-faixa {
   fill: none;
-  stroke: var(--tb-trilha);
-  stroke-width: 2.4;
+  stroke: var(--tb-borda);
   stroke-linecap: round;
   stroke-linejoin: round;
-  opacity: 0.9;
 }
-.tb-casa {
-  fill: var(--tb-casa);
+.tb-bloco {
+  fill: var(--tb-c1);
   stroke: var(--tb-borda);
-  stroke-width: 0.35;
+  stroke-width: 0.28;
+  stroke-linejoin: round;
 }
-.tb-casa.tb-dez {
-  stroke-width: 0.6;
+.tb-bloco.tb-b {
+  fill: var(--tb-c2);
 }
-.tb-casa.tb-bonus {
+.tb-bloco.tb-bonus {
   fill: var(--tb-bonus);
-  stroke: #fff8;
-  filter: drop-shadow(0 0 0.8px var(--tb-bonus));
+}
+.tb-q {
+  font-weight: 900;
+  fill: #fff;
+  text-anchor: middle;
+  dominant-baseline: central;
+  paint-order: stroke;
+  stroke: #0007;
+  stroke-width: 0.35px;
+  font-family: inherit;
+}
+.tb-rot {
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  fill: var(--tb-num);
+  text-anchor: middle;
+  dominant-baseline: central;
+  paint-order: stroke;
+  stroke: var(--tb-halo);
+  stroke-width: 0.6px;
+  font-family: inherit;
 }
 .tb-num {
-  font-size: 2.3px;
   font-weight: 800;
   fill: var(--tb-num);
   text-anchor: middle;
@@ -77,7 +96,6 @@
   filter: drop-shadow(0 0 1.2px var(--tb-ponta));
 }
 .tb-ponta-ic {
-  font-size: 2.6px;
   text-anchor: middle;
   dominant-baseline: central;
 }
@@ -141,6 +159,8 @@
   --tb-num: #fecaca;
   --tb-halo: #120404;
   --tb-ponta: #ef4444;
+  --tb-c1: #b91c1c;
+  --tb-c2: #292524;
 }
 .tb-tema-junior {
   --tb-fundo: radial-gradient(120% 90% at 30% 20%, #1d4ed8 0%, #0b2447 75%);
@@ -152,6 +172,8 @@
   --tb-num: #fef9c3;
   --tb-halo: #0b2447;
   --tb-ponta: #34d399;
+  --tb-c1: #fde047; /* no Júnior o degradê de arco-íris vem casa por casa (cara de Perfil 8) */
+  --tb-c2: #fde047;
 }
 .tb-tema-oldschool {
   --tb-fundo: repeating-linear-gradient(100deg, #6b4423 0 14px, #5d3a1d 14px 30px, #6f4826 30px 44px);
@@ -163,9 +185,12 @@
   --tb-num: #fff3d6;
   --tb-halo: #4a2d14;
   --tb-ponta: #b45309;
+  --tb-c1: #f3e2bf;
+  --tb-c2: #a0693a;
 }
-.tb-tema-oldschool .tb-trilha {
-  stroke-dasharray: 3.2 1.4;
+.tb-tema-junior .tb-bonus,
+.tb-tema-junior .tb-faixa {
+  stroke: #ffffff;
 }
 
 /* ---- tema Claro ---- */
@@ -222,4 +247,9 @@ body.claro .tb-tema-oldschool {
   margin-left: -17px;
   margin-top: -17px;
   font-size: 1.15rem;
+}
+.tb-num.tb-num-bloco {
+  fill: #fff;
+  stroke: #000a;
+  stroke-width: 0.45px;
 }
