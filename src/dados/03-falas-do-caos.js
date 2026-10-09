@@ -4586,6 +4586,31 @@ const REACTIVE_VOICE = {
     "Carta de bônus desistida. Ela volta pra fila, mais descansada. Ninguém pontua.",
     "O bônus fugiu da carta e vai tentar de novo na próxima. Ninguém pontua agora.",
   ],
+  // 1.7.9.9 (ideia do JF): o Desfazer vira "chamaram o VAR". m = Mestre (quem pediu), q = quem tinha
+  // acertado, t = o veredito anulado (Errou, Pulou, Absurdo).
+  var: {
+    acerto: [
+      (m, q) => `📺 Opa! ${m} chamou o VAR! Após uma análise minuciosa... o ponto de ${q} foi ANULADO.`,
+      (m, q) => `🟥 Cartão vermelho pro ponto de ${q}! O VAR anulou. Não pode, não.`,
+      (m, q) => `📺 Revisão do VAR: ${m} viu alguma coisa estranha no lance. Ponto de ${q} anulado, volta tudo.`,
+      (m, q) => `Vixe. Parece que alguém não cumpriu as regras. O VAR anulou o acerto de ${q}.`,
+      (m, q) => `📺 Segura a comemoração, ${q}! Checagem do VAR em andamento... anulado.`,
+      (m, q) => `O VAR foi chamado e o lance de ${q} não valeu. A torcida vaia, eu aplaudo.`,
+      (m, q) => `📺 Linhas traçadas, replay em câmera lenta, e... impedimento! Ponto de ${q} anulado.`,
+    ],
+    erro: [
+      (m, q, t) => `📺 ${m} chamou o VAR! Após análise minuciosa, o "${t}" foi anulado. A jogada volta.`,
+      (m, q, t) => `🟨 O VAR voltou o lance: "${t}" anulado. Alguém aí ganhou uma segunda chance.`,
+      (m, q, t) => `Revisão do VAR concluída: não foi "${t}" coisa nenhuma. Volta tudo.`,
+      (m, q, t) => `📺 Árbitro de vídeo em ação. O "${t}" foi anulado. Respira e marca de novo.`,
+      (m, q, t) => `📺 Opa, opa, opa! O VAR achou um erro no erro. "${t}" anulado.`,
+    ],
+    palpite: [
+      (m) => `📺 VAR no palpite! ${m} pediu revisão e o palpite foi anulado.`,
+      () => `🟥 Palpite anulado pelo VAR. Nem sempre a ficha cai, né?`,
+      () => `📺 O VAR olhou o palpite de todos os ângulos e mandou voltar. Anulado.`,
+    ],
+  },
   // 1.7.9.5 · Board Update 4 (ideia do JF): o C.A.O.S. comenta o tabuleiro do lobby entre as cartas.
   tabuleiro: {
     // a primeira vez que este aparelho vê o lobby

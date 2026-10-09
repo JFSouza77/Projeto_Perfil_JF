@@ -518,7 +518,8 @@ function desfazerNome(tipo, args) {
 }
 function desfazerOferecer(tipo, args, foto) {
   desfazerLimpar();
-  desfazerOferta = { tipo, foto, nome: desfazerNome(tipo, args), ate: Date.now() + DESFAZER_MS };
+  const quem = tipo === "acertou" ? (players[args && args[0] !== undefined ? args[0] : responderIndex] || {}).name || null : null;
+  desfazerOferta = { tipo, foto, nome: desfazerNome(tipo, args), quem, ate: Date.now() + DESFAZER_MS };
   try {
     const b = document.createElement("button");
     b.type = "button";
@@ -560,6 +561,19 @@ function desfazerUltimo() {
   updateDeckInfo();
   updateDrawAvailability();
   saveGameState();
-  showToastMessage("↩️ Desfeito: " + o.nome + ". Pode marcar de novo.", null, true, null, true);
+  showToastMessage(desfazerFalaVar(o), null, true, null, true);
   return true;
+}
+// 1.7.9.9 (ideia do JF): o C.A.O.S. narra o Desfazer como o VAR do futebol. Calado, só o aviso.
+function desfazerFalaVar(o) {
+  const simples = "↩️ Desfeito: " + o.nome + ". Pode marcar de novo.";
+  try {
+    if (caosSilenced || !REACTIVE_VOICE.var) return simples;
+    const banco = o.tipo === "acertou" ? REACTIVE_VOICE.var.acerto : o.tipo === "errou" ? REACTIVE_VOICE.var.erro : REACTIVE_VOICE.var.palpite;
+    const m = (players[mestreIndex] || {}).name || "O Mestre";
+    const fala = getRandomReaction(banco, m, o.quem || "alguém", o.nome);
+    return fala ? fala + " ↩️ Pode marcar de novo." : simples;
+  } catch (e) {
+    return simples;
+  }
 }

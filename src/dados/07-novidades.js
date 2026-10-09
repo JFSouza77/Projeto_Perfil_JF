@@ -6,6 +6,16 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.9.9",
+    data: "09/10/2026 · 18:15",
+    nome: "Rooms and Network Update · VAR do C.A.O.S.",
+    t: "Desfez o veredito? Chamaram o VAR.",
+    itens: [
+      "📺 Chama o VAR: quando o Mestre desfaz um veredito, o C.A.O.S. narra como árbitro de vídeo. Análise minuciosa, cartão vermelho, ponto anulado, segunda chance pra quem errou.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.9.8",
     data: "09/10/2026 · 17:56",
     nome: "Rooms and Network Update · Board Update 6",
