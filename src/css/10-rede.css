@@ -96,3 +96,108 @@ body.claro .rede-barra {
 body.claro .rede-link {
   background: #0000000f;
 }
+
+/* 1.7.9.10 · painel calculado pelo host, votação, intervalo e conexão */
+.rede-conexao {
+  text-align: center;
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  color: #fde68a;
+}
+.rede-btn.rede-ok {
+  background: #15803dcc;
+  border-color: #4ade80aa;
+}
+.rede-btn.rede-nao {
+  background: #b91c1ccc;
+  border-color: #f87171aa;
+}
+.rede-acoes.rede-mais {
+  margin-top: 10px;
+  opacity: 0.9;
+}
+.rede-acoes.rede-mais .rede-btn {
+  min-height: 38px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  background: #ffffff1a;
+  border-color: #ffffff40;
+}
+.rede-acoes + .rede-rot {
+  margin-top: 10px;
+}
+.rede-intervalo,
+.rede-votacao {
+  margin: 8px 0 10px;
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 0.92rem;
+}
+.rede-intervalo {
+  background: #a78bfa22;
+  border: 1px solid #a78bfa88;
+}
+.rede-votacao {
+  background: #22d3ee1a;
+  border: 1px solid #22d3ee88;
+}
+.rede-votacao .rede-acoes {
+  margin-top: 8px;
+}
+.rede-estado {
+  margin: 4px 0 8px;
+  font-weight: 800;
+}
+.rede-rot-eu {
+  display: block;
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+  text-align: left;
+}
+.rede-rot-eu select {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 8px;
+  border-radius: 8px;
+  font: inherit;
+}
+/* voto do jogador que está no aparelho do host */
+.rede-voto-host {
+  position: fixed;
+  left: 50%;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  z-index: 10002;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #0b0820f0;
+  border: 1px solid #22d3ee;
+  color: #fff;
+  font-weight: 800;
+  box-shadow: 0 8px 30px #0008;
+}
+.rede-voto-host button {
+  min-height: 40px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 0;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+.rede-voto-host [data-sim="1"] {
+  background: #16a34a;
+  color: #fff;
+}
+.rede-voto-host [data-sim="0"] {
+  background: #dc2626;
+  color: #fff;
+}
+body.claro .rede-voto-host {
+  background: #fffffff0;
+  color: #1e1b4b;
+}

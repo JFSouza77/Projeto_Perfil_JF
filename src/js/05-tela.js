@@ -986,10 +986,12 @@ function render() {
           chooseClue(parseInt(btn.dataset.idx));
         };
       }
-      if (canDiscard) document.getElementById("discardBtn").addEventListener("click", discardAndDraw);
+      // 1.7.9.10: com gente na sala online, Descartar e Desistir viram votação da mesa (decisão do JF)
+      if (canDiscard)
+        document.getElementById("discardBtn").addEventListener("click", () => (typeof redeVotacaoTalvez === "function" && redeVotacaoTalvez("descartar")) || discardAndDraw());
       {
         const gu = document.getElementById("giveUpBtn");
-        if (gu) gu.addEventListener("click", pedirDesistirCarta);
+        if (gu) gu.addEventListener("click", () => (typeof redeVotacaoTalvez === "function" && redeVotacaoTalvez("desistir")) || pedirDesistirCarta());
       }
     }
   }
@@ -3247,7 +3249,7 @@ Os ${p.score} pontos vão ser divididos: +${parte} pra cada um dos ${resto} que 
       const sb = document.createElement("button");
       sb.type = "button";
       sb.className = "ci-btn ci-wide";
-      sb.textContent = rede && rede.papel === "host" ? `🌐 Sala ${rede.sala} (ver quem está dentro)` : "🌐 Abrir sala (ensaio da rede)";
+      sb.textContent = rede && rede.papel === "host" ? `🌐 Sala ${rede.sala} (ver quem está dentro)` : "🌐 Jogar online (abrir sala)";
       sb.addEventListener("click", () => {
         ov.remove();
         redePainelHost();

@@ -16,6 +16,8 @@
   "devDependencies": {
     "acorn": "^8.15.0",
     "csso": "^5.0.5",
+    "peer": "^1.0.2",
+    "peerjs": "^1.5.5",
     "terser": "^5.44.0"
   },
   "optionalDependencies": {

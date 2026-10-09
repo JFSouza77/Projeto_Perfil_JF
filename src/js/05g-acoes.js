@@ -33,7 +33,9 @@ const ACOES = {
   bonusAdversario: { fn: "chooseBonusOpponent", pode: () => acoesEmJogo() && cardState === "bonusChoice" },
   // 1.7.9: a mesma regra da tela (até a 5ª dica, no máximo 2 seguidos); o "reembaralhar" saiu de vez
   descartarCarta: { fn: "discardAndDraw", pode: () => podeDescartarCarta() },
-  desistirCarta: { fn: "pedirDesistirCarta", pode: () => podeDesistirCarta() },
+  // 1.7.9.10: a ação é a desistência de verdade (antes era só o pedido, e a confirmação da janela mudava
+  // a partida fora da porta: sem revisão, sem registro). O botão continua pedindo confirmação antes.
+  desistirCarta: { fn: "desistirCarta", pode: () => podeDesistirCarta() },
   expressPassar: { fn: "expressPass", pode: () => acoesEmJogo() && CURRENT_MODE === "express" },
   expressPular: { fn: "expressSkip", pode: () => acoesEmJogo() && CURRENT_MODE === "express" },
   expressInverter: { fn: "expressReverse", pode: () => acoesEmJogo() && CURRENT_MODE === "express" },
