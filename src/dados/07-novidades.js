@@ -1,9 +1,20 @@
 // Novidades que o jogador vê (🆕 na tela inicial). Escreva pra quem joga:
 //  · cada item é "emoji Título: explicação" (título curto, até 34 letras, sem dois-pontos nem aspas),
 //    assim ele vira um título que abre ao tocar;
-//  · nada de bastidores (quem pediu, quem revisou, IA, testes, simulador, código, ids). Versão que só
-//    mudou por dentro fica só com a frase "t" e itens vazios.
+//  · nada de bastidores (o criador, IA, testes, simulador, código, ids). Versão que só mudou por dentro
+//    fica só com a frase "t" e itens vazios;
+//  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.8.8",
+    data: "08/10/2026 · 22:02",
+    nome: "Actions and Events Update · Parte 9",
+    t: "Créditos de volta nas Novidades.",
+    itens: [
+      "🙌 Créditos de volta: as ideias que vieram de quem joga voltaram a levar o nome de quem deu, como as do Pedro, do Felipe, do Bruno Levanti e do Klaus.",
+    ],
+    qol: [],
+  },
   {
     v: "Beta 1.7.8.7",
     data: "08/10/2026 · 21:40",
@@ -364,7 +375,7 @@ const NOVIDADES = [
       "🎯 3.410 falas: o repertório do C.A.O.S. fechou redondinho.",
     ],
     qol: [
-      "👑 Volta de quem sumiu: o C.A.O.S. só diz que sentiu falta quando a pessoa está voltando de verdade.",
+      "👑 Anne: o C.A.O.S. só diz que sentiu falta quando ela está voltando, e ganhou falas novas pra primeira vez, pra quando ela volta no mesmo dia e pra quando ela some.",
       "👋 Boas-vindas com nome: a fala de quem chega sempre traz o nome da pessoa.",
       "💾 O que ele lembra: o Cérebro mostra o que o C.A.O.S. guarda entre partidas. Jogando pelo site adicionado à Tela de Início, a memória fica guardada de vez.",
     ],
@@ -395,6 +406,7 @@ const NOVIDADES = [
     t: "O C.A.O.S. monta o que vai dizer pelo momento da partida, em vez de repetir frases.",
     itens: [
       "🧠 Falas montadas na hora: ele junta pedaços de frase conforme a hora, o dia, o modo, quem está na mesa e o que lembra de cada pessoa.",
+      "😎 Chega de comporte-se: as entradas especiais, que tinham 3 falas, agora têm centenas de combinações, e o C.A.O.S. lembra da última partida, de quanto tempo faz e de quem está na mesa (Anne, Pedro, Isabel).",
       "👋 Boas-vindas de verdade: cada jogador é recebido de um jeito, conforme a hora, se é a primeira vez, se sumiu, se ganhou ou perdeu a última.",
       "🔁 Menos repetição: ele lembra o que já disse e evita repetir, mesmo depois de fechar o jogo. Fala marcada com 👎 não volta.",
       "😤 Emoções calibradas: errar várias vezes seguidas deixa o C.A.O.S. irritado e depois magoado, e o tédio passa quando a mesa volta a jogar.",
@@ -408,7 +420,9 @@ const NOVIDADES = [
     data: "03/10/2026 · 10:40",
     nome: "C.A.O.S. and Code Update · Parte 1",
     t: "Organização por dentro, sem mudar nada na partida.",
-    itens: [],
+    itens: [
+      "🗂️ Jogo organizado por dentro: o jogo, que era um arquivo gigante só, agora é montado a partir de 32 partes menores, cada uma no seu lugar (sugestão do Klaus).",
+    ],
     qol: [],
   },
   {
@@ -558,6 +572,7 @@ const NOVIDADES = [
       "🧑 Cartas de Pessoa revisadas: as 191 cartas de Pessoa foram lidas dica por dica, e 83 dicas foram corrigidas ou trocadas.",
       "✍️ Fatos corrigidos: a Anitta não foi dentista; o Casimiro é vascaíno; o Neymar já voltou ao Santos; a Elsa não é coroada no fim do filme; e outras.",
       "🔁 Menos repetição: cartas que repetiam a mesma informação em duas ou três dicas ganharam dicas novas.",
+      "🙌 Créditos ao Pedro: a musiquinha de vitória quando alguém acerta a carta e a risada do C.A.O.S. quando ele zoa foram ideias do Pedro, de 11 anos, que chegaram na 1.7.1.6. Valeu, Pedro!",
     ],
     qol: [
       "🧹 Jogo mais leve: estilos que nunca apareciam na tela saíram. O jogo fica igualzinho.",
@@ -573,7 +588,7 @@ const NOVIDADES = [
       "🧮 Contas conferidas: somas, bissextos, algarismos romanos e divisões checados. Saíram as dicas tipo “venho dois anos depois de”.",
       "☀️ Modo Claro com identidade: cada modo ganhou um fundo na sua cor, e a carta virada usa o mesmo roxo do Noturno.",
       "🔎 Contraste no Claro: o que sumia no papel ficou legível.",
-      "📰 Novidades em caixinhas: cada mudança mostra só o título; é só tocar pra abrir ou fechar a explicação.",
+      "📰 Novidades em caixinhas: cada mudança mostra só o título; é só tocar pra abrir ou fechar a explicação. Ideia do Bruno Levanti!",
     ],
     qol: [
       "✍️ Fatos corrigidos: Olimpíadas de inverno, a saída da Rússia da guerra (1918), a Tarsila e a expulsão dos judeus em 1492.",
@@ -619,7 +634,7 @@ const NOVIDADES = [
     nome: "Owner Lock Update",
     t: "Cores com dono travadas de verdade e um C.A.O.S. que perde a paciência aos poucos.",
     itens: [
-      "🔒 Cores com dono: algumas cores especiais aparecem na paleta com cadeado e só liberam pro nome do dono.",
+      "🔒 Cores com dono: algumas cores especiais, como a cor Princesa da Anne, aparecem na paleta com cadeado e só liberam pro nome do dono.",
       "😤 Paciência que acaba: insistiu numa cor ou emoji que já tem dono? O C.A.O.S. sobe o tom a cada toque (no Júnior ele só reclama).",
     ],
     qol: [],
@@ -658,7 +673,7 @@ const NOVIDADES = [
       "🧸 Zoeira do Júnior: Family friendly (carinho o tempo todo e poucas zoeirinhas leves), Suave (zoa um pouquinho) e Normal (zoa no limite).",
       "🎭 Cada nível com seu jeito: no Suave ele ri de vez em quando; no Normal quase não fica magoado; no Ácido fica magoado e cobra depois; o Nível 0 torra a paciência.",
       "🥛 Nível 0 sem volta: silenciou o C.A.O.S.? Na carta seguinte ele cobra: “Foi você que pediu Nível 0. Não aguentou? Bebe leite!”",
-      "➕ Cadastro na ordem certa: o botão Adicionar fica depois de Cor, Emoji e Zoeira.",
+      "➕ Cadastro na ordem certa: o botão Adicionar fica depois de Cor, Emoji e Zoeira (ideia do Felipe).",
       "🎨 Cor ou emoji ocupado: o C.A.O.S. avisa de quem é.",
     ],
     qol: [
@@ -692,8 +707,8 @@ const NOVIDADES = [
     itens: [
       "🌙 Noturno e Claro: o Modo Noturno (padrão, tudo escuro) e o Modo Claro (papel lavanda e cartas brancas). Troque no menu ⋮.",
       "🙈 Resposta menor: só o nome, numa caixinha própria, e dá pra tocar nela pra esconder na hora.",
-      "🎵 Musiquinha de vitória: toca quando alguém acerta a carta.",
-      "😂 Risada do C.A.O.S.: às vezes ele ri quando zoa (nunca com quem está no Suave ou é iniciante).",
+      "🎵 Musiquinha de vitória: toca quando alguém acerta a carta. Ideia do Pedro, 11 anos!",
+      "😂 Risada do C.A.O.S.: às vezes ele ri quando zoa (nunca com quem está no Suave ou é iniciante). Ideia do Pedro, 11 anos!",
       "📱 Ícone novo: o ? neon na frente de uma carta com o P de Perfil.",
       "⏰ Tempo esgotado justo: o próximo não perde mais 5 segundos durante o aviso.",
       "💬 Balão mais legível: no celular, a fala vai embaixo, na largura toda.",
