@@ -408,6 +408,11 @@ function registrarVersao(versao, arqs) {
       `\n⚠️  ATENÇÃO: o nome do mestre diz ${versao.replace(/_/g, ".")}, mas o <title> do HTML diz ${carimbo || "(sem versão)"}.` +
         `\n    Confira o histórico/título do mestre antes de publicar.\n`,
     );
+  // 1.7.9.12: a linha da versão na tela inicial também tem que bater (na 1.7.9.12 ela ficou na versão
+  // anterior porque a troca procurava a linha pelo número). Aqui não é aviso: não publica.
+  const naTela = (mestre.match(/id="splashBuildLog">🚀 Beta (\d+(?:\.\d+){2,3})/) || [])[1];
+  if (naTela !== versao.replace(/_/g, "."))
+    throw new Error(`A tela inicial diz Beta ${naTela || "(sem versão)"}, mas o mestre é ${versao.replace(/_/g, ".")}. Atualize a linha do splashBuildLog em src/html/02-corpo.html.`);
   // A data "Atualizada em" da tela inicial tem que ser a de hoje (horário de Brasília).
   const hoje = new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo" }).format(new Date());
   const dataMestre = (mestre.match(/Atualizada em (\d{2}\/\d{2}\/\d{4})/) || [])[1];

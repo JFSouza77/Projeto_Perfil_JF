@@ -2297,3 +2297,9 @@ body.claro .acess-op.on {
     opacity: 0.7;
   }
 }
+/* 1.7.9.12: o aviso do online virou botão (abre o passo a passo) */
+button.splash-embreve {
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}

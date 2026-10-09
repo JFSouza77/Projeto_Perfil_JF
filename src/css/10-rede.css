@@ -201,3 +201,17 @@ body.claro .rede-voto-host {
   background: #fffffff0;
   color: #1e1b4b;
 }
+
+/* 1.7.9.12 · "Como funciona o online" na tela do convidado */
+.rede-como {
+  display: block;
+  margin: 14px auto 6px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid #22d3ee88;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}

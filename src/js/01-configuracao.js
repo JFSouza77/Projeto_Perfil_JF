@@ -890,7 +890,7 @@ const CAOS_TROPECO = {
   interpErro: ["Espera, isso foi acerto? … Não. Não foi.", "Pera, acertou? … Não. Ok, eu tinha entendido errado."],
 };
 const FORMAT_WRAP_IDS = { versus: "fmtWrapVersus", equipe: "fmtWrapEquipe" };
-const TUT_CAPS = ["Começo", "Cadastro", "A carta", "Pontos", "C.A.O.S.", "Extras"];
+const TUT_CAPS = ["Começo", "Cadastro", "A carta", "Pontos", "C.A.O.S.", "Extras", "Online"]; // 1.7.9.12: + Online
 const MODE_WRAP_IDS = {
   classico: "modeWrapClassico",
   hardcore: "modeWrapHardcore",

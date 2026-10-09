@@ -1217,7 +1217,8 @@ function redeConvidadoIniciar(sala) {
     redeConvidadoTiques();
   }, 500);
 }
-const REDE_SAIR = '<button type="button" class="telao-sair" onclick="redeSairDaSala()">✕ Sair da sala</button>';
+const REDE_SAIR =
+  '<button type="button" class="rede-como" onclick="openTutorial(\'manual:online\')">❓ Como funciona o online</button><button type="button" class="telao-sair" onclick="redeSairDaSala()">✕ Sair da sala</button>';
 function redeSairDaSala() {
   try {
     if (rede) {
@@ -1406,7 +1407,7 @@ function redePainelHost() {
     if (!ov.isConnected && ov._montado) return;
     if (!rede || rede.papel !== "host") {
       const temNet = redeTemInternet();
-      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Jogar online</h3><p>Abra uma sala: cada jogador entra pelo link no próprio celular, escolhe quem é e joga de lá. Este aparelho continua com a partida.</p>${
+      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Jogar online</h3><p>Abra uma sala: cada jogador entra pelo link no próprio celular, escolhe quem é e joga de lá. Este aparelho continua com a partida.</p><button type="button" class="chip" id="redeComo">❓ Como funciona (passo a passo)</button>${
         temNet ? `<button type="button" class="btn-start btn-neo neo-solid neo-still" id="redeAbrirNet" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">Abrir sala pela internet</button>` : `<p><small>Este navegador não tem como abrir sala pela internet.</small></p>`
       }<button type="button" class="chip" id="redeAbrirLocal">Ensaio neste navegador (abas)</button><button type="button" class="chip" id="redeOk" style="margin-top:10px">Fechar</button></div>`;
       const net = ov.querySelector("#redeAbrirNet");
@@ -1415,6 +1416,10 @@ function redePainelHost() {
           redeAbrirSala("internet");
           pintar();
         });
+      ov.querySelector("#redeComo").addEventListener("click", () => {
+        ov.remove();
+        openTutorial("manual:online");
+      });
       ov.querySelector("#redeAbrirLocal").addEventListener("click", () => {
         redeAbrirSala("local");
         pintar();
@@ -1433,7 +1438,7 @@ function redePainelHost() {
         navigator.share ? '<button type="button" class="chip" id="redeCompartilhar">📤 Compartilhar</button>' : ""
       }<label class="rede-rot-eu">Quem joga neste aparelho? <select id="redeEu">${opcoesEu}</select></label><ul class="rede-lista">${lugares}</ul>${
         rede.modo === "local" ? '<button type="button" class="chip" id="redeAbrirAba">Abrir uma aba de convidado</button>' : ""
-      }<button type="button" class="chip" id="redeFecharSala">Fechar a sala</button><button type="button" class="chip" id="redeOk" style="margin-top:10px">Fechar</button></div>`;
+      }<button type="button" class="chip" id="redeComoSala">❓ Como funciona</button><button type="button" class="chip" id="redeFecharSala">Fechar a sala</button><button type="button" class="chip" id="redeOk" style="margin-top:10px">Fechar</button></div>`;
       ov.querySelector("#redeCopiar").addEventListener("click", (e) => {
         try {
           navigator.clipboard.writeText(redeLinkDaSala());
@@ -1450,6 +1455,10 @@ function redePainelHost() {
       });
       const ab = ov.querySelector("#redeAbrirAba");
       if (ab) ab.addEventListener("click", () => window.open(redeLinkDaSala(), "_blank"));
+      ov.querySelector("#redeComoSala").addEventListener("click", () => {
+        ov.remove();
+        openTutorial("manual:online");
+      });
       ov.querySelector("#redeFecharSala").addEventListener("click", () => {
         redeFechar();
         pintar();

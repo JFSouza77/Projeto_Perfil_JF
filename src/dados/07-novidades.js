@@ -6,6 +6,18 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.9.12",
+    data: "09/10/2026 · 20:09",
+    nome: "Rooms and Network Update · Manual do online",
+    t: "O online ganhou passo a passo: no manual, nas dicas e em cada tela da sala.",
+    itens: [
+      "📖 Capítulo Online no manual: como funciona, como abrir a sala no aparelho do host, como entrar pelo link, quem toca o quê e o que fazer se a conexão cair.",
+      "❓ Como funciona em todo lugar: o aviso do online na tela inicial, a janela da sala e a tela de quem entra pelo link abrem direto o passo a passo.",
+      "💡 Dicas da pausa: a pausa lembra que dá pra jogar online e, com a sala aberta, como chamar mais gente.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.9.11",
     data: "09/10/2026 · 19:44",
     nome: "Rooms and Network Update · Troca de host",
