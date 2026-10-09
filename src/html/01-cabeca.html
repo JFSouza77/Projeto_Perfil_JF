@@ -6,6 +6,15 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.9.4 · 09/10/2026 · "Rooms and Network Update · Board Update 3" = LOBBY DO TABULEIRO ENTRE AS CARTAS.
+          Ideia do JF. Na partida volta a linha com pontinhos (renderBoardTrack como antes da 1.7.9.2); o
+          tabuleiro desenhado fica no "toque pra ampliar" e vira uma tela de espera entre as cartas
+          (tabLobbyAbrir): checkWinnerThenDraw marca a carta como acabada e, quando a próxima já está
+          escondida (drawHidden) ou na escolha do duelo de bônus, o lobby abre por 60 s (pausa e aba
+          escondida param o relógio) com "Próxima carta ▶", o próximo Mestre, os peões andando desde o
+          lobby anterior e a lista com +N/−N casas. Só tela: não vai no save nem no registro de ações.
+          Desfazer o veredito fecha o lobby (fica abaixo do botão Desfazer). Não abre no Express, no
+          Descartar nem no fim. Liga/desliga por aparelho (perfil5_tab_lobby) no tabuleiro grande.
   1.7.9.3 · 09/10/2026 · "Rooms and Network Update · Board Update 2" = TABULEIRO COM CARA DE TABULEIRO.
           Feedback do JF com fotos dos tabuleiros de verdade (Perfil 3, 4, 5, 6, 7, 8 e Júnior). Casas viram
           blocos colados numa pista larga (largura calculada pra não encostar na volta vizinha; o Oito tem
@@ -517,7 +526,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.9.3</title>
+<title>Perfil JF · Beta 1.7.9.4</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

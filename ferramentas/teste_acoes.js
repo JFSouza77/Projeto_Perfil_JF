@@ -124,8 +124,16 @@ const ARQ = acharMestre(process.argv[2]);
     if (document.getElementById('correctBtn')) document.getElementById('correctBtn').click();
     await espera(30); fechar();
     out.ofereceuDesfazer = !!document.getElementById('desfazerBtn') && !!desfazerOferta && semRelogio(retratoPartida('mestre')) !== antesAcerto;
+    // 1.7.9.4: o lobby do tabuleiro abre quando a próxima carta fica pronta, é só tela (não sobe a
+    // revisão) e o Desfazer fecha ele
+    for (let i = 0; i < 40 && !document.getElementById('tabLobby'); i++) { await espera(50); fechar(); }
+    const revLobby = partidaRevisao;
+    out.lobbyAbriu = !!document.getElementById('tabLobby') && cardState === 'hidden' && !!document.querySelector('#tabLobby #tabCaixaLobby .tb-pecas');
+    await espera(60);
+    out.lobbySoTela = partidaRevisao === revLobby && !!document.getElementById('desfazerBtn') && +getComputedStyle(document.getElementById('tabLobby')).zIndex < +getComputedStyle(document.getElementById('desfazerBtn')).zIndex;
     document.getElementById('desfazerBtn') && document.getElementById('desfazerBtn').click();
     await espera(30); fechar();
+    out.lobbyDesfeito = !document.getElementById('tabLobby');
     out.caosVoltou = JSON.stringify(caosExtraSalvar()) === caosAntes && JSON.stringify((caosCardMem && caosCardMem.porCarta || {})[currentCard.answer] || null) === memAntes && caosMatchLog.length === mlAntes;
     out.desfezIgual = semRelogio(retratoPartida('mestre')) === antesAcerto && history.length === histAntes && deck.length === deckAntes;
     out.desfazerNoRegistro = partidaRevisao === revAntesD + 2 && acoesLog[acoesLog.length - 1].a === 'desfazer' && !document.getElementById('desfazerBtn');
@@ -259,6 +267,9 @@ const ARQ = acharMestre(process.argv[2]);
     ['Partida nova zera revisão e registro', r.zerou],
     ['1.7.9.2: a forma do tabuleiro volta igual ao recarregar', r.formaVoltou],
     ['1.7.9.2: partida nova sorteia outra forma de tabuleiro', r.formaNova],
+    ['1.7.9.4: o tabuleiro abre entre as cartas, com a próxima já escondida', r.lobbyAbriu],
+    ['1.7.9.4: o lobby é só tela (não mexe na partida) e fica abaixo do Desfazer', r.lobbySoTela],
+    ['1.7.9.4: desfazer o veredito fecha o lobby', r.lobbyDesfeito],
   ];
   linhas.forEach(([n, ok]) => console.log(`${ok ? 'ok    ' : 'FALHOU'}  ${n}`));
   const tudo = linhas.every((l) => l[1]) && !erros.length;

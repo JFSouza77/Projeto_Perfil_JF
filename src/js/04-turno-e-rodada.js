@@ -264,6 +264,7 @@ function resetDeck() {
   caosPartidaSerial++;
   matchId = null;
   tabForma = null; // 1.7.9.2: partida nova, tabuleiro novo
+  tabLobbyZerar(); // 1.7.9.4
   sorteioContagem = 0;
   acoesZerar();
   caosCatSeq = [];
@@ -455,11 +456,13 @@ function drawHidden() {
   renderMiniScoreboard();
   render();
   saveGameState();
+  tabLobbyTalvez();
 }
 function beginBonusChoice() {
   cardState = "bonusChoice";
   render();
   saveGameState();
+  tabLobbyTalvez();
 }
 function chooseBonusOpponent(idx) {
   if (cardState !== "bonusChoice" || pendingBonusQueue.length === 0) return;
@@ -491,6 +494,7 @@ function flipCard() {
   saveGameState();
 }
 function checkWinnerThenDraw() {
+  tabLobbyPendente = true; // 1.7.9.4: a carta acabou; o lobby do tabuleiro abre quando a próxima estiver pronta
   renderScoreboard();
   renderMiniScoreboard();
   if (ultimaRodadaAtiva() && (ultimaRodada || gemWinner || victoryReached())) {
