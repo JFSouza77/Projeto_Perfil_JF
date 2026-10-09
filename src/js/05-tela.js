@@ -896,14 +896,12 @@ function render() {
     }
     const historyBlurred = pendingIndex !== null ? "blurred" : "";
     const realCluesCount = revealedOrder.filter((r) => r.item.type === "clue").length;
-    const canReshuffle = pendingIndex === null && revealedOrder.length === 0;
     // no Express a 1ª dica abre sozinha (nunca fica sem dica aberta): o descarte vale com a dica na tela
     const expressPodeDescartar = CURRENT_MODE === "express" && pendingIndex !== null && !expressAskWho && !expressWhoFreeze;
     const canDiscard = (pendingIndex === null || expressPodeDescartar) && realCluesCount <= 5 && consecutiveDiscards < 2;
     let extraBtnsHtml = "";
-    if (canReshuffle) {
-      extraBtnsHtml += `<button class="discard-btn" id="reshuffleBtn" style="margin-bottom:8px;">⟲ Trocar de carta (antes da 1ª dica)</button>`;
-    }
+    // 1.7.8.7: o "Reembaralhar" (antes da 1ª dica, sem limite) saiu; fazia o mesmo que o Descartar.
+    // Trocar a carta é só pelo Descartar (até a 5ª dica, no máximo 2 seguidas). No online, vira votação da mesa.
     if (canDiscard) {
       const chancesLeft = 5 - realCluesCount;
       const discardsLeft = 2 - consecutiveDiscards;
@@ -986,7 +984,6 @@ function render() {
         };
       }
       if (canDiscard) document.getElementById("discardBtn").addEventListener("click", discardAndDraw);
-      if (canReshuffle) document.getElementById("reshuffleBtn").addEventListener("click", reshuffleAndDraw);
       {
         const gu = document.getElementById("giveUpBtn");
         if (gu) gu.addEventListener("click", pedirDesistirCarta);
@@ -1013,9 +1010,13 @@ function cartaAnimarClasse(el, cls) {
   el.classList.remove(cls);
   void el.offsetWidth;
   el.classList.add(cls);
-  const tira = () => el.classList.remove(cls);
-  el.addEventListener("animationend", (ev) => ev.target === el && tira(), { once: true });
-  setTimeout(tira, 900);
+  const fim = (ev) => ev.target === el && tira();
+  const tira = () => {
+    el.classList.remove(cls);
+    el.removeEventListener("animationend", fim);
+  };
+  el.addEventListener("animationend", fim);
+  setTimeout(tira, 1500);
 }
 // cópia das costas da carta, por cima, girando pra fora (a carta de verdade já é a roleta por baixo)
 function cartaCostasSaindo(area) {
@@ -1040,7 +1041,7 @@ function cartaCostasSaindo(area) {
     document.body.appendChild(c);
     const tira = () => c.remove();
     c.addEventListener("animationend", tira, { once: true });
-    setTimeout(tira, 700);
+    setTimeout(tira, 900);
   } catch (e) {}
 }
 // guarda onde estava a frase da roleta, pra depois da virada ela deslizar até o topo da carta
@@ -1065,9 +1066,10 @@ function cartaFraseSobe(topoAntes) {
     h.style.transition = "none";
     h.style.transform = `translateY(${dy}px)`;
     void h.offsetWidth;
-    h.style.transition = "transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)";
+    // 1.7.8.7: subida mais lenta e macia (antes 0,5 s parecia instantâneo)
+    h.style.transition = "transform 1s cubic-bezier(0.33, 0, 0.2, 1)";
     h.style.transform = "";
-    setTimeout(() => (h.style.transition = ""), 650);
+    setTimeout(() => (h.style.transition = ""), 1100);
   } catch (e) {}
 }
 function startCategoryRoulette() {
@@ -2461,16 +2463,20 @@ function casaAnunciar() {
       caosRoletaSom("pouso");
     } catch (e) {}
     desc.innerHTML = winCondRuleText();
+    // 1.7.8.7: "Bora jogar!" em destaque e "Como funciona" mais leve, um embaixo do outro
     const row = caosModalRow();
+    row.classList.add("caos-mrow-pilha");
+    const comoFunciona = caosModalBtn("📖 Como funciona este modo?", "#0e7490", () => {
+      fechar();
+      openTutorial("vitoria:" + final);
+    });
+    comoFunciona.classList.add("caos-mbtn-sec");
     row.append(
-      caosModalBtn("📖 Como funciona?", "#0e7490", () => {
-        fechar();
-        openTutorial("vitoria:" + final);
-      }),
-      caosModalBtn("Bora jogar!", "#1f7a4f", () => {
+      caosModalBtn("🎮 Bora jogar!", "#1f7a4f", () => {
         fechar();
         vitoriaTutTalvez(final);
       }),
+      comoFunciona,
     );
     box.append(row);
     renderMiniScoreboard();
@@ -2674,14 +2680,9 @@ function buildRulesHtml() {
     li.push(
       `💎 <b>Joias:</b> acerte com até ${c.gemLimit} dicas reais e ganhe a joia da categoria${c.equipe ? " (é da equipe)" : ""}. ${gemsCountForWin() ? (ultimaRodadaAtiva() ? "4 joias = meta batida (a rodada termina e aí sai o vencedor)." : "4 joias = vitória na hora.") : `Com menos de ${GEMS_MIN_PLAYERS} jogadores (Moda da Casa) a joia é só troféu.`}${c.express ? " Com 1 categoria dá pra ter até 4 dela; com 2, até 2 de cada." : " Carta bônus não dá joia."}`,
     );
-  if (!c.express)
-    li.push(
-      "⟲ <b>Não curtiu a carta?</b> Troque antes da 1ª dica. <b>Carta difícil?</b> Descarte até a 5ª dica (no máximo 2 seguidas).",
-    );
-  else
-    li.push(
-      "✕ <b>Carta difícil ou o Mestre viu sem querer?</b> Descarte e puxe outra até a 5ª dica (no máximo 2 seguidas).",
-    );
+  li.push(
+    "✕ <b>Carta difícil ou o Mestre viu sem querer?</b> Descarte e puxe outra até a 5ª dica (no máximo 2 seguidas).",
+  );
   if (!c.equipe && !c.express && !c.hard)
     li.push(
       "🤖 <b>Ajudinha do C.A.O.S.:</b> no máximo 1 vez por partida, quem estiver bem atrás pode ganhar pontos ou uma carta bônus.",
