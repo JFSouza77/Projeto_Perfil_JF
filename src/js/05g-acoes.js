@@ -356,7 +356,42 @@ function desfazerFotografar() {
     timerKind,
     timerResta: timerEndAt ? Math.max(1000, timerEndAt - agora) : null,
     cartaResta: cardEndAt ? Math.max(1000, cardEndAt - agora) : null,
+    caos: desfazerCaosFoto(),
   };
+}
+// 1.7.8.6 (feedback): o C.A.O.S. também volta. Antes ele lembrava do acerto desfeito (humor, vínculos,
+// memória da carta) e terminava a fala sobre um veredito que não valeu mais.
+function desfazerCaosFoto() {
+  try {
+    const resp = currentCard && currentCard.answer;
+    if (!caosCardMem && typeof caosCardMemLoad === "function") caosCardMemLoad();
+    const pc = resp && caosCardMem && caosCardMem.porCarta ? caosCardMem.porCarta[resp] : undefined;
+    return {
+      extra: desfazerCopia(caosExtraSalvar()),
+      resp,
+      carta: pc === undefined ? undefined : desfazerCopia(pc),
+      logs: { m: caosMatchLog.length, r: caosRitmoLog.length, e: caosEmoHist.length },
+    };
+  } catch (e) {
+    return null;
+  }
+}
+function desfazerCaosAplicar(c) {
+  try {
+    if (typeof caosVoiceCancel === "function") caosVoiceCancel();
+  } catch (e) {}
+  if (!c) return;
+  try {
+    if (c.extra) caosExtraRestaurar(c.extra);
+    if (c.resp && caosCardMem && caosCardMem.porCarta) {
+      if (c.carta === undefined) delete caosCardMem.porCarta[c.resp];
+      else caosCardMem.porCarta[c.resp] = c.carta;
+      caosCardMemSave();
+    }
+    if (caosMatchLog.length > c.logs.m) caosMatchLog.length = c.logs.m;
+    if (caosRitmoLog.length > c.logs.r) caosRitmoLog.length = c.logs.r;
+    if (caosEmoHist.length > c.logs.e) caosEmoHist.length = c.logs.e;
+  } catch (e) {}
 }
 function desfazerAplicar(f) {
   players = f.players;
@@ -407,6 +442,7 @@ function desfazerAplicar(f) {
   pendingStartTime = Date.now();
   // o que o veredito deixou agendado (ex.: seguir depois do balão) não vale mais
   cartaSeq++;
+  desfazerCaosAplicar(f.caos);
 }
 function desfazerNome(tipo, args) {
   if (tipo === "acertou") {

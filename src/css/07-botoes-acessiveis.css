@@ -349,24 +349,49 @@ body.claro .tut-ouvir {
   font-size: 0.9em;
   margin-left: 2px;
 }
-@keyframes carta-virando {
+/* 1.7.8.6: "Ver carta" gira a carta (costas saem, roleta entra); "Falei!" desliza a frase pro topo */
+@keyframes carta-flip-sai {
   from {
-    transform: perspective(900px) rotateY(80deg);
-    opacity: 0.4;
+    transform: perspective(900px) rotateY(0deg);
+  }
+  to {
+    transform: perspective(900px) rotateY(90deg);
+  }
+}
+@keyframes carta-flip-entra {
+  from {
+    transform: perspective(900px) rotateY(-90deg);
   }
   to {
     transform: perspective(900px) rotateY(0deg);
+  }
+}
+@keyframes carta-aparece {
+  from {
+    opacity: 0;
+  }
+  to {
     opacity: 1;
   }
 }
-.card.virando {
-  animation: carta-virando 0.38s ease-out;
+.card.flip-sai {
+  animation: carta-flip-sai 0.22s ease-in forwards;
 }
-body.batata-mode .card.virando {
+.card.flip-entra {
+  animation: carta-flip-entra 0.26s ease-out 0.2s both;
+}
+.card.revelando > :not(.answer-header) {
+  animation: carta-aparece 0.45s ease-out 0.15s both;
+}
+body.batata-mode .card.flip-sai,
+body.batata-mode .card.flip-entra,
+body.batata-mode .card.revelando > * {
   animation: none;
 }
 @media (prefers-reduced-motion: reduce) {
-  .card.virando {
+  .card.flip-sai,
+  .card.flip-entra,
+  .card.revelando > * {
     animation: none;
   }
 }
@@ -387,6 +412,37 @@ body.batata-mode .card.virando {
   font-size: 1rem;
   box-shadow: 0 6px 22px #0009;
   max-width: calc(100vw - 32px);
+  /* 1.7.8.6 (feedback): mais largo e com a barra dos 8 segundos */
+  width: min(calc(100vw - 32px), 440px);
+  min-height: 54px;
+  text-align: center;
+  overflow: hidden;
+}
+.desfazer-btn::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 4px;
+  width: 100%;
+  background: currentColor;
+  opacity: 0.55;
+  transform-origin: left;
+  animation: desfazer-tempo 8s linear forwards;
+}
+@keyframes desfazer-tempo {
+  to {
+    transform: scaleX(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .desfazer-btn::after {
+    animation: none;
+  }
+}
+/* 1.7.8.6 (feedback): "Resposta escondida" centralizada */
+.answer-toggle:not(.open):not(.livre) {
+  text-align: center;
 }
 body.claro .desfazer-btn {
   background: #fffbeb;
@@ -394,6 +450,18 @@ body.claro .desfazer-btn {
   border-color: #d4a017;
 }
 /* 1.7.8.3: telão (aba que só olha a partida) */
+.telao-sair {
+  align-self: center;
+  min-height: 48px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 2px solid #94a3b8;
+  background: transparent;
+  color: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
 .telao {
   width: min(100%, 1100px);
   margin: 0 auto;
@@ -457,4 +525,44 @@ body.claro .desfazer-btn {
 }
 .telao-placar li span {
   margin-right: 12px;
+}
+
+/* 1.7.8.6 (feedback): pausa enxuta */
+.pause-grade {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+  margin-top: 12px;
+}
+.pause-grade .btn-sec {
+  margin: 0;
+  width: 100%;
+  min-height: 52px;
+  font-size: 0.92rem;
+}
+.pause-mais {
+  width: 100%;
+  margin-top: 12px;
+}
+.pause-mais > summary {
+  cursor: pointer;
+  list-style: none;
+  text-align: center;
+  min-height: 48px;
+  line-height: 48px;
+  border-radius: 12px;
+  border: 1px dashed rgba(148, 163, 184, 0.5);
+  font-weight: 700;
+  opacity: 0.9;
+}
+.pause-mais > summary::-webkit-details-marker {
+  display: none;
+}
+.pause-mais[open] > summary {
+  margin-bottom: 8px;
+}
+.pause-mais > .btn-sec {
+  width: 100%;
+  margin: 0 0 8px;
 }

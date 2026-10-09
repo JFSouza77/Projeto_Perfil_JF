@@ -6,6 +6,14 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.8.6 · 08/10/2026 · "Actions and Events Update · Feedback" = FEEDBACK DO JF NA 1.7.8.
+          Desfazer volta também o C.A.O.S. (caosExtraSalvar/Restaurar, memória da carta, logs) e corta a voz.
+          Botão Desfazer mais largo com barra dos 8 s. "Resposta escondida" centralizada. Telão com "✕ Sair do
+          telão" (no celular não tinha saída). "Olhou sem querer? Reembaralhar" virou "Trocar de carta (antes
+          da 1ª dica)", mesma regra. Ver carta: giro 3D (costas saem, roleta entra); Falei!: a frase "Diga aos
+          jogadores" sobe deslizando até o topo e o resto aparece (substitui o giro da 1.7.7.8). Pausa enxuta:
+          grade 2×2 (Claro, Voz, Acessibilidade, Como se ganha) e "Mais opções" (Manual, Trocar modo,
+          Exportar, Resumo das regras).
   1.7.8.5 · 08/10/2026 · "Actions and Events Update · Parte 6" = REPLAY E QOL (fecha a 1.7.8).
           O simulador grava as ações (acoesAoMudar) e, com --replay, repete numa partida nova com a mesma
           semente via dispatchAction, comparando o retrato do Mestre no fim. O replay achou 3 acoplamentos e
@@ -460,7 +468,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.8.5</title>
+<title>Perfil JF · Beta 1.7.8.6</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6810,24 +6818,49 @@ body.claro .tut-ouvir {
   font-size: 0.9em;
   margin-left: 2px;
 }
-@keyframes carta-virando {
+/* 1.7.8.6: "Ver carta" gira a carta (costas saem, roleta entra); "Falei!" desliza a frase pro topo */
+@keyframes carta-flip-sai {
   from {
-    transform: perspective(900px) rotateY(80deg);
-    opacity: 0.4;
+    transform: perspective(900px) rotateY(0deg);
+  }
+  to {
+    transform: perspective(900px) rotateY(90deg);
+  }
+}
+@keyframes carta-flip-entra {
+  from {
+    transform: perspective(900px) rotateY(-90deg);
   }
   to {
     transform: perspective(900px) rotateY(0deg);
+  }
+}
+@keyframes carta-aparece {
+  from {
+    opacity: 0;
+  }
+  to {
     opacity: 1;
   }
 }
-.card.virando {
-  animation: carta-virando 0.38s ease-out;
+.card.flip-sai {
+  animation: carta-flip-sai 0.22s ease-in forwards;
 }
-body.batata-mode .card.virando {
+.card.flip-entra {
+  animation: carta-flip-entra 0.26s ease-out 0.2s both;
+}
+.card.revelando > :not(.answer-header) {
+  animation: carta-aparece 0.45s ease-out 0.15s both;
+}
+body.batata-mode .card.flip-sai,
+body.batata-mode .card.flip-entra,
+body.batata-mode .card.revelando > * {
   animation: none;
 }
 @media (prefers-reduced-motion: reduce) {
-  .card.virando {
+  .card.flip-sai,
+  .card.flip-entra,
+  .card.revelando > * {
     animation: none;
   }
 }
@@ -6848,6 +6881,37 @@ body.batata-mode .card.virando {
   font-size: 1rem;
   box-shadow: 0 6px 22px #0009;
   max-width: calc(100vw - 32px);
+  /* 1.7.8.6 (feedback): mais largo e com a barra dos 8 segundos */
+  width: min(calc(100vw - 32px), 440px);
+  min-height: 54px;
+  text-align: center;
+  overflow: hidden;
+}
+.desfazer-btn::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 4px;
+  width: 100%;
+  background: currentColor;
+  opacity: 0.55;
+  transform-origin: left;
+  animation: desfazer-tempo 8s linear forwards;
+}
+@keyframes desfazer-tempo {
+  to {
+    transform: scaleX(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .desfazer-btn::after {
+    animation: none;
+  }
+}
+/* 1.7.8.6 (feedback): "Resposta escondida" centralizada */
+.answer-toggle:not(.open):not(.livre) {
+  text-align: center;
 }
 body.claro .desfazer-btn {
   background: #fffbeb;
@@ -6855,6 +6919,18 @@ body.claro .desfazer-btn {
   border-color: #d4a017;
 }
 /* 1.7.8.3: telão (aba que só olha a partida) */
+.telao-sair {
+  align-self: center;
+  min-height: 48px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 2px solid #94a3b8;
+  background: transparent;
+  color: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
 .telao {
   width: min(100%, 1100px);
   margin: 0 auto;
@@ -6918,6 +6994,46 @@ body.claro .desfazer-btn {
 }
 .telao-placar li span {
   margin-right: 12px;
+}
+
+/* 1.7.8.6 (feedback): pausa enxuta */
+.pause-grade {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+  margin-top: 12px;
+}
+.pause-grade .btn-sec {
+  margin: 0;
+  width: 100%;
+  min-height: 52px;
+  font-size: 0.92rem;
+}
+.pause-mais {
+  width: 100%;
+  margin-top: 12px;
+}
+.pause-mais > summary {
+  cursor: pointer;
+  list-style: none;
+  text-align: center;
+  min-height: 48px;
+  line-height: 48px;
+  border-radius: 12px;
+  border: 1px dashed rgba(148, 163, 184, 0.5);
+  font-weight: 700;
+  opacity: 0.9;
+}
+.pause-mais > summary::-webkit-details-marker {
+  display: none;
+}
+.pause-mais[open] > summary {
+  margin-bottom: 8px;
+}
+.pause-mais > .btn-sec {
+  width: 100%;
+  margin: 0 0 8px;
 }
 /* 1.7.7.7 · Computador (Opera GX / Chrome). Sugestão do GPT a partir de um print do JF.
  * Antes, no computador o jogo inteiro era ampliado com zoom 1.2 (regra em 01-base.css): a coluna
@@ -7090,7 +7206,7 @@ body.claro .desfazer-btn {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.8.5 · Actions and Events Update · Parte 6<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.8.6 · Actions and Events Update · Feedback<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -7191,22 +7307,24 @@ body.claro .desfazer-btn {
     </div>
     <button class="btn-start btn-neo neo-solid neo-still" id="pauseResumeBtn" style="--mc:#fbbf24; --mc-glow:rgba(251,191,36,0.35);">▶️ Voltar pro jogo</button>
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost" id="pauseAdmBtn" style="--mc:#e11d48; --mc-glow:rgba(225,29,72,0.28); margin-top:12px;">🛡️ ADM</button> 
-    <div class="sec-row pause-ajustes">
+    <!-- 1.7.8.6 (feedback): pausa enxuta. O de sempre em grade 2×2; o resto em "Mais opções" -->
+    <div class="pause-grade">
       <button class="btn-sec" id="pauseTemaBtn" type="button">☀️ Modo Claro</button>
       <button class="btn-sec" id="pauseVozBtn" type="button">🤐 Calar a voz</button>
+      <button class="btn-sec" id="pauseAcessBtn" type="button">♿ Acessibilidade</button>
+      <button class="btn-sec" id="pauseVitoriaBtn" type="button">🏆 Como se ganha</button>
     </div>
-    <button class="btn-sec" id="pauseAcessBtn" type="button">♿ Acessibilidade (letra, tempo, voz)</button>
     <button class="btn-sec" id="pauseTutBtn" type="button" style="display:none; --cc:#22d3ee;">🎓 Primeira vez? Tutorial de 2 minutos</button>
-    <button class="btn-sec" id="pauseVitoriaBtn" type="button">🏆 Como se ganha nesta partida</button>
-    <button class="btn-sec" id="pauseManualBtn" type="button">📖 Manual completo (todas as regras)</button>
     <button class="btn-sec" id="pauseReligarBtn" type="button" style="display:none;">🔊 Religar o C.A.O.S. nesta carta</button>
-    <div class="sec-row sec-col">
+    <details class="pause-mais">
+      <summary>⚙️ Mais opções</summary>
+      <button class="btn-sec" id="pauseManualBtn" type="button">📖 Manual completo (todas as regras)</button>
       <button class="btn-sec" id="pauseTrocarModoBtn">🔄 Trocar de modo (recomeça com os mesmos jogadores)</button>
       <button class="btn-sec" id="pauseExportBtn">📤 Exportar partida (Save de Bolso)</button>
-    </div>
-    <details class="pause-rules">
-      <summary>📋 Ver regras completas</summary>
-      <ul id="pauseRulesList"></ul>
+      <details class="pause-rules">
+        <summary>📋 Resumo das regras desta partida</summary>
+        <ul id="pauseRulesList"></ul>
+      </details>
     </details>
   </section>
 
@@ -9745,6 +9863,7 @@ function chooseBonusOpponent(idx) {
 function flipCard() {
   if (cardState !== "hidden") return;
   document.getElementById("caosPergunta")?.remove();
+  const fraseTopo = cartaFraseAntes();
   cardState = "revealed";
   if (CURRENT_MODE === "express") startExpressCard();
   else startTimer("pick");
@@ -9758,16 +9877,8 @@ function flipCard() {
   caosSatisfacaoTalvez();
   caosEixosCarta();
   render();
-  // 1.7.7.8: a carta vira com uma animação curta (só enfeite: a carta já está aberta e clicável)
-  try {
-    const a = document.getElementById("cardArea");
-    if (a) {
-      a.classList.remove("virando");
-      void a.offsetWidth;
-      a.classList.add("virando");
-      a.addEventListener("animationend", () => a.classList.remove("virando"), { once: true });
-    }
-  } catch (e) {}
+  // 1.7.8.6: a frase da roleta sobe até o topo da carta e o resto aparece (o giro foi no "Ver carta")
+  cartaFraseSobe(fraseTopo);
   saveGameState();
 }
 function checkWinnerThenDraw() {
@@ -12520,7 +12631,7 @@ function render() {
     const canDiscard = (pendingIndex === null || expressPodeDescartar) && realCluesCount <= 5 && consecutiveDiscards < 2;
     let extraBtnsHtml = "";
     if (canReshuffle) {
-      extraBtnsHtml += `<button class="discard-btn" id="reshuffleBtn" style="margin-bottom:8px;">⟲ Olhou sem querer? Reembaralhar e puxar outra</button>`;
+      extraBtnsHtml += `<button class="discard-btn" id="reshuffleBtn" style="margin-bottom:8px;">⟲ Trocar de carta (antes da 1ª dica)</button>`;
     }
     if (canDiscard) {
       const chancesLeft = 5 - realCluesCount;
@@ -12617,6 +12728,77 @@ function mestreDestaqueHtml() {
   const m = players[mestreIndex];
   return `<span class="mestre-destaque">🎙️ ${m ? playerNameHtml(m.name, m.color, m.avatar) : "?"}</span>`;
 }
+// 1.7.8.6 (feedback do JF): "Ver carta" vira a carta de verdade (as costas giram e a roleta entra
+// do outro lado); depois do "Falei!", sem outro giro: a frase "Diga aos jogadores" sobe deslizando até o
+// topo da carta e o resto aparece aos poucos. Só enfeite: o estado do jogo muda na hora, como antes.
+function cartaAnimar() {
+  try {
+    if (!visualFxAllowed()) return false;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+  } catch (e) {}
+  return true;
+}
+function cartaAnimarClasse(el, cls) {
+  el.classList.remove(cls);
+  void el.offsetWidth;
+  el.classList.add(cls);
+  const tira = () => el.classList.remove(cls);
+  el.addEventListener("animationend", (ev) => ev.target === el && tira(), { once: true });
+  setTimeout(tira, 900);
+}
+// cópia das costas da carta, por cima, girando pra fora (a carta de verdade já é a roleta por baixo)
+function cartaCostasSaindo(area) {
+  try {
+    const r = area.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    const c = area.cloneNode(true);
+    c.querySelectorAll("[id]").forEach((e) => e.removeAttribute("id"));
+    c.setAttribute("aria-hidden", "true");
+    c.classList.add("flip-sai");
+    Object.assign(c.style, {
+      position: "fixed",
+      left: r.left + "px",
+      top: r.top + "px",
+      width: r.width + "px",
+      height: r.height + "px",
+      margin: "0",
+      zIndex: "60",
+      pointerEvents: "none",
+      boxSizing: "border-box",
+    });
+    document.body.appendChild(c);
+    const tira = () => c.remove();
+    c.addEventListener("animationend", tira, { once: true });
+    setTimeout(tira, 700);
+  } catch (e) {}
+}
+// guarda onde estava a frase da roleta, pra depois da virada ela deslizar até o topo da carta
+function cartaFraseAntes() {
+  try {
+    const f = document.querySelector("#cardArea .roulette-phrase");
+    return f ? f.getBoundingClientRect().top : null;
+  } catch (e) {
+    return null;
+  }
+}
+function cartaFraseSobe(topoAntes) {
+  if (!cartaAnimar()) return;
+  try {
+    const area = document.getElementById("cardArea");
+    const h = area && area.querySelector(".answer-header");
+    if (!area || !h) return;
+    cartaAnimarClasse(area, "revelando");
+    if (topoAntes === null) return;
+    const dy = topoAntes - h.getBoundingClientRect().top;
+    if (Math.abs(dy) < 4) return;
+    h.style.transition = "none";
+    h.style.transform = `translateY(${dy}px)`;
+    void h.offsetWidth;
+    h.style.transition = "transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)";
+    h.style.transform = "";
+    setTimeout(() => (h.style.transition = ""), 650);
+  } catch (e) {}
+}
 function startCategoryRoulette() {
   if (cardState !== "hidden" || !currentCard) return;
   const area = document.getElementById("cardArea");
@@ -12629,6 +12811,8 @@ function startCategoryRoulette() {
   if (!cats.includes(finalCat)) cats.push(finalCat);
   const label = (c) => (CATEGORY_LABELS[c] || c).toUpperCase();
   const token = ++rouletteToken;
+  const virar = cartaAnimar();
+  if (virar) cartaCostasSaindo(area);
   area.className = "card";
   area.style.setProperty("--card-glow", (GEM_INFO[finalCat] || {}).color || "#a78bfa");
   area.innerHTML = `
@@ -12638,6 +12822,7 @@ function startCategoryRoulette() {
       <div class="roulette-hint" id="rouletteHint">🎰 sorteando a categoria...</div>
       <button type="button" class="flip-btn" id="rouletteDoneBtn" style="display:none;">✓ Falei! Mostrar a carta</button>
     </div>`;
+  if (virar) cartaAnimarClasse(area, "flip-entra");
   const reel = document.getElementById("rouletteReel");
   const finish = () => {
     if (token !== rouletteToken || cardState !== "hidden" || !reel.isConnected) return;
@@ -14220,7 +14405,7 @@ function buildRulesHtml() {
     );
   if (!c.express)
     li.push(
-      "🙈 <b>Olhou sem querer?</b> Reembaralhe antes da 1ª dica. <b>Carta difícil?</b> Descarte até a 5ª dica (no máximo 2 seguidas).",
+      "⟲ <b>Não curtiu a carta?</b> Troque antes da 1ª dica. <b>Carta difícil?</b> Descarte até a 5ª dica (no máximo 2 seguidas).",
     );
   else
     li.push(
@@ -14936,10 +15121,10 @@ function updateNoturnoBtn() {
 function pausaAjustesAtualizar() {
   const t = document.getElementById("pauseTemaBtn"),
     v = document.getElementById("pauseVozBtn");
-  if (t) t.textContent = document.body.classList.contains("claro") ? "🌙 Mudar pro Noturno" : "☀️ Mudar pro Claro";
+  if (t) t.textContent = document.body.classList.contains("claro") ? "🌙 Noturno" : "☀️ Modo Claro";
   if (v) {
     v.style.display = CAOS_VOICE_OK ? "" : "none";
-    v.textContent = caosVoiceOn ? "🤐 Calar a voz do C.A.O.S." : "🗣️ Ligar a voz do C.A.O.S.";
+    v.textContent = caosVoiceOn ? "🤐 Calar a voz" : "🗣️ Ligar a voz";
   }
   // 1.7.5.2: silenciou sem querer? Religa nesta carta, sem mágoa.
   const r = document.getElementById("pauseReligarBtn");
@@ -16192,7 +16377,42 @@ function desfazerFotografar() {
     timerKind,
     timerResta: timerEndAt ? Math.max(1000, timerEndAt - agora) : null,
     cartaResta: cardEndAt ? Math.max(1000, cardEndAt - agora) : null,
+    caos: desfazerCaosFoto(),
   };
+}
+// 1.7.8.6 (feedback): o C.A.O.S. também volta. Antes ele lembrava do acerto desfeito (humor, vínculos,
+// memória da carta) e terminava a fala sobre um veredito que não valeu mais.
+function desfazerCaosFoto() {
+  try {
+    const resp = currentCard && currentCard.answer;
+    if (!caosCardMem && typeof caosCardMemLoad === "function") caosCardMemLoad();
+    const pc = resp && caosCardMem && caosCardMem.porCarta ? caosCardMem.porCarta[resp] : undefined;
+    return {
+      extra: desfazerCopia(caosExtraSalvar()),
+      resp,
+      carta: pc === undefined ? undefined : desfazerCopia(pc),
+      logs: { m: caosMatchLog.length, r: caosRitmoLog.length, e: caosEmoHist.length },
+    };
+  } catch (e) {
+    return null;
+  }
+}
+function desfazerCaosAplicar(c) {
+  try {
+    if (typeof caosVoiceCancel === "function") caosVoiceCancel();
+  } catch (e) {}
+  if (!c) return;
+  try {
+    if (c.extra) caosExtraRestaurar(c.extra);
+    if (c.resp && caosCardMem && caosCardMem.porCarta) {
+      if (c.carta === undefined) delete caosCardMem.porCarta[c.resp];
+      else caosCardMem.porCarta[c.resp] = c.carta;
+      caosCardMemSave();
+    }
+    if (caosMatchLog.length > c.logs.m) caosMatchLog.length = c.logs.m;
+    if (caosRitmoLog.length > c.logs.r) caosRitmoLog.length = c.logs.r;
+    if (caosEmoHist.length > c.logs.e) caosEmoHist.length = c.logs.e;
+  } catch (e) {}
 }
 function desfazerAplicar(f) {
   players = f.players;
@@ -16243,6 +16463,7 @@ function desfazerAplicar(f) {
   pendingStartTime = Date.now();
   // o que o veredito deixou agendado (ex.: seguir depois do balão) não vale mais
   cartaSeq++;
+  desfazerCaosAplicar(f.caos);
 }
 function desfazerNome(tipo, args) {
   if (tipo === "acertou") {
@@ -16357,6 +16578,18 @@ function telaoAbrirAba() {
 }
 
 /* --- Lado do telão: só mostra --- */
+// 1.7.8.6 (feedback): no celular não tinha como sair do telão sem fechar o jogo
+const TELAO_SAIR = '<button type="button" class="telao-sair" onclick="telaoSair()">✕ Sair do telão</button>';
+function telaoSair() {
+  try {
+    if (telaoRelogioTimer) clearInterval(telaoRelogioTimer);
+    if (telaoCanal) telaoCanal.close();
+  } catch (e) {}
+  try {
+    window.history.replaceState(null, "", String(location.href).split("#")[0]);
+  } catch (e) {}
+  location.reload();
+}
 function telaoIniciar() {
   try {
     saveBloqueado = true; // o telão nunca grava a partida
@@ -16374,9 +16607,9 @@ function telaoIniciar() {
     box.setAttribute("aria-live", "polite");
     document.body.appendChild(box);
   }
-  box.innerHTML = '<div class="telao-espera">📺 Telão do Perfil JF<br><small>Esperando a partida na outra aba…</small></div>';
+  box.innerHTML = '<div class="telao-espera">📺 Telão do Perfil JF<br><small>Esperando a partida na outra aba…</small></div>' + TELAO_SAIR;
   if (!telaoAbrirCanal()) {
-    box.innerHTML = '<div class="telao-espera">Este navegador não tem como receber a partida da outra aba.</div>';
+    box.innerHTML = '<div class="telao-espera">Este navegador não tem como receber a partida da outra aba.</div>' + TELAO_SAIR;
     return;
   }
   telaoCanal.onmessage = (ev) => {
@@ -16424,7 +16657,8 @@ function telaoDesenhar(r) {
       <div>⏱️ <b id="telaoRelogio">—</b></div>
     </section>
     ${c ? `<section class="telao-carta"><div class="telao-cat">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)} · ${c.abertas.length} de ${c.totalDicas} dicas</div><ol class="telao-dicas">${dicas || "<li>Nenhuma dica aberta ainda</li>"}</ol></section>` : ""}
-    <section class="telao-placar"><ol>${placar}</ol></section>`;
+    <section class="telao-placar"><ol>${placar}</ol></section>
+    ${TELAO_SAIR}`;
   telaoRelogio();
 }
 function telaoRelogio() {
@@ -18663,7 +18897,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.8.5 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.8.6 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -23730,7 +23964,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.8.5 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.8.6 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -26895,7 +27129,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.8.5 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.8.6 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -27418,7 +27652,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.8.5 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.8.6 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -62028,7 +62262,7 @@ const TUTORIAL_STEPS = [
     sec: 2,
     icon: "🙈",
     title: "2. A resposta (só pro Mestre)",
-    text: "Ao virar a carta, a resposta fica <b>à mostra até a 1ª dica ser aberta</b>: é a hora do Mestre memorizar. Memorizou? <b>Toque nela pra esconder na hora</b> (bom quando a mesa demora pra escolher a dica). Depois ela se esconde, e pra conferir de novo é só tocar na faixa ou em <b>👁️ Conferir resposta</b> (aparece por <b>5 segundos</b>). Assim ninguém espia por cima do ombro.<br>Olhou sem querer (ou alguém viu)? Dá pra <b>reembaralhar</b> antes da 1ª dica.",
+    text: "Ao virar a carta, a resposta fica <b>à mostra até a 1ª dica ser aberta</b>: é a hora do Mestre memorizar. Memorizou? <b>Toque nela pra esconder na hora</b> (bom quando a mesa demora pra escolher a dica). Depois ela se esconde, e pra conferir de novo é só tocar na faixa ou em <b>👁️ Conferir resposta</b> (aparece por <b>5 segundos</b>). Assim ninguém espia por cima do ombro.<br>Não curtiu a carta (ou alguém viu)? Dá pra <b>trocar de carta</b> antes da 1ª dica.",
     mock: '<div class="answer-line-name answer-toggle livre"><span class="ans-nome">Cometa</span></div><div class="ans-hint">👆 toque pra esconder · some sozinha na 1ª dica</div><div class="answer-line-name answer-toggle" style="margin-top:8px;">🙈 Resposta escondida — toque pra ver (5 s)</div>',
   },
   {
@@ -62384,7 +62618,7 @@ const PAUSE_TIPS = [
   },
   {
     when: () => CURRENT_MODE !== "express",
-    text: () => "Olhou a carta sem querer? Dá pra reembaralhar antes de revelar a primeira dica.",
+    text: () => "Não curtiu a carta? Dá pra trocar por outra antes de revelar a primeira dica.",
   },
   {
     when: () => CURRENT_MODE !== "express",
@@ -62480,6 +62714,22 @@ const PAUSE_TIPS = [
   },
 ];
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.8.6",
+    data: "08/10/2026 · 21:04",
+    nome: "Actions and Events Update · Feedback",
+    t: "O que o JF achou testando a 1.7.8, já ajustado.",
+    itens: [
+      "↩️ Desfazer volta o C.A.O.S. também: ele esquece o acerto desfeito e para de falar dele.",
+      "🃏 Ver carta agora gira a carta de verdade, e a roleta aparece do outro lado. Depois do \"Falei!\", a frase \"Diga aos jogadores\" sobe e se encaixa no topo da carta.",
+      "⏸️ A pausa ficou enxuta: o de sempre em 4 botões, e o resto em \"Mais opções\".",
+      "📺 O telão tem botão de sair. No celular não tinha como.",
+    ],
+    qol: [
+      "⟲ \"Olhou sem querer? Reembaralhar\" virou \"Trocar de carta\", que é como todo mundo usa. A regra é a mesma: só antes da 1ª dica.",
+      "📏 Botão Desfazer mais largo, com uma barrinha mostrando os 8 segundos. \"Resposta escondida\" agora fica centralizada.",
+    ],
+  },
   {
     v: "Beta 1.7.8.5",
     data: "08/10/2026 · 19:51",

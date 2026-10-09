@@ -119,12 +119,14 @@ const ARQ = acharMestre(process.argv[2]);
     const semRelogio = (o) => { const c = JSON.parse(JSON.stringify(o)); delete c.revisao; delete c.relogio; return JSON.stringify(c); };
     const antesAcerto = semRelogio(retratoPartida('mestre'));
     const histAntes = history.length, deckAntes = deck.length, revAntesD = partidaRevisao;
+    const caosAntes = JSON.stringify(caosExtraSalvar()), memAntes = JSON.stringify((caosCardMem && caosCardMem.porCarta || {})[currentCard.answer] || null), mlAntes = caosMatchLog.length;
     toqueJogoUltimo = 0;
     if (document.getElementById('correctBtn')) document.getElementById('correctBtn').click();
     await espera(30); fechar();
     out.ofereceuDesfazer = !!document.getElementById('desfazerBtn') && !!desfazerOferta && semRelogio(retratoPartida('mestre')) !== antesAcerto;
     document.getElementById('desfazerBtn') && document.getElementById('desfazerBtn').click();
     await espera(30); fechar();
+    out.caosVoltou = JSON.stringify(caosExtraSalvar()) === caosAntes && JSON.stringify((caosCardMem && caosCardMem.porCarta || {})[currentCard.answer] || null) === memAntes && caosMatchLog.length === mlAntes;
     out.desfezIgual = semRelogio(retratoPartida('mestre')) === antesAcerto && history.length === histAntes && deck.length === deckAntes;
     out.desfazerNoRegistro = partidaRevisao === revAntesD + 2 && acoesLog[acoesLog.length - 1].a === 'desfazer' && !document.getElementById('desfazerBtn');
     out.relogioVoltou = !!timerKind && !!timerEndAt;
@@ -202,6 +204,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['Aviso de mudança a cada ação', r.avisou],
     ['Acertou oferece ↩️ Desfazer', r.ofereceuDesfazer],
     ['Desfazer volta pontos, vez, carta, baralho e histórico ao de antes', r.desfezIgual],
+    ['Desfazer volta também o humor e a memória do C.A.O.S. (1.7.8.6)', r.caosVoltou],
     ['Desfazer é uma ação registrada e o botão some', r.desfazerNoRegistro],
     ['Desfazer devolve o relógio da dica', r.relogioVoltou],
     ['Outra jogada fecha a janela do desfazer', r.outraJogadaFecha],

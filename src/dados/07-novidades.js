@@ -1,5 +1,21 @@
 const NOVIDADES = [
   {
+    v: "Beta 1.7.8.6",
+    data: "08/10/2026 · 21:04",
+    nome: "Actions and Events Update · Feedback",
+    t: "O que o JF achou testando a 1.7.8, já ajustado.",
+    itens: [
+      "↩️ Desfazer volta o C.A.O.S. também: ele esquece o acerto desfeito e para de falar dele.",
+      "🃏 Ver carta agora gira a carta de verdade, e a roleta aparece do outro lado. Depois do \"Falei!\", a frase \"Diga aos jogadores\" sobe e se encaixa no topo da carta.",
+      "⏸️ A pausa ficou enxuta: o de sempre em 4 botões, e o resto em \"Mais opções\".",
+      "📺 O telão tem botão de sair. No celular não tinha como.",
+    ],
+    qol: [
+      "⟲ \"Olhou sem querer? Reembaralhar\" virou \"Trocar de carta\", que é como todo mundo usa. A regra é a mesma: só antes da 1ª dica.",
+      "📏 Botão Desfazer mais largo, com uma barrinha mostrando os 8 segundos. \"Resposta escondida\" agora fica centralizada.",
+    ],
+  },
+  {
     v: "Beta 1.7.8.5",
     data: "08/10/2026 · 19:51",
     nome: "Actions and Events Update · Parte 6",
