@@ -171,12 +171,40 @@ const ARQ = acharMestre(process.argv[2]);
     out.falaNome = fNome && fNome.destino === 'nome' && fNome.para[0].id === players[1].id;
     const evs = caosCanal.map((x) => x.eventId);
     out.falaEvento = evs.every(Boolean) && new Set(evs).size === evs.length && fDir.matchId === matchId && typeof fDir.revisao === 'number';
+    // 4f) 1.7.9: a porta confere as regras do motor, não só a tela
+    fechar();
+    const revPorta = partidaRevisao;
+    out.semReembaralhar = dispatchAction({ type: 'reembaralharDicas' }).motivo === 'acao_desconhecida';
+    out.moverSemEspecial = dispatchAction({ type: 'moverJogador', data: [0, 5] }).motivo === 'fora_de_hora' && dispatchAction({ type: 'moverJogador', data: [responderIndex, 2] }).motivo === 'fora_de_hora' && dispatchAction({ type: 'moverEquipe', data: ['A', 2] }).motivo === 'fora_de_hora';
+    // cenário em que a tela mostra o Descartar (carta aberta, sem dica pendente, 0 descartes seguidos)
+    const salvoD = { cs: cardState, pi: pendingIndex, cd: consecutiveDiscards };
+    cardState = 'revealed'; pendingIndex = null; consecutiveDiscards = 0;
+    const podiaDescartar = podeDescartarCarta();
+    consecutiveDiscards = 2; // já descartou 2 seguidas: a tela esconde o botão, a porta tem que recusar
+    out.descarteLimite = { podiaAntes: podiaDescartar, recusou: dispatchAction({ type: 'descartarCarta' }).motivo === 'fora_de_hora', reais: revealedOrder.filter((x) => x.item.type === 'clue').length };
+    cardState = salvoD.cs; pendingIndex = salvoD.pi; consecutiveDiscards = salvoD.cd;
+    out.portaSemEfeito = partidaRevisao === revPorta;
+    // pausar e voltar sobem a revisão (o telão fica sabendo)
+    const rp = partidaRevisao; pauseGame(); const r1 = partidaRevisao; resumeGame(); fechar();
+    out.pausaRevisao = r1 === rp + 1 && partidaRevisao === rp + 2 && acoesLog.slice(-2).map((x) => x.a).join() === 'pausar,continuar';
+    // comando repetido continua recusado depois de recarregar a partida
+    const okp = dispatchAction({ type: 'pausar', commandId: 'teste-duravel-1' }); resumeGame(); fechar();
+    saveGameState(); acoesComandosVistos = []; loadGameState(); fechar();
+    const de = dispatchAction({ type: 'pausar', commandId: 'teste-duravel-1' });
+    out.comandoDuravel = okp.ok === true && de.duplicado === true && acoesLog.some((x) => x.c === 'teste-duravel-1');
+    if (pausedAt) { resumeGame(); fechar(); }
     // 5) save e retomada guardam revisão e registro
     saveGameState();
     const revSalva = partidaRevisao, nSalvo = acoesLog.length;
     partidaRevisao = 0; acoesLog = [];
     loadGameState();
     out.salvou = partidaRevisao === revSalva && acoesLog.length === nSalvo;
+    // a fala ganha o pedaço da sessão no eventId (recarregar não repete eventId)
+    out.eventoSessao = caosCanal.length > 0 && caosCanal.every((x) => /:[a-z0-9]{1,6}:f\d+$/.test(x.eventId));
+    // tirar jogador pelo ADM é uma ação registrada
+    const ra = partidaRevisao, nP = players.length;
+    const msgRem = admRemoverJogador(nP - 1);
+    out.removerRegistra = players.length === nP - 1 ? partidaRevisao > ra && acoesLog[acoesLog.length - 1].a === 'admRemover' : 'não removeu: ' + msgRem;
     // 6) partida nova zera
     resetDeck();
     out.zerou = partidaRevisao === 0 && acoesLog.length === 0;
@@ -216,6 +244,14 @@ const ARQ = acharMestre(process.argv[2]);
     ['Nome no texto vira só diagnóstico (com id)', r.falaNome],
     ['Cada fala é um evento único com partida e revisão', r.falaEvento],
     ['Revisão e registro vão pro save', r.salvou],
+    ['1.7.9: "reembaralharDicas" não existe mais na porta', r.semReembaralhar],
+    ['1.7.9: mover casas sem a especial aberta é recusado', r.moverSemEspecial],
+    ['1.7.9: descarte além do limite é recusado (a tela e a porta usam a mesma regra)', r.descarteLimite && r.descarteLimite.podiaAntes && r.descarteLimite.recusou],
+    ['1.7.9: comando recusado não muda nada', r.portaSemEfeito],
+    ['1.7.9: pausar e voltar sobem a revisão', r.pausaRevisao],
+    ['1.7.9: comando repetido segue recusado depois de recarregar', r.comandoDuravel],
+    ['1.7.9: eventId da fala com o pedaço da sessão', r.eventoSessao],
+    ['1.7.9: tirar jogador pelo ADM é ação registrada', r.removerRegistra === true],
     ['Partida nova zera revisão e registro', r.zerou],
   ];
   linhas.forEach(([n, ok]) => console.log(`${ok ? 'ok    ' : 'FALHOU'}  ${n}`));

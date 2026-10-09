@@ -6,6 +6,17 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.9",
+    data: "09/10/2026 · 10:44",
+    nome: "Rooms and Network Update · Parte 1",
+    t: "Começa a Rooms and Network Update: as regras do jogo ficam firmes antes de chegar o online.",
+    itens: [
+      "🛡️ Regras que valem sempre: descartar, desistir e mover casas seguem as mesmas regras na tela e por dentro do jogo. No online, ninguém consegue pular uma regra mandando a jogada por fora.",
+      "📺 Telão acompanha a pausa: pausar e voltar aparecem na hora no telão.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.8.9",
     data: "08/10/2026 · 23:06",
     nome: "Actions and Events Update · Parte 10",

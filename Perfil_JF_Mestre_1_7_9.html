@@ -6,6 +6,14 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.9 · 09/10/2026 · "Rooms and Network Update · Parte 1" = PORTA DAS AÇÕES FECHADA.
+          Revisão externa da 1.7.8.9, conferida no código. A porta (dispatchAction) usa as mesmas regras da
+          tela: descarte (podeDescartarCarta), desistir (podeDesistirCarta), mover casas só com a especial de
+          mover aberta (acoesMovimentoValido/EquipeValido), alvo do Express só com a janela aberta.
+          reembaralharDicas e reshuffleAndDraw saíram. expressCardLost e admRemoverJogador viraram ações.
+          A pausa entra na foto da casca (acoesFoto): pausar e voltar sobem a revisão e avisam o telão (e,
+          como toda ação, pausar fecha a janela do Desfazer). commandId aplicado vai no save (acoesComandos) e no log (campo c). eventId das
+          falas com pedaço da sessão. Plano da rede no Roteiro, seção 10.
   1.7.8.9 · 08/10/2026 · "Actions and Events Update · Parte 10" = DEBUG ANTES DO ONLINE.
           ferramentas/teste_macaco.js: toca em botões ao acaso (como um dedo, só no que está por cima), confere
           regras a cada 25 toques e recarrega a cada 200 exigindo a mesma partida. Achou: a roleta da categoria
@@ -487,7 +495,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.8.9</title>
+<title>Perfil JF · Beta 1.7.9</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -7314,7 +7322,7 @@ body.claro .caos-mbtn.caos-mbtn-sec {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.8.9 · Actions and Events Update · Parte 10<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9 · Rooms and Network Update · Parte 1<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -9859,20 +9867,6 @@ function discardAndDraw() {
   }
   usedAtLeastOnce = true;
   consecutiveDiscards++;
-  drawHidden();
-}
-function reshuffleAndDraw() {
-  if (gameEnded) return;
-  clearTimer();
-  caosCardPrediction = null;
-  if (currentCard) {
-    if (currentCard.isBonus) {
-      pendingBonusQueue.unshift({ landerIdx: currentCard.bonusLandedByIdx, opponentIdx: currentCard.bonusMestreIdx });
-    }
-    devolverAoBaralho(cardsByAnswer.get(currentCard.answer) || currentCard);
-  }
-  currentCard = null;
-  usedAtLeastOnce = true;
   drawHidden();
 }
 function drawHidden() {
@@ -12741,7 +12735,7 @@ function render() {
     const realCluesCount = revealedOrder.filter((r) => r.item.type === "clue").length;
     // no Express a 1ª dica abre sozinha (nunca fica sem dica aberta): o descarte vale com a dica na tela
     const expressPodeDescartar = CURRENT_MODE === "express" && pendingIndex !== null && !expressAskWho && !expressWhoFreeze;
-    const canDiscard = (pendingIndex === null || expressPodeDescartar) && realCluesCount <= 5 && consecutiveDiscards < 2;
+    const canDiscard = podeDescartarCarta(); // 1.7.9: mesma regra da porta das ações
     let extraBtnsHtml = "";
     // 1.7.8.7: o "Reembaralhar" (antes da 1ª dica, sem limite) saiu; fazia o mesmo que o Descartar.
     // Trocar a carta é só pelo Descartar (até a 5ª dica, no máximo 2 seguidas). No online, vira votação da mesa.
@@ -12755,7 +12749,7 @@ function render() {
           : `✕ Carta muito difícil? Descartar (${chancesLeft} chance${chancesLeft === 1 ? "" : "s"} de dica, ${discardsLeft} de descarte)`;
       extraBtnsHtml += `<button class="discard-btn" id="discardBtn">${discardText}</button>`;
     }
-    if (CURRENT_MODE !== "express" && pendingIndex === null && revealedOrder.length >= 1)
+    if (podeDesistirCarta())
       extraBtnsHtml += `<button class="discard-btn" id="giveUpBtn" style="color:#b45309;border-color:rgba(180,83,9,.5);margin-top:8px">🏳️ Desistir desta carta (ninguém acerta)</button>`;
     area.style.setProperty("--card-glow", (GEM_INFO[gemCategoryFor(currentCard.category)] || {}).color || "#a78bfa");
     const bonusBannerRevealedHtml = currentCard.isBonus ? renderBonusBanner() : "";
@@ -16170,17 +16164,24 @@ const ACOES = {
   palpiteErrou: { fn: "palpiteMiss", pode: () => acoesComDica() },
   especialSeguir: { fn: "continueAfterSpecial", pode: () => acoesComDica() },
   especialPerdeVez: { fn: "loseTurnAfterSpecial", pode: () => acoesComDica() },
-  moverJogador: { fn: "applySpecialMove", pode: () => acoesEmJogo() },
-  moverEquipe: { fn: "applyTeamSpecialMove", pode: () => acoesEmJogo() },
+  // 1.7.9: mover só com a especial de mover aberta, o valor dela e um alvo permitido (antes: qualquer
+  // jogador e qualquer valor, a qualquer hora)
+  moverJogador: { fn: "applySpecialMove", pode: (alvo, n) => acoesMovimentoValido(alvo, n) },
+  moverEquipe: { fn: "applyTeamSpecialMove", pode: (eq, n) => acoesMovimentoEquipeValido(eq, n) },
   bonusAdversario: { fn: "chooseBonusOpponent", pode: () => acoesEmJogo() && cardState === "bonusChoice" },
-  descartarCarta: { fn: "discardAndDraw", pode: () => acoesEmJogo() },
-  reembaralharDicas: { fn: "reshuffleAndDraw", pode: () => acoesEmJogo() },
-  desistirCarta: { fn: "pedirDesistirCarta", pode: () => acoesEmJogo() },
+  // 1.7.9: a mesma regra da tela (até a 5ª dica, no máximo 2 seguidos); o "reembaralhar" saiu de vez
+  descartarCarta: { fn: "discardAndDraw", pode: () => podeDescartarCarta() },
+  desistirCarta: { fn: "pedirDesistirCarta", pode: () => podeDesistirCarta() },
   expressPassar: { fn: "expressPass", pode: () => acoesEmJogo() && CURRENT_MODE === "express" },
   expressPular: { fn: "expressSkip", pode: () => acoesEmJogo() && CURRENT_MODE === "express" },
   expressInverter: { fn: "expressReverse", pode: () => acoesEmJogo() && CURRENT_MODE === "express" },
   expressMirar: { fn: "openExpressTargetPopup", pode: (tipo) => acoesComDica() && CURRENT_MODE === "express" && (tipo === "steal" || tipo === "block") },
-  expressAlvo: { fn: "resolveExpressTarget", pode: () => acoesEmJogo() && CURRENT_MODE === "express" },
+  expressAlvo: { fn: "resolveExpressTarget", pode: (idx) => acoesEmJogo() && CURRENT_MODE === "express" && !!expressTargetAction && !!players[idx] },
+  // 1.7.9: o fim do tempo da carta no Express e a saída de um jogador pelo ADM mudavam a partida fora
+  // de uma ação (sem revisão, sem aviso pro telão/rede). Agora são ações. Quem pode mandar cada uma
+  // (só o aparelho que hospeda, só o ADM) é a 1.7.9 que confere, pela sessão.
+  expressCartaPerdida: { fn: "expressCardLost", pode: () => acoesEmJogo() && CURRENT_MODE === "express" && cardState === "revealed" && !!cardEndAt && cardSecondsLeft() <= 0 },
+  admRemover: { fn: "admRemoverJogador", pode: (r) => acoesEmJogo() && CURRENT_FORMAT !== "equipe" && !!players[r] && players.length > 2 },
   tempoAcabou: { fn: "onTimerExpired", pode: () => acoesEmJogo() },
   pausar: { fn: "pauseGame", pode: () => acoesEmJogo() },
   continuar: { fn: "resumeGame", pode: () => starterChosen && !gameEnded },
@@ -16194,6 +16195,7 @@ let acoesLog = [];
 let acoesComandosVistos = [];
 let acoesProfundidade = 0;
 let acoesOrigemAtual = null; // "comando" quando a ação veio do dispatchAction
+let acoesComandoAtual = null; // commandId do comando em andamento (vai pro log)
 let acoesInstaladas = false;
 const ACOES_POR_FN = {};
 Object.keys(ACOES).forEach((t) => (ACOES_POR_FN[ACOES[t].fn] = t));
@@ -16203,6 +16205,46 @@ function acoesEmJogo() {
 }
 function acoesComDica() {
   return acoesEmJogo() && cardState === "revealed" && pendingIndex !== null;
+}
+// Texto (minúsculo) da especial aberta agora, ou "" se a dica pendente não é especial.
+function acoesEspecialTxt() {
+  if (!acoesComDica() || !currentCard) return "";
+  const it = currentCard.clues[pendingIndex];
+  return it && it.type === "special" ? String(it.text).toLowerCase() : "";
+}
+// Regras únicas do descarte e do desistir: a tela mostra o botão e a porta das ações aceita o
+// comando pela MESMA conta (antes a porta aceitava qualquer descarte com a partida rolando).
+function podeDescartarCarta() {
+  if (!acoesEmJogo() || cardState !== "revealed" || !currentCard) return false;
+  const reais = revealedOrder.filter((r) => r.item.type === "clue").length;
+  // no Express a 1ª dica abre sozinha: o descarte vale com a dica na tela
+  const expressPode = CURRENT_MODE === "express" && pendingIndex !== null && !expressAskWho && !expressWhoFreeze;
+  return (pendingIndex === null || expressPode) && reais <= 5 && consecutiveDiscards < 2;
+}
+function podeDesistirCarta() {
+  return acoesEmJogo() && CURRENT_MODE !== "express" && cardState === "revealed" && !!currentCard && pendingIndex === null && revealedOrder.length >= 1;
+}
+// Mover casas: só com a especial de mover aberta, no valor dela e com um alvo que a tela ofereceria.
+function acoesMovimento() {
+  const t = acoesEspecialTxt();
+  if (!t || CURRENT_MODE === "express") return null;
+  if (t.includes("avance 1 casa")) return { n: 1, escolha: false };
+  if (t.includes("avance 2 casas") && !t.includes("escolha")) return { n: 2, escolha: false };
+  if (t.includes("volte 2 casas") && !t.includes("escolha")) return { n: -2, escolha: false };
+  if (t.includes("volte 3 casas")) return { n: -3, escolha: false };
+  if (t.includes("escolha um jogador")) return { n: t.includes("avançar") ? 2 : -2, escolha: true };
+  return null;
+}
+function acoesMovimentoValido(alvo, n) {
+  const m = acoesMovimento();
+  if (!m || !Number.isInteger(alvo) || !players[alvo] || n !== m.n) return false;
+  if (!m.escolha) return alvo === responderIndex;
+  return CURRENT_FORMAT !== "equipe" && alvo !== responderIndex;
+}
+function acoesMovimentoEquipeValido(eq, n) {
+  const m = acoesMovimento();
+  if (!m || !m.escolha || CURRENT_FORMAT !== "equipe" || n !== m.n || !teams || !teams[eq]) return false;
+  return eq !== (players[responderIndex] && players[responderIndex].team);
 }
 function acoesDicaLivre(idx) {
   return (
@@ -16244,9 +16286,15 @@ function acoesRegistrar(tipo, args, origem) {
     m: jogadorIdDe(mestreIndex),
     v: jogadorIdDe(responderIndex),
     t: caosPartidaInicioAt ? Math.max(0, Date.now() - caosPartidaInicioAt) : 0,
+    c: acoesComandoAtual, // 1.7.9: id do comando que pediu (null = toque neste aparelho ou o próprio jogo)
   });
   if (acoesLog.length > ACOES_LOG_MAX) acoesLog.splice(0, acoesLog.length - ACOES_LOG_MAX);
   if (typeof acoesAvisar === "function") acoesAvisar(acoesLog[acoesLog.length - 1]);
+}
+// O que conta como "a partida mudou": a foto da espinha mais a pausa (1.7.9: pausar e voltar
+// não mudavam a foto, então não subiam a revisão nem avisavam o telão).
+function acoesFoto() {
+  return caosEspinhaFoto() + (typeof pausedAt !== "undefined" && pausedAt ? "|pausada" : "");
 }
 // Casca de uma função do motor: só a chamada de fora conta como ação.
 function acoesEnvolver(fnNome) {
@@ -16256,7 +16304,7 @@ function acoesEnvolver(fnNome) {
   const casca = function () {
     if (acoesProfundidade > 0) return orig.apply(this, arguments);
     const origem = acoesOrigem();
-    const antes = caosEspinhaFoto();
+    const antes = acoesFoto();
     const fotoDesfazer = DESFAZER_TIPOS.includes(tipo) ? desfazerFotografar() : null;
     acoesProfundidade++;
     try {
@@ -16264,7 +16312,7 @@ function acoesEnvolver(fnNome) {
     } finally {
       acoesProfundidade--;
       try {
-        if (antes !== caosEspinhaFoto()) {
+        if (antes !== acoesFoto()) {
           acoesRegistrar(tipo, arguments, origem);
           if (fotoDesfazer && !gameEnded) desfazerOferecer(tipo, arguments, fotoDesfazer);
           else if (tipo !== "desfazer") desfazerLimpar();
@@ -16309,9 +16357,14 @@ function acoesRestaurar(state) {
           m: jogadorIdValido(x.m) ? x.m : null,
           v: jogadorIdValido(x.v) ? x.v : null,
           t: typeof x.t === "number" && isFinite(x.t) ? x.t : 0,
+          c: typeof x.c === "string" && x.c.length <= 64 ? x.c : null,
         }))
     : [];
-  acoesComandosVistos = [];
+  // 1.7.9: os comandos já aplicados vão no save. Antes a lista zerava ao recarregar e um comando
+  // repetido podia ser aceito de novo na mesma partida.
+  acoesComandosVistos = Array.isArray(state.acoesComandos)
+    ? state.acoesComandos.filter((x) => typeof x === "string" && x && x.length <= 64).slice(-ACOES_COMANDOS_MAX)
+    : [];
 }
 // A porta dos comandos (rede na 1.7.9; testes e ferramentas hoje).
 function dispatchAction(cmd) {
@@ -16336,12 +16389,14 @@ function dispatchAction(cmd) {
   if (!pode) return { ok: false, motivo: "fora_de_hora", revisao: partidaRevisao };
   const antes = partidaRevisao;
   acoesOrigemAtual = "comando";
+  acoesComandoAtual = typeof c.commandId === "string" ? c.commandId : null;
   try {
     window[def.fn].apply(null, dados);
   } catch (e) {
     return { ok: false, motivo: "erro", revisao: partidaRevisao };
   } finally {
     acoesOrigemAtual = null;
+    acoesComandoAtual = null;
   }
   if (c.commandId !== undefined) {
     acoesComandosVistos.push(c.commandId);
@@ -19020,7 +19075,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.8.9 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.9 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -24087,7 +24142,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.8.9 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.9 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -25504,6 +25559,9 @@ function caosCanalDestino(texto) {
     : [{ id: null, nome: "mesa", aparelho: "todos" }];
 }
 let caosCanalSeq = 0;
+// 1.7.9: o contador volta a 0 quando a página recarrega; o pedaço da sessão evita repetir um eventId
+// já usado na mesma partida (quem recebe ignora evento repetido).
+const caosCanalSessao = Math.random().toString(36).slice(2, 6);
 let caosCanalDestinoExplicito = null; // { ids: [...] } enquanto caosFalarPara entrega a fala
 function caosCanalRegistrar(texto, privado) {
   try {
@@ -25516,7 +25574,7 @@ function caosCanalRegistrar(texto, privado) {
       : caosCanalDestino(texto);
     caosCanal.push({
       // evento da fala: id único na partida (a rede usa pra não entregar duas vezes)
-      eventId: (typeof matchId === "string" && matchId ? matchId : "local") + ":f" + ++caosCanalSeq,
+      eventId: (typeof matchId === "string" && matchId ? matchId : "local") + ":" + caosCanalSessao + ":f" + ++caosCanalSeq,
       matchId: typeof matchId === "string" ? matchId : null,
       revisao: typeof partidaRevisao === "number" ? partidaRevisao : 0,
       t: Date.now(),
@@ -25949,6 +26007,7 @@ function saveGameState() {
       matchId,
       partidaRevisao,
       acoesLog,
+      acoesComandos: acoesComandosVistos,
       deck: deck.map((c) => c.answer),
       currentCardAnswer: currentCard ? currentCard.answer : null,
       currentCardClues: currentCard ? currentCard.clues : null,
@@ -27252,7 +27311,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.8.9 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.9 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -27775,7 +27834,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.8.9 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.9 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -62843,6 +62902,17 @@ const PAUSE_TIPS = [
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.9",
+    data: "09/10/2026 · 10:44",
+    nome: "Rooms and Network Update · Parte 1",
+    t: "Começa a Rooms and Network Update: as regras do jogo ficam firmes antes de chegar o online.",
+    itens: [
+      "🛡️ Regras que valem sempre: descartar, desistir e mover casas seguem as mesmas regras na tela e por dentro do jogo. No online, ninguém consegue pular uma regra mandando a jogada por fora.",
+      "📺 Telão acompanha a pausa: pausar e voltar aparecem na hora no telão.",
+    ],
+    qol: [],
+  },
   {
     v: "Beta 1.7.8.9",
     data: "08/10/2026 · 23:06",

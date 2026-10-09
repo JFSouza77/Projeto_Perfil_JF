@@ -901,7 +901,7 @@ function render() {
     const realCluesCount = revealedOrder.filter((r) => r.item.type === "clue").length;
     // no Express a 1ª dica abre sozinha (nunca fica sem dica aberta): o descarte vale com a dica na tela
     const expressPodeDescartar = CURRENT_MODE === "express" && pendingIndex !== null && !expressAskWho && !expressWhoFreeze;
-    const canDiscard = (pendingIndex === null || expressPodeDescartar) && realCluesCount <= 5 && consecutiveDiscards < 2;
+    const canDiscard = podeDescartarCarta(); // 1.7.9: mesma regra da porta das ações
     let extraBtnsHtml = "";
     // 1.7.8.7: o "Reembaralhar" (antes da 1ª dica, sem limite) saiu; fazia o mesmo que o Descartar.
     // Trocar a carta é só pelo Descartar (até a 5ª dica, no máximo 2 seguidas). No online, vira votação da mesa.
@@ -915,7 +915,7 @@ function render() {
           : `✕ Carta muito difícil? Descartar (${chancesLeft} chance${chancesLeft === 1 ? "" : "s"} de dica, ${discardsLeft} de descarte)`;
       extraBtnsHtml += `<button class="discard-btn" id="discardBtn">${discardText}</button>`;
     }
-    if (CURRENT_MODE !== "express" && pendingIndex === null && revealedOrder.length >= 1)
+    if (podeDesistirCarta())
       extraBtnsHtml += `<button class="discard-btn" id="giveUpBtn" style="color:#b45309;border-color:rgba(180,83,9,.5);margin-top:8px">🏳️ Desistir desta carta (ninguém acerta)</button>`;
     area.style.setProperty("--card-glow", (GEM_INFO[gemCategoryFor(currentCard.category)] || {}).color || "#a78bfa");
     const bonusBannerRevealedHtml = currentCard.isBonus ? renderBonusBanner() : "";

@@ -6,6 +6,14 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.9 · 09/10/2026 · "Rooms and Network Update · Parte 1" = PORTA DAS AÇÕES FECHADA.
+          Revisão externa da 1.7.8.9, conferida no código. A porta (dispatchAction) usa as mesmas regras da
+          tela: descarte (podeDescartarCarta), desistir (podeDesistirCarta), mover casas só com a especial de
+          mover aberta (acoesMovimentoValido/EquipeValido), alvo do Express só com a janela aberta.
+          reembaralharDicas e reshuffleAndDraw saíram. expressCardLost e admRemoverJogador viraram ações.
+          A pausa entra na foto da casca (acoesFoto): pausar e voltar sobem a revisão e avisam o telão (e,
+          como toda ação, pausar fecha a janela do Desfazer). commandId aplicado vai no save (acoesComandos) e no log (campo c). eventId das
+          falas com pedaço da sessão. Plano da rede no Roteiro, seção 10.
   1.7.8.9 · 08/10/2026 · "Actions and Events Update · Parte 10" = DEBUG ANTES DO ONLINE.
           ferramentas/teste_macaco.js: toca em botões ao acaso (como um dedo, só no que está por cima), confere
           regras a cada 25 toques e recarrega a cada 200 exigindo a mesma partida. Achou: a roleta da categoria
@@ -487,7 +495,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.8.9</title>
+<title>Perfil JF · Beta 1.7.9</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

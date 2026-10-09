@@ -236,6 +236,9 @@ function caosCanalDestino(texto) {
     : [{ id: null, nome: "mesa", aparelho: "todos" }];
 }
 let caosCanalSeq = 0;
+// 1.7.9: o contador volta a 0 quando a página recarrega; o pedaço da sessão evita repetir um eventId
+// já usado na mesma partida (quem recebe ignora evento repetido).
+const caosCanalSessao = Math.random().toString(36).slice(2, 6);
 let caosCanalDestinoExplicito = null; // { ids: [...] } enquanto caosFalarPara entrega a fala
 function caosCanalRegistrar(texto, privado) {
   try {
@@ -248,7 +251,7 @@ function caosCanalRegistrar(texto, privado) {
       : caosCanalDestino(texto);
     caosCanal.push({
       // evento da fala: id único na partida (a rede usa pra não entregar duas vezes)
-      eventId: (typeof matchId === "string" && matchId ? matchId : "local") + ":f" + ++caosCanalSeq,
+      eventId: (typeof matchId === "string" && matchId ? matchId : "local") + ":" + caosCanalSessao + ":f" + ++caosCanalSeq,
       matchId: typeof matchId === "string" ? matchId : null,
       revisao: typeof partidaRevisao === "number" ? partidaRevisao : 0,
       t: Date.now(),
