@@ -10,7 +10,7 @@
  *    aparelho desenha o mesmo tabuleiro. Não repete a forma da partida anterior neste aparelho.
  *  · 1.7.9.4: na partida volta a linha com pontinhos; o desenho aparece no "toque pra ampliar" e no
  *    lobby entre as cartas (tabLobbyAbrir, mais abaixo).
- *  · Tudo em SVG feito aqui (nada pra baixar). Modo Batata e "menos movimento" tiram a animação.
+ *  · Tudo em SVG feito aqui (nada pra baixar). Modo Batata e Menos movimento: o peão vai direto pra casa.
  * ---------------------------------------------------------------------- */
 const TAB_CASAS = 100;
 const TAB_FORMAS = {
@@ -333,8 +333,7 @@ function tabPosicionarPecas(caixa, forma, emPe, pecas, animar) {
 }
 function tabAnimar() {
   try {
-    if (document.body.classList.contains("batata-mode")) return false;
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+    if (semMovimento()) return false;
   } catch (e) {}
   return true;
 }
@@ -360,18 +359,174 @@ function tabPecasDaPartida() {
     };
   });
 }
-// Tabuleiro grande: em pé no celular, deitado no computador. Vai no "toque pra ampliar" e no lobby.
+// Tabuleiro grande: em pé no celular, deitado no computador. 1.7.9.5 (pedido do JF): só aparece no
+// lobby entre as cartas; na partida fica a linha com pontinhos (e o "toque pra ampliar" mostra a lista).
 function tabHtmlGrande(id) {
   const forma = tabFormaAtual(), tema = tabTema(CURRENT_MODE);
   const emPe = window.innerWidth < 700;
-  return `<div class="tb-caixa tb-grande tb-tema-${tema}${emPe ? " tb-em-pe" : ""}" id="${id || "tabCaixaGrande"}">${tabSvg({ forma, meta: WINNING_SCORE, modo: CURRENT_MODE, emPe })}<div class="tb-pecas"></div></div>
-    <div class="tb-legenda tb-legenda-grande">${TAB_FORMAS[forma].ic} Tabuleiro ${TAB_FORMAS[forma].nome} · ${TAB_CASAS} casinhas, cada uma vale ${(WINNING_SCORE / TAB_CASAS).toLocaleString("pt-BR")} casa${WINNING_SCORE / TAB_CASAS === 1 ? "" : "s"}${boardCountsForWin() ? "" : " · não vale vitória"}</div>`;
+  return `<div class="tb-caixa tb-grande tb-zoom tb-tema-${tema}${emPe ? " tb-em-pe" : ""}" id="${id || "tabCaixaLobby"}">
+      <div class="tb-zoom-in">${tabSvg({ forma, meta: WINNING_SCORE, modo: CURRENT_MODE, emPe })}<div class="tb-pecas"></div></div>
+      <div class="tb-zoom-btns"><button type="button" data-z="+" aria-label="Aumentar o zoom">+</button><button type="button" data-z="-" aria-label="Diminuir o zoom">−</button><button type="button" data-z="0" aria-label="Ver o tabuleiro inteiro">⤢</button></div>
+      <div class="tb-info" aria-live="polite"></div>
+    </div>
+    <div class="tb-legenda tb-legenda-grande">${TAB_FORMAS[forma].ic} Tabuleiro ${TAB_FORMAS[forma].nome} · ${TAB_CASAS} casinhas, cada uma vale ${(WINNING_SCORE / TAB_CASAS).toLocaleString("pt-BR")} casa${WINNING_SCORE / TAB_CASAS === 1 ? "" : "s"}${boardCountsForWin() ? "" : " · não vale vitória"}</div>
+    <div class="tb-dica-zoom">🔍 Pinça (ou + e −) pra dar zoom e arrastar · toque num peão ou numa casa pra medir a distância</div>`;
 }
-function tabPreencherGrande() {
-  const caixa = document.getElementById("tabCaixaGrande");
-  if (!caixa) return;
-  Object.keys(tabPrevIdx).forEach((k) => k.startsWith("tabCaixaGrande") && delete tabPrevIdx[k]);
-  tabPosicionarPecas(caixa, tabFormaAtual(), caixa.classList.contains("tb-em-pe"), tabPecasDaPartida(), false);
+
+/* --- 1.7.9.5 · Zoom e régua do tabuleiro grande (lobby) ---
+ * Pinça com dois dedos (ou + e −, ou a rodinha do mouse) aproxima; com zoom, um dedo arrasta.
+ * Toque duplo aproxima/volta. Tocar num peão escolhe ele; tocar numa casa diz que casa é e a
+ * distância até o peão escolhido. É só olhar: nada disso mexe na partida. */
+function tabZoomInstalar(caixa, forma, emPe) {
+  const alvo = caixa.querySelector(".tb-zoom-in");
+  if (!alvo || caixa._zoom) return caixa._zoom;
+  let z = 1, x = 0, y = 0, base = null, moveu = false, escolhido = null;
+  const dedos = new Map();
+  const pintar = () => {
+    const W = caixa.clientWidth, H = caixa.clientHeight;
+    z = Math.max(1, Math.min(4, z));
+    x = Math.min(0, Math.max(W * (1 - z), x));
+    y = Math.min(0, Math.max(H * (1 - z), y));
+    alvo.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) scale(${z.toFixed(3)})`;
+    // o peão cresce menos que o desenho, pra não tampar as casas de perto
+    caixa.style.setProperty("--tbp", (1 / Math.sqrt(z)).toFixed(3));
+    caixa.classList.toggle("tb-zoomado", z > 1.01);
+    caixa.style.touchAction = z > 1.01 ? "none" : "pan-y";
+  };
+  const zoomEm = (nz, cx, cy) => {
+    nz = Math.max(1, Math.min(4, nz));
+    const k = nz / z;
+    x = cx - (cx - x) * k;
+    y = cy - (cy - y) * k;
+    z = nz;
+    pintar();
+    tabCaosNoTabuleiro("zoom");
+  };
+  const local = (e) => {
+    const r = caixa.getBoundingClientRect();
+    return [e.clientX - r.left, e.clientY - r.top];
+  };
+  caixa.addEventListener("pointerdown", (e) => {
+    if (e.target.closest(".tb-zoom-btns")) return;
+    dedos.set(e.pointerId, [e.clientX, e.clientY]);
+    if (dedos.size === 1) moveu = false;
+    base = null;
+  });
+  caixa.addEventListener("pointermove", (e) => {
+    if (!dedos.has(e.pointerId)) return;
+    const [ax, ay] = dedos.get(e.pointerId);
+    dedos.set(e.pointerId, [e.clientX, e.clientY]);
+    if (dedos.size >= 2) {
+      const [[x1, y1], [x2, y2]] = [...dedos.values()];
+      const r = caixa.getBoundingClientRect();
+      const d = Math.hypot(x1 - x2, y1 - y2), cx = (x1 + x2) / 2 - r.left, cy = (y1 + y2) / 2 - r.top;
+      if (base && base.d > 0) {
+        x += cx - base.cx;
+        y += cy - base.cy;
+        zoomEm((z * d) / base.d, cx, cy);
+      }
+      base = { d, cx, cy };
+      moveu = true;
+      e.preventDefault();
+    } else if (z > 1.01) {
+      const dx = e.clientX - ax, dy = e.clientY - ay;
+      if (Math.abs(dx) + Math.abs(dy) > 1) moveu = true;
+      x += dx;
+      y += dy;
+      pintar();
+      e.preventDefault();
+    }
+  });
+  const soltar = (e) => {
+    dedos.delete(e.pointerId);
+    if (dedos.size < 2) base = null;
+  };
+  ["pointerup", "pointercancel", "pointerleave"].forEach((t) => caixa.addEventListener(t, soltar));
+  caixa.addEventListener(
+    "wheel",
+    (e) => {
+      e.preventDefault();
+      const [cx, cy] = local(e);
+      zoomEm(z * (e.deltaY < 0 ? 1.2 : 1 / 1.2), cx, cy);
+    },
+    { passive: false },
+  );
+  caixa.addEventListener("dblclick", (e) => {
+    const [cx, cy] = local(e);
+    zoomEm(z > 1.5 ? 1 : 2.5, cx, cy);
+  });
+  caixa.querySelectorAll(".tb-zoom-btns [data-z]").forEach((bt) =>
+    bt.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const W = caixa.clientWidth, H = caixa.clientHeight, q = bt.dataset.z;
+      if (q === "0") {
+        z = 1;
+        x = y = 0;
+        pintar();
+      } else zoomEm(z * (q === "+" ? 1.5 : 1 / 1.5), W / 2, H / 2);
+    }),
+  );
+  // toque: peão (escolhe) ou casa (que casa é, e a distância até o peão escolhido)
+  const info = caixa.querySelector(".tb-info");
+  const dizer = (html) => {
+    if (!info) return;
+    info.innerHTML = html;
+    info.classList.toggle("on", !!html);
+  };
+  caixa.addEventListener("click", (e) => {
+    if (moveu || e.target.closest(".tb-zoom-btns")) return;
+    const pecas = tabPecasDaPartida(), meta = WINNING_SCORE;
+    const peao = e.target.closest(".tb-peao");
+    if (peao) {
+      const p = pecas.find((q) => q.k === peao.dataset.k);
+      if (!p) return;
+      escolhido = p.k;
+      caixa.querySelectorAll(".tb-peao").forEach((el) => el.classList.toggle("tb-sel", el.dataset.k === p.k));
+      const lider = Math.max(...pecas.map((q) => q.pos));
+      const atras = lider - p.pos;
+      dizer(`<b>${escapeHtml(p.titulo.replace(/: casa -?\d+$/, ""))}</b> · casa ${p.pos} · ${atras > 0 ? `a ${atras} do líder` : "🏁 na frente"} · faltam ${Math.max(0, meta - p.pos)}`);
+      tabCaosNoTabuleiro("peao");
+      return;
+    }
+    const g = tabGeo(forma, emPe), r = alvo.getBoundingClientRect();
+    if (!r.width) return;
+    const sx = ((e.clientX - r.left) / r.width) * g.W, sy = ((e.clientY - r.top) / r.height) * g.H;
+    let melhor = -1, dist = Infinity;
+    g.casas.forEach(([cx, cy], i) => {
+      const d = Math.hypot(cx - sx, cy - sy);
+      if (d < dist) {
+        dist = d;
+        melhor = i;
+      }
+    });
+    if (melhor < 0 || dist > g.largura) {
+      dizer("");
+      return;
+    }
+    const casa = Math.round((melhor * meta) / TAB_CASAS);
+    let bonus = false;
+    for (let pos = BONUS_HOUSE_INTERVAL; pos < meta; pos += BONUS_HOUSE_INTERVAL) if (tabIdx(pos, meta) === melhor) bonus = true;
+    const nomeCasa = melhor === 0 ? "Saída" : melhor === TAB_CASAS ? `Chegada (casa ${meta})` : `Casa ${casa}`;
+    let txt = `<b>${nomeCasa}</b>${bonus ? " · ❓ casa de bônus" : ""}`;
+    const p = escolhido && pecas.find((q) => q.k === escolhido);
+    if (p && melhor > 0) {
+      const nome = escapeHtml(p.titulo.replace(/: casa -?\d+$/, ""));
+      const d = casa - p.pos;
+      txt += d > 0 ? ` · ${nome} está a ${d} casa${d === 1 ? "" : "s"} daqui` : d < 0 ? ` · ${nome} já passou daqui (${-d} atrás)` : ` · ${nome} está aqui`;
+    } else if (!p) txt += " · toque num peão pra medir a distância";
+    dizer(txt);
+    tabCaosNoTabuleiro("casa");
+  });
+  // Safari do iPhone: a pinça dentro do tabuleiro é do tabuleiro, não da página inteira
+  ["gesturestart", "gesturechange"].forEach((t) => caixa.addEventListener(t, (e) => e.preventDefault()));
+  // navegador sem overflow: clip rola a caixa sozinho ao focar um botão: volta pro lugar
+  caixa.addEventListener("scroll", () => {
+    caixa.scrollLeft = 0;
+    caixa.scrollTop = 0;
+  });
+  caixa._zoom = { pintar };
+  pintar();
+  return caixa._zoom;
 }
 
 /* --- 1.7.9.4 · Board Update 3: LOBBY ENTRE AS CARTAS (ideia do JF) ---
@@ -450,8 +605,18 @@ function tabLobbyAbrir() {
     <ul class="tg-list">${tabuleiroLinhasHtml(antes)}</ul>
   </div>`;
   document.body.appendChild(ov);
-  ov.querySelector("#tbLobbyPular").addEventListener("click", tabLobbyFechar);
+  tabLobbyAbertoEm = Date.now();
+  ov.querySelector("#tbLobbyPular").addEventListener("click", () => {
+    // pulou nos primeiros 3 segundos: às vezes o C.A.O.S. reclama
+    if (Date.now() - tabLobbyAbertoEm < 3000 && tabCaosPode() && Math.random() < 0.3) {
+      const fala = getRandomReaction(REACTIVE_VOICE.tabuleiro.pular);
+      if (fala) caosFalaAgendar(() => fala, 300, "baixa");
+    }
+    tabLobbyFechar();
+  });
+  tabCaosNoTabuleiro("abrir");
   const caixa = ov.querySelector("#tabCaixaLobby");
+  tabZoomInstalar(caixa, tabFormaAtual(), caixa.classList.contains("tb-em-pe"));
   // os peões entram um instante depois, pra andança aparecer (sai de onde estavam no lobby anterior)
   setTimeout(() => {
     if (caixa.isConnected) tabPosicionarPecas(caixa, tabFormaAtual(), caixa.classList.contains("tb-em-pe"), tabPecasDaPartida(), tabAnimar());
@@ -475,6 +640,48 @@ function tabLobbyAbrir() {
     if (barra) barra.style.width = ((resta / (TAB_LOBBY_SEG * 1000)) * 100).toFixed(1) + "%";
     if (resta <= 0) tabLobbyFechar();
   }, 250);
+}
+/* --- 1.7.9.5: o C.A.O.S. comenta o tabuleiro (ideia do JF) ---
+ * Estreia (a primeira vez que o aparelho vê o lobby), às vezes quando o lobby abre, quando mexem no
+ * tabuleiro (zoom, peão, casa: no máximo uma vez por lobby) e quando pulam o lobby logo de cara.
+ * Só fala: respeita o C.A.O.S. calado e nunca mexe na partida. */
+const TAB_LOBBY_VISTO_KEY = "perfil5_tab_lobby_visto";
+let tabCaosLobbyFalou = false; // já comentou um toque neste lobby
+let tabLobbyAbertoEm = 0;
+function tabCaosPode() {
+  return typeof caosSilenced !== "undefined" && !caosSilenced && typeof REACTIVE_VOICE !== "undefined" && REACTIVE_VOICE.tabuleiro;
+}
+function tabCaosNoTabuleiro(tipo) {
+  try {
+    if (!tabCaosPode() || !document.getElementById("tabLobby")) return;
+    const V = REACTIVE_VOICE.tabuleiro;
+    if (tipo === "abrir") {
+      // os toques no tabuleiro rendem comentário em metade dos lobbies (e no máximo um)
+      tabCaosLobbyFalou = Math.random() > 0.5;
+      let estreia = false;
+      try {
+        estreia = !JFStore.getItem(TAB_LOBBY_VISTO_KEY);
+        if (estreia) JFStore.setItem(TAB_LOBBY_VISTO_KEY, "1");
+      } catch (e) {}
+      if (!estreia && Math.random() > 0.35) return;
+      const pecas = tabPecasDaPartida().slice().sort((a, b) => b.pos - a.pos);
+      const lider = pecas.length ? pecas[0].titulo.replace(/: casa -?\d+$/, "") : "alguém";
+      const fala = getRandomReaction(estreia ? V.estreia : V.abrir, lider);
+      if (fala) caosFalaAgendar(() => fala, 900, estreia ? undefined : "baixa");
+      return;
+    }
+    if (tabCaosLobbyFalou) return;
+    tabCaosLobbyFalou = true;
+    if (tipo === "peao") {
+      const sel = document.querySelector("#tabLobby .tb-peao.tb-sel");
+      const p = sel && tabPecasDaPartida().find((q) => q.k === sel.dataset.k);
+      const fala = p && getRandomReaction(V.peao, p.titulo.replace(/: casa -?\d+$/, ""));
+      if (fala) caosFalaAgendar(() => fala, 400, "baixa");
+    } else if (V[tipo]) {
+      const fala = getRandomReaction(V[tipo]);
+      if (fala) caosFalaAgendar(() => fala, 400, "baixa");
+    }
+  } catch (e) {}
 }
 function tabLobbyFechar() {
   clearInterval(tabLobbyRelogio);

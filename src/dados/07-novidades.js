@@ -6,6 +6,22 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.9.5",
+    data: "09/10/2026 · 14:49",
+    nome: "Rooms and Network Update · Board Update 4",
+    t: "Zoom no tabuleiro, régua de casas e o C.A.O.S. de olho no mapa.",
+    itens: [
+      "🔍 Zoom no tabuleiro: entre as cartas, dá pra aproximar com dois dedos (ou com + e −) e arrastar pra ver cada casinha.",
+      "📏 Régua de casas: toque num peão e depois numa casa pra saber quantas casas faltam até ali. A casa de bônus avisa que é bônus.",
+      "🎙️ O C.A.O.S. vê o tabuleiro: ele comenta quando o tabuleiro abre, quando vocês dão zoom ou medem distância, e reclama de quem pula sem nem olhar.",
+      "📍 Partida mais limpa: durante a carta fica só a linha com pontinhos. Tocando nela, aparece a lista de quem está na frente. O tabuleiro grande fica pro intervalo entre as cartas.",
+      "🐢 Menos movimento de verdade: na Acessibilidade, ele agora só tira o que treme, pula, gira ou desliza. Cores, neon e brilho continuam. O Modo Batata segue separado, pra celular que precisa de um jogo mais leve.",
+    ],
+    qol: [
+      "🎉 Confete sem cair: com Menos movimento, o confete aparece espalhado e some devagar, sem chover na tela.",
+    ],
+  },
+  {
     v: "Beta 1.7.9.4",
     data: "09/10/2026 · 14:07",
     nome: "Rooms and Network Update · Board Update 3",

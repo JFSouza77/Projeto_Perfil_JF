@@ -3,12 +3,19 @@
  * Antes ela existia só no Old School Acessibilidade. Agora fica no menu ⋮ (e na Pausa):
  * letra maior (2 níveis), mais tempo pra escolher/responder, ler as dicas em voz alta,
  * volume da voz e dos sons, alto contraste e menos movimento.
+ * 1.7.9.5 (correção do JF): "Menos movimento" é acessibilidade e NÃO é o Modo Batata.
+ *  · Menos movimento (acessCfg.calmo, classe acess-calmo no <html>): pra quem tem vertigem ou vista
+ *    cansada. Tira só o que mexe: tremer, pular, flutuar, girar a carta, deslizar, peão andando,
+ *    confete caindo. Cores, neon, brilho e luzes continuam. Também vale quando o aparelho pede
+ *    "reduzir movimento" (prefers-reduced-motion). Pergunte com movimentoReduzido().
+ *  · Modo Batata (menu ⋮, body.batata-mode): otimização pra celular fraco. Desliga tudo que pesa:
+ *    neon, brilho, sombras, degradês animados, efeitos e também o movimento.
  * O Old School Acessibilidade continua: ele liga letra grande e mais tempo naquela partida.
  * ---------------------------------------------------------------------- */
 const ACESS_KEY = "perfil5_acessibilidade";
 // Segundos a mais por tipo de relógio quando "Mais tempo" está ligado.
 const ACESS_TEMPO_EXTRA = { pick: 15, response: 30, special: 10, turn: 5 };
-const ACESS_PADRAO = { letra: 0, tempo: false, lerDicas: false, volVoz: 1, volSom: 1, contraste: false };
+const ACESS_PADRAO = { letra: 0, tempo: false, lerDicas: false, volVoz: 1, volSom: 1, contraste: false, calmo: false };
 let acessCfg = { ...ACESS_PADRAO };
 function acessCarregar() {
   try {
@@ -20,7 +27,7 @@ function acessCarregar() {
     Object.keys(ACESS_PADRAO).forEach((k) => {
       if (k in ok) acessCfg[k] = ok[k];
     });
-    ["tempo", "lerDicas", "contraste"].forEach((k) => {
+    ["tempo", "lerDicas", "contraste", "calmo"].forEach((k) => {
       acessCfg[k] = acessCfg[k] === true;
     });
     acessCfg.letra = [0, 1, 2].includes(acessCfg.letra) ? acessCfg.letra : 0;
@@ -57,6 +64,21 @@ function aplicarAcessibilidade() {
   h.classList.toggle("acess-letra-1", acessCfg.letra === 1);
   h.classList.toggle("acess-letra-2", acessCfg.letra === 2);
   h.classList.toggle("acess-contraste", !!acessCfg.contraste);
+  h.classList.toggle("acess-calmo", !!acessCfg.calmo);
+}
+// Menos movimento: a opção do jogo ou o "reduzir movimento" do aparelho. O Batata também tira o
+// movimento, mas por outro motivo (desempenho) e junto com o resto; quem quer saber do Batata
+// pergunta visualFxAllowed().
+function movimentoReduzido() {
+  if (acessCfg.calmo) return true;
+  try {
+    return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  } catch (e) {
+    return false;
+  }
+}
+function semMovimento() {
+  return movimentoReduzido() || (typeof document !== "undefined" && document.body && document.body.classList.contains("batata-mode"));
 }
 // Lê a dica em voz alta quando ela abre (usa a voz do aparelho; entra na fila depois do C.A.O.S.).
 function acessLerDica(num, item) {
@@ -98,11 +120,12 @@ function acessPainelAbrir() {
       <button type="button" data-tog="tempo"${sel(acessCfg.tempo)}>⏳ Mais tempo <small>+15 s pra escolher a dica, +30 s pra responder</small></button>
       <button type="button" data-tog="lerDicas"${sel(acessCfg.lerDicas)}${CAOS_VOICE_OK ? "" : " disabled"}>🔊 Ler as dicas em voz alta <small>${CAOS_VOICE_OK ? "cada dica é lida quando abre" : "este aparelho não tem voz"}</small></button>
       <button type="button" data-tog="contraste"${sel(acessCfg.contraste)}>🌗 Alto contraste <small>texto mais forte, sem brilho neon</small></button>
-      <button type="button" data-tog="calmo"${sel(document.body.classList.contains("batata-mode"))}>🐢 Menos movimento <small>tira animações (o mesmo do Modo Batata)</small></button>
+      <button type="button" data-tog="calmo"${sel(acessCfg.calmo)}>🐢 Menos movimento <small>nada treme, pula, gira ou desliza. Cores, neon e brilho continuam</small></button>
       <div class="acess-grupo"><label class="acess-rot" for="acessVolVoz">🗣️ Volume da voz <b>${Math.round(acessCfg.volVoz * 100)}%</b></label>
         <input id="acessVolVoz" type="range" min="0" max="1" step="0.05" value="${acessCfg.volVoz}"></div>
       <div class="acess-grupo"><label class="acess-rot" for="acessVolSom">🎵 Volume dos sons <b>${Math.round(acessCfg.volSom * 100)}%</b></label>
         <input id="acessVolSom" type="range" min="0" max="1" step="0.05" value="${acessCfg.volSom}"></div>
+      <div class="acess-nota">🥔 O Modo Batata (menu ⋮) é outra coisa: deixa o jogo leve pra celular fraco e desliga neon, brilho e efeitos.</div>
       <div class="acess-nota">🌎 Idioma: Português (Brasil). Outros idiomas vêm numa próxima atualização.</div>
       <div class="acess-acoes"><button type="button" class="acess-fechar" id="acessFechar">Pronto</button></div>`;
     box.querySelectorAll("[data-letra]").forEach((b) =>
@@ -116,14 +139,10 @@ function acessPainelAbrir() {
     box.querySelectorAll("[data-tog]").forEach((b) =>
       b.addEventListener("click", () => {
         const k = b.dataset.tog;
-        if (k === "calmo") {
-          if (typeof toggleBatataMode === "function") toggleBatataMode();
-        } else {
-          acessCfg[k] = !acessCfg[k];
-          acessSalvar();
-          aplicarAcessibilidade();
-          if (k === "lerDicas" && acessCfg.lerDicas) acessLerDica(1, { type: "clue", text: "Assim as dicas vão ser lidas." });
-        }
+        acessCfg[k] = !acessCfg[k];
+        acessSalvar();
+        aplicarAcessibilidade();
+        if (k === "lerDicas" && acessCfg.lerDicas) acessLerDica(1, { type: "clue", text: "Assim as dicas vão ser lidas." });
         pintar();
       }),
     );

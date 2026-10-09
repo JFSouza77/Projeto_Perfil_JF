@@ -254,6 +254,7 @@ body.claro .tb-tema-oldschool {
 /* abaixo do Desfazer (10001) e das janelas (10002): dá pra desfazer o veredito com o lobby aberto */
 .jf-modal-bg.tb-lobby-bg {
   z-index: 10000;
+  overflow-x: hidden;
   align-items: flex-start;
   overflow-y: auto;
   /* em cima fica o botão Desfazer (8 s depois do veredito): o lobby começa abaixo dele */
@@ -293,6 +294,9 @@ body.claro .tb-tema-oldschool {
 }
 .tb-lobby-pular {
   flex: none;
+  position: relative;
+  overflow: hidden; /* o brilho neon do botão não pode vazar e criar rolagem pro lado */
+  isolation: isolate;
   padding: 9px 14px;
   font-size: 0.9rem;
   font-weight: 800;
@@ -355,4 +359,83 @@ body.claro .tb-lobby-tempo {
 }
 body.claro .tg-andou:not(.tg-subiu):not(.tg-desceu) {
   background: #0000001a;
+}
+
+/* ---- 1.7.9.5 · zoom e régua do tabuleiro grande (lobby) ---- */
+.tb-caixa.tb-zoom {
+  overflow: hidden;
+  overflow: clip; /* não vira área de rolagem (o foco num botão não pode empurrar o desenho) */
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+.tb-zoom-in {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.tb-zoom .tb-pecas .tb-peao {
+  pointer-events: auto;
+  cursor: pointer;
+  scale: var(--tbp, 1);
+}
+.tb-zoom .tb-peao.tb-sel {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+  z-index: 4;
+}
+.tb-zoom-btns {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 5;
+}
+.tb-zoom-btns button {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid #ffffff55;
+  background: #0b0820cc;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+}
+.tb-info {
+  position: absolute;
+  left: 8px;
+  right: 52px;
+  bottom: 8px;
+  z-index: 5;
+  padding: 7px 10px;
+  border-radius: 10px;
+  background: #0b0820e0;
+  color: #fff;
+  font-size: 0.8rem;
+  text-align: left;
+  line-height: 1.3;
+  display: none;
+}
+.tb-info.on {
+  display: block;
+}
+.tb-dica-zoom {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+body.claro .tb-zoom-btns button,
+body.claro .tb-info {
+  background: #ffffffe6;
+  color: #2e1065;
+  border-color: #7c3aed55;
+}
+body.claro .tb-zoom .tb-peao.tb-sel {
+  outline-color: #2e1065;
 }

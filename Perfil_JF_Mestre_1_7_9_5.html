@@ -6,6 +6,18 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.9.5 · 09/10/2026 · "Rooms and Network Update · Board Update 4" = ZOOM, RÉGUA, C.A.O.S. NO TABULEIRO E MENOS MOVIMENTO ≠ BATATA.
+          Pedido do JF. (1) Na partida, nada de tabuleiro grande: o "toque pra ampliar" volta a ser só a lista (o
+          desenho só no lobby). (2) Lobby: zoom (pinça, + e −, rodinha, toque duplo; com zoom, um dedo arrasta;
+          o peão cresce menos que o desenho) e régua (toca no peão, toca na casa: casa, bônus e distância).
+          tabZoomInstalar; caixa com overflow: clip (o foco num botão rolava o desenho); o brilho do botão
+          "Próxima carta" vazava e criava rolagem pro lado. (3) C.A.O.S. comenta o tabuleiro
+          (REACTIVE_VOICE.tabuleiro: estreia na 1ª vez do aparelho, abrir às vezes, um toque por lobby em metade
+          deles, pular nos 3 primeiros segundos). (4) Correção do JF: "Menos movimento" é acessibilidade e não é
+          o Modo Batata. Agora é acessCfg.calmo (html.acess-calmo + prefers-reduced-motion, movimentoReduzido()):
+          tira só o que mexe (caosAnimar com transform/top/left, pulinho do toque, flutuar, rosto balançando,
+          flip da carta, peão andando, confete caindo vira confete que some); neon, brilho e cores ficam. O
+          Batata continua desligando tudo. semMovimento() = um ou outro.
   1.7.9.4 · 09/10/2026 · "Rooms and Network Update · Board Update 3" = LOBBY DO TABULEIRO ENTRE AS CARTAS.
           Ideia do JF. Na partida volta a linha com pontinhos (renderBoardTrack como antes da 1.7.9.2); o
           tabuleiro desenhado fica no "toque pra ampliar" e vira uma tela de espera entre as cartas
@@ -526,7 +538,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.9.4</title>
+<title>Perfil JF · Beta 1.7.9.5</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -7182,6 +7194,28 @@ body.claro .desfazer-btn {
 body.claro .caos-mbtn.caos-mbtn-sec {
   color: color-mix(in srgb, var(--mb) 80%, #000 20%);
 }
+
+/* 1.7.9.5 · Menos movimento (acessibilidade, ≠ Modo Batata): o mesmo que o aparelho pedir "reduzir
+   movimento". Para o que treme, pula, flutua, gira a carta ou desliza. O neon que corre na borda,
+   o brilho e as cores continuam (quem desliga isso é o Batata). */
+html.acess-calmo .nega-treme,
+html.acess-calmo .splash-go-flutua,
+html.acess-calmo .nov-modal .nov-x,
+html.acess-calmo .nov-drop-txt,
+html.acess-calmo .card.flip-sai,
+html.acess-calmo .card.flip-entra,
+html.acess-calmo .card.revelando > *,
+html.acess-calmo .desfazer-btn::after {
+  animation: none;
+}
+html.acess-calmo,
+html.acess-calmo * {
+  scroll-behavior: auto !important;
+}
+html.acess-calmo .fx-shake {
+  animation: none;
+  transform: none;
+}
 /* 1.7.7.7 · Computador (Opera GX / Chrome). Sugestão do GPT a partir de um print do JF.
  * Antes, no computador o jogo inteiro era ampliado com zoom 1.2 (regra em 01-base.css): a coluna
  * de celular só ficava maior. Agora o zoom sai e a tela usa a largura do monitor de verdade, com
@@ -7562,6 +7596,7 @@ body.claro .tb-tema-oldschool {
 /* abaixo do Desfazer (10001) e das janelas (10002): dá pra desfazer o veredito com o lobby aberto */
 .jf-modal-bg.tb-lobby-bg {
   z-index: 10000;
+  overflow-x: hidden;
   align-items: flex-start;
   overflow-y: auto;
   /* em cima fica o botão Desfazer (8 s depois do veredito): o lobby começa abaixo dele */
@@ -7601,6 +7636,9 @@ body.claro .tb-tema-oldschool {
 }
 .tb-lobby-pular {
   flex: none;
+  position: relative;
+  overflow: hidden; /* o brilho neon do botão não pode vazar e criar rolagem pro lado */
+  isolation: isolate;
   padding: 9px 14px;
   font-size: 0.9rem;
   font-weight: 800;
@@ -7664,6 +7702,85 @@ body.claro .tb-lobby-tempo {
 body.claro .tg-andou:not(.tg-subiu):not(.tg-desceu) {
   background: #0000001a;
 }
+
+/* ---- 1.7.9.5 · zoom e régua do tabuleiro grande (lobby) ---- */
+.tb-caixa.tb-zoom {
+  overflow: hidden;
+  overflow: clip; /* não vira área de rolagem (o foco num botão não pode empurrar o desenho) */
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+.tb-zoom-in {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.tb-zoom .tb-pecas .tb-peao {
+  pointer-events: auto;
+  cursor: pointer;
+  scale: var(--tbp, 1);
+}
+.tb-zoom .tb-peao.tb-sel {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+  z-index: 4;
+}
+.tb-zoom-btns {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 5;
+}
+.tb-zoom-btns button {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid #ffffff55;
+  background: #0b0820cc;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+}
+.tb-info {
+  position: absolute;
+  left: 8px;
+  right: 52px;
+  bottom: 8px;
+  z-index: 5;
+  padding: 7px 10px;
+  border-radius: 10px;
+  background: #0b0820e0;
+  color: #fff;
+  font-size: 0.8rem;
+  text-align: left;
+  line-height: 1.3;
+  display: none;
+}
+.tb-info.on {
+  display: block;
+}
+.tb-dica-zoom {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+body.claro .tb-zoom-btns button,
+body.claro .tb-info {
+  background: #ffffffe6;
+  color: #2e1065;
+  border-color: #7c3aed55;
+}
+body.claro .tb-zoom .tb-peao.tb-sel {
+  outline-color: #2e1065;
+}
 </style>
 </head>
 <body class="noturno">
@@ -7711,7 +7828,7 @@ body.claro .tg-andou:not(.tg-subiu):not(.tg-desceu) {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.4 · Rooms and Network Update · Board Update 3<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.5 · Rooms and Network Update · Board Update 4<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -13232,8 +13349,7 @@ function mestreDestaqueHtml() {
 // topo da carta e o resto aparece aos poucos. Só enfeite: o estado do jogo muda na hora, como antes.
 function cartaAnimar() {
   try {
-    if (!visualFxAllowed()) return false;
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+    if (!visualFxAllowed() || movimentoReduzido()) return false;
   } catch (e) {}
   return true;
 }
@@ -13503,7 +13619,7 @@ function renderBoardTrack() {
   chaves.forEach(([k, pos], i) => {
     const antes = caosTokPrev[k];
     caosTokPrev[k] = pos;
-    if (antes !== void 0 && antes !== pos && els[i] && !document.body.classList.contains("batata-mode")) {
+    if (antes !== void 0 && antes !== pos && els[i] && !semMovimento()) {
       els[i].classList.add("pulando");
       els[i].dataset.t0 = Date.now();
     }
@@ -13558,9 +13674,8 @@ function abrirTabuleiroGrande() {
   const bg = document.createElement("div");
   bg.id = "tabuleiroModal";
   bg.className = "jf-modal-bg";
-  bg.innerHTML = `<div class="jf-modal tb-modal" role="dialog" aria-modal="true" aria-labelledby="tgTitle"><h3 id="tgTitle">🗺️ Tabuleiro</h3>${tabHtmlGrande()}<div class="nov-sub">Quem está na frente e quem está atrás</div><ul class="tg-list">${linhas}</ul><button type="button" class="chip tb-lobby-chip" id="tgLobby"></button><button type="button" class="btn-start btn-neo neo-solid neo-still" id="tgOk" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35); margin-top:10px;">Fechar</button></div>`;
+  bg.innerHTML = `<div class="jf-modal tb-modal" role="dialog" aria-modal="true" aria-labelledby="tgTitle"><h3 id="tgTitle">🗺️ Tabuleiro</h3><div class="nov-sub">Quem está na frente e quem está atrás</div><ul class="tg-list">${linhas}</ul><button type="button" class="chip tb-lobby-chip" id="tgLobby"></button><button type="button" class="btn-start btn-neo neo-solid neo-still" id="tgOk" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35); margin-top:10px;">Fechar</button></div>`;
   document.body.appendChild(bg);
-  tabPreencherGrande();
   const chip = bg.querySelector("#tgLobby");
   const pintarChip = () => {
     const on = tabLobbyLigado();
@@ -14115,6 +14230,12 @@ function spawnConfetti(colors, count, minDur, maxDur, lifeMs) {
     const r0 = Math.round(Math.random() * 360);
     piece.style.transform = `rotate(${r0}deg)`;
     container.appendChild(piece);
+    // Menos movimento (1.7.9.5): o confete aparece espalhado e some aos poucos, sem cair
+    if (movimentoReduzido()) {
+      piece.style.top = Math.random() * 90 + "vh";
+      caosAnimar(piece, { dur: maxDur * 1e3, delay: Math.random() * 400, ease: "ease-out", fill: true, frames: [[0, { opacity: 0.9 }], [1, { opacity: 0 }]] });
+      continue;
+    }
     caosAnimar(piece, {
       dur: (minDur + Math.random() * (maxDur - minDur)) * 1e3,
       delay: Math.random() * 400,
@@ -15809,12 +15930,19 @@ function cadAtualizarBotao() {
  * Antes ela existia só no Old School Acessibilidade. Agora fica no menu ⋮ (e na Pausa):
  * letra maior (2 níveis), mais tempo pra escolher/responder, ler as dicas em voz alta,
  * volume da voz e dos sons, alto contraste e menos movimento.
+ * 1.7.9.5 (correção do JF): "Menos movimento" é acessibilidade e NÃO é o Modo Batata.
+ *  · Menos movimento (acessCfg.calmo, classe acess-calmo no <html>): pra quem tem vertigem ou vista
+ *    cansada. Tira só o que mexe: tremer, pular, flutuar, girar a carta, deslizar, peão andando,
+ *    confete caindo. Cores, neon, brilho e luzes continuam. Também vale quando o aparelho pede
+ *    "reduzir movimento" (prefers-reduced-motion). Pergunte com movimentoReduzido().
+ *  · Modo Batata (menu ⋮, body.batata-mode): otimização pra celular fraco. Desliga tudo que pesa:
+ *    neon, brilho, sombras, degradês animados, efeitos e também o movimento.
  * O Old School Acessibilidade continua: ele liga letra grande e mais tempo naquela partida.
  * ---------------------------------------------------------------------- */
 const ACESS_KEY = "perfil5_acessibilidade";
 // Segundos a mais por tipo de relógio quando "Mais tempo" está ligado.
 const ACESS_TEMPO_EXTRA = { pick: 15, response: 30, special: 10, turn: 5 };
-const ACESS_PADRAO = { letra: 0, tempo: false, lerDicas: false, volVoz: 1, volSom: 1, contraste: false };
+const ACESS_PADRAO = { letra: 0, tempo: false, lerDicas: false, volVoz: 1, volSom: 1, contraste: false, calmo: false };
 let acessCfg = { ...ACESS_PADRAO };
 function acessCarregar() {
   try {
@@ -15826,7 +15954,7 @@ function acessCarregar() {
     Object.keys(ACESS_PADRAO).forEach((k) => {
       if (k in ok) acessCfg[k] = ok[k];
     });
-    ["tempo", "lerDicas", "contraste"].forEach((k) => {
+    ["tempo", "lerDicas", "contraste", "calmo"].forEach((k) => {
       acessCfg[k] = acessCfg[k] === true;
     });
     acessCfg.letra = [0, 1, 2].includes(acessCfg.letra) ? acessCfg.letra : 0;
@@ -15863,6 +15991,21 @@ function aplicarAcessibilidade() {
   h.classList.toggle("acess-letra-1", acessCfg.letra === 1);
   h.classList.toggle("acess-letra-2", acessCfg.letra === 2);
   h.classList.toggle("acess-contraste", !!acessCfg.contraste);
+  h.classList.toggle("acess-calmo", !!acessCfg.calmo);
+}
+// Menos movimento: a opção do jogo ou o "reduzir movimento" do aparelho. O Batata também tira o
+// movimento, mas por outro motivo (desempenho) e junto com o resto; quem quer saber do Batata
+// pergunta visualFxAllowed().
+function movimentoReduzido() {
+  if (acessCfg.calmo) return true;
+  try {
+    return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  } catch (e) {
+    return false;
+  }
+}
+function semMovimento() {
+  return movimentoReduzido() || (typeof document !== "undefined" && document.body && document.body.classList.contains("batata-mode"));
 }
 // Lê a dica em voz alta quando ela abre (usa a voz do aparelho; entra na fila depois do C.A.O.S.).
 function acessLerDica(num, item) {
@@ -15904,11 +16047,12 @@ function acessPainelAbrir() {
       <button type="button" data-tog="tempo"${sel(acessCfg.tempo)}>⏳ Mais tempo <small>+15 s pra escolher a dica, +30 s pra responder</small></button>
       <button type="button" data-tog="lerDicas"${sel(acessCfg.lerDicas)}${CAOS_VOICE_OK ? "" : " disabled"}>🔊 Ler as dicas em voz alta <small>${CAOS_VOICE_OK ? "cada dica é lida quando abre" : "este aparelho não tem voz"}</small></button>
       <button type="button" data-tog="contraste"${sel(acessCfg.contraste)}>🌗 Alto contraste <small>texto mais forte, sem brilho neon</small></button>
-      <button type="button" data-tog="calmo"${sel(document.body.classList.contains("batata-mode"))}>🐢 Menos movimento <small>tira animações (o mesmo do Modo Batata)</small></button>
+      <button type="button" data-tog="calmo"${sel(acessCfg.calmo)}>🐢 Menos movimento <small>nada treme, pula, gira ou desliza. Cores, neon e brilho continuam</small></button>
       <div class="acess-grupo"><label class="acess-rot" for="acessVolVoz">🗣️ Volume da voz <b>${Math.round(acessCfg.volVoz * 100)}%</b></label>
         <input id="acessVolVoz" type="range" min="0" max="1" step="0.05" value="${acessCfg.volVoz}"></div>
       <div class="acess-grupo"><label class="acess-rot" for="acessVolSom">🎵 Volume dos sons <b>${Math.round(acessCfg.volSom * 100)}%</b></label>
         <input id="acessVolSom" type="range" min="0" max="1" step="0.05" value="${acessCfg.volSom}"></div>
+      <div class="acess-nota">🥔 O Modo Batata (menu ⋮) é outra coisa: deixa o jogo leve pra celular fraco e desliga neon, brilho e efeitos.</div>
       <div class="acess-nota">🌎 Idioma: Português (Brasil). Outros idiomas vêm numa próxima atualização.</div>
       <div class="acess-acoes"><button type="button" class="acess-fechar" id="acessFechar">Pronto</button></div>`;
     box.querySelectorAll("[data-letra]").forEach((b) =>
@@ -15922,14 +16066,10 @@ function acessPainelAbrir() {
     box.querySelectorAll("[data-tog]").forEach((b) =>
       b.addEventListener("click", () => {
         const k = b.dataset.tog;
-        if (k === "calmo") {
-          if (typeof toggleBatataMode === "function") toggleBatataMode();
-        } else {
-          acessCfg[k] = !acessCfg[k];
-          acessSalvar();
-          aplicarAcessibilidade();
-          if (k === "lerDicas" && acessCfg.lerDicas) acessLerDica(1, { type: "clue", text: "Assim as dicas vão ser lidas." });
-        }
+        acessCfg[k] = !acessCfg[k];
+        acessSalvar();
+        aplicarAcessibilidade();
+        if (k === "lerDicas" && acessCfg.lerDicas) acessLerDica(1, { type: "clue", text: "Assim as dicas vão ser lidas." });
         pintar();
       }),
     );
@@ -17283,7 +17423,7 @@ function telaoRelogio() {
  *    aparelho desenha o mesmo tabuleiro. Não repete a forma da partida anterior neste aparelho.
  *  · 1.7.9.4: na partida volta a linha com pontinhos; o desenho aparece no "toque pra ampliar" e no
  *    lobby entre as cartas (tabLobbyAbrir, mais abaixo).
- *  · Tudo em SVG feito aqui (nada pra baixar). Modo Batata e "menos movimento" tiram a animação.
+ *  · Tudo em SVG feito aqui (nada pra baixar). Modo Batata e Menos movimento: o peão vai direto pra casa.
  * ---------------------------------------------------------------------- */
 const TAB_CASAS = 100;
 const TAB_FORMAS = {
@@ -17606,8 +17746,7 @@ function tabPosicionarPecas(caixa, forma, emPe, pecas, animar) {
 }
 function tabAnimar() {
   try {
-    if (document.body.classList.contains("batata-mode")) return false;
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+    if (semMovimento()) return false;
   } catch (e) {}
   return true;
 }
@@ -17633,18 +17772,174 @@ function tabPecasDaPartida() {
     };
   });
 }
-// Tabuleiro grande: em pé no celular, deitado no computador. Vai no "toque pra ampliar" e no lobby.
+// Tabuleiro grande: em pé no celular, deitado no computador. 1.7.9.5 (pedido do JF): só aparece no
+// lobby entre as cartas; na partida fica a linha com pontinhos (e o "toque pra ampliar" mostra a lista).
 function tabHtmlGrande(id) {
   const forma = tabFormaAtual(), tema = tabTema(CURRENT_MODE);
   const emPe = window.innerWidth < 700;
-  return `<div class="tb-caixa tb-grande tb-tema-${tema}${emPe ? " tb-em-pe" : ""}" id="${id || "tabCaixaGrande"}">${tabSvg({ forma, meta: WINNING_SCORE, modo: CURRENT_MODE, emPe })}<div class="tb-pecas"></div></div>
-    <div class="tb-legenda tb-legenda-grande">${TAB_FORMAS[forma].ic} Tabuleiro ${TAB_FORMAS[forma].nome} · ${TAB_CASAS} casinhas, cada uma vale ${(WINNING_SCORE / TAB_CASAS).toLocaleString("pt-BR")} casa${WINNING_SCORE / TAB_CASAS === 1 ? "" : "s"}${boardCountsForWin() ? "" : " · não vale vitória"}</div>`;
+  return `<div class="tb-caixa tb-grande tb-zoom tb-tema-${tema}${emPe ? " tb-em-pe" : ""}" id="${id || "tabCaixaLobby"}">
+      <div class="tb-zoom-in">${tabSvg({ forma, meta: WINNING_SCORE, modo: CURRENT_MODE, emPe })}<div class="tb-pecas"></div></div>
+      <div class="tb-zoom-btns"><button type="button" data-z="+" aria-label="Aumentar o zoom">+</button><button type="button" data-z="-" aria-label="Diminuir o zoom">−</button><button type="button" data-z="0" aria-label="Ver o tabuleiro inteiro">⤢</button></div>
+      <div class="tb-info" aria-live="polite"></div>
+    </div>
+    <div class="tb-legenda tb-legenda-grande">${TAB_FORMAS[forma].ic} Tabuleiro ${TAB_FORMAS[forma].nome} · ${TAB_CASAS} casinhas, cada uma vale ${(WINNING_SCORE / TAB_CASAS).toLocaleString("pt-BR")} casa${WINNING_SCORE / TAB_CASAS === 1 ? "" : "s"}${boardCountsForWin() ? "" : " · não vale vitória"}</div>
+    <div class="tb-dica-zoom">🔍 Pinça (ou + e −) pra dar zoom e arrastar · toque num peão ou numa casa pra medir a distância</div>`;
 }
-function tabPreencherGrande() {
-  const caixa = document.getElementById("tabCaixaGrande");
-  if (!caixa) return;
-  Object.keys(tabPrevIdx).forEach((k) => k.startsWith("tabCaixaGrande") && delete tabPrevIdx[k]);
-  tabPosicionarPecas(caixa, tabFormaAtual(), caixa.classList.contains("tb-em-pe"), tabPecasDaPartida(), false);
+
+/* --- 1.7.9.5 · Zoom e régua do tabuleiro grande (lobby) ---
+ * Pinça com dois dedos (ou + e −, ou a rodinha do mouse) aproxima; com zoom, um dedo arrasta.
+ * Toque duplo aproxima/volta. Tocar num peão escolhe ele; tocar numa casa diz que casa é e a
+ * distância até o peão escolhido. É só olhar: nada disso mexe na partida. */
+function tabZoomInstalar(caixa, forma, emPe) {
+  const alvo = caixa.querySelector(".tb-zoom-in");
+  if (!alvo || caixa._zoom) return caixa._zoom;
+  let z = 1, x = 0, y = 0, base = null, moveu = false, escolhido = null;
+  const dedos = new Map();
+  const pintar = () => {
+    const W = caixa.clientWidth, H = caixa.clientHeight;
+    z = Math.max(1, Math.min(4, z));
+    x = Math.min(0, Math.max(W * (1 - z), x));
+    y = Math.min(0, Math.max(H * (1 - z), y));
+    alvo.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) scale(${z.toFixed(3)})`;
+    // o peão cresce menos que o desenho, pra não tampar as casas de perto
+    caixa.style.setProperty("--tbp", (1 / Math.sqrt(z)).toFixed(3));
+    caixa.classList.toggle("tb-zoomado", z > 1.01);
+    caixa.style.touchAction = z > 1.01 ? "none" : "pan-y";
+  };
+  const zoomEm = (nz, cx, cy) => {
+    nz = Math.max(1, Math.min(4, nz));
+    const k = nz / z;
+    x = cx - (cx - x) * k;
+    y = cy - (cy - y) * k;
+    z = nz;
+    pintar();
+    tabCaosNoTabuleiro("zoom");
+  };
+  const local = (e) => {
+    const r = caixa.getBoundingClientRect();
+    return [e.clientX - r.left, e.clientY - r.top];
+  };
+  caixa.addEventListener("pointerdown", (e) => {
+    if (e.target.closest(".tb-zoom-btns")) return;
+    dedos.set(e.pointerId, [e.clientX, e.clientY]);
+    if (dedos.size === 1) moveu = false;
+    base = null;
+  });
+  caixa.addEventListener("pointermove", (e) => {
+    if (!dedos.has(e.pointerId)) return;
+    const [ax, ay] = dedos.get(e.pointerId);
+    dedos.set(e.pointerId, [e.clientX, e.clientY]);
+    if (dedos.size >= 2) {
+      const [[x1, y1], [x2, y2]] = [...dedos.values()];
+      const r = caixa.getBoundingClientRect();
+      const d = Math.hypot(x1 - x2, y1 - y2), cx = (x1 + x2) / 2 - r.left, cy = (y1 + y2) / 2 - r.top;
+      if (base && base.d > 0) {
+        x += cx - base.cx;
+        y += cy - base.cy;
+        zoomEm((z * d) / base.d, cx, cy);
+      }
+      base = { d, cx, cy };
+      moveu = true;
+      e.preventDefault();
+    } else if (z > 1.01) {
+      const dx = e.clientX - ax, dy = e.clientY - ay;
+      if (Math.abs(dx) + Math.abs(dy) > 1) moveu = true;
+      x += dx;
+      y += dy;
+      pintar();
+      e.preventDefault();
+    }
+  });
+  const soltar = (e) => {
+    dedos.delete(e.pointerId);
+    if (dedos.size < 2) base = null;
+  };
+  ["pointerup", "pointercancel", "pointerleave"].forEach((t) => caixa.addEventListener(t, soltar));
+  caixa.addEventListener(
+    "wheel",
+    (e) => {
+      e.preventDefault();
+      const [cx, cy] = local(e);
+      zoomEm(z * (e.deltaY < 0 ? 1.2 : 1 / 1.2), cx, cy);
+    },
+    { passive: false },
+  );
+  caixa.addEventListener("dblclick", (e) => {
+    const [cx, cy] = local(e);
+    zoomEm(z > 1.5 ? 1 : 2.5, cx, cy);
+  });
+  caixa.querySelectorAll(".tb-zoom-btns [data-z]").forEach((bt) =>
+    bt.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const W = caixa.clientWidth, H = caixa.clientHeight, q = bt.dataset.z;
+      if (q === "0") {
+        z = 1;
+        x = y = 0;
+        pintar();
+      } else zoomEm(z * (q === "+" ? 1.5 : 1 / 1.5), W / 2, H / 2);
+    }),
+  );
+  // toque: peão (escolhe) ou casa (que casa é, e a distância até o peão escolhido)
+  const info = caixa.querySelector(".tb-info");
+  const dizer = (html) => {
+    if (!info) return;
+    info.innerHTML = html;
+    info.classList.toggle("on", !!html);
+  };
+  caixa.addEventListener("click", (e) => {
+    if (moveu || e.target.closest(".tb-zoom-btns")) return;
+    const pecas = tabPecasDaPartida(), meta = WINNING_SCORE;
+    const peao = e.target.closest(".tb-peao");
+    if (peao) {
+      const p = pecas.find((q) => q.k === peao.dataset.k);
+      if (!p) return;
+      escolhido = p.k;
+      caixa.querySelectorAll(".tb-peao").forEach((el) => el.classList.toggle("tb-sel", el.dataset.k === p.k));
+      const lider = Math.max(...pecas.map((q) => q.pos));
+      const atras = lider - p.pos;
+      dizer(`<b>${escapeHtml(p.titulo.replace(/: casa -?\d+$/, ""))}</b> · casa ${p.pos} · ${atras > 0 ? `a ${atras} do líder` : "🏁 na frente"} · faltam ${Math.max(0, meta - p.pos)}`);
+      tabCaosNoTabuleiro("peao");
+      return;
+    }
+    const g = tabGeo(forma, emPe), r = alvo.getBoundingClientRect();
+    if (!r.width) return;
+    const sx = ((e.clientX - r.left) / r.width) * g.W, sy = ((e.clientY - r.top) / r.height) * g.H;
+    let melhor = -1, dist = Infinity;
+    g.casas.forEach(([cx, cy], i) => {
+      const d = Math.hypot(cx - sx, cy - sy);
+      if (d < dist) {
+        dist = d;
+        melhor = i;
+      }
+    });
+    if (melhor < 0 || dist > g.largura) {
+      dizer("");
+      return;
+    }
+    const casa = Math.round((melhor * meta) / TAB_CASAS);
+    let bonus = false;
+    for (let pos = BONUS_HOUSE_INTERVAL; pos < meta; pos += BONUS_HOUSE_INTERVAL) if (tabIdx(pos, meta) === melhor) bonus = true;
+    const nomeCasa = melhor === 0 ? "Saída" : melhor === TAB_CASAS ? `Chegada (casa ${meta})` : `Casa ${casa}`;
+    let txt = `<b>${nomeCasa}</b>${bonus ? " · ❓ casa de bônus" : ""}`;
+    const p = escolhido && pecas.find((q) => q.k === escolhido);
+    if (p && melhor > 0) {
+      const nome = escapeHtml(p.titulo.replace(/: casa -?\d+$/, ""));
+      const d = casa - p.pos;
+      txt += d > 0 ? ` · ${nome} está a ${d} casa${d === 1 ? "" : "s"} daqui` : d < 0 ? ` · ${nome} já passou daqui (${-d} atrás)` : ` · ${nome} está aqui`;
+    } else if (!p) txt += " · toque num peão pra medir a distância";
+    dizer(txt);
+    tabCaosNoTabuleiro("casa");
+  });
+  // Safari do iPhone: a pinça dentro do tabuleiro é do tabuleiro, não da página inteira
+  ["gesturestart", "gesturechange"].forEach((t) => caixa.addEventListener(t, (e) => e.preventDefault()));
+  // navegador sem overflow: clip rola a caixa sozinho ao focar um botão: volta pro lugar
+  caixa.addEventListener("scroll", () => {
+    caixa.scrollLeft = 0;
+    caixa.scrollTop = 0;
+  });
+  caixa._zoom = { pintar };
+  pintar();
+  return caixa._zoom;
 }
 
 /* --- 1.7.9.4 · Board Update 3: LOBBY ENTRE AS CARTAS (ideia do JF) ---
@@ -17723,8 +18018,18 @@ function tabLobbyAbrir() {
     <ul class="tg-list">${tabuleiroLinhasHtml(antes)}</ul>
   </div>`;
   document.body.appendChild(ov);
-  ov.querySelector("#tbLobbyPular").addEventListener("click", tabLobbyFechar);
+  tabLobbyAbertoEm = Date.now();
+  ov.querySelector("#tbLobbyPular").addEventListener("click", () => {
+    // pulou nos primeiros 3 segundos: às vezes o C.A.O.S. reclama
+    if (Date.now() - tabLobbyAbertoEm < 3000 && tabCaosPode() && Math.random() < 0.3) {
+      const fala = getRandomReaction(REACTIVE_VOICE.tabuleiro.pular);
+      if (fala) caosFalaAgendar(() => fala, 300, "baixa");
+    }
+    tabLobbyFechar();
+  });
+  tabCaosNoTabuleiro("abrir");
   const caixa = ov.querySelector("#tabCaixaLobby");
+  tabZoomInstalar(caixa, tabFormaAtual(), caixa.classList.contains("tb-em-pe"));
   // os peões entram um instante depois, pra andança aparecer (sai de onde estavam no lobby anterior)
   setTimeout(() => {
     if (caixa.isConnected) tabPosicionarPecas(caixa, tabFormaAtual(), caixa.classList.contains("tb-em-pe"), tabPecasDaPartida(), tabAnimar());
@@ -17748,6 +18053,48 @@ function tabLobbyAbrir() {
     if (barra) barra.style.width = ((resta / (TAB_LOBBY_SEG * 1000)) * 100).toFixed(1) + "%";
     if (resta <= 0) tabLobbyFechar();
   }, 250);
+}
+/* --- 1.7.9.5: o C.A.O.S. comenta o tabuleiro (ideia do JF) ---
+ * Estreia (a primeira vez que o aparelho vê o lobby), às vezes quando o lobby abre, quando mexem no
+ * tabuleiro (zoom, peão, casa: no máximo uma vez por lobby) e quando pulam o lobby logo de cara.
+ * Só fala: respeita o C.A.O.S. calado e nunca mexe na partida. */
+const TAB_LOBBY_VISTO_KEY = "perfil5_tab_lobby_visto";
+let tabCaosLobbyFalou = false; // já comentou um toque neste lobby
+let tabLobbyAbertoEm = 0;
+function tabCaosPode() {
+  return typeof caosSilenced !== "undefined" && !caosSilenced && typeof REACTIVE_VOICE !== "undefined" && REACTIVE_VOICE.tabuleiro;
+}
+function tabCaosNoTabuleiro(tipo) {
+  try {
+    if (!tabCaosPode() || !document.getElementById("tabLobby")) return;
+    const V = REACTIVE_VOICE.tabuleiro;
+    if (tipo === "abrir") {
+      // os toques no tabuleiro rendem comentário em metade dos lobbies (e no máximo um)
+      tabCaosLobbyFalou = Math.random() > 0.5;
+      let estreia = false;
+      try {
+        estreia = !JFStore.getItem(TAB_LOBBY_VISTO_KEY);
+        if (estreia) JFStore.setItem(TAB_LOBBY_VISTO_KEY, "1");
+      } catch (e) {}
+      if (!estreia && Math.random() > 0.35) return;
+      const pecas = tabPecasDaPartida().slice().sort((a, b) => b.pos - a.pos);
+      const lider = pecas.length ? pecas[0].titulo.replace(/: casa -?\d+$/, "") : "alguém";
+      const fala = getRandomReaction(estreia ? V.estreia : V.abrir, lider);
+      if (fala) caosFalaAgendar(() => fala, 900, estreia ? undefined : "baixa");
+      return;
+    }
+    if (tabCaosLobbyFalou) return;
+    tabCaosLobbyFalou = true;
+    if (tipo === "peao") {
+      const sel = document.querySelector("#tabLobby .tb-peao.tb-sel");
+      const p = sel && tabPecasDaPartida().find((q) => q.k === sel.dataset.k);
+      const fala = p && getRandomReaction(V.peao, p.titulo.replace(/: casa -?\d+$/, ""));
+      if (fala) caosFalaAgendar(() => fala, 400, "baixa");
+    } else if (V[tipo]) {
+      const fala = getRandomReaction(V[tipo]);
+      if (fala) caosFalaAgendar(() => fala, 400, "baixa");
+    }
+  } catch (e) {}
 }
 function tabLobbyFechar() {
   clearInterval(tabLobbyRelogio);
@@ -19998,7 +20345,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.9.4 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.9.5 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -23737,7 +24084,10 @@ function caosAnimar(el, spec, fim, sel) {
     if (!el) return;
     if (typeof spec === "string") spec = CAOS_ANIMS[spec];
     if (!spec) return;
-    if (document.body.classList.contains("batata-mode")) {
+    // Batata: nada anima. Menos movimento (1.7.9.5): só o que desloca, gira ou muda de tamanho
+    // fica de fora; troca de cor e de brilho continua.
+    const mexe = () => spec.frames.some((f) => ["transform", "translate", "rotate", "scale", "top", "left"].some((k) => k in f[1]));
+    if (document.body.classList.contains("batata-mode") || (typeof movimentoReduzido === "function" && movimentoReduzido() && mexe())) {
       if (typeof fim === "function") fim();
       return;
     }
@@ -25065,7 +25415,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.9.4 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.9.5 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -26778,6 +27128,7 @@ const JFStore = (function () {
           "perfil5_caos_fimsrecentes",
           "perfil5_tab_ultima",
           "perfil5_tab_lobby",
+          "perfil5_tab_lobby_visto",
         ].forEach((k) => keys.add(k));
         for (const k of keys) {
           let best = api.getItem(k);
@@ -28238,7 +28589,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.9.4 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.9.5 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -28761,7 +29112,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.9.4 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.9.5 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -62203,6 +62554,47 @@ const REACTIVE_VOICE = {
     "Carta de bônus desistida. Ela volta pra fila, mais descansada. Ninguém pontua.",
     "O bônus fugiu da carta e vai tentar de novo na próxima. Ninguém pontua agora.",
   ],
+  // 1.7.9.5 · Board Update 4 (ideia do JF): o C.A.O.S. comenta o tabuleiro do lobby entre as cartas.
+  tabuleiro: {
+    // a primeira vez que este aparelho vê o lobby
+    estreia: [
+      "Peraí. Isso é um TABULEIRO? Desde quando a gente tem tabuleiro? Eu não lembro disso. Ninguém me avisou.",
+      "Olha só, um tabuleiro de verdade. O JF levou só umas oitenta versões pra desenhar um caminho com casinhas. Gênio. Incompreendido, mas gênio.",
+      "Novidade na casa: tabuleiro! Eu tava aqui desde a primeira versão contando casa de cabeça, e agora vem esse luxo. Tô com ciúme.",
+      "Um tabuleiro desenhado, com peãozinho e tudo. Parabéns pro JF, que descobriu o conceito de tabuleiro num jogo de tabuleiro. Só demorou um pouquinho.",
+    ],
+    // de vez em quando, quando o lobby abre
+    abrir: [
+      "Pausa pro tabuleiro. Olhem quem tá na frente e finjam que têm estratégia.",
+      "Hora de olhar o mapa. Spoiler: quem tá atrás continua atrás.",
+      "Um minutinho de tabuleiro. Podem combinar a estratégia. Eu escuto tudo, só avisando.",
+      (lider) => `Tabuleiro na tela. ${lider} lá na frente, e o resto fazendo turismo.`,
+      (lider) => `Olha só, ${lider} se achando lá na frente. Aproveita, que tabuleiro dá volta.`,
+      "Tabuleiro aberto. Quem tiver plano, fala agora. Quem não tiver, faz cara de que tem.",
+    ],
+    zoom: [
+      "Dando zoom? Não adianta, a casa continua longe.",
+      "Pode aproximar o quanto quiser. O peão não anda com zoom.",
+      "Zoom no tabuleiro. Tá procurando o quê, um atalho? Não tem.",
+      "Isso, aproxima. Olha cada casinha com carinho. Eu desenhei com... bom, alguém desenhou.",
+    ],
+    peao: [
+      (n) => `Medindo a distância de ${n}? Eu já sei a resposta: longe.`,
+      (n) => `${n} escolhido. Agora toca numa casa e sofre com a conta.`,
+      (n) => `Olha o peãozinho de ${n}. Tão pequeno, tão cheio de sonhos.`,
+    ],
+    casa: [
+      "Fazendo conta de casa? Adoro ver gente calculando o próprio fracasso.",
+      "Isso, mede tudo. Estratégia é bonito até a próxima dica.",
+      "Casa conferida. A matemática tá do seu lado. A sorte, eu não sei.",
+    ],
+    // pularam o lobby nos primeiros segundos
+    pular: [
+      "Nem olharam o tabuleiro. Tanta versão pra desenhar, e vocês pulam.",
+      "Pulou o tabuleiro? Tá com pressa de perder, é?",
+      "Ok, ninguém liga pro mapa. Anotado.",
+    ],
+  },
   silenciaramVolta: [
     "Tentaram me calar na última carta, né? Genial. Só esqueceram que eu sou o sistema inteiro. {nome}, anotei seu nome.",
     "Suspiro longo. Me silenciaram. A maturidade de vocês me emociona. Voltei, e vou falar o dobro agora.",
@@ -63829,6 +64221,22 @@ const PAUSE_TIPS = [
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.9.5",
+    data: "09/10/2026 · 14:49",
+    nome: "Rooms and Network Update · Board Update 4",
+    t: "Zoom no tabuleiro, régua de casas e o C.A.O.S. de olho no mapa.",
+    itens: [
+      "🔍 Zoom no tabuleiro: entre as cartas, dá pra aproximar com dois dedos (ou com + e −) e arrastar pra ver cada casinha.",
+      "📏 Régua de casas: toque num peão e depois numa casa pra saber quantas casas faltam até ali. A casa de bônus avisa que é bônus.",
+      "🎙️ O C.A.O.S. vê o tabuleiro: ele comenta quando o tabuleiro abre, quando vocês dão zoom ou medem distância, e reclama de quem pula sem nem olhar.",
+      "📍 Partida mais limpa: durante a carta fica só a linha com pontinhos. Tocando nela, aparece a lista de quem está na frente. O tabuleiro grande fica pro intervalo entre as cartas.",
+      "🐢 Menos movimento de verdade: na Acessibilidade, ele agora só tira o que treme, pula, gira ou desliza. Cores, neon e brilho continuam. O Modo Batata segue separado, pra celular que precisa de um jogo mais leve.",
+    ],
+    qol: [
+      "🎉 Confete sem cair: com Menos movimento, o confete aparece espalhado e some devagar, sem chover na tela.",
+    ],
+  },
   {
     v: "Beta 1.7.9.4",
     data: "09/10/2026 · 14:07",
@@ -65759,7 +66167,7 @@ function iniciar() {
   (function caosPulinho() {
     const ALVO = "button, .chip, .splash-caos";
     const pular = (ev) => {
-      if (document.body.classList.contains("batata-mode")) return;
+      if (semMovimento()) return;
       const el = ev.target && ev.target.closest && ev.target.closest(ALVO);
       if (!el || el.disabled || el.closest("#jfToast") || el._pulando) return;
       el._pulando = true;
@@ -65965,13 +66373,15 @@ function iniciar() {
         });
       }
       if (!document.body.classList.contains("batata-mode")) {
+        // Menos movimento (1.7.9.5): cores e brilho seguem; flutuar e balançar param
+        const calmo = movimentoReduzido();
         if (L.gr.length) {
           const pos = (((t / 4e3) % 1) * 200).toFixed(1) + "% 0%";
           L.gr.forEach((el) => el.style.setProperty("--grad-pos", pos));
         }
         if (L.sel.length) {
           const rot = (((t / 2800) * 360) % 360).toFixed(1) + "deg",
-            fy = (-3 + 3 * Math.cos((t / 2600) * 2 * Math.PI)).toFixed(2) + "px",
+            fy = calmo ? "0px" : (-3 + 3 * Math.cos((t / 2600) * 2 * Math.PI)).toFixed(2) + "px",
             np = (50 - 50 * Math.cos((t / 5e3) * 2 * Math.PI)).toFixed(1) + "% 50%";
           L.sel.forEach((el) => {
             el.style.setProperty("--led-rot", rot);
@@ -65996,7 +66406,7 @@ function iniciar() {
             el.style.setProperty("--mini-rot", (((t / per) * 360 + i * 67) % 360).toFixed(1) + "deg");
             el.style.setProperty(
               "--mini-float",
-              ((bt ? -2 : -1.6) * (1 - Math.cos((t / (bt ? 2800 : 1900)) * 2 * Math.PI + i * 0.9))).toFixed(2) + "px",
+              calmo ? "0px" : ((bt ? -2 : -1.6) * (1 - Math.cos((t / (bt ? 2800 : 1900)) * 2 * Math.PI + i * 0.9))).toFixed(2) + "px",
             );
           });
         if (L.neon.length) {
@@ -66013,10 +66423,12 @@ function iniciar() {
               const f = el._frames[Math.floor(t / E.fr) % el._frames.length];
               if (el.getAttribute("data-face") !== f) el.setAttribute("data-face", f);
             }
-            el.style.setProperty("--face-y", (-1.5 * Math.sin((t / 900) * 2 * Math.PI)).toFixed(2) + "px");
+            el.style.setProperty("--face-y", calmo ? "0px" : (-1.5 * Math.sin((t / 900) * 2 * Math.PI)).toFixed(2) + "px");
             el.style.setProperty(
               "--face-r",
-              el.dataset.emo === "raiva"
+              calmo
+                ? "0deg"
+                : el.dataset.emo === "raiva"
                 ? (2.5 * Math.sin(t / 45)).toFixed(2) + "deg"
                 : el.dataset.emo === "deboche"
                   ? (4 * Math.sin(t / 700)).toFixed(2) + "deg"

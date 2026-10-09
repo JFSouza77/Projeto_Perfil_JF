@@ -217,6 +217,22 @@ const ARQ = acharMestre(process.argv[2]);
     const msgRem = admRemoverJogador(nP - 1);
     out.removerRegistra = players.length === nP - 1 ? partidaRevisao > ra && acoesLog[acoesLog.length - 1].a === 'admRemover' : 'não removeu: ' + msgRem;
     // 6) partida nova zera
+    // 1.7.9.5: na partida o "toque pra ampliar" é só a lista (o desenho grande fica no lobby)
+    abrirTabuleiroGrande();
+    out.ampliarSemDesenho = !document.querySelector('#tabuleiroModal .tb-caixa') && !!document.querySelector('#tabuleiroModal .tg-list');
+    document.getElementById('tabuleiroModal') && document.getElementById('tabuleiroModal').remove();
+    // 1.7.9.5: Menos movimento é acessibilidade e não liga o Modo Batata (e o Batata não liga ele)
+    {
+      const batAntes = document.body.classList.contains('batata-mode'), calmoAntes = acessCfg.calmo;
+      acessCfg.calmo = true; aplicarAcessibilidade();
+      const calmoOk = movimentoReduzido() && !document.body.classList.contains('batata-mode') && visualFxAllowed() && document.documentElement.classList.contains('acess-calmo') && !tabAnimar();
+      acessCfg.calmo = false; aplicarAcessibilidade();
+      if (!batAntes) toggleBatataMode();
+      const batOk = !acessCfg.calmo && !visualFxAllowed() && !tabAnimar() && !document.documentElement.classList.contains('acess-calmo');
+      if (!batAntes) toggleBatataMode();
+      acessCfg.calmo = calmoAntes; aplicarAcessibilidade();
+      out.calmoSeparado = calmoOk && batOk;
+    }
     resetDeck();
     out.zerou = partidaRevisao === 0 && acoesLog.length === 0 && tabForma === null;
     out.formaNova = !!tabFormaAtual() && tabForma !== formaSalva;
@@ -270,6 +286,8 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.9.4: o tabuleiro abre entre as cartas, com a próxima já escondida', r.lobbyAbriu],
     ['1.7.9.4: o lobby é só tela (não mexe na partida) e fica abaixo do Desfazer', r.lobbySoTela],
     ['1.7.9.4: desfazer o veredito fecha o lobby', r.lobbyDesfeito],
+    ['1.7.9.5: na partida o "toque pra ampliar" mostra só a lista, sem o tabuleiro grande', r.ampliarSemDesenho],
+    ['1.7.9.5: Menos movimento (acessibilidade) e Modo Batata são coisas separadas', r.calmoSeparado],
   ];
   linhas.forEach(([n, ok]) => console.log(`${ok ? 'ok    ' : 'FALHOU'}  ${n}`));
   const tudo = linhas.every((l) => l[1]) && !erros.length;

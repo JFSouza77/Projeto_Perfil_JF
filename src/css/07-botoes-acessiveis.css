@@ -655,3 +655,25 @@ body.claro .desfazer-btn {
 body.claro .caos-mbtn.caos-mbtn-sec {
   color: color-mix(in srgb, var(--mb) 80%, #000 20%);
 }
+
+/* 1.7.9.5 · Menos movimento (acessibilidade, ≠ Modo Batata): o mesmo que o aparelho pedir "reduzir
+   movimento". Para o que treme, pula, flutua, gira a carta ou desliza. O neon que corre na borda,
+   o brilho e as cores continuam (quem desliga isso é o Batata). */
+html.acess-calmo .nega-treme,
+html.acess-calmo .splash-go-flutua,
+html.acess-calmo .nov-modal .nov-x,
+html.acess-calmo .nov-drop-txt,
+html.acess-calmo .card.flip-sai,
+html.acess-calmo .card.flip-entra,
+html.acess-calmo .card.revelando > *,
+html.acess-calmo .desfazer-btn::after {
+  animation: none;
+}
+html.acess-calmo,
+html.acess-calmo * {
+  scroll-behavior: auto !important;
+}
+html.acess-calmo .fx-shake {
+  animation: none;
+  transform: none;
+}

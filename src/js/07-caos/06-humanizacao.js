@@ -429,7 +429,10 @@ function caosAnimar(el, spec, fim, sel) {
     if (!el) return;
     if (typeof spec === "string") spec = CAOS_ANIMS[spec];
     if (!spec) return;
-    if (document.body.classList.contains("batata-mode")) {
+    // Batata: nada anima. Menos movimento (1.7.9.5): só o que desloca, gira ou muda de tamanho
+    // fica de fora; troca de cor e de brilho continua.
+    const mexe = () => spec.frames.some((f) => ["transform", "translate", "rotate", "scale", "top", "left"].some((k) => k in f[1]));
+    if (document.body.classList.contains("batata-mode") || (typeof movimentoReduzido === "function" && movimentoReduzido() && mexe())) {
       if (typeof fim === "function") fim();
       return;
     }

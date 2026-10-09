@@ -1004,8 +1004,7 @@ function mestreDestaqueHtml() {
 // topo da carta e o resto aparece aos poucos. Só enfeite: o estado do jogo muda na hora, como antes.
 function cartaAnimar() {
   try {
-    if (!visualFxAllowed()) return false;
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+    if (!visualFxAllowed() || movimentoReduzido()) return false;
   } catch (e) {}
   return true;
 }
@@ -1275,7 +1274,7 @@ function renderBoardTrack() {
   chaves.forEach(([k, pos], i) => {
     const antes = caosTokPrev[k];
     caosTokPrev[k] = pos;
-    if (antes !== void 0 && antes !== pos && els[i] && !document.body.classList.contains("batata-mode")) {
+    if (antes !== void 0 && antes !== pos && els[i] && !semMovimento()) {
       els[i].classList.add("pulando");
       els[i].dataset.t0 = Date.now();
     }
@@ -1330,9 +1329,8 @@ function abrirTabuleiroGrande() {
   const bg = document.createElement("div");
   bg.id = "tabuleiroModal";
   bg.className = "jf-modal-bg";
-  bg.innerHTML = `<div class="jf-modal tb-modal" role="dialog" aria-modal="true" aria-labelledby="tgTitle"><h3 id="tgTitle">🗺️ Tabuleiro</h3>${tabHtmlGrande()}<div class="nov-sub">Quem está na frente e quem está atrás</div><ul class="tg-list">${linhas}</ul><button type="button" class="chip tb-lobby-chip" id="tgLobby"></button><button type="button" class="btn-start btn-neo neo-solid neo-still" id="tgOk" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35); margin-top:10px;">Fechar</button></div>`;
+  bg.innerHTML = `<div class="jf-modal tb-modal" role="dialog" aria-modal="true" aria-labelledby="tgTitle"><h3 id="tgTitle">🗺️ Tabuleiro</h3><div class="nov-sub">Quem está na frente e quem está atrás</div><ul class="tg-list">${linhas}</ul><button type="button" class="chip tb-lobby-chip" id="tgLobby"></button><button type="button" class="btn-start btn-neo neo-solid neo-still" id="tgOk" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35); margin-top:10px;">Fechar</button></div>`;
   document.body.appendChild(bg);
-  tabPreencherGrande();
   const chip = bg.querySelector("#tgLobby");
   const pintarChip = () => {
     const on = tabLobbyLigado();
@@ -1887,6 +1885,12 @@ function spawnConfetti(colors, count, minDur, maxDur, lifeMs) {
     const r0 = Math.round(Math.random() * 360);
     piece.style.transform = `rotate(${r0}deg)`;
     container.appendChild(piece);
+    // Menos movimento (1.7.9.5): o confete aparece espalhado e some aos poucos, sem cair
+    if (movimentoReduzido()) {
+      piece.style.top = Math.random() * 90 + "vh";
+      caosAnimar(piece, { dur: maxDur * 1e3, delay: Math.random() * 400, ease: "ease-out", fill: true, frames: [[0, { opacity: 0.9 }], [1, { opacity: 0 }]] });
+      continue;
+    }
     caosAnimar(piece, {
       dur: (minDur + Math.random() * (maxDur - minDur)) * 1e3,
       delay: Math.random() * 400,
