@@ -559,11 +559,6 @@ function tabLobbyLigar(on) {
   } catch (e) {}
   if (!on) tabLobbyFechar();
 }
-function tabLobbyCasas() {
-  const o = {};
-  tabPecasDaPartida().forEach((p) => (o[p.k] = p.pos));
-  return o;
-}
 // Partida nova: esquece o lobby anterior e as posições desenhadas.
 function tabLobbyZerar() {
   tabLobbyPendente = false;
@@ -581,9 +576,10 @@ function tabLobbyTalvez() {
 }
 function tabLobbyAbrir() {
   tabLobbyFechar();
-  const agora = tabLobbyCasas();
-  // primeira carta da partida: todo mundo saiu da casa 0
-  const antes = tabLobbyAntes || (stats.totalDrawn <= 2 ? Object.fromEntries(Object.keys(agora).map((k) => [k, 0])) : null);
+  // 1.7.9.6: a foto guarda casa, pontos e joias (lobbyFoto, 05j-lobby-placar.js)
+  const agora = lobbyFoto();
+  // primeira carta da partida: todo mundo saiu do zero
+  const antes = tabLobbyAntes || (stats.totalDrawn <= 2 ? lobbyFotoZero(agora) : null);
   tabLobbyAntesVelho = tabLobbyAntes;
   tabLobbyAntes = agora;
   let prox = "";
@@ -593,16 +589,20 @@ function tabLobbyAbrir() {
     if (m) prox = `📖 Próximo Mestre: ${playerNameHtml(m.name, m.color, m.avatar)}`;
   }
   if (typeof ultimaRodada !== "undefined" && ultimaRodada) prox += `<div class="tb-lobby-ultima">⏳ Última rodada!</div>`;
+  const aba = lobbyAbaInicial();
   const ov = document.createElement("div");
   ov.id = "tabLobby";
   ov.className = "jf-modal-bg tb-lobby-bg";
   ov.innerHTML = `<div class="jf-modal tb-modal tb-lobby" role="dialog" aria-modal="true" aria-labelledby="tbLobbyTit">
-    <div class="tb-lobby-topo"><h3 id="tbLobbyTit">🗺️ Antes da próxima carta</h3><button type="button" class="btn-neo neo-solid neo-still tb-lobby-pular" id="tbLobbyPular" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35);">Próxima carta ▶</button></div>
+    <div class="tb-lobby-topo"><h3 id="tbLobbyTit">⏸️ Antes da próxima carta</h3><button type="button" class="btn-neo neo-solid neo-still tb-lobby-pular" id="tbLobbyPular" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35);">Próxima carta ▶</button></div>
     <div class="tb-lobby-tempo" aria-hidden="true"><div class="tb-lobby-barra" id="tbLobbyBarra"></div></div>
-    <div class="tb-lobby-sub"><b id="tbLobbySeg">${TAB_LOBBY_SEG}</b> s pra ver o tabuleiro e combinar a estratégia</div>
+    <div class="tb-lobby-sub"><b id="tbLobbySeg">${TAB_LOBBY_SEG}</b> s pra ver o placar e combinar a estratégia</div>
     <div class="tb-lobby-prox">${prox}</div>
-    ${tabHtmlGrande("tabCaixaLobby")}
-    <ul class="tg-list">${tabuleiroLinhasHtml(antes)}</ul>
+    ${lobbyAbasHtml(aba)}
+    <div class="lb-painel" data-aba="tabuleiro">${tabHtmlGrande("tabCaixaLobby")}
+    <ul class="tg-list">${tabuleiroLinhasHtml(antes && antes.pos)}</ul></div>
+    <div class="lb-painel" data-aba="pontos" hidden>${lobbyPontosHtml(antes)}</div>
+    ${lobbyAbasDisponiveis().includes("joias") ? `<div class="lb-painel" data-aba="joias" hidden>${lobbyJoiasHtml(antes)}</div>` : ""}
   </div>`;
   document.body.appendChild(ov);
   tabLobbyAbertoEm = Date.now();
@@ -617,6 +617,7 @@ function tabLobbyAbrir() {
   tabCaosNoTabuleiro("abrir");
   const caixa = ov.querySelector("#tabCaixaLobby");
   tabZoomInstalar(caixa, tabFormaAtual(), caixa.classList.contains("tb-em-pe"));
+  lobbyAbasInstalar(ov);
   // os peões entram um instante depois, pra andança aparecer (sai de onde estavam no lobby anterior)
   setTimeout(() => {
     if (caixa.isConnected) tabPosicionarPecas(caixa, tabFormaAtual(), caixa.classList.contains("tb-em-pe"), tabPecasDaPartida(), tabAnimar());

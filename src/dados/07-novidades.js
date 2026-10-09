@@ -6,6 +6,19 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.9.6",
+    data: "09/10/2026 · 16:59",
+    nome: "Rooms and Network Update · Board Update 5",
+    t: "O intervalo entre as cartas ganhou abas: Tabuleiro, Pontos e Joias.",
+    itens: [
+      "🗂️ Abas no intervalo: entre uma carta e outra dá pra ver o Tabuleiro, os Pontos e as Joias. Abre direto no que decide a partida, marcado com 🎯.",
+      "🏆 Pódio dos pontos: os três primeiros sobem nos degraus, e as barras de todo mundo crescem com os pontos que cada um fez na carta.",
+      "👑 Coroa de joias: cada jogador ou equipe tem uma coroa com um encaixe por joia. A joia nova entra brilhando, e embaixo aparece o que falta pra completar.",
+      "⚠️ A uma joia da coroa: quem está quase completando fica destacado, pra mesa toda ficar de olho.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.9.5",
     data: "09/10/2026 · 14:49",
     nome: "Rooms and Network Update · Board Update 4",

@@ -6,6 +6,13 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.9.6 · 09/10/2026 · "Rooms and Network Update · Board Update 5" = LOBBY COM ABAS (TABULEIRO, PONTOS, JOIAS).
+          Ideias aprovadas pelo JF. 05j-lobby-placar.js: o lobby abre na aba da condição de vitória (🎯 marca a que
+          decide). Pontos: pódio em degraus (2º, 1º, 3º) e corrida de barras que crescem do lobby anterior até agora
+          (+N), com a meta quando os pontos decidem. Joias: coroa com GEMS_TO_WIN encaixes, joia nova cai e brilha
+          (Menos movimento: só brilha; Batata: parada), "Falta: …" e destaque de quem está a uma joia. A aba Joias
+          só aparece quando a partida dá joias. lobbyFoto guarda casa, pontos e joias (era só casa). C.A.O.S.
+          ganhou falas pra troca de aba.
   1.7.9.5 · 09/10/2026 · "Rooms and Network Update · Board Update 4" = ZOOM, RÉGUA, C.A.O.S. NO TABULEIRO E MENOS MOVIMENTO ≠ BATATA.
           Pedido do JF. (1) Na partida, nada de tabuleiro grande: o "toque pra ampliar" volta a ser só a lista (o
           desenho só no lobby). (2) Lobby: zoom (pinça, + e −, rodinha, toque duplo; com zoom, um dedo arrasta;
@@ -538,7 +545,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.9.5</title>
+<title>Perfil JF · Beta 1.7.9.6</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -7781,6 +7788,253 @@ body.claro .tb-info {
 body.claro .tb-zoom .tb-peao.tb-sel {
   outline-color: #2e1065;
 }
+
+/* ---- 1.7.9.6 · lobby com abas: Tabuleiro, Pontos e Joias ---- */
+.lb-abas {
+  display: flex;
+  gap: 6px;
+  margin: 10px 0 8px;
+  padding: 4px;
+  border-radius: 14px;
+  background: #ffffff12;
+}
+.lb-aba {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 4px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  opacity: 0.75;
+}
+.lb-aba.on {
+  background: #a78bfa;
+  color: #140b2e;
+  opacity: 1;
+}
+.lb-vale {
+  font-size: 0.72rem;
+}
+.lb-painel[hidden] {
+  display: none;
+}
+.lp-cab {
+  font-size: 0.82rem;
+  opacity: 0.85;
+  margin: 2px 0 10px;
+}
+.lp-vazio-txt {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin: 14px 0;
+}
+/* pódio: 2º, 1º, 3º em degraus */
+.lp-podio {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: end;
+  gap: 6px;
+  margin: 4px 0 14px;
+}
+.lp-degrau {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+.lp-tok {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+  background: var(--pc);
+  border: 2px solid #fff;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--pc) 60%, transparent);
+}
+.lp-nome {
+  margin: 4px 0;
+  font-size: 0.8rem;
+  font-weight: 800;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lp-bloco {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 6px;
+  border-radius: 10px 10px 4px 4px;
+  background: color-mix(in srgb, var(--pc, #a78bfa) 40%, #1c1c33);
+  border: 1px solid color-mix(in srgb, var(--pc, #a78bfa) 70%, transparent);
+  font-size: 0.78rem;
+}
+.lp-bloco b {
+  font-size: 1.3rem;
+}
+.lp-1 .lp-bloco {
+  height: 86px;
+}
+.lp-2 .lp-bloco {
+  height: 62px;
+}
+.lp-3 .lp-bloco {
+  height: 44px;
+}
+.lp-vazio .lp-bloco {
+  background: #ffffff0d;
+  border-style: dashed;
+  border-color: #ffffff33;
+}
+.lp-1 .lp-tok {
+  width: 42px;
+  height: 42px;
+  font-size: 1.35rem;
+}
+/* barras */
+.lp-lista,
+.lj-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+.lp-linha,
+.lj-linha {
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--pc) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pc) 45%, transparent);
+}
+.lp-topo,
+.lj-topo {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+.lp-trilho {
+  position: relative;
+  height: 12px;
+  margin-top: 8px;
+  border-radius: 999px;
+  background: #ffffff1f;
+}
+.lp-barra {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--pc) 70%, #fff), var(--pc));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--pc) 60%, transparent);
+  transition: width 0.9s ease-out;
+}
+.lp-chegada {
+  position: absolute;
+  right: -2px;
+  top: -4px;
+  bottom: -4px;
+  width: 4px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(180deg, #fff 0 3px, #111 3px 6px);
+}
+/* joias: a coroa */
+.lj-coroa {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+.lj-ic {
+  font-size: 1.2rem;
+}
+.lj-joia {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  clip-path: polygon(50% 0, 100% 38%, 82% 100%, 18% 100%, 0 38%);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--gc) 55%, #fff), var(--gc) 60%, color-mix(in srgb, var(--gc) 70%, #000));
+  color: #fff;
+  font-weight: 900;
+  font-size: 0.78rem;
+  text-shadow: 0 1px 2px #0008;
+}
+.lj-joia.lj-oca {
+  background: #ffffff1a;
+}
+.lj-joia.lj-nova {
+  animation: ljChega 0.9s ease-out both, ljBrilha 1.6s ease-in-out 0.9s 3;
+}
+@keyframes ljChega {
+  0% {
+    transform: translateY(-14px) scale(1.6);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(2px) scale(0.95);
+    opacity: 1;
+  }
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes ljBrilha {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.6) drop-shadow(0 0 6px var(--gc));
+  }
+}
+.lj-pe {
+  margin-top: 6px;
+  font-size: 0.76rem;
+  opacity: 0.8;
+}
+.lj-quase {
+  border-color: #fbbf24;
+  box-shadow: 0 0 12px #fbbf2455;
+}
+/* Menos movimento: a joia nova só brilha (não cai); as barras já nascem no lugar */
+html.acess-calmo .lj-joia.lj-nova {
+  animation: ljBrilha 1.6s ease-in-out 3;
+}
+html.acess-calmo .lp-barra {
+  transition: none;
+}
+body.batata-mode .lj-joia.lj-nova {
+  animation: none;
+}
+body.claro .lb-abas {
+  background: #0000000d;
+}
+body.claro .lb-aba.on {
+  background: #7c3aed;
+  color: #fff;
+}
+body.claro .lp-trilho,
+body.claro .lj-joia.lj-oca {
+  background: #0000001a;
+}
+body.claro .lp-bloco {
+  background: color-mix(in srgb, var(--pc, #a78bfa) 30%, #fff);
+}
 </style>
 </head>
 <body class="noturno">
@@ -7828,7 +8082,7 @@ body.claro .tb-zoom .tb-peao.tb-sel {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.5 · Rooms and Network Update · Board Update 4<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.6 · Rooms and Network Update · Board Update 5<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -17972,11 +18226,6 @@ function tabLobbyLigar(on) {
   } catch (e) {}
   if (!on) tabLobbyFechar();
 }
-function tabLobbyCasas() {
-  const o = {};
-  tabPecasDaPartida().forEach((p) => (o[p.k] = p.pos));
-  return o;
-}
 // Partida nova: esquece o lobby anterior e as posições desenhadas.
 function tabLobbyZerar() {
   tabLobbyPendente = false;
@@ -17994,9 +18243,10 @@ function tabLobbyTalvez() {
 }
 function tabLobbyAbrir() {
   tabLobbyFechar();
-  const agora = tabLobbyCasas();
-  // primeira carta da partida: todo mundo saiu da casa 0
-  const antes = tabLobbyAntes || (stats.totalDrawn <= 2 ? Object.fromEntries(Object.keys(agora).map((k) => [k, 0])) : null);
+  // 1.7.9.6: a foto guarda casa, pontos e joias (lobbyFoto, 05j-lobby-placar.js)
+  const agora = lobbyFoto();
+  // primeira carta da partida: todo mundo saiu do zero
+  const antes = tabLobbyAntes || (stats.totalDrawn <= 2 ? lobbyFotoZero(agora) : null);
   tabLobbyAntesVelho = tabLobbyAntes;
   tabLobbyAntes = agora;
   let prox = "";
@@ -18006,16 +18256,20 @@ function tabLobbyAbrir() {
     if (m) prox = `📖 Próximo Mestre: ${playerNameHtml(m.name, m.color, m.avatar)}`;
   }
   if (typeof ultimaRodada !== "undefined" && ultimaRodada) prox += `<div class="tb-lobby-ultima">⏳ Última rodada!</div>`;
+  const aba = lobbyAbaInicial();
   const ov = document.createElement("div");
   ov.id = "tabLobby";
   ov.className = "jf-modal-bg tb-lobby-bg";
   ov.innerHTML = `<div class="jf-modal tb-modal tb-lobby" role="dialog" aria-modal="true" aria-labelledby="tbLobbyTit">
-    <div class="tb-lobby-topo"><h3 id="tbLobbyTit">🗺️ Antes da próxima carta</h3><button type="button" class="btn-neo neo-solid neo-still tb-lobby-pular" id="tbLobbyPular" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35);">Próxima carta ▶</button></div>
+    <div class="tb-lobby-topo"><h3 id="tbLobbyTit">⏸️ Antes da próxima carta</h3><button type="button" class="btn-neo neo-solid neo-still tb-lobby-pular" id="tbLobbyPular" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35);">Próxima carta ▶</button></div>
     <div class="tb-lobby-tempo" aria-hidden="true"><div class="tb-lobby-barra" id="tbLobbyBarra"></div></div>
-    <div class="tb-lobby-sub"><b id="tbLobbySeg">${TAB_LOBBY_SEG}</b> s pra ver o tabuleiro e combinar a estratégia</div>
+    <div class="tb-lobby-sub"><b id="tbLobbySeg">${TAB_LOBBY_SEG}</b> s pra ver o placar e combinar a estratégia</div>
     <div class="tb-lobby-prox">${prox}</div>
-    ${tabHtmlGrande("tabCaixaLobby")}
-    <ul class="tg-list">${tabuleiroLinhasHtml(antes)}</ul>
+    ${lobbyAbasHtml(aba)}
+    <div class="lb-painel" data-aba="tabuleiro">${tabHtmlGrande("tabCaixaLobby")}
+    <ul class="tg-list">${tabuleiroLinhasHtml(antes && antes.pos)}</ul></div>
+    <div class="lb-painel" data-aba="pontos" hidden>${lobbyPontosHtml(antes)}</div>
+    ${lobbyAbasDisponiveis().includes("joias") ? `<div class="lb-painel" data-aba="joias" hidden>${lobbyJoiasHtml(antes)}</div>` : ""}
   </div>`;
   document.body.appendChild(ov);
   tabLobbyAbertoEm = Date.now();
@@ -18030,6 +18284,7 @@ function tabLobbyAbrir() {
   tabCaosNoTabuleiro("abrir");
   const caixa = ov.querySelector("#tabCaixaLobby");
   tabZoomInstalar(caixa, tabFormaAtual(), caixa.classList.contains("tb-em-pe"));
+  lobbyAbasInstalar(ov);
   // os peões entram um instante depois, pra andança aparecer (sai de onde estavam no lobby anterior)
   setTimeout(() => {
     if (caixa.isConnected) tabPosicionarPecas(caixa, tabFormaAtual(), caixa.classList.contains("tb-em-pe"), tabPecasDaPartida(), tabAnimar());
@@ -18119,6 +18374,192 @@ function tabPecasTelao(r) {
   const forma = TAB_FORMAS[r.tabuleiro] ? r.tabuleiro : "oito";
   const pecas = (r.equipes && r.equipes.length ? r.equipes.map((e) => ({ k: "t" + e.id, idx: tabIdx(e.casa, r.meta.casa), html: (TEAM_INFO[e.id] || {}).emoji || "●", style: `background:${(TEAM_INFO[e.id] || {}).color || "#888"}` })) : r.jogadores.map((j) => ({ k: "p" + j.id, idx: tabIdx(j.casa, r.meta.casa), html: escapeHtml(j.avatar || (j.nome || "?")[0]), style: `background:${corDoJogador(j.cor)}` })));
   tabPosicionarPecas(caixa, forma, false, pecas, tabAnimar());
+}
+/* ----------------------------------------------------------------------
+ * 5j. LOBBY COM ABAS: TABULEIRO, PONTOS E JOIAS (1.7.9.6 · Board Update 5, ideia aprovada pelo JF)
+ * O lobby entre as cartas (05i-tabuleiro.js) ganha abas. Abre direto na aba da condição de vitória.
+ *  · Tabuleiro: o desenho com zoom e régua, e a lista de quem está na frente.
+ *  · Pontos: "corrida de barras" com pódio (1º, 2º e 3º em degraus) e quanto cada um ganhou na carta.
+ *  · Joias: cada jogador (ou equipe) com a sua coroa, um encaixe por joia; a joia ganha na carta
+ *    entra brilhando, e embaixo diz o que falta. Só aparece quando a partida dá joias.
+ * É só tela, como o lobby: lê o placar, não muda nada.
+ * ---------------------------------------------------------------------- */
+const LOBBY_ABAS = {
+  tabuleiro: { ic: "🗺️", nome: "Tabuleiro" },
+  pontos: { ic: "🏆", nome: "Pontos" },
+  joias: { ic: "💎", nome: "Joias" },
+};
+// Quem aparece no lobby: as equipes (no formato Equipe) ou os jogadores. A chave k é a mesma dos peões.
+function lobbyEntidades() {
+  const cats = currentGemCategories();
+  const gemas = (h) => Object.fromEntries(cats.map((c) => [c, (h && h.gems && h.gems[c]) || 0]));
+  if (CURRENT_FORMAT === "equipe")
+    return teamOrder.map((id) => ({
+      k: "t" + id,
+      nome: `${TEAM_INFO[id].emoji} Equipe ${TEAM_INFO[id].label}`,
+      cor: corDoJogador(TEAM_INFO[id].color),
+      tok: TEAM_INFO[id].emoji,
+      pos: teams[id].position || 0,
+      pts: teamScore(id),
+      gems: gemas(teams[id]),
+    }));
+  return players.map((p) => ({
+    k: "p" + (p.id || p.name),
+    nome: playerNameHtml(p.name, p.color, p.avatar),
+    cor: corDoJogador(p.color),
+    tok: escapeHtml(p.avatar || (p.name ? p.name[0].toUpperCase() : "?")),
+    pos: p.position || 0,
+    pts: p.score || 0,
+    gems: gemas(p),
+  }));
+}
+// Foto do placar num lobby (pra mostrar o que mudou no seguinte).
+function lobbyFoto() {
+  const f = { pos: {}, pts: {}, gems: {} };
+  lobbyEntidades().forEach((e) => {
+    f.pos[e.k] = e.pos;
+    f.pts[e.k] = e.pts;
+    f.gems[e.k] = { ...e.gems };
+  });
+  return f;
+}
+function lobbyFotoZero(f) {
+  const z = { pos: {}, pts: {}, gems: {} };
+  Object.keys(f.pos).forEach((k) => {
+    z.pos[k] = 0;
+    z.pts[k] = 0;
+    z.gems[k] = {};
+  });
+  return z;
+}
+function lobbyAbasDisponiveis() {
+  return ["tabuleiro", "pontos"].concat(gemsAwarded() ? ["joias"] : []);
+}
+// Abre na aba que decide a partida (Moda da Casa: a do modo sorteado; antes do sorteio, Tabuleiro).
+function lobbyAbaInicial() {
+  const w = winCond();
+  const aba = w === "pontos" ? "pontos" : w === "joias" ? "joias" : "tabuleiro";
+  return lobbyAbasDisponiveis().includes(aba) ? aba : "tabuleiro";
+}
+function lobbyVale(aba) {
+  const w = winCond();
+  if (aba === "tabuleiro") return boardCountsForWin();
+  if (aba === "pontos") return w === "pontos";
+  return gemsCountForWin();
+}
+function lobbyAbasHtml(inicial) {
+  const abas = lobbyAbasDisponiveis();
+  return `<div class="lb-abas" role="tablist" aria-label="O que ver">${abas
+    .map(
+      (a) =>
+        `<button type="button" role="tab" class="lb-aba${a === inicial ? " on" : ""}" data-aba="${a}" aria-selected="${a === inicial}">${LOBBY_ABAS[a].ic} ${LOBBY_ABAS[a].nome}${lobbyVale(a) ? ' <span class="lb-vale" title="Decide a partida">🎯</span>' : ""}</button>`,
+    )
+    .join("")}</div>`;
+}
+function lobbyGanhoSelo(d) {
+  if (!d) return "";
+  return `<span class="tg-andou${d > 0 ? " tg-subiu" : " tg-desceu"}">${d > 0 ? "+" + d : d}</span>`;
+}
+
+/* --- Pontos: corrida de barras com pódio --- */
+function lobbyPontosHtml(antes) {
+  const ents = lobbyEntidades().sort((a, b) => b.pts - a.pts);
+  const valePontos = winCond() === "pontos";
+  const meta = valePontos ? metaPontos() : 0;
+  const escala = Math.max(meta, ...ents.map((e) => e.pts), 1);
+  const ant = (e) => (antes && antes.pts && typeof antes.pts[e.k] === "number" ? antes.pts[e.k] : null);
+  // pódio: 2º, 1º, 3º (só com pontos de verdade)
+  const top = ents.slice(0, 3).filter((e) => e.pts > 0);
+  const degrau = (e, lugar) =>
+    e
+      ? `<div class="lp-degrau lp-${lugar}" style="--pc:${e.cor}"><div class="lp-tok">${e.tok}</div><div class="lp-nome">${e.nome}</div><div class="lp-bloco"><b>${["", "🥇", "🥈", "🥉"][lugar]}</b><span>${e.pts} pt${e.pts === 1 ? "" : "s"}</span></div></div>`
+      : `<div class="lp-degrau lp-${lugar} lp-vazio"><div class="lp-bloco"></div></div>`;
+  const podio = top.length
+    ? `<div class="lp-podio">${degrau(top[1], 2)}${degrau(top[0], 1)}${degrau(top[2], 3)}</div>`
+    : `<div class="lp-vazio-txt">Ninguém pontuou ainda. O pódio tá esperando.</div>`;
+  const barras = ents
+    .map((e) => {
+      const a = ant(e);
+      const de = a === null ? e.pts : a;
+      return `<li class="lp-linha" style="--pc:${e.cor}"><div class="lp-topo"><span>${e.nome}${a === null ? "" : lobbyGanhoSelo(e.pts - a)}</span><b>${e.pts}${valePontos ? `/${meta}` : ""}</b></div><div class="lp-trilho"><div class="lp-barra" data-de="${((de / escala) * 100).toFixed(1)}" data-ate="${((e.pts / escala) * 100).toFixed(1)}" style="width:${((de / escala) * 100).toFixed(1)}%"></div>${valePontos ? '<i class="lp-chegada" title="Meta"></i>' : ""}</div></li>`;
+    })
+    .join("");
+  const cab = valePontos
+    ? `🎯 Vence quem chegar a <b>${meta} pontos</b>${CURRENT_FORMAT === "equipe" ? " (soma da equipe)" : ""}.`
+    : "Nesta partida os pontos não decidem quem vence. Valem pela glória.";
+  return `<div class="lp-cab">${cab}</div>${podio}<ul class="lp-lista">${barras}</ul>`;
+}
+
+/* --- Joias: a coroa de cada um --- */
+function lobbyJoiasHtml(antes) {
+  const cats = currentGemCategories();
+  const vale = gemsCountForWin();
+  const cap = gemCapFor();
+  const ents = lobbyEntidades()
+    .map((e) => ({ ...e, total: cats.reduce((s, c) => s + e.gems[c], 0) }))
+    .sort((a, b) => b.total - a.total);
+  const nomeCat = (c) => `${CAT_SELO_ICONE[c] || "💎"} ${c.charAt(0) + c.slice(1).toLowerCase()}`;
+  const linhas = ents
+    .map((e) => {
+      const ant = antes && antes.gems && antes.gems[e.k];
+      const encaixes = [];
+      cats.forEach((c) => {
+        const novas = ant ? Math.max(0, e.gems[c] - (ant[c] || 0)) : 0;
+        for (let i = 0; i < e.gems[c]; i++)
+          encaixes.push(
+            `<span class="lj-joia${i >= e.gems[c] - novas ? " lj-nova" : ""}" style="--gc:${GEM_INFO[c].color}" title="${nomeCat(c)}">${GEM_INFO[c].letter}</span>`,
+          );
+      });
+      while (encaixes.length < GEMS_TO_WIN) encaixes.push('<span class="lj-joia lj-oca" aria-hidden="true"></span>');
+      const faltam = cap === 1 ? cats.filter((c) => !e.gems[c]) : [];
+      const quase = vale && e.total === GEMS_TO_WIN - 1;
+      const pe =
+        e.total >= GEMS_TO_WIN
+          ? "👑 Coroa completa!"
+          : faltam.length
+            ? `Falta: ${faltam.map(nomeCat).join(", ")}`
+            : `${GEMS_TO_WIN - e.total} joia${GEMS_TO_WIN - e.total === 1 ? "" : "s"} pra completar`;
+      return `<li class="lj-linha${quase ? " lj-quase" : ""}" style="--pc:${e.cor}"><div class="lj-topo"><span>${e.nome}</span><b>${e.total}/${GEMS_TO_WIN}</b></div><div class="lj-coroa"><span class="lj-ic" aria-hidden="true">👑</span>${encaixes.join("")}</div><div class="lj-pe">${quase ? "⚠️ A uma joia da coroa! · " : ""}${pe}</div></li>`;
+    })
+    .join("");
+  const cab = vale
+    ? `🎯 Vence quem completar a coroa com <b>${GEMS_TO_WIN} joias</b>.`
+    : "Nesta partida as joias são troféu: contam pra história, não pra vitória.";
+  return `<div class="lp-cab">${cab}</div><ul class="lj-lista">${linhas}</ul>`;
+}
+
+// Liga as abas: troca o painel, refaz o zoom do tabuleiro quando ele volta a aparecer e faz as barras
+// dos pontos crescerem do valor de antes até o de agora.
+function lobbyAbasInstalar(ov) {
+  const crescer = (painel) => {
+    if (!painel || painel.dataset.cresceu) return;
+    painel.dataset.cresceu = "1";
+    const barras = painel.querySelectorAll(".lp-barra[data-ate]");
+    const ir = () => barras.forEach((b) => (b.style.width = b.dataset.ate + "%"));
+    if (typeof semMovimento === "function" && semMovimento()) ir();
+    else requestAnimationFrame(() => requestAnimationFrame(ir));
+  };
+  const mostrar = (aba) => {
+    ov.querySelectorAll(".lb-aba").forEach((b) => {
+      const on = b.dataset.aba === aba;
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-selected", String(on));
+    });
+    ov.querySelectorAll(".lb-painel").forEach((p) => (p.hidden = p.dataset.aba !== aba));
+    if (aba === "tabuleiro") {
+      const caixa = ov.querySelector("#tabCaixaLobby");
+      if (caixa && caixa._zoom) caixa._zoom.pintar();
+    }
+    if (aba === "pontos") crescer(ov.querySelector('.lb-painel[data-aba="pontos"]'));
+  };
+  ov.querySelectorAll(".lb-aba").forEach((b) =>
+    b.addEventListener("click", () => {
+      mostrar(b.dataset.aba);
+      tabCaosNoTabuleiro("aba");
+    }),
+  );
+  const ini = ov.querySelector(".lb-aba.on");
+  mostrar(ini ? ini.dataset.aba : "tabuleiro");
 }
 /* ======================================================================
  * 6. VOZ, SOM E VIBRAÇÃO
@@ -20345,7 +20786,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.9.5 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.9.6 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -25415,7 +25856,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.9.5 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.9.6 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -28589,7 +29030,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.9.5 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.9.6 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -29112,7 +29553,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.9.5 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.9.6 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -62588,6 +63029,13 @@ const REACTIVE_VOICE = {
       "Isso, mede tudo. Estratégia é bonito até a próxima dica.",
       "Casa conferida. A matemática tá do seu lado. A sorte, eu não sei.",
     ],
+    // trocaram de aba no lobby (Tabuleiro, Pontos, Joias)
+    aba: [
+      "Trocando de aba pra ver se o placar melhora? Não melhora.",
+      "Pontos, joias, tabuleiro... Pode olhar de todo jeito. Quem tá atrás continua atrás.",
+      "Isso, confere tudo. Eu adoro uma mesa que estuda a própria derrota.",
+      "Mudou de aba. Corajoso. A aba de antes tava doendo, né?",
+    ],
     // pularam o lobby nos primeiros segundos
     pular: [
       "Nem olharam o tabuleiro. Tanta versão pra desenhar, e vocês pulam.",
@@ -64221,6 +64669,19 @@ const PAUSE_TIPS = [
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.9.6",
+    data: "09/10/2026 · 16:59",
+    nome: "Rooms and Network Update · Board Update 5",
+    t: "O intervalo entre as cartas ganhou abas: Tabuleiro, Pontos e Joias.",
+    itens: [
+      "🗂️ Abas no intervalo: entre uma carta e outra dá pra ver o Tabuleiro, os Pontos e as Joias. Abre direto no que decide a partida, marcado com 🎯.",
+      "🏆 Pódio dos pontos: os três primeiros sobem nos degraus, e as barras de todo mundo crescem com os pontos que cada um fez na carta.",
+      "👑 Coroa de joias: cada jogador ou equipe tem uma coroa com um encaixe por joia. A joia nova entra brilhando, e embaixo aparece o que falta pra completar.",
+      "⚠️ A uma joia da coroa: quem está quase completando fica destacado, pra mesa toda ficar de olho.",
+    ],
+    qol: [],
+  },
   {
     v: "Beta 1.7.9.5",
     data: "09/10/2026 · 14:49",

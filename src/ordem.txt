@@ -24,6 +24,7 @@ js/05f-tempo-de-jogo.js
 js/05g-acoes.js
 js/05h-telao.js
 js/05i-tabuleiro.js
+js/05j-lobby-placar.js
 js/06-voz-som-vibracao.js
 js/07-caos/01-nucleo-e-falas.js
 js/07-caos/02-cerebro-adm.js
