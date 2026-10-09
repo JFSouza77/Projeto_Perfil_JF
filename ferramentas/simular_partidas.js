@@ -245,6 +245,7 @@ async function jogar(b, cen, semente) {
           const f = retratoPartida("mestre");
           delete f.relogio;
           delete f.matchId; // o replay é outra partida: o matchId é novo
+          delete f.tabuleiro; // e a forma do tabuleiro (só desenho) é sorteada de novo
           return JSON.stringify(f);
         })(),
       };
@@ -323,6 +324,7 @@ async function replay(b, cen, semente, original) {
     const f = retratoPartida("mestre");
     delete f.relogio;
           delete f.matchId; // o replay é outra partida: o matchId é novo
+          delete f.tabuleiro; // e a forma do tabuleiro (só desenho) é sorteada de novo
     return { divergiu, avisoMeio, repetidas, final: JSON.stringify(f) };
   }, original.gravacao);
   await page.close();
