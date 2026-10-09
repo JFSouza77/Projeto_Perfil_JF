@@ -112,7 +112,7 @@ function contar(js) {
   const rvSrc = js.slice(rv.start, rv.end);
   // versão publicada: as cartas vêm embaralhadas e precisam do cartasAbrir junto
   const fnAbrir = ast.body.find((n) => n.type === "FunctionDeclaration" && n.id && n.id.name === "cartasAbrir");
-  const cartas = vm.runInNewContext((fnAbrir ? js.slice(fnAbrir.start, fnAbrir.end) + ";" : "") + "(" + cartasSrc + ")");
+  const cartas = vm.runInNewContext((fnAbrir ? js.slice(fnAbrir.start, fnAbrir.end) + ";" : "") + "function redeSemCatalogo(){return false};(" + cartasSrc + ")");
   const R = vm.runInNewContext("(" + rvSrc + ")");
   let grupos = 0, falas = 0;
   (function walk(o) {
@@ -220,7 +220,8 @@ function embaralharCartas(js, versao) {
   const volta = vm.runInNewContext(abrir + "cartasAbrir(" + JSON.stringify(enc) + "," + JSON.stringify(A) + "," + JSON.stringify(B) + ")");
   if (JSON.stringify(volta) !== json) throw new Error("As cartas embaralhadas não voltaram idênticas.");
   const decl = js.lastIndexOf("const ADULT_CARDS", ini.start);
-  let out = aplicar(js, [[lit.start, lit.end, "cartasAbrir(" + JSON.stringify(enc) + "," + JSON.stringify(A) + "," + JSON.stringify(B) + ")"]]);
+  // 1.7.9.7 (trava de privacidade 2): o convidado de uma sala não desembaralha o catálogo
+  let out = aplicar(js, [[lit.start, lit.end, '(typeof redeSemCatalogo==="function"&&redeSemCatalogo()?[]:cartasAbrir(' + JSON.stringify(enc) + "," + JSON.stringify(A) + "," + JSON.stringify(B) + "))"]]);
   out = out.slice(0, decl) + abrir + out.slice(decl);
   return { js: out, cartas: cartas.length };
 }

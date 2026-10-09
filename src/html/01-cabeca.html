@@ -6,6 +6,17 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.9.7 · 09/10/2026 · "Rooms and Network Update · Parte 3" = SALA, PROTOCOLO, PAPÉIS E RELÓGIO (FUNDAÇÃO DA REDE).
+          05k-rede.js + 10-rede.css. Host autoritativo: abre a sala (código de 4 letras sem I/O) pelo ADM; convidado
+          entra por #sala=ABCD, escolhe quem é, recebe o retrato público e manda comandos. Envelope (protocolo,
+          sala, sessão, seq) e validação (formato, protocolo, sala, sessão, tipo, conteúdo, tamanho, repetida/velha).
+          Ator pela sessão (assento), papel conferido pelo host (redePodeComandar: veredito/virar/sacar/descartar só
+          Mestre; dica vez ou Mestre; duelo quem caiu no bônus; pausar qualquer um; tempo/ADM/encerrar só host),
+          depois a porta de sempre (dispatchAction). Resposta só pro Mestre ("segredo" endereçado; o convidado apaga
+          quando a carta acaba ou deixa de ser Mestre). Reconexão por id + chave do aparelho; lugar online não é
+          tomado. Relógio por ping/pong (menor atraso) e redeAgora no convidado. Convidado: saveBloqueado, não roda o
+          motor, e na versão publicada não desembaralha o catálogo (build.js: redeSemCatalogo). Transporte trocável;
+          hoje só o local (BroadcastChannel). teste_rede.js (23 conferências).
   1.7.9.6 · 09/10/2026 · "Rooms and Network Update · Board Update 5" = LOBBY COM ABAS (TABULEIRO, PONTOS, JOIAS).
           Ideias aprovadas pelo JF. 05j-lobby-placar.js: o lobby abre na aba da condição de vitória (🎯 marca a que
           decide). Pontos: pódio em degraus (2º, 1º, 3º) e corrida de barras que crescem do lobby anterior até agora
@@ -545,7 +556,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.9.6</title>
+<title>Perfil JF · Beta 1.7.9.7</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

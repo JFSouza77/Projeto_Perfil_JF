@@ -3242,6 +3242,18 @@ Os ${p.score} pontos vão ser divididos: +${parte} pra cada um dos ${resto} que 
       tb.addEventListener("click", telaoAbrirAba);
       sP.appendChild(tb);
     }
+    // 1.7.9.7: sala da rede (por enquanto, ensaio em abas do mesmo navegador)
+    if (typeof redePainelHost === "function" && typeof BroadcastChannel === "function") {
+      const sb = document.createElement("button");
+      sb.type = "button";
+      sb.className = "ci-btn ci-wide";
+      sb.textContent = rede && rede.papel === "host" ? `🌐 Sala ${rede.sala} (ver quem está dentro)` : "🌐 Abrir sala (ensaio da rede)";
+      sb.addEventListener("click", () => {
+        ov.remove();
+        redePainelHost();
+      });
+      sP.appendChild(sb);
+    }
     body.appendChild(sP);
   }
   head.querySelector("#admFechar").addEventListener("click", () => ov.remove());
