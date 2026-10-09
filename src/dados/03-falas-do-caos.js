@@ -4620,6 +4620,13 @@ const REACTIVE_VOICE = {
       "Isso, mede tudo. Estratégia é bonito até a próxima dica.",
       "Casa conferida. A matemática tá do seu lado. A sorte, eu não sei.",
     ],
+    // trocaram de aba no lobby (Tabuleiro, Pontos, Joias)
+    aba: [
+      "Trocando de aba pra ver se o placar melhora? Não melhora.",
+      "Pontos, joias, tabuleiro... Pode olhar de todo jeito. Quem tá atrás continua atrás.",
+      "Isso, confere tudo. Eu adoro uma mesa que estuda a própria derrota.",
+      "Mudou de aba. Corajoso. A aba de antes tava doendo, né?",
+    ],
     // pularam o lobby nos primeiros segundos
     pular: [
       "Nem olharam o tabuleiro. Tanta versão pra desenhar, e vocês pulam.",

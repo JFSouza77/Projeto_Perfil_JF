@@ -439,3 +439,250 @@ body.claro .tb-info {
 body.claro .tb-zoom .tb-peao.tb-sel {
   outline-color: #2e1065;
 }
+
+/* ---- 1.7.9.6 · lobby com abas: Tabuleiro, Pontos e Joias ---- */
+.lb-abas {
+  display: flex;
+  gap: 6px;
+  margin: 10px 0 8px;
+  padding: 4px;
+  border-radius: 14px;
+  background: #ffffff12;
+}
+.lb-aba {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 4px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  opacity: 0.75;
+}
+.lb-aba.on {
+  background: #a78bfa;
+  color: #140b2e;
+  opacity: 1;
+}
+.lb-vale {
+  font-size: 0.72rem;
+}
+.lb-painel[hidden] {
+  display: none;
+}
+.lp-cab {
+  font-size: 0.82rem;
+  opacity: 0.85;
+  margin: 2px 0 10px;
+}
+.lp-vazio-txt {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin: 14px 0;
+}
+/* pódio: 2º, 1º, 3º em degraus */
+.lp-podio {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: end;
+  gap: 6px;
+  margin: 4px 0 14px;
+}
+.lp-degrau {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+.lp-tok {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+  background: var(--pc);
+  border: 2px solid #fff;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--pc) 60%, transparent);
+}
+.lp-nome {
+  margin: 4px 0;
+  font-size: 0.8rem;
+  font-weight: 800;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lp-bloco {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 6px;
+  border-radius: 10px 10px 4px 4px;
+  background: color-mix(in srgb, var(--pc, #a78bfa) 40%, #1c1c33);
+  border: 1px solid color-mix(in srgb, var(--pc, #a78bfa) 70%, transparent);
+  font-size: 0.78rem;
+}
+.lp-bloco b {
+  font-size: 1.3rem;
+}
+.lp-1 .lp-bloco {
+  height: 86px;
+}
+.lp-2 .lp-bloco {
+  height: 62px;
+}
+.lp-3 .lp-bloco {
+  height: 44px;
+}
+.lp-vazio .lp-bloco {
+  background: #ffffff0d;
+  border-style: dashed;
+  border-color: #ffffff33;
+}
+.lp-1 .lp-tok {
+  width: 42px;
+  height: 42px;
+  font-size: 1.35rem;
+}
+/* barras */
+.lp-lista,
+.lj-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+.lp-linha,
+.lj-linha {
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--pc) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pc) 45%, transparent);
+}
+.lp-topo,
+.lj-topo {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+.lp-trilho {
+  position: relative;
+  height: 12px;
+  margin-top: 8px;
+  border-radius: 999px;
+  background: #ffffff1f;
+}
+.lp-barra {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--pc) 70%, #fff), var(--pc));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--pc) 60%, transparent);
+  transition: width 0.9s ease-out;
+}
+.lp-chegada {
+  position: absolute;
+  right: -2px;
+  top: -4px;
+  bottom: -4px;
+  width: 4px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(180deg, #fff 0 3px, #111 3px 6px);
+}
+/* joias: a coroa */
+.lj-coroa {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+.lj-ic {
+  font-size: 1.2rem;
+}
+.lj-joia {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  clip-path: polygon(50% 0, 100% 38%, 82% 100%, 18% 100%, 0 38%);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--gc) 55%, #fff), var(--gc) 60%, color-mix(in srgb, var(--gc) 70%, #000));
+  color: #fff;
+  font-weight: 900;
+  font-size: 0.78rem;
+  text-shadow: 0 1px 2px #0008;
+}
+.lj-joia.lj-oca {
+  background: #ffffff1a;
+}
+.lj-joia.lj-nova {
+  animation: ljChega 0.9s ease-out both, ljBrilha 1.6s ease-in-out 0.9s 3;
+}
+@keyframes ljChega {
+  0% {
+    transform: translateY(-14px) scale(1.6);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(2px) scale(0.95);
+    opacity: 1;
+  }
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes ljBrilha {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.6) drop-shadow(0 0 6px var(--gc));
+  }
+}
+.lj-pe {
+  margin-top: 6px;
+  font-size: 0.76rem;
+  opacity: 0.8;
+}
+.lj-quase {
+  border-color: #fbbf24;
+  box-shadow: 0 0 12px #fbbf2455;
+}
+/* Menos movimento: a joia nova só brilha (não cai); as barras já nascem no lugar */
+html.acess-calmo .lj-joia.lj-nova {
+  animation: ljBrilha 1.6s ease-in-out 3;
+}
+html.acess-calmo .lp-barra {
+  transition: none;
+}
+body.batata-mode .lj-joia.lj-nova {
+  animation: none;
+}
+body.claro .lb-abas {
+  background: #0000000d;
+}
+body.claro .lb-aba.on {
+  background: #7c3aed;
+  color: #fff;
+}
+body.claro .lp-trilho,
+body.claro .lj-joia.lj-oca {
+  background: #0000001a;
+}
+body.claro .lp-bloco {
+  background: color-mix(in srgb, var(--pc, #a78bfa) 30%, #fff);
+}

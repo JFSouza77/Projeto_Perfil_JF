@@ -129,6 +129,15 @@ const ARQ = acharMestre(process.argv[2]);
     for (let i = 0; i < 40 && !document.getElementById('tabLobby'); i++) { await espera(50); fechar(); }
     const revLobby = partidaRevisao;
     out.lobbyAbriu = !!document.getElementById('tabLobby') && cardState === 'hidden' && !!document.querySelector('#tabLobby #tabCaixaLobby .tb-pecas');
+    // 1.7.9.6: abas Tabuleiro/Pontos(/Joias), abrindo na que decide a partida; trocar de aba não muda nada
+    {
+      const abas = [...document.querySelectorAll('#tabLobby .lb-aba')].map((b) => b.dataset.aba);
+      const on = document.querySelector('#tabLobby .lb-aba.on');
+      const pts = document.querySelector('#tabLobby .lb-aba[data-aba="pontos"]');
+      if (pts) pts.click();
+      const painelPts = document.querySelector('#tabLobby .lb-painel[data-aba="pontos"]');
+      out.lobbyAbas = abas.includes('tabuleiro') && abas.includes('pontos') && abas.includes('joias') === gemsAwarded() && !!on && on.dataset.aba === lobbyAbaInicial() && !!painelPts && !painelPts.hidden && !!painelPts.querySelector('.lp-lista') && partidaRevisao === revLobby;
+    }
     await espera(60);
     out.lobbySoTela = partidaRevisao === revLobby && !!document.getElementById('desfazerBtn') && +getComputedStyle(document.getElementById('tabLobby')).zIndex < +getComputedStyle(document.getElementById('desfazerBtn')).zIndex;
     document.getElementById('desfazerBtn') && document.getElementById('desfazerBtn').click();
@@ -286,6 +295,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.9.4: o tabuleiro abre entre as cartas, com a próxima já escondida', r.lobbyAbriu],
     ['1.7.9.4: o lobby é só tela (não mexe na partida) e fica abaixo do Desfazer', r.lobbySoTela],
     ['1.7.9.4: desfazer o veredito fecha o lobby', r.lobbyDesfeito],
+    ['1.7.9.6: lobby com abas (Tabuleiro, Pontos e Joias quando a partida dá joias), abrindo na que decide', r.lobbyAbas],
     ['1.7.9.5: na partida o "toque pra ampliar" mostra só a lista, sem o tabuleiro grande', r.ampliarSemDesenho],
     ['1.7.9.5: Menos movimento (acessibilidade) e Modo Batata são coisas separadas', r.calmoSeparado],
   ];
