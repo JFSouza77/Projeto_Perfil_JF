@@ -415,3 +415,40 @@ Cada parte sai publicada sozinha. Em todas, o jogo local continua igual para que
   - o "✓ Acertou" do Express só abre a pergunta "Quem acertou?" (`expressAskWho`, congela o relógio) fora de uma ação. No online, isso é tela só do Mestre: não vai pro retrato, e o relógio congelado precisa ir junto com a revisão;
   - o `expressTargetAction` não é salvo: se recarregar com a janela do alvo aberta, a especial é escolhida de novo.
 - **Revisão externa:** `docs/Instrucoes_Debug_Externo.md`.
+
+## 10. Plano da 1.7.9 · Rooms and Network Update
+
+Base: a revisão externa da 1.7.8.9 (10 achados), cada um conferido no código.
+
+### Parte 1 · 1.7.9 · Porta das ações fechada (publicada)
+- **A porta confere as regras do motor, não só a tela:**
+  - descartar só até a 5ª dica e no máximo 2 seguidos;
+  - desistir só depois da 1ª dica;
+  - mover casas só com a especial de mover aberta, no valor dela e com um alvo permitido;
+  - o alvo do Express só com a janela de alvo aberta.
+  - A tela e a porta usam a mesma conta (`podeDescartarCarta`, `podeDesistirCarta`, `acoesMovimentoValido`).
+- **O `reembaralharDicas` saiu da porta** e o `reshuffleAndDraw` saiu do jogo.
+- **Viraram ações** (com revisão e aviso pro telão/rede): o fim do tempo da carta no Express (`expressCartaPerdida`) e tirar jogador pelo ADM (`admRemover`).
+- **Pausar e voltar sobem a revisão:** a pausa entra na conta de "a partida mudou". Como toda ação, pausar fecha a janela do Desfazer, de propósito: desfazer com a partida pausada religaria o relógio.
+- **Comando repetido segue recusado depois de recarregar:** os `commandId` já aplicados vão no save, e o log de cada ação guarda o `commandId`.
+- **Falas do C.A.O.S.:** o `eventId` ganha um pedaço da sessão (`matchId:sessão:fN`), então recarregar não repete eventId.
+- **Espinha (achado 10), mantida como está e registrada aqui:**
+  - os campos "só vigiados" (início/fim, estado da carta, carta atual, tamanho do baralho) não são desfeitos;
+  - desfazer troca de carta no meio de uma rotina do C.A.O.S. é mais arriscado do que avisar;
+  - nenhuma rotina do C.A.O.S. mexe neles hoje (a espinha anotaria).
+
+### Para as próximas partes (precisa da rede)
+- **Envelope obrigatório:**
+  - na rede, todo comando leva versão do protocolo, `matchId`, `commandId`, revisão esperada e o ator;
+  - o ator vem da sessão (quem está conectado), nunca do que o aparelho diz;
+  - o host confere o papel de quem manda: só o Mestre dá veredito, só quem está na vez escolhe a dica, só o ADM tira jogador, só o host manda as ações automáticas (tempo acabou, sacar).
+- **Três formatos de estado:**
+  - o estado completo, que só o host tem;
+  - o retrato público, que vai pros convidados;
+  - um pacote de recuperação, que vai só pro próximo host em caso de troca.
+  - O retrato do telão não serve pra reconectar.
+- **Relógio:** os aparelhos estimam a diferença pro relógio do host e mostram a contagem por ela. Só o host decide que o tempo acabou.
+- **Votação do Descartar:** já registrada acima.
+- **Privacidade das respostas (decisão do JF):** hoje o catálogo das 1000 cartas vem dentro do jogo. Duas saídas:
+  - **(a) Partida casual:** todo mundo recebe o jogo inteiro. Quem souber mexer nas ferramentas do navegador acha a resposta, mas pela tela normal ninguém vê. É o mesmo nível de um jogo de tabuleiro, em que dá pra espiar a carta.
+  - **(b) Sigilo de verdade:** o catálogo fica só no aparelho do host (ou num servidor), e cada carta vai só pro celular do Mestre na hora. Custa mais trabalho e exige que os convidados recebam uma versão do jogo sem as cartas.

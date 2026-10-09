@@ -372,20 +372,6 @@ function discardAndDraw() {
   consecutiveDiscards++;
   drawHidden();
 }
-function reshuffleAndDraw() {
-  if (gameEnded) return;
-  clearTimer();
-  caosCardPrediction = null;
-  if (currentCard) {
-    if (currentCard.isBonus) {
-      pendingBonusQueue.unshift({ landerIdx: currentCard.bonusLandedByIdx, opponentIdx: currentCard.bonusMestreIdx });
-    }
-    devolverAoBaralho(cardsByAnswer.get(currentCard.answer) || currentCard);
-  }
-  currentCard = null;
-  usedAtLeastOnce = true;
-  drawHidden();
-}
 function drawHidden() {
   roletaCarta = null;
   clearTimer();

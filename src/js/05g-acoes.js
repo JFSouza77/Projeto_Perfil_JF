@@ -26,17 +26,24 @@ const ACOES = {
   palpiteErrou: { fn: "palpiteMiss", pode: () => acoesComDica() },
   especialSeguir: { fn: "continueAfterSpecial", pode: () => acoesComDica() },
   especialPerdeVez: { fn: "loseTurnAfterSpecial", pode: () => acoesComDica() },
-  moverJogador: { fn: "applySpecialMove", pode: () => acoesEmJogo() },
-  moverEquipe: { fn: "applyTeamSpecialMove", pode: () => acoesEmJogo() },
+  // 1.7.9: mover só com a especial de mover aberta, o valor dela e um alvo permitido (antes: qualquer
+  // jogador e qualquer valor, a qualquer hora)
+  moverJogador: { fn: "applySpecialMove", pode: (alvo, n) => acoesMovimentoValido(alvo, n) },
+  moverEquipe: { fn: "applyTeamSpecialMove", pode: (eq, n) => acoesMovimentoEquipeValido(eq, n) },
   bonusAdversario: { fn: "chooseBonusOpponent", pode: () => acoesEmJogo() && cardState === "bonusChoice" },
-  descartarCarta: { fn: "discardAndDraw", pode: () => acoesEmJogo() },
-  reembaralharDicas: { fn: "reshuffleAndDraw", pode: () => acoesEmJogo() },
-  desistirCarta: { fn: "pedirDesistirCarta", pode: () => acoesEmJogo() },
+  // 1.7.9: a mesma regra da tela (até a 5ª dica, no máximo 2 seguidos); o "reembaralhar" saiu de vez
+  descartarCarta: { fn: "discardAndDraw", pode: () => podeDescartarCarta() },
+  desistirCarta: { fn: "pedirDesistirCarta", pode: () => podeDesistirCarta() },
   expressPassar: { fn: "expressPass", pode: () => acoesEmJogo() && CURRENT_MODE === "express" },
   expressPular: { fn: "expressSkip", pode: () => acoesEmJogo() && CURRENT_MODE === "express" },
   expressInverter: { fn: "expressReverse", pode: () => acoesEmJogo() && CURRENT_MODE === "express" },
   expressMirar: { fn: "openExpressTargetPopup", pode: (tipo) => acoesComDica() && CURRENT_MODE === "express" && (tipo === "steal" || tipo === "block") },
-  expressAlvo: { fn: "resolveExpressTarget", pode: () => acoesEmJogo() && CURRENT_MODE === "express" },
+  expressAlvo: { fn: "resolveExpressTarget", pode: (idx) => acoesEmJogo() && CURRENT_MODE === "express" && !!expressTargetAction && !!players[idx] },
+  // 1.7.9: o fim do tempo da carta no Express e a saída de um jogador pelo ADM mudavam a partida fora
+  // de uma ação (sem revisão, sem aviso pro telão/rede). Agora são ações. Quem pode mandar cada uma
+  // (só o aparelho que hospeda, só o ADM) é a 1.7.9 que confere, pela sessão.
+  expressCartaPerdida: { fn: "expressCardLost", pode: () => acoesEmJogo() && CURRENT_MODE === "express" && cardState === "revealed" && !!cardEndAt && cardSecondsLeft() <= 0 },
+  admRemover: { fn: "admRemoverJogador", pode: (r) => acoesEmJogo() && CURRENT_FORMAT !== "equipe" && !!players[r] && players.length > 2 },
   tempoAcabou: { fn: "onTimerExpired", pode: () => acoesEmJogo() },
   pausar: { fn: "pauseGame", pode: () => acoesEmJogo() },
   continuar: { fn: "resumeGame", pode: () => starterChosen && !gameEnded },
@@ -50,6 +57,7 @@ let acoesLog = [];
 let acoesComandosVistos = [];
 let acoesProfundidade = 0;
 let acoesOrigemAtual = null; // "comando" quando a ação veio do dispatchAction
+let acoesComandoAtual = null; // commandId do comando em andamento (vai pro log)
 let acoesInstaladas = false;
 const ACOES_POR_FN = {};
 Object.keys(ACOES).forEach((t) => (ACOES_POR_FN[ACOES[t].fn] = t));
@@ -59,6 +67,46 @@ function acoesEmJogo() {
 }
 function acoesComDica() {
   return acoesEmJogo() && cardState === "revealed" && pendingIndex !== null;
+}
+// Texto (minúsculo) da especial aberta agora, ou "" se a dica pendente não é especial.
+function acoesEspecialTxt() {
+  if (!acoesComDica() || !currentCard) return "";
+  const it = currentCard.clues[pendingIndex];
+  return it && it.type === "special" ? String(it.text).toLowerCase() : "";
+}
+// Regras únicas do descarte e do desistir: a tela mostra o botão e a porta das ações aceita o
+// comando pela MESMA conta (antes a porta aceitava qualquer descarte com a partida rolando).
+function podeDescartarCarta() {
+  if (!acoesEmJogo() || cardState !== "revealed" || !currentCard) return false;
+  const reais = revealedOrder.filter((r) => r.item.type === "clue").length;
+  // no Express a 1ª dica abre sozinha: o descarte vale com a dica na tela
+  const expressPode = CURRENT_MODE === "express" && pendingIndex !== null && !expressAskWho && !expressWhoFreeze;
+  return (pendingIndex === null || expressPode) && reais <= 5 && consecutiveDiscards < 2;
+}
+function podeDesistirCarta() {
+  return acoesEmJogo() && CURRENT_MODE !== "express" && cardState === "revealed" && !!currentCard && pendingIndex === null && revealedOrder.length >= 1;
+}
+// Mover casas: só com a especial de mover aberta, no valor dela e com um alvo que a tela ofereceria.
+function acoesMovimento() {
+  const t = acoesEspecialTxt();
+  if (!t || CURRENT_MODE === "express") return null;
+  if (t.includes("avance 1 casa")) return { n: 1, escolha: false };
+  if (t.includes("avance 2 casas") && !t.includes("escolha")) return { n: 2, escolha: false };
+  if (t.includes("volte 2 casas") && !t.includes("escolha")) return { n: -2, escolha: false };
+  if (t.includes("volte 3 casas")) return { n: -3, escolha: false };
+  if (t.includes("escolha um jogador")) return { n: t.includes("avançar") ? 2 : -2, escolha: true };
+  return null;
+}
+function acoesMovimentoValido(alvo, n) {
+  const m = acoesMovimento();
+  if (!m || !Number.isInteger(alvo) || !players[alvo] || n !== m.n) return false;
+  if (!m.escolha) return alvo === responderIndex;
+  return CURRENT_FORMAT !== "equipe" && alvo !== responderIndex;
+}
+function acoesMovimentoEquipeValido(eq, n) {
+  const m = acoesMovimento();
+  if (!m || !m.escolha || CURRENT_FORMAT !== "equipe" || n !== m.n || !teams || !teams[eq]) return false;
+  return eq !== (players[responderIndex] && players[responderIndex].team);
 }
 function acoesDicaLivre(idx) {
   return (
@@ -100,9 +148,15 @@ function acoesRegistrar(tipo, args, origem) {
     m: jogadorIdDe(mestreIndex),
     v: jogadorIdDe(responderIndex),
     t: caosPartidaInicioAt ? Math.max(0, Date.now() - caosPartidaInicioAt) : 0,
+    c: acoesComandoAtual, // 1.7.9: id do comando que pediu (null = toque neste aparelho ou o próprio jogo)
   });
   if (acoesLog.length > ACOES_LOG_MAX) acoesLog.splice(0, acoesLog.length - ACOES_LOG_MAX);
   if (typeof acoesAvisar === "function") acoesAvisar(acoesLog[acoesLog.length - 1]);
+}
+// O que conta como "a partida mudou": a foto da espinha mais a pausa (1.7.9: pausar e voltar
+// não mudavam a foto, então não subiam a revisão nem avisavam o telão).
+function acoesFoto() {
+  return caosEspinhaFoto() + (typeof pausedAt !== "undefined" && pausedAt ? "|pausada" : "");
 }
 // Casca de uma função do motor: só a chamada de fora conta como ação.
 function acoesEnvolver(fnNome) {
@@ -112,7 +166,7 @@ function acoesEnvolver(fnNome) {
   const casca = function () {
     if (acoesProfundidade > 0) return orig.apply(this, arguments);
     const origem = acoesOrigem();
-    const antes = caosEspinhaFoto();
+    const antes = acoesFoto();
     const fotoDesfazer = DESFAZER_TIPOS.includes(tipo) ? desfazerFotografar() : null;
     acoesProfundidade++;
     try {
@@ -120,7 +174,7 @@ function acoesEnvolver(fnNome) {
     } finally {
       acoesProfundidade--;
       try {
-        if (antes !== caosEspinhaFoto()) {
+        if (antes !== acoesFoto()) {
           acoesRegistrar(tipo, arguments, origem);
           if (fotoDesfazer && !gameEnded) desfazerOferecer(tipo, arguments, fotoDesfazer);
           else if (tipo !== "desfazer") desfazerLimpar();
@@ -165,9 +219,14 @@ function acoesRestaurar(state) {
           m: jogadorIdValido(x.m) ? x.m : null,
           v: jogadorIdValido(x.v) ? x.v : null,
           t: typeof x.t === "number" && isFinite(x.t) ? x.t : 0,
+          c: typeof x.c === "string" && x.c.length <= 64 ? x.c : null,
         }))
     : [];
-  acoesComandosVistos = [];
+  // 1.7.9: os comandos já aplicados vão no save. Antes a lista zerava ao recarregar e um comando
+  // repetido podia ser aceito de novo na mesma partida.
+  acoesComandosVistos = Array.isArray(state.acoesComandos)
+    ? state.acoesComandos.filter((x) => typeof x === "string" && x && x.length <= 64).slice(-ACOES_COMANDOS_MAX)
+    : [];
 }
 // A porta dos comandos (rede na 1.7.9; testes e ferramentas hoje).
 function dispatchAction(cmd) {
@@ -192,12 +251,14 @@ function dispatchAction(cmd) {
   if (!pode) return { ok: false, motivo: "fora_de_hora", revisao: partidaRevisao };
   const antes = partidaRevisao;
   acoesOrigemAtual = "comando";
+  acoesComandoAtual = typeof c.commandId === "string" ? c.commandId : null;
   try {
     window[def.fn].apply(null, dados);
   } catch (e) {
     return { ok: false, motivo: "erro", revisao: partidaRevisao };
   } finally {
     acoesOrigemAtual = null;
+    acoesComandoAtual = null;
   }
   if (c.commandId !== undefined) {
     acoesComandosVistos.push(c.commandId);
