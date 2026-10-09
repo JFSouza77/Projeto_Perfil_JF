@@ -110,7 +110,9 @@ function contar(js) {
   const cartasSrc = js.slice(cartasIni.arguments[0].start, cartasIni.arguments[0].end);
   const rv = inicializador(ast, "REACTIVE_VOICE");
   const rvSrc = js.slice(rv.start, rv.end);
-  const cartas = vm.runInNewContext("(" + cartasSrc + ")");
+  // versão publicada: as cartas vêm embaralhadas e precisam do cartasAbrir junto
+  const fnAbrir = ast.body.find((n) => n.type === "FunctionDeclaration" && n.id && n.id.name === "cartasAbrir");
+  const cartas = vm.runInNewContext((fnAbrir ? js.slice(fnAbrir.start, fnAbrir.end) + ";" : "") + "(" + cartasSrc + ")");
   const R = vm.runInNewContext("(" + rvSrc + ")");
   let grupos = 0, falas = 0;
   (function walk(o) {
@@ -157,10 +159,79 @@ function gerarDebug(html, versao) {
   return antes + "<style>" + p.css + "</style>" + meio + "<script>" + js + "</script>" + p.depois;
 }
 
+// ------------------------------------------------------- cartas embaralhadas
+// 1.7.9.1: na versão publicada (site e offline) as cartas vão embaralhadas por substituição de
+// letras: cada caractere vira outro, com uma troca que muda a cada versão. Ctrl+F e "ver código-fonte"
+// não acham resposta nem dica; o jogo desembaralha ao abrir. Não é cofre (quem roda o jogo nas
+// ferramentas do navegador acha), é só tirar o atalho do espertinho. A substituição mantém o tamanho e
+// a compressão do download. O Mestre (arquivo de trabalho) continua legível.
+function embaralharCartas(js, versao) {
+  const ast = parse(js);
+  const ini = inicializador(ast, "ADULT_CARDS");
+  const lit = ini.arguments[0];
+  const cartas = vm.runInNewContext("(" + js.slice(lit.start, lit.end) + ")");
+  const json = JSON.stringify(cartas);
+  const set = new Set();
+  for (let i = 0; i < json.length; i++) {
+    const c = json.charCodeAt(i);
+    if (c < 0xd800 || c > 0xdfff) set.add(c);
+  }
+  const fixo = (c) => c < 0x20 || c === 0x22 || c === 0x5c || c === 0x7f || (c >= 0x2028 && c <= 0x2029);
+  const de = [...set].filter((c) => !fixo(c)).sort((x, y) => x - y);
+  // troca embaralhada com semente da versão (mulberry32)
+  let h = 2166136261;
+  for (const ch of "perfil-jf|" + versao) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0;
+  const rnd = () => {
+    h = (h + 0x6d2b79f5) >>> 0;
+    let t = h;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+  const embaralha = (l) => {
+    const r = l.slice();
+    for (let i = r.length - 1; i > 0; i--) {
+      const j = Math.floor(rnd() * (i + 1));
+      [r[i], r[j]] = [r[j], r[i]];
+    }
+    return r;
+  };
+  // mesma classe de tamanho em UTF-8: 1 byte ↔ 1 byte, 2 ↔ 2, 3 ↔ 3 (o arquivo não cresce)
+  const classe = (c) => (c < 0x80 ? 1 : c < 0x800 ? 2 : 3);
+  const para = de.slice();
+  [1, 2, 3].forEach((k) => {
+    const idx = de.map((c, i) => (classe(c) === k ? i : -1)).filter((i) => i >= 0);
+    const mix = embaralha(idx.map((i) => de[i]));
+    idx.forEach((i, n) => (para[i] = mix[n]));
+  });
+  const mapa = new Map(de.map((c, i) => [c, para[i]]));
+  let enc = "";
+  for (let i = 0; i < json.length; i++) {
+    const c = json.charCodeAt(i);
+    enc += String.fromCharCode(mapa.has(c) ? mapa.get(c) : c);
+  }
+  const A = String.fromCharCode(...de), B = String.fromCharCode(...para);
+  const abrir =
+    "function cartasAbrir(t,a,b){const m=new Uint16Array(65536);for(let i=0;i<65536;i++)m[i]=i;" +
+    "for(let i=0;i<b.length;i++)m[b.charCodeAt(i)]=a.charCodeAt(i);const u=new Uint16Array(t.length);" +
+    "for(let i=0;i<t.length;i++)u[i]=m[t.charCodeAt(i)];let s=\"\";for(let i=0;i<u.length;i+=8192)" +
+    "s+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return JSON.parse(s)}\n";
+  // confere a volta antes de publicar
+  const volta = vm.runInNewContext(abrir + "cartasAbrir(" + JSON.stringify(enc) + "," + JSON.stringify(A) + "," + JSON.stringify(B) + ")");
+  if (JSON.stringify(volta) !== json) throw new Error("As cartas embaralhadas não voltaram idênticas.");
+  const decl = js.lastIndexOf("const ADULT_CARDS", ini.start);
+  let out = aplicar(js, [[lit.start, lit.end, "cartasAbrir(" + JSON.stringify(enc) + "," + JSON.stringify(A) + "," + JSON.stringify(B) + ")"]]);
+  out = out.slice(0, decl) + abrir + out.slice(decl);
+  return { js: out, cartas: cartas.length };
+}
+
 // --------------------------------------------------------------- compacta
-async function gerarCompacta(html) {
+async function gerarCompacta(html, versao) {
   const p = partes(html);
   const removido = [];
+  const emb = embaralharCartas(p.js, versao || "x");
+  p.js = emb.js;
+  removido.push(`Cartas: as ${emb.cartas} vão embaralhadas (substituição de letras; o jogo desembaralha ao abrir)`);
   // DEBUG desligado: o terser apaga os console.* que ficam atrás dele
   if (!/\nconst DEBUG = true;/.test(p.js)) throw new Error("O mestre precisa ter 'const DEBUG = true;'.");
   const jsEntrada = p.js.replace(/\nconst DEBUG = true;/, "\nconst DEBUG = false;");
@@ -351,7 +422,7 @@ function registrarVersao(versao, arqs) {
   };
 
   const debug = gerarDebug(mestre, versao);
-  const comp = await gerarCompacta(mestre);
+  const comp = await gerarCompacta(mestre, versao);
   fs.writeFileSync(saidas.debug, debug);
   fs.writeFileSync(saidas.compacta, comp.html);
   fs.writeFileSync(saidas.offline, comp.offline);
