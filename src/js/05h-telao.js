@@ -55,6 +55,18 @@ function telaoAbrirAba() {
 }
 
 /* --- Lado do telão: só mostra --- */
+// 1.7.8.6 (feedback): no celular não tinha como sair do telão sem fechar o jogo
+const TELAO_SAIR = '<button type="button" class="telao-sair" onclick="telaoSair()">✕ Sair do telão</button>';
+function telaoSair() {
+  try {
+    if (telaoRelogioTimer) clearInterval(telaoRelogioTimer);
+    if (telaoCanal) telaoCanal.close();
+  } catch (e) {}
+  try {
+    window.history.replaceState(null, "", String(location.href).split("#")[0]);
+  } catch (e) {}
+  location.reload();
+}
 function telaoIniciar() {
   try {
     saveBloqueado = true; // o telão nunca grava a partida
@@ -72,9 +84,9 @@ function telaoIniciar() {
     box.setAttribute("aria-live", "polite");
     document.body.appendChild(box);
   }
-  box.innerHTML = '<div class="telao-espera">📺 Telão do Perfil JF<br><small>Esperando a partida na outra aba…</small></div>';
+  box.innerHTML = '<div class="telao-espera">📺 Telão do Perfil JF<br><small>Esperando a partida na outra aba…</small></div>' + TELAO_SAIR;
   if (!telaoAbrirCanal()) {
-    box.innerHTML = '<div class="telao-espera">Este navegador não tem como receber a partida da outra aba.</div>';
+    box.innerHTML = '<div class="telao-espera">Este navegador não tem como receber a partida da outra aba.</div>' + TELAO_SAIR;
     return;
   }
   telaoCanal.onmessage = (ev) => {
@@ -122,7 +134,8 @@ function telaoDesenhar(r) {
       <div>⏱️ <b id="telaoRelogio">—</b></div>
     </section>
     ${c ? `<section class="telao-carta"><div class="telao-cat">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)} · ${c.abertas.length} de ${c.totalDicas} dicas</div><ol class="telao-dicas">${dicas || "<li>Nenhuma dica aberta ainda</li>"}</ol></section>` : ""}
-    <section class="telao-placar"><ol>${placar}</ol></section>`;
+    <section class="telao-placar"><ol>${placar}</ol></section>
+    ${TELAO_SAIR}`;
   telaoRelogio();
 }
 function telaoRelogio() {

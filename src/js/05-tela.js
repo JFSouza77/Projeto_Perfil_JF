@@ -902,7 +902,7 @@ function render() {
     const canDiscard = (pendingIndex === null || expressPodeDescartar) && realCluesCount <= 5 && consecutiveDiscards < 2;
     let extraBtnsHtml = "";
     if (canReshuffle) {
-      extraBtnsHtml += `<button class="discard-btn" id="reshuffleBtn" style="margin-bottom:8px;">⟲ Olhou sem querer? Reembaralhar e puxar outra</button>`;
+      extraBtnsHtml += `<button class="discard-btn" id="reshuffleBtn" style="margin-bottom:8px;">⟲ Trocar de carta (antes da 1ª dica)</button>`;
     }
     if (canDiscard) {
       const chancesLeft = 5 - realCluesCount;
@@ -999,6 +999,77 @@ function mestreDestaqueHtml() {
   const m = players[mestreIndex];
   return `<span class="mestre-destaque">🎙️ ${m ? playerNameHtml(m.name, m.color, m.avatar) : "?"}</span>`;
 }
+// 1.7.8.6 (feedback do JF): "Ver carta" vira a carta de verdade (as costas giram e a roleta entra
+// do outro lado); depois do "Falei!", sem outro giro: a frase "Diga aos jogadores" sobe deslizando até o
+// topo da carta e o resto aparece aos poucos. Só enfeite: o estado do jogo muda na hora, como antes.
+function cartaAnimar() {
+  try {
+    if (!visualFxAllowed()) return false;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+  } catch (e) {}
+  return true;
+}
+function cartaAnimarClasse(el, cls) {
+  el.classList.remove(cls);
+  void el.offsetWidth;
+  el.classList.add(cls);
+  const tira = () => el.classList.remove(cls);
+  el.addEventListener("animationend", (ev) => ev.target === el && tira(), { once: true });
+  setTimeout(tira, 900);
+}
+// cópia das costas da carta, por cima, girando pra fora (a carta de verdade já é a roleta por baixo)
+function cartaCostasSaindo(area) {
+  try {
+    const r = area.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    const c = area.cloneNode(true);
+    c.querySelectorAll("[id]").forEach((e) => e.removeAttribute("id"));
+    c.setAttribute("aria-hidden", "true");
+    c.classList.add("flip-sai");
+    Object.assign(c.style, {
+      position: "fixed",
+      left: r.left + "px",
+      top: r.top + "px",
+      width: r.width + "px",
+      height: r.height + "px",
+      margin: "0",
+      zIndex: "60",
+      pointerEvents: "none",
+      boxSizing: "border-box",
+    });
+    document.body.appendChild(c);
+    const tira = () => c.remove();
+    c.addEventListener("animationend", tira, { once: true });
+    setTimeout(tira, 700);
+  } catch (e) {}
+}
+// guarda onde estava a frase da roleta, pra depois da virada ela deslizar até o topo da carta
+function cartaFraseAntes() {
+  try {
+    const f = document.querySelector("#cardArea .roulette-phrase");
+    return f ? f.getBoundingClientRect().top : null;
+  } catch (e) {
+    return null;
+  }
+}
+function cartaFraseSobe(topoAntes) {
+  if (!cartaAnimar()) return;
+  try {
+    const area = document.getElementById("cardArea");
+    const h = area && area.querySelector(".answer-header");
+    if (!area || !h) return;
+    cartaAnimarClasse(area, "revelando");
+    if (topoAntes === null) return;
+    const dy = topoAntes - h.getBoundingClientRect().top;
+    if (Math.abs(dy) < 4) return;
+    h.style.transition = "none";
+    h.style.transform = `translateY(${dy}px)`;
+    void h.offsetWidth;
+    h.style.transition = "transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)";
+    h.style.transform = "";
+    setTimeout(() => (h.style.transition = ""), 650);
+  } catch (e) {}
+}
 function startCategoryRoulette() {
   if (cardState !== "hidden" || !currentCard) return;
   const area = document.getElementById("cardArea");
@@ -1011,6 +1082,8 @@ function startCategoryRoulette() {
   if (!cats.includes(finalCat)) cats.push(finalCat);
   const label = (c) => (CATEGORY_LABELS[c] || c).toUpperCase();
   const token = ++rouletteToken;
+  const virar = cartaAnimar();
+  if (virar) cartaCostasSaindo(area);
   area.className = "card";
   area.style.setProperty("--card-glow", (GEM_INFO[finalCat] || {}).color || "#a78bfa");
   area.innerHTML = `
@@ -1020,6 +1093,7 @@ function startCategoryRoulette() {
       <div class="roulette-hint" id="rouletteHint">🎰 sorteando a categoria...</div>
       <button type="button" class="flip-btn" id="rouletteDoneBtn" style="display:none;">✓ Falei! Mostrar a carta</button>
     </div>`;
+  if (virar) cartaAnimarClasse(area, "flip-entra");
   const reel = document.getElementById("rouletteReel");
   const finish = () => {
     if (token !== rouletteToken || cardState !== "hidden" || !reel.isConnected) return;
@@ -2602,7 +2676,7 @@ function buildRulesHtml() {
     );
   if (!c.express)
     li.push(
-      "🙈 <b>Olhou sem querer?</b> Reembaralhe antes da 1ª dica. <b>Carta difícil?</b> Descarte até a 5ª dica (no máximo 2 seguidas).",
+      "⟲ <b>Não curtiu a carta?</b> Troque antes da 1ª dica. <b>Carta difícil?</b> Descarte até a 5ª dica (no máximo 2 seguidas).",
     );
   else
     li.push(
@@ -3318,10 +3392,10 @@ function updateNoturnoBtn() {
 function pausaAjustesAtualizar() {
   const t = document.getElementById("pauseTemaBtn"),
     v = document.getElementById("pauseVozBtn");
-  if (t) t.textContent = document.body.classList.contains("claro") ? "🌙 Mudar pro Noturno" : "☀️ Mudar pro Claro";
+  if (t) t.textContent = document.body.classList.contains("claro") ? "🌙 Noturno" : "☀️ Modo Claro";
   if (v) {
     v.style.display = CAOS_VOICE_OK ? "" : "none";
-    v.textContent = caosVoiceOn ? "🤐 Calar a voz do C.A.O.S." : "🗣️ Ligar a voz do C.A.O.S.";
+    v.textContent = caosVoiceOn ? "🤐 Calar a voz" : "🗣️ Ligar a voz";
   }
   // 1.7.5.2: silenciou sem querer? Religa nesta carta, sem mágoa.
   const r = document.getElementById("pauseReligarBtn");

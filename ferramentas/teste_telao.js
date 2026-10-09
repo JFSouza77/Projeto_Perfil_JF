@@ -76,6 +76,11 @@ const ARQ = acharMestre(process.argv[2]);
   const t2 = await telao.evaluate(() => document.getElementById('telao').innerText);
   if (process.env.PRINT) await telao.screenshot({ path: process.env.PRINT });
   const saveDepois = await jogo.evaluate(() => JFStore.getItem('perfil200_state'));
+  // 1.7.8.6: botão de sair do telão (no celular não tinha saída)
+  const temSair = await telao.evaluate(() => !!document.querySelector('#telao .telao-sair'));
+  await Promise.all([telao.waitForNavigation({ timeout: 8000 }).catch(() => {}), telao.click('#telao .telao-sair').catch(() => {})]);
+  await telao.waitForFunction(() => typeof telaoModo === 'function', null, { timeout: 8000 }).catch(() => {});
+  const saiu = await telao.evaluate(() => !location.hash.includes('telao') && !document.getElementById('telao') && typeof telaoModo === 'function' && !telaoModo()).catch(() => false);
   const savedAt = (s) => (JSON.parse(s || '{}').savedAt || 0);
   const linhas = [
     ['Telão chega na mesma revisão do jogo', t.rev === j.rev && t.txt.includes('revisão ' + j.rev)],
@@ -85,6 +90,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['Telão ignora retrato velho', !t2.includes('VELHO')],
     ['Telão não carrega a partida e não grava (saveBloqueado)', t.bloqueado === true && t.iniciou === false],
     ['O save continua sendo só do jogo', savedAt(saveDepois) >= savedAt(saveAntes)],
+    ['Telão tem botão de sair, e ele volta pro jogo normal', temSair && saiu],
   ];
   linhas.forEach(([n, ok]) => console.log(`${ok ? 'ok    ' : 'FALHOU'}  ${n}`));
   const tudo = linhas.every((l) => l[1]) && !erros.length;

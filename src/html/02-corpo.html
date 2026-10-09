@@ -45,7 +45,7 @@
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.8.5 · Actions and Events Update · Parte 6<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.8.6 · Actions and Events Update · Feedback<br>C.A.O.S. 4.0 · Atualizada em 08/10/2026</div>
     </div>
     <!-- Aviso "Em breve": remover quando o multiplayer chegar (1.7.10). -->
     <div class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🚧 Em breve</span><b class="eb-titulo">🌐 Modo Multiplayer</b><span class="eb-sub">Online e local · em preparação</span></div>
@@ -146,22 +146,24 @@
     </div>
     <button class="btn-start btn-neo neo-solid neo-still" id="pauseResumeBtn" style="--mc:#fbbf24; --mc-glow:rgba(251,191,36,0.35);">▶️ Voltar pro jogo</button>
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost" id="pauseAdmBtn" style="--mc:#e11d48; --mc-glow:rgba(225,29,72,0.28); margin-top:12px;">🛡️ ADM</button> 
-    <div class="sec-row pause-ajustes">
+    <!-- 1.7.8.6 (feedback): pausa enxuta. O de sempre em grade 2×2; o resto em "Mais opções" -->
+    <div class="pause-grade">
       <button class="btn-sec" id="pauseTemaBtn" type="button">☀️ Modo Claro</button>
       <button class="btn-sec" id="pauseVozBtn" type="button">🤐 Calar a voz</button>
+      <button class="btn-sec" id="pauseAcessBtn" type="button">♿ Acessibilidade</button>
+      <button class="btn-sec" id="pauseVitoriaBtn" type="button">🏆 Como se ganha</button>
     </div>
-    <button class="btn-sec" id="pauseAcessBtn" type="button">♿ Acessibilidade (letra, tempo, voz)</button>
     <button class="btn-sec" id="pauseTutBtn" type="button" style="display:none; --cc:#22d3ee;">🎓 Primeira vez? Tutorial de 2 minutos</button>
-    <button class="btn-sec" id="pauseVitoriaBtn" type="button">🏆 Como se ganha nesta partida</button>
-    <button class="btn-sec" id="pauseManualBtn" type="button">📖 Manual completo (todas as regras)</button>
     <button class="btn-sec" id="pauseReligarBtn" type="button" style="display:none;">🔊 Religar o C.A.O.S. nesta carta</button>
-    <div class="sec-row sec-col">
+    <details class="pause-mais">
+      <summary>⚙️ Mais opções</summary>
+      <button class="btn-sec" id="pauseManualBtn" type="button">📖 Manual completo (todas as regras)</button>
       <button class="btn-sec" id="pauseTrocarModoBtn">🔄 Trocar de modo (recomeça com os mesmos jogadores)</button>
       <button class="btn-sec" id="pauseExportBtn">📤 Exportar partida (Save de Bolso)</button>
-    </div>
-    <details class="pause-rules">
-      <summary>📋 Ver regras completas</summary>
-      <ul id="pauseRulesList"></ul>
+      <details class="pause-rules">
+        <summary>📋 Resumo das regras desta partida</summary>
+        <ul id="pauseRulesList"></ul>
+      </details>
     </details>
   </section>
 

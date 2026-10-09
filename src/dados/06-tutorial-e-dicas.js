@@ -94,7 +94,7 @@ const TUTORIAL_STEPS = [
     sec: 2,
     icon: "🙈",
     title: "2. A resposta (só pro Mestre)",
-    text: "Ao virar a carta, a resposta fica <b>à mostra até a 1ª dica ser aberta</b>: é a hora do Mestre memorizar. Memorizou? <b>Toque nela pra esconder na hora</b> (bom quando a mesa demora pra escolher a dica). Depois ela se esconde, e pra conferir de novo é só tocar na faixa ou em <b>👁️ Conferir resposta</b> (aparece por <b>5 segundos</b>). Assim ninguém espia por cima do ombro.<br>Olhou sem querer (ou alguém viu)? Dá pra <b>reembaralhar</b> antes da 1ª dica.",
+    text: "Ao virar a carta, a resposta fica <b>à mostra até a 1ª dica ser aberta</b>: é a hora do Mestre memorizar. Memorizou? <b>Toque nela pra esconder na hora</b> (bom quando a mesa demora pra escolher a dica). Depois ela se esconde, e pra conferir de novo é só tocar na faixa ou em <b>👁️ Conferir resposta</b> (aparece por <b>5 segundos</b>). Assim ninguém espia por cima do ombro.<br>Não curtiu a carta (ou alguém viu)? Dá pra <b>trocar de carta</b> antes da 1ª dica.",
     mock: '<div class="answer-line-name answer-toggle livre"><span class="ans-nome">Cometa</span></div><div class="ans-hint">👆 toque pra esconder · some sozinha na 1ª dica</div><div class="answer-line-name answer-toggle" style="margin-top:8px;">🙈 Resposta escondida — toque pra ver (5 s)</div>',
   },
   {
@@ -450,7 +450,7 @@ const PAUSE_TIPS = [
   },
   {
     when: () => CURRENT_MODE !== "express",
-    text: () => "Olhou a carta sem querer? Dá pra reembaralhar antes de revelar a primeira dica.",
+    text: () => "Não curtiu a carta? Dá pra trocar por outra antes de revelar a primeira dica.",
   },
   {
     when: () => CURRENT_MODE !== "express",
