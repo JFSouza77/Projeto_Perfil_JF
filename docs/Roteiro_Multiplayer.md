@@ -452,3 +452,16 @@ Base: a revisão externa da 1.7.8.9 (10 achados), cada um conferido no código.
 - **Privacidade das respostas (decisão do JF):** hoje o catálogo das 1000 cartas vem dentro do jogo. Duas saídas:
   - **(a) Partida casual:** todo mundo recebe o jogo inteiro. Quem souber mexer nas ferramentas do navegador acha a resposta, mas pela tela normal ninguém vê. É o mesmo nível de um jogo de tabuleiro, em que dá pra espiar a carta.
   - **(b) Sigilo de verdade:** o catálogo fica só no aparelho do host (ou num servidor), e cada carta vai só pro celular do Mestre na hora. Custa mais trabalho e exige que os convidados recebam uma versão do jogo sem as cartas.
+
+### Decisão do JF · Privacidade das respostas (09/10/2026)
+- **Escolha: (a), com o máximo de travas da (b).** Fica aberta a (b) completa depois, se precisar.
+- **Já feito (1.7.9.1):** cartas embaralhadas no arquivo publicado.
+  - Ctrl+F e "ver código-fonte" não acham nada.
+  - A troca de letras muda a cada versão.
+- **Travas para as partes da rede:**
+  1. **Convidado não roda a partida:** o celular do convidado só mostra o retrato público que o host manda. Ele não guarda carta nem baralho, e o `retratoPartida("mestre")` dele não tem resposta pra dar.
+  2. **Convidado não desembaralha o catálogo:** sem as cartas abertas na memória, não dá pra procurar a carta pelas dicas que já saíram. O celular só desembaralha se virar host (ou se o jogo for local).
+  3. **A resposta vai só pro celular do Mestre, na hora,** e sai da memória dele quando a carta acaba (veredito, descarte ou tempo).
+  4. **O retrato público continua sem id da carta e sem id da dica,** o que já é verdade desde a 1.7.8.4.
+  5. **O save do convidado não guarda carta nem resposta.** Só o host salva a partida.
+- **O que sobra:** quem souber depurar o jogo no navegador do host ou do Mestre da vez. É o mesmo que espiar a carta na mão de quem lê.

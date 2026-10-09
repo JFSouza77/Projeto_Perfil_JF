@@ -6,6 +6,16 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.9.1",
+    data: "09/10/2026 · 11:38",
+    nome: "Rooms and Network Update · Parte 2",
+    t: "Nada de espiar as cartas pelo código.",
+    itens: [
+      "🔐 Cartas embaralhadas: no site e no arquivo offline, as respostas e as dicas ficam embaralhadas dentro do jogo. Abrir o código da página e procurar o nome da carta não acha nada.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.9",
     data: "09/10/2026 · 10:44",
     nome: "Rooms and Network Update · Parte 1",
