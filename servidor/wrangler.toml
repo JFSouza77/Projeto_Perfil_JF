@@ -1,0 +1,16 @@
+# Perfil JF · servidor da sala (Cloudflare Workers, plano grátis). Como publicar: LEIA-ME.md
+name = "perfil-jf-sala"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+# sites que podem pedir a lista de salas e a ponte (separados por vírgula). O arquivo offline e o localhost já valem.
+ORIGENS = "https://jfsouza77.github.io"
+
+[[durable_objects.bindings]]
+name = "SINAL"
+class_name = "Sinal"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Sinal"]
