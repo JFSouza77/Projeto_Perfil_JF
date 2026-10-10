@@ -65,7 +65,8 @@ const ARQ = acharMestre(process.argv[2]);
     showToastMessage('[C.A.O.S.] Boa, Ana! Beto, sua vez.'); showToastMessage('[C.A.O.S.] Mesa animada hoje.');
     out.canal = caosCanal.map((c) => c.para.map((d) => d.nome + '@' + d.aparelho).join('+'));
     // funções reais continuam funcionando
-    out.gerador = !!caosGerarFala('inicioModo', null);
+    // o gerador pode não montar numa tentativa (6 sorteios falham) e o jogo cai na lista pronta: vale montar em até 5
+    out.gerador = [1, 2, 3, 4, 5].some(() => !!caosGerarFala('inicioModo', null));
     out.log = caosEspinha.log;
     return out;
   });
@@ -77,6 +78,7 @@ const ARQ = acharMestre(process.argv[2]);
   console.log(`Medidores saneados: ${r.saneou ? 'ok' : 'FALHOU'}`);
   console.log(`Espinha completa (palpite, joias, bônus, dicas, rodada, relógios; jogador pelo id): ${completaOk ? 'ok' : 'FALHOU ' + JSON.stringify(r.completa)}`);
   console.log(`Canal: ${r.canal.join(' | ')}`);
+  console.log(`Gerador de falas responde: ${r.gerador ? 'ok' : 'FALHOU'}`);
   console.log(ok && !erros.length ? 'ESPINHA OK' : 'ESPINHA COM PROBLEMA ' + erros.join(' | '));
   process.exitCode = ok && !erros.length ? 0 : 1;
   await b.close();
