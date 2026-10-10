@@ -241,7 +241,7 @@ const TUTORIAL_STEPS = [
     sec: 6,
     icon: "📡",
     title: "Abrir uma sala (no aparelho do host)",
-    text: "<ol><li>Monte a partida <b>normalmente</b> nesse aparelho: formato, modo e o <b>cadastro de todo mundo</b> (inclusive quem vai jogar de outro celular). Sorteie quem começa;</li><li>Com a partida na tela, toque em <b>⏸️ Pausar</b>;</li><li>Toque em <b>🌐 Jogar online (beta)</b> e depois em <b>Abrir sala pela internet</b>;</li><li>Espere aparecer <b>🟢 Sala aberta</b> (leva uns segundos);</li><li>Em <b>Quem joga neste aparelho?</b>, escolha o seu nome (ou \"ninguém\", se o aparelho fica só na mesa);</li><li>Toque em <b>📋 Copiar link</b> ou <b>📤 Compartilhar</b> e mande no grupo;</li><li>Feche a janela e toque em <b>▶️ Voltar pro jogo</b>.</li></ol>Pra ver quem já entrou, é só abrir <b>🌐 Jogar online</b> de novo.",
+    text: "A ordem certa é <b>sala primeiro, cadastro depois</b>:<ol><li>Nesse aparelho, escolha o formato e o modo;</li><li>Na tela dos jogadores, toque em <b>🌐 Vai jogar online?</b> e depois em <b>Abrir sala pela internet</b>. Espere o <b>🟢 Sala aberta</b>;</li><li>Toque em <b>📋 Copiar link</b> ou <b>📤 Compartilhar</b> e mande no grupo. Quem abrir fica esperando o nome aparecer;</li><li>Feche a janela e <b>cadastre todo mundo</b> (inclusive quem joga de outro celular). Cada um toca no próprio nome no celular dele;</li><li>Sorteie quem começa. O jogo pergunta <b>Quem joga neste aparelho?</b>: escolha o seu nome (ou \"ninguém\", se o aparelho fica só na mesa).</li></ol>Quando o Mestre está em outro aparelho, este mostra a tela de jogador, <b>sem a carta e sem a resposta</b>. Já começou a partida? Dá pra abrir a sala pela <b>⏸️ Pausa</b>, em <b>🌐 Jogar online</b>.",
     dark: true,
     mock: '<div class="tut-sala"><div class="tut-sala-rot">🌐 Sala K7P2</div><div class="tut-sala-sub">🟢 Sala aberta</div><div class="tut-sala-sub">📋 Copiar link · 📤 Compartilhar</div></div>',
   },
@@ -257,7 +257,7 @@ const TUTORIAL_STEPS = [
     sec: 6,
     icon: "🎙️",
     title: "Quem toca o quê",
-    text: "Cada celular só mostra o que é seu:<ul><li>🎙️ <b>Mestre:</b> vê a resposta (\"🔒 Só você vê\"), vira a carta, dá o veredito (Acertou, Errou, Pulou), resolve as instruções especiais e o palpite;</li><li>👉 <b>Quem está na vez:</b> escolhe o número da dica;</li><li>🏟️ <b>Quem caiu na casa de bônus:</b> escolhe contra quem é o duelo;</li><li>⏸️ <b>Qualquer um</b> pode pausar e continuar;</li><li>🗳️ <b>Descartar e Desistir</b> viram votação: o Mestre pede e a mesa vota no celular;</li><li>📱 <b>O host</b> controla tudo pelo aparelho dele e é o único que toca em <b>Próxima carta</b> no intervalo.</li></ul>",
+    text: "Cada celular só mostra o que é seu:<ul><li>🎙️ <b>Mestre:</b> vê a resposta (\"🔒 Só você vê\"), vira a carta, dá o veredito (Acertou, Errou, Pulou), resolve as instruções especiais e o palpite;</li><li>👉 <b>Quem está na vez:</b> escolhe o número da dica;</li><li>🏟️ <b>Quem caiu na casa de bônus:</b> escolhe contra quem é o duelo;</li><li>⏸️ <b>Qualquer um</b> pode pausar e continuar;</li><li>🗳️ <b>Descartar e Desistir</b> viram votação: o Mestre pede e a mesa vota no celular;</li><li>📱 <b>O host</b> é o único que toca em <b>Próxima carta</b> no intervalo. Quando o Mestre está em outro aparelho, o host vê a mesma tela dos jogadores (sem a resposta). Se o Mestre não tem aparelho, ele usa o do host, que mostra tudo.</li></ul>",
   },
   {
     sec: 6,
@@ -344,7 +344,7 @@ const PAUSE_TIPS = [
   // 1.7.9.12: dicas do online
   {
     when: () => typeof rede === "undefined" || !rede,
-    text: () => "Dá pra jogar cada um no seu celular: toque em 🌐 Jogar online aqui na pausa. O passo a passo está no 📖 Manual, capítulo Online.",
+    text: () => "Dá pra jogar cada um no seu celular: na próxima partida, abra a sala no cadastro (🌐 Vai jogar online?), antes de cadastrar. Já começou? Toque em 🌐 Jogar online aqui na pausa. Passo a passo no 📖 Manual, capítulo Online.",
   },
   {
     when: () => typeof rede !== "undefined" && !!rede && rede.papel === "host",

@@ -283,6 +283,8 @@ async function rodar(b, modo, porta, turn) {
   }
   const revTroca = await H(() => partidaRevisao);
   const placarTroca = await H(() => JSON.stringify(players.map((p) => [p.id, p.score, p.position])));
+  // o pacote vai no máximo a cada 3 s (e na batida de 4 s): espera o sucessor estar com a revisão de agora
+  await esperar(gV, (rv) => !!rede.recuperacao && rede.recuperacao.revisao === rv, revTroca, 10000);
   await host.close();
   conf("O outro celular avisa que o host sumiu e quem assume", await esperar(gM, () => !!document.querySelector(".rede-conexao") && /assume/.test(document.querySelector(".rede-conexao").textContent), null, 15000));
   conf("O sucessor assume: vira host da MESMA sala", await esperar(gV, (s) => typeof rede !== "undefined" && rede && rede.papel === "host" && rede.sala === s && rede.transporte.estado === "aberta", sala, 60000));
@@ -298,6 +300,95 @@ async function rodar(b, modo, porta, turn) {
   return { ok, erros };
 }
 
+// 1.7.9.4 · Sala antes do cadastro (pedido do JF) e tela de jogador no host quando o Mestre está em outro aparelho
+async function rodarSalaPrimeiro(b) {
+  const ctx = await b.newContext({ viewport: { width: 390, height: 844 } });
+  await ctx.route(/^https?:/, (r) => r.abort());
+  await ctx.addInitScript(() => {
+    try {
+      localStorage.setItem("perfil5_tutorial_visto", "x");
+      localStorage.setItem("perfil5_tab_lobby", "0");
+    } catch (e) {}
+    if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
+  });
+  const erros = [], ok = [];
+  const conf = (nome, v) => ok.push([`[sala primeiro] ${nome}`, !!v]);
+  const abrir = async (hash) => {
+    const pg = await ctx.newPage();
+    pg.on("pageerror", (e) => erros.push(e.message.slice(0, 160)));
+    await pg.goto("file://" + ARQ + (hash || ""));
+    return pg;
+  };
+  const esperar = (pg, fn, a, ms) => pg.waitForFunction(fn, a, { timeout: ms || 8000 }).then(() => true, () => false);
+  const host = await abrir("");
+  await host.waitForFunction(() => typeof sorteioSemear === "function" && !document.getElementById("goToRulesBtn").disabled);
+  // cadastro vazio, sala aberta antes de cadastrar
+  const sala = await host.evaluate(() => {
+    document.querySelectorAll(".caos-modal-ov, #novidadesModal").forEach((o) => o.remove());
+    caosSilenced = true;
+    CURRENT_FORMAT = "versus";
+    selectMode("classico");
+    WIN_CONDITION = "tabuleiro";
+    players = [];
+    return redeAbrirSala("local");
+  });
+  conf("O botão da sala aparece no cadastro", await host.evaluate(() => !!document.getElementById("redeCadBtn") && /Sala/.test(document.getElementById("redeCadBtn").textContent)));
+  const g = await abrir("#sala=" + sala + "&local");
+  conf(
+    "Quem entra antes do cadastro espera o nome aparecer",
+    await esperar(g, () => rede && rede.estado === "escolhendo" && /cadastrando/.test(document.getElementById("telao").textContent)),
+  );
+  // o host cadastra: o nome aparece na hora no celular de quem espera
+  await host.evaluate(() => {
+    ["Ana", "Beto", "Caio"].forEach((n, i) => players.push({ id: jogadorIdNovo(), name: n, score: 0, position: 0, isBlocked: false, color: PLAYER_COLORS[i], avatar: "😀", humor: "normal", ageBracket: null, team: null, gems: {} }));
+    redeHostCadastroMudou();
+  });
+  conf("Os nomes cadastrados aparecem pra escolher", await esperar(g, () => rede.estado === "escolhendo" && rede.lugares.length === 3));
+  const ana = await host.evaluate(() => players[0].id);
+  await g.evaluate((id) => redeEscolherLugar(id), ana);
+  conf(
+    "Escolheu o nome antes da partida: tela de espera",
+    await esperar(g, () => rede.estado === "dentro" && rede.retrato && !rede.retrato.iniciada && /Esperando o host/.test(document.getElementById("telao").textContent)),
+  );
+  // a partida começa com a Ana (no celular dela) de Mestre e o Beto no aparelho do host, na vez
+  await host.evaluate(async () => {
+    rede.hostEu = players[1].id;
+    starterDrawCount = 1;
+    mestreIndex = 0;
+    responderIndex = 1;
+    ["splashScreen", "welcomeScreen", "playerPanel", "orderRevealSection"].forEach((id) => {
+      const e = document.getElementById(id);
+      if (e) e.style.display = "none";
+    });
+    document.getElementById("gameScreen").style.display = "block";
+    document.getElementById("playAreaSection").style.display = "block";
+    beginGameplay();
+    await new Promise((r) => setTimeout(r, 300));
+    if (activeToastState) closeActiveToast();
+    redeHostPublicar(true);
+  });
+  conf("Mestre em outro aparelho: o host mostra a tela de jogador", await esperar(host, () => !!document.getElementById("redeHostVista") && document.body.classList.contains("rede-mestre-longe")));
+  conf("Na tela do host não aparece a resposta", await host.evaluate(() => !document.getElementById("redeHostVista").textContent.includes(currentCard.answer)));
+  conf("O convidado começa a partida junto", await esperar(g, () => rede.retrato && rede.retrato.iniciada && !!document.querySelector("#telao .telao-vez")));
+  // a Mestre vira a carta no celular dela; o Beto escolhe a dica na tela do host
+  await g.evaluate(() => redeMandar("sacarCarta"));
+  await esperar(host, () => cardState === "hidden" || cardState === "revealed");
+  await g.evaluate(() => redeMandar("virarCarta"));
+  await esperar(host, () => cardState === "revealed", null, 12000);
+  await host.evaluate(() => redeHostPublicar(true));
+  const temNum = await esperar(host, () => !!document.querySelector("#redeHostVista [data-dica]"), null, 12000);
+  conf("Na vez de quem está no host, os números aparecem na tela dele", temNum);
+  if (temNum) await host.evaluate(() => document.querySelector("#redeHostVista [data-dica]").click());
+  conf("A dica escolhida no host abre", await esperar(host, () => revealedOrder.length === 1));
+  // a Mestre sai da sala: o host volta pra tela de sempre (ela jogaria no aparelho do host)
+  await g.close({ runBeforeUnload: true });
+  await host.waitForTimeout(500);
+  await host.evaluate(() => redeHostPublicar(true));
+  conf("Mestre fora da sala: o host volta a mostrar tudo", await esperar(host, () => !document.getElementById("redeHostVista") && !document.body.classList.contains("rede-mestre-longe")));
+  await ctx.close();
+  return { ok, erros };
+}
+
 (async () => {
   const b = await navegador();
   const todos = [], erros = [];
@@ -305,6 +396,9 @@ async function rodar(b, modo, porta, turn) {
     const r = await rodar(b, "local");
     todos.push(...r.ok);
     erros.push(...r.erros);
+    const r2 = await rodarSalaPrimeiro(b);
+    todos.push(...r2.ok);
+    erros.push(...r2.erros);
   }
   if (SO !== "local") {
     const sv = await servidorPeer();

@@ -215,3 +215,32 @@ body.claro .rede-voto-host {
   font-weight: 700;
   cursor: pointer;
 }
+
+/* 1.7.9.4 · Tela de jogador no aparelho do host (o Mestre da vez está em outro aparelho) */
+.rede-host-vista {
+  position: fixed;
+  inset: 0;
+  z-index: 9900; /* em cima da partida; embaixo do balão do C.A.O.S. (10000) e das janelas (10002) */
+  width: auto;
+  margin: 0;
+  overflow-y: auto;
+  background: var(--bg);
+  padding: calc(12px + env(safe-area-inset-top, 0px)) 16px calc(16px + env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+}
+body.claro .rede-host-vista {
+  color: #22263f;
+}
+/* 1.7.9.4 · Sala aberta já no cadastro */
+.rede-cad {
+  margin: 4px 0 12px;
+  text-align: center;
+}
+.rede-cad .rede-btn {
+  width: 100%;
+}
+.rede-cad-info {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}

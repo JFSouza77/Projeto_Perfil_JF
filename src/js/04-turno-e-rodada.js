@@ -1484,6 +1484,7 @@ function addPlayer() {
   input.value = "";
   caosTomadaN = 0;
   renderScoreboard();
+  if (typeof redeHostCadastroMudou === "function") redeHostCadastroMudou(); // 1.7.9.4: a sala vê o nome novo na hora
   renderColorPicker();
   renderAvatarPicker();
   updateDrawAvailability();

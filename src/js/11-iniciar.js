@@ -834,6 +834,11 @@ function iniciar() {
     const on = document.getElementById("pauseOnlineBtn");
     if (on) on.addEventListener("click", () => typeof redePainelHost === "function" && redePainelHost());
   }
+  {
+    // 1.7.9.4 (pedido do JF): abrir a sala já no cadastro, antes de cadastrar os jogadores
+    const cad = document.getElementById("redeCadBtn");
+    if (cad) cad.addEventListener("click", () => typeof redePainelHost === "function" && redePainelHost());
+  }
   document.getElementById("btnMemImportar").addEventListener("click", caosMemoriaImportar);
   temaAplicar();
   document.getElementById("btnNovidades").addEventListener("click", abrirNovidades);
