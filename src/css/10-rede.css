@@ -492,3 +492,8 @@ body.claro button.splash-embreve {
   align-items: center;
   gap: 8px;
 }
+/* 1.7.10 · Salas na sua rede */
+.rede-perto{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.rede-perto:empty{display:none}
+.rede-perto-rot{font-size:.85rem;opacity:.8}
+.rede-perto-sala{text-align:left}

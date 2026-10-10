@@ -66,6 +66,35 @@ const JOGO_VERSAO = (() => {
     return "?";
   }
 })();
+// 1.7.10 · "1.7.9.9" > "1.7.9.8"? (compara número a número)
+function redeVersaoMaior(a, b) {
+  const x = String(a || "").split(".").map(Number), y = String(b || "").split(".").map(Number);
+  for (let i = 0; i < Math.max(x.length, y.length); i++) {
+    const d = (x[i] || 0) - (y[i] || 0);
+    if (d) return d > 0;
+  }
+  return false;
+}
+// 1.7.10 · O host atualizou o jogo no meio da partida: quem está com a versão velha recarrega sozinho uma vez
+// (volta pro mesmo lugar). Se mesmo assim continuar diferente, fica o botão "Recarregar" com a explicação.
+function redeAtualizarJunto(versaoHost) {
+  if (!versaoHost || !redeVersaoMaior(versaoHost, JOGO_VERSAO)) return false;
+  const marca = "perfil5_rede_atualizou";
+  try {
+    if (sessionStorage.getItem(marca) === versaoHost) return false;
+    sessionStorage.setItem(marca, versaoHost);
+  } catch (e) {
+    return false;
+  }
+  try {
+    showToastMessage(`🔄 O host atualizou o jogo (Beta ${versaoHost}). Atualizando…`, null, true);
+  } catch (e) {}
+  setTimeout(() => {
+    if (typeof window.__REDE_RECARREGAR === "function") return window.__REDE_RECARREGAR(); // (teste)
+    location.reload();
+  }, 1500);
+  return true;
+}
 let redeInsistirId = false; // reabrindo a sala depois de assumir: espera o id da sala ficar livre
 let redeOuvindo = false; // a escuta das ações (acoesAoMudar) é registrada uma vez só
 let rede = null; // { papel: "host" | "convidado", sala, sessao, transporte, seq, ultimoSeq: {} , ... }
@@ -192,10 +221,66 @@ const REDE_ICE = [
   },
   { urls: ["turn:freeturn.net:3478", "turns:freeturn.tel:5349"], username: "free", credential: "free" },
 ];
-// Configuração do PeerJS (o teste aponta pra um servidor local por window.__REDE_PEER_CONFIG).
-function redePeerConfig() {
+/* --- 1.7.10 · Servidor da sala nosso (Cloudflare, servidor/worker.js; decisão do JF) ---
+   Apresenta os aparelhos (no lugar do servidor público do PeerJS), lista as salas da mesma rede e entrega
+   a ponte TURN do Cloudflare (1.000 GB/mês grátis). Vazio = só o público, como antes. Com ele, o público
+   fica de reserva: o host abre a sala nos dois, e o convidado tenta o nosso e, se não achar, o público. */
+const REDE_SERVIDOR = ""; // endereço do Worker, ex.: "perfil-jf-sala.<conta>.workers.dev"
+const REDE_SERVIDOR_CHAVE = "perfiljf";
+const REDE_PONTE_KEY = "perfil5_rede_ponte";
+let redePonte = null; // { iceServers, validade } vindo do servidor nosso
+// { host, port, secure } do servidor nosso, ou null (o teste usa window.__REDE_SERVIDOR)
+function redeServidorNosso() {
+  const t = typeof window !== "undefined" && window.__REDE_SERVIDOR;
+  if (t && t.host) return { host: t.host, port: t.port || 443, secure: t.secure !== false };
+  return REDE_SERVIDOR ? { host: REDE_SERVIDOR, port: 443, secure: true } : null;
+}
+function redeServidorUrl(caminho) {
+  const s = redeServidorNosso();
+  return s ? `${s.secure ? "https" : "http"}://${s.host}:${s.port}${caminho}` : null;
+}
+function redePonteValida() {
+  if (redePonte && redePonte.validade > Date.now() + 3600000) return redePonte;
+  try {
+    const p = JSON.parse(localStorage.getItem(REDE_PONTE_KEY) || "null");
+    if (p && Array.isArray(p.iceServers) && p.validade > Date.now() + 3600000) return (redePonte = p);
+  } catch (e) {}
+  return null;
+}
+// Pega as credenciais da ponte (valem 24 h) antes de abrir a conexão; sem resposta em 2,5 s, segue sem.
+function redePontePronta() {
+  const url = redeServidorUrl("/ponte");
+  if (!url || redePonteValida() || !redeTemInternet()) return Promise.resolve();
+  let ctl = null;
+  try {
+    ctl = new AbortController();
+  } catch (e) {}
+  const tempo = setTimeout(() => ctl && ctl.abort(), 2500);
+  return fetch(url, ctl ? { signal: ctl.signal } : {})
+    .then((r) => r.json())
+    .then((j) => {
+      if (!j || !Array.isArray(j.iceServers) || !j.iceServers.length) return;
+      redePonte = { iceServers: j.iceServers.slice(0, 4), validade: +j.validade || Date.now() + 86400000 };
+      try {
+        localStorage.setItem(REDE_PONTE_KEY, JSON.stringify(redePonte));
+      } catch (e) {}
+    })
+    .catch(() => {})
+    .finally(() => clearTimeout(tempo));
+}
+// Lista dos servidores de apresentação: o nosso primeiro (se tiver) e o público de reserva.
+function redeServidores() {
+  return redeServidorNosso() ? [0, 1] : [1];
+}
+// Configuração do PeerJS. qual = 0 (nosso) ou 1 (público; o teste aponta pra um local por __REDE_PEER_CONFIG).
+function redePeerConfig(qual) {
+  if (qual === undefined) qual = redeServidores()[0];
   const extra = (typeof window !== "undefined" && window.__REDE_PEER_CONFIG) || {};
-  return Object.assign({ debug: 0, config: { iceServers: REDE_ICE_PROPRIOS.concat(REDE_ICE), sdpSemantics: "unified-plan" } }, extra);
+  const p = redePonteValida();
+  const ice = { iceServers: REDE_ICE_PROPRIOS.concat(p ? p.iceServers : [], REDE_ICE), sdpSemantics: "unified-plan" };
+  const s = qual === 0 && redeServidorNosso();
+  if (s) return { debug: 0, host: s.host, port: s.port, secure: s.secure, path: "/", key: REDE_SERVIDOR_CHAVE, config: extra.config || ice };
+  return Object.assign({ debug: 0, config: ice }, extra);
 }
 function redeMudouEstado(t) {
   try {
@@ -208,7 +293,7 @@ function redeTransportePeerHost(sala) {
   const porSessao = new Map(); // sessão → conexão (pra mensagem "para" alguém ir só pra ele)
   const todas = new Set();
   let receber = () => {};
-  let peer = null, tentativas = 0, fechado = false;
+  let peer = null, reserva = null, tentativas = 0, fechado = false;
   const t = {
     tipo: "internet",
     estado: "conectando",
@@ -235,7 +320,66 @@ function redeTransportePeerHost(sala) {
       try {
         peer && peer.destroy();
       } catch (e) {}
+      try {
+        reserva && reserva.destroy();
+      } catch (e) {}
     },
+  };
+  // cada convidado que chega (pelo servidor nosso ou pelo de reserva) entra pelo mesmo caminho
+  const aoConectar = (c) => {
+    todas.add(c);
+    c.on("data", (d) => {
+      if (typeof d !== "string") return;
+      // a conexão fica presa à primeira sessão que falou por ela (ninguém se passa por outro)
+      let de = null;
+      try {
+        de = JSON.parse(d).de;
+      } catch (e) {}
+      if (!c._sessao && redeSessaoValida(de)) {
+        c._sessao = de;
+        porSessao.set(de, c);
+      }
+      if (c._sessao && de !== c._sessao) return;
+      receber(d);
+    });
+    const tirar = () => {
+      todas.delete(c);
+      if (c._sessao && porSessao.get(c._sessao) === c) porSessao.delete(c._sessao);
+    };
+    c.on("close", tirar);
+    c.on("error", tirar);
+  };
+  // 1.7.10: com o servidor nosso, a sala também abre no público (de reserva). Se um cair, o outro segura.
+  const abrirReserva = () => {
+    if (fechado || redeServidores().length < 2) return;
+    try {
+      reserva = new Peer(REDE_PEER_PREFIXO + sala.toLowerCase(), redePeerConfig(1));
+    } catch (e) {
+      return;
+    }
+    const r = reserva;
+    r.on("open", () => {
+      if (t.estado !== "aberta" && !fechado) {
+        t.estado = "aberta";
+        t.erro = null;
+        redeMudouEstado(t);
+      }
+    });
+    r.on("connection", aoConectar);
+    r.on("error", (e) => {
+      if ((e && e.type) === "peer-unavailable" || fechado || reserva !== r) return;
+      try {
+        r.destroy();
+      } catch (x) {}
+      setTimeout(() => reserva === r && abrirReserva(), 20000);
+    });
+    r.on("disconnected", () =>
+      setTimeout(() => {
+        try {
+          if (!fechado && reserva === r && r.disconnected && !r.destroyed) r.reconnect();
+        } catch (x) {}
+      }, 3000)
+    );
   };
   const abrir = () => {
     try {
@@ -264,6 +408,7 @@ function redeTransportePeerHost(sala) {
         fechado = true;
         try {
           peer.destroy();
+          reserva && reserva.destroy();
         } catch (x) {}
         return void setTimeout(redeTrocarCodigo, 0);
       }
@@ -281,6 +426,16 @@ function redeTransportePeerHost(sala) {
         return;
       }
       if (tipo === "peer-unavailable") return; // um convidado sumiu: não é erro da sala
+      // o servidor nosso falhou mas a reserva está aberta: a sala segue; tenta voltar pro nosso depois
+      if (reserva && reserva.open && !fechado) {
+        setTimeout(() => {
+          try {
+            if (!fechado && peer.disconnected && !peer.destroyed) peer.reconnect();
+            else if (!fechado && peer.destroyed) abrir();
+          } catch (x) {}
+        }, 15000);
+        return;
+      }
       t.erro = tipo;
       if (t.estado !== "aberta") t.estado = "erro";
       redeMudouEstado(t);
@@ -294,31 +449,13 @@ function redeTransportePeerHost(sala) {
         } catch (e) {}
       }, 1500);
     });
-    peer.on("connection", (c) => {
-      todas.add(c);
-      c.on("data", (d) => {
-        if (typeof d !== "string") return;
-        // a conexão fica presa à primeira sessão que falou por ela (ninguém se passa por outro)
-        let de = null;
-        try {
-          de = JSON.parse(d).de;
-        } catch (e) {}
-        if (!c._sessao && redeSessaoValida(de)) {
-          c._sessao = de;
-          porSessao.set(de, c);
-        }
-        if (c._sessao && de !== c._sessao) return;
-        receber(d);
-      });
-      const tirar = () => {
-        todas.delete(c);
-        if (c._sessao && porSessao.get(c._sessao) === c) porSessao.delete(c._sessao);
-      };
-      c.on("close", tirar);
-      c.on("error", tirar);
-    });
+    peer.on("connection", aoConectar);
   };
-  abrir();
+  redePontePronta().then(() => {
+    if (fechado) return;
+    abrir();
+    abrirReserva();
+  });
   return t;
 }
 // Internet, lado do convidado: uma conexão com o host, que volta sozinha se cair.
@@ -389,7 +526,7 @@ function redeTransportePeerConvidado(sala) {
     agendado = setTimeout(conectar, ms);
   };
   const conectar = () => {
-    if (fechado || !peer || peer.destroyed) return;
+    if (fechado || !peer || peer.destroyed || (conn && conn.open)) return;
     if (peer.disconnected) {
       try {
         peer.reconnect();
@@ -430,28 +567,44 @@ function redeTransportePeerConvidado(sala) {
     c.on("close", caiu);
     c.on("error", caiu);
   };
-  try {
-    peer = new Peer(undefined, redePeerConfig());
-  } catch (e) {
-    t.estado = "erro";
-    t.erro = "peer";
-    return t;
-  }
-  peer.on("open", () => conectar());
-  peer.on("error", (e) => {
-    const tipo = (e && e.type) || "erro";
-    // a sala não existe (ainda) ou o host está recarregando: insiste devagar
-    if (tipo === "peer-unavailable") {
-      t.estado = "sem_sala";
+  // 1.7.10: com o servidor nosso, o público fica de reserva: se a sala não aparece num, tenta o outro
+  const servidores = redeServidores();
+  let qual = 0;
+  const trocar = (ms) => {
+    clearTimeout(agendado);
+    try {
+      peer && peer.destroy();
+    } catch (e) {}
+    peer = null;
+    qual = (qual + 1) % servidores.length;
+    agendado = setTimeout(criar, ms);
+  };
+  const criar = () => {
+    if (fechado) return;
+    let p;
+    try {
+      p = new Peer(undefined, redePeerConfig(servidores[qual]));
+    } catch (e) {
+      t.estado = "erro";
+      t.erro = "peer";
+      redeMudouEstado(t);
+      return;
+    }
+    peer = p;
+    p.on("open", () => peer === p && conectar());
+    p.on("error", (e) => {
+      if (peer !== p) return;
+      const tipo = (e && e.type) || "erro";
+      // a sala não existe (ainda) ou o host está recarregando: insiste devagar
+      if (tipo === "peer-unavailable") t.estado = "sem_sala";
       t.erro = tipo;
       redeMudouEstado(t);
-      return tentarDeNovo(3000);
-    }
-    t.erro = tipo;
-    redeMudouEstado(t);
-    tentarDeNovo(4000);
-  });
-  peer.on("disconnected", () => tentarDeNovo(1500));
+      if (servidores.length > 1 && !(conn && conn.open)) return trocar(tipo === "peer-unavailable" ? 1500 : 2500);
+      tentarDeNovo(tipo === "peer-unavailable" ? 3000 : 4000);
+    });
+    p.on("disconnected", () => peer === p && tentarDeNovo(1500));
+  };
+  redePontePronta().then(criar);
   return t;
 }
 function redeFabrica(modo, papel) {
@@ -621,6 +774,7 @@ function redeAbrirSalaCom(fab, modo, salaFixa) {
     redeHostEsperando();
     redeHostPublicar(true);
     redeCadastroInfo();
+    redeSalaContar();
   }, 4000);
   redeHostGuardar();
   redeCadastroInfo();
@@ -1662,6 +1816,7 @@ function redeConvidadoReceber(m) {
       rede.motivo = m.motivo;
       rede.versaoHost = m.versao || null;
       if (m.motivo === "lugar_ocupado") rede.eu = null;
+      if (m.motivo === "versao_diferente") redeAtualizarJunto(rede.versaoHost);
     }
     return avisar();
   }
@@ -1891,7 +2046,7 @@ function redeConvidadoDesenhar() {
   if (rede.estado === "recusado") {
     const ver =
       rede.motivo === "versao_diferente"
-        ? `<br><small>Host: Beta ${escapeHtml(rede.versaoHost || "?")} · Você: Beta ${escapeHtml(JOGO_VERSAO)}. Recarregue a página pra atualizar.</small>`
+        ? `<br><small>Host: Beta ${escapeHtml(rede.versaoHost || "?")} · Você: Beta ${escapeHtml(JOGO_VERSAO)}. ${redeVersaoMaior(JOGO_VERSAO, rede.versaoHost) ? "O jogo do host está mais velho: ele precisa recarregar o jogo dele." : "Recarregue a página pra atualizar."}</small>`
         : "";
     box.innerHTML = `${sala}<div class="telao-espera">${escapeHtml(REDE_MOTIVOS[rede.motivo] || "Não deu pra entrar.")}${ver}<br><button type="button" class="rede-lugar" id="redeDeNovo">${rede.motivo === "versao_diferente" ? "🔄 Recarregar" : "Tentar de novo"}</button></div>${REDE_SAIR}`;
     box.querySelector("#redeDeNovo").addEventListener("click", () => {
@@ -2330,12 +2485,55 @@ function redePerguntarSala() {
   document.body.appendChild(ov);
 }
 // Tela inicial: entrar numa sala digitando o código (o link continua valendo).
+/* --- 1.7.10 · Salas na sua rede (servidor nosso) ---
+   O host conta a sala pro servidor (nome, formato e modo, quantos jogadores); quem vai entrar vê as salas
+   abertas no mesmo Wi-Fi (mesmo endereço na internet) e toca pra entrar. O host ainda precisa aceitar. */
+function redeSalaContar() {
+  const url = redeServidorUrl("/sala");
+  if (!url || !rede || rede.papel !== "host" || rede.modo !== "internet" || !redeTemInternet()) return;
+  const eu = rede.hostEu ? jogadorPorId(rede.hostEu) : null;
+  const modo = (CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus") + " · " + String(CURRENT_MODE || "").replace(/^./, (c) => c.toUpperCase());
+  const info = JSON.stringify({ sala: rede.sala, nome: eu ? eu.name : null, modo, jogadores: players.length });
+  if (info === rede.salaContada && Date.now() - (rede.salaContadaEm || 0) < 60000) return;
+  rede.salaContada = info;
+  rede.salaContadaEm = Date.now();
+  try {
+    fetch(url, { method: "POST", body: info }).catch(() => {});
+  } catch (e) {}
+}
+function redeSalasPerto(caixa) {
+  const url = redeServidorUrl("/salas");
+  if (!url || !caixa || !redeTemInternet()) return;
+  fetch(url)
+    .then((r) => r.json())
+    .then((lista) => {
+      if (!caixa.isConnected || !Array.isArray(lista)) return;
+      const boas = lista.filter((x) => x && redeSalaValida(String(x.sala || "")));
+      if (!boas.length) {
+        caixa.innerHTML = `<small>📶 Nenhuma sala aberta no seu Wi-Fi agora.</small>`;
+        return;
+      }
+      caixa.innerHTML =
+        `<div class="rede-perto-rot">📶 Salas na sua rede</div>` +
+        boas
+          .map((x) => {
+            const quem = x.nome ? `${escapeHtml(String(x.nome))}` : "Sala";
+            const det = [x.modo ? escapeHtml(String(x.modo)) : "", x.jogadores ? `${x.jogadores | 0} jogador${(x.jogadores | 0) === 1 ? "" : "es"}` : ""].filter(Boolean).join(" · ");
+            return `<button type="button" class="chip rede-perto-sala" data-sala="${x.sala}"><b>${x.sala}</b> · ${quem}${det ? `<small> · ${det}</small>` : ""}</button>`;
+          })
+          .join("");
+      caixa.querySelectorAll("[data-sala]").forEach((bt) => bt.addEventListener("click", () => redeIrPraSala(bt.dataset.sala, "internet")));
+    })
+    .catch(() => {
+      if (caixa.isConnected) caixa.innerHTML = "";
+    });
+}
 function redeEntrarPorCodigo() {
   document.getElementById("redeCodigoJanela")?.remove();
   const ov = document.createElement("div");
   ov.id = "redeCodigoJanela";
   ov.className = "jf-modal-bg";
-  ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Jogar online</h3><p><b>Entrar numa sala:</b> digite o código que aparece no aparelho do host.</p><input type="text" id="redeCodigoIn" class="rede-codigo-in" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCD" aria-label="Código da sala"><div class="rede-aviso" id="redeCodigoErro" style="display:none"></div><button type="button" class="btn-start btn-neo neo-solid neo-still" id="redeCodigoIr" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">Entrar na sala</button><p style="margin-top:12px"><small>Pra <b>abrir</b> uma sala: toque em <b>Jogar</b>, escolha o formato e o modo e responda <b>Sim</b> em "Vai jogar online?".</small></p><button type="button" class="chip" id="redeCodigoComo">❓ Como funciona</button><button type="button" class="chip" id="redeCodigoFechar" style="margin-top:10px">Fechar</button></div>`;
+  ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Jogar online</h3><p><b>Entrar numa sala:</b> digite o código que aparece no aparelho do host.</p><input type="text" id="redeCodigoIn" class="rede-codigo-in" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCD" aria-label="Código da sala"><div class="rede-aviso" id="redeCodigoErro" style="display:none"></div><button type="button" class="btn-start btn-neo neo-solid neo-still" id="redeCodigoIr" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">Entrar na sala</button><div class="rede-perto" id="redeSalasPerto"></div><p style="margin-top:12px"><small>Pra <b>abrir</b> uma sala: toque em <b>Jogar</b>, escolha o formato e o modo e responda <b>Sim</b> em "Vai jogar online?".</small></p><button type="button" class="chip" id="redeCodigoComo">❓ Como funciona</button><button type="button" class="chip" id="redeCodigoFechar" style="margin-top:10px">Fechar</button></div>`;
   const inp = ov.querySelector("#redeCodigoIn"), erro = ov.querySelector("#redeCodigoErro");
   inp.addEventListener("input", () => {
     inp.value = inp.value.toUpperCase().replace(/[^A-HJ-NP-Z]/g, "").slice(0, 4); // o código não usa I nem O
@@ -2362,6 +2560,7 @@ function redeEntrarPorCodigo() {
   });
   ov.querySelector("#redeCodigoFechar").addEventListener("click", () => ov.remove());
   document.body.appendChild(ov);
+  redeSalasPerto(ov.querySelector("#redeSalasPerto"));
   setTimeout(() => inp.focus(), 50);
 }
 /* --- 1.7.9.8 · Sala de perto: QR Code, selo de conexão e tirar da sala --- */

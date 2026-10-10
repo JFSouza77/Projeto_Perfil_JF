@@ -21,6 +21,9 @@ const PUB = (() => {
   return fs.existsSync(p) ? p : null;
 })();
 const SO = (args.find((a) => a.startsWith("--so=")) || "").slice(5);
+// --servidor=PORTA: usa o servidor da sala nosso (servidor/worker.js rodando com "wrangler dev") no lugar do "peer"
+const SERVIDOR = +((args.find((a) => a.startsWith("--servidor=")) || "").slice(11)) || 0;
+const CHAVE = SERVIDOR ? "perfiljf" : "peerjs";
 
 async function navegador() {
   const { chromium } = require("playwright-core");
@@ -92,12 +95,13 @@ async function rodarOrfa(b) {
 // 1.7.9.8 · Código sorteado já em uso por outro grupo: a sala nova troca de código (não entra na sala dos outros)
 async function rodarColisao(b, porta) {
   const ctx = await b.newContext();
+  await ctx.addInitScript("window.__CHAVE = " + JSON.stringify(CHAVE));
   await ctx.route(/^https?:/, (r) => (r.request().url().startsWith("http://127.0.0.1:" + porta) ? r.continue() : r.abort()));
   await ctx.addInitScript((porta) => {
     try {
       localStorage.setItem("perfil5_tutorial_visto", "x");
     } catch (e) {}
-    window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, config: { iceServers: [] } };
+    window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, key: window.__CHAVE || "peerjs", config: { iceServers: [] } };
   }, porta);
   const erros = [], ok = [];
   const abrir = async () => {
@@ -121,6 +125,60 @@ async function rodarColisao(b, porta) {
   await ctx.close();
   return { ok, erros };
 }
+// 1.7.10 · Servidor da sala nosso (servidor/worker.js no "wrangler dev") com o público ("peer" local) de reserva:
+// o host abre nos dois, a lista de salas da rede mostra a sala, e um convidado sem o nosso entra pelo público.
+async function rodarServidorNosso(b, nosso, publico) {
+  const ctx = await b.newContext({ viewport: { width: 390, height: 844 } });
+  await ctx.route(/^https?:/, (r) => (r.request().url().startsWith("http://127.0.0.1:") ? r.continue() : r.abort()));
+  await ctx.addInitScript(([nosso, publico]) => {
+    try {
+      localStorage.setItem("perfil5_tutorial_visto", "x");
+      Object.keys(localStorage).filter((k) => k.startsWith("perfil5_rede_eu_")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) {}
+    if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
+    window.__REDE_SERVIDOR = { host: "127.0.0.1", port: window.__NOSSO_MORTO ? 9 : nosso, secure: false };
+    window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: publico, path: "/", secure: false, key: "peerjs", config: { iceServers: [] } };
+  }, [nosso, publico]);
+  const erros = [], ok = [];
+  const conf = (n, v) => ok.push(["[servidor nosso] " + n, !!v]);
+  const abrir = async (hash, antes) => {
+    const pg = await ctx.newPage();
+    pg.on("pageerror", (e) => erros.push(e.message.slice(0, 160)));
+    if (antes) await pg.addInitScript(antes);
+    await pg.goto("file://" + ARQ + (hash || ""));
+    await pg.waitForFunction(() => typeof redeAbrirSala === "function");
+    return pg;
+  };
+  const esperar = (pg, fn, a, ms) => pg.waitForFunction(fn, a, { timeout: ms || 15000 }).then(() => true, () => false);
+  const host = await abrir("");
+  await host.waitForFunction(() => !document.getElementById("goToRulesBtn").disabled);
+  const sala = await host.evaluate(() => redeAbrirSala("internet"));
+  conf("Sala aberta (servidor nosso e o público de reserva)", await esperar(host, () => rede && rede.transporte.estado === "aberta"));
+  const g1 = await abrir("#sala=" + sala);
+  conf("Convidado entra pelo servidor nosso", await esperar(g1, () => rede && rede.transporte && rede.transporte.estado === "aberta" && rede.estado !== "entrando", null, 20000));
+  const g2 = await abrir("#sala=" + sala, "window.__NOSSO_MORTO = true;");
+  conf("Servidor nosso fora do ar: o convidado entra pelo público", await esperar(g2, () => rede && rede.transporte && rede.transporte.estado === "aberta" && rede.estado !== "entrando", null, 40000));
+  await host.evaluate(() => redeSalaContar());
+  const g3 = await abrir("");
+  await g3.evaluate(() => redeEntrarPorCodigo());
+  conf("Salas na sua rede: a sala aparece na tela de entrar", await esperar(g3, (c) => !!document.querySelector(`#redeSalasPerto [data-sala="${c}"]`), sala, 10000));
+  await Promise.all([g3.waitForNavigation().catch(() => {}), g3.evaluate(() => document.querySelector("#redeSalasPerto [data-sala]").click())]);
+  await g3.waitForFunction(() => typeof redeAbrirSala === "function").catch(() => {});
+  conf("Tocar na sala da lista entra nela", await esperar(g3, (c) => !!rede && rede.sala === c, sala, 10000));
+  conf(
+    "Ponte: sem conta configurada segue sem; com credenciais, elas vão primeiro na lista",
+    await g3.evaluate(async () => {
+      await redePontePronta();
+      const sem = !redePonteValida();
+      redePonte = { iceServers: [{ urls: ["turn:turn.cloudflare.com:3478"], username: "u", credential: "c" }], validade: Date.now() + 86400000 };
+      delete window.__REDE_PEER_CONFIG.config;
+      const lista = redePeerConfig(0).config.iceServers;
+      return sem && lista[0].urls[0] === "turn:turn.cloudflare.com:3478" && lista.length > 1 && redePeerConfig(0).key === "perfiljf";
+    }),
+  );
+  await ctx.close();
+  return { ok, erros };
+}
 function servidorTurn() {
   let Turn;
   try {
@@ -140,6 +198,7 @@ function servidorTurn() {
 
 async function rodar(b, modo, porta, turn) {
   const ctx = await b.newContext({ viewport: { width: 390, height: 844 } });
+  await ctx.addInitScript("window.__CHAVE = " + JSON.stringify(CHAVE));
   await ctx.route(/^https?:/, (r) => (porta && r.request().url().startsWith("http://127.0.0.1:" + porta) ? r.continue() : r.abort()));
   await ctx.addInitScript(([porta, turn]) => {
     try {
@@ -150,7 +209,7 @@ async function rodar(b, modo, porta, turn) {
     if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
     // com turn: só vale a ponte (relay), como num 4G que não deixa ligação direta
     const ice = turn ? { iceServers: [{ urls: "turn:127.0.0.1:" + turn, username: "jf", credential: "teste" }], iceTransportPolicy: "relay" } : { iceServers: [] };
-    if (porta) window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, config: ice };
+    if (porta) window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, key: window.__CHAVE || "peerjs", config: ice };
   }, [porta || 0, turn || 0]);
   const erros = [];
   const abrir = async (hash, initScript) => {
@@ -626,7 +685,7 @@ async function rodarSalaPrimeiro(b) {
     erros.push(...r3.erros);
   }
   if (SO !== "local") {
-    const sv = await servidorPeer();
+    const sv = SERVIDOR ? { porta: SERVIDOR, fechar: () => {} } : await servidorPeer();
     if (!sv) console.log("(sem o pacote 'peer': o roteiro pela internet não rodou; npm install)");
     else {
       try {
@@ -636,6 +695,18 @@ async function rodarSalaPrimeiro(b) {
         const rc = await rodarColisao(b, sv.porta);
         todos.push(...rc.ok);
         erros.push(...rc.erros);
+        if (SERVIDOR) {
+          const pub = await servidorPeer();
+          if (pub) {
+            try {
+              const rn = await rodarServidorNosso(b, SERVIDOR, pub.porta);
+              todos.push(...rn.ok);
+              erros.push(...rn.erros);
+            } finally {
+              pub.fechar();
+            }
+          }
+        }
         // 1.7.9.3 · de novo, mas só pela ponte TURN (servidor local): prova que a conexão passa pelo relay
         const tv = servidorTurn();
         if (!tv) console.log("(sem o pacote 'node-turn': o roteiro via TURN não rodou; npm install)");
