@@ -259,6 +259,9 @@ const ARQ = acharMestre(process.argv[2]);
     {
       window.__REDE_SERVIDOR = false; // (sem mandar pro servidor de verdade)
       localStorage.removeItem('perfil5_cartas_reportadas');
+      const cartaAntes = currentCard, fimAntes = gameEnded, iniAntes = starterChosen;
+      if (!currentCard) currentCard = cartaPorId('ANO-0001');
+      gameEnded = false; starterChosen = true;
       const rev0 = partidaRevisao, temCarta = !!(currentCard && currentCard.id);
       cartaReportarAbrir();
       const ov = document.getElementById('reportarCarta');
@@ -267,6 +270,7 @@ const ARQ = acharMestre(process.argv[2]);
       const l = cartasReportadas();
       out.reportar = temCarta && semResposta && l.length === 1 && l[0].id === currentCard.id && l[0].motivo === 'entrega' && cartasReportadasTexto().includes(currentCard.id) && partidaRevisao === rev0;
       out.reportar = out.reportar && cartaReporteFila().length === 1;
+      currentCard = cartaAntes; gameEnded = fimAntes; starterChosen = iniAntes;
       if (ov) ov.remove();
       localStorage.removeItem('perfil5_cartas_reportadas');
       localStorage.removeItem('perfil5_cartas_reporte_fila');
