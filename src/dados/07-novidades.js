@@ -6,6 +6,19 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.9.8",
+    data: "10/10/2026 · 14:49",
+    nome: "Rooms and Network Update · Sala de perto",
+    t: "QR Code pra entrar de perto, conexão de cada um à vista e o host pode tirar alguém da sala.",
+    itens: [
+      "📷 QR Code da sala: o painel da sala mostra um QR Code. Quem está perto aponta a câmera do celular e já cai na sala.",
+      "🌉 Direto ou pela ponte: no painel, ao lado de cada nome, aparece se o celular está ligado direto (mesmo Wi-Fi) ou pela ponte (4G/5G) e quanto a conexão demora. No celular de quem entrou aparece o mesmo selo.",
+      "✕ Tirar da sala: o host pode tirar um aparelho da sala. Pra voltar, ele precisa pedir de novo.",
+      "🎲 Código sem confusão: se o código sorteado já estiver sendo usado por outra sala, o jogo sorteia outro na hora.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.9.7",
     data: "10/10/2026 · 14:08",
     nome: "Rooms and Network Update · Sala blindada",

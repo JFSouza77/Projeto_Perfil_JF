@@ -44,6 +44,38 @@ async function servidorPeer() {
   return { porta: srv.address().port, fechar: () => srv.close() };
 }
 
+// 1.7.9.8 · Código sorteado já em uso por outro grupo: a sala nova troca de código (não entra na sala dos outros)
+async function rodarColisao(b, porta) {
+  const ctx = await b.newContext();
+  await ctx.route(/^https?:/, (r) => (r.request().url().startsWith("http://127.0.0.1:" + porta) ? r.continue() : r.abort()));
+  await ctx.addInitScript((porta) => {
+    try {
+      localStorage.setItem("perfil5_tutorial_visto", "x");
+    } catch (e) {}
+    window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, config: { iceServers: [] } };
+  }, porta);
+  const erros = [], ok = [];
+  const abrir = async () => {
+    const pg = await ctx.newPage();
+    pg.on("pageerror", (e) => erros.push(e.message.slice(0, 160)));
+    await pg.goto("file://" + ARQ);
+    await pg.waitForFunction(() => typeof redeAbrirSala === "function" && !document.getElementById("goToRulesBtn").disabled);
+    return pg;
+  };
+  const outro = await abrir();
+  const codigo = await outro.evaluate(() => redeAbrirSala("internet"));
+  await outro.waitForFunction(() => rede && rede.transporte.estado === "aberta", null, { timeout: 15000 });
+  const eu = await abrir();
+  await eu.evaluate((c) => {
+    window.__REDE_SALA_TESTE = c;
+    redeAbrirSala("internet");
+  }, codigo);
+  const trocou = await eu.waitForFunction((c) => rede && rede.papel === "host" && rede.sala !== c && rede.transporte.estado === "aberta", codigo, { timeout: 30000 }).then(() => true, () => false);
+  ok.push(["[internet] Código sorteado já em uso: a sala nova troca de código e continua host", trocou]);
+  ok.push(["[internet] O outro grupo continua com a sala dele", await outro.evaluate((c) => rede && rede.papel === "host" && rede.sala === c, codigo)]);
+  await ctx.close();
+  return { ok, erros };
+}
 function servidorTurn() {
   let Turn;
   try {
@@ -132,6 +164,11 @@ async function rodar(b, modo, porta, turn) {
   // 1.7.9.6: aparelho novo espera o host aceitar
   conf("Aparelho novo espera o host aceitar", (await esperar(gM, () => rede.estado === "aguardando")) && (await esperar(host, () => Object.keys(rede.pedidos).length === 2 && !!document.getElementById("redePedidos"))));
   await H(() => redeAprovarTodos());
+  if (modo === "internet")
+    conf(
+      `O host vê como cada celular está ligado (${turn ? "pela ponte" : "direto"})`,
+      await esperar(host, (via) => Object.values(rede.assentos).some((a) => a.via === via), turn ? "ponte" : "direta", 25000),
+    );
   conf("Escolheu o lugar e entrou (com o retrato da partida)", (await esperar(gM, () => rede.estado === "dentro" && !!rede.retrato)) && (await esperar(gV, () => rede.estado === "dentro" && !!rede.retrato)));
   // 2) privacidade
   const semResposta = async (pg) => pg.evaluate((resp) => !JSON.stringify(rede.retrato).includes(resp), ids.resposta);
@@ -500,6 +537,10 @@ async function rodarSalaPrimeiro(b) {
   conf("A partida nova começa no celular dela também", await esperar(g, () => rede.retrato && rede.retrato.iniciada && !!document.querySelector("#telao .rede-carta-mestre"), null, 12000));
   conf("De novo com a Mestre fora do host: tela de jogador no host", await esperar(host, () => !!document.getElementById("redeHostVista")));
   // a Mestre sai da sala: o host volta pra tela de sempre (ela jogaria no aparelho do host)
+  // 1.7.9.8: o QR Code da sala aparece no painel; o host tira a Ana da sala
+  conf("O painel da sala mostra o QR Code do link", await host.evaluate(() => { redePainelHost(); const ok = !!document.querySelector("#redePainel .rede-qr svg"); document.getElementById("redePainel").remove(); return ok; }));
+  await host.evaluate(() => redeTirarDaSala(players[0].id));
+  conf("O host tira um aparelho da sala: ele fica de fora e precisa pedir de novo", (await esperar(g, () => rede.estado === "recusado" && rede.motivo === "removido")) && (await host.evaluate(() => !rede.assentos[players[0].id])));
   await g.close({ runBeforeUnload: true });
   await host.waitForTimeout(500);
   await host.evaluate(() => redeHostPublicar(true));
@@ -527,6 +568,9 @@ async function rodarSalaPrimeiro(b) {
         const r = await rodar(b, "internet", sv.porta);
         todos.push(...r.ok);
         erros.push(...r.erros);
+        const rc = await rodarColisao(b, sv.porta);
+        todos.push(...rc.ok);
+        erros.push(...rc.erros);
         // 1.7.9.3 · de novo, mas só pela ponte TURN (servidor local): prova que a conexão passa pelo relay
         const tv = servidorTurn();
         if (!tv) console.log("(sem o pacote 'node-turn': o roteiro via TURN não rodou; npm install)");

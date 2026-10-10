@@ -506,6 +506,12 @@ Base: a revisão externa da 1.7.8.9 (10 achados), cada um conferido no código.
   - Regra pra frente: versão pequena (uma ou duas mudanças) entra junto na próxima, em vez de ganhar número próprio, pra 1.7.9 não passar do .9.
 
 ### Pra 1.7.10 (Multiplayer Update · lançamento)
+- **Robustez e redes (levantamento de 10/10/2026, pergunta do JF):**
+  - **Gente por perto:** navegador não consegue procurar aparelhos na rede (sem acesso a broadcast/mDNS). Feito: QR Code no painel (1.7.9.8). Pra uma lista "salas na sua rede" de verdade, precisa de um servidor nosso (ex.: Cloudflare Worker grátis) que agrupe as salas pelo IP público: **decisão do JF (exige conta)**.
+  - **4G + Wi-Fi:** já funciona pelas pontes TURN gratuitas (1.7.9.3) e o selo mostra quem está pela ponte (1.7.9.8). O que ainda pode falhar: as pontes gratuitas saírem do ar. Solução definitiva: conta própria de TURN (Metered grátis 20 GB/mês ou Cloudflare) em `REDE_ICE_PROPRIOS`: **decisão do JF**.
+  - **Servidor de apresentação (PeerJS público):** é o ponto único de falha que sobra (se o 0.peerjs.com cair, ninguém abre sala). Solução: servidor PeerJS próprio (grátis no Render/Fly) ou Cloudflare: **decisão do JF**.
+  - **Testes que faltam:** Equipe e Express no online (o roteiro automático cobre Versus/Clássico), partida inteira até o fim com 3 celulares, iPhone em segundo plano (ligação recebida, trocar de app).
+  - **Atualização no meio da partida:** se o host atualizar o jogo, os convidados recebem "versão diferente" e precisam recarregar. Ideia: aviso pra todos recarregarem juntos.
 - **Nome DICAOS, domínio próprio e mudança de endereço** (save e memória).
 - **Beta fechado com a família**, em celulares de verdade, no Wi-Fi e no 4G/5G.
 
