@@ -6,6 +6,14 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.9.9 · 10/10/2026 · "Rooms and Network Update · Regras da sala" = FIM DA PARTIDA ONLINE E VÁRIOS NO APARELHO DO HOST.
+          Regra do JF: partida online (partidaOnline, salvo no save, zerado no resetDeck) não continua sem ninguém de
+          fora. redeSozinhoConferir na batida: 45 s sem nenhum aparelho de fora online → pausa e janela #redeSozinho
+          (esperar mais 2 min ou encerrar); 2 min depois → redeEncerrarOnline (endGame). Fechar a sala no meio pede
+          confirmação e encerra. App aberto de novo com partida online e sem sala pra retomar → redePartidaOnlineOrfa.
+          Pergunta do JF (Isabel no celular do JF): hostEu + hostJunto (redeDefinirNoHost); o painel tem caixas
+          [data-eu] no lugar do select; redeNoHost em lugares, falas, sucessor, Mestre longe e votantes; a votação do
+          host tem uma linha por jogador do aparelho. teste_rede: dois no host votando, todo mundo saiu, partida órfã.
   1.7.9.8 · 10/10/2026 · "Rooms and Network Update · Sala de perto" = QR CODE, SELO DE CONEXÃO, TIRAR DA SALA, CÓDIGO SEM COLISÃO.
           Pergunta do JF (o que mais pode dar bug; gente por perto; 4G + Wi-Fi). BUG: código sorteado já em uso por
           outro grupo → a regra da 1.7.9.5 (id ocupado + alguém responde = rebaixar) colocava o host na sala dos
@@ -685,7 +693,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.9.8</title>
+<title>Perfil JF · Beta 1.7.9.9</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

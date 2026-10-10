@@ -464,3 +464,31 @@ body.claro button.splash-embreve {
   font-size: 0.75rem;
   cursor: pointer;
 }
+/* 1.7.9.9 · Quem joga neste aparelho (pode ser mais de um) e voto de cada um no host */
+.rede-eu-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 6px 0;
+}
+.rede-eu-op {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+.rede-eu-op.longe {
+  opacity: 0.55;
+}
+.rede-eu-op input {
+  width: 20px;
+  height: 20px;
+}
+.rede-voto-host {
+  flex-direction: column;
+}
+.rede-voto-linha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

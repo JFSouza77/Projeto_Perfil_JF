@@ -263,6 +263,7 @@ function resetGame() {
 function resetDeck() {
   caosPartidaSerial++;
   matchId = null;
+  if (typeof partidaOnline !== "undefined") partidaOnline = false; // 1.7.9.9: partida nova começa sem ser online
   tabForma = null; // 1.7.9.2: partida nova, tabuleiro novo
   tabLobbyZerar(); // 1.7.9.4
   sorteioContagem = 0;

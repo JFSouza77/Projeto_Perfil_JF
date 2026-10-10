@@ -444,6 +444,7 @@ function saveGameState() {
       CURRENT_MODE,
       WINNING_SCORE,
       tabForma, // 1.7.9.2: forma do tabuleiro da partida
+      partidaOnline: typeof partidaOnline !== "undefined" && !!partidaOnline, // 1.7.9.9: teve jogador em outro aparelho
       RESPONSE_TIME_LIMIT,
       playDirection,
       expressSelectedCategories,
@@ -687,6 +688,7 @@ function loadGameState() {
     CURRENT_MODE = state.CURRENT_MODE || "classico";
     WINNING_SCORE = state.WINNING_SCORE === void 0 || state.WINNING_SCORE === null ? 200 : state.WINNING_SCORE;
     tabForma = typeof state.tabForma === "string" && TAB_FORMAS[state.tabForma] ? state.tabForma : null;
+    if (typeof partidaOnline !== "undefined") partidaOnline = state.partidaOnline === true;
     admPrincipalId = state.admPrincipalId || null;
     matchId = state.matchId || null;
     acoesRestaurar(state);
@@ -1668,7 +1670,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.9.8 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.9.9 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2191,7 +2193,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.9.8 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.9.9 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
