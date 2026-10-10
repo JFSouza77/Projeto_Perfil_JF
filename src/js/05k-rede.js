@@ -61,12 +61,14 @@ const REDE_VOTO_MS = 20000;
 const JOGO_VERSAO = (() => {
   try {
     if (typeof window.__JOGO_VERSAO === "string") return window.__JOGO_VERSAO; // (teste de versão diferente)
-    return (String(document.title).match(/(\d+(?:\.\d+){2,3})/) || [])[1] || "?";
+    return (String(document.title).match(/(\d+(?:\.\d+){1,3})/) || [])[1] || "?"; // "1.7.10" ou "1.0"
   } catch (e) {
     return "?";
   }
 })();
-// 1.7.10 · "1.7.9.9" > "1.7.9.8"? (compara número a número)
+// 1.7.10 · Build deste aparelho (o teste troca por window.__JOGO_BUILD). A rede compara o build, não o nome.
+const REDE_BUILD = typeof window !== "undefined" && Number.isInteger(window.__JOGO_BUILD) ? window.__JOGO_BUILD : JOGO_BUILD;
+// "1.7.9.9" > "1.7.9.8"? (número a número; só pra host antigo, que não manda o build)
 function redeVersaoMaior(a, b) {
   const x = String(a || "").split(".").map(Number), y = String(b || "").split(".").map(Number);
   for (let i = 0; i < Math.max(x.length, y.length); i++) {
@@ -77,17 +79,22 @@ function redeVersaoMaior(a, b) {
 }
 // 1.7.10 · O host atualizou o jogo no meio da partida: quem está com a versão velha recarrega sozinho uma vez
 // (volta pro mesmo lugar). Se mesmo assim continuar diferente, fica o botão "Recarregar" com a explicação.
-function redeAtualizarJunto(versaoHost) {
-  if (!versaoHost || !redeVersaoMaior(versaoHost, JOGO_VERSAO)) return false;
-  const marca = "perfil5_rede_atualizou";
+// O host é mais novo? Pelo build; host antigo (sem build) pelo número do nome.
+function redeHostMaisNovo(versaoHost, buildHost) {
+  if (Number.isInteger(buildHost)) return buildHost > REDE_BUILD;
+  return !!versaoHost && redeVersaoMaior(versaoHost, JOGO_VERSAO);
+}
+function redeAtualizarJunto(versaoHost, buildHost) {
+  if (!redeHostMaisNovo(versaoHost, buildHost)) return false;
+  const marca = "perfil5_rede_atualizou", qual = String(Number.isInteger(buildHost) ? buildHost : versaoHost);
   try {
-    if (sessionStorage.getItem(marca) === versaoHost) return false;
-    sessionStorage.setItem(marca, versaoHost);
+    if (sessionStorage.getItem(marca) === qual) return false;
+    sessionStorage.setItem(marca, qual);
   } catch (e) {
     return false;
   }
   try {
-    showToastMessage(`🔄 O host atualizou o jogo (Beta ${versaoHost}). Atualizando…`, null, true);
+    showToastMessage(`🔄 O host atualizou o jogo (versão ${versaoHost || "nova"}). Atualizando…`, null, true);
   } catch (e) {}
   setTimeout(() => {
     if (typeof window.__REDE_RECARREGAR === "function") return window.__REDE_RECARREGAR(); // (teste)
@@ -678,7 +685,7 @@ function redeValidar(bruto) {
   const ok = {
     oi: () =>
       (m.jogadorId === undefined || m.jogadorId === null || jogadorIdValido(m.jogadorId)) &&
-      typeof m.chave === "string" && /^[a-z0-9]{12,32}$/.test(m.chave) && txt(m.versao, 20),
+      typeof m.chave === "string" && /^[a-z0-9]{12,32}$/.test(m.chave) && txt(m.versao, 20) && (m.build === undefined || Number.isInteger(m.build)),
     cmd: () =>
       typeof m.commandId === "string" && /^[A-Za-z0-9_:-]{4,64}$/.test(m.commandId) && typeof m.acao === "string" && !!ACOES[m.acao] &&
       Array.isArray(m.dados) && m.dados.length <= 4 && m.dados.every(redeEhPrimitivo) &&
@@ -694,7 +701,7 @@ function redeValidar(bruto) {
     fala: () => txt(m.texto, 240) && (m.quem === undefined || (Array.isArray(m.quem) && m.quem.length <= 8 && m.quem.every(jogadorIdValido))),
     bemvindo: () => jogadorIdValido(m.jogadorId),
     escolha: () => Array.isArray(m.lugares) && m.lugares.length <= 12 && m.lugares.every((l) => l && jogadorIdValido(l.id) && typeof l.nome === "string"),
-    recusa: () => txt(m.motivo, 40) && (m.versao === undefined || txt(m.versao, 20)),
+    recusa: () => txt(m.motivo, 40) && (m.versao === undefined || txt(m.versao, 20)) && (m.build === undefined || Number.isInteger(m.build)),
     retrato: () => m.r && typeof m.r === "object" && m.r.protocolo === RETRATO_PROTOCOLO && m.r.papel === "mesa" && Number.isInteger(m.r.revisao) && Array.isArray(m.r.jogadores),
     segredo: () => Number.isInteger(m.revisao) && (m.resposta === null || txt(m.resposta, 120)),
     resp: () => typeof m.commandId === "string" && typeof m.ok === "boolean",
@@ -1102,7 +1109,8 @@ function redeHostReceber(m) {
   if (m.t === "voto") return a && redeVotar(a, m.votacao, m.sim);
 }
 function redeHostOi(m) {
-  if (m.versao !== JOGO_VERSAO) return redeEnviar("recusa", { motivo: "versao_diferente", versao: JOGO_VERSAO }, m.de);
+  // 1.7.10: vale o build (convidado antigo não manda build: é mais velho, recusa igual)
+  if (m.build !== REDE_BUILD) return redeEnviar("recusa", { motivo: "versao_diferente", versao: JOGO_VERSAO, build: REDE_BUILD }, m.de);
   // 1.7.9.4 (pedido do JF: abrir a sala antes de cadastrar): sem jogadores ainda, quem chega fica na tela
   // "Quem é você?" e o nome aparece lá quando o host cadastrar (redeHostEsperando)
   const pedido = m.jogadorId && jogadorIdxPorId(m.jogadorId) >= 0 ? m.jogadorId : null;
@@ -1797,7 +1805,7 @@ function redeEntrarSala(sala, transporteFabrica) {
     aoMudar: null,
   };
   redeTelaAcesa(true);
-  const oi = () => redeEnviar("oi", { jogadorId: rede.eu, chave: rede.chave, versao: JOGO_VERSAO });
+  const oi = () => redeEnviar("oi", { jogadorId: rede.eu, chave: rede.chave, versao: JOGO_VERSAO, build: REDE_BUILD });
   rede.oi = oi;
   transporte.aoReceber((bruto) => {
     const m = redeValidar(bruto);
@@ -1885,8 +1893,9 @@ function redeConvidadoReceber(m) {
       rede.estado = "recusado";
       rede.motivo = m.motivo;
       rede.versaoHost = m.versao || null;
+      rede.buildHost = Number.isInteger(m.build) ? m.build : null;
       if (m.motivo === "lugar_ocupado") rede.eu = null;
-      if (m.motivo === "versao_diferente") redeAtualizarJunto(rede.versaoHost);
+      if (m.motivo === "versao_diferente") redeAtualizarJunto(rede.versaoHost, rede.buildHost);
     }
     return avisar();
   }
@@ -1969,7 +1978,7 @@ function redeEscolherLugar(jid) {
   if (!rede || rede.papel !== "convidado" || !jogadorIdValido(jid)) return false;
   rede.eu = jid;
   rede.estado = "entrando";
-  return redeEnviar("oi", { jogadorId: jid, chave: rede.chave, versao: JOGO_VERSAO });
+  return redeEnviar("oi", { jogadorId: jid, chave: rede.chave, versao: JOGO_VERSAO, build: REDE_BUILD });
 }
 // Mandar um comando pro host. O mesmo commandId vai de novo se a resposta não vier (o host aplica
 // uma vez só).
@@ -2116,7 +2125,7 @@ function redeConvidadoDesenhar() {
   if (rede.estado === "recusado") {
     const ver =
       rede.motivo === "versao_diferente"
-        ? `<br><small>Host: Beta ${escapeHtml(rede.versaoHost || "?")} · Você: Beta ${escapeHtml(JOGO_VERSAO)}. ${redeVersaoMaior(JOGO_VERSAO, rede.versaoHost) ? "O jogo do host está mais velho: ele precisa recarregar o jogo dele." : "Recarregue a página pra atualizar."}</small>`
+        ? `<br><small>Host: ${escapeHtml(rede.versaoHost || "?")} · Você: ${escapeHtml(JOGO_VERSAO)}. ${!redeHostMaisNovo(rede.versaoHost, rede.buildHost) ? "O jogo do host está mais velho: ele precisa recarregar o jogo dele." : "Recarregue a página pra atualizar."}</small>`
         : "";
     box.innerHTML = `${sala}<div class="telao-espera">${escapeHtml(REDE_MOTIVOS[rede.motivo] || "Não deu pra entrar.")}${ver}<br><button type="button" class="rede-lugar" id="redeDeNovo">${rede.motivo === "versao_diferente" ? "🔄 Recarregar" : "Tentar de novo"}</button></div>${REDE_SAIR}`;
     box.querySelector("#redeDeNovo").addEventListener("click", () => {
@@ -2558,12 +2567,14 @@ function redePerguntarSala() {
 /* --- 1.7.10 · Salas na sua rede (servidor nosso) ---
    O host conta a sala pro servidor (nome, formato e modo, quantos jogadores); quem vai entrar vê as salas
    abertas no mesmo Wi-Fi (mesmo endereço na internet) e toca pra entrar. O host ainda precisa aceitar. */
+// 1.7.10 (parecer do Klaus): o cartão não leva nome de ninguém (no 4G, estranhos podem dividir o mesmo endereço)
+// e sala do Júnior não aparece na lista (criança entra só pelo código ou QR Code).
 function redeSalaContar() {
   const url = redeServidorUrl("/sala");
   if (!url || !rede || rede.papel !== "host" || rede.modo !== "internet" || !redeTemInternet()) return;
-  const eu = rede.hostEu ? jogadorPorId(rede.hostEu) : null;
+  const listar = CURRENT_MODE !== "junior";
   const modo = (CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus") + " · " + String(CURRENT_MODE || "").replace(/^./, (c) => c.toUpperCase());
-  const info = JSON.stringify({ sala: rede.sala, nome: eu ? eu.name : null, modo, jogadores: players.length });
+  const info = JSON.stringify({ sala: rede.sala, listar, modo: listar ? modo : null, jogadores: listar ? players.length : 0 });
   if (info === rede.salaContada && Date.now() - (rede.salaContadaEm || 0) < 60000) return;
   rede.salaContada = info;
   rede.salaContadaEm = Date.now();
@@ -2587,9 +2598,8 @@ function redeSalasPerto(caixa) {
         `<div class="rede-perto-rot">📶 Salas na sua rede</div>` +
         boas
           .map((x) => {
-            const quem = x.nome ? `${escapeHtml(String(x.nome))}` : "Sala";
             const det = [x.modo ? escapeHtml(String(x.modo)) : "", x.jogadores ? `${x.jogadores | 0} jogador${(x.jogadores | 0) === 1 ? "" : "es"}` : ""].filter(Boolean).join(" · ");
-            return `<button type="button" class="chip rede-perto-sala" data-sala="${x.sala}"><b>${x.sala}</b> · ${quem}${det ? `<small> · ${det}</small>` : ""}</button>`;
+            return `<button type="button" class="chip rede-perto-sala" data-sala="${x.sala}">Sala <b>${x.sala}</b>${det ? `<small> · ${det}</small>` : ""}</button>`;
           })
           .join("");
       caixa.querySelectorAll("[data-sala]").forEach((bt) => bt.addEventListener("click", () => redeIrPraSala(bt.dataset.sala, "internet")));

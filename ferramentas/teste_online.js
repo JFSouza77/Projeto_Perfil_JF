@@ -331,23 +331,24 @@ async function atualizacao(b, sv) {
     const anne = await entrar(m, host, sala, "Anne");
     await host.evaluate((id) => redeDefinirNoHost([id]), await host.evaluate(() => players.find((p) => p.name === "JF").id));
     await jogarAteOFim(host, [anne.g], 3000);
-    const versao = await host.evaluate(() => JOGO_VERSAO);
-    const nova = versao.split(".").map((x, i, a) => (i === a.length - 1 ? +x + 1 : x)).join(".");
+    // 1.7.10 (alerta do Klaus): a versão nova se chama "1.0", que "volta" no número; quem decide é o build
+    const build = await host.evaluate(() => JOGO_BUILD);
+    const nova = "1.0", novaInit = `window.__JOGO_VERSAO = "1.0"; window.__JOGO_BUILD = ${build + 1};`;
     // a Anne marca quando o jogo pediu pra recarregar (no teste, em vez de recarregar de verdade)
     await anne.g.evaluate(() => (window.__REDE_RECARREGAR = () => (window.__recarregou = (window.__recarregou || 0) + 1)));
-    await host.addInitScript(`window.__JOGO_VERSAO = ${JSON.stringify(nova)};`);
+    await host.addInitScript(novaInit);
     await host.reload();
     await host.waitForFunction(() => typeof redeAbrirSala === "function");
-    conf(`[${rot}] Host recarregou com a versão nova e a sala voltou`, await esperar(host, () => rede && rede.papel === "host" && rede.transporte.estado === "aberta", null, 30000));
+    conf(`[${rot}] Host recarregou com a versão nova ("Release 1.0", build maior) e a sala voltou`, await esperar(host, () => rede && rede.papel === "host" && rede.transporte.estado === "aberta", null, 30000));
     conf(`[${rot}] O celular da Anne vê que o host atualizou e recarrega sozinho`, await esperar(anne.g, () => window.__recarregou === 1, null, 30000));
     await anne.g.waitForTimeout(3000);
     conf(`[${rot}] Recarrega uma vez só (sem ficar em loop se a versão nova ainda não chegou)`, (await anne.g.evaluate(() => window.__recarregou)) === 1 && (await anne.g.evaluate(() => /Recarregue a página/.test(document.body.innerText))));
     // a versão nova chega no celular: ela volta pro mesmo lugar
-    await anne.g.context().addInitScript(`window.__JOGO_VERSAO = ${JSON.stringify(nova)};`);
+    await anne.g.context().addInitScript(novaInit);
     await anne.g.reload();
     conf(`[${rot}] Com a versão nova, a Anne volta pro mesmo lugar na partida`, await esperar(anne.g, (id) => rede && rede.estado === "dentro" && rede.eu === id, anne.id, 25000));
     // host mais velho que o celular: o celular explica que quem precisa atualizar é o host
-    const p2 = await m.abrir("#sala=" + sala, `window.__JOGO_VERSAO = ${JSON.stringify(nova.replace(/\d+$/, (n) => +n + 5))};`);
+    const p2 = await m.abrir("#sala=" + sala, `window.__JOGO_VERSAO = "1.0.1"; window.__JOGO_BUILD = ${build + 5};`);
     await host.evaluate(() => 0);
     conf(`[${rot}] Celular mais novo que o host: avisa que o host precisa recarregar`, await esperar(p2, () => rede && rede.motivo === "versao_diferente" && /host está mais velho/.test(document.body.innerText), null, 20000));
   } finally {

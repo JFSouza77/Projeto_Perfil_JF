@@ -255,6 +255,19 @@ const ARQ = acharMestre(process.argv[2]);
       acessCfg.calmo = calmoAntes; aplicarAcessibilidade();
       out.calmoSeparado = calmoOk && batOk;
     }
+    // 1.7.10: Reportar carta anota no aparelho (sem mostrar a resposta na janela, sem mexer na partida)
+    {
+      localStorage.removeItem('perfil5_cartas_reportadas');
+      const rev0 = partidaRevisao, temCarta = !!(currentCard && currentCard.id);
+      cartaReportarAbrir();
+      const ov = document.getElementById('reportarCarta');
+      const semResposta = !!ov && temCarta && !ov.textContent.toLowerCase().includes(String(currentCard.answer).toLowerCase());
+      if (ov && temCarta) { ov.querySelector('input[name="repMotivo"][value="entrega"]').click(); ov.querySelector('#repSalvar').click(); }
+      const l = cartasReportadas();
+      out.reportar = temCarta && semResposta && l.length === 1 && l[0].id === currentCard.id && l[0].motivo === 'entrega' && cartasReportadasTexto().includes(currentCard.id) && partidaRevisao === rev0;
+      if (ov) ov.remove();
+      localStorage.removeItem('perfil5_cartas_reportadas');
+    }
     resetDeck();
     out.zerou = partidaRevisao === 0 && acoesLog.length === 0 && tabForma === null;
     out.formaNova = !!tabFormaAtual() && tabForma !== formaSalva;
@@ -312,6 +325,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.9.6: lobby com abas (Tabuleiro, Pontos e Joias quando a partida dá joias), abrindo na que decide', r.lobbyAbas],
     ['1.7.9.5: na partida o "toque pra ampliar" mostra só a lista, sem o tabuleiro grande', r.ampliarSemDesenho],
     ['1.7.9.5: Menos movimento (acessibilidade) e Modo Batata são coisas separadas', r.calmoSeparado],
+    ['1.7.10: Reportar carta anota no aparelho, sem resposta na janela e sem mexer na partida', r.reportar],
   ];
   linhas.forEach(([n, ok]) => console.log(`${ok ? 'ok    ' : 'FALHOU'}  ${n}`));
   const tudo = linhas.every((l) => l[1]) && !erros.length;

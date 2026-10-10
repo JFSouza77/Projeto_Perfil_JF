@@ -167,6 +167,17 @@ async function rodarServidorNosso(b, nosso, publico) {
   await Promise.all([g3.waitForNavigation().catch(() => {}), g3.evaluate(() => document.querySelector("#redeSalasPerto [data-sala]").click())]);
   await g3.waitForFunction(() => typeof redeAbrirSala === "function").catch(() => {});
   conf("Tocar na sala da lista entra nela", await esperar(g3, (c) => !!rede && rede.sala === c, sala, 10000));
+  // 1.7.10 (parecer do Klaus): o cartão não tem nome de ninguém, e sala do Júnior não aparece na lista
+  await host.evaluate(() => { players = [{ id: jogadorIdNovo(), name: "Zuleica", score: 0, position: 0, color: PLAYER_COLORS[0], avatar: "😀", humor: "normal", gems: {} }]; rede.hostEu = players[0].id; rede.salaContada = null; redeSalaContar(); });
+  const g4 = await abrir("");
+  await g4.evaluate(() => redeEntrarPorCodigo());
+  conf("Salas na sua rede: o cartão não mostra nome de ninguém", (await esperar(g4, (c) => !!document.querySelector(`#redeSalasPerto [data-sala="${c}"]`), sala, 10000)) && !(await g4.evaluate(() => /Zuleica/.test(document.getElementById("redeSalasPerto").textContent))));
+  await host.evaluate(() => { CURRENT_MODE = "junior"; redeSalaContar(); });
+  await host.waitForTimeout(800);
+  const g5 = await abrir("");
+  await g5.evaluate(() => redeEntrarPorCodigo());
+  await g5.waitForTimeout(2500);
+  conf("Sala do Júnior não aparece na lista (só pelo código)", !(await g5.evaluate((c) => !!document.querySelector(`#redeSalasPerto [data-sala="${c}"]`), sala)));
   conf(
     "Ponte: sem conta configurada segue sem; com credenciais, elas vão primeiro na lista",
     await g3.evaluate(async () => {
@@ -387,7 +398,7 @@ async function rodar(b, modo, porta, turn) {
   // 9) lugar ocupado e versão diferente
   await gC.evaluate((id) => redeEscolherLugar(id), ids.mestre);
   conf("Lugar de quem está online não pode ser tomado", await esperar(gC, () => rede.estado === "recusado" && rede.motivo === "lugar_ocupado"));
-  const gX = await abrir("#sala=" + sala + sufixo, `(() => { ${LIMPAR} window.__JOGO_VERSAO = "0.0.1"; })();`);
+  const gX = await abrir("#sala=" + sala + sufixo, `(() => { ${LIMPAR} window.__JOGO_VERSAO = "0.0.1"; window.__JOGO_BUILD = 1; })();`);
   conf("Versão diferente é recusada, com o aviso pra atualizar", await esperar(gX, () => rede && rede.estado === "recusado" && rede.motivo === "versao_diferente" && !!rede.versaoHost, null, 15000));
   await gX.close();
   // 10) reconexão

@@ -19,6 +19,7 @@
 "use strict";
 const fs = require("fs");
 const path = require("path");
+const { versaoDoTitulo, versaoDoArquivo, acharMestreMaisNovo } = require("./versao");
 const zlib = require("zlib");
 const vm = require("vm");
 const acorn = require("acorn");
@@ -57,17 +58,9 @@ const tamanho = (s) => Buffer.byteLength(s, "utf8");
 function acharMestre() {
   const dado = process.argv.slice(2).find((a) => !a.startsWith("--"));
   if (dado) return path.resolve(dado);
-  const versao = (f) => f.match(/_(\d+(?:_\d+){2,3})\.html$/)[1].split("_").map(Number);
-  const lista = fs
-    .readdirSync(PASTA)
-    .filter((f) => /^Perfil_JF_Mestre_\d+(_\d+){2,3}\.html$/.test(f))
-    .sort((a, b) => {
-      const [x, y] = [versao(a), versao(b)];
-      for (let i = 0; i < 4; i++) if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) - (y[i] || 0);
-      return 0;
-    });
-  if (!lista.length) throw new Error("Nenhum Perfil_JF_Mestre_X_Y_Z.html encontrado.");
-  return path.join(PASTA, lista[lista.length - 1]);
+  const m = acharMestreMaisNovo(PASTA); // 1.7.10: o mais novo pelo build (versao.js)
+  if (!m) throw new Error("Nenhum Perfil_JF_Mestre_X_Y.html encontrado.");
+  return m;
 }
 
 // Separa o HTML em: antes do <style>, CSS, meio, JS, depois do </script>.
@@ -399,11 +392,11 @@ function registrarVersao(versao, arqs) {
     console.log(`Mestre montado a partir de src/ (${montado.partes} partes).`);
   }
   const mestreArq = montado ? montado.arquivo : acharMestre();
-  const versao = path.basename(mestreArq).match(/(\d+(?:_\d+){2,3})\.html$/)[1];
+  const versao = versaoDoArquivo(mestreArq);
   const mestre = fs.readFileSync(mestreArq, "utf8");
   console.log(`Mestre usado: ${path.basename(mestreArq)} (versão ${versao.replace(/_/g, ".")})`);
   // O carimbo de versão dentro do HTML (<title>) tem que bater com o nome do arquivo.
-  const carimbo = (mestre.match(/<title>[^<]*?(\d+(?:\.\d+){2,3})[^<]*<\/title>/) || [])[1];
+  const carimbo = versaoDoTitulo(mestre);
   if (carimbo !== versao.replace(/_/g, "."))
     console.warn(
       `\n⚠️  ATENÇÃO: o nome do mestre diz ${versao.replace(/_/g, ".")}, mas o <title> do HTML diz ${carimbo || "(sem versão)"}.` +
@@ -411,7 +404,7 @@ function registrarVersao(versao, arqs) {
     );
   // 1.7.9.12: a linha da versão na tela inicial também tem que bater (na 1.7.9.12 ela ficou na versão
   // anterior porque a troca procurava a linha pelo número). Aqui não é aviso: não publica.
-  const naTela = (mestre.match(/id="splashBuildLog">🚀 Beta (\d+(?:\.\d+){2,3})/) || [])[1];
+  const naTela = (mestre.match(/id="splashBuildLog">🚀 (?:Beta|Release) (\d+(?:\.\d+){1,3})/) || [])[1];
   if (naTela !== versao.replace(/_/g, "."))
     throw new Error(`A tela inicial diz Beta ${naTela || "(sem versão)"}, mas o mestre é ${versao.replace(/_/g, ".")}. Atualize a linha do splashBuildLog em src/html/02-corpo.html.`);
   // A data "Atualizada em" da tela inicial tem que ser a de hoje (horário de Brasília).

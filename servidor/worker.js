@@ -11,8 +11,8 @@
  * Rotas (o jogo usa key "perfiljf" e path "/"):
  *   GET  /perfiljf/id      → id aleatório pro PeerJS (convidado)
  *   WS   /peerjs?key=&id=&token=  → sinalização (Durable Object "Sinal", com hibernação)
- *   GET  /salas            → [{ sala, nome, modo, jogadores, desde }] da mesma rede
- *   POST /sala             → o host conta o nome, o modo e quantos jogadores (só do mesmo endereço do host)
+ *   GET  /salas            → [{ sala, modo, jogadores, desde }] da mesma rede (só as anunciadas)
+ *   POST /sala             → o host anuncia a sala (modo e quantos jogadores; sem nome; o Júnior pede pra não listar)
  *   GET  /ponte            → { iceServers: [...] } (vazio se a ponte não estiver configurada)
  *
  * Segredos (wrangler secret put): TURN_KEY_ID e TURN_KEY_API_TOKEN. Variável: ORIGENS (sites aceitos).
@@ -236,8 +236,10 @@ export class Sinal {
     for (const ws of this.ctx.getWebSockets()) {
       const a = ws.deserializeAttachment();
       if (!a || a.morto || Date.now() - a.visto > MORTO_MS || a.rede !== minha || !a.id.startsWith(PREFIXO_SALA)) continue;
-      const i = a.info || {};
-      lista.push({ sala: a.id.slice(PREFIXO_SALA.length).toUpperCase(), nome: i.nome || null, modo: i.modo || null, jogadores: i.jogadores || 0, desde: a.desde });
+      // só aparece a sala que o host anunciou (o Júnior não anuncia) e sem nome de ninguém
+      const i = a.info;
+      if (!i || !i.listar) continue;
+      lista.push({ sala: a.id.slice(PREFIXO_SALA.length).toUpperCase(), modo: i.modo || null, jogadores: i.jogadores || 0, desde: a.desde });
     }
     return lista.sort((x, y) => y.desde - x.desde).slice(0, 12);
   }
@@ -254,7 +256,7 @@ export class Sinal {
     // só quem está na mesma rede do host atualiza o cartão da sala
     if (!v || v.a.rede !== rede(ip)) return json({ erro: "sem_sala" }, 404);
     const limpa = (s, n) => String(s || "").replace(/[<>&"'`\\\u0000-\u001f\u200b-\u200f\u2028-\u202e]/g, "").slice(0, n) || null;
-    v.a.info = { nome: limpa(d.nome, 24), modo: limpa(d.modo, 24), jogadores: Math.max(0, Math.min(12, d.jogadores | 0)) };
+    v.a.info = { listar: d.listar !== false, modo: limpa(d.modo, 24), jogadores: Math.max(0, Math.min(12, d.jogadores | 0)) };
     v.ws.serializeAttachment(v.a);
     return json({ ok: true });
   }
