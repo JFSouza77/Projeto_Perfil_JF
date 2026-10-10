@@ -225,13 +225,14 @@ const REDE_ICE = [
    Apresenta os aparelhos (no lugar do servidor público do PeerJS), lista as salas da mesma rede e entrega
    a ponte TURN do Cloudflare (1.000 GB/mês grátis). Vazio = só o público, como antes. Com ele, o público
    fica de reserva: o host abre a sala nos dois, e o convidado tenta o nosso e, se não achar, o público. */
-const REDE_SERVIDOR = ""; // endereço do Worker, ex.: "perfil-jf-sala.<conta>.workers.dev"
+const REDE_SERVIDOR = "perfil-jf-sala.joaofe0000.workers.dev"; // endereço do Worker (conta do JF, 10/10/2026)
 const REDE_SERVIDOR_CHAVE = "perfiljf";
 const REDE_PONTE_KEY = "perfil5_rede_ponte";
 let redePonte = null; // { iceServers, validade } vindo do servidor nosso
 // { host, port, secure } do servidor nosso, ou null (o teste usa window.__REDE_SERVIDOR)
 function redeServidorNosso() {
   const t = typeof window !== "undefined" && window.__REDE_SERVIDOR;
+  if (t === false) return null; // (teste: só o servidor local)
   if (t && t.host) return { host: t.host, port: t.port || 443, secure: t.secure !== false };
   return REDE_SERVIDOR ? { host: REDE_SERVIDOR, port: 443, secure: true } : null;
 }

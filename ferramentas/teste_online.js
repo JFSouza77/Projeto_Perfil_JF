@@ -54,7 +54,8 @@ async function mesa(b, sv, rot) {
           localStorage.setItem("perfil5_tut_vitoria_vistos", JSON.stringify(["casa", "tabuleiro", "pontos", "joias"]));
         } catch (e) {}
         if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
-        window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, key: chave, config: { iceServers: [] } };
+        if (window.__REDE_SERVIDOR === undefined) window.__REDE_SERVIDOR = false;
+    window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, key: chave, config: { iceServers: [] } };
       },
       [sv.porta, sv.chave],
     );

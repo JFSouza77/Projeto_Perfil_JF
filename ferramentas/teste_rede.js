@@ -101,6 +101,7 @@ async function rodarColisao(b, porta) {
     try {
       localStorage.setItem("perfil5_tutorial_visto", "x");
     } catch (e) {}
+    if (window.__REDE_SERVIDOR === undefined) window.__REDE_SERVIDOR = false;
     window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, key: window.__CHAVE || "peerjs", config: { iceServers: [] } };
   }, porta);
   const erros = [], ok = [];
@@ -137,6 +138,7 @@ async function rodarServidorNosso(b, nosso, publico) {
     } catch (e) {}
     if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
     window.__REDE_SERVIDOR = { host: "127.0.0.1", port: window.__NOSSO_MORTO ? 9 : nosso, secure: false };
+    if (window.__REDE_SERVIDOR === undefined) window.__REDE_SERVIDOR = false;
     window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: publico, path: "/", secure: false, key: "peerjs", config: { iceServers: [] } };
   }, [nosso, publico]);
   const erros = [], ok = [];
@@ -209,6 +211,7 @@ async function rodar(b, modo, porta, turn) {
     if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
     // com turn: só vale a ponte (relay), como num 4G que não deixa ligação direta
     const ice = turn ? { iceServers: [{ urls: "turn:127.0.0.1:" + turn, username: "jf", credential: "teste" }], iceTransportPolicy: "relay" } : { iceServers: [] };
+    if (window.__REDE_SERVIDOR === undefined) window.__REDE_SERVIDOR = false;
     if (porta) window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, key: window.__CHAVE || "peerjs", config: ice };
   }, [porta || 0, turn || 0]);
   const erros = [];
