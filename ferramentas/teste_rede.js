@@ -314,7 +314,7 @@ async function rodar(b, modo, porta, turn) {
         const r = await rodar(b, "internet", sv.porta);
         todos.push(...r.ok);
         erros.push(...r.erros);
-        // 1.7.9.13 · de novo, mas só pela ponte TURN (servidor local): prova que a conexão passa pelo relay
+        // 1.7.9.3 · de novo, mas só pela ponte TURN (servidor local): prova que a conexão passa pelo relay
         const tv = servidorTurn();
         if (!tv) console.log("(sem o pacote 'node-turn': o roteiro via TURN não rodou; npm install)");
         else {
