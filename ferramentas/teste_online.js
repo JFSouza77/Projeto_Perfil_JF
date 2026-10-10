@@ -245,9 +245,25 @@ async function segundoPlano(b, sv) {
     conf(`[${rot}] Mesa montada (JF no host, Anne e Pedro nos celulares)`, anne.ok && pedro.ok);
     const congelar = async (pg, ms) => {
       const cdp = await pg.context().newCDPSession(pg);
-      await cdp.send("Page.setWebLifecycleState", { state: "frozen" });
+      // o Chromium não congela página com WebRTC aberto (setWebLifecycleState não pega): pausa o JavaScript
+      // inteiro pelo depurador, como o iOS suspende o app (a conexão fica lá, mas ninguém responde)
+      // como o iOS: antes de suspender, a página fica escondida (visibilitychange)
+      await pg.evaluate(() => {
+        Object.defineProperty(document, "hidden", { value: true, configurable: true });
+        Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
+        document.dispatchEvent(new Event("visibilitychange"));
+      });
+      await new Promise((r) => setTimeout(r, 200));
+      await cdp.send("Debugger.enable");
+      await cdp.send("Debugger.pause");
       await new Promise((r) => setTimeout(r, ms));
-      await cdp.send("Page.setWebLifecycleState", { state: "active" });
+      await cdp.send("Debugger.resume").catch(() => {});
+      await cdp.send("Debugger.disable").catch(() => {});
+      await pg.evaluate(() => {
+        delete document.hidden;
+        delete document.visibilityState;
+        document.dispatchEvent(new Event("visibilitychange"));
+      }).catch(() => {});
       await cdp.detach().catch(() => {});
     };
     // 1) a Anne troca de app por 8 s; enquanto isso a partida anda no host
@@ -272,11 +288,32 @@ async function segundoPlano(b, sv) {
     const revAntes = await host.evaluate(() => partidaRevisao);
     await jogarAteOFim(host, [volta, pedro.g], 3000);
     conf(`[${rot}] A partida anda depois que o host volta`, (await host.evaluate(() => partidaRevisao)) > revAntes);
-    // 4) o host some por 30 s (ligação recebida): o 2º Mestre assume; quando o JF volta, entra como jogador
+    // 4) o host some por 30 s (ligação recebida): o 2º Mestre começa a assumir. Se o servidor já soltou a sala
+    //    (o nosso solta em 20 s), ele vira host e o JF volta como jogador; se a sala ainda está presa no
+    //    aparelho do JF (o público segura até ~90 s), o JF continua host e a Anne volta a ser jogadora.
+    //    Em qualquer caso: um host só, todo mundo de volta e nada perdido.
+    const revCong = await host.evaluate(() => partidaRevisao);
     await congelar(host, 30000);
-    const assumiu = await esperar(volta, () => rede && rede.papel === "host", null, 5000).then(async (a) => a || (await esperar(pedro.g, () => rede && rede.papel === "host", null, 15000)));
-    conf(`[${rot}] Host sumiu 30 s: um celular assume a sala sem perder a partida`, assumiu);
-    conf(`[${rot}] O JF volta e entra como jogador (não briga pela sala)`, await esperar(host, () => rede && rede.papel === "convidado", null, 40000));
+    const pgs = [host, volta, pedro.g];
+    const papeis = async () => Promise.all(pgs.map((pg) => pg.evaluate(() => (rede ? rede.papel + ":" + (rede.papel === "host" ? rede.transporte.estado : rede.estado) : "nada")).catch(() => "recarregando")));
+    let fim = [], t0 = Date.now();
+    while (Date.now() - t0 < 150000) {
+      fim = await papeis();
+      if (process.env.DIAG && (Date.now() - t0) % 10000 < 1100) console.log("DIAG", Math.round((Date.now() - t0) / 1000), fim.join(" | "), (await Promise.all(pgs.map((pg) => pg.evaluate(() => JSON.stringify(rede && rede.transporte && rede.transporte.diag ? rede.transporte.diag() : null)).catch(() => "?")))).join(" / "));
+      if (fim.filter((x) => x === "host:aberta").length === 1 && fim.filter((x) => x === "convidado:dentro").length === 2) break;
+      await host.waitForTimeout(1000);
+    }
+    if (process.env.DIAG) console.log("DIAG papéis", fim.join(" | "), Math.round((Date.now() - t0) / 1000) + " s");
+    conf(`[${rot}] Host sumiu 30 s: no fim fica um host só e os outros dois de volta na sala (${Math.round((Date.now() - t0) / 1000)} s)`, fim.filter((x) => x === "host:aberta").length === 1 && fim.filter((x) => x === "convidado:dentro").length === 2);
+    const quem = pgs[fim.indexOf("host:aberta")];
+    if (process.env.DIAG && quem) console.log("DIAG volta", revCong, await quem.evaluate(() => JSON.stringify({ rev: partidaRevisao, ini: starterChosen, fim: gameEnded, tam: (JFStore.getItem("perfil200_state") || "").length }))); 
+    conf(`[${rot}] Nada se perdeu na volta (mesma revisão ou à frente)`, !!quem && (await quem.evaluate((r) => partidaRevisao >= r && starterChosen && !gameEnded, revCong)));
+    if (quem) {
+      const outros = pgs.filter((pg) => pg !== quem);
+      const antes = await quem.evaluate(() => partidaRevisao);
+      await jogarAteOFim(quem, outros, 4000);
+      conf(`[${rot}] A partida continua depois da volta`, (await quem.evaluate(() => partidaRevisao)) > antes);
+    }
   } finally {
     await m.fechar();
   }

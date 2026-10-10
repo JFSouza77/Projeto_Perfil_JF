@@ -299,6 +299,17 @@ function redeTransportePeerHost(sala) {
     estado: "conectando",
     erro: null,
     aoEstado: null,
+    // 1.7.10: abre a sala de novo no servidor (ele soltou este aparelho enquanto estava parado)
+    reabrir() {
+      if (fechado) return;
+      try {
+        peer && peer.destroy();
+      } catch (e) {}
+      tentativas = 0;
+      abrir();
+    },
+    // situação do servidor de apresentação (pro teste e pro diagnóstico do ADM)
+    diag: () => ({ aberto: !!(peer && peer.open), caiu: !!(peer && peer.disconnected), fim: !!(peer && peer.destroyed), reserva: !!(reserva && reserva.open), tentativas, erro: t.erro }),
     enviar(texto, para) {
       const manda = (c) => {
         try {
@@ -417,7 +428,10 @@ function redeTransportePeerHost(sala) {
         try {
           peer.destroy();
         } catch (x) {}
-        if (redeInsistirId) return void setTimeout(abrir, 2500);
+        // 1.7.10: assumindo a sala, o host antigo pode só ter ido pro segundo plano (ligação, outro app) e
+        // voltado com a sala ainda presa nele: a cada 3ª tentativa pergunta; se ele responde, ele continua
+        // host e este volta a ser jogador (nada se perde: sem host, ninguém mexeu na partida)
+        if (redeInsistirId && tentativas % 3) return void setTimeout(abrir, 2500);
         redeSondar(sala, "internet", (existe) => {
           if (fechado) return;
           if (existe && rede && rede.papel === "host" && rede.transporte === t) return redeHostRebaixar();
@@ -706,7 +720,7 @@ function redeValidar(bruto) {
 function redeHostGuardar() {
   try {
     if (rede && rede.papel === "host")
-      JFStore.setItem(REDE_HOST_KEY, JSON.stringify({ sala: rede.sala, modo: rede.modo, eu: rede.hostEu || null, junto: rede.hostJunto || [], quando: Date.now(), aprovados: Object.keys(rede.aprovados || {}).slice(-40) }));
+      JFStore.setItem(REDE_HOST_KEY, JSON.stringify({ sala: rede.sala, modo: rede.modo, eu: rede.hostEu || null, junto: rede.hostJunto || [], chave: rede.chaveHost, quando: Date.now(), aprovados: Object.keys(rede.aprovados || {}).slice(-40) }));
   } catch (e) {}
 }
 // Abre a sala. modo "internet" (padrão, PeerJS) ou "local" (ensaio em abas). salaFixa: reabrir
@@ -734,6 +748,7 @@ function redeAbrirSalaCom(fab, modo, salaFixa) {
     assentos: {},
     hostEu: null, // o jogador que está no aparelho do host (vota por ele)
     hostJunto: [], // 1.7.9.9: outros jogadores que dividem o aparelho do host (sem aparelho próprio)
+    chaveHost: redeAleatorio(16), // 1.7.10: identidade de jogador deste aparelho, se ele deixar de ser host
     segredoEnviado: null,
     paineis: {},
     votacao: null,
@@ -768,6 +783,10 @@ function redeAbrirSalaCom(fab, modo, salaFixa) {
   // batida: retrato de novo a cada 4 s (quem perdeu uma mensagem se acerta) e confere a votação
   rede.batida = setInterval(() => {
     if (!rede || rede.papel !== "host") return;
+    // 1.7.10: a batida atrasou muito = o aparelho ficou em segundo plano (iPhone suspende o app)
+    const agora = Date.now();
+    if (rede.ultimaBatida && agora - rede.ultimaBatida > 12000) redeHostVoltouDoFundo();
+    rede.ultimaBatida = agora;
     redeVotacaoConferir();
     redePedidosConferir();
     redeSozinhoConferir();
@@ -800,6 +819,8 @@ function redeHostRetomar() {
     if (existe) {
       try {
         JFStore.removeItem(REDE_HOST_KEY);
+        // 1.7.10: outro aparelho assumiu enquanto este estava fechado: volta direto pro próprio jogador
+        if (jogadorIdValido(s.eu) && typeof s.chave === "string" && /^[a-z0-9]{12,32}$/.test(s.chave)) localStorage.setItem(REDE_EU_KEY + s.sala, JSON.stringify({ id: s.eu, chave: s.chave }));
       } catch (e) {}
       return redeIrPraSala(s.sala, modo);
     }
@@ -809,6 +830,7 @@ function redeHostRetomar() {
     if (jogadorIdValido(s.eu) && jogadorIdxPorId(s.eu) >= 0) rede.hostEu = s.eu;
     rede.hostJunto = (Array.isArray(s.junto) ? s.junto : []).filter((id) => jogadorIdValido(id) && jogadorIdxPorId(id) >= 0 && id !== rede.hostEu);
     (Array.isArray(s.aprovados) ? s.aprovados : []).forEach((c) => typeof c === "string" && (rede.aprovados[c] = true));
+    if (typeof s.chave === "string" && /^[a-z0-9]{12,32}$/.test(s.chave)) rede.chaveHost = s.chave;
     redeHostGuardar();
     if (s.assumiu) {
       // o C.A.O.S. anuncia a troca (gerador hostCaiu, pronto desde a 1.7.5.1)
@@ -825,13 +847,14 @@ function redeHostRetomar() {
 // Pergunta se a sala já tem host (um ping; quem responde é o host). Local: 2,5 s; internet: 8 s.
 function redeSondar(sala, modo, cb) {
   let feito = false;
-  const fim = (v) => {
+  // cb(existe, quem): quem = a sessão que respondeu como host (1.7.10: o host sabe se é ele mesmo)
+  const fim = (v, quem) => {
     if (feito) return;
     feito = true;
     try {
       limpar();
     } catch (e) {}
-    cb(v);
+    cb(v, quem || null);
   };
   let limpar = () => {};
   const sessao = "s_sonda" + redeAleatorio(6);
@@ -839,7 +862,7 @@ function redeSondar(sala, modo, cb) {
   const ouviu = (d) => {
     try {
       const o = JSON.parse(d);
-      if (o && o.sala === sala && (o.t === "pong" || o.t === "retrato") && o.de !== sessao) fim(true);
+      if (o && o.sala === sala && (o.t === "pong" || o.t === "retrato") && o.de !== sessao) fim(true, o.de);
     } catch (e) {}
   };
   if (modo === "local") {
@@ -861,7 +884,14 @@ function redeSondar(sala, modo, cb) {
   limpar = () => peer.destroy();
   peer.on("open", () => {
     const c = peer.connect(REDE_PEER_PREFIXO + sala.toLowerCase(), { reliable: true });
-    c.on("open", () => fim(true));
+    c.on("open", () => {
+      // alguém está com a sala; o ping diz quem (sem resposta em 4 s, vale assim mesmo)
+      c.on("data", (d) => typeof d === "string" && ouviu(d));
+      try {
+        c.send(ping);
+      } catch (e) {}
+      setTimeout(() => fim(true), 4000);
+    });
   });
   peer.on("error", () => fim(false));
   setTimeout(() => fim(false), 15000); // 1.7.9.5: no 4G a conexão pode levar mais de 8 s
@@ -873,11 +903,40 @@ function redeIrPraSala(sala, modo) {
   } catch (e) {}
 }
 // Outro aparelho é host desta sala: este deixa de ser e entra como jogador.
+// 1.7.10 · O host voltou do segundo plano (ligação, outro app): enquanto ele estava parado, o 2º Mestre pode
+// ter assumido a sala. Pergunta ao servidor quem está com ela: outro aparelho → este entra como jogador;
+// ninguém responde → o servidor soltou a sala deste aparelho, então abre de novo; ele mesmo → segue.
+// 1.7.10: indo pro segundo plano (o iOS ainda deixa rodar um instante): o host manda o pacote na hora,
+// pro 2º Mestre assumir com a última jogada se ele não voltar
+try {
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && rede && rede.papel === "host") redeHostRecuperacao(true);
+  });
+  window.addEventListener("pagehide", () => rede && rede.papel === "host" && redeHostRecuperacao(true));
+} catch (e) {}
+function redeHostVoltouDoFundo() {
+  if (!rede || rede.papel !== "host" || rede.conferindoVolta) return;
+  rede.conferindoVolta = true;
+  const t = rede.transporte;
+  try {
+    caosLog("rede", "o host voltou do segundo plano: conferindo quem está com a sala");
+  } catch (e) {}
+  redeSondar(rede.sala, rede.modo, (existe, quem) => {
+    if (!rede || rede.papel !== "host" || rede.transporte !== t) return;
+    rede.conferindoVolta = false;
+    if (existe && quem && quem !== rede.sessao) return redeHostRebaixar();
+    if (!existe && t && typeof t.reabrir === "function") t.reabrir();
+  });
+}
 function redeHostRebaixar() {
   if (!rede || rede.papel !== "host") return;
   const sala = rede.sala, modo = rede.modo;
   try {
     caosLog("rede", "outro aparelho é host da sala " + sala + ": este entra como jogador");
+  } catch (e) {}
+  // 1.7.10: volta direto pro próprio jogador (a identidade foi aprovada no pacote que o sucessor recebeu)
+  try {
+    if (rede.hostEu && rede.chaveHost) localStorage.setItem(REDE_EU_KEY + sala, JSON.stringify({ id: rede.hostEu, chave: rede.chaveHost }));
   } catch (e) {}
   redeFechar();
   redeIrPraSala(sala, modo);
@@ -1448,14 +1507,24 @@ function redeHostRecuperacao(forcar) {
   if (!a || !starterChosen || gameEnded) return;
   const chave = suc + "|" + partidaRevisao;
   if (rede.recEnviada === chave && !forcar) return;
-  if (!forcar && rede.recEnviada && rede.recEnviada.startsWith(suc + "|") && Date.now() - rede.recQuando < 3000) return;
+  // 1.7.10: no máximo 1 por segundo; o que ficar pra trás vai no fim da janela (antes: 3 s e sem o atraso,
+  // então a última jogada antes de o host ir pro segundo plano podia ficar fora do pacote)
+  const espera = 1000 - (Date.now() - rede.recQuando);
+  if (!forcar && rede.recEnviada && rede.recEnviada.startsWith(suc + "|") && espera > 0) {
+    if (!rede.recDepois) rede.recDepois = setTimeout(() => {
+      if (!rede || rede.papel !== "host") return;
+      rede.recDepois = null;
+      redeHostRecuperacao(false);
+    }, espera + 20);
+    return;
+  }
   let estado = null;
   try {
     saveGameState();
     estado = JFStore.getItem("perfil200_state");
   } catch (e) {}
   if (!estado) return;
-  if (redeEnviar("recuperacao", { estado, revisao: partidaRevisao, matchId: matchId || null, aprovados: Object.keys(rede.aprovados || {}).slice(-40) }, a.sessao)) {
+  if (redeEnviar("recuperacao", { estado, revisao: partidaRevisao, matchId: matchId || null, aprovados: Object.keys(rede.aprovados || {}).slice(-39).concat(rede.chaveHost || []) }, a.sessao)) {
     rede.recEnviada = chave;
     rede.recQuando = Date.now();
   }
