@@ -257,6 +257,7 @@ const ARQ = acharMestre(process.argv[2]);
     }
     // 1.7.10: Reportar carta anota no aparelho (sem mostrar a resposta na janela, sem mexer na partida)
     {
+      window.__REDE_SERVIDOR = false; // (sem mandar pro servidor de verdade)
       localStorage.removeItem('perfil5_cartas_reportadas');
       const rev0 = partidaRevisao, temCarta = !!(currentCard && currentCard.id);
       cartaReportarAbrir();
@@ -265,8 +266,10 @@ const ARQ = acharMestre(process.argv[2]);
       if (ov && temCarta) { ov.querySelector('input[name="repMotivo"][value="entrega"]').click(); ov.querySelector('#repSalvar').click(); }
       const l = cartasReportadas();
       out.reportar = temCarta && semResposta && l.length === 1 && l[0].id === currentCard.id && l[0].motivo === 'entrega' && cartasReportadasTexto().includes(currentCard.id) && partidaRevisao === rev0;
+      out.reportar = out.reportar && cartaReporteFila().length === 1;
       if (ov) ov.remove();
       localStorage.removeItem('perfil5_cartas_reportadas');
+      localStorage.removeItem('perfil5_cartas_reporte_fila');
     }
     resetDeck();
     out.zerou = partidaRevisao === 0 && acoesLog.length === 0 && tabForma === null;

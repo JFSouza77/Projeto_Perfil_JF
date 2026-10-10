@@ -178,6 +178,17 @@ async function rodarServidorNosso(b, nosso, publico) {
   await g5.evaluate(() => redeEntrarPorCodigo());
   await g5.waitForTimeout(2500);
   conf("Sala do Júnior não aparece na lista (só pelo código)", !(await g5.evaluate((c) => !!document.querySelector(`#redeSalasPerto [data-sala="${c}"]`), sala)));
+  // 1.7.10 (ideia do JF): carta reportada em qualquer aparelho vai pro servidor; o JF lê numa página com senha
+  const faltam = await g5.evaluate(async () => {
+    localStorage.removeItem("perfil5_cartas_reporte_fila");
+    cartaReportarGuardar({ id: "ANO-0042", resposta: "Teste", categoria: "ANO", dica: { pos: 2, id: "ANO-0042-C03", texto: "<b>dica</b> errada" }, motivo: "fato", nota: "conferir", modo: "classico", versao: "1.7.10", quando: Date.now() });
+    return cartaReporteEnviar();
+  });
+  const http = require("http");
+  const pegar = (cam) => new Promise((ok) => http.get("http://127.0.0.1:" + nosso + cam, (r) => { let d = ""; r.on("data", (c) => (d += c)); r.on("end", () => ok({ st: r.statusCode, d })); }).on("error", () => ok({ st: 0, d: "" })));
+  const pag = await pegar("/reportes?chave=teste-senha"), errada = await pegar("/reportes?chave=chute");
+  conf("Reportar carta: o reporte chega no servidor e sai da fila do aparelho", faltam === 0 && pag.st === 200 && /ANO-0042/.test(pag.d) && /Fato errado/.test(pag.d));
+  conf("Página dos reportes: senha errada não entra; texto vem escapado", errada.st === 401 && !/<b>dica<\/b>/.test(pag.d));
   conf(
     "Ponte: sem conta configurada segue sem; com credenciais, elas vão primeiro na lista",
     await g3.evaluate(async () => {
