@@ -216,6 +216,12 @@ function medir(tela) {
     await anotar("modo");
     await c("#modeBtnClassico");
     await c("#modeConfirmBtn");
+    // 1.7.9.6: depois do modo, "Vai jogar online?" (audita a janela e segue sem sala)
+    await espera(700);
+    if (await page.locator("#redePergunta").count()) {
+      await anotar("pergunta da sala online");
+      await c("#redePerguntaNao");
+    }
     await anotar("regras do modo");
     await c("#startGameBtn");
     await fecharJanelas("jogadores");

@@ -262,6 +262,7 @@ function caosCanalRegistrar(texto, privado) {
       privado: !!(privado || (exp && exp.privado)),
     });
     if (caosCanal.length > 40) caosCanal.shift();
+    if (typeof redeHostFala === "function") redeHostFala(caosCanal[caosCanal.length - 1]); // 1.7.9.6: a fala vai pra sala online
   } catch (e) {}
 }
 // Fala dirigida a um jogador (pelo id; aceita o nome por compatibilidade). Hoje aparece na tela de
@@ -287,8 +288,15 @@ function caosEspinhaInstalar() {
   // canal: toda fala do C.A.O.S. que passa pela tela é registrada com o destino
   const toast = window.showToastMessage;
   if (typeof toast === "function" && !toast.__canal) {
-    const viaCanal = function (msg) {
-      if (typeof msg === "string" && msg.indexOf("[C.A.O.S.]") !== -1) caosCanalRegistrar(msg, caosCanalPrivado);
+    const viaCanal = function (msg, afterClose) {
+      if (typeof msg === "string" && msg.indexOf("[C.A.O.S.]") !== -1) {
+        caosCanalRegistrar(msg, caosCanalPrivado);
+        // 1.7.9.6: fala particular de quem está em outro aparelho (online) não aparece aqui
+        if (typeof redeFalaSoLonge === "function" && redeFalaSoLonge(caosCanal[caosCanal.length - 1])) {
+          if (typeof afterClose === "function") afterClose();
+          return;
+        }
+      }
       return toast.apply(this, arguments);
     };
     viaCanal.__canal = true;

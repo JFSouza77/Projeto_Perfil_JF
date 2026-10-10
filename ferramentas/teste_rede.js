@@ -129,6 +129,9 @@ async function rodar(b, modo, porta, turn) {
   conf("Convidado recebe a lista de lugares livres", (await esperar(gM, () => rede && rede.estado === "escolhendo" && rede.lugares.length === 3, null, 15000)) && (await esperar(gV, () => rede && rede.estado === "escolhendo", null, 15000)));
   await gM.evaluate((id) => redeEscolherLugar(id), ids.mestre);
   await gV.evaluate((id) => redeEscolherLugar(id), ids.vez);
+  // 1.7.9.6: aparelho novo espera o host aceitar
+  conf("Aparelho novo espera o host aceitar", (await esperar(gM, () => rede.estado === "aguardando")) && (await esperar(host, () => Object.keys(rede.pedidos).length === 2 && !!document.getElementById("redePedidos"))));
+  await H(() => redeAprovarTodos());
   conf("Escolheu o lugar e entrou (com o retrato da partida)", (await esperar(gM, () => rede.estado === "dentro" && !!rede.retrato)) && (await esperar(gV, () => rede.estado === "dentro" && !!rede.retrato)));
   // 2) privacidade
   const semResposta = async (pg) => pg.evaluate((resp) => !JSON.stringify(rede.retrato).includes(resp), ids.resposta);
@@ -172,7 +175,10 @@ async function rodar(b, modo, porta, turn) {
   const livre = await H(() => currentCard.clues.findIndex((c, i) => c.type === "clue" && !revealedOrder.some((x) => x.index === i)));
   const revAntes = await H(() => partidaRevisao);
   r = await mandar(gV, "escolherDica", livre);
-  conf("Quem está na vez escolhe a dica", r && r.ok && (await H((i) => revealedOrder.some((x) => x.index === i), livre)));
+  conf("Quem está na vez não abre a dica (regra do JF: só o Mestre)", r && !r.ok && r.motivo === "sem_permissao" && (await H((i) => !revealedOrder.some((x) => x.index === i), livre)));
+  r = await mandar(gM, "escolherDica", livre);
+  conf("O Mestre abre a dica", r && r.ok && (await H((i) => revealedOrder.some((x) => x.index === i), livre)));
+  conf("O telão mostra quem pediu a dica", await esperar(gV, () => /pedida por/.test(document.getElementById("telao").textContent)));
   conf("Revisão subiu uma vez", (await H(() => partidaRevisao)) === revAntes + 1);
   conf("Painel do Mestre com Acertou/Errou/Pulou", await esperar(gM, () => ["acertou", "errou"].every((a) => rede.painel.opcoes.some((o) => o.a === a)) && rede.painel.opcoes.some((o) => o.d[0] === "pular")));
   // 6) repetido e revisão velha
@@ -315,9 +321,10 @@ async function rodarSalaPrimeiro(b) {
   });
   const erros = [], ok = [];
   const conf = (nome, v) => ok.push([`[sala primeiro] ${nome}`, !!v]);
-  const abrir = async (hash) => {
+  const abrir = async (hash, init) => {
     const pg = await ctx.newPage();
     pg.on("pageerror", (e) => erros.push(e.message.slice(0, 160)));
+    if (init) await pg.addInitScript(init);
     await pg.goto("file://" + ARQ + (hash || ""));
     return pg;
   };
@@ -336,18 +343,35 @@ async function rodarSalaPrimeiro(b) {
   });
   conf("O botão da sala aparece no cadastro", await host.evaluate(() => !!document.getElementById("redeCadBtn") && /Sala/.test(document.getElementById("redeCadBtn").textContent)));
   const g = await abrir("#sala=" + sala + "&local");
+  // 1.7.9.6 (pedido do JF): quem entra cria o próprio jogador e o host aceita
   conf(
-    "Quem entra antes do cadastro espera o nome aparecer",
-    await esperar(g, () => rede && rede.estado === "escolhendo" && /cadastrando/.test(document.getElementById("telao").textContent)),
+    "Quem entra antes do cadastro vê o formulário pra criar o jogador",
+    await esperar(g, () => rede && rede.estado === "escolhendo" && !!rede.cadastro && !!document.getElementById("redeNome") && document.querySelectorAll("#telao .rede-av").length > 5),
   );
-  // o host cadastra: o nome aparece na hora no celular de quem espera
+  const avAna = await g.evaluate(() => rede.cadastro.avatares[3]);
+  await g.evaluate((av) => redePedirEntrada({ nome: "Ana", avatar: av, humor: "suave", idade: "maior" }), avAna);
+  conf("Pediu pra entrar: espera o host aceitar", (await esperar(g, () => rede.estado === "aguardando")) && (await esperar(host, () => !!document.getElementById("redePedidos") && /Ana/.test(document.getElementById("redePedidos").textContent))));
+  await host.evaluate(() => document.querySelector('#redePedidos [data-sim="1"]').click());
+  conf(
+    "O host aceitou: o jogador entra no cadastro como ela criou",
+    await host.evaluate((av) => players.length === 1 && players[0].name === "Ana" && players[0].avatar === av && players[0].humor === "suave" && players[0].idade === "maior", avAna),
+  );
+  // outro aparelho: nome repetido volta pro formulário; depois o host recusa
+  // outro celular: sem a identidade guardada do aparelho da Ana
+  const g2 = await abrir("#sala=" + sala + "&local", () => Object.keys(localStorage).filter((k) => k.startsWith("perfil5_rede_eu_")).forEach((k) => localStorage.removeItem(k)));
+  await esperar(g2, () => rede && rede.estado === "escolhendo" && !!rede.cadastro);
+  await g2.evaluate(() => redePedirEntrada({ nome: "ana" }));
+  conf("Nome repetido: volta pro formulário com o aviso", await esperar(g2, () => rede.estado === "escolhendo" && /Já tem alguém/.test(document.getElementById("telao").textContent)));
+  await g2.evaluate(() => redePedirEntrada({ nome: "Duda" }));
+  await esperar(host, () => Object.keys(rede.pedidos).length === 1);
+  await host.evaluate(() => document.querySelector('#redePedidos [data-sim="0"]').click());
+  conf("O host recusou: o aparelho fica de fora", (await esperar(g2, () => rede.estado === "recusado" && rede.motivo === "recusado")) && (await host.evaluate(() => players.length === 1)));
+  await g2.close();
+  // o host cadastra o resto aqui mesmo
   await host.evaluate(() => {
-    ["Ana", "Beto", "Caio"].forEach((n, i) => players.push({ id: jogadorIdNovo(), name: n, score: 0, position: 0, isBlocked: false, color: PLAYER_COLORS[i], avatar: "😀", humor: "normal", ageBracket: null, team: null, gems: {} }));
+    ["Beto", "Caio"].forEach((n, i) => players.push({ id: jogadorIdNovo(), name: n, score: 0, position: 0, isBlocked: false, color: PLAYER_COLORS[i + 1], avatar: "😀", humor: "normal", ageBracket: null, team: null, gems: {} }));
     redeHostCadastroMudou();
   });
-  conf("Os nomes cadastrados aparecem pra escolher", await esperar(g, () => rede.estado === "escolhendo" && rede.lugares.length === 3));
-  const ana = await host.evaluate(() => players[0].id);
-  await g.evaluate((id) => redeEscolherLugar(id), ana);
   conf(
     "Escolheu o nome antes da partida: tela de espera",
     await esperar(g, () => rede.estado === "dentro" && rede.retrato && !rede.retrato.iniciada && /Esperando o host/.test(document.getElementById("telao").textContent)),
@@ -378,10 +402,22 @@ async function rodarSalaPrimeiro(b) {
   await g.evaluate(() => redeMandar("virarCarta"));
   await esperar(host, () => cardState === "revealed", null, 12000);
   await host.evaluate(() => redeHostPublicar(true));
-  const temNum = await esperar(host, () => !!document.querySelector("#redeHostVista [data-dica]"), null, 12000);
-  conf("Na vez de quem está no host, os números aparecem na tela dele", temNum);
-  if (temNum) await host.evaluate(() => document.querySelector("#redeHostVista [data-dica]").click());
-  conf("A dica escolhida no host abre", await esperar(host, () => revealedOrder.length === 1));
+  // 1.7.9.6 (regra do JF): só o Mestre abre a dica; quem está na vez só fala o número
+  conf(
+    "Na vez de quem está no host: o aviso pra falar o número, sem botões de dica",
+    await esperar(host, () => !!document.getElementById("redeHostVista") && /fale um número/.test(document.getElementById("redeHostVista").textContent) && !document.querySelector("#redeHostVista [data-dica]"), null, 12000),
+  );
+  const livreH = await host.evaluate(() => currentCard.clues.findIndex((c) => c.type === "clue"));
+  await g.evaluate((i) => redeMandar("escolherDica", i), livreH);
+  conf("A Mestre abre a dica no celular dela", await esperar(host, () => revealedOrder.length === 1));
+  // 1.7.9.6: o C.A.O.S. fala no celular dela também (e a fala particular vai só pra ela)
+  await host.evaluate(() => showToastMessage("[C.A.O.S.] Ana, essa é pra mesa toda."));
+  conf("Fala do C.A.O.S. aparece no celular da Ana", await esperar(g, () => (!!document.getElementById("redeFala") && /pra mesa toda/.test(document.getElementById("redeFala").textContent)) || (rede.falas || []).some((f) => /pra mesa toda/.test(f.texto)), null, 12000));
+  await host.evaluate(() => caosFalarPara(players[0].id, "[C.A.O.S.] Só entre nós: segredo da Ana.", true));
+  conf(
+    "Fala particular chega no celular dela, marcada como dela",
+    await esperar(g, () => (document.querySelector("#redeFala.minha") && /segredo da Ana/.test(document.getElementById("redeFala").textContent)) || (rede.falas || []).some((f) => /segredo da Ana/.test(f.texto) && f.minha), null, 12000),
+  );
   // 1.7.9.5: a Mestre vê a carta como na tela de sempre (a dica da vez e os botões do veredito)
   await host.evaluate(() => redeHostPublicar(true));
   conf(

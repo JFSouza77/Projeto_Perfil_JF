@@ -1734,6 +1734,7 @@ function selectMode(mode, expressCategories, flavor) {
       ] || "outro modo";
     caosToastAtrasado(() => showToastMessage(getRandomReaction(REACTIVE_VOICE.trocaDeModo, nm)), 300);
   }
+  if (typeof redePerguntarSalaTalvez === "function") redePerguntarSalaTalvez(); // 1.7.9.6 (pedido do JF): sala online logo depois do modo
   saveGameState();
 }
 function confirmExpress(flavor) {
