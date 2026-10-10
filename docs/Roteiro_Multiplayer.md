@@ -496,8 +496,15 @@ Base: a revisão externa da 1.7.8.9 (10 achados), cada um conferido no código.
 - **Placar do intervalo no celular de cada um:** abas Pontos e Joias a partir do retrato.
 - **Tela de carregamento** (relato do JF: no iPhone não aparecia): imagens de abertura do iOS e tela de carregamento dentro do jogo.
 
+### 1.7.9.13 · Pronto pro online (publicada)
+- **TURN (decisão do JF: usar):** `REDE_ICE` em `05k-rede.js` com STUN (Google, Cloudflare) e três pontes gratuitas sem conta (PeerJS, Open Relay da Metered nas portas 80/443 com TCP e TLS, freeturn.net). Se uma sair do ar, as outras seguram.
+  - Conta própria (ex.: Metered grátis, 20 GB/mês) entra em `REDE_ICE_PROPRIOS`, que vai na frente da lista.
+  - Teste: `teste_rede` roda o roteiro da internet de novo **só pela ponte** (`iceTransportPolicy: "relay"`, servidor TURN local `node-turn`) e confere que a ponte foi usada.
+  - Daqui do ambiente de testes não dá pra alcançar os servidores públicos: quem confirma é o teste no 4G de verdade.
+- **Tela acesa:** Wake Lock enquanto a sala está aberta (host e convidados), pedido de novo ao voltar pro jogo ou no primeiro toque.
+- **NOVIDADES enxutas:** da 1.7.3 em diante, as versões pequenas de cada update viraram um bloco só (`v: "Beta X a Y"`). O HISTÓRICO técnico continua uma linha por versão.
+
 ### Pra 1.7.10 (Multiplayer Update · lançamento)
-- **Servidor de retransmissão (TURN)** pras redes de celular que bloqueiam conexão direta (precisa escolher um serviço; o gratuito pede conta). Hoje usa só o STUN padrão do PeerJS.
 - **Nome DICAOS, domínio próprio e mudança de endereço** (save e memória).
 - **Beta fechado com a família**, em celulares de verdade, no Wi-Fi e no 4G/5G.
 

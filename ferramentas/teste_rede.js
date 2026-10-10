@@ -44,18 +44,37 @@ async function servidorPeer() {
   return { porta: srv.address().port, fechar: () => srv.close() };
 }
 
-async function rodar(b, modo, porta) {
+function servidorTurn() {
+  let Turn;
+  try {
+    Turn = require("node-turn");
+  } catch (e) {
+    return null;
+  }
+  const porta = 34780 + Math.floor(Math.random() * 200);
+  const s = new Turn({ listeningIps: ["127.0.0.1"], listeningPort: porta, relayIps: ["127.0.0.1"], authMech: "long-term", credentials: { jf: "teste" }, debugLevel: "OFF" });
+  let usos = 0;
+  s.start();
+  // conta as reservas de ponte (allocate) que o servidor aceitou
+  const n0 = () => Object.keys(s.allocations || {}).length;
+  const timer = setInterval(() => (usos = Math.max(usos, n0())), 100);
+  return { porta, usos: () => Math.max(usos, n0()), fechar: () => (clearInterval(timer), s.stop()) };
+}
+
+async function rodar(b, modo, porta, turn) {
   const ctx = await b.newContext({ viewport: { width: 390, height: 844 } });
   await ctx.route(/^https?:/, (r) => (porta && r.request().url().startsWith("http://127.0.0.1:" + porta) ? r.continue() : r.abort()));
-  await ctx.addInitScript((porta) => {
+  await ctx.addInitScript(([porta, turn]) => {
     try {
       localStorage.setItem("perfil5_tutorial_visto", "x");
       localStorage.setItem("perfil5_tab_lobby", "0");
       localStorage.setItem("perfil5_tut_vitoria_vistos", JSON.stringify(["casa", "tabuleiro", "pontos", "joias"]));
     } catch (e) {}
     if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
-    if (porta) window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, config: { iceServers: [] } };
-  }, porta || 0);
+    // com turn: só vale a ponte (relay), como num 4G que não deixa ligação direta
+    const ice = turn ? { iceServers: [{ urls: "turn:127.0.0.1:" + turn, username: "jf", credential: "teste" }], iceTransportPolicy: "relay" } : { iceServers: [] };
+    if (porta) window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, config: ice };
+  }, [porta || 0, turn || 0]);
   const erros = [];
   const abrir = async (hash, initScript) => {
     const pg = await ctx.newPage();
@@ -92,7 +111,15 @@ async function rodar(b, modo, porta) {
   const H = (fn, a) => host.evaluate(fn, a);
   const esperar = (pg, fn, a, ms) => pg.waitForFunction(fn, a, { timeout: ms || 8000 }).then(() => true, () => false);
   const ok = [];
-  const conf = (nome, v) => ok.push([`[${modo}] ${nome}`, !!v]);
+  const conf = (nome, v) => ok.push([`[${turn ? "internet via TURN" : modo}] ${nome}`, !!v]);
+  if (modo === "local")
+    conf(
+      "Config de verdade leva STUN e pontes TURN (80/443)",
+      await H(() => {
+        const ice = redePeerConfig().config.iceServers.flatMap((x) => [].concat(x.urls));
+        return ice.some((u) => u.startsWith("stun:")) && ice.filter((u) => /^turns?:/.test(u)).length >= 4 && ice.some((u) => /:443/.test(u));
+      }),
+    );
   if (modo === "internet") conf("Sala aberta no servidor (PeerJS)", await esperar(host, () => rede && rede.transporte.estado === "aberta", null, 10000));
   const ids = await H(() => ({ mestre: jogadorIdDe(mestreIndex), vez: jogadorIdDe(responderIndex), outro: players[2].id, resposta: currentCard.answer }));
 
@@ -287,6 +314,18 @@ async function rodar(b, modo, porta) {
         const r = await rodar(b, "internet", sv.porta);
         todos.push(...r.ok);
         erros.push(...r.erros);
+        // 1.7.9.13 · de novo, mas só pela ponte TURN (servidor local): prova que a conexão passa pelo relay
+        const tv = servidorTurn();
+        if (!tv) console.log("(sem o pacote 'node-turn': o roteiro via TURN não rodou; npm install)");
+        else {
+          try {
+            const r2 = await rodar(b, "internet", sv.porta, tv.porta);
+            todos.push(...r2.ok, ["[internet via TURN] A ponte TURN foi usada", tv.usos() > 0]);
+            erros.push(...r2.erros);
+          } finally {
+            tv.fechar();
+          }
+        }
       } finally {
         sv.fechar();
       }
