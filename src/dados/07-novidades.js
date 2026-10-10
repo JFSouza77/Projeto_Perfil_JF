@@ -6,6 +6,19 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.9.9",
+    data: "10/10/2026 · 15:24",
+    nome: "Rooms and Network Update · Regras da sala",
+    t: "Partida online sem ninguém de fora é encerrada, e mais de um jogador pode dividir o aparelho do host.",
+    itens: [
+      "📴 Todo mundo saiu: se todos os outros aparelhos saírem da sala, o jogo pausa e avisa. Se ninguém voltar em 2 minutos, a partida online é encerrada.",
+      "🏁 Fechar a sala encerra: fechar a sala no meio de uma partida online encerra a partida (o jogo pergunta antes).",
+      "🔁 Sem continuar sozinho: abriu o jogo de novo e a sala da partida online não existe mais? A partida fica encerrada, com o resultado de agora.",
+      "👥 Dois no aparelho do host: em Quem joga neste aparelho dá pra marcar mais de um nome. A tela mostra todos, e cada um vota pelo próprio botão.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.9.8",
     data: "10/10/2026 · 14:49",
     nome: "Rooms and Network Update · Sala de perto",

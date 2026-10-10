@@ -1002,7 +1002,8 @@ function iniciar() {
       }
       loadGameState();
       // 1.7.9.10: o host recarregou com a sala aberta: ela volta com o mesmo código
-      if (typeof redeHostRetomar === "function") redeHostRetomar();
+      // 1.7.9.9: partida online sem sala pra voltar (a sala foi encerrada) não continua neste aparelho
+      if (typeof redeHostRetomar === "function" && !redeHostRetomar() && typeof redePartidaOnlineOrfa === "function") redePartidaOnlineOrfa();
       if (typeof telaoLigarJogo === "function") telaoLigarJogo();
       updateModeNotice();
       renderStorageStatus();

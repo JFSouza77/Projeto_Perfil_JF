@@ -511,6 +511,8 @@ Base: a revisão externa da 1.7.8.9 (10 achados), cada um conferido no código.
   - **4G + Wi-Fi:** já funciona pelas pontes TURN gratuitas (1.7.9.3) e o selo mostra quem está pela ponte (1.7.9.8). O que ainda pode falhar: as pontes gratuitas saírem do ar. Solução definitiva: conta própria de TURN (Metered grátis 20 GB/mês ou Cloudflare) em `REDE_ICE_PROPRIOS`: **decisão do JF**.
   - **Servidor de apresentação (PeerJS público):** é o ponto único de falha que sobra (se o 0.peerjs.com cair, ninguém abre sala). Solução: servidor PeerJS próprio (grátis no Render/Fly) ou Cloudflare: **decisão do JF**.
   - **Testes que faltam:** Equipe e Express no online (o roteiro automático cobre Versus/Clássico), partida inteira até o fim com 3 celulares, iPhone em segundo plano (ligação recebida, trocar de app).
+  - **Fim da partida online (regra do JF, feito na 1.7.9.9):** todo mundo de fora saiu → 45 s, pausa e aviso, 2 min e a partida é encerrada; fechar a sala no meio encerra; app reaberto com partida online salva e sem sala → encerrada. Vários jogadores no aparelho do host (hostJunto), cada um vota.
+  - **Dois jogadores num celular convidado:** hoje é um lugar por aparelho convidado (quem divide o celular com outro joga no aparelho do host). Pra 1.7.10: o convidado escolher mais de um nome e alternar a tela pela vez: **decisão do JF**.
   - **Atualização no meio da partida:** se o host atualizar o jogo, os convidados recebem "versão diferente" e precisam recarregar. Ideia: aviso pra todos recarregarem juntos.
 - **Nome DICAOS, domínio próprio e mudança de endereço** (save e memória).
 - **Beta fechado com a família**, em celulares de verdade, no Wi-Fi e no 4G/5G.

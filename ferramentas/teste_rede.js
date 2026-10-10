@@ -44,6 +44,51 @@ async function servidorPeer() {
   return { porta: srv.address().port, fechar: () => srv.close() };
 }
 
+// 1.7.9.9 · Partida online salva e sem sala pra voltar: ao abrir o jogo, ela é encerrada (não continua aqui)
+async function rodarOrfa(b) {
+  const ctx = await b.newContext({ viewport: { width: 390, height: 844 } });
+  await ctx.route(/^https?:/, (r) => r.abort());
+  await ctx.addInitScript(() => {
+    try {
+      localStorage.setItem("perfil5_tutorial_visto", "x");
+      localStorage.setItem("perfil5_tut_vitoria_vistos", JSON.stringify(["casa", "tabuleiro", "pontos", "joias"]));
+    } catch (e) {}
+    if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
+  });
+  const erros = [], ok = [];
+  const pg = await ctx.newPage();
+  pg.on("pageerror", (e) => erros.push(e.message.slice(0, 160)));
+  await pg.goto("file://" + ARQ);
+  await pg.waitForFunction(() => typeof sorteioSemear === "function" && !document.getElementById("goToRulesBtn").disabled);
+  await pg.evaluate(async () => {
+    document.querySelectorAll(".caos-modal-ov, #novidadesModal").forEach((o) => o.remove());
+    caosSilenced = true;
+    CURRENT_FORMAT = "versus";
+    players = ["Ana", "Beto"].map((n, i) => ({ id: jogadorIdNovo(), name: n, score: 0, position: 0, isBlocked: false, color: PLAYER_COLORS[i], avatar: "😀", humor: "normal", ageBracket: null, team: null, gems: {} }));
+    selectMode("classico");
+    starterDrawCount = 1;
+    mestreIndex = 0;
+    responderIndex = 1;
+    ["splashScreen", "welcomeScreen", "playerPanel", "orderRevealSection"].forEach((id) => {
+      const e = document.getElementById(id);
+      if (e) e.style.display = "none";
+    });
+    document.getElementById("gameScreen").style.display = "block";
+    document.getElementById("playAreaSection").style.display = "block";
+    beginGameplay();
+    await new Promise((r) => setTimeout(r, 300));
+    partidaOnline = true; // teve gente em outro aparelho
+    saveGameState();
+    if (JFStore.flushNow) await JFStore.flushNow();
+  });
+  await pg.reload();
+  await pg.waitForFunction(() => typeof partidaOnline !== "undefined" && starterChosen, null, { timeout: 15000 });
+  ok.push(["[online salvo] Abriu de novo sem sala pra voltar: avisa que a sala foi encerrada", await pg.waitForFunction(() => !!document.getElementById("redeOrfa"), null, { timeout: 10000 }).then(() => true, () => false)]);
+  await pg.evaluate(() => document.getElementById("redeOrfaOk") && document.getElementById("redeOrfaOk").click());
+  ok.push(["[online salvo] A partida fica encerrada (não continua neste aparelho)", await pg.waitForFunction(() => gameEnded, null, { timeout: 8000 }).then(() => true, () => false)]);
+  await ctx.close();
+  return { ok, erros };
+}
 // 1.7.9.8 · Código sorteado já em uso por outro grupo: a sala nova troca de código (não entra na sala dos outros)
 async function rodarColisao(b, porta) {
   const ctx = await b.newContext();
@@ -350,6 +395,7 @@ async function rodarSalaPrimeiro(b) {
   const ctx = await b.newContext({ viewport: { width: 390, height: 844 } });
   await ctx.route(/^https?:/, (r) => r.abort());
   await ctx.addInitScript(() => {
+    window.__REDE_SOZINHO = [1500, 3000]; // 1.7.9.9: tempos curtos pro teste de "todo mundo saiu"
     try {
       localStorage.setItem("perfil5_tutorial_visto", "x");
       localStorage.setItem("perfil5_tab_lobby", "0");
@@ -536,6 +582,19 @@ async function rodarSalaPrimeiro(b) {
   });
   conf("A partida nova começa no celular dela também", await esperar(g, () => rede.retrato && rede.retrato.iniciada && !!document.querySelector("#telao .rede-carta-mestre"), null, 12000));
   conf("De novo com a Mestre fora do host: tela de jogador no host", await esperar(host, () => !!document.getElementById("redeHostVista")));
+  // 1.7.9.9: Beto e Caio dividem o aparelho do host; cada um vota pelo próprio botão
+  await host.evaluate(() => redeDefinirNoHost([players[1].id, players[2].id]));
+  conf("Dois jogadores no aparelho do host: a tela mostra os dois", await esperar(host, () => (document.getElementById("redeHostVista") || {}).textContent && /Beto/.test(document.getElementById("redeHostVista").textContent) && /Caio/.test(document.getElementById("redeHostVista").textContent)));
+  conf("Os dois votam: a mesa tem 3 votantes", await host.evaluate(() => redeVotantes().length === 3));
+  await g.evaluate(() => redeMandar("virarCarta"));
+  await esperar(host, () => cardState === "revealed", null, 12000);
+  const descA = await host.evaluate(() => stats.totalDiscarded);
+  await g.evaluate(() => redeMandar("descartarCarta"));
+  conf("Votação: uma linha de voto pra cada jogador do aparelho do host", await esperar(host, () => document.querySelectorAll("#redeVotoHost .rede-voto-linha").length === 2));
+  await host.evaluate(() => document.querySelector('#redeVotoHost [data-sim="1"]').click());
+  await host.evaluate(() => document.querySelector('#redeVotoHost [data-sim="1"]') && document.querySelector('#redeVotoHost [data-sim="1"]').click());
+  conf("Com os votos dos dois, a carta é descartada", await esperar(host, (n) => stats.totalDiscarded === n + 1 && !rede.votacao, descA));
+  await host.evaluate(() => redeDefinirNoHost([players[1].id]));
   // a Mestre sai da sala: o host volta pra tela de sempre (ela jogaria no aparelho do host)
   // 1.7.9.8: o QR Code da sala aparece no painel; o host tira a Ana da sala
   conf("O painel da sala mostra o QR Code do link", await host.evaluate(() => { redePainelHost(); const ok = !!document.querySelector("#redePainel .rede-qr svg"); document.getElementById("redePainel").remove(); return ok; }));
@@ -545,6 +604,9 @@ async function rodarSalaPrimeiro(b) {
   await host.waitForTimeout(500);
   await host.evaluate(() => redeHostPublicar(true));
   conf("Mestre fora da sala: o host volta a mostrar tudo", await esperar(host, () => !document.getElementById("redeHostVista") && !document.body.classList.contains("rede-mestre-longe")));
+  // 1.7.9.9 (regra do JF): partida online e todo mundo saiu → pausa, avisa e encerra (sem continuar sozinho)
+  conf("Todo mundo saiu da sala: o jogo pausa e avisa", await esperar(host, () => !!document.getElementById("redeSozinho") && !!pausedAt, null, 10000));
+  conf("Ninguém voltou: a partida online é encerrada", await esperar(host, () => gameEnded && !document.getElementById("redeSozinho"), null, 12000));
   await ctx.close();
   return { ok, erros };
 }
@@ -559,6 +621,9 @@ async function rodarSalaPrimeiro(b) {
     const r2 = await rodarSalaPrimeiro(b);
     todos.push(...r2.ok);
     erros.push(...r2.erros);
+    const r3 = await rodarOrfa(b);
+    todos.push(...r3.ok);
+    erros.push(...r3.erros);
   }
   if (SO !== "local") {
     const sv = await servidorPeer();
