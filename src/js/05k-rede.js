@@ -153,10 +153,25 @@ function redeTransporteLocal(sala) {
   };
   return t;
 }
+// 1.7.9.13 · Servidores que ajudam os celulares a se acharem. STUN descobre o endereço de cada um; TURN é a
+// ponte: quando a rede do celular (4G/5G, Wi-Fi de empresa) não deixa a ligação direta, os dados passam por ele.
+// Todos gratuitos e sem conta; se um sair do ar, os outros seguram. Portas 80/443 passam até em rede fechada.
+// Pra usar uma conta própria (ex.: Metered, 20 GB/mês grátis), é só pôr os dados dela em REDE_ICE_PROPRIOS.
+const REDE_ICE_PROPRIOS = [];
+const REDE_ICE = [
+  { urls: ["stun:stun.l.google.com:19302", "stun:stun.cloudflare.com:3478"] },
+  { urls: ["turn:eu-0.turn.peerjs.com:3478", "turn:us-0.turn.peerjs.com:3478"], username: "peerjs", credential: "peerjsp" },
+  {
+    urls: ["turn:openrelay.metered.ca:80", "turn:openrelay.metered.ca:443", "turn:openrelay.metered.ca:443?transport=tcp", "turns:openrelay.metered.ca:443?transport=tcp"],
+    username: "openrelayproject",
+    credential: "openrelayproject",
+  },
+  { urls: ["turn:freeturn.net:3478", "turns:freeturn.tel:5349"], username: "free", credential: "free" },
+];
 // Configuração do PeerJS (o teste aponta pra um servidor local por window.__REDE_PEER_CONFIG).
 function redePeerConfig() {
   const extra = (typeof window !== "undefined" && window.__REDE_PEER_CONFIG) || {};
-  return Object.assign({ debug: 0 }, extra);
+  return Object.assign({ debug: 0, config: { iceServers: REDE_ICE_PROPRIOS.concat(REDE_ICE), sdpSemantics: "unified-plan" } }, extra);
 }
 function redeMudouEstado(t) {
   try {
@@ -503,6 +518,7 @@ function redeAbrirSalaCom(fab, modo, salaFixa) {
     recQuando: 0,
     batida: null,
   };
+  redeTelaAcesa(true);
   transporte.aoReceber((bruto) => {
     // outro aparelho já é host desta sala (só acontece no ensaio local): este passa a jogador
     if (typeof bruto === "string" && bruto.includes('"t":"retrato"')) {
@@ -631,8 +647,33 @@ function redeHostRebaixar() {
   redeFechar();
   redeIrPraSala(sala, modo);
 }
+// 1.7.9.13 · Tela acesa enquanto a sala está aberta: celular que apaga a tela derruba a conexão (o iPhone
+// suspende a página). Usa o Wake Lock do navegador quando existe; ao voltar pro jogo, pede de novo.
+let redeTravaTela = null;
+function redeTelaAcesa(ligar) {
+  try {
+    if (!ligar) {
+      if (redeTravaTela) redeTravaTela.release().catch(() => {});
+      redeTravaTela = null;
+      return;
+    }
+    if (!navigator.wakeLock || document.visibilityState !== "visible" || (redeTravaTela && !redeTravaTela.released)) return;
+    navigator.wakeLock.request("screen").then(
+      (t) => {
+        if (rede) redeTravaTela = t;
+        else t.release().catch(() => {});
+      },
+      () => {},
+    );
+  } catch (e) {}
+}
+if (typeof document !== "undefined")
+  ["visibilitychange", "pointerdown"].forEach((ev) =>
+    document.addEventListener(ev, () => rede && redeTelaAcesa(true), { passive: true }),
+  ); // alguns navegadores só liberam depois de um toque
 function redeFechar() {
   if (!rede) return;
+  redeTelaAcesa(false);
   try {
     if (rede.papel === "convidado") redeEnviar("tchau", {});
     if (rede.papel === "host") JFStore.removeItem(REDE_HOST_KEY);
@@ -1005,6 +1046,7 @@ function redeEntrarSala(sala, transporteFabrica) {
     relogio: { dif: 0, atraso: Infinity, amostras: 0 },
     aoMudar: null,
   };
+  redeTelaAcesa(true);
   const oi = () => redeEnviar("oi", { jogadorId: rede.eu, chave: rede.chave, versao: JOGO_VERSAO });
   rede.oi = oi;
   transporte.aoReceber((bruto) => {

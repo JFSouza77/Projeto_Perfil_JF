@@ -249,7 +249,7 @@ const TUTORIAL_STEPS = [
     sec: 6,
     icon: "🔗",
     title: "Entrar na sala (no seu celular)",
-    text: "<ol><li>Abra o <b>link</b> que o host mandou (no Safari ou no Chrome);</li><li>Na tela <b>Quem é você?</b>, toque no seu nome;</li><li>Pronto: aparece o placar, a carta e os <b>botões do seu papel</b>.</li></ol>Se aparecer <b>\"Esse jogador já está na sala\"</b>, outra pessoa escolheu esse nome: confira com a mesa. Se aparecer <b>\"versão diferente\"</b>, recarregue a página pra atualizar o jogo.<br>💡 Deixe o jogo <b>aberto na tela</b>: se o celular bloquear ou você trocar de app, a conexão pode cair (é só abrir o link de novo).",
+    text: "<ol><li>Abra o <b>link</b> que o host mandou (no Safari ou no Chrome);</li><li>Na tela <b>Quem é você?</b>, toque no seu nome;</li><li>Pronto: aparece o placar, a carta e os <b>botões do seu papel</b>.</li></ol>Se aparecer <b>\"Esse jogador já está na sala\"</b>, outra pessoa escolheu esse nome: confira com a mesa. Se aparecer <b>\"versão diferente\"</b>, recarregue a página pra atualizar o jogo.<br>💡 Com a sala aberta, o jogo mantém a <b>tela acesa</b> sozinho. Se você trocar de app, a conexão pode cair: é só voltar pro jogo ou abrir o link de novo.",
     dark: true,
     mock: '<div class="tut-sala"><div class="tut-sala-rot">🌐 Sala K7P2</div><div class="tut-sala-cod" style="font-size:1.1rem">Quem é você?</div><div class="tut-sala-sub">🦊 Ana · 🐼 Beto · 🐸 Caio</div></div>',
   },
@@ -263,7 +263,7 @@ const TUTORIAL_STEPS = [
     sec: 6,
     icon: "🆘",
     title: "Se a conexão cair",
-    text: "<ul><li>🔄 <b>Caiu ou fechou sem querer?</b> Abra o link de novo: você volta pro mesmo lugar;</li><li>📱 <b>O host recarregou?</b> A sala volta sozinha, com o mesmo código, e todo mundo se reconecta;</li><li>👑 <b>O host sumiu de vez?</b> Em uns 15 segundos, quem foi o <b>2º Mestre</b> da partida assume a sala, sem perder nada. Se o host voltar, entra como jogador;</li><li>📶 <b>Não abriu?</b> Tente todos no <b>mesmo Wi-Fi</b>. Em algumas redes 4G/5G a conexão direta é bloqueada.</li></ul>Pra sair da sala, toque em <b>✕ Sair da sala</b>, no fim da tela.",
+    text: "<ul><li>🔄 <b>Caiu ou fechou sem querer?</b> Abra o link de novo: você volta pro mesmo lugar;</li><li>📱 <b>O host recarregou?</b> A sala volta sozinha, com o mesmo código, e todo mundo se reconecta;</li><li>👑 <b>O host sumiu de vez?</b> Em uns 15 segundos, quem foi o <b>2º Mestre</b> da partida assume a sala, sem perder nada. Se o host voltar, entra como jogador;</li><li>📶 <b>Não abriu?</b> No 4G/5G, quando a ligação direta é bloqueada, o jogo passa por uma ponte na internet (leva uns segundos a mais). Se mesmo assim não abrir, tente todos no <b>mesmo Wi-Fi</b>.</li></ul>Pra sair da sala, toque em <b>✕ Sair da sala</b>, no fim da tela.",
   },
   {
     sec: 6,
@@ -352,7 +352,7 @@ const PAUSE_TIPS = [
   },
   {
     when: () => typeof rede !== "undefined" && !!rede && rede.papel === "host",
-    text: () => "Online: deixe este aparelho com o jogo aberto na tela. Se ele bloquear por muito tempo, quem foi o 2º Mestre assume a sala.",
+    text: () => "Online: este aparelho mantém a tela acesa sozinho, mas não troque de app por muito tempo. Se ele sumir, quem foi o 2º Mestre assume a sala.",
   },
   {
     when: () => CURRENT_MODE !== "express",
