@@ -1523,13 +1523,17 @@ function caosEscolhaTomada(tipo, valor, btn) {
   }
   if (txt) showToastMessage(txt, null, true);
 }
+// 1.7.9.6: as cores da paleta (a daqui e a do convidado online)
+function coresDaPaleta() {
+  const isBatata = document.body.classList.contains("batata-mode");
+  return PLAYER_COLORS.slice(0, -1)
+    .concat(["GRAD_PRINCESA", "RGB"])
+    .filter((c) => !(isBatata && (c === "RGB" || GRADIENTS[c])));
+}
 function renderColorPicker() {
   const row = document.getElementById("colorPickerRow");
   if (!row) return;
-  const isBatata = document.body.classList.contains("batata-mode");
-  const availableColors = PLAYER_COLORS.slice(0, -1)
-    .concat(["GRAD_PRINCESA", "RGB"])
-    .filter((c) => !(isBatata && (c === "RGB" || GRADIENTS[c])));
+  const availableColors = coresDaPaleta();
   const usedColors = new Set(players.map((p) => p.color));
   availableColors.forEach((c) => {
     if (corReservada(c)) usedColors.add(c);
@@ -1689,9 +1693,8 @@ function humorOptionsForMode() {
 function humorPreMarcado() {
   return CURRENT_MODE === "junior" || CURRENT_MODE === "hardcore";
 }
-function renderHumorPicker() {
-  const row = document.getElementById("humorPickerRow");
-  if (!row) return;
+// 1.7.9.6: as opções de zoeira do modo (o cadastro daqui e o do convidado online usam a mesma lista)
+function humorOpcoesModo() {
   const junior = CURRENT_MODE === "junior";
   const JR_HINT = {
     suave: "Zoa um pouquinho e dá uma risadinha aqui e ali, mas sempre tranquilo.",
@@ -1712,6 +1715,13 @@ function renderHumorPicker() {
             : o,
         )
       : HUMOR_OPTIONS.filter((o) => o.id !== "familia");
+  return opts;
+}
+function renderHumorPicker() {
+  const row = document.getElementById("humorPickerRow");
+  if (!row) return;
+  const junior = CURRENT_MODE === "junior";
+  const opts = humorOpcoesModo();
   if (!opts.some((o) => o.id === selectedHumor)) selectedHumor = junior ? "familia" : "normal";
   row.innerHTML = opts
     .map(

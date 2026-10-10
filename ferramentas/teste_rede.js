@@ -346,8 +346,16 @@ async function rodarSalaPrimeiro(b) {
   // 1.7.9.6 (pedido do JF): quem entra cria o próprio jogador e o host aceita
   conf(
     "Quem entra antes do cadastro vê o formulário pra criar o jogador",
-    await esperar(g, () => rede && rede.estado === "escolhendo" && !!rede.cadastro && !!document.getElementById("redeNome") && document.querySelectorAll("#telao .rede-av").length > 5),
+    await esperar(g, () => rede && rede.estado === "escolhendo" && !!rede.cadastro && !!document.getElementById("redeNome") && document.querySelectorAll("#telao .avatar-swatch").length > 5 && document.querySelectorAll("#telao .humor-btn").length >= 3),
   );
+  // o mesmo cadastro do host: com o nome "Anne", a cor exclusiva dela (degradê) já vem marcada, e o RGB do JF fica travado
+  await g.fill("#redeNome", "Anne");
+  conf(
+    "Cadastro no celular igual ao do host (cor de dono marcada, a do outro travada)",
+    await esperar(g, () => !!document.querySelector('#telao .color-swatch.selected[data-cor="GRAD_PRINCESA"]') && !!document.querySelector('#telao .color-swatch.tomada[data-cor="RGB"]') && rede.rascunho.avatar === "👸"),
+  );
+  await g.fill("#redeNome", "");
+  await g.evaluate(() => (rede.rascunho = {}));
   const avAna = await g.evaluate(() => rede.cadastro.avatares[3]);
   await g.evaluate((av) => redePedirEntrada({ nome: "Ana", avatar: av, humor: "suave", idade: "maior" }), avAna);
   conf("Pediu pra entrar: espera o host aceitar", (await esperar(g, () => rede.estado === "aguardando")) && (await esperar(host, () => !!document.getElementById("redePedidos") && /Ana/.test(document.getElementById("redePedidos").textContent))));
