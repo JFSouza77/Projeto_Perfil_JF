@@ -122,7 +122,7 @@ function telaoDesenhar(r, alvo) {
   const c = r.carta;
   const dicas = c
     ? c.abertas
-        .map((d) => `<li${d.pos === c.pendente ? ' class="telao-agora"' : ""}>${d.tipo === "special" ? "⭐ " : ""}${escapeHtml(d.texto)}</li>`)
+        .map((d) => `<li${d.pos === c.pendente ? ' class="telao-agora"' : ""}>${d.tipo === "special" ? "⭐ " : ""}${escapeHtml(d.texto)}${d.pedidaPor ? ` <small class="telao-quem">· pedida por ${nome(d.pedidaPor)}</small>` : ""}</li>`) // 1.7.9.6: quem pediu
         .join("")
     : "";
   box.innerHTML = `

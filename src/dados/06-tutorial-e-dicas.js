@@ -241,23 +241,23 @@ const TUTORIAL_STEPS = [
     sec: 6,
     icon: "📡",
     title: "Abrir uma sala (no aparelho do host)",
-    text: "A ordem certa é <b>sala primeiro, cadastro depois</b>:<ol><li>Nesse aparelho, escolha o formato e o modo;</li><li>Na tela dos jogadores, toque em <b>🌐 Vai jogar online?</b> e depois em <b>Abrir sala pela internet</b>. Espere o <b>🟢 Sala aberta</b>;</li><li>Toque em <b>📋 Copiar link</b> ou <b>📤 Compartilhar</b> e mande no grupo. Quem abrir fica esperando o nome aparecer;</li><li>Feche a janela e <b>cadastre todo mundo</b> (inclusive quem joga de outro celular). Cada um toca no próprio nome no celular dele;</li><li>Sorteie quem começa. O jogo pergunta <b>Quem joga neste aparelho?</b>: escolha o seu nome (ou \"ninguém\", se o aparelho fica só na mesa).</li></ol>Quando o Mestre está em outro aparelho, este mostra a tela de jogador, <b>sem a carta e sem a resposta</b>. Já começou a partida? Dá pra abrir a sala pela <b>⏸️ Pausa</b>, em <b>🌐 Jogar online</b>.",
+    text: "<ol><li>Toque em <b>Jogar</b>, escolha o formato (Versus ou Equipe) e o modo;</li><li>O jogo pergunta <b>Vai jogar online?</b>: toque em <b>🌐 Sim, abrir a sala</b>. Este aparelho vira o <b>host</b>;</li><li>Aparece o <b>código da sala</b> (4 letras). Fale o código pra mesa ou mande o link (<b>📋 Copiar</b> ou <b>📤 Compartilhar</b>);</li><li>Quando alguém pedir pra entrar, aparece <b>🙋 Pedido pra entrar</b>: toque em <b>✅ Aceitar</b>. Cada um cria o próprio jogador no celular dele, e ele entra no cadastro sozinho;</li><li>Quem vai jogar <b>neste</b> aparelho você cadastra aqui mesmo, como sempre;</li><li>Sorteie quem começa. O jogo pergunta <b>Quem joga neste aparelho?</b>: escolha o seu nome (ou \"ninguém\", se o aparelho fica só na mesa).</li></ol>Disse \"Não\" e mudou de ideia? Toque em <b>🌐 Vai jogar online?</b> na tela dos jogadores, ou na <b>⏸️ Pausa</b>, em <b>🌐 Jogar online</b>.",
     dark: true,
-    mock: '<div class="tut-sala"><div class="tut-sala-rot">🌐 Sala K7P2</div><div class="tut-sala-sub">🟢 Sala aberta</div><div class="tut-sala-sub">📋 Copiar link · 📤 Compartilhar</div></div>',
+    mock: '<div class="tut-sala"><div class="tut-sala-rot">Código da sala</div><div class="tut-sala-cod">K7P2</div><div class="tut-sala-sub">🙋 Ana quer entrar · ✅ Aceitar</div></div>',
   },
   {
     sec: 6,
     icon: "🔗",
     title: "Entrar na sala (no seu celular)",
-    text: "<ol><li>Abra o <b>link</b> que o host mandou (no Safari ou no Chrome);</li><li>Na tela <b>Quem é você?</b>, toque no seu nome;</li><li>Pronto: aparece o placar, a carta e os <b>botões do seu papel</b>.</li></ol>Se aparecer <b>\"Esse jogador já está na sala\"</b>, outra pessoa escolheu esse nome: confira com a mesa. Se aparecer <b>\"versão diferente\"</b>, recarregue a página pra atualizar o jogo.<br>💡 Com a sala aberta, o jogo mantém a <b>tela acesa</b> sozinho. Se você trocar de app, a conexão pode cair: é só voltar pro jogo ou abrir o link de novo.",
+    text: "<ol><li>Abra o jogo e toque em <b>🌐 Jogar online</b>, na tela inicial;</li><li>Digite o <b>código da sala</b> que aparece no aparelho do host e toque em <b>Entrar na sala</b> (ou abra o link que o host mandou);</li><li><b>Crie o seu jogador</b>: nome, cor, emoji, zoeira e idade. Toque em <b>🙋 Pedir pra entrar</b>;</li><li>Espere o host <b>aceitar</b>. Pronto: você está na sala e aparece no cadastro.</li></ol>Se o host já cadastrou você, toque no seu nome na lista, embaixo do formulário. Partida já começada? Só dá pra escolher um nome da lista.<br>Se aparecer <b>\"versão diferente\"</b>, recarregue a página pra atualizar o jogo.<br>💡 Com a sala aberta, o jogo mantém a <b>tela acesa</b> sozinho. Se você trocar de app, a conexão pode cair: é só voltar pro jogo.",
     dark: true,
-    mock: '<div class="tut-sala"><div class="tut-sala-rot">🌐 Sala K7P2</div><div class="tut-sala-cod" style="font-size:1.1rem">Quem é você?</div><div class="tut-sala-sub">🦊 Ana · 🐼 Beto · 🐸 Caio</div></div>',
+    mock: '<div class="tut-sala"><div class="tut-sala-rot">🌐 Sala K7P2</div><div class="tut-sala-cod" style="font-size:1.1rem">🙋 Crie o seu jogador</div><div class="tut-sala-sub">Nome · Cor · Emoji · Zoeira → Pedir pra entrar</div></div>',
   },
   {
     sec: 6,
     icon: "🎙️",
     title: "Quem toca o quê",
-    text: "Cada celular só mostra o que é seu:<ul><li>🎙️ <b>Mestre:</b> vê a carta como na tela de sempre: vira a carta, vê a resposta, dá o veredito (Acertou, Errou, Pulou, Absurdo), resolve as instruções especiais e o palpite;</li><li>👉 <b>Quem está na vez:</b> escolhe o número da dica;</li><li>🏟️ <b>Quem caiu na casa de bônus:</b> escolhe contra quem é o duelo;</li><li>⏸️ <b>Qualquer um</b> pode pausar e continuar;</li><li>🗳️ <b>Descartar e Desistir</b> viram votação: o Mestre pede e a mesa vota no celular;</li><li>📱 <b>O host</b> é o único que toca em <b>Próxima carta</b> no intervalo. Quando o Mestre está em outro aparelho, o host vê a mesma tela dos jogadores (sem a resposta). Se o Mestre não tem aparelho, ele usa o do host, que mostra tudo.</li></ul>",
+    text: "Cada celular só mostra o que é seu:<ul><li>🎙️ <b>Mestre:</b> vê a carta como na tela de sempre: vira a carta, vê a resposta, <b>abre as dicas</b>, dá o veredito (Acertou, Errou, Pulou, Absurdo), resolve as instruções especiais e o palpite;</li><li>👉 <b>Quem está na vez:</b> fala o número da dica, e o Mestre abre. Todo mundo vê a dica e quem pediu;</li><li>🤖 <b>O C.A.O.S.</b> fala em todos os celulares; o que é só pra uma pessoa aparece só no celular dela;</li><li>🏟️ <b>Quem caiu na casa de bônus:</b> escolhe contra quem é o duelo;</li><li>⏸️ <b>Qualquer um</b> pode pausar e continuar;</li><li>🗳️ <b>Descartar e Desistir</b> viram votação: o Mestre pede e a mesa vota no celular;</li><li>📱 <b>O host</b> é o único que toca em <b>Próxima carta</b> no intervalo. Quando o Mestre está em outro aparelho, o host vê a mesma tela dos jogadores (sem a resposta). Se o Mestre não tem aparelho, ele usa o do host, que mostra tudo.</li></ul>",
   },
   {
     sec: 6,
@@ -344,7 +344,7 @@ const PAUSE_TIPS = [
   // 1.7.9.12: dicas do online
   {
     when: () => typeof rede === "undefined" || !rede,
-    text: () => "Dá pra jogar cada um no seu celular: na próxima partida, abra a sala no cadastro (🌐 Vai jogar online?), antes de cadastrar. Já começou? Toque em 🌐 Jogar online aqui na pausa. Passo a passo no 📖 Manual, capítulo Online.",
+    text: () => "Dá pra jogar cada um no seu celular: na próxima partida, responda Sim em \"Vai jogar online?\" depois de escolher o modo. Quem entra digita o código da sala e cria o próprio jogador. Já começou? Toque em 🌐 Jogar online aqui na pausa.",
   },
   {
     when: () => typeof rede !== "undefined" && !!rede && rede.papel === "host",

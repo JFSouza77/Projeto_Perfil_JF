@@ -828,7 +828,7 @@ function iniciar() {
   {
     // 1.7.9.12: o aviso do online na tela inicial abre o passo a passo
     const eb = document.getElementById("splashEmBreve");
-    if (eb) eb.addEventListener("click", () => openTutorial("manual:online"));
+    if (eb) eb.addEventListener("click", () => (typeof redeEntrarPorCodigo === "function" ? redeEntrarPorCodigo() : openTutorial("manual:online"))); // 1.7.9.6
   }
   {
     const on = document.getElementById("pauseOnlineBtn");

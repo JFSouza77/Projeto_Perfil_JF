@@ -6,6 +6,24 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.9.6",
+    data: "10/10/2026 · 10:54",
+    nome: "Rooms and Network Update · Entrada na sala",
+    t: "Abrir a sala ficou no caminho do jogo, cada um cria o próprio jogador, e o C.A.O.S. fala em todos os celulares.",
+    itens: [
+      "🌐 Vai jogar online: depois de escolher o modo, o jogo pergunta se é pra abrir a sala. Com Sim, este aparelho vira o host e mostra o código da sala.",
+      "🔑 Entrar com o código: na tela inicial, toque em Jogar online e digite as 4 letras que aparecem no aparelho do host. O link continua valendo.",
+      "🙋 Cada um cria o seu jogador: quem entra escolhe nome, cor, emoji, zoeira e idade no próprio celular e pede pra entrar.",
+      "✅ O host aceita: cada pedido aparece no aparelho do host, que aceita ou recusa. Quem já foi aceito volta sem pedir de novo.",
+      "🎙️ Só o Mestre abre as dicas: quem está na vez fala o número, e o Mestre abre. Todo mundo vê a dica e quem pediu.",
+      "🤖 C.A.O.S. em todos os celulares: as falas dele aparecem no celular de cada um, e o que é só pra uma pessoa aparece só no celular dela.",
+    ],
+    qol: [
+      "💡 Botão da sala mais visível: o Vai jogar online da tela dos jogadores ganhou destaque.",
+      "📖 Manual do online: o passo a passo segue o caminho novo, com código, pedido e aceite.",
+    ],
+  },
+  {
     v: "Beta 1.7.9.5",
     data: "10/10/2026 · 00:15",
     nome: "Rooms and Network Update · Carta do Mestre",

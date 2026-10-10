@@ -315,7 +315,7 @@ async function testarNavegador(arquivo) {
     // tutorial aberto sozinho (aparelho novo: "Como se ganha" no começo da partida) → fecha
     await page.locator("#tutClose:visible").click({ timeout: 1000 }).catch(() => {});
     for (let i = 0; i < 4; i++) {
-      const b = page.locator(".caos-modal-ov button:visible, #novOk:visible, #paNao:visible").first();
+      const b = page.locator(".caos-modal-ov button:visible, #novOk:visible, #paNao:visible, #redePerguntaNao:visible").first(); // 1.7.9.6: "Vai jogar online?" → Não
       if (!(await b.count())) break;
       await b.click({ timeout: 1000 }).catch(() => {});
       await page.waitForTimeout(300);
@@ -330,6 +330,7 @@ async function testarNavegador(arquivo) {
     await clica("#fmtConfirmBtn", "formato ok");
     await clica("#modeBtnClassico", "modo");
     await clica("#modeConfirmBtn", "modo ok");
+    await fechaModais(); // 1.7.9.6: depois do modo vem "Vai jogar online?"
     await clica("#startGameBtn", "vamos jogar");
     await fechaModais();
     for (const nome of ["Ana", "Beto"]) {

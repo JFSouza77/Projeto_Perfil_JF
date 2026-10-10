@@ -48,8 +48,8 @@
 const REDE_PROTOCOLO = 1;
 const REDE_MAX_LETRAS = 640 * 1024; // só o pacote de recuperação chega perto disso
 const REDE_MAX_NORMAL = 64 * 1024; // o resto das mensagens
-const REDE_DO_CONVIDADO = ["oi", "cmd", "ping", "tchau", "voto"];
-const REDE_DO_HOST = ["bemvindo", "escolha", "recusa", "retrato", "segredo", "resp", "pong", "painel", "recuperacao"];
+const REDE_DO_CONVIDADO = ["oi", "cmd", "ping", "tchau", "voto", "pedido"];
+const REDE_DO_HOST = ["bemvindo", "escolha", "recusa", "retrato", "segredo", "resp", "pong", "painel", "recuperacao", "aguarde", "fala"];
 const REDE_HOST_SUMIU_MS = 15000; // sem notícia do host há mais que isso: o sucessor assume
 const REDE_ONLINE_MS = 15000; // sem notícia há mais que isso: o convidado conta como fora
 const REDE_LETRAS_SALA = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // sem I e O (não confundem com 1 e 0)
@@ -467,6 +467,12 @@ function redeValidar(bruto) {
     ping: () => typeof m.t0 === "number" && isFinite(m.t0),
     tchau: () => true,
     voto: () => txt(m.votacao, 40) && typeof m.sim === "boolean",
+    // 1.7.9.6: o convidado cria o próprio jogador (o host aprova e cadastra)
+    pedido: () =>
+      m.perfil && typeof m.perfil === "object" && txt(m.perfil.nome, 15) && typeof m.chave === "string" && /^[a-z0-9]{12,32}$/.test(m.chave) &&
+      ["cor", "avatar", "humor", "idade", "faixa"].every((k) => m.perfil[k] === undefined || m.perfil[k] === null || txt(m.perfil[k], 20)),
+    aguarde: () => true,
+    fala: () => txt(m.texto, 240) && (m.quem === undefined || (Array.isArray(m.quem) && m.quem.length <= 8 && m.quem.every(jogadorIdValido))),
     bemvindo: () => jogadorIdValido(m.jogadorId),
     escolha: () => Array.isArray(m.lugares) && m.lugares.length <= 12 && m.lugares.every((l) => l && jogadorIdValido(l.id) && typeof l.nome === "string"),
     recusa: () => txt(m.motivo, 40) && (m.versao === undefined || txt(m.versao, 20)),
@@ -474,7 +480,9 @@ function redeValidar(bruto) {
     segredo: () => Number.isInteger(m.revisao) && (m.resposta === null || txt(m.resposta, 120)),
     resp: () => typeof m.commandId === "string" && typeof m.ok === "boolean",
     pong: () => typeof m.t0 === "number" && typeof m.th === "number" && isFinite(m.th),
-    recuperacao: () => txt(m.estado, REDE_MAX_LETRAS) && Number.isInteger(m.revisao) && (m.matchId === null || txt(m.matchId, 64)),
+    recuperacao: () =>
+      txt(m.estado, REDE_MAX_LETRAS) && Number.isInteger(m.revisao) && (m.matchId === null || txt(m.matchId, 64)) &&
+      (m.aprovados === undefined || (Array.isArray(m.aprovados) && m.aprovados.length <= 40 && m.aprovados.every((c) => txt(c, 32)))),
     painel: () =>
       Number.isInteger(m.revisao) && Array.isArray(m.opcoes) && m.opcoes.length <= 40 &&
       m.opcoes.every((o) => o && typeof o.a === "string" && !!ACOES[o.a] && Array.isArray(o.d) && o.d.length <= 4 && o.d.every(redeEhPrimitivo) && txt(o.t, 80) && (o.c === undefined || txt(o.c, 12)) && (o.g === undefined || txt(o.g, 60))),
@@ -494,7 +502,7 @@ function redeValidar(bruto) {
 function redeHostGuardar() {
   try {
     if (rede && rede.papel === "host")
-      JFStore.setItem(REDE_HOST_KEY, JSON.stringify({ sala: rede.sala, modo: rede.modo, eu: rede.hostEu || null, quando: Date.now() }));
+      JFStore.setItem(REDE_HOST_KEY, JSON.stringify({ sala: rede.sala, modo: rede.modo, eu: rede.hostEu || null, quando: Date.now(), aprovados: Object.keys(rede.aprovados || {}).slice(-40) }));
   } catch (e) {}
 }
 // Abre a sala. modo "internet" (padrão, PeerJS) ou "local" (ensaio em abas). salaFixa: reabrir
@@ -527,6 +535,8 @@ function redeAbrirSalaCom(fab, modo, salaFixa) {
     recQuando: 0,
     batida: null,
     esperando: {}, // 1.7.9.4: sessões na tela "Quem é você?" → a última lista mandada (a sala abre antes do cadastro)
+    pedidos: {}, // 1.7.9.6: sessão → pedido de entrada esperando o host aprovar
+    aprovados: {}, // 1.7.9.6: aparelhos (chave) que o host já aprovou: voltam sem pedir de novo
   };
   redeTelaAcesa(true);
   transporte.aoReceber((bruto) => {
@@ -587,6 +597,7 @@ function redeHostRetomar() {
     const sala = redeAbrirSala(modo, s.sala);
     if (!sala) return;
     if (jogadorIdValido(s.eu) && jogadorIdxPorId(s.eu) >= 0) rede.hostEu = s.eu;
+    (Array.isArray(s.aprovados) ? s.aprovados : []).forEach((c) => typeof c === "string" && (rede.aprovados[c] = true));
     redeHostGuardar();
     if (s.assumiu) {
       // o C.A.O.S. anuncia a troca (gerador hostCaiu, pronto desde a 1.7.5.1)
@@ -719,8 +730,23 @@ function redeLugaresLivres() {
 // (jogador cadastrado, removido, lugar ocupado). Lugar de jogador que saiu do cadastro volta pra escolha.
 function redeMandarEscolha(sessao) {
   const lugares = redeLugaresLivres();
-  rede.esperando[sessao] = JSON.stringify(lugares);
-  redeEnviar("escolha", { lugares }, sessao);
+  const cadastro = redeOpcoesCadastro();
+  rede.esperando[sessao] = JSON.stringify([lugares, cadastro]);
+  redeEnviar("escolha", { lugares, cadastro }, sessao);
+}
+// 1.7.9.6: o que o convidado pode escolher pra criar o próprio jogador (só antes da partida começar)
+function redeOpcoesCadastro() {
+  if (starterChosen || players.length >= MAX_PLAYERS) return null;
+  const usadas = new Set(players.map((p) => p.color)), usados = new Set(players.map((p) => p.avatar));
+  const equipe = CURRENT_FORMAT === "equipe";
+  return {
+    equipe,
+    cores: equipe ? [] : PLAYER_COLORS.filter((c) => c !== "RGB" && !GRADIENTS[c] && !usadas.has(c)),
+    avatares: avatarsForMode().filter((a) => !usados.has(a)),
+    humores: humorOptionsForMode().concat("caos").map((id) => ({ id, nome: (HUMOR_OPTIONS.find((o) => o.id === id) || {}).label || id })),
+    humorPadrao: CURRENT_MODE === "junior" ? "familia" : "normal",
+    idades: equipe ? AGE_BRACKETS.map((b) => ({ id: b.id, nome: b.label })) : IDADE_OPCOES.map((o) => ({ id: o.id, nome: o.label })),
+  };
 }
 function redeHostEsperando() {
   if (!rede || rede.papel !== "host") return;
@@ -747,7 +773,7 @@ function redeHostEsperando() {
     delete rede.paineis[p.id];
     redeEnviar("bemvindo", { jogadorId: p.id, matchId: matchId || null, volta: true }, ses);
   });
-  const lista = JSON.stringify(redeLugaresLivres());
+  const lista = JSON.stringify([redeLugaresLivres(), redeOpcoesCadastro()]);
   Object.keys(rede.esperando).forEach((ses) => rede.esperando[ses] !== lista && redeMandarEscolha(ses));
 }
 // Resumo da sala no cadastro (botão "Vai jogar online?").
@@ -784,8 +810,10 @@ function redeHostReceber(m) {
   if (m.t === "tchau") {
     if (a) rede.assentos[a].visto = 0;
     delete rede.esperando[m.de];
+    if (rede.pedidos[m.de]) delete rede.pedidos[m.de], redePedidosPintar();
     return;
   }
+  if (m.t === "pedido") return redeHostPedidoPerfil(m);
   if (m.t === "cmd") return redeHostComando(m, a);
   if (m.t === "voto") return a && redeVotar(a, m.votacao, m.sim);
 }
@@ -799,6 +827,13 @@ function redeHostOi(m) {
   const atual = rede.assentos[pedido];
   // o mesmo aparelho voltando (mesma chave) recupera o lugar na hora; outro só depois que ele cair
   if (atual && atual.sessao !== m.de && redeOnline(atual) && atual.chave !== m.chave) return redeEnviar("recusa", { motivo: "lugar_ocupado" }, m.de);
+  // 1.7.9.6 (pedido do JF): aparelho novo só entra com o host aprovando; quem volta (mesma chave) entra direto
+  if (!rede.aprovados[m.chave] && !(atual && atual.chave === m.chave)) return redePedidoNovo(m.de, { tipo: "lugar", jogadorId: pedido, chave: m.chave });
+  redeAssentar(m.de, pedido, m.chave);
+}
+function redeAssentar(ses, pedido, chave) {
+  const m = { de: ses, chave };
+  const atual = rede.assentos[pedido];
   // a mesma sessão não segura dois lugares
   const antigo = redeAssentoDaSessao(m.de);
   if (antigo && antigo !== pedido) delete rede.assentos[antigo];
@@ -818,6 +853,196 @@ function redeHostOi(m) {
   const p = document.getElementById("redePainel");
   if (p && typeof p._pintar === "function") p._pintar();
 }
+/* --- 1.7.9.6 · Falas do C.A.O.S. nos celulares (relato do JF: ele falou com a Anne pelo aparelho do host) ---
+   Toda fala que passa pelo canal (11-espinha) vai pra sala, com quem ela cita. Fala particular (ex.: o aviso
+   de tempo extra do Mestre) vai só pro aparelho da pessoa e não aparece no host se ela está em outro aparelho. */
+function redeHostFala(f) {
+  if (!rede || rede.papel !== "host" || !f || !f.texto) return;
+  const ids = (f.para || []).map((d) => d.id).filter((id) => jogadorIdValido(id));
+  if (f.privado) {
+    ids.forEach((id) => {
+      const a = rede.assentos[id];
+      if (a && redeOnline(a) && id !== rede.hostEu) redeEnviar("fala", { texto: f.texto, quem: [id] }, a.sessao);
+    });
+    return;
+  }
+  redeEnviar("fala", ids.length ? { texto: f.texto, quem: ids.slice(0, 8) } : { texto: f.texto });
+}
+// A fala particular é só de quem está em outro aparelho? Então não aparece aqui no host.
+function redeFalaSoLonge(f) {
+  if (!rede || rede.papel !== "host" || !f || !f.privado) return false;
+  const ids = (f.para || []).map((d) => d.id).filter(Boolean);
+  return ids.length > 0 && ids.every((id) => id !== rede.hostEu && redeOnline(rede.assentos[id]));
+}
+// No celular do convidado: balão da fala (e a voz, quando a fala é com ele).
+function redeFalaMostrar(m) {
+  rede.falas = (rede.falas || []).concat({ texto: m.texto, minha: Array.isArray(m.quem) && m.quem.includes(rede.eu) }).slice(-3);
+  if (!rede.falaAtiva) redeFalaProxima();
+  else if (rede.falas.length > 1) {
+    // fila crescendo: encurta a fala da tela
+    clearTimeout(rede.falaTimer);
+    rede.falaTimer = setTimeout(redeFalaProxima, 1500);
+  }
+}
+function redeFalaProxima() {
+  const f = rede && rede.falas && rede.falas.shift();
+  let el = document.getElementById("redeFala");
+  if (!f) {
+    if (el) el.remove();
+    if (rede) rede.falaAtiva = false;
+    return;
+  }
+  rede.falaAtiva = true;
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "redeFala";
+    el.className = "rede-fala";
+    el.setAttribute("aria-live", "polite");
+    el.addEventListener("click", () => redeFalaProxima());
+    document.body.appendChild(el);
+  }
+  el.classList.toggle("minha", f.minha);
+  el.innerHTML = `<b>🤖 C.A.O.S.</b> ${escapeHtml(f.texto)}`;
+  if (f.minha)
+    try {
+      caosSpeak("[C.A.O.S.] " + f.texto, "__normal");
+    } catch (e) {}
+  clearTimeout(rede.falaTimer);
+  // com fala esperando na fila, esta fica menos tempo (o celular não fica atrasado em relação à mesa)
+  const ms = Math.min(9000, Math.max(3500, f.texto.length * 70));
+  rede.falaTimer = setTimeout(redeFalaProxima, rede.falas.length ? Math.min(ms, 2500) : ms);
+}
+/* --- 1.7.9.6 · Pedidos de entrada (pedido do JF: o host autoriza; cada um cria o próprio jogador) --- */
+function redePerfilProblema(perfil, ignorarSessao) {
+  const nome = String((perfil && perfil.nome) || "").trim();
+  if (starterChosen) return "partida_comecou";
+  const pendentes = Object.keys(rede.pedidos).filter((s) => s !== ignorarSessao && rede.pedidos[s].tipo === "perfil");
+  if (players.length + pendentes.length >= MAX_PLAYERS) return "sala_cheia";
+  if (nome.length < 2 || nome.length > 15) return "nome_curto";
+  const igual = (n) => String(n).toLowerCase() === nome.toLowerCase();
+  if (players.some((p) => igual(p.name)) || pendentes.some((s) => igual(rede.pedidos[s].perfil.nome))) return "nome_em_uso";
+  return "";
+}
+function redeHostPedidoPerfil(m) {
+  const prob = redePerfilProblema(m.perfil, m.de);
+  if (prob) return redeEnviar("recusa", { motivo: prob }, m.de);
+  const pedido = { tipo: "perfil", perfil: { ...m.perfil, nome: String(m.perfil.nome).trim() }, chave: m.chave };
+  if (rede.aprovados[m.chave]) return redeAprovarPedido(m.de, true, pedido);
+  redePedidoNovo(m.de, pedido);
+}
+function redePedidoNovo(ses, pedido) {
+  rede.pedidos[ses] = { ...pedido, quando: Date.now() };
+  delete rede.esperando[ses];
+  redeEnviar("aguarde", {}, ses);
+  redePedidosPintar();
+  redeCadastroInfo();
+  try {
+    vibrar("erro"); // chama a atenção de quem está com o aparelho do host
+  } catch (e) {}
+}
+// O host aceita (ou recusa) a entrada. O perfil vira jogador do cadastro, com as mesmas travas do cadastro daqui.
+function redeAprovarPedido(ses, sim, pedidoDireto) {
+  if (!rede || rede.papel !== "host") return false;
+  const p = pedidoDireto || rede.pedidos[ses];
+  delete rede.pedidos[ses];
+  redePedidosPintar();
+  if (!p) return false;
+  if (!sim) {
+    redeEnviar("recusa", { motivo: "recusado" }, ses);
+    redeCadastroInfo();
+    return true;
+  }
+  rede.aprovados[p.chave] = true;
+  redeHostGuardar();
+  let pid = p.jogadorId;
+  if (p.tipo === "perfil") {
+    const prob = redePerfilProblema(p.perfil, ses);
+    if (prob) return redeEnviar("recusa", { motivo: prob }, ses), false;
+    pid = redeHostAdicionarPerfil(p.perfil);
+  } else if (jogadorIdxPorId(pid) < 0 || pid === rede.hostEu || redeOnline(rede.assentos[pid])) {
+    return redeMandarEscolha(ses), false;
+  }
+  if (!pid) return false;
+  redeAssentar(ses, pid, p.chave);
+  return true;
+}
+function redeAprovarTodos() {
+  Object.keys((rede && rede.pedidos) || {}).forEach((ses) => redeAprovarPedido(ses, true));
+}
+function redeHostAdicionarPerfil(perfil) {
+  const name = String(perfil.nome).trim().slice(0, 15);
+  undoTeamFormation();
+  const isEquipe = CURRENT_FORMAT === "equipe";
+  const usadas = new Set(players.map((p) => p.color)), usados = new Set(players.map((p) => p.avatar));
+  const cores = PLAYER_COLORS.filter((c) => c !== "RGB" && !GRADIENTS[c] && !usadas.has(c));
+  const avatares = avatarsForMode().filter((a) => !usados.has(a));
+  const cor = cores.includes(perfil.cor) ? perfil.cor : cores[0] || PLAYER_COLORS[0];
+  const avatar = avatares.includes(perfil.avatar) ? perfil.avatar : avatares[0] || "😀";
+  const humores = humorOptionsForMode().concat("caos");
+  const humor = humores.includes(perfil.humor) ? perfil.humor : CURRENT_MODE === "junior" ? "familia" : "normal";
+  const faixa = isEquipe && AGE_BRACKETS.some((b) => b.id === perfil.faixa) ? perfil.faixa : null;
+  const p = {
+    id: jogadorIdNovo(),
+    name,
+    score: 0,
+    position: 0,
+    isBlocked: false,
+    color: isEquipe ? "#888888" : sanitizePlayerColor(name, cor),
+    avatar: sanitizePlayerAvatar(name, avatar),
+    humor: humor === "caos" ? caosSortearHumor() : humor,
+    humorCaos: humor === "caos" || void 0,
+    ageBracket: faixa,
+    idade: isEquipe ? (faixa ? (faixa === "crianca" ? "menor" : "maior") : null) : IDADE_OPCOES.some((o) => o.id === perfil.idade) ? perfil.idade : null,
+    team: null,
+    nickMs: null,
+    aparelho: "celular",
+  };
+  players.push(p);
+  try {
+    caosMemCadastro(p);
+  } catch (e) {}
+  renderScoreboard();
+  renderColorPicker();
+  renderAvatarPicker();
+  updateDrawAvailability();
+  saveGameState();
+  redeHostCadastroMudou();
+  try {
+    caosWelcomePlayer(p);
+  } catch (e) {}
+  return p.id;
+}
+const REDE_MOTIVO_TXT = {
+  partida_comecou: "A partida já começou: escolha um nome da lista.",
+  sala_cheia: "A sala já está cheia.",
+  nome_curto: "O nome precisa ter de 2 a 15 letras.",
+  nome_em_uso: "Já tem alguém com esse nome. Escolha outro.",
+};
+// Janelinha do host com os pedidos de entrada.
+function redePedidosPintar() {
+  let box = document.getElementById("redePedidos");
+  const lista = rede && rede.papel === "host" ? Object.keys(rede.pedidos) : [];
+  if (!lista.length) {
+    if (box) box.remove();
+    return;
+  }
+  if (!box) {
+    box = document.createElement("div");
+    box.id = "redePedidos";
+    box.className = "rede-pedidos";
+    box.setAttribute("role", "dialog");
+    document.body.appendChild(box);
+  }
+  const quem = (p) =>
+    p.tipo === "perfil" ? `${escapeHtml(p.perfil.avatar || "🙂")} <b>${escapeHtml(p.perfil.nome)}</b> quer entrar` : `Alguém quer entrar como <b>${escapeHtml((jogadorPorId(p.jogadorId) || {}).name || "?")}</b>`;
+  box.innerHTML =
+    `<div class="rede-pedidos-tit">🙋 Pedido${lista.length > 1 ? "s" : ""} pra entrar na sala ${rede.sala}</div>` +
+    lista.map((ses) => `<div class="rede-pedido"><span>${quem(rede.pedidos[ses])}</span><span><button type="button" class="rede-btn rede-ok" data-sim="1" data-ses="${ses}">✅ Aceitar</button><button type="button" class="rede-btn rede-nao" data-sim="0" data-ses="${ses}">❌</button></span></div>`).join("") +
+    (lista.length > 1 ? `<button type="button" class="rede-btn rede-ok" id="redeAceitarTodos">✅ Aceitar todos</button>` : "");
+  box.querySelectorAll("[data-ses]").forEach((b) => b.addEventListener("click", () => redeAprovarPedido(b.dataset.ses, b.dataset.sim === "1")));
+  const todos = box.querySelector("#redeAceitarTodos");
+  if (todos) todos.addEventListener("click", redeAprovarTodos);
+}
 // Quem pode mandar o quê (o host confere antes da porta de sempre).
 const REDE_SO_MESTRE = [
   "sacarCarta", "virarCarta", "roletaCategoria", "acertou", "errou", "palpiteAcertou", "palpiteErrou", "especialSeguir",
@@ -832,7 +1057,7 @@ function redePodeComandar(acao, jid) {
   if (REDE_QUALQUER_UM.includes(acao)) return true;
   const ehMestre = jogadorIdDe(mestreIndex) === jid;
   if (REDE_SO_MESTRE.includes(acao)) return ehMestre;
-  if (acao === "escolherDica") return ehMestre || jogadorIdDe(responderIndex) === jid;
+  if (acao === "escolherDica") return ehMestre; // 1.7.9.6 (regra do JF): só o Mestre abre as dicas; quem está na vez fala o número
   if (acao === "bonusAdversario") {
     const e = pendingBonusQueue && pendingBonusQueue[0];
     if (!e) return false;
@@ -960,7 +1185,7 @@ function redeHostRecuperacao(forcar) {
     estado = JFStore.getItem("perfil200_state");
   } catch (e) {}
   if (!estado) return;
-  if (redeEnviar("recuperacao", { estado, revisao: partidaRevisao, matchId: matchId || null }, a.sessao)) {
+  if (redeEnviar("recuperacao", { estado, revisao: partidaRevisao, matchId: matchId || null, aprovados: Object.keys(rede.aprovados || {}).slice(-40) }, a.sessao)) {
     rede.recEnviada = chave;
     rede.recQuando = Date.now();
   }
@@ -1043,13 +1268,8 @@ function redeHostVista() {
   const vez = !!eu && jogadorIdDe(responderIndex) === eu.id;
   let h = `<div class="rede-eu">${eu ? `Neste aparelho: <b>${nome(eu)}</b>${vez ? " · 👉 sua vez" : ""}` : "Este aparelho é a mesa"}</div>`;
   h += `<div class="rede-segredo">🔒 A carta e a resposta estão no aparelho de <b>${mestre ? nome(mestre) : "quem é o Mestre"}</b> (Mestre da vez).</div>`;
-  const c = r.carta;
-  if (vez && cardState === "revealed" && c && pendingIndex === null && !pausedAt) {
-    const abertas = new Set(c.abertas.map((d) => d.pos));
-    const nums = [];
-    for (let i = 0; i < c.totalDicas; i++) if (!abertas.has(i)) nums.push(`<button type="button" class="rede-btn" data-dica="${i}">${i + 1}</button>`);
-    if (nums.length) h += `<div class="rede-rot">Escolha uma dica:</div><div class="rede-nums">${nums.join("")}</div>`;
-  }
+  if (vez && cardState === "revealed" && pendingIndex === null && !pausedAt)
+    h += `<div class="rede-rot">👉 Sua vez: fale um número de dica pro Mestre abrir.</div>`; // 1.7.9.6: só o Mestre abre
   const ops = eu ? redeOpcoes(eu.id).filter((o) => o.a !== "pausar") : [];
   if (ops.length) h += `<div class="rede-acoes">${ops.map((o, i) => `<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`).join("")}</div>`;
   h += `<div class="rede-acoes rede-mais"><button type="button" class="rede-btn" id="redeVistaPausar">⏸️ Pausar</button><button type="button" class="rede-btn" id="redeVistaSala">🌐 Sala ${rede.sala}</button></div>`;
@@ -1261,10 +1481,22 @@ function redeConvidadoReceber(m) {
   if (m.t === "escolha") {
     rede.estado = "escolhendo";
     rede.lugares = m.lugares;
+    rede.cadastro = m.cadastro && typeof m.cadastro === "object" ? m.cadastro : null;
     return avisar();
   }
+  if (m.t === "aguarde") {
+    rede.estado = "aguardando";
+    return avisar();
+  }
+  if (m.t === "fala") return redeFalaMostrar(m);
   if (m.t === "recusa") {
-    if (["lugar_ocupado", "sem_partida", "versao_diferente"].includes(m.motivo)) {
+    // 1.7.9.6: problema no jogador que eu criei: volto pro formulário com o aviso
+    if (REDE_MOTIVO_TXT[m.motivo]) {
+      rede.estado = "escolhendo";
+      rede.erroCadastro = REDE_MOTIVO_TXT[m.motivo];
+      return avisar();
+    }
+    if (["lugar_ocupado", "sem_partida", "versao_diferente", "recusado"].includes(m.motivo)) {
       rede.estado = "recusado";
       rede.motivo = m.motivo;
       rede.versaoHost = m.versao || null;
@@ -1299,7 +1531,7 @@ function redeConvidadoReceber(m) {
   }
   if (m.t === "recuperacao") {
     // só guarda se o retrato mais recente diz que eu sou o sucessor (mensagem fora de ordem não fica)
-    if (rede.retrato && rede.retrato.sucessor === rede.eu) rede.recuperacao = { estado: m.estado, revisao: m.revisao, matchId: m.matchId };
+    if (rede.retrato && rede.retrato.sucessor === rede.eu) rede.recuperacao = { estado: m.estado, revisao: m.revisao, matchId: m.matchId, aprovados: m.aprovados || [] };
     return;
   }
   if (m.t === "segredo") {
@@ -1324,7 +1556,7 @@ function redeAssumir() {
   } catch (e) {}
   try {
     JFStore.setItem("perfil200_state", rede.recuperacao.estado);
-    JFStore.setItem(REDE_HOST_KEY, JSON.stringify({ sala, modo, eu: rede.eu, quando: Date.now(), assumiu: true, antigo }));
+    JFStore.setItem(REDE_HOST_KEY, JSON.stringify({ sala, modo, eu: rede.eu, quando: Date.now(), assumiu: true, antigo, aprovados: rede.recuperacao.aprovados || [] }));
   } catch (e) {}
   const ir = () => {
     try {
@@ -1437,6 +1669,7 @@ function redeSairDaSala() {
   location.reload();
 }
 const REDE_MOTIVOS = {
+  recusado: "O host não aceitou a entrada.",
   lugar_ocupado: "Esse jogador já está na sala em outro aparelho.",
   sem_partida: "O host ainda não cadastrou os jogadores. Espere e tente de novo.",
   versao_diferente: "Seu jogo está numa versão diferente da do host.",
@@ -1487,13 +1720,9 @@ function redeConvidadoDesenhar() {
     conexao = `<div class="rede-conexao">🔌 Sem notícia do host…${suc ? ` Se ele não voltar, ${escapeHtml(suc.nome)} assume a sala.` : ""}</div>`;
   }
   const sala = `<div class="rede-sala">🌐 Sala <b>${rede.sala}</b></div>${conexao}`;
-  if (rede.estado === "escolhendo") {
-    const l = rede.lugares
-      .map((p) => `<button type="button" class="rede-lugar" data-id="${escapeHtml(p.id)}">${escapeHtml((p.avatar ? p.avatar + " " : "") + p.nome)}</button>`)
-      .join("");
-    const vazio = "<small>O host ainda está cadastrando os jogadores. Seu nome aparece aqui assim que ele cadastrar.</small>";
-    box.innerHTML = `${sala}<div class="telao-espera">Quem é você?<div class="rede-lugares">${l || vazio}</div></div>${REDE_SAIR}`;
-    box.querySelectorAll(".rede-lugar").forEach((b) => b.addEventListener("click", () => redeEscolherLugar(b.dataset.id)));
+  if (rede.estado === "escolhendo") return redeEscolhaDesenhar(box, sala);
+  if (rede.estado === "aguardando") {
+    box.innerHTML = `${sala}<div class="telao-espera">⏳ Pedido enviado<br><small>Esperando o host aceitar a sua entrada…</small></div>${REDE_SAIR}`;
     return;
   }
   if (rede.estado === "recusado") {
@@ -1585,8 +1814,9 @@ function redeMestreCartaMontar(box) {
     const cor = (GEM_INFO[cat] || {}).color || "#e94560";
     const resp = rede.segredo && rede.segredo.resposta ? escapeHtml(rede.segredo.resposta) : "…";
     const livre = !c.abertas.length || Date.now() < (rede.verRespostaAte || 0);
+    const quem = (d) => (d.pedidaPor ? ` <span class="picked-by">(pedida por ${nome(d.pedidaPor)})</span>` : "");
     const dicas = c.abertas
-      .map((d) => (d.tipo === "special" ? `<li class="special">${d.pos + 1}. ⭐ ${escapeHtml(d.texto)}</li>` : `<li><span class="clue-num">${d.pos + 1}.</span>${escapeHtml(d.texto)}</li>`))
+      .map((d) => (d.tipo === "special" ? `<li class="special">${d.pos + 1}. ⭐ ${escapeHtml(d.texto)}${quem(d)}</li>` : `<li><span class="clue-num">${d.pos + 1}.</span>${escapeHtml(d.texto)}${quem(d)}</li>`))
       .join("");
     let controles = "";
     const pend = c.pendente === null || c.pendente === undefined ? null : c.abertas.find((d) => d.pos === c.pendente);
@@ -1599,7 +1829,7 @@ function redeMestreCartaMontar(box) {
       const abertas = new Set(c.abertas.map((d) => d.pos));
       let grade = "";
       for (let i = 0; i < c.totalDicas; i++) grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : ""}>${i + 1}</button>`;
-      controles = `<div class="pick-label">${nome(r.vezId)}, escolha uma dica (${c.totalDicas - c.abertas.length} restantes)</div><div class="number-grid">${grade}</div>`;
+      controles = `<div class="pick-label">${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)</div><div class="number-grid">${grade}</div>`;
     }
     h = `<div class="card rede-carta-mestre" style="--card-glow:${cor}">
       <div class="answer-header cat-neon" style="--cat:${cor};"><span class="cat-selo">${CAT_SELO_ICONE[cat] || "🃏"} ${escapeHtml((GEM_INFO[cat] || {}).name || cat)}</span>Diga aos jogadores: "Eu sou ${formatLabelUppercase(CATEGORY_LABELS[cat] || escapeHtml(cat))}."</div>
@@ -1633,6 +1863,75 @@ function redeMestreCartaMontar(box) {
     });
   return true;
 }
+/* --- 1.7.9.6 · Entrada na sala: criar o próprio jogador (antes da partida) ou escolher um nome da lista --- */
+function redeEscolhaDesenhar(box, sala) {
+  const focoNome = document.activeElement && document.activeElement.id === "redeNome";
+  const cad = rede.cadastro, r = (rede.rascunho = rede.rascunho || {});
+  const l = (rede.lugares || [])
+    .map((p) => `<button type="button" class="rede-lugar" data-id="${escapeHtml(p.id)}">${escapeHtml((p.avatar ? p.avatar + " " : "") + p.nome)}</button>`)
+    .join("");
+  let form = "";
+  if (cad) {
+    if (r.cor && !cad.cores.includes(r.cor)) r.cor = null;
+    if (r.avatar && !cad.avatares.includes(r.avatar)) r.avatar = null;
+    if (!r.humor) r.humor = cad.humorPadrao;
+    const sel = (on) => (on ? " sel" : "");
+    form = `<div class="rede-form">
+      <div class="rede-form-tit">🙋 Crie o seu jogador</div>
+      <input type="text" id="redeNome" maxlength="15" placeholder="Seu nome" aria-label="Seu nome" value="${escapeHtml(r.nome || "")}">
+      ${cad.cores.length ? `<div class="rede-rot">🎨 Cor</div><div class="rede-cores">${cad.cores.map((c) => `<button type="button" class="rede-cor${sel(r.cor === c)}" data-cor="${escapeHtml(c)}" style="background:${escapeHtml(c)}" aria-label="Cor ${escapeHtml(c)}"></button>`).join("")}</div>` : ""}
+      <div class="rede-rot">😀 Emoji</div><div class="rede-avatares">${cad.avatares.slice(0, 48).map((a) => `<button type="button" class="rede-av${sel(r.avatar === a)}" data-av="${escapeHtml(a)}">${escapeHtml(a)}</button>`).join("")}</div>
+      <div class="rede-rot">🎭 Zoeira do C.A.O.S. com você</div><div class="rede-acoes">${cad.humores.map((h) => `<button type="button" class="rede-btn rede-chip${sel(r.humor === h.id)}" data-humor="${escapeHtml(h.id)}">${escapeHtml(h.nome)}</button>`).join("")}</div>
+      <div class="rede-rot">${cad.equipe ? "Faixa etária" : "Idade (opcional)"}</div><div class="rede-acoes">${cad.idades.map((o) => `<button type="button" class="rede-btn rede-chip${sel(r.idade === o.id)}" data-idade="${escapeHtml(o.id)}">${escapeHtml(o.nome)}</button>`).join("")}</div>
+      ${rede.erroCadastro ? `<div class="rede-aviso">${escapeHtml(rede.erroCadastro)}</div>` : ""}
+      <button type="button" class="btn-start btn-neo neo-solid neo-still" id="redePedir" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">🙋 Pedir pra entrar</button>
+    </div>`;
+  }
+  const lista = l ? `<div class="rede-rot">${cad ? "Ou, se o host já cadastrou você:" : "Quem é você?"}</div><div class="rede-lugares">${l}</div>` : "";
+  const vazio = !cad && !l ? "<small>O host ainda está montando a partida. Espere um pouquinho.</small>" : "";
+  box.innerHTML = `${sala}<div class="telao-espera rede-entrada">${cad ? "" : "Quem é você?"}${form}${lista}${vazio}</div>${REDE_SAIR}`;
+  box.querySelectorAll(".rede-lugar").forEach((b) => b.addEventListener("click", () => redeEscolherLugar(b.dataset.id)));
+  const nome = box.querySelector("#redeNome");
+  if (nome) {
+    nome.addEventListener("input", () => (r.nome = nome.value));
+    if (focoNome) {
+      nome.focus();
+      nome.setSelectionRange(nome.value.length, nome.value.length);
+    }
+  }
+  const marcar = (attr, campo) =>
+    box.querySelectorAll(`[data-${attr}]`).forEach((b) =>
+      b.addEventListener("click", () => {
+        r[campo] = r[campo] === b.dataset[attr] && campo === "idade" ? null : b.dataset[attr];
+        redeEscolhaDesenhar(box, sala);
+      }),
+    );
+  marcar("cor", "cor");
+  marcar("av", "avatar");
+  marcar("humor", "humor");
+  marcar("idade", "idade");
+  const pedir = box.querySelector("#redePedir");
+  if (pedir) pedir.addEventListener("click", () => redePedirEntrada());
+}
+function redePedirEntrada(perfil) {
+  if (!rede || rede.papel !== "convidado") return false;
+  const r = perfil || rede.rascunho || {};
+  const nome = String(r.nome || "").trim();
+  if (nome.length < 2 || nome.length > 15) {
+    rede.erroCadastro = REDE_MOTIVO_TXT.nome_curto;
+    redeConvidadoDesenhar();
+    return false;
+  }
+  rede.erroCadastro = null;
+  const cad = rede.cadastro || {};
+  const p = { nome, cor: r.cor || null, avatar: r.avatar || null, humor: r.humor || null };
+  if (cad.equipe) p.faixa = r.idade || null;
+  else p.idade = r.idade || null;
+  redeEnviar("pedido", { perfil: p, chave: rede.chave });
+  rede.estado = "aguardando";
+  redeConvidadoDesenhar();
+  return true;
+}
 function redeBotoesHtml() {
   const r = rede.retrato, eu = r.jogadores.find((j) => j.id === rede.eu);
   const papel = redeMeuPapel();
@@ -1655,10 +1954,12 @@ function redeBotoesHtml() {
     const quem = (r.jogadores.find((j) => j.id === v.pedidoPor) || { nome: "O Mestre" }).nome;
     h += `<div class="rede-votacao">🗳️ ${escapeHtml(quem)} quer ${v.tipo === "descartar" ? "descartar" : "desistir de"} esta carta. <b>${v.sim}</b> sim · <b>${v.nao}</b> não · <b id="redeVotoSeg">…</b> s${ja ? "<div><small>Seu voto foi.</small></div>" : `<div class="rede-acoes"><button type="button" class="rede-btn rede-ok" data-voto="1">👍 Sim</button><button type="button" class="rede-btn rede-nao" data-voto="0">👎 Não</button></div>`}</div>`;
   }
+  if (papel.vez && !papel.mestre && r.estadoCarta === "revealed" && r.carta && (r.carta.pendente === null || r.carta.pendente === undefined))
+    h += `<div class="rede-rot">👉 Sua vez: fale um número de dica pro Mestre abrir.</div>`;
   if (papel.mestre && rede.segredo && rede.segredo.resposta)
     h += `<div class="rede-segredo">🔒 Só você vê: <b>${escapeHtml(rede.segredo.resposta)}</b></div>`;
   const c = r.carta;
-  if ((papel.vez || papel.mestre) && r.estadoCarta === "revealed" && c && (c.pendente === null || c.pendente === undefined) && !(r.relogio && r.relogio.pausado)) {
+  if (papel.mestre && r.estadoCarta === "revealed" && c && (c.pendente === null || c.pendente === undefined) && !(r.relogio && r.relogio.pausado)) {
     const abertas = new Set(c.abertas.map((d) => d.pos));
     const nums = [];
     for (let i = 0; i < c.totalDicas; i++) if (!abertas.has(i)) nums.push(`<button type="button" class="rede-btn" data-dica="${i}">${i + 1}</button>`);
@@ -1694,6 +1995,66 @@ const REDE_ESTADO_HOST = {
   aberta: "🟢 Sala aberta",
   erro: "🔴 Não deu pra abrir a sala pela internet",
 };
+/* --- 1.7.9.6 · O caminho do online (pedido do JF): Jogar → formato → modo → "Vai jogar online?" ---
+   Só pergunta depois de um toque de verdade (escolher o modo na tela), sem sala aberta e sem ninguém
+   cadastrado ainda. Quem vai entrar usa o botão 🌐 Jogar online da tela inicial e digita o código. */
+function redePerguntarSalaTalvez() {
+  try {
+    if (rede || redeSalaDoEndereco() || players.length || starterChosen || !redeTemInternet()) return;
+    if (!(navigator.userActivation && navigator.userActivation.isActive)) return;
+  } catch (e) {
+    return;
+  }
+  setTimeout(redePerguntarSala, 450);
+}
+function redePerguntarSala() {
+  if (rede || document.getElementById("redePergunta")) return;
+  const ov = document.createElement("div");
+  ov.id = "redePergunta";
+  ov.className = "jf-modal-bg";
+  ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Vai jogar online?</h3><p>Abrindo a sala, este aparelho vira o <b>host</b> da partida. Os outros entram com o <b>código da sala</b> (ou pelo link), você aceita a entrada e cada um cria o próprio jogador no celular dele.</p><button type="button" class="btn-start btn-neo neo-solid neo-still" id="redePerguntaSim" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">🌐 Sim, abrir a sala</button><button type="button" class="chip" id="redePerguntaNao" style="margin-top:10px">Não, todo mundo neste aparelho</button></div>`;
+  ov.querySelector("#redePerguntaSim").addEventListener("click", () => {
+    ov.remove();
+    if (redeAbrirSala("internet")) redePainelHost();
+  });
+  ov.querySelector("#redePerguntaNao").addEventListener("click", () => ov.remove());
+  document.body.appendChild(ov);
+}
+// Tela inicial: entrar numa sala digitando o código (o link continua valendo).
+function redeEntrarPorCodigo() {
+  document.getElementById("redeCodigoJanela")?.remove();
+  const ov = document.createElement("div");
+  ov.id = "redeCodigoJanela";
+  ov.className = "jf-modal-bg";
+  ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Jogar online</h3><p><b>Entrar numa sala:</b> digite o código que aparece no aparelho do host.</p><input type="text" id="redeCodigoIn" class="rede-codigo-in" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCD" aria-label="Código da sala"><div class="rede-aviso" id="redeCodigoErro" style="display:none"></div><button type="button" class="btn-start btn-neo neo-solid neo-still" id="redeCodigoIr" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">Entrar na sala</button><p style="margin-top:12px"><small>Pra <b>abrir</b> uma sala: toque em <b>Jogar</b>, escolha o formato e o modo e responda <b>Sim</b> em "Vai jogar online?".</small></p><button type="button" class="chip" id="redeCodigoComo">❓ Como funciona</button><button type="button" class="chip" id="redeCodigoFechar" style="margin-top:10px">Fechar</button></div>`;
+  const inp = ov.querySelector("#redeCodigoIn"), erro = ov.querySelector("#redeCodigoErro");
+  inp.addEventListener("input", () => {
+    inp.value = inp.value.toUpperCase().replace(/[^A-HJ-NP-Z]/g, "").slice(0, 4); // o código não usa I nem O
+  });
+  const ir = () => {
+    const c = inp.value.trim().toUpperCase();
+    if (!redeSalaValida(c)) {
+      erro.textContent = "O código tem 4 letras, como aparece no aparelho do host.";
+      erro.style.display = "";
+      return;
+    }
+    if (!redeTemInternet()) {
+      erro.textContent = "Este aparelho está sem internet.";
+      erro.style.display = "";
+      return;
+    }
+    redeIrPraSala(c, "internet");
+  };
+  ov.querySelector("#redeCodigoIr").addEventListener("click", ir);
+  inp.addEventListener("keydown", (e) => e.key === "Enter" && ir());
+  ov.querySelector("#redeCodigoComo").addEventListener("click", () => {
+    ov.remove();
+    openTutorial("manual:online");
+  });
+  ov.querySelector("#redeCodigoFechar").addEventListener("click", () => ov.remove());
+  document.body.appendChild(ov);
+  setTimeout(() => inp.focus(), 50);
+}
 function redePainelHost() {
   document.getElementById("redePainel")?.remove();
   if (rede && rede.papel === "host") rede.perguntouEu = true;
@@ -1731,10 +2092,10 @@ function redePainelHost() {
         .join("");
       const opcoesEu = `<option value="">ninguém (o aparelho é só a mesa)</option>` + players.map((p) => `<option value="${escapeHtml(p.id)}"${p.id === rede.hostEu ? " selected" : ""}>${escapeHtml(p.name)}</option>`).join("");
       const erro = est === "erro" ? `<p class="rede-aviso">${REDE_ESTADO_HOST.erro}${rede.transporte.erro ? " (" + escapeHtml(rede.transporte.erro) + ")" : ""}. Confira a internet e tente de novo, ou use o ensaio em abas.</p>` : "";
-      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Sala ${rede.sala}</h3><div class="rede-estado">${rede.modo === "local" ? "🧪 Ensaio em abas deste navegador" : REDE_ESTADO_HOST[est] || est}</div>${erro}<p>Link pra entrar:<br><code class="rede-link">${escapeHtml(redeLinkDaSala())}</code></p><button type="button" class="chip" id="redeCopiar">📋 Copiar link</button>${
+      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Sala ${rede.sala}</h3><div class="rede-estado">${rede.modo === "local" ? "🧪 Ensaio em abas deste navegador" : REDE_ESTADO_HOST[est] || est}</div>${erro}<div class="rede-codigo-rot">Código da sala</div><div class="rede-codigo">${rede.sala}</div><p class="rede-rot">Quem vai jogar abre o jogo, toca em <b>🌐 Jogar online</b> e digita o código. Ou mande o link:</p><code class="rede-link">${escapeHtml(redeLinkDaSala())}</code><button type="button" class="chip" id="redeCopiar">📋 Copiar link</button>${
         navigator.share ? '<button type="button" class="chip" id="redeCompartilhar">📤 Compartilhar</button>' : ""
       }<label class="rede-rot-eu">Quem joga neste aparelho? <select id="redeEu">${opcoesEu}</select><small>${
-        players.length ? "Escolha quem está com este aparelho: a carta só aparece aqui quando essa pessoa for o Mestre (ou quando o Mestre não tiver aparelho)." : "Cadastre os jogadores depois de mandar o link: cada um escolhe o próprio nome no celular."
+        players.length ? "Escolha quem está com este aparelho: a carta só aparece aqui quando essa pessoa for o Mestre (ou quando o Mestre não tiver aparelho)." : "Mande o código (ou o link): cada um cria o próprio jogador no celular, e você aceita a entrada aqui. Quem joga neste aparelho você cadastra como sempre."
       }</small></label><ul class="rede-lista">${lugares}</ul>${
         rede.modo === "local" ? '<button type="button" class="chip" id="redeAbrirAba">Abrir uma aba de convidado</button>' : ""
       }<button type="button" class="chip" id="redeComoSala">❓ Como funciona</button><button type="button" class="chip" id="redeFecharSala">Fechar a sala</button><button type="button" class="chip" id="redeOk" style="margin-top:10px">Fechar</button></div>`;
