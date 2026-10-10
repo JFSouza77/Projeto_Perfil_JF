@@ -6,21 +6,25 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
-  1.7.9.13 · 09/10/2026 · "Rooms and Network Update · Pronto pro online" = TURN, TELA ACESA E NOVIDADES ENXUTAS.
+  NUMERAÇÃO DA 1.7.9 ARRUMADA (pedido do JF, 09/10/2026): as versões pequenas foram juntadas e renumeradas.
+          1.7.9 = antigas 1.7.9 e 1.7.9.1 · 1.7.9.1 = antigas 1.7.9.2 a 1.7.9.6 · 1.7.9.2 = antigas 1.7.9.7 a 1.7.9.9 ·
+          1.7.9.3 = antigas 1.7.9.10 a 1.7.9.13. As linhas abaixo guardam o número antigo entre parênteses; os
+          comentários "1.7.9.N ·" dentro do código usam a numeração antiga. Arquivos publicados antes disso:
+          versoes_antigas/numeracao_antiga_1_7_9/. NOVIDADES: um bloco por versão nova.
+  1.7.9.3 (antiga 1.7.9.13) · 09/10/2026 · "Rooms and Network Update · Pronto pro online" = TURN E TELA ACESA.
           Decisão do JF: usar TURN. REDE_ICE (05k-rede.js): STUN Google/Cloudflare + pontes gratuitas sem conta
           (PeerJS, Open Relay 80/443 TCP/TLS, freeturn.net); REDE_ICE_PROPRIOS pra uma conta própria. teste_rede roda
           o roteiro da internet de novo só pela ponte (iceTransportPolicy relay, node-turn local) e confere o uso.
           Wake Lock com a sala aberta (redeTelaAcesa), de novo ao voltar pro jogo ou no primeiro toque. Manual e dica
-          da pausa falam da tela acesa e da ponte. NOVIDADES da 1.7.3 em diante: versões pequenas de cada update
-          juntadas num bloco só (v "Beta X a Y"; 61 → 39 entradas, sem perder créditos).
-  1.7.9.12 · 09/10/2026 · "Rooms and Network Update · Manual do online" = ONLINE EXPLICADO EM TODO LUGAR.
+          da pausa falam da tela acesa e da ponte.
+  1.7.9.3 (antiga 1.7.9.12) · 09/10/2026 · "Rooms and Network Update · Manual do online" = ONLINE EXPLICADO EM TODO LUGAR.
           Pedido do JF ("se bobear, nem eu vou saber abrir uma sala online"). TUT_CAPS ganhou o capítulo Online (sec 6,
           5 passos + Pronto!): como funciona, abrir a sala (host), entrar pelo link, quem toca o quê, se a conexão
           cair. openTutorial("manual:online") abre direto nele: botão do aviso da tela inicial, "❓ Como funciona"
           na janela da sala e na tela do convidado. Tutorial rápido aponta pro capítulo. PAUSE_TIPS: 3 dicas do online.
           Linha da versão da tela inicial estava presa na 1.7.9.11 (a troca procurava pela linha 48, que mudou com a
           tela de carregamento): agora o build recusa publicar se a tela inicial e o mestre não baterem.
-  1.7.9.11 · 09/10/2026 · "Rooms and Network Update · Troca de host" = TELA DE CARREGAMENTO, TROCA DE HOST, PLACAR NO CELULAR.
+  1.7.9.3 (antiga 1.7.9.11) · 09/10/2026 · "Rooms and Network Update · Troca de host" = TELA DE CARREGAMENTO, TROCA DE HOST, PLACAR NO CELULAR.
           · Relato do JF: no iPhone não aparecia tela de carregamento. O iOS só mostra abertura com imagem no
             tamanho exato (apple-touch-startup-image): 11 imagens em icones/abertura-*.jpg (752 KB no total,
             ferramentas/gerar_aberturas.js). E #carregando no corpo: aparece na hora, sai no fim do JFStore.boot
@@ -35,7 +39,7 @@
             outro host também passa a jogador).
           · Intervalo no celular: abas Pontos e Joias a partir do retrato (lobbyContextoDoRetrato).
           · teste_rede: 90 conferências (abas e internet), com a troca de host e o host antigo voltando.
-  1.7.9.10 · 09/10/2026 · "Rooms and Network Update · Final" = O ONLINE DE VERDADE (BETA) E O FIM DA 1.7.9.
+  1.7.9.3 (antiga 1.7.9.10) · 09/10/2026 · "Rooms and Network Update · Final" = O ONLINE DE VERDADE (BETA) E O FIM DA 1.7.9.
           Decisões do JF: PeerJS; no online só o host segue o intervalo; tudo numa atualização só (a última da 1.7.9).
           · Transporte INTERNET: PeerJS 1.5.5 embutido (05l-peerjs.js, MIT). O host é um Peer com o id da sala e
             recebe uma conexão de cada convidado; a conexão fica presa à 1ª sessão que falou por ela; "para" vai só
@@ -51,16 +55,16 @@
             (tabLobbyFimEm; os celulares veem o aviso), sala volta quando o host recarrega (perfil5_rede_host).
           · "🌐 Jogar online (beta)" na pausa; tutorial e tela inicial atualizados. teste_rede: o mesmo roteiro em
             abas e pela internet (servidor PeerJS local), 74 conferências.
-  1.7.9.9 · 09/10/2026 · "Rooms and Network Update · VAR do C.A.O.S." = O DESFAZER VIRA VAR.
+  1.7.9.2 (antiga 1.7.9.9) · 09/10/2026 · "Rooms and Network Update · VAR do C.A.O.S." = O DESFAZER VIRA VAR.
           Ideia do JF. desfazerFalaVar (05g-acoes.js) + REACTIVE_VOICE.var (acerto, erro, palpite): o aviso do
           Desfazer vira narração de árbitro de vídeo, com o Mestre que pediu e quem perdeu o ponto. Com o C.A.O.S.
           calado fica o aviso simples de antes. Sempre termina com "Pode marcar de novo".
-  1.7.9.8 · 09/10/2026 · "Rooms and Network Update · Board Update 6" = JOIAS COM FORMATO PRÓPRIO.
+  1.7.9.2 (antiga 1.7.9.8) · 09/10/2026 · "Rooms and Network Update · Board Update 6" = JOIAS COM FORMATO PRÓPRIO.
           Ideia do JF. joiaHtml/joiasEmOrdem (03-regras.js): cada categoria tem forma além da cor (Ano hexágono,
           Coisa esmeralda, Lugar losango, Pessoa redonda, Animal triângulo, por clip-path) e a ordem é alfabética.
           Vale no placar (gemBadgesHtml) e na coroa do lobby, que agora tem um encaixe por categoria, com a sombra
           da joia que falta.
-  1.7.9.7 · 09/10/2026 · "Rooms and Network Update · Parte 3" = SALA, PROTOCOLO, PAPÉIS E RELÓGIO (FUNDAÇÃO DA REDE).
+  1.7.9.2 (antiga 1.7.9.7) · 09/10/2026 · "Rooms and Network Update · Parte 3" = SALA, PROTOCOLO, PAPÉIS E RELÓGIO (FUNDAÇÃO DA REDE).
           05k-rede.js + 10-rede.css. Host autoritativo: abre a sala (código de 4 letras sem I/O) pelo ADM; convidado
           entra por #sala=ABCD, escolhe quem é, recebe o retrato público e manda comandos. Envelope (protocolo,
           sala, sessão, seq) e validação (formato, protocolo, sala, sessão, tipo, conteúdo, tamanho, repetida/velha).
@@ -71,14 +75,14 @@
           tomado. Relógio por ping/pong (menor atraso) e redeAgora no convidado. Convidado: saveBloqueado, não roda o
           motor, e na versão publicada não desembaralha o catálogo (build.js: redeSemCatalogo). Transporte trocável;
           hoje só o local (BroadcastChannel). teste_rede.js (23 conferências).
-  1.7.9.6 · 09/10/2026 · "Rooms and Network Update · Board Update 5" = LOBBY COM ABAS (TABULEIRO, PONTOS, JOIAS).
+  1.7.9.1 (antiga 1.7.9.6) · 09/10/2026 · "Rooms and Network Update · Board Update 5" = LOBBY COM ABAS (TABULEIRO, PONTOS, JOIAS).
           Ideias aprovadas pelo JF. 05j-lobby-placar.js: o lobby abre na aba da condição de vitória (🎯 marca a que
           decide). Pontos: pódio em degraus (2º, 1º, 3º) e corrida de barras que crescem do lobby anterior até agora
           (+N), com a meta quando os pontos decidem. Joias: coroa com GEMS_TO_WIN encaixes, joia nova cai e brilha
           (Menos movimento: só brilha; Batata: parada), "Falta: …" e destaque de quem está a uma joia. A aba Joias
           só aparece quando a partida dá joias. lobbyFoto guarda casa, pontos e joias (era só casa). C.A.O.S.
           ganhou falas pra troca de aba.
-  1.7.9.5 · 09/10/2026 · "Rooms and Network Update · Board Update 4" = ZOOM, RÉGUA, C.A.O.S. NO TABULEIRO E MENOS MOVIMENTO ≠ BATATA.
+  1.7.9.1 (antiga 1.7.9.5) · 09/10/2026 · "Rooms and Network Update · Board Update 4" = ZOOM, RÉGUA, C.A.O.S. NO TABULEIRO E MENOS MOVIMENTO ≠ BATATA.
           Pedido do JF. (1) Na partida, nada de tabuleiro grande: o "toque pra ampliar" volta a ser só a lista (o
           desenho só no lobby). (2) Lobby: zoom (pinça, + e −, rodinha, toque duplo; com zoom, um dedo arrasta;
           o peão cresce menos que o desenho) e régua (toca no peão, toca na casa: casa, bônus e distância).
@@ -90,7 +94,7 @@
           tira só o que mexe (caosAnimar com transform/top/left, pulinho do toque, flutuar, rosto balançando,
           flip da carta, peão andando, confete caindo vira confete que some); neon, brilho e cores ficam. O
           Batata continua desligando tudo. semMovimento() = um ou outro.
-  1.7.9.4 · 09/10/2026 · "Rooms and Network Update · Board Update 3" = LOBBY DO TABULEIRO ENTRE AS CARTAS.
+  1.7.9.1 (antiga 1.7.9.4) · 09/10/2026 · "Rooms and Network Update · Board Update 3" = LOBBY DO TABULEIRO ENTRE AS CARTAS.
           Ideia do JF. Na partida volta a linha com pontinhos (renderBoardTrack como antes da 1.7.9.2); o
           tabuleiro desenhado fica no "toque pra ampliar" e vira uma tela de espera entre as cartas
           (tabLobbyAbrir): checkWinnerThenDraw marca a carta como acabada e, quando a próxima já está
@@ -99,7 +103,7 @@
           lobby anterior e a lista com +N/−N casas. Só tela: não vai no save nem no registro de ações.
           Desfazer o veredito fecha o lobby (fica abaixo do botão Desfazer). Não abre no Express, no
           Descartar nem no fim. Liga/desliga por aparelho (perfil5_tab_lobby) no tabuleiro grande.
-  1.7.9.3 · 09/10/2026 · "Rooms and Network Update · Board Update 2" = TABULEIRO COM CARA DE TABULEIRO.
+  1.7.9.1 (antiga 1.7.9.3) · 09/10/2026 · "Rooms and Network Update · Board Update 2" = TABULEIRO COM CARA DE TABULEIRO.
           Feedback do JF com fotos dos tabuleiros de verdade (Perfil 3, 4, 5, 6, 7, 8 e Júnior). Casas viram
           blocos colados numa pista larga (largura calculada pra não encostar na volta vizinha; o Oito tem
           largura fixa porque cruza no meio), em duas cores (Clássico laranja e azul, Hardcore vermelho e
@@ -107,7 +111,7 @@
           número da casa dentro do bloco a cada 10 casinhas. Placas SAÍDA e CHEGADA no lugar mais livre.
           Coração saiu; entraram Oval, Labirinto e Zigue-zague; Espiral mais espaçada; Circuito sem chicane;
           Estrela mais cheia. Save antigo com "coracao" sorteia outra forma.
-  1.7.9.2 · 09/10/2026 · "Rooms and Network Update · Board Update" = TABULEIRO DE VERDADE.
+  1.7.9.1 (antiga 1.7.9.2) · 09/10/2026 · "Rooms and Network Update · Board Update" = TABULEIRO DE VERDADE.
           Ideia do JF. 05i-tabuleiro.js + 09-tabuleiro.css: a linha com pontinhos virou um tabuleiro SVG com
           100 casinhas (cada uma vale meta/100: 2 no Clássico, 1,5 no Júnior; os números são as casas de
           verdade). 7 formas (Oito, Serpente, Espiral, Coração, Onda, Circuito, Estrela), sorteadas por
@@ -115,13 +119,13 @@
           igual). Tema por modo (Clássico neon, Hardcore vermelho/💀, Júnior colorido/🏆, Old School madeira/📻)
           e no Claro. Peões andam casa por casa (Web Animations; Batata e menos movimento desligam). Tabuleiro
           grande em pé no celular (o Oito vira um 8 de verdade). Telão mostra o mesmo tabuleiro.
-  1.7.9.1 · 09/10/2026 · "Rooms and Network Update · Parte 2" = CARTAS EMBARALHADAS NA VERSÃO PUBLICADA.
+  1.7.9 (antiga 1.7.9.1) · 09/10/2026 · "Rooms and Network Update · Parte 2" = CARTAS EMBARALHADAS NA VERSÃO PUBLICADA.
           Decisão do JF: privacidade (a) com travas da (b). build.js (embaralharCartas): no site e no offline
           as 1000 cartas vão por substituição de letras (troca dentro da mesma classe de bytes, aspas/barra/
           controles fixos: o arquivo não cresce e a compressão do download continua igual), com a troca
           semeada pela versão. cartasAbrir desembaralha ao abrir; o build confere a volta idêntica. O Mestre
           continua legível. Plano das travas do online no Roteiro, seção 10.
-  1.7.9 · 09/10/2026 · "Rooms and Network Update · Parte 1" = PORTA DAS AÇÕES FECHADA.
+  1.7.9 (antiga 1.7.9) · 09/10/2026 · "Rooms and Network Update · Parte 1" = PORTA DAS AÇÕES FECHADA.
           Revisão externa da 1.7.8.9, conferida no código. A porta (dispatchAction) usa as mesmas regras da
           tela: descarte (podeDescartarCarta), desistir (podeDesistirCarta), mover casas só com a especial de
           mover aberta (acoesMovimentoValido/EquipeValido), alvo do Express só com a janela aberta.
@@ -622,7 +626,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.9.13</title>
+<title>Perfil JF · Beta 1.7.9.3</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

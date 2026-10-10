@@ -496,13 +496,14 @@ Base: a revisão externa da 1.7.8.9 (10 achados), cada um conferido no código.
 - **Placar do intervalo no celular de cada um:** abas Pontos e Joias a partir do retrato.
 - **Tela de carregamento** (relato do JF: no iPhone não aparecia): imagens de abertura do iOS e tela de carregamento dentro do jogo.
 
-### 1.7.9.13 · Pronto pro online (publicada)
+### 1.7.9.3 (antiga 1.7.9.13) · Pronto pro online (publicada)
 - **TURN (decisão do JF: usar):** `REDE_ICE` em `05k-rede.js` com STUN (Google, Cloudflare) e três pontes gratuitas sem conta (PeerJS, Open Relay da Metered nas portas 80/443 com TCP e TLS, freeturn.net). Se uma sair do ar, as outras seguram.
   - Conta própria (ex.: Metered grátis, 20 GB/mês) entra em `REDE_ICE_PROPRIOS`, que vai na frente da lista.
   - Teste: `teste_rede` roda o roteiro da internet de novo **só pela ponte** (`iceTransportPolicy: "relay"`, servidor TURN local `node-turn`) e confere que a ponte foi usada.
   - Daqui do ambiente de testes não dá pra alcançar os servidores públicos: quem confirma é o teste no 4G de verdade.
 - **Tela acesa:** Wake Lock enquanto a sala está aberta (host e convidados), pedido de novo ao voltar pro jogo ou no primeiro toque.
-- **NOVIDADES enxutas:** da 1.7.3 em diante, as versões pequenas de cada update viraram um bloco só (`v: "Beta X a Y"`). O HISTÓRICO técnico continua uma linha por versão.
+- **Numeração da 1.7.9 arrumada (pedido do JF):** as versões pequenas foram juntadas e renumeradas. 1.7.9 = antigas 1.7.9 e .1 · 1.7.9.1 = antigas .2 a .6 · 1.7.9.2 = antigas .7 a .9 · 1.7.9.3 = antigas .10 a .13. Neste roteiro, os números 1.7.9.N das seções mais abaixo são os antigos.
+  - Regra pra frente: versão pequena (uma ou duas mudanças) entra junto na próxima, em vez de ganhar número próprio, pra 1.7.9 não passar do .9.
 
 ### Pra 1.7.10 (Multiplayer Update · lançamento)
 - **Nome DICAOS, domínio próprio e mudança de endereço** (save e memória).

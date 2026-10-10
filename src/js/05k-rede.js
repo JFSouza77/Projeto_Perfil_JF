@@ -153,7 +153,7 @@ function redeTransporteLocal(sala) {
   };
   return t;
 }
-// 1.7.9.13 · Servidores que ajudam os celulares a se acharem. STUN descobre o endereço de cada um; TURN é a
+// 1.7.9.3 · Servidores que ajudam os celulares a se acharem. STUN descobre o endereço de cada um; TURN é a
 // ponte: quando a rede do celular (4G/5G, Wi-Fi de empresa) não deixa a ligação direta, os dados passam por ele.
 // Todos gratuitos e sem conta; se um sair do ar, os outros seguram. Portas 80/443 passam até em rede fechada.
 // Pra usar uma conta própria (ex.: Metered, 20 GB/mês grátis), é só pôr os dados dela em REDE_ICE_PROPRIOS.
@@ -647,7 +647,7 @@ function redeHostRebaixar() {
   redeFechar();
   redeIrPraSala(sala, modo);
 }
-// 1.7.9.13 · Tela acesa enquanto a sala está aberta: celular que apaga a tela derruba a conexão (o iPhone
+// 1.7.9.3 · Tela acesa enquanto a sala está aberta: celular que apaga a tela derruba a conexão (o iPhone
 // suspende a página). Usa o Wake Lock do navegador quando existe; ao voltar pro jogo, pede de novo.
 let redeTravaTela = null;
 function redeTelaAcesa(ligar) {

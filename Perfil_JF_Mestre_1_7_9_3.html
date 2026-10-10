@@ -6,21 +6,25 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
-  1.7.9.13 · 09/10/2026 · "Rooms and Network Update · Pronto pro online" = TURN, TELA ACESA E NOVIDADES ENXUTAS.
+  NUMERAÇÃO DA 1.7.9 ARRUMADA (pedido do JF, 09/10/2026): as versões pequenas foram juntadas e renumeradas.
+          1.7.9 = antigas 1.7.9 e 1.7.9.1 · 1.7.9.1 = antigas 1.7.9.2 a 1.7.9.6 · 1.7.9.2 = antigas 1.7.9.7 a 1.7.9.9 ·
+          1.7.9.3 = antigas 1.7.9.10 a 1.7.9.13. As linhas abaixo guardam o número antigo entre parênteses; os
+          comentários "1.7.9.N ·" dentro do código usam a numeração antiga. Arquivos publicados antes disso:
+          versoes_antigas/numeracao_antiga_1_7_9/. NOVIDADES: um bloco por versão nova.
+  1.7.9.3 (antiga 1.7.9.13) · 09/10/2026 · "Rooms and Network Update · Pronto pro online" = TURN E TELA ACESA.
           Decisão do JF: usar TURN. REDE_ICE (05k-rede.js): STUN Google/Cloudflare + pontes gratuitas sem conta
           (PeerJS, Open Relay 80/443 TCP/TLS, freeturn.net); REDE_ICE_PROPRIOS pra uma conta própria. teste_rede roda
           o roteiro da internet de novo só pela ponte (iceTransportPolicy relay, node-turn local) e confere o uso.
           Wake Lock com a sala aberta (redeTelaAcesa), de novo ao voltar pro jogo ou no primeiro toque. Manual e dica
-          da pausa falam da tela acesa e da ponte. NOVIDADES da 1.7.3 em diante: versões pequenas de cada update
-          juntadas num bloco só (v "Beta X a Y"; 61 → 39 entradas, sem perder créditos).
-  1.7.9.12 · 09/10/2026 · "Rooms and Network Update · Manual do online" = ONLINE EXPLICADO EM TODO LUGAR.
+          da pausa falam da tela acesa e da ponte.
+  1.7.9.3 (antiga 1.7.9.12) · 09/10/2026 · "Rooms and Network Update · Manual do online" = ONLINE EXPLICADO EM TODO LUGAR.
           Pedido do JF ("se bobear, nem eu vou saber abrir uma sala online"). TUT_CAPS ganhou o capítulo Online (sec 6,
           5 passos + Pronto!): como funciona, abrir a sala (host), entrar pelo link, quem toca o quê, se a conexão
           cair. openTutorial("manual:online") abre direto nele: botão do aviso da tela inicial, "❓ Como funciona"
           na janela da sala e na tela do convidado. Tutorial rápido aponta pro capítulo. PAUSE_TIPS: 3 dicas do online.
           Linha da versão da tela inicial estava presa na 1.7.9.11 (a troca procurava pela linha 48, que mudou com a
           tela de carregamento): agora o build recusa publicar se a tela inicial e o mestre não baterem.
-  1.7.9.11 · 09/10/2026 · "Rooms and Network Update · Troca de host" = TELA DE CARREGAMENTO, TROCA DE HOST, PLACAR NO CELULAR.
+  1.7.9.3 (antiga 1.7.9.11) · 09/10/2026 · "Rooms and Network Update · Troca de host" = TELA DE CARREGAMENTO, TROCA DE HOST, PLACAR NO CELULAR.
           · Relato do JF: no iPhone não aparecia tela de carregamento. O iOS só mostra abertura com imagem no
             tamanho exato (apple-touch-startup-image): 11 imagens em icones/abertura-*.jpg (752 KB no total,
             ferramentas/gerar_aberturas.js). E #carregando no corpo: aparece na hora, sai no fim do JFStore.boot
@@ -35,7 +39,7 @@
             outro host também passa a jogador).
           · Intervalo no celular: abas Pontos e Joias a partir do retrato (lobbyContextoDoRetrato).
           · teste_rede: 90 conferências (abas e internet), com a troca de host e o host antigo voltando.
-  1.7.9.10 · 09/10/2026 · "Rooms and Network Update · Final" = O ONLINE DE VERDADE (BETA) E O FIM DA 1.7.9.
+  1.7.9.3 (antiga 1.7.9.10) · 09/10/2026 · "Rooms and Network Update · Final" = O ONLINE DE VERDADE (BETA) E O FIM DA 1.7.9.
           Decisões do JF: PeerJS; no online só o host segue o intervalo; tudo numa atualização só (a última da 1.7.9).
           · Transporte INTERNET: PeerJS 1.5.5 embutido (05l-peerjs.js, MIT). O host é um Peer com o id da sala e
             recebe uma conexão de cada convidado; a conexão fica presa à 1ª sessão que falou por ela; "para" vai só
@@ -51,16 +55,16 @@
             (tabLobbyFimEm; os celulares veem o aviso), sala volta quando o host recarrega (perfil5_rede_host).
           · "🌐 Jogar online (beta)" na pausa; tutorial e tela inicial atualizados. teste_rede: o mesmo roteiro em
             abas e pela internet (servidor PeerJS local), 74 conferências.
-  1.7.9.9 · 09/10/2026 · "Rooms and Network Update · VAR do C.A.O.S." = O DESFAZER VIRA VAR.
+  1.7.9.2 (antiga 1.7.9.9) · 09/10/2026 · "Rooms and Network Update · VAR do C.A.O.S." = O DESFAZER VIRA VAR.
           Ideia do JF. desfazerFalaVar (05g-acoes.js) + REACTIVE_VOICE.var (acerto, erro, palpite): o aviso do
           Desfazer vira narração de árbitro de vídeo, com o Mestre que pediu e quem perdeu o ponto. Com o C.A.O.S.
           calado fica o aviso simples de antes. Sempre termina com "Pode marcar de novo".
-  1.7.9.8 · 09/10/2026 · "Rooms and Network Update · Board Update 6" = JOIAS COM FORMATO PRÓPRIO.
+  1.7.9.2 (antiga 1.7.9.8) · 09/10/2026 · "Rooms and Network Update · Board Update 6" = JOIAS COM FORMATO PRÓPRIO.
           Ideia do JF. joiaHtml/joiasEmOrdem (03-regras.js): cada categoria tem forma além da cor (Ano hexágono,
           Coisa esmeralda, Lugar losango, Pessoa redonda, Animal triângulo, por clip-path) e a ordem é alfabética.
           Vale no placar (gemBadgesHtml) e na coroa do lobby, que agora tem um encaixe por categoria, com a sombra
           da joia que falta.
-  1.7.9.7 · 09/10/2026 · "Rooms and Network Update · Parte 3" = SALA, PROTOCOLO, PAPÉIS E RELÓGIO (FUNDAÇÃO DA REDE).
+  1.7.9.2 (antiga 1.7.9.7) · 09/10/2026 · "Rooms and Network Update · Parte 3" = SALA, PROTOCOLO, PAPÉIS E RELÓGIO (FUNDAÇÃO DA REDE).
           05k-rede.js + 10-rede.css. Host autoritativo: abre a sala (código de 4 letras sem I/O) pelo ADM; convidado
           entra por #sala=ABCD, escolhe quem é, recebe o retrato público e manda comandos. Envelope (protocolo,
           sala, sessão, seq) e validação (formato, protocolo, sala, sessão, tipo, conteúdo, tamanho, repetida/velha).
@@ -71,14 +75,14 @@
           tomado. Relógio por ping/pong (menor atraso) e redeAgora no convidado. Convidado: saveBloqueado, não roda o
           motor, e na versão publicada não desembaralha o catálogo (build.js: redeSemCatalogo). Transporte trocável;
           hoje só o local (BroadcastChannel). teste_rede.js (23 conferências).
-  1.7.9.6 · 09/10/2026 · "Rooms and Network Update · Board Update 5" = LOBBY COM ABAS (TABULEIRO, PONTOS, JOIAS).
+  1.7.9.1 (antiga 1.7.9.6) · 09/10/2026 · "Rooms and Network Update · Board Update 5" = LOBBY COM ABAS (TABULEIRO, PONTOS, JOIAS).
           Ideias aprovadas pelo JF. 05j-lobby-placar.js: o lobby abre na aba da condição de vitória (🎯 marca a que
           decide). Pontos: pódio em degraus (2º, 1º, 3º) e corrida de barras que crescem do lobby anterior até agora
           (+N), com a meta quando os pontos decidem. Joias: coroa com GEMS_TO_WIN encaixes, joia nova cai e brilha
           (Menos movimento: só brilha; Batata: parada), "Falta: …" e destaque de quem está a uma joia. A aba Joias
           só aparece quando a partida dá joias. lobbyFoto guarda casa, pontos e joias (era só casa). C.A.O.S.
           ganhou falas pra troca de aba.
-  1.7.9.5 · 09/10/2026 · "Rooms and Network Update · Board Update 4" = ZOOM, RÉGUA, C.A.O.S. NO TABULEIRO E MENOS MOVIMENTO ≠ BATATA.
+  1.7.9.1 (antiga 1.7.9.5) · 09/10/2026 · "Rooms and Network Update · Board Update 4" = ZOOM, RÉGUA, C.A.O.S. NO TABULEIRO E MENOS MOVIMENTO ≠ BATATA.
           Pedido do JF. (1) Na partida, nada de tabuleiro grande: o "toque pra ampliar" volta a ser só a lista (o
           desenho só no lobby). (2) Lobby: zoom (pinça, + e −, rodinha, toque duplo; com zoom, um dedo arrasta;
           o peão cresce menos que o desenho) e régua (toca no peão, toca na casa: casa, bônus e distância).
@@ -90,7 +94,7 @@
           tira só o que mexe (caosAnimar com transform/top/left, pulinho do toque, flutuar, rosto balançando,
           flip da carta, peão andando, confete caindo vira confete que some); neon, brilho e cores ficam. O
           Batata continua desligando tudo. semMovimento() = um ou outro.
-  1.7.9.4 · 09/10/2026 · "Rooms and Network Update · Board Update 3" = LOBBY DO TABULEIRO ENTRE AS CARTAS.
+  1.7.9.1 (antiga 1.7.9.4) · 09/10/2026 · "Rooms and Network Update · Board Update 3" = LOBBY DO TABULEIRO ENTRE AS CARTAS.
           Ideia do JF. Na partida volta a linha com pontinhos (renderBoardTrack como antes da 1.7.9.2); o
           tabuleiro desenhado fica no "toque pra ampliar" e vira uma tela de espera entre as cartas
           (tabLobbyAbrir): checkWinnerThenDraw marca a carta como acabada e, quando a próxima já está
@@ -99,7 +103,7 @@
           lobby anterior e a lista com +N/−N casas. Só tela: não vai no save nem no registro de ações.
           Desfazer o veredito fecha o lobby (fica abaixo do botão Desfazer). Não abre no Express, no
           Descartar nem no fim. Liga/desliga por aparelho (perfil5_tab_lobby) no tabuleiro grande.
-  1.7.9.3 · 09/10/2026 · "Rooms and Network Update · Board Update 2" = TABULEIRO COM CARA DE TABULEIRO.
+  1.7.9.1 (antiga 1.7.9.3) · 09/10/2026 · "Rooms and Network Update · Board Update 2" = TABULEIRO COM CARA DE TABULEIRO.
           Feedback do JF com fotos dos tabuleiros de verdade (Perfil 3, 4, 5, 6, 7, 8 e Júnior). Casas viram
           blocos colados numa pista larga (largura calculada pra não encostar na volta vizinha; o Oito tem
           largura fixa porque cruza no meio), em duas cores (Clássico laranja e azul, Hardcore vermelho e
@@ -107,7 +111,7 @@
           número da casa dentro do bloco a cada 10 casinhas. Placas SAÍDA e CHEGADA no lugar mais livre.
           Coração saiu; entraram Oval, Labirinto e Zigue-zague; Espiral mais espaçada; Circuito sem chicane;
           Estrela mais cheia. Save antigo com "coracao" sorteia outra forma.
-  1.7.9.2 · 09/10/2026 · "Rooms and Network Update · Board Update" = TABULEIRO DE VERDADE.
+  1.7.9.1 (antiga 1.7.9.2) · 09/10/2026 · "Rooms and Network Update · Board Update" = TABULEIRO DE VERDADE.
           Ideia do JF. 05i-tabuleiro.js + 09-tabuleiro.css: a linha com pontinhos virou um tabuleiro SVG com
           100 casinhas (cada uma vale meta/100: 2 no Clássico, 1,5 no Júnior; os números são as casas de
           verdade). 7 formas (Oito, Serpente, Espiral, Coração, Onda, Circuito, Estrela), sorteadas por
@@ -115,13 +119,13 @@
           igual). Tema por modo (Clássico neon, Hardcore vermelho/💀, Júnior colorido/🏆, Old School madeira/📻)
           e no Claro. Peões andam casa por casa (Web Animations; Batata e menos movimento desligam). Tabuleiro
           grande em pé no celular (o Oito vira um 8 de verdade). Telão mostra o mesmo tabuleiro.
-  1.7.9.1 · 09/10/2026 · "Rooms and Network Update · Parte 2" = CARTAS EMBARALHADAS NA VERSÃO PUBLICADA.
+  1.7.9 (antiga 1.7.9.1) · 09/10/2026 · "Rooms and Network Update · Parte 2" = CARTAS EMBARALHADAS NA VERSÃO PUBLICADA.
           Decisão do JF: privacidade (a) com travas da (b). build.js (embaralharCartas): no site e no offline
           as 1000 cartas vão por substituição de letras (troca dentro da mesma classe de bytes, aspas/barra/
           controles fixos: o arquivo não cresce e a compressão do download continua igual), com a troca
           semeada pela versão. cartasAbrir desembaralha ao abrir; o build confere a volta idêntica. O Mestre
           continua legível. Plano das travas do online no Roteiro, seção 10.
-  1.7.9 · 09/10/2026 · "Rooms and Network Update · Parte 1" = PORTA DAS AÇÕES FECHADA.
+  1.7.9 (antiga 1.7.9) · 09/10/2026 · "Rooms and Network Update · Parte 1" = PORTA DAS AÇÕES FECHADA.
           Revisão externa da 1.7.8.9, conferida no código. A porta (dispatchAction) usa as mesmas regras da
           tela: descarte (podeDescartarCarta), desistir (podeDesistirCarta), mover casas só com a especial de
           mover aberta (acoesMovimentoValido/EquipeValido), alvo do Express só com a janela aberta.
@@ -622,7 +626,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.9.13</title>
+<title>Perfil JF · Beta 1.7.9.3</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -8512,7 +8516,7 @@ body.claro .rede-voto-host {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.13 · Rooms and Network Update · Pronto pro online<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.3 · Rooms and Network Update · Online<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Como jogar online (passo a passo)"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Na partida: ⏸️ Pausar → 🌐 Jogar online · toque pra ver como</span></button>
@@ -19240,7 +19244,7 @@ function redeTransporteLocal(sala) {
   };
   return t;
 }
-// 1.7.9.13 · Servidores que ajudam os celulares a se acharem. STUN descobre o endereço de cada um; TURN é a
+// 1.7.9.3 · Servidores que ajudam os celulares a se acharem. STUN descobre o endereço de cada um; TURN é a
 // ponte: quando a rede do celular (4G/5G, Wi-Fi de empresa) não deixa a ligação direta, os dados passam por ele.
 // Todos gratuitos e sem conta; se um sair do ar, os outros seguram. Portas 80/443 passam até em rede fechada.
 // Pra usar uma conta própria (ex.: Metered, 20 GB/mês grátis), é só pôr os dados dela em REDE_ICE_PROPRIOS.
@@ -19734,7 +19738,7 @@ function redeHostRebaixar() {
   redeFechar();
   redeIrPraSala(sala, modo);
 }
-// 1.7.9.13 · Tela acesa enquanto a sala está aberta: celular que apaga a tela derruba a conexão (o iPhone
+// 1.7.9.3 · Tela acesa enquanto a sala está aberta: celular que apaga a tela derruba a conexão (o iPhone
 // suspende a página). Usa o Wake Lock do navegador quando existe; ao voltar pro jogo, pede de novo.
 let redeTravaTela = null;
 function redeTelaAcesa(ligar) {
@@ -22862,7 +22866,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.9.13 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.9.3 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -27932,7 +27936,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.9.13 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.9.3 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -31106,7 +31110,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.9.13 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.9.3 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -31629,7 +31633,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.9.13 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.9.3 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -66812,9 +66816,9 @@ const PAUSE_TIPS = [
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
-  // 1.7.9.13 · Novidades enxutas: as versões pequenas de cada update foram juntadas num bloco só (v com "a").
+  // 1.7.9.3 · Numeração da 1.7.9 arrumada: as versões pequenas foram juntadas (a 1.7.9.3 de agora = antigas 1.7.9.10 a 1.7.9.13).
   {
-    v: "Beta 1.7.9.10 a 1.7.9.13",
+    v: "Beta 1.7.9.3",
     data: "09/10/2026 · 21:04",
     nome: "Rooms and Network Update · Online",
     t: "Chegou o online (beta): cada um joga no próprio celular, com passo a passo e ponte pro 4G.",
@@ -66835,12 +66839,12 @@ const NOVIDADES = [
     ],
     qol: [
       "🔌 Reconexão mais esperta: se a conexão com o host parecer viva mas não chegar nada, o celular abre uma conexão nova sozinho.",
-      "📰 Novidades mais enxutas: as versões pequenas de cada update foram juntadas num bloco só, pra ler tudo de uma vez.",
+      "🔢 Numeração arrumada: as versões pequenas da 1.7.9 foram juntadas, e a lista ficou mais curta. Esta é a 1.7.9.3.",
       "🧪 Beta: o online ainda está em teste. Se a conexão não abrir, tente com todo mundo no mesmo Wi-Fi.",
     ],
   },
   {
-    v: "Beta 1.7.9.7 a 1.7.9.9",
+    v: "Beta 1.7.9.2",
     data: "09/10/2026 · 18:15",
     nome: "Rooms and Network Update · Joias e VAR",
     t: "Joias com formato próprio, o VAR do C.A.O.S. e o começo das salas online.",
@@ -66853,7 +66857,7 @@ const NOVIDADES = [
     qol: [],
   },
   {
-    v: "Beta 1.7.9.2 a 1.7.9.6",
+    v: "Beta 1.7.9.1",
     data: "09/10/2026 · 16:59",
     nome: "Rooms and Network Update · Tabuleiro",
     t: "Chegou o tabuleiro de verdade, com intervalo entre as cartas, zoom e abas.",
@@ -66879,7 +66883,7 @@ const NOVIDADES = [
     ],
   },
   {
-    v: "Beta 1.7.9 a 1.7.9.1",
+    v: "Beta 1.7.9",
     data: "09/10/2026 · 11:38",
     nome: "Rooms and Network Update · Regras firmes",
     t: "Começa a Rooms and Network Update: regras firmes e cartas protegidas antes do online.",
@@ -66891,85 +66895,232 @@ const NOVIDADES = [
     qol: [],
   },
   {
-    v: "Beta 1.7.8.6 a 1.7.8.9",
+    v: "Beta 1.7.8.9",
     data: "08/10/2026 · 23:06",
-    nome: "Actions and Events Update · Final",
-    t: "Desfazer completo, carta que vira de verdade, um botão só pra trocar de carta e pausa enxuta.",
+    nome: "Actions and Events Update · Parte 10",
+    t: "Faxina antes do online.",
+    itens: [
+      "🎰 Roleta não some mais: se a partida for pausada ou a tela se atualizar no meio da roleta da categoria, ela volta já parada na categoria certa, em vez de voltar pras costas da carta.",
+    ],
+    qol: [
+      "🃏 Giro da carta mais limpo: a animação do Ver carta não deixa mais uma cópia da carta escondida na tela.",
+    ],
+  },
+  {
+    v: "Beta 1.7.8.8",
+    data: "08/10/2026 · 22:02",
+    nome: "Actions and Events Update · Parte 9",
+    t: "Créditos de volta nas Novidades.",
+    itens: [
+      "🙌 Créditos de volta: as ideias que vieram de quem joga voltaram a levar o nome de quem deu, como as do Pedro, do Felipe, do Bruno Levanti e do Klaus.",
+    ],
+    qol: [],
+  },
+  {
+    v: "Beta 1.7.8.7",
+    data: "08/10/2026 · 21:40",
+    nome: "Actions and Events Update · Parte 8",
+    t: "Um botão só pra trocar de carta e janelas mais bonitas.",
+    itens: [
+      "✕ Um botão só pra trocar de carta: o Reembaralhar saiu. Carta difícil demais ou o Mestre viu sem querer? Use Descartar, até a 5ª dica e no máximo 2 seguidas.",
+      "🏠 Moda da Casa mais clara: “Bora jogar!” virou o botão principal, e “Como funciona este modo?” fica logo abaixo.",
+      "✨ Botões novos nas janelas: os botões das janelas do C.A.O.S. ganharam relevo, brilho e resposta ao toque.",
+      "🃏 Carta mais suave: o giro do Ver carta e a subida da frase depois do “Falei!” ficaram mais lentos e macios.",
+    ],
+    qol: [
+      "🔤 Palavra inteira no topo da carta: “Eu sou um LUGAR” não quebra mais no meio.",
+      "📰 Novidades revisadas: todas as versões seguem o mesmo formato, com um título em cada mudança.",
+    ],
+  },
+  {
+    v: "Beta 1.7.8.6",
+    data: "08/10/2026 · 21:04",
+    nome: "Actions and Events Update · Parte 7",
+    t: "Desfazer mais completo, carta que vira de verdade e pausa mais enxuta.",
     itens: [
       "↩️ Desfazer completo: além de pontos, vez e carta, o C.A.O.S. também esquece o veredito desfeito e para de falar dele.",
       "🃏 A carta vira de verdade: Ver carta gira a carta e a roleta aparece do outro lado. Depois do “Falei!”, a frase “Diga aos jogadores” sobe e se encaixa no topo da carta.",
-      "✕ Um botão só pra trocar de carta: o Reembaralhar saiu. Carta difícil demais ou o Mestre viu sem querer? Use Descartar, até a 5ª dica e no máximo 2 seguidas.",
       "⏸️ Pausa enxuta: o que se usa sempre ficou em 4 botões, e o resto foi pra “Mais opções”.",
-      "🏠 Moda da Casa mais clara: “Bora jogar!” virou o botão principal, e “Como funciona este modo?” fica logo abaixo.",
-      "✨ Botões novos nas janelas: os botões das janelas do C.A.O.S. ganharam relevo, brilho e resposta ao toque.",
-      "🎰 Roleta não some mais: se a partida for pausada no meio da roleta da categoria, ela volta já parada na categoria certa.",
       "📺 Sair do telão: o telão ganhou um botão de sair, que faltava no celular.",
-      "🙌 Créditos de volta: as ideias que vieram de quem joga voltaram a levar o nome de quem deu, como as do Pedro, do Felipe, do Bruno Levanti e do Klaus.",
     ],
     qol: [
       "📏 Desfazer mais visível: o botão ficou mais largo, com uma barrinha mostrando os 8 segundos.",
       "🙈 Resposta escondida no centro: o “toque pra ver” fica no meio da caixa.",
-      "🔤 Palavra inteira no topo da carta: “Eu sou um LUGAR” não quebra mais no meio.",
-      "🃏 Giro da carta mais limpo: mais lento e macio, sem deixar uma cópia da carta escondida na tela.",
     ],
   },
   {
-    v: "Beta 1.7.8 a 1.7.8.5",
+    v: "Beta 1.7.8.5",
     data: "08/10/2026 · 19:51",
-    nome: "Actions and Events Update · Desfazer e Telão",
-    t: "Começa a Actions and Events Update: as jogadas se preparam pro online, e chegam o Desfazer e o Telão.",
+    nome: "Actions and Events Update · Parte 6",
+    t: "Ajustes no evento de piedade e no Express.",
     itens: [
-      "↩️ Desfazer: depois de Acertou, Errou, Pulou, Absurdo ou palpite, aparece “Desfazer” no alto da tela por 8 segundos. Só o último veredito, e não vale se ele acabou a partida.",
-      "📺 Telão: numa segunda aba (ou num segundo monitor), a mesa vê o placar, o Mestre, a vez, as dicas abertas e o relógio, ao vivo. Nunca mostra a resposta.",
-      "🛡️ Toque repetido não conta dobrado: uma jogada enviada duas vezes pelo mesmo toque vale uma vez só.",
-      "🌐 Jogadas em ordem: cada jogada fica registrada na ordem. No online, um celular atrasado não consegue aplicar uma jogada velha.",
-      "🙈 Resposta protegida: os celulares da mesa recebem placar, vez, dicas abertas e relógio, mas nunca a resposta nem as dicas fechadas.",
-      "💾 Dica certa na partida salva: se o texto de uma dica for corrigido numa atualização, a partida salva continua com a dica certa aberta.",
-      "🤫 Aviso só pro Mestre: o aviso de tempo extra é só pra ele.",
       "🕊️ Evento de piedade sempre aparece: ele não deixa mais de aparecer quando já tem um balão do C.A.O.S. na tela.",
-      "🎯 Alvo do Express guardado: a escolha do alvo de Roubo e Bloqueio é guardada como as outras jogadas.",
+      "🎯 Alvo do Express guardado: a escolha do alvo de Roubo e Bloqueio agora é guardada como as outras jogadas.",
+    ],
+    qol: [],
+  },
+  {
+    v: "Beta 1.7.8.4",
+    data: "08/10/2026 · 18:50",
+    nome: "Actions and Events Update · Parte 5",
+    t: "Partida salva mais segura e falas do C.A.O.S. com destinatário.",
+    itens: [
+      "💾 Dica certa na partida salva: se o texto de uma dica for corrigido numa atualização, a partida salva continua com a dica certa aberta.",
+      "🤫 Aviso só pro Mestre: o aviso de tempo extra é pra ele, e no online vai aparecer só no celular dele.",
+    ],
+    qol: [],
+  },
+  {
+    v: "Beta 1.7.8.3",
+    data: "08/10/2026 · 18:39",
+    nome: "Actions and Events Update · Parte 4",
+    t: "Telão: uma segunda tela que mostra a partida pra mesa.",
+    itens: [
+      "📺 Telão: numa segunda aba (ou num segundo monitor), a mesa vê o placar, quem é o Mestre, de quem é a vez, as dicas abertas e o relógio, ao vivo.",
+      "🙈 Sem spoiler: o telão nunca mostra a resposta e não mexe na partida, só assiste.",
     ],
     qol: [
-      "🔑 Onde abrir o telão: no painel ADM, em 📺 Abrir telão.",
+      "🔑 Onde abrir: por enquanto, no painel ADM, em 📺 Abrir telão.",
     ],
   },
   {
-    v: "Beta 1.7.7.5 a 1.7.7.8",
+    v: "Beta 1.7.8.2",
+    data: "08/10/2026 · 18:29",
+    nome: "Actions and Events Update · Parte 3",
+    t: "Tocou no botão errado? Agora dá pra desfazer.",
+    itens: [
+      "↩️ Desfazer: depois de Acertou, Errou, Pulou, Absurdo ou palpite, aparece “Desfazer” no alto da tela por 8 segundos. Ele volta pontos, joias, vez, carta e relógio.",
+      "🎯 Só o último: só o último veredito pode ser desfeito, e o botão some quando alguém faz outra jogada. Se o veredito acabou a partida, não tem volta.",
+    ],
+    qol: [],
+  },
+  {
+    v: "Beta 1.7.8.1",
+    data: "08/10/2026 · 18:05",
+    nome: "Actions and Events Update · Parte 2",
+    t: "Preparação pro online: o jogo já sabe o que cada aparelho pode ver.",
+    itens: [
+      "🙈 Resposta protegida: no online, os celulares da mesa vão receber placar, vez, dicas abertas e relógio, mas nunca a resposta nem as dicas fechadas.",
+    ],
+    qol: [],
+  },
+  {
+    v: "Beta 1.7.8",
+    data: "08/10/2026 · 17:53",
+    nome: "Actions and Events Update · Parte 1",
+    t: "Começa a Actions and Events Update: as jogadas se preparam pro online.",
+    itens: [
+      "🛡️ Toque repetido não conta dobrado: uma jogada enviada duas vezes pelo mesmo toque vale uma vez só.",
+      "🌐 Jogadas em ordem: cada jogada fica registrada na ordem. No online, um celular atrasado não consegue aplicar uma jogada velha.",
+    ],
+    qol: [],
+  },
+  {
+    v: "Beta 1.7.7.8",
     data: "08/10/2026 · 17:40",
     nome: "Foundation and Structure Update · Final",
-    t: "Fim da Foundation and Structure Update: joias mais claras, tutorial com voz e jogo confortável no computador.",
+    t: "Fim da Foundation and Structure Update: joias mais claras, tutorial com voz e cartas revisadas.",
     itens: [
       "🔒 Cadeado nas joias: quem já ganhou as 2 joias da rodada aparece com um cadeado no placar, pra todo mundo saber que a próxima só vem na rodada seguinte.",
       "🔊 Ouvir este passo: no tutorial, o C.A.O.S. lê o passo em voz alta pra quem aprende melhor ouvindo.",
       "🃏 Carta animada: a carta vira com uma animação curta (desligada no Modo Batata e pra quem pede menos movimento).",
-      "🖥️ Tela larga no computador: o jogo usa a largura da tela de verdade. Carta, regras e janelas ficam mais fáceis de ler, e a carta inteira cabe sem rolar.",
+    ],
+    qol: [
+      "🃏 Cartas revisadas: Enciclopédia Barsa, Carnê do Baú, Super Choque e Escova de dente tinham uma dica que entregava a resposta, e 1945 tinha dicas de conta demais.",
+      "🤖 Fala nova: uma fala do C.A.O.S. que aparecia em dois lugares ganhou uma substituta.",
+    ],
+  },
+  {
+    v: "Beta 1.7.7.7",
+    data: "08/10/2026 · 16:46",
+    nome: "Foundation and Structure Update · Computador",
+    t: "Jogar no computador ficou mais confortável.",
+    itens: [
+      "🖥️ Tela larga no computador: o jogo usa a largura da tela de verdade, em vez de só ampliar a versão de celular. Carta, regras e janelas ficam mais fáceis de ler, e a carta inteira cabe sem rolar.",
+    ],
+    qol: [
+      "📱 Celular e tablet: nada mudou.",
+    ],
+  },
+  {
+    v: "Beta 1.7.7.6",
+    data: "08/10/2026 · 16:04",
+    nome: "Foundation and Structure Update · QoL",
+    t: "Mais cuidado com quem joga e com a partida salva.",
+    itens: [
       "⏳ Tempo extra discreto: quando o Mestre ganha tempo extra, o C.A.O.S. avisa sem dizer o motivo pra mesa toda.",
       "💾 Importar mais seguro: um código estragado, gigante ou de uma versão mais nova é recusado sem apagar a partida deste aparelho.",
     ],
     qol: [
-      "🃏 Cartas revisadas: Enciclopédia Barsa, Carnê do Baú, Super Choque e Escova de dente tinham uma dica que entregava a resposta, e 1945 tinha dicas de conta demais.",
       "🎲 Tela inicial sem número velho: ela mostra “Preparando as cartas…” até contar o baralho.",
       "⌨️ Teclado e leitor de tela: o recado do C.A.O.S. na tela inicial responde ao Enter e ao Espaço, e o leitor de tela pula as palavras decorativas.",
     ],
   },
   {
-    v: "Beta 1.7.7 a 1.7.7.4",
+    v: "Beta 1.7.7.5",
+    data: "08/10/2026 · 15:52",
+    nome: "Foundation and Structure Update · Parte 6",
+    t: "Conferência geral de todos os modos e formatos. Nada muda na partida.",
+    itens: [],
+    qol: [],
+  },
+  {
+    v: "Beta 1.7.7.4",
     data: "08/10/2026 · 15:37",
+    nome: "Foundation and Structure Update · Parte 5",
+    t: "Partida salva mais completa.",
+    itens: [
+      "💾 Recarregar sem perder nada: recarregar a página no meio da partida não perde mais a sequência de acertos, a contagem de cartas esgotadas nem os erros da carta em jogo.",
+    ],
+    qol: [],
+  },
+  {
+    v: "Beta 1.7.7.3",
+    data: "05/10/2026 · 23:11",
+    nome: "Foundation and Structure Update · Parte 4",
+    t: "O C.A.O.S. continua zoando à vontade, mas não encosta em nada que decide a partida.",
+    itens: [
+      "🦴 C.A.O.S. não mexe no jogo: fichas de palpite, joias, casa de bônus, dicas abertas, rodada e o modo sorteado da Moda da Casa são só da mesa.",
+      "⏱️ Relógio justo: o C.A.O.S. pode dar tempo (o relógio para enquanto ele fala), mas nunca tira.",
+    ],
+    qol: [],
+  },
+  {
+    v: "Beta 1.7.7.2",
+    data: "05/10/2026 · 22:50",
+    nome: "Foundation and Structure Update · Parte 3",
+    t: "Partidas salvas mais resistentes a atualizações.",
+    itens: [
+      "💾 Carta certa sempre: se a resposta de uma carta for corrigida numa atualização, a partida salva continua com a carta certa.",
+      "🎲 Código da partida: cada partida ganha um código próprio, que aparece no relatório exportado.",
+      "💾 Saves antigos: partidas salvas em versões anteriores continuam abrindo normalmente.",
+    ],
+    qol: [],
+  },
+  {
+    v: "Beta 1.7.7.1",
+    data: "05/10/2026 · 22:38",
+    nome: "Foundation and Structure Update · Parte 2",
+    t: "Fichas e joias ficam com a pessoa, não com o lugar na mesa.",
+    itens: [
+      "🃏 Fichas e joias com dono: fichas de palpite, joias da rodada e o vencedor por joias ficam com a pessoa, mesmo se alguém sair ou a ordem mudar.",
+      "💾 Saves antigos: partidas salvas em versões anteriores continuam abrindo normalmente.",
+    ],
+    qol: [
+      "💎 Trava de joias corrigida: quando o ADM tirava alguém da partida, a trava de 2 joias por rodada podia passar pro jogador do lado.",
+    ],
+  },
+  {
+    v: "Beta 1.7.7",
+    data: "05/10/2026 · 22:23",
     nome: "Foundation and Structure Update · Parte 1",
-    t: "Começa a Foundation and Structure Update: menos toque errado, partida salva mais firme e um C.A.O.S. que não mexe no jogo.",
+    t: "Começa a Foundation and Structure Update: menos toque errado e mais acessibilidade.",
     itens: [
       "👆 Toque duplo no Errou: se o dedo tocar duas vezes, o segundo toque não abre um número sem querer.",
       "↩️ Botão voltar do Android: com uma janela aberta, ele fecha a janela primeiro em vez de pausar o jogo por baixo.",
       "🦻 Leitor de tela: VoiceOver e TalkBack avisam de quem é a vez e quem é o Mestre.",
-      "🃏 Fichas e joias com dono: fichas de palpite, joias da rodada e o vencedor por joias ficam com a pessoa, mesmo se alguém sair ou a ordem mudar.",
-      "💾 Recarregar sem perder nada: a partida salva guarda a carta certa (mesmo se a resposta for corrigida), a sequência de acertos e os erros da carta em jogo.",
-      "🎲 Código da partida: cada partida ganha um código próprio, que aparece no relatório exportado.",
-      "🦴 C.A.O.S. não mexe no jogo: fichas de palpite, joias, casa de bônus, dicas abertas, rodada e o modo sorteado da Moda da Casa são só da mesa.",
-      "⏱️ Relógio justo: o C.A.O.S. pode dar tempo (o relógio para enquanto ele fala), mas nunca tira.",
     ],
     qol: [
-      "💾 Saves antigos: partidas salvas em versões anteriores continuam abrindo normalmente.",
-      "💎 Trava de joias corrigida: quando o ADM tirava alguém da partida, a trava de 2 joias por rodada podia passar pro jogador do lado.",
       "✋ Acertou longe do Errou: mais espaço entre os dois, pra ninguém tocar no errado no susto.",
       "🔠 Letra Grande e Enorme: dicas e respostas longas quebram a linha certinho, e a grade de números cabe até em celular pequeno.",
       "⚠︎ Absurdo explicado: é o chute que foi absurdo (nada a ver com a dica), não a dica.",
@@ -66977,80 +67128,186 @@ const NOVIDADES = [
     ],
   },
   {
-    v: "Beta 1.7.6.4 a 1.7.6.7",
+    v: "Beta 1.7.6.7",
     data: "03/10/2026 · 23:30",
-    nome: "Buttons and Tutorial Update · Ajuda do Mestre",
-    t: "Tempo extra pra quem lê devagar, um tutorial pra cada jeito de ganhar e várias correções.",
+    nome: "Buttons and Tutorial Update · QoL",
+    t: "Um tutorial pra cada jeito de ganhar e várias correções.",
     itens: [
-      "🧒 Idade no cadastro: 🧒 Menos de 12 ou 🧑 12 ou mais (opcional). No Equipe vale a faixa de idade que já existia.",
-      "⏳ Tempo extra pro Mestre: quem tem menos de 12 ou é iniciante ganha +20 s pra responder quando é o Mestre. No Express, +8 s em cada dica e +40 s na carta.",
-      "🤖 O C.A.O.S. percebe: se um Mestre está com dificuldade pra ler, ele pergunta à mesa se pode dar o tempo extra, e avisa na primeira vez que a pessoa vira Mestre.",
-      "🏆 Como se ganha: um tutorial de 5 passos pra cada condição de vitória (Clássico, Pontos, Só Joias e Moda da Casa). Aparece sozinho na primeira vez e fica na Pausa.",
-      "🎓 Tutoriais redondos: 10 passos no rápido (menos de 2 minutos) e 35 no manual completo.",
+      "🏆 Como se ganha: um tutorial de 5 passos pra cada condição de vitória (Clássico, Pontos, Só Joias e Moda da Casa), com os números da partida.",
+      "▶️ Abre na hora certa: ele aparece sozinho na primeira vez de cada condição neste aparelho. Na Moda da Casa, logo depois da roleta.",
+      "📖 Pra rever: “Como funciona?” no cadastro e na roleta, e “🏆 Como se ganha” na Pausa.",
       "👥 Equipe com 6 jogadores: agora dá pra jogar com 2 equipes de 3 (antes só 3 equipes de 2).",
-      "🔠 Letra Enorme sem vazar: no painel ♿ Acessibilidade, os botões crescem junto com o texto.",
     ],
     qol: [
-      "🛡️ ADM: liga ou desliga o tempo extra de Mestre de cada jogador.",
-      "🎨 Cores e emojis maiores: no cadastro, ficaram do tamanho de um dedo e ganharam nome pro leitor de tela.",
-      "🤫 C.A.O.S. espera a janela: com uma janela aberta, ele espera ela fechar pra falar, e quando a piada já fechou, não emenda mais nada.",
-      "🤖 Falas corrigidas: “E mesmo assim não foi, Fulano.” termina certo, e ele não diz que hesitou depois de uma frase em que não hesitou.",
+      "🤖 Fala sem nexo corrigida: “A dica era... E mesmo assim, Fulano.” agora termina com “E mesmo assim não foi, Fulano.”",
+      "🤖 Hesitação de verdade: o C.A.O.S. não diz mais “Anota aí que eu hesitei.” depois de uma frase em que não hesitou.",
+      "🧒 Tempo extra no Equipe: a faixa etária explica que 6-12 também ganha tempo extra quando é o Mestre.",
+      "🤫 C.A.O.S. espera a janela: com uma janela aberta (Reiniciar, Encerrar, tutorial, acessibilidade…), ele espera ela fechar pra falar.",
       "🃏 Verso com formato de carta: mais estreito e mais alto, como uma carta de verdade.",
-      "⏱️ Duração certa: o tempo de partida conta só o tempo jogando. Pausa, app fechado e celular bloqueado ficam de fora.",
+      "⏱️ Duração certa: o tempo de partida conta só o tempo jogando. Pausa, app fechado e celular bloqueado ficam de fora, e o tempo pausado aparece separado.",
+      "🗺️ Tabuleiro ampliado: a lista de jogadores rola dentro da janela.",
       "🔥 Perto ou Longe: a pergunta fica 25 segundos na tela, e depois de escolher ainda dá pra digitar o chute.",
+      "🎤 C.A.O.S. sabe parar: quando a piada já fechou, ele não emenda mais nada.",
       "⏸️ Pausa alinhada: todos os botões com a mesma largura.",
     ],
   },
   {
-    v: "Beta 1.7.6 a 1.7.6.3",
-    data: "03/10/2026 · 17:41",
-    nome: "Buttons and Tutorial Update · Parte 1",
-    t: "Começa a Buttons and Tutorial Update: acessibilidade em todos os modos, botões maiores e um tutorial novo.",
+    v: "Beta 1.7.6.6",
+    data: "03/10/2026 · 18:26",
+    nome: "Buttons and Tutorial Update · QoL",
+    t: "Tutoriais com números redondos: 10 passos no rápido e 35 no manual completo.",
     itens: [
-      "♿ Acessibilidade em todos os modos: no menu ⋮ e na Pausa. Letra Normal, Grande ou Enorme, mais tempo, dicas em voz alta, volumes separados, alto contraste e menos movimento.",
-      "👆 Botões maiores: todos têm pelo menos o tamanho de um dedo, inclusive as dicas de 1 a 20, o menu ⋮ e a Pausa.",
-      "🌗 Mais contraste: Nível 0, remover, Conferir resposta, a resposta da carta e o Descartar ficaram mais fáceis de ler.",
-      "🎓 Tutorial rápido: o básico do jogo em menos de 2 minutos, com as telas de verdade em cada passo. Abre no 🎓 Como jogar e no “Nunca jogou?”.",
-      "📖 Manual completo: o tutorial antigo, com todos os detalhes, virou o Manual. Fica no fim do tutorial, no menu ⋮ e na Pausa.",
-      "🎓 Convite pro tutorial: na primeira vez que o jogo abre num aparelho, e quando alguém toca em 🐣 Sou iniciante, o C.A.O.S. pergunta uma vez se querem fazer o tutorial.",
+      "🎓 Tutorial rápido com 10 passos: entraram “Às vezes é uma surpresa” (instruções especiais) e “Lê devagar? Tudo bem” (tempo extra do Mestre). Continua com menos de 2 minutos.",
+      "📖 Manual com 35 passos: o tempo extra do Mestre ganhou um passo próprio no capítulo Cadastro.",
+    ],
+    qol: [],
+  },
+  {
+    v: "Beta 1.7.6.5",
+    data: "03/10/2026 · 18:19",
+    nome: "Buttons and Tutorial Update · QoL",
+    t: "Com a letra Enorme, o texto não vaza mais dos botões.",
+    itens: [
+      "🔠 Letra Enorme sem vazar: no painel ♿ Acessibilidade, os botões crescem junto com o texto e a janela rola até o Pronto.",
+    ],
+    qol: [],
+  },
+  {
+    v: "Beta 1.7.6.4",
+    data: "03/10/2026 · 17:54",
+    nome: "Buttons and Tutorial Update · Ajuda do Mestre",
+    t: "Quem lê mais devagar ganha um tempinho extra quando é o Mestre.",
+    itens: [
+      "🧒 Idade no cadastro: 🧒 Menos de 12 ou 🧑 12 ou mais (opcional). No Equipe vale a faixa de idade que já existia.",
+      "⏳ Tempo extra pro Mestre: quem tem menos de 12 ou é iniciante ganha +20 s pra responder quando é o Mestre. No Express, +8 s em cada dica e +40 s na carta.",
+      "🤖 O C.A.O.S. percebe: se um Mestre está com dificuldade pra ler, ele pergunta à mesa se pode dar o tempo extra. Quem decide é a mesa.",
+      "🗣️ Aviso carinhoso: na primeira vez que a pessoa vira Mestre, o C.A.O.S. avisa do tempo extra.",
     ],
     qol: [
-      "📱 Cada aparelho com o seu: o ajuste de acessibilidade fica guardado no próprio celular.",
-      "⌨️ Contorno no botão escolhido: aparece quando se usa teclado ou leitor de tela, e o campo do nome diz o que é.",
-      "🔘 Botão desligado visível: no menu ⋮, ele tem borda tracejada em vez de ficar quase apagado.",
+      "🛡️ ADM: liga ou desliga o tempo extra de Mestre de cada jogador.",
+      "📖 Manual: explica o tempo extra no passo do Mestre.",
+      "🎨 Cores e emojis maiores: no cadastro, as bolinhas de cor e os emojis ficaram do tamanho de um dedo e ganharam nome pro leitor de tela.",
+    ],
+  },
+  {
+    v: "Beta 1.7.6.3",
+    data: "03/10/2026 · 17:41",
+    nome: "Buttons and Tutorial Update · Parte 4",
+    t: "Ninguém fica perdido: o C.A.O.S. oferece o tutorial pra quem está chegando.",
+    itens: [
+      "🎓 Convite pro tutorial: na primeira vez que o jogo abre num aparelho, e quando alguém toca em 🐣 Sou iniciante, o C.A.O.S. pergunta se querem fazer o tutorial (menos de 2 minutos).",
+      "↪️ Segue de onde parou: quando o tutorial fecha, o jogo volta pra escolha do formato ou pro cadastro guiado.",
+      "⏸️ Tutorial na Pausa: aparece “🎓 Primeira vez? Tutorial de 2 minutos” até alguém ver o tutorial neste aparelho.",
+    ],
+    qol: [
+      "🙅 Sem insistência: ele pergunta uma vez só.",
+      "🐣 Sou iniciante: o cadastro guiado continua igual e agora pode começar com o tutorial.",
+    ],
+  },
+  {
+    v: "Beta 1.7.6.2",
+    data: "03/10/2026 · 17:31",
+    nome: "Buttons and Tutorial Update · Parte 3",
+    t: "Tutorial novo: o básico do jogo em menos de 2 minutos, com desenhos das telas.",
+    itens: [
+      "🎓 Tutorial rápido: passos curtos (o jogo, o Mestre, o número, o chute, os pontos, o C.A.O.S., o online e pronto). Abre no 🎓 Como jogar e no “Nunca jogou?”.",
+      "🖼️ Com as telas de verdade: cada passo mostra o botão ou a tela de que está falando.",
+      "🌐 Online explicado: criar a sala, digitar o código, o Mestre passando de celular em celular e cada um vendo as regras no próprio aparelho.",
+      "📖 Manual completo: o tutorial antigo, com todos os detalhes, virou o Manual. Fica no fim do tutorial, no menu ⋮ e na Pausa.",
+    ],
+    qol: [
+      "🆘 Host caiu no online: o manual explica que quem foi o 2º Mestre assume.",
+      "♿ Manual mais completo: explica a Acessibilidade e o Levar e Trazer a memória do C.A.O.S.",
       "✕ Fechar o tutorial: botão maior e visível no tema Claro.",
     ],
   },
   {
-    v: "Beta 1.7.5.2 a 1.7.5.4",
+    v: "Beta 1.7.6.1",
+    data: "03/10/2026 · 17:22",
+    nome: "Buttons and Tutorial Update · Parte 2",
+    t: "Todos os botões do jogo mais fáceis de tocar e de ler, no Noturno e no Claro.",
+    itens: [
+      "👆 Botões maiores: todos têm pelo menos o tamanho de um dedo, inclusive as dicas de 1 a 20, o menu ⋮ e a Pausa.",
+      "🎯 Links mais fáceis de tocar: “Sem ideia de nome?” e “remover” ganharam uma área de toque maior.",
+      "🌗 Mais contraste: Nível 0, remover, Conferir resposta, a resposta da carta e o Descartar ficaram mais fáceis de ler.",
+      "⌨️ Contorno no botão escolhido: aparece quando se usa teclado ou leitor de tela.",
+    ],
+    qol: [
+      "🔘 Botão desligado visível: no menu ⋮, ele tem borda tracejada em vez de ficar quase apagado.",
+      "🗣️ Campo do nome: o leitor de tela agora diz o que é.",
+    ],
+  },
+  {
+    v: "Beta 1.7.6",
+    data: "03/10/2026 · 17:10",
+    nome: "Buttons and Tutorial Update · Parte 1",
+    t: "Começa a Buttons and Tutorial Update: acessibilidade pra todo mundo, em qualquer modo.",
+    itens: [
+      "♿ Acessibilidade em todos os modos: no menu ⋮ da tela inicial e na Pausa. Antes era só do Old School Acessibilidade.",
+      "🔠 Letra maior: Normal, Grande ou Enorme.",
+      "⏳ Mais tempo: +15 s pra escolher a dica e +30 s pra responder.",
+      "🔊 Dicas em voz alta: cada dica é lida quando abre.",
+      "🎵 Volumes separados: voz e sons, cada um no seu controle.",
+      "🌗 Contraste e movimento: Alto contraste e 🐢 Menos movimento.",
+    ],
+    qol: [
+      "📱 Cada aparelho com o seu: o ajuste fica guardado no próprio celular. No online, cada um ajusta o seu.",
+      "👆 Menu ⋮: tocar num botão que abre janela fecha o menu antes, então o primeiro toque na janela já funciona.",
+      "🌎 Idiomas: o painel já tem lugar reservado pra outros idiomas.",
+    ],
+  },
+  {
+    v: "Beta 1.7.5.4",
     data: "03/10/2026 · 16:27",
-    nome: "C.A.O.S. and Code Update · C.A.O.S. 4.0",
-    t: "Chegou o C.A.O.S. 4.0: emoções mais vivas, as 3 leis e a memória que viaja com você.",
+    nome: "C.A.O.S. and Code Update · QoL",
+    t: "A memória do C.A.O.S. agora viaja com você.",
+    itens: [
+      "🧠 Leve a memória do C.A.O.S.: no menu ⋮ da tela inicial, 📤 Levar copia um código com tudo o que ele lembra (jogadores, recordes, nicks, rivalidades, cartas) e 📥 Trazer cola esse código em outro aparelho.",
+    ],
+    qol: [],
+  },
+  {
+    v: "Beta 1.7.5.3",
+    data: "03/10/2026 · 15:21",
+    nome: "C.A.O.S. and Code Update · Parte 4 (final)",
+    t: "O C.A.O.S. é caótico, mas leal: nada que ele faz quebra a partida.",
+    itens: [
+      "🦴 As 3 leis do C.A.O.S.: ele nunca mexe no jogo (pontos, casas, joias, turno e carta são da mesa), nunca fala o que a mesa proibiu e nunca trava a partida.",
+      "🎯 3.410 falas: o repertório do C.A.O.S. fechou redondinho.",
+    ],
+    qol: [
+      "👑 Anne: o C.A.O.S. só diz que sentiu falta quando ela está voltando, e ganhou falas novas pra primeira vez, pra quando ela volta no mesmo dia e pra quando ela some.",
+      "👋 Boas-vindas com nome: a fala de quem chega sempre traz o nome da pessoa.",
+      "💾 O que ele lembra: o Cérebro mostra o que o C.A.O.S. guarda entre partidas. Jogando pelo site adicionado à Tela de Início, a memória fica guardada de vez.",
+    ],
+  },
+  {
+    v: "Beta 1.7.5.2",
+    data: "03/10/2026 · 12:56",
+    nome: "C.A.O.S. and Code Update · Parte 3",
+    t: "Chegou o C.A.O.S. 4.0: cérebro recalibrado, emoções mais vivas e mecânicas novas.",
     itens: [
       "🗣️ Ele comenta o chute: quando o Mestre digita o que a pessoa chutou, o C.A.O.S. compara com a resposta e comenta, sem entregar nada.",
       "💭 Pensamento em voz alta: de vez em quando ele conta como está por dentro: irritado, entediado, empolgado, magoado…",
       "🎭 Rostinhos novos: cada mistura de emoções (magoado, saudade, empolgação nervosa, riso sem graça) ganhou rosto próprio.",
       "💊 Humor estável: ele não pula mais de alegre pra triste do nada e vai se acalmando aos poucos.",
       "🔊 Religar na Pausa: silenciou o C.A.O.S. sem querer? Na Pausa dá pra religar ele naquela carta.",
-      "🦴 As 3 leis do C.A.O.S.: ele nunca mexe no jogo, nunca fala o que a mesa proibiu e nunca trava a partida.",
-      "🧠 Leve a memória do C.A.O.S.: no menu ⋮, 📤 Levar copia um código com tudo o que ele lembra e 📥 Trazer cola esse código em outro aparelho.",
     ],
     qol: [
-      "👑 Anne: o C.A.O.S. só diz que sentiu falta quando ela está voltando, e ganhou falas novas pra ela.",
-      "👋 Boas-vindas com nome: a fala de quem chega sempre traz o nome da pessoa.",
-      "🧠 Cérebro no ADM: mostra as dez emoções, a mistura do momento e o que ele guarda entre partidas, com uma barra pra cada emoção.",
-      "📚 Repertório: 3.410 falas e cerca de 30 mil combinações, sem termo proibido no Júnior e no modo Família.",
+      "🧠 Cérebro no ADM: a rede mostra as dez emoções, a mistura do momento, o estado e o temperamento.",
+      "🎛️ Humor por barras: no Console do Cérebro, cada emoção tem uma barra pra subir ou baixar.",
+      "📚 Repertório: mais de 3.400 falas e cerca de 30 mil combinações montadas na hora.",
+      "🔍 Falas revisadas: nenhum termo proibido nas falas do Júnior e do modo Família.",
     ],
   },
   {
-    v: "Beta 1.7.5 a 1.7.5.1",
+    v: "Beta 1.7.5.1",
     data: "03/10/2026 · 12:25",
-    nome: "C.A.O.S. and Code Update · Parte 1",
-    t: "Jogo organizado por dentro e um C.A.O.S. que monta o que vai dizer na hora.",
+    nome: "C.A.O.S. and Code Update · Parte 2",
+    t: "O C.A.O.S. monta o que vai dizer pelo momento da partida, em vez de repetir frases.",
     itens: [
-      "🗂️ Jogo organizado por dentro: o jogo, que era um arquivo gigante só, agora é montado a partir de partes menores, cada uma no seu lugar (sugestão do Klaus).",
       "🧠 Falas montadas na hora: ele junta pedaços de frase conforme a hora, o dia, o modo, quem está na mesa e o que lembra de cada pessoa.",
-      "😎 Chega de comporte-se: as entradas especiais têm centenas de combinações, e o C.A.O.S. lembra da última partida e de quem está na mesa (Anne, Pedro, Isabel).",
+      "😎 Chega de comporte-se: as entradas especiais, que tinham 3 falas, agora têm centenas de combinações, e o C.A.O.S. lembra da última partida, de quanto tempo faz e de quem está na mesa (Anne, Pedro, Isabel).",
       "👋 Boas-vindas de verdade: cada jogador é recebido de um jeito, conforme a hora, se é a primeira vez, se sumiu, se ganhou ou perdeu a última.",
       "🔁 Menos repetição: ele lembra o que já disse e evita repetir, mesmo depois de fechar o jogo. Fala marcada com 👎 não volta.",
       "😤 Emoções calibradas: errar várias vezes seguidas deixa o C.A.O.S. irritado e depois magoado, e o tédio passa quando a mesa volta a jogar.",
@@ -67060,50 +67317,101 @@ const NOVIDADES = [
     ],
   },
   {
-    v: "Beta 1.7.4.2 a 1.7.4.4",
-    data: "03/10/2026 · 10:15",
-    nome: "Game Mode Update · Final",
-    t: "Júnior, Clássico e Old School conferidos de ponta a ponta. Fecha a Game Mode Update.",
+    v: "Beta 1.7.5",
+    data: "03/10/2026 · 10:40",
+    nome: "C.A.O.S. and Code Update · Parte 1",
+    t: "Organização por dentro, sem mudar nada na partida.",
     itens: [
-      "🧒 Júnior conferido: meta de 150 casas, Palpite a qualquer hora e joias. A zoeira só oferece Family friendly, Suave e Normal, e os avatares de adulto ficam de fora.",
-      "🧸 Cartas certinhas pra criança: saiu o que não combinava com a idade, como bebida e dicas pesadas, e as falas do Júnior foram varridas atrás de palavras de adulto.",
-      "🃏 Clássico conferido: meta de 200 casas, 90 s pra responder, até 20 dicas com 1 a 4 especiais, Palpite a qualquer hora, joias, casas de bônus e Ajudinha do C.A.O.S.",
-      "📻 Old School conferido: cartas de quem viveu a época, sem animais, nas quatro categorias equilibradas, em Versus e em Equipe.",
+      "🗂️ Jogo organizado por dentro: o jogo, que era um arquivo gigante só, agora é montado a partir de 32 partes menores, cada uma no seu lugar (sugestão do Klaus).",
+    ],
+    qol: [],
+  },
+  {
+    v: "Beta 1.7.4.4",
+    data: "03/10/2026 · 10:15",
+    nome: "Game Mode Update · Parte 5 (final)",
+    t: "Old School conferido de ponta a ponta. Fecha a Game Mode Update.",
+    itens: [
+      "📻 Old School conferido: cartas de quem viveu a época, sem animais, nas quatro categorias equilibradas, meta de 200 casas, Palpite a qualquer hora e joias, em Versus e em Equipe.",
+      "🔎 Acessibilidade na prática: letra maior em toda a tela, 45 s pra escolher a dica, 2 min pra responder e 25 s nas instruções especiais.",
       "🎙️ C.A.O.S. contador de histórias: no Old School ele faz menos piada boba, avisa menos o tempo e comenta a nostalgia da época das cartas.",
-      "📅 Cartas de Ano revisadas: as contas das 200 cartas de Ano conferidas de novo, e os fatos das novas relidos um por um.",
-      "👤 Cartas de Pessoa novas: Bluey, Peppa Pig, Rapunzel, Mulan, Simba, Popeye, Garfield, Charlie Brown e Ash Ketchum.",
     ],
     qol: [
-      "✍️ Fatos ajustados: Kellogg em 1906, o Copan com mais de 30 andares, o peixe-boi quase sem predadores e a galhada do veado.",
+      "🔍 Cartas Old School relidas: as cartas novas da 1.7.3.5, com os fatos mais arriscados conferidos (Copan, Mappin, Torre de TV de Brasília).",
       "✨ Novidades em neon: a caixa de Novidades ganhou o neon girando na borda, e o X de fechar pulsa no mesmo ritmo.",
     ],
   },
   {
-    v: "Beta 1.7.4 a 1.7.4.1",
-    data: "03/10/2026 · 01:33",
-    nome: "Game Mode Update · Parte 1",
-    t: "Começa a Game Mode Update: as jogadas de UNO do Express funcionam de verdade e o baralho se equilibra.",
+    v: "Beta 1.7.4.3",
+    data: "03/10/2026 · 10:08",
+    nome: "Game Mode Update · Parte 4",
+    t: "Clássico conferido de ponta a ponta, e mais uma revisão nas cartas de Ano e Pessoa.",
     itens: [
-      "⏭️ Especiais de UNO que funcionam: se o tempo acaba numa especial, o efeito acontece sozinho (pula, inverte, bloqueia ou cede a vez).",
-      "🔄 Inverter de verdade: Volte 2 casas é o Inverter do UNO, e Volte 3 casas inverte e ainda pula 1.",
-      "👀 Dá pra ver o efeito: depois de cada especial aparece quem foi pulado, quem bloqueou quem e de quem é a vez.",
-      "✕ Descartar no Express: dá pra descartar e puxar outra carta até a 5ª dica (no máximo 2 seguidas).",
-      "👁️ Resposta à mostra no Express: ela aparece pro Mestre memorizar e some sozinha na 2ª dica ou quando o Mestre toca nela.",
-      "⚖️ Baralho equilibrado de verdade: cada categoria sai cerca de 25% das vezes (no Hardcore, 30% Ano e Pessoa) e nenhuma sai mais de duas vezes seguidas.",
-      "🐾 Animal no Júnior: os animais aparecem numa a cada quatro cartas, mais ou menos.",
-      "💀 Hardcore conferido: 10 entradas por carta com 1 ou 2 especiais, 60 s pra responder, pontos em dobro, sem Palpite a qualquer hora e sem Ajudinha.",
-      "🔎 Old School Acessibilidade: letra maior em toda a tela, 45 s pra escolher a dica, 2 min pra responder e 25 s nas instruções especiais.",
+      "🃏 Clássico conferido: meta de 200 casas, 400 cartas, 90 s pra responder, até 20 dicas com 1 a 4 especiais, Palpite a qualquer hora, joias, casas de bônus e Ajudinha do C.A.O.S.",
+      "📅 Cartas de Ano revisadas: as contas das 200 cartas de Ano conferidas de novo, e os fatos das 101 novas relidos um por um.",
+      "👤 Cartas de Pessoa novas: Bluey, Peppa Pig, Rapunzel, Mulan, Simba, Popeye, Garfield, Charlie Brown e Ash Ketchum, com as datas de estreia conferidas.",
     ],
     qol: [
-      "🎰 Roleta com as categorias certas: no Express, ela só mostra as categorias da partida.",
-      "📜 Regras do Express atualizadas: explicam cada especial, o efeito quando o tempo acaba e o descarte.",
+      "✍️ Fato ajustado: em 1906, quem fundou a empresa de flocos de milho foi W. K. Kellogg.",
+      "🏢 Copan: as fontes não batem no número de andares, então a dica diz que ele tem mais de 30.",
+    ],
+  },
+  {
+    v: "Beta 1.7.4.2",
+    data: "03/10/2026 · 04:32",
+    nome: "Game Mode Update · Parte 3",
+    t: "Júnior conferido de ponta a ponta, com cartas e falas na medida pra criançada.",
+    itens: [
+      "🧒 Júnior conferido: meta de 150 casas, cartas de Animal, Pessoa, Lugar e Coisa, Palpite a qualquer hora e joias. A zoeira só oferece Family friendly, Suave e Normal, e os avatares de adulto ficam de fora.",
+      "🐾 Animal na medida: os animais saem numa a cada quatro cartas, e nenhuma categoria aparece mais de duas vezes seguidas.",
+      "🧸 Cartas certinhas pra criança: saiu o que não combinava com a idade, como bebida e dicas pesadas, sem perder a graça.",
+      "🤖 C.A.O.S. de família: todas as falas do Júnior foram varridas atrás de palavras de adulto.",
+    ],
+    qol: [
+      "🔍 Cartas novas relidas: as cartas novas que aparecem no Júnior, com atenção a números, recordes e datas.",
+      "✍️ Fatos ajustados: o peixe-boi quase não tem predadores, e o veado ganhou uma dica sobre a galhada.",
+    ],
+  },
+  {
+    v: "Beta 1.7.4.1",
+    data: "03/10/2026 · 01:33",
+    nome: "Game Mode Update · Parte 2",
+    t: "As categorias se revezam de verdade, e Hardcore e Old School foram conferidos.",
+    itens: [
+      "⚖️ Baralho equilibrado de verdade: a categoria com mais cartas dominava a partida (no Clássico, Coisa chegava a 60%). Agora cada uma sai cerca de 25% das vezes; no Hardcore, 30% Ano e Pessoa e 20% Lugar e Coisa.",
+      "🔁 No máximo 2 seguidas: nenhuma categoria sai mais de duas vezes seguidas nos modos com tabuleiro.",
+      "🐾 Animal no Júnior: os animais aparecem numa a cada quatro cartas, mais ou menos.",
+      "♻️ Carta devolvida sem bagunçar: a carta trocada volta num ponto qualquer do baralho, sem desfazer o equilíbrio.",
+      "🔎 Old School Acessibilidade: letra maior em toda a tela, 45 s pra escolher a dica, 2 min pra responder e 25 s nas instruções especiais.",
+      "💀 Hardcore conferido: 10 entradas por carta com 1 ou 2 especiais, 60 s pra responder, pontos em dobro, sem Palpite a qualquer hora e sem Ajudinha do C.A.O.S.",
+    ],
+    qol: [
+      "📝 Texto do Equipe corrigido: o Old School também vale no Equipe.",
       "✨ Ícone novo: neon mais vivo e fundo azul mais escuro (no iPhone, o ícone troca quando o atalho é adicionado de novo).",
+    ],
+  },
+  {
+    v: "Beta 1.7.4",
+    data: "03/10/2026 · 00:51",
+    nome: "Game Mode Update · Parte 1",
+    t: "Começa a Game Mode Update. Primeiro, o Express: as jogadas de UNO funcionam de verdade.",
+    itens: [
+      "⏭️ Especiais de UNO que funcionam: se o tempo acaba numa especial, o efeito acontece sozinho (pula, inverte, bloqueia ou cede a vez).",
+      "🔄 Inverter de verdade: Volte 2 casas é o Inverter do UNO (a vez volta pra quem jogou antes), e Volte 3 casas inverte e ainda pula 1.",
+      "👀 Dá pra ver o efeito: depois de cada especial aparece quem foi pulado, quem bloqueou quem e de quem é a vez.",
+      "🎯 Pular com nome: a especial Avance mostra quem vai ser pulado antes de tocar no botão.",
+      "✕ Descartar no Express: dá pra descartar e puxar outra carta até a 5ª dica (no máximo 2 seguidas).",
+      "🎰 Roleta com as categorias certas: no Express, ela só mostra as categorias da partida; com uma só, cai direto nela.",
+      "👁️ Resposta à mostra no Express: ela aparece pro Mestre memorizar e some sozinha na 2ª dica ou quando o Mestre toca nela.",
+    ],
+    qol: [
+      "📜 Regras do Express atualizadas: explicam cada especial, o efeito quando o tempo acaba e o descarte.",
     ],
   },
   {
     v: "Beta 1.7.3.5",
     data: "03/10/2026 · 00:07",
-    nome: "Cards and Rules Update · 1000 cartas",
+    nome: "Cards and Rules Update · Parte 6",
     t: "400 cartas novas e o baralho equilibrado: agora são 1000 cartas, 200 de cada categoria.",
     itens: [
       "⚖️ Baralho equilibrado: Ano, Pessoa, Lugar, Animal e Coisa têm exatamente 200 cartas cada. Nenhuma carta antiga saiu.",
@@ -67116,49 +67424,107 @@ const NOVIDADES = [
     qol: [
       "🔍 Vistoria geral: as 1000 cartas conferidas de novo (20 dicas por carta, especiais no lugar certo, nenhuma resposta repetida e as contas das cartas de Ano).",
       "🙈 Sem entregar o nome: dezenas de dicas que soltavam um pedaço da resposta foram reescritas.",
+      "✍️ Fatos conferidos: datas, recordes e curiosidades das cartas novas checados um por um.",
       "📐 Título da versão na caixa: nas Novidades, nomes de versão compridos quebram a linha em vez de vazar.",
     ],
   },
   {
-    v: "Beta 1.7.3.2 a 1.7.3.4",
+    v: "Beta 1.7.3.4",
     data: "02/10/2026 · 22:41",
-    nome: "Cards and Rules Update · Pente fino",
-    t: "Todas as 600 cartas passaram pelo pente fino, dica por dica.",
+    nome: "Cards and Rules Update · Parte 5 (final)",
+    t: "Cartas de Animal e Coisa conferidas, e todas as 600 cartas passaram pelo pente fino.",
     itens: [
-      "🧑 Cartas de Pessoa revisadas: as 191 cartas lidas dica por dica, com 83 dicas corrigidas ou trocadas. A Anitta não foi dentista, o Casimiro é vascaíno e o Neymar já voltou ao Santos.",
-      "🗺️ Cartas de Lugar revisadas: as 137 cartas, com 55 dicas corrigidas. A Índia passou a China em população e a Amazônia não é o pulmão do mundo.",
-      "🐾 Animal e Coisa revisadas: 173 cartas e 95 dicas corrigidas. A Laika foi ao espaço antes dos humanos e a borboleta fica numa crisálida, não num casulo.",
-      "🎙️ Dubladores conferidos: Guilherme Briggs, Bianca Alencar, Marco Ribeiro, Wendel Bezerra e Úrsula Bezerra ganharam dicas certinhas.",
-      "🔁 Menos repetição: cartas que diziam a mesma coisa em várias dicas ganharam dicas novas, e dicas que soltavam o nome foram reescritas.",
-      "🤖 C.A.O.S. mais afiado: 202 falas fracas, repetidas ou fora de contexto saíram, e ficaram as melhores.",
-      "🙌 Créditos ao Pedro: a musiquinha de vitória quando alguém acerta a carta e a risada do C.A.O.S. quando ele zoa foram ideias do Pedro, de 11 anos, que chegaram na 1.7.1.6. Valeu, Pedro!",
+      "🐾 Cartas de Animal revisadas: as 51 cartas de Animal foram lidas dica por dica.",
+      "🧸 Cartas de Coisa revisadas: as 122 cartas de Coisa também. Ao todo, 95 dicas foram corrigidas ou trocadas.",
+      "✍️ Fatos corrigidos: a Laika foi ao espaço antes dos humanos; a borboleta fica numa crisálida, não num casulo; o panda hoje está vulnerável, não mais em perigo; e outras.",
+      "🔁 Menos repetição: cartas que diziam a mesma coisa três ou quatro vezes ganharam dicas novas.",
+      "✅ Cards and Rules Update completa: as 600 cartas do jogo foram revisadas uma por uma.",
     ],
     qol: [
+      "🤖 Falas sem repeteco: saíram as falas do C.A.O.S. que apareciam iguais em dois lugares.",
       "⚡ Mais leve: o jogo ficou menor e abre um pouquinho mais rápido.",
+      "🙈 Dicas que entregavam a resposta: palavras que soltavam o nome foram tiradas das dicas.",
     ],
   },
   {
-    v: "Beta 1.7.3 a 1.7.3.1",
+    v: "Beta 1.7.3.3",
+    data: "02/10/2026 · 21:13",
+    nome: "Cards and Rules Update · Parte 4",
+    t: "Cartas de Lugar conferidas, dubladores checados e um C.A.O.S. que repete menos.",
+    itens: [
+      "🗺️ Cartas de Lugar revisadas: as 137 cartas de Lugar foram lidas dica por dica, e 55 dicas foram corrigidas ou trocadas.",
+      "✍️ Fatos corrigidos: a Índia passou a China em população; a Amazônia não é o pulmão do mundo; o Atlântico tem o nome do titã Atlas; e outras.",
+      "🙈 Sem entregar o nome: dicas que soltavam um pedaço da resposta foram reescritas.",
+      "🎙️ Dubladores conferidos: as cartas de dubladores foram checadas uma por uma.",
+      "🤖 C.A.O.S. mais afiado: 202 falas fracas, repetidas ou fora de contexto saíram, e ficaram as melhores.",
+    ],
+    qol: [
+      "🎬 Apresentação do C.A.O.S.: das versões quase iguais, ficaram as que têm uma piada própria.",
+      "🔗 Falas soltas: saíram falas que só faziam sentido logo depois de outra.",
+      "🎙️ Dublagem conferida: Guilherme Briggs, Bianca Alencar, Marco Ribeiro, Wendel Bezerra e Úrsula Bezerra ganharam dicas certinhas.",
+    ],
+  },
+  {
+    v: "Beta 1.7.3.2",
+    data: "02/10/2026 · 20:28",
+    nome: "Cards and Rules Update · Parte 3",
+    t: "Todas as cartas de Pessoa conferidas uma por uma.",
+    itens: [
+      "🧑 Cartas de Pessoa revisadas: as 191 cartas de Pessoa foram lidas dica por dica, e 83 dicas foram corrigidas ou trocadas.",
+      "✍️ Fatos corrigidos: a Anitta não foi dentista; o Casimiro é vascaíno; o Neymar já voltou ao Santos; a Elsa não é coroada no fim do filme; e outras.",
+      "🔁 Menos repetição: cartas que repetiam a mesma informação em duas ou três dicas ganharam dicas novas.",
+      "🙌 Créditos ao Pedro: a musiquinha de vitória quando alguém acerta a carta e a risada do C.A.O.S. quando ele zoa foram ideias do Pedro, de 11 anos, que chegaram na 1.7.1.6. Valeu, Pedro!",
+    ],
+    qol: [
+      "🧹 Jogo mais leve: estilos que nunca apareciam na tela saíram. O jogo fica igualzinho.",
+    ],
+  },
+  {
+    v: "Beta 1.7.3.1",
     data: "02/10/2026 · 18:07",
+    nome: "Cards and Rules Update · Parte 2",
+    t: "Cartas de Ano revisadas, Modo Claro mais legível e novidades que abrem e fecham.",
+    itens: [
+      "📅 Cartas de Ano revisadas: cada uma tem no máximo 3 dicas de conta e só 1 que entrega o ano de cara. Mais de 450 dicas viraram fatos novos.",
+      "🧮 Contas conferidas: somas, bissextos, algarismos romanos e divisões checados. Saíram as dicas tipo “venho dois anos depois de”.",
+      "☀️ Modo Claro com identidade: cada modo ganhou um fundo na sua cor, e a carta virada usa o mesmo roxo do Noturno.",
+      "🔎 Contraste no Claro: o que sumia no papel ficou legível.",
+      "📰 Novidades em caixinhas: cada mudança mostra só o título; é só tocar pra abrir ou fechar a explicação. Ideia do Bruno Levanti!",
+    ],
+    qol: [
+      "✍️ Fatos corrigidos: Olimpíadas de inverno, a saída da Rússia da guerra (1918), a Tarsila e a expulsão dos judeus em 1492.",
+      "🎯 Tabuleiro: números a cada 20 casas, e um toque abre a versão ampliada, com a distância pro líder.",
+      "📋 Lista de jogadores: uma linha discreta separa cada jogador no cadastro.",
+      "🎴 Carta virada no Claro: o mesmo desenho do Noturno, em tons de lavanda.",
+      "⏯️ Pausar, Reiniciar e Encerrar: no Claro, o mesmo neon do Noturno num tom mais escuro.",
+      "🎰 Modo escolhido: o cartão não perde mais a borda de cima enquanto flutua.",
+      "❎ Fechar as Novidades: um X no canto, que acompanha a rolagem.",
+      "☀️ Menu de ajustes: quando o Vibrar não aparece (iPhone), o botão Claro/Noturno fica centralizado.",
+      "✨ Brilhos no Claro: a luz das bordas dos botões vem num tom escuro da própria cor.",
+    ],
+  },
+  {
+    v: "Beta 1.7.3",
+    data: "02/10/2026 · 15:20",
     nome: "Cards and Rules Update",
-    t: "Cartas revisadas, Old School maior, regras mais simples, verso de carta novinho e Modo Claro mais legível.",
+    t: "Cartas revisadas, 25 cartas novas no Old School, regras mais simples e um verso de carta novinho.",
     itens: [
       "🃏 Cartas revisadas: cada dica funciona sozinha, sem repetir a mesma informação e sem entregar o nome da resposta.",
-      "📅 Cartas de Ano revisadas: no máximo 3 dicas de conta e só 1 que entrega o ano de cara. Mais de 450 dicas viraram fatos novos, com as contas conferidas.",
-      "📻 Old School maior: 25 cartas novas de Ano, Coisa e Lugar (como Tamagotchi, Fliperama, Atari e Playcenter).",
+      "📻 Old School maior: 25 cartas novas de Ano, Coisa e Lugar (como Tamagotchi, Fliperama, Atari e Playcenter). O baralho total tem 600 cartas.",
       "⚖️ Categorias equilibradas: todas saem na mesma proporção. No Hardcore, Ano e Pessoa saem mais (30% cada).",
       "💀 Hardcore sem dó: o C.A.O.S. decide sorteia entre Normal, Ácido e Nível 0.",
       "📋 Regras novas: mais curtas, diretas e na ordem em que as coisas acontecem no jogo.",
       "🎴 Verso novo da carta: moldura neon dupla, cantos dourados, o P dentro do ? e o olho do C.A.O.S.",
-      "☀️ Modo Claro com identidade: cada modo ganhou um fundo na sua cor, e o que sumia no papel ficou legível.",
-      "📰 Novidades em caixinhas: cada mudança mostra só o título; é só tocar pra abrir ou fechar a explicação. Ideia do Bruno Levanti!",
     ],
     qol: [
-      "🎙️ Mestre e vez em destaque: o Mestre aparece marcado na carta virada e na roleta, e o “Vez de” ganhou um selo amarelo.",
+      "🎙️ Mestre em destaque: o Mestre da rodada aparece marcado na carta virada e na roleta da categoria.",
+      "👉 Vez em destaque: o “Vez de” ganhou um selo amarelo na carta aberta.",
       "🚫 Cor ou emoji com dono: a tela nega na hora, com som, vibração e o botão tremendo.",
-      "✍️ Fatos corrigidos: Pelé e Edinho, Chaves e Dona Clotilde, a Magali, o Zidane, a Tarsila, a saída da Rússia da guerra e outros.",
-      "🎯 Tabuleiro: números a cada 20 casas, e um toque abre a versão ampliada, com a distância pro líder.",
-      "❎ Fechar as Novidades: um X no canto, que acompanha a rolagem.",
+      "🎴 Carta virada mais limpa: saiu o “Puxou sem querer?”. O descarte de carta difícil continua depois de virar.",
+      "✍️ Fatos corrigidos: Pelé e Edinho, Chaves e Dona Clotilde, a Magali, o Zidane, a Rosinha e a dublagem do Máscara.",
+      "🔤 Dicas que entregavam: saíram as que davam a resposta por tradução ou sigla.",
+      "🧒 Contagem do Júnior: o aviso mostra quantas cartas o baralho tem de verdade.",
+      "🎓 Tutorial: a instrução de exemplo agora é “Volte 2 casas”.",
       "🤖 C.A.O.S. 3.8: com as falas novas, o C.A.O.S. subiu de 3.6 pra 3.8.",
       "🚧 Em breve: a tela de abertura avisa que vem aí o Multiplayer, online e local.",
     ],
