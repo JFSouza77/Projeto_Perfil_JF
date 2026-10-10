@@ -374,6 +374,38 @@ async function rodarSalaPrimeiro(b) {
   await esperar(host, () => Object.keys(rede.pedidos).length === 1);
   await host.evaluate(() => document.querySelector('#redePedidos [data-sim="0"]').click());
   conf("O host recusou: o aparelho fica de fora", (await esperar(g2, () => rede.estado === "recusado" && rede.motivo === "recusado")) && (await host.evaluate(() => players.length === 1)));
+  // 1.7.9.7 · sala blindada: nome com HTML chega limpo; rajada de mensagens é cortada; pedidos têm limite
+  await g2.evaluate(() => {
+    rede.estado = "escolhendo";
+    redeEnviar("pedido", { perfil: { nome: "<img src=x>Zé" }, chave: rede.chave });
+  });
+  conf(
+    "Nome com HTML chega limpo no host",
+    await esperar(host, () => Object.values(rede.pedidos).some((p) => p.perfil && /Zé/.test(p.perfil.nome) && !/[<>]/.test(p.perfil.nome))),
+  );
+  await host.evaluate(() => redeAprovarTodos());
+  conf("O jogador entra com o nome limpo", await host.evaluate(() => players.some((p) => /Zé/.test(p.name) && !/[<>]/.test(p.name))));
+  await host.evaluate(() => {
+    const z = players.findIndex((p) => /Zé/.test(p.name));
+    players.splice(z, 1);
+    redeHostCadastroMudou();
+  });
+  const ritmoAntes = await host.evaluate(() => rede.recusadas.ritmo || 0);
+  await g2.evaluate(() => {
+    for (let i = 0; i < 60; i++) redeEnviar("ping", { t0: Date.now() });
+  });
+  conf("Rajada de mensagens de um aparelho é cortada (até 25 por segundo)", await esperar(host, (n) => (rede.recusadas.ritmo || 0) > n, ritmoAntes));
+  const limite = await host.evaluate(() => {
+    for (let i = 0; i < 6; i++) rede.pedidos["s_falso" + i] = { tipo: "lugar", jogadorId: players[0].id, chave: "x".repeat(16), quando: Date.now() };
+    return Object.keys(rede.pedidos).length;
+  });
+  await g2.waitForTimeout(1100);
+  await g2.evaluate(() => redeEnviar("pedido", { perfil: { nome: "Gabi" }, chave: rede.chave }));
+  conf(`Com ${limite} pedidos esperando, o próximo é recusado com aviso`, await esperar(g2, () => rede.estado === "escolhendo" && /Muita gente/.test(rede.erroCadastro || "")));
+  await host.evaluate(() => {
+    Object.keys(rede.pedidos).forEach((k) => k.startsWith("s_falso") && delete rede.pedidos[k]);
+    redePedidosPintar();
+  });
   await g2.close();
   // o host cadastra o resto aqui mesmo
   await host.evaluate(() => {

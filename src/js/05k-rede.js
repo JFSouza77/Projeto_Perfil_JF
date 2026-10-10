@@ -562,6 +562,7 @@ function redeAbrirSalaCom(fab, modo, salaFixa) {
   rede.batida = setInterval(() => {
     if (!rede || rede.papel !== "host") return;
     redeVotacaoConferir();
+    redePedidosConferir();
     redeHostEsperando();
     redeHostPublicar(true);
     redeCadastroInfo();
@@ -712,6 +713,7 @@ function redeFechar() {
   rede = null;
   redeHostVista();
   redeCadastroInfo();
+  redePedidosPintar(); // 1.7.9.7: a janelinha de pedidos some junto com a sala
 }
 function redeAssentoDaSessao(sessao) {
   if (!rede || !rede.assentos) return null;
@@ -806,6 +808,7 @@ function redeHostCadastroMudou() {
   if (p && typeof p._pintar === "function") p._pintar();
 }
 function redeHostReceber(m) {
+  if (!redeRitmoOk(m.de)) return; // 1.7.9.7: sessão mandando demais
   const a = redeAssentoDaSessao(m.de);
   if (a) rede.assentos[a].visto = Date.now();
   if (m.t === "oi") return redeHostOi(m);
@@ -915,9 +918,47 @@ function redeFalaProxima() {
   const ms = Math.min(9000, Math.max(3500, f.texto.length * 70));
   rede.falaTimer = setTimeout(redeFalaProxima, rede.falas.length ? Math.min(ms, 2500) : ms);
 }
+/* --- 1.7.9.7 · Sala blindada: o que vem de outro aparelho é limpo e tem limite ---
+   Nome criado pelo convidado: sem caracteres de HTML nem invisíveis (o nome aparece em janelas e falas do
+   host). Ritmo: cada sessão manda no máximo 25 mensagens por segundo; pedido de entrada no máximo 1 a cada
+   3 s e no máximo 6 esperando ao mesmo tempo; pedido sem resposta expira em 3 min. */
+const REDE_RITMO_MAX = 25, REDE_PEDIDOS_MAX = 6, REDE_PEDIDO_EXPIRA_MS = 180000;
+function nomeJogadorLimpo(n) {
+  return String(n == null ? "" : n)
+    .replace(/[<>&"'`\\]/g, "")
+    .replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u2028-\u202e\u2060-\u2069\ufeff]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 15);
+}
+function redeRitmoOk(ses) {
+  const agora = Date.now();
+  rede.ritmo = rede.ritmo || {};
+  const r = rede.ritmo[ses] && agora - rede.ritmo[ses].t < 1000 ? rede.ritmo[ses] : (rede.ritmo[ses] = { t: agora, n: 0 });
+  r.n++;
+  if (r.n > REDE_RITMO_MAX) {
+    rede.recusadas.ritmo = (rede.recusadas.ritmo || 0) + 1;
+    return false;
+  }
+  return true;
+}
+// Batida do host: pedido velho expira; partida começou → pedido de criar jogador não vale mais.
+function redePedidosConferir() {
+  if (!rede || rede.papel !== "host") return;
+  let mudou = false;
+  Object.keys(rede.pedidos).forEach((ses) => {
+    const p = rede.pedidos[ses];
+    const motivo = Date.now() - p.quando > REDE_PEDIDO_EXPIRA_MS ? "pedido_expirou" : starterChosen && p.tipo === "perfil" ? "partida_comecou" : "";
+    if (!motivo) return;
+    delete rede.pedidos[ses];
+    redeEnviar("recusa", { motivo }, ses);
+    mudou = true;
+  });
+  if (mudou) redePedidosPintar(), redeCadastroInfo();
+}
 /* --- 1.7.9.6 · Pedidos de entrada (pedido do JF: o host autoriza; cada um cria o próprio jogador) --- */
 function redePerfilProblema(perfil, ignorarSessao) {
-  const nome = String((perfil && perfil.nome) || "").trim();
+  const nome = nomeJogadorLimpo(perfil && perfil.nome);
   if (starterChosen) return "partida_comecou";
   const pendentes = Object.keys(rede.pedidos).filter((s) => s !== ignorarSessao && rede.pedidos[s].tipo === "perfil");
   if (players.length + pendentes.length >= MAX_PLAYERS) return "sala_cheia";
@@ -927,13 +968,18 @@ function redePerfilProblema(perfil, ignorarSessao) {
   return "";
 }
 function redeHostPedidoPerfil(m) {
+  if (redeAssentoDaSessao(m.de)) return; // já está na sala
+  const ant = rede.pedidos[m.de];
+  if (ant && Date.now() - ant.quando < 3000) return; // um pedido a cada 3 s
+  if (!ant && Object.keys(rede.pedidos).length >= REDE_PEDIDOS_MAX) return redeEnviar("recusa", { motivo: "muitos_pedidos" }, m.de);
   const prob = redePerfilProblema(m.perfil, m.de);
   if (prob) return redeEnviar("recusa", { motivo: prob }, m.de);
-  const pedido = { tipo: "perfil", perfil: { ...m.perfil, nome: String(m.perfil.nome).trim() }, chave: m.chave };
+  const pedido = { tipo: "perfil", perfil: { ...m.perfil, nome: nomeJogadorLimpo(m.perfil.nome) }, chave: m.chave };
   if (rede.aprovados[m.chave]) return redeAprovarPedido(m.de, true, pedido);
   redePedidoNovo(m.de, pedido);
 }
 function redePedidoNovo(ses, pedido) {
+  if (!rede.pedidos[ses] && Object.keys(rede.pedidos).length >= REDE_PEDIDOS_MAX) return redeEnviar("recusa", { motivo: "muitos_pedidos" }, ses);
   rede.pedidos[ses] = { ...pedido, quando: Date.now() };
   delete rede.esperando[ses];
   redeEnviar("aguarde", {}, ses);
@@ -973,7 +1019,7 @@ function redeAprovarTodos() {
   Object.keys((rede && rede.pedidos) || {}).forEach((ses) => redeAprovarPedido(ses, true));
 }
 function redeHostAdicionarPerfil(perfil) {
-  const name = String(perfil.nome).trim().slice(0, 15);
+  const name = nomeJogadorLimpo(perfil.nome);
   undoTeamFormation();
   const isEquipe = CURRENT_FORMAT === "equipe";
   const usadas = new Set(players.map((p) => p.color)), usados = new Set(players.map((p) => p.avatar));
@@ -1021,6 +1067,8 @@ const REDE_MOTIVO_TXT = {
   sala_cheia: "A sala já está cheia.",
   nome_curto: "O nome precisa ter de 2 a 15 letras.",
   nome_em_uso: "Já tem alguém com esse nome. Escolha outro.",
+  muitos_pedidos: "Muita gente pedindo pra entrar ao mesmo tempo. Tente de novo em instantes.",
+  pedido_expirou: "O pedido ficou sem resposta. Tente de novo.",
 };
 // Janelinha do host com os pedidos de entrada.
 function redePedidosPintar() {
@@ -1484,8 +1532,8 @@ function redeConvidadoReceber(m) {
   }
   if (m.t === "escolha") {
     rede.estado = "escolhendo";
-    rede.lugares = m.lugares;
-    rede.cadastro = m.cadastro && typeof m.cadastro === "object" ? m.cadastro : null;
+    rede.lugares = m.lugares.map((l) => ({ id: l.id, nome: String(l.nome).slice(0, 24), avatar: redeEmojiLimpo(l.avatar) }));
+    rede.cadastro = redeCadastroLimpo(m.cadastro);
     return avisar();
   }
   if (m.t === "aguarde") {
@@ -1519,7 +1567,7 @@ function redeConvidadoReceber(m) {
     return avisar();
   }
   if (m.t === "retrato") {
-    const r = m.r, ant = rede.retrato;
+    const r = redeRetratoLimpo(m.r), ant = rede.retrato;
     if (ant && ant.matchId === r.matchId && r.revisao < ant.revisao) return; // atrasado
     rede.retrato = r;
     // trava 3: a resposta sai da memória quando a carta acaba ou quando não sou mais o Mestre
@@ -1867,6 +1915,36 @@ function redeMestreCartaMontar(box) {
     });
   return true;
 }
+/* --- 1.7.9.7 · O que chega do host também é limpo antes de desenhar (cor só das conhecidas, emoji curto) --- */
+function redeEmojiLimpo(a) {
+  return typeof a === "string" && a ? a.replace(/[<>&"'`\\]/g, "").slice(0, 8) || null : null;
+}
+function redeCorLimpa(c, padrao) {
+  return isSafeColor(c) ? c : padrao;
+}
+function redeRetratoLimpo(r) {
+  (r.jogadores || []).forEach((j) => {
+    j.cor = redeCorLimpa(j.cor, "#cccccc");
+    j.avatar = redeEmojiLimpo(j.avatar);
+    j.nome = String(j.nome == null ? "?" : j.nome).slice(0, 24);
+  });
+  return r;
+}
+function redeCadastroLimpo(c) {
+  if (!c || typeof c !== "object") return null;
+  const lista = (v) => (Array.isArray(v) ? v.slice(0, 80) : []);
+  const op = (o) => ({ id: String(o && o.id).slice(0, 20), nome: String(o && o.nome).slice(0, 40), dica: String((o && o.dica) || "").slice(0, 300), cor: redeCorLimpa(o && o.cor, "#fbbf24") });
+  return {
+    equipe: !!c.equipe,
+    cores: lista(c.cores).filter((x) => isSafeColor(x)),
+    coresUsadas: lista(c.coresUsadas).filter((x) => typeof x === "string"),
+    avatares: lista(c.avatares).map(redeEmojiLimpo).filter(Boolean),
+    avataresUsados: lista(c.avataresUsados).map(redeEmojiLimpo).filter(Boolean),
+    humores: lista(c.humores).slice(0, 8).map(op),
+    humorPadrao: String(c.humorPadrao || "normal").slice(0, 20),
+    idades: lista(c.idades).slice(0, 8).map(op),
+  };
+}
 /* --- 1.7.9.6 · Entrada na sala: criar o próprio jogador (antes da partida) ou escolher um nome da lista --- */
 function redeEscolhaDesenhar(box, sala) {
   const focoNome = document.activeElement && document.activeElement.id === "redeNome";
@@ -1961,7 +2039,7 @@ function redeEscolhaDesenhar(box, sala) {
 function redePedirEntrada(perfil) {
   if (!rede || rede.papel !== "convidado") return false;
   const r = perfil || rede.rascunho || {};
-  const nome = String(r.nome || "").trim();
+  const nome = nomeJogadorLimpo(r.nome);
   if (nome.length < 2 || nome.length > 15) {
     rede.erroCadastro = REDE_MOTIVO_TXT.nome_curto;
     redeConvidadoDesenhar();

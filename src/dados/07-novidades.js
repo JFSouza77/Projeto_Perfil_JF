@@ -6,6 +6,21 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.9.7",
+    data: "10/10/2026 · 14:08",
+    nome: "Rooms and Network Update · Sala blindada",
+    t: "Revisão de segurança do online: a sala aguenta aparelho bagunceiro sem atrapalhar a partida.",
+    itens: [
+      "🛡️ Nome limpo: o nome que alguém cria no celular entra sem símbolos estranhos, pra não bagunçar a tela do host.",
+      "🚦 Sem enxurrada: um aparelho que manda coisa demais de uma vez é segurado, e a partida segue normal pra mesa.",
+      "🙋 Pedidos com limite: no máximo 6 pedidos de entrada esperando ao mesmo tempo. Pedido sem resposta expira em 3 minutos.",
+      "⏱️ Partida começou: quem ainda estava criando o jogador recebe o aviso e pode escolher um nome da lista.",
+    ],
+    qol: [
+      "🧹 Sala fechada, janela fechada: fechar a sala tira também a janelinha de pedidos do host.",
+    ],
+  },
+  {
     v: "Beta 1.7.9.6",
     data: "10/10/2026 · 10:54",
     nome: "Rooms and Network Update · Entrada na sala",
