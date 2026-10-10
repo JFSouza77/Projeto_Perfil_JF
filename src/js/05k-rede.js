@@ -230,12 +230,21 @@ function redeTransportePeerHost(sala) {
     peer.on("error", (e) => {
       const tipo = (e && e.type) || "erro";
       // o id da sala ainda está preso no servidor (o host acabou de recarregar): tenta de novo
-      if (tipo === "unavailable-id" && tentativas < (redeInsistirId ? 45 : 6) && !fechado) {
+      // 1.7.9.5 (relato do JF: fechou o app, a Anne trocou a carta e, ao voltar, ele continuava na carta
+      // antiga): id da sala ocupado. Pergunta a quem está com ele: se alguém responde, outro aparelho é o
+      // host (assumiu a sala) e este entra como jogador; se ninguém responde, é o id antigo preso no
+      // servidor (app fechado de repente segura o id por até ~1 min) e tenta de novo.
+      if (tipo === "unavailable-id" && tentativas < (redeInsistirId ? 45 : 30) && !fechado) {
         tentativas++;
         try {
           peer.destroy();
         } catch (x) {}
-        setTimeout(abrir, 2500);
+        if (redeInsistirId) return void setTimeout(abrir, 2500);
+        redeSondar(sala, "internet", (existe) => {
+          if (fechado) return;
+          if (existe && rede && rede.papel === "host" && rede.transporte === t) return redeHostRebaixar();
+          setTimeout(abrir, 1000);
+        });
         return;
       }
       if (tipo === "peer-unavailable") return; // um convidado sumiu: não é erro da sala
@@ -633,7 +642,7 @@ function redeSondar(sala, modo, cb) {
     c.on("open", () => fim(true));
   });
   peer.on("error", () => fim(false));
-  setTimeout(() => fim(false), 8000);
+  setTimeout(() => fim(false), 15000); // 1.7.9.5: no 4G a conexão pode levar mais de 8 s
 }
 function redeIrPraSala(sala, modo) {
   try {
@@ -716,11 +725,27 @@ function redeMandarEscolha(sessao) {
 function redeHostEsperando() {
   if (!rede || rede.papel !== "host") return;
   if (rede.hostEu && jogadorIdxPorId(rede.hostEu) < 0) rede.hostEu = null;
+  rede.semLugar = rede.semLugar || {};
   Object.keys(rede.assentos).forEach((jid) => {
     if (jogadorIdxPorId(jid) >= 0) return;
-    const ses = rede.assentos[jid].sessao;
+    const a = rede.assentos[jid];
     delete rede.assentos[jid];
-    if (ses) redeMandarEscolha(ses);
+    if (!a.sessao) return;
+    // 1.7.9.5 (relato do JF: Reiniciar no host não reiniciava no tablet): guarda o nome de quem perdeu o
+    // lugar; se o host cadastrar o mesmo nome de novo, o aparelho volta pro lugar sozinho
+    rede.semLugar[a.sessao] = { nome: a.nome || null, chave: a.chave };
+    redeMandarEscolha(a.sessao);
+  });
+  Object.keys(rede.esperando).forEach((ses) => {
+    const sl = rede.semLugar[ses];
+    if (!sl || !sl.nome) return;
+    const p = players.find((x) => x.name.toLowerCase() === sl.nome.toLowerCase() && x.id !== rede.hostEu && !redeOnline(rede.assentos[x.id]));
+    if (!p) return;
+    rede.assentos[p.id] = { sessao: ses, visto: Date.now(), chave: sl.chave, nome: p.name };
+    delete rede.esperando[ses];
+    delete rede.semLugar[ses];
+    delete rede.paineis[p.id];
+    redeEnviar("bemvindo", { jogadorId: p.id, matchId: matchId || null, volta: true }, ses);
   });
   const lista = JSON.stringify(redeLugaresLivres());
   Object.keys(rede.esperando).forEach((ses) => rede.esperando[ses] !== lista && redeMandarEscolha(ses));
@@ -778,8 +803,9 @@ function redeHostOi(m) {
   const antigo = redeAssentoDaSessao(m.de);
   if (antigo && antigo !== pedido) delete rede.assentos[antigo];
   const volta = !!atual;
-  rede.assentos[pedido] = { sessao: m.de, visto: Date.now(), chave: m.chave };
+  rede.assentos[pedido] = { sessao: m.de, visto: Date.now(), chave: m.chave, nome: (jogadorPorId(pedido) || {}).name || null };
   delete rede.esperando[m.de];
+  if (rede.semLugar) delete rede.semLugar[m.de];
   delete rede.paineis[pedido];
   redeEnviar("bemvindo", { jogadorId: pedido, matchId: matchId || null, volta }, m.de);
   try {
@@ -1500,6 +1526,9 @@ function redeConvidadoDesenhar() {
   const sair = box.querySelector(".telao-sair");
   if (sair) sair.outerHTML = REDE_SAIR;
   box.insertAdjacentHTML("afterbegin", sala);
+  // 1.7.9.5 (relato do JF: "ela fica na sala TV, não tem nada pra acontecer"): quem é o Mestre vê a carta
+  // como na tela de sempre, no lugar do resumo do telão
+  if (redeMestreCartaMontar(box)) return redeConvidadoTiques();
   const barra = document.createElement("section");
   barra.className = "rede-barra";
   barra.innerHTML = redeBotoesHtml();
@@ -1522,6 +1551,87 @@ function redeConvidadoDesenhar() {
   barra.querySelectorAll("[data-dica]").forEach((b) => b.addEventListener("click", () => redeMandar("escolherDica", +b.dataset.dica)));
   barra.querySelectorAll("[data-voto]").forEach((b) => b.addEventListener("click", () => redeVotarConvidado(b.dataset.voto === "1") && redeConvidadoDesenhar()));
   redeConvidadoTiques();
+}
+/* --- 1.7.9.5 · A carta do Mestre no celular dele, com a cara da tela de sempre ---
+   Mesmas classes da carta do jogo (.card, .answer-header, .clue-list, .number-grid, .btn-correct…); os
+   botões são os do painel que o host calculou (nada de regra aqui). Votação, intervalo e fim ficam no
+   resumo de sempre. */
+const REDE_CLASSE_BOTAO = (o) =>
+  o.a === "acertou" || o.a === "palpiteAcertou" ? "btn-correct" :
+  o.a === "errou" ? (o.d[0] === "pular" ? "btn-pular" : o.d[0] === "absurdo" ? "btn-absurdo" : "btn-wrong") :
+  o.a === "palpiteErrou" ? "btn-wrong" :
+  o.a === "virarCarta" ? "flip-btn" :
+  o.a === "sacarCarta" ? "main-btn btn-draw" :
+  o.a === "descartarCarta" || o.a === "desistirCarta" ? "discard-btn" :
+  o.g === "Mais" ? "rede-btn" : "continue-btn";
+function redeMestreCartaMontar(box) {
+  const r = rede.retrato, papel = redeMeuPapel(), c = r.carta;
+  if (!papel.mestre || r.fim || r.intervalo || r.votacao || (r.relogio && r.relogio.pausado)) return false;
+  if (!["none", "hidden", "revealed"].includes(r.estadoCarta)) return false;
+  const ops = (rede.painel && rede.painel.opcoes) || [];
+  const nome = (id) => {
+    const j = r.jogadores.find((p) => p.id === id);
+    return j ? escapeHtml((j.avatar ? j.avatar + " " : "") + j.nome) : "—";
+  };
+  const botao = (o, i) => `<button type="button" class="${REDE_CLASSE_BOTAO(o)}" data-op="${i}">${escapeHtml(o.t)}</button>`;
+  const grupo = (f) => ops.map((o, i) => (f(o) ? botao(o, i) : "")).join("");
+  const mais = grupo((o) => o.g === "Mais");
+  let h = "";
+  if (r.estadoCarta !== "revealed" || !c) {
+    const virar = grupo((o) => o.a === "virarCarta" || o.a === "sacarCarta");
+    h = `<div class="card face-down rede-carta-mestre"><div class="verso-frase">Você sabe dizer quem sou?!</div><div class="mestre-da-vez">Mestre da rodada: <b>você</b></div><div>Vire a carta quando estiver pronto.</div>${virar}</div>`;
+  } else {
+    const cat = typeof gemCategoryFor === "function" ? gemCategoryFor(c.categoria) : c.categoria;
+    const cor = (GEM_INFO[cat] || {}).color || "#e94560";
+    const resp = rede.segredo && rede.segredo.resposta ? escapeHtml(rede.segredo.resposta) : "…";
+    const livre = !c.abertas.length || Date.now() < (rede.verRespostaAte || 0);
+    const dicas = c.abertas
+      .map((d) => (d.tipo === "special" ? `<li class="special">${d.pos + 1}. ⭐ ${escapeHtml(d.texto)}</li>` : `<li><span class="clue-num">${d.pos + 1}.</span>${escapeHtml(d.texto)}</li>`))
+      .join("");
+    let controles = "";
+    const pend = c.pendente === null || c.pendente === undefined ? null : c.abertas.find((d) => d.pos === c.pendente);
+    if (pend) {
+      const especial = grupo((o) => o.g !== "Mais" && !["acertou", "errou", "palpiteAcertou", "palpiteErrou"].includes(o.a));
+      controles = `<div class="pending-box spotlight-box"><span class="pending-num">Dica ${pend.pos + 1}:</span> ${pend.tipo === "special" ? "⭐ " : ""}${escapeHtml(pend.texto)}</div>
+        <div class="guess-btns" style="flex-direction:column;">${grupo((o) => o.a === "acertou")}${grupo((o) => o.a === "errou" && !o.d.length)}<div class="mesa-btns">${grupo((o) => o.a === "errou" && o.d.length)}</div></div>
+        ${especial}${grupo((o) => o.a === "palpiteAcertou" || o.a === "palpiteErrou")}`;
+    } else {
+      const abertas = new Set(c.abertas.map((d) => d.pos));
+      let grade = "";
+      for (let i = 0; i < c.totalDicas; i++) grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : ""}>${i + 1}</button>`;
+      controles = `<div class="pick-label">${nome(r.vezId)}, escolha uma dica (${c.totalDicas - c.abertas.length} restantes)</div><div class="number-grid">${grade}</div>`;
+    }
+    h = `<div class="card rede-carta-mestre" style="--card-glow:${cor}">
+      <div class="answer-header cat-neon" style="--cat:${cor};"><span class="cat-selo">${CAT_SELO_ICONE[cat] || "🃏"} ${escapeHtml((GEM_INFO[cat] || {}).name || cat)}</span>Diga aos jogadores: "Eu sou ${formatLabelUppercase(CATEGORY_LABELS[cat] || escapeHtml(cat))}."</div>
+      <button type="button" id="redeResp" class="answer-line-name answer-toggle${livre ? " open" : ""}">${livre ? "🔒 " + resp : "👁️ Toque pra ver a resposta"}</button>
+      <div class="clue-history${pend ? " blurred" : ""}"><div class="turn-info"><span class="mestre-tag">🎙️ Mestre: você</span><span class="responder-tag">👉 Vez de: ${nome(r.vezId)}</span></div><ul class="clue-list">${dicas || "<li>Nenhuma dica aberta ainda</li>"}</ul></div>
+      ${controles}
+      ${grupo((o) => o.a === "descartarCarta" || o.a === "desistirCarta")}
+    </div>`;
+  }
+  const ult = Object.values(rede.respostas).slice(-1)[0];
+  const aviso = ult && (!ult.ok || ult.motivo === "votacao") && REDE_MOTIVOS[ult.motivo] ? `<div class="rede-aviso">${escapeHtml(REDE_MOTIVOS[ult.motivo])}</div>` : "";
+  const sec = document.createElement("section");
+  sec.className = "rede-mestre";
+  sec.innerHTML = h + aviso + (mais ? `<div class="rede-acoes rede-mais">${grupo((o) => o.g === "Mais" && o.a !== "descartarCarta" && o.a !== "desistirCarta")}</div>` : "");
+  const resumo = box.querySelector(".telao-carta");
+  if (resumo) resumo.replaceWith(sec);
+  else (box.querySelector(".telao-vez") || box.firstChild).after(sec);
+  sec.querySelectorAll("[data-op]").forEach((b) =>
+    b.addEventListener("click", () => {
+      const o = ops[+b.dataset.op];
+      if (o) redeMandar(o.a, ...o.d);
+    }),
+  );
+  sec.querySelectorAll(".number-btn[data-dica]:not(.aberta)").forEach((b) => b.addEventListener("click", () => redeMandar("escolherDica", +b.dataset.dica)));
+  const rb = sec.querySelector("#redeResp");
+  if (rb)
+    rb.addEventListener("click", () => {
+      rede.verRespostaAte = Date.now() < (rede.verRespostaAte || 0) ? 0 : Date.now() + 3000;
+      redeConvidadoDesenhar();
+      setTimeout(() => rede && redeConvidadoDesenhar(), 3100);
+    });
+  return true;
 }
 function redeBotoesHtml() {
   const r = rede.retrato, eu = r.jogadores.find((j) => j.id === rede.eu);

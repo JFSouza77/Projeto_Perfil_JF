@@ -6,6 +6,17 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.9.5 · 10/10/2026 · "Rooms and Network Update · Carta do Mestre" = A CARTA DE VERDADE NO CELULAR DO MESTRE.
+          2º teste do JF (tablet Android da Anne): o Mestre convidado via o resumo do telão ("sala TV, não tem
+          nada pra acontecer"). redeMestreCartaMontar: com o convidado Mestre, a carta com as classes da tela de
+          sempre (.card, answer-header, clue-list, number-grid, btn-correct/wrong/pular/absurdo), botões do
+          painel do host (REDE_CLASSE_BOTAO); resposta livre até a 1ª dica, depois "toque pra ver" (3 s); pausa,
+          votação, intervalo e fim ficam no resumo. Reiniciar com a sala aberta: o tablet ficava preso no jogador
+          que não existia mais; agora volta pra escolha e, com o mesmo nome cadastrado de novo, volta pro lugar
+          sozinho (rede.semLugar, nome no assento). App do host fechado, o sucessor assumiu e o host reabriu:
+          a sondagem (8 s) não achava a sala no 4G e ele reabria com a partida velha; agora 15 s, e com o id da
+          sala ocupado o host pergunta a quem está com ele: alguém respondeu = outro host, entra como jogador
+          (redeHostRebaixar); ninguém = id antigo preso, tenta de novo (até 30 vezes).
   1.7.9.4 · 09/10/2026 · "Rooms and Network Update · Sala primeiro" = SALA ANTES DO CADASTRO E HOST SEM SPOILER.
           1º teste do JF em aparelhos de verdade: a Anne era a Mestre no tablet dela e o celular do host continuava
           com a tela do Mestre (carta e resposta). redeHostVista: com o Mestre da vez online em outro aparelho, o host
@@ -641,7 +652,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.9.4</title>
+<title>Perfil JF · Beta 1.7.9.5</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -8504,6 +8515,19 @@ body.claro .rede-host-vista {
   font-size: 0.85rem;
   opacity: 0.9;
 }
+/* 1.7.9.5 · A carta do Mestre no celular/tablet dele, com a cara da tela de sempre */
+.rede-mestre {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.rede-mestre .rede-carta-mestre {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
 </style>
 </head>
 <body class="noturno">
@@ -8560,7 +8584,7 @@ body.claro .rede-host-vista {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.4 · Rooms and Network Update · Sala primeiro<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.5 · Rooms and Network Update · Carta do Mestre<br>C.A.O.S. 4.0 · Atualizada em 10/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Como jogar online (passo a passo)"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Na partida: ⏸️ Pausar → 🌐 Jogar online · toque pra ver como</span></button>
@@ -19369,12 +19393,21 @@ function redeTransportePeerHost(sala) {
     peer.on("error", (e) => {
       const tipo = (e && e.type) || "erro";
       // o id da sala ainda está preso no servidor (o host acabou de recarregar): tenta de novo
-      if (tipo === "unavailable-id" && tentativas < (redeInsistirId ? 45 : 6) && !fechado) {
+      // 1.7.9.5 (relato do JF: fechou o app, a Anne trocou a carta e, ao voltar, ele continuava na carta
+      // antiga): id da sala ocupado. Pergunta a quem está com ele: se alguém responde, outro aparelho é o
+      // host (assumiu a sala) e este entra como jogador; se ninguém responde, é o id antigo preso no
+      // servidor (app fechado de repente segura o id por até ~1 min) e tenta de novo.
+      if (tipo === "unavailable-id" && tentativas < (redeInsistirId ? 45 : 30) && !fechado) {
         tentativas++;
         try {
           peer.destroy();
         } catch (x) {}
-        setTimeout(abrir, 2500);
+        if (redeInsistirId) return void setTimeout(abrir, 2500);
+        redeSondar(sala, "internet", (existe) => {
+          if (fechado) return;
+          if (existe && rede && rede.papel === "host" && rede.transporte === t) return redeHostRebaixar();
+          setTimeout(abrir, 1000);
+        });
         return;
       }
       if (tipo === "peer-unavailable") return; // um convidado sumiu: não é erro da sala
@@ -19772,7 +19805,7 @@ function redeSondar(sala, modo, cb) {
     c.on("open", () => fim(true));
   });
   peer.on("error", () => fim(false));
-  setTimeout(() => fim(false), 8000);
+  setTimeout(() => fim(false), 15000); // 1.7.9.5: no 4G a conexão pode levar mais de 8 s
 }
 function redeIrPraSala(sala, modo) {
   try {
@@ -19855,11 +19888,27 @@ function redeMandarEscolha(sessao) {
 function redeHostEsperando() {
   if (!rede || rede.papel !== "host") return;
   if (rede.hostEu && jogadorIdxPorId(rede.hostEu) < 0) rede.hostEu = null;
+  rede.semLugar = rede.semLugar || {};
   Object.keys(rede.assentos).forEach((jid) => {
     if (jogadorIdxPorId(jid) >= 0) return;
-    const ses = rede.assentos[jid].sessao;
+    const a = rede.assentos[jid];
     delete rede.assentos[jid];
-    if (ses) redeMandarEscolha(ses);
+    if (!a.sessao) return;
+    // 1.7.9.5 (relato do JF: Reiniciar no host não reiniciava no tablet): guarda o nome de quem perdeu o
+    // lugar; se o host cadastrar o mesmo nome de novo, o aparelho volta pro lugar sozinho
+    rede.semLugar[a.sessao] = { nome: a.nome || null, chave: a.chave };
+    redeMandarEscolha(a.sessao);
+  });
+  Object.keys(rede.esperando).forEach((ses) => {
+    const sl = rede.semLugar[ses];
+    if (!sl || !sl.nome) return;
+    const p = players.find((x) => x.name.toLowerCase() === sl.nome.toLowerCase() && x.id !== rede.hostEu && !redeOnline(rede.assentos[x.id]));
+    if (!p) return;
+    rede.assentos[p.id] = { sessao: ses, visto: Date.now(), chave: sl.chave, nome: p.name };
+    delete rede.esperando[ses];
+    delete rede.semLugar[ses];
+    delete rede.paineis[p.id];
+    redeEnviar("bemvindo", { jogadorId: p.id, matchId: matchId || null, volta: true }, ses);
   });
   const lista = JSON.stringify(redeLugaresLivres());
   Object.keys(rede.esperando).forEach((ses) => rede.esperando[ses] !== lista && redeMandarEscolha(ses));
@@ -19917,8 +19966,9 @@ function redeHostOi(m) {
   const antigo = redeAssentoDaSessao(m.de);
   if (antigo && antigo !== pedido) delete rede.assentos[antigo];
   const volta = !!atual;
-  rede.assentos[pedido] = { sessao: m.de, visto: Date.now(), chave: m.chave };
+  rede.assentos[pedido] = { sessao: m.de, visto: Date.now(), chave: m.chave, nome: (jogadorPorId(pedido) || {}).name || null };
   delete rede.esperando[m.de];
+  if (rede.semLugar) delete rede.semLugar[m.de];
   delete rede.paineis[pedido];
   redeEnviar("bemvindo", { jogadorId: pedido, matchId: matchId || null, volta }, m.de);
   try {
@@ -20639,6 +20689,9 @@ function redeConvidadoDesenhar() {
   const sair = box.querySelector(".telao-sair");
   if (sair) sair.outerHTML = REDE_SAIR;
   box.insertAdjacentHTML("afterbegin", sala);
+  // 1.7.9.5 (relato do JF: "ela fica na sala TV, não tem nada pra acontecer"): quem é o Mestre vê a carta
+  // como na tela de sempre, no lugar do resumo do telão
+  if (redeMestreCartaMontar(box)) return redeConvidadoTiques();
   const barra = document.createElement("section");
   barra.className = "rede-barra";
   barra.innerHTML = redeBotoesHtml();
@@ -20661,6 +20714,87 @@ function redeConvidadoDesenhar() {
   barra.querySelectorAll("[data-dica]").forEach((b) => b.addEventListener("click", () => redeMandar("escolherDica", +b.dataset.dica)));
   barra.querySelectorAll("[data-voto]").forEach((b) => b.addEventListener("click", () => redeVotarConvidado(b.dataset.voto === "1") && redeConvidadoDesenhar()));
   redeConvidadoTiques();
+}
+/* --- 1.7.9.5 · A carta do Mestre no celular dele, com a cara da tela de sempre ---
+   Mesmas classes da carta do jogo (.card, .answer-header, .clue-list, .number-grid, .btn-correct…); os
+   botões são os do painel que o host calculou (nada de regra aqui). Votação, intervalo e fim ficam no
+   resumo de sempre. */
+const REDE_CLASSE_BOTAO = (o) =>
+  o.a === "acertou" || o.a === "palpiteAcertou" ? "btn-correct" :
+  o.a === "errou" ? (o.d[0] === "pular" ? "btn-pular" : o.d[0] === "absurdo" ? "btn-absurdo" : "btn-wrong") :
+  o.a === "palpiteErrou" ? "btn-wrong" :
+  o.a === "virarCarta" ? "flip-btn" :
+  o.a === "sacarCarta" ? "main-btn btn-draw" :
+  o.a === "descartarCarta" || o.a === "desistirCarta" ? "discard-btn" :
+  o.g === "Mais" ? "rede-btn" : "continue-btn";
+function redeMestreCartaMontar(box) {
+  const r = rede.retrato, papel = redeMeuPapel(), c = r.carta;
+  if (!papel.mestre || r.fim || r.intervalo || r.votacao || (r.relogio && r.relogio.pausado)) return false;
+  if (!["none", "hidden", "revealed"].includes(r.estadoCarta)) return false;
+  const ops = (rede.painel && rede.painel.opcoes) || [];
+  const nome = (id) => {
+    const j = r.jogadores.find((p) => p.id === id);
+    return j ? escapeHtml((j.avatar ? j.avatar + " " : "") + j.nome) : "—";
+  };
+  const botao = (o, i) => `<button type="button" class="${REDE_CLASSE_BOTAO(o)}" data-op="${i}">${escapeHtml(o.t)}</button>`;
+  const grupo = (f) => ops.map((o, i) => (f(o) ? botao(o, i) : "")).join("");
+  const mais = grupo((o) => o.g === "Mais");
+  let h = "";
+  if (r.estadoCarta !== "revealed" || !c) {
+    const virar = grupo((o) => o.a === "virarCarta" || o.a === "sacarCarta");
+    h = `<div class="card face-down rede-carta-mestre"><div class="verso-frase">Você sabe dizer quem sou?!</div><div class="mestre-da-vez">Mestre da rodada: <b>você</b></div><div>Vire a carta quando estiver pronto.</div>${virar}</div>`;
+  } else {
+    const cat = typeof gemCategoryFor === "function" ? gemCategoryFor(c.categoria) : c.categoria;
+    const cor = (GEM_INFO[cat] || {}).color || "#e94560";
+    const resp = rede.segredo && rede.segredo.resposta ? escapeHtml(rede.segredo.resposta) : "…";
+    const livre = !c.abertas.length || Date.now() < (rede.verRespostaAte || 0);
+    const dicas = c.abertas
+      .map((d) => (d.tipo === "special" ? `<li class="special">${d.pos + 1}. ⭐ ${escapeHtml(d.texto)}</li>` : `<li><span class="clue-num">${d.pos + 1}.</span>${escapeHtml(d.texto)}</li>`))
+      .join("");
+    let controles = "";
+    const pend = c.pendente === null || c.pendente === undefined ? null : c.abertas.find((d) => d.pos === c.pendente);
+    if (pend) {
+      const especial = grupo((o) => o.g !== "Mais" && !["acertou", "errou", "palpiteAcertou", "palpiteErrou"].includes(o.a));
+      controles = `<div class="pending-box spotlight-box"><span class="pending-num">Dica ${pend.pos + 1}:</span> ${pend.tipo === "special" ? "⭐ " : ""}${escapeHtml(pend.texto)}</div>
+        <div class="guess-btns" style="flex-direction:column;">${grupo((o) => o.a === "acertou")}${grupo((o) => o.a === "errou" && !o.d.length)}<div class="mesa-btns">${grupo((o) => o.a === "errou" && o.d.length)}</div></div>
+        ${especial}${grupo((o) => o.a === "palpiteAcertou" || o.a === "palpiteErrou")}`;
+    } else {
+      const abertas = new Set(c.abertas.map((d) => d.pos));
+      let grade = "";
+      for (let i = 0; i < c.totalDicas; i++) grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : ""}>${i + 1}</button>`;
+      controles = `<div class="pick-label">${nome(r.vezId)}, escolha uma dica (${c.totalDicas - c.abertas.length} restantes)</div><div class="number-grid">${grade}</div>`;
+    }
+    h = `<div class="card rede-carta-mestre" style="--card-glow:${cor}">
+      <div class="answer-header cat-neon" style="--cat:${cor};"><span class="cat-selo">${CAT_SELO_ICONE[cat] || "🃏"} ${escapeHtml((GEM_INFO[cat] || {}).name || cat)}</span>Diga aos jogadores: "Eu sou ${formatLabelUppercase(CATEGORY_LABELS[cat] || escapeHtml(cat))}."</div>
+      <button type="button" id="redeResp" class="answer-line-name answer-toggle${livre ? " open" : ""}">${livre ? "🔒 " + resp : "👁️ Toque pra ver a resposta"}</button>
+      <div class="clue-history${pend ? " blurred" : ""}"><div class="turn-info"><span class="mestre-tag">🎙️ Mestre: você</span><span class="responder-tag">👉 Vez de: ${nome(r.vezId)}</span></div><ul class="clue-list">${dicas || "<li>Nenhuma dica aberta ainda</li>"}</ul></div>
+      ${controles}
+      ${grupo((o) => o.a === "descartarCarta" || o.a === "desistirCarta")}
+    </div>`;
+  }
+  const ult = Object.values(rede.respostas).slice(-1)[0];
+  const aviso = ult && (!ult.ok || ult.motivo === "votacao") && REDE_MOTIVOS[ult.motivo] ? `<div class="rede-aviso">${escapeHtml(REDE_MOTIVOS[ult.motivo])}</div>` : "";
+  const sec = document.createElement("section");
+  sec.className = "rede-mestre";
+  sec.innerHTML = h + aviso + (mais ? `<div class="rede-acoes rede-mais">${grupo((o) => o.g === "Mais" && o.a !== "descartarCarta" && o.a !== "desistirCarta")}</div>` : "");
+  const resumo = box.querySelector(".telao-carta");
+  if (resumo) resumo.replaceWith(sec);
+  else (box.querySelector(".telao-vez") || box.firstChild).after(sec);
+  sec.querySelectorAll("[data-op]").forEach((b) =>
+    b.addEventListener("click", () => {
+      const o = ops[+b.dataset.op];
+      if (o) redeMandar(o.a, ...o.d);
+    }),
+  );
+  sec.querySelectorAll(".number-btn[data-dica]:not(.aberta)").forEach((b) => b.addEventListener("click", () => redeMandar("escolherDica", +b.dataset.dica)));
+  const rb = sec.querySelector("#redeResp");
+  if (rb)
+    rb.addEventListener("click", () => {
+      rede.verRespostaAte = Date.now() < (rede.verRespostaAte || 0) ? 0 : Date.now() + 3000;
+      redeConvidadoDesenhar();
+      setTimeout(() => rede && redeConvidadoDesenhar(), 3100);
+    });
+  return true;
 }
 function redeBotoesHtml() {
   const r = rede.retrato, eu = r.jogadores.find((j) => j.id === rede.eu);
@@ -23063,7 +23197,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.9.4 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.9.5 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -28133,7 +28267,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.9.4 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.9.5 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -31307,7 +31441,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.9.4 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.9.5 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -31830,7 +31964,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.9.4 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.9.5 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -66676,7 +66810,7 @@ const TUTORIAL_STEPS = [
     sec: 6,
     icon: "🎙️",
     title: "Quem toca o quê",
-    text: "Cada celular só mostra o que é seu:<ul><li>🎙️ <b>Mestre:</b> vê a resposta (\"🔒 Só você vê\"), vira a carta, dá o veredito (Acertou, Errou, Pulou), resolve as instruções especiais e o palpite;</li><li>👉 <b>Quem está na vez:</b> escolhe o número da dica;</li><li>🏟️ <b>Quem caiu na casa de bônus:</b> escolhe contra quem é o duelo;</li><li>⏸️ <b>Qualquer um</b> pode pausar e continuar;</li><li>🗳️ <b>Descartar e Desistir</b> viram votação: o Mestre pede e a mesa vota no celular;</li><li>📱 <b>O host</b> é o único que toca em <b>Próxima carta</b> no intervalo. Quando o Mestre está em outro aparelho, o host vê a mesma tela dos jogadores (sem a resposta). Se o Mestre não tem aparelho, ele usa o do host, que mostra tudo.</li></ul>",
+    text: "Cada celular só mostra o que é seu:<ul><li>🎙️ <b>Mestre:</b> vê a carta como na tela de sempre: vira a carta, vê a resposta, dá o veredito (Acertou, Errou, Pulou, Absurdo), resolve as instruções especiais e o palpite;</li><li>👉 <b>Quem está na vez:</b> escolhe o número da dica;</li><li>🏟️ <b>Quem caiu na casa de bônus:</b> escolhe contra quem é o duelo;</li><li>⏸️ <b>Qualquer um</b> pode pausar e continuar;</li><li>🗳️ <b>Descartar e Desistir</b> viram votação: o Mestre pede e a mesa vota no celular;</li><li>📱 <b>O host</b> é o único que toca em <b>Próxima carta</b> no intervalo. Quando o Mestre está em outro aparelho, o host vê a mesma tela dos jogadores (sem a resposta). Se o Mestre não tem aparelho, ele usa o do host, que mostra tudo.</li></ul>",
   },
   {
     sec: 6,
@@ -67013,6 +67147,20 @@ const PAUSE_TIPS = [
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.9.5",
+    data: "10/10/2026 · 00:15",
+    nome: "Rooms and Network Update · Carta do Mestre",
+    t: "No online, quem é o Mestre vê a carta de verdade no próprio celular, e a sala aguenta Reiniciar e app fechado.",
+    itens: [
+      "🃏 Carta do Mestre no celular dele: no online, o Mestre vê a carta como na tela de sempre. A categoria, a resposta, as dicas, a grade de números e os botões Acertou, Errou, Pulou e Absurdo.",
+      "🔄 Reiniciar com a sala aberta: depois de Reiniciar, quem estava na sala volta pra escolha do nome. Se o host cadastrar o mesmo nome de novo, o celular volta pro lugar sozinho.",
+      "📱 Host que fechou o app: se outro aparelho assumiu a sala enquanto o host estava fora, ao abrir de novo ele entra como jogador e vê a partida de agora, sem ficar preso na carta antiga.",
+    ],
+    qol: [
+      "📶 Mais paciência no 4G: o aparelho espera mais pela resposta da sala antes de decidir se a sala ainda tem host.",
+    ],
+  },
   {
     v: "Beta 1.7.9.4",
     data: "09/10/2026 · 23:45",

@@ -6,6 +6,20 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.9.5",
+    data: "10/10/2026 · 00:15",
+    nome: "Rooms and Network Update · Carta do Mestre",
+    t: "No online, quem é o Mestre vê a carta de verdade no próprio celular, e a sala aguenta Reiniciar e app fechado.",
+    itens: [
+      "🃏 Carta do Mestre no celular dele: no online, o Mestre vê a carta como na tela de sempre. A categoria, a resposta, as dicas, a grade de números e os botões Acertou, Errou, Pulou e Absurdo.",
+      "🔄 Reiniciar com a sala aberta: depois de Reiniciar, quem estava na sala volta pra escolha do nome. Se o host cadastrar o mesmo nome de novo, o celular volta pro lugar sozinho.",
+      "📱 Host que fechou o app: se outro aparelho assumiu a sala enquanto o host estava fora, ao abrir de novo ele entra como jogador e vê a partida de agora, sem ficar preso na carta antiga.",
+    ],
+    qol: [
+      "📶 Mais paciência no 4G: o aparelho espera mais pela resposta da sala antes de decidir se a sala ainda tem host.",
+    ],
+  },
+  {
     v: "Beta 1.7.9.4",
     data: "09/10/2026 · 23:45",
     nome: "Rooms and Network Update · Sala primeiro",
