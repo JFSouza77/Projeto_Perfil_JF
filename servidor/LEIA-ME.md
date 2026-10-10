@@ -29,6 +29,10 @@ A partir daí, toda mudança nesta pasta que entrar no GitHub publica o servidor
    - tipo **Secret**, nome `TURN_KEY_API_TOKEN`, valor = o API Token.
 9. Toque em **Deploy** (ou **Save and deploy**).
 
+### 3b. Senha da página de cartas reportadas
+- Em **Variables and Secrets → Add**, crie um **Secret** com o nome `REPORTES_SENHA`. O valor é uma senha que só você sabe (pode ser uma frase).
+- Pra ver os reportes, abra `https://perfil-jf-sala.SEU-NOME.workers.dev/reportes?chave=SUA-SENHA`. Salve nos favoritos.
+
 ### 4. Conferir
 - Abra `https://perfil-jf-sala.SEU-NOME.workers.dev/`: deve aparecer "Perfil JF · servidor da sala".
 - Abra `.../ponte`: deve aparecer uma lista `iceServers` com `turn.cloudflare.com`. Se vier vazia, confira os dois segredos.
