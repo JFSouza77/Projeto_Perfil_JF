@@ -257,7 +257,7 @@ const TUTORIAL_STEPS = [
     sec: 6,
     icon: "🎙️",
     title: "Quem toca o quê",
-    text: "Cada celular só mostra o que é seu:<ul><li>🎙️ <b>Mestre:</b> vê a resposta (\"🔒 Só você vê\"), vira a carta, dá o veredito (Acertou, Errou, Pulou), resolve as instruções especiais e o palpite;</li><li>👉 <b>Quem está na vez:</b> escolhe o número da dica;</li><li>🏟️ <b>Quem caiu na casa de bônus:</b> escolhe contra quem é o duelo;</li><li>⏸️ <b>Qualquer um</b> pode pausar e continuar;</li><li>🗳️ <b>Descartar e Desistir</b> viram votação: o Mestre pede e a mesa vota no celular;</li><li>📱 <b>O host</b> é o único que toca em <b>Próxima carta</b> no intervalo. Quando o Mestre está em outro aparelho, o host vê a mesma tela dos jogadores (sem a resposta). Se o Mestre não tem aparelho, ele usa o do host, que mostra tudo.</li></ul>",
+    text: "Cada celular só mostra o que é seu:<ul><li>🎙️ <b>Mestre:</b> vê a carta como na tela de sempre: vira a carta, vê a resposta, dá o veredito (Acertou, Errou, Pulou, Absurdo), resolve as instruções especiais e o palpite;</li><li>👉 <b>Quem está na vez:</b> escolhe o número da dica;</li><li>🏟️ <b>Quem caiu na casa de bônus:</b> escolhe contra quem é o duelo;</li><li>⏸️ <b>Qualquer um</b> pode pausar e continuar;</li><li>🗳️ <b>Descartar e Desistir</b> viram votação: o Mestre pede e a mesa vota no celular;</li><li>📱 <b>O host</b> é o único que toca em <b>Próxima carta</b> no intervalo. Quando o Mestre está em outro aparelho, o host vê a mesma tela dos jogadores (sem a resposta). Se o Mestre não tem aparelho, ele usa o do host, que mostra tudo.</li></ul>",
   },
   {
     sec: 6,

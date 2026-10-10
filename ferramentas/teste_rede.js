@@ -134,7 +134,7 @@ async function rodar(b, modo, porta, turn) {
   const semResposta = async (pg) => pg.evaluate((resp) => !JSON.stringify(rede.retrato).includes(resp), ids.resposta);
   conf("Retrato do convidado nunca tem a resposta", (await semResposta(gM)) && (await semResposta(gV)));
   conf("Resposta chega só pro Mestre", (await esperar(gM, (resp) => rede.segredo && rede.segredo.resposta === resp, ids.resposta)) && (await gV.evaluate(() => rede.segredo === null)));
-  conf("A tela do Mestre mostra a resposta; a do outro, não", (await gM.evaluate((r) => document.body.innerText.includes(r), ids.resposta)) && !(await gV.evaluate((r) => document.body.innerText.includes(r), ids.resposta)));
+  conf("A tela do outro não mostra a resposta", !(await gV.evaluate((r) => document.body.innerText.includes(r), ids.resposta)));
   // 3) painel calculado pelo host
   conf("Painel do Mestre: Ver carta; o do outro, não", (await esperar(gM, () => rede.painel && rede.painel.opcoes.some((o) => o.a === "virarCarta"))) && (await gV.evaluate(() => !!rede.painel && !rede.painel.opcoes.some((o) => o.a === "virarCarta"))));
   // 4) papéis
@@ -151,6 +151,8 @@ async function rodar(b, modo, porta, turn) {
     document.querySelector(`[data-op="${i}"]`).click();
   });
   conf("O Mestre vira a carta pelo botão do painel", await esperar(host, () => cardState === "revealed"));
+  // 1.7.9.5: como na tela de sempre, a resposta aparece pro Mestre depois de virar a carta
+  conf("Virou a carta: a tela do Mestre mostra a resposta", await esperar(gM, (r) => document.body.innerText.toLowerCase().includes(r.toLowerCase()), ids.resposta));
   r = await mandar(gM, "tempoAcabou");
   conf("Coisa só do host (tempo acabou) é recusada pra convidado", r && !r.ok && r.motivo === "sem_permissao");
   // 5) votação do Descartar: o host joga como Caio; Ana (Mestre) pede, Beto vota sim
@@ -380,6 +382,47 @@ async function rodarSalaPrimeiro(b) {
   conf("Na vez de quem está no host, os números aparecem na tela dele", temNum);
   if (temNum) await host.evaluate(() => document.querySelector("#redeHostVista [data-dica]").click());
   conf("A dica escolhida no host abre", await esperar(host, () => revealedOrder.length === 1));
+  // 1.7.9.5: a Mestre vê a carta como na tela de sempre (a dica da vez e os botões do veredito)
+  await host.evaluate(() => redeHostPublicar(true));
+  conf(
+    "A Mestre vê a carta no celular dela (resposta, dica da vez e Acertou/Errou)",
+    await esperar(g, () => {
+      const c = document.querySelector("#telao .rede-carta-mestre");
+      return !!c && !!c.querySelector(".pending-box") && !!c.querySelector(".btn-correct") && !!c.querySelector(".btn-wrong") && !document.querySelector("#telao .telao-carta");
+    }),
+  );
+  // 1.7.9.5: Reiniciar no host com a sala aberta; o mesmo nome cadastrado de novo devolve o lugar sozinho
+  await host.evaluate(() => resetGame());
+  conf("Reiniciar no host: o celular volta pra escolha do nome", await esperar(g, () => rede.estado === "escolhendo", null, 12000));
+  await host.evaluate(() => {
+    document.querySelectorAll(".caos-modal-ov, .jf-modal-bg").forEach((o) => o.remove());
+    CURRENT_FORMAT = "versus";
+    selectMode("classico");
+    WIN_CONDITION = "tabuleiro";
+    ["Ana", "Beto", "Caio"].forEach((n, i) => players.push({ id: jogadorIdNovo(), name: n, score: 0, position: 0, isBlocked: false, color: PLAYER_COLORS[i], avatar: "😀", humor: "normal", ageBracket: null, team: null, gems: {} }));
+    redeHostCadastroMudou();
+  });
+  const anaNova = await host.evaluate(() => players[0].id);
+  conf("Mesmo nome cadastrado de novo: o celular volta pro lugar sozinho", await esperar(g, (id) => rede.estado === "dentro" && rede.eu === id, anaNova, 12000));
+  await host.evaluate(async () => {
+    rede.hostEu = players[1].id;
+    starterDrawCount = 1;
+    mestreIndex = 0;
+    responderIndex = 1;
+    ["splashScreen", "welcomeScreen", "playerPanel", "orderRevealSection"].forEach((id) => {
+      const e = document.getElementById(id);
+      if (e) e.style.display = "none";
+    });
+    document.getElementById("gameScreen").style.display = "block";
+    document.getElementById("playAreaSection").style.display = "block";
+    beginGameplay();
+    await new Promise((r) => setTimeout(r, 300));
+    if (activeToastState) closeActiveToast();
+    document.getElementById("redePainel")?.remove();
+    redeHostPublicar(true);
+  });
+  conf("A partida nova começa no celular dela também", await esperar(g, () => rede.retrato && rede.retrato.iniciada && !!document.querySelector("#telao .rede-carta-mestre"), null, 12000));
+  conf("De novo com a Mestre fora do host: tela de jogador no host", await esperar(host, () => !!document.getElementById("redeHostVista")));
   // a Mestre sai da sala: o host volta pra tela de sempre (ela jogaria no aparelho do host)
   await g.close({ runBeforeUnload: true });
   await host.waitForTimeout(500);

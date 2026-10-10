@@ -244,3 +244,16 @@ body.claro .rede-host-vista {
   font-size: 0.85rem;
   opacity: 0.9;
 }
+/* 1.7.9.5 · A carta do Mestre no celular/tablet dele, com a cara da tela de sempre */
+.rede-mestre {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.rede-mestre .rede-carta-mestre {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
