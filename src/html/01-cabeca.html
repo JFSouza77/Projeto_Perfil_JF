@@ -6,6 +6,15 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.9.8 · 10/10/2026 · "Rooms and Network Update · Sala de perto" = QR CODE, SELO DE CONEXÃO, TIRAR DA SALA, CÓDIGO SEM COLISÃO.
+          Pergunta do JF (o que mais pode dar bug; gente por perto; 4G + Wi-Fi). BUG: código sorteado já em uso por
+          outro grupo → a regra da 1.7.9.5 (id ocupado + alguém responde = rebaixar) colocava o host na sala dos
+          outros; agora sala recém-aberta (rede.salaNova) sorteia outro código (redeTrocarCodigo, até 5 vezes).
+          QR Code do link no painel (biblioteca qrcode-generator 2.0.4 embutida em 05m-qrcode.js, MIT).
+          Selo de conexão: o convidado lê o par de candidatos do WebRTC (t.ligacao: direta/ponte) e manda no ping
+          com a demora (ms); o host mostra no painel ao lado de cada nome, o convidado mostra na linha da sala.
+          redeTirarDaSala: lugar livre, aprovação desfeita, recusa "removido". teste_rede: QR, tirar, selo
+          (direto e pela ponte) e colisão de código (rodarColisao).
   1.7.9.7 · 10/10/2026 · "Rooms and Network Update · Sala blindada" = REVISÃO DE SEGURANÇA DO ONLINE.
           Pedido do JF (debug antes do próximo teste). Host: nomeJogadorLimpo no nome criado pelo convidado (sem
           <>&"'`\ nem caracteres invisíveis); redeRitmoOk (25 mensagens/s por sessão); pedido: 1 a cada 3 s, no
@@ -676,7 +685,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.9.7</title>
+<title>Perfil JF · Beta 1.7.9.8</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

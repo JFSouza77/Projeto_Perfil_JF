@@ -82,7 +82,27 @@ function redeAleatorio(n) {
   }
   return s;
 }
+let redeTrocasCodigo = 0;
+function redeTrocarCodigo() {
+  if (!rede || rede.papel !== "host" || ++redeTrocasCodigo > 5) return;
+  const modo = rede.modo, eu = rede.hostEu, painel = !!document.getElementById("redePainel");
+  try {
+    caosLog("rede", `código ${rede.sala} já estava em uso: sorteando outro`);
+  } catch (e) {}
+  redeFechar();
+  if (!redeAbrirSala(modo)) return;
+  rede.hostEu = eu;
+  if (painel) redePainelHost();
+}
 function redeCodigoSala() {
+  // (teste) primeiro código forçado, pra simular código já em uso
+  try {
+    if (typeof window !== "undefined" && window.__REDE_SALA_TESTE && redeSalaValida(window.__REDE_SALA_TESTE)) {
+      const c = window.__REDE_SALA_TESTE;
+      window.__REDE_SALA_TESTE = null;
+      return c;
+    }
+  } catch (e) {}
   let s = "";
   for (let i = 0; i < 4; i++) s += REDE_LETRAS_SALA[Math.floor(Math.random() * REDE_LETRAS_SALA.length)];
   return s;
@@ -234,6 +254,15 @@ function redeTransportePeerHost(sala) {
       // antiga): id da sala ocupado. Pergunta a quem está com ele: se alguém responde, outro aparelho é o
       // host (assumiu a sala) e este entra como jogador; se ninguém responde, é o id antigo preso no
       // servidor (app fechado de repente segura o id por até ~1 min) e tenta de novo.
+      // 1.7.9.8: sala recém-aberta com o código já em uso por outro grupo: sorteia outro código (nunca entra
+      // na sala dos outros). A pergunta "quem está com o id" abaixo é só pra quem está voltando pra própria sala.
+      if (tipo === "unavailable-id" && !fechado && rede && rede.papel === "host" && rede.transporte === t && rede.salaNova) {
+        fechado = true;
+        try {
+          peer.destroy();
+        } catch (x) {}
+        return void setTimeout(redeTrocarCodigo, 0);
+      }
       if (tipo === "unavailable-id" && tentativas < (redeInsistirId ? 45 : 30) && !fechado) {
         tentativas++;
         try {
@@ -312,6 +341,24 @@ function redeTransportePeerConvidado(sala) {
     },
     aoReceber(fn) {
       receber = fn;
+    },
+    // 1.7.9.8: a ligação com o host é direta ou passa pela ponte (TURN)?
+    async ligacao() {
+      const pc = conn && conn.peerConnection;
+      if (!pc || typeof pc.getStats !== "function") return null;
+      try {
+        const st = await pc.getStats();
+        let par = null;
+        st.forEach((x) => {
+          if (x.type === "transport" && x.selectedCandidatePairId) par = st.get(x.selectedCandidatePairId) || par;
+        });
+        if (!par) st.forEach((x) => x.type === "candidate-pair" && x.state === "succeeded" && (x.nominated || x.selected) && (par = par || x));
+        const loc = par && st.get(par.localCandidateId), rem = par && st.get(par.remoteCandidateId);
+        if (!loc) return null;
+        return loc.candidateType === "relay" || (rem && rem.candidateType === "relay") ? "ponte" : "direta";
+      } catch (e) {
+        return null;
+      }
     },
     // a conexão parece viva mas o host sumiu (o WebRTC pode demorar a perceber): abre outra
     reconectar() {
@@ -464,7 +511,7 @@ function redeValidar(bruto) {
       typeof m.commandId === "string" && /^[A-Za-z0-9_:-]{4,64}$/.test(m.commandId) && typeof m.acao === "string" && !!ACOES[m.acao] &&
       Array.isArray(m.dados) && m.dados.length <= 4 && m.dados.every(redeEhPrimitivo) &&
       (m.rev === undefined || Number.isInteger(m.rev)) && (m.matchId === undefined || m.matchId === null || typeof m.matchId === "string"),
-    ping: () => typeof m.t0 === "number" && isFinite(m.t0),
+    ping: () => typeof m.t0 === "number" && isFinite(m.t0) && (m.via === undefined || ["direta", "ponte", "local"].includes(m.via)) && (m.ms === undefined || (Number.isFinite(m.ms) && m.ms >= 0 && m.ms <= 60000)),
     tchau: () => true,
     voto: () => txt(m.votacao, 40) && typeof m.sim === "boolean",
     // 1.7.9.6: o convidado cria o próprio jogador (o host aprova e cadastra)
@@ -516,6 +563,7 @@ function redeAbrirSalaCom(fab, modo, salaFixa) {
   if (rede) redeFechar();
   const sala = redeSalaValida(salaFixa) ? salaFixa : redeCodigoSala();
   const transporte = fab(sala);
+  const salaNova = !redeSalaValida(salaFixa);
   if (!transporte) return null;
   rede = {
     papel: "host",
@@ -534,6 +582,7 @@ function redeAbrirSalaCom(fab, modo, salaFixa) {
     recEnviada: null, // revisão e sucessor do último pacote de recuperação
     recQuando: 0,
     batida: null,
+    salaNova, // 1.7.9.8: sala recém-aberta (não é volta de recarga): código ocupado = sorteia outro
     esperando: {}, // 1.7.9.4: sessões na tela "Quem é você?" → a última lista mandada (a sala abre antes do cadastro)
     pedidos: {}, // 1.7.9.6: sessão → pedido de entrada esperando o host aprovar
     aprovados: {}, // 1.7.9.6: aparelhos (chave) que o host já aprovou: voltam sem pedir de novo
@@ -812,7 +861,13 @@ function redeHostReceber(m) {
   const a = redeAssentoDaSessao(m.de);
   if (a) rede.assentos[a].visto = Date.now();
   if (m.t === "oi") return redeHostOi(m);
-  if (m.t === "ping") return redeEnviar("pong", { t0: m.t0, th: Date.now() }, m.de);
+  if (m.t === "ping") {
+    if (a) {
+      if (m.via) rede.assentos[a].via = m.via;
+      if (m.ms !== undefined) rede.assentos[a].ms = m.ms;
+    }
+    return redeEnviar("pong", { t0: m.t0, th: Date.now() }, m.de);
+  }
   if (m.t === "tchau") {
     if (a) rede.assentos[a].visto = 0;
     delete rede.esperando[m.de];
@@ -1500,7 +1555,16 @@ function redeEntrarSala(sala, transporteFabrica) {
   rede.pingTimer = setInterval(() => {
     if (!rede || rede.papel !== "convidado") return;
     n++;
-    if (n <= 4 || n % 10 === 0) redeEnviar("ping", { t0: Date.now() });
+    if (n <= 4 || n % 10 === 0) {
+      // 1.7.9.8: junto do ping vai como está a minha ligação (o host mostra no painel da sala)
+      const extra = {};
+      if (rede.via) extra.via = rede.via;
+      if (Number.isFinite(rede.ms)) extra.ms = Math.round(rede.ms);
+      redeEnviar("ping", { t0: Date.now(), ...extra });
+      const t = rede.transporte;
+      if (t && t.tipo === "local") rede.via = "local";
+      else if (t && typeof t.ligacao === "function") t.ligacao().then((v) => rede && v && (rede.via = v));
+    }
     if (rede.estado === "entrando" && n % 6 === 0) oi();
     redeReenviar();
   }, 500);
@@ -1528,6 +1592,7 @@ function redeConvidadoReceber(m) {
       rede.relogio.atraso = Math.min(atraso, rede.relogio.atraso);
     }
     rede.relogio.amostras++;
+    rede.ms = atraso; // a última ida e volta (o selo de conexão da tela)
     return;
   }
   if (m.t === "escolha") {
@@ -1548,7 +1613,14 @@ function redeConvidadoReceber(m) {
       rede.erroCadastro = REDE_MOTIVO_TXT[m.motivo];
       return avisar();
     }
-    if (["lugar_ocupado", "sem_partida", "versao_diferente", "recusado"].includes(m.motivo)) {
+    if (["lugar_ocupado", "sem_partida", "versao_diferente", "recusado", "removido"].includes(m.motivo)) {
+      if (m.motivo === "removido") {
+        rede.eu = null;
+        try {
+          localStorage.removeItem(REDE_EU_KEY + rede.sala);
+          sessionStorage.removeItem(REDE_EU_KEY + rede.sala);
+        } catch (e) {}
+      }
       rede.estado = "recusado";
       rede.motivo = m.motivo;
       rede.versaoHost = m.versao || null;
@@ -1722,6 +1794,7 @@ function redeSairDaSala() {
 }
 const REDE_MOTIVOS = {
   recusado: "O host não aceitou a entrada.",
+  removido: "O host tirou você da sala.",
   lugar_ocupado: "Esse jogador já está na sala em outro aparelho.",
   sem_partida: "O host ainda não cadastrou os jogadores. Espere e tente de novo.",
   versao_diferente: "Seu jogo está numa versão diferente da do host.",
@@ -1771,7 +1844,8 @@ function redeConvidadoDesenhar() {
     const suc = rede.retrato.sucessor && rede.retrato.jogadores.find((j) => j.id === rede.retrato.sucessor);
     conexao = `<div class="rede-conexao">🔌 Sem notícia do host…${suc ? ` Se ele não voltar, ${escapeHtml(suc.nome)} assume a sala.` : ""}</div>`;
   }
-  const sala = `<div class="rede-sala">🌐 Sala <b>${rede.sala}</b></div>${conexao}`;
+  const selo = rede.estado === "dentro" && rede.via && rede.via !== "local" ? `<span class="rede-selo">${rede.via === "ponte" ? "🌉 pela ponte" : "📶 direta"}${Number.isFinite(rede.ms) ? " · " + Math.round(rede.ms) + " ms" : ""}</span>` : "";
+  const sala = `<div class="rede-sala">🌐 Sala <b>${rede.sala}</b>${selo}</div>${conexao}`;
   if (rede.estado === "escolhendo") return redeEscolhaDesenhar(box, sala);
   if (rede.estado === "aguardando") {
     box.innerHTML = `${sala}<div class="telao-espera">⏳ Pedido enviado<br><small>Esperando o host aceitar a sua entrada…</small></div>${REDE_SAIR}`;
@@ -2178,6 +2252,42 @@ function redeEntrarPorCodigo() {
   document.body.appendChild(ov);
   setTimeout(() => inp.focus(), 50);
 }
+/* --- 1.7.9.8 · Sala de perto: QR Code, selo de conexão e tirar da sala --- */
+// QR Code do link da sala (biblioteca 5m, embutida): quem está perto aponta a câmera e entra.
+function redeQrHtml(link) {
+  try {
+    if (typeof qrcode !== "function" || !link) return "";
+    const qr = qrcode(0, "M");
+    qr.addData(link);
+    qr.make();
+    return `<div class="rede-qr" aria-label="QR Code do link da sala">${qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true })}</div><div class="rede-qr-rot">📷 Quem está perto: aponte a câmera do celular</div>`;
+  } catch (e) {
+    return "";
+  }
+}
+// "📶 direta · 40 ms" ou "🌉 pela ponte · 120 ms" (o convidado conta no ping)
+function redeSeloConexao(a) {
+  if (!a || !a.via) return "";
+  const ms = Number.isFinite(a.ms) ? ` · ${Math.round(a.ms)} ms` : "";
+  return a.via === "ponte" ? ` · 🌉 pela ponte${ms}` : a.via === "local" ? "" : ` · 📶 direta${ms}`;
+}
+// O host tira um aparelho da sala: o lugar fica livre e a aprovação daquele aparelho é desfeita.
+function redeTirarDaSala(jid) {
+  if (!rede || rede.papel !== "host") return false;
+  const a = rede.assentos[jid];
+  if (!a) return false;
+  delete rede.assentos[jid];
+  if (a.chave) delete rede.aprovados[a.chave];
+  delete rede.paineis[jid];
+  if (a.sessao) redeEnviar("recusa", { motivo: "removido" }, a.sessao);
+  redeHostGuardar();
+  redeHostPublicar(true);
+  redeCadastroInfo();
+  try {
+    caosLog("rede", `${(jogadorPorId(jid) || {}).name || "?"} foi tirado da sala pelo host`);
+  } catch (e) {}
+  return true;
+}
 function redePainelHost() {
   document.getElementById("redePainel")?.remove();
   if (rede && rede.papel === "host") rede.perguntouEu = true;
@@ -2209,13 +2319,15 @@ function redePainelHost() {
       const est = rede.transporte.estado || "aberta";
       const lugares = players
         .map((p) => {
-          const s = p.id === rede.hostEu ? "📱 neste aparelho" : redeOnline(rede.assentos[p.id]) ? "🟢 na sala" : rede.assentos[p.id] ? "🟠 caiu" : "⚪ fora";
-          return `<li>${escapeHtml((p.avatar ? p.avatar + " " : "") + p.name)} · ${s}</li>`;
+          const a = rede.assentos[p.id];
+          const s = p.id === rede.hostEu ? "📱 neste aparelho" : redeOnline(a) ? "🟢 na sala" + redeSeloConexao(a) : a ? "🟠 caiu" : "⚪ fora";
+          const tirar = a && p.id !== rede.hostEu ? ` <button type="button" class="rede-tirar" data-tirar="${escapeHtml(p.id)}" aria-label="Tirar ${escapeHtml(p.name)} da sala">✕ tirar</button>` : "";
+          return `<li>${escapeHtml((p.avatar ? p.avatar + " " : "") + p.name)} · ${s}${tirar}</li>`;
         })
         .join("");
       const opcoesEu = `<option value="">ninguém (o aparelho é só a mesa)</option>` + players.map((p) => `<option value="${escapeHtml(p.id)}"${p.id === rede.hostEu ? " selected" : ""}>${escapeHtml(p.name)}</option>`).join("");
       const erro = est === "erro" ? `<p class="rede-aviso">${REDE_ESTADO_HOST.erro}${rede.transporte.erro ? " (" + escapeHtml(rede.transporte.erro) + ")" : ""}. Confira a internet e tente de novo, ou use o ensaio em abas.</p>` : "";
-      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Sala ${rede.sala}</h3><div class="rede-estado">${rede.modo === "local" ? "🧪 Ensaio em abas deste navegador" : REDE_ESTADO_HOST[est] || est}</div>${erro}<div class="rede-codigo-rot">Código da sala</div><div class="rede-codigo">${rede.sala}</div><p class="rede-rot">Quem vai jogar abre o jogo, toca em <b>🌐 Jogar online</b> e digita o código. Ou mande o link:</p><code class="rede-link">${escapeHtml(redeLinkDaSala())}</code><button type="button" class="chip" id="redeCopiar">📋 Copiar link</button>${
+      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Sala ${rede.sala}</h3><div class="rede-estado">${rede.modo === "local" ? "🧪 Ensaio em abas deste navegador" : REDE_ESTADO_HOST[est] || est}</div>${erro}<div class="rede-codigo-rot">Código da sala</div><div class="rede-codigo">${rede.sala}</div>${redeQrHtml(redeLinkDaSala())}<p class="rede-rot">Quem vai jogar abre o jogo, toca em <b>🌐 Jogar online</b> e digita o código. Ou mande o link:</p><code class="rede-link">${escapeHtml(redeLinkDaSala())}</code><button type="button" class="chip" id="redeCopiar">📋 Copiar link</button>${
         navigator.share ? '<button type="button" class="chip" id="redeCompartilhar">📤 Compartilhar</button>' : ""
       }<label class="rede-rot-eu">Quem joga neste aparelho? <select id="redeEu">${opcoesEu}</select><small>${
         players.length ? "Escolha quem está com este aparelho: a carta só aparece aqui quando essa pessoa for o Mestre (ou quando o Mestre não tiver aparelho)." : "Mande o código (ou o link): cada um cria o próprio jogador no celular, e você aceita a entrada aqui. Quem joga neste aparelho você cadastra como sempre."
@@ -2238,6 +2350,12 @@ function redePainelHost() {
         redeHostPublicar(true);
         pintar();
       });
+      ov.querySelectorAll("[data-tirar]").forEach((b) =>
+        b.addEventListener("click", () => {
+          redeTirarDaSala(b.dataset.tirar);
+          pintar();
+        }),
+      );
       const ab = ov.querySelector("#redeAbrirAba");
       if (ab) ab.addEventListener("click", () => window.open(redeLinkDaSala(), "_blank"));
       ov.querySelector("#redeComoSala").addEventListener("click", () => {

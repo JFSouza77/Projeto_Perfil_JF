@@ -425,3 +425,42 @@ body.claro button.splash-embreve {
   opacity: 0.75;
   margin: -4px 0 8px;
 }
+/* 1.7.9.8 · QR Code da sala, selo de conexão e tirar da sala */
+.rede-qr {
+  width: min(190px, 56vw);
+  margin: 6px auto 2px;
+  padding: 8px;
+  border-radius: 12px;
+  background: #fff;
+  box-sizing: border-box;
+}
+.rede-qr svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.rede-qr-rot {
+  text-align: center;
+  font-size: 0.78rem;
+  opacity: 0.85;
+  margin-bottom: 6px;
+}
+.rede-selo {
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #ffffff14;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+.rede-tirar {
+  margin-left: 6px;
+  padding: 2px 8px;
+  border-radius: 8px;
+  border: 1px solid #f8717188;
+  background: transparent;
+  color: #fca5a5;
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+}

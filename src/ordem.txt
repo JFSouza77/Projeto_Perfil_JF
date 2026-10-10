@@ -28,6 +28,7 @@ js/05i-tabuleiro.js
 js/05j-lobby-placar.js
 js/05k-rede.js
 js/05l-peerjs.js
+js/05m-qrcode.js
 js/06-voz-som-vibracao.js
 js/07-caos/01-nucleo-e-falas.js
 js/07-caos/02-cerebro-adm.js
