@@ -6,6 +6,17 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.9.4 · 09/10/2026 · "Rooms and Network Update · Sala primeiro" = SALA ANTES DO CADASTRO E HOST SEM SPOILER.
+          1º teste do JF em aparelhos de verdade: a Anne era a Mestre no tablet dela e o celular do host continuava
+          com a tela do Mestre (carta e resposta). redeHostVista: com o Mestre da vez online em outro aparelho, o host
+          mostra a tela de jogador (retrato público via telaoDesenhar(r, alvo), números da dica na vez do hostEu,
+          Pausar e Sala); Mestre sem aparelho ou fora da sala → a tela de sempre volta; intervalo fica de fora.
+          Pedido do JF: sala primeiro, cadastro depois. Botão "🌐 Vai jogar online?" no cadastro (redeCadBtn,
+          redeCadastroInfo); quem entra sem jogadores cadastrados fica em rede.esperando e recebe a lista de novo
+          quando ela muda (redeHostEsperando, redeHostCadastroMudou no addPlayer e no remover); tela de espera do
+          convidado antes da partida (retrato.iniciada). Partida começando com a sala aberta e sem hostEu: abre o
+          painel uma vez pra perguntar quem joga no aparelho. teste_rede: roteiro "sala primeiro"; a troca de
+          host espera o pacote de recuperação em dia antes de derrubar o host (o teste falhava por tempo).
   NUMERAÇÃO DA 1.7 ARRUMADA (pedido do JF, 09/10/2026): as versões pequenas de cada série foram juntadas e
           renumeradas. Regra daqui pra frente: mudança pequena entra junto na próxima versão, sem número próprio.
           1.7.9.3 = antigas 1.7.9.10–13 · 1.7.9.2 = 1.7.9.7–9 · 1.7.9.1 = 1.7.9.2–6 · 1.7.9 = 1.7.9 e 1.7.9.1
@@ -630,7 +641,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.9.3</title>
+<title>Perfil JF · Beta 1.7.9.4</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

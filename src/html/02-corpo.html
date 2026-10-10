@@ -54,7 +54,7 @@
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.3 · Rooms and Network Update · Online<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.9.4 · Rooms and Network Update · Sala primeiro<br>C.A.O.S. 4.0 · Atualizada em 09/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Como jogar online (passo a passo)"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Na partida: ⏸️ Pausar → 🌐 Jogar online · toque pra ver como</span></button>
@@ -187,6 +187,8 @@
   <section class="panel" id="playerPanel">
     
     <div class="trocar-modo-row"><span class="tm-rot">Modo</span><span id="trocarModoLabel">—</span><button type="button" id="trocarModoBtn">🔄 Escolher outro modo</button></div>
+    <!-- 1.7.9.4 (pedido do JF): no online, a sala abre antes do cadastro; cada um escolhe o próprio nome no celular -->
+    <div class="rede-cad" id="redeCad"><button type="button" class="rede-btn" id="redeCadBtn">🌐 Vai jogar online? Abra a sala antes de cadastrar</button><div class="rede-cad-info" id="redeCadInfo"></div></div>
     <h2 class="cad-tit">Jogadores</h2>
     
     <button type="button" id="iniBtn" class="ini-start">🐣 Sou iniciante — Quero ajuda do C.A.O.S.</button>

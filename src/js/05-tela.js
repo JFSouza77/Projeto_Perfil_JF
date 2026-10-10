@@ -1438,6 +1438,7 @@ function renderScoreboard() {
       if (starterChosen) return;
       players.splice(parseInt(btn.dataset.i), 1);
       undoTeamFormation();
+      if (typeof redeHostCadastroMudou === "function") redeHostCadastroMudou(); // 1.7.9.4
       if (mestreIndex !== null && mestreIndex >= players.length) mestreIndex = 0;
       if (responderIndex !== null && responderIndex >= players.length) responderIndex = 0;
       renderScoreboard();

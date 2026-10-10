@@ -104,8 +104,8 @@ function telaoIniciar() {
   telaoRelogioTimer = setInterval(telaoRelogio, 500);
 }
 const TELAO_CAT = { ANO: "📅 Ano", PESSOA: "🧑 Pessoa", LUGAR: "📍 Lugar", COISA: "📦 Coisa", ANIMAL: "🐾 Animal" };
-function telaoDesenhar(r) {
-  const box = document.getElementById("telao");
+function telaoDesenhar(r, alvo) {
+  const box = alvo || document.getElementById("telao"); // 1.7.9.4: o host desenha na própria tela de jogador
   if (!box) return;
   const nome = (id) => {
     const j = r.jogadores.find((p) => p.id === id);

@@ -5,6 +5,20 @@
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.9.4",
+    data: "09/10/2026 · 23:45",
+    nome: "Rooms and Network Update · Sala primeiro",
+    t: "No online, a sala abre antes do cadastro, e o celular do host respeita quem é o Mestre.",
+    itens: [
+      "🌐 Sala antes do cadastro: na tela dos jogadores, toque em Vai jogar online? e mande o link. Quem abrir fica esperando, e o nome aparece pra escolher assim que for cadastrado.",
+      "🔒 Host sem spoiler: quando o Mestre está no próprio celular, o aparelho do host vira tela de jogador, sem a carta e sem a resposta. Se o Mestre não tiver aparelho, o host mostra tudo, como antes.",
+      "📱 Quem joga neste aparelho: quando a partida começa com a sala aberta, o jogo pergunta quem está com o aparelho do host.",
+    ],
+    qol: [
+      "📖 Manual do online: o passo a passo segue a ordem nova, sala primeiro e cadastro depois.",
+    ],
+  },
   // 1.7.9.3 · Numeração da 1.7 arrumada: as versões pequenas de cada série foram juntadas e renumeradas (tabela no HISTÓRICO, 01-cabeca.html).
   {
     v: "Beta 1.7.9.3",
