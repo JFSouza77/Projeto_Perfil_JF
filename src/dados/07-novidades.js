@@ -13,7 +13,7 @@ const NOVIDADES = [
     itens: [
       "🌐 Vai jogar online: depois de escolher o modo, o jogo pergunta se é pra abrir a sala. Com Sim, este aparelho vira o host e mostra o código da sala.",
       "🔑 Entrar com o código: na tela inicial, toque em Jogar online e digite as 4 letras que aparecem no aparelho do host. O link continua valendo.",
-      "🙋 Cada um cria o seu jogador: quem entra escolhe nome, cor, emoji, zoeira e idade no próprio celular e pede pra entrar.",
+      "🙋 Cada um cria o seu jogador: quem entra escolhe nome, cor, emoji, zoeira e idade no próprio celular e pede pra entrar. É o mesmo cadastro do host, com as cores e os emojis exclusivos de cada dono.",
       "✅ O host aceita: cada pedido aparece no aparelho do host, que aceita ou recusa. Quem já foi aceito volta sem pedir de novo.",
       "🎙️ Só o Mestre abre as dicas: quem está na vez fala o número, e o Mestre abre. Todo mundo vê a dica e quem pediu.",
       "🤖 C.A.O.S. em todos os celulares: as falas dele aparecem no celular de cada um, e o que é só pra uma pessoa aparece só no celular dela.",

@@ -735,17 +735,20 @@ function redeMandarEscolha(sessao) {
   redeEnviar("escolha", { lugares, cadastro }, sessao);
 }
 // 1.7.9.6: o que o convidado pode escolher pra criar o próprio jogador (só antes da partida começar)
+// 1.7.9.6 (pedido do JF): o mesmo cadastro do host, com as cores de dono (RGB do JF, degradê da Anne),
+// os emojis exclusivos e as cores da zoeira
 function redeOpcoesCadastro() {
   if (starterChosen || players.length >= MAX_PLAYERS) return null;
-  const usadas = new Set(players.map((p) => p.color)), usados = new Set(players.map((p) => p.avatar));
   const equipe = CURRENT_FORMAT === "equipe";
   return {
     equipe,
-    cores: equipe ? [] : PLAYER_COLORS.filter((c) => c !== "RGB" && !GRADIENTS[c] && !usadas.has(c)),
-    avatares: avatarsForMode().filter((a) => !usados.has(a)),
-    humores: humorOptionsForMode().concat("caos").map((id) => ({ id, nome: (HUMOR_OPTIONS.find((o) => o.id === id) || {}).label || id })),
+    cores: equipe ? [] : coresDaPaleta(),
+    coresUsadas: players.map((p) => p.color),
+    avatares: avatarsForMode(),
+    avataresUsados: players.map((p) => p.avatar),
+    humores: humorOpcoesModo().map((o) => ({ id: o.id, nome: o.label, dica: o.hint || "", cor: HUMOR_COR[o.id] || "#fbbf24" })),
     humorPadrao: CURRENT_MODE === "junior" ? "familia" : "normal",
-    idades: equipe ? AGE_BRACKETS.map((b) => ({ id: b.id, nome: b.label })) : IDADE_OPCOES.map((o) => ({ id: o.id, nome: o.label })),
+    idades: equipe ? AGE_BRACKETS.map((b) => ({ id: b.id, nome: b.label, cor: b.cor })) : IDADE_OPCOES.map((o) => ({ id: o.id, nome: o.label, cor: o.id === "menor" ? "#22d3ee" : "#a78bfa" })),
   };
 }
 function redeHostEsperando() {
@@ -974,11 +977,12 @@ function redeHostAdicionarPerfil(perfil) {
   undoTeamFormation();
   const isEquipe = CURRENT_FORMAT === "equipe";
   const usadas = new Set(players.map((p) => p.color)), usados = new Set(players.map((p) => p.avatar));
-  const cores = PLAYER_COLORS.filter((c) => c !== "RGB" && !GRADIENTS[c] && !usadas.has(c));
-  const avatares = avatarsForMode().filter((a) => !usados.has(a));
-  const cor = cores.includes(perfil.cor) ? perfil.cor : cores[0] || PLAYER_COLORS[0];
-  const avatar = avatares.includes(perfil.avatar) ? perfil.avatar : avatares[0] || "😀";
-  const humores = humorOptionsForMode().concat("caos");
+  // as mesmas regras do cadastro daqui: cor de dono só com o nome do dono (sanitizePlayerColor/Avatar)
+  const cores = coresDaPaleta().filter((c) => !usadas.has(c) && (!COR_EXCLUSIVA[c] || COR_EXCLUSIVA[c].dono(name)));
+  const avatares = avatarsForMode().concat(AVATAR_EXCLUSIVE).filter((a) => !usados.has(a));
+  const cor = cores.includes(perfil.cor) ? perfil.cor : cores.find((c) => !COR_EXCLUSIVA[c]) || PLAYER_COLORS[0];
+  const avatar = avatares.includes(perfil.avatar) ? perfil.avatar : avatares.find((a) => !AVATAR_EXCLUSIVE.includes(a)) || "😀";
+  const humores = humorOpcoesModo().map((o) => o.id);
   const humor = humores.includes(perfil.humor) ? perfil.humor : CURRENT_MODE === "junior" ? "familia" : "normal";
   const faixa = isEquipe && AGE_BRACKETS.some((b) => b.id === perfil.faixa) ? perfil.faixa : null;
   const p = {
@@ -1872,17 +1876,47 @@ function redeEscolhaDesenhar(box, sala) {
     .join("");
   let form = "";
   if (cad) {
-    if (r.cor && !cad.cores.includes(r.cor)) r.cor = null;
-    if (r.avatar && !cad.avatares.includes(r.avatar)) r.avatar = null;
+    const nomeAt = String(r.nome || "").trim();
+    const usadas = new Set(cad.coresUsadas || []), usados = new Set(cad.avataresUsados || []);
+    const tomadaCor = (c) => usadas.has(c) || (!!COR_EXCLUSIVA[c] && !COR_EXCLUSIVA[c].dono(nomeAt));
+    // emoji exclusivo do dono (😎 do JF, 👸 da Anne) entra na lista quando o nome é o dele
+    const exclusivo = isJfName(nomeAt) ? "😎" : isAnneName(nomeAt) ? "👸" : null;
+    const avatares = (exclusivo && !usados.has(exclusivo) ? [exclusivo] : []).concat(cad.avatares);
+    // dono digitou o nome: a cor e o emoji dele já vêm marcados (o host faria o mesmo)
+    const corDono = cad.cores.find((c) => COR_EXCLUSIVA[c] && COR_EXCLUSIVA[c].dono(nomeAt) && !usadas.has(c));
+    if (corDono && r.donoMarcado !== nomeAt) {
+      r.cor = corDono;
+      if (exclusivo && !usados.has(exclusivo)) r.avatar = exclusivo;
+      r.donoMarcado = nomeAt;
+    }
+    if (r.cor && (tomadaCor(r.cor) || !cad.cores.includes(r.cor))) r.cor = null;
+    if (r.avatar && (usados.has(r.avatar) || !avatares.includes(r.avatar))) r.avatar = null;
     if (!r.humor) r.humor = cad.humorPadrao;
-    const sel = (on) => (on ? " sel" : "");
+    const hAtual = cad.humores.find((h) => h.id === r.humor);
+    const cores = cad.cores
+      .map((c, i) => {
+        const t = tomadaCor(c);
+        const rot = (COR_EXCLUSIVA[c] ? "Cor exclusiva " + COR_EXCLUSIVA[c].de : "Cor " + (i + 1)) + (t ? " (já tem dono)" : "");
+        return `<button type="button" class="color-swatch${c === r.cor ? " selected" : ""}${c === "RGB" ? " rgb-swatch" : ""}${t ? " tomada" : ""}${COR_EXCLUSIVA[c] && t && !usadas.has(c) ? " reservada" : ""}" data-cor="${escapeHtml(c)}" style="${c === "RGB" ? "" : "background:" + playerColorCss(c)}" aria-label="${escapeHtml(rot)}"${t ? ' aria-disabled="true"' : ""}></button>`;
+      })
+      .join("");
+    const emojis = avatares
+      .map((a) => `<button type="button" class="avatar-swatch${a === r.avatar ? " selected" : ""}${usados.has(a) ? " tomada" : ""}" data-av="${escapeHtml(a)}" aria-label="Emoji ${escapeHtml(a)}"${usados.has(a) ? ' aria-disabled="true"' : ""}>${escapeHtml(a)}</button>`)
+      .join("");
+    const humores = cad.humores
+      .map((h) => `<button type="button" class="main-btn age-swatch humor-btn${h.id === r.humor ? " on" : ""}" data-humor="${escapeHtml(h.id)}" style="--hc:${escapeHtml(h.cor)};">${escapeHtml(h.nome)}</button>`)
+      .join("");
+    const idades = cad.idades
+      .map((o) => `<button type="button" class="main-btn age-swatch ${cad.equipe ? "age-btn" : "idade-btn"}${o.id === r.idade ? " on" : ""}" data-idade="${escapeHtml(o.id)}" style="--hc:${escapeHtml(o.cor)};" aria-pressed="${o.id === r.idade}">${escapeHtml(o.nome)}</button>`)
+      .join("");
     form = `<div class="rede-form">
       <div class="rede-form-tit">🙋 Crie o seu jogador</div>
       <input type="text" id="redeNome" maxlength="15" placeholder="Seu nome" aria-label="Seu nome" value="${escapeHtml(r.nome || "")}">
-      ${cad.cores.length ? `<div class="rede-rot">🎨 Cor</div><div class="rede-cores">${cad.cores.map((c) => `<button type="button" class="rede-cor${sel(r.cor === c)}" data-cor="${escapeHtml(c)}" style="background:${escapeHtml(c)}" aria-label="Cor ${escapeHtml(c)}"></button>`).join("")}</div>` : ""}
-      <div class="rede-rot">😀 Emoji</div><div class="rede-avatares">${cad.avatares.slice(0, 48).map((a) => `<button type="button" class="rede-av${sel(r.avatar === a)}" data-av="${escapeHtml(a)}">${escapeHtml(a)}</button>`).join("")}</div>
-      <div class="rede-rot">🎭 Zoeira do C.A.O.S. com você</div><div class="rede-acoes">${cad.humores.map((h) => `<button type="button" class="rede-btn rede-chip${sel(r.humor === h.id)}" data-humor="${escapeHtml(h.id)}">${escapeHtml(h.nome)}</button>`).join("")}</div>
-      <div class="rede-rot">${cad.equipe ? "Faixa etária" : "Idade (opcional)"}</div><div class="rede-acoes">${cad.idades.map((o) => `<button type="button" class="rede-btn rede-chip${sel(r.idade === o.id)}" data-idade="${escapeHtml(o.id)}">${escapeHtml(o.nome)}</button>`).join("")}</div>
+      ${cad.cores.length ? `<div class="rede-rot">🎨 Cor</div><div class="color-picker-row rede-paleta">${cores}</div>` : ""}
+      <div class="rede-rot">😀 Emoji</div><div class="avatar-picker-row rede-paleta">${emojis}</div>
+      <div class="rede-rot">🎭 Zoeira · Como o C.A.O.S. pode zoar você?</div><div class="color-picker-row rede-paleta tem-escolha">${humores}</div>
+      ${hAtual && hAtual.dica ? `<div class="rede-dica-humor">${escapeHtml(hAtual.dica)}</div>` : ""}
+      <div class="rede-rot">${cad.equipe ? "Faixa etária" : "Idade <small>(opcional · com menos de 12, ganha tempo extra pra ler quando for o Mestre)</small>"}</div><div class="color-picker-row rede-paleta${r.idade ? " tem-escolha" : ""}">${idades}</div>
       ${rede.erroCadastro ? `<div class="rede-aviso">${escapeHtml(rede.erroCadastro)}</div>` : ""}
       <button type="button" class="btn-start btn-neo neo-solid neo-still" id="redePedir" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">🙋 Pedir pra entrar</button>
     </div>`;
@@ -1893,7 +1927,13 @@ function redeEscolhaDesenhar(box, sala) {
   box.querySelectorAll(".rede-lugar").forEach((b) => b.addEventListener("click", () => redeEscolherLugar(b.dataset.id)));
   const nome = box.querySelector("#redeNome");
   if (nome) {
-    nome.addEventListener("input", () => (r.nome = nome.value));
+    // trocar o nome pode destravar a cor e o emoji de dono: redesenha só quando isso muda
+    const dono = (n) => (isJfName(n) ? "jf" : isAnneName(n) ? "anne" : "");
+    nome.addEventListener("input", () => {
+      const antes = dono(String(r.nome || "").trim());
+      r.nome = nome.value;
+      if (dono(String(r.nome).trim()) !== antes) redeEscolhaDesenhar(box, sala);
+    });
     if (focoNome) {
       nome.focus();
       nome.setSelectionRange(nome.value.length, nome.value.length);
@@ -1902,7 +1942,12 @@ function redeEscolhaDesenhar(box, sala) {
   const marcar = (attr, campo) =>
     box.querySelectorAll(`[data-${attr}]`).forEach((b) =>
       b.addEventListener("click", () => {
-        r[campo] = r[campo] === b.dataset[attr] && campo === "idade" ? null : b.dataset[attr];
+        if (b.classList.contains("tomada")) {
+          rede.erroCadastro = campo === "cor" && COR_EXCLUSIVA[b.dataset[attr]] ? `Essa é a cor exclusiva ${COR_EXCLUSIVA[b.dataset[attr]].de}.` : "Esse já tem dono. Escolha outro.";
+        } else {
+          rede.erroCadastro = null;
+          r[campo] = r[campo] === b.dataset[attr] && campo === "idade" ? null : b.dataset[attr];
+        }
         redeEscolhaDesenhar(box, sala);
       }),
     );
