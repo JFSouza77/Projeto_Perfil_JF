@@ -502,7 +502,7 @@ Base: a revisão externa da 1.7.8.9 (10 achados), cada um conferido no código.
   - Teste: `teste_rede` roda o roteiro da internet de novo **só pela ponte** (`iceTransportPolicy: "relay"`, servidor TURN local `node-turn`) e confere que a ponte foi usada.
   - Daqui do ambiente de testes não dá pra alcançar os servidores públicos: quem confirma é o teste no 4G de verdade.
 - **Tela acesa:** Wake Lock enquanto a sala está aberta (host e convidados), pedido de novo ao voltar pro jogo ou no primeiro toque.
-- **Numeração da 1.7.9 arrumada (pedido do JF):** as versões pequenas foram juntadas e renumeradas. 1.7.9 = antigas 1.7.9 e .1 · 1.7.9.1 = antigas .2 a .6 · 1.7.9.2 = antigas .7 a .9 · 1.7.9.3 = antigas .10 a .13. Neste roteiro, os números 1.7.9.N das seções mais abaixo são os antigos.
+- **Numeração da 1.7 arrumada (pedido do JF):** as versões pequenas de cada série foram juntadas e renumeradas (tabela completa no HISTÓRICO de `src/html/01-cabeca.html`). Na 1.7.9: 1.7.9 = antigas 1.7.9 e .1 · 1.7.9.1 = antigas .2 a .6 · 1.7.9.2 = antigas .7 a .9 · 1.7.9.3 = antigas .10 a .13. Neste roteiro, os números 1.7.N.M das seções mais abaixo são os antigos.
   - Regra pra frente: versão pequena (uma ou duas mudanças) entra junto na próxima, em vez de ganhar número próprio, pra 1.7.9 não passar do .9.
 
 ### Pra 1.7.10 (Multiplayer Update · lançamento)

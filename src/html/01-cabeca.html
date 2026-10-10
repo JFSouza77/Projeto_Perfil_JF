@@ -6,11 +6,15 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
-  NUMERAÇÃO DA 1.7.9 ARRUMADA (pedido do JF, 09/10/2026): as versões pequenas foram juntadas e renumeradas.
-          1.7.9 = antigas 1.7.9 e 1.7.9.1 · 1.7.9.1 = antigas 1.7.9.2 a 1.7.9.6 · 1.7.9.2 = antigas 1.7.9.7 a 1.7.9.9 ·
-          1.7.9.3 = antigas 1.7.9.10 a 1.7.9.13. As linhas abaixo guardam o número antigo entre parênteses; os
-          comentários "1.7.9.N ·" dentro do código usam a numeração antiga. Arquivos publicados antes disso:
-          versoes_antigas/numeracao_antiga_1_7_9/. NOVIDADES: um bloco por versão nova.
+  NUMERAÇÃO DA 1.7 ARRUMADA (pedido do JF, 09/10/2026): as versões pequenas de cada série foram juntadas e
+          renumeradas. Regra daqui pra frente: mudança pequena entra junto na próxima versão, sem número próprio.
+          1.7.9.3 = antigas 1.7.9.10–13 · 1.7.9.2 = 1.7.9.7–9 · 1.7.9.1 = 1.7.9.2–6 · 1.7.9 = 1.7.9 e 1.7.9.1
+          1.7.8.1 = antigas 1.7.8.6–9 · 1.7.8 = 1.7.8–1.7.8.5 · 1.7.7.1 = 1.7.7.5–8 · 1.7.7 = 1.7.7–1.7.7.4
+          1.7.6.1 = antigas 1.7.6.4–7 · 1.7.6 = 1.7.6–1.7.6.3 · 1.7.5.1 = 1.7.5.2–4 · 1.7.5 = 1.7.5 e 1.7.5.1
+          1.7.4.1 = antigas 1.7.4.2–4 · 1.7.4 = 1.7.4 e 1.7.4.1 · 1.7.3.2 = 1.7.3.5 · 1.7.3.1 = 1.7.3.2–4 · 1.7.3 = 1.7.3 e 1.7.3.1
+          1.7.2.1 = antigas 1.7.2.1–4 · 1.7.1.1 = 1.7.1.4–6 · 1.7.1 = 1.7.1.1–3 · 1.7.2 e 1.7.0 não mudaram.
+          As linhas abaixo guardam o número antigo entre parênteses; os comentários "1.7.N.M ·" dentro do código usam a
+          numeração antiga. Arquivos publicados antes disso: versoes_antigas/numeracao_antiga/. NOVIDADES: um bloco por versão.
   1.7.9.3 (antiga 1.7.9.13) · 09/10/2026 · "Rooms and Network Update · Pronto pro online" = TURN E TELA ACESA.
           Decisão do JF: usar TURN. REDE_ICE (05k-rede.js): STUN Google/Cloudflare + pontes gratuitas sem conta
           (PeerJS, Open Relay 80/443 TCP/TLS, freeturn.net); REDE_ICE_PROPRIOS pra uma conta própria. teste_rede roda
@@ -133,7 +137,7 @@
           A pausa entra na foto da casca (acoesFoto): pausar e voltar sobem a revisão e avisam o telão (e,
           como toda ação, pausar fecha a janela do Desfazer). commandId aplicado vai no save (acoesComandos) e no log (campo c). eventId das
           falas com pedaço da sessão. Plano da rede no Roteiro, seção 10.
-  1.7.8.9 · 08/10/2026 · "Actions and Events Update · Parte 10" = DEBUG ANTES DO ONLINE.
+  1.7.8.1 (antiga 1.7.8.9) · 08/10/2026 · "Actions and Events Update · Parte 10" = DEBUG ANTES DO ONLINE.
           ferramentas/teste_macaco.js: toca em botões ao acaso (como um dedo, só no que está por cima), confere
           regras a cada 25 toques e recarrega a cada 200 exigindo a mesma partida. Achou: a roleta da categoria
           se perdia em qualquer render() (pausa e volta, balão que fecha) e o Mestre tinha que virar de novo;
@@ -141,10 +145,10 @@
           id="cardArea" (dois #cardArea na tela por um instante). Sonda do desfazer: 200 vereditos desfeitos em
           7 cenários + Express, espinha idêntica. "Próxima" do Express segue sem desfazer (abre a dica seguinte
           na tela). docs/Instrucoes_Debug_Externo.md: roteiro para revisão por outra IA.
-  1.7.8.8 · 08/10/2026 · "Actions and Events Update · Parte 9" = CRÉDITOS DE VOLTA NAS NOVIDADES.
+  1.7.8.1 (antiga 1.7.8.8) · 08/10/2026 · "Actions and Events Update · Parte 9" = CRÉDITOS DE VOLTA NAS NOVIDADES.
           Ideias de pessoas de verdade voltam com o nome (Pedro, Felipe, Bruno Levanti, Klaus) e os jogadores
           citados (Anne, Pedro, Isabel). O criador e as IAs seguem fora das novidades.
-  1.7.8.7 · 08/10/2026 · "Actions and Events Update · Parte 8" = BOTÕES, DESCARTE ÚNICO E NOVIDADES REVISADAS.
+  1.7.8.1 (antiga 1.7.8.7) · 08/10/2026 · "Actions and Events Update · Parte 8" = BOTÕES, DESCARTE ÚNICO E NOVIDADES REVISADAS.
           caosModalBtn ganhou classe .caos-mbtn (relevo, brilho, toque, foco), cor ainda por parâmetro (--mb);
           vale pra todas as janelas do C.A.O.S. Moda da Casa: "Bora jogar!" em destaque e "Como funciona este
           modo?" mais leve, um embaixo do outro. .answer-header sem hífen automático ("LU-GAR").
@@ -152,7 +156,7 @@
           único jeito de trocar a carta (até a 5ª dica, no máximo 2 seguidas; no online, votação da mesa na
           1.7.9). Giro do Ver carta e subida do Falei! mais lentos e macios. NOVIDADES reescritas inteiras pra
           quem joga: todo item "emoji Título: texto", sem bastidores (nomes, IA, testes, código).
-  1.7.8.6 · 08/10/2026 · "Actions and Events Update · Parte 7" = AJUSTES DE TESTE DA 1.7.8.
+  1.7.8.1 (antiga 1.7.8.6) · 08/10/2026 · "Actions and Events Update · Parte 7" = AJUSTES DE TESTE DA 1.7.8.
           Desfazer volta também o C.A.O.S. (caosExtraSalvar/Restaurar, memória da carta, logs) e corta a voz.
           Botão Desfazer mais largo com barra dos 8 s. "Resposta escondida" centralizada. Telão com "✕ Sair do
           telão" (no celular não tinha saída). "Olhou sem querer? Reembaralhar" virou "Trocar de carta (antes
@@ -160,14 +164,14 @@
           jogadores" sobe deslizando até o topo e o resto aparece (substitui o giro da 1.7.7.8). Pausa enxuta:
           grade 2×2 (Claro, Voz, Acessibilidade, Como se ganha) e "Mais opções" (Manual, Trocar modo,
           Exportar, Resumo das regras).
-  1.7.8.5 · 08/10/2026 · "Actions and Events Update · Parte 6" = REPLAY E QOL (fecha a 1.7.8).
+  1.7.8 (antiga 1.7.8.5) · 08/10/2026 · "Actions and Events Update · Parte 6" = REPLAY E QOL (fecha a 1.7.8).
           O simulador grava as ações (acoesAoMudar) e, com --replay, repete numa partida nova com a mesma
           semente via dispatchAction, comparando o retrato do Mestre no fim. O replay achou 3 acoplamentos e
           eles foram corrigidos: evento de piedade não espera mais o balão (mostra com prioridade), alvo do
           Express (expressMirar) virou ação e entra na foto da espinha, e o evento do clique não vai mais para
           os dados da ação. Limite conhecido: a revisão pode diferir em 1 ou 2 quando uma ação automática
           (sacar, tempo, encerrar) já veio embutida em outra; o estado da partida é o mesmo.
-  1.7.8.4 · 08/10/2026 · "Actions and Events Update · Parte 5" = IDS DAS DICAS E FALAS COMO EVENTOS.
+  1.7.8 (antiga 1.7.8.4) · 08/10/2026 · "Actions and Events Update · Parte 5" = IDS DAS DICAS E FALAS COMO EVENTOS.
           expandDeck dá id fixo a cada dica pela posição no arquivo (ANO-0001-C07; 20 mil únicos). Regra no
           99-fechamento: nunca reordenar nem apagar entradas. O save acha a dica pelo id (depois pelo texto, save
           antigo). retratoPartida("mestre") leva clueId das dicas abertas; o público não (começa com o id da
@@ -175,7 +179,7 @@
           mesa | nome); caosFalarPara(id, fala, privado) dá destinatário pelo id; o achado pelo nome no texto
           fica só como diagnóstico. Aviso do tempo extra do Mestre passa a ser fala privada pra ele, pelo id.
           teste_acoes com 7 itens novos (31 no total).
-  1.7.8.3 · 08/10/2026 · "Actions and Events Update · Parte 4" = TELÃO (ENSAIO EM DUAS ABAS).
+  1.7.8 (antiga 1.7.8.3) · 08/10/2026 · "Actions and Events Update · Parte 4" = TELÃO (ENSAIO EM DUAS ABAS).
           js/05h-telao.js: a aba do jogo publica retratoPartida("mesa") por BroadcastChannel ("perfiljf-telao") a
           cada ação (acoesAoMudar) e quando o telão pede. A aba aberta com #telao não carrega a partida (startApp
           pula o loadGameState), fica com saveBloqueado e só desenha: rodada, revisão, Mestre, vez, relógio,
@@ -183,7 +187,7 @@
           menor da mesma partida e protocolo desconhecido; tudo com escapeHtml. Botão "📺 Abrir telão" no painel
           ADM. ferramentas/teste_telao.js: servidor http local + duas abas (BroadcastChannel não liga file://).
           Não prova rede, segurança nem reconexão: é o ensaio do fluxo ação → retrato → outra tela.
-  1.7.8.2 · 08/10/2026 · "Actions and Events Update · Parte 3" = DESFAZER O ÚLTIMO VEREDITO.
+  1.7.8 (antiga 1.7.8.2) · 08/10/2026 · "Actions and Events Update · Parte 3" = DESFAZER O ÚLTIMO VEREDITO.
           js/05g-acoes.js: antes de Acertou, Errou/Pulou/Absurdo e palpite, a fronteira tira uma cópia em memória
           do estado de regra (jogadores, equipes, vez, Mestre, carta, dicas, baralho, histórico, estatísticas,
           palpite, joias, rodada, sequência, relógio com o tempo que faltava). Depois do veredito aparece
@@ -191,14 +195,14 @@
           abaixo das janelas. Qualquer outra jogada fecha; não aparece se o veredito acabou a partida. Desfazer é
           ação ("desfazer", sobe a revisão) e cartaSeq++ cancela o que o veredito tinha agendado. Falas do C.A.O.S.
           não voltam. Manual (passo dos vereditos) cita o Desfazer. teste_acoes +5 itens; simulador desfaz 10%.
-  1.7.8.1 · 08/10/2026 · "Actions and Events Update · Parte 2" = RETRATO DA PARTIDA (GAMESNAPSHOT).
+  1.7.8 (antiga 1.7.8.1) · 08/10/2026 · "Actions and Events Update · Parte 2" = RETRATO DA PARTIDA (GAMESNAPSHOT).
           retratoPartida("mesa" | "mestre") em js/05g-acoes.js: protocolo, matchId, revisão, modo, vitória, rodada,
           jogadores por id (pontos, casa, joias, equipe), equipes, Mestre e vez por id, carta (categoria, dicas
           abertas com quem pediu, dica pendente), palpites, joias da rodada, vencedor e relógio. Projeção pública
           sem resposta, sem id da carta (o catálogo está no jogo: o id entregaria) e sem dica fechada; a do Mestre
           leva resposta e id. Sem idade, humor nem falas. acoesAoMudar(fn) avisa a cada ação. teste_acoes com
           6 itens novos; simulador confere a cada 10 passos que o retrato público não leva a resposta.
-  1.7.8 · 08/10/2026 · "Actions and Events Update · Parte 1" = FRONTEIRA DE AÇÕES.
+  1.7.8 (antiga 1.7.8) · 08/10/2026 · "Actions and Events Update · Parte 1" = FRONTEIRA DE AÇÕES.
           js/05g-acoes.js: 24 ações com nome por cima das funções do motor (casca como a da espinha, instalada
           no iniciar antes de ligar os botões). Só a chamada de fora vira ação (profundidade); a revisão
           (partidaRevisao) sobe quando a foto da espinha muda; acoesLog guarda as últimas 300 com Mestre e vez
@@ -206,7 +210,7 @@
           dispatchAction(cmd): recusa ação desconhecida, partida errada, revisão obsoleta, fora de hora; commandId
           repetido não aplica duas vezes. Cérebro mostra as últimas ações. ferramentas/teste_acoes.js (13 itens) e
           simulador conferindo que a revisão só cresce. Plano da 1.7.8 no Roteiro_Multiplayer seção 9.
-  1.7.7.8 · 08/10/2026 · "Foundation and Structure Update · Final" = DECISÕES DO JF E FECHAMENTO DA 1.7.7.
+  1.7.7.1 (antiga 1.7.7.8) · 08/10/2026 · "Foundation and Structure Update · Final" = DECISÕES DO JF E FECHAMENTO DA 1.7.7.
           Nome confirmado pelo JF: Foundation and Structure Update (trocado em todo lugar). 1) Placar: 🔒 em quem
           já levou as 2 joias da rodada (joiasTravaBadge, só quando a trava vale). 2) Tutorial: 🔊 "Ouvir este
           passo" (lê título e texto com a voz do aparelho, só ao tocar; trocar de passo ou fechar cala). 3) Virada
@@ -214,13 +218,13 @@
           Barsa, Carnê do Baú, Super Choque e Escova de dente com dica que trazia a resposta; 1945 com 4 dicas de
           conta (Sou ímpar → Anne Frank). Fala do Ácido repetida de outra lista trocada. Desempate, desfazer,
           tempo extra pra quem responde e karaokê: decididos no Roteiro_Multiplayer seção 8.
-  1.7.7.7 · 08/10/2026 · "Foundation and Structure Update · Computador" = TELA DE COMPUTADOR (OPERA GX / CHROME).
+  1.7.7.1 (antiga 1.7.7.7) · 08/10/2026 · "Foundation and Structure Update · Computador" = TELA DE COMPUTADOR (OPERA GX / CHROME).
           css/08-computador.css (sugestão do GPT a partir de um print do JF): com mouse e janela de pelo menos
           900×640, sai o zoom 1.2 do body e a tela passa a usar a largura do monitor, com limites de leitura
           (painéis até 1100-1240 px, carta até 960 px, verso 360 px, lista de dicas 76 caracteres, janelas até
           720-900 px e com rolagem própria). Celular e tablet não mudam. Conferido em 1366×768 e 1920×1080
           (antes e depois): sem rolagem lateral; a carta inteira com Pausar/Reiniciar/Encerrar cabe na tela.
-  1.7.7.6 · 08/10/2026 · "Foundation and Structure Update · QoL da revisão" = DOCUMENTOS DO GPT (ROTEIRO, MESTRE E C.A.O.S.).
+  1.7.7.1 (antiga 1.7.7.6) · 08/10/2026 · "Foundation and Structure Update · QoL da revisão" = DOCUMENTOS DO GPT (ROTEIRO, MESTRE E C.A.O.S.).
           1) Fala do tempo extra do Mestre neutra (sem "já que você é mais novinho"). 2) Splash: "Preparando as
           cartas…" no lugar do "575 cartas" fixo; recado do C.A.O.S. com Enter/Espaço; palavras flutuantes e dado
           aria-hidden. 3) Importar save: limite de 2 milhões de caracteres e importSaveConferir (versão, jogadores,
@@ -229,7 +233,7 @@
           unhandledrejection) registrados só no aparelho, com tipo e hora, mostrados no Cérebro. 6) Espinha: rotina
           que devolver Promise é anotada e a rejeição contida. Medido: desktop 1280×720 a 1920×1080 sem rolagem
           lateral nem botão cortado (zoom 1.2 fica até o JF mandar o caso do Opera GX). Roteiro_Multiplayer seção 7.
-  1.7.7.5 · 08/10/2026 · "Foundation and Structure Update · Parte 6" = SIMULADOR (FIM DA 1.7.7).
+  1.7.7.1 (antiga 1.7.7.5) · 08/10/2026 · "Foundation and Structure Update · Parte 6" = SIMULADOR (FIM DA 1.7.7).
           ferramentas/simular_partidas.js (npm run simular): 14 partidas inteiras automáticas tocando nos
           botões da mesa (Versus 2/3/4/6 em Clássico, Hardcore, Júnior, Old School e Express; Tabuleiro,
           Pontos, Joias e Moda da Casa; Equipe 2×2, 2×3, 3×2 Duelo e 3×2 Todos), com semente e limite de
@@ -239,7 +243,7 @@
           balões (repetição exata vem com a fila de ações da 1.7.8). Status_do_Roteiro e Roteiro_Multiplayer
           atualizados: a 1.7.7 terminou. Avisos do auditor de cartas e fala repetida ficam pro JF decidir.
           Sem mudança no jogo nesta parte.
-  1.7.7.4 · 08/10/2026 · "Foundation and Structure Update · Parte 5" = SORTEIOS E INVENTÁRIO DO ESTADO.
+  1.7.7 (antiga 1.7.7.4) · 08/10/2026 · "Foundation and Structure Update · Parte 5" = SORTEIOS E INVENTÁRIO DO ESTADO.
           1) js/02c-sorteio.js: todo sorteio que decide o jogo passa por sorteioRegra() (embaralhar e devolver
           carta, especiais do Hardcore, modo da Moda da Casa, categorias e modo sorteados, alvo automático das
           surpresas, 1º Mestre, evento de misericórdia, Duelo/Todos). Hoje é o mesmo Math.random; nos testes,
@@ -248,7 +252,7 @@
           starterDrawCount, cardWrongCount e sorteioContagem (antes se perdiam ao recarregar).
           3) docs/Estado_da_Partida.md: as 258 variáveis separadas em regra, C.A.O.S. e tela, e o que vai pro
           save; base do retrato da partida da 1.7.8. teste_identidade com sorteio e save das variáveis novas.
-  1.7.7.3 · 05/10/2026 · "Foundation and Structure Update · Parte 4" = ESPINHA COMPLETA.
+  1.7.7 (antiga 1.7.7.3) · 05/10/2026 · "Foundation and Structure Update · Parte 4" = ESPINHA COMPLETA.
           A foto da 1ª lei (caosEspinhaFoto) passou a vigiar e desfazer também: fichas de palpite e estoque,
           joias da rodada, vencedor por joias, fila da casa de bônus, dicas abertas (dica a mais sai), dica
           pendente, modo sorteado da Moda da Casa, rodada, última rodada, vez das equipes (e cursor de cada
@@ -257,7 +261,7 @@
           relógio encurtado volta. Carta, baralho, início e fim seguem só vigiados (anota, não desfaz).
           caos_teste_espinha: rotina falsa mexe em tudo isso e a espinha desfaz tudo (+ dar tempo continua
           podendo). Conferido no código: nenhuma rotina protegida mexe nesses dados por direito.
-  1.7.7.2 · 05/10/2026 · "Foundation and Structure Update · Parte 3" = PARTIDA E CARTAS IDENTIFICADAS.
+  1.7.7 (antiga 1.7.7.2) · 05/10/2026 · "Foundation and Structure Update · Parte 3" = PARTIDA E CARTAS IDENTIFICADAS.
           1) As 1000 cartas ganharam id fixo escrito na própria carta (ANO-0001 … ANIMAL-0200), na ordem dos
           arquivos. O id não sai da resposta (pedido do roteiro do GPT): corrigir uma resposta não muda o id.
           CARTAS_RESPOSTA_ANTIGA (dados/02-cartas/99-fechamento.js) guarda resposta antiga → id, pra save velho
@@ -268,7 +272,7 @@
           Jogar de novo zeram (resetDeck). Aparece no relatório exportado. 4) auditar_cartas confere formato,
           prefixo da categoria e unicidade do id, e o mapa de respostas antigas. teste_identidade com 6 itens novos.
           Sem mudança de conteúdo nas cartas (só o id), então nada pro log de cartas.
-  1.7.7.1 · 05/10/2026 · "Foundation and Structure Update · Parte 2" = IDENTIDADE DOS JOGADORES.
+  1.7.7 (antiga 1.7.7.1) · 05/10/2026 · "Foundation and Structure Update · Parte 2" = IDENTIDADE DOS JOGADORES.
           js/02b-identidade.js: todo jogador ganha id ("j_" + 6 letras) no cadastro; não muda se alguém sai,
           se a ordem muda ou se a partida é salva e restaurada. Passam a usar o id (no Versus; no Equipe a chave
           segue sendo a equipe): fichas de palpite, joias da rodada, vencedor por joias, 1º Mestre da rodada
@@ -278,7 +282,7 @@
           não remapeia mais as fichas de palpite: só sai a ficha de quem saiu. Defeito corrigido: as joias da
           rodada não eram remapeadas na remoção (a trava de 2 por rodada passava pro vizinho). Novo teste:
           ferramentas/teste_identidade.js (save antigo, salvar/restaurar, remoção, vencedor, ids únicos).
-  1.7.7 · 05/10/2026 · "Foundation and Structure Update · Parte 1" = CORREÇÕES DA REVISÃO (GPT + GOOGLE AI STUDIO).
+  1.7.7 (antiga 1.7.7) · 05/10/2026 · "Foundation and Structure Update · Parte 1" = CORREÇÕES DA REVISÃO (GPT + GOOGLE AI STUDIO).
           A revisão do JF, do GPT e do Google AI Studio (1.7.0 a 1.7.6.x) foi conferida no código; entrou o que
           era correção verificável, sem mudar regra. 1) Toque duplo: por 400 ms depois de um veredito ou de um
           número, outro toque nesses botões é ignorado (o 2º toque caía no número que nascia no lugar do Errou).
@@ -292,7 +296,7 @@
           existe; agora roda o teste de estresse, e ganhou "publicar", "testes" e "auditar".
           Ideias da revisão que mudam regra (desempate, desfazer, tempo extra de quem responde, karaokê…)
           ficaram no Roteiro_Multiplayer.md pra decisão do JF.
-  1.7.6.7 · 03/10/2026 · "Buttons and Tutorial Update · QoL de emergência" = 3 PEDIDOS DO JF DEPOIS DE JOGAR.
+  1.7.6.1 (antiga 1.7.6.7) · 03/10/2026 · "Buttons and Tutorial Update · QoL de emergência" = 3 PEDIDOS DO JF DEPOIS DE JOGAR.
           1) Fala sem nexo: "A dica era X. E mesmo assim, Fulano." ficou "E mesmo assim não foi, Fulano." (e a
           do número ganhou "não saiu"); a cauda de tropeço "Anota aí que eu hesitei." (não havia hesitação) virou
           "Tá, essa saiu meio torta. Finge que foi de propósito.". 2) Equipe com 6: 2 equipes de 3 liberado
@@ -313,46 +317,46 @@
           com 6 jogadores rolava a tela de baixo). Pergunta Perto/Longe fica 25 s (era 9) e, depois de Perto/Longe,
           ainda oferece "Digitar o chute" (comenta o chute OU o Perto/Longe, nunca os dois). Tropeço "arrep"
           não entra em fala que fecha sozinha (caosFalaFechaSozinha). Botões soltos da Pausa na largura toda.
-  1.7.6.6 · 03/10/2026 · "Buttons and Tutorial Update · QoL" = NÚMEROS REDONDOS NOS TUTORIAIS (pedido do JF).
+  1.7.6.1 (antiga 1.7.6.6) · 03/10/2026 · "Buttons and Tutorial Update · QoL" = NÚMEROS REDONDOS NOS TUTORIAIS (pedido do JF).
           Manual: 35 passos (novo "Idade e tempo extra" no Cadastro; a frase saiu do passo do Mestre).
           Rápido: 10 passos (novos "Às vezes é uma surpresa" e "Lê devagar? Tudo bem"), 301 palavras (~1min53s).
-  1.7.6.5 · 03/10/2026 · "Buttons and Tutorial Update · QoL" = LETRA ENORME SEM VAZAR (print do JF no iPhone).
+  1.7.6.1 (antiga 1.7.6.5) · 03/10/2026 · "Buttons and Tutorial Update · QoL" = LETRA ENORME SEM VAZAR (print do JF no iPhone).
           O painel ♿ é uma coluna flex com max-height: com letra Enorme passava da altura e o navegador espremia
           os botões (flex-shrink), o texto vazava. Agora nada encolhe e a caixa rola. auditar_botoes.js ganhou a
           rodada "enorme" (letra Enorme, 390×664, área útil do Safari) e a checagem de texto vazando (mede só os
           nós de texto, não o brilho neon): na 1.7.6.4 acha os 4 botões do print, na 1.7.6.5 zero.
-  1.7.6.4 · 03/10/2026 · "Buttons and Tutorial Update · Ajuda do Mestre" = TEMPO EXTRA PRA QUEM LÊ DEVAGAR (pedido do JF,
+  1.7.6.1 (antiga 1.7.6.4) · 03/10/2026 · "Buttons and Tutorial Update · Ajuda do Mestre" = TEMPO EXTRA PRA QUEM LÊ DEVAGAR (pedido do JF,
           testado com a Isabel). js/05d-ajuda-do-mestre.js: idade opcional no cadastro (🧒 Menos de 12 / 🧑 12 ou mais;
           no Equipe vale a faixa 6-12). Mestre menor de 12, iniciante ou aceito pela mesa ganha +20 s pra responder,
           +10 s no especial e, no Express, +8 s por dica e +40 s na carta. O C.A.O.S. observa cada Mestre (p.obsM:
           dicas, estouros e tempo até o veredito); se um fica bem acima da mesa, pergunta à mesa se dá o tempo extra
           (uma vez por jogador). ADM liga/desliga por jogador. Campos novos no save: idade, mestreAjuda*, obsM.
           Cores e emojis do cadastro com toque de 44 px e aria-label (a auditoria pegou com o seletor aberto).
-  1.7.6.3 · 03/10/2026 · "Buttons and Tutorial Update · Parte 4" = O C.A.O.S. SUGERE O TUTORIAL (pedido do JF).
+  1.7.6 (antiga 1.7.6.3) · 03/10/2026 · "Buttons and Tutorial Update · Parte 4" = O C.A.O.S. SUGERE O TUTORIAL (pedido do JF).
           js/05c-sugestao-tutorial.js (chave nova perfil5_tutorial_visto): "Quer fazer o tutorial? Leva menos de
           dois minutos." ao tocar em Jogar num aparelho sem fichas na memória e no Sou iniciante; uma vez por sessão
           e nunca mais depois de abrir o tutorial ou responder "Já sei jogar". Ver o tutorial → ao fechar, segue de
           onde parou (formato ou cadastro guiado). Na Pausa, 🎓 Primeira vez? fica à vista até o tutorial ser visto.
-  1.7.6.2 · 03/10/2026 · "Buttons and Tutorial Update · Parte 3" = TUTORIAL RÁPIDO + MANUAL (pedido do JF).
+  1.7.6 (antiga 1.7.6.2) · 03/10/2026 · "Buttons and Tutorial Update · Parte 3" = TUTORIAL RÁPIDO + MANUAL (pedido do JF).
           TUTORIAL_RAPIDO (dados/06): 8 passos, 274 palavras (~1min45s), linguagem pra criança, "prints" feitos
           com as peças do jogo (número, Acertou/Errou, balão do C.A.O.S., código da sala). Abre no Como jogar e
           no "Nunca jogou?"; no último passo, 📖 Ver o manual completo. openTutorial("rapido"|"manual").
           Manual (TUTORIAL_STEPS) ganhou o passo Online (1.7.10): ativar, código da sala, rodízio de Mestres,
           host que cai (2º Mestre assume) e regras/acessibilidade em cada aparelho; ♿ e Levar/Trazer nos Ajustes.
           📖 Manual completo no menu ⋮ e na Pausa. auditar_botoes.js passa também pelo tutorial e pelo manual.
-  1.7.6.1 · 03/10/2026 · "Buttons and Tutorial Update · Parte 2" = AUDITORIA DOS BOTÕES (pedido do JF).
+  1.7.6 (antiga 1.7.6.1) · 03/10/2026 · "Buttons and Tutorial Update · Parte 2" = AUDITORIA DOS BOTÕES (pedido do JF).
           ferramentas/auditar_botoes.js passa por 13 telas no Noturno e no Claro e mede cada botão:
           toque ≥ 44 px, nome acessível e contraste WCAG AA (4,5:1; 3:1 em texto grande). Antes: 107 toques
           pequenos, 2 sem nome, 9 contrastes fracos; depois: zero. Correções em css/07-botoes-acessiveis.css
           (min-height 44, área ampliada nos botões com cara de link, foco visível, cores do Nível 0, remover,
           Conferir, resposta, Reembaralhar e Descartar), aria-label no nome do jogador, chip desligado tracejado.
-  1.7.6 · 03/10/2026 · "Buttons and Tutorial Update · Parte 1" = ACESSIBILIDADE PRA TODOS (pedido do JF).
+  1.7.6 (antiga 1.7.6) · 03/10/2026 · "Buttons and Tutorial Update · Parte 1" = ACESSIBILIDADE PRA TODOS (pedido do JF).
           Painel ♿ Acessibilidade no menu ⋮ e na Pausa (js/05b-acessibilidade.js, chave perfil5_acessibilidade):
           letra Normal/Grande/Enorme (classes acess-letra-1/2 no <html>), Mais tempo (+15 escolher, +30 responder,
           +10 especial, +5 vez), ler as dicas em voz alta, volume da voz e dos sons, alto contraste (acess-contraste)
           e Menos movimento (= Modo Batata). Vale pra todos os modos; o Old School Acessibilidade continua.
           Botões do menu ⋮ que abrem janela fecham o menu antes (data-fecha-menu), assim o 1º toque na janela vale.
-  1.7.5.4 · 03/10/2026 · "C.A.O.S. and Code Update · QoL" = MEMÓRIA PORTÁTIL + C.A.O.S. ORGANIZADO (pedido do JF).
+  1.7.5.1 (antiga 1.7.5.4) · 03/10/2026 · "C.A.O.S. and Code Update · QoL" = MEMÓRIA PORTÁTIL + C.A.O.S. ORGANIZADO (pedido do JF).
           Levar/Trazer a memória do C.A.O.S. no menu ⋮ (caosMemoriaExportar/Importar em js/08): código
           CAOSMEM1. com fichas, recordes, rivais, nomes, nicks, cartas, avaliações, gerador e diagnóstico;
           trazer substitui a memória do aparelho (com confirmação), a partida em andamento não muda.
@@ -362,7 +366,7 @@
           Faxina: nenhuma função morta (só caosFalarPara, guardada pro online); comentários conferidos.
           Pronto pra 1.7.10: sucessão de host (o 2º Mestre da partida assume; regra do JF) no roteiro
           e gerador hostCaiu (sem uso até o online).
-  1.7.5.3 · 03/10/2026 · "C.A.O.S. and Code Update · Parte 4 (final)" = A ESPINHA DO C.A.O.S. (pedido do JF:
+  1.7.5.1 (antiga 1.7.5.3) · 03/10/2026 · "C.A.O.S. and Code Update · Parte 4 (final)" = A ESPINHA DO C.A.O.S. (pedido do JF:
           caótico leal, autônomo sem consciência, blindado). js/07c-espinha-do-caos.js com as 3 leis:
           1) nunca mexe no jogo (foto do estado antes de cada rotina protegida; mudança é desfeita);
           2) nunca fala o que a mesa proibiu (filtros do motor); 3) nunca trava a partida (erro vira
@@ -379,7 +383,7 @@
           Memória (fichas, nomes, nicks, partidas, recordes, cartas, onde grava, persistida?) com aviso de
           arquivo local e dica da Tela de Início.
           FECHA A C.A.O.S. AND CODE UPDATE.
-  1.7.5.2 · 03/10/2026 · "C.A.O.S. and Code Update · Parte 3" = C.A.O.S. 4.0 (pedido do JF: versão mais
+  1.7.5.1 (antiga 1.7.5.2) · 03/10/2026 · "C.A.O.S. and Code Update · Parte 3" = C.A.O.S. 4.0 (pedido do JF: versão mais
           poderosa, recalibrada). Novos geradores: chute (o Mestre digita o chute e ele comenta pelo tipo
           de erro, categoria e memória: chute repetido na carta, dicas abertas, como a pessoa vai na
           categoria, carta difícil/fácil; nunca diz se a data é antes ou depois; Suave só a reação),
@@ -400,7 +404,7 @@
           Repertório estimado: 3409 falas prontas (651 com nome/número variável) + 16 geradores com
           ~30 mil combinações + geradores de acerto/erro/pulo e do Hall. QoL: conferência das simulações
           da 1.7.5.1 (6 de 6 partidas até o fim; emoções em partida real).
-  1.7.5.1 · 03/10/2026 · "C.A.O.S. and Code Update · Parte 2" = GERADOR DE FALAS + CALIBRAÇÃO DAS EMOÇÕES.
+  1.7.5 (antiga 1.7.5.1) · 03/10/2026 · "C.A.O.S. and Code Update · Parte 2" = GERADOR DE FALAS + CALIBRAÇÃO DAS EMOÇÕES.
           Pedido do JF: o C.A.O.S. repetia demais (entrada do JF tinha 3 falas). Novo gerador de falas por
           gatilho (js/07b-gerador-de-falas.js + um arquivo por gatilho em dados/08-geradores/): monta a fala
           juntando pedaços pelo contexto (hora, dia, modo, mesa, memória da pessoa, humor, temperamento e
@@ -415,7 +419,7 @@
           nunca voltava). Limite de memória: avaliações 👍/👎 com teto de 500 (CAOS_RATINGS_MAX). Testes no
           repositório: ferramentas/caos_teste_geradores.js e caos_teste_estresse.js. Mapa do cérebro em
           docs/CAOS_Cerebro.md. C.A.O.S. continua 3.8.
-  1.7.5 · 03/10/2026 · "C.A.O.S. and Code Update · Parte 1" = CÓDIGO ORGANIZADO (Parte A do roteiro, sugestão
+  1.7.5 (antiga 1.7.5) · 03/10/2026 · "C.A.O.S. and Code Update · Parte 1" = CÓDIGO ORGANIZADO (Parte A do roteiro, sugestão
           do Klaus). O Mestre virou 32 partes em src/: html/ (cabeça, corpo, fim), css/ (6 partes), js/
           (seções 1 a 9 e 11 do índice) e dados/ (emoções, cartas por categoria em dados/02-cartas/,
           falas, léxico, apelidos, tutorial, novidades). montar.js junta as partes na ordem de
@@ -431,7 +435,7 @@
           1.7.0 a 1.7.4.4 preenchidas pelo histórico); cada versão entra por PR mergeado. O *_debug.html deixa de
           ser versionado a partir da 1.7.5 (é gerado de novo a cada build); os antigos ficam.
           PRÓXIMO: Parte 2 = cérebro do C.A.O.S. (C.A.O.S. continua 3.8 até lá).
-  1.7.4.4 · 03/10/2026 · "Game Mode Update · Parte 5 (final)" = OLD SCHOOL (auditoria própria). Conferido:
+  1.7.4.1 (antiga 1.7.4.4) · 03/10/2026 · "Game Mode Update · Parte 5 (final)" = OLD SCHOOL (auditoria própria). Conferido:
           baralho 240 (oldschool/os, sem ANIMAL), 25% por categoria, meta 200, palpite, joias, Versus e
           Equipe; acessibilidade na prática (html 112%, dica em destaque 21,9 px, escolher 45 s,
           responder 120 s, especial 25 s; padrão 30/90/15); C.A.O.S. comentarista (caosOS: menos
@@ -445,7 +449,7 @@
           @property --nov-rot animado) e o X (.nov-x) herdando o mesmo ângulo, sincronizado, e
           pulsando (novPulsa); Claro em lavanda; sem animação no Batata e com movimento reduzido.
           PRÓXIMO: 1.7.5 "C.A.O.S. and Code Update" (ver docs/Status_do_Roteiro.md).
-  1.7.4.3 · 03/10/2026 · "Game Mode Update · Parte 4" = CLÁSSICO. Teste pela tela: reembaralhar devolve a carta
+  1.7.4.1 (antiga 1.7.4.3) · 03/10/2026 · "Game Mode Update · Parte 4" = CLÁSSICO. Teste pela tela: reembaralhar devolve a carta
           (devolverAoBaralho), descarte até 2 seguidos (3º bloqueado), erro passa a vez, Desistir após a
           1ª dica, especial de casa no tempo esgotado (15 s) anda sozinha. Simulações: Versus 3/5j
           (casa, joias, pontos) e Equipe 4/6j (casa, tabuleiro) até o fim; 1 travamento da automação
@@ -455,7 +459,7 @@
           Roteiro de organização/online salvo em docs/ (Roteiro_Organizacao_e_Online.md e
           Status_do_Roteiro.md). Decisão do JF: Parte A (código) → 1.7.5 "C.A.O.S. and Code Update",
           junto com o cérebro do C.A.O.S.; Parte B (online) → 1.7.10.
-  1.7.4.2 · 03/10/2026 · "Game Mode Update · Parte 3" = JÚNIOR. Conferido: meta 150, baralho 250 (junior/livre,
+  1.7.4.1 (antiga 1.7.4.2) · 03/10/2026 · "Game Mode Update · Parte 3" = JÚNIOR. Conferido: meta 150, baralho 250 (junior/livre,
           sem ANO), resp 90 s, palpite e joias; zoeira familia/suave/normal (padrão familia), avatares
           de adulto fora, Júnior oculto no Equipe; regras com meta e 250 cartas. Cartas visíveis no
           Júnior varridas por termos de adulto: Feijoada (caipirinha), Lesma (cerveja), Ostra e
@@ -464,7 +468,7 @@
           Júnior varridas: "Que gostoso" → "Que alegria" (familias.carinho), Hollow Knight "caiu".
           QoL: releitura das 205 cartas novas visíveis no Júnior (números/recordes/datas). 5 partidas
           simuladas de Júnior até o fim.
-  1.7.4.1 · 03/10/2026 · "Game Mode Update · Parte 2". BUG GRAVE do baralho: embaralharEquilibrado põe a
+  1.7.4 (antiga 1.7.4.1) · 03/10/2026 · "Game Mode Update · Parte 2". BUG GRAVE do baralho: embaralharEquilibrado põe a
           ordem equilibrada no começo, mas a compra é deck.pop() (do fim) — a categoria maior dominava
           (Clássico: Coisa+Animal 61%, Lugar 6%; Júnior: Animal 65%). Agora o baralho entra com
           .reverse(); medido: 25% por categoria (Hardcore 30/30/20/20). Anti-repetição com lim = 2 em
@@ -484,7 +488,7 @@
           cérebro, humanização, memória e limites, limites de comportamento, testes de estresse, tédio
           e animação, controle e mistura de emoções. IDEIA PARA DEPOIS: "Crie/sugira sua carta" — a
           pessoa escreve a carta e o C.A.O.S. confere se ela já existe no jogo.
-  1.7.4 · 03/10/2026 · "Game Mode Update · Parte 1" (nome novo pedido pelo JF). Foco: corrigir, acertar e
+  1.7.4 (antiga 1.7.4) · 03/10/2026 · "Game Mode Update · Parte 1" (nome novo pedido pelo JF). Foco: corrigir, acertar e
           melhorar os modos existentes. Parte 1 = EXPRESS: especial com o tempo da vez esgotado
           agora aplica o efeito (expressAutoSpecial; antes onTimerExpired("turn") só chamava
           expressPass e ignorava a especial). Volte 2 = inverter (UNO), Volte 3 = inverter + pular 1
@@ -495,19 +499,19 @@
           answerLivre vale no Express até revealedOrder.length <= 1 (antes excluía o Express).
           ROTEIRO da 1.7.4: .1 = Hardcore; .2 = Júnior; .3 = Clássico e Old School; em cada parte,
           conferir o modo contra o planejado (regras, roletas, tempos, especiais, pontuação).
-  1.7.3.5 · 03/10/2026 · "Cards and Rules Update · Parte 6". Pedido do JF: equilibrar o baralho. +400 cartas
+  1.7.3.2 (antiga 1.7.3.5) · 03/10/2026 · "Cards and Rules Update · Parte 6". Pedido do JF: equilibrar o baralho. +400 cartas
           (nenhuma removida): ANO +101 (10 oldschool, 25 adulto+os de 1919–1959, 66 adulto de 1066 a
           1916), ANIMAL +149 (55 junior, 74 livre, 20 adulto), COISA +78 (18 junior, 20 livre, 15
           oldschool, 25 adulto), LUGAR +63 (14 junior, 15 livre, 14 oldschool, 20 adulto), PESSOA +9
           (5 junior, 4 livre). Total 1000 = 200 por categoria. Vistoria: auditar + ano_math nas 1000;
           vazamentos corrigidos (Leão, Rinoceronte e novas), "quatro dígitos" tirado de 2001/2002.
           Ajuste: .nov-nome (pílula do nome da versão) quebra linha em vez de vazar da caixa no iPhone.
-  1.7.3.4 · 02/10/2026 · "Cards and Rules Update · Parte 5 (final)". Pente fino nas 51 cartas de
+  1.7.3.1 (antiga 1.7.3.4) · 02/10/2026 · "Cards and Rules Update · Parte 5 (final)". Pente fino nas 51 cartas de
           ANIMAL e 122 de COISA (95 dicas: fatos, ecos internos e vazamentos). Repetições: falas
           iguais entre grupos (nivelZero × acido etc.) e quase iguais no mesmo grupo cortadas (7);
           entre cartas, as repetidas são genéricas de propósito. Compacta 1770 → 1754 KB desde a 1.7.3.1.
           FECHA A 1.7.3: as 600 cartas revisadas. PRÓXIMO: área de Agradecimentos Especiais.
-  1.7.3.3 · 02/10/2026 · "Cards and Rules Update · Parte 4". Pente fino nas 137 cartas de LUGAR (55
+  1.7.3.1 (antiga 1.7.3.3) · 02/10/2026 · "Cards and Rules Update · Parte 4". Pente fino nas 137 cartas de LUGAR (55
           dicas: fatos, desatualizadas e vazamentos de nome) e nos 9 dubladores (checados por busca;
           Dublapédia bloqueada pela rede do ambiente). Falas do C.A.O.S.: 202 cortadas (erroSarcasmo
           257→143, apresentacaoInicial 97→52, acertoRidiculamenteRapido, jogadorLento, espontaneo,
@@ -518,7 +522,7 @@
           começou aos 8 com os irmãos; Briggs fez o Samurai Jack até a 4ª temporada, Ricardo Juarez a
           5ª; Tatiane fez Zoey 101; Bardavid nas novelas confere). Kate Winslet/Titanic saiu (sem
           confirmação). Em dúvida de dublagem: perguntar ao JF.
-  1.7.3.2 · 02/10/2026 · "Cards and Rules Update · Parte 3". Pente fino nas 191 cartas de PESSOA
+  1.7.3.1 (antiga 1.7.3.2) · 02/10/2026 · "Cards and Rules Update · Parte 3". Pente fino nas 191 cartas de PESSOA
           (83 dicas corrigidas ou trocadas: fatos errados, desatualizados e repetidos). Limpeza de
           CSS morto: regras vazias e declarações sempre sobrescritas por regra igual mais abaixo
           (fallbacks com color-mix/var/clamp preservados; estilo calculado conferido igual antes/depois).
@@ -528,25 +532,25 @@
           DEPOIS de fechar a 1.7.3 (1.7.3.4 pronta): área de AGRADECIMENTOS ESPECIAIS no jogo, com
           as crianças (Pedro, Isabel), a namorada do JF, Bruno Levanti, Felipe e todo mundo que
           ajudou de verdade no projeto. Não fazer antes.
-  1.7.3.1 · 02/10/2026 · "Cards and Rules Update · Parte 2". Pente fino nas 99 cartas de ANO (no
+  1.7.3 (antiga 1.7.3.1) · 02/10/2026 · "Cards and Rules Update · Parte 2". Pente fino nas 99 cartas de ANO (no
           máximo 3 dicas de conta e 1 que entrega o ano; fatos repetidos trocados; erros corrigidos);
           Modo Claro com identidade (modos e zoeira tingidos, carta virada roxa, pontuação na cor do
           jogador via corDoJogador, pausa colorida); números do tabuleiro a cada 20 casas; novidades com itens que
           abrem e fecham (.nov-drop, sugestão do Bruno Levanti).
-  1.7.3 · 02/10/2026 · "Cards and Rules Update". C.A.O.S. sobe pra 3.8 (depois da 3.9 vem a 4.0).
+  1.7.3 (antiga 1.7.3) · 02/10/2026 · "Cards and Rules Update". C.A.O.S. sobe pra 3.8 (depois da 3.9 vem a 4.0).
           Aviso "Em breve: Modo Multiplayer" na abertura (#splashEmBreve; tirar na 1.7.10). Pente fino nas cartas (dicas independentes,
           sem eco, sem vazamento, fatos corrigidos); +25 cartas Old School (600 no total); baralho
           equilibrado por categoria (embaralharEquilibrado); C.A.O.S. decide no Hardcore inclui
           Nível 0; regras reescritas; verso novo da carta (VERSO_EMBLEMA_SVG).
-  1.7.2.4 · 02/10/2026 · "Owner Lock Update". Cores exclusivas na paleta com cadeado (COR_EXCLUSIVA,
+  1.7.2.1 (antiga 1.7.2.4) · 02/10/2026 · "Owner Lock Update". Cores exclusivas na paleta com cadeado (COR_EXCLUSIVA,
           corReservada: RGB do JF, GRAD_PRINCESA da Anne); aviso de cor/emoji com dono sobe o tom
           por toque (caosTomadaN), sem depender da zoeira.
-  1.7.2.3 · 02/10/2026 · "Pause Menu Update". Pausa com tema e voz (pausaAjustesAtualizar,
+  1.7.2.1 (antiga 1.7.2.3) · 02/10/2026 · "Pause Menu Update". Pausa com tema e voz (pausaAjustesAtualizar,
           pausaVozTrocar); selo da categoria na carta aberta (CAT_SELO_ICONE, .cat-selo);
           .caos-pergunta maior (botões de 44 px).
-  1.7.2.2 · 02/10/2026 · "No Mercy Update". Hardcore sem Suave: zoeira Normal (padrão), Ácido ou
+  1.7.2.1 (antiga 1.7.2.2) · 02/10/2026 · "No Mercy Update". Hardcore sem Suave: zoeira Normal (padrão), Ácido ou
           Nível 0 (humorOptionsForMode, renderHumorPicker, playerHumor, ajustarJogadoresAoModo).
-  1.7.2.1 · 02/10/2026 · "Family Friendly Update". Cadastro: Adicionar depois de Cor/Emoji/Zoeira
+  1.7.2.1 (antiga 1.7.2.1) · 02/10/2026 · "Family Friendly Update". Cadastro: Adicionar depois de Cor/Emoji/Zoeira
           (#addAcaoRow); cor/emoji já escolhido avisa de quem é (caosEscolhaTomada). Júnior: zoeira
           Family friendly/Suave/Normal (humor "familia", humorFamilia, caosFamiliaTroca: 1 a 5
           zoeirinhas leves por partida); mágoa por nível; Nível 0 silenciou → silenciaramVoltaZero.
@@ -558,7 +562,7 @@
           repetida. Modo Claro "Papel" (identidade própria: creme âmbar, tinta, sem neon).
           Versões antes da 1.7 ganharam nome de update nas NOVIDADES.
           Logo: P grande em azul neon e JF em laranja neon (mesma letra).
-  1.7.1.6 · 02/10/2026 · "Day & Night Update". Números das versões corrigidos (as antigas 1.7.1.2 a 1.7.1.6 são
+  1.7.1.1 (antiga 1.7.1.6) · 02/10/2026 · "Day & Night Update". Números das versões corrigidos (as antigas 1.7.1.2 a 1.7.1.6 são
           1.7.1.1 a 1.7.1.5; arquivos renomeados, conteúdo intacto). Ícone novo do app
           (? neon + carta com P). Dois visuais: Noturno (padrão) e Claro (body.claro).
           Resposta menor (só o nome, numa caixinha), toque pra esconder antes da 1ª dica.
@@ -566,18 +570,18 @@
           zoeiras (CAOS_RISADA_*). As duas foram ideias do Pedro, 11 anos. Debug: tempo esgotado
           não come 5 s do próximo; Express não vira "misto" ao recarregar; Reiniciar
           solta o silêncio do sorteio. Balão do C.A.O.S. no celular: fala na largura toda.
-  1.7.1.5 · 01/10/2026 · "Pocket Update". PWA (manifest.json + ícones: instala na tela de início em tela cheia);
+  1.7.1.1 (antiga 1.7.1.5) · 01/10/2026 · "Pocket Update". PWA (manifest.json + ícones: instala na tela de início em tela cheia);
           Compartilhar resultado no fim de jogo; destaque Mestre muralha no resumo; dicas
           de Mestre na pausa.
-  1.7.1.4 · 01/10/2026 · "Clean Start Update". Tela inicial mais limpa: botão Jogar flutua de leve; Novidades e um
+  1.7.1.1 (antiga 1.7.1.4) · 01/10/2026 · "Clean Start Update". Tela inicial mais limpa: botão Jogar flutua de leve; Novidades e um
           menu ⋮ (Som, Vibrar, Voz + Ajustar voz, Batata) no canto superior direito.
-  1.7.1.3 · 01/10/2026 · "Voices & Faces Update". Som no iPhone religa no primeiro toque depois de o Safari suspender o
+  1.7.1 (antiga 1.7.1.3) · 01/10/2026 · "Voices & Faces Update". Som no iPhone religa no primeiro toque depois de o Safari suspender o
           áudio; Moda da Casa e última rodada nas regras, tutorial e dicas da pausa; rostinhos
           novos do C.A.O.S.; falas novas no Encerrar e no sorteio da Moda da Casa.
-  1.7.1.2 · 01/10/2026 · "Final Round Update". Sorteio da Moda da Casa com a roleta da categoria (som), C.A.O.S.
+  1.7.1 (antiga 1.7.1.2) · 01/10/2026 · "Final Round Update". Sorteio da Moda da Casa com a roleta da categoria (som), C.A.O.S.
           calado durante o sorteio (só comenta o resultado); última rodada (ULTIMA_RODADA):
           bateu a meta, a rodada termina e vence quem estiver na frente.
-  1.7.1.1 · 01/10/2026 · "House Rules Update". Mestre em 9 seções (configuração, estado, regras, turno e rodada, tela,
+  1.7.1 (antiga 1.7.1.1) · 01/10/2026 · "House Rules Update". Mestre em 9 seções (configuração, estado, regras, turno e rodada, tela,
           voz e som, C.A.O.S., salvamento, utilitários). Moda da Casa: o C.A.O.S. sorteia o
           modo da mesa (tabuleiro/pontos/joias, sem repetir o anterior; saves antigos = "misto");
           meta de pontos 200 e joia com até 6 dicas na Moda da Casa (aprovados pela simulação
