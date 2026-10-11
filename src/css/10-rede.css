@@ -407,7 +407,17 @@ button.splash-embreve .eb-sub {
   color: #e0f2fe;
 }
 body.claro button.splash-embreve {
-  background: linear-gradient(180deg, #0891b2, #0e7490);
+  /* 1.7.10 (print do JF no Modo Claro): o título ficava roxo e a legenda escura sobre o azul (a regra do
+     Claro de 06-modo-claro.css ganhava). Azul um tom mais escuro e texto claro: contraste de leitura. */
+  background: linear-gradient(180deg, #0e7490, #155e75);
+  border-color: #0e7490;
+}
+body.claro button.splash-embreve .eb-titulo {
+  color: #fff;
+  text-shadow: 0 1px 2px #0003;
+}
+body.claro button.splash-embreve .eb-sub {
+  color: #e0f2fe;
 }
 /* 1.7.9.6 · formulário do convidado com as mesmas peças do cadastro do host */
 .rede-form .rede-paleta {
