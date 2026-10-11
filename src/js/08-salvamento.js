@@ -212,7 +212,7 @@ const JFStore = (function () {
         for (const k of keys) {
           // 1.7.10: estado da sala online não volta do banco: outra aba (convidado no mesmo navegador) via a
           // cópia velha e regravava por cima da do host, e a lista de aprovados sumia (falha intermitente)
-          if (k.startsWith("perfil5_rede_")) continue;
+          if (ls && k.startsWith("perfil5_rede_")) continue;
           let best = api.getItem(k);
           const cands = [fromIdb[k]];
           if (hasClaudeStorage) {

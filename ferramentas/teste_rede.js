@@ -497,7 +497,10 @@ async function rodar(b, modo, porta, turn) {
   conf("O outro celular se reconecta ao novo host sozinho", await esperar(gM, () => rede.estado === "dentro" && !!rede.painel && Date.now() - rede.ultimoHost < 5000, null, 40000));
   // o host antigo volta: descobre que já tem host e entra como jogador
   const velhoHost = await abrir("");
-  conf("O host antigo volta e entra como jogador (não briga pela sala)", await esperar(velhoHost, (s) => typeof rede !== "undefined" && rede && rede.papel === "convidado" && rede.sala === s, sala, 40000));
+  const virouJogador = await esperar(velhoHost, (s) => typeof rede !== "undefined" && rede && rede.papel === "convidado" && rede.sala === s, sala, 40000);
+  if (!virouJogador)
+    console.log(`[diag velho] ${turn ? "turn" : modo}:`, JSON.stringify(await velhoHost.evaluate(() => ({ url: location.hash, rede: typeof rede !== "undefined" && rede ? { papel: rede.papel, sala: rede.sala, estado: rede.estado, t: rede.transporte && rede.transporte.estado } : null, starterChosen, gameEnded, orfa: !!document.getElementById("redeOrfa"), guardado: localStorage.getItem("perfil5_rede_host") }))).catch((e) => String(e))));
+  conf("O host antigo volta e entra como jogador (não briga pela sala)", virouJogador);
   await velhoHost.close();
   for (const pg of [gM, gV, gC]) await pg.close();
   await ctx.close();
