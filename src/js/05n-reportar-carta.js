@@ -28,6 +28,7 @@ function cartasReportadas() {
   }
 }
 function cartaReportarGuardar(r) {
+  if (!r.uid) r.uid = Math.random().toString(36).slice(2, 10); // tira da fila pelo uid (revisão 1.7.10)
   const l = cartasReportadas();
   l.push(r);
   while (l.length > CARTAS_REPORTADAS_MAX) l.shift();
@@ -59,14 +60,20 @@ function cartaReporteEnviar() {
     for (let i = 0; i < 50; i++) {
       const f = cartaReporteFila();
       if (!f.length) break;
+      const item = f[0];
       let ok = false;
       try {
-        const r = await fetch(url, { method: "POST", body: JSON.stringify(f[0]) });
-        ok = r.ok || r.status === 400; // 400 = reporte que o servidor não aceita: não adianta insistir
+        const { uid, ...corpo } = item;
+        const r = await fetch(url, { method: "POST", body: JSON.stringify(corpo) });
+        // revisão 1.7.10: recusa que não muda tentando de novo (400 inválido, 403 origem, 413 grande) sai da
+        // fila, senão travava todos os de trás; 429 (calma) e erro de rede esperam a próxima vez
+        ok = r.ok || [400, 403, 413].includes(r.status);
       } catch (e) {}
       if (!ok) break;
       try {
-        localStorage.setItem(CARTAS_REPORTE_FILA_KEY, JSON.stringify(cartaReporteFila().slice(1)));
+        // tira pelo uid (outro reporte pode ter entrado na fila enquanto este ia)
+        const chave = JSON.stringify(item);
+        localStorage.setItem(CARTAS_REPORTE_FILA_KEY, JSON.stringify(cartaReporteFila().filter((x) => (item.uid ? x.uid !== item.uid : JSON.stringify(x) !== chave))));
       } catch (e) {
         break;
       }

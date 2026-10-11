@@ -304,16 +304,25 @@ function caosEspinhaInstalar() {
           return;
         }
         const r = toast.apply(this, arguments);
-        // a mesa toda: os celulares mostram com o mesmo rosto e a mesma etiqueta do balão daqui
-        try {
-          const el = document.getElementById("jfToast");
-          if (el && el.dataset.emo && ev && String(el.textContent).indexOf(String(ev.texto).slice(0, 24)) !== -1) {
-            ev.emo = el.dataset.emo;
-            ev.face = el.getAttribute("data-face") || null;
-            ev.rotulo = (el.querySelector(".toast-rotulo") || {}).textContent || null;
-          }
-        } catch (e) {}
-        if (typeof redeHostFala === "function") redeHostFala(ev);
+        // a mesa toda: os celulares mostram com o mesmo rosto e a mesma etiqueta do balão daqui. A fala pode
+        // esperar na fila atrás de outra (revisão 1.7.10): confere até ela aparecer aqui (no máximo ~8 s)
+        if (typeof redeHostFala === "function" && typeof rede !== "undefined" && rede && rede.papel === "host") {
+          let n = 0;
+          const pegar = () => {
+            try {
+              const el = document.getElementById("jfToast");
+              if (el && el.dataset.emo && ev && String(el.textContent).indexOf(String(ev.texto).slice(0, 24)) !== -1) {
+                ev.emo = el.dataset.emo;
+                ev.face = el.getAttribute("data-face") || null;
+                ev.rotulo = (el.querySelector(".toast-rotulo") || {}).textContent || null;
+                return redeHostFala(ev);
+              }
+            } catch (e) {}
+            if (++n > 26) return redeHostFala(ev);
+            setTimeout(pegar, 300);
+          };
+          pegar();
+        }
         return r;
       }
       return toast.apply(this, arguments);

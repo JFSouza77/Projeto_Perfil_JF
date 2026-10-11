@@ -1484,6 +1484,7 @@ function addPlayer() {
   caosMemCadastro(players[players.length - 1]);
   input.value = "";
   caosTomadaN = 0;
+  cadRepetidoN = 0; // revisão 1.7.10: o tom do "nome repetido" também volta ao leve
   renderScoreboard();
   if (typeof redeHostCadastroMudou === "function") redeHostCadastroMudou(); // 1.7.9.4: a sala vê o nome novo na hora
   renderColorPicker();

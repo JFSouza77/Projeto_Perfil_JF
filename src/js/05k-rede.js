@@ -68,21 +68,12 @@ const JOGO_VERSAO = (() => {
 })();
 // 1.7.10 · Build deste aparelho (o teste troca por window.__JOGO_BUILD). A rede compara o build, não o nome.
 const REDE_BUILD = typeof window !== "undefined" && Number.isInteger(window.__JOGO_BUILD) ? window.__JOGO_BUILD : JOGO_BUILD;
-// "1.7.9.9" > "1.7.9.8"? (número a número; só pra host antigo, que não manda o build)
-function redeVersaoMaior(a, b) {
-  const x = String(a || "").split(".").map(Number), y = String(b || "").split(".").map(Number);
-  for (let i = 0; i < Math.max(x.length, y.length); i++) {
-    const d = (x[i] || 0) - (y[i] || 0);
-    if (d) return d > 0;
-  }
-  return false;
-}
 // 1.7.10 · O host atualizou o jogo no meio da partida: quem está com a versão velha recarrega sozinho uma vez
 // (volta pro mesmo lugar). Se mesmo assim continuar diferente, fica o botão "Recarregar" com a explicação.
 // O host é mais novo? Pelo build; host antigo (sem build) pelo número do nome.
 function redeHostMaisNovo(versaoHost, buildHost) {
-  if (Number.isInteger(buildHost)) return buildHost > REDE_BUILD;
-  return !!versaoHost && redeVersaoMaior(versaoHost, JOGO_VERSAO);
+  // revisão 1.7.10: host que não manda build é anterior à 1.7.10 (o nome pode "voltar" pra 1.0: não compara nome)
+  return Number.isInteger(buildHost) && buildHost > REDE_BUILD;
 }
 function redeAtualizarJunto(versaoHost, buildHost) {
   if (!redeHostMaisNovo(versaoHost, buildHost)) return false;
@@ -310,7 +301,12 @@ function redeTransportePeerHost(sala) {
     // 1.7.10: abre a sala de novo no servidor (ele soltou este aparelho enquanto estava parado)
     reabrir() {
       if (fechado) return;
+      // revisão 1.7.10: com celular ainda ligado (as conexões diretas seguem vivas), não derruba ninguém;
+      // só reconecta no servidor se a biblioteca já sabe que caiu
+      const algumLigado = [...todas].some((c) => c && c.open);
       try {
+        if (peer && !peer.destroyed && peer.disconnected) return void peer.reconnect();
+        if (algumLigado && peer && !peer.destroyed) return;
         peer && peer.destroy();
       } catch (e) {}
       tentativas = 0;
@@ -386,7 +382,18 @@ function redeTransportePeerHost(sala) {
     });
     r.on("connection", aoConectar);
     r.on("error", (e) => {
-      if ((e && e.type) === "peer-unavailable" || fechado || reserva !== r) return;
+      const tipo = (e && e.type) || "erro";
+      if (tipo === "peer-unavailable" || fechado || reserva !== r) return;
+      // revisão 1.7.10: na sala recém-aberta, o código já é de outro grupo no servidor público: troca o
+      // código (como no nosso), senão um convidado que caísse no público entraria na sala dos outros
+      if (tipo === "unavailable-id" && rede && rede.papel === "host" && rede.transporte === t && rede.salaNova) {
+        fechado = true;
+        try {
+          r.destroy();
+          peer && peer.destroy();
+        } catch (x) {}
+        return void setTimeout(redeTrocarCodigo, 0);
+      }
       try {
         r.destroy();
       } catch (x) {}
@@ -449,15 +456,15 @@ function redeTransportePeerHost(sala) {
       }
       if (tipo === "peer-unavailable") return; // um convidado sumiu: não é erro da sala
       // o servidor nosso falhou mas a reserva está aberta: a sala segue; tenta voltar pro nosso depois
-      if (reserva && reserva.open && !fechado) {
+      // (revisão 1.7.10: com dois servidores, tenta voltar pro nosso mesmo que a reserva ainda não tenha aberto)
+      if (redeServidores().length > 1 && !fechado)
         setTimeout(() => {
           try {
             if (!fechado && peer.disconnected && !peer.destroyed) peer.reconnect();
             else if (!fechado && peer.destroyed) abrir();
           } catch (x) {}
         }, 15000);
-        return;
-      }
+      if (reserva && reserva.open && !fechado) return;
       t.erro = tipo;
       if (t.estado !== "aberta") t.estado = "erro";
       redeMudouEstado(t);
@@ -1168,7 +1175,8 @@ function redeHostFala(f) {
     });
     return;
   }
-  redeEnviar("fala", ids.length ? { texto: f.texto, quem: ids.slice(0, 8), ...visual } : { texto: f.texto, ...visual });
+  // só marca "é com você" (voz no celular dela) quando a fala fala COM a pessoa; citação é da mesa
+  redeEnviar("fala", ids.length && redeFalaComQuem(f) ? { texto: f.texto, quem: ids.slice(0, 8), ...visual } : { texto: f.texto, ...visual });
 }
 // A fala particular é só de quem está em outro aparelho? Então não aparece aqui no host.
 // 1.7.10 (relato do JF: "falou com a Anne no MEU celular"): vale também pra fala NÃO particular que cita só
@@ -1176,7 +1184,19 @@ function redeHostFala(f) {
 function redeFalaSoLonge(f) {
   if (!rede || rede.papel !== "host" || !f) return false;
   const ids = (f.para || []).map((d) => d.id).filter(Boolean);
-  return ids.length > 0 && ids.every((id) => !redeNoHost(id) && redeOnline(rede.assentos[id]));
+  if (!ids.length || !ids.every((id) => !redeNoHost(id) && redeOnline(rede.assentos[id]))) return false;
+  // revisão 1.7.10: fala que só CITA a pessoa ("Anne venceu a partida!") é da mesa e fica no host;
+  // sai daqui só a particular e a que FALA COM ela ("Anne, essa dica foi você que pediu.")
+  return !!f.privado || redeFalaComQuem(f);
+}
+// A fala chama a pessoa pelo nome (vocativo)? "Anne, …", "… , Anne.", "Valeu, Anne!", "… Anne?"
+function redeFalaComQuem(f) {
+  const t = String((f && f.texto) || "");
+  return (f.para || []).some((d) => {
+    if (!d || !d.id || !d.nome) return false;
+    const n = String(d.nome).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`(^|[.!?]\\s+)${n}\\s*[,!?:]|[,;]\\s*${n}\\s*[.!?…]*\\s*$`, "u").test(t);
+  });
 }
 // No celular do convidado: balão da fala (e a voz, quando a fala é com ele).
 function redeFalaMostrar(m) {
