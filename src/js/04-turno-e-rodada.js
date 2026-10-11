@@ -1444,7 +1444,7 @@ function addPlayer() {
     return;
   }
   if (players.some((p) => p.name.toLowerCase() === name.toLowerCase())) {
-    caosAvisoModal("Esse jogador já está na partida!");
+    cadNomeRepetido(name); // 1.7.10 (pedido do JF): treme, borda vermelha, mostra o nome na lista e o C.A.O.S. comenta
     return;
   }
   if (players.length >= MAX_PLAYERS) {
@@ -1484,6 +1484,7 @@ function addPlayer() {
   caosMemCadastro(players[players.length - 1]);
   input.value = "";
   caosTomadaN = 0;
+  cadRepetidoN = 0; // revisão 1.7.10: o tom do "nome repetido" também volta ao leve
   renderScoreboard();
   if (typeof redeHostCadastroMudou === "function") redeHostCadastroMudou(); // 1.7.9.4: a sala vê o nome novo na hora
   renderColorPicker();

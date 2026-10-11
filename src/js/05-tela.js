@@ -1426,7 +1426,7 @@ function renderScoreboard() {
             ? ' <span class="age-badge">🎓</span>'
             : "");
       return `
-    <li>
+    <li data-i="${p.originalIndex}">
       <span>${playerNameHtml(p.name, p.color, p.avatar)}${ageBadge}</span>
       <span><span class="pts">${p.score} pts</span><button class="remove-player" data-i="${p.originalIndex}">remover</button></span>
     </li>
@@ -1504,6 +1504,38 @@ function negarEscolha(btn) {
     btn.classList.add("nega-treme");
     setTimeout(() => btn.classList.remove("nega-treme"), 450);
   }
+}
+// 1.7.10 (pedido do JF, jogando online com a Anne): nome que já está na partida. A tela nega como no erro da
+// carta (piscada e borda vermelhas, o campo treme), a lista rola até o nome já cadastrado e ele fica em
+// destaque; o C.A.O.S. comenta com frases que variam e sobem o tom se a pessoa insistir.
+let cadRepetidoN = 0, cadRepetidoAt = 0;
+function cadNomeRepetido(nome) {
+  const input = document.getElementById("playerNameInput");
+  negarEscolha(input);
+  const idx = players.findIndex((p) => p.name.toLowerCase() === String(nome).toLowerCase());
+  const li = idx >= 0 && document.querySelector(`#scoreboard li[data-i="${idx}"]`);
+  if (li) {
+    li.classList.remove("cad-repetido");
+    void li.offsetWidth;
+    li.classList.add("cad-repetido");
+    try {
+      li.scrollIntoView({ behavior: movimentoReduzido() ? "auto" : "smooth", block: "center" });
+    } catch (e) {}
+    setTimeout(() => li.classList.remove("cad-repetido"), 2600);
+  }
+  if (input) {
+    input.classList.add("cad-campo-erro");
+    setTimeout(() => input.classList.remove("cad-campo-erro"), 2600);
+  }
+  // fala: no máximo uma a cada 2,5 s (toques seguidos não empilham balões)
+  if (Date.now() - cadRepetidoAt < 2500) return;
+  cadRepetidoAt = Date.now();
+  cadRepetidoN++;
+  const nivel = cadRepetidoN <= 1 ? "leve" : cadRepetidoN === 2 || CURRENT_MODE === "junior" ? "normal" : "zero";
+  const quem = idx >= 0 ? players[idx].name : nome;
+  const txt = getRandomReaction(REACTIVE_VOICE.nomeRepetido[nivel], quem);
+  if (txt) showToastMessage(txt, null, true);
+  else caosAvisoModal(`${quem} já está na partida!`);
 }
 function caosEscolhaTomada(tipo, valor, btn) {
   const exclusiva = tipo === "cor" && COR_EXCLUSIVA[valor];

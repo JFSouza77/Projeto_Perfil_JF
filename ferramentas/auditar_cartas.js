@@ -109,6 +109,16 @@ function auditar(cartas) {
         break;
       }
     q.forEach((t) => t[0] === "*" && !ESPECIAIS.includes(t.slice(1).trim().toLowerCase()) && erro(c, "estrutura", `especial desconhecida: ${t}`));
+    // regra do JF (11/10/2026): no máximo UMA especial de cada tipo por carta (um Volte do próprio jogador,
+    // um Avance do próprio jogador, e nenhuma especial repetida)
+    {
+      const tipoEsp = (t) => (/^volte \d/i.test(t) ? "volte" : /^avance \d/i.test(t) ? "avance" : t.toLowerCase());
+      const vistos = new Set();
+      q.filter((t) => t[0] === "*").map((t) => tipoEsp(t.slice(1).trim())).forEach((tp) => {
+        if (vistos.has(tp)) erro(c, "estrutura", `duas especiais do mesmo tipo (${tp})`);
+        vistos.add(tp);
+      });
+    }
     if (c.cat === "ANO" && c.class === "junior") erro(c, "junior", "Júnior não tem carta de ANO");
 
     const dicas = q.map((t, i) => [t, i + 1]).filter(([t]) => t[0] !== "*");

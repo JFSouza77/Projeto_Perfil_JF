@@ -11,6 +11,7 @@
 "use strict";
 const fs = require("fs");
 const path = require("path");
+const { versaoDoTitulo, buildDe, nomeDoMestre } = require("./versao");
 
 const PASTA = __dirname;
 const SRC = path.join(PASTA, "src");
@@ -40,9 +41,11 @@ function montar() {
   if (faltam.length) throw new Error("src/ordem.txt cita arquivos que não existem: " + faltam.join(", "));
   if (sobram.length) throw new Error("Arquivos em src/ que não estão em src/ordem.txt: " + sobram.join(", "));
   const html = lista.map((f) => fs.readFileSync(path.join(SRC, f), "utf8")).join("");
-  const versao = (html.match(/<title>[^<]*?(\d+(?:\.\d+){2,3})[^<]*<\/title>/) || [])[1];
+  // 1.7.10: o nome de exibição (do <title>) dá nome ao arquivo; o build (JOGO_BUILD) diz qual é mais nova (versao.js)
+  const versao = versaoDoTitulo(html);
   if (!versao) throw new Error("Não achei a versão no <title> de src/html/01-cabeca.html.");
-  const arquivo = path.join(PASTA, `Perfil_JF_Mestre_${versao.replace(/\./g, "_")}.html`);
+  if (!buildDe(html)) throw new Error("Não achei const JOGO_BUILD = <número>; em src/js/01-configuracao.js.");
+  const arquivo = path.join(PASTA, nomeDoMestre(versao));
   fs.writeFileSync(arquivo, html);
   return { arquivo, versao, partes: lista.length, html };
 }

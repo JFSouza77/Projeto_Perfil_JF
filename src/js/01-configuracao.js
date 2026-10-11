@@ -11,6 +11,10 @@
   10. Dados (cartas, falas do C.A.O.S., rostos, rótulos, tabelas)
   11. iniciar(): monta tudo e liga a tela (roda por último)
 */
+// 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
+// É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
+// ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
+const JOGO_BUILD = 1800;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)

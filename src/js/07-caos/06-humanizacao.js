@@ -86,6 +86,8 @@ function caosNaoCurti(t0) {
 }
 function caosPerguntaTalvez(p, tipo) {
   if (!p || tipo || gameEnded || CURRENT_MODE === "express" || (currentCard && currentCard.isBonus)) return;
+  // 1.7.10 (print do JF): com o Mestre em outro aparelho (online), a pergunta Perto/Longe não aparece no host
+  if (typeof redeMestreLonge === "function" && redeMestreLonge()) return;
   const aperto = caosConsole && caosConsole.seqErr >= 2;
   if (
     caosPerguntaN >= (aperto ? 6 : 4) ||

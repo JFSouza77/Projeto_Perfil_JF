@@ -209,7 +209,15 @@ const JFStore = (function () {
           "perfil5_tab_lobby",
           "perfil5_tab_lobby_visto",
         ].forEach((k) => keys.add(k));
+        let abaDeFora = false;
+        try {
+          abaDeFora = /(^|[#&])(sala=|telao)/.test(location.hash || "");
+        } catch (e) {}
         for (const k of keys) {
+          // 1.7.10: aba de convidado ou de telão não puxa do banco o estado da sala online: no mesmo navegador
+          // ela via a cópia velha e regravava por cima da do host (a lista de aprovados sumia). O host continua
+          // puxando: é a reserva dele quando o navegador não guardou (cota cheia, por exemplo).
+          if (abaDeFora && k.startsWith("perfil5_rede_")) continue;
           let best = api.getItem(k);
           const cands = [fromIdb[k]];
           if (hasClaudeStorage) {
@@ -1670,7 +1678,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.9.9 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.10 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2193,7 +2201,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.9.9 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.10 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,

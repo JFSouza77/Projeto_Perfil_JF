@@ -21,6 +21,9 @@ const PUB = (() => {
   return fs.existsSync(p) ? p : null;
 })();
 const SO = (args.find((a) => a.startsWith("--so=")) || "").slice(5);
+// --servidor=PORTA: usa o servidor da sala nosso (servidor/worker.js rodando com "wrangler dev") no lugar do "peer"
+const SERVIDOR = +((args.find((a) => a.startsWith("--servidor=")) || "").slice(11)) || 0;
+const CHAVE = SERVIDOR ? "perfiljf" : "peerjs";
 
 async function navegador() {
   const { chromium } = require("playwright-core");
@@ -92,12 +95,14 @@ async function rodarOrfa(b) {
 // 1.7.9.8 · Código sorteado já em uso por outro grupo: a sala nova troca de código (não entra na sala dos outros)
 async function rodarColisao(b, porta) {
   const ctx = await b.newContext();
+  await ctx.addInitScript("window.__CHAVE = " + JSON.stringify(CHAVE));
   await ctx.route(/^https?:/, (r) => (r.request().url().startsWith("http://127.0.0.1:" + porta) ? r.continue() : r.abort()));
   await ctx.addInitScript((porta) => {
     try {
       localStorage.setItem("perfil5_tutorial_visto", "x");
     } catch (e) {}
-    window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, config: { iceServers: [] } };
+    if (window.__REDE_SERVIDOR === undefined) window.__REDE_SERVIDOR = false;
+    window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, key: window.__CHAVE || "peerjs", config: { iceServers: [] } };
   }, porta);
   const erros = [], ok = [];
   const abrir = async () => {
@@ -121,6 +126,83 @@ async function rodarColisao(b, porta) {
   await ctx.close();
   return { ok, erros };
 }
+// 1.7.10 · Servidor da sala nosso (servidor/worker.js no "wrangler dev") com o público ("peer" local) de reserva:
+// o host abre nos dois, a lista de salas da rede mostra a sala, e um convidado sem o nosso entra pelo público.
+async function rodarServidorNosso(b, nosso, publico) {
+  const ctx = await b.newContext({ viewport: { width: 390, height: 844 } });
+  await ctx.route(/^https?:/, (r) => (r.request().url().startsWith("http://127.0.0.1:") ? r.continue() : r.abort()));
+  await ctx.addInitScript(([nosso, publico]) => {
+    try {
+      localStorage.setItem("perfil5_tutorial_visto", "x");
+      Object.keys(localStorage).filter((k) => k.startsWith("perfil5_rede_eu_")).forEach((k) => localStorage.removeItem(k));
+    } catch (e) {}
+    if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
+    window.__REDE_SERVIDOR = { host: "127.0.0.1", port: window.__NOSSO_MORTO ? 9 : nosso, secure: false };
+    if (window.__REDE_SERVIDOR === undefined) window.__REDE_SERVIDOR = false;
+    window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: publico, path: "/", secure: false, key: "peerjs", config: { iceServers: [] } };
+  }, [nosso, publico]);
+  const erros = [], ok = [];
+  const conf = (n, v) => ok.push(["[servidor nosso] " + n, !!v]);
+  const abrir = async (hash, antes) => {
+    const pg = await ctx.newPage();
+    pg.on("pageerror", (e) => erros.push(e.message.slice(0, 160)));
+    if (antes) await pg.addInitScript(antes);
+    await pg.goto("file://" + ARQ + (hash || ""));
+    await pg.waitForFunction(() => typeof redeAbrirSala === "function");
+    return pg;
+  };
+  const esperar = (pg, fn, a, ms) => pg.waitForFunction(fn, a, { timeout: ms || 15000 }).then(() => true, () => false);
+  const host = await abrir("");
+  await host.waitForFunction(() => !document.getElementById("goToRulesBtn").disabled);
+  const sala = await host.evaluate(() => redeAbrirSala("internet"));
+  conf("Sala aberta (servidor nosso e o público de reserva)", await esperar(host, () => rede && rede.transporte.estado === "aberta"));
+  const g1 = await abrir("#sala=" + sala);
+  conf("Convidado entra pelo servidor nosso", await esperar(g1, () => rede && rede.transporte && rede.transporte.estado === "aberta" && rede.estado !== "entrando", null, 20000));
+  const g2 = await abrir("#sala=" + sala, "window.__NOSSO_MORTO = true;");
+  conf("Servidor nosso fora do ar: o convidado entra pelo público", await esperar(g2, () => rede && rede.transporte && rede.transporte.estado === "aberta" && rede.estado !== "entrando", null, 40000));
+  await host.evaluate(() => redeSalaContar());
+  const g3 = await abrir("");
+  await g3.evaluate(() => redeEntrarPorCodigo());
+  conf("Salas na sua rede: a sala aparece na tela de entrar", await esperar(g3, (c) => !!document.querySelector(`#redeSalasPerto [data-sala="${c}"]`), sala, 10000));
+  await Promise.all([g3.waitForNavigation().catch(() => {}), g3.evaluate(() => document.querySelector("#redeSalasPerto [data-sala]").click())]);
+  await g3.waitForFunction(() => typeof redeAbrirSala === "function").catch(() => {});
+  conf("Tocar na sala da lista entra nela", await esperar(g3, (c) => !!rede && rede.sala === c, sala, 10000));
+  // 1.7.10 (parecer do Klaus): o cartão não tem nome de ninguém, e sala do Júnior não aparece na lista
+  await host.evaluate(() => { players = [{ id: jogadorIdNovo(), name: "Zuleica", score: 0, position: 0, color: PLAYER_COLORS[0], avatar: "😀", humor: "normal", gems: {} }]; rede.hostEu = players[0].id; rede.salaContada = null; redeSalaContar(); });
+  const g4 = await abrir("");
+  await g4.evaluate(() => redeEntrarPorCodigo());
+  conf("Salas na sua rede: o cartão não mostra nome de ninguém", (await esperar(g4, (c) => !!document.querySelector(`#redeSalasPerto [data-sala="${c}"]`), sala, 10000)) && !(await g4.evaluate(() => /Zuleica/.test(document.getElementById("redeSalasPerto").textContent))));
+  await host.evaluate(() => { CURRENT_MODE = "junior"; redeSalaContar(); });
+  await host.waitForTimeout(800);
+  const g5 = await abrir("");
+  await g5.evaluate(() => redeEntrarPorCodigo());
+  await g5.waitForTimeout(2500);
+  conf("Sala do Júnior não aparece na lista (só pelo código)", !(await g5.evaluate((c) => !!document.querySelector(`#redeSalasPerto [data-sala="${c}"]`), sala)));
+  // 1.7.10 (ideia do JF): carta reportada em qualquer aparelho vai pro servidor; o JF lê numa página com senha
+  const faltam = await g5.evaluate(async () => {
+    localStorage.removeItem("perfil5_cartas_reporte_fila");
+    cartaReportarGuardar({ id: "ANO-0042", resposta: "Teste", categoria: "ANO", dica: { pos: 2, id: "ANO-0042-C03", texto: "<b>dica</b> errada" }, motivo: "fato", nota: "conferir", modo: "classico", versao: "1.7.10", quando: Date.now() });
+    return cartaReporteEnviar();
+  });
+  const http = require("http");
+  const pegar = (cam) => new Promise((ok) => http.get("http://127.0.0.1:" + nosso + cam, (r) => { let d = ""; r.on("data", (c) => (d += c)); r.on("end", () => ok({ st: r.statusCode, d })); }).on("error", () => ok({ st: 0, d: "" })));
+  const pag = await pegar("/reportes?chave=teste-senha"), errada = await pegar("/reportes?chave=chute");
+  conf("Reportar carta: o reporte chega no servidor e sai da fila do aparelho", faltam === 0 && pag.st === 200 && /ANO-0042/.test(pag.d) && /Fato errado/.test(pag.d));
+  conf("Página dos reportes: senha errada não entra; texto vem escapado", errada.st === 401 && !/<b>dica<\/b>/.test(pag.d));
+  conf(
+    "Ponte: sem conta configurada segue sem; com credenciais, elas vão primeiro na lista",
+    await g3.evaluate(async () => {
+      await redePontePronta();
+      const sem = !redePonteValida();
+      redePonte = { iceServers: [{ urls: ["turn:turn.cloudflare.com:3478"], username: "u", credential: "c" }], validade: Date.now() + 86400000 };
+      delete window.__REDE_PEER_CONFIG.config;
+      const lista = redePeerConfig(0).config.iceServers;
+      return sem && lista[0].urls[0] === "turn:turn.cloudflare.com:3478" && lista.length > 1 && redePeerConfig(0).key === "perfiljf";
+    }),
+  );
+  await ctx.close();
+  return { ok, erros };
+}
 function servidorTurn() {
   let Turn;
   try {
@@ -140,6 +222,7 @@ function servidorTurn() {
 
 async function rodar(b, modo, porta, turn) {
   const ctx = await b.newContext({ viewport: { width: 390, height: 844 } });
+  await ctx.addInitScript("window.__CHAVE = " + JSON.stringify(CHAVE));
   await ctx.route(/^https?:/, (r) => (porta && r.request().url().startsWith("http://127.0.0.1:" + porta) ? r.continue() : r.abort()));
   await ctx.addInitScript(([porta, turn]) => {
     try {
@@ -150,17 +233,44 @@ async function rodar(b, modo, porta, turn) {
     if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
     // com turn: só vale a ponte (relay), como num 4G que não deixa ligação direta
     const ice = turn ? { iceServers: [{ urls: "turn:127.0.0.1:" + turn, username: "jf", credential: "teste" }], iceTransportPolicy: "relay" } : { iceServers: [] };
-    if (porta) window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, config: ice };
+    if (window.__REDE_SERVIDOR === undefined) window.__REDE_SERVIDOR = false;
+    if (porta) window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, key: window.__CHAVE || "peerjs", config: ice };
   }, [porta || 0, turn || 0]);
   const erros = [];
   const abrir = async (hash, initScript) => {
     const pg = await ctx.newPage();
     pg.on("pageerror", (e) => erros.push(e.message.slice(0, 160)));
+    if (process.env.REDE_ESPIAO) {
+      pg.on("console", (c) => c.text().startsWith("[HOSTKEY]") && console.log(c.text().slice(0, 400)));
+      await pg.addInitScript(() => {
+        const set = Storage.prototype.setItem, rem = Storage.prototype.removeItem;
+        const quem = () => (location.hash || "#host").slice(0, 20) + " " + (typeof rede !== "undefined" && rede ? rede.papel : "-");
+        Storage.prototype.setItem = function (k, v) {
+          if (k === "perfil5_rede_host") console.log("[HOSTKEY] set", quem(), Date.now(), String(v).slice(0, 160), new Error().stack.split("\n").slice(2, 5).join(" < ").replace(/file:\/\/\S+?:(\d+):\d+/g, "@$1"));
+          return set.call(this, k, v);
+        };
+        Storage.prototype.removeItem = function (k) {
+          if (k === "perfil5_rede_host") console.log("[HOSTKEY] rem", quem(), Date.now(), new Error().stack.split("\n").slice(2, 5).join(" < ").replace(/file:\/\/\S+?:(\d+):\d+/g, "@$1"));
+          return rem.call(this, k);
+        };
+      });
+    }
     if (initScript) await pg.addInitScript(initScript);
     await pg.goto("file://" + ARQ + (hash || ""));
     return pg;
   };
   const sufixo = modo === "local" ? "&local" : "";
+  // diagnóstico quando uma volta falha (estado de cada aparelho + uso da ponte)
+  const diagRede = async (onde, pgs) => {
+    for (const [nome, pg] of Object.entries(pgs)) {
+      try {
+        const d = await pg.evaluate(() => (typeof rede === "undefined" || !rede ? null : { estado: rede.estado, papel: rede.papel, t: rede.transporte.estado, erro: rede.transporte.erro, diag: rede.transporte.diag ? rede.transporte.diag() : null, semHost: rede.ultimoHost ? Date.now() - rede.ultimoHost : null, suc: rede.retrato && rede.retrato.sucessor, eu: rede.eu, rec: !!rede.recuperacao, assumindo: !!rede.assumindo, chave: rede.chave, aprovados: rede.aprovados ? Object.keys(rede.aprovados) : undefined, pedidos: rede.pedidos ? Object.values(rede.pedidos).map((x) => x.tipo + ":" + x.chave) : undefined, assentos: rede.assentos ? Object.entries(rede.assentos).map(([k, a]) => k + ":" + a.chave) : undefined, guardado: localStorage.getItem("perfil5_rede_host") }));
+        console.log(`[diag ${onde}] ${turn ? "turn" : modo} ${nome}:`, JSON.stringify(d));
+      } catch (e) {
+        console.log(`[diag ${onde}] ${nome}: (fechada)`);
+      }
+    }
+  };
   // host: partida montada como no cadastro
   const host = await abrir("");
   await host.waitForFunction(() => typeof sorteioSemear === "function" && !document.getElementById("goToRulesBtn").disabled);
@@ -325,7 +435,7 @@ async function rodar(b, modo, porta, turn) {
   // 9) lugar ocupado e versão diferente
   await gC.evaluate((id) => redeEscolherLugar(id), ids.mestre);
   conf("Lugar de quem está online não pode ser tomado", await esperar(gC, () => rede.estado === "recusado" && rede.motivo === "lugar_ocupado"));
-  const gX = await abrir("#sala=" + sala + sufixo, `(() => { ${LIMPAR} window.__JOGO_VERSAO = "0.0.1"; })();`);
+  const gX = await abrir("#sala=" + sala + sufixo, `(() => { ${LIMPAR} window.__JOGO_VERSAO = "0.0.1"; window.__JOGO_BUILD = 1; })();`);
   conf("Versão diferente é recusada, com o aviso pra atualizar", await esperar(gX, () => rede && rede.estado === "recusado" && rede.motivo === "versao_diferente" && !!rede.versaoHost, null, 15000));
   await gX.close();
   // 10) reconexão
@@ -355,7 +465,9 @@ async function rodar(b, modo, porta, turn) {
   const revHost = await H(() => partidaRevisao);
   await host.reload();
   conf("Host recarregou: a sala volta com o mesmo código", await esperar(host, (s) => typeof rede !== "undefined" && rede && rede.sala === s && rede.transporte.estado === "aberta", sala, 30000));
-  conf("Os celulares voltam sozinhos, com o retrato da partida", (await esperar(gV, (rv) => rede.estado === "dentro" && rede.retrato && rede.retrato.revisao >= rv && rede.transporte.estado === "aberta", revHost, 30000)) && (await esperar(gM, () => rede.estado === "dentro" && !!rede.painel, null, 30000)));
+  const voltaram = (await esperar(gV, (rv) => rede.estado === "dentro" && rede.retrato && rede.retrato.revisao >= rv && rede.transporte.estado === "aberta", revHost, 30000)) && (await esperar(gM, () => rede.estado === "dentro" && !!rede.painel, null, 30000));
+  if (!voltaram) await diagRede("volta", { host, gV, gM });
+  conf("Os celulares voltam sozinhos, com o retrato da partida", voltaram);
   const mestreAgora = await H(() => jogadorIdDe(mestreIndex));
   const gMestre = mestreAgora === ids.vez ? gV : mestreAgora === ids.mestre ? gM : null;
   if (gMestre) conf("Depois da volta, o Mestre recebe a resposta de novo", await esperar(gMestre, () => !!rede.segredo && !!rede.segredo.resposta, null, 15000));
@@ -374,16 +486,31 @@ async function rodar(b, modo, porta, turn) {
   const revTroca = await H(() => partidaRevisao);
   const placarTroca = await H(() => JSON.stringify(players.map((p) => [p.id, p.score, p.position])));
   // o pacote vai no máximo a cada 3 s (e na batida de 4 s): espera o sucessor estar com a revisão de agora
-  await esperar(gV, (rv) => !!rede.recuperacao && rede.recuperacao.revisao === rv, revTroca, 10000);
+  const pacoteEmDia = await esperar(gV, (rv) => !!rede.recuperacao && rede.recuperacao.revisao === rv, revTroca, 10000);
+  const pacoteRev = await gV.evaluate(() => rede.recuperacao && rede.recuperacao.revisao);
+  const revPreFecho = await H(() => partidaRevisao);
   await host.close();
   conf("O outro celular avisa que o host sumiu e quem assume", await esperar(gM, () => !!document.querySelector(".rede-conexao") && /assume/.test(document.querySelector(".rede-conexao").textContent), null, 15000));
-  conf("O sucessor assume: vira host da MESMA sala", await esperar(gV, (s) => typeof rede !== "undefined" && rede && rede.papel === "host" && rede.sala === s && rede.transporte.estado === "aberta", sala, 60000));
-  conf("Nada se perdeu: mesma revisão e o mesmo placar", (await gV.evaluate(() => partidaRevisao)) === revTroca && (await gV.evaluate(() => JSON.stringify(players.map((p) => [p.id, p.score, p.position])))) === placarTroca);
+  const assumiu = await esperar(gV, (s) => typeof rede !== "undefined" && rede && rede.papel === "host" && rede.sala === s && rede.transporte.estado === "aberta", sala, 60000);
+  if (!assumiu) await diagRede("troca", { gV, gM });
+  conf("O sucessor assume: vira host da MESMA sala", assumiu);
+  const revDepois = await gV.evaluate(() => partidaRevisao), placarDepois = await gV.evaluate(() => JSON.stringify(players.map((p) => [p.id, p.score, p.position])));
+  // nada se perdeu = não voltou nenhuma revisão e o placar é o mesmo (o novo host pode avançar logo depois de assumir)
+  if (revDepois !== revTroca || placarDepois !== placarTroca) console.log(`[diag perdeu] ${turn ? "turn" : modo}: revTroca=${revTroca} hostAntesDeFechar=${revPreFecho} pacote=${pacoteRev} emDia=${pacoteEmDia} novoHost=${revDepois} placar ${placarTroca} → ${placarDepois}`);
+  conf("Nada se perdeu: nenhuma revisão voltou e o placar é o mesmo", revDepois >= revTroca && revDepois <= revTroca + 1 && placarDepois === placarTroca);
   conf("O novo host joga com o próprio jogador (Beto)", (await gV.evaluate(() => rede.hostEu)) === ids.vez);
   conf("O outro celular se reconecta ao novo host sozinho", await esperar(gM, () => rede.estado === "dentro" && !!rede.painel && Date.now() - rede.ultimoHost < 5000, null, 40000));
   // o host antigo volta: descobre que já tem host e entra como jogador
   const velhoHost = await abrir("");
-  conf("O host antigo volta e entra como jogador (não briga pela sala)", await esperar(velhoHost, (s) => typeof rede !== "undefined" && rede && rede.papel === "convidado" && rede.sala === s, sala, 40000));
+  const virouJogador = await esperar(velhoHost, (s) => typeof rede !== "undefined" && rede && rede.papel === "convidado" && rede.sala === s, sala, 40000);
+  if (!virouJogador)
+    console.log(
+      `[diag velho] ${turn ? "turn" : modo}:`,
+      await velhoHost
+        .evaluate(() => JSON.stringify({ url: location.hash, rede: typeof rede !== "undefined" && rede ? { papel: rede.papel, sala: rede.sala, estado: rede.estado, t: rede.transporte && rede.transporte.estado } : null, starterChosen, gameEnded, orfa: !!document.getElementById("redeOrfa"), guardado: localStorage.getItem("perfil5_rede_host") }))
+        .catch((e) => String(e)),
+    );
+  conf("O host antigo volta e entra como jogador (não briga pela sala)", virouJogador);
   await velhoHost.close();
   for (const pg of [gM, gV, gC]) await pg.close();
   await ctx.close();
@@ -541,6 +668,11 @@ async function rodarSalaPrimeiro(b) {
     "Fala particular chega no celular dela, marcada como dela",
     await esperar(g, () => (document.querySelector("#redeFala.minha") && /segredo da Ana/.test(document.getElementById("redeFala").textContent)) || (rede.falas || []).some((f) => /segredo da Ana/.test(f.texto) && f.minha), null, 12000),
   );
+  // 1.7.10 (relato do JF): fala que cita só a Ana (em outro aparelho) vai pro celular dela, com o rosto e a
+  // etiqueta do humor, e não aparece no host; fala da mesa (sem citar ninguém de fora) segue no host
+  await host.evaluate(() => { document.getElementById("jfToast") && document.getElementById("jfToast").remove(); caosLastPick = { bank: "gerador.erro.normal", key: "x", text: "[C.A.O.S.] Ana, foi você que pediu essa." }; showToastMessage("[C.A.O.S.] Ana, foi você que pediu essa."); });
+  conf("Fala com quem está em outro aparelho vai pro celular dela (com o rosto e o humor)", await esperar(g, () => (rede.falas || []).concat(document.getElementById("redeFala") ? [{ html: document.getElementById("redeFala").innerHTML }] : []).some((f) => (f.html && /foi você que pediu/.test(f.html) && /rede-fala-rosto/.test(f.html)) || (/foi você que pediu/.test(f.texto || "") && f.minha && f.emo)), null, 12000));
+  conf("…e não aparece no aparelho do host", !(await host.evaluate(() => !!document.getElementById("jfToast") && /foi você que pediu/.test(document.getElementById("jfToast").textContent))));
   // 1.7.9.5: a Mestre vê a carta como na tela de sempre (a dica da vez e os botões do veredito)
   await host.evaluate(() => redeHostPublicar(true));
   conf(
@@ -626,7 +758,7 @@ async function rodarSalaPrimeiro(b) {
     erros.push(...r3.erros);
   }
   if (SO !== "local") {
-    const sv = await servidorPeer();
+    const sv = SERVIDOR ? { porta: SERVIDOR, fechar: () => {} } : await servidorPeer();
     if (!sv) console.log("(sem o pacote 'peer': o roteiro pela internet não rodou; npm install)");
     else {
       try {
@@ -636,6 +768,18 @@ async function rodarSalaPrimeiro(b) {
         const rc = await rodarColisao(b, sv.porta);
         todos.push(...rc.ok);
         erros.push(...rc.erros);
+        if (SERVIDOR) {
+          const pub = await servidorPeer();
+          if (pub) {
+            try {
+              const rn = await rodarServidorNosso(b, SERVIDOR, pub.porta);
+              todos.push(...rn.ok);
+              erros.push(...rn.erros);
+            } finally {
+              pub.fechar();
+            }
+          }
+        }
         // 1.7.9.3 · de novo, mas só pela ponte TURN (servidor local): prova que a conexão passa pelo relay
         const tv = servidorTurn();
         if (!tv) console.log("(sem o pacote 'node-turn': o roteiro via TURN não rodou; npm install)");

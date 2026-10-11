@@ -255,6 +255,42 @@ const ARQ = acharMestre(process.argv[2]);
       acessCfg.calmo = calmoAntes; aplicarAcessibilidade();
       out.calmoSeparado = calmoOk && batOk;
     }
+    // 1.7.10 (pedido do JF): nome repetido no cadastro destaca o nome já cadastrado e o C.A.O.S. comenta
+    {
+      const salvos = players, iniAntes = starterChosen;
+      starterChosen = false;
+      players = [{ id: 'j_rep001', name: 'Anne', score: 0, position: 0, color: PLAYER_COLORS[0], avatar: '😀', humor: 'normal', gems: {} }];
+      renderScoreboard();
+      const inp = document.getElementById('playerNameInput');
+      inp.value = 'anne';
+      cadRepetidoAt = 0; cadRepetidoN = 0;
+      const n0 = players.length;
+      addPlayer();
+      const li = document.querySelector('#scoreboard li[data-i="0"]');
+      const toast = document.getElementById('jfToast');
+      out.nomeRepetido = players.length === n0 && !!li && li.classList.contains('cad-repetido') && inp.classList.contains('cad-campo-erro') && !!toast && /Anne/.test(toast.textContent) && !document.querySelector('.caos-modal-ov');
+      players = salvos; starterChosen = iniAntes; inp.value = ''; renderScoreboard();
+    }
+    // 1.7.10: Reportar carta anota no aparelho (sem mostrar a resposta na janela, sem mexer na partida)
+    {
+      window.__REDE_SERVIDOR = false; // (sem mandar pro servidor de verdade)
+      localStorage.removeItem('perfil5_cartas_reportadas');
+      const cartaAntes = currentCard, fimAntes = gameEnded, iniAntes = starterChosen;
+      if (!currentCard) currentCard = cartaPorId('ANO-0001');
+      gameEnded = false; starterChosen = true;
+      const rev0 = partidaRevisao, temCarta = !!(currentCard && currentCard.id);
+      cartaReportarAbrir();
+      const ov = document.getElementById('reportarCarta');
+      const semResposta = !!ov && temCarta && !ov.textContent.toLowerCase().includes(String(currentCard.answer).toLowerCase());
+      if (ov && temCarta) { ov.querySelector('input[name="repMotivo"][value="entrega"]').click(); ov.querySelector('#repSalvar').click(); }
+      const l = cartasReportadas();
+      out.reportar = temCarta && semResposta && l.length === 1 && l[0].id === currentCard.id && l[0].motivo === 'entrega' && cartasReportadasTexto().includes(currentCard.id) && partidaRevisao === rev0;
+      out.reportar = out.reportar && cartaReporteFila().length === 1;
+      currentCard = cartaAntes; gameEnded = fimAntes; starterChosen = iniAntes;
+      if (ov) ov.remove();
+      localStorage.removeItem('perfil5_cartas_reportadas');
+      localStorage.removeItem('perfil5_cartas_reporte_fila');
+    }
     resetDeck();
     out.zerou = partidaRevisao === 0 && acoesLog.length === 0 && tabForma === null;
     out.formaNova = !!tabFormaAtual() && tabForma !== formaSalva;
@@ -312,6 +348,8 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.9.6: lobby com abas (Tabuleiro, Pontos e Joias quando a partida dá joias), abrindo na que decide', r.lobbyAbas],
     ['1.7.9.5: na partida o "toque pra ampliar" mostra só a lista, sem o tabuleiro grande', r.ampliarSemDesenho],
     ['1.7.9.5: Menos movimento (acessibilidade) e Modo Batata são coisas separadas', r.calmoSeparado],
+    ['1.7.10: Reportar carta anota no aparelho, sem resposta na janela e sem mexer na partida', r.reportar],
+    ['1.7.10: nome repetido: o nome já cadastrado fica em destaque, o campo fica vermelho e o C.A.O.S. comenta', r.nomeRepetido],
   ];
   linhas.forEach(([n, ok]) => console.log(`${ok ? 'ok    ' : 'FALHOU'}  ${n}`));
   const tudo = linhas.every((l) => l[1]) && !erros.length;

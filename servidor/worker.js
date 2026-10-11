@@ -252,10 +252,12 @@ export class Sinal {
     if (!idValido(id)) return recusar("ERROR", "Invalid id");
     // o mesmo id já está aqui: se é o mesmo aparelho voltando (mesmo token) ou um aparelho que sumiu,
     // o novo assume; se é outro aparelho vivo, o id está ocupado (o jogo trata: outro código ou outro host)
+    let herdada = null; // o mesmo aparelho voltando (mesmo token) mantém o anúncio da sala (revisão 1.7.10)
     for (const ws of this.ctx.getWebSockets(id)) {
       const a = ws.deserializeAttachment();
       if (!a || a.morto) continue;
       if (a.token === token || Date.now() - a.visto > MORTO_MS) {
+        if (a.token === token && a.info) herdada = a.info;
         ws.serializeAttachment({ ...a, morto: true });
         try {
           ws.close(1000, "substituido");
@@ -264,7 +266,7 @@ export class Sinal {
     }
     this.ctx.acceptWebSocket(servidor, [id]);
     const agora = Date.now();
-    servidor.serializeAttachment({ id, token, rede: rede(ip), visto: agora, desde: agora, info: null });
+    servidor.serializeAttachment({ id, token, rede: rede(ip), visto: agora, desde: agora, info: herdada });
     servidor.send(JSON.stringify({ type: "OPEN" }));
     return new Response(null, { status: 101, webSocket: cliente });
   }
