@@ -281,7 +281,12 @@ async function segundoPlano(b, sv) {
     const volta = await ctxAnne.newPage();
     volta.on("pageerror", (e) => erros.push(`[${rot}] ${e.message.slice(0, 160)}`));
     await volta.goto("file://" + ARQ + "#sala=" + sala);
-    conf(`[${rot}] O iOS fechou a página: abrindo o link de novo ela volta pro mesmo lugar, sem pedir de novo`, await esperar(volta, (id) => rede && rede.estado === "dentro" && rede.eu === id && !!rede.retrato, anne.id, 25000));
+    const voltouAnne = await esperar(volta, (id) => rede && rede.estado === "dentro" && rede.eu === id && !!rede.retrato, anne.id, 25000);
+    if (!voltouAnne) {
+      console.log("[diag ios] anne:", await volta.evaluate(() => JSON.stringify({ rede: rede ? { estado: rede.estado, eu: rede.eu, motivo: rede.motivo, t: rede.transporte.estado, erro: rede.transporte.erro, diag: rede.transporte.diag && rede.transporte.diag() } : null, guardado: Object.keys(localStorage).filter((k) => k.startsWith("perfil5_rede_eu_")).map((k) => k + "=" + localStorage.getItem(k)) })).catch(String));
+      console.log("[diag ios] host:", await host.evaluate(() => JSON.stringify({ pedidos: Object.values(rede.pedidos).map((x) => x.tipo + ":" + x.chave), aprovados: Object.keys(rede.aprovados), assentos: Object.entries(rede.assentos).map(([k, a]) => k + ":" + a.chave + ":" + (redeOnline(a) ? "on" : "off")), t: rede.transporte.estado })).catch(String));
+    }
+    conf(`[${rot}] O iOS fechou a página: abrindo o link de novo ela volta pro mesmo lugar, sem pedir de novo`, voltouAnne);
     // 3) o host (JF) troca de app por 6 s: a sala continua com ele
     await congelar(host, 6000);
     await host.waitForTimeout(1500);
