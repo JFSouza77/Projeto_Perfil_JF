@@ -249,7 +249,7 @@ async function rodar(b, modo, porta, turn) {
   const diagRede = async (onde, pgs) => {
     for (const [nome, pg] of Object.entries(pgs)) {
       try {
-        const d = await pg.evaluate(() => (typeof rede === "undefined" || !rede ? null : { estado: rede.estado, papel: rede.papel, t: rede.transporte.estado, erro: rede.transporte.erro, diag: rede.transporte.diag ? rede.transporte.diag() : null, semHost: rede.ultimoHost ? Date.now() - rede.ultimoHost : null, suc: rede.retrato && rede.retrato.sucessor, eu: rede.eu, rec: !!rede.recuperacao, assumindo: !!rede.assumindo }));
+        const d = await pg.evaluate(() => (typeof rede === "undefined" || !rede ? null : { estado: rede.estado, papel: rede.papel, t: rede.transporte.estado, erro: rede.transporte.erro, diag: rede.transporte.diag ? rede.transporte.diag() : null, semHost: rede.ultimoHost ? Date.now() - rede.ultimoHost : null, suc: rede.retrato && rede.retrato.sucessor, eu: rede.eu, rec: !!rede.recuperacao, assumindo: !!rede.assumindo, chave: rede.chave, aprovados: rede.aprovados ? Object.keys(rede.aprovados) : undefined, pedidos: rede.pedidos ? Object.values(rede.pedidos).map((x) => x.tipo + ":" + x.chave) : undefined, assentos: rede.assentos ? Object.entries(rede.assentos).map(([k, a]) => k + ":" + a.chave) : undefined, guardado: localStorage.getItem("perfil5_rede_host") }));
         console.log(`[diag ${onde}] ${turn ? "turn" : modo} ${nome}:`, JSON.stringify(d));
       } catch (e) {
         console.log(`[diag ${onde}] ${nome}: (fechada)`);
