@@ -486,13 +486,17 @@ async function rodar(b, modo, porta, turn) {
   const revTroca = await H(() => partidaRevisao);
   const placarTroca = await H(() => JSON.stringify(players.map((p) => [p.id, p.score, p.position])));
   // o pacote vai no máximo a cada 3 s (e na batida de 4 s): espera o sucessor estar com a revisão de agora
-  await esperar(gV, (rv) => !!rede.recuperacao && rede.recuperacao.revisao === rv, revTroca, 10000);
+  const pacoteEmDia = await esperar(gV, (rv) => !!rede.recuperacao && rede.recuperacao.revisao === rv, revTroca, 10000);
+  const pacoteRev = await gV.evaluate(() => rede.recuperacao && rede.recuperacao.revisao);
+  const revPreFecho = await H(() => partidaRevisao);
   await host.close();
   conf("O outro celular avisa que o host sumiu e quem assume", await esperar(gM, () => !!document.querySelector(".rede-conexao") && /assume/.test(document.querySelector(".rede-conexao").textContent), null, 15000));
   const assumiu = await esperar(gV, (s) => typeof rede !== "undefined" && rede && rede.papel === "host" && rede.sala === s && rede.transporte.estado === "aberta", sala, 60000);
   if (!assumiu) await diagRede("troca", { gV, gM });
   conf("O sucessor assume: vira host da MESMA sala", assumiu);
-  conf("Nada se perdeu: mesma revisão e o mesmo placar", (await gV.evaluate(() => partidaRevisao)) === revTroca && (await gV.evaluate(() => JSON.stringify(players.map((p) => [p.id, p.score, p.position])))) === placarTroca);
+  const revDepois = await gV.evaluate(() => partidaRevisao), placarDepois = await gV.evaluate(() => JSON.stringify(players.map((p) => [p.id, p.score, p.position])));
+  if (revDepois !== revTroca || placarDepois !== placarTroca) console.log(`[diag perdeu] ${turn ? "turn" : modo}: revTroca=${revTroca} hostAntesDeFechar=${revPreFecho} pacote=${pacoteRev} emDia=${pacoteEmDia} novoHost=${revDepois} placar ${placarTroca} → ${placarDepois}`);
+  conf("Nada se perdeu: mesma revisão e o mesmo placar", revDepois === revTroca && placarDepois === placarTroca);
   conf("O novo host joga com o próprio jogador (Beto)", (await gV.evaluate(() => rede.hostEu)) === ids.vez);
   conf("O outro celular se reconecta ao novo host sozinho", await esperar(gM, () => rede.estado === "dentro" && !!rede.painel && Date.now() - rede.ultimoHost < 5000, null, 40000));
   // o host antigo volta: descobre que já tem host e entra como jogador
