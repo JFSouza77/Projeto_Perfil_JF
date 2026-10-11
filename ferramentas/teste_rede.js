@@ -240,6 +240,21 @@ async function rodar(b, modo, porta, turn) {
   const abrir = async (hash, initScript) => {
     const pg = await ctx.newPage();
     pg.on("pageerror", (e) => erros.push(e.message.slice(0, 160)));
+    if (process.env.REDE_ESPIAO) {
+      pg.on("console", (c) => c.text().startsWith("[HOSTKEY]") && console.log(c.text().slice(0, 400)));
+      await pg.addInitScript(() => {
+        const set = Storage.prototype.setItem, rem = Storage.prototype.removeItem;
+        const quem = () => (location.hash || "#host").slice(0, 20) + " " + (typeof rede !== "undefined" && rede ? rede.papel : "-");
+        Storage.prototype.setItem = function (k, v) {
+          if (k === "perfil5_rede_host") console.log("[HOSTKEY] set", quem(), Date.now(), String(v).slice(0, 160), new Error().stack.split("\n").slice(2, 5).join(" < ").replace(/file:\/\/\S+?:(\d+):\d+/g, "@$1"));
+          return set.call(this, k, v);
+        };
+        Storage.prototype.removeItem = function (k) {
+          if (k === "perfil5_rede_host") console.log("[HOSTKEY] rem", quem(), Date.now(), new Error().stack.split("\n").slice(2, 5).join(" < ").replace(/file:\/\/\S+?:(\d+):\d+/g, "@$1"));
+          return rem.call(this, k);
+        };
+      });
+    }
     if (initScript) await pg.addInitScript(initScript);
     await pg.goto("file://" + ARQ + (hash || ""));
     return pg;

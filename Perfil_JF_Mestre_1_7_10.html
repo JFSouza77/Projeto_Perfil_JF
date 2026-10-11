@@ -22,6 +22,10 @@
           o Mestre longe. Cartas: uma especial de cada tipo por carta (316 trocas, docs/Correcoes_de_Cartas.md;
           auditar_cartas confere). Cadastro: nome repetido (cadNomeRepetido). Testes novos: teste_online.js
           (partidas até o fim, segundo plano, atualização), teste_rede --servidor; revisão de código (10 achados).
+          BUG da bateria (intermitente): o JFStore.boot de outra aba copiava do banco a cópia velha de
+          perfil5_rede_host por cima da do host (localStorage entre abas chega com atraso) e a lista de aprovados
+          sumia; host recarregado mandava os celulares pedirem entrada de novo. Agora as chaves perfil5_rede_* não
+          voltam do banco no boot.
  = FIM DA PARTIDA ONLINE E VÁRIOS NO APARELHO DO HOST.
           Regra do JF: partida online (partidaOnline, salvo no save, zerado no resetDeck) não continua sem ninguém de
           fora. redeSozinhoConferir na batida: 45 s sem nenhum aparelho de fora online → pausa e janela #redeSozinho
@@ -33979,6 +33983,9 @@ const JFStore = (function () {
           "perfil5_tab_lobby_visto",
         ].forEach((k) => keys.add(k));
         for (const k of keys) {
+          // 1.7.10: estado da sala online não volta do banco: outra aba (convidado no mesmo navegador) via a
+          // cópia velha e regravava por cima da do host, e a lista de aprovados sumia (falha intermitente)
+          if (k.startsWith("perfil5_rede_")) continue;
           let best = api.getItem(k);
           const cands = [fromIdb[k]];
           if (hasClaudeStorage) {
