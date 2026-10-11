@@ -133,7 +133,7 @@ function telaoDesenhar(r, alvo) {
       <div>👉 Vez de<br><b>${nome(r.vezId)}</b></div>
       <div>⏱️ <b id="telaoRelogio">—</b></div>
     </section>
-    ${c ? `<section class="telao-carta"><div class="telao-cat">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)} · ${c.abertas.length} de ${c.totalDicas} dicas</div><ol class="telao-dicas">${dicas || "<li>Nenhuma dica aberta ainda</li>"}</ol></section>` : ""}
+    ${c ? `<section class="telao-carta"><div class="telao-cat">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)} · ${c.abertas.length} de ${c.totalDicas} dicas</div>${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>` : ""}
     ${tabHtmlTelao(r)}
     <section class="telao-placar"><ol>${placar}</ol></section>
     ${TELAO_SAIR}`;

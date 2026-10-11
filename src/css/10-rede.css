@@ -514,3 +514,10 @@ body.claro button.splash-embreve .eb-sub {
 #reportarCarta .rep-op input{margin-top:3px;min-width:20px;min-height:20px}
 #reportarCarta #repNota{width:100%;box-sizing:border-box;margin:6px 0 12px;padding:10px;border-radius:10px;font-size:1rem}
 #reportarCarta .rep-id,#reportarCarta .rep-total{font-size:.9rem;opacity:.9}
+/* 1.7.10 · balão do C.A.O.S. no celular igual ao do host (rosto + etiqueta do humor + cor) */
+.rede-fala{border:2px solid var(--emo-cor,#a78bfa);box-shadow:0 8px 30px #0008,0 0 22px color-mix(in srgb,var(--emo-cor,#a78bfa) 45%,transparent);background:#1a0f2ef2}
+.rede-fala.minha{border-color:var(--emo-cor,#fbbf24)}
+.rede-fala-topo{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.rede-fala-rosto{display:inline-block;padding:4px 12px;border:2px solid var(--emo-cor,#a78bfa);border-radius:999px;font-weight:800;color:var(--emo-cor,#c4b5fd);white-space:nowrap;font-size:.95rem}
+.rede-fala-rotulo{display:inline-block;padding:3px 12px;border-radius:999px;background:var(--emo-cor,#a78bfa);color:#14001f;font-weight:900;letter-spacing:.12em;text-transform:uppercase;font-size:.75rem}
+.rede-fala-txt{font-weight:700;font-size:1.02rem}

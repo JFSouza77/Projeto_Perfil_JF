@@ -677,3 +677,5 @@ html.acess-calmo .fx-shake {
   animation: none;
   transform: none;
 }
+/* 1.7.10 (print do JF): sem dica aberta não vira item "1." da lista */
+.telao-sem-dica{opacity:.75;font-size:1.05rem;margin:10px 4px}

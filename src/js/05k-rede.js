@@ -698,7 +698,12 @@ function redeValidar(bruto) {
       m.perfil && typeof m.perfil === "object" && txt(m.perfil.nome, 15) && typeof m.chave === "string" && /^[a-z0-9]{12,32}$/.test(m.chave) &&
       ["cor", "avatar", "humor", "idade", "faixa"].every((k) => m.perfil[k] === undefined || m.perfil[k] === null || txt(m.perfil[k], 20)),
     aguarde: () => true,
-    fala: () => txt(m.texto, 240) && (m.quem === undefined || (Array.isArray(m.quem) && m.quem.length <= 8 && m.quem.every(jogadorIdValido))),
+    fala: () =>
+      txt(m.texto, 240) &&
+      (m.quem === undefined || (Array.isArray(m.quem) && m.quem.length <= 8 && m.quem.every(jogadorIdValido))) &&
+      (m.emo === undefined || (typeof m.emo === "string" && /^[a-z]{2,20}$/.test(m.emo))) &&
+      (m.face === undefined || txt(m.face, 24)) &&
+      (m.rotulo === undefined || txt(m.rotulo, 24)),
     bemvindo: () => jogadorIdValido(m.jogadorId),
     escolha: () => Array.isArray(m.lugares) && m.lugares.length <= 12 && m.lugares.every((l) => l && jogadorIdValido(l.id) && typeof l.nome === "string"),
     recusa: () => txt(m.motivo, 40) && (m.versao === undefined || txt(m.versao, 20)) && (m.build === undefined || Number.isInteger(m.build)),
@@ -1151,24 +1156,31 @@ function redeAssentar(ses, pedido, chave) {
 function redeHostFala(f) {
   if (!rede || rede.papel !== "host" || !f || !f.texto) return;
   const ids = (f.para || []).map((d) => d.id).filter((id) => jogadorIdValido(id));
+  // 1.7.10: o rosto e a etiqueta do humor vão junto (o celular desenha o balão igual ao do host)
+  const visual = {};
+  if (typeof f.emo === "string" && /^[a-z]{2,20}$/.test(f.emo)) visual.emo = f.emo;
+  if (typeof f.face === "string" && f.face.length <= 24) visual.face = f.face;
+  if (typeof f.rotulo === "string" && f.rotulo.length <= 24) visual.rotulo = f.rotulo;
   if (f.privado) {
     ids.forEach((id) => {
       const a = rede.assentos[id];
-      if (a && redeOnline(a) && !redeNoHost(id)) redeEnviar("fala", { texto: f.texto, quem: [id] }, a.sessao);
+      if (a && redeOnline(a) && !redeNoHost(id)) redeEnviar("fala", { texto: f.texto, quem: [id], ...visual }, a.sessao);
     });
     return;
   }
-  redeEnviar("fala", ids.length ? { texto: f.texto, quem: ids.slice(0, 8) } : { texto: f.texto });
+  redeEnviar("fala", ids.length ? { texto: f.texto, quem: ids.slice(0, 8), ...visual } : { texto: f.texto, ...visual });
 }
 // A fala particular é só de quem está em outro aparelho? Então não aparece aqui no host.
+// 1.7.10 (relato do JF: "falou com a Anne no MEU celular"): vale também pra fala NÃO particular que cita só
+// quem está em outro aparelho: vai pro celular dessa pessoa e não aparece no host. Fala da mesa: todos.
 function redeFalaSoLonge(f) {
-  if (!rede || rede.papel !== "host" || !f || !f.privado) return false;
+  if (!rede || rede.papel !== "host" || !f) return false;
   const ids = (f.para || []).map((d) => d.id).filter(Boolean);
   return ids.length > 0 && ids.every((id) => !redeNoHost(id) && redeOnline(rede.assentos[id]));
 }
 // No celular do convidado: balão da fala (e a voz, quando a fala é com ele).
 function redeFalaMostrar(m) {
-  rede.falas = (rede.falas || []).concat({ texto: m.texto, minha: Array.isArray(m.quem) && m.quem.includes(rede.eu) }).slice(-3);
+  rede.falas = (rede.falas || []).concat({ texto: m.texto, minha: Array.isArray(m.quem) && m.quem.includes(rede.eu), emo: m.emo || null, face: m.face || null, rotulo: m.rotulo || null }).slice(-3);
   if (!rede.falaAtiva) redeFalaProxima();
   else if (rede.falas.length > 1) {
     // fila crescendo: encurta a fala da tela
@@ -1194,7 +1206,18 @@ function redeFalaProxima() {
     document.body.appendChild(el);
   }
   el.classList.toggle("minha", f.minha);
-  el.innerHTML = `<b>🤖 C.A.O.S.</b> ${escapeHtml(f.texto)}`;
+  // 1.7.10 (relato do JF): o mesmo jeito do balão do host: rosto do C.A.O.S., etiqueta do humor e a cor dele
+  const E = f.emo && typeof CAOS_EMOS !== "undefined" ? CAOS_EMOS[f.emo] : null;
+  let face = f.face;
+  if (!face && E)
+    try {
+      face = (caosFaceEscolher(f.emo) || [])[0] || null;
+    } catch (e) {}
+  const rotulo = f.rotulo || (E ? E.nome : null);
+  el.style.setProperty("--emo-cor", E ? E.cor : "#a78bfa");
+  el.innerHTML =
+    `<div class="rede-fala-topo"><span class="rede-fala-rosto">${escapeHtml(face || "🤖")}</span>${rotulo ? `<span class="rede-fala-rotulo">${escapeHtml(rotulo)}</span>` : ""}</div>` +
+    `<div class="rede-fala-txt">[C.A.O.S.] ${escapeHtml(f.texto)}</div>`;
   if (f.minha)
     try {
       caosSpeak("[C.A.O.S.] " + f.texto, "__normal");
@@ -2468,9 +2491,9 @@ const REDE_ESTADO_HOST = {
    cadastrado ainda. Quem vai entrar usa o botão 🌐 Jogar online da tela inicial e digita o código. */
 /* --- 1.7.9.9 · Partida online sem ninguém (regra do JF) ---
    Teve gente em outro aparelho e todo mundo saiu: 45 s pra quem caiu voltar; depois o jogo pausa e avisa;
-   ninguém voltou em 2 min → a partida é encerrada (sem "continuar sozinho": quem está no aparelho do host
-   pode encerrar antes ou esperar mais 2 min). App aberto de novo sem sala pra voltar → partida encerrada. */
-let REDE_SOZINHO_MS = 45000, REDE_SOZINHO_FIM_MS = 120000;
+   ninguém voltou em 5 min (1.7.10; era 2) → a partida é encerrada (sem "continuar sozinho": quem está no aparelho do host
+   pode encerrar antes ou esperar mais 5 min). App aberto de novo sem sala pra voltar → partida encerrada. */
+let REDE_SOZINHO_MS = 45000, REDE_SOZINHO_FIM_MS = 300000; // 1.7.10 (JF): 5 min (2 min era o tempo de atender uma ligação)
 try {
   if (typeof window !== "undefined" && Array.isArray(window.__REDE_SOZINHO)) [REDE_SOZINHO_MS, REDE_SOZINHO_FIM_MS] = window.__REDE_SOZINHO; // (teste)
 } catch (e) {}
@@ -2505,7 +2528,7 @@ function redeSozinhoConferir() {
   const ov = document.createElement("div");
   ov.id = "redeSozinho";
   ov.className = "jf-modal-bg rede-sozinho";
-  ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>📴 Todo mundo saiu da sala</h3><p>Esta partida é <b>online</b>: os outros aparelhos saíram da sala <b>${rede.sala}</b>. Se ninguém voltar em <b id="redeSozinhoSeg">${falta}</b> s, a partida é encerrada.</p><p><small>Quem caiu é só abrir o jogo de novo (ou o link) pra voltar.</small></p><button type="button" class="chip" id="redeSozinhoEsperar">⏳ Esperar mais 2 minutos</button><button type="button" class="chip" id="redeSozinhoFim" style="margin-top:10px">🏁 Encerrar a partida agora</button></div>`;
+  ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>📴 Todo mundo saiu da sala</h3><p>Esta partida é <b>online</b>: os outros aparelhos saíram da sala <b>${rede.sala}</b>. Se ninguém voltar em <b id="redeSozinhoSeg">${falta}</b> s, a partida é encerrada.</p><p><small>Quem caiu é só abrir o jogo de novo (ou o link) pra voltar.</small></p><button type="button" class="chip" id="redeSozinhoEsperar">⏳ Esperar mais 5 minutos</button><button type="button" class="chip" id="redeSozinhoFim" style="margin-top:10px">🏁 Encerrar a partida agora</button></div>`;
   ov.querySelector("#redeSozinhoEsperar").addEventListener("click", () => {
     if (rede) rede.sozinhoDesde = Date.now() - REDE_SOZINHO_MS;
     redeSozinhoConferir();

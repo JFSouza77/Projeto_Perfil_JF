@@ -262,7 +262,7 @@ function caosCanalRegistrar(texto, privado) {
       privado: !!(privado || (exp && exp.privado)),
     });
     if (caosCanal.length > 40) caosCanal.shift();
-    if (typeof redeHostFala === "function") redeHostFala(caosCanal[caosCanal.length - 1]); // 1.7.9.6: a fala vai pra sala online
+    // 1.7.10: a fala vai pra sala online depois (no canal da tela), já com o humor e o rosto do C.A.O.S.
   } catch (e) {}
 }
 // Fala dirigida a um jogador (pelo id; aceita o nome por compatibilidade). Hoje aparece na tela de
@@ -291,11 +291,30 @@ function caosEspinhaInstalar() {
     const viaCanal = function (msg, afterClose) {
       if (typeof msg === "string" && msg.indexOf("[C.A.O.S.]") !== -1) {
         caosCanalRegistrar(msg, caosCanalPrivado);
-        // 1.7.9.6: fala particular de quem está em outro aparelho (online) não aparece aqui
-        if (typeof redeFalaSoLonge === "function" && redeFalaSoLonge(caosCanal[caosCanal.length - 1])) {
+        const ev = caosCanal[caosCanal.length - 1];
+        // 1.7.9.6 / 1.7.10 (relato do JF): fala com quem está em outro aparelho (online) vai pro celular
+        // dessa pessoa (com voz) e não aparece aqui. O humor sai do banco da fala, como no balão daqui.
+        if (typeof redeFalaSoLonge === "function" && redeFalaSoLonge(ev)) {
+          try {
+            const banco = caosLastPick && String(msg).indexOf(String(caosLastPick.text).replace(/^\[C\.A\.O\.S\.\]\s*/, "")) !== -1 ? caosLastPick.bank : null;
+            ev.emo = caosEmocaoDaFala(banco) || null;
+          } catch (e) {}
+          if (typeof redeHostFala === "function") redeHostFala(ev);
           if (typeof afterClose === "function") afterClose();
           return;
         }
+        const r = toast.apply(this, arguments);
+        // a mesa toda: os celulares mostram com o mesmo rosto e a mesma etiqueta do balão daqui
+        try {
+          const el = document.getElementById("jfToast");
+          if (el && el.dataset.emo && ev && String(el.textContent).indexOf(String(ev.texto).slice(0, 24)) !== -1) {
+            ev.emo = el.dataset.emo;
+            ev.face = el.getAttribute("data-face") || null;
+            ev.rotulo = (el.querySelector(".toast-rotulo") || {}).textContent || null;
+          }
+        } catch (e) {}
+        if (typeof redeHostFala === "function") redeHostFala(ev);
+        return r;
       }
       return toast.apply(this, arguments);
     };
