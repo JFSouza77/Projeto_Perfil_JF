@@ -255,6 +255,22 @@ const ARQ = acharMestre(process.argv[2]);
       acessCfg.calmo = calmoAntes; aplicarAcessibilidade();
       out.calmoSeparado = calmoOk && batOk;
     }
+    // 1.7.10 (pedido do JF): nome repetido no cadastro destaca o nome já cadastrado e o C.A.O.S. comenta
+    {
+      const salvos = players, iniAntes = starterChosen;
+      starterChosen = false;
+      players = [{ id: 'j_rep001', name: 'Anne', score: 0, position: 0, color: PLAYER_COLORS[0], avatar: '😀', humor: 'normal', gems: {} }];
+      renderScoreboard();
+      const inp = document.getElementById('playerNameInput');
+      inp.value = 'anne';
+      cadRepetidoAt = 0; cadRepetidoN = 0;
+      const n0 = players.length;
+      addPlayer();
+      const li = document.querySelector('#scoreboard li[data-i="0"]');
+      const toast = document.getElementById('jfToast');
+      out.nomeRepetido = players.length === n0 && !!li && li.classList.contains('cad-repetido') && inp.classList.contains('cad-campo-erro') && !!toast && /Anne/.test(toast.textContent) && !document.querySelector('.caos-modal-ov');
+      players = salvos; starterChosen = iniAntes; inp.value = ''; renderScoreboard();
+    }
     // 1.7.10: Reportar carta anota no aparelho (sem mostrar a resposta na janela, sem mexer na partida)
     {
       window.__REDE_SERVIDOR = false; // (sem mandar pro servidor de verdade)
@@ -333,6 +349,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.9.5: na partida o "toque pra ampliar" mostra só a lista, sem o tabuleiro grande', r.ampliarSemDesenho],
     ['1.7.9.5: Menos movimento (acessibilidade) e Modo Batata são coisas separadas', r.calmoSeparado],
     ['1.7.10: Reportar carta anota no aparelho, sem resposta na janela e sem mexer na partida', r.reportar],
+    ['1.7.10: nome repetido: o nome já cadastrado fica em destaque, o campo fica vermelho e o C.A.O.S. comenta', r.nomeRepetido],
   ];
   linhas.forEach(([n, ok]) => console.log(`${ok ? 'ok    ' : 'FALHOU'}  ${n}`));
   const tudo = linhas.every((l) => l[1]) && !erros.length;

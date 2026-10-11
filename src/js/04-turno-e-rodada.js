@@ -1444,7 +1444,7 @@ function addPlayer() {
     return;
   }
   if (players.some((p) => p.name.toLowerCase() === name.toLowerCase())) {
-    caosAvisoModal("Esse jogador já está na partida!");
+    cadNomeRepetido(name); // 1.7.10 (pedido do JF): treme, borda vermelha, mostra o nome na lista e o C.A.O.S. comenta
     return;
   }
   if (players.length >= MAX_PLAYERS) {

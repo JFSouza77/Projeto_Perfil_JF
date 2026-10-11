@@ -2303,3 +2303,8 @@ button.splash-embreve {
   font: inherit;
   cursor: pointer;
 }
+/* 1.7.10 · nome repetido no cadastro: o nome já cadastrado pisca em destaque e o campo fica com borda vermelha */
+#scoreboard li.cad-repetido{animation:cadRepetido 0.65s ease-in-out 4;outline:3px solid #ef4444;outline-offset:2px;border-radius:10px;background:#ef444422}
+@keyframes cadRepetido{0%,100%{box-shadow:0 0 0 0 #ef444400}50%{box-shadow:0 0 18px 4px #ef4444aa}}
+.cad-campo-erro{border-color:#ef4444 !important;box-shadow:0 0 0 3px #ef444455 !important}
+html.acess-calmo #scoreboard li.cad-repetido,body.batata-mode #scoreboard li.cad-repetido{animation:none}

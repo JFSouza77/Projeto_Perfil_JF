@@ -4679,6 +4679,25 @@ const REACTIVE_VOICE = {
       (d) => `[C.A.O.S.] Pode apertar até o dedo cansar: a cor ${d} não sai daí. Escolhe outra, vai.`,
     ],
   },
+  // 1.7.10 (pedido do JF): tentou cadastrar um nome que já está na partida (sobe o tom se insistir)
+  nomeRepetido: {
+    leve: [
+      (n) => `[C.A.O.S.] ${n} já está na lista! Olha ali, destacado.`,
+      (n) => `[C.A.O.S.] Opa, ${n} já entrou. Ninguém joga duas vezes, nem com saudade.`,
+      (n) => `[C.A.O.S.] Esse nome já tá na mesa: ${n}. Quer outro jogador ou foi sem querer?`,
+      (n) => `[C.A.O.S.] ${n} de novo? Já tem um ${n} aí. Clone eu não aceito.`,
+    ],
+    normal: [
+      (n) => `[C.A.O.S.] De novo o ${n}? Ele já está aqui, olha a lista.`,
+      (n) => `[C.A.O.S.] Já falei: ${n} já entrou. Se for outra pessoa, põe o sobrenome.`,
+      (n) => `[C.A.O.S.] ${n} em dobro não rola. Um ${n} por partida já dá trabalho.`,
+    ],
+    zero: [
+      (n) => `[C.A.O.S.] Terceira vez com ${n}. A lista tá ali piscando, gênio.`,
+      (n) => `[C.A.O.S.] Pode digitar ${n} mil vezes: continua tendo um só. Olha pra cima.`,
+      (n) => `[C.A.O.S.] ${n}, ${n}, ${n}... Tá tentando invocar? Ele já tá na mesa.`,
+    ],
+  },
   escolhaTomada: {
     leve: [
       (d, t, T, e, o) => `[C.A.O.S.] Ops! ${T} já é de ${d}. Que tal escolher ${o}?`,
