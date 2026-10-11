@@ -6,7 +6,23 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
-  1.7.9.9 · 10/10/2026 · "Rooms and Network Update · Regras da sala" = FIM DA PARTIDA ONLINE E VÁRIOS NO APARELHO DO HOST.
+  1.7.10 · 11/10/2026 · "Multiplayer Update · Online de verdade" = SERVIDOR E PONTE PRÓPRIOS (Cloudflare), PRIMEIRA DA 1.7.10.
+          Decisões do JF: servidor nosso (Cloudflare, servidor/worker.js: Worker + Durable Object) e a 1.7.10 sai antes
+          do Modo C.A.O.S. (que vem numa ramificação). Rede: REDE_SERVIDOR (perfil-jf-sala.joaofe0000.workers.dev);
+          host abre a sala no nosso E no PeerJS público (reserva); convidado tenta o nosso e depois o público;
+          ponte TURN do Cloudflare via /ponte (redePontePronta, 24 h, guardada em perfil5_rede_ponte). Salas da
+          rede (/salas, mesmo IP; cartão sem nome; Júnior não anuncia). Reportar carta (05n: fila no aparelho →
+          POST /reporte; página do JF com a senha REPORTES_SENHA). Versão: JOGO_BUILD (1800) + versao.js (nome de
+          exibição só texto; montar/build/testes acham o Mestre pelo build; a rede compara o build). Host que volta
+          do segundo plano (batida atrasou 12 s) pergunta quem está com a sala (redeHostVoltouDoFundo); sucessor
+          desiste se o host voltou; pacote de recuperação 1/s + no visibilitychange/pagehide; identidade do host
+          pré-aprovada (chaveHost). Atualizar junto (redeAtualizarJunto). Sala sem ninguém: 5 min. C.A.O.S.: fala
+          que FALA COM quem está em outro aparelho (vocativo ou particular) vai só pro celular dele; balão do
+          celular com rosto/etiqueta/cor (emo, face, rotulo na mensagem "fala"); Perto/Longe não aparece no host com
+          o Mestre longe. Cartas: uma especial de cada tipo por carta (316 trocas, docs/Correcoes_de_Cartas.md;
+          auditar_cartas confere). Cadastro: nome repetido (cadNomeRepetido). Testes novos: teste_online.js
+          (partidas até o fim, segundo plano, atualização), teste_rede --servidor; revisão de código (10 achados).
+ = FIM DA PARTIDA ONLINE E VÁRIOS NO APARELHO DO HOST.
           Regra do JF: partida online (partidaOnline, salvo no save, zerado no resetDeck) não continua sem ninguém de
           fora. redeSozinhoConferir na batida: 45 s sem nenhum aparelho de fora online → pausa e janela #redeSozinho
           (esperar mais 2 min ou encerrar); 2 min depois → redeEncerrarOnline (endGame). Fechar a sala no meio pede
@@ -695,7 +711,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.9.9</title>
+<title>Perfil JF · Beta 1.7.10</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

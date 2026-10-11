@@ -6,6 +6,29 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10",
+    data: "11/10/2026 · 10:24",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "Servidor e ponte próprios: cada um joga na sua internet, sem rotear. E o online ficou mais firme.",
+    itens: [
+      "🌉 Ponte própria: quem está no 4G ou 5G e quem está no Wi-Fi jogam juntos, cada um na sua internet. Não precisa mais rotear o celular.",
+      "🛟 Servidor de reserva: se o servidor da sala cair, o jogo passa pro de reserva sozinho e a partida segue.",
+      "📶 Salas na sua rede: na tela Jogar online aparecem as salas abertas no mesmo Wi-Fi. É só tocar e o host aceita. Sala do Júnior não aparece (entra pelo código ou QR Code).",
+      "📞 Ligação no meio do jogo: o host que atende uma ligação volta pra partida sem bagunça. Se demorar, o 2º Mestre assume e o host volta como jogador, no próprio nome.",
+      "⏳ Mais tempo pra voltar: se todo mundo sair da sala, a partida espera 5 minutos antes de encerrar (eram 2).",
+      "🔄 Atualizar junto: se o host atualizar o jogo no meio da partida, os celulares atualizam sozinhos e voltam pro mesmo lugar.",
+      "🤖 C.A.O.S. no celular certo: quando ele fala com você, aparece e fala no SEU celular, com o rostinho e o humor dele, igual no host.",
+      "🙈 Perto ou Longe no lugar certo: com o Mestre em outro celular, a pergunta do chute não aparece no aparelho do host.",
+      "⚑ Reportar carta: achou uma carta com erro? Pausa, Mais opções, Reportar esta carta. Vai direto pro JF.",
+      "🔁 Nome repetido: tentou cadastrar alguém que já está na partida? A tela treme, mostra o nome na lista e o C.A.O.S. comenta.",
+    ],
+    qol: [
+      "🃏 Especiais sem repetir: cada carta tem no máximo um Volte e um Avance do próprio jogador (316 cartas ajustadas).",
+      "📋 Lista de dicas limpa: sem dica aberta, a tela não mostra um item 1 vazio.",
+      "🎨 Jogar online no Modo Claro: o botão da tela inicial ficou fácil de ler.",
+    ],
+  },
+  {
     v: "Beta 1.7.9.9",
     data: "10/10/2026 · 15:24",
     nome: "Rooms and Network Update · Regras da sala",
