@@ -495,8 +495,9 @@ async function rodar(b, modo, porta, turn) {
   if (!assumiu) await diagRede("troca", { gV, gM });
   conf("O sucessor assume: vira host da MESMA sala", assumiu);
   const revDepois = await gV.evaluate(() => partidaRevisao), placarDepois = await gV.evaluate(() => JSON.stringify(players.map((p) => [p.id, p.score, p.position])));
+  // nada se perdeu = não voltou nenhuma revisão e o placar é o mesmo (o novo host pode avançar logo depois de assumir)
   if (revDepois !== revTroca || placarDepois !== placarTroca) console.log(`[diag perdeu] ${turn ? "turn" : modo}: revTroca=${revTroca} hostAntesDeFechar=${revPreFecho} pacote=${pacoteRev} emDia=${pacoteEmDia} novoHost=${revDepois} placar ${placarTroca} → ${placarDepois}`);
-  conf("Nada se perdeu: mesma revisão e o mesmo placar", revDepois === revTroca && placarDepois === placarTroca);
+  conf("Nada se perdeu: nenhuma revisão voltou e o placar é o mesmo", revDepois >= revTroca && revDepois <= revTroca + 1 && placarDepois === placarTroca);
   conf("O novo host joga com o próprio jogador (Beto)", (await gV.evaluate(() => rede.hostEu)) === ids.vez);
   conf("O outro celular se reconecta ao novo host sozinho", await esperar(gM, () => rede.estado === "dentro" && !!rede.painel && Date.now() - rede.ultimoHost < 5000, null, 40000));
   // o host antigo volta: descobre que já tem host e entra como jogador
