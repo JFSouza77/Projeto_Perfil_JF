@@ -24,8 +24,8 @@
           (partidas até o fim, segundo plano, atualização), teste_rede --servidor; revisão de código (10 achados).
           BUG da bateria (intermitente): o JFStore.boot de outra aba copiava do banco a cópia velha de
           perfil5_rede_host por cima da do host (localStorage entre abas chega com atraso) e a lista de aprovados
-          sumia; host recarregado mandava os celulares pedirem entrada de novo. Agora as chaves perfil5_rede_* não
-          voltam do banco no boot.
+          sumia; host recarregado mandava os celulares pedirem entrada de novo. Agora aba de convidado (#sala=) ou de
+          telão não puxa as chaves perfil5_rede_* do banco no boot; o host puxa (reserva quando o navegador não guardou).
  = FIM DA PARTIDA ONLINE E VÁRIOS NO APARELHO DO HOST.
           Regra do JF: partida online (partidaOnline, salvo no save, zerado no resetDeck) não continua sem ninguém de
           fora. redeSozinhoConferir na batida: 45 s sem nenhum aparelho de fora online → pausa e janela #redeSozinho

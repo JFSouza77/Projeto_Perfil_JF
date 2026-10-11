@@ -209,10 +209,15 @@ const JFStore = (function () {
           "perfil5_tab_lobby",
           "perfil5_tab_lobby_visto",
         ].forEach((k) => keys.add(k));
+        let abaDeFora = false;
+        try {
+          abaDeFora = /(^|[#&])(sala=|telao)/.test(location.hash || "");
+        } catch (e) {}
         for (const k of keys) {
-          // 1.7.10: estado da sala online não volta do banco: outra aba (convidado no mesmo navegador) via a
-          // cópia velha e regravava por cima da do host, e a lista de aprovados sumia (falha intermitente)
-          if (ls && k.startsWith("perfil5_rede_")) continue;
+          // 1.7.10: aba de convidado ou de telão não puxa do banco o estado da sala online: no mesmo navegador
+          // ela via a cópia velha e regravava por cima da do host (a lista de aprovados sumia). O host continua
+          // puxando: é a reserva dele quando o navegador não guardou (cota cheia, por exemplo).
+          if (abaDeFora && k.startsWith("perfil5_rede_")) continue;
           let best = api.getItem(k);
           const cands = [fromIdb[k]];
           if (hasClaudeStorage) {
