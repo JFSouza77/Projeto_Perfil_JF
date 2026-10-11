@@ -499,7 +499,12 @@ async function rodar(b, modo, porta, turn) {
   const velhoHost = await abrir("");
   const virouJogador = await esperar(velhoHost, (s) => typeof rede !== "undefined" && rede && rede.papel === "convidado" && rede.sala === s, sala, 40000);
   if (!virouJogador)
-    console.log(`[diag velho] ${turn ? "turn" : modo}:`, JSON.stringify(await velhoHost.evaluate(() => ({ url: location.hash, rede: typeof rede !== "undefined" && rede ? { papel: rede.papel, sala: rede.sala, estado: rede.estado, t: rede.transporte && rede.transporte.estado } : null, starterChosen, gameEnded, orfa: !!document.getElementById("redeOrfa"), guardado: localStorage.getItem("perfil5_rede_host") }))).catch((e) => String(e))));
+    console.log(
+      `[diag velho] ${turn ? "turn" : modo}:`,
+      await velhoHost
+        .evaluate(() => JSON.stringify({ url: location.hash, rede: typeof rede !== "undefined" && rede ? { papel: rede.papel, sala: rede.sala, estado: rede.estado, t: rede.transporte && rede.transporte.estado } : null, starterChosen, gameEnded, orfa: !!document.getElementById("redeOrfa"), guardado: localStorage.getItem("perfil5_rede_host") }))
+        .catch((e) => String(e)),
+    );
   conf("O host antigo volta e entra como jogador (não briga pela sala)", virouJogador);
   await velhoHost.close();
   for (const pg of [gM, gV, gC]) await pg.close();

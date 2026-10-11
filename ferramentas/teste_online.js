@@ -339,7 +339,9 @@ async function atualizacao(b, sv) {
     await host.addInitScript(novaInit);
     await host.reload();
     await host.waitForFunction(() => typeof redeAbrirSala === "function");
-    conf(`[${rot}] Host recarregou com a versão nova ("Release 1.0", build maior) e a sala voltou`, await esperar(host, () => rede && rede.papel === "host" && rede.transporte.estado === "aberta", null, 30000));
+    const voltou = await esperar(host, () => rede && rede.papel === "host" && rede.transporte.estado === "aberta", null, 30000);
+    if (!voltou) console.log("[diag atualização]", await host.evaluate(() => JSON.stringify({ rede: rede ? { papel: rede.papel, t: rede.transporte.estado } : null, starterChosen, gameEnded, orfa: !!document.getElementById("redeOrfa"), guardado: localStorage.getItem("perfil5_rede_host"), versao: JOGO_VERSAO })));
+    conf(`[${rot}] Host recarregou com a versão nova ("Release 1.0", build maior) e a sala voltou`, voltou);
     conf(`[${rot}] O celular da Anne vê que o host atualizou e recarrega sozinho`, await esperar(anne.g, () => window.__recarregou === 1, null, 30000));
     await anne.g.waitForTimeout(3000);
     conf(`[${rot}] Recarrega uma vez só (sem ficar em loop se a versão nova ainda não chegou)`, (await anne.g.evaluate(() => window.__recarregou)) === 1 && (await anne.g.evaluate(() => /Recarregue a página/.test(document.body.innerText))));
