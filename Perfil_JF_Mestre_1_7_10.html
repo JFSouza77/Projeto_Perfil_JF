@@ -20074,6 +20074,7 @@ function redeTransportePeerConvidado(sala) {
         return null;
       }
     },
+    diag: () => ({ aberto: !!(peer && peer.open), caiu: !!(peer && peer.disconnected), fim: !!(peer && peer.destroyed), conn: conn ? (conn.open ? "aberta" : "pendente") : null, servidor: qual, erro: t.erro }),
     // a conexão parece viva mas o host sumiu (o WebRTC pode demorar a perceber): abre outra
     reconectar() {
       if (fechado) return;

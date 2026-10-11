@@ -245,6 +245,17 @@ async function rodar(b, modo, porta, turn) {
     return pg;
   };
   const sufixo = modo === "local" ? "&local" : "";
+  // diagnóstico quando uma volta falha (estado de cada aparelho + uso da ponte)
+  const diagRede = async (onde, pgs) => {
+    for (const [nome, pg] of Object.entries(pgs)) {
+      try {
+        const d = await pg.evaluate(() => (typeof rede === "undefined" || !rede ? null : { estado: rede.estado, papel: rede.papel, t: rede.transporte.estado, erro: rede.transporte.erro, diag: rede.transporte.diag ? rede.transporte.diag() : null, semHost: rede.ultimoHost ? Date.now() - rede.ultimoHost : null, suc: rede.retrato && rede.retrato.sucessor, eu: rede.eu, rec: !!rede.recuperacao, assumindo: !!rede.assumindo }));
+        console.log(`[diag ${onde}] ${turn ? "turn" : modo} ${nome}:`, JSON.stringify(d));
+      } catch (e) {
+        console.log(`[diag ${onde}] ${nome}: (fechada)`);
+      }
+    }
+  };
   // host: partida montada como no cadastro
   const host = await abrir("");
   await host.waitForFunction(() => typeof sorteioSemear === "function" && !document.getElementById("goToRulesBtn").disabled);
@@ -439,7 +450,9 @@ async function rodar(b, modo, porta, turn) {
   const revHost = await H(() => partidaRevisao);
   await host.reload();
   conf("Host recarregou: a sala volta com o mesmo código", await esperar(host, (s) => typeof rede !== "undefined" && rede && rede.sala === s && rede.transporte.estado === "aberta", sala, 30000));
-  conf("Os celulares voltam sozinhos, com o retrato da partida", (await esperar(gV, (rv) => rede.estado === "dentro" && rede.retrato && rede.retrato.revisao >= rv && rede.transporte.estado === "aberta", revHost, 30000)) && (await esperar(gM, () => rede.estado === "dentro" && !!rede.painel, null, 30000)));
+  const voltaram = (await esperar(gV, (rv) => rede.estado === "dentro" && rede.retrato && rede.retrato.revisao >= rv && rede.transporte.estado === "aberta", revHost, 30000)) && (await esperar(gM, () => rede.estado === "dentro" && !!rede.painel, null, 30000));
+  if (!voltaram) await diagRede("volta", { host, gV, gM });
+  conf("Os celulares voltam sozinhos, com o retrato da partida", voltaram);
   const mestreAgora = await H(() => jogadorIdDe(mestreIndex));
   const gMestre = mestreAgora === ids.vez ? gV : mestreAgora === ids.mestre ? gM : null;
   if (gMestre) conf("Depois da volta, o Mestre recebe a resposta de novo", await esperar(gMestre, () => !!rede.segredo && !!rede.segredo.resposta, null, 15000));
@@ -461,7 +474,9 @@ async function rodar(b, modo, porta, turn) {
   await esperar(gV, (rv) => !!rede.recuperacao && rede.recuperacao.revisao === rv, revTroca, 10000);
   await host.close();
   conf("O outro celular avisa que o host sumiu e quem assume", await esperar(gM, () => !!document.querySelector(".rede-conexao") && /assume/.test(document.querySelector(".rede-conexao").textContent), null, 15000));
-  conf("O sucessor assume: vira host da MESMA sala", await esperar(gV, (s) => typeof rede !== "undefined" && rede && rede.papel === "host" && rede.sala === s && rede.transporte.estado === "aberta", sala, 60000));
+  const assumiu = await esperar(gV, (s) => typeof rede !== "undefined" && rede && rede.papel === "host" && rede.sala === s && rede.transporte.estado === "aberta", sala, 60000);
+  if (!assumiu) await diagRede("troca", { gV, gM });
+  conf("O sucessor assume: vira host da MESMA sala", assumiu);
   conf("Nada se perdeu: mesma revisão e o mesmo placar", (await gV.evaluate(() => partidaRevisao)) === revTroca && (await gV.evaluate(() => JSON.stringify(players.map((p) => [p.id, p.score, p.position])))) === placarTroca);
   conf("O novo host joga com o próprio jogador (Beto)", (await gV.evaluate(() => rede.hostEu)) === ids.vez);
   conf("O outro celular se reconecta ao novo host sozinho", await esperar(gM, () => rede.estado === "dentro" && !!rede.painel && Date.now() - rede.ultimoHost < 5000, null, 40000));
