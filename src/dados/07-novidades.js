@@ -16,7 +16,9 @@ const NOVIDADES = [
       "🔁 Sem continuar sozinho: abriu o jogo de novo e a sala da partida online não existe mais? A partida fica encerrada, com o resultado de agora.",
       "👥 Dois no aparelho do host: em Quem joga neste aparelho dá pra marcar mais de um nome. A tela mostra todos, e cada um vota pelo próprio botão.",
     ],
-    qol: [],
+    qol: [
+      "🎨 Jogar online no Modo Claro: o botão da tela inicial ficou fácil de ler (antes o texto sumia no azul).",
+    ],
   },
   {
     v: "Beta 1.7.9.8",
