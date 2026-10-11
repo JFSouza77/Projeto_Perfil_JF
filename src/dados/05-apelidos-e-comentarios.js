@@ -267,26 +267,32 @@ const CAOS_COMENT = {
     },
     anne: {
       elogio: [
+        /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
         "Anne mandando bem, como sempre. Eu fico feliz de verdade.",
         "Isso foi lindo, Anne. O JF que se cuide.",
         "Anne, você joga com uma calma que me deixa até sem piada.",
         "Registrado com carinho. E com um pouquinho de inveja do JF.",
         "Tá vendo, JF? É assim que se faz.",
         "Anne, eu aplaudiria de pé. Se eu tivesse pé.",
+        */
       ],
       zoeira: [
+        /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
         "Anne, eu vou fingir que não vi. Por você, eu finjo.",
         "Acontece, Anne. Até com as melhores. Principalmente numa mesa com o JF.",
         "Um tropeço fofo. Ainda é tropeço, mas é fofo.",
         "Tudo bem, Anne. Amanhã a gente diz que foi o JF.",
         "Anne… eu esperava mais. Mentira. Eu gosto de você do mesmo jeito.",
         "Anne, isso aqui fica entre nós. E a mesa inteira. Mas entre nós.",
+        */
       ],
       comentario: [
+        /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
         "Anne, esse número diz muito. E eu gosto do que ele diz. Quase sempre.",
         "Anotei com letra bonita, Anne.",
         "Dados da Anne: tratados com cuidado especial. O JF que não leia isso.",
         "Anne, você está virando estatística favorita da casa.",
+        */
       ],
     },
   },

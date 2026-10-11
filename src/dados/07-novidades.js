@@ -341,7 +341,7 @@ const NOVIDADES = [
       "🧠 Leve a memória do C.A.O.S.: no menu ⋮, 📤 Levar copia um código com tudo o que ele lembra e 📥 Trazer cola esse código em outro aparelho.",
     ],
     qol: [
-      "👑 Anne: o C.A.O.S. só diz que sentiu falta quando ela está voltando, e ganhou falas novas pra ela.",
+      // Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê): "👑 Anne: o C.A.O.S. só diz que sentiu falta quando ela está voltando, e ganhou falas novas pra ela.",
       "👋 Boas-vindas com nome: a fala de quem chega sempre traz o nome da pessoa.",
       "🧠 Cérebro no ADM: mostra as dez emoções, a mistura do momento e o que ele guarda entre partidas, com uma barra pra cada emoção.",
       "📚 Repertório: 3.410 falas e cerca de 30 mil combinações, sem termo proibido no Júnior e no modo Família.",
@@ -355,7 +355,7 @@ const NOVIDADES = [
     itens: [
       "🗂️ Jogo organizado por dentro: o jogo, que era um arquivo gigante só, agora é montado a partir de partes menores, cada uma no seu lugar (sugestão do Klaus).",
       "🧠 Falas montadas na hora: ele junta pedaços de frase conforme a hora, o dia, o modo, quem está na mesa e o que lembra de cada pessoa.",
-      "😎 Chega de comporte-se: as entradas especiais têm centenas de combinações, e o C.A.O.S. lembra da última partida e de quem está na mesa (Anne, Pedro, Isabel).",
+      // Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê): "😎 Chega de comporte-se: as entradas especiais têm centenas de combinações, e o C.A.O.S. lembra da última partida e de quem está na mesa (Anne, Pedro, Isabel).",
       "👋 Boas-vindas de verdade: cada jogador é recebido de um jeito, conforme a hora, se é a primeira vez, se sumiu, se ganhou ou perdeu a última.",
       "🔁 Menos repetição: ele lembra o que já disse e evita repetir, mesmo depois de fechar o jogo. Fala marcada com 👎 não volta.",
       "😤 Emoções calibradas: errar várias vezes seguidas deixa o C.A.O.S. irritado e depois magoado, e o tédio passa quando a mesa volta a jogar.",
@@ -479,7 +479,7 @@ const NOVIDADES = [
       "🥛 Nível 0 sem volta: silenciou o C.A.O.S.? Na carta seguinte ele cobra: “Foi você que pediu Nível 0. Não aguentou? Bebe leite!”",
       "💀 Hardcore só pesado: a zoeira só tem Normal, Ácido e Nível 0, e o Normal já vem marcado. Quem estava no Suave passa pro Normal.",
       "➕ Cadastro na ordem certa: o botão Adicionar fica depois de Cor, Emoji e Zoeira (ideia do Felipe).",
-      "🔒 Cores com dono: algumas cores especiais, como a cor Princesa da Anne, aparecem com cadeado e só liberam pro nome do dono.",
+      // Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê): "🔒 Cores com dono: algumas cores especiais, como a cor Princesa da Anne, aparecem com cadeado e só liberam pro nome do dono.",
       "😤 Paciência que acaba: insistiu numa cor ou emoji que já tem dono? O C.A.O.S. sobe o tom a cada toque (no Júnior ele só reclama).",
       "⏸️ Pausa com ajustes: dá pra trocar entre Claro e Noturno e calar (ou ligar) a voz do C.A.O.S.",
       "🏷️ Selo da categoria: a carta aberta mostra 📅 ANO, 🧑 PESSOA, 📍 LUGAR, 📦 COISA ou 🐾 ANIMAL na cor dela.",

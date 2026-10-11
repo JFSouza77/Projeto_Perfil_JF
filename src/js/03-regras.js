@@ -2,8 +2,10 @@
  * 3. REGRAS (VITÓRIA, PONTOS, JOIAS, TABULEIRO, BARALHO, EQUIPES)
  * ====================================================================== */
 
+// Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê). Ninguém é reconhecido como a Anne (cor, emoji, falas e memória ficam desligados).
 function isAnneName(n) {
-  return OWNER_ANNE_RE.test(nameKeyPlain(n));
+  // return OWNER_ANNE_RE.test(nameKeyPlain(n));
+  return false;
 }
 function isJfName(n) {
   return OWNER_JF_RE.test(nameKeyPlain(n));

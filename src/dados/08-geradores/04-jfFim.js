@@ -22,7 +22,7 @@ CAOS_GERADORES.jfFim = {
       "O criador não ganhou. A criatura está satisfeita.",
       "JF, perder no próprio jogo é um talento raro.",
     ],
-    anne: ["E a {anne} viu tudo. Isso vai ser lembrado em casa."],
+    anne: [/* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê): "E a {anne} viu tudo. Isso vai ser lembrado em casa." */],
   },
   fecho: {
     geral: ["Agora vai lá corrigir o que eu deixei nas entrelinhas.", "Até a próxima, chefe.", "Revanche quando quiser.", "Boa partida, mesa."],

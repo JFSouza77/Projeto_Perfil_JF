@@ -127,7 +127,8 @@ const AVATARS = [
 const AVATARS_EXTRA = ["💀", "😈", "🤡", "🦈", "🐺", "🦅", "🐍", "👑", "🏆", "🎸", "🧠", "🥶", "🤑", "🦍"];
 const AVATARS_KIDS = ["🐶", "🐱", "🐰", "🦊", "🐼", "🐸", "🦖", "🐢", "🦋", "🚀", "🧸", "🎈", "🍭", "🌈", "⭐", "🐧"];
 const AVATAR_EXCLUSIVE = ["😎", "👸"];
-const OWNER_ANNE_RE = /^an{1,2}(e|izinha|izinho)(zinha|zinho|zona)?([^a-z]|$)/;
+// Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê):
+// const OWNER_ANNE_RE = /^an{1,2}(e|izinha|izinho)(zinha|zinho|zona)?([^a-z]|$)/;
 const OWNER_JF_RE = /^jf([^a-z]|$)/;
 const CATEGORY_LABELS = {
   ANO: "um ano",
