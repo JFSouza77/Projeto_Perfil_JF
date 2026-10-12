@@ -312,7 +312,7 @@ async function segundoPlano(b, sv) {
     await host.waitForTimeout(1500);
     conf(`[${rot}] Host volta de 6 s em segundo plano e continua host`, (await host.evaluate(() => rede && rede.papel === "host")) && (await esperar(volta, () => rede.papel === "convidado" && rede.estado === "dentro", null, 15000)));
     const revAntes = await host.evaluate(() => partidaRevisao);
-    await jogarAteOFim(host, [volta, pedro.g], 3000);
+    await jogarAteOFim(host, [volta, pedro.g], 8000); // (a roleta da categoria leva uns 3 s)
     conf(`[${rot}] A partida anda depois que o host volta`, (await host.evaluate(() => partidaRevisao)) > revAntes);
     // 4) o host some por 30 s (ligação recebida): o 2º Mestre começa a assumir. Se o servidor já soltou a sala
     //    (o nosso solta em 20 s), ele vira host e o JF volta como jogador; se a sala ainda está presa no
