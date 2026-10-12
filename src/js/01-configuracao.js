@@ -127,8 +127,9 @@ const AVATARS = [
 const AVATARS_EXTRA = ["💀", "😈", "🤡", "🦈", "🐺", "🦅", "🐍", "👑", "🏆", "🎸", "🧠", "🥶", "🤑", "🦍"];
 const AVATARS_KIDS = ["🐶", "🐱", "🐰", "🦊", "🐼", "🐸", "🦖", "🐢", "🦋", "🚀", "🧸", "🎈", "🍭", "🌈", "⭐", "🐧"];
 const AVATAR_EXCLUSIVE = ["😎", "👸"];
-// Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê):
-// const OWNER_ANNE_RE = /^an{1,2}(e|izinha|izinho)(zinha|zinho|zona)?([^a-z]|$)/;
+const OWNER_ANNE_RE = /^an{1,2}(e|izinha|izinho)(zinha|zinho|zona)?([^a-z]|$)/;
+// Conteúdo ligado à Anne (cor, emoji, falas, memória do C.A.O.S.): liga/desliga no Cérebro (aba Falas). Desligado por padrão.
+const ANNE_LIGADA_KEY = "perfil5_anne_ligada";
 const OWNER_JF_RE = /^jf([^a-z]|$)/;
 const CATEGORY_LABELS = {
   ANO: "um ano",

@@ -3569,6 +3569,10 @@ function novidadesMarcarChip() {
   }
   c.classList.toggle("tem-novo", visto !== NOVIDADES[0].v);
 }
+// item que cita a Anne só aparece com o conteúdo dela ligado (Cérebro, aba Falas)
+function novItemVale(t) {
+  return anneLigada() || !/\bAnne\b/.test(String(t));
+}
 // Item das novidades no formato "emoji Título: texto": o título vai numa caixinha de destaque.
 function novItemHtml(x) {
   const m = /^(\S+\s+)?([^:<"]{2,34}):\s+([\s\S]+)$/u.exec(x);
@@ -3583,7 +3587,7 @@ function abrirNovidades() {
   bg.innerHTML = `<div class="jf-modal nov-modal" role="dialog" aria-modal="true" aria-labelledby="novTitle">
     <button type="button" class="nov-x" id="novX" aria-label="Fechar novidades">✕</button>
     <div class="nov-ic">🆕</div><h3 id="novTitle">NOVIDADES</h3><div class="nov-sub">O que mudou nas últimas versões</div>
-    ${NOVIDADES.map((n, i) => `<details class="nov-item"${i === 0 ? " open" : ""}><summary><span class="nov-v">${n.v}</span>${n.nome ? `<span class="nov-nome">${n.nome}</span>` : ""}${n.data ? `<span class="nov-data">📅 ${n.data}</span>` : ""}<span class="nov-t">${n.t}</span></summary><ul>${n.itens.map(novItemHtml).join("")}</ul>${n.qol && n.qol.length ? `<div class="nov-qol">🔧 Ajustes e correções (QoL)</div><ul>${n.qol.map(novItemHtml).join("")}</ul>` : ""}</details>`).join("")}
+    ${NOVIDADES.map((n, i) => `<details class="nov-item"${i === 0 ? " open" : ""}><summary><span class="nov-v">${n.v}</span>${n.nome ? `<span class="nov-nome">${n.nome}</span>` : ""}${n.data ? `<span class="nov-data">📅 ${n.data}</span>` : ""}<span class="nov-t">${n.t}</span></summary><ul>${n.itens.filter(novItemVale).map(novItemHtml).join("")}</ul>${n.qol && n.qol.filter(novItemVale).length ? `<div class="nov-qol">🔧 Ajustes e correções (QoL)</div><ul>${n.qol.filter(novItemVale).map(novItemHtml).join("")}</ul>` : ""}</details>`).join("")}
     <button type="button" class="btn-start btn-neo neo-solid neo-still" id="novOk" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35); margin-top:14px;">Entendi</button>
   </div>`;
   document.body.appendChild(bg);

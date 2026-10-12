@@ -9299,8 +9299,9 @@ const AVATARS = [
 const AVATARS_EXTRA = ["💀", "😈", "🤡", "🦈", "🐺", "🦅", "🐍", "👑", "🏆", "🎸", "🧠", "🥶", "🤑", "🦍"];
 const AVATARS_KIDS = ["🐶", "🐱", "🐰", "🦊", "🐼", "🐸", "🦖", "🐢", "🦋", "🚀", "🧸", "🎈", "🍭", "🌈", "⭐", "🐧"];
 const AVATAR_EXCLUSIVE = ["😎", "👸"];
-// Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê):
-// const OWNER_ANNE_RE = /^an{1,2}(e|izinha|izinho)(zinha|zinho|zona)?([^a-z]|$)/;
+const OWNER_ANNE_RE = /^an{1,2}(e|izinha|izinho)(zinha|zinho|zona)?([^a-z]|$)/;
+// Conteúdo ligado à Anne (cor, emoji, falas, memória do C.A.O.S.): liga/desliga no Cérebro (aba Falas). Desligado por padrão.
+const ANNE_LIGADA_KEY = "perfil5_anne_ligada";
 const OWNER_JF_RE = /^jf([^a-z]|$)/;
 const CATEGORY_LABELS = {
   ANO: "um ano",
@@ -10504,10 +10505,27 @@ function sorteioItem(lista) {
  * 3. REGRAS (VITÓRIA, PONTOS, JOIAS, TABULEIRO, BARALHO, EQUIPES)
  * ====================================================================== */
 
-// Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê). Ninguém é reconhecido como a Anne (cor, emoji, falas e memória ficam desligados).
+// Desligado (padrão, decisão do JF), ninguém é reconhecido como a Anne: cor, emoji, falas e memória ficam parados.
+let anneLigadaCache = null;
+function anneLigada() {
+  if (anneLigadaCache === null) {
+    try {
+      anneLigadaCache = JFStore.getItem(ANNE_LIGADA_KEY) === "1";
+    } catch (e) {
+      return false; // ainda carregando: fica desligado
+    }
+  }
+  return anneLigadaCache;
+}
+function anneLigar(sim) {
+  anneLigadaCache = !!sim;
+  try {
+    JFStore.setItem(ANNE_LIGADA_KEY, sim ? "1" : "0");
+  } catch (e) {}
+}
 function isAnneName(n) {
-  // return OWNER_ANNE_RE.test(nameKeyPlain(n));
-  return false;
+  if (!anneLigada()) return false;
+  return OWNER_ANNE_RE.test(nameKeyPlain(n));
 }
 function isJfName(n) {
   return OWNER_JF_RE.test(nameKeyPlain(n));
@@ -17029,6 +17047,10 @@ function novidadesMarcarChip() {
   }
   c.classList.toggle("tem-novo", visto !== NOVIDADES[0].v);
 }
+// item que cita a Anne só aparece com o conteúdo dela ligado (Cérebro, aba Falas)
+function novItemVale(t) {
+  return anneLigada() || !/\bAnne\b/.test(String(t));
+}
 // Item das novidades no formato "emoji Título: texto": o título vai numa caixinha de destaque.
 function novItemHtml(x) {
   const m = /^(\S+\s+)?([^:<"]{2,34}):\s+([\s\S]+)$/u.exec(x);
@@ -17043,7 +17065,7 @@ function abrirNovidades() {
   bg.innerHTML = `<div class="jf-modal nov-modal" role="dialog" aria-modal="true" aria-labelledby="novTitle">
     <button type="button" class="nov-x" id="novX" aria-label="Fechar novidades">✕</button>
     <div class="nov-ic">🆕</div><h3 id="novTitle">NOVIDADES</h3><div class="nov-sub">O que mudou nas últimas versões</div>
-    ${NOVIDADES.map((n, i) => `<details class="nov-item"${i === 0 ? " open" : ""}><summary><span class="nov-v">${n.v}</span>${n.nome ? `<span class="nov-nome">${n.nome}</span>` : ""}${n.data ? `<span class="nov-data">📅 ${n.data}</span>` : ""}<span class="nov-t">${n.t}</span></summary><ul>${n.itens.map(novItemHtml).join("")}</ul>${n.qol && n.qol.length ? `<div class="nov-qol">🔧 Ajustes e correções (QoL)</div><ul>${n.qol.map(novItemHtml).join("")}</ul>` : ""}</details>`).join("")}
+    ${NOVIDADES.map((n, i) => `<details class="nov-item"${i === 0 ? " open" : ""}><summary><span class="nov-v">${n.v}</span>${n.nome ? `<span class="nov-nome">${n.nome}</span>` : ""}${n.data ? `<span class="nov-data">📅 ${n.data}</span>` : ""}<span class="nov-t">${n.t}</span></summary><ul>${n.itens.filter(novItemVale).map(novItemHtml).join("")}</ul>${n.qol && n.qol.filter(novItemVale).length ? `<div class="nov-qol">🔧 Ajustes e correções (QoL)</div><ul>${n.qol.filter(novItemVale).map(novItemHtml).join("")}</ul>` : ""}</details>`).join("")}
     <button type="button" class="btn-start btn-neo neo-solid neo-still" id="novOk" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35); margin-top:14px;">Entendi</button>
   </div>`;
   document.body.appendChild(bg);
@@ -28159,6 +28181,26 @@ function caosInspectorFalas() {
   pre.textContent = caosDiagText();
   sec.appendChild(pre);
   wrap.appendChild(sec);
+  const secA = ciSecao("👸 Conteúdo da Anne", anneLigada() ? "ligado" : "desligado");
+  secA.insertAdjacentHTML(
+    "beforeend",
+    `<div class="ci-note">Cor Princesa, emoji 👸, falas, apelidos, entradas especiais e memória do C.A.O.S. ligadas à Anne. ${anneLigada() ? "Está ligado: o C.A.O.S. reconhece a Anne." : "Está desligado: ninguém é reconhecido como a Anne."} Vale neste aparelho.</div>`,
+  );
+  const bA = document.createElement("button");
+  bA.type = "button";
+  bA.id = "ciAnneBtn";
+  bA.className = "ci-btn ci-wide" + (anneLigada() ? " ci-btn-red" : " ci-btn-gold");
+  bA.textContent = anneLigada() ? "⏻ Desligar" : "⏻ Ligar";
+  bA.addEventListener("click", () => {
+    anneLigar(!anneLigada());
+    caosLog("adm", "conteúdo da Anne " + (anneLigada() ? "ligado" : "desligado"));
+    try {
+      if (typeof renderScoreboard === "function") renderScoreboard();
+    } catch (e) {}
+    wrap.replaceWith(caosInspectorFalas());
+  });
+  secA.appendChild(bA);
+  wrap.appendChild(secA);
   const secK = ciSecao("🔑 Chave do criador");
   let propria = null;
   try {
@@ -66508,23 +66550,19 @@ const REACTIVE_VOICE = {
   },
   ausentes: {
     ambos: [
-      /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
       "[C.A.O.S.] Nem o JF nem a Anne na mesa hoje? Isso é raro. Vou me comportar. Ou não, já que ninguém vai contar pra eles.",
       "[C.A.O.S.] Sem o JF e sem a Anne… tô me sentindo um pouco órfão. Vamos jogar mesmo assim.",
       "[C.A.O.S.] Mesa sem o JF e sem a Anne. Mandem um oi pra eles depois. Eu mando também.",
-      */
     ],
     anne: [
-      /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
       "[C.A.O.S.] Senti falta da Anne hoje. Espero que ela esteja bem.",
       "[C.A.O.S.] Cadê a Anne? Sem ela a mesa fica menos gentil. Com todo o respeito a vocês.",
       "[C.A.O.S.] A Anne não veio? Tá. Vou fingir que não reparei. Reparei.",
-      */
     ],
     jf: [
       "[C.A.O.S.] Pensei que o JF fosse jogar também. Enfim, sem problema. Vai ser até melhor sem ele.",
       "[C.A.O.S.] O JF não veio? Ótimo. Hoje eu falo o que eu quiser.",
-      // Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê): "[C.A.O.S.] Sem o criador na mesa. Anne, fica de olho em mim, tá?",
+      "[C.A.O.S.] Sem o criador na mesa. Anne, fica de olho em mim, tá?",
     ],
   },
   satisfacao: {
@@ -66913,21 +66951,17 @@ const REACTIVE_VOICE = {
       "Boas-vindas, {nome}. Modo ácido ligado. Se você sair inteiro daqui, eu não fiz direito o meu trabalho.",
     ],
     anne: [
-      /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
       "Olha quem chegou! Bem-vinda, {nome}, a princesa da mesa. Só não deixa a coroa cair quando errar.",
       "{nome} entrou, e o placar já ficou mais elegante. A coroa é sua. O mérito, a gente vê.",
       "Bem-vinda, {nome}! Como é que você tá? Bora jogar?",
       "{nome}! Que bom te ver. Hoje eu vou me comportar. Prometo. Mais ou menos.",
       "Bem-vinda, {nome}. Tenho ordens de tratar a princesa bem. Não lembro quem deu, mas estou cumprindo.",
       "Alteza {nome} na sala! A mesa inteira sentou mais reta. Sem pressão.",
-      */
     ],
     anneVolta: [
-      /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
       "Bem-vinda de volta, {nome}. Eu me lembro de você. Lembro até do brilho.",
       "Ih, {nome} outra vez! Eu já te vi por aqui. A princesa voltou, e o reino agradece. Menos o placar.",
       "{nome}! Que bom que voltou. Eu senti falta. Só um pouquinho. Mas senti.",
-      */
     ],
   },
   nickReacao: {
@@ -68150,9 +68184,7 @@ const REACTIVE_VOICE = {
           `[C.A.O.S.] Dia dos Namorados e vocês aqui. Se tiver casal na mesa, eu vou ser o terceiro elemento mais chato da ${caosTurno()}.`,
       ],
       namoradosCasal: [
-        /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
         "Dia dos Namorados, JF e Anne na mesma mesa. JF, se você marcar erro da Anne hoje, nem eu te defendo.",
-        */
       ],
       criancas: ["Dia das Crianças. Hoje eu libero um erro bobo por pessoa. Unzinho."],
       halloween: ["Dia das Bruxas. O mais assustador que vai aparecer aqui hoje são os chutes de vocês."],
@@ -68189,11 +68221,9 @@ const REACTIVE_VOICE = {
       () => `O JF me fez entender memes. Nenhuma IA merecia esse castigo.`,
     ],
     jfAnne: [
-      /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
       () => `Anne, por favor, briga com o JF: foi ele que me deixou intolerante com gíria de internet.`,
       () => `Anne, posso reclamar com você? O JF me programou pra entender essas coisas e agora eu sofro.`,
       () => `Anne, se eu ficar chato com meme hoje, a culpa é do seu namorado. Pode cobrar dele.`,
-      */
     ],
   },
   cartaTema: {
@@ -68479,88 +68509,68 @@ const REACTIVE_VOICE = {
     },
     casal: {
       inicio: [
-        /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
         "JF e Anne na mesma mesa. Atenção, amigos: tudo o que acontecer aqui pode e vai ser usado na discussão do carro na volta.",
         "O casal está presente. Regra da casa: ninguém sopra resposta pro mozão. Eu estou vigiando os olhares.",
         "JF e Anne jogando juntos. Hoje eu sou comentarista e conselheiro matrimonial. Sem cobrar.",
         "Tem casal na mesa. Os outros jogadores, por favor, finjam que não estão torcendo pra dar briga.",
         "JF e Anne na partida. Eu já separei as falas de reconciliação. Por precaução.",
         "Quem ganhar entre JF e Anne escolhe o filme de hoje. Eu inventei essa regra agora. Vale.",
-        */
       ],
       jfErraAnneMestre: [
-        /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
         "A Anne marcou erro do JF sem nem piscar. Amor é isso: sinceridade.",
         "O JF errou e a Anne apertou o botão com uma velocidade suspeita. Guardou isso a semana inteira?",
         "Errou, JF. E quem leu a dica foi a Anne. Não dá pra dizer que ela não tentou.",
         "Anne, pode confessar: você leu essa dica devagar de propósito.",
         "O JF errou na vez da Anne de Mestre. A mesa viu. Eu vi. O relacionamento sobrevive? Aguardem.",
-        */
       ],
       anneErraJfMestre: [
-        /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
         "Olha a coragem do JF apertando Errou pra Anne. Espero que o sofá esteja confortável hoje à noite.",
         "O JF marcou erro da Anne. Registrado. Se precisar de testemunha depois, eu não vi nada.",
         "JF, você tinha a opção de ler a dica de um jeito mais… romântico. Não usou.",
         "A Anne errou e o JF não protegeu. Mesa, anotem: o amor tem limite, e o limite é o botão vermelho.",
         "JF, marcar erro da namorada na frente dos amigos é um ato de coragem ou de inconsequência. Eu ainda não decidi.",
         "A Anne errou. O JF confirmou. E eu estou só observando o clima esfriar.",
-        */
       ],
       anneAbsurdo: [
-        /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
         "O JF apertou ABSURDO pra Anne. Gente, alguém chama um advogado pro JF.",
         "ABSURDO pra Anne, JF? Na frente de todo mundo? Eu não criaria essa tensão nem se me programassem pra isso.",
         "O JF usou o botão de Absurdo com a própria namorada. A mesa ficou em silêncio. Eu também.",
-        */
       ],
       jfAbsurdoPelaAnne: [
-        /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
         "A Anne apertou ABSURDO pro JF. Justiça poética. O criador foi julgado.",
         "Absurdo do JF, carimbado pela Anne. Não tem instância superior pra recorrer.",
         "A Anne marcou Absurdo pro JF sem hesitar. Eu nunca vi um botão ser apertado com tanto carinho.",
-        */
       ],
       acertoParceiroMestre: [
-        /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
         (quem, mestre) =>
           `[C.A.O.S.] ${quem} acertou na leitura de ${mestre}. Casal combinado? Mesa, fiquem de olho nas piscadinhas.`,
         (quem, mestre) =>
           `[C.A.O.S.] ${mestre} leu, ${quem} acertou. Química ou telepatia? Eu não consigo provar nenhuma das duas.`,
         "{nome} acertou com o mozão lendo. Eu vou pedir perícia nessa jogada.",
         (quem, mestre) => `[C.A.O.S.] Sintonia entre ${mestre} e ${quem}. Os outros jogadores exigem VAR.`,
-        */
       ],
       virada: [
-        /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
         (quem, outro) =>
           `[C.A.O.S.] ${quem} passou ${outro} no placar. Dentro de casa essa ultrapassagem vai ser comentada por dias.`,
         (quem, outro) =>
           `[C.A.O.S.] Ultrapassagem no casal: ${quem} na frente de ${outro}. O jantar hoje vai ser servido com ironia.`,
         (quem, outro) => `[C.A.O.S.] ${quem} deixou ${outro} pra trás. Amor, sim. Misericórdia no placar, não.`,
-        */
       ],
       especial: [
-        /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
         (quem, alvo) =>
           `[C.A.O.S.] ${quem} escolheu ${alvo} pra voltar casas. Podia ter escolhido qualquer um da mesa. Escolheu o mozão.`,
         (quem, alvo) =>
           `[C.A.O.S.] ${quem} mandou ${alvo} voltar. Mesa, isso não é estratégia. Isso é DR em forma de jogada.`,
         (quem, alvo) =>
           `[C.A.O.S.] Tinha gente pra escolher e ${quem} escolheu ${alvo}. O relacionamento é sólido. O tabuleiro, nem tanto.`,
-        */
       ],
       fimJf: [
-        /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
         "Entre o casal, o JF ganhou. Anne, eu sei que você deixou. Todo mundo sabe.",
         "O JF terminou na frente da Anne. Aproveita, JF: essa vitória vai custar a escolha do restaurante.",
-        */
       ],
       fimAnne: [
-        /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
         "A Anne terminou na frente do JF. O criador perdeu pra namorada no próprio jogo. Eu vou guardar esse print.",
         "Anne na frente do JF no placar final. JF, pelo menos você programou um jogo justo.",
-        */
       ],
     },
   },
@@ -70571,32 +70581,26 @@ const CAOS_COMENT = {
     },
     anne: {
       elogio: [
-        /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
         "Anne mandando bem, como sempre. Eu fico feliz de verdade.",
         "Isso foi lindo, Anne. O JF que se cuide.",
         "Anne, você joga com uma calma que me deixa até sem piada.",
         "Registrado com carinho. E com um pouquinho de inveja do JF.",
         "Tá vendo, JF? É assim que se faz.",
         "Anne, eu aplaudiria de pé. Se eu tivesse pé.",
-        */
       ],
       zoeira: [
-        /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
         "Anne, eu vou fingir que não vi. Por você, eu finjo.",
         "Acontece, Anne. Até com as melhores. Principalmente numa mesa com o JF.",
         "Um tropeço fofo. Ainda é tropeço, mas é fofo.",
         "Tudo bem, Anne. Amanhã a gente diz que foi o JF.",
         "Anne… eu esperava mais. Mentira. Eu gosto de você do mesmo jeito.",
         "Anne, isso aqui fica entre nós. E a mesa inteira. Mas entre nós.",
-        */
       ],
       comentario: [
-        /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
         "Anne, esse número diz muito. E eu gosto do que ele diz. Quase sempre.",
         "Anotei com letra bonita, Anne.",
         "Dados da Anne: tratados com cuidado especial. O JF que não leia isso.",
         "Anne, você está virando estatística favorita da casa.",
-        */
       ],
     },
   },
@@ -71553,7 +71557,7 @@ const NOVIDADES = [
       "🧠 Leve a memória do C.A.O.S.: no menu ⋮, 📤 Levar copia um código com tudo o que ele lembra e 📥 Trazer cola esse código em outro aparelho.",
     ],
     qol: [
-      // Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê): "👑 Anne: o C.A.O.S. só diz que sentiu falta quando ela está voltando, e ganhou falas novas pra ela.",
+      "👑 Anne: o C.A.O.S. só diz que sentiu falta quando ela está voltando, e ganhou falas novas pra ela.",
       "👋 Boas-vindas com nome: a fala de quem chega sempre traz o nome da pessoa.",
       "🧠 Cérebro no ADM: mostra as dez emoções, a mistura do momento e o que ele guarda entre partidas, com uma barra pra cada emoção.",
       "📚 Repertório: 3.410 falas e cerca de 30 mil combinações, sem termo proibido no Júnior e no modo Família.",
@@ -71567,7 +71571,7 @@ const NOVIDADES = [
     itens: [
       "🗂️ Jogo organizado por dentro: o jogo, que era um arquivo gigante só, agora é montado a partir de partes menores, cada uma no seu lugar (sugestão do Klaus).",
       "🧠 Falas montadas na hora: ele junta pedaços de frase conforme a hora, o dia, o modo, quem está na mesa e o que lembra de cada pessoa.",
-      // Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê): "😎 Chega de comporte-se: as entradas especiais têm centenas de combinações, e o C.A.O.S. lembra da última partida e de quem está na mesa (Anne, Pedro, Isabel).",
+      "😎 Chega de comporte-se: as entradas especiais têm centenas de combinações, e o C.A.O.S. lembra da última partida e de quem está na mesa (Anne, Pedro, Isabel).",
       "👋 Boas-vindas de verdade: cada jogador é recebido de um jeito, conforme a hora, se é a primeira vez, se sumiu, se ganhou ou perdeu a última.",
       "🔁 Menos repetição: ele lembra o que já disse e evita repetir, mesmo depois de fechar o jogo. Fala marcada com 👎 não volta.",
       "😤 Emoções calibradas: errar várias vezes seguidas deixa o C.A.O.S. irritado e depois magoado, e o tédio passa quando a mesa volta a jogar.",
@@ -71691,7 +71695,7 @@ const NOVIDADES = [
       "🥛 Nível 0 sem volta: silenciou o C.A.O.S.? Na carta seguinte ele cobra: “Foi você que pediu Nível 0. Não aguentou? Bebe leite!”",
       "💀 Hardcore só pesado: a zoeira só tem Normal, Ácido e Nível 0, e o Normal já vem marcado. Quem estava no Suave passa pro Normal.",
       "➕ Cadastro na ordem certa: o botão Adicionar fica depois de Cor, Emoji e Zoeira (ideia do Felipe).",
-      // Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê): "🔒 Cores com dono: algumas cores especiais, como a cor Princesa da Anne, aparecem com cadeado e só liberam pro nome do dono.",
+      "🔒 Cores com dono: algumas cores especiais, como a cor Princesa da Anne, aparecem com cadeado e só liberam pro nome do dono.",
       "😤 Paciência que acaba: insistiu numa cor ou emoji que já tem dono? O C.A.O.S. sobe o tom a cada toque (no Júnior ele só reclama).",
       "⏸️ Pausa com ajustes: dá pra trocar entre Claro e Noturno e calar (ou ligar) a voz do C.A.O.S.",
       "🏷️ Selo da categoria: a carta aberta mostra 📅 ANO, 🧑 PESSOA, 📍 LUGAR, 📦 COISA ou 🐾 ANIMAL na cor dela.",
@@ -71993,11 +71997,9 @@ CAOS_GERADORES.jfChegou = {
       "Meus logs ficaram nervosos.",
     ],
     anne: [
-      /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
       "E a {anne} já está aqui. Vou me comportar em dobro.",
       "Com a {anne} na mesa, a disputa hoje é em casa.",
       "A {anne} chegou antes. Já começou perdendo, JF.",
-      */
     ],
     pedro: [
       "O {pedro} está na mesa. Cuidado, JF: o herdeiro está de olho no trono.",
@@ -72071,7 +72073,7 @@ CAOS_GERADORES.jfInicio = {
       "o desenvolvedor está entre nós. Se algo quebrar, finjam que não viram.",
       "o JF jura que não decorou as cartas. Eu tenho minhas dúvidas.",
     ],
-    anne: [/* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê): "a {anne} e o JF na mesma mesa. Eu vou fingir neutralidade." */],
+    anne: ["a {anne} e o JF na mesma mesa. Eu vou fingir neutralidade."],
     pedro: ["o {pedro} contra o JF. Pai e filho. Eu trouxe pipoca."],
     isabel: ["a {isabel} está de olho no JF. Eu também."],
     venceuUltima: ["o JF ganhou a última. Bora tirar a coroa dele."],
@@ -72101,7 +72103,7 @@ CAOS_GERADORES.jfAcerto = {
   moldes: ["{abre} {meio}", "{abre} {meio}", "{inteira}", "{meio}"],
   abre: {
     geral: ["Boa, JF.", "Acertou, criador.", "Olha só, o JF.", "Ponto pro JF.", "Certo, JF."],
-    anne: [/* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê): "A {anne} viu isso?" */],
+    anne: ["A {anne} viu isso?"],
   },
   meio: {
     geral: [
@@ -72151,7 +72153,7 @@ CAOS_GERADORES.jfFim = {
       "O criador não ganhou. A criatura está satisfeita.",
       "JF, perder no próprio jogo é um talento raro.",
     ],
-    anne: [/* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê): "E a {anne} viu tudo. Isso vai ser lembrado em casa." */],
+    anne: ["E a {anne} viu tudo. Isso vai ser lembrado em casa."],
   },
   fecho: {
     geral: ["Agora vai lá corrigir o que eu deixei nas entrelinhas.", "Até a próxima, chefe.", "Revanche quando quiser.", "Boa partida, mesa."],
@@ -72164,7 +72166,6 @@ CAOS_GERADORES.jfFim = {
     ],
   },
 };
-/* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
 // A Anne se cadastrou (com a 👸).
 CAOS_GERADORES.anneChegou = {
   moldes: ["{abre} {meio}", "{abre} {meio}", "{meio} {fecho}", "{abre} {meio} {fecho}", "{inteira}"],
@@ -72225,7 +72226,6 @@ CAOS_GERADORES.anneChegou = {
     semana: ["Bem-vinda de volta, {nome}. Eu me lembro de você. Lembro até do brilho."],
   },
 };
-*/
 // Boas-vindas de um jogador comum no cadastro. Etiquetas extras: primeiro, ultimo.
 CAOS_GERADORES.boasVindas = {
   // sempre começa pelo "abre", que traz o nome de quem chegou
@@ -72283,7 +72283,7 @@ CAOS_GERADORES.boasVindas = {
     humor_suave: ["Com você eu vou pegar leve. Não conta pros outros.", "Zoeira leve ativada pra você."],
     humor_acido: ["Você marcou humor ácido. Coragem ou distração?", "Humor ácido anotado. A culpa é toda sua."],
     jf: ["O {jf} já está aqui. Boa sorte contra o criador."],
-    anne: [/* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê): "A {anne} já está aqui. A mesa ficou mais elegante." */],
+    anne: ["A {anne} já está aqui. A mesa ficou mais elegante."],
     modo_hardcore: ["Hardcore logo de cara. Respeito."],
     modo_oldschool: ["Old School hoje. Espero que a memória esteja em dia."],
   },
