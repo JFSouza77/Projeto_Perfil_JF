@@ -2590,12 +2590,16 @@ function redePartidaOnlineOrfa() {
 // Pedido do JF: ao abrir a sala, o host decide as Travas ADM da partida. Aplicar as travas = travar os nicks
 // de dono (hoje o da Anne: o mesmo botão do Cérebro fica ligado e o C.A.O.S. reconhece a Anne); Não = desligado.
 // O JF segue sempre reconhecido. Vale também nos celulares (vai no retrato e na escolha).
-function redeTravasPerguntar(seguir) {
+// Vale também na partida local: a pergunta aparece ao tocar em Jogar; respondida, abrir a sala não pergunta de novo.
+let travasRespondidas = false;
+function redeTravasPerguntar(seguir, deNovo) {
+  if (travasRespondidas && !deNovo) return seguir();
   document.getElementById("redeTravas")?.remove();
   const { ov, box } = caosModalBase();
   ov.id = "redeTravas";
   const fim = (travar) => {
     ov.remove();
+    travasRespondidas = true;
     anneLigar(travar);
     try {
       caosLog("adm", "Travas ADM " + (travar ? "aplicadas" : "não aplicadas") + " na sala");

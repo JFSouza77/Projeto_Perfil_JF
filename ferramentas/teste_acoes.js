@@ -271,6 +271,23 @@ const ARQ = acharMestre(process.argv[2]);
       out.nomeRepetido = players.length === n0 && !!li && li.classList.contains('cad-repetido') && inp.classList.contains('cad-campo-erro') && !!toast && /Anne/.test(toast.textContent) && !document.querySelector('.caos-modal-ov');
       players = salvos; starterChosen = iniAntes; inp.value = ''; renderScoreboard();
     }
+    // Travas ADM (pedido do JF): a pergunta abre; Sim trava o nick da Anne (reconhecida), Não desliga; respondida, não pergunta de novo
+    {
+      const antes = anneLigada();
+      const clicar = (re) => [...document.querySelectorAll('#redeTravas button')].find((x) => re.test(x.textContent)).click();
+      let seguiu = 0;
+      redeTravasPerguntar(() => seguiu++, true);
+      const abriu = !!document.getElementById('redeTravas') && /Travas ADM/.test(document.getElementById('redeTravas').textContent);
+      clicar(/Sim/);
+      const sim = anneLigada() === true && isAnneName('Anne') && seguiu === 1;
+      redeTravasPerguntar(() => seguiu++);
+      const naoRepete = !document.getElementById('redeTravas') && seguiu === 2;
+      redeTravasPerguntar(() => seguiu++, true);
+      clicar(/Não/);
+      const nao = anneLigada() === false && !isAnneName('Anne') && seguiu === 3;
+      out.travasAdm = abriu && sim && naoRepete && nao;
+      anneLigar(antes);
+    }
     // 1.7.10: Reportar carta anota no aparelho (sem mostrar a resposta na janela, sem mexer na partida)
     {
       window.__REDE_SERVIDOR = false; // (sem mandar pro servidor de verdade)
@@ -350,6 +367,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.9.5: Menos movimento (acessibilidade) e Modo Batata são coisas separadas', r.calmoSeparado],
     ['1.7.10: Reportar carta anota no aparelho, sem resposta na janela e sem mexer na partida', r.reportar],
     ['1.7.10: nome repetido: o nome já cadastrado fica em destaque, o campo fica vermelho e o C.A.O.S. comenta', r.nomeRepetido],
+    ['Travas ADM: a pergunta abre, Sim trava o nick da Anne, Não desliga, e não pergunta duas vezes na mesma partida', r.travasAdm],
   ];
   linhas.forEach(([n, ok]) => console.log(`${ok ? 'ok    ' : 'FALHOU'}  ${n}`));
   const tudo = linhas.every((l) => l[1]) && !erros.length;
