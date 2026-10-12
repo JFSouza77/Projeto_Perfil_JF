@@ -10359,6 +10359,7 @@ let expressAskWho = false;
 let expressWhoFreeze = null;
 let expressTargetAction = null;
 let rouletteToken = 0;
+let roletaRetomar = false; // 1.7.10.1: recarregou no meio do giro: a roleta gira de novo (não pousa sozinha)
 let roletaPousou = false; // 1.7.10.1: a roleta desta carta já parou na categoria (só então os celulares veem a categoria)
 let roletaCarta = null; // 1.7.8.9: carta cuja roleta já foi aberta (render() redesenha a roleta, não as costas)
 let answerRevealUntil = 0;
@@ -14145,7 +14146,9 @@ function render() {
     drawBtn.textContent = "🔀 Sortear carta";
   } else if (cardState === "hidden" && roletaCarta && roletaCarta === currentCard) {
     drawBtn.style.display = "none";
-    roletaDesenhar(true);
+    const retomar = roletaRetomar;
+    roletaRetomar = false;
+    roletaDesenhar(!retomar);
   } else if (cardState === "hidden") {
     area.className = "card face-down";
     const mestreBadge = mestreDestaqueHtml();
@@ -34367,6 +34370,8 @@ function saveGameState() {
             }
           : null,
       cardState,
+      // 1.7.10.1: a roleta da categoria (girando ou parada) volta igual depois de recarregar
+      roleta: cardState === "hidden" && currentCard && roletaCarta === currentCard ? (roletaPousou ? "pousou" : "girando") : null,
       gameEnded,
       usedAtLeastOnce,
       starterChosen,
@@ -34763,6 +34768,9 @@ function loadGameState() {
       currentCard = null;
     }
     cardState = state.cardState || "none";
+    roletaCarta = cardState === "hidden" && currentCard && (state.roleta === "pousou" || state.roleta === "girando") ? currentCard : null;
+    roletaPousou = !!roletaCarta && state.roleta === "pousou";
+    roletaRetomar = !!roletaCarta && !roletaPousou;
     gameEnded = state.gameEnded || false;
     usedAtLeastOnce = state.usedAtLeastOnce || false;
     starterChosen = state.starterChosen || false;

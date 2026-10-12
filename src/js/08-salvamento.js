@@ -384,6 +384,8 @@ function saveGameState() {
             }
           : null,
       cardState,
+      // 1.7.10.1: a roleta da categoria (girando ou parada) volta igual depois de recarregar
+      roleta: cardState === "hidden" && currentCard && roletaCarta === currentCard ? (roletaPousou ? "pousou" : "girando") : null,
       gameEnded,
       usedAtLeastOnce,
       starterChosen,
@@ -780,6 +782,9 @@ function loadGameState() {
       currentCard = null;
     }
     cardState = state.cardState || "none";
+    roletaCarta = cardState === "hidden" && currentCard && (state.roleta === "pousou" || state.roleta === "girando") ? currentCard : null;
+    roletaPousou = !!roletaCarta && state.roleta === "pousou";
+    roletaRetomar = !!roletaCarta && !roletaPousou;
     gameEnded = state.gameEnded || false;
     usedAtLeastOnce = state.usedAtLeastOnce || false;
     starterChosen = state.starterChosen || false;

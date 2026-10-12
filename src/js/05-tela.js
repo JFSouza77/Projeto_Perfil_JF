@@ -636,7 +636,9 @@ function render() {
     drawBtn.textContent = "🔀 Sortear carta";
   } else if (cardState === "hidden" && roletaCarta && roletaCarta === currentCard) {
     drawBtn.style.display = "none";
-    roletaDesenhar(true);
+    const retomar = roletaRetomar;
+    roletaRetomar = false;
+    roletaDesenhar(!retomar);
   } else if (cardState === "hidden") {
     area.className = "card face-down";
     const mestreBadge = mestreDestaqueHtml();
