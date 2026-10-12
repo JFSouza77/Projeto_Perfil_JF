@@ -4,7 +4,13 @@
 
 // Desligado (padrão, decisão do JF), ninguém é reconhecido como a Anne: cor, emoji, falas e memória ficam parados.
 let anneLigadaCache = null;
+// Online: no celular convidado vale o que o host da sala decidiu (chega no retrato e na escolha; não grava)
+let anneDaSalaValor = null;
+function anneDaSala(v) {
+  anneDaSalaValor = typeof v === "boolean" ? v : null;
+}
 function anneLigada() {
+  if (anneDaSalaValor !== null) return anneDaSalaValor;
   if (anneLigadaCache === null) {
     try {
       anneLigadaCache = JFStore.getItem(ANNE_LIGADA_KEY) === "1";
@@ -18,6 +24,10 @@ function anneLigar(sim) {
   anneLigadaCache = !!sim;
   try {
     JFStore.setItem(ANNE_LIGADA_KEY, sim ? "1" : "0");
+  } catch (e) {}
+  // host com sala aberta: os celulares recebem a mudança na hora
+  try {
+    if (typeof rede !== "undefined" && rede && rede.papel === "host") redeHostPublicar(true);
   } catch (e) {}
 }
 function isAnneName(n) {
