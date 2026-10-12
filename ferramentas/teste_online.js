@@ -61,7 +61,25 @@ async function mesa(b, sv, rot) {
       [sv.porta, sv.chave],
     );
     if (extra) await ctx.addInitScript(extra);
+    if (process.env.REDE_ESPIAO)
+      await ctx.addInitScript(() => {
+        const set = Storage.prototype.setItem, rem = Storage.prototype.removeItem, clr = Storage.prototype.clear;
+        const pilha = () => new Error().stack.split("\n").slice(2, 6).join(" < ").replace(/file:\/\/\S+?:(\d+):\d+/g, "@$1");
+        Storage.prototype.setItem = function (k, v) {
+          if (String(k).startsWith("perfil5_rede_eu_")) console.log("[EUKEY] set", this === localStorage ? "ls" : "ss", location.hash, Date.now(), v, pilha());
+          return set.call(this, k, v);
+        };
+        Storage.prototype.removeItem = function (k) {
+          if (String(k).startsWith("perfil5_rede_eu_")) console.log("[EUKEY] rem", this === localStorage ? "ls" : "ss", location.hash, Date.now(), pilha());
+          return rem.call(this, k);
+        };
+        Storage.prototype.clear = function () {
+          console.log("[EUKEY] clear", location.hash, pilha());
+          return clr.call(this);
+        };
+      });
     const pg = await ctx.newPage();
+    if (process.env.REDE_ESPIAO) pg.on("console", (c) => c.text().startsWith("[EUKEY]") && console.log(`[${rot}]`, c.text().slice(0, 300)));
     pg.on("pageerror", (e) => erros.push(`[${rot}] ${e.message.slice(0, 160)}`));
     pg.on("dialog", (d) => d.accept().catch(() => {}));
     await pg.goto("file://" + ARQ + (hash || ""));
@@ -281,6 +299,7 @@ async function segundoPlano(b, sv) {
     await jogarAteOFim(host, [pedro.g], 4000);
     const volta = await ctxAnne.newPage();
     volta.on("pageerror", (e) => erros.push(`[${rot}] ${e.message.slice(0, 160)}`));
+    if (process.env.REDE_ESPIAO) volta.on("console", (c) => c.text().startsWith("[EUKEY]") && console.log(`[${rot} volta]`, c.text().slice(0, 300)));
     await volta.goto("file://" + ARQ + "#sala=" + sala);
     const voltouAnne = await esperar(volta, (id) => rede && rede.estado === "dentro" && rede.eu === id && !!rede.retrato, anne.id, 25000);
     if (!voltouAnne) {
