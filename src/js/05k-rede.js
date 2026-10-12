@@ -2587,15 +2587,16 @@ function redePartidaOnlineOrfa() {
   ov.querySelector("#redeOrfaOk").addEventListener("click", () => redeEncerrarOnline("A sala da partida online foi encerrada."));
   document.body.appendChild(ov);
 }
-// Pedido do JF: ao abrir a sala, o host decide as Travas ADM da partida (hoje: o conteúdo da Anne, o mesmo
-// botão do Cérebro). Sim = travado (desligado); Não = liberado. Vale também nos celulares (vai no retrato).
+// Pedido do JF: ao abrir a sala, o host decide as Travas ADM da partida. Aplicar as travas = travar os nicks
+// de dono (hoje o da Anne: o mesmo botão do Cérebro fica ligado e o C.A.O.S. reconhece a Anne); Não = desligado.
+// O JF segue sempre reconhecido. Vale também nos celulares (vai no retrato e na escolha).
 function redeTravasPerguntar(seguir) {
   document.getElementById("redeTravas")?.remove();
   const { ov, box } = caosModalBase();
   ov.id = "redeTravas";
   const fim = (travar) => {
     ov.remove();
-    anneLigar(!travar);
+    anneLigar(travar);
     try {
       caosLog("adm", "Travas ADM " + (travar ? "aplicadas" : "não aplicadas") + " na sala");
     } catch (e) {}
