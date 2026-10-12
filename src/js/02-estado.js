@@ -236,6 +236,7 @@ let expressAskWho = false;
 let expressWhoFreeze = null;
 let expressTargetAction = null;
 let rouletteToken = 0;
+let roletaPousou = false; // 1.7.10.1: a roleta desta carta já parou na categoria (só então os celulares veem a categoria)
 let roletaCarta = null; // 1.7.8.9: carta cuja roleta já foi aberta (render() redesenha a roleta, não as costas)
 let answerRevealUntil = 0;
 // Carta cuja resposta o Mestre já escondeu com um toque (antes da 1ª dica).

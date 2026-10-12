@@ -55,6 +55,7 @@ async function mesa(b, sv, rot) {
         } catch (e) {}
         if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
         if (window.__REDE_SERVIDOR === undefined) window.__REDE_SERVIDOR = false;
+    if (window.__REDE_HOST_SUMIU_MS === undefined) window.__REDE_HOST_SUMIU_MS = 15000; // (o jogo espera 1 min; o teste, 15 s)
     window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, key: chave, config: { iceServers: [] } };
       },
       [sv.porta, sv.chave],
@@ -125,7 +126,7 @@ const PASSO_CELULAR = () => {
   const tem = (a) => ops.findIndex((o) => o.a === a);
   const sorte = Math.random();
   const escolher = () => {
-    for (const a of ["continuar", "bonusAdversario", "sacarCarta", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"]) if (tem(a) >= 0) return ops[tem(a)];
+    for (const a of ["continuar", "bonusAdversario", "sacarCarta", "roletaCategoria", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"]) if (tem(a) >= 0) return ops[tem(a)];
     const ac = ops.filter((o) => o.a === "acertou");
     if (ac.length && sorte < 0.3) return ac[Math.floor(Math.random() * ac.length)];
     if (tem("errou") >= 0) return ops[tem("errou")];
@@ -169,7 +170,7 @@ const PASSO_HOST = () => {
       }
     }
     let o = null;
-    for (const a of ["continuar", "bonusAdversario", "sacarCarta", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"])
+    for (const a of ["continuar", "bonusAdversario", "sacarCarta", "roletaCategoria", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"])
       if (!o && tem(a) >= 0) o = ops[tem(a)];
     const ac = ops.filter((x) => x.a === "acertou");
     if (!o && ac.length && sorte < 0.3) o = ac[Math.floor(Math.random() * ac.length)];

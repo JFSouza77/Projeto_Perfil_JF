@@ -377,6 +377,7 @@ function discardAndDraw() {
 }
 function drawHidden() {
   roletaCarta = null;
+  roletaPousou = false;
   clearTimer();
   clearCardTimer();
   if (gameEnded) return;
@@ -477,6 +478,7 @@ function flipCard() {
   document.getElementById("caosPergunta")?.remove();
   const fraseTopo = cartaFraseAntes();
   roletaCarta = null;
+  roletaPousou = false;
   cardState = "revealed";
   if (CURRENT_MODE === "express") startExpressCard();
   else startTimer("pick");

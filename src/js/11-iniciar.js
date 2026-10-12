@@ -523,6 +523,8 @@ function iniciar() {
   });
   document.getElementById("startGameBtn").addEventListener("click", () => {
     unlockAudio();
+    // 1.7.10.1 (pedido do JF): com a sala aberta, cada jogador precisa de um aparelho (o celular dele ou o do host)
+    if (typeof redeSemAparelho === "function" && redeSemAparelho().length) return redeAvisarSemAparelho();
     document.getElementById("welcomeScreen").style.display = "none";
     document.getElementById("gameScreen").style.display = "flex";
     syncGameplayPanels();

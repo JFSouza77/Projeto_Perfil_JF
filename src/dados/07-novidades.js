@@ -6,6 +6,21 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.1",
+    data: "12/10/2026 · 16:29",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "Correções do online depois do primeiro teste com cada um numa internet.",
+    itens: [
+      "🎰 Roleta em todos os celulares: quem joga no próprio celular vê a roleta da categoria girar e parar, igual à tela do host.",
+      "🙈 Categoria só depois da roleta: o celular não mostra mais a categoria antes da hora, e Animal aparece como Coisa, igual ao host.",
+      "🏆 Como se vence no celular: o topo da tela mostra a modalidade da partida e o objetivo.",
+      "🗺️ Tabuleiro no intervalo: com a carta na mesa, o tabuleiro inteiro sai da frente e volta no intervalo entre as cartas.",
+      "⏳ Host com 1 minuto: quem é host pode sair do jogo por até 1 minuto, pra atender uma mensagem ou tirar um print, sem perder a sala.",
+      "📱 Cada um no seu aparelho: com a sala aberta, a partida só começa quando todo jogador estiver no próprio celular ou marcado no aparelho do host.",
+    ],
+    qol: ["🔤 Botão da sala: com a sala aberta, o botão da pausa mostra o código da sala e quem está dentro."],
+  },
+  {
     v: "Beta 1.7.10",
     data: "11/10/2026 · 10:24",
     nome: "Multiplayer Update · Online de verdade",

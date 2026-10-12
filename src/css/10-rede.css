@@ -521,3 +521,11 @@ body.claro button.splash-embreve .eb-sub {
 .rede-fala-rosto{display:inline-block;padding:4px 12px;border:2px solid var(--emo-cor,#a78bfa);border-radius:999px;font-weight:800;color:var(--emo-cor,#c4b5fd);white-space:nowrap;font-size:.95rem}
 .rede-fala-rotulo{display:inline-block;padding:3px 12px;border-radius:999px;background:var(--emo-cor,#a78bfa);color:#14001f;font-weight:900;letter-spacing:.12em;text-transform:uppercase;font-size:.75rem}
 .rede-fala-txt{font-weight:700;font-size:1.02rem}
+
+/* 1.7.10.1 · roleta da categoria nos celulares e "como se vence" no topo */
+.telao-roleta { margin: 4px 0; }
+.telao-roleta .roulette-phrase { font-size: 1.05rem; }
+.telao-objetivo { margin: 8px 0; padding: 8px 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.85rem; text-align: left; }
+.telao-objetivo summary { cursor: pointer; }
+.telao-objetivo p { margin: 6px 0 0; opacity: 0.85; }
+body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba(0, 0, 0, 0.12); }

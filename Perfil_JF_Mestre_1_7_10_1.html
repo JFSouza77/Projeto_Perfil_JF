@@ -6,6 +6,16 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.1 · 12/10/2026 · "Multiplayer Update · Online de verdade" = CORREÇÕES DO PRIMEIRO TESTE EM REDES DIFERENTES (5G × Wi-Fi).
+          Relato do JF: roleta da categoria só no host → o retrato leva carta.roleta {cats, girando} e o celular gira
+          o rolo (telaoRoletaHtml/telaoRoletaAnimar) até a categoria chegar; o Mestre no celular gira (roletaCategoria,
+          "↻ Virar carta") e, parada, "✓ Falei! Mostrar a carta" (virarCarta). Categoria vazando: carta.categoria vai
+          mapeada (gemCategoryFor: Animal → Coisa fora do Júnior) e null até a roleta parar (roletaPousou, 02-estado).
+          Como se vence no celular (retrato.objetivo + .telao-objetivo). Tabuleiro inteiro no celular e no host com
+          Mestre longe só no intervalo, no fim ou sem carta (telaoMostraTabuleiro). Troca de host: 1 min sem notícia
+          (REDE_HOST_SUMIU_MS 60 000; testes usam __REDE_HOST_SUMIU_MS 15 000). Botão da pausa com a sala aberta vira
+          "🌐 Sala XXXX (ver quem está dentro)" (redeBotaoPausaNome). Partida online só começa com todo jogador num
+          aparelho (redeSemAparelho/redeAvisarSemAparelho no startGameBtn). JOGO_BUILD 1801.
   1.7.10 · 11/10/2026 · "Multiplayer Update · Online de verdade" = SERVIDOR E PONTE PRÓPRIOS (Cloudflare), PRIMEIRA DA 1.7.10.
           Decisões do JF: servidor nosso (Cloudflare, servidor/worker.js: Worker + Durable Object) e a 1.7.10 sai antes
           do Modo C.A.O.S. (que vem numa ramificação). Rede: REDE_SERVIDOR (perfil-jf-sala.joaofe0000.workers.dev);
@@ -715,7 +725,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10</title>
+<title>Perfil JF · Beta 1.7.10.1</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -8862,6 +8872,14 @@ body.claro button.splash-embreve .eb-sub {
 .rede-fala-rosto{display:inline-block;padding:4px 12px;border:2px solid var(--emo-cor,#a78bfa);border-radius:999px;font-weight:800;color:var(--emo-cor,#c4b5fd);white-space:nowrap;font-size:.95rem}
 .rede-fala-rotulo{display:inline-block;padding:3px 12px;border-radius:999px;background:var(--emo-cor,#a78bfa);color:#14001f;font-weight:900;letter-spacing:.12em;text-transform:uppercase;font-size:.75rem}
 .rede-fala-txt{font-weight:700;font-size:1.02rem}
+
+/* 1.7.10.1 · roleta da categoria nos celulares e "como se vence" no topo */
+.telao-roleta { margin: 4px 0; }
+.telao-roleta .roulette-phrase { font-size: 1.05rem; }
+.telao-objetivo { margin: 8px 0; padding: 8px 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.85rem; text-align: left; }
+.telao-objetivo summary { cursor: pointer; }
+.telao-objetivo p { margin: 6px 0 0; opacity: 0.85; }
+body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba(0, 0, 0, 0.12); }
 </style>
 </head>
 <body class="noturno">
@@ -8918,7 +8936,7 @@ body.claro button.splash-embreve .eb-sub {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.0 · Atualizada em 12/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.1 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.0 · Atualizada em 12/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -9186,7 +9204,7 @@ body.claro button.splash-embreve .eb-sub {
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1800;
+const JOGO_BUILD = 1801;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -10341,6 +10359,7 @@ let expressAskWho = false;
 let expressWhoFreeze = null;
 let expressTargetAction = null;
 let rouletteToken = 0;
+let roletaPousou = false; // 1.7.10.1: a roleta desta carta já parou na categoria (só então os celulares veem a categoria)
 let roletaCarta = null; // 1.7.8.9: carta cuja roleta já foi aberta (render() redesenha a roleta, não as costas)
 let answerRevealUntil = 0;
 // Carta cuja resposta o Mestre já escondeu com um toque (antes da 1ª dica).
@@ -11519,6 +11538,7 @@ function discardAndDraw() {
 }
 function drawHidden() {
   roletaCarta = null;
+  roletaPousou = false;
   clearTimer();
   clearCardTimer();
   if (gameEnded) return;
@@ -11619,6 +11639,7 @@ function flipCard() {
   document.getElementById("caosPergunta")?.remove();
   const fraseTopo = cartaFraseAntes();
   roletaCarta = null;
+  roletaPousou = false;
   cardState = "revealed";
   if (CURRENT_MODE === "express") startExpressCard();
   else startTimer("pick");
@@ -14568,20 +14589,33 @@ function cartaFraseSobe(topoAntes) {
 // 1.7.8.9: a roleta é lembrada pela carta. Antes, qualquer render() no meio dela (pausa e volta, balão
 // que fecha) redesenhava as costas e o Mestre tinha que virar de novo. Agora o render() redesenha a
 // roleta já pousada na categoria. (roletaCarta mora em 02-estado.js)
+function redePublicarSeHost() {
+  try {
+    if (typeof rede !== "undefined" && rede && rede.papel === "host") redeHostPublicar(true);
+  } catch (e) {}
+}
 function startCategoryRoulette() {
   roletaDesenhar(false);
 }
-function roletaDesenhar(jaPousada) {
-  if (cardState !== "hidden" || !currentCard) return;
-  roletaCarta = currentCard;
-  const area = document.getElementById("cardArea");
-  const finalCat = gemCategoryFor(currentCard.category);
-  // no Express a roleta só gira entre as categorias da partida (escolhidas ou sorteadas pelo C.A.O.S.)
+// no Express a roleta só gira entre as categorias da partida (escolhidas ou sorteadas pelo C.A.O.S.)
+function roletaCategorias() {
   const cats =
     CURRENT_MODE === "express" && expressSelectedCategories && expressSelectedCategories.length
       ? expressSelectedCategories.slice()
       : currentGemCategories();
-  if (!cats.includes(finalCat)) cats.push(finalCat);
+  const finalCat = currentCard ? gemCategoryFor(currentCard.category) : null;
+  if (finalCat && !cats.includes(finalCat)) cats.push(finalCat);
+  return cats;
+}
+function roletaDesenhar(jaPousada) {
+  if (cardState !== "hidden" || !currentCard) return;
+  if (roletaCarta !== currentCard) roletaPousou = false;
+  roletaCarta = currentCard;
+  const area = document.getElementById("cardArea");
+  const finalCat = gemCategoryFor(currentCard.category);
+  const cats = roletaCategorias();
+  // 1.7.10.1 (relato do JF): os celulares veem a roleta girando; o giro começou, a sala fica sabendo
+  if (!jaPousada) redePublicarSeHost();
   const label = (c) => (CATEGORY_LABELS[c] || c).toUpperCase();
   const token = ++rouletteToken;
   const virar = !jaPousada && cartaAnimar();
@@ -14609,6 +14643,10 @@ function roletaDesenhar(jaPousada) {
       if (token === rouletteToken) flipCard();
     });
     if (!jaPousada) caosRoletaSom("pouso");
+    if (!roletaPousou) {
+      roletaPousou = true;
+      redePublicarSeHost(); // agora a categoria vai pros celulares
+    }
   };
   if (jaPousada || !visualFxAllowed() || cats.length < 2) {
     finish();
@@ -17919,7 +17957,7 @@ setInterval(tempoTick, TEMPO_TICK_MS);
 const ACOES = {
   sacarCarta: { fn: "drawHidden", pode: () => acoesEmJogo() && cardState === "none" },
   virarCarta: { fn: "flipCard", pode: () => acoesEmJogo() && cardState === "hidden" },
-  roletaCategoria: { fn: "startCategoryRoulette", pode: () => acoesEmJogo() && cardState === "hidden" },
+  roletaCategoria: { fn: "startCategoryRoulette", pode: () => acoesEmJogo() && cardState === "hidden" && roletaCarta !== currentCard },
   escolherDica: { fn: "chooseClue", pode: (idx) => acoesEmJogo() && acoesDicaLivre(idx) },
   acertou: { fn: "markCorrect", pode: (idx) => acoesComDica() && (idx === undefined || !!players[idx]) },
   errou: { fn: "markWrong", pode: (tipo) => acoesComDica() && [undefined, null, "pular", "absurdo"].includes(tipo) },
@@ -18199,7 +18237,10 @@ function retratoPartida(papel) {
     ? {
         // o id da carta só pro Mestre: com o catálogo dentro do jogo, o id entregaria a resposta
         ...(mestre ? { id: currentCard.id || null } : {}),
-        categoria: currentCard.category,
+        // 1.7.10.1 (relato do JF): a categoria do jogo (Animal vira Coisa fora do Júnior), e só depois que a
+        // roleta para; antes disso os celulares veem a roleta girando com as categorias da partida
+        categoria: cardState !== "hidden" || (roletaCarta === currentCard && roletaPousou) ? gemCategoryFor(currentCard.category) : null,
+        roleta: cardState === "hidden" ? { cats: roletaCategorias(), girando: roletaCarta === currentCard && !roletaPousou } : null,
         totalDicas: currentCard.clues.length,
         abertas: revealedOrder.map((r) => ({
           // o id da dica começa com o id da carta: só pro Mestre (no público entregaria a resposta)
@@ -18222,6 +18263,14 @@ function retratoPartida(papel) {
     modo: CURRENT_MODE,
     formato: CURRENT_FORMAT,
     vitoria: winCond(),
+    // 1.7.10.1 (relato do JF): os celulares mostram como se vence (o mesmo texto do host, sem marcação)
+    objetivo: (() => {
+      try {
+        return String(winCondRuleText()).replace(/<[^>]*>/g, "").slice(0, 400);
+      } catch (e) {
+        return "";
+      }
+    })(),
     meta: { casa: WINNING_SCORE, pontos: typeof metaPontos === "function" ? metaPontos() : null },
     tabuleiro: CURRENT_MODE === "express" ? null : tabFormaAtual(), // 1.7.9.2: todo aparelho desenha a mesma forma
     rodada: rodadaAtual,
@@ -18586,6 +18635,43 @@ function telaoIniciar() {
   telaoRelogioTimer = setInterval(telaoRelogio, 500);
 }
 const TELAO_CAT = { ANO: "📅 Ano", PESSOA: "🧑 Pessoa", LUGAR: "📍 Lugar", COISA: "📦 Coisa", ANIMAL: "🐾 Animal" };
+/* 1.7.10.1 (relato do JF) · A roleta da categoria também nos celulares: enquanto o host não manda a categoria,
+   o rolo gira entre as categorias da partida; quando ela chega, para nela ("Eu sou UMA COISA"). */
+let telaoRoletaTimer = null;
+function telaoRoletaHtml(c) {
+  const label = (k) => escapeHtml((CATEGORY_LABELS[k] || k || "?").toUpperCase());
+  const cats = (c.roleta && Array.isArray(c.roleta.cats) && c.roleta.cats.length ? c.roleta.cats : Object.keys(CATEGORY_LABELS)).filter((k) => typeof k === "string").slice(0, 8);
+  const pousou = !!c.categoria;
+  const cor = pousou ? (GEM_INFO[c.categoria] || {}).color || "#e94560" : "#a78bfa";
+  const dica = pousou ? "🗣️ A categoria da carta" : c.roleta && c.roleta.girando ? "🎰 sorteando a categoria..." : "🃏 O Mestre vai virar a carta";
+  return `<div class="roulette telao-roleta" style="--cat:${cor};" data-cats="${escapeHtml(cats.join(","))}" data-pousou="${pousou ? 1 : 0}"><div class="roulette-phrase">"Eu sou <span class="roulette-reel${pousou ? " landed" : ""}" id="telaoReel">${pousou ? label(c.categoria) : label(cats[0])}</span>"</div><div class="roulette-hint">${dica}</div></div>`;
+}
+function telaoRoletaAnimar(raiz) {
+  clearInterval(telaoRoletaTimer);
+  telaoRoletaTimer = null;
+  const box = raiz && raiz.querySelector(".telao-roleta");
+  if (!box || box.dataset.pousou === "1") return;
+  const reel = box.querySelector(".roulette-reel"), cats = box.dataset.cats.split(",").filter(Boolean);
+  if (!reel || cats.length < 2 || (typeof visualFxAllowed === "function" && !visualFxAllowed())) return;
+  let i = 0;
+  telaoRoletaTimer = setInterval(() => {
+    if (!reel.isConnected) return clearInterval(telaoRoletaTimer);
+    i = (i + 1) % cats.length;
+    reel.textContent = (CATEGORY_LABELS[cats[i]] || cats[i]).toUpperCase();
+  }, 140);
+}
+const TELAO_VITORIA_IC = { casa: "🏠", tabuleiro: "🏁", pontos: "🔢", joias: "💎", express: "⚡" };
+function telaoObjetivoHtml(r) {
+  const w = (typeof WIN_CONDITIONS !== "undefined" && WIN_CONDITIONS[r.vitoria]) || null;
+  const nome = w ? w.label : r.vitoria;
+  if (!nome) return "";
+  return `<details class="telao-objetivo"><summary>${TELAO_VITORIA_IC[r.vitoria] || (w && w.icon) || "🏆"} Como se vence: <b>${escapeHtml(nome)}</b></summary>${r.objetivo ? `<p>${escapeHtml(r.objetivo)}</p>` : ""}</details>`;
+}
+// 1.7.10.1 (pedido do JF): o tabuleiro inteiro só no intervalo (lobby antes da próxima carta), no fim e antes
+// da primeira carta; com carta na mesa, ele sai da frente (o placar logo abaixo mostra a casa de cada um)
+function telaoMostraTabuleiro(r) {
+  return !!(r.intervalo || r.fim || !r.carta || r.estadoCarta === "none");
+}
 function telaoDesenhar(r, alvo) {
   const box = alvo || document.getElementById("telao"); // 1.7.9.4: o host desenha na própria tela de jogador
   if (!box) return;
@@ -18615,11 +18701,13 @@ function telaoDesenhar(r, alvo) {
       <div>👉 Vez de<br><b>${nome(r.vezId)}</b></div>
       <div>⏱️ <b id="telaoRelogio">—</b></div>
     </section>
-    ${c ? `<section class="telao-carta"><div class="telao-cat">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)} · ${c.abertas.length} de ${c.totalDicas} dicas</div>${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>` : ""}
-    ${tabHtmlTelao(r)}
+    ${telaoObjetivoHtml(r)}
+    ${c && r.estadoCarta === "hidden" ? `<section class="telao-carta">${telaoRoletaHtml(c)}</section>` : c && c.categoria ? `<section class="telao-carta"><div class="telao-cat">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)} · ${c.abertas.length} de ${c.totalDicas} dicas</div>${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>` : ""}
+    ${telaoMostraTabuleiro(r) ? tabHtmlTelao(r) : ""}
     <section class="telao-placar"><ol>${placar}</ol></section>
     ${TELAO_SAIR}`;
   tabPecasTelao(r); // 1.7.9.2: o mesmo tabuleiro do jogo
+  telaoRoletaAnimar(box);
   telaoRelogio();
 }
 function telaoRelogio() {
@@ -19633,7 +19721,8 @@ const REDE_MAX_LETRAS = 640 * 1024; // só o pacote de recuperação chega perto
 const REDE_MAX_NORMAL = 64 * 1024; // o resto das mensagens
 const REDE_DO_CONVIDADO = ["oi", "cmd", "ping", "tchau", "voto", "pedido"];
 const REDE_DO_HOST = ["bemvindo", "escolha", "recusa", "retrato", "segredo", "resp", "pong", "painel", "recuperacao", "aguarde", "fala"];
-const REDE_HOST_SUMIU_MS = 15000; // sem notícia do host há mais que isso: o sucessor assume
+// 1.7.10.1 (pedido do JF): 1 min sem notícia do host antes do sucessor assumir (dá tempo de voltar de outro app)
+const REDE_HOST_SUMIU_MS = typeof window !== "undefined" && Number.isFinite(window.__REDE_HOST_SUMIU_MS) ? window.__REDE_HOST_SUMIU_MS : 60000;
 const REDE_ONLINE_MS = 15000; // sem notícia há mais que isso: o convidado conta como fora
 const REDE_LETRAS_SALA = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // sem I e O (não confundem com 1 e 0)
 const REDE_SITE = "https://jfsouza77.github.io/Projeto_Perfil_JF/"; // link pros convidados (o host pode estar no offline)
@@ -20656,16 +20745,23 @@ function redeHostEsperando() {
   const lista = JSON.stringify([redeLugaresLivres(), redeOpcoesCadastro()]);
   Object.keys(rede.esperando).forEach((ses) => rede.esperando[ses] !== lista && redeMandarEscolha(ses));
 }
+// 1.7.10.1 (pedido do JF): com a sala aberta, o botão da pausa não fala mais em abrir sala
+function redeBotaoPausaNome() {
+  const on = document.getElementById("pauseOnlineBtn");
+  if (on) on.textContent = rede && rede.papel === "host" ? `🌐 Sala ${rede.sala} (ver quem está dentro)` : "🌐 Jogar online (beta)";
+}
 // Resumo da sala no cadastro (botão "Vai jogar online?").
 function redeCadastroInfo() {
   const b = document.getElementById("redeCadBtn"), info = document.getElementById("redeCadInfo");
   if (!b || !info) return;
+  redeBotaoPausaNome();
   if (!rede || rede.papel !== "host") {
     b.textContent = "🌐 Vai jogar online? Abra a sala antes de cadastrar";
     info.innerHTML = "";
     return;
   }
   b.textContent = `🌐 Sala ${rede.sala} aberta · ver o link`;
+  redeBotaoPausaNome();
   const na = players.filter((p) => redeOnline(rede.assentos[p.id])).map((p) => escapeHtml(p.name));
   const esperando = Object.keys(rede.esperando).length;
   info.innerHTML =
@@ -21073,7 +21169,11 @@ function redeOpcoes(jid) {
   }
   if (ehMestre) {
     if (cardState === "none") add("sacarCarta", [], "🃏 Puxar carta", "ok");
-    if (cardState === "hidden") add("virarCarta", [], "👀 Ver carta", "ok");
+    // 1.7.10.1: o Mestre no celular gira a roleta (todos veem) e, com ela parada, mostra a carta
+    if (cardState === "hidden") {
+      if (roletaCarta !== currentCard) add("roletaCategoria", [], "↻ Virar carta", "ok");
+      else if (roletaPousou) add("virarCarta", [], "✓ Falei! Mostrar a carta", "ok");
+    }
     if (cardState === "revealed" && pendingIndex !== null && currentCard) {
       const item = currentCard.clues[pendingIndex], txt = String(item.text || "").toLowerCase();
       const resp = responderIndex;
@@ -21213,6 +21313,19 @@ function redeHostPublicar(forcar) {
 // 1.7.9.9 · Jogadores do aparelho do host: o principal (hostEu) e quem divide o aparelho com ele.
 function redeNoHost(jid) {
   return !!rede && !!jid && (jid === rede.hostEu || (rede.hostJunto || []).includes(jid));
+}
+// 1.7.10.1 (pedido do JF): a partida online só começa quando todo jogador tem aparelho: o próprio celular (na
+// sala) ou o do host (marcado em "Quem joga neste aparelho?"). Devolve quem ainda está sem.
+function redeSemAparelho() {
+  if (!rede || rede.papel !== "host" || starterChosen) return [];
+  return players.filter((p) => !redeNoHost(p.id) && !redeOnline(rede.assentos[p.id]));
+}
+function redeAvisarSemAparelho() {
+  const nomes = redeSemAparelho().map((p) => p.name);
+  caosAvisoModal(
+    `Antes de começar, diga onde cada um joga: ${nomes.join(", ")} ${nomes.length === 1 ? "ainda não está" : "ainda não estão"} na sala. Entre pelo celular ou marque em "Quem joga neste aparelho?".`,
+    () => redePainelHost(),
+  );
 }
 function redeJogadoresNoHost() {
   if (!rede) return [];
@@ -21833,8 +21946,12 @@ function redeMestreCartaMontar(box) {
   const mais = grupo((o) => o.g === "Mais");
   let h = "";
   if (r.estadoCarta !== "revealed" || !c) {
-    const virar = grupo((o) => o.a === "virarCarta" || o.a === "sacarCarta");
-    h = `<div class="card face-down rede-carta-mestre"><div class="verso-frase">Você sabe dizer quem sou?!</div><div class="mestre-da-vez">Mestre da rodada: <b>você</b></div><div>Vire a carta quando estiver pronto.</div>${virar}</div>`;
+    const virar = grupo((o) => o.a === "virarCarta" || o.a === "sacarCarta" || o.a === "roletaCategoria");
+    // 1.7.10.1: depois de virar, o Mestre vê a mesma roleta da mesa e lê a categoria em voz alta
+    const girou = c && r.estadoCarta === "hidden" && c.roleta && (c.roleta.girando || c.categoria);
+    h = girou
+      ? `<div class="card rede-carta-mestre"><div class="roulette-title">Mestre, diga aos jogadores:</div>${telaoRoletaHtml(c)}${c.categoria ? '<div class="roulette-hint">🗣️ Leia a frase em voz alta pra todo mundo. Só a categoria, nunca a resposta!</div>' : ""}${virar}</div>`
+      : `<div class="card face-down rede-carta-mestre"><div class="verso-frase">Você sabe dizer quem sou?!</div><div class="mestre-da-vez">Mestre da rodada: <b>você</b></div><div>Vire a carta quando estiver pronto.</div>${virar}</div>`;
   } else {
     const cat = typeof gemCategoryFor === "function" ? gemCategoryFor(c.categoria) : c.categoria;
     const cor = (GEM_INFO[cat] || {}).color || "#e94560";
@@ -21873,6 +21990,7 @@ function redeMestreCartaMontar(box) {
   const resumo = box.querySelector(".telao-carta");
   if (resumo) resumo.replaceWith(sec);
   else (box.querySelector(".telao-vez") || box.firstChild).after(sec);
+  if (typeof telaoRoletaAnimar === "function") telaoRoletaAnimar(sec);
   sec.querySelectorAll("[data-op]").forEach((b) =>
     b.addEventListener("click", () => {
       const o = ops[+b.dataset.op];
@@ -27224,7 +27342,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.1 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -32316,7 +32434,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.1 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -35536,7 +35654,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.10.1 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -36059,7 +36177,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.10.1 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -71262,6 +71380,21 @@ const PAUSE_TIPS = [
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.1",
+    data: "12/10/2026 · 16:29",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "Correções do online depois do primeiro teste com cada um numa internet.",
+    itens: [
+      "🎰 Roleta em todos os celulares: quem joga no próprio celular vê a roleta da categoria girar e parar, igual à tela do host.",
+      "🙈 Categoria só depois da roleta: o celular não mostra mais a categoria antes da hora, e Animal aparece como Coisa, igual ao host.",
+      "🏆 Como se vence no celular: o topo da tela mostra a modalidade da partida e o objetivo.",
+      "🗺️ Tabuleiro no intervalo: com a carta na mesa, o tabuleiro inteiro sai da frente e volta no intervalo entre as cartas.",
+      "⏳ Host com 1 minuto: quem é host pode sair do jogo por até 1 minuto, pra atender uma mensagem ou tirar um print, sem perder a sala.",
+      "📱 Cada um no seu aparelho: com a sala aberta, a partida só começa quando todo jogador estiver no próprio celular ou marcado no aparelho do host.",
+    ],
+    qol: ["🔤 Botão da sala: com a sala aberta, o botão da pausa mostra o código da sala e quem está dentro."],
+  },
+  {
     v: "Beta 1.7.10",
     data: "11/10/2026 · 10:24",
     nome: "Multiplayer Update · Online de verdade",
@@ -73338,6 +73471,8 @@ function iniciar() {
   });
   document.getElementById("startGameBtn").addEventListener("click", () => {
     unlockAudio();
+    // 1.7.10.1 (pedido do JF): com a sala aberta, cada jogador precisa de um aparelho (o celular dele ou o do host)
+    if (typeof redeSemAparelho === "function" && redeSemAparelho().length) return redeAvisarSemAparelho();
     document.getElementById("welcomeScreen").style.display = "none";
     document.getElementById("gameScreen").style.display = "flex";
     syncGameplayPanels();

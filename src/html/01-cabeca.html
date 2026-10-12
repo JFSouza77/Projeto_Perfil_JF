@@ -6,6 +6,16 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.1 · 12/10/2026 · "Multiplayer Update · Online de verdade" = CORREÇÕES DO PRIMEIRO TESTE EM REDES DIFERENTES (5G × Wi-Fi).
+          Relato do JF: roleta da categoria só no host → o retrato leva carta.roleta {cats, girando} e o celular gira
+          o rolo (telaoRoletaHtml/telaoRoletaAnimar) até a categoria chegar; o Mestre no celular gira (roletaCategoria,
+          "↻ Virar carta") e, parada, "✓ Falei! Mostrar a carta" (virarCarta). Categoria vazando: carta.categoria vai
+          mapeada (gemCategoryFor: Animal → Coisa fora do Júnior) e null até a roleta parar (roletaPousou, 02-estado).
+          Como se vence no celular (retrato.objetivo + .telao-objetivo). Tabuleiro inteiro no celular e no host com
+          Mestre longe só no intervalo, no fim ou sem carta (telaoMostraTabuleiro). Troca de host: 1 min sem notícia
+          (REDE_HOST_SUMIU_MS 60 000; testes usam __REDE_HOST_SUMIU_MS 15 000). Botão da pausa com a sala aberta vira
+          "🌐 Sala XXXX (ver quem está dentro)" (redeBotaoPausaNome). Partida online só começa com todo jogador num
+          aparelho (redeSemAparelho/redeAvisarSemAparelho no startGameBtn). JOGO_BUILD 1801.
   1.7.10 · 11/10/2026 · "Multiplayer Update · Online de verdade" = SERVIDOR E PONTE PRÓPRIOS (Cloudflare), PRIMEIRA DA 1.7.10.
           Decisões do JF: servidor nosso (Cloudflare, servidor/worker.js: Worker + Durable Object) e a 1.7.10 sai antes
           do Modo C.A.O.S. (que vem numa ramificação). Rede: REDE_SERVIDOR (perfil-jf-sala.joaofe0000.workers.dev);
@@ -715,7 +725,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10</title>
+<title>Perfil JF · Beta 1.7.10.1</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
