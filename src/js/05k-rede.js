@@ -1025,7 +1025,7 @@ function redeMandarEscolha(sessao) {
   const lugares = redeLugaresLivres();
   const cadastro = redeOpcoesCadastro();
   rede.esperando[sessao] = JSON.stringify([lugares, cadastro]);
-  redeEnviar("escolha", { lugares, cadastro }, sessao);
+  redeEnviar("escolha", { lugares, cadastro, anne: anneLigada() }, sessao);
 }
 // 1.7.9.6: o que o convidado pode escolher pra criar o próprio jogador (só antes da partida começar)
 // 1.7.9.6 (pedido do JF): o mesmo cadastro do host, com as cores de dono (RGB do JF, degradê da Anne),
@@ -1598,7 +1598,7 @@ function redeHostPublicar(forcar) {
   r.votacao = rede.votacao ? redeVotacaoPublica() : null;
   r.sucessor = redeSucessor();
   r.hostNome = rede.hostEu ? (jogadorPorId(rede.hostEu) || {}).name || null : null;
-  redeEnviar("retrato", { r });
+  redeEnviar("retrato", { r, anne: anneLigada() });
   redeHostRecuperacao(false);
   Object.keys(rede.assentos).forEach((jid) => {
     const a = rede.assentos[jid];
@@ -1908,6 +1908,7 @@ function redeConvidadoReceber(m) {
     rede.ms = atraso; // a última ida e volta (o selo de conexão da tela)
     return;
   }
+  if (typeof m.anne === "boolean" && (m.t === "escolha" || m.t === "retrato")) anneDaSala(m.anne); // Travas ADM do host
   if (m.t === "escolha") {
     rede.estado = "escolhendo";
     rede.lugares = m.lugares.map((l) => ({ id: l.id, nome: String(l.nome).slice(0, 24), avatar: redeEmojiLimpo(l.avatar) }));
@@ -1996,6 +1997,7 @@ function redeAssumir() {
   try {
     JFStore.setItem("perfil200_state", rede.recuperacao.estado);
     JFStore.setItem(REDE_HOST_KEY, JSON.stringify({ sala, modo, eu: rede.eu, quando: Date.now(), assumiu: true, antigo, aprovados: rede.recuperacao.aprovados || [] }));
+    if (anneDaSalaValor !== null) anneLigar(anneDaSalaValor); // o novo host segue com as Travas ADM da partida
   } catch (e) {}
   const ir = () => {
     try {
@@ -2585,6 +2587,25 @@ function redePartidaOnlineOrfa() {
   ov.querySelector("#redeOrfaOk").addEventListener("click", () => redeEncerrarOnline("A sala da partida online foi encerrada."));
   document.body.appendChild(ov);
 }
+// Pedido do JF: ao abrir a sala, o host decide as Travas ADM da partida (hoje: o conteúdo da Anne, o mesmo
+// botão do Cérebro). Sim = travado (desligado); Não = liberado. Vale também nos celulares (vai no retrato).
+function redeTravasPerguntar(seguir) {
+  document.getElementById("redeTravas")?.remove();
+  const { ov, box } = caosModalBase();
+  ov.id = "redeTravas";
+  const fim = (travar) => {
+    ov.remove();
+    anneLigar(!travar);
+    try {
+      caosLog("adm", "Travas ADM " + (travar ? "aplicadas" : "não aplicadas") + " na sala");
+    } catch (e) {}
+    seguir();
+  };
+  const row = caosModalRow();
+  row.append(caosModalBtn("Não", "#444a66", () => fim(false)), caosModalBtn("🔒 Sim, aplicar", "#dc2626", () => fim(true)));
+  box.append(caosModalMsg("🛡️ Deseja aplicar as Travas ADM nessa partida?!"), row);
+  document.body.appendChild(ov);
+}
 function redePerguntarSalaTalvez() {
   try {
     if (rede || redeSalaDoEndereco() || players.length || starterChosen || !redeTemInternet()) return;
@@ -2602,7 +2623,7 @@ function redePerguntarSala() {
   ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Vai jogar online?</h3><p>Abrindo a sala, este aparelho vira o <b>host</b> da partida. Os outros entram com o <b>código da sala</b> (ou pelo link), você aceita a entrada e cada um cria o próprio jogador no celular dele.</p><button type="button" class="btn-start btn-neo neo-solid neo-still" id="redePerguntaSim" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">🌐 Sim, abrir a sala</button><button type="button" class="chip" id="redePerguntaNao" style="margin-top:10px">Não, todo mundo neste aparelho</button></div>`;
   ov.querySelector("#redePerguntaSim").addEventListener("click", () => {
     ov.remove();
-    if (redeAbrirSala("internet")) redePainelHost();
+    redeTravasPerguntar(() => redeAbrirSala("internet") && redePainelHost());
   });
   ov.querySelector("#redePerguntaNao").addEventListener("click", () => ov.remove());
   document.body.appendChild(ov);
@@ -2738,18 +2759,22 @@ function redePainelHost() {
       }<button type="button" class="chip" id="redeAbrirLocal">Ensaio neste navegador (abas)</button><button type="button" class="chip" id="redeOk" style="margin-top:10px">Fechar</button></div>`;
       const net = ov.querySelector("#redeAbrirNet");
       if (net)
-        net.addEventListener("click", () => {
-          redeAbrirSala("internet");
-          pintar();
-        });
+        net.addEventListener("click", () =>
+          redeTravasPerguntar(() => {
+            redeAbrirSala("internet");
+            pintar();
+          }),
+        );
       ov.querySelector("#redeComo").addEventListener("click", () => {
         ov.remove();
         openTutorial("manual:online");
       });
-      ov.querySelector("#redeAbrirLocal").addEventListener("click", () => {
-        redeAbrirSala("local");
-        pintar();
-      });
+      ov.querySelector("#redeAbrirLocal").addEventListener("click", () =>
+        redeTravasPerguntar(() => {
+          redeAbrirSala("local");
+          pintar();
+        }),
+      );
     } else {
       const est = rede.transporte.estado || "aberta";
       const lugares = players
