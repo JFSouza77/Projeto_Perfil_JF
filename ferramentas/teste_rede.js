@@ -102,6 +102,7 @@ async function rodarColisao(b, porta) {
       localStorage.setItem("perfil5_tutorial_visto", "x");
     } catch (e) {}
     if (window.__REDE_SERVIDOR === undefined) window.__REDE_SERVIDOR = false;
+    if (window.__REDE_HOST_SUMIU_MS === undefined) window.__REDE_HOST_SUMIU_MS = 15000; // (o jogo espera 1 min; o teste, 15 s)
     window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, key: window.__CHAVE || "peerjs", config: { iceServers: [] } };
   }, porta);
   const erros = [], ok = [];
@@ -139,6 +140,7 @@ async function rodarServidorNosso(b, nosso, publico) {
     if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
     window.__REDE_SERVIDOR = { host: "127.0.0.1", port: window.__NOSSO_MORTO ? 9 : nosso, secure: false };
     if (window.__REDE_SERVIDOR === undefined) window.__REDE_SERVIDOR = false;
+    if (window.__REDE_HOST_SUMIU_MS === undefined) window.__REDE_HOST_SUMIU_MS = 15000; // (o jogo espera 1 min; o teste, 15 s)
     window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: publico, path: "/", secure: false, key: "peerjs", config: { iceServers: [] } };
   }, [nosso, publico]);
   const erros = [], ok = [];
@@ -234,6 +236,7 @@ async function rodar(b, modo, porta, turn) {
     // com turn: só vale a ponte (relay), como num 4G que não deixa ligação direta
     const ice = turn ? { iceServers: [{ urls: "turn:127.0.0.1:" + turn, username: "jf", credential: "teste" }], iceTransportPolicy: "relay" } : { iceServers: [] };
     if (window.__REDE_SERVIDOR === undefined) window.__REDE_SERVIDOR = false;
+    if (window.__REDE_HOST_SUMIU_MS === undefined) window.__REDE_HOST_SUMIU_MS = 15000; // (o jogo espera 1 min; o teste, 15 s)
     if (porta) window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, key: window.__CHAVE || "peerjs", config: ice };
   }, [porta || 0, turn || 0]);
   const erros = [];
@@ -331,7 +334,9 @@ async function rodar(b, modo, porta, turn) {
   conf("Resposta chega só pro Mestre", (await esperar(gM, (resp) => rede.segredo && rede.segredo.resposta === resp, ids.resposta)) && (await gV.evaluate(() => rede.segredo === null)));
   conf("A tela do outro não mostra a resposta", !(await gV.evaluate((r) => document.body.innerText.includes(r), ids.resposta)));
   // 3) painel calculado pelo host
-  conf("Painel do Mestre: Ver carta; o do outro, não", (await esperar(gM, () => rede.painel && rede.painel.opcoes.some((o) => o.a === "virarCarta"))) && (await gV.evaluate(() => !!rede.painel && !rede.painel.opcoes.some((o) => o.a === "virarCarta"))));
+  conf("Painel do Mestre: Virar carta; o do outro, não", (await esperar(gM, () => rede.painel && rede.painel.opcoes.some((o) => o.a === "roletaCategoria"))) && (await gV.evaluate(() => !!rede.painel && !rede.painel.opcoes.some((o) => o.a === "roletaCategoria" || o.a === "virarCarta"))));
+  // 1.7.10.1 (relato do JF): antes da roleta, o celular não sabe a categoria
+  conf("Antes da roleta, a categoria não vai pros celulares", await gV.evaluate(() => !!rede.retrato.carta && rede.retrato.carta.categoria === null));
   // 4) papéis
   const mandar = async (pg, acao, ...dados) => {
     const id = await pg.evaluate(([a, d]) => redeMandar(a, ...d), [acao, dados]);
@@ -340,7 +345,16 @@ async function rodar(b, modo, porta, turn) {
   };
   let r = await mandar(gV, "virarCarta");
   conf("Quem não é Mestre não vira a carta (sem_permissao)", r && !r.ok && r.motivo === "sem_permissao" && (await H(() => cardState)) === "hidden");
-  // o Mestre vira tocando o botão do painel
+  // o Mestre vira tocando o botão do painel: a roleta gira (todos veem) e, parada, ele mostra a carta
+  await gM.evaluate(() => {
+    const i = rede.painel.opcoes.findIndex((o) => o.a === "roletaCategoria");
+    document.querySelector(`[data-op="${i}"]`).click();
+  });
+  conf("A roleta aparece no celular de quem não é Mestre", await esperar(gV, () => !!document.querySelector(".telao-roleta")));
+  conf("Roleta parada: o celular vê a categoria do jogo (Animal vira Coisa)", await esperar(gV, (cat) => rede.retrato.carta && rede.retrato.carta.categoria === cat, await H(() => gemCategoryFor(currentCard.category)), 15000));
+  conf("Com a carta na mesa, o celular não mostra o tabuleiro inteiro", await gV.evaluate(() => !document.getElementById("tabCaixaTelao")));
+  conf("O celular mostra como se vence", await gV.evaluate(() => !!document.querySelector(".telao-objetivo")));
+  await esperar(gM, () => rede.painel && rede.painel.opcoes.some((o) => o.a === "virarCarta"), null, 15000);
   await gM.evaluate(() => {
     const i = rede.painel.opcoes.findIndex((o) => o.a === "virarCarta");
     document.querySelector(`[data-op="${i}"]`).click();

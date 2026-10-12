@@ -18,7 +18,7 @@
 const ACOES = {
   sacarCarta: { fn: "drawHidden", pode: () => acoesEmJogo() && cardState === "none" },
   virarCarta: { fn: "flipCard", pode: () => acoesEmJogo() && cardState === "hidden" },
-  roletaCategoria: { fn: "startCategoryRoulette", pode: () => acoesEmJogo() && cardState === "hidden" },
+  roletaCategoria: { fn: "startCategoryRoulette", pode: () => acoesEmJogo() && cardState === "hidden" && roletaCarta !== currentCard },
   escolherDica: { fn: "chooseClue", pode: (idx) => acoesEmJogo() && acoesDicaLivre(idx) },
   acertou: { fn: "markCorrect", pode: (idx) => acoesComDica() && (idx === undefined || !!players[idx]) },
   errou: { fn: "markWrong", pode: (tipo) => acoesComDica() && [undefined, null, "pular", "absurdo"].includes(tipo) },
@@ -298,7 +298,10 @@ function retratoPartida(papel) {
     ? {
         // o id da carta só pro Mestre: com o catálogo dentro do jogo, o id entregaria a resposta
         ...(mestre ? { id: currentCard.id || null } : {}),
-        categoria: currentCard.category,
+        // 1.7.10.1 (relato do JF): a categoria do jogo (Animal vira Coisa fora do Júnior), e só depois que a
+        // roleta para; antes disso os celulares veem a roleta girando com as categorias da partida
+        categoria: cardState !== "hidden" || (roletaCarta === currentCard && roletaPousou) ? gemCategoryFor(currentCard.category) : null,
+        roleta: cardState === "hidden" ? { cats: roletaCategorias(), girando: roletaCarta === currentCard && !roletaPousou } : null,
         totalDicas: currentCard.clues.length,
         abertas: revealedOrder.map((r) => ({
           // o id da dica começa com o id da carta: só pro Mestre (no público entregaria a resposta)
@@ -321,6 +324,14 @@ function retratoPartida(papel) {
     modo: CURRENT_MODE,
     formato: CURRENT_FORMAT,
     vitoria: winCond(),
+    // 1.7.10.1 (relato do JF): os celulares mostram como se vence (o mesmo texto do host, sem marcação)
+    objetivo: (() => {
+      try {
+        return String(winCondRuleText()).replace(/<[^>]*>/g, "").slice(0, 400);
+      } catch (e) {
+        return "";
+      }
+    })(),
     meta: { casa: WINNING_SCORE, pontos: typeof metaPontos === "function" ? metaPontos() : null },
     tabuleiro: CURRENT_MODE === "express" ? null : tabFormaAtual(), // 1.7.9.2: todo aparelho desenha a mesma forma
     rodada: rodadaAtual,

@@ -384,6 +384,8 @@ function saveGameState() {
             }
           : null,
       cardState,
+      // 1.7.10.1: a roleta da categoria (girando ou parada) volta igual depois de recarregar
+      roleta: cardState === "hidden" && currentCard && roletaCarta === currentCard ? (roletaPousou ? "pousou" : "girando") : null,
       gameEnded,
       usedAtLeastOnce,
       starterChosen,
@@ -780,6 +782,9 @@ function loadGameState() {
       currentCard = null;
     }
     cardState = state.cardState || "none";
+    roletaCarta = cardState === "hidden" && currentCard && (state.roleta === "pousou" || state.roleta === "girando") ? currentCard : null;
+    roletaPousou = !!roletaCarta && state.roleta === "pousou";
+    roletaRetomar = !!roletaCarta && !roletaPousou;
     gameEnded = state.gameEnded || false;
     usedAtLeastOnce = state.usedAtLeastOnce || false;
     starterChosen = state.starterChosen || false;
@@ -1678,7 +1683,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.10.1 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2201,7 +2206,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.10.1 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,

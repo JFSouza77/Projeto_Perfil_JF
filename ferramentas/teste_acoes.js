@@ -288,6 +288,22 @@ const ARQ = acharMestre(process.argv[2]);
       out.travasAdm = abriu && sim && naoRepete && nao;
       anneLigar(antes);
     }
+    // 1.7.10.1 (pedido do JF): com a sala aberta, a partida não começa com jogador sem aparelho
+    {
+      const salvos = players, iniAntes = starterChosen;
+      starterChosen = false;
+      players = [{ id: 'j_semap1', name: 'Bia', score: 0, position: 0, color: PLAYER_COLORS[0], avatar: '😀', humor: 'normal', gems: {} }, { id: 'j_semap2', name: 'Caio', score: 0, position: 0, color: PLAYER_COLORS[1], avatar: '😎', humor: 'normal', gems: {} }];
+      const abriu = !!redeAbrirSala('local');
+      const tela = document.getElementById('welcomeScreen').style.display;
+      document.getElementById('startGameBtn').click();
+      const barrou = redeSemAparelho().length === 2 && document.getElementById('welcomeScreen').style.display === tela && !!document.querySelector('.caos-aviso-ov');
+      document.querySelectorAll('.caos-aviso-ov, #redePainel').forEach((o) => o.remove());
+      rede.hostEu = 'j_semap1'; rede.hostJunto = ['j_semap2'];
+      const liberou = redeSemAparelho().length === 0;
+      redeFechar();
+      out.semAparelho = abriu && barrou && liberou;
+      players = salvos; starterChosen = iniAntes;
+    }
     // 1.7.10: Reportar carta anota no aparelho (sem mostrar a resposta na janela, sem mexer na partida)
     {
       window.__REDE_SERVIDOR = false; // (sem mandar pro servidor de verdade)
@@ -368,6 +384,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.10: Reportar carta anota no aparelho, sem resposta na janela e sem mexer na partida', r.reportar],
     ['1.7.10: nome repetido: o nome já cadastrado fica em destaque, o campo fica vermelho e o C.A.O.S. comenta', r.nomeRepetido],
     ['Travas ADM: a pergunta abre, Sim trava o nick da Anne, Não desliga, e não pergunta duas vezes na mesma partida', r.travasAdm],
+    ['1.7.10.1: com a sala aberta, a partida só começa quando todo jogador tem aparelho', r.semAparelho],
   ];
   linhas.forEach(([n, ok]) => console.log(`${ok ? 'ok    ' : 'FALHOU'}  ${n}`));
   const tudo = linhas.every((l) => l[1]) && !erros.length;

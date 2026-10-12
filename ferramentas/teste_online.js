@@ -55,12 +55,31 @@ async function mesa(b, sv, rot) {
         } catch (e) {}
         if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
         if (window.__REDE_SERVIDOR === undefined) window.__REDE_SERVIDOR = false;
+    if (window.__REDE_HOST_SUMIU_MS === undefined) window.__REDE_HOST_SUMIU_MS = 15000; // (o jogo espera 1 min; o teste, 15 s)
     window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, key: chave, config: { iceServers: [] } };
       },
       [sv.porta, sv.chave],
     );
     if (extra) await ctx.addInitScript(extra);
+    if (process.env.REDE_ESPIAO)
+      await ctx.addInitScript(() => {
+        const set = Storage.prototype.setItem, rem = Storage.prototype.removeItem, clr = Storage.prototype.clear;
+        const pilha = () => new Error().stack.split("\n").slice(2, 6).join(" < ").replace(/file:\/\/\S+?:(\d+):\d+/g, "@$1");
+        Storage.prototype.setItem = function (k, v) {
+          if (String(k).startsWith("perfil5_rede_eu_")) console.log("[EUKEY] set", this === localStorage ? "ls" : "ss", location.hash, Date.now(), v, pilha());
+          return set.call(this, k, v);
+        };
+        Storage.prototype.removeItem = function (k) {
+          if (String(k).startsWith("perfil5_rede_eu_")) console.log("[EUKEY] rem", this === localStorage ? "ls" : "ss", location.hash, Date.now(), pilha());
+          return rem.call(this, k);
+        };
+        Storage.prototype.clear = function () {
+          console.log("[EUKEY] clear", location.hash, pilha());
+          return clr.call(this);
+        };
+      });
     const pg = await ctx.newPage();
+    if (process.env.REDE_ESPIAO) pg.on("console", (c) => c.text().startsWith("[EUKEY]") && console.log(`[${rot}]`, c.text().slice(0, 300)));
     pg.on("pageerror", (e) => erros.push(`[${rot}] ${e.message.slice(0, 160)}`));
     pg.on("dialog", (d) => d.accept().catch(() => {}));
     await pg.goto("file://" + ARQ + (hash || ""));
@@ -125,7 +144,7 @@ const PASSO_CELULAR = () => {
   const tem = (a) => ops.findIndex((o) => o.a === a);
   const sorte = Math.random();
   const escolher = () => {
-    for (const a of ["continuar", "bonusAdversario", "sacarCarta", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"]) if (tem(a) >= 0) return ops[tem(a)];
+    for (const a of ["continuar", "bonusAdversario", "sacarCarta", "roletaCategoria", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"]) if (tem(a) >= 0) return ops[tem(a)];
     const ac = ops.filter((o) => o.a === "acertou");
     if (ac.length && sorte < 0.3) return ac[Math.floor(Math.random() * ac.length)];
     if (tem("errou") >= 0) return ops[tem("errou")];
@@ -169,7 +188,7 @@ const PASSO_HOST = () => {
       }
     }
     let o = null;
-    for (const a of ["continuar", "bonusAdversario", "sacarCarta", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"])
+    for (const a of ["continuar", "bonusAdversario", "sacarCarta", "roletaCategoria", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"])
       if (!o && tem(a) >= 0) o = ops[tem(a)];
     const ac = ops.filter((x) => x.a === "acertou");
     if (!o && ac.length && sorte < 0.3) o = ac[Math.floor(Math.random() * ac.length)];
@@ -280,6 +299,7 @@ async function segundoPlano(b, sv) {
     await jogarAteOFim(host, [pedro.g], 4000);
     const volta = await ctxAnne.newPage();
     volta.on("pageerror", (e) => erros.push(`[${rot}] ${e.message.slice(0, 160)}`));
+    if (process.env.REDE_ESPIAO) volta.on("console", (c) => c.text().startsWith("[EUKEY]") && console.log(`[${rot} volta]`, c.text().slice(0, 300)));
     await volta.goto("file://" + ARQ + "#sala=" + sala);
     const voltouAnne = await esperar(volta, (id) => rede && rede.estado === "dentro" && rede.eu === id && !!rede.retrato, anne.id, 25000);
     if (!voltouAnne) {
@@ -292,7 +312,7 @@ async function segundoPlano(b, sv) {
     await host.waitForTimeout(1500);
     conf(`[${rot}] Host volta de 6 s em segundo plano e continua host`, (await host.evaluate(() => rede && rede.papel === "host")) && (await esperar(volta, () => rede.papel === "convidado" && rede.estado === "dentro", null, 15000)));
     const revAntes = await host.evaluate(() => partidaRevisao);
-    await jogarAteOFim(host, [volta, pedro.g], 3000);
+    await jogarAteOFim(host, [volta, pedro.g], 8000); // (a roleta da categoria leva uns 3 s)
     conf(`[${rot}] A partida anda depois que o host volta`, (await host.evaluate(() => partidaRevisao)) > revAntes);
     // 4) o host some por 30 s (ligação recebida): o 2º Mestre começa a assumir. Se o servidor já soltou a sala
     //    (o nosso solta em 20 s), ele vira host e o JF volta como jogador; se a sala ainda está presa no

@@ -636,7 +636,9 @@ function render() {
     drawBtn.textContent = "🔀 Sortear carta";
   } else if (cardState === "hidden" && roletaCarta && roletaCarta === currentCard) {
     drawBtn.style.display = "none";
-    roletaDesenhar(true);
+    const retomar = roletaRetomar;
+    roletaRetomar = false;
+    roletaDesenhar(!retomar);
   } else if (cardState === "hidden") {
     area.className = "card face-down";
     const mestreBadge = mestreDestaqueHtml();
@@ -1080,20 +1082,39 @@ function cartaFraseSobe(topoAntes) {
 // 1.7.8.9: a roleta é lembrada pela carta. Antes, qualquer render() no meio dela (pausa e volta, balão
 // que fecha) redesenhava as costas e o Mestre tinha que virar de novo. Agora o render() redesenha a
 // roleta já pousada na categoria. (roletaCarta mora em 02-estado.js)
+// a roleta parou: a categoria vai pros celulares (e o Mestre no celular ganha o "Falei! Mostrar a carta")
+function roletaPousar() {
+  if (roletaPousou || cardState !== "hidden" || !currentCard || roletaCarta !== currentCard) return;
+  roletaPousou = true;
+  redePublicarSeHost();
+}
+function redePublicarSeHost() {
+  try {
+    if (typeof rede !== "undefined" && rede && rede.papel === "host") redeHostPublicar(true);
+  } catch (e) {}
+}
 function startCategoryRoulette() {
   roletaDesenhar(false);
 }
-function roletaDesenhar(jaPousada) {
-  if (cardState !== "hidden" || !currentCard) return;
-  roletaCarta = currentCard;
-  const area = document.getElementById("cardArea");
-  const finalCat = gemCategoryFor(currentCard.category);
-  // no Express a roleta só gira entre as categorias da partida (escolhidas ou sorteadas pelo C.A.O.S.)
+// no Express a roleta só gira entre as categorias da partida (escolhidas ou sorteadas pelo C.A.O.S.)
+function roletaCategorias() {
   const cats =
     CURRENT_MODE === "express" && expressSelectedCategories && expressSelectedCategories.length
       ? expressSelectedCategories.slice()
       : currentGemCategories();
-  if (!cats.includes(finalCat)) cats.push(finalCat);
+  const finalCat = currentCard ? gemCategoryFor(currentCard.category) : null;
+  if (finalCat && !cats.includes(finalCat)) cats.push(finalCat);
+  return cats;
+}
+function roletaDesenhar(jaPousada) {
+  if (cardState !== "hidden" || !currentCard) return;
+  if (roletaCarta !== currentCard) roletaPousou = false;
+  roletaCarta = currentCard;
+  const area = document.getElementById("cardArea");
+  const finalCat = gemCategoryFor(currentCard.category);
+  const cats = roletaCategorias();
+  // 1.7.10.1 (relato do JF): os celulares veem a roleta girando; o giro começou, a sala fica sabendo
+  if (!jaPousada) redePublicarSeHost();
   const label = (c) => (CATEGORY_LABELS[c] || c).toUpperCase();
   const token = ++rouletteToken;
   const virar = !jaPousada && cartaAnimar();
@@ -1121,6 +1142,7 @@ function roletaDesenhar(jaPousada) {
       if (token === rouletteToken) flipCard();
     });
     if (!jaPousada) caosRoletaSom("pouso");
+    roletaPousar();
   };
   if (jaPousada || !visualFxAllowed() || cats.length < 2) {
     finish();
@@ -1130,8 +1152,12 @@ function roletaDesenhar(jaPousada) {
     step = 0,
     delay = 55;
   const STEPS = 14 + Math.floor(Math.random() * 4);
+  // se a roleta sair da tela no meio do giro, ela pousa assim mesmo (a sala não fica esperando)
+  const carta = currentCard;
+  setTimeout(() => roletaCarta === carta && roletaPousar(), 6000);
   const spin = () => {
-    if (token !== rouletteToken || cardState !== "hidden" || !reel.isConnected) return;
+    if (token !== rouletteToken || cardState !== "hidden") return;
+    if (!reel.isConnected) return roletaPousar();
     if (step >= STEPS) {
       finish();
       return;

@@ -50,7 +50,8 @@ const REDE_MAX_LETRAS = 640 * 1024; // só o pacote de recuperação chega perto
 const REDE_MAX_NORMAL = 64 * 1024; // o resto das mensagens
 const REDE_DO_CONVIDADO = ["oi", "cmd", "ping", "tchau", "voto", "pedido"];
 const REDE_DO_HOST = ["bemvindo", "escolha", "recusa", "retrato", "segredo", "resp", "pong", "painel", "recuperacao", "aguarde", "fala"];
-const REDE_HOST_SUMIU_MS = 15000; // sem notícia do host há mais que isso: o sucessor assume
+// 1.7.10.1 (pedido do JF): 1 min sem notícia do host antes do sucessor assumir (dá tempo de voltar de outro app)
+const REDE_HOST_SUMIU_MS = typeof window !== "undefined" && Number.isFinite(window.__REDE_HOST_SUMIU_MS) ? window.__REDE_HOST_SUMIU_MS : 60000;
 const REDE_ONLINE_MS = 15000; // sem notícia há mais que isso: o convidado conta como fora
 const REDE_LETRAS_SALA = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // sem I e O (não confundem com 1 e 0)
 const REDE_SITE = "https://jfsouza77.github.io/Projeto_Perfil_JF/"; // link pros convidados (o host pode estar no offline)
@@ -1073,16 +1074,23 @@ function redeHostEsperando() {
   const lista = JSON.stringify([redeLugaresLivres(), redeOpcoesCadastro()]);
   Object.keys(rede.esperando).forEach((ses) => rede.esperando[ses] !== lista && redeMandarEscolha(ses));
 }
+// 1.7.10.1 (pedido do JF): com a sala aberta, o botão da pausa não fala mais em abrir sala
+function redeBotaoPausaNome() {
+  const on = document.getElementById("pauseOnlineBtn");
+  if (on) on.textContent = rede && rede.papel === "host" ? `🌐 Sala ${rede.sala} (ver quem está dentro)` : "🌐 Jogar online (beta)";
+}
 // Resumo da sala no cadastro (botão "Vai jogar online?").
 function redeCadastroInfo() {
   const b = document.getElementById("redeCadBtn"), info = document.getElementById("redeCadInfo");
   if (!b || !info) return;
+  redeBotaoPausaNome();
   if (!rede || rede.papel !== "host") {
     b.textContent = "🌐 Vai jogar online? Abra a sala antes de cadastrar";
     info.innerHTML = "";
     return;
   }
   b.textContent = `🌐 Sala ${rede.sala} aberta · ver o link`;
+  redeBotaoPausaNome();
   const na = players.filter((p) => redeOnline(rede.assentos[p.id])).map((p) => escapeHtml(p.name));
   const esperando = Object.keys(rede.esperando).length;
   info.innerHTML =
@@ -1490,7 +1498,11 @@ function redeOpcoes(jid) {
   }
   if (ehMestre) {
     if (cardState === "none") add("sacarCarta", [], "🃏 Puxar carta", "ok");
-    if (cardState === "hidden") add("virarCarta", [], "👀 Ver carta", "ok");
+    // 1.7.10.1: o Mestre no celular gira a roleta (todos veem) e, com ela parada, mostra a carta
+    if (cardState === "hidden") {
+      if (roletaCarta !== currentCard) add("roletaCategoria", [], "↻ Virar carta", "ok");
+      else if (roletaPousou) add("virarCarta", [], "✓ Falei! Mostrar a carta", "ok");
+    }
     if (cardState === "revealed" && pendingIndex !== null && currentCard) {
       const item = currentCard.clues[pendingIndex], txt = String(item.text || "").toLowerCase();
       const resp = responderIndex;
@@ -1630,6 +1642,19 @@ function redeHostPublicar(forcar) {
 // 1.7.9.9 · Jogadores do aparelho do host: o principal (hostEu) e quem divide o aparelho com ele.
 function redeNoHost(jid) {
   return !!rede && !!jid && (jid === rede.hostEu || (rede.hostJunto || []).includes(jid));
+}
+// 1.7.10.1 (pedido do JF): a partida online só começa quando todo jogador tem aparelho: o próprio celular (na
+// sala) ou o do host (marcado em "Quem joga neste aparelho?"). Devolve quem ainda está sem.
+function redeSemAparelho() {
+  if (!rede || rede.papel !== "host" || starterChosen) return [];
+  return players.filter((p) => !redeNoHost(p.id) && !redeOnline(rede.assentos[p.id]));
+}
+function redeAvisarSemAparelho() {
+  const nomes = redeSemAparelho().map((p) => p.name);
+  caosAvisoModal(
+    `Antes de começar, diga onde cada um joga: ${nomes.join(", ")} ${nomes.length === 1 ? "ainda não está" : "ainda não estão"} na sala. Entre pelo celular ou marque em "Quem joga neste aparelho?".`,
+    () => redePainelHost(),
+  );
 }
 function redeJogadoresNoHost() {
   if (!rede) return [];
@@ -2250,8 +2275,12 @@ function redeMestreCartaMontar(box) {
   const mais = grupo((o) => o.g === "Mais");
   let h = "";
   if (r.estadoCarta !== "revealed" || !c) {
-    const virar = grupo((o) => o.a === "virarCarta" || o.a === "sacarCarta");
-    h = `<div class="card face-down rede-carta-mestre"><div class="verso-frase">Você sabe dizer quem sou?!</div><div class="mestre-da-vez">Mestre da rodada: <b>você</b></div><div>Vire a carta quando estiver pronto.</div>${virar}</div>`;
+    const virar = grupo((o) => o.a === "virarCarta" || o.a === "sacarCarta" || o.a === "roletaCategoria");
+    // 1.7.10.1: depois de virar, o Mestre vê a mesma roleta da mesa e lê a categoria em voz alta
+    const girou = c && r.estadoCarta === "hidden" && c.roleta && (c.roleta.girando || c.categoria);
+    h = girou
+      ? `<div class="card rede-carta-mestre"><div class="roulette-title">Mestre, diga aos jogadores:</div>${telaoRoletaHtml(c)}${c.categoria ? '<div class="roulette-hint">🗣️ Leia a frase em voz alta pra todo mundo. Só a categoria, nunca a resposta!</div>' : ""}${virar}</div>`
+      : `<div class="card face-down rede-carta-mestre"><div class="verso-frase">Você sabe dizer quem sou?!</div><div class="mestre-da-vez">Mestre da rodada: <b>você</b></div><div>Vire a carta quando estiver pronto.</div>${virar}</div>`;
   } else {
     const cat = typeof gemCategoryFor === "function" ? gemCategoryFor(c.categoria) : c.categoria;
     const cor = (GEM_INFO[cat] || {}).color || "#e94560";
@@ -2290,6 +2319,7 @@ function redeMestreCartaMontar(box) {
   const resumo = box.querySelector(".telao-carta");
   if (resumo) resumo.replaceWith(sec);
   else (box.querySelector(".telao-vez") || box.firstChild).after(sec);
+  if (typeof telaoRoletaAnimar === "function") telaoRoletaAnimar(sec);
   sec.querySelectorAll("[data-op]").forEach((b) =>
     b.addEventListener("click", () => {
       const o = ops[+b.dataset.op];
