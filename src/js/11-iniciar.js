@@ -535,10 +535,17 @@ function iniciar() {
       return;
     }
     if (tutMesaNova() && tutSugerir("primeira", () => document.getElementById("goToRulesBtn").click())) return;
-    document.getElementById("splashScreen").style.display = "none";
-    document.getElementById("formatSelectScreen").style.display = "block";
-    resetFormatSelectionUI();
-    renderModeCardDescs();
+    const seguir = () => {
+      document.getElementById("splashScreen").style.display = "none";
+      document.getElementById("formatSelectScreen").style.display = "block";
+      resetFormatSelectionUI();
+      renderModeCardDescs();
+    };
+    // Travas ADM (pedido do JF): toda partida nova, local ou online, começa com a pergunta. Navegador de teste
+    // automático não pergunta (os testes abrem a pergunta direto, em teste_acoes).
+    travasRespondidas = false;
+    if (navigator.webdriver) return seguir();
+    redeTravasPerguntar(seguir, true);
   });
   ["versus", "equipe"].forEach((fmt) =>
     document.getElementById(fmt === "versus" ? "btnFormatVersus" : "btnFormatEquipe").addEventListener("click", () => {
