@@ -549,6 +549,7 @@ async function rodarSalaPrimeiro(b) {
     selectMode("classico");
     WIN_CONDITION = "tabuleiro";
     players = [];
+    anneLigar(true); // Travas ADM aplicadas: o nick da Anne travado (a cor de dono dela vale)
     return redeAbrirSala("local");
   });
   conf("O botão da sala aparece no cadastro", await host.evaluate(() => !!document.getElementById("redeCadBtn") && /Sala/.test(document.getElementById("redeCadBtn").textContent)));
