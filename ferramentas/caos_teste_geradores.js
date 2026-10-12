@@ -26,7 +26,7 @@ const N = +(process.argv[2] || 30), file = acharMestre(process.argv[3]);
   const casos = [
     { g: 'jfChegou', quem: 0, mesa: ['JF'] },
     { g: 'jfChegou', quem: 0, mesa: ['JF', 'Anne', 'Pedro'], modo: 'hardcore' },
-    // Anne: desativado a pedido do JF (só comentário): { g: 'anneChegou', quem: 1, mesa: ['JF', 'Anne'] },
+    { g: 'anneChegou', quem: 1, mesa: ['JF', 'Anne'] },
     { g: 'jfInicio', quem: 0, mesa: ['JF', 'Ana', 'Beto'] },
     { g: 'jfAcerto', quem: 0, mesa: ['JF', 'Anne'] },
     { g: 'jfFim', quem: 0, mesa: ['JF', 'Ana'], extra: { tags: ['jfPerdeu'] } },

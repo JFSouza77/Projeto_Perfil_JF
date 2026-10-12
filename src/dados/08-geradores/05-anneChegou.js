@@ -1,4 +1,3 @@
-/* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
 // A Anne se cadastrou (com a 👸).
 CAOS_GERADORES.anneChegou = {
   moldes: ["{abre} {meio}", "{abre} {meio}", "{meio} {fecho}", "{abre} {meio} {fecho}", "{inteira}"],
@@ -59,4 +58,3 @@ CAOS_GERADORES.anneChegou = {
     semana: ["Bem-vinda de volta, {nome}. Eu me lembro de você. Lembro até do brilho."],
   },
 };
-*/

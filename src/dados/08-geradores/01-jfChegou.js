@@ -58,11 +58,9 @@ CAOS_GERADORES.jfChegou = {
       "Meus logs ficaram nervosos.",
     ],
     anne: [
-      /* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê)
       "E a {anne} já está aqui. Vou me comportar em dobro.",
       "Com a {anne} na mesa, a disputa hoje é em casa.",
       "A {anne} chegou antes. Já começou perdendo, JF.",
-      */
     ],
     pedro: [
       "O {pedro} está na mesa. Cuidado, JF: o herdeiro está de olho no trono.",

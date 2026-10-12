@@ -1368,6 +1368,26 @@ function caosInspectorFalas() {
   pre.textContent = caosDiagText();
   sec.appendChild(pre);
   wrap.appendChild(sec);
+  const secA = ciSecao("👸 Conteúdo da Anne", anneLigada() ? "ligado" : "desligado");
+  secA.insertAdjacentHTML(
+    "beforeend",
+    `<div class="ci-note">Cor Princesa, emoji 👸, falas, apelidos, entradas especiais e memória do C.A.O.S. ligadas à Anne. ${anneLigada() ? "Está ligado: o C.A.O.S. reconhece a Anne." : "Está desligado: ninguém é reconhecido como a Anne."} Vale neste aparelho.</div>`,
+  );
+  const bA = document.createElement("button");
+  bA.type = "button";
+  bA.id = "ciAnneBtn";
+  bA.className = "ci-btn ci-wide" + (anneLigada() ? " ci-btn-red" : " ci-btn-gold");
+  bA.textContent = anneLigada() ? "⏻ Desligar" : "⏻ Ligar";
+  bA.addEventListener("click", () => {
+    anneLigar(!anneLigada());
+    caosLog("adm", "conteúdo da Anne " + (anneLigada() ? "ligado" : "desligado"));
+    try {
+      if (typeof renderScoreboard === "function") renderScoreboard();
+    } catch (e) {}
+    wrap.replaceWith(caosInspectorFalas());
+  });
+  secA.appendChild(bA);
+  wrap.appendChild(secA);
   const secK = ciSecao("🔑 Chave do criador");
   let propria = null;
   try {

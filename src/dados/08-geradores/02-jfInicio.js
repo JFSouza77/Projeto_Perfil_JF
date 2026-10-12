@@ -19,7 +19,7 @@ CAOS_GERADORES.jfInicio = {
       "o desenvolvedor está entre nós. Se algo quebrar, finjam que não viram.",
       "o JF jura que não decorou as cartas. Eu tenho minhas dúvidas.",
     ],
-    anne: [/* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê): "a {anne} e o JF na mesma mesa. Eu vou fingir neutralidade." */],
+    anne: ["a {anne} e o JF na mesma mesa. Eu vou fingir neutralidade."],
     pedro: ["o {pedro} contra o JF. Pai e filho. Eu trouxe pipoca."],
     isabel: ["a {isabel} está de olho no JF. Eu também."],
     venceuUltima: ["o JF ganhou a última. Bora tirar a coroa dele."],

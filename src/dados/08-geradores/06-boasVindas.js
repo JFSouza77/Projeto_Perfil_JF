@@ -55,7 +55,7 @@ CAOS_GERADORES.boasVindas = {
     humor_suave: ["Com você eu vou pegar leve. Não conta pros outros.", "Zoeira leve ativada pra você."],
     humor_acido: ["Você marcou humor ácido. Coragem ou distração?", "Humor ácido anotado. A culpa é toda sua."],
     jf: ["O {jf} já está aqui. Boa sorte contra o criador."],
-    anne: [/* Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê): "A {anne} já está aqui. A mesa ficou mais elegante." */],
+    anne: ["A {anne} já está aqui. A mesa ficou mais elegante."],
     modo_hardcore: ["Hardcore logo de cara. Respeito."],
     modo_oldschool: ["Old School hoje. Espero que a memória esteja em dia."],
   },

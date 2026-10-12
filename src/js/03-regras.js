@@ -2,10 +2,27 @@
  * 3. REGRAS (VITÓRIA, PONTOS, JOIAS, TABULEIRO, BARALHO, EQUIPES)
  * ====================================================================== */
 
-// Anne: desativado a pedido do JF (só comentário; o C.A.O.S. não lê). Ninguém é reconhecido como a Anne (cor, emoji, falas e memória ficam desligados).
+// Desligado (padrão, decisão do JF), ninguém é reconhecido como a Anne: cor, emoji, falas e memória ficam parados.
+let anneLigadaCache = null;
+function anneLigada() {
+  if (anneLigadaCache === null) {
+    try {
+      anneLigadaCache = JFStore.getItem(ANNE_LIGADA_KEY) === "1";
+    } catch (e) {
+      return false; // ainda carregando: fica desligado
+    }
+  }
+  return anneLigadaCache;
+}
+function anneLigar(sim) {
+  anneLigadaCache = !!sim;
+  try {
+    JFStore.setItem(ANNE_LIGADA_KEY, sim ? "1" : "0");
+  } catch (e) {}
+}
 function isAnneName(n) {
-  // return OWNER_ANNE_RE.test(nameKeyPlain(n));
-  return false;
+  if (!anneLigada()) return false;
+  return OWNER_ANNE_RE.test(nameKeyPlain(n));
 }
 function isJfName(n) {
   return OWNER_JF_RE.test(nameKeyPlain(n));
