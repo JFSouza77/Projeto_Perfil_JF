@@ -18,7 +18,8 @@ function wav() {
 (async () => {
   const { chromium } = require("playwright");
   let pedidos = 0;
-  const azure = http.createServer((req, res) => { req.resume(); req.on("end", () => { pedidos++; res.writeHead(200, { "Content-Type": "audio/mpeg" }); res.end(wav()); }); });
+  const ssmls = [];
+  const azure = http.createServer((req, res) => { let corpo = ""; req.on("data", (c) => (corpo += c)); req.on("end", () => { pedidos++; ssmls.push(corpo); res.writeHead(200, { "Content-Type": "audio/mpeg" }); res.end(wav()); }); });
   await new Promise((ok) => azure.listen(8799, "127.0.0.1", ok));
   const b = await chromium.launch({ args: ["--autoplay-policy=no-user-gesture-required"] });
   const ok = [];
@@ -46,6 +47,11 @@ function wav() {
     const p1 = pedidos;
     const r2 = await falar(frase);
     conf("A mesma fala de novo não pede outra vez", !r2.timeout && r2.aparelho === 0 && pedidos === p1);
+    // 1.7.10.3.1: a emoção vai junto: reticências viram pausa do tamanho da emoção, e o volume muda
+    const n0 = ssmls.length;
+    const r5 = await pg.evaluate((t) => new Promise((fim) => { caosEmoFalaAtual = "triste"; caosSpeak(t, null, () => fim(true)); setTimeout(() => fim(false), 8000); }), `[C.A.O.S.] Hmm... essa doeu ${Date.now() % 100000}. Que PENA.`);
+    const novos = ssmls.slice(n0).join(" ");
+    conf("Emoção na voz nova: pausa nas reticências, volume da tristeza e palavra em caixa alta mais forte", r5 && /<break time="650ms"\/>/.test(novos) && /volume="-12%"/.test(novos) && /<prosody volume="\+25%" pitch="\+8%">pena<\/prosody>/.test(novos));
     await pg.evaluate(() => (caosVoiceName = "x"));
     const r3 = await falar("[C.A.O.S.] Com voz do aparelho escolhida.");
     conf("Voz do aparelho escolhida na lista: usa o aparelho", !r3.timeout && r3.aparelho >= 1);

@@ -50,6 +50,9 @@ A partir daí, toda mudança nesta pasta que entrar no GitHub publica o servidor
 5. Opcional: pra trocar a voz, crie a variável (texto) `AZURE_VOZ` com o nome de outra voz brasileira do Azure
    (padrão: `pt-BR-AntonioNeural`). A lista e as amostras ficam na Galeria de Voz do Azure (Speech Studio).
    Teto do mês: variável `VOZ_TETO_MES` (padrão 400000 letras, abaixo do grátis do Azure).
+   Emoção (1.7.10.3.1): o jogo manda a emoção de cada fala; o servidor muda volume e pausas sozinho. Se um dia
+   usar uma voz com estilos (as MAI-Voice da Microsoft, ex.: Caio), crie a variável `AZURE_ESTILOS` = `1` e a
+   emoção vira o estilo dela (alegre, triste, bravo, sussurrando...).
 
 Conferir: `.../voz/estado` tem que mostrar `{"ligada":true}`. Sem isso (ou sem internet), o C.A.O.S. fala com a voz do aparelho, como antes.
 

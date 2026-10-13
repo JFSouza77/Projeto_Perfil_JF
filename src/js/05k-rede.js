@@ -62,7 +62,7 @@ const REDE_VOTO_MS = 20000;
 const JOGO_VERSAO = (() => {
   try {
     if (typeof window.__JOGO_VERSAO === "string") return window.__JOGO_VERSAO; // (teste de versão diferente)
-    return (String(document.title).match(/(\d+(?:\.\d+){1,3})/) || [])[1] || "?"; // "1.7.10" ou "1.0"
+    return (String(document.title).match(/(\d+(?:\.\d+){1,4})/) || [])[1] || "?"; // "1.7.10" ou "1.0"
   } catch (e) {
     return "?";
   }

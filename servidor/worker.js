@@ -22,7 +22,7 @@
  *                            (as falas se repetem muito) e há um teto de letras por mês (VOZ_TETO_MES).
  *
  * Segredos (wrangler secret put): TURN_KEY_ID, TURN_KEY_API_TOKEN, REPORTES_SENHA, AZURE_SPEECH_KEY e
- * AZURE_SPEECH_REGION. Variáveis: ORIGENS (sites aceitos), AZURE_VOZ (nome da voz) e VOZ_TETO_MES.
+ * AZURE_SPEECH_REGION. Variáveis: ORIGENS (sites aceitos), AZURE_VOZ (nome da voz), AZURE_ESTILOS (1 = a voz tem estilos de emoção) e VOZ_TETO_MES.
  * Como publicar: servidor/LEIA-ME.md.
  */
 const CHAVE = "perfiljf";
@@ -55,6 +55,38 @@ function cors(req, env, livre) {
       Vary: "Origin",
     },
   };
+}
+// 1.7.10.3.1 · Emoção na voz nova. [volume, pausa do "…" em ms, estilo da Microsoft (só nas vozes com estilos)]
+const VOZ_EMOCOES = {
+  calmo: ["+0%", 380, ""],
+  orgulho: ["+8%", 320, "joyful"],
+  raiva: ["+15%", 260, "angry"],
+  furia: ["+22%", 220, "shouting"],
+  deboche: ["+0%", 480, ""],
+  tedio: ["-10%", 650, ""],
+  carinho: ["-6%", 420, "softvoice"],
+  desafio: ["+10%", 300, "determined"],
+  pensando: ["-4%", 600, "confused"],
+  preocupado: ["+0%", 380, "fearful"],
+  festa: ["+15%", 260, "excited"],
+  surpresa: ["+12%", 300, "surprised"],
+  triste: ["-12%", 650, "sad"],
+  julgando: ["-3%", 520, ""],
+  espiando: ["-18%", 500, "whispering"],
+  recompondo: ["-5%", 450, "relieved"],
+};
+const VOZ_SSML_VERSAO = 2;
+// Texto já limpo (sem < > & ") → SSML: "⏸" vira pausa, PALAVRA EM CAIXA ALTA (4+ letras) sai mais forte,
+// interjeição no começo ganha um respiro, e a emoção muda o volume (e o estilo, se a voz tiver).
+function vozSsml(nome, t, rate, pitch, e, estilos) {
+  const [vol, pausa, estilo] = VOZ_EMOCOES[e] || VOZ_EMOCOES.calmo;
+  let corpo = t
+    .replace(/^(ah+|hm+|hum+|u[eé]|ops|opa|uau|eita|nossa|vish|oxe|aff)([,!.]?)\s+(?!⏸)/i, (m, a, pt) => `${a}${pt || ","}<break time="220ms"/> `)
+    .replace(/\s*⏸\s*/g, `<break time="${pausa}ms"/> `)
+    .replace(/(^|[^\p{L}])(\p{Lu}{4,})(?![\p{L}])/gu, (m, a, w) => `${a}<prosody volume="+25%" pitch="+8%">${w.toLowerCase()}</prosody>`);
+  corpo = `<prosody rate="${rate}" pitch="${pitch}" volume="${vol}">${corpo}</prosody>`;
+  if (estilos && estilo) corpo = `<mstts:express-as style="${estilo}">${corpo}</mstts:express-as>`;
+  return `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xml:lang="pt-BR"><voice name="${nome}">${corpo}</voice></speak>`;
 }
 const json = (dados, status, h) => new Response(JSON.stringify(dados), { status: status || 200, headers: { "Content-Type": "application/json", "Cache-Control": "no-store", ...(h || {}) } });
 
@@ -185,12 +217,16 @@ export class Sinal {
     } catch (e) {
       return json({ erro: "json" }, 400);
     }
-    const t = String((d && d.t) || "").replace(/[\u0000-\u001f<>&]/g, " ").replace(/\s+/g, " ").trim().slice(0, 400);
+    const t = String((d && d.t) || "").replace(/[\u0000-\u001f<>&"]/g, " ").replace(/\s+/g, " ").trim().slice(0, 400);
     if (!t) return json({ erro: "vazio" }, 400);
     const num = (v, a, b) => Math.max(a, Math.min(b, Number.isFinite(+v) ? +v : 1));
     const r = Math.round(num(d.r, 0.5, 2) * 20) / 20, p = Math.round(num(d.p, 0.5, 2) * 20) / 20;
-    const nome = String(this.env.AZURE_VOZ || "pt-BR-AntonioNeural").replace(/[^A-Za-z0-9:-]/g, "");
-    const dig = await crypto.subtle.digest("SHA-256", new TextEncoder().encode([nome, r, p, t].join("|")));
+    const nome = String(this.env.AZURE_VOZ || "pt-BR-AntonioNeural").replace(/[^A-Za-z0-9:.-]/g, "");
+    // 1.7.10.3.1: a emoção da fala (vem do jogo) muda volume e pausas; com AZURE_ESTILOS ligado (voz com estilos,
+    // como as MAI-Voice), também vira o estilo da Microsoft (alegre, triste, bravo...)
+    const e = Object.prototype.hasOwnProperty.call(VOZ_EMOCOES, d.e) ? d.e : "";
+    const estilos = !!this.env.AZURE_ESTILOS && this.env.AZURE_ESTILOS !== "0";
+    const dig = await crypto.subtle.digest("SHA-256", new TextEncoder().encode([nome, r, p, t, e, estilos ? 1 : 0, VOZ_SSML_VERSAO].join("|")));
     const chave = "v:" + [...new Uint8Array(dig)].map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 40);
     const st = this.ctx.storage;
     const guardada = await st.get(chave);
@@ -209,7 +245,7 @@ export class Sinal {
     const gasto = (await st.get("mes:" + mes)) || 0;
     if (gasto + t.length > teto) return json({ erro: "teto" }, 429);
     const pct = (x, k) => (x >= 1 ? "+" : "") + Math.round((x - 1) * k) + "%";
-    const ssml = `<speak version="1.0" xml:lang="pt-BR"><voice name="${nome}"><prosody rate="${pct(r, 100)}" pitch="${pct(p, 40)}">${t}</prosody></voice></speak>`;
+    const ssml = vozSsml(nome, t, pct(r, 100), pct(p, 40), e, estilos);
     const url = this.env.AZURE_URL || `https://${String(this.env.AZURE_SPEECH_REGION).replace(/[^a-z0-9]/g, "")}.tts.speech.microsoft.com/cognitiveservices/v1`;
     let az;
     try {
