@@ -56,32 +56,45 @@ function cors(req, env, livre) {
     },
   };
 }
-// 1.7.10.3.1 · Emoção na voz nova. [volume, pausa do "…" em ms, estilo da Microsoft (só nas vozes com estilos)]
+// 1.7.10.3.1 · Emoção na voz nova. [volume, pausa do "…" em ms, estilo da Microsoft (só nas vozes com estilos),
+// ajuste de velocidade em %]. C.A.O.S. 4.1.4 (calibragem pedida pelo JF): fala do dia a dia sai normal, sem
+// "ator de novela" (estilo neutral); vergonha mais baixa e lenta; recompondo mais rápido e leve; deboche seco e
+// provocativo (neutro, um pouco mais lento, pausa maior); estilos que vêm com suspiro (hopeful, relieved,
+// regretful) fora. As emoções fortes (festa, surpresa, raiva, tristeza, tédio...) ficam como estavam.
 const VOZ_EMOCOES = {
-  calmo: ["+0%", 380, "neutral"], // feedback do JF: sem estilo soava triste; "hopeful" saía ofegante
-  orgulho: ["+8%", 320, "joyful"],
-  raiva: ["+15%", 260, "angry"],
-  furia: ["+22%", 220, "shouting"],
-  deboche: ["+0%", 480, "happy"],
-  tedio: ["-10%", 650, ""],
-  carinho: ["-6%", 420, "softvoice"],
-  desafio: ["+10%", 300, "determined"],
-  pensando: ["-4%", 600, "confused"],
-  preocupado: ["+0%", 380, "fearful"],
-  festa: ["+15%", 260, "excited"],
-  surpresa: ["+12%", 300, "surprised"],
-  triste: ["-12%", 650, "sad"],
-  julgando: ["-3%", 520, ""],
-  espiando: ["-18%", 500, "whispering"],
-  recompondo: ["-5%", 450, "neutral"], // ("relieved" vem com suspiro)
+  calmo: ["+0%", 380, "neutral", 0],
+  orgulho: ["+8%", 320, "joyful", 0],
+  raiva: ["+15%", 260, "angry", 0],
+  furia: ["+22%", 220, "shouting", 0],
+  deboche: ["+0%", 560, "neutral", -6],
+  tedio: ["-10%", 650, "", 0],
+  carinho: ["-6%", 420, "softvoice", 0],
+  desafio: ["+10%", 300, "determined", 0],
+  pensando: ["-4%", 600, "confused", 0],
+  preocupado: ["+0%", 380, "fearful", 0],
+  festa: ["+15%", 260, "excited", 0],
+  surpresa: ["+12%", 300, "surprised", 0],
+  triste: ["-12%", 650, "sad", 0],
+  julgando: ["-3%", 520, "", 0],
+  espiando: ["-18%", 500, "whispering", 0],
+  recompondo: ["-3%", 300, "neutral", 8],
+  medo: ["+5%", 280, "fearful", 0],
+  ansiedade: ["+5%", 260, "fearful", 5],
+  vergonha: ["-14%", 520, "neutral", -10],
+  nojo: ["+0%", 450, "disgusted", 0],
+  nostalgia: ["-6%", 560, "neutral", -5],
+  alivio: ["-3%", 340, "neutral", 5],
 };
-const VOZ_SSML_VERSAO = 4;
+const VOZ_SSML_VERSAO = 5;
 // Texto já limpo (sem < > & ") → SSML: "⏸" vira pausa, PALAVRA EM CAIXA ALTA (4+ letras) sai mais forte,
 // palavra esticada ("PASTEEEL", "NÃÃÃO") vira a palavra normal, mais lenta e forte (lida letra a letra, saía
 // "pastil"), interjeição no começo ganha um respiro, e a emoção muda o volume (e o estilo, se a voz tiver).
 // Voz com estilos (Caio): sem mexer no tom (o estilo cuida da entonação; tom mexido deixava a voz murcha).
-function vozSsml(nome, t, rate, pitch, e, estilos) {
-  const [vol, pausa, estilo] = VOZ_EMOCOES[e] || VOZ_EMOCOES.calmo;
+function vozSsml(nome, t, rateN, pitch, e, estilos) {
+  const [vol, pausa, estilo, dRate] = VOZ_EMOCOES[e] || VOZ_EMOCOES.calmo;
+  const rn = Math.round((Number(rateN) || 0) + (dRate || 0)), rate = (rn >= 0 ? "+" : "") + rn + "%";
+  // sem pontuação no fim, a voz às vezes "solta o ar" (suspiro avulso): fecha a frase
+  if (!/[.!?…]$/.test(t)) t += ".";
   let corpo = t
     .replace(/^(ah+|hm+|hum+|u[eé]|ops|opa|uau|eita|nossa|vish|oxe|aff)([,!.]?)\s+(?!⏸)/i, (m, a, pt) => `${a}${pt || ","}<break time="220ms"/> `)
     .replace(/\s*⏸\s*/g, `<break time="${pausa}ms"/> `)
@@ -275,7 +288,7 @@ export class Sinal {
         az = await fetch(v.url, {
           method: "POST",
           headers: { "Ocp-Apim-Subscription-Key": v.chave, "Content-Type": "application/ssml+xml", "X-Microsoft-OutputFormat": "audio-24khz-48kbitrate-mono-mp3", "User-Agent": "perfil-jf" },
-          body: vozSsml(v.nome, t, pct(r, 100), pct(p, 40), e, v.estilos),
+          body: vozSsml(v.nome, t, Math.round((r - 1) * 100), pct(p, 40), e, v.estilos),
         });
       } catch (err) {
         az = null;
