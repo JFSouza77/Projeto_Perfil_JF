@@ -22,7 +22,7 @@
  *                            (as falas se repetem muito) e há um teto de letras por mês (VOZ_TETO_MES).
  *
  * Segredos (wrangler secret put): TURN_KEY_ID, TURN_KEY_API_TOKEN, REPORTES_SENHA, AZURE_SPEECH_KEY e
- * AZURE_SPEECH_REGION. Variáveis: ORIGENS (sites aceitos), AZURE_VOZ (nome da voz), AZURE_ESTILOS (1 = a voz tem estilos de emoção) e VOZ_TETO_MES.
+ * AZURE_SPEECH_REGION (e, opcional, AZURE_MAI_KEY + AZURE_MAI_REGION: voz com emoção, com a grátis de reserva). Variáveis: ORIGENS (sites aceitos), AZURE_VOZ (nome da voz), AZURE_ESTILOS (1 = a voz tem estilos de emoção) e VOZ_TETO_MES.
  * Como publicar: servidor/LEIA-ME.md.
  */
 const CHAVE = "perfiljf";
@@ -87,6 +87,19 @@ function vozSsml(nome, t, rate, pitch, e, estilos) {
   corpo = `<prosody rate="${rate}" pitch="${pitch}" volume="${vol}">${corpo}</prosody>`;
   if (estilos && estilo) corpo = `<mstts:express-as style="${estilo}">${corpo}</mstts:express-as>`;
   return `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xml:lang="pt-BR"><voice name="${nome}">${corpo}</voice></speak>`;
+}
+// 1.7.10.3.1 · Vozes do servidor, na ordem de tentativa. "mai" (opcional): voz com emoção de verdade (MAI-Voice,
+// paga; AZURE_MAI_KEY + AZURE_MAI_REGION, voz em AZURE_MAI_VOZ). "padrao": a voz grátis (AZURE_SPEECH_KEY +
+// AZURE_SPEECH_REGION, voz em AZURE_VOZ). Se a "mai" falhar (crédito acabou, chave errada), cai na "padrao".
+function vozesDoServidor(env) {
+  const url = (reg, teste) => teste || `https://${String(reg).replace(/[^a-z0-9]/g, "")}.tts.speech.microsoft.com/cognitiveservices/v1`;
+  const nome = (n, pad) => String(n || pad).replace(/[^A-Za-z0-9:.-]/g, "");
+  const out = [];
+  if (env.AZURE_MAI_KEY && env.AZURE_MAI_REGION)
+    out.push({ id: "mai", chave: env.AZURE_MAI_KEY, url: url(env.AZURE_MAI_REGION, env.AZURE_MAI_URL), nome: nome(env.AZURE_MAI_VOZ, "pt-BR-Caio:MAI-Voice-2.1-Flash"), estilos: true });
+  if (env.AZURE_SPEECH_KEY && env.AZURE_SPEECH_REGION)
+    out.push({ id: "padrao", chave: env.AZURE_SPEECH_KEY, url: url(env.AZURE_SPEECH_REGION, env.AZURE_URL), nome: nome(env.AZURE_VOZ, "pt-BR-AntonioNeural"), estilos: !!env.AZURE_ESTILOS && env.AZURE_ESTILOS !== "0" });
+  return out;
 }
 const json = (dados, status, h) => new Response(JSON.stringify(dados), { status: status || 200, headers: { "Content-Type": "application/json", "Cache-Control": "no-store", ...(h || {}) } });
 
@@ -156,9 +169,9 @@ export default {
     }
     // 1.7.10.2 · voz nova do C.A.O.S. (Azure); instância "voz" do Durable Object guarda as falas e o teto do mês
     const voz = () => env.SINAL.get(env.SINAL.idFromName("voz"));
-    if (p === "/voz/estado" && req.method === "GET") return json({ ligada: !!(env.AZURE_SPEECH_KEY && env.AZURE_SPEECH_REGION) }, 200, h);
+    if (p === "/voz/estado" && req.method === "GET") return json({ ligada: vozesDoServidor(env).length > 0 }, 200, h);
     if (p === "/voz" && req.method === "POST") {
-      if (!env.AZURE_SPEECH_KEY || !env.AZURE_SPEECH_REGION) return json({ erro: "sem_voz" }, 503, h);
+      if (!vozesDoServidor(env).length) return json({ erro: "sem_voz" }, 503, h);
       const corpo = await req.text();
       if (corpo.length > 1500) return json({ erro: "grande" }, 413, h);
       const r = await voz().fetch(new Request("https://voz/voz", { method: "POST", body: corpo, headers: { "CF-Connecting-IP": req.headers.get("CF-Connecting-IP") || "" } }));
@@ -221,19 +234,26 @@ export class Sinal {
     if (!t) return json({ erro: "vazio" }, 400);
     const num = (v, a, b) => Math.max(a, Math.min(b, Number.isFinite(+v) ? +v : 1));
     const r = Math.round(num(d.r, 0.5, 2) * 20) / 20, p = Math.round(num(d.p, 0.5, 2) * 20) / 20;
-    const nome = String(this.env.AZURE_VOZ || "pt-BR-AntonioNeural").replace(/[^A-Za-z0-9:.-]/g, "");
-    // 1.7.10.3.1: a emoção da fala (vem do jogo) muda volume e pausas; com AZURE_ESTILOS ligado (voz com estilos,
-    // como as MAI-Voice), também vira o estilo da Microsoft (alegre, triste, bravo...)
+    // 1.7.10.3.1: a emoção da fala (vem do jogo) muda volume e pausas; numa voz com estilos (MAI-Voice, ex.: Caio)
+    // também vira o estilo da Microsoft (alegre, triste, bravo...).
     const e = Object.prototype.hasOwnProperty.call(VOZ_EMOCOES, d.e) ? d.e : "";
-    const estilos = !!this.env.AZURE_ESTILOS && this.env.AZURE_ESTILOS !== "0";
-    const dig = await crypto.subtle.digest("SHA-256", new TextEncoder().encode([nome, r, p, t, e, estilos ? 1 : 0, VOZ_SSML_VERSAO].join("|")));
-    const chave = "v:" + [...new Uint8Array(dig)].map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 40);
+    const vozes = vozesDoServidor(this.env);
     const st = this.ctx.storage;
-    const guardada = await st.get(chave);
     const mp3 = (dados, origem) => new Response(dados, { headers: { "Content-Type": "audio/mpeg", "Cache-Control": "public, max-age=604800", "X-Voz": origem } });
-    if (guardada) return mp3(guardada, "guardada");
-    // ritmo: 400 falas novas por hora por endereço (em memória)
+    const chaveDe = async (v) => {
+      const dig = await crypto.subtle.digest("SHA-256", new TextEncoder().encode([v.nome, r, p, t, e, v.estilos ? 1 : 0, VOZ_SSML_VERSAO].join("|")));
+      return "v:" + [...new Uint8Array(dig)].map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 40);
+    };
+    // Voz principal fora do ar (crédito acabou, chave trocada...): pula ela por 10 min e usa a reserva
+    this.vozFora = this.vozFora || {};
     const agora = Date.now();
+    const pausa = Number(this.env.VOZ_PAUSA_MS) > 0 ? Number(this.env.VOZ_PAUSA_MS) : 600e3; // (o teste encurta)
+    const ativas = vozes.filter((v, i) => i === vozes.length - 1 || !(agora - (this.vozFora[v.id] || 0) < pausa));
+    for (const v of ativas) {
+      const g = await st.get(await chaveDe(v));
+      if (g) return mp3(g, "guardada");
+    }
+    // ritmo: 400 falas novas por hora por endereço (em memória)
     this.ritmoVoz = this.ritmoVoz || new Map();
     const rv = (this.ritmoVoz.get(ip) || []).filter((x) => agora - x < 3600e3);
     if (rv.length >= 400) return json({ erro: "calma" }, 429);
@@ -245,23 +265,29 @@ export class Sinal {
     const gasto = (await st.get("mes:" + mes)) || 0;
     if (gasto + t.length > teto) return json({ erro: "teto" }, 429);
     const pct = (x, k) => (x >= 1 ? "+" : "") + Math.round((x - 1) * k) + "%";
-    const ssml = vozSsml(nome, t, pct(r, 100), pct(p, 40), e, estilos);
-    const url = this.env.AZURE_URL || `https://${String(this.env.AZURE_SPEECH_REGION).replace(/[^a-z0-9]/g, "")}.tts.speech.microsoft.com/cognitiveservices/v1`;
-    let az;
-    try {
-      az = await fetch(url, {
-        method: "POST",
-        headers: { "Ocp-Apim-Subscription-Key": this.env.AZURE_SPEECH_KEY, "Content-Type": "application/ssml+xml", "X-Microsoft-OutputFormat": "audio-24khz-48kbitrate-mono-mp3", "User-Agent": "perfil-jf" },
-        body: ssml,
-      });
-    } catch (e) {
-      return json({ erro: "azure" }, 502);
+    let ultimo = 0;
+    for (const v of ativas) {
+      let az;
+      try {
+        az = await fetch(v.url, {
+          method: "POST",
+          headers: { "Ocp-Apim-Subscription-Key": v.chave, "Content-Type": "application/ssml+xml", "X-Microsoft-OutputFormat": "audio-24khz-48kbitrate-mono-mp3", "User-Agent": "perfil-jf" },
+          body: vozSsml(v.nome, t, pct(r, 100), pct(p, 40), e, v.estilos),
+        });
+      } catch (err) {
+        az = null;
+      }
+      if (!az || !az.ok) {
+        ultimo = az ? az.status : 0;
+        this.vozFora[v.id] = agora;
+        continue;
+      }
+      const dados = await az.arrayBuffer();
+      await st.put("mes:" + mes, gasto + t.length);
+      if (dados.byteLength > 0 && dados.byteLength < 1900000) await st.put(await chaveDe(v), dados);
+      return mp3(dados, "nova:" + v.id);
     }
-    if (!az.ok) return json({ erro: "azure", status: az.status }, 502);
-    const dados = await az.arrayBuffer();
-    await st.put("mes:" + mes, gasto + t.length);
-    if (dados.byteLength > 0 && dados.byteLength < 1900000) await st.put(chave, dados);
-    return mp3(dados, "nova");
+    return json({ erro: "azure", status: ultimo }, 502);
   }
   /* --- 1.7.10 · Reportes de cartas (instância "reportes"; storage do Durable Object) ---
      Guarda só o que serve pra conferir a carta: id, resposta, categoria, dica, motivo, nota curta, modo,

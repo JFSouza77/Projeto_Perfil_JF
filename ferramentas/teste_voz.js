@@ -18,8 +18,10 @@ function wav() {
 (async () => {
   const { chromium } = require("playwright");
   let pedidos = 0;
-  const ssmls = [];
-  const azure = http.createServer((req, res) => { let corpo = ""; req.on("data", (c) => (corpo += c)); req.on("end", () => { pedidos++; ssmls.push(corpo); res.writeHead(200, { "Content-Type": "audio/mpeg" }); res.end(wav()); }); });
+  const ssmls = [], caminhos = [];
+  let maiQuebrado = false;
+  const azure = http.createServer((req, res) => { let corpo = ""; req.on("data", (c) => (corpo += c)); req.on("end", () => { pedidos++; ssmls.push(corpo); caminhos.push(req.url);
+    if (req.url === "/mai" && maiQuebrado) { res.writeHead(401); return res.end("sem credito"); } res.writeHead(200, { "Content-Type": "audio/mpeg" }); res.end(wav()); }); });
   await new Promise((ok) => azure.listen(8799, "127.0.0.1", ok));
   const b = await chromium.launch({ args: ["--autoplay-policy=no-user-gesture-required"] });
   const ok = [];
@@ -52,6 +54,15 @@ function wav() {
     const r5 = await pg.evaluate((t) => new Promise((fim) => { caosEmoFalaAtual = "triste"; caosSpeak(t, null, () => fim(true)); setTimeout(() => fim(false), 8000); }), (() => { const n = Date.now() % 100000; return `[C.A.O.S.] Hmm... essa doeu ${n}. Que PENA, rodada ${n}.`; })());
     const novos = ssmls.slice(n0).join(" ");
     conf("Emoção na voz nova: pausa nas reticências, volume da tristeza e palavra em caixa alta mais forte", r5 && /<break time="650ms"\/>/.test(novos) && /volume="-12%"/.test(novos) && /<prosody volume="\+25%" pitch="\+8%">pena<\/prosody>/.test(novos));
+    // 1.7.10.3.1: com a voz com emoção (MAI, ex.: Caio) configurada, ela vem primeiro, com o estilo da emoção;
+    // se ela falhar (crédito acabou), a voz grátis assume sem o jogo perceber
+    conf("Voz com emoção (Caio) primeiro, com o estilo triste", /\/mai/.test(caminhos.slice(n0).join(" ")) && /Caio:MAI-Voice-2\.1-Flash/.test(novos) && /express-as style="sad"/.test(novos));
+    maiQuebrado = true;
+    const n1 = ssmls.length;
+    const r6 = await falar(`[C.A.O.S.] Sem crédito na voz com emoção ${Date.now() % 100000}.`);
+    const depois = ssmls.slice(n1).join(" ");
+    conf("Voz com emoção fora do ar: a voz grátis assume (sem cair na voz do aparelho)", !r6.timeout && r6.aparelho === 0 && /AntonioNeural/.test(depois));
+    maiQuebrado = false;
     await pg.evaluate(() => (caosVoiceName = "x"));
     const r3 = await falar("[C.A.O.S.] Com voz do aparelho escolhida.");
     conf("Voz do aparelho escolhida na lista: usa o aparelho", !r3.timeout && r3.aparelho >= 1);
