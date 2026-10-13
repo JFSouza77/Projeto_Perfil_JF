@@ -7,6 +7,12 @@ const TUTORIAL_STEPS = [
   },
   {
     sec: 0,
+    icon: "🗂️",
+    title: "O que vale em cada categoria",
+    text: "<ul><li>📅 <b>Ano</b>: um ano exato, uma década ou até um século.</li><li>🧑 <b>Pessoa</b>: gente de verdade ou personagem, e também <b>grupo, dupla, banda, turma ou família</b> (os Jetsons, os Beatles...).</li><li>📍 <b>Lugar</b>: real ou de ficção, de uma padaria a um planeta.</li><li>📦 <b>Coisa</b>: literalmente qualquer coisa: real, fictícia, um conceito, algo abstrato, um sentimento e <b>até animais</b>.</li><li>🐾 No <b>Júnior</b>, <b>Animal</b> é categoria própria (bicho real, fictício ou mitológico) e Coisa não inclui animais.</li></ul>O C.A.O.S. lembra disso na primeira carta de cada categoria.",
+  },
+  {
+    sec: 0,
     icon: "🧭",
     title: "O caminho até a partida",
     text: "Do começo ao jogo são poucos toques:<ul><li>🎮 <b>Jogar</b> na tela inicial;</li><li>⚔️ <b>Versus ou Equipe</b>;</li><li>🃏 o <b>modo</b> (Júnior, Clássico...);</li><li>📋 o <b>Resumo rápido</b> das regras → <b>Vamos começar!</b>;</li><li>✍️ o <b>cadastro</b> de quem vai jogar;</li><li>🎲 <b>Sortear quem começa</b>. Pronto, a primeira carta sai.</li></ul>",
@@ -178,6 +184,12 @@ const TUTORIAL_STEPS = [
     icon: "🤖",
     title: "Quem é o C.A.O.S.?",
     text: "É o <b>narrador</b> da mesa: comenta, zoa (sem palavrão) e dá voz ao jogo — mas <b>não decide nada</b> e nunca entrega a resposta.<br>Ele reage ao que acontece de verdade: acertos rápidos, erros em sequência, Pulou, Absurdo, a hora da partida, quem está liderando... e respeita o nível de zoeira de cada um.<br>👎 Não curtiu uma fala? <b>Segure o balão</b> por 1 segundo: ele anota (e aprende). E às vezes, depois de um erro, aparece só pro Mestre: <b>🔥 Perto / 🧊 Longe</b>. É opcional; se tocar, ele comenta.",
+  },
+  {
+    sec: 4,
+    icon: "🤐",
+    title: "Como calar (ou silenciar) o C.A.O.S.",
+    text: "<ul><li>🔈 A <b>voz</b> começa <b>desligada</b>. Pra ouvir, toque em <b>🗣️ Voz</b> na tela inicial ou em <b>Calar/Ligar a voz</b> na pausa. Online, cada celular liga a sua.</li><li>🔇 No balão dele, o <b>🔇</b> silencia o C.A.O.S. <b>até o fim da carta</b>; na pausa, <b>🔊 Religar o C.A.O.S. nesta carta</b> desfaz.</li><li>⏭️ O <b>⏭️</b> no balão pula só aquela fala.</li><li>🌷 Achou ele chato com você? Mude o seu <b>nível de zoeira</b> pra Suave (no cadastro ou pelo ADM).</li></ul>",
   },
   {
     sec: 4,

@@ -6,13 +6,26 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.3",
+    data: "13/10/2026 · 10:03",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "Regras mais fáceis de achar e a voz do C.A.O.S. em todos os celulares.",
+    itens: [
+      "🗂️ O que vale em cada categoria: o Manual explica o que entra em Ano, Pessoa, Lugar e Coisa (e Animal, no Júnior). Pessoa também vale grupo, dupla e banda. Quem apontou foram o Vitinho e o Typingg, que testaram o online!",
+      "🤖 C.A.O.S. lembra a regra: na primeira carta de cada categoria da partida, ele lembra o que aquela categoria inclui.",
+      "🔎 Busca nas regras: no Manual, digite uma palavra (grupo, calar, joia) e vá direto pro passo certo.",
+      "🔊 Voz em todos os celulares: no online, cada celular fala com a voz do C.A.O.S. quando ela está ligada nele. Quem joga pelo celular tem o próprio botão de voz.",
+    ],
+    qol: ["🤐 Como calar o C.A.O.S.: um passo novo no Manual mostra todos os jeitos de calar ou silenciar (valeu, Vitinho e Typingg)."],
+  },
+  {
     v: "Beta 1.7.10.2",
     data: "13/10/2026 · 09:07",
     nome: "Multiplayer Update · Online de verdade",
     t: "O C.A.O.S. ganhou uma voz nova e agora começa calado.",
     itens: [
       "🎙️ Voz nova do C.A.O.S.: com internet, ele fala com uma voz brasileira mais natural, igual em todo aparelho. Sem internet, volta a voz do celular.",
-      "🤐 C.A.O.S. começa calado: a voz vem desligada. Pra ouvir, toque em Voz na tela inicial ou na pausa. Os balões continuam aparecendo.",
+      "🤐 C.A.O.S. começa calado: a voz vem desligada. Pra ouvir, toque em Voz na tela inicial ou na pausa. Os balões continuam aparecendo. Pedido do Typingg depois de testar com o Vitinho.",
     ],
     qol: [],
   },

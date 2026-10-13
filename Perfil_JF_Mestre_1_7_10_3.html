@@ -6,6 +6,16 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.3 · 13/10/2026 · "Multiplayer Update · Online de verdade" = REGRAS MAIS FÁCEIS DE ACHAR E VOZ EM TODOS OS CELULARES.
+          Pedido do JF (os Jetsons: a regra não muda): o manual ganhou o passo "O que vale em cada categoria" (Ano até
+          século; Pessoa vale grupo, dupla, banda; Lugar real ou de ficção; Coisa vale tudo, até animal; no Júnior,
+          Animal é categoria própria e Coisa sem animal) e "Como calar (ou silenciar) o C.A.O.S."; busca nas regras no
+          manual (tutBuscar, sem acento, sinônimos TUT_SINONIMOS). caosPrimeiraCategoria no flipCard: lembrete na 1ª
+          carta de cada categoria (REACTIVE_VOICE.primeiraCategoria, COISA_JR no Júnior). A dica da "carta de grupo"
+          ficou de fora de propósito: avisar só na carta de grupo entregaria que a resposta é um grupo. Online: o
+          celular fala todas as falas que mostra (antes só as dele), com botão 🗣️ Voz do C.A.O.S. na tela do
+          convidado (redeSairHtml/redeVozTrocar). JOGO_BUILD 1803. Créditos: Vitinho e Typingg (testaram o online; regras
+          das categorias, calar o C.A.O.S., voz começando desligada).
   1.7.10.2 · 13/10/2026 · "Multiplayer Update · Online de verdade" = VOZ NOVA DO C.A.O.S. (AZURE) E VOZ COMEÇA DESLIGADA.
           Pedido do JF (escolha: Azure) e relato de quem testou ("muta, dá a opção de desmutar"). Servidor: POST /voz
           (texto limpo, velocidade, tom → SSML → Azure pt-BR, AZURE_VOZ padrão pt-BR-AntonioNeural), cada fala guardada
@@ -733,7 +743,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.2</title>
+<title>Perfil JF · Beta 1.7.10.3</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -4706,6 +4716,15 @@ body.batata-mode .card .flip-btn:before {
   color: #fca5a5;
   border-color: #fca5a559;
 }
+
+/* 1.7.10.3 · busca nas regras (manual) */
+.tut-busca { margin: 6px 0 4px; }
+.tut-busca input { width: 100%; padding: 9px 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.06); color: inherit; font-size: 16px; }
+.tut-busca-res { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; max-height: 40vh; overflow: auto; }
+.tut-busca-item { text-align: left; padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.15); background: rgba(255, 255, 255, 0.05); color: inherit; cursor: pointer; }
+.tut-busca-item small { display: block; opacity: 0.75; margin-top: 2px; }
+.tut-busca-nada { opacity: 0.7; font-size: 0.9rem; padding: 4px 2px; }
+body.claro .tut-busca input, body.claro .tut-busca-item { border-color: rgba(0, 0, 0, 0.18); background: rgba(0, 0, 0, 0.04); }
 /* Verso da carta (1.7.3): moldura dupla neon, cantos dourados e o emblema "P dentro do ?". */
 .card.face-down {
   position: relative;
@@ -8944,7 +8963,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.2 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.0 · Atualizada em 13/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.3 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.0 · Atualizada em 13/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -9212,7 +9231,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1802;
+const JOGO_BUILD = 1803;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -11661,10 +11680,23 @@ function flipCard() {
   caosAusentesTalvez();
   caosSatisfacaoTalvez();
   caosEixosCarta();
+  caosPrimeiraCategoria();
   render();
   // 1.7.8.6: a frase da roleta sobe até o topo da carta e o resto aparece (o giro foi no "Ver carta")
   cartaFraseSobe(fraseTopo);
   saveGameState();
+}
+// 1.7.10.3 (pedido do JF): a primeira carta de cada categoria na partida vem com o lembrete do que ela inclui
+// (Pessoa vale grupo, Lugar vale ficção, Ano vale década/século, Coisa vale tudo). Uma vez por categoria.
+function caosPrimeiraCategoria() {
+  try {
+    if (!currentCard || typeof REACTIVE_VOICE === "undefined" || !REACTIVE_VOICE.primeiraCategoria) return;
+    const cat = gemCategoryFor(currentCard.category);
+    const banco = REACTIVE_VOICE.primeiraCategoria[cat === "COISA" && CURRENT_MODE === "junior" ? "COISA_JR" : cat];
+    if (!banco || !caosOncePerMatch("primeira_cat_" + cat)) return;
+    caosLog("fala", "primeira carta de " + cat);
+    caosFalaAgendar(() => getRandomReaction(banco), 900, "media");
+  } catch (e) {}
 }
 function checkWinnerThenDraw() {
   tabLobbyPendente = true; // 1.7.9.4: a carta acabou; o lobby do tabuleiro abre quando a próxima estiver pronta
@@ -16343,6 +16375,7 @@ function openTutorial(tipo) {
       <button type="button" class="tut-close" id="tutClose" aria-label="Fechar tutorial">✕</button>
       <div class="tut-tempo" id="tutTempo"></div>
       <div class="tut-caps" id="tutCaps"></div>
+      <div class="tut-busca" id="tutBusca"><input type="search" id="tutBuscaIn" placeholder="🔎 Procurar nas regras (ex.: grupo, calar, joia)" aria-label="Procurar nas regras" autocomplete="off"><div class="tut-busca-res" id="tutBuscaRes"></div></div>
       <div class="tut-icon" id="tutIcon" aria-hidden="true"></div>
       <div class="tut-title" id="tutTitle"></div>
       <div class="tut-text" id="tutText"></div>
@@ -16369,9 +16402,53 @@ function openTutorial(tipo) {
     });
     document.getElementById("tutManual").addEventListener("click", () => openTutorial("manual"));
     document.getElementById("tutOuvir").addEventListener("click", tutOuvirPasso);
+    document.getElementById("tutBuscaIn").addEventListener("input", tutBuscar);
   }
   ov.style.display = "flex";
   renderTutorial();
+}
+// 1.7.10.3 (ideia do JF): busca nas regras. Procura no manual completo (título e texto, sem acento) e leva
+// direto pro passo; algumas palavras puxam sinônimos (calar → silenciar, mudo, voz...).
+const TUT_SINONIMOS = { calar: ["silenc", "voz", "mudo", "🔇"], silenciar: ["calar", "voz", "🔇"], mudo: ["calar", "silenc", "voz"], grupo: ["banda", "dupla", "turma", "pessoa"], banda: ["grupo", "pessoa"], jetsons: ["grupo", "pessoa"], animal: ["bicho", "coisa"], bicho: ["animal"], ganhar: ["vence", "vitória", "meta"], vencer: ["vence", "vitória", "ganha"] };
+function tutSemAcento(t) {
+  return String(t).replace(/<[^>]*>/g, " ").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+function tutBuscar() {
+  const inp = document.getElementById("tutBuscaIn"), res = document.getElementById("tutBuscaRes");
+  if (!inp || !res) return;
+  const q = tutSemAcento(inp.value).trim();
+  if (q.length < 2) {
+    res.innerHTML = "";
+    return;
+  }
+  const termos = [q].concat((TUT_SINONIMOS[q] || []).map(tutSemAcento));
+  const achados = TUTORIAL_STEPS.map((p, i) => {
+    const titulo = tutSemAcento(p.title), texto = tutSemAcento(typeof p.text === "function" ? p.text() : p.text);
+    const pontos = termos.reduce((n, t, k) => n + (titulo.includes(t) ? (k ? 2 : 5) : 0) + (texto.includes(t) ? (k ? 1 : 3) : 0), 0);
+    let trecho = "";
+    const t = termos.find((x) => texto.includes(x));
+    if (t) {
+      const j = texto.indexOf(t);
+      trecho = (j > 30 ? "…" : "") + texto.slice(Math.max(0, j - 30), j + 60).trim() + "…";
+    }
+    return { i, pontos, trecho };
+  })
+    .filter((x) => x.pontos > 0)
+    .sort((a, b) => b.pontos - a.pontos)
+    .slice(0, 6);
+  res.innerHTML = achados.length
+    ? achados.map((a) => `<button type="button" class="tut-busca-item" data-passo="${a.i}"><b>${TUTORIAL_STEPS[a.i].icon} ${escapeHtml(TUTORIAL_STEPS[a.i].title)}</b>${a.trecho ? `<small>${escapeHtml(a.trecho)}</small>` : ""}</button>`).join("")
+    : '<div class="tut-busca-nada">Nada encontrado. Tente outra palavra.</div>';
+  res.querySelectorAll("[data-passo]").forEach((b) =>
+    b.addEventListener("click", () => {
+      tutorialTipo = "manual";
+      tutorialLista = TUTORIAL_STEPS;
+      tutorialPos = +b.dataset.passo;
+      inp.value = "";
+      res.innerHTML = "";
+      renderTutorial();
+    }),
+  );
 }
 // 1.7.7.8 (ideia do JF, revisão do GPT): o C.A.O.S. lê o passo em voz alta, só quando a pessoa toca.
 // Nunca vira o passo sozinho; trocar de passo ou fechar o tutorial cala a leitura.
@@ -16429,6 +16506,8 @@ function renderTutorial() {
       : "📖 Manual completo";
   const caps = document.getElementById("tutCaps");
   caps.style.display = rapido || vitoria ? "none" : "";
+  const busca = document.getElementById("tutBusca");
+  if (busca) busca.style.display = rapido || vitoria ? "none" : "";
   caps.innerHTML = rapido || vitoria
     ? ""
     : TUT_CAPS.map((c, i) => `<button type="button" data-cap="${i}" class="${i === s.sec ? "on" : ""}">${c}</button>`).join("");
@@ -20936,10 +21015,11 @@ function redeFalaProxima() {
   el.innerHTML =
     `<div class="rede-fala-topo"><span class="rede-fala-rosto">${escapeHtml(face || "🤖")}</span>${rotulo ? `<span class="rede-fala-rotulo">${escapeHtml(rotulo)}</span>` : ""}</div>` +
     `<div class="rede-fala-txt">[C.A.O.S.] ${escapeHtml(f.texto)}</div>`;
-  if (f.minha)
-    try {
-      caosSpeak("[C.A.O.S.] " + f.texto, "__normal");
-    } catch (e) {}
+  // 1.7.10.3 (relato do JF: a voz só saía no host): o celular fala tudo o que mostra, se a voz dele estiver ligada
+  // (cada aparelho liga a sua no botão 🗣️ Voz do C.A.O.S.; começa desligada, então não vira eco na mesma sala)
+  try {
+    caosSpeak("[C.A.O.S.] " + f.texto, "__normal");
+  } catch (e) {}
   clearTimeout(rede.falaTimer);
   // com fala esperando na fila, esta fica menos tempo (o celular não fica atrasado em relação à mesa)
   const ms = Math.min(9000, Math.max(3500, f.texto.length * 70));
@@ -21798,7 +21878,7 @@ function redeConvidadoIniciar(sala) {
     document.body.appendChild(box);
   }
   if (!redeEntrarSala(sala)) {
-    box.innerHTML = `<div class="telao-espera">Este navegador não consegue entrar na sala${redeModoDoEndereco() === "internet" ? " pela internet" : ""}.</div>${REDE_SAIR}`;
+    box.innerHTML = `<div class="telao-espera">Este navegador não consegue entrar na sala${redeModoDoEndereco() === "internet" ? " pela internet" : ""}.</div>${redeSairHtml()}`;
     return;
   }
   rede.aoMudar = () => redeConvidadoDesenhar();
@@ -21808,8 +21888,20 @@ function redeConvidadoIniciar(sala) {
     redeConvidadoTiques();
   }, 500);
 }
-const REDE_SAIR =
-  '<button type="button" class="rede-como" onclick="openTutorial(\'manual:online\')">❓ Como funciona o online</button><button type="button" class="telao-sair" onclick="redeSairDaSala()">✕ Sair da sala</button>';
+// 1.7.10.3: no celular do convidado também tem o botão da voz do C.A.O.S. (começa desligada)
+function redeSairHtml() {
+  const voz = typeof CAOS_VOICE_OK !== "undefined" && CAOS_VOICE_OK ? `<button type="button" class="rede-como rede-voz" onclick="redeVozTrocar()">${caosVoiceOn ? "🗣️ Voz do C.A.O.S.: ligada" : "🤐 Voz do C.A.O.S.: desligada"}</button>` : "";
+  return voz + '<button type="button" class="rede-como" onclick="openTutorial(\'manual:online\')">❓ Como funciona o online</button><button type="button" class="telao-sair" onclick="redeSairDaSala()">✕ Sair da sala</button>';
+}
+function redeVozTrocar() {
+  try {
+    unlockAudio();
+    toggleVoice();
+  } catch (e) {}
+  try {
+    redeConvidadoDesenhar();
+  } catch (e) {}
+}
 function redeSairDaSala() {
   try {
     if (rede) {
@@ -21879,7 +21971,7 @@ function redeConvidadoDesenhar() {
   const sala = `<div class="rede-sala">🌐 Sala <b>${rede.sala}</b>${selo}</div>${conexao}`;
   if (rede.estado === "escolhendo") return redeEscolhaDesenhar(box, sala);
   if (rede.estado === "aguardando") {
-    box.innerHTML = `${sala}<div class="telao-espera">⏳ Pedido enviado<br><small>Esperando o host aceitar a sua entrada…</small></div>${REDE_SAIR}`;
+    box.innerHTML = `${sala}<div class="telao-espera">⏳ Pedido enviado<br><small>Esperando o host aceitar a sua entrada…</small></div>${redeSairHtml()}`;
     return;
   }
   if (rede.estado === "recusado") {
@@ -21887,7 +21979,7 @@ function redeConvidadoDesenhar() {
       rede.motivo === "versao_diferente"
         ? `<br><small>Host: ${escapeHtml(rede.versaoHost || "?")} · Você: ${escapeHtml(JOGO_VERSAO)}. ${!redeHostMaisNovo(rede.versaoHost, rede.buildHost) ? "O jogo do host está mais velho: ele precisa recarregar o jogo dele." : "Recarregue a página pra atualizar."}</small>`
         : "";
-    box.innerHTML = `${sala}<div class="telao-espera">${escapeHtml(REDE_MOTIVOS[rede.motivo] || "Não deu pra entrar.")}${ver}<br><button type="button" class="rede-lugar" id="redeDeNovo">${rede.motivo === "versao_diferente" ? "🔄 Recarregar" : "Tentar de novo"}</button></div>${REDE_SAIR}`;
+    box.innerHTML = `${sala}<div class="telao-espera">${escapeHtml(REDE_MOTIVOS[rede.motivo] || "Não deu pra entrar.")}${ver}<br><button type="button" class="rede-lugar" id="redeDeNovo">${rede.motivo === "versao_diferente" ? "🔄 Recarregar" : "Tentar de novo"}</button></div>${redeSairHtml()}`;
     box.querySelector("#redeDeNovo").addEventListener("click", () => {
       if (rede.motivo === "versao_diferente") return location.reload();
       rede.estado = "entrando";
@@ -21896,21 +21988,21 @@ function redeConvidadoDesenhar() {
     return;
   }
   if (rede.estado !== "dentro" || !rede.retrato) {
-    box.innerHTML = `${sala}<div class="telao-espera">Entrando na sala…</div>${REDE_SAIR}`;
+    box.innerHTML = `${sala}<div class="telao-espera">Entrando na sala…</div>${redeSairHtml()}`;
     return;
   }
   // 1.7.9.4: sala aberta antes da partida: espera o host terminar o cadastro e começar
   if (!rede.retrato.iniciada) {
     const r = rede.retrato, eu = r.jogadores.find((j) => j.id === rede.eu);
     const mesa = r.jogadores.map((j) => `<li>${escapeHtml((j.avatar ? j.avatar + " " : "") + j.nome)}${j.id === rede.eu ? " · você" : ""}</li>`).join("");
-    box.innerHTML = `${sala}<div class="telao-espera">✅ Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b><br><small>Esperando o host terminar o cadastro e começar a partida…</small></div><ul class="rede-lista">${mesa}</ul>${REDE_SAIR}`;
+    box.innerHTML = `${sala}<div class="telao-espera">✅ Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b><br><small>Esperando o host terminar o cadastro e começar a partida…</small></div><ul class="rede-lista">${mesa}</ul>${redeSairHtml()}`;
     return;
   }
   telaoUltimo = rede.retrato;
   telaoDesenhar(rede.retrato);
   // troca o "sair do telão" pelo "sair da sala" e põe a sala e os botões do meu papel
   const sair = box.querySelector(".telao-sair");
-  if (sair) sair.outerHTML = REDE_SAIR;
+  if (sair) sair.outerHTML = redeSairHtml();
   box.insertAdjacentHTML("afterbegin", sala);
   // 1.7.9.5 (relato do JF: "ela fica na sala TV, não tem nada pra acontecer"): quem é o Mestre vê a carta
   // como na tela de sempre, no lugar do resumo do telão
@@ -22111,7 +22203,7 @@ function redeEscolhaDesenhar(box, sala) {
   }
   const lista = l ? `<div class="rede-rot">${cad ? "Ou, se o host já cadastrou você:" : "Quem é você?"}</div><div class="rede-lugares">${l}</div>` : "";
   const vazio = !cad && !l ? "<small>O host ainda está montando a partida. Espere um pouquinho.</small>" : "";
-  box.innerHTML = `${sala}<div class="telao-espera rede-entrada">${cad ? "" : "Quem é você?"}${form}${lista}${vazio}</div>${REDE_SAIR}`;
+  box.innerHTML = `${sala}<div class="telao-espera rede-entrada">${cad ? "" : "Quem é você?"}${form}${lista}${vazio}</div>${redeSairHtml()}`;
   box.querySelectorAll(".rede-lugar").forEach((b) => b.addEventListener("click", () => redeEscolherLugar(b.dataset.id)));
   const nome = box.querySelector("#redeNome");
   if (nome) {
@@ -27486,7 +27578,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.2 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.3 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -32578,7 +32670,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.2 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.3 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -35803,7 +35895,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.2 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.10.3 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -36326,7 +36418,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.2 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.10.3 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -69724,6 +69816,40 @@ const REACTIVE_VOICE = {
     "{nome} acertou assim, do nada? Tá perdoado. Por enquanto.",
     "Eu estava te perseguindo, {nome}. Mas essa jogada foi boa demais. Arquivo encerrado.",
   ],
+  // 1.7.10.3 (pedido do JF): a primeira carta de cada categoria na partida vem com o lembrete do que ela inclui.
+  // No Júnior, Coisa não inclui animais (Animal é categoria própria).
+  primeiraCategoria: {
+    ANO: [
+      "Primeira carta de Ano! Lembrando: pode ser um ano exato, uma década ou até um século inteiro.",
+      "Ano na mesa. Vale avisar: a resposta pode abranger de uma década até um século. Pensem grande.",
+      "Categoria Ano estreando. Não é só número redondo: pode ser ano, década ou século.",
+    ],
+    PESSOA: [
+      "Primeira Pessoa da partida! Lembrando: vale gente de verdade, personagem, e também grupo, dupla ou banda.",
+      "Pessoa na mesa. Vale real ou fictício, e vale grupo: dupla, banda, turma, família inteira.",
+      "Categoria Pessoa estreando. Atenção: um grupo inteiro também conta como Pessoa.",
+    ],
+    LUGAR: [
+      "Primeiro Lugar da partida! Lembrando: pode ser um lugar real ou de ficção.",
+      "Lugar na mesa. Real ou inventado, de cidade a planeta, de filme a desenho: tudo vale.",
+      "Categoria Lugar estreando. Vale lugar de verdade e lugar de livro, filme ou desenho.",
+    ],
+    COISA: [
+      "Primeira Coisa da partida! Aqui vale literalmente qualquer coisa: real, de ficção, um conceito, algo abstrato. E até animal.",
+      "Coisa na mesa. Pode ser objeto, ideia, sentimento, coisa inventada. E os animais também moram aqui.",
+      "Categoria Coisa estreando. É a categoria do tudo: real, fictício, abstrato. Até bicho conta como Coisa.",
+    ],
+    COISA_JR: [
+      "Primeira Coisa da partida! Pode ser coisa de verdade, de faz de conta, ou até algo que a gente sente.",
+      "Coisa na mesa. Vale objeto, brinquedo, comida, coisa inventada e até sentimento.",
+      "Categoria Coisa estreando. Pode ser qualquer coisa, de verdade ou de mentirinha. Bicho tem categoria própria!",
+    ],
+    ANIMAL: [
+      "Primeiro Animal da partida! Pode ser bicho de verdade ou de faz de conta, como os das lendas.",
+      "Animal na mesa. Vale bicho real e também bicho mágico, de história ou de mitologia.",
+      "Categoria Animal estreando. Lembrando: vale animal de verdade e animal fictício ou mitológico.",
+    ],
+  },
   vozCalada: [
     "Cansaram de me ouvir? Tá bom. Agora eu só escrevo.",
     "Tiraram a minha voz. Beleza. Os balões continuam, e eu continuo certo.",
@@ -70941,6 +71067,12 @@ const TUTORIAL_STEPS = [
   },
   {
     sec: 0,
+    icon: "🗂️",
+    title: "O que vale em cada categoria",
+    text: "<ul><li>📅 <b>Ano</b>: um ano exato, uma década ou até um século.</li><li>🧑 <b>Pessoa</b>: gente de verdade ou personagem, e também <b>grupo, dupla, banda, turma ou família</b> (os Jetsons, os Beatles...).</li><li>📍 <b>Lugar</b>: real ou de ficção, de uma padaria a um planeta.</li><li>📦 <b>Coisa</b>: literalmente qualquer coisa: real, fictícia, um conceito, algo abstrato, um sentimento e <b>até animais</b>.</li><li>🐾 No <b>Júnior</b>, <b>Animal</b> é categoria própria (bicho real, fictício ou mitológico) e Coisa não inclui animais.</li></ul>O C.A.O.S. lembra disso na primeira carta de cada categoria.",
+  },
+  {
+    sec: 0,
     icon: "🧭",
     title: "O caminho até a partida",
     text: "Do começo ao jogo são poucos toques:<ul><li>🎮 <b>Jogar</b> na tela inicial;</li><li>⚔️ <b>Versus ou Equipe</b>;</li><li>🃏 o <b>modo</b> (Júnior, Clássico...);</li><li>📋 o <b>Resumo rápido</b> das regras → <b>Vamos começar!</b>;</li><li>✍️ o <b>cadastro</b> de quem vai jogar;</li><li>🎲 <b>Sortear quem começa</b>. Pronto, a primeira carta sai.</li></ul>",
@@ -71112,6 +71244,12 @@ const TUTORIAL_STEPS = [
     icon: "🤖",
     title: "Quem é o C.A.O.S.?",
     text: "É o <b>narrador</b> da mesa: comenta, zoa (sem palavrão) e dá voz ao jogo — mas <b>não decide nada</b> e nunca entrega a resposta.<br>Ele reage ao que acontece de verdade: acertos rápidos, erros em sequência, Pulou, Absurdo, a hora da partida, quem está liderando... e respeita o nível de zoeira de cada um.<br>👎 Não curtiu uma fala? <b>Segure o balão</b> por 1 segundo: ele anota (e aprende). E às vezes, depois de um erro, aparece só pro Mestre: <b>🔥 Perto / 🧊 Longe</b>. É opcional; se tocar, ele comenta.",
+  },
+  {
+    sec: 4,
+    icon: "🤐",
+    title: "Como calar (ou silenciar) o C.A.O.S.",
+    text: "<ul><li>🔈 A <b>voz</b> começa <b>desligada</b>. Pra ouvir, toque em <b>🗣️ Voz</b> na tela inicial ou em <b>Calar/Ligar a voz</b> na pausa. Online, cada celular liga a sua.</li><li>🔇 No balão dele, o <b>🔇</b> silencia o C.A.O.S. <b>até o fim da carta</b>; na pausa, <b>🔊 Religar o C.A.O.S. nesta carta</b> desfaz.</li><li>⏭️ O <b>⏭️</b> no balão pula só aquela fala.</li><li>🌷 Achou ele chato com você? Mude o seu <b>nível de zoeira</b> pra Suave (no cadastro ou pelo ADM).</li></ul>",
   },
   {
     sec: 4,
@@ -71529,13 +71667,26 @@ const PAUSE_TIPS = [
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.3",
+    data: "13/10/2026 · 10:03",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "Regras mais fáceis de achar e a voz do C.A.O.S. em todos os celulares.",
+    itens: [
+      "🗂️ O que vale em cada categoria: o Manual explica o que entra em Ano, Pessoa, Lugar e Coisa (e Animal, no Júnior). Pessoa também vale grupo, dupla e banda. Quem apontou foram o Vitinho e o Typingg, que testaram o online!",
+      "🤖 C.A.O.S. lembra a regra: na primeira carta de cada categoria da partida, ele lembra o que aquela categoria inclui.",
+      "🔎 Busca nas regras: no Manual, digite uma palavra (grupo, calar, joia) e vá direto pro passo certo.",
+      "🔊 Voz em todos os celulares: no online, cada celular fala com a voz do C.A.O.S. quando ela está ligada nele. Quem joga pelo celular tem o próprio botão de voz.",
+    ],
+    qol: ["🤐 Como calar o C.A.O.S.: um passo novo no Manual mostra todos os jeitos de calar ou silenciar (valeu, Vitinho e Typingg)."],
+  },
+  {
     v: "Beta 1.7.10.2",
     data: "13/10/2026 · 09:07",
     nome: "Multiplayer Update · Online de verdade",
     t: "O C.A.O.S. ganhou uma voz nova e agora começa calado.",
     itens: [
       "🎙️ Voz nova do C.A.O.S.: com internet, ele fala com uma voz brasileira mais natural, igual em todo aparelho. Sem internet, volta a voz do celular.",
-      "🤐 C.A.O.S. começa calado: a voz vem desligada. Pra ouvir, toque em Voz na tela inicial ou na pausa. Os balões continuam aparecendo.",
+      "🤐 C.A.O.S. começa calado: a voz vem desligada. Pra ouvir, toque em Voz na tela inicial ou na pausa. Os balões continuam aparecendo. Pedido do Typingg depois de testar com o Vitinho.",
     ],
     qol: [],
   },
