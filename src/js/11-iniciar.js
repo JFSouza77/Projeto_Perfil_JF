@@ -33,7 +33,7 @@ function iniciar() {
     soundOn = JFStore.getItem("perfil200_som") !== "0";
   } catch (e) {}
   try {
-    caosVoiceOn = JFStore.getItem("perfil200_voz") !== "0";
+    caosVoiceOn = JFStore.getItem("perfil200_voz") === "1";
   } catch (e) {}
   if (!CAOS_VOICE_OK) caosVoiceOn = false;
   try {

@@ -17,8 +17,12 @@
  *   POST /reporte          → carta reportada por qualquer aparelho (1.7.10: id, dica, motivo; nada pessoal)
  *   GET  /reportes?chave=… → página do JF com os reportes (senha no segredo REPORTES_SENHA); &formato=texto
  *   POST /reportes/apagar  → apaga todos (com a senha)
+ *   GET  /voz/estado       → { ligada } (1.7.10.2: a voz nova do C.A.O.S. está configurada?)
+ *   POST /voz              → { t, r, p } → MP3 da fala (Azure, voz pt-BR). Cada fala gerada fica guardada
+ *                            (as falas se repetem muito) e há um teto de letras por mês (VOZ_TETO_MES).
  *
- * Segredos (wrangler secret put): TURN_KEY_ID e TURN_KEY_API_TOKEN. Variável: ORIGENS (sites aceitos).
+ * Segredos (wrangler secret put): TURN_KEY_ID, TURN_KEY_API_TOKEN, REPORTES_SENHA, AZURE_SPEECH_KEY e
+ * AZURE_SPEECH_REGION. Variáveis: ORIGENS (sites aceitos), AZURE_VOZ (nome da voz) e VOZ_TETO_MES.
  * Como publicar: servidor/LEIA-ME.md.
  */
 const CHAVE = "perfiljf";
@@ -118,6 +122,18 @@ export default {
       const r = await sinal().fetch(new Request("https://sinal/sala", { method: "POST", body: corpo, headers: { "CF-Connecting-IP": req.headers.get("CF-Connecting-IP") || "" } }));
       return json(await r.json(), r.status, h);
     }
+    // 1.7.10.2 · voz nova do C.A.O.S. (Azure); instância "voz" do Durable Object guarda as falas e o teto do mês
+    const voz = () => env.SINAL.get(env.SINAL.idFromName("voz"));
+    if (p === "/voz/estado" && req.method === "GET") return json({ ligada: !!(env.AZURE_SPEECH_KEY && env.AZURE_SPEECH_REGION) }, 200, h);
+    if (p === "/voz" && req.method === "POST") {
+      if (!env.AZURE_SPEECH_KEY || !env.AZURE_SPEECH_REGION) return json({ erro: "sem_voz" }, 503, h);
+      const corpo = await req.text();
+      if (corpo.length > 1500) return json({ erro: "grande" }, 413, h);
+      const r = await voz().fetch(new Request("https://voz/voz", { method: "POST", body: corpo, headers: { "CF-Connecting-IP": req.headers.get("CF-Connecting-IP") || "" } }));
+      const cab = new Headers(r.headers);
+      Object.entries(h).forEach(([k, v]) => cab.set(k, v));
+      return new Response(r.body, { status: r.status, headers: cab });
+    }
     if (p === "/ponte" && req.method === "GET") {
       try {
         return json(await ponte(env), 200, h);
@@ -155,7 +171,61 @@ export class Sinal {
     if (url.pathname === "/reporte") return this.guardarReporte(await req.text(), ip);
     if (url.pathname === "/reportes") return this.paginaReportes(url);
     if (url.pathname === "/reportes/apagar") return this.apagarReportes(req);
+    if (url.pathname === "/voz") return this.falar(await req.text(), ip);
     return new Response("?", { status: 404 });
+  }
+  /* --- 1.7.10.2 · Voz nova do C.A.O.S. (instância "voz") ---
+     Recebe o texto já limpo pelo jogo (t), a velocidade (r) e o tom (p) e devolve o MP3 do Azure. A mesma fala
+     com o mesmo jeito sai do storage (sem gastar o Azure de novo). Teto de letras por mês (VOZ_TETO_MES, padrão
+     400 mil, abaixo do grátis do Azure) e ritmo por endereço; passou disso, o jogo usa a voz do aparelho. */
+  async falar(corpo, ip) {
+    let d;
+    try {
+      d = JSON.parse(corpo);
+    } catch (e) {
+      return json({ erro: "json" }, 400);
+    }
+    const t = String((d && d.t) || "").replace(/[\u0000-\u001f<>&]/g, " ").replace(/\s+/g, " ").trim().slice(0, 400);
+    if (!t) return json({ erro: "vazio" }, 400);
+    const num = (v, a, b) => Math.max(a, Math.min(b, Number.isFinite(+v) ? +v : 1));
+    const r = Math.round(num(d.r, 0.5, 2) * 20) / 20, p = Math.round(num(d.p, 0.5, 2) * 20) / 20;
+    const nome = String(this.env.AZURE_VOZ || "pt-BR-AntonioNeural").replace(/[^A-Za-z0-9:-]/g, "");
+    const dig = await crypto.subtle.digest("SHA-256", new TextEncoder().encode([nome, r, p, t].join("|")));
+    const chave = "v:" + [...new Uint8Array(dig)].map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 40);
+    const st = this.ctx.storage;
+    const guardada = await st.get(chave);
+    const mp3 = (dados, origem) => new Response(dados, { headers: { "Content-Type": "audio/mpeg", "Cache-Control": "public, max-age=604800", "X-Voz": origem } });
+    if (guardada) return mp3(guardada, "guardada");
+    // ritmo: 400 falas novas por hora por endereço (em memória)
+    const agora = Date.now();
+    this.ritmoVoz = this.ritmoVoz || new Map();
+    const rv = (this.ritmoVoz.get(ip) || []).filter((x) => agora - x < 3600e3);
+    if (rv.length >= 400) return json({ erro: "calma" }, 429);
+    rv.push(agora);
+    this.ritmoVoz.set(ip, rv);
+    // teto do mês
+    const mes = new Date().toISOString().slice(0, 7);
+    const teto = Number(this.env.VOZ_TETO_MES) > 0 ? Number(this.env.VOZ_TETO_MES) : 400000;
+    const gasto = (await st.get("mes:" + mes)) || 0;
+    if (gasto + t.length > teto) return json({ erro: "teto" }, 429);
+    const pct = (x, k) => (x >= 1 ? "+" : "") + Math.round((x - 1) * k) + "%";
+    const ssml = `<speak version="1.0" xml:lang="pt-BR"><voice name="${nome}"><prosody rate="${pct(r, 100)}" pitch="${pct(p, 40)}">${t}</prosody></voice></speak>`;
+    const url = this.env.AZURE_URL || `https://${String(this.env.AZURE_SPEECH_REGION).replace(/[^a-z0-9]/g, "")}.tts.speech.microsoft.com/cognitiveservices/v1`;
+    let az;
+    try {
+      az = await fetch(url, {
+        method: "POST",
+        headers: { "Ocp-Apim-Subscription-Key": this.env.AZURE_SPEECH_KEY, "Content-Type": "application/ssml+xml", "X-Microsoft-OutputFormat": "audio-24khz-48kbitrate-mono-mp3", "User-Agent": "perfil-jf" },
+        body: ssml,
+      });
+    } catch (e) {
+      return json({ erro: "azure" }, 502);
+    }
+    if (!az.ok) return json({ erro: "azure", status: az.status }, 502);
+    const dados = await az.arrayBuffer();
+    await st.put("mes:" + mes, gasto + t.length);
+    if (dados.byteLength > 0 && dados.byteLength < 1900000) await st.put(chave, dados);
+    return mp3(dados, "nova");
   }
   /* --- 1.7.10 · Reportes de cartas (instância "reportes"; storage do Durable Object) ---
      Guarda só o que serve pra conferir a carta: id, resposta, categoria, dica, motivo, nota curta, modo,

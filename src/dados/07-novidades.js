@@ -6,6 +6,17 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.2",
+    data: "13/10/2026 · 09:07",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "O C.A.O.S. ganhou uma voz nova e agora começa calado.",
+    itens: [
+      "🎙️ Voz nova do C.A.O.S.: com internet, ele fala com uma voz brasileira mais natural, igual em todo aparelho. Sem internet, volta a voz do celular.",
+      "🤐 C.A.O.S. começa calado: a voz vem desligada. Pra ouvir, toque em Voz na tela inicial ou na pausa. Os balões continuam aparecendo.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.1",
     data: "12/10/2026 · 16:29",
     nome: "Multiplayer Update · Online de verdade",

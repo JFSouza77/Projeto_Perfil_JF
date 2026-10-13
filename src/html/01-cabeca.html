@@ -6,6 +6,14 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.2 · 13/10/2026 · "Multiplayer Update · Online de verdade" = VOZ NOVA DO C.A.O.S. (AZURE) E VOZ COMEÇA DESLIGADA.
+          Pedido do JF (escolha: Azure) e relato de quem testou ("muta, dá a opção de desmutar"). Servidor: POST /voz
+          (texto limpo, velocidade, tom → SSML → Azure pt-BR, AZURE_VOZ padrão pt-BR-AntonioNeural), cada fala guardada
+          no storage do Durable Object (instância "voz"), teto de letras por mês (VOZ_TETO_MES, 400 mil) e ritmo por
+          endereço; GET /voz/estado. Jogo: caosSpeak separa caosFalarNuvem (WebAudio, pedaços pedidos juntos e tocados
+          em ordem, cache no aparelho) e caosFalarAparelho (como antes); voz automática + internet = nuvem; 1º pedaço
+          com mais de 2,5 s, erro ou sem servidor = aparelho. Jeito da fala sem sorteio na nuvem (o cache acerta).
+          caosVoiceOn começa false (perfil200_voz só liga com "1"). teste_voz.js (Azure de mentira). JOGO_BUILD 1802.
   1.7.10.1 · 12/10/2026 · "Multiplayer Update · Online de verdade" = CORREÇÕES DO PRIMEIRO TESTE EM REDES DIFERENTES (5G × Wi-Fi).
           Relato do JF: roleta da categoria só no host → o retrato leva carta.roleta {cats, girando} e o celular gira
           o rolo (telaoRoletaHtml/telaoRoletaAnimar) até a categoria chegar; o Mestre no celular gira (roletaCategoria,
@@ -725,7 +733,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.1</title>
+<title>Perfil JF · Beta 1.7.10.2</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

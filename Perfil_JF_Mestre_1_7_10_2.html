@@ -6,6 +6,14 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.2 · 13/10/2026 · "Multiplayer Update · Online de verdade" = VOZ NOVA DO C.A.O.S. (AZURE) E VOZ COMEÇA DESLIGADA.
+          Pedido do JF (escolha: Azure) e relato de quem testou ("muta, dá a opção de desmutar"). Servidor: POST /voz
+          (texto limpo, velocidade, tom → SSML → Azure pt-BR, AZURE_VOZ padrão pt-BR-AntonioNeural), cada fala guardada
+          no storage do Durable Object (instância "voz"), teto de letras por mês (VOZ_TETO_MES, 400 mil) e ritmo por
+          endereço; GET /voz/estado. Jogo: caosSpeak separa caosFalarNuvem (WebAudio, pedaços pedidos juntos e tocados
+          em ordem, cache no aparelho) e caosFalarAparelho (como antes); voz automática + internet = nuvem; 1º pedaço
+          com mais de 2,5 s, erro ou sem servidor = aparelho. Jeito da fala sem sorteio na nuvem (o cache acerta).
+          caosVoiceOn começa false (perfil200_voz só liga com "1"). teste_voz.js (Azure de mentira). JOGO_BUILD 1802.
   1.7.10.1 · 12/10/2026 · "Multiplayer Update · Online de verdade" = CORREÇÕES DO PRIMEIRO TESTE EM REDES DIFERENTES (5G × Wi-Fi).
           Relato do JF: roleta da categoria só no host → o retrato leva carta.roleta {cats, girando} e o celular gira
           o rolo (telaoRoletaHtml/telaoRoletaAnimar) até a categoria chegar; o Mestre no celular gira (roletaCategoria,
@@ -725,7 +733,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.1</title>
+<title>Perfil JF · Beta 1.7.10.2</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -8936,7 +8944,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.1 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.0 · Atualizada em 12/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.2 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.0 · Atualizada em 13/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -9204,7 +9212,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1801;
+const JOGO_BUILD = 1802;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -10230,7 +10238,7 @@ var splashH0;
 var splashT0 = 0;
 let lastBeepSecond = null;
 let soundOn = true;
-let caosVoiceOn = true;
+let caosVoiceOn = false; // 1.7.10.2: começa calado; liga no botão Voz (fica salvo no aparelho)
 let caosVoiceSilenced = 0;
 let caosVoiceSpoken = 0;
 let caosCardTimes = [];
@@ -25174,10 +25182,12 @@ function caosPickVoice() {
 }
 function caosVoiceCancel() {
   try {
+    if (typeof vozNuvemParar === "function") vozNuvemParar();
     if (CAOS_VOICE_OK) window.speechSynthesis.cancel();
   } catch (e) {}
 }
 function caosSpeakSample(txt) {
+  if (vozNuvemUsa()) return caosFalarNuvem([txt], [[Math.min(2, caosVoiceSpeed), 1]], null, null, -1);
   try {
     const u = new SpeechSynthesisUtterance(txt);
     u.lang = "pt-BR";
@@ -25255,7 +25265,7 @@ function caosSpeak(msg, humorForcado, onEnd, onPedaco, vir) {
       CAOS_VOICE_MATRIZ[humorForcado || caosHumorMatriz()] || [1, 1];
     const st = humorForcado === "__normal" ? [1.05, 1.05] : [st0[0] * hm[0], st0[1] * hm[1]];
     const voice = caosPickVoice();
-    window.speechSynthesis.cancel();
+    caosVoiceCancel();
     let partes = caosSpeechChunks(txt),
       corteV = -1;
     if (vir && typeof onPedaco === "function") {
@@ -25271,43 +25281,159 @@ function caosSpeak(msg, humorForcado, onEnd, onPedaco, vir) {
     }
     if (vir && corteV >= 0) vir.corteReal = corteV;
     const hmV = corteV >= 0 && vir && CAOS_VOICE_EMO[vir.para];
-    partes.forEach((chunk, pi) => {
-      const u = new SpeechSynthesisUtterance(chunk);
-      u.lang = "pt-BR";
-      u.volume = acessVolVoz();
-      if (voice) u.voice = voice;
+    // jeito de cada pedaço: [velocidade, tom relativo] (o tom do aparelho vem depois, em caosFalarAparelho)
+    const jeitos = partes.map((chunk, pi) => {
       const end = chunk.slice(-1);
       const stP = hmV && pi >= corteV ? [st0[0] * hmV[0], st0[1] * hmV[1]] : st;
-      u.rate = Math.max(0.93 * caosVoiceSpeed, Math.min(2, stP[0] * caosVoiceSpeed + (Math.random() - 0.5) * 0.06));
-      const tom = caosTomEfetivo();
-      u.pitch = Math.max(
-        Math.max(0.4, 0.88 * tom),
-        Math.min(2, stP[1] * tom + (Math.random() - 0.5) * 0.08 + (end === "?" ? 0.08 : end === "!" ? 0.05 : 0)),
-      );
-      if (corteV >= 0 && typeof onPedaco === "function")
-        u.onstart = () => {
-          try {
-            onPedaco(pi, corteV);
-          } catch (e) {}
-        };
-      if (pi === partes.length - 1 && typeof onEnd === "function") {
-        let feito = false;
-        const fim = () => {
-          if (!feito) {
-            feito = true;
-            onEnd();
-          }
-        };
-        u.onend = fim;
-        u.onerror = fim;
-      }
-      window.speechSynthesis.speak(u);
+      // sem sorteio aqui: a voz nova guarda cada fala pelo jeito exato (o sorteio fica só na voz do aparelho)
+      const vel = Math.max(0.93 * caosVoiceSpeed, Math.min(2, stP[0] * caosVoiceSpeed));
+      return [vel, stP[1] + (end === "?" ? 0.08 : end === "!" ? 0.05 : 0)];
     });
+    // 1.7.10.2: com internet, a voz nova (servidor → Azure); sem ela, ou se demorar, a voz do aparelho
+    if (vozNuvemUsa()) caosFalarNuvem(partes, jeitos, onEnd, onPedaco, corteV);
+    else caosFalarAparelho(partes, jeitos, onEnd, onPedaco, corteV, voice);
     caosVoiceSpoken++;
     return true;
   } catch (e) {
     return false;
   }
+}
+function caosFalarAparelho(partes, jeitos, onEnd, onPedaco, corteV, voice) {
+  try {
+    window.speechSynthesis.cancel();
+  } catch (e) {}
+  const tom = caosTomEfetivo();
+  partes.forEach((chunk, pi) => {
+    const u = new SpeechSynthesisUtterance(chunk);
+    u.lang = "pt-BR";
+    u.volume = acessVolVoz();
+    if (voice === undefined) voice = caosPickVoice();
+    if (voice) u.voice = voice;
+    u.rate = Math.max(0.93 * caosVoiceSpeed, Math.min(2, jeitos[pi][0] + (Math.random() - 0.5) * 0.06));
+    u.pitch = Math.max(Math.max(0.4, 0.88 * tom), Math.min(2, (jeitos[pi][1] + (Math.random() - 0.5) * 0.08) * tom));
+    if (corteV >= 0 && typeof onPedaco === "function")
+      u.onstart = () => {
+        try {
+          onPedaco(pi, corteV);
+        } catch (e) {}
+      };
+    if (pi === partes.length - 1 && typeof onEnd === "function") {
+      let feito = false;
+      const fim = () => {
+        if (!feito) {
+          feito = true;
+          onEnd();
+        }
+      };
+      u.onend = fim;
+      u.onerror = fim;
+    }
+    window.speechSynthesis.speak(u);
+  });
+}
+/* --- 1.7.10.2 · Voz nova do C.A.O.S. (pedido do JF; escolha: Azure) ---
+   Com a voz "automática" e internet, cada pedaço da fala vem do servidor da sala (POST /voz → MP3 de uma voz
+   brasileira do Azure) e toca pelo mesmo áudio dos efeitos (WebAudio, já destravado no primeiro toque).
+   Os pedaços são pedidos juntos e tocam em ordem; a mesma fala fica guardada no aparelho (e no servidor).
+   Sem internet, servidor sem a voz configurada, teto do mês, ou o 1º pedaço demorando mais de 2,5 s: a fala
+   sai pela voz do aparelho, como antes. Voz escolhida na lista (do aparelho) também usa o aparelho. */
+const vozNuvem = { ok: null, quando: 0, token: 0, fonte: null, cache: new Map() };
+function vozNuvemUrl(c) {
+  try {
+    return typeof redeServidorUrl === "function" ? redeServidorUrl(c) : null;
+  } catch (e) {
+    return null;
+  }
+}
+function vozNuvemConferir() {
+  const url = vozNuvemUrl("/voz/estado");
+  if (!url || (typeof navigator !== "undefined" && navigator.onLine === false)) return;
+  if (vozNuvem.ok !== null && Date.now() - vozNuvem.quando < 10 * 60e3) return;
+  vozNuvem.quando = Date.now();
+  fetch(url)
+    .then((r) => (r.ok ? r.json() : null))
+    .then((j) => (vozNuvem.ok = !!(j && j.ligada)))
+    .catch(() => (vozNuvem.ok = false));
+}
+function vozNuvemUsa() {
+  if (caosVoiceName || vozNuvem.ok !== true) return false;
+  if (typeof navigator !== "undefined" && navigator.onLine === false) return false;
+  try {
+    return !!audioContexto();
+  } catch (e) {
+    return false;
+  }
+}
+function vozNuvemParar() {
+  vozNuvem.token++;
+  try {
+    if (vozNuvem.fonte) vozNuvem.fonte.stop();
+  } catch (e) {}
+  vozNuvem.fonte = null;
+}
+function vozNuvemPedaco(texto, vel, tom) {
+  const r = Math.round(vel * 20) / 20, p = Math.round(Math.max(0.5, Math.min(2, tom * caosVoicePitch)) * 20) / 20;
+  const chave = r + "|" + p + "|" + texto;
+  if (vozNuvem.cache.has(chave)) return Promise.resolve(vozNuvem.cache.get(chave));
+  const ctx = audioContexto();
+  return fetch(vozNuvemUrl("/voz"), { method: "POST", body: JSON.stringify({ t: texto, r, p }) })
+    .then((resp) => {
+      if (resp.status === 503) vozNuvem.ok = false; // o servidor ainda não tem a voz configurada
+      if (!resp.ok) throw new Error("voz " + resp.status);
+      return resp.arrayBuffer();
+    })
+    .then((buf) => new Promise((ok, erro) => ctx.decodeAudioData(buf, ok, erro)))
+    .then((audio) => {
+      vozNuvem.cache.set(chave, audio);
+      if (vozNuvem.cache.size > 150) vozNuvem.cache.delete(vozNuvem.cache.keys().next().value);
+      return audio;
+    });
+}
+function caosFalarNuvem(partes, jeitos, onEnd, onPedaco, corteV) {
+  vozNuvemParar();
+  try {
+    window.speechSynthesis.cancel();
+  } catch (e) {}
+  const token = vozNuvem.token, ctx = audioContexto();
+  const pedidos = partes.map((ch, i) => vozNuvemPedaco(ch, jeitos[i][0], jeitos[i][1]));
+  let comecou = false;
+  // o 1º pedaço demorou: fala pelo aparelho (e a nuvem não toca mais nada desta fala)
+  const plano = (desde) => {
+    if (token !== vozNuvem.token) return;
+    vozNuvem.token++;
+    caosFalarAparelho(partes.slice(desde), jeitos.slice(desde), onEnd, onPedaco ? (pi, c) => onPedaco(pi + desde, c) : null, corteV >= desde ? corteV - desde : -1);
+  };
+  const espera = setTimeout(() => !comecou && plano(0), 2500);
+  const tocar = (i) => {
+    if (token !== vozNuvem.token) return;
+    if (i >= partes.length) {
+      vozNuvem.fonte = null;
+      if (typeof onEnd === "function") onEnd();
+      return;
+    }
+    pedidos[i]
+      .then((audio) => {
+        if (token !== vozNuvem.token) return;
+        comecou = true;
+        clearTimeout(espera);
+        const f = ctx.createBufferSource(), g = ctx.createGain();
+        f.buffer = audio;
+        g.gain.value = acessVolVoz();
+        f.connect(g).connect(ctx.destination);
+        f.onended = () => tocar(i + 1);
+        vozNuvem.fonte = f;
+        if (corteV >= 0 && typeof onPedaco === "function")
+          try {
+            onPedaco(i, corteV);
+          } catch (e) {}
+        f.start();
+      })
+      .catch(() => {
+        clearTimeout(espera);
+        plano(i);
+      });
+  };
+  tocar(0);
 }
 function caosBip(emo) {
   if (!soundOn || Date.now() - caosBipAt < 1200) return;
@@ -25479,7 +25605,8 @@ function updateVoiceBtn() {
   if (nome) {
     const cur = caosPickVoice();
     nome.textContent =
-      "🎙️ Voz: " + (caosVoiceName && cur ? cur.name : "automática" + (cur ? " (" + cur.name + ")" : "")).slice(0, 44);
+      "🎙️ Voz: " +
+      (caosVoiceName && cur ? cur.name : vozNuvem.ok ? "Caos (voz nova, pela internet)" : "automática" + (cur ? " (" + cur.name + ")" : "")).slice(0, 44);
   }
 }
 function stepVoice(kind, dir) {
@@ -25513,6 +25640,7 @@ function toggleVoice() {
     JFStore.setItem("perfil200_voz", caosVoiceOn ? "1" : "0");
   } catch (e) {}
   updateVoiceBtn();
+  if (caosVoiceOn) vozNuvemConferir();
   if (caosVoiceOn) caosSpeakSample("Voz do Caos ligada. Podem começar.");
   else {
     caosVoiceCancel();
@@ -25727,6 +25855,12 @@ function toggleVibra() {
   if (vibraOn) vibrar("acerto");
 }
 
+
+// 1.7.10.2: pergunta ao servidor se a voz nova está ligada (de novo a cada 10 min, se a voz estiver ligada)
+try {
+  setTimeout(vozNuvemConferir, 3000);
+  setInterval(() => caosVoiceOn && vozNuvemConferir(), 10 * 60e3);
+} catch (e) {}
 /* ======================================================================
  * 7. C.A.O.S. (FALAS, HUMOR, ROSTOS, MEMÓRIA, DECISÕES)
  * ====================================================================== */
@@ -27352,7 +27486,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.1 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.2 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -32444,7 +32578,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.1 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.2 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -35319,7 +35453,7 @@ function applyStoredPrefs() {
     soundOn = JFStore.getItem("perfil200_som") !== "0";
   } catch (e) {}
   try {
-    if (CAOS_VOICE_OK) caosVoiceOn = JFStore.getItem("perfil200_voz") !== "0";
+    if (CAOS_VOICE_OK) caosVoiceOn = JFStore.getItem("perfil200_voz") === "1";
   } catch (e) {}
   try {
     const v = parseFloat(JFStore.getItem("perfil200_voz_vel"));
@@ -35669,7 +35803,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.1 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.10.2 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -36192,7 +36326,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.1 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.10.2 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -71395,6 +71529,17 @@ const PAUSE_TIPS = [
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.2",
+    data: "13/10/2026 · 09:07",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "O C.A.O.S. ganhou uma voz nova e agora começa calado.",
+    itens: [
+      "🎙️ Voz nova do C.A.O.S.: com internet, ele fala com uma voz brasileira mais natural, igual em todo aparelho. Sem internet, volta a voz do celular.",
+      "🤐 C.A.O.S. começa calado: a voz vem desligada. Pra ouvir, toque em Voz na tela inicial ou na pausa. Os balões continuam aparecendo.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.1",
     data: "12/10/2026 · 16:29",
     nome: "Multiplayer Update · Online de verdade",
@@ -72996,7 +73141,7 @@ function iniciar() {
     soundOn = JFStore.getItem("perfil200_som") !== "0";
   } catch (e) {}
   try {
-    caosVoiceOn = JFStore.getItem("perfil200_voz") !== "0";
+    caosVoiceOn = JFStore.getItem("perfil200_voz") === "1";
   } catch (e) {}
   if (!CAOS_VOICE_OK) caosVoiceOn = false;
   try {

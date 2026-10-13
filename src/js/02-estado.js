@@ -107,7 +107,7 @@ var splashH0;
 var splashT0 = 0;
 let lastBeepSecond = null;
 let soundOn = true;
-let caosVoiceOn = true;
+let caosVoiceOn = false; // 1.7.10.2: começa calado; liga no botão Voz (fica salvo no aparelho)
 let caosVoiceSilenced = 0;
 let caosVoiceSpoken = 0;
 let caosCardTimes = [];
