@@ -288,6 +288,29 @@ const ARQ = acharMestre(process.argv[2]);
       out.travasAdm = abriu && sim && naoRepete && nao;
       anneLigar(antes);
     }
+    // Pedido do JF: no cadastro, a pergunta da voz. Voz já ligada = não pergunta; Sim liga; Não = fala triste, voz desligada
+    {
+      const vozAntes = caosVoiceOn, falou = [];
+      const toggleOrig = toggleVoice;
+      toggleVoice = () => { caosVoiceOn = !caosVoiceOn; };
+      let seguiu = 0;
+      caosVoiceOn = true; vozPerguntada = false;
+      vozPerguntar(() => seguiu++);
+      const ligadaPula = !document.getElementById('vozPergunta') && seguiu === 1;
+      caosVoiceOn = false; vozPerguntada = false;
+      vozPerguntar(() => seguiu++);
+      const abriu = !!document.getElementById('vozPergunta') && /Voz do C\.A\.O\.S\./.test(document.getElementById('vozPergunta').textContent);
+      [...document.querySelectorAll('#vozPergunta button')].find((x) => /Ligar/.test(x.textContent)).click();
+      const sim = caosVoiceOn === true && seguiu === 2;
+      caosVoiceOn = false; vozPerguntada = false;
+      vozPerguntar(() => seguiu++, (t) => falou.push(t));
+      [...document.querySelectorAll('#vozPergunta button')].find((x) => /Não/.test(x.textContent)).click();
+      const nao = caosVoiceOn === false && seguiu === 3 && falou.length === 1 && typeof falou[0] === "string" && falou[0].length > 10;
+      vozPerguntar(() => seguiu++);
+      const umaVez = !document.getElementById('vozPergunta') && seguiu === 4;
+      toggleVoice = toggleOrig; caosVoiceOn = vozAntes;
+      out.vozPergunta = ligadaPula && abriu && sim && nao && umaVez;
+    }
     // 1.7.10.3: busca nas regras e o lembrete da primeira carta de cada categoria
     {
       openTutorial('manual');
@@ -399,6 +422,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.10: Reportar carta anota no aparelho, sem resposta na janela e sem mexer na partida', r.reportar],
     ['1.7.10: nome repetido: o nome já cadastrado fica em destaque, o campo fica vermelho e o C.A.O.S. comenta', r.nomeRepetido],
     ['Travas ADM: a pergunta abre, Sim trava o nick da Anne, Não desliga, e não pergunta duas vezes na mesma partida', r.travasAdm],
+    ['Cadastro: o C.A.O.S. pergunta da voz (não pergunta se já está ligada); Sim liga; Não ganha fala triste e segue sem voz', r.vozPergunta],
     ['1.7.10.3: busca nas regras acha "grupo"; o C.A.O.S. lembra o que vale na 1ª carta de cada categoria (Júnior sem animal em Coisa)', r.regrasEPrimeira],
     ['1.7.10.1: com a sala aberta, a partida só começa quando todo jogador tem aparelho', r.semAparelho],
   ];

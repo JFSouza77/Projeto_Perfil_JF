@@ -546,6 +546,7 @@ function iniciar() {
     // Travas ADM (pedido do JF): toda partida nova, local ou online, começa com a pergunta. Navegador de teste
     // automático não pergunta (os testes abrem a pergunta direto, em teste_acoes).
     travasRespondidas = false;
+    vozPerguntada = false;
     if (navigator.webdriver) return seguir();
     redeTravasPerguntar(seguir, true);
   });

@@ -4542,6 +4542,16 @@ const REACTIVE_VOICE = {
     "{nome} acertou assim, do nada? Tá perdoado. Por enquanto.",
     "Eu estava te perseguindo, {nome}. Mas essa jogada foi boa demais. Arquivo encerrado.",
   ],
+  // Pedido do JF: no cadastro, quem disser "não" pra voz ganha um comentáriozinho triste (mas ele aceita).
+  vozRecusada: [
+    "Tudo bem... eu fico só nos balões. Calado. Sozinho. Tá ótimo.",
+    "Sem voz? Ok. Vou fingir que não doeu.",
+    "Entendi. Vocês preferem me ler. Pelo menos eu continuo escrevendo.",
+    "Tá bom, fico mudo. Mas os balões continuam, e eles não perdoam.",
+    "Logo eu, com essa voz linda... Aceito. Com tristeza, mas aceito.",
+    "Sem áudio, então. Se mudarem de ideia, o botão da voz está lá.",
+    "Silêncio aceito. Vou guardar todas as piadas pra escrever.",
+  ],
   // 1.7.10.3 (pedido do JF): a primeira carta de cada categoria na partida vem com o lembrete do que ela inclui.
   // No Júnior, Coisa não inclui animais (Animal é categoria própria).
   primeiraCategoria: {

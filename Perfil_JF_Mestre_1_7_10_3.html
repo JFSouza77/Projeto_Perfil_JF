@@ -16,6 +16,9 @@
           celular fala todas as falas que mostra (antes só as dele), com botão 🗣️ Voz do C.A.O.S. na tela do
           convidado (redeSairHtml/redeVozTrocar). JOGO_BUILD 1803. Créditos: Vitinho e Typingg (testaram o online; regras
           das categorias, calar o C.A.O.S., voz começando desligada).
+          Ajuste na mesma versão (pedido do JF): ao entrar no cadastro dos jogadores, se a voz do aparelho está
+          desligada, aparece "Ligar a Voz do C.A.O.S.?" em todo aparelho (host e celulares, uma vez por partida). Sim
+          liga a voz ali; Não ganha um comentário triste (banco vozRecusada) e segue só com os balões. JOGO_BUILD 1804.
   1.7.10.2 · 13/10/2026 · "Multiplayer Update · Online de verdade" = VOZ NOVA DO C.A.O.S. (AZURE) E VOZ COMEÇA DESLIGADA.
           Pedido do JF (escolha: Azure) e relato de quem testou ("muta, dá a opção de desmutar"). Servidor: POST /voz
           (texto limpo, velocidade, tom → SSML → Azure pt-BR, AZURE_VOZ padrão pt-BR-AntonioNeural), cada fala guardada
@@ -9231,7 +9234,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1803;
+const JOGO_BUILD = 1804;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -12940,7 +12943,11 @@ function selectMode(mode, expressCategories, flavor) {
       ] || "outro modo";
     caosToastAtrasado(() => showToastMessage(getRandomReaction(REACTIVE_VOICE.trocaDeModo, nm)), 300);
   }
-  if (typeof redePerguntarSalaTalvez === "function") redePerguntarSalaTalvez(); // 1.7.9.6 (pedido do JF): sala online logo depois do modo
+  const sala = () => {
+    if (typeof redePerguntarSalaTalvez === "function") redePerguntarSalaTalvez(); // 1.7.9.6 (pedido do JF): sala online logo depois do modo
+  };
+  if (navigator.webdriver) sala();
+  else vozPerguntar(sala);
   saveGameState();
 }
 function confirmExpress(flavor) {
@@ -21707,6 +21714,7 @@ function redeConvidadoReceber(m) {
     rede.estado = "escolhendo";
     rede.lugares = m.lugares.map((l) => ({ id: l.id, nome: String(l.nome).slice(0, 24), avatar: redeEmojiLimpo(l.avatar) }));
     rede.cadastro = redeCadastroLimpo(m.cadastro);
+    redeVozPerguntar();
     return avisar();
   }
   if (m.t === "aguarde") {
@@ -21901,6 +21909,23 @@ function redeVozTrocar() {
   try {
     redeConvidadoDesenhar();
   } catch (e) {}
+}
+// Pedido do JF: o celular também pergunta da voz no cadastro (uma vez por sala neste aparelho).
+function redeVozPerguntar() {
+  if (navigator.webdriver || !rede) return;
+  const k = "perfil5_rede_vozperg_" + rede.sala;
+  try {
+    if (sessionStorage.getItem(k)) return;
+    sessionStorage.setItem(k, "1");
+  } catch (e) {}
+  setTimeout(
+    () =>
+      vozPerguntar(
+        () => rede && redeConvidadoDesenhar(),
+        (t) => rede && redeFalaMostrar({ texto: t, quem: [rede.eu], emo: null }),
+      ),
+    300,
+  );
 }
 function redeSairDaSala() {
   try {
@@ -25738,6 +25763,34 @@ function toggleVoice() {
     caosVoiceCancel();
     caosVozCalada();
   }
+}
+// Pedido do JF: ao entrar no cadastro dos jogadores, se a voz deste aparelho está desligada, o C.A.O.S.
+// pergunta se pode falar. Sim = liga a voz aqui. Não = comentáriozinho triste, segue só com os balões.
+// Aparece em todo aparelho (host e celulares), uma vez por partida; quem já deixou a voz ligada não vê.
+let vozPerguntada = false;
+function vozPerguntar(seguir, triste) {
+  seguir = seguir || (() => {});
+  if (vozPerguntada || caosVoiceOn || typeof CAOS_VOICE_OK === "undefined" || !CAOS_VOICE_OK) return seguir();
+  vozPerguntada = true;
+  document.getElementById("vozPergunta")?.remove();
+  const { ov, box } = caosModalBase();
+  ov.id = "vozPergunta";
+  const fim = (sim) => {
+    ov.remove();
+    unlockAudio();
+    if (sim) {
+      if (!caosVoiceOn) toggleVoice();
+    } else {
+      const t = getRandomReaction(REACTIVE_VOICE.vozRecusada);
+      if (triste) triste(t);
+      else caosToastAtrasado(() => showToastMessage(t), 250);
+    }
+    seguir();
+  };
+  const row = caosModalRow();
+  row.append(caosModalBtn("🤐 Não", "#444a66", () => fim(false)), caosModalBtn("🗣️ Ligar a Voz do C.A.O.S.", "#16a34a", () => fim(true)));
+  box.append(caosModalMsg("🎙️ Posso falar com vocês?\nLigar a Voz do C.A.O.S. neste aparelho?"), row);
+  document.body.appendChild(ov);
 }
 function sfxNote(ctx, freq, start, dur, opts) {
   opts = opts || {};
@@ -69816,6 +69869,16 @@ const REACTIVE_VOICE = {
     "{nome} acertou assim, do nada? Tá perdoado. Por enquanto.",
     "Eu estava te perseguindo, {nome}. Mas essa jogada foi boa demais. Arquivo encerrado.",
   ],
+  // Pedido do JF: no cadastro, quem disser "não" pra voz ganha um comentáriozinho triste (mas ele aceita).
+  vozRecusada: [
+    "Tudo bem... eu fico só nos balões. Calado. Sozinho. Tá ótimo.",
+    "Sem voz? Ok. Vou fingir que não doeu.",
+    "Entendi. Vocês preferem me ler. Pelo menos eu continuo escrevendo.",
+    "Tá bom, fico mudo. Mas os balões continuam, e eles não perdoam.",
+    "Logo eu, com essa voz linda... Aceito. Com tristeza, mas aceito.",
+    "Sem áudio, então. Se mudarem de ideia, o botão da voz está lá.",
+    "Silêncio aceito. Vou guardar todas as piadas pra escrever.",
+  ],
   // 1.7.10.3 (pedido do JF): a primeira carta de cada categoria na partida vem com o lembrete do que ela inclui.
   // No Júnior, Coisa não inclui animais (Animal é categoria própria).
   primeiraCategoria: {
@@ -71676,6 +71739,7 @@ const NOVIDADES = [
       "🤖 C.A.O.S. lembra a regra: na primeira carta de cada categoria da partida, ele lembra o que aquela categoria inclui.",
       "🔎 Busca nas regras: no Manual, digite uma palavra (grupo, calar, joia) e vá direto pro passo certo.",
       "🔊 Voz em todos os celulares: no online, cada celular fala com a voz do C.A.O.S. quando ela está ligada nele. Quem joga pelo celular tem o próprio botão de voz.",
+      "🎙️ Ligar a Voz do C.A.O.S.: no cadastro dos jogadores, se a voz estiver desligada, ele pergunta em cada aparelho (celulares do online também). Sim liga a voz ali. Não deixa ele meio tristinho, mas os balões continuam.",
     ],
     qol: ["🤐 Como calar o C.A.O.S.: um passo novo no Manual mostra todos os jeitos de calar ou silenciar (valeu, Vitinho e Typingg)."],
   },
@@ -73805,6 +73869,7 @@ function iniciar() {
     // Travas ADM (pedido do JF): toda partida nova, local ou online, começa com a pergunta. Navegador de teste
     // automático não pergunta (os testes abrem a pergunta direto, em teste_acoes).
     travasRespondidas = false;
+    vozPerguntada = false;
     if (navigator.webdriver) return seguir();
     redeTravasPerguntar(seguir, true);
   });

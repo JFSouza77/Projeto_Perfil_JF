@@ -15,6 +15,7 @@ const NOVIDADES = [
       "🤖 C.A.O.S. lembra a regra: na primeira carta de cada categoria da partida, ele lembra o que aquela categoria inclui.",
       "🔎 Busca nas regras: no Manual, digite uma palavra (grupo, calar, joia) e vá direto pro passo certo.",
       "🔊 Voz em todos os celulares: no online, cada celular fala com a voz do C.A.O.S. quando ela está ligada nele. Quem joga pelo celular tem o próprio botão de voz.",
+      "🎙️ Ligar a Voz do C.A.O.S.: no cadastro dos jogadores, se a voz estiver desligada, ele pergunta em cada aparelho (celulares do online também). Sim liga a voz ali. Não deixa ele meio tristinho, mas os balões continuam.",
     ],
     qol: ["🤐 Como calar o C.A.O.S.: um passo novo no Manual mostra todos os jeitos de calar ou silenciar (valeu, Vitinho e Typingg)."],
   },

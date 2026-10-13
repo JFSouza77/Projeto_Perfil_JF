@@ -1939,6 +1939,7 @@ function redeConvidadoReceber(m) {
     rede.estado = "escolhendo";
     rede.lugares = m.lugares.map((l) => ({ id: l.id, nome: String(l.nome).slice(0, 24), avatar: redeEmojiLimpo(l.avatar) }));
     rede.cadastro = redeCadastroLimpo(m.cadastro);
+    redeVozPerguntar();
     return avisar();
   }
   if (m.t === "aguarde") {
@@ -2133,6 +2134,23 @@ function redeVozTrocar() {
   try {
     redeConvidadoDesenhar();
   } catch (e) {}
+}
+// Pedido do JF: o celular também pergunta da voz no cadastro (uma vez por sala neste aparelho).
+function redeVozPerguntar() {
+  if (navigator.webdriver || !rede) return;
+  const k = "perfil5_rede_vozperg_" + rede.sala;
+  try {
+    if (sessionStorage.getItem(k)) return;
+    sessionStorage.setItem(k, "1");
+  } catch (e) {}
+  setTimeout(
+    () =>
+      vozPerguntar(
+        () => rede && redeConvidadoDesenhar(),
+        (t) => rede && redeFalaMostrar({ texto: t, quem: [rede.eu], emo: null }),
+      ),
+    300,
+  );
 }
 function redeSairDaSala() {
   try {
