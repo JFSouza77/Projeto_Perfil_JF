@@ -58,11 +58,11 @@ function cors(req, env, livre) {
 }
 // 1.7.10.3.1 · Emoção na voz nova. [volume, pausa do "…" em ms, estilo da Microsoft (só nas vozes com estilos)]
 const VOZ_EMOCOES = {
-  calmo: ["+0%", 380, ""],
+  calmo: ["+0%", 380, "hopeful"], // (sem estilo, o Caio calmo soava triste: feedback do JF)
   orgulho: ["+8%", 320, "joyful"],
   raiva: ["+15%", 260, "angry"],
   furia: ["+22%", 220, "shouting"],
-  deboche: ["+0%", 480, ""],
+  deboche: ["+0%", 480, "happy"],
   tedio: ["-10%", 650, ""],
   carinho: ["-6%", 420, "softvoice"],
   desafio: ["+10%", 300, "determined"],
@@ -75,16 +75,19 @@ const VOZ_EMOCOES = {
   espiando: ["-18%", 500, "whispering"],
   recompondo: ["-5%", 450, "relieved"],
 };
-const VOZ_SSML_VERSAO = 2;
+const VOZ_SSML_VERSAO = 3;
 // Texto já limpo (sem < > & ") → SSML: "⏸" vira pausa, PALAVRA EM CAIXA ALTA (4+ letras) sai mais forte,
-// interjeição no começo ganha um respiro, e a emoção muda o volume (e o estilo, se a voz tiver).
+// palavra esticada ("PASTEEEL", "NÃÃÃO") vira a palavra normal, mais lenta e forte (lida letra a letra, saía
+// "pastil"), interjeição no começo ganha um respiro, e a emoção muda o volume (e o estilo, se a voz tiver).
+// Voz com estilos (Caio): sem mexer no tom (o estilo cuida da entonação; tom mexido deixava a voz murcha).
 function vozSsml(nome, t, rate, pitch, e, estilos) {
   const [vol, pausa, estilo] = VOZ_EMOCOES[e] || VOZ_EMOCOES.calmo;
   let corpo = t
     .replace(/^(ah+|hm+|hum+|u[eé]|ops|opa|uau|eita|nossa|vish|oxe|aff)([,!.]?)\s+(?!⏸)/i, (m, a, pt) => `${a}${pt || ","}<break time="220ms"/> `)
     .replace(/\s*⏸\s*/g, `<break time="${pausa}ms"/> `)
-    .replace(/(^|[^\p{L}])(\p{Lu}{4,})(?![\p{L}])/gu, (m, a, w) => `${a}<prosody volume="+25%" pitch="+8%">${w.toLowerCase()}</prosody>`);
-  corpo = `<prosody rate="${rate}" pitch="${pitch}" volume="${vol}">${corpo}</prosody>`;
+    .replace(/\p{L}*(\p{L})\1{2,}\p{L}*/gu, (w) => `<prosody rate="-15%" volume="+20%">${w.replace(/(\p{L})\1{2,}/gu, "$1").toLowerCase()}</prosody>`)
+    .replace(/(^|[^\p{L}])(\p{Lu}{4,})(?![\p{L}])/gu, (m, a, w) => `${a}<prosody volume="+25%"${estilos ? "" : ' pitch="+8%"'}>${w.toLowerCase()}</prosody>`);
+  corpo = `<prosody rate="${rate}"${estilos ? "" : ` pitch="${pitch}"`} volume="${vol}">${corpo}</prosody>`;
   if (estilos && estilo) corpo = `<mstts:express-as style="${estilo}">${corpo}</mstts:express-as>`;
   return `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xml:lang="pt-BR"><voice name="${nome}">${corpo}</voice></speak>`;
 }

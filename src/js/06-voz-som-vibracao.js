@@ -91,6 +91,11 @@ function caosSpeechText(msg, pausa) {
     .replace(/\b[Oo]\(A\)\s*/g, "")
     .replace(/\((a|as|o|os)\)/gi, "")
     .replace(/[\p{Extended_Pictographic}\uFE0F\u200D\u25C6]/gu, "")
+    // 1.7.10.3.1 (feedback do JF: risada engasgada): em português o H é mudo, então "Hahaha" saía "aaa"
+    .replace(/\b(?:k{3,}|(?:ha){2,}h?|(?:há){2,}|(?:rs){2,})\b/gi, "rá rá rá")
+    .replace(/\b(?:he){2,}\b/gi, "rê rê")
+    .replace(/\b(?:hi){2,}\b/gi, "ri ri")
+    .replace(/\b(?:hu){2,}\b/gi, "ru ru")
     .replace(/\s*(?:\.{2,}|…)+\s*/g, pausa ? " ⏸ " : ", ")
     .replace(/\s+/g, " ")
     .replace(/,\s*([.!?,])/g, "$1")

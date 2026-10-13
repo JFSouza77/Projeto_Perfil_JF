@@ -53,10 +53,14 @@ function wav() {
     const n0 = ssmls.length;
     const r5 = await pg.evaluate((t) => new Promise((fim) => { caosEmoFalaAtual = "triste"; caosSpeak(t, null, () => fim(true)); setTimeout(() => fim(false), 8000); }), (() => { const n = Date.now() % 100000; return `[C.A.O.S.] Hmm... essa doeu ${n}. Que PENA, rodada ${n}.`; })());
     const novos = ssmls.slice(n0).join(" ");
-    conf("Emoção na voz nova: pausa nas reticências, volume da tristeza e palavra em caixa alta mais forte", r5 && /<break time="650ms"\/>/.test(novos) && /volume="-12%"/.test(novos) && /<prosody volume="\+25%" pitch="\+8%">pena<\/prosody>/.test(novos));
+    conf("Emoção na voz nova: pausa nas reticências, volume da tristeza e palavra em caixa alta mais forte", r5 && /<break time="650ms"\/>/.test(novos) && /volume="-12%"/.test(novos) && /<prosody volume="\+25%"( pitch="\+8%")?>pena<\/prosody>/.test(novos));
     // 1.7.10.3.1: com a voz com emoção (MAI, ex.: Caio) configurada, ela vem primeiro, com o estilo da emoção;
     // se ela falhar (crédito acabou), a voz grátis assume sem o jogo perceber
     conf("Voz com emoção (Caio) primeiro, com o estilo triste", /\/mai/.test(caminhos.slice(n0).join(" ")) && /Caio:MAI-Voice-2\.1-Flash/.test(novos) && /express-as style="sad"/.test(novos));
+    // feedback do JF: palavra esticada ("PASTEEEL") vira a palavra normal, mais lenta (lida letra a letra saía "pastil")
+    const n2 = ssmls.length;
+    await falar(`[C.A.O.S.] OLHA O PASTEEEL ${Date.now() % 100000}!`);
+    conf("Palavra esticada (PASTEEEL) sai como pastel, mais lenta e forte", /<prosody rate="-15%" volume="\+20%">pastel<\/prosody>/.test(ssmls.slice(n2).join(" ")));
     maiQuebrado = true;
     const n1 = ssmls.length;
     const r6 = await falar(`[C.A.O.S.] Sem crédito na voz com emoção ${Date.now() % 100000}.`);
