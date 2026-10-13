@@ -15,6 +15,11 @@
           JOGO_BUILD 1806.
           4.1.3 (feedback do JF): Caio calmo com "hopeful" saía ofegante, quase sem fôlego; calmo e recompondo passam
           ao estilo "neutral" (a voz normal dele; "relieved" vinha com suspiro). VOZ_SSML_VERSAO 4. JOGO_BUILD 1807.
+          4.1.4 (calibragem do JF): VOZ_EMOCOES ganha ajuste de velocidade e as emoções que faltavam (medo, ansiedade,
+          vergonha, nojo, nostalgia, alívio; antes caíam no calmo). Fala do dia a dia neutral; vergonha -14% volume e
+          -10% velocidade; recompondo +8% e leve; deboche neutro, -6% e pausa de 560 ms (seco, provocativo); sem os
+          estilos que vêm com suspiro; frase sem pontuação final ganha ponto (evita "soltar o ar" no fim). Emoções
+          fortes como estavam. VOZ_SSML_VERSAO 5. JOGO_BUILD 1808.
           Pedido do JF. O jogo manda a emoção de cada pedaço da fala (caosEmoFalaAtual, humor da matriz ou o "para" da
           virada) junto com o texto; reticências viram a marca ⏸ (caosSpeechText com pausa; a voz do aparelho segue com
           vírgula, caosSemPausa). Servidor (vozSsml/VOZ_EMOCOES): volume por emoção, pausa do tamanho da emoção (triste e
@@ -8984,7 +8989,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.3.1 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.1.3 · Atualizada em 13/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.3.1 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.1.4 · Atualizada em 13/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -9252,7 +9257,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1807;
+const JOGO_BUILD = 1808;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -27671,7 +27676,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.3.1 · C.A.O.S. 4.1.3</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.3.1 · C.A.O.S. 4.1.4</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -30995,7 +31000,7 @@ function caosNeuralDesenhar(cv, t) {
     const C = caosConsole || {};
     const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
 tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
-${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.1.3`;
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.1.4`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }
@@ -32763,7 +32768,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.3.1 · C.A.O.S. 4.1.3)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.3.1 · C.A.O.S. 4.1.4)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -35988,7 +35993,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.3.1 · C.A.O.S. 4.1.3");
+  L.push("- **Versão:** Beta 1.7.10.3.1 · C.A.O.S. 4.1.4");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -36511,7 +36516,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.3.1 · C.A.O.S. 4.1.3",
+        versao: "Beta 1.7.10.3.1 · C.A.O.S. 4.1.4",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -71773,11 +71778,11 @@ const NOVIDADES = [
     v: "Beta 1.7.10.3.1",
     data: "13/10/2026 · 13:04",
     nome: "Multiplayer Update · Online de verdade",
-    t: "Chegou o C.A.O.S. 4.1.3: voz nova, mais emoção e uma fala mais caprichada.",
+    t: "Chegou o C.A.O.S. 4.1.4: voz nova, mais emoção e uma fala mais caprichada.",
     itens: [
       "🎙️ C.A.O.S. 4.1 com voz nova: com internet, ele fala com uma voz brasileira natural, igual em todo aparelho, no lugar da voz robótica do celular.",
       "🎭 C.A.O.S. 4.1.1 com mais emoção: com a voz nova, ele fala mais alto quando está bravo ou em festa, mais baixo quando está triste ou espiando, faz pausas de verdade nas reticências e capricha nas palavras em CAIXA ALTA.",
-      "🗣️ C.A.O.S. 4.1.3 fala melhor: a risada parou de sair engasgada, palavras esticadas como PASTEEEL saem certinhas e, calmo, ele fala com a voz normal e tranquila dele.",
+      "🗣️ C.A.O.S. 4.1.4 fala melhor: a risada parou de sair engasgada, palavras esticadas como PASTEEEL saem certinhas, no dia a dia ele fala com a voz normal dele, com vergonha fala mais baixo e devagar e o deboche ficou seco e provocativo.",
     ],
     qol: [],
   },
