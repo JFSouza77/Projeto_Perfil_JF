@@ -6,6 +6,10 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.4 · 13/10/2026 · "Multiplayer Update · Online de verdade" = O C.A.O.S. PERGUNTA SE PODE FALAR.
+          Pedido do JF: ao entrar no cadastro dos jogadores, se a voz do aparelho está desligada, aparece "Ligar a Voz do
+          C.A.O.S.?" em todo aparelho (host e celulares, uma vez por partida). Sim liga a voz ali; Não ganha um
+          comentário triste (banco vozRecusada) e segue só com os balões. Quem já deixou a voz ligada não vê.
   1.7.10.3 · 13/10/2026 · "Multiplayer Update · Online de verdade" = REGRAS MAIS FÁCEIS DE ACHAR E VOZ EM TODOS OS CELULARES.
           Pedido do JF (os Jetsons: a regra não muda): o manual ganhou o passo "O que vale em cada categoria" (Ano até
           século; Pessoa vale grupo, dupla, banda; Lugar real ou de ficção; Coisa vale tudo, até animal; no Júnior,
@@ -743,7 +747,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.3</title>
+<title>Perfil JF · Beta 1.7.10.4</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -8963,7 +8967,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.3 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.0 · Atualizada em 13/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.4 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.0 · Atualizada em 13/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -9231,7 +9235,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1803;
+const JOGO_BUILD = 1804;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -12940,7 +12944,11 @@ function selectMode(mode, expressCategories, flavor) {
       ] || "outro modo";
     caosToastAtrasado(() => showToastMessage(getRandomReaction(REACTIVE_VOICE.trocaDeModo, nm)), 300);
   }
-  if (typeof redePerguntarSalaTalvez === "function") redePerguntarSalaTalvez(); // 1.7.9.6 (pedido do JF): sala online logo depois do modo
+  const sala = () => {
+    if (typeof redePerguntarSalaTalvez === "function") redePerguntarSalaTalvez(); // 1.7.9.6 (pedido do JF): sala online logo depois do modo
+  };
+  if (navigator.webdriver) sala();
+  else vozPerguntar(sala);
   saveGameState();
 }
 function confirmExpress(flavor) {
@@ -21707,6 +21715,7 @@ function redeConvidadoReceber(m) {
     rede.estado = "escolhendo";
     rede.lugares = m.lugares.map((l) => ({ id: l.id, nome: String(l.nome).slice(0, 24), avatar: redeEmojiLimpo(l.avatar) }));
     rede.cadastro = redeCadastroLimpo(m.cadastro);
+    redeVozPerguntar();
     return avisar();
   }
   if (m.t === "aguarde") {
@@ -21901,6 +21910,23 @@ function redeVozTrocar() {
   try {
     redeConvidadoDesenhar();
   } catch (e) {}
+}
+// Pedido do JF: o celular também pergunta da voz no cadastro (uma vez por sala neste aparelho).
+function redeVozPerguntar() {
+  if (navigator.webdriver || !rede) return;
+  const k = "perfil5_rede_vozperg_" + rede.sala;
+  try {
+    if (sessionStorage.getItem(k)) return;
+    sessionStorage.setItem(k, "1");
+  } catch (e) {}
+  setTimeout(
+    () =>
+      vozPerguntar(
+        () => rede && redeConvidadoDesenhar(),
+        (t) => rede && redeFalaMostrar({ texto: t, quem: [rede.eu], emo: null }),
+      ),
+    300,
+  );
 }
 function redeSairDaSala() {
   try {
@@ -25739,6 +25765,34 @@ function toggleVoice() {
     caosVozCalada();
   }
 }
+// Pedido do JF: ao entrar no cadastro dos jogadores, se a voz deste aparelho está desligada, o C.A.O.S.
+// pergunta se pode falar. Sim = liga a voz aqui. Não = comentáriozinho triste, segue só com os balões.
+// Aparece em todo aparelho (host e celulares), uma vez por partida; quem já deixou a voz ligada não vê.
+let vozPerguntada = false;
+function vozPerguntar(seguir, triste) {
+  seguir = seguir || (() => {});
+  if (vozPerguntada || caosVoiceOn || typeof CAOS_VOICE_OK === "undefined" || !CAOS_VOICE_OK) return seguir();
+  vozPerguntada = true;
+  document.getElementById("vozPergunta")?.remove();
+  const { ov, box } = caosModalBase();
+  ov.id = "vozPergunta";
+  const fim = (sim) => {
+    ov.remove();
+    unlockAudio();
+    if (sim) {
+      if (!caosVoiceOn) toggleVoice();
+    } else {
+      const t = getRandomReaction(REACTIVE_VOICE.vozRecusada);
+      if (triste) triste(t);
+      else caosToastAtrasado(() => showToastMessage(t), 250);
+    }
+    seguir();
+  };
+  const row = caosModalRow();
+  row.append(caosModalBtn("🤐 Não", "#444a66", () => fim(false)), caosModalBtn("🗣️ Ligar a Voz do C.A.O.S.", "#16a34a", () => fim(true)));
+  box.append(caosModalMsg("🎙️ Posso falar com vocês?\nLigar a Voz do C.A.O.S. neste aparelho?"), row);
+  document.body.appendChild(ov);
+}
 function sfxNote(ctx, freq, start, dur, opts) {
   opts = opts || {};
   const vol = Math.max(1e-4, (opts.vol || 0.12) * acessVolSom());
@@ -27578,7 +27632,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.3 · C.A.O.S. 4.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.4 · C.A.O.S. 4.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -32670,7 +32724,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.3 · C.A.O.S. 4.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.4 · C.A.O.S. 4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -35895,7 +35949,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.3 · C.A.O.S. 4.0");
+  L.push("- **Versão:** Beta 1.7.10.4 · C.A.O.S. 4.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -36418,7 +36472,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.3 · C.A.O.S. 4.0",
+        versao: "Beta 1.7.10.4 · C.A.O.S. 4.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -69816,6 +69870,16 @@ const REACTIVE_VOICE = {
     "{nome} acertou assim, do nada? Tá perdoado. Por enquanto.",
     "Eu estava te perseguindo, {nome}. Mas essa jogada foi boa demais. Arquivo encerrado.",
   ],
+  // Pedido do JF: no cadastro, quem disser "não" pra voz ganha um comentáriozinho triste (mas ele aceita).
+  vozRecusada: [
+    "Tudo bem... eu fico só nos balões. Calado. Sozinho. Tá ótimo.",
+    "Sem voz? Ok. Vou fingir que não doeu.",
+    "Entendi. Vocês preferem me ler. Pelo menos eu continuo escrevendo.",
+    "Tá bom, fico mudo. Mas os balões continuam, e eles não perdoam.",
+    "Logo eu, com essa voz linda... Aceito. Com tristeza, mas aceito.",
+    "Sem áudio, então. Se mudarem de ideia, o botão da voz está lá.",
+    "Silêncio aceito. Vou guardar todas as piadas pra escrever.",
+  ],
   // 1.7.10.3 (pedido do JF): a primeira carta de cada categoria na partida vem com o lembrete do que ela inclui.
   // No Júnior, Coisa não inclui animais (Animal é categoria própria).
   primeiraCategoria: {
@@ -71666,6 +71730,16 @@ const PAUSE_TIPS = [
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.10.4",
+    data: "13/10/2026 · 10:45",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "O C.A.O.S. agora pergunta se pode falar.",
+    itens: [
+      "🎙️ Ligar a Voz do C.A.O.S.: no cadastro dos jogadores, se a voz estiver desligada, ele pergunta em cada aparelho (celulares do online também). Sim liga a voz ali. Não deixa ele meio tristinho, mas os balões continuam.",
+    ],
+    qol: [],
+  },
   {
     v: "Beta 1.7.10.3",
     data: "13/10/2026 · 10:03",
@@ -73805,6 +73879,7 @@ function iniciar() {
     // Travas ADM (pedido do JF): toda partida nova, local ou online, começa com a pergunta. Navegador de teste
     // automático não pergunta (os testes abrem a pergunta direto, em teste_acoes).
     travasRespondidas = false;
+    vozPerguntada = false;
     if (navigator.webdriver) return seguir();
     redeTravasPerguntar(seguir, true);
   });

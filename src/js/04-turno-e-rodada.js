@@ -1751,7 +1751,11 @@ function selectMode(mode, expressCategories, flavor) {
       ] || "outro modo";
     caosToastAtrasado(() => showToastMessage(getRandomReaction(REACTIVE_VOICE.trocaDeModo, nm)), 300);
   }
-  if (typeof redePerguntarSalaTalvez === "function") redePerguntarSalaTalvez(); // 1.7.9.6 (pedido do JF): sala online logo depois do modo
+  const sala = () => {
+    if (typeof redePerguntarSalaTalvez === "function") redePerguntarSalaTalvez(); // 1.7.9.6 (pedido do JF): sala online logo depois do modo
+  };
+  if (navigator.webdriver) sala();
+  else vozPerguntar(sala);
   saveGameState();
 }
 function confirmExpress(flavor) {

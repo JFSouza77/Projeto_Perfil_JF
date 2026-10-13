@@ -510,6 +510,34 @@ function toggleVoice() {
     caosVozCalada();
   }
 }
+// Pedido do JF: ao entrar no cadastro dos jogadores, se a voz deste aparelho está desligada, o C.A.O.S.
+// pergunta se pode falar. Sim = liga a voz aqui. Não = comentáriozinho triste, segue só com os balões.
+// Aparece em todo aparelho (host e celulares), uma vez por partida; quem já deixou a voz ligada não vê.
+let vozPerguntada = false;
+function vozPerguntar(seguir, triste) {
+  seguir = seguir || (() => {});
+  if (vozPerguntada || caosVoiceOn || typeof CAOS_VOICE_OK === "undefined" || !CAOS_VOICE_OK) return seguir();
+  vozPerguntada = true;
+  document.getElementById("vozPergunta")?.remove();
+  const { ov, box } = caosModalBase();
+  ov.id = "vozPergunta";
+  const fim = (sim) => {
+    ov.remove();
+    unlockAudio();
+    if (sim) {
+      if (!caosVoiceOn) toggleVoice();
+    } else {
+      const t = getRandomReaction(REACTIVE_VOICE.vozRecusada);
+      if (triste) triste(t);
+      else caosToastAtrasado(() => showToastMessage(t), 250);
+    }
+    seguir();
+  };
+  const row = caosModalRow();
+  row.append(caosModalBtn("🤐 Não", "#444a66", () => fim(false)), caosModalBtn("🗣️ Ligar a Voz do C.A.O.S.", "#16a34a", () => fim(true)));
+  box.append(caosModalMsg("🎙️ Posso falar com vocês?\nLigar a Voz do C.A.O.S. neste aparelho?"), row);
+  document.body.appendChild(ov);
+}
 function sfxNote(ctx, freq, start, dur, opts) {
   opts = opts || {};
   const vol = Math.max(1e-4, (opts.vol || 0.12) * acessVolSom());
