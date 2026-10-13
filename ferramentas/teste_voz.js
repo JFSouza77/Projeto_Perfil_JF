@@ -47,9 +47,9 @@ function wav() {
     const p1 = pedidos;
     const r2 = await falar(frase);
     conf("A mesma fala de novo não pede outra vez", !r2.timeout && r2.aparelho === 0 && pedidos === p1);
-    // 1.7.10.3.1: a emoção vai junto: reticências viram pausa do tamanho da emoção, e o volume muda
+    // 1.7.10.3.1 (cada frase com número próprio: o servidor guarda as falas entre testes): a emoção vai junto: reticências viram pausa do tamanho da emoção, e o volume muda
     const n0 = ssmls.length;
-    const r5 = await pg.evaluate((t) => new Promise((fim) => { caosEmoFalaAtual = "triste"; caosSpeak(t, null, () => fim(true)); setTimeout(() => fim(false), 8000); }), `[C.A.O.S.] Hmm... essa doeu ${Date.now() % 100000}. Que PENA.`);
+    const r5 = await pg.evaluate((t) => new Promise((fim) => { caosEmoFalaAtual = "triste"; caosSpeak(t, null, () => fim(true)); setTimeout(() => fim(false), 8000); }), (() => { const n = Date.now() % 100000; return `[C.A.O.S.] Hmm... essa doeu ${n}. Que PENA, rodada ${n}.`; })());
     const novos = ssmls.slice(n0).join(" ");
     conf("Emoção na voz nova: pausa nas reticências, volume da tristeza e palavra em caixa alta mais forte", r5 && /<break time="650ms"\/>/.test(novos) && /volume="-12%"/.test(novos) && /<prosody volume="\+25%" pitch="\+8%">pena<\/prosody>/.test(novos));
     await pg.evaluate(() => (caosVoiceName = "x"));
