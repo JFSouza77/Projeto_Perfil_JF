@@ -11,8 +11,9 @@ O código está público no GitHub para jogar e acompanhar o projeto. Isso **nã
 - **Ideias e ajuda da família e dos amigos:**
   - Klaus sugeriu a organização do código, que entrou na 1.7.5.
   - Pedro (11 anos) teve a ideia da risadinha do C.A.O.S.
+  - Vitinho e Typingg (Luís Gabriel) testaram o online entre São Paulo e Rio e apontaram as regras das categorias (Pessoa vale grupo), como calar o C.A.O.S. e a voz começando desligada (1.7.10.2 e 1.7.10.3).
 - A lista completa de agradecimentos vai entrar na área "Agradecimentos Especiais" do jogo.
-- **Biblioteca de terceiros:** o online (desde a 1.7.9.10) usa o **PeerJS** (licença MIT, © Michelle Bu e Eric Zhang), embutido no jogo com a licença original junto. Nenhuma parte do jogo depende de outro código de terceiros.
+- **Biblioteca de terceiros:** o online (desde a 1.7.9.10) usa o **PeerJS** (licença MIT, © Michelle Bu e Eric Zhang), embutido no jogo com a licença original junto, e o QR Code da sala (desde a 1.7.9.8) usa o **qrcode-generator** (licença MIT, © Kazuhiko Arase). A voz nova do C.A.O.S. (desde a 1.7.10.2) é gerada pelo serviço de voz do **Microsoft Azure**, chamado pelo servidor da sala; sem ele, o jogo usa a voz do próprio aparelho.
 
 ## Como provar a autoria
 1. **Histórico do Git** neste repositório: cada mudança tem data, hora, autor e descrição, desde o primeiro commit.
