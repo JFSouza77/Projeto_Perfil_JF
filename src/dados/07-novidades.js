@@ -6,6 +6,19 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.3",
+    data: "13/10/2026 · 10:03",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "Regras mais fáceis de achar e a voz do C.A.O.S. em todos os celulares.",
+    itens: [
+      "🗂️ O que vale em cada categoria: o Manual explica o que entra em Ano, Pessoa, Lugar e Coisa (e Animal, no Júnior). Pessoa também vale grupo, dupla e banda.",
+      "🤖 C.A.O.S. lembra a regra: na primeira carta de cada categoria da partida, ele lembra o que aquela categoria inclui.",
+      "🔎 Busca nas regras: no Manual, digite uma palavra (grupo, calar, joia) e vá direto pro passo certo.",
+      "🔊 Voz em todos os celulares: no online, cada celular fala com a voz do C.A.O.S. quando ela está ligada nele. Quem joga pelo celular tem o próprio botão de voz.",
+    ],
+    qol: ["🤐 Como calar o C.A.O.S.: um passo novo no Manual mostra todos os jeitos de calar ou silenciar."],
+  },
+  {
     v: "Beta 1.7.10.2",
     data: "13/10/2026 · 09:07",
     nome: "Multiplayer Update · Online de verdade",

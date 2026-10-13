@@ -2825,6 +2825,7 @@ function openTutorial(tipo) {
       <button type="button" class="tut-close" id="tutClose" aria-label="Fechar tutorial">✕</button>
       <div class="tut-tempo" id="tutTempo"></div>
       <div class="tut-caps" id="tutCaps"></div>
+      <div class="tut-busca" id="tutBusca"><input type="search" id="tutBuscaIn" placeholder="🔎 Procurar nas regras (ex.: grupo, calar, joia)" aria-label="Procurar nas regras" autocomplete="off"><div class="tut-busca-res" id="tutBuscaRes"></div></div>
       <div class="tut-icon" id="tutIcon" aria-hidden="true"></div>
       <div class="tut-title" id="tutTitle"></div>
       <div class="tut-text" id="tutText"></div>
@@ -2851,9 +2852,53 @@ function openTutorial(tipo) {
     });
     document.getElementById("tutManual").addEventListener("click", () => openTutorial("manual"));
     document.getElementById("tutOuvir").addEventListener("click", tutOuvirPasso);
+    document.getElementById("tutBuscaIn").addEventListener("input", tutBuscar);
   }
   ov.style.display = "flex";
   renderTutorial();
+}
+// 1.7.10.3 (ideia do JF): busca nas regras. Procura no manual completo (título e texto, sem acento) e leva
+// direto pro passo; algumas palavras puxam sinônimos (calar → silenciar, mudo, voz...).
+const TUT_SINONIMOS = { calar: ["silenc", "voz", "mudo", "🔇"], silenciar: ["calar", "voz", "🔇"], mudo: ["calar", "silenc", "voz"], grupo: ["banda", "dupla", "turma", "pessoa"], banda: ["grupo", "pessoa"], jetsons: ["grupo", "pessoa"], animal: ["bicho", "coisa"], bicho: ["animal"], ganhar: ["vence", "vitória", "meta"], vencer: ["vence", "vitória", "ganha"] };
+function tutSemAcento(t) {
+  return String(t).replace(/<[^>]*>/g, " ").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+function tutBuscar() {
+  const inp = document.getElementById("tutBuscaIn"), res = document.getElementById("tutBuscaRes");
+  if (!inp || !res) return;
+  const q = tutSemAcento(inp.value).trim();
+  if (q.length < 2) {
+    res.innerHTML = "";
+    return;
+  }
+  const termos = [q].concat((TUT_SINONIMOS[q] || []).map(tutSemAcento));
+  const achados = TUTORIAL_STEPS.map((p, i) => {
+    const titulo = tutSemAcento(p.title), texto = tutSemAcento(typeof p.text === "function" ? p.text() : p.text);
+    const pontos = termos.reduce((n, t, k) => n + (titulo.includes(t) ? (k ? 2 : 5) : 0) + (texto.includes(t) ? (k ? 1 : 3) : 0), 0);
+    let trecho = "";
+    const t = termos.find((x) => texto.includes(x));
+    if (t) {
+      const j = texto.indexOf(t);
+      trecho = (j > 30 ? "…" : "") + texto.slice(Math.max(0, j - 30), j + 60).trim() + "…";
+    }
+    return { i, pontos, trecho };
+  })
+    .filter((x) => x.pontos > 0)
+    .sort((a, b) => b.pontos - a.pontos)
+    .slice(0, 6);
+  res.innerHTML = achados.length
+    ? achados.map((a) => `<button type="button" class="tut-busca-item" data-passo="${a.i}"><b>${TUTORIAL_STEPS[a.i].icon} ${escapeHtml(TUTORIAL_STEPS[a.i].title)}</b>${a.trecho ? `<small>${escapeHtml(a.trecho)}</small>` : ""}</button>`).join("")
+    : '<div class="tut-busca-nada">Nada encontrado. Tente outra palavra.</div>';
+  res.querySelectorAll("[data-passo]").forEach((b) =>
+    b.addEventListener("click", () => {
+      tutorialTipo = "manual";
+      tutorialLista = TUTORIAL_STEPS;
+      tutorialPos = +b.dataset.passo;
+      inp.value = "";
+      res.innerHTML = "";
+      renderTutorial();
+    }),
+  );
 }
 // 1.7.7.8 (ideia do JF, revisão do GPT): o C.A.O.S. lê o passo em voz alta, só quando a pessoa toca.
 // Nunca vira o passo sozinho; trocar de passo ou fechar o tutorial cala a leitura.
@@ -2911,6 +2956,8 @@ function renderTutorial() {
       : "📖 Manual completo";
   const caps = document.getElementById("tutCaps");
   caps.style.display = rapido || vitoria ? "none" : "";
+  const busca = document.getElementById("tutBusca");
+  if (busca) busca.style.display = rapido || vitoria ? "none" : "";
   caps.innerHTML = rapido || vitoria
     ? ""
     : TUT_CAPS.map((c, i) => `<button type="button" data-cap="${i}" class="${i === s.sec ? "on" : ""}">${c}</button>`).join("");

@@ -288,6 +288,21 @@ const ARQ = acharMestre(process.argv[2]);
       out.travasAdm = abriu && sim && naoRepete && nao;
       anneLigar(antes);
     }
+    // 1.7.10.3: busca nas regras e o lembrete da primeira carta de cada categoria
+    {
+      openTutorial('manual');
+      const i = document.getElementById('tutBuscaIn');
+      i.value = 'grupo'; tutBuscar();
+      const achou = /cada categoria/.test((document.querySelector('.tut-busca-item') || {}).textContent || '');
+      closeTutorial();
+      const orig = caosFalaAgendar, got = [];
+      caosFalaAgendar = (fn) => got.push(fn());
+      const cartaAntes = currentCard, modoAntes = CURRENT_MODE, usados = new Set(caosEasterEggsUsed);
+      const t = (cat, modo) => { CURRENT_MODE = modo; currentCard = { category: cat, clues: [] }; caosEasterEggsUsed.clear(); caosPrimeiraCategoria(); caosPrimeiraCategoria(); };
+      t('PESSOA', 'classico'); t('COISA', 'junior');
+      caosFalaAgendar = orig; currentCard = cartaAntes; CURRENT_MODE = modoAntes; caosEasterEggsUsed.clear(); usados.forEach((k) => caosEasterEggsUsed.add(k));
+      out.regrasEPrimeira = achou && got.length === 2 && /grupo|banda|dupla/i.test(got[0]) && !/animal|bicho moram|até bicho conta/i.test(got[1].replace('Bicho tem categoria própria', ''));
+    }
     // 1.7.10.1 (pedido do JF): com a sala aberta, a partida não começa com jogador sem aparelho
     {
       const salvos = players, iniAntes = starterChosen;
@@ -384,6 +399,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.10: Reportar carta anota no aparelho, sem resposta na janela e sem mexer na partida', r.reportar],
     ['1.7.10: nome repetido: o nome já cadastrado fica em destaque, o campo fica vermelho e o C.A.O.S. comenta', r.nomeRepetido],
     ['Travas ADM: a pergunta abre, Sim trava o nick da Anne, Não desliga, e não pergunta duas vezes na mesma partida', r.travasAdm],
+    ['1.7.10.3: busca nas regras acha "grupo"; o C.A.O.S. lembra o que vale na 1ª carta de cada categoria (Júnior sem animal em Coisa)', r.regrasEPrimeira],
     ['1.7.10.1: com a sala aberta, a partida só começa quando todo jogador tem aparelho', r.semAparelho],
   ];
   linhas.forEach(([n, ok]) => console.log(`${ok ? 'ok    ' : 'FALHOU'}  ${n}`));

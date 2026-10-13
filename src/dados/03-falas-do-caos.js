@@ -4542,6 +4542,40 @@ const REACTIVE_VOICE = {
     "{nome} acertou assim, do nada? Tá perdoado. Por enquanto.",
     "Eu estava te perseguindo, {nome}. Mas essa jogada foi boa demais. Arquivo encerrado.",
   ],
+  // 1.7.10.3 (pedido do JF): a primeira carta de cada categoria na partida vem com o lembrete do que ela inclui.
+  // No Júnior, Coisa não inclui animais (Animal é categoria própria).
+  primeiraCategoria: {
+    ANO: [
+      "Primeira carta de Ano! Lembrando: pode ser um ano exato, uma década ou até um século inteiro.",
+      "Ano na mesa. Vale avisar: a resposta pode abranger de uma década até um século. Pensem grande.",
+      "Categoria Ano estreando. Não é só número redondo: pode ser ano, década ou século.",
+    ],
+    PESSOA: [
+      "Primeira Pessoa da partida! Lembrando: vale gente de verdade, personagem, e também grupo, dupla ou banda.",
+      "Pessoa na mesa. Vale real ou fictício, e vale grupo: dupla, banda, turma, família inteira.",
+      "Categoria Pessoa estreando. Atenção: um grupo inteiro também conta como Pessoa.",
+    ],
+    LUGAR: [
+      "Primeiro Lugar da partida! Lembrando: pode ser um lugar real ou de ficção.",
+      "Lugar na mesa. Real ou inventado, de cidade a planeta, de filme a desenho: tudo vale.",
+      "Categoria Lugar estreando. Vale lugar de verdade e lugar de livro, filme ou desenho.",
+    ],
+    COISA: [
+      "Primeira Coisa da partida! Aqui vale literalmente qualquer coisa: real, de ficção, um conceito, algo abstrato. E até animal.",
+      "Coisa na mesa. Pode ser objeto, ideia, sentimento, coisa inventada. E os animais também moram aqui.",
+      "Categoria Coisa estreando. É a categoria do tudo: real, fictício, abstrato. Até bicho conta como Coisa.",
+    ],
+    COISA_JR: [
+      "Primeira Coisa da partida! Pode ser coisa de verdade, de faz de conta, ou até algo que a gente sente.",
+      "Coisa na mesa. Vale objeto, brinquedo, comida, coisa inventada e até sentimento.",
+      "Categoria Coisa estreando. Pode ser qualquer coisa, de verdade ou de mentirinha. Bicho tem categoria própria!",
+    ],
+    ANIMAL: [
+      "Primeiro Animal da partida! Pode ser bicho de verdade ou de faz de conta, como os das lendas.",
+      "Animal na mesa. Vale bicho real e também bicho mágico, de história ou de mitologia.",
+      "Categoria Animal estreando. Lembrando: vale animal de verdade e animal fictício ou mitológico.",
+    ],
+  },
   vozCalada: [
     "Cansaram de me ouvir? Tá bom. Agora eu só escrevo.",
     "Tiraram a minha voz. Beleza. Os balões continuam, e eu continuo certo.",

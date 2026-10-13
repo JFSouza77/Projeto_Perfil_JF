@@ -491,10 +491,23 @@ function flipCard() {
   caosAusentesTalvez();
   caosSatisfacaoTalvez();
   caosEixosCarta();
+  caosPrimeiraCategoria();
   render();
   // 1.7.8.6: a frase da roleta sobe até o topo da carta e o resto aparece (o giro foi no "Ver carta")
   cartaFraseSobe(fraseTopo);
   saveGameState();
+}
+// 1.7.10.3 (pedido do JF): a primeira carta de cada categoria na partida vem com o lembrete do que ela inclui
+// (Pessoa vale grupo, Lugar vale ficção, Ano vale década/século, Coisa vale tudo). Uma vez por categoria.
+function caosPrimeiraCategoria() {
+  try {
+    if (!currentCard || typeof REACTIVE_VOICE === "undefined" || !REACTIVE_VOICE.primeiraCategoria) return;
+    const cat = gemCategoryFor(currentCard.category);
+    const banco = REACTIVE_VOICE.primeiraCategoria[cat === "COISA" && CURRENT_MODE === "junior" ? "COISA_JR" : cat];
+    if (!banco || !caosOncePerMatch("primeira_cat_" + cat)) return;
+    caosLog("fala", "primeira carta de " + cat);
+    caosFalaAgendar(() => getRandomReaction(banco), 900, "media");
+  } catch (e) {}
 }
 function checkWinnerThenDraw() {
   tabLobbyPendente = true; // 1.7.9.4: a carta acabou; o lobby do tabuleiro abre quando a próxima estiver pronta

@@ -1247,10 +1247,11 @@ function redeFalaProxima() {
   el.innerHTML =
     `<div class="rede-fala-topo"><span class="rede-fala-rosto">${escapeHtml(face || "🤖")}</span>${rotulo ? `<span class="rede-fala-rotulo">${escapeHtml(rotulo)}</span>` : ""}</div>` +
     `<div class="rede-fala-txt">[C.A.O.S.] ${escapeHtml(f.texto)}</div>`;
-  if (f.minha)
-    try {
-      caosSpeak("[C.A.O.S.] " + f.texto, "__normal");
-    } catch (e) {}
+  // 1.7.10.3 (relato do JF: a voz só saía no host): o celular fala tudo o que mostra, se a voz dele estiver ligada
+  // (cada aparelho liga a sua no botão 🗣️ Voz do C.A.O.S.; começa desligada, então não vira eco na mesma sala)
+  try {
+    caosSpeak("[C.A.O.S.] " + f.texto, "__normal");
+  } catch (e) {}
   clearTimeout(rede.falaTimer);
   // com fala esperando na fila, esta fica menos tempo (o celular não fica atrasado em relação à mesa)
   const ms = Math.min(9000, Math.max(3500, f.texto.length * 70));
@@ -2109,7 +2110,7 @@ function redeConvidadoIniciar(sala) {
     document.body.appendChild(box);
   }
   if (!redeEntrarSala(sala)) {
-    box.innerHTML = `<div class="telao-espera">Este navegador não consegue entrar na sala${redeModoDoEndereco() === "internet" ? " pela internet" : ""}.</div>${REDE_SAIR}`;
+    box.innerHTML = `<div class="telao-espera">Este navegador não consegue entrar na sala${redeModoDoEndereco() === "internet" ? " pela internet" : ""}.</div>${redeSairHtml()}`;
     return;
   }
   rede.aoMudar = () => redeConvidadoDesenhar();
@@ -2119,8 +2120,20 @@ function redeConvidadoIniciar(sala) {
     redeConvidadoTiques();
   }, 500);
 }
-const REDE_SAIR =
-  '<button type="button" class="rede-como" onclick="openTutorial(\'manual:online\')">❓ Como funciona o online</button><button type="button" class="telao-sair" onclick="redeSairDaSala()">✕ Sair da sala</button>';
+// 1.7.10.3: no celular do convidado também tem o botão da voz do C.A.O.S. (começa desligada)
+function redeSairHtml() {
+  const voz = typeof CAOS_VOICE_OK !== "undefined" && CAOS_VOICE_OK ? `<button type="button" class="rede-como rede-voz" onclick="redeVozTrocar()">${caosVoiceOn ? "🗣️ Voz do C.A.O.S.: ligada" : "🤐 Voz do C.A.O.S.: desligada"}</button>` : "";
+  return voz + '<button type="button" class="rede-como" onclick="openTutorial(\'manual:online\')">❓ Como funciona o online</button><button type="button" class="telao-sair" onclick="redeSairDaSala()">✕ Sair da sala</button>';
+}
+function redeVozTrocar() {
+  try {
+    unlockAudio();
+    toggleVoice();
+  } catch (e) {}
+  try {
+    redeConvidadoDesenhar();
+  } catch (e) {}
+}
 function redeSairDaSala() {
   try {
     if (rede) {
@@ -2190,7 +2203,7 @@ function redeConvidadoDesenhar() {
   const sala = `<div class="rede-sala">🌐 Sala <b>${rede.sala}</b>${selo}</div>${conexao}`;
   if (rede.estado === "escolhendo") return redeEscolhaDesenhar(box, sala);
   if (rede.estado === "aguardando") {
-    box.innerHTML = `${sala}<div class="telao-espera">⏳ Pedido enviado<br><small>Esperando o host aceitar a sua entrada…</small></div>${REDE_SAIR}`;
+    box.innerHTML = `${sala}<div class="telao-espera">⏳ Pedido enviado<br><small>Esperando o host aceitar a sua entrada…</small></div>${redeSairHtml()}`;
     return;
   }
   if (rede.estado === "recusado") {
@@ -2198,7 +2211,7 @@ function redeConvidadoDesenhar() {
       rede.motivo === "versao_diferente"
         ? `<br><small>Host: ${escapeHtml(rede.versaoHost || "?")} · Você: ${escapeHtml(JOGO_VERSAO)}. ${!redeHostMaisNovo(rede.versaoHost, rede.buildHost) ? "O jogo do host está mais velho: ele precisa recarregar o jogo dele." : "Recarregue a página pra atualizar."}</small>`
         : "";
-    box.innerHTML = `${sala}<div class="telao-espera">${escapeHtml(REDE_MOTIVOS[rede.motivo] || "Não deu pra entrar.")}${ver}<br><button type="button" class="rede-lugar" id="redeDeNovo">${rede.motivo === "versao_diferente" ? "🔄 Recarregar" : "Tentar de novo"}</button></div>${REDE_SAIR}`;
+    box.innerHTML = `${sala}<div class="telao-espera">${escapeHtml(REDE_MOTIVOS[rede.motivo] || "Não deu pra entrar.")}${ver}<br><button type="button" class="rede-lugar" id="redeDeNovo">${rede.motivo === "versao_diferente" ? "🔄 Recarregar" : "Tentar de novo"}</button></div>${redeSairHtml()}`;
     box.querySelector("#redeDeNovo").addEventListener("click", () => {
       if (rede.motivo === "versao_diferente") return location.reload();
       rede.estado = "entrando";
@@ -2207,21 +2220,21 @@ function redeConvidadoDesenhar() {
     return;
   }
   if (rede.estado !== "dentro" || !rede.retrato) {
-    box.innerHTML = `${sala}<div class="telao-espera">Entrando na sala…</div>${REDE_SAIR}`;
+    box.innerHTML = `${sala}<div class="telao-espera">Entrando na sala…</div>${redeSairHtml()}`;
     return;
   }
   // 1.7.9.4: sala aberta antes da partida: espera o host terminar o cadastro e começar
   if (!rede.retrato.iniciada) {
     const r = rede.retrato, eu = r.jogadores.find((j) => j.id === rede.eu);
     const mesa = r.jogadores.map((j) => `<li>${escapeHtml((j.avatar ? j.avatar + " " : "") + j.nome)}${j.id === rede.eu ? " · você" : ""}</li>`).join("");
-    box.innerHTML = `${sala}<div class="telao-espera">✅ Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b><br><small>Esperando o host terminar o cadastro e começar a partida…</small></div><ul class="rede-lista">${mesa}</ul>${REDE_SAIR}`;
+    box.innerHTML = `${sala}<div class="telao-espera">✅ Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b><br><small>Esperando o host terminar o cadastro e começar a partida…</small></div><ul class="rede-lista">${mesa}</ul>${redeSairHtml()}`;
     return;
   }
   telaoUltimo = rede.retrato;
   telaoDesenhar(rede.retrato);
   // troca o "sair do telão" pelo "sair da sala" e põe a sala e os botões do meu papel
   const sair = box.querySelector(".telao-sair");
-  if (sair) sair.outerHTML = REDE_SAIR;
+  if (sair) sair.outerHTML = redeSairHtml();
   box.insertAdjacentHTML("afterbegin", sala);
   // 1.7.9.5 (relato do JF: "ela fica na sala TV, não tem nada pra acontecer"): quem é o Mestre vê a carta
   // como na tela de sempre, no lugar do resumo do telão
@@ -2422,7 +2435,7 @@ function redeEscolhaDesenhar(box, sala) {
   }
   const lista = l ? `<div class="rede-rot">${cad ? "Ou, se o host já cadastrou você:" : "Quem é você?"}</div><div class="rede-lugares">${l}</div>` : "";
   const vazio = !cad && !l ? "<small>O host ainda está montando a partida. Espere um pouquinho.</small>" : "";
-  box.innerHTML = `${sala}<div class="telao-espera rede-entrada">${cad ? "" : "Quem é você?"}${form}${lista}${vazio}</div>${REDE_SAIR}`;
+  box.innerHTML = `${sala}<div class="telao-espera rede-entrada">${cad ? "" : "Quem é você?"}${form}${lista}${vazio}</div>${redeSairHtml()}`;
   box.querySelectorAll(".rede-lugar").forEach((b) => b.addEventListener("click", () => redeEscolherLugar(b.dataset.id)));
   const nome = box.querySelector("#redeNome");
   if (nome) {
