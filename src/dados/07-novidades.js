@@ -9,10 +9,11 @@ const NOVIDADES = [
     v: "Beta 1.7.10.3.1",
     data: "13/10/2026 · 13:04",
     nome: "Multiplayer Update · Online de verdade",
-    t: "Chegou o C.A.O.S. 4.1.1: voz nova e uma fala com mais emoção.",
+    t: "Chegou o C.A.O.S. 4.1.2: voz nova, mais emoção e uma fala mais caprichada.",
     itens: [
       "🎙️ C.A.O.S. 4.1 com voz nova: com internet, ele fala com uma voz brasileira natural, igual em todo aparelho, no lugar da voz robótica do celular.",
       "🎭 C.A.O.S. 4.1.1 com mais emoção: com a voz nova, ele fala mais alto quando está bravo ou em festa, mais baixo quando está triste ou espiando, faz pausas de verdade nas reticências e capricha nas palavras em CAIXA ALTA.",
+      "🗣️ C.A.O.S. 4.1.2 fala melhor: a risada parou de sair engasgada, palavras esticadas como PASTEEEL saem certinhas e, calmo, ele não soa mais triste..",
     ],
     qol: [],
   },
