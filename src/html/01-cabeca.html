@@ -6,6 +6,16 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.3.1 · 13/10/2026 · "Multiplayer Update · Online de verdade" = PATCH: MAIS EMOÇÃO NA VOZ NOVA DO C.A.O.S.
+          Pedido do JF. O jogo manda a emoção de cada pedaço da fala (caosEmoFalaAtual, humor da matriz ou o "para" da
+          virada) junto com o texto; reticências viram a marca ⏸ (caosSpeechText com pausa; a voz do aparelho segue com
+          vírgula, caosSemPausa). Servidor (vozSsml/VOZ_EMOCOES): volume por emoção, pausa do tamanho da emoção (triste e
+          tédio mais longas, fúria e festa curtas), PALAVRA EM CAIXA ALTA mais forte, respiro depois de interjeição
+          (Hmm, Eita, Ué...). AZURE_ESTILOS=1 liga os estilos da Microsoft (express-as) pra quando usar voz com estilos
+          (MAI-Voice). A emoção entra na chave da fala guardada. Servidor com duas vozes (vozesDoServidor): a com
+          emoção (AZURE_MAI_KEY/REGION, padrão pt-BR-Caio:MAI-Voice-2.1-Flash) primeiro e a grátis de reserva; falhou,
+          pula 10 min. Versões com 5 números (versao.js, build.js, JOGO_VERSAO). teste_voz confere o SSML, o Caio
+          primeiro e a reserva. JOGO_BUILD 1805.
   1.7.10.3 · 13/10/2026 · "Multiplayer Update · Online de verdade" = REGRAS MAIS FÁCEIS DE ACHAR E VOZ EM TODOS OS CELULARES.
           Pedido do JF (os Jetsons: a regra não muda): o manual ganhou o passo "O que vale em cada categoria" (Ano até
           século; Pessoa vale grupo, dupla, banda; Lugar real ou de ficção; Coisa vale tudo, até animal; no Júnior,
@@ -746,7 +756,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.3</title>
+<title>Perfil JF · Beta 1.7.10.3.1</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

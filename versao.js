@@ -9,7 +9,7 @@ const fs = require("fs");
 const path = require("path");
 
 // "1.7.10" ou "1.0" (2 a 4 números) dentro do <title>
-const RE_VERSAO = /\d+(?:\.\d+){1,3}/;
+const RE_VERSAO = /\d+(?:\.\d+){1,4}/;
 function versaoDoTitulo(html) {
   const t = (String(html).match(/<title>([^<]*)<\/title>/) || [])[1] || "";
   return (t.match(RE_VERSAO) || [])[0] || null;
@@ -18,8 +18,8 @@ function buildDe(html) {
   const m = String(html).match(/const JOGO_BUILD = (\d+);/);
   return m ? +m[1] : null;
 }
-const RE_MESTRE = /^Perfil_JF_Mestre_\d+(?:_\d+){1,3}\.html$/;
-const versaoDoArquivo = (f) => (path.basename(f).match(/_(\d+(?:_\d+){1,3})\.html$/) || [])[1] || null;
+const RE_MESTRE = /^Perfil_JF_Mestre_\d+(?:_\d+){1,4}\.html$/;
+const versaoDoArquivo = (f) => (path.basename(f).match(/_(\d+(?:_\d+){1,4})\.html$/) || [])[1] || null;
 const nomeDoMestre = (versao) => `Perfil_JF_Mestre_${String(versao).replace(/\./g, "_")}.html`;
 
 // O Mestre mais novo da pasta: pelo build escrito dentro dele (os nomes de exibição podem "voltar", 1.7.10 → 1.0).

@@ -19,6 +19,7 @@
 | `REPORTES_SENHA` | Senha da página de cartas reportadas | o JF inventa |
 | `AZURE_SPEECH_KEY` | Chave da voz nova do C.A.O.S. | Azure → Speech services → Chaves e Ponto de Extremidade (Chave 1) |
 | `AZURE_SPEECH_REGION` | Região da voz (`brazilsouth`) | idem (Local/Região) |
+| `AZURE_MAI_KEY`, `AZURE_MAI_REGION` (opcionais) | Voz com emoção (MAI-Voice, paga; ex.: Caio). Falhou, a voz grátis assume | Azure → recurso Microsoft Foundry (ex.: East US) → Chaves |
 | `AZURE_VOZ`, `VOZ_TETO_MES` (variáveis, opcionais) | Nome da voz (padrão `pt-BR-AntonioNeural`) e teto de letras por mês (padrão 400 mil) | o JF escolhe |
 | `ORIGENS` (variável, não segredo) | Sites que podem usar a lista de salas, a ponte e os reportes | `servidor/wrangler.toml` |
 

@@ -6,6 +6,16 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.3.1",
+    data: "13/10/2026 · 13:04",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "A voz nova do C.A.O.S. ficou mais expressiva.",
+    itens: [
+      "🎭 Voz do C.A.O.S. com emoção: com a voz nova, ele fala mais alto quando está bravo ou em festa, mais baixo quando está triste ou espiando, faz pausas de verdade nas reticências e capricha nas palavras em CAIXA ALTA.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.3",
     data: "13/10/2026 · 10:03",
     nome: "Multiplayer Update · Online de verdade",

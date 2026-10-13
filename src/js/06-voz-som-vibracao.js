@@ -81,7 +81,8 @@ function caosNumFem(n) {
   if (r) p.push(r < 10 ? U[r] : r < 20 ? D10[r - 10] : DZ[Math.floor(r / 10)] + (r % 10 ? " e " + U[r % 10] : ""));
   return p.join(" e ");
 }
-function caosSpeechText(msg) {
+// 1.7.10.3.1: com pausa = true, o "…" vira a marca ⏸ (a voz nova faz uma pausa de verdade, do tamanho da emoção)
+function caosSpeechText(msg, pausa) {
   return String(msg || "")
     .replace(CAOS_FEM_RE, (m, a, n, b) => a + caosNumFem(+n) + b)
     .replace(/⟦[^⟧]*⟧/g, "")
@@ -90,13 +91,21 @@ function caosSpeechText(msg) {
     .replace(/\b[Oo]\(A\)\s*/g, "")
     .replace(/\((a|as|o|os)\)/gi, "")
     .replace(/[\p{Extended_Pictographic}\uFE0F\u200D\u25C6]/gu, "")
-    .replace(/\s*(?:\.{2,}|…)+\s*/g, ", ")
+    .replace(/\s*(?:\.{2,}|…)+\s*/g, pausa ? " ⏸ " : ", ")
     .replace(/\s+/g, " ")
     .replace(/,\s*([.!?,])/g, "$1")
     .replace(/^[,\s]+/, "")
     .replace(/,\s*$/, ".")
+    .replace(/\s*⏸\s*([.!?,])/g, "$1")
+    .replace(/^\s*⏸\s*/, "")
+    .replace(/\s*⏸\s*$/, ".")
     .trim();
 }
+function caosSemPausa(t) {
+  return t.replace(/\s*⏸\s*/g, ", ");
+}
+// Humor da matriz → emoção da voz nova
+const CAOS_VOZ_MATRIZ_EMO = { frustrado: "raiva", orgulhoso: "orgulho", entediado: "tedio", desafiante: "desafio" };
 function caosSpeechIsForMaster(txt) {
   return CAOS_MASTER_RE.test(txt);
 }
@@ -116,7 +125,8 @@ function caosSpeechChunks(txt) {
 function caosSpeak(msg, humorForcado, onEnd, onPedaco, vir) {
   if (caosMudoCarta && humorForcado !== "__normal") return false;
   if (!caosVoiceOn || !CAOS_VOICE_OK || typeof msg !== "string" || msg.indexOf("[C.A.O.S.]") === -1) return false;
-  const txt = caosSpeechText(msg);
+  const txtP = caosSpeechText(msg, true),
+    txt = caosSemPausa(txtP);
   if (!txt) return false;
   if (caosSpeechIsForMaster(txt) && !humorForcado) {
     caosVoiceSilenced++;
@@ -129,13 +139,13 @@ function caosSpeak(msg, humorForcado, onEnd, onPedaco, vir) {
     const st = humorForcado === "__normal" ? [1.05, 1.05] : [st0[0] * hm[0], st0[1] * hm[1]];
     const voice = caosPickVoice();
     caosVoiceCancel();
-    let partes = caosSpeechChunks(txt),
+    let partes = caosSpeechChunks(txtP),
       corteV = -1;
     if (vir && typeof onPedaco === "function") {
-      const pos = vir.depois ? txt.indexOf(vir.depois) : -1;
+      const pos = !vir.depois ? -1 : txtP.indexOf(vir.depois) >= 0 ? txtP.indexOf(vir.depois) : txtP.indexOf(vir.depois.replace(/, /g, " ⏸ "));
       if (pos > 0) {
-        const pa = caosSpeechChunks(txt.slice(0, pos)),
-          pb = caosSpeechChunks(txt.slice(pos));
+        const pa = caosSpeechChunks(txtP.slice(0, pos)),
+          pb = caosSpeechChunks(txtP.slice(pos));
         if (pa.length && pb.length) {
           partes = pa.concat(pb);
           corteV = pa.length;
@@ -144,17 +154,23 @@ function caosSpeak(msg, humorForcado, onEnd, onPedaco, vir) {
     }
     if (vir && corteV >= 0) vir.corteReal = corteV;
     const hmV = corteV >= 0 && vir && CAOS_VOICE_EMO[vir.para];
+    const emo0 =
+      humorForcado === "__normal"
+        ? "calmo"
+        : (!humorForcado && typeof caosEmoFalaAtual !== "undefined" && CAOS_VOICE_EMO[caosEmoFalaAtual] && caosEmoFalaAtual) ||
+          CAOS_VOZ_MATRIZ_EMO[humorForcado || caosHumorMatriz()] ||
+          "calmo";
     // jeito de cada pedaço: [velocidade, tom relativo] (o tom do aparelho vem depois, em caosFalarAparelho)
     const jeitos = partes.map((chunk, pi) => {
       const end = chunk.slice(-1);
       const stP = hmV && pi >= corteV ? [st0[0] * hmV[0], st0[1] * hmV[1]] : st;
       // sem sorteio aqui: a voz nova guarda cada fala pelo jeito exato (o sorteio fica só na voz do aparelho)
       const vel = Math.max(0.93 * caosVoiceSpeed, Math.min(2, stP[0] * caosVoiceSpeed));
-      return [vel, stP[1] + (end === "?" ? 0.08 : end === "!" ? 0.05 : 0)];
+      return [vel, stP[1] + (end === "?" ? 0.08 : end === "!" ? 0.05 : 0), hmV && pi >= corteV ? vir.para : emo0];
     });
     // 1.7.10.2: com internet, a voz nova (servidor → Azure); sem ela, ou se demorar, a voz do aparelho
     if (vozNuvemUsa()) caosFalarNuvem(partes, jeitos, onEnd, onPedaco, corteV);
-    else caosFalarAparelho(partes, jeitos, onEnd, onPedaco, corteV, voice);
+    else caosFalarAparelho(partes.map(caosSemPausa), jeitos, onEnd, onPedaco, corteV, voice);
     caosVoiceSpoken++;
     return true;
   } catch (e) {
@@ -234,12 +250,13 @@ function vozNuvemParar() {
   } catch (e) {}
   vozNuvem.fonte = null;
 }
-function vozNuvemPedaco(texto, vel, tom) {
+function vozNuvemPedaco(texto, vel, tom, emo) {
   const r = Math.round(vel * 20) / 20, p = Math.round(Math.max(0.5, Math.min(2, tom * caosVoicePitch)) * 20) / 20;
-  const chave = r + "|" + p + "|" + texto;
+  const e = emo || "calmo";
+  const chave = r + "|" + p + "|" + e + "|" + texto;
   if (vozNuvem.cache.has(chave)) return Promise.resolve(vozNuvem.cache.get(chave));
   const ctx = audioContexto();
-  return fetch(vozNuvemUrl("/voz"), { method: "POST", body: JSON.stringify({ t: texto, r, p }) })
+  return fetch(vozNuvemUrl("/voz"), { method: "POST", body: JSON.stringify({ t: texto, r, p, e }) })
     .then((resp) => {
       if (resp.status === 503) vozNuvem.ok = false; // o servidor ainda não tem a voz configurada
       if (!resp.ok) throw new Error("voz " + resp.status);
@@ -258,13 +275,13 @@ function caosFalarNuvem(partes, jeitos, onEnd, onPedaco, corteV) {
     window.speechSynthesis.cancel();
   } catch (e) {}
   const token = vozNuvem.token, ctx = audioContexto();
-  const pedidos = partes.map((ch, i) => vozNuvemPedaco(ch, jeitos[i][0], jeitos[i][1]));
+  const pedidos = partes.map((ch, i) => vozNuvemPedaco(ch, jeitos[i][0], jeitos[i][1], jeitos[i][2]));
   let comecou = false;
   // o 1º pedaço demorou: fala pelo aparelho (e a nuvem não toca mais nada desta fala)
   const plano = (desde) => {
     if (token !== vozNuvem.token) return;
     vozNuvem.token++;
-    caosFalarAparelho(partes.slice(desde), jeitos.slice(desde), onEnd, onPedaco ? (pi, c) => onPedaco(pi + desde, c) : null, corteV >= desde ? corteV - desde : -1);
+    caosFalarAparelho(partes.slice(desde).map(caosSemPausa), jeitos.slice(desde), onEnd, onPedaco ? (pi, c) => onPedaco(pi + desde, c) : null, corteV >= desde ? corteV - desde : -1);
   };
   const espera = setTimeout(() => !comecou && plano(0), 2500);
   const tocar = (i) => {

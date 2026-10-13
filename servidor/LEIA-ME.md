@@ -50,6 +50,23 @@ A partir daí, toda mudança nesta pasta que entrar no GitHub publica o servidor
 5. Opcional: pra trocar a voz, crie a variável (texto) `AZURE_VOZ` com o nome de outra voz brasileira do Azure
    (padrão: `pt-BR-AntonioNeural`). A lista e as amostras ficam na Galeria de Voz do Azure (Speech Studio).
    Teto do mês: variável `VOZ_TETO_MES` (padrão 400000 letras, abaixo do grátis do Azure).
+   Emoção (1.7.10.3.1): o jogo manda a emoção de cada fala; o servidor muda volume e pausas sozinho. Se um dia
+   usar uma voz com estilos (as MAI-Voice da Microsoft, ex.: Caio), crie a variável `AZURE_ESTILOS` = `1` e a
+   emoção vira o estilo dela (alegre, triste, bravo, sussurrando...).
+
+### 3d. Voz com emoção de verdade (opcional, paga: MAI-Voice, ex.: Caio)
+A voz grátis (3c) continua configurada e vira a **reserva**: se a voz com emoção falhar (crédito acabou, chave
+errada), o servidor usa a grátis sozinho, sem o jogo perceber.
+1. No Azure, crie um recurso **Microsoft Foundry** numa região que tenha MAI-Voice (ex.: **East US**).
+2. Copie a chave (Chave 1) e a região (ex.: `eastus`).
+3. No Cloudflare (**perfil-jf-sala → Settings → Variables and Secrets**):
+   - Secret `AZURE_MAI_KEY` = a chave;
+   - Secret `AZURE_MAI_REGION` = a região (ex.: `eastus`);
+   - (opcional) variável `AZURE_MAI_VOZ` (padrão `pt-BR-Caio:MAI-Voice-2.1-Flash`).
+   Toque em **Deploy**.
+4. Pra voltar só pra voz grátis: apague `AZURE_MAI_KEY` e toque em **Deploy**.
+O teto do mês (`VOZ_TETO_MES`, padrão 400 mil letras) vale pras duas: com a MAI Flash (US$ 15 por milhão de letras),
+dá no máximo uns US$ 6 por mês. Crie também um alerta de orçamento no Azure (Gerenciamento de Custos → Orçamentos).
 
 Conferir: `.../voz/estado` tem que mostrar `{"ligada":true}`. Sem isso (ou sem internet), o C.A.O.S. fala com a voz do aparelho, como antes.
 

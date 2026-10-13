@@ -404,7 +404,7 @@ function registrarVersao(versao, arqs) {
     );
   // 1.7.9.12: a linha da versão na tela inicial também tem que bater (na 1.7.9.12 ela ficou na versão
   // anterior porque a troca procurava a linha pelo número). Aqui não é aviso: não publica.
-  const telaM = mestre.match(/id="splashBuildLog">🚀 (Beta|Release) (\d+(?:\.\d+){1,3})/) || [];
+  const telaM = mestre.match(/id="splashBuildLog">🚀 (Beta|Release) (\d+(?:\.\d+){1,4})/) || [];
   const naTela = telaM[2];
   if (naTela !== versao.replace(/_/g, "."))
     throw new Error(`A tela inicial diz ${telaM[1] || "Beta"} ${naTela || "(sem versão)"}, mas o mestre é ${versao.replace(/_/g, ".")}. Atualize a linha do splashBuildLog em src/html/02-corpo.html.`);
