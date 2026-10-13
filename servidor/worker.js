@@ -58,7 +58,7 @@ function cors(req, env, livre) {
 }
 // 1.7.10.3.1 · Emoção na voz nova. [volume, pausa do "…" em ms, estilo da Microsoft (só nas vozes com estilos)]
 const VOZ_EMOCOES = {
-  calmo: ["+0%", 380, "hopeful"], // (sem estilo, o Caio calmo soava triste: feedback do JF)
+  calmo: ["+0%", 380, "neutral"], // feedback do JF: sem estilo soava triste; "hopeful" saía ofegante
   orgulho: ["+8%", 320, "joyful"],
   raiva: ["+15%", 260, "angry"],
   furia: ["+22%", 220, "shouting"],
@@ -73,9 +73,9 @@ const VOZ_EMOCOES = {
   triste: ["-12%", 650, "sad"],
   julgando: ["-3%", 520, ""],
   espiando: ["-18%", 500, "whispering"],
-  recompondo: ["-5%", 450, "relieved"],
+  recompondo: ["-5%", 450, "neutral"], // ("relieved" vem com suspiro)
 };
-const VOZ_SSML_VERSAO = 3;
+const VOZ_SSML_VERSAO = 4;
 // Texto já limpo (sem < > & ") → SSML: "⏸" vira pausa, PALAVRA EM CAIXA ALTA (4+ letras) sai mais forte,
 // palavra esticada ("PASTEEEL", "NÃÃÃO") vira a palavra normal, mais lenta e forte (lida letra a letra, saía
 // "pastil"), interjeição no começo ganha um respiro, e a emoção muda o volume (e o estilo, se a voz tiver).

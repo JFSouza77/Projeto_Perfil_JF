@@ -267,8 +267,11 @@ const ARQ = acharMestre(process.argv[2]);
       const n0 = players.length;
       addPlayer();
       const li = document.querySelector('#scoreboard li[data-i="0"]');
-      const toast = document.getElementById('jfToast');
-      out.nomeRepetido = players.length === n0 && !!li && li.classList.contains('cad-repetido') && inp.classList.contains('cad-campo-erro') && !!toast && /Anne/.test(toast.textContent) && !document.querySelector('.caos-modal-ov');
+      const marcou = players.length === n0 && !!li && li.classList.contains('cad-repetido') && inp.classList.contains('cad-campo-erro');
+      // o balão às vezes "pensa" antes (💭 ···): espera o texto aparecer
+      let toast = null;
+      for (let k = 0; k < 40 && !(toast && /Anne/.test(toast.textContent)); k++) { await espera(50); toast = document.getElementById('jfToast'); }
+      out.nomeRepetido = marcou && !!toast && /Anne/.test(toast.textContent) && !document.querySelector('.caos-modal-ov');
       players = salvos; starterChosen = iniAntes; inp.value = ''; renderScoreboard();
     }
     // Travas ADM (pedido do JF): a pergunta abre; Sim trava o nick da Anne (reconhecida), Não desliga; respondida, não pergunta de novo
