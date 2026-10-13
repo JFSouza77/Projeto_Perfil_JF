@@ -17,6 +17,9 @@
 | `TURN_KEY_ID` | Id da ponte TURN | Cloudflare → Realtime → TURN Server ("Jogo JF") |
 | `TURN_KEY_API_TOKEN` | Chave da ponte (aparece uma vez só) | idem |
 | `REPORTES_SENHA` | Senha da página de cartas reportadas | o JF inventa |
+| `AZURE_SPEECH_KEY` | Chave da voz nova do C.A.O.S. | Azure → Speech services → Chaves e Ponto de Extremidade (Chave 1) |
+| `AZURE_SPEECH_REGION` | Região da voz (`brazilsouth`) | idem (Local/Região) |
+| `AZURE_VOZ`, `VOZ_TETO_MES` (variáveis, opcionais) | Nome da voz (padrão `pt-BR-AntonioNeural`) e teto de letras por mês (padrão 400 mil) | o JF escolhe |
 | `ORIGENS` (variável, não segredo) | Sites que podem usar a lista de salas, a ponte e os reportes | `servidor/wrangler.toml` |
 
 ## 3. Tarefas comuns
@@ -34,6 +37,7 @@
 | Problema | O que acontece no jogo | O que fazer |
 |---|---|---|
 | Servidor nosso fora do ar ou estourou o limite do dia | O jogo usa o servidor público do PeerJS (reserva) e as pontes grátis. "Salas na sua rede" e reportes ficam parados (os reportes esperam na fila do aparelho) | Ver o status em cloudflarestatus.com; limites voltam 00:00 UTC (21h em Brasília) |
+| Voz nova fora (`/voz/estado` sem `ligada`, teto do mês, Azure fora) | O C.A.O.S. fala com a voz do aparelho, como antes | Conferir os 2 segredos do Azure; o teto volta no mês seguinte |
 | Ponte TURN sem credenciais (`/ponte` vazio) | 4G com Wi-Fi pode não conectar pelas pontes grátis | Conferir os 2 segredos; girar a chave (3) |
 | Servidor público do PeerJS fora do ar | Nada muda, se o nosso estiver no ar | — |
 | GitHub Pages fora do ar | Quem tem o app instalado ou o arquivo offline continua jogando | Mandar o arquivo offline pra quem precisar |

@@ -33,6 +33,26 @@ A partir daí, toda mudança nesta pasta que entrar no GitHub publica o servidor
 - Em **Variables and Secrets → Add**, crie um **Secret** com o nome `REPORTES_SENHA`. O valor é uma senha que só você sabe (pode ser uma frase).
 - Pra ver os reportes, abra `https://perfil-jf-sala.SEU-NOME.workers.dev/reportes?chave=SUA-SENHA`. Salve nos favoritos.
 
+### 3c. Voz nova do C.A.O.S. (Microsoft Azure, plano grátis)
+1. Entre em **portal.azure.com** e crie a conta grátis (pede cartão só pra conferir; o plano grátis F0 não cobra).
+2. No topo, busque **Speech services** (Serviços de Fala) → **Criar**:
+   - Grupo de recursos: crie um novo (ex.: "perfil-jf");
+   - Região: **Brazil South**;
+   - Nome: qualquer um (ex.: "perfil-jf-voz");
+   - Tipo de preço: **Free F0**.
+   Toque em **Revisar + criar** → **Criar**.
+3. Quando terminar, abra o recurso → **Chaves e Ponto de Extremidade** (Keys and Endpoint). Copie a **Chave 1** e o
+   **Local/Região** (fica como `brazilsouth`).
+4. No Cloudflare, em **Workers & Pages → perfil-jf-sala → Settings → Variables and Secrets → Add**:
+   - tipo **Secret**, nome `AZURE_SPEECH_KEY`, valor = a Chave 1;
+   - tipo **Secret**, nome `AZURE_SPEECH_REGION`, valor = `brazilsouth`.
+   Toque em **Deploy**.
+5. Opcional: pra trocar a voz, crie a variável (texto) `AZURE_VOZ` com o nome de outra voz brasileira do Azure
+   (padrão: `pt-BR-AntonioNeural`). A lista e as amostras ficam na Galeria de Voz do Azure (Speech Studio).
+   Teto do mês: variável `VOZ_TETO_MES` (padrão 400000 letras, abaixo do grátis do Azure).
+
+Conferir: `.../voz/estado` tem que mostrar `{"ligada":true}`. Sem isso (ou sem internet), o C.A.O.S. fala com a voz do aparelho, como antes.
+
 ### 4. Conferir
 - Abra `https://perfil-jf-sala.SEU-NOME.workers.dev/`: deve aparecer "Perfil JF · servidor da sala".
 - Abra `.../ponte`: deve aparecer uma lista `iceServers` com `turn.cloudflare.com`. Se vier vazia, confira os dois segredos.

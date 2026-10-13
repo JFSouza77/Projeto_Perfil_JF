@@ -1333,7 +1333,7 @@ function applyStoredPrefs() {
     soundOn = JFStore.getItem("perfil200_som") !== "0";
   } catch (e) {}
   try {
-    if (CAOS_VOICE_OK) caosVoiceOn = JFStore.getItem("perfil200_voz") !== "0";
+    if (CAOS_VOICE_OK) caosVoiceOn = JFStore.getItem("perfil200_voz") === "1";
   } catch (e) {}
   try {
     const v = parseFloat(JFStore.getItem("perfil200_voz_vel"));
