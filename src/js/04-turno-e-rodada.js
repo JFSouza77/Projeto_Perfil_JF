@@ -287,6 +287,7 @@ function resetDeck() {
   caosSaidaTemp = null;
   caosSaidasTensao = 0;
   caosCortes = { total: 0, por: {}, rancor: {} };
+  caosOuvintesZerar();
   caosAviaoLast = -99;
   caosAcidLastCard = -99;
   caosAcidLastIdx = null;
@@ -406,6 +407,7 @@ function drawHidden() {
     }
     if (!falou && stats.totalDrawn >= 3 && stats.totalDrawn <= 5) falou = maybeShowNameReminder();
     if (!falou) falou = caosRelogioNaCarta();
+    if (!falou) falou = caosOuvintesNaCarta();
     if (!falou) falou = caosMesaNaCarta();
     if (!falou) maybeShowCardChatter();
   }
@@ -1993,6 +1995,10 @@ function beginGameplay() {
   caosMagoaInicio();
   jogadoresGarantirIds(players);
   if (!admPrincipalId && players[mestreIndex]) admPrincipalId = players[mestreIndex].id;
+  // C.A.O.S. 4.3: a voz do aparelho do host conta pros ouvintes da sala (os celulares avisam sozinhos)
+  try {
+    if (salaOnlineAberta() && caosVoiceOn) caosOuvinteVoz(redeJogadoresNoHost(), true);
+  } catch (e) {}
   rodadaIniciar();
   voltarGuardar();
   players.forEach((p) => {

@@ -14,7 +14,7 @@
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1809;
+const JOGO_BUILD = 1810;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -523,11 +523,18 @@ const CAOS_BIP = {
 };
 const CAOS_BALAO_MIN_MS = 2500;
 const CAOS_BALAO_POS_VOZ_MS = 600;
-// C.A.O.S. 4.2 (partida online de 4 pessoas: "o C.A.O.S. estava insuportável", todo mundo calou ele):
-// comentário (fala que não é aviso nem regra) no máximo 2 por carta e com pelo menos 20 s entre um e outro.
-// Avisos, regras e falas importantes (priority, essencial) não entram nessa conta.
-const CAOS_FALAS_POR_CARTA = 2;
-const CAOS_FALA_INTERVALO_MS = 20000;
+// C.A.O.S. 4.2 (partida online de 4 pessoas: "o C.A.O.S. estava insuportável", todo mundo calou ele) tinha
+// cortado pra 2 comentários por carta com 20 s entre eles. C.A.O.S. 4.3 (JF): falar bastante não é o
+// problema (5 a 10 comentários por carta tudo bem); o problema era falar MUITO em POUCO tempo, uma fala
+// atropelando a outra. Agora: até 10 comentários por carta, e o próximo só começa depois que o anterior
+// TERMINOU, com um respiro. "Ouvido interno": se ele falou muito no último minuto, o respiro aumenta; se
+// falou muito nas últimas 3 cartas, dobra. Avisos, regras e falas importantes não entram nessa conta.
+const CAOS_FALAS_POR_CARTA = 10;
+const CAOS_RESPIRO_MS = 3500; // silêncio mínimo depois que a fala anterior terminou
+const CAOS_RESPIRO_RAJADA_MS = 9000; // respiro quando ele já falou CAOS_RAJADA_FALAS vezes no último minuto
+const CAOS_RAJADA_FALAS = 6;
+const CAOS_FALA_INICIO_MIN_MS = 6000; // entre o começo de uma fala e o da próxima (fala curtinha não vira metralhadora)
+const CAOS_FALAS_3_CARTAS = 18; // passou disso nas últimas 3 cartas: respiro em dobro
 const CAOS_COLOR_NAMES = {
   "#dc2626": "vermelho-sangue",
   "#6366f1": "índigo",

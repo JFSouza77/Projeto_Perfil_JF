@@ -24,6 +24,9 @@ const ACOES = {
   errou: { fn: "markWrong", pode: (tipo) => acoesComDica() && [undefined, null, "pular", "absurdo"].includes(tipo) },
   palpiteAcertou: { fn: "palpiteHit", pode: () => acoesComDica() },
   palpiteErrou: { fn: "palpiteMiss", pode: () => acoesComDica() },
+  // 1.7.10.5: quem tem a ficha reivindica a tentativa no próprio aparelho; quem está na vez pede a dica
+  palpitarAgora: { fn: "palpitarAgora", pode: (k) => acoesComDica() && palpiteEligibleHolders().includes(k) && !palpiteVezAtual() },
+  pedirDica: { fn: "pedirDica", pode: (idx) => acoesEmJogo() && cardState === "revealed" && pendingIndex === null && acoesDicaLivre(idx) },
   especialSeguir: { fn: "continueAfterSpecial", pode: () => acoesComDica() },
   especialPerdeVez: { fn: "loseTurnAfterSpecial", pode: () => acoesComDica() },
   // 1.7.9: mover só com a especial de mover aberta, o valor dela e um alvo permitido (antes: qualquer
@@ -359,6 +362,15 @@ function retratoPartida(papel) {
     vezId: jogadorIdDe(responderIndex),
     carta,
     palpites: { ...palpiteHolders },
+    // 1.7.10.5: quem tocou em Palpitar agora (a tentativa é dele até o veredito) e a dica pedida pelo aparelho
+    palpiteVez: (() => {
+      const pv = typeof palpiteVezAtual === "function" ? palpiteVezAtual() : null;
+      return pv ? pv.key : null;
+    })(),
+    pedidoDica: (() => {
+      const pd = typeof pedidoDicaAtual === "function" ? pedidoDicaAtual() : null;
+      return pd ? { pos: pd.idx, por: pd.por } : null;
+    })(),
     estoquePalpite: palpiteStock,
     joiasRodada: { ...joiasRodada },
     vencedorJoias: gemWinner ? { tipo: gemWinner.kind, id: gemWinner.id } : null,

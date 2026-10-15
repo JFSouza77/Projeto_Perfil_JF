@@ -6,6 +6,23 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.5 · 15/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.3: OUVINTES, RESPIRO E PALPITAR AGORA.
+          Retorno do JF sobre a 4.2: falar muito não é problema (5 a 10 por carta ok); o problema era falar muito em pouco
+          tempo. Cordas vocais: CAOS_FALAS_POR_CARTA 2 → 10; no lugar do intervalo fixo de 20 s, o comentário só sai
+          depois que a fala anterior TERMINOU (caosFalaFimAt, marcado no closeActiveToast) + respiro CAOS_RESPIRO_MS 3,5 s
+          e 6 s mínimos entre começos; ouvido interno (caosRespiroAgora): 6+ falas no último minuto = respiro de 9 s;
+          18+ falas nas últimas 3 cartas = dobra. A fila respeita o respiro e não conta a fala duas vezes (caosFalaDaFila).
+          Ouvintes da sala (07-caos/12-ouvintes.js): cada celular manda um sinal invisível pro host (novo tipo "sinal":
+          "pulou"/"voz"); só o cérebro do C.A.O.S. lê, nada aparece na tela do host. Pular fala marca quem pulou de
+          verdade (caosRegistrarCorte(quemIdx); no aparelho do host, caosQuemPulouAqui), e a reação vai pro aparelho dessa
+          pessoa. Calou = desligou a voz depois de ter ligado. Todos calaram: só aviso de regra até alguém religar. Só parte
+          calou: quem calou fica com rancor/marcado, quem ouve vira "suave" (playerHumor via caosFiel) e ele faz ciúmes
+          (falas caosOuvintes.*). Palpitar agora (pedido do JF): quem tem a ficha toca no próprio aparelho, o Mestre julga só
+          esse palpite (palpiteVez; ações palpitarAgora/pedirDica); errou, a ficha volta pro banco e a vez segue com a mesma
+          dica. Selo amarelo 🃏 em quem tem ficha. Pedir dica: quem está na vez toca no número e o Mestre recebe o pedido em
+          destaque (só o Mestre abre, regra da 1.7.9.6). Deboche da voz do servidor: meio seco, meio alegre
+          (["+4%",470,"neutral",-3], VOZ_SSML_VERSAO 7). Travamento do duelo relatado pelo Henrique: não reproduzido em
+          1.920 jogadas aleatórias (ferramentas/teste_duelo.js entra na bateria). Docs de brainstorm em docs/brainstorm/.
   1.7.10.4 · 15/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.2: FALA MENOS E FALA PRA PESSOA CERTA.
           Partida online de 4 PCs (JF, Vitinho, Rafa, Henrique): o C.A.O.S. estava insuportável e todos calaram.
           Orçamento de comentários (CAOS_FALAS_POR_CARTA 7 → 2, CAOS_FALA_INTERVALO_MS 20 s, dobra se falou 5+ nas
@@ -781,7 +798,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.4</title>
+<title>Perfil JF · Beta 1.7.10.5</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

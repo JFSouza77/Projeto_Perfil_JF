@@ -49,6 +49,8 @@ function humorEscolhido(p) {
 }
 function playerHumor(p) {
   if (p && p.iniciante) return "suave";
+  // C.A.O.S. 4.3: no online, se uma parte da mesa calou ele, quem ainda ouve ganha o tratamento suave (ciúmes)
+  if (typeof caosFiel === "function" && caosFiel(p)) return "suave";
   const h = p && p.humor;
   if (h === "familia") return typeof CURRENT_MODE !== "undefined" && CURRENT_MODE === "hardcore" ? "normal" : "suave";
   if (h === "suave" && typeof CURRENT_MODE !== "undefined" && CURRENT_MODE === "hardcore") return "normal";
@@ -462,8 +464,45 @@ function palpiteEligibleScorers() {
   if (CURRENT_FORMAT === "equipe") return players.map((p, i) => i).filter((i) => keys.includes(players[i].team));
   return keys.map((k) => jogadorIdxPorId(k)).filter((i) => i >= 0);
 }
+// 1.7.10.5 (pedido do JF) · Palpitar agora: quem tem a ficha toca no PRÓPRIO aparelho enquanto a dica está aberta
+// e "rouba" a tentativa. O Mestre passa a julgar o palpite dessa pessoa (acertou/errou) no lugar de quem estava na
+// vez. Um por vez: o primeiro toque que chega no host vale; os outros esperam o veredito. Errou: a ficha volta pro
+// banco e a vez normal segue com a mesma dica aberta (o relógio não reinicia).
+let palpiteVez = null; // { key, dica, carta }
+function palpiteVezAtual() {
+  if (!palpiteVez || palpiteVez.dica !== pendingIndex || palpiteVez.carta !== cartaSeq) return null;
+  return palpiteEligibleHolders().includes(palpiteVez.key) ? palpiteVez : null;
+}
+function palpitarAgora(key) {
+  if (pendingIndex === null || gameEnded || !currentCard) return;
+  const item = currentCard.clues[pendingIndex];
+  if (!item || item.type !== "clue" || !palpiteEligibleHolders().includes(key) || palpiteVezAtual()) return;
+  palpiteVez = { key, dica: pendingIndex, carta: cartaSeq };
+  const d = entityDisplay(key);
+  caosLog("palpite", `${d.name} tocou em Palpitar agora (dica ${pendingIndex + 1})`);
+  // sem balão: a área de julgamento do Mestre já troca pro palpite (JF: o host não pode virar live de notificação)
+  playSfx("pick");
+  render();
+}
+// 1.7.10.5 (pedido do JF) · Pedir dica de qualquer aparelho: quem está na vez toca no número e o Mestre recebe o
+// pedido em destaque (quem abre continua sendo o Mestre, regra da 1.7.9.6). Agiliza com Mestre distraído.
+let pedidoDica = null; // { idx, por, carta }
+function pedidoDicaAtual() {
+  if (!pedidoDica || pedidoDica.carta !== cartaSeq || pendingIndex !== null || cardState !== "revealed") return null;
+  if (revealedOrder.some((r) => r.index === pedidoDica.idx)) return null;
+  return pedidoDica;
+}
+function pedirDica(idx) {
+  if (cardState !== "revealed" || pendingIndex !== null || gameEnded || !currentCard) return;
+  if (idx < 0 || idx >= currentCard.clues.length || revealedOrder.some((r) => r.index === idx)) return;
+  pedidoDica = { idx, por: jogadorIdDe(responderIndex), carta: cartaSeq };
+  caosLog("dica", `${(players[responderIndex] || {}).name} pediu a dica ${idx + 1}`);
+  playSfx("pick");
+  render();
+}
 function palpiteHit(key) {
   if (pendingIndex === null || gameEnded || !palpiteEligibleHolders().includes(key)) return;
+  palpiteVez = null;
   const t = CURRENT_FORMAT === "equipe" ? teams[key] : null;
   const idx = t ? (t.members && t.members.length ? t.members[t.memberCursor % t.members.length] : null) : jogadorIdxPorId(key);
   if (idx === null || idx === void 0 || idx < 0) return;
@@ -471,6 +510,7 @@ function palpiteHit(key) {
 }
 function palpiteMiss(key) {
   if (pendingIndex === null || gameEnded || !palpiteEligibleHolders().includes(key)) return;
+  palpiteVez = null;
   consumePalpite(key);
   const d = entityDisplay(key);
   showToastMessage(`🃏 ${d.name} errou o palpite — sem penalidade, a ficha voltou pro estoque.`, null, true);
@@ -620,12 +660,18 @@ function gemBadgesHtml(holder) {
     .map((c) => ` <span class="gem">${joiaHtml(c, "joia-mini")}${g[c] > 1 ? "×" + g[c] : ""}</span>`)
     .join("");
 }
+// 1.7.10.5 (pedido do JF): selo amarelo (a cor da ficha no Perfil de mesa) em quem tem ficha de palpite
 function palpiteBadge(key) {
   const n = palpiteCount(key);
-  return n > 0 ? ` <span title="fichas de palpite">🃏×${n}</span>` : "";
+  return n > 0 ? ` <span class="selo-palpite" title="Tem ficha de palpite a qualquer hora">🃏${n > 1 ? "×" + n : ""}</span>` : "";
 }
 function buildPalpiteBoxHtml() {
-  const keys = palpiteEligibleHolders();
+  // 1.7.10.5: no online, quem tem aparelho próprio na sala usa o botão Palpitar agora lá (sai daqui)
+  const keys = palpiteEligibleHolders().filter(
+    (k) =>
+      CURRENT_FORMAT === "equipe" ||
+      typeof rede === "undefined" || !rede || rede.papel !== "host" || redeNoHost(k) || !redeOnline(rede.assentos[k]),
+  );
   if (keys.length === 0) return "";
   const rows = keys
     .map((k) => {

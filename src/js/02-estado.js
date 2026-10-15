@@ -85,6 +85,7 @@ let caosPrevMarkedIdx = null;
 let caosLastSpeechByPlayer = {};
 let caosCardMem = null;
 let caosUltimaFalaAt = 0;
+let caosFalaFimAt = 0; // C.A.O.S. 4.3: quando a última fala dele terminou (o respiro conta daqui)
 let caosFalasRecentes = [];
 let caosLastMoodSeen = null;
 let gemWinner = null;

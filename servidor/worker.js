@@ -66,7 +66,7 @@ const VOZ_EMOCOES = {
   orgulho: ["+8%", 320, "joyful", 0],
   raiva: ["+15%", 260, "angry", 0],
   furia: ["+22%", 220, "shouting", 0],
-  deboche: ["+0%", 560, "neutral", -6],
+  deboche: ["+4%", 470, "neutral", -3], // 4.3 (JF: "um pouco dos dois"): seco, mas com um sorrisinho na voz
   tedio: ["-10%", 650, "", 0],
   carinho: ["-6%", 420, "softvoice", 0],
   desafio: ["+10%", 300, "determined", 0],
@@ -85,7 +85,7 @@ const VOZ_EMOCOES = {
   nostalgia: ["-6%", 560, "neutral", -5],
   alivio: ["-3%", 340, "neutral", 5],
 };
-const VOZ_SSML_VERSAO = 6;
+const VOZ_SSML_VERSAO = 7;
 // Texto já limpo (sem < > & ") → SSML: "⏸" vira pausa, PALAVRA EM CAIXA ALTA (4+ letras) sai mais forte,
 // palavra esticada ("PASTEEEL", "NÃÃÃO") vira a palavra normal, mais lenta e forte (lida letra a letra, saía
 // "pastil"), interjeição no começo ganha um respiro, e a emoção muda o volume (e o estilo, se a voz tiver).

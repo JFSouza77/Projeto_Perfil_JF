@@ -48,7 +48,7 @@
 const REDE_PROTOCOLO = 1;
 const REDE_MAX_LETRAS = 640 * 1024; // só o pacote de recuperação chega perto disso
 const REDE_MAX_NORMAL = 64 * 1024; // o resto das mensagens
-const REDE_DO_CONVIDADO = ["oi", "cmd", "ping", "tchau", "voto", "pedido"];
+const REDE_DO_CONVIDADO = ["oi", "cmd", "ping", "tchau", "voto", "pedido", "sinal"];
 const REDE_DO_HOST = ["bemvindo", "escolha", "recusa", "retrato", "segredo", "resp", "pong", "painel", "recuperacao", "aguarde", "fala"];
 // 1.7.10.1 (pedido do JF): 1 min sem notícia do host antes do sucessor assumir (dá tempo de voltar de outro app)
 const REDE_HOST_SUMIU_MS = typeof window !== "undefined" && Number.isFinite(window.__REDE_HOST_SUMIU_MS) ? window.__REDE_HOST_SUMIU_MS : 60000;
@@ -707,6 +707,8 @@ function redeValidar(bruto) {
       m.perfil && typeof m.perfil === "object" && txt(m.perfil.nome, 15) && typeof m.chave === "string" && /^[a-z0-9]{12,32}$/.test(m.chave) &&
       ["cor", "avatar", "humor", "idade", "faixa"].every((k) => m.perfil[k] === undefined || m.perfil[k] === null || txt(m.perfil[k], 20)),
     aguarde: () => true,
+    // C.A.O.S. 4.3: o celular conta pro host que pulou a fala ou ligou/desligou a voz do C.A.O.S.
+    sinal: () => ["pulou", "voz"].includes(m.tipo) && (m.ligada === undefined || typeof m.ligada === "boolean"),
     fala: () =>
       txt(m.texto, 240) &&
       (m.quem === undefined || (Array.isArray(m.quem) && m.quem.length <= 8 && m.quem.every(jogadorIdValido))) &&
@@ -1128,6 +1130,21 @@ function redeHostReceber(m) {
   if (m.t === "pedido") return redeHostPedidoPerfil(m);
   if (m.t === "cmd") return redeHostComando(m, a);
   if (m.t === "voto") return a && redeVotar(a, m.votacao, m.sim);
+  if (m.t === "sinal") return a && redeHostSinal(a, m);
+}
+// C.A.O.S. 4.3: sinal do celular. "pulou" = a pessoa daquele aparelho pulou a fala (o C.A.O.S. marca ela, não o
+// Mestre da vez). "voz" = ela ligou ou desligou a voz do C.A.O.S. no celular (conta pros ouvintes da sala).
+function redeHostSinal(jid, m) {
+  const i = jogadorIdxPorId(jid);
+  if (i < 0) return;
+  if (m.tipo === "voz") return caosOuvinteVoz([jid], !!m.ligada);
+  if (m.tipo === "pulou") {
+    const agora = Date.now();
+    rede.pulouAt = rede.pulouAt || {};
+    if (agora - (rede.pulouAt[jid] || 0) < 1500) return; // dois toques seguidos contam uma vez
+    rede.pulouAt[jid] = agora;
+    caosRegistrarCorte(i);
+  }
 }
 function redeHostOi(m) {
   // 1.7.10: vale o build (convidado antigo não manda build: é mais velho, recusa igual)
@@ -1233,7 +1250,16 @@ function redeFalaProxima() {
     el.id = "redeFala";
     el.className = "rede-fala";
     el.setAttribute("aria-live", "polite");
-    el.addEventListener("click", () => redeFalaProxima());
+    el.addEventListener("click", () => {
+      // C.A.O.S. 4.3: pulei a fala do C.A.O.S. aqui no celular: o host fica sabendo quem foi
+      if (rede && rede.falaAtiva && rede.papel === "convidado" && rede.eu) {
+        try {
+          caosVoiceCancel();
+        } catch (e) {}
+        redeEnviar("sinal", { tipo: "pulou" });
+      }
+      redeFalaProxima();
+    });
     document.body.appendChild(el);
   }
   el.classList.toggle("minha", f.minha);
@@ -1446,13 +1472,16 @@ const REDE_SO_MESTRE = [
 ];
 const REDE_QUALQUER_UM = ["pausar", "continuar"];
 const REDE_SO_HOST = ["tempoAcabou", "expressCartaPerdida", "admRemover", "encerrar"];
-function redePodeComandar(acao, jid) {
+function redePodeComandar(acao, jid, dados) {
   if (!jid || jogadorIdxPorId(jid) < 0) return false;
   if (REDE_SO_HOST.includes(acao)) return false;
   if (REDE_QUALQUER_UM.includes(acao)) return true;
   const ehMestre = jogadorIdDe(mestreIndex) === jid;
   if (REDE_SO_MESTRE.includes(acao)) return ehMestre;
   if (acao === "escolherDica") return ehMestre; // 1.7.9.6 (regra do JF): só o Mestre abre as dicas; quem está na vez fala o número
+  // 1.7.10.5: quem está na vez pede a dica no próprio aparelho (o Mestre abre); a ficha de palpite é de quem tem
+  if (acao === "pedirDica") return !ehMestre && jogadorIdDe(responderIndex) === jid;
+  if (acao === "palpitarAgora") return !ehMestre && !!dados && dados[0] === palpiteKeyOf(jogadorIdxPorId(jid));
   if (acao === "bonusAdversario") {
     const e = pendingBonusQueue && pendingBonusQueue[0];
     if (!e) return false;
@@ -1464,7 +1493,7 @@ function redePodeComandar(acao, jid) {
 function redeHostComando(m, jid) {
   const responder = (ok, motivo) => redeEnviar("resp", { commandId: m.commandId, ok, motivo: motivo || null, revisao: partidaRevisao }, m.de);
   if (!jid) return responder(false, "sem_lugar");
-  if (!redePodeComandar(m.acao, jid)) return responder(false, "sem_permissao");
+  if (!redePodeComandar(m.acao, jid, m.dados)) return responder(false, "sem_permissao");
   // Descartar e Desistir pedidos pelo celular viram votação da mesa (se houver mais gente na sala)
   if ((m.acao === "descartarCarta" || m.acao === "desistirCarta") && redeVotacaoPrecisa()) {
     const def = ACOES[m.acao];
@@ -1501,8 +1530,25 @@ function redeOpcoes(jid) {
       teamOrder.filter((id) => id !== e.landerIdx).forEach((id) => add("bonusAdversario", [id], `${TEAM_INFO[id].emoji} Equipe ${TEAM_INFO[id].label}`, "", "🏟️ Contra quem é o duelo?"));
     else players.forEach((p, i) => i !== e.landerIdx && add("bonusAdversario", [i], nome(i), "", "🏟️ Contra quem é o duelo?"));
   }
+  // 1.7.10.5 (pedido do JF): quem tem a ficha de palpite "rouba" a tentativa no próprio aparelho
+  const meuIdx = jogadorIdxPorId(jid), minhaChave = palpiteKeyOf(meuIdx);
+  if (!ehMestre && cardState === "revealed" && pendingIndex !== null && currentCard && currentCard.clues[pendingIndex].type === "clue" && CURRENT_MODE !== "express") {
+    const pv = palpiteVezAtual();
+    if (!pv && palpiteEligibleHolders().includes(minhaChave)) add("palpitarAgora", [minhaChave], "🃏 Palpitar agora!", "ok", "Palpite a qualquer hora");
+  }
+  // 1.7.10.5: quem está na vez pede a dica pelo número; o Mestre recebe o pedido e abre
+  if (!ehMestre && cardState === "revealed" && pendingIndex === null && currentCard && jogadorIdDe(responderIndex) === jid && CURRENT_MODE !== "express") {
+    const ped = pedidoDicaAtual();
+    currentCard.clues.forEach((c, i) => {
+      if (!revealedOrder.some((r) => r.index === i)) add("pedirDica", [i], (ped && ped.idx === i ? "👉 " : "") + String(i + 1), "", "👉 Peça a sua dica: toque no número (o Mestre abre)");
+    });
+  }
   if (ehMestre) {
     if (cardState === "none") add("sacarCarta", [], "🃏 Puxar carta", "ok");
+    if (cardState === "revealed" && pendingIndex === null && currentCard) {
+      const ped = pedidoDicaAtual();
+      if (ped) add("escolherDica", [ped.idx], `👉 Abrir a dica ${ped.idx + 1} (pedida por ${nome(jogadorIdxPorId(ped.por))})`, "ok");
+    }
     // 1.7.10.1: o Mestre no celular gira a roleta (todos veem) e, com ela parada, mostra a carta
     if (cardState === "hidden") {
       if (roletaCarta !== currentCard) add("roletaCategoria", [], "↻ Virar carta", "ok");
@@ -1538,15 +1584,25 @@ function redeOpcoes(jid) {
         players.forEach((p, i) => i !== mestreIndex && add("acertou", [i], "✓ " + nome(i), "ok", "Quem acertou?"));
         add("expressPassar", [], "➡️ Próxima dica", "nao");
       } else {
-        add("acertou", [resp], `✓ ${players[resp] ? players[resp].name : "?"} acertou`, "ok");
-        add("errou", [], "✕ Errou", "nao");
-        add("errou", ["pular"], "» Pulou");
-        add("errou", ["absurdo"], "⚠︎ Absurdo");
-        palpiteEligibleHolders().forEach((k) => {
-          const d = entityDisplay(k);
-          add("palpiteAcertou", [k], `🃏 Palpite de ${d.name}: acertou`, "ok", "Palpite a qualquer hora");
-          add("palpiteErrou", [k], `🃏 Palpite de ${d.name}: errou`, "nao", "Palpite a qualquer hora");
-        });
+        // 1.7.10.5 (pedido do JF): alguém tocou em Palpitar agora: o julgamento troca de alvo pra essa pessoa
+        const pv = palpiteVezAtual();
+        if (pv) {
+          const d = entityDisplay(pv.key);
+          add("palpiteAcertou", [pv.key], `🃏 ${d.name} acertou (palpite)`, "ok");
+          add("palpiteErrou", [pv.key], `🃏 ${d.name} errou (palpite)`, "nao");
+        } else {
+          add("acertou", [resp], `✓ ${players[resp] ? players[resp].name : "?"} acertou`, "ok");
+          add("errou", [], "✕ Errou", "nao");
+          add("errou", ["pular"], "» Pulou");
+          add("errou", ["absurdo"], "⚠︎ Absurdo");
+          // a ficha fica com o botão no aparelho de quem tem; aqui só quem não tem como tocar (sem aparelho na sala)
+          palpiteEligibleHolders().forEach((k) => {
+            if (CURRENT_FORMAT !== "equipe" && (redeNoHost(k) || redeOnline(rede.assentos[k]))) return;
+            const d = entityDisplay(k);
+            add("palpiteAcertou", [k], `🃏 Palpite de ${d.name}: acertou`, "ok", "Palpite a qualquer hora");
+            add("palpiteErrou", [k], `🃏 Palpite de ${d.name}: errou`, "nao", "Palpite a qualquer hora");
+          });
+        }
       }
     }
     if (cardState === "revealed" && CURRENT_MODE !== "express") {
@@ -1725,7 +1781,7 @@ function redeHostVista() {
   if (topo) topo.after(barra);
   else box.prepend(barra);
   const agir = (quem, acao, dados) => {
-    if (!quem || !redePodeComandar(acao, quem)) return;
+    if (!quem || !redePodeComandar(acao, quem, dados)) return;
     dispatchAction({ type: acao, data: dados, commandId: "h_" + redeAleatorio(12), expectedRevision: partidaRevisao, actorId: quem });
   };
   barra.querySelectorAll("[data-op]").forEach((b) =>
@@ -1979,6 +2035,10 @@ function redeConvidadoReceber(m) {
   if (m.t === "bemvindo") {
     rede.eu = m.jogadorId;
     rede.estado = "dentro";
+    // C.A.O.S. 4.3: entrou com a voz ligada? O host conta como ouvinte
+    try {
+      if (caosVoiceOn) redeEnviar("sinal", { tipo: "voz", ligada: true });
+    } catch (e) {}
     try {
       const eu = JSON.stringify({ id: m.jogadorId, chave: rede.chave });
       sessionStorage.setItem(REDE_EU_KEY + rede.sala, eu);
@@ -2135,6 +2195,9 @@ function redeVozTrocar() {
   try {
     unlockAudio();
     toggleVoice();
+  } catch (e) {}
+  try {
+    if (rede && rede.papel === "convidado" && rede.eu) redeEnviar("sinal", { tipo: "voz", ligada: !!caosVoiceOn });
   } catch (e) {}
   // C.A.O.S. 4.2: calou a voz no celular? Uma reação curta, só em texto, uma vez por sala neste aparelho
   try {
@@ -2344,8 +2407,9 @@ function redeMestreCartaMontar(box) {
     } else {
       const abertas = new Set(c.abertas.map((d) => d.pos));
       let grade = "";
-      for (let i = 0; i < c.totalDicas; i++) grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : ""}>${i + 1}</button>`;
-      controles = `<div class="pick-label">${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)</div><div class="number-grid">${grade}</div>`;
+      const ped = r.pedidoDica; // 1.7.10.5: número pedido por quem está na vez
+      for (let i = 0; i < c.totalDicas; i++) grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}${ped && ped.pos === i ? " pedida" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : ""}>${i + 1}</button>`;
+      controles = `${ped ? `<div class="pedido-dica">👉 ${nome(ped.por)} pediu a dica <b>${ped.pos + 1}</b>. Toque nela pra abrir.</div>` : ""}<div class="pick-label">${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)</div><div class="number-grid">${grade}</div>`;
     }
     h = `<div class="card rede-carta-mestre" style="--card-glow:${cor}">
       <div class="answer-header cat-neon" style="--cat:${cor};"><span class="cat-selo">${CAT_SELO_ICONE[cat] || "🃏"} ${escapeHtml((GEM_INFO[cat] || {}).name || cat)}</span>Diga aos jogadores: "Eu sou ${formatLabelUppercase(CATEGORY_LABELS[cat] || escapeHtml(cat))}."</div>
@@ -2548,7 +2612,7 @@ function redeBotoesHtml() {
     h += `<div class="rede-votacao">🗳️ ${escapeHtml(quem)} quer ${v.tipo === "descartar" ? "descartar" : "desistir de"} esta carta. <b>${v.sim}</b> sim · <b>${v.nao}</b> não · <b id="redeVotoSeg">…</b> s${ja ? "<div><small>Seu voto foi.</small></div>" : `<div class="rede-acoes"><button type="button" class="rede-btn rede-ok" data-voto="1">👍 Sim</button><button type="button" class="rede-btn rede-nao" data-voto="0">👎 Não</button></div>`}</div>`;
   }
   if (papel.vez && !papel.mestre && r.estadoCarta === "revealed" && r.carta && (r.carta.pendente === null || r.carta.pendente === undefined))
-    h += `<div class="rede-rot">👉 Sua vez: fale um número de dica pro Mestre abrir.</div>`;
+    h += `<div class="rede-rot">👉 Sua vez: toque no número (ou fale) e o Mestre abre a dica.</div>`;
   if (papel.mestre && rede.segredo && rede.segredo.resposta)
     h += `<div class="rede-segredo">🔒 Só você vê: <b>${escapeHtml(rede.segredo.resposta)}</b></div>`;
   const c = r.carta;
@@ -2564,13 +2628,14 @@ function redeBotoesHtml() {
   ops.forEach((o, i) => {
     const g = o.g || "";
     let gr = grupos.find((x) => x.g === g);
-    if (!gr) grupos.push((gr = { g, itens: [] }));
+    if (!gr) grupos.push((gr = { g, itens: [], nums: true }));
+    if (o.a !== "pedirDica") gr.nums = false;
     gr.itens.push(`<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`);
   });
   grupos.sort((a, b) => (a.g === "Mais") - (b.g === "Mais"));
   grupos.forEach((gr) => {
     if (gr.g) h += `<div class="rede-rot">${escapeHtml(gr.g === "Mais" ? "" : gr.g)}</div>`;
-    h += `<div class="rede-acoes${gr.g === "Mais" ? " rede-mais" : ""}">${gr.itens.join("")}</div>`;
+    h += `<div class="${gr.nums ? "rede-nums" : "rede-acoes"}${gr.g === "Mais" ? " rede-mais" : ""}">${gr.itens.join("")}</div>`;
   });
   const ult = Object.values(rede.respostas).slice(-1)[0];
   const aviso = ult && (!ult.ok || ult.motivo === "votacao") && REDE_MOTIVOS[ult.motivo] ? `<div class="rede-aviso">${escapeHtml(REDE_MOTIVOS[ult.motivo])}</div>` : "";

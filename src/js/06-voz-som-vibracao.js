@@ -528,10 +528,11 @@ function toggleVoice() {
   updateVoiceBtn();
   if (caosVoiceOn) vozNuvemConferir();
   if (caosVoiceOn) caosSpeakSample("Voz do Caos ligada. Podem começar.");
-  else {
-    caosVoiceCancel();
-    caosVozCalada();
-  }
+  else caosVoiceCancel();
+  // C.A.O.S. 4.3: com a sala online aberta, quem decide a reação é a conta dos ouvintes da sala
+  // (todos calaram / só alguns calaram); no aparelho único, a reação de sempre (só texto, uma vez)
+  if (typeof salaOnlineAberta === "function" && salaOnlineAberta()) caosOuvinteVoz(redeJogadoresNoHost(), caosVoiceOn);
+  else if (!caosVoiceOn) caosVozCalada();
 }
 // Pedido do JF: ao entrar no cadastro dos jogadores, se a voz deste aparelho está desligada, o C.A.O.S.
 // pergunta se pode falar. Sim = liga a voz aqui. Não = comentáriozinho triste, segue só com os balões.

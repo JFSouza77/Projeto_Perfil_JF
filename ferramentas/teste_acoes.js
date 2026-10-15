@@ -318,13 +318,22 @@ const ARQ = acharMestre(process.argv[2]);
     // C.A.O.S. 4.2 (partida online de 4: "insuportável"): comentário respeita intervalo; aviso de regra passa;
     // no online, Alt-Tab não pausa e pular fala não marca ninguém; categoria apresentada volta no save
     {
-      const ultAntes = caosUltimaFalaAt;
+      const ultAntes = caosUltimaFalaAt, fimAntes = caosFalaFimAt;
+      if (activeToastState) closeActiveToast();
       caosUltimaFalaAt = Date.now();
-      const cortaComentario = caosToastBloquear() === true;
+      const cortaInicio = caosToastBloquear() === true;
+      // C.A.O.S. 4.3: o respiro conta de quando a fala anterior TERMINOU
+      caosUltimaFalaAt = Date.now() - 3e4; caosFalaFimAt = Date.now();
+      const cortaRespiro = caosToastBloquear() === true;
+      caosFalaFimAt = Date.now() - 2e4; caosFalaCartaN = 0; caosFalasRecentes = [];
+      const respirouPassa = caosToastBloquear() === false;
+      const cortaComentario = cortaInicio && cortaRespiro && respirouPassa && CAOS_FALAS_POR_CARTA >= 5;
+      caosFalaFimAt = fimAntes;
       caosFalaEssencial = true;
       const regraPassa = caosToastBloquear() === false;
       caosFalaEssencial = false;
       caosUltimaFalaAt = ultAntes;
+      caosFalaFimAt = fimAntes;
       const redeAntes = typeof rede !== 'undefined' ? rede : null;
       rede = { papel: 'host' };
       const pausou0 = !!pausedAt;
@@ -341,6 +350,87 @@ const ARQ = acharMestre(process.argv[2]);
       const guardou = Array.isArray(salvo.caosUmaVez) && salvo.caosUmaVez.includes('primeira_cat_LUGAR');
       out.caos42 = cortaComentario && regraPassa && naoPausa && naoMarca && guardou;
       out.caos42diag = JSON.stringify({ cortaComentario, regraPassa, naoPausa, naoMarca, guardou });
+    }
+    // C.A.O.S. 4.3 · ouvintes da sala: pular marca quem pulou (aparelho do host / celular); todos calaram =
+    // quieto (regra passa); só parte calou = ciúmes (quem calou marcado, quem ouve fica no suave)
+    {
+      const redeAntes = typeof rede !== 'undefined' ? rede : null;
+      const cortesAntes = JSON.stringify(caosCortes), marcAntes = JSON.stringify(caosMarked), ouvAntes = JSON.stringify(caosOuvintes), estAntes = caosOuvintesEstado;
+      const agendarOrig = caosFalaAgendar, falas = [];
+      caosFalaAgendar = (fn, ms, prio) => falas.push({ t: fn(), prio });
+      const jogAntes = players, iniAntes3 = starterChosen, fimJogo3 = gameEnded, mestreAntes3 = mestreIndex;
+      players = ['Ana', 'Beto', 'Caio'].map((n, i) => ({ id: jogadorIdNovo(), name: n, score: 0, position: 0, color: PLAYER_COLORS[i], avatar: '😀', humor: 'normal', gems: {} }));
+      starterChosen = true; gameEnded = false; mestreIndex = 2;
+      const [a, b2, c] = players;
+      rede = { papel: 'host', hostEu: a.id, hostJunto: [], assentos: {} };
+      caosCortes = { total: 0, por: {}, rancor: {} };
+      caosOuvintes = {}; caosOuvintesEstado = 'normal';
+      caosRegistrarCorte();
+      const pulouHost = caosCortes.por[a.name] === 1 && caosMarked.idx === 0;
+      redeHostSinal(b2.id, { tipo: 'pulou' });
+      redeHostSinal(b2.id, { tipo: 'pulou' }); // toque duplo conta uma vez
+      const pulouCelular = caosCortes.por[b2.name] === 1 && caosMarked.idx === 1 && !caosCortes.por[players[mestreIndex].name + '_x'];
+      caosOuvinteVoz([a.id], true); redeHostSinal(b2.id, { tipo: 'voz', ligada: true }); caosOuvinteVoz([c.id], true);
+      const normal = caosOuvintesEstado === 'normal';
+      redeHostSinal(b2.id, { tipo: 'voz', ligada: false });
+      const ciumes = caosOuvintesEstado === 'ciumes' && caosFiel(a) && !caosFiel(b2) && playerHumor(a) === 'suave' && caosCortes.rancor[b2.name] === true && falas.some((f) => f.t.includes(b2.name) && f.t.includes(a.name) || f.t.includes(b2.name) && f.t.includes(c.name));
+      caosOuvinteVoz([a.id], false); caosOuvinteVoz([c.id], false);
+      const fimAntes2 = caosFalaFimAt, iniAntes2 = caosUltimaFalaAt;
+      caosFalaFimAt = 0; caosUltimaFalaAt = 0; caosFalaCartaN = 0; caosFalasRecentes = [];
+      const calada = caosSalaCalada() && caosToastBloquear() === true && falas.some((f) => f.prio === 'regra' && /calou|calad|ninguém quer|desligou/i.test(f.t));
+      caosFalaEssencial = true; const regraPassa = caosToastBloquear() === false; caosFalaEssencial = false;
+      caosOuvinteVoz([c.id], true);
+      const voltou = caosOuvintesEstado === 'ciumes' && !caosSalaCalada() && falas.some((f) => f.t.includes(c.name) && /de novo|voltei|saudade/i.test(f.t));
+      caosFalaFimAt = fimAntes2; caosUltimaFalaAt = iniAntes2;
+      caosFalaAgendar = agendarOrig;
+      caosCortes = JSON.parse(cortesAntes); caosMarked = JSON.parse(marcAntes); caosOuvintes = JSON.parse(ouvAntes); caosOuvintesEstado = estAntes;
+      rede = redeAntes;
+      players = jogAntes; starterChosen = iniAntes3; gameEnded = fimJogo3; mestreIndex = mestreAntes3;
+      out.caos43 = pulouHost && pulouCelular && normal && ciumes && calada && regraPassa && voltou;
+      out.caos43diag = JSON.stringify({ pulouHost, pulouCelular, normal, ciumes, calada, regraPassa, voltou });
+    }
+    // 1.7.10.5 · Palpitar agora (quem tem a ficha rouba a tentativa no próprio aparelho) e pedido de dica pelo aparelho
+    {
+      const redeAntes = typeof rede !== 'undefined' ? rede : null;
+      const jogAntes = players, iniAntes = starterChosen, fimAntes = gameEnded, mAntes = mestreIndex, rAntes = responderIndex;
+      const cartaAntes = currentCard, estAntes = cardState, pendAntes = pendingIndex, revAntes = revealedOrder, holdAntes = { ...palpiteHolders }, stockAntes = palpiteStock, modoAntes = CURRENT_MODE, fmtAntes = CURRENT_FORMAT;
+      CURRENT_FORMAT = 'versus';
+      players = ['Ana', 'Beto', 'Caio', 'Duda'].map((n, i) => ({ id: jogadorIdNovo(), name: n, score: 0, position: 0, color: PLAYER_COLORS[i], avatar: '😀', humor: 'normal', gems: {} }));
+      const [a, b2, c, d] = players;
+      starterChosen = true; gameEnded = false; mestreIndex = 0; responderIndex = 1;
+      currentCard = { answer: 'Teste', category: 'COISA', clues: Array.from({ length: 10 }, (_, i) => ({ type: 'clue', text: 'dica ' + (i + 1) })) };
+      cardState = 'revealed'; revealedOrder = []; pendingIndex = null; cartaSeq++;
+      rede = { papel: 'host', hostEu: a.id, hostJunto: [], assentos: { [b2.id]: { visto: Date.now(), sessao: 's_b' }, [c.id]: { visto: Date.now(), sessao: 's_c' }, [d.id]: { visto: Date.now(), sessao: 's_d' } } };
+      // pedido de dica: Beto (na vez) pede a 7 no celular dele; o Mestre vê "Abrir a dica 7"
+      const opsBeto = redeOpcoes(b2.id);
+      const temNumeros = opsBeto.filter((o) => o.a === 'pedirDica').length === 10;
+      const naoDeOutro = !redePodeComandar('pedirDica', c.id, [6]) && redePodeComandar('pedirDica', b2.id, [6]);
+      dispatchAction({ type: 'pedirDica', data: [6], actorId: b2.id });
+      const opsMestre = redeOpcoes(a.id);
+      const pedido = !!opsMestre.find((o) => o.a === 'escolherDica' && o.d[0] === 6 && /pedida por/.test(o.t)) && retratoPartida('mesa').pedidoDica.pos === 6 && pendingIndex === null;
+      chooseClue(6);
+      if (activeToastState) closeActiveToast();
+      const pedidoSome = !pedidoDicaAtual() && retratoPartida('mesa').pedidoDica === null;
+      // Palpitar agora: Caio tem a ficha; vê o botão no aparelho dele; Duda (sem ficha) não vê
+      palpiteHolders = { [c.id]: 1 }; palpiteStock = 4;
+      const caioVe = !!redeOpcoes(c.id).find((o) => o.a === 'palpitarAgora');
+      const dudaNao = !redeOpcoes(d.id).find((o) => o.a === 'palpitarAgora') && !redePodeComandar('palpitarAgora', d.id, [c.id]);
+      const mestreSemFicha = !redeOpcoes(a.id).some((o) => o.a === 'palpiteAcertou');
+      dispatchAction({ type: 'palpitarAgora', data: [c.id], actorId: c.id });
+      if (activeToastState) closeActiveToast();
+      const om = redeOpcoes(a.id);
+      const julgaCaio = om.some((o) => o.a === 'palpiteAcertou' && o.d[0] === c.id) && !om.some((o) => o.a === 'acertou') && retratoPartida('mesa').palpiteVez === c.id;
+      const umPorVez = !redeOpcoes(c.id).find((o) => o.a === 'palpitarAgora');
+      const pendDepois = pendingIndex;
+      dispatchAction({ type: 'palpiteErrou', data: [c.id], actorId: a.id });
+      if (activeToastState) closeActiveToast();
+      const errouSegue = !palpiteHolders[c.id] && palpiteStock === 5 && pendingIndex === pendDepois && responderIndex === 1 && !palpiteVezAtual() && redeOpcoes(a.id).some((o) => o.a === 'acertou');
+      rede = redeAntes;
+      players = jogAntes; starterChosen = iniAntes; gameEnded = fimAntes; mestreIndex = mAntes; responderIndex = rAntes;
+      currentCard = cartaAntes; cardState = estAntes; pendingIndex = pendAntes; revealedOrder = revAntes; palpiteHolders = holdAntes; palpiteStock = stockAntes; CURRENT_MODE = modoAntes; CURRENT_FORMAT = fmtAntes;
+      palpiteVez = null; pedidoDica = null;
+      out.palpiteAgora = temNumeros && naoDeOutro && pedido && pedidoSome && caioVe && dudaNao && mestreSemFicha && julgaCaio && umPorVez && errouSegue;
+      out.palpiteAgoraDiag = JSON.stringify({ temNumeros, naoDeOutro, pedido, pedidoSome, caioVe, dudaNao, mestreSemFicha, julgaCaio, umPorVez, errouSegue });
     }
     // 1.7.10.3: busca nas regras e o lembrete da primeira carta de cada categoria
     {
@@ -453,7 +543,9 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.10: Reportar carta anota no aparelho, sem resposta na janela e sem mexer na partida', r.reportar],
     ['1.7.10: nome repetido: o nome já cadastrado fica em destaque, o campo fica vermelho e o C.A.O.S. comenta', r.nomeRepetido],
     ['Travas ADM: a pergunta abre, Sim trava o nick da Anne, Não desliga, e não pergunta duas vezes na mesma partida', r.travasAdm],
-    ['C.A.O.S. 4.2: comentário espera o intervalo, aviso de regra passa, no online Alt-Tab não pausa e pular fala não marca ninguém, e o que ele já apresentou volta no save', r.caos42],
+    ['C.A.O.S. 4.3: comentário espera a fala anterior terminar + respiro (até 10 por carta), aviso de regra passa, no online Alt-Tab não pausa e pular fala não marca ninguém, e o que ele já apresentou volta no save', r.caos42],
+    ['C.A.O.S. 4.3: pular fala marca quem pulou (aparelho do host e celular); todos calaram = quieto (regra passa); parte calou = ciúmes; quem religa traz ele de volta', r.caos43],
+    ['1.7.10.5: quem está na vez pede a dica no aparelho (o Mestre recebe o pedido); quem tem a ficha toca em Palpitar agora e o Mestre julga só esse palpite; errou, a ficha volta e a vez segue', r.palpiteAgora],
     ['Cadastro: o C.A.O.S. pergunta da voz (não pergunta se já está ligada); Sim liga; Não ganha fala triste e segue sem voz', r.vozPergunta],
     ['1.7.10.3: busca nas regras acha "grupo"; o C.A.O.S. lembra o que vale na 1ª carta de cada categoria (Júnior sem animal em Coisa)', r.regrasEPrimeira],
     ['1.7.10.1: com a sala aberta, a partida só começa quando todo jogador tem aparelho', r.semAparelho],

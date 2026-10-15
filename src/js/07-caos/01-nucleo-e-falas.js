@@ -731,15 +731,21 @@ function caosFilaProxima() {
     }
     const f = caosFila.shift();
     const velha =
-      Date.now() - f.at > 15e3 ||
+      Date.now() - f.at > 2e4 ||
       stats.totalDrawn - f.carta >= 2 ||
       (stats.totalDrawn !== f.carta && cardState === "revealed" && revealedOrder.length > 0);
     if (velha) {
       caosLog("fila", "fala extra descartada (fora de contexto)");
       return;
     }
-    showToastMessage(f.msg, null, false, false, f.noFreeze);
-  }, 700);
+    // já passou pelo orçamento quando entrou na fila: não conta de novo
+    caosFalaDaFila = true;
+    try {
+      showToastMessage(f.msg, null, false, false, f.noFreeze);
+    } finally {
+      caosFalaDaFila = false;
+    }
+  }, Math.max(700, caosRespiroAgora()));
 }
 function caosLeituraMinMs(st) {
   const m = String((st && st.msg) || "");
@@ -843,17 +849,16 @@ function caosPularFala(ev) {
     caosVinculoCorte();
   }
 }
-function caosRegistrarCorte() {
+function caosRegistrarCorte(quemIdx) {
   caosCortes.total++;
   const agora = Date.now();
   caosFalasRecentes.push(agora, agora);
   caosEmoNudge(0.6, -0.3);
-  // C.A.O.S. 4.2: no online, quem pula a fala pode estar em qualquer aparelho (o Mestre da vez quase nunca é
-  // quem tocou): pular não marca ninguém. No aparelho único da mesa, segue o palpite de sempre (o Mestre).
-  const quem =
-    !salaOnlineAberta() && mestreIndex !== null && mestreIndex !== void 0 && players[mestreIndex] && starterChosen && !gameEnded
-      ? players[mestreIndex]
-      : null;
+  // C.A.O.S. 4.3 (JF: "ele tem que saber quem exatamente calou ele"): marca quem pulou de verdade. No online,
+  // cada celular avisa o host quem tocou (redeHostSinal); no aparelho do host, é o jogador deste aparelho
+  // (caosQuemPulouAqui). No aparelho único da mesa, segue o palpite de sempre (o Mestre da vez).
+  const qi = quemIdx === undefined ? caosQuemPulouAqui() : quemIdx;
+  const quem = qi !== null && qi !== void 0 && qi >= 0 && players[qi] && starterChosen && !gameEnded ? players[qi] : null;
   const C = REACTIVE_VOICE.caosCortado;
   let fala = null;
   if (quem && quem.iniciante) {
@@ -869,8 +874,8 @@ function caosRegistrarCorte() {
     const n = (caosCortes.por[quem.name] = (caosCortes.por[quem.name] || 0) + 1);
     caosCortes.rancor[quem.name] = true;
     caosMarked = {
-      idx: mestreIndex,
-      remaining: Math.max(caosMarked.idx === mestreIndex ? caosMarked.remaining : 0, 5),
+      idx: qi,
+      remaining: Math.max(caosMarked.idx === qi ? caosMarked.remaining : 0, 5),
     };
     caosLog("cortado", `${quem.name} pulou a fala (${n}ª vez) → marcado + rancor`);
     if (n === 3) fala = getRandomReaction(C.terceira, quem.name);
@@ -889,19 +894,33 @@ function caosVingancaLine(p) {
   return getRandomReaction(REACTIVE_VOICE.caosCortado.vinganca, p.name, caosCortes.por[p.name] || 1);
 }
 let caosFalaEssencial = false; // fala de regra/aviso em andamento: passa pelo orçamento (C.A.O.S. 4.2)
+let caosFalaDaFila = false; // C.A.O.S. 4.3: fala saindo da fila (já foi contada quando entrou)
+// "Ouvido interno": quanto silêncio ele precisa antes do próximo comentário.
+function caosRespiroAgora() {
+  let r = caosFalasUltimos(6e4) >= CAOS_RAJADA_FALAS ? CAOS_RESPIRO_RAJADA_MS : CAOS_RESPIRO_MS;
+  try {
+    const desde = (stats ? stats.totalDrawn : 0) - 2;
+    if (stats && stats.totalDrawn >= 1 && caosMatchLog.filter((e) => e.n >= desde && e.n > 0).length >= CAOS_FALAS_3_CARTAS)
+      r *= 2;
+  } catch (e) {}
+  return r;
+}
 function caosToastBloquear() {
   try {
     if (document.getElementById("pauseScreen").style.display === "block") return true;
     if (caosFalaEssencial) return false;
-    // C.A.O.S. 4.2: intervalo mínimo entre comentários (vale também no lobby e no cadastro)
-    // "ouvido interno": se ele falou muito nas últimas 3 cartas (5+ falas), espera o dobro antes de comentar
-    let intervalo = CAOS_FALA_INTERVALO_MS;
-    try {
-      const desde = (stats ? stats.totalDrawn : 0) - 2;
-      if (stats && stats.totalDrawn >= 1 && caosMatchLog.filter((e) => e.n >= desde && e.n > 0).length >= 5) intervalo *= 2;
-    } catch (e) {}
-    if (Date.now() - (caosUltimaFalaAt || 0) < intervalo) {
-      caosLog("orcamento", "fala cortada (intervalo)");
+    // C.A.O.S. 4.3: a sala inteira calou ele: só aviso de regra passa
+    if (caosSalaCalada()) {
+      caosLog("ouvintes", "fala cortada (a sala toda calou o C.A.O.S.)");
+      return true;
+    }
+    if (caosFalaDaFila) return false;
+    // C.A.O.S. 4.3 (cordas vocais): comentário só depois que a fala anterior terminou + respiro.
+    // Vale também no lobby e no cadastro. Se tem fala dele na tela agora, quem decide é a fila (não corta).
+    const r = caosRespiroAgora();
+    const agora = Date.now();
+    if (!activeToastState && (agora - (caosFalaFimAt || 0) < r || agora - (caosUltimaFalaAt || 0) < CAOS_FALA_INICIO_MIN_MS)) {
+      caosLog("orcamento", "fala cortada (respiro " + Math.round(r / 1000) + " s)");
       return true;
     }
     if (!stats || stats.totalDrawn < 1 || gameEnded) return false;
