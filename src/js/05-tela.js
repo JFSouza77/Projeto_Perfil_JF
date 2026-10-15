@@ -97,7 +97,8 @@ function playerSwatchAttrs(color) {
   const isRgb = color === "RGB";
   const isGrad = !!GRADIENTS[color];
   const isOnyx = color === "GRAD_ONYX";
-  const textColor = isOnyx ? "#fff" : isRgb || isGrad ? "#1a1a2e" : isLightHexColor(color) ? "#1a1a2e" : "#fff";
+  const presente = PRESENTES.find((p) => p.cor === color);
+  const textColor = isOnyx || presente ? "#fff" : isRgb || isGrad ? "#1a1a2e" : isLightHexColor(color) ? "#1a1a2e" : "#fff";
   const shadow = textColor === "#fff" ? "text-shadow:0 1px 2px rgba(0,0,0,0.8);" : "";
   const bg = isRgb ? "" : `background:${playerColorCss(color)};`;
   return { cls: isRgb ? " rgb-swatch" : isOnyx ? " onyx-swatch" : "", style: `${bg} color:${textColor}; ${shadow}` };
@@ -110,6 +111,10 @@ function playerNameHtml(name, color, avatar) {
     return `${avatarHtml}<span class="player-name-neon rgb-name">${safeName}</span>`;
   }
   if (color === "GRAD_ONYX") return `${avatarHtml}<span class="player-name-neon onyx-name">${safeName}</span>`;
+  // 1.7.10.6: degradê escuro de presente: nome claro, brilhando na cor da pessoa
+  const presente = PRESENTES.find((p) => p.cor === color);
+  if (presente)
+    return `${avatarHtml}<span class="player-name-neon presente-name" style="--pn-a:${presente.neon[0]}; --pn-b:${presente.neon[1]};">${safeName}</span>`;
   if (GRADIENTS[color]) {
     return `${avatarHtml}<span class="player-name-neon grad-anim" style="background:${caosGradLoop(color)}; background-size:200% 100%; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; text-shadow:none; filter:drop-shadow(0 0 2px rgba(0,0,0,0.7)); font-weight:800;">${safeName}</span>`;
   }
@@ -1511,6 +1516,8 @@ const COR_EXCLUSIVA = {
   RGB: { de: "do JF", dono: (n) => isJfName(n) },
   GRAD_PRINCESA: { de: "da Anne", dono: (n) => isAnneName(n) },
 };
+// 1.7.10.6: as cores de presente também têm dono
+PRESENTES.forEach((pr) => (COR_EXCLUSIVA[pr.cor] = { de: "do " + pr.nome, dono: (n) => presenteDe(n) === pr }));
 function corReservada(c) {
   const inp = document.getElementById("playerNameInput"),
     nome = inp ? inp.value.trim() : "";
@@ -1592,7 +1599,7 @@ function caosEscolhaTomada(tipo, valor, btn) {
 function coresDaPaleta() {
   const isBatata = document.body.classList.contains("batata-mode");
   return PLAYER_COLORS.slice(0, -1)
-    .concat(["GRAD_PRINCESA", "RGB"])
+    .concat(["GRAD_PRINCESA", "RGB"], PRESENTES.map((p) => p.cor))
     .filter((c) => !(isBatata && (c === "RGB" || GRADIENTS[c])));
 }
 function renderColorPicker() {
@@ -3714,7 +3721,7 @@ function cadPodeAdicionar() {
   const inp = document.getElementById("playerNameInput");
   const nome = inp ? inp.value.trim() : "";
   if (nome.length < 2) return false;
-  if (isJfName(nome) || isAnneName(nome)) return true;
+  if (isJfName(nome) || isAnneName(nome) || presenteDe(nome)) return true;
   const eq = CURRENT_FORMAT === "equipe";
   if (!eq && !cadCor) return false;
   if (!cadEmoji) return false;
@@ -3726,7 +3733,7 @@ function cadFaltaTexto() {
   const inp = document.getElementById("playerNameInput");
   const nome = inp ? inp.value.trim() : "";
   if (nome.length < 2) return "Escreva o nome (2 a 15 letras).";
-  if (isJfName(nome) || isAnneName(nome)) return "";
+  if (isJfName(nome) || isAnneName(nome) || presenteDe(nome)) return "";
   const f = [],
     eq = CURRENT_FORMAT === "equipe";
   if (!eq && !cadCor) f.push("cor");

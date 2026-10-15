@@ -2487,7 +2487,7 @@ function redeEscolhaDesenhar(box, sala) {
     const usadas = new Set(cad.coresUsadas || []), usados = new Set(cad.avataresUsados || []);
     const tomadaCor = (c) => usadas.has(c) || (!!COR_EXCLUSIVA[c] && !COR_EXCLUSIVA[c].dono(nomeAt));
     // emoji exclusivo do dono (😎 do JF, 👸 da Anne) entra na lista quando o nome é o dele
-    const exclusivo = isJfName(nomeAt) ? "😎" : isAnneName(nomeAt) ? "👸" : null;
+    const exclusivo = isJfName(nomeAt) ? "😎" : isAnneName(nomeAt) ? "👸" : presenteEmojis(presenteDe(nomeAt))[0] || null;
     const avatares = (exclusivo && !usados.has(exclusivo) ? [exclusivo] : []).concat(cad.avatares);
     // dono digitou o nome: a cor e o emoji dele já vêm marcados (o host faria o mesmo)
     const corDono = cad.cores.find((c) => COR_EXCLUSIVA[c] && COR_EXCLUSIVA[c].dono(nomeAt) && !usadas.has(c));
@@ -2535,7 +2535,7 @@ function redeEscolhaDesenhar(box, sala) {
   const nome = box.querySelector("#redeNome");
   if (nome) {
     // trocar o nome pode destravar a cor e o emoji de dono: redesenha só quando isso muda
-    const dono = (n) => (isJfName(n) ? "jf" : isAnneName(n) ? "anne" : "");
+    const dono = (n) => (isJfName(n) ? "jf" : isAnneName(n) ? "anne" : (presenteDe(n) || {}).id || "");
     nome.addEventListener("input", () => {
       const antes = dono(String(r.nome || "").trim());
       r.nome = nome.value;

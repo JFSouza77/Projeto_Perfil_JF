@@ -448,6 +448,7 @@ function drawHidden() {
     caosCardPrediction = null;
   }
   stats.totalDrawn++;
+  presentesGirarEmojis(); // 1.7.10.6: o emoji do Rafa troca a cada carta (💣 ↔ 🦇)
   caosNoteCardDrawn();
   maybeUpdateCaosFatigue();
   caosTalvezVoltar();
@@ -1640,14 +1641,13 @@ function ajustarJogadoresAoModo() {
     const usadas = new Set();
     const livres = PLAYER_COLORS.filter((c) => c !== "RGB" && !GRADIENTS[c]);
     players.forEach((p) => {
-      const dono = (p.color === "RGB" && isJfName(p.name)) || (p.color === "GRAD_PRINCESA" && isAnneName(p.name));
+      const dono = !!COR_EXCLUSIVA[p.color] && COR_EXCLUSIVA[p.color].dono(p.name);
       if (
         !dono &&
         (!isSafeColor(p.color) ||
           p.color === "#888888" ||
           usadas.has(p.color) ||
-          p.color === "RGB" ||
-          p.color === "GRAD_PRINCESA")
+          !!COR_EXCLUSIVA[p.color])
       ) {
         p.color = livres.find((c) => !usadas.has(c) && !players.some((q) => q !== p && q.color === c)) || p.color;
       }

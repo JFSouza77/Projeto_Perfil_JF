@@ -6,6 +6,14 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.6 · 15/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.3.1: PRESENTES DO JF.
+          Cor, emoji e nick exclusivos pra quem testou o online com o JF (PRESENTES em 01-configuracao.js, presenteDe em
+          03-regras.js; COR_EXCLUSIVA, paleta, cadastro local e do celular reconhecem): Carro Pika (Henrique) roxo-diabinho
+          GRAD_DIABINHO + 😈; BsLordRafa (Rafa) vermelho-sangue GRAD_SANGUE + 💣/🦇 trocando a cada carta
+          (presentesGirarEmojis no drawHidden); Vitinho/VineFA azul shinobi GRAD_SHINOBI + 🥷; Typingg/Typingg_KK/TheDevil
+          preto espadachim GRAD_KIRITO + ⚔️. Degradê escuro: nome claro brilhando (.presente-name, como o Ônix). No Júnior
+          os emojis que não são de criança ficam de fora (PRESENTE_FORA_JUNIOR); no Modo Batata, cor sólida. C.A.O.S.: falas
+          de chegada de cada um (REACTIVE_VOICE.presente). Ideia anotada pro Modo C.A.O.S.: "É HORA DO DUELO!" (Rafa).
   1.7.10.5 · 15/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.3: OUVINTES, RESPIRO E PALPITAR AGORA.
           Retorno do JF sobre a 4.2: falar muito não é problema (5 a 10 por carta ok); o problema era falar muito em pouco
           tempo. Cordas vocais: CAOS_FALAS_POR_CARTA 2 → 10; no lugar do intervalo fixo de 20 s, o comentário só sai
@@ -798,7 +806,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.5</title>
+<title>Perfil JF · Beta 1.7.10.6</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -3114,6 +3122,20 @@ button.splash-embreve {
 @keyframes cadRepetido{0%,100%{box-shadow:0 0 0 0 #ef444400}50%{box-shadow:0 0 18px 4px #ef4444aa}}
 .cad-campo-erro{border-color:#ef4444 !important;box-shadow:0 0 0 3px #ef444455 !important}
 html.acess-calmo #scoreboard li.cad-repetido,body.batata-mode #scoreboard li.cad-repetido{animation:none}
+/* 1.7.10.6 · presentes do JF: degradê escuro, nome claro brilhando na cor da pessoa */
+.presente-name {
+  color: var(--pn-a, #fff) !important;
+  font-weight: 800;
+  text-shadow:
+    0 0 4px var(--pn-b, #a855f7),
+    0 0 9px var(--pn-b, #a855f7) !important;
+}
+.card .presente-name {
+  color: #0a0a12 !important;
+  text-shadow:
+    0 0 2px var(--pn-b, #a855f7),
+    0 0 7px var(--pn-b, #a855f7) !important;
+}
 .wincond-warn {
   color: #ffd166;
 }
@@ -9073,7 +9095,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.5 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.3 · Atualizada em 15/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.6 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.3.1 · Atualizada em 15/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -9341,7 +9363,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1810;
+const JOGO_BUILD = 1811;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -9418,6 +9440,11 @@ const GRADIENTS = {
   GRAD_PESSEGO: "linear-gradient(135deg, #ffd3a5 0%, #fd6585 100%)",
   GRAD_PRINCESA: "linear-gradient(135deg, #ff8fc7 0%, #ffc2e0 55%, #ff7eb6 100%)",
   GRAD_ONYX: "linear-gradient(135deg, #000000 0%, #2a2a3d 50%, #000000 100%)",
+  // 1.7.10.6 · presentes do JF (cores exclusivas de quem testou o online com ele)
+  GRAD_DIABINHO: "linear-gradient(135deg, #7e22ce 0%, #3b0764 50%, #000000 100%)",
+  GRAD_SANGUE: "linear-gradient(135deg, #b10000 0%, #4a0000 55%, #000000 100%)",
+  GRAD_SHINOBI: "linear-gradient(135deg, #1d4ed8 0%, #374151 55%, #0b0b0f 100%)",
+  GRAD_KIRITO: "linear-gradient(135deg, #000000 0%, #1f2937 50%, #94a3b8 100%)",
 };
 const AVATARS = [
   "😎",
@@ -9453,7 +9480,18 @@ const AVATARS = [
 ];
 const AVATARS_EXTRA = ["💀", "😈", "🤡", "🦈", "🐺", "🦅", "🐍", "👑", "🏆", "🎸", "🧠", "🥶", "🤑", "🦍"];
 const AVATARS_KIDS = ["🐶", "🐱", "🐰", "🦊", "🐼", "🐸", "🦖", "🐢", "🦋", "🚀", "🧸", "🎈", "🍭", "🌈", "⭐", "🐧"];
-const AVATAR_EXCLUSIVE = ["😎", "👸"];
+// 1.7.10.6 · Presentes do JF: cor, emoji e nick exclusivos de quem testou o online com ele. O presente vale pra quem
+// usa um dos nicks (do jeito que a pessoa joga). Emoji com mais de um: troca a cada carta (gira: true).
+// neon = [cor do nome, cor do brilho] (o degradê é escuro: o nome aparece claro e brilhando, como o Ônix).
+const PRESENTES = [
+  { id: "henrique", nome: "Henrique", re: /^carro\s*pika([^a-z]|$)/, cor: "GRAD_DIABINHO", emojis: ["😈"], neon: ["#e9d5ff", "#a855f7"] },
+  { id: "rafa", nome: "Rafa", re: /^bs\s*lord\s*rafa([^a-z]|$)/, cor: "GRAD_SANGUE", emojis: ["💣", "🦇"], gira: true, neon: ["#ffd7d7", "#ff1f1f"] },
+  { id: "vitinho", nome: "Vitinho", re: /^(vitinho|vinefa)([^a-z]|$)/, cor: "GRAD_SHINOBI", emojis: ["🥷"], neon: ["#dbeafe", "#3b82f6"] },
+  { id: "typingg", nome: "Typingg", re: /^(typingg([\s_]?kk)?|the\s*devil)([^a-z]|$)/, cor: "GRAD_KIRITO", emojis: ["⚔️"], neon: ["#f8fafc", "#94a3b8"] },
+];
+// no Júnior, os emojis de presente que não são de criança ficam de fora (a cor continua)
+const PRESENTE_FORA_JUNIOR = ["😈", "💣", "🥷", "⚔️"];
+const AVATAR_EXCLUSIVE = ["😎", "👸"].concat(...PRESENTES.map((p) => p.emojis));
 const OWNER_ANNE_RE = /^an{1,2}(e|izinha|izinho)(zinha|zinho|zona)?([^a-z]|$)/;
 // Conteúdo ligado à Anne (cor, emoji, falas, memória do C.A.O.S.): liga/desliga no Cérebro (aba Falas). Desligado por padrão.
 const ANNE_LIGADA_KEY = "perfil5_anne_ligada";
@@ -9894,6 +9932,10 @@ const CAOS_COLOR_NAMES = {
   GRAD_ONYX: "ônix neon",
   GRAD_TROPICAL: "tropical",
   GRAD_PRINCESA: "princesa",
+  GRAD_DIABINHO: "roxo diabinho",
+  GRAD_SANGUE: "vermelho-sangue",
+  GRAD_SHINOBI: "azul shinobi",
+  GRAD_KIRITO: "preto espadachim",
 };
 const CAOS_AI_RE = /(intelig[eê]ncia artificial|chatgpt|gemini|claude|rob[oô]|computador|algoritmo|alexa|siri)/i;
 const CAOS_CTX_ERRO_RE =
@@ -10709,6 +10751,24 @@ function isAnneName(n) {
 function isJfName(n) {
   return OWNER_JF_RE.test(nameKeyPlain(n));
 }
+// 1.7.10.6: o presente (cor/emoji exclusivos) de quem tem este nick, ou null
+function presenteDe(n) {
+  const k = nameKeyPlain(n);
+  return (k && PRESENTES.find((p) => p.re.test(k))) || null;
+}
+function presenteEmojis(pr) {
+  if (!pr) return [];
+  return typeof CURRENT_MODE !== "undefined" && CURRENT_MODE === "junior" ? pr.emojis.filter((e) => !PRESENTE_FORA_JUNIOR.includes(e)) : pr.emojis;
+}
+// Rafa (💣/🦇): o emoji troca a cada carta
+function presentesGirarEmojis() {
+  players.forEach((p) => {
+    const pr = presenteDe(p.name), lista = presenteEmojis(pr);
+    if (!pr || !pr.gira || lista.length < 2 || !lista.includes(p.avatar)) return;
+    const outro = lista[(lista.indexOf(p.avatar) + 1) % lista.length];
+    if (!players.some((q) => q !== p && q.avatar === outro)) p.avatar = outro;
+  });
+}
 // Níveis de zoeira: Family friendly (só no Júnior: só carinho) < Suave (zoa um pouquinho)
 // < Normal (zoa e implica no limite) < Ácido (implica, briga e fica magoado) < Nível 0 (torra
 // a paciência; você que pediu). Family friendly conta como Suave em todas as travas, e ainda
@@ -11261,7 +11321,8 @@ function sanitizePlayerColor(name, color) {
   if (isJfName(name) && !used.has("RGB")) final = "RGB";
   else if (isAnneName(name) && !used.has("GRAD_PRINCESA")) final = "GRAD_PRINCESA";
   else if (isEnigmaName(name) && !used.has("GRAD_ONYX")) final = "GRAD_ONYX";
-  else if (final === "RGB" || final === "GRAD_PRINCESA") final = pick();
+  else if (presenteDe(name) && !used.has(presenteDe(name).cor)) final = presenteDe(name).cor;
+  else if (final === "RGB" || final === "GRAD_PRINCESA" || (PRESENTES.some((p) => p.cor === final) && !(presenteDe(name) && presenteDe(name).cor === final))) final = pick();
   if (document.body.classList.contains("batata-mode") && (final === "RGB" || GRADIENTS[final]))
     final = isAnneName(name) && !used.has("#ff9ecd") ? "#ff9ecd" : pick();
   return final;
@@ -11270,6 +11331,12 @@ function sanitizePlayerAvatar(name, avatar) {
   const used = new Set(players.map((p) => p.avatar));
   if (isJfName(name) && !used.has("😎")) return "😎";
   if (isAnneName(name) && !used.has("👸")) return "👸";
+  const meu = presenteEmojis(presenteDe(name));
+  if (meu.length) {
+    if (meu.includes(avatar) && !used.has(avatar)) return avatar;
+    const livre = meu.find((e) => !used.has(e));
+    if (livre) return livre;
+  }
   if (AVATAR_EXCLUSIVE.includes(avatar)) {
     const free = avatarsForMode().find((a) => !used.has(a));
     return free || avatar;
@@ -11835,6 +11902,7 @@ function drawHidden() {
     caosCardPrediction = null;
   }
   stats.totalDrawn++;
+  presentesGirarEmojis(); // 1.7.10.6: o emoji do Rafa troca a cada carta (💣 ↔ 🦇)
   caosNoteCardDrawn();
   maybeUpdateCaosFatigue();
   caosTalvezVoltar();
@@ -13027,14 +13095,13 @@ function ajustarJogadoresAoModo() {
     const usadas = new Set();
     const livres = PLAYER_COLORS.filter((c) => c !== "RGB" && !GRADIENTS[c]);
     players.forEach((p) => {
-      const dono = (p.color === "RGB" && isJfName(p.name)) || (p.color === "GRAD_PRINCESA" && isAnneName(p.name));
+      const dono = !!COR_EXCLUSIVA[p.color] && COR_EXCLUSIVA[p.color].dono(p.name);
       if (
         !dono &&
         (!isSafeColor(p.color) ||
           p.color === "#888888" ||
           usadas.has(p.color) ||
-          p.color === "RGB" ||
-          p.color === "GRAD_PRINCESA")
+          !!COR_EXCLUSIVA[p.color])
       ) {
         p.color = livres.find((c) => !usadas.has(c) && !players.some((q) => q !== p && q.color === c)) || p.color;
       }
@@ -13903,7 +13970,8 @@ function playerSwatchAttrs(color) {
   const isRgb = color === "RGB";
   const isGrad = !!GRADIENTS[color];
   const isOnyx = color === "GRAD_ONYX";
-  const textColor = isOnyx ? "#fff" : isRgb || isGrad ? "#1a1a2e" : isLightHexColor(color) ? "#1a1a2e" : "#fff";
+  const presente = PRESENTES.find((p) => p.cor === color);
+  const textColor = isOnyx || presente ? "#fff" : isRgb || isGrad ? "#1a1a2e" : isLightHexColor(color) ? "#1a1a2e" : "#fff";
   const shadow = textColor === "#fff" ? "text-shadow:0 1px 2px rgba(0,0,0,0.8);" : "";
   const bg = isRgb ? "" : `background:${playerColorCss(color)};`;
   return { cls: isRgb ? " rgb-swatch" : isOnyx ? " onyx-swatch" : "", style: `${bg} color:${textColor}; ${shadow}` };
@@ -13916,6 +13984,10 @@ function playerNameHtml(name, color, avatar) {
     return `${avatarHtml}<span class="player-name-neon rgb-name">${safeName}</span>`;
   }
   if (color === "GRAD_ONYX") return `${avatarHtml}<span class="player-name-neon onyx-name">${safeName}</span>`;
+  // 1.7.10.6: degradê escuro de presente: nome claro, brilhando na cor da pessoa
+  const presente = PRESENTES.find((p) => p.cor === color);
+  if (presente)
+    return `${avatarHtml}<span class="player-name-neon presente-name" style="--pn-a:${presente.neon[0]}; --pn-b:${presente.neon[1]};">${safeName}</span>`;
   if (GRADIENTS[color]) {
     return `${avatarHtml}<span class="player-name-neon grad-anim" style="background:${caosGradLoop(color)}; background-size:200% 100%; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; text-shadow:none; filter:drop-shadow(0 0 2px rgba(0,0,0,0.7)); font-weight:800;">${safeName}</span>`;
   }
@@ -15317,6 +15389,8 @@ const COR_EXCLUSIVA = {
   RGB: { de: "do JF", dono: (n) => isJfName(n) },
   GRAD_PRINCESA: { de: "da Anne", dono: (n) => isAnneName(n) },
 };
+// 1.7.10.6: as cores de presente também têm dono
+PRESENTES.forEach((pr) => (COR_EXCLUSIVA[pr.cor] = { de: "do " + pr.nome, dono: (n) => presenteDe(n) === pr }));
 function corReservada(c) {
   const inp = document.getElementById("playerNameInput"),
     nome = inp ? inp.value.trim() : "";
@@ -15398,7 +15472,7 @@ function caosEscolhaTomada(tipo, valor, btn) {
 function coresDaPaleta() {
   const isBatata = document.body.classList.contains("batata-mode");
   return PLAYER_COLORS.slice(0, -1)
-    .concat(["GRAD_PRINCESA", "RGB"])
+    .concat(["GRAD_PRINCESA", "RGB"], PRESENTES.map((p) => p.cor))
     .filter((c) => !(isBatata && (c === "RGB" || GRADIENTS[c])));
 }
 function renderColorPicker() {
@@ -17520,7 +17594,7 @@ function cadPodeAdicionar() {
   const inp = document.getElementById("playerNameInput");
   const nome = inp ? inp.value.trim() : "";
   if (nome.length < 2) return false;
-  if (isJfName(nome) || isAnneName(nome)) return true;
+  if (isJfName(nome) || isAnneName(nome) || presenteDe(nome)) return true;
   const eq = CURRENT_FORMAT === "equipe";
   if (!eq && !cadCor) return false;
   if (!cadEmoji) return false;
@@ -17532,7 +17606,7 @@ function cadFaltaTexto() {
   const inp = document.getElementById("playerNameInput");
   const nome = inp ? inp.value.trim() : "";
   if (nome.length < 2) return "Escreva o nome (2 a 15 letras).";
-  if (isJfName(nome) || isAnneName(nome)) return "";
+  if (isJfName(nome) || isAnneName(nome) || presenteDe(nome)) return "";
   const f = [],
     eq = CURRENT_FORMAT === "equipe";
   if (!eq && !cadCor) f.push("cor");
@@ -22574,7 +22648,7 @@ function redeEscolhaDesenhar(box, sala) {
     const usadas = new Set(cad.coresUsadas || []), usados = new Set(cad.avataresUsados || []);
     const tomadaCor = (c) => usadas.has(c) || (!!COR_EXCLUSIVA[c] && !COR_EXCLUSIVA[c].dono(nomeAt));
     // emoji exclusivo do dono (😎 do JF, 👸 da Anne) entra na lista quando o nome é o dele
-    const exclusivo = isJfName(nomeAt) ? "😎" : isAnneName(nomeAt) ? "👸" : null;
+    const exclusivo = isJfName(nomeAt) ? "😎" : isAnneName(nomeAt) ? "👸" : presenteEmojis(presenteDe(nomeAt))[0] || null;
     const avatares = (exclusivo && !usados.has(exclusivo) ? [exclusivo] : []).concat(cad.avatares);
     // dono digitou o nome: a cor e o emoji dele já vêm marcados (o host faria o mesmo)
     const corDono = cad.cores.find((c) => COR_EXCLUSIVA[c] && COR_EXCLUSIVA[c].dono(nomeAt) && !usadas.has(c));
@@ -22622,7 +22696,7 @@ function redeEscolhaDesenhar(box, sala) {
   const nome = box.querySelector("#redeNome");
   if (nome) {
     // trocar o nome pode destravar a cor e o emoji de dono: redesenha só quando isso muda
-    const dono = (n) => (isJfName(n) ? "jf" : isAnneName(n) ? "anne" : "");
+    const dono = (n) => (isJfName(n) ? "jf" : isAnneName(n) ? "anne" : (presenteDe(n) || {}).id || "");
     nome.addEventListener("input", () => {
       const antes = dono(String(r.nome || "").trim());
       r.nome = nome.value;
@@ -28088,7 +28162,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.5 · C.A.O.S. 4.3</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.6 · C.A.O.S. 4.3.1</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -31414,7 +31488,7 @@ function caosNeuralDesenhar(cv, t) {
     const C = caosConsole || {};
     const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
 tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
-${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.3`;
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.3.1`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }
@@ -31981,6 +32055,9 @@ function caosWelcomePlayer(p) {
     const g = caosGerarFala("jfChegou", p);
     if (g) return showToastMessage(g);
     bank = REACTIVE_VOICE.nickReacao.jf;
+  } else if (presenteDe(name) && p.color === presenteDe(name).cor && REACTIVE_VOICE.presente[presenteDe(name).id] && R() < 0.85) {
+    // 1.7.10.6: quem ganhou presente do JF chega com a cor exclusiva, e o C.A.O.S. repara
+    bank = REACTIVE_VOICE.presente[presenteDe(name).id];
   }
   else {
     {
@@ -33182,7 +33259,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5 · C.A.O.S. 4.3)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.6 · C.A.O.S. 4.3.1)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -36530,7 +36607,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.5 · C.A.O.S. 4.3");
+  L.push("- **Versão:** Beta 1.7.10.6 · C.A.O.S. 4.3.1");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -37053,7 +37130,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.5 · C.A.O.S. 4.3",
+        versao: "Beta 1.7.10.6 · C.A.O.S. 4.3.1",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -70496,6 +70573,29 @@ const REACTIVE_VOICE = {
       "Categoria Animal estreando. Lembrando: vale animal de verdade e animal fictício ou mitológico.",
     ],
   },
+  // 1.7.10.6 · Presentes do JF: a chegada de quem tem cor e emoji exclusivos
+  presente: {
+    henrique: [
+      "{nome} chegou de roxo diabinho. Presente do JF. Combina demais, e isso me preocupa.",
+      "Olha o {nome} com o diabinho roxo. Essa cor ninguém mais pode usar. Nem eu.",
+      "{nome} na mesa, roxo e preto. Eu já sabia que vinha confusão.",
+    ],
+    rafa: [
+      "{nome} chegou. Vermelho-sangue e uma bomba. O Oppenheimer da mesa está entre nós.",
+      "Cuidado: {nome} na área. Discreto como um morcego, explosivo como uma TNT nuclear.",
+      "{nome} entrou. A cada carta ele troca de bomba pra morcego. Ninguém sabe qual vai aparecer. Nem ele.",
+    ],
+    vitinho: [
+      "{nome} chegou de azul shinobi. Ninja de verdade não avisa que chegou, mas eu aviso.",
+      "Olha o ninja da mesa: {nome}. Copiar resposta com o Sharingan não vale, hein.",
+      "{nome} entrou em silêncio, estilo Kakashi. Eu vi mesmo assim.",
+    ],
+    typingg: [
+      "{nome} chegou de preto, com duas espadas. Isso aqui não é Aincrad, mas pode lutar.",
+      "Duas espadas, roupa preta: {nome} na mesa. Só falta o Star Burst Stream nas dicas.",
+      "{nome} entrou. Espadachim preto confirmado. Presente do JF, nem adianta pedir a cor.",
+    ],
+  },
   // C.A.O.S. 4.3 · Ouvintes da sala (pedido do JF): todo mundo calou, alguém voltou, ciúmes de quem ainda ouve.
   // Sem vocativo de propósito ("Fulano, …"): essas falas são da mesa toda, não particulares.
   caosOuvintes: {
@@ -72338,6 +72438,21 @@ const PAUSE_TIPS = [
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.10.6",
+    data: "15/10/2026 · 19:30",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "Presentes pra quem testou o online: cores e emojis exclusivos, e o C.A.O.S. repara quando eles chegam.",
+    itens: [
+      "😈 Presente do Henrique: com o nick Carro Pika, ele ganha o degradê roxo-diabinho e o emoji de diabinho roxo.",
+      "💣 Presente do Rafa: com o nick BsLordRafa, ele ganha o vermelho-sangue, e o emoji troca entre bomba e morcego a cada carta.",
+      "🥷 Presente do Vitinho: com Vitinho ou VineFA, ele ganha o azul shinobi e o emoji de ninja.",
+      "⚔️ Presente do Typingg: com Typingg, Typingg_KK ou TheDevil, ele ganha o preto espadachim e as duas espadas.",
+    ],
+    qol: [
+      "🔒 Só deles: essas cores e emojis ficam com cadeado pra todo o resto da mesa.",
+    ],
+  },
   {
     v: "Beta 1.7.10.5",
     data: "15/10/2026 · 17:21",

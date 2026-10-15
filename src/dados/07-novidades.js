@@ -6,6 +6,21 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.6",
+    data: "15/10/2026 · 19:30",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "Presentes pra quem testou o online: cores e emojis exclusivos, e o C.A.O.S. repara quando eles chegam.",
+    itens: [
+      "😈 Presente do Henrique: com o nick Carro Pika, ele ganha o degradê roxo-diabinho e o emoji de diabinho roxo.",
+      "💣 Presente do Rafa: com o nick BsLordRafa, ele ganha o vermelho-sangue, e o emoji troca entre bomba e morcego a cada carta.",
+      "🥷 Presente do Vitinho: com Vitinho ou VineFA, ele ganha o azul shinobi e o emoji de ninja.",
+      "⚔️ Presente do Typingg: com Typingg, Typingg_KK ou TheDevil, ele ganha o preto espadachim e as duas espadas.",
+    ],
+    qol: [
+      "🔒 Só deles: essas cores e emojis ficam com cadeado pra todo o resto da mesa.",
+    ],
+  },
+  {
     v: "Beta 1.7.10.5",
     data: "15/10/2026 · 17:21",
     nome: "Multiplayer Update · Online de verdade",
