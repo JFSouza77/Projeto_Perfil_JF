@@ -297,7 +297,7 @@ function caosEspinhaInstalar() {
         if (typeof redeFalaSoLonge === "function" && redeFalaSoLonge(ev)) {
           // C.A.O.S. 4.2: a fala que vai só pro celular da pessoa também respeita o orçamento de comentários
           const bypass = arguments[2], prio = arguments[3];
-          if (!bypass && !prio && typeof caosToastBloquear === "function" && caosToastBloquear()) {
+          if (!bypass && !prio && !caosCanalPrivado && typeof caosToastBloquear === "function" && caosToastBloquear()) {
             if (typeof afterClose === "function") afterClose();
             return;
           }
