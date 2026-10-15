@@ -2346,6 +2346,20 @@ function renderFinalScreen() {
   if (hz) hz.addEventListener("click", hallZerar);
   caosLigarFalaveis(winnerArea);
 }
+function caosOuvirDeNovo(e) {
+  if (!e || !e.text) return;
+  const voz = caosVoiceOn, emo = typeof caosEmoFalaAtual !== "undefined" ? caosEmoFalaAtual : null, mudo = caosMudoCarta;
+  try {
+    unlockAudio();
+    caosVoiceOn = true; // ouve mesmo com a voz da partida desligada (foi a pessoa que pediu)
+    caosMudoCarta = false;
+    caosEmoFalaAtual = e.emo || "calmo";
+    caosSpeak("[C.A.O.S.] " + e.text, null);
+  } catch (err) {}
+  caosVoiceOn = voz;
+  caosEmoFalaAtual = emo;
+  caosMudoCarta = mudo;
+}
 function openCaosReview() {
   let ov = document.getElementById("caosReviewOverlay");
   if (ov) ov.remove();
@@ -2366,7 +2380,8 @@ function openCaosReview() {
   h.textContent = "🤖 Como foi o C.A.O.S. hoje?";
   const sub = document.createElement("div");
   sub.style.cssText = "opacity:0.75; font-size:0.85rem; text-align:center; margin-bottom:10px;";
-  sub.textContent = "Dê uma nota pras falas. As que a mesa reprovar (2 👎) param de sair neste aparelho.";
+  sub.textContent = "Dê uma nota pras falas. As que a mesa reprovar (2 👎) param de sair neste aparelho." +
+    (typeof CAOS_VOICE_OK !== "undefined" && CAOS_VOICE_OK ? " Toque em 🔊 pra ouvir a fala de novo, com a mesma emoção." : "");
   box.append(close, h, sub);
   caosMatchLog.forEach((e) => {
     const row = document.createElement("div");
@@ -2393,6 +2408,16 @@ function openCaosReview() {
       });
       btns.appendChild(b);
     });
+    // C.A.O.S. 4.2 (pedido do JF, pra calibrar a voz): ouvir a fala de novo. A fala é gerada de novo com o
+    // mesmo texto e a mesma emoção (a voz nova repete igual, guardada no servidor; a do aparelho pode variar)
+    if (typeof CAOS_VOICE_OK !== "undefined" && CAOS_VOICE_OK) {
+      const ouvir = document.createElement("button");
+      ouvir.type = "button";
+      ouvir.textContent = "🔊";
+      ouvir.title = "Ouvir de novo";
+      ouvir.addEventListener("click", () => caosOuvirDeNovo(e));
+      btns.prepend(ouvir);
+    }
     row.append(t, btns);
     box.appendChild(row);
   });

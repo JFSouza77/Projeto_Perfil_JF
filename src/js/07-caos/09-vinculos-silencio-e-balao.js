@@ -121,10 +121,12 @@ function caosVinculoAcerto(idx) {
   }
 }
 function caosVinculoCorte() {
+  if (salaOnlineAberta()) return; // C.A.O.S. 4.2: no online não dá pra saber quem pulou
   const m = mestreIndex !== null && mestreIndex !== void 0 ? players[mestreIndex] : null;
   if (m) caosVincRessent(m, 1, "cortou a fala");
 }
 function caosVinculoNaoCurti() {
+  if (salaOnlineAberta()) return; // C.A.O.S. 4.2: o 👎 no online não é de quem "segura o celular"
   const m = mestreIndex !== null && mestreIndex !== void 0 && starterChosen && !gameEnded ? players[mestreIndex] : null;
   if (!m || !caosVincElegivelDesafeto(m)) return;
   caosVincRessent(m, 1, "👎 (palpite: quem segurava o celular)");
@@ -729,6 +731,11 @@ function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze, _d
   if (caosEmoFala) caosViradaDesde++;
   const virada = viradaManual || caosViradaDecidir(msg, caosEmoFala, caosBancoFala, priority, tropecou);
   caosLogMatchLine(msg);
+  // C.A.O.S. 4.2: a emoção da fala fica no registro (o botão 🔊 da revisão repete do mesmo jeito)
+  try {
+    const ult = caosMatchLog[caosMatchLog.length - 1];
+    if (ult && caosEmoFala && !ult.emo && String(msg).indexOf(ult.text.slice(0, 30)) !== -1) ult.emo = caosEmoFala;
+  } catch (e) {}
   if (virada) {
     virada.linha = caosMatchLog[caosMatchLog.length - 1] || null;
     caosViradaDesde = 0;

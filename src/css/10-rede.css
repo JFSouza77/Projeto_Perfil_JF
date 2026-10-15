@@ -529,3 +529,9 @@ body.claro button.splash-embreve .eb-sub {
 .telao-objetivo summary { cursor: pointer; }
 .telao-objetivo p { margin: 6px 0 0; opacity: 0.85; }
 body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba(0, 0, 0, 0.12); }
+/* C.A.O.S. 4.2: selo HOST e números de dica na T2 */
+.selo-host { display: inline-block; margin-left: 4px; padding: 0 5px; border-radius: 6px; font-size: 0.62em; font-weight: 800; letter-spacing: 0.04em; vertical-align: middle; background: #f59e0b; color: #1a1a2e; }
+.telao-numeros { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 8px; }
+.telao-numeros span { min-width: 1.9em; text-align: center; padding: 2px 4px; border-radius: 6px; font-size: 0.85em; font-weight: 700; background: rgba(255,255,255,0.12); }
+.telao-numeros span.usada { opacity: 0.35; text-decoration: line-through; }
+.telao-numeros span.agora { background: #f59e0b; color: #1a1a2e; box-shadow: 0 0 0 2px #fde68a; }

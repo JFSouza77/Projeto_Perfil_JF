@@ -3959,6 +3959,7 @@ const REACTIVE_VOICE = {
       ],
       palpite: [
         "{nome}, você ganhou uma FICHA DE PALPITE! Com ela você pode responder fora da sua vez, em qualquer carta, quando tiver certeza. Avisa o Mestre na hora. Guarda pra uma boa oportunidade, mas não esquece dela!",
+        "{nome}, ficha de palpite na mão! Dá pra responder mesmo na vez de outra pessoa: avise a mesa e espere o Mestre marcar. Use com sabedoria, é uma só.",
       ],
       mestreBotoes: [
         "Mestre {nome}, dois botões novos pra você: » Pulou é quando a pessoa não tinha palpite nenhum; ⚠︎ Absurdo é quando o chute foi muito longe. Pro placar os dois contam como Errou. Pra mim, contam muito mais.",

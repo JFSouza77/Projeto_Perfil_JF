@@ -372,7 +372,8 @@ function caosVozCalada() {
     if (!stats || stats.totalDrawn < 1 || gameEnded || !caosOncePerMatch("voz_calada")) return;
     caosEmoNudge(2, -1);
     caosLog("voz", "voz desligada no meio da partida");
-    caosFalaAgendar(() => getRandomReaction(REACTIVE_VOICE.vozCalada), 500, "media");
+    // C.A.O.S. 4.2: resposta a quem acabou de calar a voz: aparece sempre (fora do orçamento), uma vez, só em texto
+    caosFalaAgendar(() => getRandomReaction(REACTIVE_VOICE.vozCalada), 500, "regra");
   } catch (e) {}
 }
 function caosFalarNormal(txt) {

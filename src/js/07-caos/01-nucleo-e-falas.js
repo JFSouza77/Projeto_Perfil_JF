@@ -848,8 +848,10 @@ function caosRegistrarCorte() {
   const agora = Date.now();
   caosFalasRecentes.push(agora, agora);
   caosEmoNudge(0.6, -0.3);
+  // C.A.O.S. 4.2: no online, quem pula a fala pode estar em qualquer aparelho (o Mestre da vez quase nunca é
+  // quem tocou): pular não marca ninguém. No aparelho único da mesa, segue o palpite de sempre (o Mestre).
   const quem =
-    mestreIndex !== null && mestreIndex !== void 0 && players[mestreIndex] && starterChosen && !gameEnded
+    !salaOnlineAberta() && mestreIndex !== null && mestreIndex !== void 0 && players[mestreIndex] && starterChosen && !gameEnded
       ? players[mestreIndex]
       : null;
   const C = REACTIVE_VOICE.caosCortado;
@@ -886,9 +888,22 @@ function caosVingancaLine(p) {
   caosLog("vinganca", `${p.name} (cortou ${caosCortes.por[p.name] || 1}x)`);
   return getRandomReaction(REACTIVE_VOICE.caosCortado.vinganca, p.name, caosCortes.por[p.name] || 1);
 }
+let caosFalaEssencial = false; // fala de regra/aviso em andamento: passa pelo orçamento (C.A.O.S. 4.2)
 function caosToastBloquear() {
   try {
     if (document.getElementById("pauseScreen").style.display === "block") return true;
+    if (caosFalaEssencial) return false;
+    // C.A.O.S. 4.2: intervalo mínimo entre comentários (vale também no lobby e no cadastro)
+    // "ouvido interno": se ele falou muito nas últimas 3 cartas (5+ falas), espera o dobro antes de comentar
+    let intervalo = CAOS_FALA_INTERVALO_MS;
+    try {
+      const desde = (stats ? stats.totalDrawn : 0) - 2;
+      if (stats && stats.totalDrawn >= 1 && caosMatchLog.filter((e) => e.n >= desde && e.n > 0).length >= 5) intervalo *= 2;
+    } catch (e) {}
+    if (Date.now() - (caosUltimaFalaAt || 0) < intervalo) {
+      caosLog("orcamento", "fala cortada (intervalo)");
+      return true;
+    }
     if (!stats || stats.totalDrawn < 1 || gameEnded) return false;
     if (caosFalaCartaRef !== stats.totalDrawn) {
       caosFalaCartaRef = stats.totalDrawn;
@@ -1053,7 +1068,11 @@ function caosTalvezVoltar() {
   caosEmo.calor = 5;
   caosEmo.paciencia = Math.max(caosEmo.paciencia ?? 7, 6);
   caosLog("voltou", "saída temporária acabou");
-  showToastMessage(getRandomReaction(REACTIVE_VOICE.caosVoltouTemporario));
+  // C.A.O.S. 4.2 (relato do JF): "desvirei a mesa" sem ele ter virado a mesa não faz sentido; só sai se virou
+  const voltas = caosEasterEggsUsed.has("virou_mesa")
+    ? REACTIVE_VOICE.caosVoltouTemporario
+    : REACTIVE_VOICE.caosVoltouTemporario.filter((f) => String(typeof f === "function" ? f() : f).indexOf("desvirei") === -1);
+  showToastMessage(getRandomReaction(voltas));
 }
 function caosMemReset() {
   caosCardTimes = [];

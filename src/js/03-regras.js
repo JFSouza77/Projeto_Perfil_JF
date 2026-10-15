@@ -637,3 +637,33 @@ function buildPalpiteBoxHtml() {
   return `<div class="palpite-box"><div class="palpite-title">🃏 Alguém usou o palpite a qualquer hora? (fichas no estoque: ${palpiteStock})</div>${rows}</div>`;
 }
 
+
+// C.A.O.S. 4.2 (relato da partida online: nick sexual passou): nome de jogador com termo sexual ou palavrão é
+// recusado com aviso neutro. Confere sem acento, com troca de número por letra (p1k4) e letra repetida (piikaa).
+// Exceção pedida pelo JF: "Carro Pika" (o nick do Henrique), só esse nome exato.
+const NOME_EXCECOES = ["carro pika"];
+const NOME_PROIBIDO_PALAVRA =
+  /^(pica|picas|picao|picudo|picuda|pika|pikas|pikao|pikudo|pikuda|piroca|pirocao|pirocudo|rola|rolas|rolao|pau(zao|zudo)|cu|cus|cuzao|cuzinho|puta|putas|puto|putinha|putaria|foda|fodas|fode|foder|fodeu|fudendo|fuder|porra|caralho|caralhos|krl|crl|buceta|boceta|bct|xoxota|xereca|xota|xana|xavasca|perereca|grelo|siririca|punheta|bronha|boquete|gozo|gozar|gozei|gozada|tesao|tesuda|tesudo|sexo|sexy|sexual|transa|transar|anal|penis|vagina|porno|pornô|nude|nudes|xvideos|safada|safado|vadia|vagabunda|piranha|rapariga|prostituta|bundao|rabuda|peitao|peituda|mamada|chupa|chupada|chupeta|pinto|pintao|pintudo|bilau|binga|benga|jeba|cacete|caceta|trolha)$/;
+const NOME_PROIBIDO_TRECHO = /(piroc|bucet|bocet|xoxot|xerec|punhet|siriric|boquet|caralh|putari|porno|xvideo|pornhub|onlyfans|chupaper|chupapic|mamapic|pikaz|picaz)/;
+function nomeNormalizarFiltro(n) {
+  return String(n || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/0/g, "o").replace(/1/g, "i").replace(/3/g, "e").replace(/4/g, "a").replace(/5/g, "s").replace(/7/g, "t")
+    .replace(/@/g, "a").replace(/\$/g, "s").replace(/!/g, "i")
+    .replace(/[^a-z\s]/g, " ")
+    .replace(/(.)\1+/g, "$1")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+function nomeImproprio(n) {
+  const base = String(n || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, " ").trim();
+  if (NOME_EXCECOES.includes(base)) return false;
+  const t = nomeNormalizarFiltro(n);
+  if (!t) return false;
+  const palavras = t.split(" ");
+  // a palavra sozinha ("Pika"), e também colada no resto ("CarroPika" vira "carro pika" só se tiver espaço)
+  if (palavras.some((w) => NOME_PROIBIDO_PALAVRA.test(w) || NOME_PROIBIDO_PALAVRA.test(w.replace(/(.)\1+/g, "$1")))) return true;
+  return NOME_PROIBIDO_TRECHO.test(t.replace(/ /g, ""));
+}

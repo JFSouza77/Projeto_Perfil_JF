@@ -6,6 +6,18 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.4 · 15/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.2: FALA MENOS E FALA PRA PESSOA CERTA.
+          Partida online de 4 PCs (JF, Vitinho, Rafa, Henrique): o C.A.O.S. estava insuportável e todos calaram.
+          Orçamento de comentários (CAOS_FALAS_POR_CARTA 7 → 2, CAOS_FALA_INTERVALO_MS 20 s, dobra se falou 5+ nas
+          últimas 3 cartas); aviso de regra ("regra"/caosFalaEssencial) passa. A espinha não manda mais pros celulares a
+          fala que o host cortou (antes ia depois de ~8 s) e a fala só-longe passa pelo orçamento. Fala que fala COM
+          quem está longe vai só pro aparelho dela. No online, Alt-Tab/minimizar no host não pausa (salaOnlineAberta) nem
+          trava o lobby; pular fala e 👎 não marcam o Mestre. Categoria apresentada e easter eggs no save (caosUmaVez).
+          "Desvirei a mesa" só depois de virar. Voz calada: reação só em texto, uma vez (no celular também). 🔊 na revisão
+          das falas (mesma emoção). Vergonha com estilo embarrassed. Filtro de nick (nomeImproprio; exceção exata
+          "Carro Pika"). T2: número pedido na lista (li value), números de dica pra todos, a dica que o Mestre lê só aparece
+          pra mesa depois do veredito (retrato mesa sem o texto pendente), selo HOST. Ficha de palpite explicada uma vez
+          por jogador (perfil5_palpite_explicado). teste_telao atualizado (tabuleiro só no intervalo). JOGO_BUILD 1809.
   1.7.10.3.1 · 13/10/2026 · "Multiplayer Update · Online de verdade" = PATCH: MAIS EMOÇÃO NA VOZ NOVA DO C.A.O.S.
           C.A.O.S. 4.0 → 4.1.1 (regra do JF: mexeu no C.A.O.S., sobe a versão dele; a do jogo não muda por isso):
           4.1 = voz nova (Azure, desde a 1.7.10.2); 4.1.1 = mecânica da voz (emoção, pausas, entonação, Caio opcional).
@@ -769,7 +781,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.3.1</title>
+<title>Perfil JF · Beta 1.7.10.4</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -8933,6 +8945,12 @@ body.claro button.splash-embreve .eb-sub {
 .telao-objetivo summary { cursor: pointer; }
 .telao-objetivo p { margin: 6px 0 0; opacity: 0.85; }
 body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba(0, 0, 0, 0.12); }
+/* C.A.O.S. 4.2: selo HOST e números de dica na T2 */
+.selo-host { display: inline-block; margin-left: 4px; padding: 0 5px; border-radius: 6px; font-size: 0.62em; font-weight: 800; letter-spacing: 0.04em; vertical-align: middle; background: #f59e0b; color: #1a1a2e; }
+.telao-numeros { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 8px; }
+.telao-numeros span { min-width: 1.9em; text-align: center; padding: 2px 4px; border-radius: 6px; font-size: 0.85em; font-weight: 700; background: rgba(255,255,255,0.12); }
+.telao-numeros span.usada { opacity: 0.35; text-decoration: line-through; }
+.telao-numeros span.agora { background: #f59e0b; color: #1a1a2e; box-shadow: 0 0 0 2px #fde68a; }
 </style>
 </head>
 <body class="noturno">
@@ -8989,7 +9007,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.3.1 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.1.4 · Atualizada em 13/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.4 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.2 · Atualizada em 15/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -9257,7 +9275,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1808;
+const JOGO_BUILD = 1809;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -9766,7 +9784,11 @@ const CAOS_BIP = {
 };
 const CAOS_BALAO_MIN_MS = 2500;
 const CAOS_BALAO_POS_VOZ_MS = 600;
-const CAOS_FALAS_POR_CARTA = 7;
+// C.A.O.S. 4.2 (partida online de 4 pessoas: "o C.A.O.S. estava insuportável", todo mundo calou ele):
+// comentário (fala que não é aviso nem regra) no máximo 2 por carta e com pelo menos 20 s entre um e outro.
+// Avisos, regras e falas importantes (priority, essencial) não entram nessa conta.
+const CAOS_FALAS_POR_CARTA = 2;
+const CAOS_FALA_INTERVALO_MS = 20000;
 const CAOS_COLOR_NAMES = {
   "#dc2626": "vermelho-sangue",
   "#6366f1": "índigo",
@@ -11213,6 +11235,36 @@ function buildPalpiteBoxHtml() {
   return `<div class="palpite-box"><div class="palpite-title">🃏 Alguém usou o palpite a qualquer hora? (fichas no estoque: ${palpiteStock})</div>${rows}</div>`;
 }
 
+
+// C.A.O.S. 4.2 (relato da partida online: nick sexual passou): nome de jogador com termo sexual ou palavrão é
+// recusado com aviso neutro. Confere sem acento, com troca de número por letra (p1k4) e letra repetida (piikaa).
+// Exceção pedida pelo JF: "Carro Pika" (o nick do Henrique), só esse nome exato.
+const NOME_EXCECOES = ["carro pika"];
+const NOME_PROIBIDO_PALAVRA =
+  /^(pica|picas|picao|picudo|picuda|pika|pikas|pikao|pikudo|pikuda|piroca|pirocao|pirocudo|rola|rolas|rolao|pau(zao|zudo)|cu|cus|cuzao|cuzinho|puta|putas|puto|putinha|putaria|foda|fodas|fode|foder|fodeu|fudendo|fuder|porra|caralho|caralhos|krl|crl|buceta|boceta|bct|xoxota|xereca|xota|xana|xavasca|perereca|grelo|siririca|punheta|bronha|boquete|gozo|gozar|gozei|gozada|tesao|tesuda|tesudo|sexo|sexy|sexual|transa|transar|anal|penis|vagina|porno|pornô|nude|nudes|xvideos|safada|safado|vadia|vagabunda|piranha|rapariga|prostituta|bundao|rabuda|peitao|peituda|mamada|chupa|chupada|chupeta|pinto|pintao|pintudo|bilau|binga|benga|jeba|cacete|caceta|trolha)$/;
+const NOME_PROIBIDO_TRECHO = /(piroc|bucet|bocet|xoxot|xerec|punhet|siriric|boquet|caralh|putari|porno|xvideo|pornhub|onlyfans|chupaper|chupapic|mamapic|pikaz|picaz)/;
+function nomeNormalizarFiltro(n) {
+  return String(n || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/0/g, "o").replace(/1/g, "i").replace(/3/g, "e").replace(/4/g, "a").replace(/5/g, "s").replace(/7/g, "t")
+    .replace(/@/g, "a").replace(/\$/g, "s").replace(/!/g, "i")
+    .replace(/[^a-z\s]/g, " ")
+    .replace(/(.)\1+/g, "$1")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+function nomeImproprio(n) {
+  const base = String(n || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, " ").trim();
+  if (NOME_EXCECOES.includes(base)) return false;
+  const t = nomeNormalizarFiltro(n);
+  if (!t) return false;
+  const palavras = t.split(" ");
+  // a palavra sozinha ("Pika"), e também colada no resto ("CarroPika" vira "carro pika" só se tiver espaço)
+  if (palavras.some((w) => NOME_PROIBIDO_PALAVRA.test(w) || NOME_PROIBIDO_PALAVRA.test(w.replace(/(.)\1+/g, "$1")))) return true;
+  return NOME_PROIBIDO_TRECHO.test(t.replace(/ /g, ""));
+}
 /* ======================================================================
  * 4. TURNO E RODADA (SORTEIO DE CARTA, DICAS, ACERTO/ERRO, ESPECIAIS, TIMERS, PAUSA, INÍCIO E FIM)
  * ====================================================================== */
@@ -11714,6 +11766,28 @@ function flipCard() {
 }
 // 1.7.10.3 (pedido do JF): a primeira carta de cada categoria na partida vem com o lembrete do que ela inclui
 // (Pessoa vale grupo, Lugar vale ficção, Ano vale década/século, Coisa vale tudo). Uma vez por categoria.
+// C.A.O.S. 4.2 (relato da partida online): na primeira ficha de palpite de cada jogador, o C.A.O.S. explica o
+// que ela faz, uma vez por pessoa (lembra o nome neste aparelho, entre partidas). A fala começa com o nome, então
+// no online vai pro aparelho da pessoa. É aviso de regra: não entra no orçamento de comentários.
+const PALPITE_EXPLICADO_KEY = "perfil5_palpite_explicado";
+function caosExplicarPalpite(p) {
+  try {
+    if (!p || !p.name || gameEnded) return;
+    const nome = String(p.name).toLowerCase().trim();
+    let lista = [];
+    try {
+      lista = JSON.parse(localStorage.getItem(PALPITE_EXPLICADO_KEY) || "[]");
+    } catch (e) {}
+    if (!Array.isArray(lista)) lista = [];
+    if (lista.includes(nome)) return;
+    lista.push(nome);
+    try {
+      localStorage.setItem(PALPITE_EXPLICADO_KEY, JSON.stringify(lista.slice(-200)));
+    } catch (e) {}
+    caosLog("palpite", `${p.name}: explicação da ficha (1ª vez)`);
+    caosFalaAgendar(() => getRandomReaction(REACTIVE_VOICE.iniciante.explica.palpite, p.name), 1500, "regra");
+  } catch (e) {}
+}
 function caosPrimeiraCategoria() {
   try {
     if (!currentCard || typeof REACTIVE_VOICE === "undefined" || !REACTIVE_VOICE.primeiraCategoria) return;
@@ -11721,7 +11795,7 @@ function caosPrimeiraCategoria() {
     const banco = REACTIVE_VOICE.primeiraCategoria[cat === "COISA" && CURRENT_MODE === "junior" ? "COISA_JR" : cat];
     if (!banco || !caosOncePerMatch("primeira_cat_" + cat)) return;
     caosLog("fala", "primeira carta de " + cat);
-    caosFalaAgendar(() => getRandomReaction(banco), 900, "media");
+    caosFalaAgendar(() => getRandomReaction(banco), 900, "regra");
   } catch (e) {}
 }
 function checkWinnerThenDraw() {
@@ -11988,7 +12062,10 @@ function chooseClue(idx) {
   acessLerDica(idx + 1, item);
   if (item.type === "special" && isWildcardSpecial(item.text)) {
     revealedEntry.palpiteResult = grantPalpite(responderIndex);
-    if (revealedEntry.palpiteResult === "ganhou") caosIniExplica(players[responderIndex], "palpite");
+    if (revealedEntry.palpiteResult === "ganhou") {
+      if (players[responderIndex].iniciante) caosIniExplica(players[responderIndex], "palpite");
+      else caosExplicarPalpite(players[responderIndex]);
+    }
     if (revealedEntry.palpiteResult === "fominha") {
       const pf = players[responderIndex];
       caosLog("palpite", `${pf.name}: fominha (já tinha ficha)`);
@@ -12673,6 +12750,10 @@ function addPlayer() {
     caosAvisoModal("O nome deve ter entre 2 e 15 caracteres!");
     return;
   }
+  if (nomeImproprio(name)) {
+    caosAvisoModal("Esse nome não pode ser usado no jogo. Escolha outro, por favor.");
+    return;
+  }
   if (players.some((p) => p.name.toLowerCase() === name.toLowerCase())) {
     cadNomeRepetido(name); // 1.7.10 (pedido do JF): treme, borda vermelha, mostra o nome na lista e o C.A.O.S. comenta
     return;
@@ -13194,8 +13275,18 @@ function beginGameplay() {
   drawHidden();
   saveGameState();
 }
+// C.A.O.S. 4.2 / partida online de 4 PCs: no online, trocar de janela (Alt-Tab) ou minimizar no aparelho do
+// host não pausa a sala inteira. Pausa no online só pelo botão. O relógio segue pela hora de verdade.
+function salaOnlineAberta() {
+  try {
+    return typeof rede !== "undefined" && !!rede && rede.papel === "host";
+  } catch (e) {
+    return false;
+  }
+}
 function autoPauseGame() {
   if (!starterChosen || gameEnded) return;
+  if (salaOnlineAberta()) return;
   const g = document.getElementById("gameScreen");
   if (!g || g.style.display !== "flex") return;
   pauseGame();
@@ -13204,6 +13295,7 @@ function autoPauseGame() {
 }
 function recoverFromMissedPause() {
   if (!starterChosen || gameEnded) return;
+  if (salaOnlineAberta()) return; // no online o tempo correu de verdade pra todo mundo
   const g = document.getElementById("gameScreen");
   if (!g || g.style.display !== "flex") return;
   if (!(timerInterval && timerEndAt && lastTimerTick)) return;
@@ -13415,7 +13507,15 @@ function caosFalaAgendar(fn, ms, prio) {
         return;
       }
       const m = fn();
-      if (m) showToastMessage(m);
+      // "regra": aviso que explica o jogo (ex.: o que vale na categoria) não entra no orçamento de comentários
+      if (m) {
+        caosFalaEssencial = prio === "regra";
+        try {
+          showToastMessage(m);
+        } finally {
+          caosFalaEssencial = false;
+        }
+      }
     } catch (e) {}
   }, ms);
 }
@@ -15926,6 +16026,20 @@ function renderFinalScreen() {
   if (hz) hz.addEventListener("click", hallZerar);
   caosLigarFalaveis(winnerArea);
 }
+function caosOuvirDeNovo(e) {
+  if (!e || !e.text) return;
+  const voz = caosVoiceOn, emo = typeof caosEmoFalaAtual !== "undefined" ? caosEmoFalaAtual : null, mudo = caosMudoCarta;
+  try {
+    unlockAudio();
+    caosVoiceOn = true; // ouve mesmo com a voz da partida desligada (foi a pessoa que pediu)
+    caosMudoCarta = false;
+    caosEmoFalaAtual = e.emo || "calmo";
+    caosSpeak("[C.A.O.S.] " + e.text, null);
+  } catch (err) {}
+  caosVoiceOn = voz;
+  caosEmoFalaAtual = emo;
+  caosMudoCarta = mudo;
+}
 function openCaosReview() {
   let ov = document.getElementById("caosReviewOverlay");
   if (ov) ov.remove();
@@ -15946,7 +16060,8 @@ function openCaosReview() {
   h.textContent = "🤖 Como foi o C.A.O.S. hoje?";
   const sub = document.createElement("div");
   sub.style.cssText = "opacity:0.75; font-size:0.85rem; text-align:center; margin-bottom:10px;";
-  sub.textContent = "Dê uma nota pras falas. As que a mesa reprovar (2 👎) param de sair neste aparelho.";
+  sub.textContent = "Dê uma nota pras falas. As que a mesa reprovar (2 👎) param de sair neste aparelho." +
+    (typeof CAOS_VOICE_OK !== "undefined" && CAOS_VOICE_OK ? " Toque em 🔊 pra ouvir a fala de novo, com a mesma emoção." : "");
   box.append(close, h, sub);
   caosMatchLog.forEach((e) => {
     const row = document.createElement("div");
@@ -15973,6 +16088,16 @@ function openCaosReview() {
       });
       btns.appendChild(b);
     });
+    // C.A.O.S. 4.2 (pedido do JF, pra calibrar a voz): ouvir a fala de novo. A fala é gerada de novo com o
+    // mesmo texto e a mesma emoção (a voz nova repete igual, guardada no servidor; a do aparelho pode variar)
+    if (typeof CAOS_VOICE_OK !== "undefined" && CAOS_VOICE_OK) {
+      const ouvir = document.createElement("button");
+      ouvir.type = "button";
+      ouvir.textContent = "🔊";
+      ouvir.title = "Ouvir de novo";
+      ouvir.addEventListener("click", () => caosOuvirDeNovo(e));
+      btns.prepend(ouvir);
+    }
     row.append(t, btns);
     box.appendChild(row);
   });
@@ -18374,7 +18499,9 @@ function retratoPartida(papel) {
           ...(mestre ? { clueId: r.item.id || null } : {}),
           pos: r.index,
           tipo: r.item.type,
-          texto: r.item.text,
+          // C.A.O.S. 4.2 (relato da partida online): a dica que o Mestre acabou de abrir só aparece pra mesa
+          // depois do veredito (Acertou/Errou); até lá só o número fica em destaque. O Mestre vê o texto.
+          texto: !mestre && r.index === pendingIndex && CURRENT_MODE !== "express" ? null : r.item.text,
           pedidaPor: (players.find((p) => p.name === r.pickedByName) || {}).id || null,
         })),
         pendente: pendingIndex === null ? null : pendingIndex,
@@ -18804,7 +18931,9 @@ function telaoDesenhar(r, alvo) {
   if (!box) return;
   const nome = (id) => {
     const j = r.jogadores.find((p) => p.id === id);
-    return j ? escapeHtml((j.avatar ? j.avatar + " " : "") + j.nome) : "—";
+    // C.A.O.S. 4.2 (relato da partida online: ninguém sabia quem era o host): selo HOST (quem cuida da sala; não
+    // é o Mestre, que é o dono da carta da vez)
+    return j ? escapeHtml((j.avatar ? j.avatar + " " : "") + j.nome) + (r.hostId && id === r.hostId ? ' <span class="selo-host" title="Host: quem abriu e cuida da sala">HOST</span>' : "") : "—";
   };
   const placar = [...r.jogadores]
     .sort((a, b) => (r.vitoria === "pontos" ? b.pontos - a.pontos : b.casa - a.casa))
@@ -18815,10 +18944,17 @@ function telaoDesenhar(r, alvo) {
     })
     .join("");
   const c = r.carta;
+  // C.A.O.S. 4.2 (relato da partida online): cada dica com o número que foi pedido (a dica 13 aparece como 13,
+  // não como 1), e a que o Mestre está lendo só mostra o texto depois do veredito
   const dicas = c
     ? c.abertas
-        .map((d) => `<li${d.pos === c.pendente ? ' class="telao-agora"' : ""}>${d.tipo === "special" ? "⭐ " : ""}${escapeHtml(d.texto)}${d.pedidaPor ? ` <small class="telao-quem">· pedida por ${nome(d.pedidaPor)}</small>` : ""}</li>`) // 1.7.9.6: quem pediu
+        .map((d) => `<li value="${d.pos + 1}"${d.pos === c.pendente ? ' class="telao-agora"' : ""}>${d.texto == null ? "🔒 <i>O Mestre está lendo esta dica…</i>" : (d.tipo === "special" ? "⭐ " : "") + escapeHtml(d.texto)}${d.pedidaPor ? ` <small class="telao-quem">· pedida por ${nome(d.pedidaPor)}</small>` : ""}</li>`) // 1.7.9.6: quem pediu
         .join("")
+    : "";
+  // os números de dica pra todo mundo: livre, a que está sendo lida (em destaque) e as já usadas
+  const usadas = c ? new Set(c.abertas.map((d) => d.pos)) : new Set();
+  const numeros = c && c.totalDicas && r.estadoCarta !== "hidden"
+    ? `<div class="telao-numeros" aria-label="Números de dica">${Array.from({ length: c.totalDicas }, (_, i) => `<span class="${i === c.pendente ? "agora" : usadas.has(i) ? "usada" : "livre"}">${i + 1}</span>`).join("")}</div>`
     : "";
   box.innerHTML = `
     <header class="telao-topo"><b>📺 Perfil JF</b><span>rodada ${r.rodada}${r.ultimaRodada ? " · última" : ""} · revisão ${r.revisao}</span></header>
@@ -18829,7 +18965,7 @@ function telaoDesenhar(r, alvo) {
       <div>⏱️ <b id="telaoRelogio">—</b></div>
     </section>
     ${telaoObjetivoHtml(r)}
-    ${c && r.estadoCarta === "hidden" ? `<section class="telao-carta">${telaoRoletaHtml(c)}</section>` : c && c.categoria ? `<section class="telao-carta"><div class="telao-cat">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)} · ${c.abertas.length} de ${c.totalDicas} dicas</div>${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>` : ""}
+    ${c && r.estadoCarta === "hidden" ? `<section class="telao-carta">${telaoRoletaHtml(c)}</section>` : c && c.categoria ? `<section class="telao-carta"><div class="telao-cat">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)} · ${c.abertas.length} de ${c.totalDicas} dicas</div>${numeros}${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>` : ""}
     ${telaoMostraTabuleiro(r) ? tabHtmlTelao(r) : ""}
     <section class="telao-placar"><ol>${placar}</ol></section>
     ${TELAO_SAIR}`;
@@ -19483,7 +19619,7 @@ function tabLobbyAbrir() {
     antesTique = t;
     if (!ov.isConnected || gameEnded || (cardState !== "hidden" && cardState !== "bonusChoice")) return tabLobbyFechar();
     // aba escondida ou pausa: o relógio do lobby espera junto
-    if (document.hidden || (typeof pausaEstaAberta === "function" && pausaEstaAberta())) {
+    if ((document.hidden && !(typeof salaOnlineAberta === "function" && salaOnlineAberta())) || (typeof pausaEstaAberta === "function" && pausaEstaAberta())) {
       fim += passou;
       tabLobbyFim = fim;
       return;
@@ -20975,7 +21111,9 @@ function redeHostFala(f) {
   if (typeof f.emo === "string" && /^[a-z]{2,20}$/.test(f.emo)) visual.emo = f.emo;
   if (typeof f.face === "string" && f.face.length <= 24) visual.face = f.face;
   if (typeof f.rotulo === "string" && f.rotulo.length <= 24) visual.rotulo = f.rotulo;
-  if (f.privado) {
+  // C.A.O.S. 4.2 (partida online: "não chega direto no jogador"): fala particular, ou que fala COM quem está
+  // em outro aparelho, vai só pro aparelho dessa pessoa (antes ia pra sala toda e ninguém sabia que era com ele)
+  if (f.privado || redeFalaSoLonge(f)) {
     ids.forEach((id) => {
       const a = rede.assentos[id];
       if (a && redeOnline(a) && !redeNoHost(id)) redeEnviar("fala", { texto: f.texto, quem: [id], ...visual }, a.sessao);
@@ -21100,6 +21238,7 @@ function redePerfilProblema(perfil, ignorarSessao) {
   const pendentes = Object.keys(rede.pedidos).filter((s) => s !== ignorarSessao && rede.pedidos[s].tipo === "perfil");
   if (players.length + pendentes.length >= MAX_PLAYERS) return "sala_cheia";
   if (nome.length < 2 || nome.length > 15) return "nome_curto";
+  if (nomeImproprio(nome)) return "nome_improprio";
   const igual = (n) => String(n).toLowerCase() === nome.toLowerCase();
   if (players.some((p) => igual(p.name)) || pendentes.some((s) => igual(rede.pedidos[s].perfil.nome))) return "nome_em_uso";
   return "";
@@ -21204,6 +21343,7 @@ const REDE_MOTIVO_TXT = {
   sala_cheia: "A sala já está cheia.",
   nome_curto: "O nome precisa ter de 2 a 15 letras.",
   nome_em_uso: "Já tem alguém com esse nome. Escolha outro.",
+  nome_improprio: "Esse nome não pode ser usado no jogo. Escolha outro, por favor.",
   muitos_pedidos: "Muita gente pedindo pra entrar ao mesmo tempo. Tente de novo em instantes.",
   pedido_expirou: "O pedido ficou sem resposta. Tente de novo.",
 };
@@ -21409,6 +21549,7 @@ function redeHostPublicar(forcar) {
   r.votacao = rede.votacao ? redeVotacaoPublica() : null;
   r.sucessor = redeSucessor();
   r.hostNome = rede.hostEu ? (jogadorPorId(rede.hostEu) || {}).name || null : null;
+  r.hostId = rede.hostEu || null; // C.A.O.S. 4.2: selo HOST nas telas
   redeEnviar("retrato", { r, anne: anneLigada() });
   redeHostRecuperacao(false);
   Object.keys(rede.assentos).forEach((jid) => {
@@ -21929,6 +22070,14 @@ function redeVozTrocar() {
     unlockAudio();
     toggleVoice();
   } catch (e) {}
+  // C.A.O.S. 4.2: calou a voz no celular? Uma reação curta, só em texto, uma vez por sala neste aparelho
+  try {
+    const k = "perfil5_rede_vozcalada_" + (rede ? rede.sala : "");
+    if (!caosVoiceOn && rede && !sessionStorage.getItem(k)) {
+      sessionStorage.setItem(k, "1");
+      redeFalaMostrar({ texto: String(getRandomReaction(REACTIVE_VOICE.vozCalada) || "").replace(/^\[C\.A\.O\.S\.\]\s*/, ""), quem: [rede.eu] });
+    }
+  } catch (e) {}
   try {
     redeConvidadoDesenhar();
   } catch (e) {}
@@ -22292,6 +22441,11 @@ function redePedirEntrada(perfil) {
   const nome = nomeJogadorLimpo(r.nome);
   if (nome.length < 2 || nome.length > 15) {
     rede.erroCadastro = REDE_MOTIVO_TXT.nome_curto;
+    redeConvidadoDesenhar();
+    return false;
+  }
+  if (nomeImproprio(nome)) {
+    rede.erroCadastro = REDE_MOTIVO_TXT.nome_improprio;
     redeConvidadoDesenhar();
     return false;
   }
@@ -25649,7 +25803,8 @@ function caosVozCalada() {
     if (!stats || stats.totalDrawn < 1 || gameEnded || !caosOncePerMatch("voz_calada")) return;
     caosEmoNudge(2, -1);
     caosLog("voz", "voz desligada no meio da partida");
-    caosFalaAgendar(() => getRandomReaction(REACTIVE_VOICE.vozCalada), 500, "media");
+    // C.A.O.S. 4.2: resposta a quem acabou de calar a voz: aparece sempre (fora do orçamento), uma vez, só em texto
+    caosFalaAgendar(() => getRandomReaction(REACTIVE_VOICE.vozCalada), 500, "regra");
   } catch (e) {}
 }
 function caosFalarNormal(txt) {
@@ -26901,8 +27056,10 @@ function caosRegistrarCorte() {
   const agora = Date.now();
   caosFalasRecentes.push(agora, agora);
   caosEmoNudge(0.6, -0.3);
+  // C.A.O.S. 4.2: no online, quem pula a fala pode estar em qualquer aparelho (o Mestre da vez quase nunca é
+  // quem tocou): pular não marca ninguém. No aparelho único da mesa, segue o palpite de sempre (o Mestre).
   const quem =
-    mestreIndex !== null && mestreIndex !== void 0 && players[mestreIndex] && starterChosen && !gameEnded
+    !salaOnlineAberta() && mestreIndex !== null && mestreIndex !== void 0 && players[mestreIndex] && starterChosen && !gameEnded
       ? players[mestreIndex]
       : null;
   const C = REACTIVE_VOICE.caosCortado;
@@ -26939,9 +27096,22 @@ function caosVingancaLine(p) {
   caosLog("vinganca", `${p.name} (cortou ${caosCortes.por[p.name] || 1}x)`);
   return getRandomReaction(REACTIVE_VOICE.caosCortado.vinganca, p.name, caosCortes.por[p.name] || 1);
 }
+let caosFalaEssencial = false; // fala de regra/aviso em andamento: passa pelo orçamento (C.A.O.S. 4.2)
 function caosToastBloquear() {
   try {
     if (document.getElementById("pauseScreen").style.display === "block") return true;
+    if (caosFalaEssencial) return false;
+    // C.A.O.S. 4.2: intervalo mínimo entre comentários (vale também no lobby e no cadastro)
+    // "ouvido interno": se ele falou muito nas últimas 3 cartas (5+ falas), espera o dobro antes de comentar
+    let intervalo = CAOS_FALA_INTERVALO_MS;
+    try {
+      const desde = (stats ? stats.totalDrawn : 0) - 2;
+      if (stats && stats.totalDrawn >= 1 && caosMatchLog.filter((e) => e.n >= desde && e.n > 0).length >= 5) intervalo *= 2;
+    } catch (e) {}
+    if (Date.now() - (caosUltimaFalaAt || 0) < intervalo) {
+      caosLog("orcamento", "fala cortada (intervalo)");
+      return true;
+    }
     if (!stats || stats.totalDrawn < 1 || gameEnded) return false;
     if (caosFalaCartaRef !== stats.totalDrawn) {
       caosFalaCartaRef = stats.totalDrawn;
@@ -27106,7 +27276,11 @@ function caosTalvezVoltar() {
   caosEmo.calor = 5;
   caosEmo.paciencia = Math.max(caosEmo.paciencia ?? 7, 6);
   caosLog("voltou", "saída temporária acabou");
-  showToastMessage(getRandomReaction(REACTIVE_VOICE.caosVoltouTemporario));
+  // C.A.O.S. 4.2 (relato do JF): "desvirei a mesa" sem ele ter virado a mesa não faz sentido; só sai se virou
+  const voltas = caosEasterEggsUsed.has("virou_mesa")
+    ? REACTIVE_VOICE.caosVoltouTemporario
+    : REACTIVE_VOICE.caosVoltouTemporario.filter((f) => String(typeof f === "function" ? f() : f).indexOf("desvirei") === -1);
+  showToastMessage(getRandomReaction(voltas));
 }
 function caosMemReset() {
   caosCardTimes = [];
@@ -27676,7 +27850,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.3.1 · C.A.O.S. 4.1.4</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.4 · C.A.O.S. 4.2</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -30634,6 +30808,8 @@ function caosToastEmo(toast, emo, bank) {
     } catch (e) {}
   const f0 = toast._frames[0];
   toast.setAttribute("data-face", f0);
+  // C.A.O.S. 4.2: lembra que virou a mesa nesta partida (a fala "desvirei a mesa" só vale depois disso)
+  if (toast._frames.some((f) => String(f).indexOf("┻━┻") !== -1)) caosEasterEggsUsed.add("virou_mesa");
   toast.dataset.fl = toast._frames.some((f) => f.length > 9) ? "1" : "";
   toast.style.setProperty("--emo-cor", E.cor);
   toast.style.setProperty("--emo-bg", E.bg);
@@ -31000,7 +31176,7 @@ function caosNeuralDesenhar(cv, t) {
     const C = caosConsole || {};
     const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
 tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
-${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.1.4`;
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.2`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }
@@ -32768,7 +32944,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.3.1 · C.A.O.S. 4.1.4)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.4 · C.A.O.S. 4.2)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -33009,10 +33185,12 @@ function caosVinculoAcerto(idx) {
   }
 }
 function caosVinculoCorte() {
+  if (salaOnlineAberta()) return; // C.A.O.S. 4.2: no online não dá pra saber quem pulou
   const m = mestreIndex !== null && mestreIndex !== void 0 ? players[mestreIndex] : null;
   if (m) caosVincRessent(m, 1, "cortou a fala");
 }
 function caosVinculoNaoCurti() {
+  if (salaOnlineAberta()) return; // C.A.O.S. 4.2: o 👎 no online não é de quem "segura o celular"
   const m = mestreIndex !== null && mestreIndex !== void 0 && starterChosen && !gameEnded ? players[mestreIndex] : null;
   if (!m || !caosVincElegivelDesafeto(m)) return;
   caosVincRessent(m, 1, "👎 (palpite: quem segurava o celular)");
@@ -33617,6 +33795,11 @@ function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze, _d
   if (caosEmoFala) caosViradaDesde++;
   const virada = viradaManual || caosViradaDecidir(msg, caosEmoFala, caosBancoFala, priority, tropecou);
   caosLogMatchLine(msg);
+  // C.A.O.S. 4.2: a emoção da fala fica no registro (o botão 🔊 da revisão repete do mesmo jeito)
+  try {
+    const ult = caosMatchLog[caosMatchLog.length - 1];
+    if (ult && caosEmoFala && !ult.emo && String(msg).indexOf(ult.text.slice(0, 30)) !== -1) ult.emo = caosEmoFala;
+  } catch (e) {}
   if (virada) {
     virada.linha = caosMatchLog[caosMatchLog.length - 1] || null;
     caosViradaDesde = 0;
@@ -34244,6 +34427,13 @@ function caosEspinhaInstalar() {
         // 1.7.9.6 / 1.7.10 (relato do JF): fala com quem está em outro aparelho (online) vai pro celular
         // dessa pessoa (com voz) e não aparece aqui. O humor sai do banco da fala, como no balão daqui.
         if (typeof redeFalaSoLonge === "function" && redeFalaSoLonge(ev)) {
+          // C.A.O.S. 4.2: a fala que vai só pro celular da pessoa também respeita o orçamento de comentários
+          const bypass = arguments[2], prio = arguments[3];
+          if (!bypass && !prio && !caosCanalPrivado && typeof caosToastBloquear === "function" && caosToastBloquear()) {
+            if (typeof afterClose === "function") afterClose();
+            return;
+          }
+          caosUltimaFalaAt = Date.now();
           try {
             const banco = caosLastPick && String(msg).indexOf(String(caosLastPick.text).replace(/^\[C\.A\.O\.S\.\]\s*/, "")) !== -1 ? caosLastPick.bank : null;
             ev.emo = caosEmocaoDaFala(banco) || null;
@@ -34267,7 +34457,9 @@ function caosEspinhaInstalar() {
                 return redeHostFala(ev);
               }
             } catch (e) {}
-            if (++n > 26) return redeHostFala(ev);
+            // C.A.O.S. 4.2: não apareceu aqui (cortada pelo orçamento, pelo silêncio ou descartada): não vai pros
+            // celulares. Antes ia depois de ~8 s mesmo assim, e o online ouvia até as falas que o host cortou.
+            if (++n > 26) return;
             setTimeout(pegar, 300);
           };
           pegar();
@@ -34696,6 +34888,9 @@ function saveGameState() {
       cardState,
       // 1.7.10.1: a roleta da categoria (girando ou parada) volta igual depois de recarregar
       roleta: cardState === "hidden" && currentCard && roletaCarta === currentCard ? (roletaPousou ? "pousou" : "girando") : null,
+      // C.A.O.S. 4.2: o que ele só fala uma vez por partida (apresentação de cada categoria, easter eggs) volta
+      // igual depois de recarregar (antes, recarregar fazia ele apresentar as categorias de novo)
+      caosUmaVez: caosEasterEggsUsed ? [...caosEasterEggsUsed].slice(0, 200) : [],
       gameEnded,
       usedAtLeastOnce,
       starterChosen,
@@ -35095,6 +35290,7 @@ function loadGameState() {
     roletaCarta = cardState === "hidden" && currentCard && (state.roleta === "pousou" || state.roleta === "girando") ? currentCard : null;
     roletaPousou = !!roletaCarta && state.roleta === "pousou";
     roletaRetomar = !!roletaCarta && !roletaPousou;
+    if (Array.isArray(state.caosUmaVez)) caosEasterEggsUsed = new Set(state.caosUmaVez.filter((k) => typeof k === "string").slice(0, 200));
     gameEnded = state.gameEnded || false;
     usedAtLeastOnce = state.usedAtLeastOnce || false;
     starterChosen = state.starterChosen || false;
@@ -35993,7 +36189,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.3.1 · C.A.O.S. 4.1.4");
+  L.push("- **Versão:** Beta 1.7.10.4 · C.A.O.S. 4.2");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -36516,7 +36712,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.3.1 · C.A.O.S. 4.1.4",
+        versao: "Beta 1.7.10.4 · C.A.O.S. 4.2",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -69331,6 +69527,7 @@ const REACTIVE_VOICE = {
       ],
       palpite: [
         "{nome}, você ganhou uma FICHA DE PALPITE! Com ela você pode responder fora da sua vez, em qualquer carta, quando tiver certeza. Avisa o Mestre na hora. Guarda pra uma boa oportunidade, mas não esquece dela!",
+        "{nome}, ficha de palpite na mão! Dá pra responder mesmo na vez de outra pessoa: avise a mesa e espere o Mestre marcar. Use com sabedoria, é uma só.",
       ],
       mestreBotoes: [
         "Mestre {nome}, dois botões novos pra você: » Pulou é quando a pessoa não tinha palpite nenhum; ⚠︎ Absurdo é quando o chute foi muito longe. Pro placar os dois contam como Errou. Pra mim, contam muito mais.",
@@ -71774,6 +71971,24 @@ const PAUSE_TIPS = [
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.10.4",
+    data: "15/10/2026 · 15:57",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "C.A.O.S. 4.2: ele fala menos, fala com a pessoa certa e o online ficou mais claro.",
+    itens: [
+      "🤐 C.A.O.S. fala bem menos: comentário só de vez em quando, com respiro entre um e outro. Se falar muito em algumas cartas seguidas, ele mesmo segura a língua. Avisos de regra continuam. Valeu, Vitinho, Rafa e Henrique, que aguentaram ele numa partida online!",
+      "🎯 Fala no aparelho certo: quando o C.A.O.S. fala com alguém que joga em outro aparelho, a fala vai só pra essa pessoa.",
+      "🪟 Trocar de janela não pausa: no online, minimizar ou trocar de janela no computador de quem abriu a sala não pausa mais a partida de todo mundo.",
+      "🔢 Números de dica na tela: todo mundo vê quais números ainda estão livres, qual está sendo lido e as dicas com o número que foi pedido. O texto da dica aparece pra mesa quando o Mestre marca Acertou ou Errou.",
+      "🏠 Selo HOST: dá pra ver quem abriu e cuida da sala.",
+      "🔊 Ouvir de novo: na revisão das falas do fim da partida, toque em 🔊 pra ouvir cada fala de novo.",
+    ],
+    qol: [
+      "🛡️ Nomes impróprios barrados: nome com palavrão ou termo sexual não entra no cadastro.",
+      "🎟️ Ficha de palpite explicada: na primeira ficha de cada jogador, o C.A.O.S. explica rapidinho como usar.",
+    ],
+  },
   {
     v: "Beta 1.7.10.3.1",
     data: "13/10/2026 · 13:04",

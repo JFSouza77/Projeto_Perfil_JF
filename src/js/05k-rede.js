@@ -1177,7 +1177,9 @@ function redeHostFala(f) {
   if (typeof f.emo === "string" && /^[a-z]{2,20}$/.test(f.emo)) visual.emo = f.emo;
   if (typeof f.face === "string" && f.face.length <= 24) visual.face = f.face;
   if (typeof f.rotulo === "string" && f.rotulo.length <= 24) visual.rotulo = f.rotulo;
-  if (f.privado) {
+  // C.A.O.S. 4.2 (partida online: "não chega direto no jogador"): fala particular, ou que fala COM quem está
+  // em outro aparelho, vai só pro aparelho dessa pessoa (antes ia pra sala toda e ninguém sabia que era com ele)
+  if (f.privado || redeFalaSoLonge(f)) {
     ids.forEach((id) => {
       const a = rede.assentos[id];
       if (a && redeOnline(a) && !redeNoHost(id)) redeEnviar("fala", { texto: f.texto, quem: [id], ...visual }, a.sessao);
@@ -1302,6 +1304,7 @@ function redePerfilProblema(perfil, ignorarSessao) {
   const pendentes = Object.keys(rede.pedidos).filter((s) => s !== ignorarSessao && rede.pedidos[s].tipo === "perfil");
   if (players.length + pendentes.length >= MAX_PLAYERS) return "sala_cheia";
   if (nome.length < 2 || nome.length > 15) return "nome_curto";
+  if (nomeImproprio(nome)) return "nome_improprio";
   const igual = (n) => String(n).toLowerCase() === nome.toLowerCase();
   if (players.some((p) => igual(p.name)) || pendentes.some((s) => igual(rede.pedidos[s].perfil.nome))) return "nome_em_uso";
   return "";
@@ -1406,6 +1409,7 @@ const REDE_MOTIVO_TXT = {
   sala_cheia: "A sala já está cheia.",
   nome_curto: "O nome precisa ter de 2 a 15 letras.",
   nome_em_uso: "Já tem alguém com esse nome. Escolha outro.",
+  nome_improprio: "Esse nome não pode ser usado no jogo. Escolha outro, por favor.",
   muitos_pedidos: "Muita gente pedindo pra entrar ao mesmo tempo. Tente de novo em instantes.",
   pedido_expirou: "O pedido ficou sem resposta. Tente de novo.",
 };
@@ -1611,6 +1615,7 @@ function redeHostPublicar(forcar) {
   r.votacao = rede.votacao ? redeVotacaoPublica() : null;
   r.sucessor = redeSucessor();
   r.hostNome = rede.hostEu ? (jogadorPorId(rede.hostEu) || {}).name || null : null;
+  r.hostId = rede.hostEu || null; // C.A.O.S. 4.2: selo HOST nas telas
   redeEnviar("retrato", { r, anne: anneLigada() });
   redeHostRecuperacao(false);
   Object.keys(rede.assentos).forEach((jid) => {
@@ -2131,6 +2136,14 @@ function redeVozTrocar() {
     unlockAudio();
     toggleVoice();
   } catch (e) {}
+  // C.A.O.S. 4.2: calou a voz no celular? Uma reação curta, só em texto, uma vez por sala neste aparelho
+  try {
+    const k = "perfil5_rede_vozcalada_" + (rede ? rede.sala : "");
+    if (!caosVoiceOn && rede && !sessionStorage.getItem(k)) {
+      sessionStorage.setItem(k, "1");
+      redeFalaMostrar({ texto: String(getRandomReaction(REACTIVE_VOICE.vozCalada) || "").replace(/^\[C\.A\.O\.S\.\]\s*/, ""), quem: [rede.eu] });
+    }
+  } catch (e) {}
   try {
     redeConvidadoDesenhar();
   } catch (e) {}
@@ -2494,6 +2507,11 @@ function redePedirEntrada(perfil) {
   const nome = nomeJogadorLimpo(r.nome);
   if (nome.length < 2 || nome.length > 15) {
     rede.erroCadastro = REDE_MOTIVO_TXT.nome_curto;
+    redeConvidadoDesenhar();
+    return false;
+  }
+  if (nomeImproprio(nome)) {
+    rede.erroCadastro = REDE_MOTIVO_TXT.nome_improprio;
     redeConvidadoDesenhar();
     return false;
   }

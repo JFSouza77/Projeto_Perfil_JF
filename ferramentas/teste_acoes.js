@@ -99,7 +99,8 @@ const ARQ = acharMestre(process.argv[2]);
     const mes = retratoPartida('mestre');
     const fechadas = currentCard.clues.filter((c, i) => !revealedOrder.some((x) => x.index === i)).map((c) => c.text);
     out.retratoSemResposta = !pub.includes(currentCard.answer) && !pub.includes(currentCard.id) && fechadas.every((t) => !pub.includes(t));
-    out.retratoAbertas = JSON.parse(pub).carta.abertas.length === revealedOrder.length && revealedOrder.every((x) => pub.includes(x.item.text));
+    // C.A.O.S. 4.2: a dica que o Mestre está lendo (pendente) só vai pra mesa depois do veredito; o Mestre vê
+    out.retratoAbertas = JSON.parse(pub).carta.abertas.length === revealedOrder.length && revealedOrder.every((x) => x.index === pendingIndex ? !pub.includes(x.item.text) && JSON.stringify(mes).includes(x.item.text) : pub.includes(x.item.text));
     out.retratoMestre = mes.carta.resposta === currentCard.answer && mes.carta.id === currentCard.id && mes.revisao === partidaRevisao && JSON.parse(pub).revisao === partidaRevisao;
     out.retratoIds = mes.jogadores.every((j) => jogadorIdValido(j.id)) && mes.mestreId === players[mestreIndex].id;
     out.retratoSemCadastro = !/"idade"|"humor"|"ageBracket"/.test(pub);
@@ -314,6 +315,33 @@ const ARQ = acharMestre(process.argv[2]);
       toggleVoice = toggleOrig; caosVoiceOn = vozAntes;
       out.vozPergunta = ligadaPula && abriu && sim && nao && umaVez;
     }
+    // C.A.O.S. 4.2 (partida online de 4: "insuportável"): comentário respeita intervalo; aviso de regra passa;
+    // no online, Alt-Tab não pausa e pular fala não marca ninguém; categoria apresentada volta no save
+    {
+      const ultAntes = caosUltimaFalaAt;
+      caosUltimaFalaAt = Date.now();
+      const cortaComentario = caosToastBloquear() === true;
+      caosFalaEssencial = true;
+      const regraPassa = caosToastBloquear() === false;
+      caosFalaEssencial = false;
+      caosUltimaFalaAt = ultAntes;
+      const redeAntes = typeof rede !== 'undefined' ? rede : null;
+      rede = { papel: 'host' };
+      const pausou0 = !!pausedAt;
+      autoPauseGame();
+      const naoPausa = !!pausedAt === pausou0 && salaOnlineAberta();
+      const marcAntes = JSON.stringify(caosMarked), cortesAntes = JSON.stringify(caosCortes);
+      caosRegistrarCorte();
+      const naoMarca = JSON.stringify(caosMarked) === marcAntes;
+      caosCortes = JSON.parse(cortesAntes);
+      rede = redeAntes;
+      caosEasterEggsUsed.add('primeira_cat_LUGAR');
+      saveGameState();
+      const salvo = JSON.parse(JFStore.getItem('perfil200_state') || '{}');
+      const guardou = Array.isArray(salvo.caosUmaVez) && salvo.caosUmaVez.includes('primeira_cat_LUGAR');
+      out.caos42 = cortaComentario && regraPassa && naoPausa && naoMarca && guardou;
+      out.caos42diag = JSON.stringify({ cortaComentario, regraPassa, naoPausa, naoMarca, guardou });
+    }
     // 1.7.10.3: busca nas regras e o lembrete da primeira carta de cada categoria
     {
       openTutorial('manual');
@@ -385,7 +413,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['Comando válido aplica (origem comando)', r.comandoOk],
     ['Comando repetido não aplica duas vezes', r.duplicadoNaoAplica],
     ['Retrato público sem resposta, sem id da carta e sem dica fechada', r.retratoSemResposta],
-    ['Retrato público com as dicas abertas', r.retratoAbertas],
+    ['Retrato público com as dicas abertas (a que o Mestre está lendo só depois do veredito)', r.retratoAbertas],
     ['Retrato do Mestre com a resposta; os dois com a revisão atual', r.retratoMestre],
     ['Retrato com jogadores pelo id', r.retratoIds],
     ['Retrato sem dado de cadastro (idade, humor)', r.retratoSemCadastro],
@@ -425,6 +453,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.10: Reportar carta anota no aparelho, sem resposta na janela e sem mexer na partida', r.reportar],
     ['1.7.10: nome repetido: o nome já cadastrado fica em destaque, o campo fica vermelho e o C.A.O.S. comenta', r.nomeRepetido],
     ['Travas ADM: a pergunta abre, Sim trava o nick da Anne, Não desliga, e não pergunta duas vezes na mesma partida', r.travasAdm],
+    ['C.A.O.S. 4.2: comentário espera o intervalo, aviso de regra passa, no online Alt-Tab não pausa e pular fala não marca ninguém, e o que ele já apresentou volta no save', r.caos42],
     ['Cadastro: o C.A.O.S. pergunta da voz (não pergunta se já está ligada); Sim liga; Não ganha fala triste e segue sem voz', r.vozPergunta],
     ['1.7.10.3: busca nas regras acha "grupo"; o C.A.O.S. lembra o que vale na 1ª carta de cada categoria (Júnior sem animal em Coisa)', r.regrasEPrimeira],
     ['1.7.10.1: com a sala aberta, a partida só começa quando todo jogador tem aparelho', r.semAparelho],
