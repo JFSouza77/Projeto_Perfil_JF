@@ -138,7 +138,7 @@ const PRESENTES = [
   { id: "henrique", nome: "Henrique", re: /^carro\s*pika([^a-z]|$)/, cor: "GRAD_DIABINHO", emojis: ["😈"], neon: ["#e9d5ff", "#a855f7"] },
   { id: "rafa", nome: "Rafa", re: /^bs\s*lord\s*rafa([^a-z]|$)/, cor: "GRAD_SANGUE", emojis: ["💣", "🦇"], gira: true, neon: ["#ffd7d7", "#ff1f1f"] },
   { id: "vitinho", nome: "Vitinho", re: /^(vitinho|vinefa)([^a-z]|$)/, cor: "GRAD_SHINOBI", emojis: ["🥷"], neon: ["#dbeafe", "#3b82f6"] },
-  { id: "typingg", nome: "Typingg", re: /^(typingg|typing[\s_]?kk|the\s*devil)([^a-z]|$)/, cor: "GRAD_KIRITO", emojis: ["⚔️"], neon: ["#f8fafc", "#94a3b8"] },
+  { id: "typingg", nome: "Typingg", re: /^(typingg([\s_]?kk)?|the\s*devil)([^a-z]|$)/, cor: "GRAD_KIRITO", emojis: ["⚔️"], neon: ["#f8fafc", "#94a3b8"] },
 ];
 // no Júnior, os emojis de presente que não são de criança ficam de fora (a cor continua)
 const PRESENTE_FORA_JUNIOR = ["😈", "💣", "🥷", "⚔️"];
