@@ -894,7 +894,13 @@ function caosToastBloquear() {
     if (document.getElementById("pauseScreen").style.display === "block") return true;
     if (caosFalaEssencial) return false;
     // C.A.O.S. 4.2: intervalo mínimo entre comentários (vale também no lobby e no cadastro)
-    if (Date.now() - (caosUltimaFalaAt || 0) < CAOS_FALA_INTERVALO_MS) {
+    // "ouvido interno": se ele falou muito nas últimas 3 cartas (5+ falas), espera o dobro antes de comentar
+    let intervalo = CAOS_FALA_INTERVALO_MS;
+    try {
+      const desde = (stats ? stats.totalDrawn : 0) - 2;
+      if (stats && stats.totalDrawn >= 1 && caosMatchLog.filter((e) => e.n >= desde && e.n > 0).length >= 5) intervalo *= 2;
+    } catch (e) {}
+    if (Date.now() - (caosUltimaFalaAt || 0) < intervalo) {
       caosLog("orcamento", "fala cortada (intervalo)");
       return true;
     }
@@ -1062,7 +1068,11 @@ function caosTalvezVoltar() {
   caosEmo.calor = 5;
   caosEmo.paciencia = Math.max(caosEmo.paciencia ?? 7, 6);
   caosLog("voltou", "saída temporária acabou");
-  showToastMessage(getRandomReaction(REACTIVE_VOICE.caosVoltouTemporario));
+  // C.A.O.S. 4.2 (relato do JF): "desvirei a mesa" sem ele ter virado a mesa não faz sentido; só sai se virou
+  const voltas = caosEasterEggsUsed.has("virou_mesa")
+    ? REACTIVE_VOICE.caosVoltouTemporario
+    : REACTIVE_VOICE.caosVoltouTemporario.filter((f) => String(typeof f === "function" ? f() : f).indexOf("desvirei") === -1);
+  showToastMessage(getRandomReaction(voltas));
 }
 function caosMemReset() {
   caosCardTimes = [];

@@ -308,7 +308,9 @@ function retratoPartida(papel) {
           ...(mestre ? { clueId: r.item.id || null } : {}),
           pos: r.index,
           tipo: r.item.type,
-          texto: r.item.text,
+          // C.A.O.S. 4.2 (relato da partida online): a dica que o Mestre acabou de abrir só aparece pra mesa
+          // depois do veredito (Acertou/Errou); até lá só o número fica em destaque. O Mestre vê o texto.
+          texto: !mestre && r.index === pendingIndex && CURRENT_MODE !== "express" ? null : r.item.text,
           pedidaPor: (players.find((p) => p.name === r.pickedByName) || {}).id || null,
         })),
         pendente: pendingIndex === null ? null : pendingIndex,

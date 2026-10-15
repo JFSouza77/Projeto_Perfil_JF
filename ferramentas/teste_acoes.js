@@ -99,7 +99,8 @@ const ARQ = acharMestre(process.argv[2]);
     const mes = retratoPartida('mestre');
     const fechadas = currentCard.clues.filter((c, i) => !revealedOrder.some((x) => x.index === i)).map((c) => c.text);
     out.retratoSemResposta = !pub.includes(currentCard.answer) && !pub.includes(currentCard.id) && fechadas.every((t) => !pub.includes(t));
-    out.retratoAbertas = JSON.parse(pub).carta.abertas.length === revealedOrder.length && revealedOrder.every((x) => pub.includes(x.item.text));
+    // C.A.O.S. 4.2: a dica que o Mestre está lendo (pendente) só vai pra mesa depois do veredito; o Mestre vê
+    out.retratoAbertas = JSON.parse(pub).carta.abertas.length === revealedOrder.length && revealedOrder.every((x) => x.index === pendingIndex ? !pub.includes(x.item.text) && JSON.stringify(mes).includes(x.item.text) : pub.includes(x.item.text));
     out.retratoMestre = mes.carta.resposta === currentCard.answer && mes.carta.id === currentCard.id && mes.revisao === partidaRevisao && JSON.parse(pub).revisao === partidaRevisao;
     out.retratoIds = mes.jogadores.every((j) => jogadorIdValido(j.id)) && mes.mestreId === players[mestreIndex].id;
     out.retratoSemCadastro = !/"idade"|"humor"|"ageBracket"/.test(pub);
@@ -412,7 +413,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['Comando válido aplica (origem comando)', r.comandoOk],
     ['Comando repetido não aplica duas vezes', r.duplicadoNaoAplica],
     ['Retrato público sem resposta, sem id da carta e sem dica fechada', r.retratoSemResposta],
-    ['Retrato público com as dicas abertas', r.retratoAbertas],
+    ['Retrato público com as dicas abertas (a que o Mestre está lendo só depois do veredito)', r.retratoAbertas],
     ['Retrato do Mestre com a resposta; os dois com a revisão atual', r.retratoMestre],
     ['Retrato com jogadores pelo id', r.retratoIds],
     ['Retrato sem dado de cadastro (idade, humor)', r.retratoSemCadastro],

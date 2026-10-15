@@ -6,6 +6,24 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.4",
+    data: "15/10/2026 · 15:57",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "C.A.O.S. 4.2: ele fala menos, fala com a pessoa certa e o online ficou mais claro.",
+    itens: [
+      "🤐 C.A.O.S. fala bem menos: comentário só de vez em quando, com respiro entre um e outro. Se falar muito em algumas cartas seguidas, ele mesmo segura a língua. Avisos de regra continuam. Valeu, Vitinho, Rafa e Henrique, que aguentaram ele numa partida online!",
+      "🎯 Fala no aparelho certo: quando o C.A.O.S. fala com alguém que joga em outro aparelho, a fala vai só pra essa pessoa.",
+      "🪟 Trocar de janela não pausa: no online, minimizar ou trocar de janela no computador de quem abriu a sala não pausa mais a partida de todo mundo.",
+      "🔢 Números de dica na tela: todo mundo vê quais números ainda estão livres, qual está sendo lido e as dicas com o número que foi pedido. O texto da dica aparece pra mesa quando o Mestre marca Acertou ou Errou.",
+      "🏠 Selo HOST: dá pra ver quem abriu e cuida da sala.",
+      "🔊 Ouvir de novo: na revisão das falas do fim da partida, toque em 🔊 pra ouvir cada fala de novo.",
+    ],
+    qol: [
+      "🛡️ Nomes impróprios barrados: nome com palavrão ou termo sexual não entra no cadastro.",
+      "🎟️ Ficha de palpite explicada: na primeira ficha de cada jogador, o C.A.O.S. explica rapidinho como usar.",
+    ],
+  },
+  {
     v: "Beta 1.7.10.3.1",
     data: "13/10/2026 · 13:04",
     nome: "Multiplayer Update · Online de verdade",

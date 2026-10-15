@@ -68,7 +68,7 @@ const ARQ = acharMestre(process.argv[2]);
     if (pendingIndex === null) chooseClue(livres[0]);
   });
   await telao.waitForTimeout(600);
-  const j = await jogo.evaluate(() => ({ rev: partidaRevisao, resposta: currentCard.answer, abertas: revealedOrder.map((x) => x.item.text), mestre: players[mestreIndex].name, vez: players[responderIndex].name, fechadas: currentCard.clues.filter((c, i) => !revealedOrder.some((x) => x.index === i)).map((c) => c.text) }));
+  const j = await jogo.evaluate(() => ({ rev: partidaRevisao, resposta: currentCard.answer, abertas: revealedOrder.map((x) => x.item.text), mestre: players[mestreIndex].name, vez: players[responderIndex].name, pendente: pendingIndex !== null, fechadas: currentCard.clues.filter((c, i) => !revealedOrder.some((x) => x.index === i)).map((c) => c.text) }));
   const t = await telao.evaluate(() => ({ txt: document.getElementById('telao').innerText, rev: telaoUltimo && telaoUltimo.revisao, bloqueado: saveBloqueado, iniciou: starterChosen, pecas: document.querySelectorAll('#tabCaixaTelao .tb-peao').length, forma: telaoUltimo && telaoUltimo.tabuleiro }));
   const formaJogo = await jogo.evaluate(() => tabForma);
   // 1.7.10.1 (pedido do JF): no meio da carta o telão não mostra o tabuleiro; no intervalo mostra
@@ -89,7 +89,7 @@ const ARQ = acharMestre(process.argv[2]);
   const linhas = [
     ['Telão chega na mesma revisão do jogo', t.rev === j.rev && t.txt.includes('revisão ' + j.rev)],
     ['Telão mostra Mestre e vez', t.txt.includes(j.mestre) && t.txt.includes(j.vez)],
-    ['Telão mostra as dicas abertas', j.abertas.every((d) => t.txt.includes(d))],
+    ['Telão mostra as dicas abertas (a que o Mestre está lendo, só depois do veredito)', j.abertas.every((d, i) => (i === j.abertas.length - 1 && j.pendente ? !t.txt.includes(d) && t.txt.includes('Mestre está lendo') : t.txt.includes(d)))],
     ['Telão nunca mostra a resposta nem dica fechada', !t.txt.includes(j.resposta) && j.fechadas.every((d) => !t.txt.includes(d))],
     ['Telão ignora retrato velho', !t2.includes('VELHO')],
     ['Telão não carrega a partida e não grava (saveBloqueado)', t.bloqueado === true && t.iniciou === false],

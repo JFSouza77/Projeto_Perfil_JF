@@ -545,6 +545,8 @@ function caosToastEmo(toast, emo, bank) {
     } catch (e) {}
   const f0 = toast._frames[0];
   toast.setAttribute("data-face", f0);
+  // C.A.O.S. 4.2: lembra que virou a mesa nesta partida (a fala "desvirei a mesa" só vale depois disso)
+  if (toast._frames.some((f) => String(f).indexOf("┻━┻") !== -1)) caosEasterEggsUsed.add("virou_mesa");
   toast.dataset.fl = toast._frames.some((f) => f.length > 9) ? "1" : "";
   toast.style.setProperty("--emo-cor", E.cor);
   toast.style.setProperty("--emo-bg", E.bg);
@@ -911,7 +913,7 @@ function caosNeuralDesenhar(cv, t) {
     const C = caosConsole || {};
     const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
 tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
-${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.1.4`;
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.2`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }

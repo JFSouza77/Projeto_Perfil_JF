@@ -499,6 +499,28 @@ function flipCard() {
 }
 // 1.7.10.3 (pedido do JF): a primeira carta de cada categoria na partida vem com o lembrete do que ela inclui
 // (Pessoa vale grupo, Lugar vale ficção, Ano vale década/século, Coisa vale tudo). Uma vez por categoria.
+// C.A.O.S. 4.2 (relato da partida online): na primeira ficha de palpite de cada jogador, o C.A.O.S. explica o
+// que ela faz, uma vez por pessoa (lembra o nome neste aparelho, entre partidas). A fala começa com o nome, então
+// no online vai pro aparelho da pessoa. É aviso de regra: não entra no orçamento de comentários.
+const PALPITE_EXPLICADO_KEY = "perfil5_palpite_explicado";
+function caosExplicarPalpite(p) {
+  try {
+    if (!p || !p.name || gameEnded) return;
+    const nome = String(p.name).toLowerCase().trim();
+    let lista = [];
+    try {
+      lista = JSON.parse(localStorage.getItem(PALPITE_EXPLICADO_KEY) || "[]");
+    } catch (e) {}
+    if (!Array.isArray(lista)) lista = [];
+    if (lista.includes(nome)) return;
+    lista.push(nome);
+    try {
+      localStorage.setItem(PALPITE_EXPLICADO_KEY, JSON.stringify(lista.slice(-200)));
+    } catch (e) {}
+    caosLog("palpite", `${p.name}: explicação da ficha (1ª vez)`);
+    caosFalaAgendar(() => getRandomReaction(REACTIVE_VOICE.iniciante.explica.palpite, p.name), 1500, "regra");
+  } catch (e) {}
+}
 function caosPrimeiraCategoria() {
   try {
     if (!currentCard || typeof REACTIVE_VOICE === "undefined" || !REACTIVE_VOICE.primeiraCategoria) return;
@@ -773,7 +795,10 @@ function chooseClue(idx) {
   acessLerDica(idx + 1, item);
   if (item.type === "special" && isWildcardSpecial(item.text)) {
     revealedEntry.palpiteResult = grantPalpite(responderIndex);
-    if (revealedEntry.palpiteResult === "ganhou") caosIniExplica(players[responderIndex], "palpite");
+    if (revealedEntry.palpiteResult === "ganhou") {
+      if (players[responderIndex].iniciante) caosIniExplica(players[responderIndex], "palpite");
+      else caosExplicarPalpite(players[responderIndex]);
+    }
     if (revealedEntry.palpiteResult === "fominha") {
       const pf = players[responderIndex];
       caosLog("palpite", `${pf.name}: fominha (já tinha ficha)`);
@@ -1456,6 +1481,10 @@ function addPlayer() {
   const name = input.value.trim();
   if (name.length < 2 || name.length > 15) {
     caosAvisoModal("O nome deve ter entre 2 e 15 caracteres!");
+    return;
+  }
+  if (nomeImproprio(name)) {
+    caosAvisoModal("Esse nome não pode ser usado no jogo. Escolha outro, por favor.");
     return;
   }
   if (players.some((p) => p.name.toLowerCase() === name.toLowerCase())) {
