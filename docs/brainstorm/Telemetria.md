@@ -39,9 +39,11 @@
 4. Página `/reportes` ganha a aba "Partidas" com médias simples.
 5. Nada muda sozinho no jogo: JF e o Klaus olham os números e decidem.
 
-## 5. Decisões do JF
+## 5. Decisões do JF (15/10/2026)
 
-- [ ] Pergunta de permissão: no 1º uso ou nas opções só?
-- [ ] 90 dias de guarda está bom?
-- [ ] Mandar também o texto das falas puladas? (Não tem dado pessoal, é texto do próprio C.A.O.S.; ajuda muito a saber QUAL fala irrita.) Recomendação: **sim**.
-- [ ] Começar já na próxima versão?
+- [x] **Pergunta de permissão:** as duas coisas. Pergunta no 1º uso **e** a opção fica nas configurações pra mudar depois.
+- [x] **Guarda de 90 dias:** sim, desde que a gente confira os relatórios. Quando a telemetria existir, a rotina mensal
+      ("Limpeza mensal do Perfil JF", todo dia 1º) passa a trazer também o resumo das partidas do mês pro JF ler.
+- [x] **Texto das falas puladas:** sim, manda (é texto do próprio C.A.O.S., sem dado pessoal).
+- [x] **Quando começar:** **depois** dos dois modos novos (Modo C.A.O.S. e Corrida contra o Tempo). Primeiro os modos;
+      depois a telemetria entra junto com a próxima fase do cérebro do C.A.O.S. (ver `CAOS_Proximos_Passos.md`).
