@@ -871,26 +871,33 @@ function render() {
           correctButtonsHtml = `<button class="btn-correct" id="correctBtn" data-scorer="${responderIndex}">✓ ${responderName} acertou</button>`;
           palpiteHtml = buildPalpiteBoxHtml();
         }
+        // 1.7.10.5 (pedido do JF): alguém tocou em Palpitar agora no aparelho dele: o veredito é do palpite
+        const pvTela = palpiteVezAtual();
         controlsHtml = `
           <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ${item.text}</div>
           <div style="text-align:center; opacity:0.75; font-size:0.85rem; margin-bottom:4px;">Vale ${pointsIfCorrect} pontos se acertar agora (${quemGanhaNm} ganha ${mestreGainDisplay})</div>
           ${spotlightTimerHtml}
-          <div class="guess-btns" style="flex-direction:column;">
+          ${pvTela ? (() => {
+            const d = entityDisplay(pvTela.key);
+            return `<div class="guess-btns palpite-vez" style="flex-direction:column;"><div class="palpite-vez-tit">🃏 ${playerNameHtml(d.name, d.color, d.avatar)} pediu o palpite!</div><button class="btn-correct palpite-hit" data-key="${pvTela.key}">🃏 ${escapeHtml(d.name)} acertou</button><button class="btn-wrong palpite-miss" data-key="${pvTela.key}">🃏 ${escapeHtml(d.name)} errou</button></div>`;
+          })() : `<div class="guess-btns" style="flex-direction:column;">
             ${correctButtonsHtml}
             <button class="btn-wrong" id="wrongBtn">✕ Errou</button>
             ${'<div class="mesa-btns"><button type="button" class="btn-pular" id="pularBtn" title="A pessoa não tinha palpite: passa a vez sem contar como erro" aria-label="Pulou: não tinha palpite, passa a vez">» Pulou</button><button type="button" class="btn-absurdo" id="absurdoBtn" title="O chute foi absurdo (nada a ver com a dica): conta como erro e o C.A.O.S. fica sabendo" aria-label="Absurdo: o chute não tinha nada a ver, conta como erro">⚠︎ Absurdo</button></div>'}
           </div>
-          ${palpiteHtml}`;
+          ${palpiteHtml}`}`;
       }
     } else {
       const totalEntries = currentCard.clues.length;
       const remaining = totalEntries - revealedOrder.length;
       let grid = "";
+      const ped = pedidoDicaAtual(); // 1.7.10.5: número pedido pelo aparelho de quem está na vez
       for (let i = 0; i < totalEntries; i++) {
         const used = revealedOrder.some((r) => r.index === i);
-        grid += `<button class="number-btn${used ? " aberta" : ""}" data-idx="${i}" ${used ? 'aria-disabled="true" title="Essa dica já foi aberta"' : ""}>${i + 1}</button>`;
+        grid += `<button class="number-btn${used ? " aberta" : ""}${ped && ped.idx === i ? " pedida" : ""}" data-idx="${i}" ${used ? 'aria-disabled="true" title="Essa dica já foi aberta"' : ""}>${i + 1}</button>`;
       }
       controlsHtml = `
+        ${ped ? `<div class="pedido-dica">👉 ${responderName} pediu a dica <b>${ped.idx + 1}</b>. Toque nela pra abrir.</div>` : ""}
         <div class="pick-label">${responderName}, escolha uma dica de 1 a ${totalEntries} (${remaining} restantes)</div>
         <div id="timerDisplay" class="pick-timer">◷ ${secondsLeft()}s</div>
         <div class="number-grid">${grid}</div>`;

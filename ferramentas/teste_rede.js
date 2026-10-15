@@ -677,16 +677,16 @@ async function rodarSalaPrimeiro(b) {
   conf("A Mestre abre a dica no celular dela", await esperar(host, () => revealedOrder.length === 1));
   // 1.7.9.6: o C.A.O.S. fala no celular dela também (e a fala particular vai só pra ela)
   // (C.A.O.S. 4.2: comentários têm intervalo de 20 s; aqui o teste é da rota, então zera o relógio de falas)
-  await host.evaluate(() => { caosUltimaFalaAt = 0; showToastMessage("[C.A.O.S.] Ana, essa é pra mesa toda."); });
+  await host.evaluate(() => { caosUltimaFalaAt = 0; caosFalaFimAt = 0; showToastMessage("[C.A.O.S.] Ana, essa é pra mesa toda."); });
   conf("Fala do C.A.O.S. aparece no celular da Ana", await esperar(g, () => (!!document.getElementById("redeFala") && /pra mesa toda/.test(document.getElementById("redeFala").textContent)) || (rede.falas || []).some((f) => /pra mesa toda/.test(f.texto)), null, 12000));
-  await host.evaluate(() => { caosUltimaFalaAt = 0; caosFalarPara(players[0].id, "[C.A.O.S.] Só entre nós: segredo da Ana.", true); });
+  await host.evaluate(() => { caosUltimaFalaAt = 0; caosFalaFimAt = 0; caosFalarPara(players[0].id, "[C.A.O.S.] Só entre nós: segredo da Ana.", true); });
   conf(
     "Fala particular chega no celular dela, marcada como dela",
     await esperar(g, () => (document.querySelector("#redeFala.minha") && /segredo da Ana/.test(document.getElementById("redeFala").textContent)) || (rede.falas || []).some((f) => /segredo da Ana/.test(f.texto) && f.minha), null, 12000),
   );
   // 1.7.10 (relato do JF): fala que cita só a Ana (em outro aparelho) vai pro celular dela, com o rosto e a
   // etiqueta do humor, e não aparece no host; fala da mesa (sem citar ninguém de fora) segue no host
-  await host.evaluate(() => { document.getElementById("jfToast") && document.getElementById("jfToast").remove(); caosLastPick = { bank: "gerador.erro.normal", key: "x", text: "[C.A.O.S.] Ana, foi você que pediu essa." }; caosUltimaFalaAt = 0; showToastMessage("[C.A.O.S.] Ana, foi você que pediu essa."); });
+  await host.evaluate(() => { document.getElementById("jfToast") && document.getElementById("jfToast").remove(); caosLastPick = { bank: "gerador.erro.normal", key: "x", text: "[C.A.O.S.] Ana, foi você que pediu essa." }; caosUltimaFalaAt = 0; caosFalaFimAt = 0; showToastMessage("[C.A.O.S.] Ana, foi você que pediu essa."); });
   conf("Fala com quem está em outro aparelho vai pro celular dela (com o rosto e o humor)", await esperar(g, () => (rede.falas || []).concat(document.getElementById("redeFala") ? [{ html: document.getElementById("redeFala").innerHTML }] : []).some((f) => (f.html && /foi você que pediu/.test(f.html) && /rede-fala-rosto/.test(f.html)) || (/foi você que pediu/.test(f.texto || "") && f.minha && f.emo)), null, 12000));
   conf("…e não aparece no aparelho do host", !(await host.evaluate(() => !!document.getElementById("jfToast") && /foi você que pediu/.test(document.getElementById("jfToast").textContent))));
   // 1.7.9.5: a Mestre vê a carta como na tela de sempre (a dica da vez e os botões do veredito)

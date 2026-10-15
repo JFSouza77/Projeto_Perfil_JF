@@ -571,6 +571,7 @@ function closeActiveToast() {
   }
   const toast = document.getElementById("jfToast");
   if (toast) toast.classList.remove("show");
+  caosFalaFimAt = Date.now();
   if (hadActiveTimer) {
     const frozenMs = Math.max(0, (freezeEndedAt || Date.now()) - frozenAt);
     if (cardEndAt && cardSerial === frozenCardSerial) cardEndAt += frozenMs;

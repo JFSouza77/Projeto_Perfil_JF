@@ -6,6 +6,22 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.5",
+    data: "15/10/2026 · 17:21",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "C.A.O.S. 4.3: ele volta a conversar, mas respira entre uma fala e outra. E chegou o Palpitar agora!",
+    itens: [
+      "🫁 C.A.O.S. respira entre as falas: ele pode comentar bastante, mas só começa uma fala depois que a anterior terminou, com uma pausa. Se falar demais em pouco tempo, ele mesmo espera mais.",
+      "🃏 Palpitar agora: no online, quem tem a ficha de palpite ganha um botão no próprio aparelho. Tocou, a tentativa é sua e o Mestre julga o seu palpite. Errou, a ficha volta e a vez segue normal.",
+      "🟡 Selo da ficha de palpite: quem tem ficha aparece com um selo amarelo, a cor da ficha no Perfil de mesa.",
+      "👉 Peça a dica pelo aparelho: quem está na vez toca no número da dica e o Mestre recebe o pedido em destaque.",
+      "👂 Ele sabe quem calou ele: no online, pular a fala marca quem pulou de verdade. Se todo mundo desligar a voz dele, ele fica quieto. Se só alguns desligarem, ele fica com ciúmes e todo carinhoso com quem ainda ouve.",
+    ],
+    qol: [
+      "😏 Deboche novo: a voz do C.A.O.S. no deboche ficou meio seca, meio alegre.",
+    ],
+  },
+  {
     v: "Beta 1.7.10.4",
     data: "15/10/2026 · 15:57",
     nome: "Multiplayer Update · Online de verdade",

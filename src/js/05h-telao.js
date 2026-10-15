@@ -148,7 +148,13 @@ function telaoDesenhar(r, alvo) {
     const j = r.jogadores.find((p) => p.id === id);
     // C.A.O.S. 4.2 (relato da partida online: ninguém sabia quem era o host): selo HOST (quem cuida da sala; não
     // é o Mestre, que é o dono da carta da vez)
-    return j ? escapeHtml((j.avatar ? j.avatar + " " : "") + j.nome) + (r.hostId && id === r.hostId ? ' <span class="selo-host" title="Host: quem abriu e cuida da sala">HOST</span>' : "") : "—";
+    // 1.7.10.5 (pedido do JF): selo amarelo em quem tem a ficha de palpite a qualquer hora
+    const ficha = r.palpites && (r.palpites[id] > 0 || (j && j.equipe && r.palpites[j.equipe] > 0));
+    return j
+      ? escapeHtml((j.avatar ? j.avatar + " " : "") + j.nome) +
+          (r.hostId && id === r.hostId ? ' <span class="selo-host" title="Host: quem abriu e cuida da sala">HOST</span>' : "") +
+          (ficha ? ' <span class="selo-palpite" title="Tem ficha de palpite a qualquer hora">🃏</span>' : "")
+      : "—";
   };
   const placar = [...r.jogadores]
     .sort((a, b) => (r.vitoria === "pontos" ? b.pontos - a.pontos : b.casa - a.casa))
@@ -169,7 +175,7 @@ function telaoDesenhar(r, alvo) {
   // os números de dica pra todo mundo: livre, a que está sendo lida (em destaque) e as já usadas
   const usadas = c ? new Set(c.abertas.map((d) => d.pos)) : new Set();
   const numeros = c && c.totalDicas && r.estadoCarta !== "hidden"
-    ? `<div class="telao-numeros" aria-label="Números de dica">${Array.from({ length: c.totalDicas }, (_, i) => `<span class="${i === c.pendente ? "agora" : usadas.has(i) ? "usada" : "livre"}">${i + 1}</span>`).join("")}</div>`
+    ? `<div class="telao-numeros" aria-label="Números de dica">${Array.from({ length: c.totalDicas }, (_, i) => `<span class="${i === c.pendente ? "agora" : usadas.has(i) ? "usada" : r.pedidoDica && r.pedidoDica.pos === i ? "pedida" : "livre"}">${i + 1}</span>`).join("")}</div>`
     : "";
   box.innerHTML = `
     <header class="telao-topo"><b>📺 Perfil JF</b><span>rodada ${r.rodada}${r.ultimaRodada ? " · última" : ""} · revisão ${r.revisao}</span></header>
@@ -179,6 +185,8 @@ function telaoDesenhar(r, alvo) {
       <div>👉 Vez de<br><b>${nome(r.vezId)}</b></div>
       <div>⏱️ <b id="telaoRelogio">—</b></div>
     </section>
+    ${r.palpiteVez ? `<div class="telao-palpite-vez">🃏 <b>${(() => { const j = r.jogadores.find((p) => p.id === r.palpiteVez); const eq = !j && r.equipes && r.equipes.find((e) => e.id === r.palpiteVez); return j ? escapeHtml(j.nome) : eq ? "Equipe " + escapeHtml(String(eq.id)) : "Alguém"; })()}</b> vai palpitar! O Mestre julga esse palpite.</div>` : ""}
+    ${r.pedidoDica ? `<div class="telao-pedido">👉 ${nome(r.pedidoDica.por)} pediu a dica <b>${r.pedidoDica.pos + 1}</b></div>` : ""}
     ${telaoObjetivoHtml(r)}
     ${c && r.estadoCarta === "hidden" ? `<section class="telao-carta">${telaoRoletaHtml(c)}</section>` : c && c.categoria ? `<section class="telao-carta"><div class="telao-cat">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)} · ${c.abertas.length} de ${c.totalDicas} dicas</div>${numeros}${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>` : ""}
     ${telaoMostraTabuleiro(r) ? tabHtmlTelao(r) : ""}

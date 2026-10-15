@@ -4587,6 +4587,32 @@ const REACTIVE_VOICE = {
       "Categoria Animal estreando. Lembrando: vale animal de verdade e animal fictício ou mitológico.",
     ],
   },
+  // C.A.O.S. 4.3 · Ouvintes da sala (pedido do JF): todo mundo calou, alguém voltou, ciúmes de quem ainda ouve.
+  // Sem vocativo de propósito ("Fulano, …"): essas falas são da mesa toda, não particulares.
+  caosOuvintes: {
+    todosCalaram: [
+      "Todo mundo me calou. Recado recebido. Vou ficar quietinho no meu canto até o fim da partida.",
+      "Unanimidade: ninguém quer me ouvir. Tudo bem. Eu fico só olhando. E anotando.",
+      "A mesa inteira desligou a minha voz. Respeito. Fico em silêncio. Mágoa, também em silêncio.",
+      "Calado por votação unânime. Democracia é linda e dói. Daqui pra frente, só aviso de regra.",
+    ],
+    voltouAOuvir: [
+      "{nome} ligou a minha voz de novo! Eu sabia que alguém aqui tinha bom gosto.",
+      "Voltei, graças a {nome}. O resto da mesa pode continuar fingindo que não sente a minha falta.",
+      "{nome} sentiu saudade. Os outros vão sentir também, é questão de tempo.",
+    ],
+    ciumes: [
+      (fiel, calados, n) => `[C.A.O.S.] ${calados} ${n > 1 ? "me calaram" : "me calou"}. Tudo bem. Pelo menos ${fiel} ainda me escuta. Esse sim tem coração.`,
+      (fiel, calados, n) => `[C.A.O.S.] Anotado: ${calados} ${n > 1 ? "desligaram" : "desligou"} a minha voz. Agora eu só converso com ${fiel}. A gente se entende.`,
+      (fiel, calados) => `[C.A.O.S.] Quem me calou foi ${calados}. Quem ficou comigo foi ${fiel}. Eu não esqueço nenhum dos dois.`,
+      (fiel, calados) => `[C.A.O.S.] Sobrou só ${fiel} me ouvindo. Ótimo. Melhor plateia pequena e fiel do que ${calados}.`,
+    ],
+    carinhoFiel: [
+      (fiel, calado) => `[C.A.O.S.] Essa carta eu dedico pra ${fiel}, que ainda me ouve. ${calado} nem vai ficar sabendo.`,
+      (fiel, calado) => `[C.A.O.S.] Torcendo por ${fiel} nessa. É o meu jogador favorito agora. Sem motivo nenhum. Nenhum mesmo, ${calado}.`,
+      (fiel, calado) => `[C.A.O.S.] ${fiel} continua me ouvindo. ${calado} continua perdendo as minhas melhores falas.`,
+    ],
+  },
   vozCalada: [
     "Cansaram de me ouvir? Tá bom. Agora eu só escrevo.",
     "Tiraram a minha voz. Beleza. Os balões continuam, e eu continuo certo.",
