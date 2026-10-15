@@ -10,7 +10,7 @@
           Cor, emoji e nick exclusivos pra quem testou o online com o JF (PRESENTES em 01-configuracao.js, presenteDe em
           03-regras.js; COR_EXCLUSIVA, paleta, cadastro local e do celular reconhecem): Carro Pika (Henrique) roxo-diabinho
           GRAD_DIABINHO + 😈; BsLordRafa (Rafa) vermelho-sangue GRAD_SANGUE + 💣/🦇 trocando a cada carta
-          (presentesGirarEmojis no drawHidden); Vitinho/VineFA azul shinobi GRAD_SHINOBI + 🥷; Typingg/Typing_KK/TheDevil
+          (presentesGirarEmojis no drawHidden); Vitinho/VineFA azul shinobi GRAD_SHINOBI + 🥷; Typingg/Typingg_KK/TheDevil
           preto espadachim GRAD_KIRITO + ⚔️. Degradê escuro: nome claro brilhando (.presente-name, como o Ônix). No Júnior
           os emojis que não são de criança ficam de fora (PRESENTE_FORA_JUNIOR); no Modo Batata, cor sólida. C.A.O.S.: falas
           de chegada de cada um (REACTIVE_VOICE.presente). Ideia anotada pro Modo C.A.O.S.: "É HORA DO DUELO!" (Rafa).
@@ -9487,7 +9487,7 @@ const PRESENTES = [
   { id: "henrique", nome: "Henrique", re: /^carro\s*pika([^a-z]|$)/, cor: "GRAD_DIABINHO", emojis: ["😈"], neon: ["#e9d5ff", "#a855f7"] },
   { id: "rafa", nome: "Rafa", re: /^bs\s*lord\s*rafa([^a-z]|$)/, cor: "GRAD_SANGUE", emojis: ["💣", "🦇"], gira: true, neon: ["#ffd7d7", "#ff1f1f"] },
   { id: "vitinho", nome: "Vitinho", re: /^(vitinho|vinefa)([^a-z]|$)/, cor: "GRAD_SHINOBI", emojis: ["🥷"], neon: ["#dbeafe", "#3b82f6"] },
-  { id: "typingg", nome: "Typingg", re: /^(typingg|typing[\s_]?kk|the\s*devil)([^a-z]|$)/, cor: "GRAD_KIRITO", emojis: ["⚔️"], neon: ["#f8fafc", "#94a3b8"] },
+  { id: "typingg", nome: "Typingg", re: /^(typingg([\s_]?kk)?|the\s*devil)([^a-z]|$)/, cor: "GRAD_KIRITO", emojis: ["⚔️"], neon: ["#f8fafc", "#94a3b8"] },
 ];
 // no Júnior, os emojis de presente que não são de criança ficam de fora (a cor continua)
 const PRESENTE_FORA_JUNIOR = ["😈", "💣", "🥷", "⚔️"];
@@ -72447,7 +72447,7 @@ const NOVIDADES = [
       "😈 Presente do Henrique: com o nick Carro Pika, ele ganha o degradê roxo-diabinho e o emoji de diabinho roxo.",
       "💣 Presente do Rafa: com o nick BsLordRafa, ele ganha o vermelho-sangue, e o emoji troca entre bomba e morcego a cada carta.",
       "🥷 Presente do Vitinho: com Vitinho ou VineFA, ele ganha o azul shinobi e o emoji de ninja.",
-      "⚔️ Presente do Typingg: com Typingg, Typing_KK ou TheDevil, ele ganha o preto espadachim e as duas espadas.",
+      "⚔️ Presente do Typingg: com Typingg, Typingg_KK ou TheDevil, ele ganha o preto espadachim e as duas espadas.",
     ],
     qol: [
       "🔒 Só deles: essas cores e emojis ficam com cadeado pra todo o resto da mesa.",
