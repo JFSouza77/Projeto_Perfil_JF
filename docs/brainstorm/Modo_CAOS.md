@@ -56,7 +56,12 @@ Online, cada um no seu aparelho. Cada jogador tem **uma carta secreta por rodada
 4. Roubo + 1 duelo (cara ou coroa).
 5. Revanche, os outros duelos, intervenção no placar.
 
-## 6. Perguntas pra fazer ao Gemini
+## 6. Ideias já anotadas
+
+- **"É HORA DO DUELO!"** (ideia do Rafa, 15/10/2026): quando o C.A.O.S. puxa um duelo entre jogadores, ele anuncia
+  bem no estilo Yu-Gi-Oh, com a tela piscando, som de batalha e os dois nomes frente a frente.
+
+## 7. Perguntas pra fazer ao Gemini
 
 - O ciclo "carta pausa e volta" fica claro pra quem joga pela 1ª vez? Como mostrar isso na tela?
 - 15 s de janela é pouco numa call com 4 a 6 pessoas?

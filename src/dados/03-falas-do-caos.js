@@ -4587,6 +4587,29 @@ const REACTIVE_VOICE = {
       "Categoria Animal estreando. Lembrando: vale animal de verdade e animal fictício ou mitológico.",
     ],
   },
+  // 1.7.10.6 · Presentes do JF: a chegada de quem tem cor e emoji exclusivos
+  presente: {
+    henrique: [
+      "{nome} chegou de roxo diabinho. Presente do JF. Combina demais, e isso me preocupa.",
+      "Olha o {nome} com o diabinho roxo. Essa cor ninguém mais pode usar. Nem eu.",
+      "{nome} na mesa, roxo e preto. Eu já sabia que vinha confusão.",
+    ],
+    rafa: [
+      "{nome} chegou. Vermelho-sangue e uma bomba. O Oppenheimer da mesa está entre nós.",
+      "Cuidado: {nome} na área. Discreto como um morcego, explosivo como uma TNT nuclear.",
+      "{nome} entrou. A cada carta ele troca de bomba pra morcego. Ninguém sabe qual vai aparecer. Nem ele.",
+    ],
+    vitinho: [
+      "{nome} chegou de azul shinobi. Ninja de verdade não avisa que chegou, mas eu aviso.",
+      "Olha o ninja da mesa: {nome}. Copiar resposta com o Sharingan não vale, hein.",
+      "{nome} entrou em silêncio, estilo Kakashi. Eu vi mesmo assim.",
+    ],
+    typingg: [
+      "{nome} chegou de preto, com duas espadas. Isso aqui não é Aincrad, mas pode lutar.",
+      "Duas espadas, roupa preta: {nome} na mesa. Só falta o Star Burst Stream nas dicas.",
+      "{nome} entrou. Espadachim preto confirmado. Presente do JF, nem adianta pedir a cor.",
+    ],
+  },
   // C.A.O.S. 4.3 · Ouvintes da sala (pedido do JF): todo mundo calou, alguém voltou, ciúmes de quem ainda ouve.
   // Sem vocativo de propósito ("Fulano, …"): essas falas são da mesa toda, não particulares.
   caosOuvintes: {

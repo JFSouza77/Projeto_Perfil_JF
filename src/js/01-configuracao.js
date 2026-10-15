@@ -14,7 +14,7 @@
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1810;
+const JOGO_BUILD = 1811;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -91,6 +91,11 @@ const GRADIENTS = {
   GRAD_PESSEGO: "linear-gradient(135deg, #ffd3a5 0%, #fd6585 100%)",
   GRAD_PRINCESA: "linear-gradient(135deg, #ff8fc7 0%, #ffc2e0 55%, #ff7eb6 100%)",
   GRAD_ONYX: "linear-gradient(135deg, #000000 0%, #2a2a3d 50%, #000000 100%)",
+  // 1.7.10.6 · presentes do JF (cores exclusivas de quem testou o online com ele)
+  GRAD_DIABINHO: "linear-gradient(135deg, #7e22ce 0%, #3b0764 50%, #000000 100%)",
+  GRAD_SANGUE: "linear-gradient(135deg, #b10000 0%, #4a0000 55%, #000000 100%)",
+  GRAD_SHINOBI: "linear-gradient(135deg, #1d4ed8 0%, #374151 55%, #0b0b0f 100%)",
+  GRAD_KIRITO: "linear-gradient(135deg, #000000 0%, #1f2937 50%, #94a3b8 100%)",
 };
 const AVATARS = [
   "😎",
@@ -126,7 +131,18 @@ const AVATARS = [
 ];
 const AVATARS_EXTRA = ["💀", "😈", "🤡", "🦈", "🐺", "🦅", "🐍", "👑", "🏆", "🎸", "🧠", "🥶", "🤑", "🦍"];
 const AVATARS_KIDS = ["🐶", "🐱", "🐰", "🦊", "🐼", "🐸", "🦖", "🐢", "🦋", "🚀", "🧸", "🎈", "🍭", "🌈", "⭐", "🐧"];
-const AVATAR_EXCLUSIVE = ["😎", "👸"];
+// 1.7.10.6 · Presentes do JF: cor, emoji e nick exclusivos de quem testou o online com ele. O presente vale pra quem
+// usa um dos nicks (do jeito que a pessoa joga). Emoji com mais de um: troca a cada carta (gira: true).
+// neon = [cor do nome, cor do brilho] (o degradê é escuro: o nome aparece claro e brilhando, como o Ônix).
+const PRESENTES = [
+  { id: "henrique", nome: "Henrique", re: /^carro\s*pika([^a-z]|$)/, cor: "GRAD_DIABINHO", emojis: ["😈"], neon: ["#e9d5ff", "#a855f7"] },
+  { id: "rafa", nome: "Rafa", re: /^bs\s*lord\s*rafa([^a-z]|$)/, cor: "GRAD_SANGUE", emojis: ["💣", "🦇"], gira: true, neon: ["#ffd7d7", "#ff1f1f"] },
+  { id: "vitinho", nome: "Vitinho", re: /^(vitinho|vinefa)([^a-z]|$)/, cor: "GRAD_SHINOBI", emojis: ["🥷"], neon: ["#dbeafe", "#3b82f6"] },
+  { id: "typingg", nome: "Typingg", re: /^(typingg|typing[\s_]?kk|the\s*devil)([^a-z]|$)/, cor: "GRAD_KIRITO", emojis: ["⚔️"], neon: ["#f8fafc", "#94a3b8"] },
+];
+// no Júnior, os emojis de presente que não são de criança ficam de fora (a cor continua)
+const PRESENTE_FORA_JUNIOR = ["😈", "💣", "🥷", "⚔️"];
+const AVATAR_EXCLUSIVE = ["😎", "👸"].concat(...PRESENTES.map((p) => p.emojis));
 const OWNER_ANNE_RE = /^an{1,2}(e|izinha|izinho)(zinha|zinho|zona)?([^a-z]|$)/;
 // Conteúdo ligado à Anne (cor, emoji, falas, memória do C.A.O.S.): liga/desliga no Cérebro (aba Falas). Desligado por padrão.
 const ANNE_LIGADA_KEY = "perfil5_anne_ligada";
@@ -567,6 +583,10 @@ const CAOS_COLOR_NAMES = {
   GRAD_ONYX: "ônix neon",
   GRAD_TROPICAL: "tropical",
   GRAD_PRINCESA: "princesa",
+  GRAD_DIABINHO: "roxo diabinho",
+  GRAD_SANGUE: "vermelho-sangue",
+  GRAD_SHINOBI: "azul shinobi",
+  GRAD_KIRITO: "preto espadachim",
 };
 const CAOS_AI_RE = /(intelig[eê]ncia artificial|chatgpt|gemini|claude|rob[oô]|computador|algoritmo|alexa|siri)/i;
 const CAOS_CTX_ERRO_RE =

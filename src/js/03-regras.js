@@ -37,6 +37,24 @@ function isAnneName(n) {
 function isJfName(n) {
   return OWNER_JF_RE.test(nameKeyPlain(n));
 }
+// 1.7.10.6: o presente (cor/emoji exclusivos) de quem tem este nick, ou null
+function presenteDe(n) {
+  const k = nameKeyPlain(n);
+  return (k && PRESENTES.find((p) => p.re.test(k))) || null;
+}
+function presenteEmojis(pr) {
+  if (!pr) return [];
+  return typeof CURRENT_MODE !== "undefined" && CURRENT_MODE === "junior" ? pr.emojis.filter((e) => !PRESENTE_FORA_JUNIOR.includes(e)) : pr.emojis;
+}
+// Rafa (💣/🦇): o emoji troca a cada carta
+function presentesGirarEmojis() {
+  players.forEach((p) => {
+    const pr = presenteDe(p.name), lista = presenteEmojis(pr);
+    if (!pr || !pr.gira || lista.length < 2 || !lista.includes(p.avatar)) return;
+    const outro = lista[(lista.indexOf(p.avatar) + 1) % lista.length];
+    if (!players.some((q) => q !== p && q.avatar === outro)) p.avatar = outro;
+  });
+}
 // Níveis de zoeira: Family friendly (só no Júnior: só carinho) < Suave (zoa um pouquinho)
 // < Normal (zoa e implica no limite) < Ácido (implica, briga e fica magoado) < Nível 0 (torra
 // a paciência; você que pediu). Family friendly conta como Suave em todas as travas, e ainda
@@ -589,7 +607,8 @@ function sanitizePlayerColor(name, color) {
   if (isJfName(name) && !used.has("RGB")) final = "RGB";
   else if (isAnneName(name) && !used.has("GRAD_PRINCESA")) final = "GRAD_PRINCESA";
   else if (isEnigmaName(name) && !used.has("GRAD_ONYX")) final = "GRAD_ONYX";
-  else if (final === "RGB" || final === "GRAD_PRINCESA") final = pick();
+  else if (presenteDe(name) && !used.has(presenteDe(name).cor)) final = presenteDe(name).cor;
+  else if (final === "RGB" || final === "GRAD_PRINCESA" || (PRESENTES.some((p) => p.cor === final) && !(presenteDe(name) && presenteDe(name).cor === final))) final = pick();
   if (document.body.classList.contains("batata-mode") && (final === "RGB" || GRADIENTS[final]))
     final = isAnneName(name) && !used.has("#ff9ecd") ? "#ff9ecd" : pick();
   return final;
@@ -598,6 +617,12 @@ function sanitizePlayerAvatar(name, avatar) {
   const used = new Set(players.map((p) => p.avatar));
   if (isJfName(name) && !used.has("😎")) return "😎";
   if (isAnneName(name) && !used.has("👸")) return "👸";
+  const meu = presenteEmojis(presenteDe(name));
+  if (meu.length) {
+    if (meu.includes(avatar) && !used.has(avatar)) return avatar;
+    const livre = meu.find((e) => !used.has(e));
+    if (livre) return livre;
+  }
   if (AVATAR_EXCLUSIVE.includes(avatar)) {
     const free = avatarsForMode().find((a) => !used.has(a));
     return free || avatar;

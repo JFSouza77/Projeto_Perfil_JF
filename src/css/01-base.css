@@ -2308,3 +2308,17 @@ button.splash-embreve {
 @keyframes cadRepetido{0%,100%{box-shadow:0 0 0 0 #ef444400}50%{box-shadow:0 0 18px 4px #ef4444aa}}
 .cad-campo-erro{border-color:#ef4444 !important;box-shadow:0 0 0 3px #ef444455 !important}
 html.acess-calmo #scoreboard li.cad-repetido,body.batata-mode #scoreboard li.cad-repetido{animation:none}
+/* 1.7.10.6 · presentes do JF: degradê escuro, nome claro brilhando na cor da pessoa */
+.presente-name {
+  color: var(--pn-a, #fff) !important;
+  font-weight: 800;
+  text-shadow:
+    0 0 4px var(--pn-b, #a855f7),
+    0 0 9px var(--pn-b, #a855f7) !important;
+}
+.card .presente-name {
+  color: #0a0a12 !important;
+  text-shadow:
+    0 0 2px var(--pn-b, #a855f7),
+    0 0 7px var(--pn-b, #a855f7) !important;
+}
