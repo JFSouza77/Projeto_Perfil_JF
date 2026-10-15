@@ -386,6 +386,9 @@ function saveGameState() {
       cardState,
       // 1.7.10.1: a roleta da categoria (girando ou parada) volta igual depois de recarregar
       roleta: cardState === "hidden" && currentCard && roletaCarta === currentCard ? (roletaPousou ? "pousou" : "girando") : null,
+      // C.A.O.S. 4.2: o que ele só fala uma vez por partida (apresentação de cada categoria, easter eggs) volta
+      // igual depois de recarregar (antes, recarregar fazia ele apresentar as categorias de novo)
+      caosUmaVez: caosEasterEggsUsed ? [...caosEasterEggsUsed].slice(0, 200) : [],
       gameEnded,
       usedAtLeastOnce,
       starterChosen,
@@ -785,6 +788,7 @@ function loadGameState() {
     roletaCarta = cardState === "hidden" && currentCard && (state.roleta === "pousou" || state.roleta === "girando") ? currentCard : null;
     roletaPousou = !!roletaCarta && state.roleta === "pousou";
     roletaRetomar = !!roletaCarta && !roletaPousou;
+    if (Array.isArray(state.caosUmaVez)) caosEasterEggsUsed = new Set(state.caosUmaVez.filter((k) => typeof k === "string").slice(0, 200));
     gameEnded = state.gameEnded || false;
     usedAtLeastOnce = state.usedAtLeastOnce || false;
     starterChosen = state.starterChosen || false;

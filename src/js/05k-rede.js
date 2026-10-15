@@ -1177,7 +1177,9 @@ function redeHostFala(f) {
   if (typeof f.emo === "string" && /^[a-z]{2,20}$/.test(f.emo)) visual.emo = f.emo;
   if (typeof f.face === "string" && f.face.length <= 24) visual.face = f.face;
   if (typeof f.rotulo === "string" && f.rotulo.length <= 24) visual.rotulo = f.rotulo;
-  if (f.privado) {
+  // C.A.O.S. 4.2 (partida online: "não chega direto no jogador"): fala particular, ou que fala COM quem está
+  // em outro aparelho, vai só pro aparelho dessa pessoa (antes ia pra sala toda e ninguém sabia que era com ele)
+  if (f.privado || redeFalaSoLonge(f)) {
     ids.forEach((id) => {
       const a = rede.assentos[id];
       if (a && redeOnline(a) && !redeNoHost(id)) redeEnviar("fala", { texto: f.texto, quem: [id], ...visual }, a.sessao);
@@ -2130,6 +2132,14 @@ function redeVozTrocar() {
   try {
     unlockAudio();
     toggleVoice();
+  } catch (e) {}
+  // C.A.O.S. 4.2: calou a voz no celular? Uma reação curta, só em texto, uma vez por sala neste aparelho
+  try {
+    const k = "perfil5_rede_vozcalada_" + (rede ? rede.sala : "");
+    if (!caosVoiceOn && rede && !sessionStorage.getItem(k)) {
+      sessionStorage.setItem(k, "1");
+      redeFalaMostrar({ texto: String(getRandomReaction(REACTIVE_VOICE.vozCalada) || "").replace(/^\[C\.A\.O\.S\.\]\s*/, ""), quem: [rede.eu] });
+    }
   } catch (e) {}
   try {
     redeConvidadoDesenhar();

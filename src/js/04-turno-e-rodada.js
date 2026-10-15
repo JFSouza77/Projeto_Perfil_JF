@@ -506,7 +506,7 @@ function caosPrimeiraCategoria() {
     const banco = REACTIVE_VOICE.primeiraCategoria[cat === "COISA" && CURRENT_MODE === "junior" ? "COISA_JR" : cat];
     if (!banco || !caosOncePerMatch("primeira_cat_" + cat)) return;
     caosLog("fala", "primeira carta de " + cat);
-    caosFalaAgendar(() => getRandomReaction(banco), 900, "media");
+    caosFalaAgendar(() => getRandomReaction(banco), 900, "regra");
   } catch (e) {}
 }
 function checkWinnerThenDraw() {
@@ -1979,8 +1979,18 @@ function beginGameplay() {
   drawHidden();
   saveGameState();
 }
+// C.A.O.S. 4.2 / partida online de 4 PCs: no online, trocar de janela (Alt-Tab) ou minimizar no aparelho do
+// host não pausa a sala inteira. Pausa no online só pelo botão. O relógio segue pela hora de verdade.
+function salaOnlineAberta() {
+  try {
+    return typeof rede !== "undefined" && !!rede && rede.papel === "host";
+  } catch (e) {
+    return false;
+  }
+}
 function autoPauseGame() {
   if (!starterChosen || gameEnded) return;
+  if (salaOnlineAberta()) return;
   const g = document.getElementById("gameScreen");
   if (!g || g.style.display !== "flex") return;
   pauseGame();
@@ -1989,6 +1999,7 @@ function autoPauseGame() {
 }
 function recoverFromMissedPause() {
   if (!starterChosen || gameEnded) return;
+  if (salaOnlineAberta()) return; // no online o tempo correu de verdade pra todo mundo
   const g = document.getElementById("gameScreen");
   if (!g || g.style.display !== "flex") return;
   if (!(timerInterval && timerEndAt && lastTimerTick)) return;
@@ -2200,7 +2211,15 @@ function caosFalaAgendar(fn, ms, prio) {
         return;
       }
       const m = fn();
-      if (m) showToastMessage(m);
+      // "regra": aviso que explica o jogo (ex.: o que vale na categoria) não entra no orçamento de comentários
+      if (m) {
+        caosFalaEssencial = prio === "regra";
+        try {
+          showToastMessage(m);
+        } finally {
+          caosFalaEssencial = false;
+        }
+      }
     } catch (e) {}
   }, ms);
 }

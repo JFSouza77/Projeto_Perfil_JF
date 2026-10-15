@@ -848,8 +848,10 @@ function caosRegistrarCorte() {
   const agora = Date.now();
   caosFalasRecentes.push(agora, agora);
   caosEmoNudge(0.6, -0.3);
+  // C.A.O.S. 4.2: no online, quem pula a fala pode estar em qualquer aparelho (o Mestre da vez quase nunca é
+  // quem tocou): pular não marca ninguém. No aparelho único da mesa, segue o palpite de sempre (o Mestre).
   const quem =
-    mestreIndex !== null && mestreIndex !== void 0 && players[mestreIndex] && starterChosen && !gameEnded
+    !salaOnlineAberta() && mestreIndex !== null && mestreIndex !== void 0 && players[mestreIndex] && starterChosen && !gameEnded
       ? players[mestreIndex]
       : null;
   const C = REACTIVE_VOICE.caosCortado;
@@ -886,9 +888,16 @@ function caosVingancaLine(p) {
   caosLog("vinganca", `${p.name} (cortou ${caosCortes.por[p.name] || 1}x)`);
   return getRandomReaction(REACTIVE_VOICE.caosCortado.vinganca, p.name, caosCortes.por[p.name] || 1);
 }
+let caosFalaEssencial = false; // fala de regra/aviso em andamento: passa pelo orçamento (C.A.O.S. 4.2)
 function caosToastBloquear() {
   try {
     if (document.getElementById("pauseScreen").style.display === "block") return true;
+    if (caosFalaEssencial) return false;
+    // C.A.O.S. 4.2: intervalo mínimo entre comentários (vale também no lobby e no cadastro)
+    if (Date.now() - (caosUltimaFalaAt || 0) < CAOS_FALA_INTERVALO_MS) {
+      caosLog("orcamento", "fala cortada (intervalo)");
+      return true;
+    }
     if (!stats || stats.totalDrawn < 1 || gameEnded) return false;
     if (caosFalaCartaRef !== stats.totalDrawn) {
       caosFalaCartaRef = stats.totalDrawn;

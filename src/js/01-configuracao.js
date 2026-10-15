@@ -523,7 +523,11 @@ const CAOS_BIP = {
 };
 const CAOS_BALAO_MIN_MS = 2500;
 const CAOS_BALAO_POS_VOZ_MS = 600;
-const CAOS_FALAS_POR_CARTA = 7;
+// C.A.O.S. 4.2 (partida online de 4 pessoas: "o C.A.O.S. estava insuportável", todo mundo calou ele):
+// comentário (fala que não é aviso nem regra) no máximo 2 por carta e com pelo menos 20 s entre um e outro.
+// Avisos, regras e falas importantes (priority, essencial) não entram nessa conta.
+const CAOS_FALAS_POR_CARTA = 2;
+const CAOS_FALA_INTERVALO_MS = 20000;
 const CAOS_COLOR_NAMES = {
   "#dc2626": "vermelho-sangue",
   "#6366f1": "índigo",

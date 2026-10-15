@@ -314,6 +314,33 @@ const ARQ = acharMestre(process.argv[2]);
       toggleVoice = toggleOrig; caosVoiceOn = vozAntes;
       out.vozPergunta = ligadaPula && abriu && sim && nao && umaVez;
     }
+    // C.A.O.S. 4.2 (partida online de 4: "insuportável"): comentário respeita intervalo; aviso de regra passa;
+    // no online, Alt-Tab não pausa e pular fala não marca ninguém; categoria apresentada volta no save
+    {
+      const ultAntes = caosUltimaFalaAt;
+      caosUltimaFalaAt = Date.now();
+      const cortaComentario = caosToastBloquear() === true;
+      caosFalaEssencial = true;
+      const regraPassa = caosToastBloquear() === false;
+      caosFalaEssencial = false;
+      caosUltimaFalaAt = ultAntes;
+      const redeAntes = typeof rede !== 'undefined' ? rede : null;
+      rede = { papel: 'host' };
+      const pausou0 = !!pausedAt;
+      autoPauseGame();
+      const naoPausa = !!pausedAt === pausou0 && salaOnlineAberta();
+      const marcAntes = JSON.stringify(caosMarked), cortesAntes = JSON.stringify(caosCortes);
+      caosRegistrarCorte();
+      const naoMarca = JSON.stringify(caosMarked) === marcAntes;
+      caosCortes = JSON.parse(cortesAntes);
+      rede = redeAntes;
+      caosEasterEggsUsed.add('primeira_cat_LUGAR');
+      saveGameState();
+      const salvo = JSON.parse(JFStore.getItem('perfil200_state') || '{}');
+      const guardou = Array.isArray(salvo.caosUmaVez) && salvo.caosUmaVez.includes('primeira_cat_LUGAR');
+      out.caos42 = cortaComentario && regraPassa && naoPausa && naoMarca && guardou;
+      out.caos42diag = JSON.stringify({ cortaComentario, regraPassa, naoPausa, naoMarca, guardou });
+    }
     // 1.7.10.3: busca nas regras e o lembrete da primeira carta de cada categoria
     {
       openTutorial('manual');
@@ -425,6 +452,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.10: Reportar carta anota no aparelho, sem resposta na janela e sem mexer na partida', r.reportar],
     ['1.7.10: nome repetido: o nome já cadastrado fica em destaque, o campo fica vermelho e o C.A.O.S. comenta', r.nomeRepetido],
     ['Travas ADM: a pergunta abre, Sim trava o nick da Anne, Não desliga, e não pergunta duas vezes na mesma partida', r.travasAdm],
+    ['C.A.O.S. 4.2: comentário espera o intervalo, aviso de regra passa, no online Alt-Tab não pausa e pular fala não marca ninguém, e o que ele já apresentou volta no save', r.caos42],
     ['Cadastro: o C.A.O.S. pergunta da voz (não pergunta se já está ligada); Sim liga; Não ganha fala triste e segue sem voz', r.vozPergunta],
     ['1.7.10.3: busca nas regras acha "grupo"; o C.A.O.S. lembra o que vale na 1ª carta de cada categoria (Júnior sem animal em Coisa)', r.regrasEPrimeira],
     ['1.7.10.1: com a sala aberta, a partida só começa quando todo jogador tem aparelho', r.semAparelho],

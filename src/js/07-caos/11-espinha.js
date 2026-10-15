@@ -295,6 +295,13 @@ function caosEspinhaInstalar() {
         // 1.7.9.6 / 1.7.10 (relato do JF): fala com quem está em outro aparelho (online) vai pro celular
         // dessa pessoa (com voz) e não aparece aqui. O humor sai do banco da fala, como no balão daqui.
         if (typeof redeFalaSoLonge === "function" && redeFalaSoLonge(ev)) {
+          // C.A.O.S. 4.2: a fala que vai só pro celular da pessoa também respeita o orçamento de comentários
+          const bypass = arguments[2], prio = arguments[3];
+          if (!bypass && !prio && typeof caosToastBloquear === "function" && caosToastBloquear()) {
+            if (typeof afterClose === "function") afterClose();
+            return;
+          }
+          caosUltimaFalaAt = Date.now();
           try {
             const banco = caosLastPick && String(msg).indexOf(String(caosLastPick.text).replace(/^\[C\.A\.O\.S\.\]\s*/, "")) !== -1 ? caosLastPick.bank : null;
             ev.emo = caosEmocaoDaFala(banco) || null;
@@ -318,7 +325,9 @@ function caosEspinhaInstalar() {
                 return redeHostFala(ev);
               }
             } catch (e) {}
-            if (++n > 26) return redeHostFala(ev);
+            // C.A.O.S. 4.2: não apareceu aqui (cortada pelo orçamento, pelo silêncio ou descartada): não vai pros
+            // celulares. Antes ia depois de ~8 s mesmo assim, e o online ouvia até as falas que o host cortou.
+            if (++n > 26) return;
             setTimeout(pegar, 300);
           };
           pegar();

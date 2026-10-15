@@ -633,7 +633,7 @@ function tabLobbyAbrir() {
     antesTique = t;
     if (!ov.isConnected || gameEnded || (cardState !== "hidden" && cardState !== "bonusChoice")) return tabLobbyFechar();
     // aba escondida ou pausa: o relógio do lobby espera junto
-    if (document.hidden || (typeof pausaEstaAberta === "function" && pausaEstaAberta())) {
+    if ((document.hidden && !(typeof salaOnlineAberta === "function" && salaOnlineAberta())) || (typeof pausaEstaAberta === "function" && pausaEstaAberta())) {
       fim += passou;
       tabLobbyFim = fim;
       return;
