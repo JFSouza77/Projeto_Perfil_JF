@@ -1,5 +1,10 @@
 # Status do roteiro de organização e online
 
+> **Atualizado em 15/10/2026 (1.7.10.5): o roteiro está cumprido.** A 1.7.10 · Multiplayer Update saiu e seguiu com
+> as correções das partidas online (até a 1.7.10.5 · C.A.O.S. 4.3). Os próximos passos estão em `docs/brainstorm/`
+> (Modo C.A.O.S., Corrida contra o Tempo e Telemetria) e no `docs/Parecer_do_Klaus_Rumo_a_Release_1_0.md`.
+> O que vem abaixo fica como histórico.
+
 > **Atualizado em 08/10/2026 (1.7.7.8): a 1.7.7 · Foundation and Structure Update está fechada.** Saiu em 6 partes mais 3 QoL (1.7.7.6 revisão do GPT, 1.7.7.7 computador, 1.7.7.8 decisões do JF):
 > - **1.7.7:** correções da revisão do GPT e do Google AI Studio.
 > - **1.7.7.1:** id dos jogadores.

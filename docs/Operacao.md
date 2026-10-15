@@ -32,6 +32,7 @@
 - **Ver as cartas reportadas:** `https://perfil-jf-sala.joaofe0000.workers.dev/reportes?chave=SENHA`. "Ver como texto" serve pra copiar e mandar pro Claude.
 - **Republicar o servidor:** qualquer mudança na pasta `servidor/` que entra na `main` é publicada sozinha (Cloudflare Builds). Pra forçar: Deployments → Retry build.
 - **Publicar uma versão do jogo:** PR para a `main` (o Claude Code faz). O GitHub Pages publica o `index.html` em ~1 min.
+- **Limpar versões antigas:** no repositório ficam só as 3 versões mais novas. `node ferramentas/limpar_versoes.js` mostra o que sai e `--apagar` limpa (a rotina mensal faz isso sozinha).
 - **Conferir se o servidor está vivo:** abra o endereço do servidor (tem que aparecer "Perfil JF · servidor da sala") e o `/ponte` (tem que aparecer `turn.cloudflare.com`).
 
 ## 4. Se algo parar
@@ -44,7 +45,7 @@
 | GitHub Pages fora do ar | Quem tem o app instalado ou o arquivo offline continua jogando | Mandar o arquivo offline pra quem precisar |
 
 ## 5. Restaurar do zero
-1. O repositório tem **tudo**: o jogo (`src/`), o servidor (`servidor/`) e as ferramentas. Backup: GitHub → Code → Download ZIP de vez em quando (o JF guarda fora do celular).
+1. O repositório tem **tudo**: o jogo (`src/`), o servidor (`servidor/`) e as ferramentas. Backup: o **acervo** no Drive do JF ("Meu Drive > Projeto Perfil JF > Perfil JF - Acervo GitHub"), com todas as versões do jogo e o histórico completo do Git (`.bundle`). A rotina agendada "Limpeza mensal do Perfil JF" (todo dia 1º, 8:48) monta um acervo novo e manda pro JF subir; dá pra montar na mão com `node ferramentas/limpar_versoes.js --acervo PASTA`. Pra restaurar do bundle: `git clone Perfil_JF_historico_completo_DATA.bundle Projeto_Perfil_JF`.
 2. Servidor novo: seguir `servidor/LEIA-ME.md` (conta Cloudflare, importar o repositório com a pasta `servidor`, os 3 segredos). Se o endereço mudar, trocar `REDE_SERVIDOR` em `src/js/05k-rede.js` e publicar uma versão.
 3. Jogo: `node build.js --testar --publicar` gera tudo a partir de `src/`.
 
