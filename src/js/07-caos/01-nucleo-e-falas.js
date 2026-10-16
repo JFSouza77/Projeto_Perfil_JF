@@ -520,6 +520,7 @@ function getRandomReaction(list, ...args) {
       if (fam !== null) return fam;
     }
     if (caosIsDisliked(list, text, args)) continue;
+    if (!caosContextoOk(text, args)) continue;
     if (typeof text === "string" && text.length > 170 && tries < 4 && list.length > 1) continue;
     if (!caosHasProfanity(text, args)) {
       const out = caosRisada(caosSelfRoastIfSlang(caosDecorate(text, list), args, list), list, args);
@@ -623,6 +624,23 @@ function caosJoinExtra(extra, main, mainPick) {
   const mesmoNome = players.some((p) => p && p.name && extra.includes(p.name) && corpo.includes(p.name));
   if (montada || longa || mesmoNome) return main;
   return "[C.A.O.S.] " + extra + " " + corpo;
+}
+// Motores de fala, passo 3 (contexto exigido): frase que só faz sentido se algo já aconteceu não sai antes disso.
+// Hoje: fala de erro com "de novo"/"outra vez" só vale se a pessoa já errou antes nesta partida.
+function caosContextoOk(text, args) {
+  try {
+    const t = String(text || "");
+    if (!/\b(de novo|outra vez|mais uma vez)\b/i.test(t) || !/(err|caiu|chut|tombo)/i.test(t)) return true;
+    const nome = (args || []).find((a) => typeof a === "string" && players.some((p) => p.name === a));
+    if (nome) {
+      const p = players.find((x) => x.name === nome);
+      return (p.errosPartida || 0) >= 2;
+    }
+    // "vocês erraram de novo": precisa de pelo menos dois erros na carta
+    return (typeof cardWrongCount === "number" ? cardWrongCount : 0) >= 2;
+  } catch (e) {
+    return true;
+  }
 }
 function caosIsDisliked(list, text, args) {
   const r = caosRatingsLoad()[caosLineKey(list, text, args)];

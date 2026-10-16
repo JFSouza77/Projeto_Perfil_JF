@@ -288,6 +288,7 @@ function resetDeck() {
   caosSaidasTensao = 0;
   caosCortes = { total: 0, por: {}, rancor: {} };
   caosOuvintesZerar();
+  players.forEach((p) => (p.errosPartida = 0));
   caosAmigosZerar();
   caosAviaoLast = -99;
   caosAcidLastCard = -99;
@@ -1008,6 +1009,8 @@ function markWrong(tipo) {
   streakScorerIdx = null;
   streakCount = 0;
   const missedPlayer = players[responderIndex];
+  // contexto pro C.A.O.S.: quantas vezes essa pessoa errou nesta partida ("errou de novo" só vale da 2ª em diante)
+  if (missedPlayer && tipo !== "pular") missedPlayer.errosPartida = (missedPlayer.errosPartida || 0) + 1;
   const missIdx = players.indexOf(missedPlayer);
   if (missIdx >= 0) caosUltimoAtorIdx = missIdx;
   const missMs = pendingStartTime ? Date.now() - pendingStartTime : null;

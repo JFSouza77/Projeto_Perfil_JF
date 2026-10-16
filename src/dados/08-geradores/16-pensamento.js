@@ -60,7 +60,9 @@ CAOS_GERADORES.pensamento = {
     mist_acuado: ["Tô me sentindo encurralado. Por uma carta.", "Medo e raiva juntos. Não chega perto."],
   },
   sobre: {
-    geral: ["Bora seguir.", "Enfim.", "Mas sigo firme.", "Voltando ao jogo."],
+    // fecho que combina com o humor (valPos/valNeg vêm da emoção do momento); sem fecho genérico solto
+    valPos: ["Que continue assim.", "Não estraguem isso."],
+    valNeg: ["Mas passa.", "Daqui a pouco melhora. Eu acho."],
     comecoPartida: ["E a partida mal começou.", "E olha que a gente acabou de começar."],
     partidaLonga: ["E já são {min} minutos de partida.", "Faz {min} minutos que a gente está aqui."],
     temLider: ["Enquanto isso, {lider} lidera.", "E quem manda no placar agora é {lider}."],

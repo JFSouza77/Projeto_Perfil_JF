@@ -9,7 +9,7 @@ CAOS_GERADORES.pausaVolta = {
       "Opa, a mesa voltou. Retomando a programação normal.",
     ],
     magoado: [
-      "Voltaram. Tudo bem. Não vou falar nada. Só vou ficar aqui, magoado. Em silêncio. Quase.",
+      "Voltaram. Tudo bem. Vou ficar aqui, magoado, em silêncio. Quase.",
       "Ah, agora eu sirvo de novo? Tá. Vamos jogar.",
       "Voltaram depois de {pausa}. Eu anotei. Não vou comentar. Já comentei.",
       "Tá bom, vamos continuar. Mas eu lembro.",
@@ -22,7 +22,8 @@ CAOS_GERADORES.pausaVolta = {
     ],
   },
   fecho: {
-    geral: ["Bora.", "Vamos nessa.", "A carta continua esperando."],
+    geral: ["A carta continua esperando.", "Onde a gente parou mesmo? Ah, é. Na carta.", "Retomando de onde vocês me largaram."],
+    leve: ["Sem ressentimento. Quase nenhum.", "Senti falta. Não espalha."],
     magoado: ["Depois a gente conversa."],
     puto: ["E não, eu não vou pegar leve agora."],
   },

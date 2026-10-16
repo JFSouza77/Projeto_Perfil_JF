@@ -6,6 +6,15 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.5.2 · 15/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.4: MOTORES DE FALA CALIBRADOS. + CORREÇÃO: Mestre em outro aparelho via "Dica N: null" (a dica pendente saiu do retrato na 4.2; agora vai junto com a resposta, só pro aparelho do Mestre). Achado pela Gameez (Júlia) e pelo Henrique (Carro Pika).
+          Pedido do JF: as falas montadas têm que fazer sentido. 1) Auditoria (ferramentas/caos_auditar_geradores.js): 4.800
+          falas dos 18 geradores; ~35% saíam com defeito (fecho genérico grudado, ideias empilhadas, mesma expressão em dois
+          pedaços, nome 2x, duas chamadas pra ação, tom trocado). 2) Motor de coerência (caosGerAvaliar/caosGerLapidar): monta
+          até 10 vezes, fica com a melhor e lapida a sobra; repetir fala recente perde pra uma nova mas não cala o C.A.O.S.;
+          pensamento fecha pelo humor (valPos/valNeg). 3) Contexto exigido (caosContextoOk): "errou de novo" só a partir do 2º
+          erro da pessoa na partida (errosPartida). 4) Emoção pelo conteúdo (caosEmocaoDoTexto) nas falas montadas.
+          5) Teste fixo: a auditoria com --testar entra na bateria e no npm run testes (0 defeitos hoje). Textos corrigidos em
+          inicioPrimeiro, pausaVolta, revanche e inicioJogadores. Bug: o anúncio de troca de host (hostCaiu) nunca saía.
   1.7.10.5.1 · 15/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.3.2: ajustes internos do C.A.O.S.
           (easter eggs; detalhes só com o JF).
   1.7.10.5 · 15/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.3: OUVINTES, RESPIRO E PALPITAR AGORA.
@@ -800,7 +809,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.5.1</title>
+<title>Perfil JF · Beta 1.7.10.5.2</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -9089,7 +9098,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.5.1 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.3.2 · Atualizada em 15/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.5.2 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.4 · Atualizada em 15/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -9357,7 +9366,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1812;
+const JOGO_BUILD = 1813;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -11736,6 +11745,7 @@ function resetDeck() {
   caosSaidasTensao = 0;
   caosCortes = { total: 0, por: {}, rancor: {} };
   caosOuvintesZerar();
+  players.forEach((p) => (p.errosPartida = 0));
   caosAmigosZerar();
   caosAviaoLast = -99;
   caosAcidLastCard = -99;
@@ -12456,6 +12466,8 @@ function markWrong(tipo) {
   streakScorerIdx = null;
   streakCount = 0;
   const missedPlayer = players[responderIndex];
+  // contexto pro C.A.O.S.: quantas vezes essa pessoa errou nesta partida ("errou de novo" só vale da 2ª em diante)
+  if (missedPlayer && tipo !== "pular") missedPlayer.errosPartida = (missedPlayer.errosPartida || 0) + 1;
   const missIdx = players.indexOf(missedPlayer);
   if (missIdx >= 0) caosUltimoAtorIdx = missIdx;
   const missMs = pendingStartTime ? Date.now() - pendingStartTime : null;
@@ -20881,7 +20893,9 @@ function redeValidar(bruto) {
     escolha: () => Array.isArray(m.lugares) && m.lugares.length <= 12 && m.lugares.every((l) => l && jogadorIdValido(l.id) && typeof l.nome === "string"),
     recusa: () => txt(m.motivo, 40) && (m.versao === undefined || txt(m.versao, 20)) && (m.build === undefined || Number.isInteger(m.build)),
     retrato: () => m.r && typeof m.r === "object" && m.r.protocolo === RETRATO_PROTOCOLO && m.r.papel === "mesa" && Number.isInteger(m.r.revisao) && Array.isArray(m.r.jogadores),
-    segredo: () => Number.isInteger(m.revisao) && (m.resposta === null || txt(m.resposta, 120)),
+    segredo: () =>
+      Number.isInteger(m.revisao) && (m.resposta === null || txt(m.resposta, 120)) &&
+      (m.dica === undefined || (m.dica && Number.isInteger(m.dica.pos) && txt(m.dica.texto, 300))),
     resp: () => typeof m.commandId === "string" && typeof m.ok === "boolean",
     pong: () => typeof m.t0 === "number" && typeof m.th === "number" && isFinite(m.th),
     recuperacao: () =>
@@ -21022,7 +21036,7 @@ function redeHostRetomar() {
       // o C.A.O.S. anuncia a troca (gerador hostCaiu, pronto desde a 1.7.5.1)
       try {
         const nome = (jogadorPorId(s.eu) || {}).name || "alguém";
-        const fala = typeof caosGerarFala === "function" ? caosGerarFala("hostCaiu", null, { antigo: s.antigo || "host", nome }) : "";
+        const fala = typeof caosGerarFala === "function" ? caosGerarFala("hostCaiu", null, { vars: { antigo: s.antigo || "host", nome } }) : "";
         showToastMessage(fala ? "[C.A.O.S.] " + fala : `[C.A.O.S.] ${nome} assumiu a sala. Nada se perdeu.`, null, true);
         caosLog("rede", `assumiu a sala ${s.sala} no lugar de ${s.antigo || "?"}`);
       } catch (e) {}
@@ -21848,9 +21862,14 @@ function redeHostPublicar(forcar) {
   const mid = jogadorIdDe(mestreIndex);
   const a = mid && rede.assentos[mid];
   const resposta = currentCard && cardState !== "none" && !gameEnded ? currentCard.answer : null;
-  const chave = [mid, resposta, matchId].join("|");
+  // 1.7.10.5.2 (bug achado pela Júlia e pelo Henrique): desde a 4.2 a dica que o Mestre está lendo vai sem texto
+  // pra mesa (só aparece depois do veredito). O Mestre que joga em outro aparelho recebia o mesmo retrato e via
+  // "null": o texto da dica pendente agora vai junto com a resposta, só pro aparelho dele.
+  const pend = resposta && pendingIndex !== null && currentCard.clues[pendingIndex] ? currentCard.clues[pendingIndex] : null;
+  const dica = pend ? { pos: pendingIndex, texto: String(pend.text || "").slice(0, 300) } : null;
+  const chave = [mid, resposta, matchId, dica ? dica.pos : "-"].join("|");
   if (a && redeOnline(a) && (forcar || chave !== rede.segredoEnviado)) {
-    redeEnviar("segredo", { revisao: partidaRevisao, resposta }, a.sessao);
+    redeEnviar("segredo", { revisao: partidaRevisao, resposta, ...(dica ? { dica } : {}) }, a.sessao);
     rede.segredoEnviado = chave;
   }
   redeHostVista();
@@ -22230,7 +22249,7 @@ function redeConvidadoReceber(m) {
   }
   if (m.t === "segredo") {
     const r = rede.retrato;
-    rede.segredo = m.resposta ? { revisao: m.revisao, resposta: m.resposta, matchId: r ? r.matchId : null } : null;
+    rede.segredo = m.resposta ? { revisao: m.revisao, resposta: m.resposta, matchId: r ? r.matchId : null, dica: m.dica || null } : null;
     return avisar();
   }
   if (m.t === "resp") {
@@ -22556,14 +22575,16 @@ function redeMestreCartaMontar(box) {
     const resp = rede.segredo && rede.segredo.resposta ? escapeHtml(rede.segredo.resposta) : "…";
     const livre = !c.abertas.length || Date.now() < (rede.verRespostaAte || 0);
     const quem = (d) => (d.pedidaPor ? ` <span class="picked-by">(pedida por ${nome(d.pedidaPor)})</span>` : "");
+    // a dica pendente vem sem texto no retrato da mesa; o texto chega no segredo (só pro Mestre)
+    const textoDe = (d) => (d.texto != null ? d.texto : rede.segredo && rede.segredo.dica && rede.segredo.dica.pos === d.pos ? rede.segredo.dica.texto : "…");
     const dicas = c.abertas
-      .map((d) => (d.tipo === "special" ? `<li class="special">${d.pos + 1}. ⭐ ${escapeHtml(d.texto)}${quem(d)}</li>` : `<li><span class="clue-num">${d.pos + 1}.</span>${escapeHtml(d.texto)}${quem(d)}</li>`))
+      .map((d) => (d.tipo === "special" ? `<li class="special">${d.pos + 1}. ⭐ ${escapeHtml(textoDe(d))}${quem(d)}</li>` : `<li><span class="clue-num">${d.pos + 1}.</span>${escapeHtml(textoDe(d))}${quem(d)}</li>`))
       .join("");
     let controles = "";
     const pend = c.pendente === null || c.pendente === undefined ? null : c.abertas.find((d) => d.pos === c.pendente);
     if (pend) {
       const especial = grupo((o) => o.g !== "Mais" && !["acertou", "errou", "palpiteAcertou", "palpiteErrou"].includes(o.a));
-      controles = `<div class="pending-box spotlight-box"><span class="pending-num">Dica ${pend.pos + 1}:</span> ${pend.tipo === "special" ? "⭐ " : ""}${escapeHtml(pend.texto)}</div>
+      controles = `<div class="pending-box spotlight-box"><span class="pending-num">Dica ${pend.pos + 1}:</span> ${pend.tipo === "special" ? "⭐ " : ""}${escapeHtml(textoDe(pend))}</div>
         <div class="guess-btns" style="flex-direction:column;">${grupo((o) => o.a === "acertou")}${grupo((o) => o.a === "errou" && !o.d.length)}<div class="mesa-btns">${grupo((o) => o.a === "errou" && o.d.length)}</div></div>
         ${especial}${grupo((o) => o.a === "palpiteAcertou" || o.a === "palpiteErrou")}`;
     } else {
@@ -27022,6 +27043,7 @@ function getRandomReaction(list, ...args) {
       if (fam !== null) return fam;
     }
     if (caosIsDisliked(list, text, args)) continue;
+    if (!caosContextoOk(text, args)) continue;
     if (typeof text === "string" && text.length > 170 && tries < 4 && list.length > 1) continue;
     if (!caosHasProfanity(text, args)) {
       const out = caosRisada(caosSelfRoastIfSlang(caosDecorate(text, list), args, list), list, args);
@@ -27125,6 +27147,23 @@ function caosJoinExtra(extra, main, mainPick) {
   const mesmoNome = players.some((p) => p && p.name && extra.includes(p.name) && corpo.includes(p.name));
   if (montada || longa || mesmoNome) return main;
   return "[C.A.O.S.] " + extra + " " + corpo;
+}
+// Motores de fala, passo 3 (contexto exigido): frase que só faz sentido se algo já aconteceu não sai antes disso.
+// Hoje: fala de erro com "de novo"/"outra vez" só vale se a pessoa já errou antes nesta partida.
+function caosContextoOk(text, args) {
+  try {
+    const t = String(text || "");
+    if (!/\b(de novo|outra vez|mais uma vez)\b/i.test(t) || !/(err|caiu|chut|tombo)/i.test(t)) return true;
+    const nome = (args || []).find((a) => typeof a === "string" && players.some((p) => p.name === a));
+    if (nome) {
+      const p = players.find((x) => x.name === nome);
+      return (p.errosPartida || 0) >= 2;
+    }
+    // "vocês erraram de novo": precisa de pelo menos dois erros na carta
+    return (typeof cardWrongCount === "number" ? cardWrongCount : 0) >= 2;
+  } catch (e) {
+    return true;
+  }
 }
 function caosIsDisliked(list, text, args) {
   const r = caosRatingsLoad()[caosLineKey(list, text, args)];
@@ -28163,7 +28202,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.5.1 · C.A.O.S. 4.3.2</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.5.2 · C.A.O.S. 4.4</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -31041,11 +31080,33 @@ function caosEscada(emo, bank, forte) {
   caosEmoFalaAtual = fim;
   return fim;
 }
+// Motores de fala, passo 4: a emoção da fala montada vem do que ela diz (antes vinha só do tipo do gerador:
+// "Tô meio pra baixo" saía com cara de deboche). A primeira regra que bater vale; nada bateu = regra antiga.
+const CAOS_EMO_DO_TEXTO = [
+  ["nostalgia", /saudade|bons tempos|partidas antigas/i],
+  ["triste", /triste|pra baixo|cinzento|chorar|magoad/i],
+  ["raiva", /irritad|contando até dez|respira, c\.a\.o\.s|mau humor|rabugent|processando com força|não chega perto/i],
+  ["medo", /medo|frio no circuito|pressentimento|alguma coisa vai acontecer/i],
+  ["ansiedade", /ansios|nervos|suspense|acelerado/i],
+  ["tedio", /entediad|tá devagar|me surpreendam|conta uma piada/i],
+  ["vergonha", /vergonha|fingir que eu não disse|rindo sem graça/i],
+  ["carinho", /gosto dessa mesa|coração mole|vocês são legais|bem-vind|que bom te ver|obrigado|com carinho|eu perdoo|torço baixinho/i],
+  ["orgulho", /bom humor|gostando dessa|divertido|orgulhos|parabéns|foi boa|acertou/i],
+  ["calmo", /tranquilo|em paz|clima bom/i],
+  ["espiando", /curioso|reparando|de olho/i],
+];
+function caosEmocaoDoTexto(t) {
+  const s = String(t || "");
+  for (const [e, re] of CAOS_EMO_DO_TEXTO) if (re.test(s)) return e;
+  return null;
+}
 function caosEmocaoDaFala(bank) {
   caosConsoleAvancar(bank);
   let e = null;
   const b = String(bank || "");
-  if (b.startsWith("gerador.")) {
+  if (b.startsWith("gerador.") && caosLastPick && caosLastPick.bank === b && caosEmocaoDoTexto(caosLastPick.text)) {
+    e = caosEmocaoDoTexto(caosLastPick.text);
+  } else if (b.startsWith("gerador.")) {
     const [, tipo, prat] = b.split(".");
     e =
       tipo === "acerto"
@@ -31493,7 +31554,7 @@ function caosNeuralDesenhar(cv, t) {
     const C = caosConsole || {};
     const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
 tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
-${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.3.2`;
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.4`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }
@@ -33263,7 +33324,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5.1 · C.A.O.S. 4.3.2)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5.2 · C.A.O.S. 4.4)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -34388,6 +34449,65 @@ function caosGerSlot(g, slot, def, ctx, usadas, ja) {
   }
   return null;
 }
+// Motor de coerência (pedido do JF: "as frases devem fazer sentido"). Avalia a fala montada pedaço por pedaço
+// e aponta o que não conversa: fecho genérico grudado no fim, começo órfão ("Mas…"), ideias demais, nome repetido,
+// a mesma expressão em dois pedaços, duas chamadas pra ação, sentimento bom com fecho de quem está mal.
+const CAOS_GER_FECHO_GENERICO =
+  /^(bora|bora seguir|enfim|mas sigo firme|voltando ao jogo|vamos nessa|que comece|que comece a bagunça|boa sorte|eu tô de olho|eu estou de olho|sem pressão\. muita pressão|agora é sério\. mais ou menos)[.!]?$/i;
+const CAOS_GER_ACAO = /\b(bora|vamos jogar|vamos nessa|que comece|bora jogar|vamos continuar|bora continuar)\b/i;
+const CAOS_GER_ORFA = /^(mas|já|até|enquanto isso|também|e (?!aí))\b/i;
+const CAOS_GER_POSITIVO = /(bom humor|gostando|divertido|tranquilo|em paz|gosto dessa mesa|legais|orgulhoso)/i;
+const CAOS_GER_FECHO_TRISTE = /(mas sigo firme|^passa\.|respira)/i;
+let caosGerUltPedacos = []; // os pedaços da última fala montada (a auditoria usa)
+function caosGerBigramas(t) {
+  const pal = String(t)
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .split(/[^a-z]+/)
+    .filter(Boolean);
+  const out = new Set();
+  for (let i = 0; i < pal.length - 1; i++) if (pal[i].length >= 4 || pal[i + 1].length >= 4) out.add(pal[i] + " " + pal[i + 1]);
+  return out;
+}
+function caosGerFrases(t) {
+  return String(t)
+    .split(/(?<=[.!?…])\s+/)
+    .filter(Boolean);
+}
+function caosGerAvaliar(pedacos, nomes) {
+  const ps = pedacos.filter((x) => x && x.trim());
+  const txt = ps.join(" ");
+  const def = [];
+  if (!ps.length) return ["vazia"];
+  if (CAOS_GER_ORFA.test(ps[0].trim())) def.push("orfa");
+  if (caosGerFrases(txt).length >= 5) def.push("empilhada");
+  if ((nomes || []).some((n) => n && (txt.match(new RegExp("(^|[^\\p{L}])" + n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?![\\p{L}])", "gu")) || []).length >= 2))
+    def.push("nome2x");
+  for (let i = 0; i < ps.length && !def.includes("repete"); i++) {
+    const bi = caosGerBigramas(ps[i]);
+    for (let j = i + 1; j < ps.length; j++) if ([...caosGerBigramas(ps[j])].some((x) => bi.has(x))) {
+      def.push("repete");
+      break;
+    }
+  }
+  if (ps.filter((x) => CAOS_GER_ACAO.test(x)).length >= 2) def.push("acao2x");
+  const ult = ps[ps.length - 1].trim();
+  if (ps.length > 1 && CAOS_GER_FECHO_GENERICO.test(ult)) def.push("rabinho");
+  if (CAOS_GER_POSITIVO.test(txt) && CAOS_GER_FECHO_TRISTE.test(ult)) def.push("tom");
+  return def;
+}
+// Lapida a melhor tentativa quando nenhuma saiu perfeita: tira o fecho genérico e os pedaços (do fim pro começo)
+// que repetem nome, expressão ou chamada pra ação. Nunca tira o primeiro pedaço.
+function caosGerLapidar(pedacos, nomes) {
+  let ps = pedacos.filter((x) => x && x.trim());
+  for (let guard = 0; guard < 4 && ps.length > 1; guard++) {
+    const def = caosGerAvaliar(ps, nomes).filter((d) => d !== "orfa" && d !== "vazia");
+    if (!def.length) break;
+    ps = ps.slice(0, -1);
+  }
+  return ps;
+}
 // Monta uma fala do gatilho. extra = { tags: [...], vars: {...} } acrescenta contexto
 // próprio do momento. Devolve "" quando o gerador não existe ou não deu pra montar.
 function caosGerarFala(g, p, extra) {
@@ -34398,49 +34518,67 @@ function caosGerarFala(g, p, extra) {
     (extra.tags || []).forEach((t) => ctx.tags.add(t));
     Object.assign(ctx.vars, extra.vars || {});
   }
+  // o humor do momento escolhe fechos que combinam (sentimento bom não fecha com "mas passa")
+  {
+    const emo = [...ctx.tags].find((t) => /^emo_/.test(t)) || "";
+    if (/^emo_(alegria|calmo|carinho|curiosidade)$/.test(emo)) ctx.tags.add("valPos");
+    else if (emo || [...ctx.tags].some((t) => /^mist_/.test(t))) ctx.tags.add("valNeg");
+  }
   const mem = caosGerMemoria(),
     mg = mem[g] || (mem[g] = {}),
     ult = mg._ult || (mg._ult = []);
-  let txt = "";
-  for (let tent = 0; tent < 6; tent++) {
+  const nomes = players.map((x) => x && x.name).filter(Boolean);
+  let txt = "",
+    melhor = null;
+  const acabamento = (t) =>
+    caosGerPreenche(t, ctx.vars)
+      .replace(/\s+/g, " ")
+      .trim()
+      .replace(/(^|[.!?]\s+)([a-zà-ú])/g, (m, a, b) => a + b.toUpperCase());
+  for (let tent = 0; tent < 10; tent++) {
     const usadas = new Set(),
       ja = new Set();
     const molde = caosPickNR("ger." + g, G.moldes);
     let falhou = false;
-    const montada = molde.replace(/\{(\w+)\}/g, (m, slot) => {
+    const pedacos = [];
+    molde.replace(/\{(\w+)\}/g, (m, slot) => {
       if (!G[slot]) return m;
       const t = caosGerSlot(g, slot, G[slot], ctx, usadas, ja);
       if (t == null) falhou = true;
-      else caosGerPalavras(t).forEach((w) => ja.add(w));
+      else {
+        caosGerPalavras(t).forEach((w) => ja.add(w));
+        pedacos.push(acabamento(t));
+      }
       return t || "";
     });
-    if (falhou) continue;
-    txt = caosGerPreenche(montada, ctx.vars)
-      .replace(/\s+/g, " ")
-      .trim()
-      .replace(/(^|[.!?]\s+)([a-zà-ú])/g, (m, a, b) => a + b.toUpperCase());
-    if (/\{\w+\}/.test(txt) || caosHasProfanity(txt, [ctx.vars.nome || ""])) {
-      txt = "";
-      continue;
-    }
-    if (txt.length > CAOS_GER_MAX && tent < 5) {
-      txt = "";
-      continue;
-    }
+    if (falhou || !pedacos.length) continue;
+    const cand = acabamento(pedacos.join(" "));
+    if (/\{\w+\}/.test(cand) || caosHasProfanity(cand, [ctx.vars.nome || ""])) continue;
+    if (cand.length > CAOS_GER_MAX) continue;
     // impressão curta da fala (a memória salva fica pequena)
     let h = 0;
-    for (const ch of txt) h = (h * 31 + ch.charCodeAt(0)) | 0;
+    for (const ch of cand) h = (h * 31 + ch.charCodeAt(0)) | 0;
     const chave = (h >>> 0).toString(36);
-    if (ult.includes(chave) && tent < 5) continue;
+    // repetir uma fala recente não é proibido (calar é pior), só perde pra uma que não repete
+    const repetida = ult.includes(chave);
     // respeita o 👎: fala montada que a mesa não curtiu não volta
-    const nota = caosRatingsLoad()["gerador|" + g + "|" + txt.slice(0, 49)];
-    if (nota && nota.down > nota.up && tent < 5) {
-      txt = "";
-      continue;
+    const nota = caosRatingsLoad()["gerador|" + g + "|" + cand.slice(0, 49)];
+    if (nota && nota.down > nota.up) continue;
+    const def = caosGerAvaliar(pedacos, nomes);
+    const nota2 = def.length + (repetida ? 0.5 : 0);
+    if (!melhor || nota2 < melhor.nota) melhor = { pedacos, def, chave, nota: nota2 };
+    if (!nota2) break;
+  }
+  if (melhor) {
+    let ps = melhor.def.length ? caosGerLapidar(melhor.pedacos, nomes) : melhor.pedacos;
+    // começo órfão sem conserto: não fala (melhor calar que falar sem sentido)
+    if (caosGerAvaliar(ps, nomes).includes("orfa")) ps = [];
+    if (ps.length) {
+      txt = acabamento(ps.join(" "));
+      caosGerUltPedacos = ps;
+      ult.push(melhor.chave);
+      while (ult.length > CAOS_GER_ULTIMAS) ult.shift();
     }
-    ult.push(chave);
-    while (ult.length > CAOS_GER_ULTIMAS) ult.shift();
-    break;
   }
   caosGerGravar();
   if (!txt) return "";
@@ -36689,7 +36827,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.5.1 · C.A.O.S. 4.3.2");
+  L.push("- **Versão:** Beta 1.7.10.5.2 · C.A.O.S. 4.4");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -37212,7 +37350,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.5.1 · C.A.O.S. 4.3.2",
+        versao: "Beta 1.7.10.5.2 · C.A.O.S. 4.4",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -72612,11 +72750,25 @@ const PAUSE_TIPS = [
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.5.2",
+    data: "15/10/2026 · 21:58",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "C.A.O.S. 4.4: as falas dele fazem mais sentido.",
+    itens: [
+      "🧠 Falas com sentido: quando o C.A.O.S. monta uma frase, ele confere se as partes combinam. Acabaram os finais soltos tipo Enfim ou Bora seguir grudados em qualquer coisa, a mesma palavra repetida e as ideias empilhadas sem ligação.",
+      "🎭 Cara de quem fala: o rostinho e a cor do balão agora acompanham o que ele diz. Se a frase é triste, o balão fica triste.",
+      "🔁 Errou de novo só quando é de novo: ele não diz que você errou de novo no seu primeiro erro.",
+      "🔎 Dica do Mestre no celular: quem era Mestre num aparelho que não é o do host via Dica null na dica escolhida. Agora aparece o texto certo. Achado pela Gameez (Júlia) e pelo Henrique (Carro Pika).",
+      "👑 Troca de host avisada: quando o host cai e outra pessoa assume a sala, o C.A.O.S. avisa a mesa como devia.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.5.1",
     data: "15/10/2026 · 21:28",
     nome: "Multiplayer Update · Online de verdade",
     t: "Ajustes por dentro: o C.A.O.S. conhece um pouco melhor quem joga com ele.",
-    itens: [],
+    itens: ["🥚 Tem coisa escondida: algumas mesas vão ouvir o C.A.O.S. falar umas coisas que as outras não ouvem. Joga com a turma pra descobrir."],
     qol: [],
   },
   {
@@ -73816,8 +73968,6 @@ CAOS_GERADORES.inicioPrimeiro = {
   meio: {
     geral: [
       "Sem pressão. Muita pressão.",
-      "Boa sorte.",
-      "Eu estou de olho.",
       "Começar bem é meio caminho. Começar mal é história pra mim.",
       "Respira e escolhe uma dica.",
       "A mesa inteira está olhando. Eu também.",
@@ -73831,8 +73981,8 @@ CAOS_GERADORES.inicioPrimeiro = {
   inteira: {
     geral: [
       "{nome} começa respondendo. Sem pressão. Muita pressão.",
-      "Quem vai sofrer primeiro é {nome}. Boa sorte.",
-      "O primeiro a responder é {nome}. Eu estou de olho.",
+      "Quem vai sofrer primeiro é {nome}. A mesa toda tá torcendo. Contra.",
+      "O primeiro a responder é {nome}. Eu já comecei a anotar.",
     ],
   },
 };
@@ -73846,7 +73996,7 @@ CAOS_GERADORES.revanche = {
   },
   meio: {
     geral: [
-      "{nome} ganhou a última, então todo mundo mira em {nome} agora.",
+      "{nome} ganhou a última. Agora todo mundo mira na mesma coroa.",
       "Eu lembro de cada lance da última. Foi agora há pouco, mas bons tempos.",
       "Os nomes eu já decorei. Os erros também.",
       "Até {nome} começa do zero. A justiça existe, às vezes.",
@@ -73861,7 +74011,7 @@ CAOS_GERADORES.revanche = {
   },
   inteira: {
     geral: [
-      "Revanche. Eu lembro de cada lance da última. Bons tempos. Foi agora há pouco, mas bons tempos.",
+      "Revanche. Eu lembro de cada lance da última. Foi agora há pouco, mas bons tempos.",
       "Mesma mesa de novo. Dá até uma saudade da partida que acabou de acabar.",
       "Revanche! Mesma mesa, placar zerado. {nome}, a coroa tá em jogo de novo.",
     ],
@@ -73928,7 +74078,7 @@ CAOS_GERADORES.pausaVolta = {
       "Opa, a mesa voltou. Retomando a programação normal.",
     ],
     magoado: [
-      "Voltaram. Tudo bem. Não vou falar nada. Só vou ficar aqui, magoado. Em silêncio. Quase.",
+      "Voltaram. Tudo bem. Vou ficar aqui, magoado, em silêncio. Quase.",
       "Ah, agora eu sirvo de novo? Tá. Vamos jogar.",
       "Voltaram depois de {pausa}. Eu anotei. Não vou comentar. Já comentei.",
       "Tá bom, vamos continuar. Mas eu lembro.",
@@ -73941,7 +74091,8 @@ CAOS_GERADORES.pausaVolta = {
     ],
   },
   fecho: {
-    geral: ["Bora.", "Vamos nessa.", "A carta continua esperando."],
+    geral: ["A carta continua esperando.", "Onde a gente parou mesmo? Ah, é. Na carta.", "Retomando de onde vocês me largaram."],
+    leve: ["Sem ressentimento. Quase nenhum.", "Senti falta. Não espalha."],
     magoado: ["Depois a gente conversa."],
     puto: ["E não, eu não vou pegar leve agora."],
   },
@@ -74044,7 +74195,15 @@ CAOS_GERADORES.inicioJogadores = {
     ],
   },
   fecho: {
-    geral: ["Bora.", "Eu já escolhi meu favorito. Não vou contar.", "Que comece a bagunça.", "Vamos nessa."],
+    geral: [
+      "Eu já escolhi meu favorito. Não vou contar.",
+      "Já decorei os nomes. Os erros eu decoro durante.",
+      "Cada um com seu caderninho na minha memória.",
+      "Prometo ser imparcial. Prometo mal, mas prometo.",
+      "Quero ver quem vai ser o primeiro a reclamar da carta.",
+    ],
+    fimDeSemana: ["Fim de semana, então a partida pode ir longe."],
+    sexta: ["Sexta-feira. Já vi que ninguém vai dormir cedo."],
     noite: ["E ainda é de noite, então ninguém tem pressa."],
     madrugada: ["De madrugada. Que coragem."],
   },
@@ -74230,7 +74389,9 @@ CAOS_GERADORES.pensamento = {
     mist_acuado: ["Tô me sentindo encurralado. Por uma carta.", "Medo e raiva juntos. Não chega perto."],
   },
   sobre: {
-    geral: ["Bora seguir.", "Enfim.", "Mas sigo firme.", "Voltando ao jogo."],
+    // fecho que combina com o humor (valPos/valNeg vêm da emoção do momento); sem fecho genérico solto
+    valPos: ["Que continue assim.", "Não estraguem isso."],
+    valNeg: ["Mas passa.", "Daqui a pouco melhora. Eu acho."],
     comecoPartida: ["E a partida mal começou.", "E olha que a gente acabou de começar."],
     partidaLonga: ["E já são {min} minutos de partida.", "Faz {min} minutos que a gente está aqui."],
     temLider: ["Enquanto isso, {lider} lidera.", "E quem manda no placar agora é {lider}."],

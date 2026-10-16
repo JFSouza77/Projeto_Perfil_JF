@@ -8,7 +8,7 @@ CAOS_GERADORES.revanche = {
   },
   meio: {
     geral: [
-      "{nome} ganhou a última, então todo mundo mira em {nome} agora.",
+      "{nome} ganhou a última. Agora todo mundo mira na mesma coroa.",
       "Eu lembro de cada lance da última. Foi agora há pouco, mas bons tempos.",
       "Os nomes eu já decorei. Os erros também.",
       "Até {nome} começa do zero. A justiça existe, às vezes.",
@@ -23,7 +23,7 @@ CAOS_GERADORES.revanche = {
   },
   inteira: {
     geral: [
-      "Revanche. Eu lembro de cada lance da última. Bons tempos. Foi agora há pouco, mas bons tempos.",
+      "Revanche. Eu lembro de cada lance da última. Foi agora há pouco, mas bons tempos.",
       "Mesma mesa de novo. Dá até uma saudade da partida que acabou de acabar.",
       "Revanche! Mesma mesa, placar zerado. {nome}, a coroa tá em jogo de novo.",
     ],

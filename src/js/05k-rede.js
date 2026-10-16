@@ -719,7 +719,9 @@ function redeValidar(bruto) {
     escolha: () => Array.isArray(m.lugares) && m.lugares.length <= 12 && m.lugares.every((l) => l && jogadorIdValido(l.id) && typeof l.nome === "string"),
     recusa: () => txt(m.motivo, 40) && (m.versao === undefined || txt(m.versao, 20)) && (m.build === undefined || Number.isInteger(m.build)),
     retrato: () => m.r && typeof m.r === "object" && m.r.protocolo === RETRATO_PROTOCOLO && m.r.papel === "mesa" && Number.isInteger(m.r.revisao) && Array.isArray(m.r.jogadores),
-    segredo: () => Number.isInteger(m.revisao) && (m.resposta === null || txt(m.resposta, 120)),
+    segredo: () =>
+      Number.isInteger(m.revisao) && (m.resposta === null || txt(m.resposta, 120)) &&
+      (m.dica === undefined || (m.dica && Number.isInteger(m.dica.pos) && txt(m.dica.texto, 300))),
     resp: () => typeof m.commandId === "string" && typeof m.ok === "boolean",
     pong: () => typeof m.t0 === "number" && typeof m.th === "number" && isFinite(m.th),
     recuperacao: () =>
@@ -860,7 +862,7 @@ function redeHostRetomar() {
       // o C.A.O.S. anuncia a troca (gerador hostCaiu, pronto desde a 1.7.5.1)
       try {
         const nome = (jogadorPorId(s.eu) || {}).name || "alguém";
-        const fala = typeof caosGerarFala === "function" ? caosGerarFala("hostCaiu", null, { antigo: s.antigo || "host", nome }) : "";
+        const fala = typeof caosGerarFala === "function" ? caosGerarFala("hostCaiu", null, { vars: { antigo: s.antigo || "host", nome } }) : "";
         showToastMessage(fala ? "[C.A.O.S.] " + fala : `[C.A.O.S.] ${nome} assumiu a sala. Nada se perdeu.`, null, true);
         caosLog("rede", `assumiu a sala ${s.sala} no lugar de ${s.antigo || "?"}`);
       } catch (e) {}
@@ -1686,9 +1688,14 @@ function redeHostPublicar(forcar) {
   const mid = jogadorIdDe(mestreIndex);
   const a = mid && rede.assentos[mid];
   const resposta = currentCard && cardState !== "none" && !gameEnded ? currentCard.answer : null;
-  const chave = [mid, resposta, matchId].join("|");
+  // 1.7.10.5.2 (bug achado pela Júlia e pelo Henrique): desde a 4.2 a dica que o Mestre está lendo vai sem texto
+  // pra mesa (só aparece depois do veredito). O Mestre que joga em outro aparelho recebia o mesmo retrato e via
+  // "null": o texto da dica pendente agora vai junto com a resposta, só pro aparelho dele.
+  const pend = resposta && pendingIndex !== null && currentCard.clues[pendingIndex] ? currentCard.clues[pendingIndex] : null;
+  const dica = pend ? { pos: pendingIndex, texto: String(pend.text || "").slice(0, 300) } : null;
+  const chave = [mid, resposta, matchId, dica ? dica.pos : "-"].join("|");
   if (a && redeOnline(a) && (forcar || chave !== rede.segredoEnviado)) {
-    redeEnviar("segredo", { revisao: partidaRevisao, resposta }, a.sessao);
+    redeEnviar("segredo", { revisao: partidaRevisao, resposta, ...(dica ? { dica } : {}) }, a.sessao);
     rede.segredoEnviado = chave;
   }
   redeHostVista();
@@ -2068,7 +2075,7 @@ function redeConvidadoReceber(m) {
   }
   if (m.t === "segredo") {
     const r = rede.retrato;
-    rede.segredo = m.resposta ? { revisao: m.revisao, resposta: m.resposta, matchId: r ? r.matchId : null } : null;
+    rede.segredo = m.resposta ? { revisao: m.revisao, resposta: m.resposta, matchId: r ? r.matchId : null, dica: m.dica || null } : null;
     return avisar();
   }
   if (m.t === "resp") {
@@ -2394,14 +2401,16 @@ function redeMestreCartaMontar(box) {
     const resp = rede.segredo && rede.segredo.resposta ? escapeHtml(rede.segredo.resposta) : "…";
     const livre = !c.abertas.length || Date.now() < (rede.verRespostaAte || 0);
     const quem = (d) => (d.pedidaPor ? ` <span class="picked-by">(pedida por ${nome(d.pedidaPor)})</span>` : "");
+    // a dica pendente vem sem texto no retrato da mesa; o texto chega no segredo (só pro Mestre)
+    const textoDe = (d) => (d.texto != null ? d.texto : rede.segredo && rede.segredo.dica && rede.segredo.dica.pos === d.pos ? rede.segredo.dica.texto : "…");
     const dicas = c.abertas
-      .map((d) => (d.tipo === "special" ? `<li class="special">${d.pos + 1}. ⭐ ${escapeHtml(d.texto)}${quem(d)}</li>` : `<li><span class="clue-num">${d.pos + 1}.</span>${escapeHtml(d.texto)}${quem(d)}</li>`))
+      .map((d) => (d.tipo === "special" ? `<li class="special">${d.pos + 1}. ⭐ ${escapeHtml(textoDe(d))}${quem(d)}</li>` : `<li><span class="clue-num">${d.pos + 1}.</span>${escapeHtml(textoDe(d))}${quem(d)}</li>`))
       .join("");
     let controles = "";
     const pend = c.pendente === null || c.pendente === undefined ? null : c.abertas.find((d) => d.pos === c.pendente);
     if (pend) {
       const especial = grupo((o) => o.g !== "Mais" && !["acertou", "errou", "palpiteAcertou", "palpiteErrou"].includes(o.a));
-      controles = `<div class="pending-box spotlight-box"><span class="pending-num">Dica ${pend.pos + 1}:</span> ${pend.tipo === "special" ? "⭐ " : ""}${escapeHtml(pend.texto)}</div>
+      controles = `<div class="pending-box spotlight-box"><span class="pending-num">Dica ${pend.pos + 1}:</span> ${pend.tipo === "special" ? "⭐ " : ""}${escapeHtml(textoDe(pend))}</div>
         <div class="guess-btns" style="flex-direction:column;">${grupo((o) => o.a === "acertou")}${grupo((o) => o.a === "errou" && !o.d.length)}<div class="mesa-btns">${grupo((o) => o.a === "errou" && o.d.length)}</div></div>
         ${especial}${grupo((o) => o.a === "palpiteAcertou" || o.a === "palpiteErrou")}`;
     } else {

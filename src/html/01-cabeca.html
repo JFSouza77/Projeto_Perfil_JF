@@ -6,6 +6,15 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.5.2 · 15/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.4: MOTORES DE FALA CALIBRADOS. + CORREÇÃO: Mestre em outro aparelho via "Dica N: null" (a dica pendente saiu do retrato na 4.2; agora vai junto com a resposta, só pro aparelho do Mestre). Achado pela Gameez (Júlia) e pelo Henrique (Carro Pika).
+          Pedido do JF: as falas montadas têm que fazer sentido. 1) Auditoria (ferramentas/caos_auditar_geradores.js): 4.800
+          falas dos 18 geradores; ~35% saíam com defeito (fecho genérico grudado, ideias empilhadas, mesma expressão em dois
+          pedaços, nome 2x, duas chamadas pra ação, tom trocado). 2) Motor de coerência (caosGerAvaliar/caosGerLapidar): monta
+          até 10 vezes, fica com a melhor e lapida a sobra; repetir fala recente perde pra uma nova mas não cala o C.A.O.S.;
+          pensamento fecha pelo humor (valPos/valNeg). 3) Contexto exigido (caosContextoOk): "errou de novo" só a partir do 2º
+          erro da pessoa na partida (errosPartida). 4) Emoção pelo conteúdo (caosEmocaoDoTexto) nas falas montadas.
+          5) Teste fixo: a auditoria com --testar entra na bateria e no npm run testes (0 defeitos hoje). Textos corrigidos em
+          inicioPrimeiro, pausaVolta, revanche e inicioJogadores. Bug: o anúncio de troca de host (hostCaiu) nunca saía.
   1.7.10.5.1 · 15/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.3.2: ajustes internos do C.A.O.S.
           (easter eggs; detalhes só com o JF).
   1.7.10.5 · 15/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.3: OUVINTES, RESPIRO E PALPITAR AGORA.
@@ -800,7 +809,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.5.1</title>
+<title>Perfil JF · Beta 1.7.10.5.2</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
