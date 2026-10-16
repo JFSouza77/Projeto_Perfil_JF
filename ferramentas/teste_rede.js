@@ -699,6 +699,24 @@ async function rodarSalaPrimeiro(b) {
   // (C.A.O.S. 4.2: comentários têm intervalo de 20 s; aqui o teste é da rota, então zera o relógio de falas)
   await host.evaluate(() => { caosUltimaFalaAt = 0; caosFalaFimAt = 0; showToastMessage("[C.A.O.S.] Ana, essa é pra mesa toda."); });
   conf("Fala do C.A.O.S. aparece no celular da Ana", await esperar(g, () => (!!document.getElementById("redeFala") && /pra mesa toda/.test(document.getElementById("redeFala").textContent)) || (rede.falas || []).some((f) => /pra mesa toda/.test(f.texto)), null, 12000));
+  // C.A.O.S. 4.4.2: no dispositivo, a voz usa a emoção da fala; a mesma fala (mesmo evento) não sai duas vezes;
+  // e a próxima só começa quando a anterior termina de ser falada (não corta no meio)
+  await g.evaluate(() => {
+    window.__vozes = []; window.__fimVoz = null;
+    window.__speakOrig = caosSpeak;
+    window.caosSpeak = (t, h, fim) => { __vozes.push([t, h, Date.now()]); window.__fimVoz = fim; return true; };
+    clearTimeout(rede.falaTimer); rede.falas = []; rede.falaAtiva = false;
+    redeFalaMostrar({ texto: "fala um", emo: "raiva", ev: "t:1" });
+    redeFalaMostrar({ texto: "fala um", emo: "raiva", ev: "t:1" });
+    redeFalaMostrar({ texto: "fala dois", ev: "t:2" });
+  });
+  const vozA = await g.evaluate(() => __vozes.length === 1 && __vozes[0][1] === "__emo:raiva");
+  await new Promise((r) => setTimeout(r, 2500));
+  const naoCorta = await g.evaluate(() => __vozes.length === 1);
+  await g.evaluate(() => __fimVoz && __fimVoz());
+  const segue = await esperar(g, () => __vozes.length === 2 && /fala dois/.test(__vozes[1][0]) && __vozes[1][1] === "__normal", null, 5000);
+  await g.evaluate(() => { window.caosSpeak = __speakOrig; clearTimeout(rede.falaTimer); rede.falas = []; rede.falaAtiva = false; const el = document.getElementById("redeFala"); if (el) el.remove(); });
+  conf("Voz no dispositivo com a emoção da fala, sem repetir o mesmo evento e sem cortar a anterior", vozA && naoCorta && segue);
   await host.evaluate(() => { caosUltimaFalaAt = 0; caosFalaFimAt = 0; caosFalarPara(players[0].id, "[C.A.O.S.] Só entre nós: segredo da Ana.", true); });
   conf(
     "Fala particular chega no celular dela, marcada como dela",

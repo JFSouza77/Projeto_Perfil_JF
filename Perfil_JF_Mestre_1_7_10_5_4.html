@@ -6,6 +6,13 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.5.4 · 16/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.4.2: VOZ NOS DISPOSITIVOS + FALA MENOS.
+          Revisão do pacote do GPT de 16/10 conferida no código (docs/Revisao_Pacote_GPT_2026-10-16.md). Corrigido: a voz
+          no dispositivo do convidado saía sempre calma (agora usa a emoção da fala, "__emo:"); a fila do convidado cortava
+          a voz no meio (agora a próxima só começa quando a anterior termina; fala velha na fila é descartada); fala repetida
+          (mesmo eventId) não sai duas vezes; vocativo "Ei, Fulano, …" reconhecido. JF: 6 falas por carta (era 10) e 12 em
+          3 cartas (era 18); o cansaço em partida longa é sempre (de propósito). Numeração (JF): 1.7.10.5.x até os modos;
+          1.7.10.6 = Modo C.A.O.S. + Corrida contra o Tempo; 1.8 depois de tudo revisado.
   1.7.10.5.3 · 15/10/2026 · "Multiplayer Update · Online de verdade" = TRAVA DA DICA + FICHA VERMELHA (ideia do JF com o Henrique) · C.A.O.S. 4.4.1.
           Online: quem está na vez escolhe a dica no aparelho dele e o Mestre só abre a dica pedida (dicaTravada/dicaPodeAbrir,
           conferido na porta escolherDica). Fail safe automático: a trava sai se o aparelho de quem está na vez cair, se ele
@@ -818,7 +825,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.5.3</title>
+<title>Perfil JF · Beta 1.7.10.5.4</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -9159,7 +9166,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.5.3 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.4.1 · Atualizada em 15/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.5.4 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.4.2 · Atualizada em 16/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -9427,7 +9434,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1814;
+const JOGO_BUILD = 1815;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -9958,12 +9965,13 @@ const CAOS_BALAO_POS_VOZ_MS = 600;
 // atropelando a outra. Agora: até 10 comentários por carta, e o próximo só começa depois que o anterior
 // TERMINOU, com um respiro. "Ouvido interno": se ele falou muito no último minuto, o respiro aumenta; se
 // falou muito nas últimas 3 cartas, dobra. Avisos, regras e falas importantes não entram nessa conta.
-const CAOS_FALAS_POR_CARTA = 10;
+// C.A.O.S. 4.4.2 (JF, 16/10: "ainda tá falando demais"): 10 → 6 comentários por carta; 18 → 12 em 3 cartas.
+const CAOS_FALAS_POR_CARTA = 6;
 const CAOS_RESPIRO_MS = 3500; // silêncio mínimo depois que a fala anterior terminou
 const CAOS_RESPIRO_RAJADA_MS = 9000; // respiro quando ele já falou CAOS_RAJADA_FALAS vezes no último minuto
 const CAOS_RAJADA_FALAS = 6;
 const CAOS_FALA_INICIO_MIN_MS = 6000; // entre o começo de uma fala e o da próxima (fala curtinha não vira metralhadora)
-const CAOS_FALAS_3_CARTAS = 18; // passou disso nas últimas 3 cartas: respiro em dobro
+const CAOS_FALAS_3_CARTAS = 12; // passou disso nas últimas 3 cartas: respiro em dobro
 const CAOS_COLOR_NAMES = {
   "#dc2626": "vermelho-sangue",
   "#6366f1": "índigo",
@@ -20983,7 +20991,8 @@ function redeValidar(bruto) {
       (m.quem === undefined || (Array.isArray(m.quem) && m.quem.length <= 8 && m.quem.every(jogadorIdValido))) &&
       (m.emo === undefined || (typeof m.emo === "string" && /^[a-z]{2,20}$/.test(m.emo))) &&
       (m.face === undefined || txt(m.face, 24)) &&
-      (m.rotulo === undefined || txt(m.rotulo, 24)),
+      (m.rotulo === undefined || txt(m.rotulo, 24)) &&
+      (m.ev === undefined || txt(m.ev, 80)),
     bemvindo: () => jogadorIdValido(m.jogadorId),
     escolha: () => Array.isArray(m.lugares) && m.lugares.length <= 12 && m.lugares.every((l) => l && jogadorIdValido(l.id) && typeof l.nome === "string"),
     recusa: () => txt(m.motivo, 40) && (m.versao === undefined || txt(m.versao, 20)) && (m.build === undefined || Number.isInteger(m.build)),
@@ -21465,6 +21474,8 @@ function redeHostFala(f) {
   if (typeof f.emo === "string" && /^[a-z]{2,20}$/.test(f.emo)) visual.emo = f.emo;
   if (typeof f.face === "string" && f.face.length <= 24) visual.face = f.face;
   if (typeof f.rotulo === "string" && f.rotulo.length <= 24) visual.rotulo = f.rotulo;
+  // C.A.O.S. 4.4.2: id do evento da fala (o dispositivo não mostra nem fala duas vezes a mesma)
+  if (typeof f.eventId === "string" && f.eventId.length <= 80) visual.ev = f.eventId;
   // C.A.O.S. 4.2 (partida online: "não chega direto no jogador"): fala particular, ou que fala COM quem está
   // em outro aparelho, vai só pro aparelho dessa pessoa (antes ia pra sala toda e ninguém sabia que era com ele)
   if (f.privado || redeFalaSoLonge(f)) {
@@ -21494,20 +21505,28 @@ function redeFalaComQuem(f) {
   return (f.para || []).some((d) => {
     if (!d || !d.id || !d.nome) return false;
     const n = String(d.nome).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    return new RegExp(`(^|[.!?]\\s+)${n}\\s*[,!?:]|[,;]\\s*${n}\\s*[.!?…]*\\s*$`, "u").test(t);
+    // C.A.O.S. 4.4.2 (revisão do GPT): também "Ei, Henrique, …" / "Olha, Henrique: …" (nome entre vírgulas no começo)
+    return new RegExp(`(^|[.!?]\\s+)${n}\\s*[,!?:]|[,;]\\s*${n}\\s*[.!?…]*\\s*$|^[^.!?]{0,14}[,!]\\s*${n}\\s*[,!?:]`, "u").test(t);
   });
 }
 // No celular do convidado: balão da fala (e a voz, quando a fala é com ele).
+// C.A.O.S. 4.4.2 (revisão do GPT, conferida no código): a fila não corta mais a voz no meio. A próxima fala só
+// começa quando a atual TERMINA de ser falada (ou o tempo de leitura acaba, com a voz desligada). Fala repetida
+// (mesmo evento) é ignorada; fala que ficou velha na fila (mais de 12 s) é descartada em vez de sair atrasada.
 function redeFalaMostrar(m) {
-  rede.falas = (rede.falas || []).concat({ texto: m.texto, minha: Array.isArray(m.quem) && m.quem.includes(rede.eu), emo: m.emo || null, face: m.face || null, rotulo: m.rotulo || null }).slice(-3);
-  if (!rede.falaAtiva) redeFalaProxima();
-  else if (rede.falas.length > 1) {
-    // fila crescendo: encurta a fala da tela
-    clearTimeout(rede.falaTimer);
-    rede.falaTimer = setTimeout(redeFalaProxima, 1500);
+  rede.falasVistas = rede.falasVistas || [];
+  if (m.ev) {
+    if (rede.falasVistas.includes(m.ev)) return;
+    rede.falasVistas.push(m.ev);
+    if (rede.falasVistas.length > 60) rede.falasVistas.shift();
   }
+  rede.falas = (rede.falas || []).concat({ texto: m.texto, minha: Array.isArray(m.quem) && m.quem.includes(rede.eu), emo: m.emo || null, face: m.face || null, rotulo: m.rotulo || null, t: Date.now() });
+  // no máximo 3 esperando: a mais antiga das que esperam sai
+  while (rede.falas.length > 3) rede.falas.shift();
+  if (!rede.falaAtiva) redeFalaProxima();
 }
 function redeFalaProxima() {
+  if (rede && rede.falas) while (rede.falas.length && Date.now() - (rede.falas[0].t || 0) > 12000) rede.falas.shift();
   const f = rede && rede.falas && rede.falas.shift();
   let el = document.getElementById("redeFala");
   if (!f) {
@@ -21548,13 +21567,23 @@ function redeFalaProxima() {
     `<div class="rede-fala-txt">[C.A.O.S.] ${escapeHtml(f.texto)}</div>`;
   // 1.7.10.3 (relato do JF: a voz só saía no host): o celular fala tudo o que mostra, se a voz dele estiver ligada
   // (cada aparelho liga a sua no botão 🗣️ Voz do C.A.O.S.; começa desligada, então não vira eco na mesma sala)
-  try {
-    caosSpeak("[C.A.O.S.] " + f.texto, "__normal");
-  } catch (e) {}
+  // C.A.O.S. 4.4.2: a voz do dispositivo usa a emoção da fala (antes saía sempre no tom calmo)
   clearTimeout(rede.falaTimer);
-  // com fala esperando na fila, esta fica menos tempo (o celular não fica atrasado em relação à mesa)
-  const ms = Math.min(9000, Math.max(3500, f.texto.length * 70));
-  rede.falaTimer = setTimeout(redeFalaProxima, rede.falas.length ? Math.min(ms, 2500) : ms);
+  const minMs = Math.min(9000, Math.max(3500, f.texto.length * 70));
+  const ini = Date.now(), serie = (rede.falaSerie = (rede.falaSerie || 0) + 1);
+  let falou = false;
+  const seguir = () => {
+    if (!rede || rede.falaSerie !== serie) return;
+    clearTimeout(rede.falaTimer);
+    // depois da voz, o balão fica um pouquinho; sem fila, fica o tempo de leitura
+    const resto = rede.falas.length ? 700 : Math.max(700, minMs - (Date.now() - ini));
+    rede.falaTimer = setTimeout(redeFalaProxima, resto);
+  };
+  try {
+    falou = !!caosSpeak("[C.A.O.S.] " + f.texto, f.emo && typeof CAOS_VOICE_EMO !== "undefined" && CAOS_VOICE_EMO[f.emo] ? "__emo:" + f.emo : "__normal", seguir);
+  } catch (e) {}
+  // sem voz: tempo de leitura; com voz: trava de segurança se o fim da fala nunca chegar
+  rede.falaTimer = setTimeout(falou ? seguir : redeFalaProxima, falou ? Math.max(minMs * 2.5, 15000) : minMs);
 }
 /* --- 1.7.9.7 · Sala blindada: o que vem de outro aparelho é limpo e tem limite ---
    Nome criado pelo convidado: sem caracteres de HTML nem invisíveis (o nome aparece em janelas e falas do
@@ -26034,6 +26063,9 @@ function caosSpeechChunks(txt) {
   return out;
 }
 function caosSpeak(msg, humorForcado, onEnd, onPedaco, vir) {
+  // C.A.O.S. 4.4.2: "__emo:<emoção>" = fala vinda do host, com a emoção dela (no dispositivo do convidado)
+  const emoRede = typeof humorForcado === "string" && humorForcado.indexOf("__emo:") === 0 ? humorForcado.slice(6) : null;
+  if (emoRede) humorForcado = "__normal";
   if (caosMudoCarta && humorForcado !== "__normal") return false;
   if (!caosVoiceOn || !CAOS_VOICE_OK || typeof msg !== "string" || msg.indexOf("[C.A.O.S.]") === -1) return false;
   const txtP = caosSpeechText(msg, true),
@@ -26047,7 +26079,8 @@ function caosSpeak(msg, humorForcado, onEnd, onPedaco, vir) {
     const st0 = CAOS_VOICE_STYLE[caosMood()] || CAOS_VOICE_STYLE.normal;
     const hm = (!humorForcado && typeof caosEmoFalaAtual !== "undefined" && CAOS_VOICE_EMO[caosEmoFalaAtual]) ||
       CAOS_VOICE_MATRIZ[humorForcado || caosHumorMatriz()] || [1, 1];
-    const st = humorForcado === "__normal" ? [1.05, 1.05] : [st0[0] * hm[0], st0[1] * hm[1]];
+    const hmR = emoRede && CAOS_VOICE_EMO[emoRede];
+    const st = hmR ? [1.05 * hmR[0], 1.05 * hmR[1]] : humorForcado === "__normal" ? [1.05, 1.05] : [st0[0] * hm[0], st0[1] * hm[1]];
     const voice = caosPickVoice();
     caosVoiceCancel();
     let partes = caosSpeechChunks(txtP),
@@ -26066,7 +26099,9 @@ function caosSpeak(msg, humorForcado, onEnd, onPedaco, vir) {
     if (vir && corteV >= 0) vir.corteReal = corteV;
     const hmV = corteV >= 0 && vir && CAOS_VOICE_EMO[vir.para];
     const emo0 =
-      humorForcado === "__normal"
+      hmR
+        ? emoRede
+        : humorForcado === "__normal"
         ? "calmo"
         : (!humorForcado && typeof caosEmoFalaAtual !== "undefined" && CAOS_VOICE_EMO[caosEmoFalaAtual] && caosEmoFalaAtual) ||
           CAOS_VOZ_MATRIZ_EMO[humorForcado || caosHumorMatriz()] ||
@@ -26748,6 +26783,7 @@ function caosFaceEscolher(emo, bank) {
 function caosOS() {
   return CURRENT_MODE === "oldschool";
 }
+// Decisão do JF (16/10/2026): ele SEMPRE cansa em partida longa (CAOS_FATIGUE_CHANCE = 1, de propósito).
 function rollCaosFatiguePlan() {
   if (Math.random() >= CAOS_FATIGUE_CHANCE) return null;
   const tiredAt = 60 + Math.floor(Math.random() * 11);
@@ -28363,7 +28399,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.5.3 · C.A.O.S. 4.4.1</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.5.4 · C.A.O.S. 4.4.2</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -31715,7 +31751,7 @@ function caosNeuralDesenhar(cv, t) {
     const C = caosConsole || {};
     const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
 tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
-${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.4.1`;
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.4.2`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }
@@ -33494,7 +33530,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5.3 · C.A.O.S. 4.4.1)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5.4 · C.A.O.S. 4.4.2)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -36997,7 +37033,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.5.3 · C.A.O.S. 4.4.1");
+  L.push("- **Versão:** Beta 1.7.10.5.4 · C.A.O.S. 4.4.2");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -37520,7 +37556,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.5.3 · C.A.O.S. 4.4.1",
+        versao: "Beta 1.7.10.5.4 · C.A.O.S. 4.4.2",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -72919,6 +72955,19 @@ const PAUSE_TIPS = [
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.10.5.4",
+    data: "16/10/2026 · 15:20",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "C.A.O.S. 4.4.2: fala menos e soa melhor em cada dispositivo.",
+    itens: [
+      "🎭 Voz com emoção em todo dispositivo: no online, a voz do C.A.O.S. no seu dispositivo agora acompanha a emoção da fala. Antes ela saía sempre calma, mesmo com o balão bravo.",
+      "🫁 Uma fala de cada vez: no seu dispositivo, a próxima fala só começa quando a anterior termina. Nada de voz cortada no meio, e fala que ficou velha na fila não sai atrasada.",
+      "🤐 Fala menos: no máximo 6 comentários por carta (eram 10). Avisos de regra continuam passando.",
+      "🎯 Fala com você no seu dispositivo: frases como Ei, Fulano, … agora vão direto pro dispositivo da pessoa.",
+    ],
+    qol: [],
+  },
   {
     v: "Beta 1.7.10.5.3",
     data: "15/10/2026 · 23:46",

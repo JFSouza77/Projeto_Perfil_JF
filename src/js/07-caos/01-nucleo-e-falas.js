@@ -64,6 +64,7 @@ function caosFaceEscolher(emo, bank) {
 function caosOS() {
   return CURRENT_MODE === "oldschool";
 }
+// Decisão do JF (16/10/2026): ele SEMPRE cansa em partida longa (CAOS_FATIGUE_CHANCE = 1, de propósito).
 function rollCaosFatiguePlan() {
   if (Math.random() >= CAOS_FATIGUE_CHANCE) return null;
   const tiredAt = 60 + Math.floor(Math.random() * 11);

@@ -1,5 +1,9 @@
 # Status do roteiro de organização e online
 
+> **Numeração (JF, 16/10/2026):** o que dá pra fazer agora entra como 1.7.10.5.x; a **1.7.10.6** sai com o Modo C.A.O.S.
+> e a Corrida contra o Tempo (o prometido pra 1.7.10); a **1.8** só depois de tudo terminado e revisado, com tema novo.
+> Revisão do pacote do GPT de 16/10: `docs/Revisao_Pacote_GPT_2026-10-16.md`.
+
 > **Atualizado em 15/10/2026 (1.7.10.5): o roteiro está cumprido.** A 1.7.10 · Multiplayer Update saiu e seguiu com
 > as correções das partidas online (até a 1.7.10.5 · C.A.O.S. 4.3). Os próximos passos estão em `docs/brainstorm/`
 > (Modo C.A.O.S., Corrida contra o Tempo e Telemetria) e no `docs/Parecer_do_Klaus_Rumo_a_Release_1_0.md`.
