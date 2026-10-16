@@ -6,12 +6,14 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
-  1.7.10.5.3 · 15/10/2026 · "Multiplayer Update · Online de verdade" = TRAVA DA DICA + FICHA VERMELHA (ideia do JF com o Henrique).
+  1.7.10.5.3 · 15/10/2026 · "Multiplayer Update · Online de verdade" = TRAVA DA DICA + FICHA VERMELHA (ideia do JF com o Henrique) · C.A.O.S. 4.4.1.
           Online: quem está na vez escolhe a dica no aparelho dele e o Mestre só abre a dica pedida (dicaTravada/dicaPodeAbrir,
           conferido na porta escolherDica). Fail safe automático: a trava sai se o aparelho de quem está na vez cair, se ele
           joga no aparelho do host ou no mesmo aparelho do Mestre. Fail safe manual: segurar um número (650 ms) e confirmar
           "Abrir sem pedido" (escolherDica com forcar). Dica aberta ganha a ficha vermelha do Perfil de tabuleiro por cima do
-          número (grade do Mestre, celular do Mestre e telão). Testes novos no teste_rede.
+          número só na T2 (telão e celulares; a tela do Mestre fica como era). Testes novos no teste_rede.
+          C.A.O.S. 4.4.1 (relato do JF): tocar na dica já aberta não fazia ele reagir (o respiro da 4.3 cortava a fala
+          calado e gastava a chance). Agora é resposta ao toque: passa pelo respiro; se ele está falando, não gasta nada.
   1.7.10.5.2 · 15/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.4: MOTORES DE FALA CALIBRADOS. + CORREÇÃO: Mestre em outro aparelho via "Dica N: null" (a dica pendente saiu do retrato na 4.2; agora vai junto com a resposta, só pro aparelho do Mestre). Achado pela Gameez (Júlia) e pelo Henrique (Carro Pika).
           Pedido do JF: as falas montadas têm que fazer sentido. 1) Auditoria (ferramentas/caos_auditar_geradores.js): 4.800
           falas dos 18 geradores; ~35% saíam com defeito (fecho genérico grudado, ideias empilhadas, mesma expressão em dois
@@ -4671,12 +4673,10 @@ body.batata-mode .ft-ic:after {
 .number-btn.aberta:after {
   display: none;
 }
-/* 1.7.10.5.3 (ideia do JF): a dica aberta ganha a ficha vermelha do Perfil de tabuleiro, por cima do número */
-.number-btn.aberta,
+/* 1.7.10.5.3 (ideia do JF): a dica aberta ganha a ficha vermelha do Perfil de tabuleiro, por cima do número (só na T2) */
 .telao-numeros .usada {
   position: relative;
 }
-.number-btn .ficha,
 .telao-numeros .ficha {
   position: absolute;
   left: 50%;
@@ -4691,7 +4691,6 @@ body.batata-mode .ft-ic:after {
   opacity: 0.86;
   pointer-events: none;
 }
-.number-btn .ficha:after,
 .telao-numeros .ficha:after {
   content: "";
   position: absolute;
@@ -4699,17 +4698,12 @@ body.batata-mode .ft-ic:after {
   border-radius: 50%;
   border: 1.5px dashed rgba(255, 255, 255, 0.35);
 }
-body.batata-mode .number-btn .ficha,
 body.batata-mode .telao-numeros .ficha {
   background: #c62828;
   box-shadow: none;
 }
-body.batata-mode .number-btn .ficha:after,
 body.batata-mode .telao-numeros .ficha:after {
   display: none;
-}
-.number-btn.aberta {
-  color: #fff;
 }
 .number-btn.travada {
   opacity: 0.55;
@@ -9164,7 +9158,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.5.3 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.4 · Atualizada em 15/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.5.3 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.4.1 · Atualizada em 15/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -14855,7 +14849,7 @@ function render() {
       for (let i = 0; i < totalEntries; i++) {
         const used = revealedOrder.some((r) => r.index === i);
         const travada = trava && !used && !(ped && ped.idx === i);
-        grid += `<button class="number-btn${used ? " aberta" : ""}${ped && ped.idx === i ? " pedida" : ""}${travada ? " travada" : ""}" data-idx="${i}" ${used ? 'aria-disabled="true" title="Essa dica já foi aberta"' : travada ? 'title="Segure pra abrir sem pedido"' : ""}>${used ? '<span class="ficha" aria-hidden="true"></span>' : ""}${i + 1}</button>`;
+        grid += `<button class="number-btn${used ? " aberta" : ""}${ped && ped.idx === i ? " pedida" : ""}${travada ? " travada" : ""}" data-idx="${i}" ${used ? 'aria-disabled="true" title="Essa dica já foi aberta"' : travada ? 'title="Segure pra abrir sem pedido"' : ""}>${i + 1}</button>`;
       }
       const forcarHtml = dicaForcarIdx !== null ? `<div class="dica-forcar">Abrir a dica <b>${dicaForcarIdx + 1}</b> sem pedido? <button type="button" class="rede-btn rede-ok" id="dicaForcarSim">Abrir</button><button type="button" class="rede-btn" id="dicaForcarNao">Cancelar</button></div>` : "";
       controlsHtml = `
@@ -22735,7 +22729,7 @@ function redeMestreCartaMontar(box) {
       if (rede.dicaForcar != null && (!trava || abertas.has(rede.dicaForcar) || rede.dicaForcarRev !== r.revisao)) rede.dicaForcar = null;
       for (let i = 0; i < c.totalDicas; i++) {
         const travada = trava && !abertas.has(i) && !(ped && ped.pos === i);
-        grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}${ped && ped.pos === i ? " pedida" : ""}${travada ? " travada" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : travada ? ' title="Segure pra abrir sem pedido"' : ""}>${abertas.has(i) ? '<span class="ficha" aria-hidden="true"></span>' : ""}${i + 1}</button>`;
+        grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}${ped && ped.pos === i ? " pedida" : ""}${travada ? " travada" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : travada ? ' title="Segure pra abrir sem pedido"' : ""}>${i + 1}</button>`;
       }
       const forcar = rede.dicaForcar != null ? `<div class="dica-forcar">Abrir a dica <b>${rede.dicaForcar + 1}</b> sem pedido? <button type="button" class="rede-btn rede-ok" id="redeForcarSim">Abrir</button><button type="button" class="rede-btn" id="redeForcarNao">Cancelar</button></div>` : "";
       const rotulo = trava && !ped ? `👉 ${nome(r.vezId)} escolhe a dica no aparelho dele (${c.totalDicas - c.abertas.length} restantes). Travou? Segure um número.` : `${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)`;
@@ -28368,7 +28362,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.5.3 · C.A.O.S. 4.4</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.5.3 · C.A.O.S. 4.4.1</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -31720,7 +31714,7 @@ function caosNeuralDesenhar(cv, t) {
     const C = caosConsole || {};
     const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
 tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
-${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.4`;
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.4.1`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }
@@ -32031,6 +32025,10 @@ function caosDicaRepetida(idx) {
   if (!currentCard || gameEnded || cardState !== "revealed" || pendingIndex !== null) return;
   const agora = Date.now();
   if (agora - caosRepetidaAt < 6e3 || caosRepetidaN >= 4) return;
+  // C.A.O.S. 4.4.1 (relato do JF: "clico trocentas vezes e ele não reage"): é resposta a um toque, não comentário
+  // solto. O respiro da 4.3 cortava a fala calado e ainda gastava a chance. Agora: se ele está falando (ou a sala
+  // calou ele), o toque não gasta nada; senão ele responde na hora, sem esperar o respiro.
+  if (activeToastState || (typeof caosSalaCalada === "function" && caosSalaCalada())) return;
   const e = revealedOrder.find((r) => r.index === idx);
   const v = players[responderIndex];
   if (!e || !v) return;
@@ -32043,7 +32041,12 @@ function caosDicaRepetida(idx) {
   if (bank === B.normal && (isJfName(v.name) || isAnneName(v.name)) && Math.random() < 0.6)
     bank = isJfName(v.name) ? B.sonso : B.sonsa;
   caosLog("dicaRepetida", `${v.name} tocou na dica ${idx + 1} (pedida por ${dono})`);
-  showToastMessage(getRandomReaction(bank, v.name, dono), null, false, false, true);
+  caosFalaDaFila = true;
+  try {
+    showToastMessage(getRandomReaction(bank, v.name, dono), null, false, false, true);
+  } finally {
+    caosFalaDaFila = false;
+  }
 }
 function caosBezier(c, x) {
   if (x <= 0 || x >= 1) return x;
@@ -33490,7 +33493,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5.3 · C.A.O.S. 4.4)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5.3 · C.A.O.S. 4.4.1)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -36993,7 +36996,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.5.3 · C.A.O.S. 4.4");
+  L.push("- **Versão:** Beta 1.7.10.5.3 · C.A.O.S. 4.4.1");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -37516,7 +37519,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.5.3 · C.A.O.S. 4.4",
+        versao: "Beta 1.7.10.5.3 · C.A.O.S. 4.4.1",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -72919,11 +72922,12 @@ const NOVIDADES = [
     v: "Beta 1.7.10.5.3",
     data: "15/10/2026 · 23:46",
     nome: "Multiplayer Update · Online de verdade",
-    t: "Dicas como no Perfil de tabuleiro.",
+    t: "Dicas como no Perfil de tabuleiro. C.A.O.S. 4.4.1.",
     itens: [
       "🔒 Só abre a dica pedida: no online, quem está na vez escolhe a dica no próprio celular e o Mestre só consegue abrir aquela. Ideia do Henrique (Carro Pika).",
       "🆘 Celular caiu: se o aparelho de quem está na vez desconectar, a trava sai sozinha. E o Mestre pode segurar um número e tocar em Abrir sem pedido pra seguir o jogo.",
-      "🔴 Ficha vermelha: a dica que já foi aberta ganha uma fichinha vermelha por cima do número, igual à do tabuleiro.",
+      "🔴 Ficha vermelha: na tela dos jogadores, a dica que já foi aberta ganha uma fichinha vermelha por cima do número, igual à do tabuleiro.",
+      "👆 Tocou na dica aberta, ele responde: tocar de novo numa dica que já saiu volta a fazer o C.A.O.S. comentar, também no computador.",
     ],
     qol: [],
   },

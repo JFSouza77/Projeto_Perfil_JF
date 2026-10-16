@@ -902,7 +902,7 @@ function render() {
       for (let i = 0; i < totalEntries; i++) {
         const used = revealedOrder.some((r) => r.index === i);
         const travada = trava && !used && !(ped && ped.idx === i);
-        grid += `<button class="number-btn${used ? " aberta" : ""}${ped && ped.idx === i ? " pedida" : ""}${travada ? " travada" : ""}" data-idx="${i}" ${used ? 'aria-disabled="true" title="Essa dica já foi aberta"' : travada ? 'title="Segure pra abrir sem pedido"' : ""}>${used ? '<span class="ficha" aria-hidden="true"></span>' : ""}${i + 1}</button>`;
+        grid += `<button class="number-btn${used ? " aberta" : ""}${ped && ped.idx === i ? " pedida" : ""}${travada ? " travada" : ""}" data-idx="${i}" ${used ? 'aria-disabled="true" title="Essa dica já foi aberta"' : travada ? 'title="Segure pra abrir sem pedido"' : ""}>${i + 1}</button>`;
       }
       const forcarHtml = dicaForcarIdx !== null ? `<div class="dica-forcar">Abrir a dica <b>${dicaForcarIdx + 1}</b> sem pedido? <button type="button" class="rede-btn rede-ok" id="dicaForcarSim">Abrir</button><button type="button" class="rede-btn" id="dicaForcarNao">Cancelar</button></div>` : "";
       controlsHtml = `

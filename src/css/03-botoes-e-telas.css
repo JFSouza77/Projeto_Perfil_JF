@@ -879,12 +879,10 @@ body.batata-mode .ft-ic:after {
 .number-btn.aberta:after {
   display: none;
 }
-/* 1.7.10.5.3 (ideia do JF): a dica aberta ganha a ficha vermelha do Perfil de tabuleiro, por cima do número */
-.number-btn.aberta,
+/* 1.7.10.5.3 (ideia do JF): a dica aberta ganha a ficha vermelha do Perfil de tabuleiro, por cima do número (só na T2) */
 .telao-numeros .usada {
   position: relative;
 }
-.number-btn .ficha,
 .telao-numeros .ficha {
   position: absolute;
   left: 50%;
@@ -899,7 +897,6 @@ body.batata-mode .ft-ic:after {
   opacity: 0.86;
   pointer-events: none;
 }
-.number-btn .ficha:after,
 .telao-numeros .ficha:after {
   content: "";
   position: absolute;
@@ -907,17 +904,12 @@ body.batata-mode .ft-ic:after {
   border-radius: 50%;
   border: 1.5px dashed rgba(255, 255, 255, 0.35);
 }
-body.batata-mode .number-btn .ficha,
 body.batata-mode .telao-numeros .ficha {
   background: #c62828;
   box-shadow: none;
 }
-body.batata-mode .number-btn .ficha:after,
 body.batata-mode .telao-numeros .ficha:after {
   display: none;
-}
-.number-btn.aberta {
-  color: #fff;
 }
 .number-btn.travada {
   opacity: 0.55;
