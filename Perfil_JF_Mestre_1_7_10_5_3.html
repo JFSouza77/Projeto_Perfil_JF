@@ -6,6 +6,12 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.5.3 · 15/10/2026 · "Multiplayer Update · Online de verdade" = TRAVA DA DICA + FICHA VERMELHA (ideia do JF com o Henrique).
+          Online: quem está na vez escolhe a dica no aparelho dele e o Mestre só abre a dica pedida (dicaTravada/dicaPodeAbrir,
+          conferido na porta escolherDica). Fail safe automático: a trava sai se o aparelho de quem está na vez cair, se ele
+          joga no aparelho do host ou no mesmo aparelho do Mestre. Fail safe manual: segurar um número (650 ms) e confirmar
+          "Abrir sem pedido" (escolherDica com forcar). Dica aberta ganha a ficha vermelha do Perfil de tabuleiro por cima do
+          número (grade do Mestre, celular do Mestre e telão). Testes novos no teste_rede.
   1.7.10.5.2 · 15/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.4: MOTORES DE FALA CALIBRADOS. + CORREÇÃO: Mestre em outro aparelho via "Dica N: null" (a dica pendente saiu do retrato na 4.2; agora vai junto com a resposta, só pro aparelho do Mestre). Achado pela Gameez (Júlia) e pelo Henrique (Carro Pika).
           Pedido do JF: as falas montadas têm que fazer sentido. 1) Auditoria (ferramentas/caos_auditar_geradores.js): 4.800
           falas dos 18 geradores; ~35% saíam com defeito (fecho genérico grudado, ideias empilhadas, mesma expressão em dois
@@ -809,7 +815,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.5.2</title>
+<title>Perfil JF · Beta 1.7.10.5.3</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -4664,6 +4670,66 @@ body.batata-mode .ft-ic:after {
 .number-btn.aberta:before,
 .number-btn.aberta:after {
   display: none;
+}
+/* 1.7.10.5.3 (ideia do JF): a dica aberta ganha a ficha vermelha do Perfil de tabuleiro, por cima do número */
+.number-btn.aberta,
+.telao-numeros .usada {
+  position: relative;
+}
+.number-btn .ficha,
+.telao-numeros .ficha {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 72%;
+  max-width: 34px;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ff9b9b 0 12%, #e23b3b 32%, #a51616 78%, #7c0d0d 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.45), inset 0 0 0 2px rgba(255, 255, 255, 0.18), inset 0 -2px 3px rgba(0, 0, 0, 0.35);
+  opacity: 0.86;
+  pointer-events: none;
+}
+.number-btn .ficha:after,
+.telao-numeros .ficha:after {
+  content: "";
+  position: absolute;
+  inset: 22%;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(255, 255, 255, 0.35);
+}
+body.batata-mode .number-btn .ficha,
+body.batata-mode .telao-numeros .ficha {
+  background: #c62828;
+  box-shadow: none;
+}
+body.batata-mode .number-btn .ficha:after,
+body.batata-mode .telao-numeros .ficha:after {
+  display: none;
+}
+.number-btn.aberta {
+  color: #fff;
+}
+.number-btn.travada {
+  opacity: 0.55;
+  cursor: not-allowed;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.dica-forcar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  margin: 6px 0 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(226, 59, 59, 0.14);
+  border: 1px solid rgba(226, 59, 59, 0.45);
+  font-size: 0.9rem;
 }
 .card .guess-btns > button,
 .card .mesa-btns button,
@@ -8991,7 +9057,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
 .selo-host { display: inline-block; margin-left: 4px; padding: 0 5px; border-radius: 6px; font-size: 0.62em; font-weight: 800; letter-spacing: 0.04em; vertical-align: middle; background: #f59e0b; color: #1a1a2e; }
 .telao-numeros { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 8px; }
 .telao-numeros span { min-width: 1.9em; text-align: center; padding: 2px 4px; border-radius: 6px; font-size: 0.85em; font-weight: 700; background: rgba(255,255,255,0.12); }
-.telao-numeros span.usada { opacity: 0.35; text-decoration: line-through; }
+.telao-numeros span.usada { color: #fff; }
 .telao-numeros span.agora { background: #f59e0b; color: #1a1a2e; box-shadow: 0 0 0 2px #fde68a; }
 /* 1.7.10.5 (pedido do JF): ficha de palpite (selo amarelo), Palpitar agora e pedido de dica pelo aparelho */
 .selo-palpite {
@@ -9098,7 +9164,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.5.2 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.4 · Atualizada em 15/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.5.3 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.4 · Atualizada em 15/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -9366,7 +9432,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1813;
+const JOGO_BUILD = 1814;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -11222,6 +11288,7 @@ function palpitarAgora(key) {
 // 1.7.10.5 (pedido do JF) · Pedir dica de qualquer aparelho: quem está na vez toca no número e o Mestre recebe o
 // pedido em destaque (quem abre continua sendo o Mestre, regra da 1.7.9.6). Agiliza com Mestre distraído.
 let pedidoDica = null; // { idx, por, carta }
+let dicaForcarIdx = null; // 1.7.10.5.3: número que o Mestre segurou pra abrir sem pedido (espera a confirmação)
 function pedidoDicaAtual() {
   if (!pedidoDica || pedidoDica.carta !== cartaSeq || pendingIndex !== null || cardState !== "revealed") return null;
   if (revealedOrder.some((r) => r.index === pedidoDica.idx)) return null;
@@ -14783,13 +14850,18 @@ function render() {
       const remaining = totalEntries - revealedOrder.length;
       let grid = "";
       const ped = pedidoDicaAtual(); // 1.7.10.5: número pedido pelo aparelho de quem está na vez
+      const trava = typeof dicaTravada === "function" && dicaTravada(); // 1.7.10.5.3: só abre a dica pedida
+      if (dicaForcarIdx !== null && (!trava || revealedOrder.some((r) => r.index === dicaForcarIdx))) dicaForcarIdx = null;
       for (let i = 0; i < totalEntries; i++) {
         const used = revealedOrder.some((r) => r.index === i);
-        grid += `<button class="number-btn${used ? " aberta" : ""}${ped && ped.idx === i ? " pedida" : ""}" data-idx="${i}" ${used ? 'aria-disabled="true" title="Essa dica já foi aberta"' : ""}>${i + 1}</button>`;
+        const travada = trava && !used && !(ped && ped.idx === i);
+        grid += `<button class="number-btn${used ? " aberta" : ""}${ped && ped.idx === i ? " pedida" : ""}${travada ? " travada" : ""}" data-idx="${i}" ${used ? 'aria-disabled="true" title="Essa dica já foi aberta"' : travada ? 'title="Segure pra abrir sem pedido"' : ""}>${used ? '<span class="ficha" aria-hidden="true"></span>' : ""}${i + 1}</button>`;
       }
+      const forcarHtml = dicaForcarIdx !== null ? `<div class="dica-forcar">Abrir a dica <b>${dicaForcarIdx + 1}</b> sem pedido? <button type="button" class="rede-btn rede-ok" id="dicaForcarSim">Abrir</button><button type="button" class="rede-btn" id="dicaForcarNao">Cancelar</button></div>` : "";
       controlsHtml = `
         ${ped ? `<div class="pedido-dica">👉 ${responderName} pediu a dica <b>${ped.idx + 1}</b>. Toque nela pra abrir.</div>` : ""}
-        <div class="pick-label">${responderName}, escolha uma dica de 1 a ${totalEntries} (${remaining} restantes)</div>
+        ${forcarHtml}
+        <div class="pick-label">${trava && !ped ? `👉 ${responderName} escolhe a dica no aparelho dele (${remaining} restantes). Travou? Segure um número.` : `${responderName}, escolha uma dica de 1 a ${totalEntries} (${remaining} restantes)`}</div>
         <div id="timerDisplay" class="pick-timer">◷ ${secondsLeft()}s</div>
         <div class="number-grid">${grid}</div>`;
     }
@@ -14883,8 +14955,31 @@ function render() {
             caosDicaRepetida(parseInt(btn.dataset.idx));
             return;
           }
+          // 1.7.10.5.3: número travado não abre no toque (o segurar já tratou, se foi o caso)
+          if (btn.classList.contains("travada")) {
+            delete gridEl.dataset.segurou;
+            return;
+          }
           chooseClue(parseInt(btn.dataset.idx));
         };
+        if (typeof dicaSegurarParaForcar === "function")
+          dicaSegurarParaForcar(gridEl, (idx) => {
+            dicaForcarIdx = idx;
+            render();
+          });
+      }
+      const fSim = document.getElementById("dicaForcarSim");
+      if (fSim) {
+        fSim.addEventListener("click", () => {
+          const idx = dicaForcarIdx;
+          dicaForcarIdx = null;
+          caosLog("dica", `Mestre abriu a dica ${idx + 1} sem pedido`);
+          chooseClue(idx, true);
+        });
+        document.getElementById("dicaForcarNao").addEventListener("click", () => {
+          dicaForcarIdx = null;
+          render();
+        });
       }
       // 1.7.9.10: com gente na sala online, Descartar e Desistir viram votação da mesa (decisão do JF)
       if (canDiscard)
@@ -18430,7 +18525,7 @@ const ACOES = {
   sacarCarta: { fn: "drawHidden", pode: () => acoesEmJogo() && cardState === "none" },
   virarCarta: { fn: "flipCard", pode: () => acoesEmJogo() && cardState === "hidden" },
   roletaCategoria: { fn: "startCategoryRoulette", pode: () => acoesEmJogo() && cardState === "hidden" && roletaCarta !== currentCard },
-  escolherDica: { fn: "chooseClue", pode: (idx) => acoesEmJogo() && acoesDicaLivre(idx) },
+  escolherDica: { fn: "chooseClue", pode: (idx, forcar) => acoesEmJogo() && acoesDicaLivre(idx) && (typeof dicaPodeAbrir !== "function" || dicaPodeAbrir(idx, forcar)) },
   acertou: { fn: "markCorrect", pode: (idx) => acoesComDica() && (idx === undefined || !!players[idx]) },
   errou: { fn: "markWrong", pode: (tipo) => acoesComDica() && [undefined, null, "pular", "absurdo"].includes(tipo) },
   palpiteAcertou: { fn: "palpiteHit", pode: () => acoesComDica() },
@@ -18680,7 +18775,11 @@ function dispatchAction(cmd) {
     acoesComandosVistos.push(c.commandId);
     if (acoesComandosVistos.length > ACOES_COMANDOS_MAX) acoesComandosVistos.shift();
   }
-  return partidaRevisao > antes ? { ok: true, revisao: partidaRevisao } : { ok: false, motivo: "sem_efeito", revisao: partidaRevisao };
+  // 1.7.10.5.3: pedir dica e palpitar agora não mexem na revisão (não entram no desfazer), mas valeram
+  const marcou =
+    (c.type === "pedirDica" && !!pedidoDicaAtual() && pedidoDicaAtual().idx === dados[0]) ||
+    (c.type === "palpitarAgora" && !!palpiteVezAtual() && palpiteVezAtual().key === dados[0]);
+  return partidaRevisao > antes || marcou ? { ok: true, revisao: partidaRevisao } : { ok: false, motivo: "sem_efeito", revisao: partidaRevisao };
 }
 // Resumo pro Cérebro (ADM).
 function acoesResumo() {
@@ -18782,6 +18881,7 @@ function retratoPartida(papel) {
       const pd = typeof pedidoDicaAtual === "function" ? pedidoDicaAtual() : null;
       return pd ? { pos: pd.idx, por: pd.por } : null;
     })(),
+    dicaTravada: typeof dicaTravada === "function" ? dicaTravada() : false, // 1.7.10.5.3: o Mestre só abre a dica pedida
     estoquePalpite: palpiteStock,
     joiasRodada: { ...joiasRodada },
     vencedorJoias: gemWinner ? { tipo: gemWinner.kind, id: gemWinner.id } : null,
@@ -19192,7 +19292,7 @@ function telaoDesenhar(r, alvo) {
   // os números de dica pra todo mundo: livre, a que está sendo lida (em destaque) e as já usadas
   const usadas = c ? new Set(c.abertas.map((d) => d.pos)) : new Set();
   const numeros = c && c.totalDicas && r.estadoCarta !== "hidden"
-    ? `<div class="telao-numeros" aria-label="Números de dica">${Array.from({ length: c.totalDicas }, (_, i) => `<span class="${i === c.pendente ? "agora" : usadas.has(i) ? "usada" : r.pedidoDica && r.pedidoDica.pos === i ? "pedida" : "livre"}">${i + 1}</span>`).join("")}</div>`
+    ? `<div class="telao-numeros" aria-label="Números de dica">${Array.from({ length: c.totalDicas }, (_, i) => `<span class="${i === c.pendente ? "agora" : usadas.has(i) ? "usada" : r.pedidoDica && r.pedidoDica.pos === i ? "pedida" : "livre"}">${usadas.has(i) && i !== c.pendente ? '<i class="ficha" aria-hidden="true"></i>' : ""}${i + 1}</span>`).join("")}</div>`
     : "";
   box.innerHTML = `
     <header class="telao-topo"><b>📺 Perfil JF</b><span>rodada ${r.rodada}${r.ultimaRodada ? " · última" : ""} · revisão ${r.revisao}</span></header>
@@ -21640,6 +21740,45 @@ function redePedidosPintar() {
   const todos = box.querySelector("#redeAceitarTodos");
   if (todos) todos.addEventListener("click", redeAprovarTodos);
 }
+// 1.7.10.5.3 (ideia do JF com o Henrique, como no Perfil de tabuleiro): no online, quem está na vez escolhe a dica
+// no próprio aparelho e o Mestre só abre a dica escolhida. Fail safe automático: a trava sai sozinha se o aparelho
+// de quem está na vez cair (ou se ele joga no aparelho do host ou no mesmo aparelho do Mestre). Fail safe manual:
+// o Mestre segura um número e confirma "Abrir sem pedido".
+function dicaTravada() {
+  if (!salaOnlineAberta() || CURRENT_MODE === "express" || cardState !== "revealed" || pendingIndex !== null || !currentCard || gameEnded) return false;
+  const vez = jogadorIdDe(responderIndex), mestre = jogadorIdDe(mestreIndex);
+  if (!vez || vez === mestre || redeNoHost(vez)) return false;
+  const a = rede.assentos[vez];
+  if (!redeOnline(a)) return false;
+  const am = rede.assentos[mestre];
+  if (am && !redeNoHost(mestre) && am.sessao === a.sessao) return false;
+  return true;
+}
+function dicaPodeAbrir(idx, forcar) {
+  if (forcar === true || typeof dicaTravada !== "function" || !dicaTravada()) return true;
+  const ped = pedidoDicaAtual();
+  return !!ped && ped.idx === idx;
+}
+// Segurar um número travado (650 ms) pede a confirmação do "Abrir sem pedido"
+function dicaSegurarParaForcar(grid, aoSegurar) {
+  let t = null, alvo = null;
+  const soltar = () => {
+    clearTimeout(t);
+    t = null;
+  };
+  grid.addEventListener("pointerdown", (e) => {
+    alvo = e.target.closest(".number-btn.travada");
+    if (!alvo) return;
+    const idx = parseInt(alvo.dataset.idx !== undefined ? alvo.dataset.idx : alvo.dataset.dica);
+    t = setTimeout(() => {
+      t = null;
+      grid.dataset.segurou = "1";
+      aoSegurar(idx);
+    }, 650);
+  });
+  ["pointerup", "pointerleave", "pointercancel"].forEach((ev) => grid.addEventListener(ev, soltar));
+  grid.addEventListener("contextmenu", (e) => e.target.closest(".number-btn.travada") && e.preventDefault());
+}
 // Quem pode mandar o quê (o host confere antes da porta de sempre).
 const REDE_SO_MESTRE = [
   "sacarCarta", "virarCarta", "roletaCategoria", "acertou", "errou", "palpiteAcertou", "palpiteErrou", "especialSeguir",
@@ -22591,8 +22730,16 @@ function redeMestreCartaMontar(box) {
       const abertas = new Set(c.abertas.map((d) => d.pos));
       let grade = "";
       const ped = r.pedidoDica; // 1.7.10.5: número pedido por quem está na vez
-      for (let i = 0; i < c.totalDicas; i++) grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}${ped && ped.pos === i ? " pedida" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : ""}>${i + 1}</button>`;
-      controles = `${ped ? `<div class="pedido-dica">👉 ${nome(ped.por)} pediu a dica <b>${ped.pos + 1}</b>. Toque nela pra abrir.</div>` : ""}<div class="pick-label">${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)</div><div class="number-grid">${grade}</div>`;
+      // 1.7.10.5.3: com a trava, só o número pedido abre; segurar um número pede o "Abrir sem pedido"
+      const trava = !!r.dicaTravada;
+      if (rede.dicaForcar != null && (!trava || abertas.has(rede.dicaForcar) || rede.dicaForcarRev !== r.revisao)) rede.dicaForcar = null;
+      for (let i = 0; i < c.totalDicas; i++) {
+        const travada = trava && !abertas.has(i) && !(ped && ped.pos === i);
+        grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}${ped && ped.pos === i ? " pedida" : ""}${travada ? " travada" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : travada ? ' title="Segure pra abrir sem pedido"' : ""}>${abertas.has(i) ? '<span class="ficha" aria-hidden="true"></span>' : ""}${i + 1}</button>`;
+      }
+      const forcar = rede.dicaForcar != null ? `<div class="dica-forcar">Abrir a dica <b>${rede.dicaForcar + 1}</b> sem pedido? <button type="button" class="rede-btn rede-ok" id="redeForcarSim">Abrir</button><button type="button" class="rede-btn" id="redeForcarNao">Cancelar</button></div>` : "";
+      const rotulo = trava && !ped ? `👉 ${nome(r.vezId)} escolhe a dica no aparelho dele (${c.totalDicas - c.abertas.length} restantes). Travou? Segure um número.` : `${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)`;
+      controles = `${ped ? `<div class="pedido-dica">👉 ${nome(ped.por)} pediu a dica <b>${ped.pos + 1}</b>. Toque nela pra abrir.</div>` : ""}${forcar}<div class="pick-label">${rotulo}</div><div class="number-grid">${grade}</div>`;
     }
     h = `<div class="card rede-carta-mestre" style="--card-glow:${cor}">
       <div class="answer-header cat-neon" style="--cat:${cor};"><span class="cat-selo">${CAT_SELO_ICONE[cat] || "🃏"} ${escapeHtml((GEM_INFO[cat] || {}).name || cat)}</span>Diga aos jogadores: "Eu sou ${formatLabelUppercase(CATEGORY_LABELS[cat] || escapeHtml(cat))}."</div>
@@ -22617,7 +22764,26 @@ function redeMestreCartaMontar(box) {
       if (o) redeMandar(o.a, ...o.d);
     }),
   );
-  sec.querySelectorAll(".number-btn[data-dica]:not(.aberta)").forEach((b) => b.addEventListener("click", () => redeMandar("escolherDica", +b.dataset.dica)));
+  sec.querySelectorAll(".number-btn[data-dica]:not(.aberta):not(.travada)").forEach((b) => b.addEventListener("click", () => redeMandar("escolherDica", +b.dataset.dica)));
+  const gradeEl = sec.querySelector(".number-grid");
+  if (gradeEl)
+    dicaSegurarParaForcar(gradeEl, (idx) => {
+      rede.dicaForcar = idx;
+      rede.dicaForcarRev = rede.retrato ? rede.retrato.revisao : null;
+      redeConvidadoDesenhar();
+    });
+  const fSim = sec.querySelector("#redeForcarSim");
+  if (fSim) {
+    fSim.addEventListener("click", () => {
+      const idx = rede.dicaForcar;
+      rede.dicaForcar = null;
+      redeMandar("escolherDica", idx, true);
+    });
+    sec.querySelector("#redeForcarNao").addEventListener("click", () => {
+      rede.dicaForcar = null;
+      redeConvidadoDesenhar();
+    });
+  }
   const rb = sec.querySelector("#redeResp");
   if (rb)
     rb.addEventListener("click", () => {
@@ -28202,7 +28368,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.5.2 · C.A.O.S. 4.4</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.5.3 · C.A.O.S. 4.4</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -33324,7 +33490,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5.2 · C.A.O.S. 4.4)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5.3 · C.A.O.S. 4.4)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -36827,7 +36993,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.5.2 · C.A.O.S. 4.4");
+  L.push("- **Versão:** Beta 1.7.10.5.3 · C.A.O.S. 4.4");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -37350,7 +37516,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.5.2 · C.A.O.S. 4.4",
+        versao: "Beta 1.7.10.5.3 · C.A.O.S. 4.4",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -72749,6 +72915,18 @@ const PAUSE_TIPS = [
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.10.5.3",
+    data: "15/10/2026 · 23:46",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "Dicas como no Perfil de tabuleiro.",
+    itens: [
+      "🔒 Só abre a dica pedida: no online, quem está na vez escolhe a dica no próprio celular e o Mestre só consegue abrir aquela. Ideia do Henrique (Carro Pika).",
+      "🆘 Celular caiu: se o aparelho de quem está na vez desconectar, a trava sai sozinha. E o Mestre pode segurar um número e tocar em Abrir sem pedido pra seguir o jogo.",
+      "🔴 Ficha vermelha: a dica que já foi aberta ganha uma fichinha vermelha por cima do número, igual à do tabuleiro.",
+    ],
+    qol: [],
+  },
   {
     v: "Beta 1.7.10.5.2",
     data: "15/10/2026 · 21:58",

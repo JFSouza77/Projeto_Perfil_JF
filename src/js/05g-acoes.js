@@ -19,7 +19,7 @@ const ACOES = {
   sacarCarta: { fn: "drawHidden", pode: () => acoesEmJogo() && cardState === "none" },
   virarCarta: { fn: "flipCard", pode: () => acoesEmJogo() && cardState === "hidden" },
   roletaCategoria: { fn: "startCategoryRoulette", pode: () => acoesEmJogo() && cardState === "hidden" && roletaCarta !== currentCard },
-  escolherDica: { fn: "chooseClue", pode: (idx) => acoesEmJogo() && acoesDicaLivre(idx) },
+  escolherDica: { fn: "chooseClue", pode: (idx, forcar) => acoesEmJogo() && acoesDicaLivre(idx) && (typeof dicaPodeAbrir !== "function" || dicaPodeAbrir(idx, forcar)) },
   acertou: { fn: "markCorrect", pode: (idx) => acoesComDica() && (idx === undefined || !!players[idx]) },
   errou: { fn: "markWrong", pode: (tipo) => acoesComDica() && [undefined, null, "pular", "absurdo"].includes(tipo) },
   palpiteAcertou: { fn: "palpiteHit", pode: () => acoesComDica() },
@@ -269,7 +269,11 @@ function dispatchAction(cmd) {
     acoesComandosVistos.push(c.commandId);
     if (acoesComandosVistos.length > ACOES_COMANDOS_MAX) acoesComandosVistos.shift();
   }
-  return partidaRevisao > antes ? { ok: true, revisao: partidaRevisao } : { ok: false, motivo: "sem_efeito", revisao: partidaRevisao };
+  // 1.7.10.5.3: pedir dica e palpitar agora não mexem na revisão (não entram no desfazer), mas valeram
+  const marcou =
+    (c.type === "pedirDica" && !!pedidoDicaAtual() && pedidoDicaAtual().idx === dados[0]) ||
+    (c.type === "palpitarAgora" && !!palpiteVezAtual() && palpiteVezAtual().key === dados[0]);
+  return partidaRevisao > antes || marcou ? { ok: true, revisao: partidaRevisao } : { ok: false, motivo: "sem_efeito", revisao: partidaRevisao };
 }
 // Resumo pro Cérebro (ADM).
 function acoesResumo() {
@@ -371,6 +375,7 @@ function retratoPartida(papel) {
       const pd = typeof pedidoDicaAtual === "function" ? pedidoDicaAtual() : null;
       return pd ? { pos: pd.idx, por: pd.por } : null;
     })(),
+    dicaTravada: typeof dicaTravada === "function" ? dicaTravada() : false, // 1.7.10.5.3: o Mestre só abre a dica pedida
     estoquePalpite: palpiteStock,
     joiasRodada: { ...joiasRodada },
     vencedorJoias: gemWinner ? { tipo: gemWinner.kind, id: gemWinner.id } : null,

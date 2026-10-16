@@ -897,13 +897,18 @@ function render() {
       const remaining = totalEntries - revealedOrder.length;
       let grid = "";
       const ped = pedidoDicaAtual(); // 1.7.10.5: número pedido pelo aparelho de quem está na vez
+      const trava = typeof dicaTravada === "function" && dicaTravada(); // 1.7.10.5.3: só abre a dica pedida
+      if (dicaForcarIdx !== null && (!trava || revealedOrder.some((r) => r.index === dicaForcarIdx))) dicaForcarIdx = null;
       for (let i = 0; i < totalEntries; i++) {
         const used = revealedOrder.some((r) => r.index === i);
-        grid += `<button class="number-btn${used ? " aberta" : ""}${ped && ped.idx === i ? " pedida" : ""}" data-idx="${i}" ${used ? 'aria-disabled="true" title="Essa dica já foi aberta"' : ""}>${i + 1}</button>`;
+        const travada = trava && !used && !(ped && ped.idx === i);
+        grid += `<button class="number-btn${used ? " aberta" : ""}${ped && ped.idx === i ? " pedida" : ""}${travada ? " travada" : ""}" data-idx="${i}" ${used ? 'aria-disabled="true" title="Essa dica já foi aberta"' : travada ? 'title="Segure pra abrir sem pedido"' : ""}>${used ? '<span class="ficha" aria-hidden="true"></span>' : ""}${i + 1}</button>`;
       }
+      const forcarHtml = dicaForcarIdx !== null ? `<div class="dica-forcar">Abrir a dica <b>${dicaForcarIdx + 1}</b> sem pedido? <button type="button" class="rede-btn rede-ok" id="dicaForcarSim">Abrir</button><button type="button" class="rede-btn" id="dicaForcarNao">Cancelar</button></div>` : "";
       controlsHtml = `
         ${ped ? `<div class="pedido-dica">👉 ${responderName} pediu a dica <b>${ped.idx + 1}</b>. Toque nela pra abrir.</div>` : ""}
-        <div class="pick-label">${responderName}, escolha uma dica de 1 a ${totalEntries} (${remaining} restantes)</div>
+        ${forcarHtml}
+        <div class="pick-label">${trava && !ped ? `👉 ${responderName} escolhe a dica no aparelho dele (${remaining} restantes). Travou? Segure um número.` : `${responderName}, escolha uma dica de 1 a ${totalEntries} (${remaining} restantes)`}</div>
         <div id="timerDisplay" class="pick-timer">◷ ${secondsLeft()}s</div>
         <div class="number-grid">${grid}</div>`;
     }
@@ -997,8 +1002,31 @@ function render() {
             caosDicaRepetida(parseInt(btn.dataset.idx));
             return;
           }
+          // 1.7.10.5.3: número travado não abre no toque (o segurar já tratou, se foi o caso)
+          if (btn.classList.contains("travada")) {
+            delete gridEl.dataset.segurou;
+            return;
+          }
           chooseClue(parseInt(btn.dataset.idx));
         };
+        if (typeof dicaSegurarParaForcar === "function")
+          dicaSegurarParaForcar(gridEl, (idx) => {
+            dicaForcarIdx = idx;
+            render();
+          });
+      }
+      const fSim = document.getElementById("dicaForcarSim");
+      if (fSim) {
+        fSim.addEventListener("click", () => {
+          const idx = dicaForcarIdx;
+          dicaForcarIdx = null;
+          caosLog("dica", `Mestre abriu a dica ${idx + 1} sem pedido`);
+          chooseClue(idx, true);
+        });
+        document.getElementById("dicaForcarNao").addEventListener("click", () => {
+          dicaForcarIdx = null;
+          render();
+        });
       }
       // 1.7.9.10: com gente na sala online, Descartar e Desistir viram votação da mesa (decisão do JF)
       if (canDiscard)

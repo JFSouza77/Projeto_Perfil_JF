@@ -382,13 +382,30 @@ async function rodar(b, modo, porta, turn) {
   const revAntes = await H(() => partidaRevisao);
   r = await mandar(gV, "escolherDica", livre);
   conf("Quem está na vez não abre a dica (regra do JF: só o Mestre)", r && !r.ok && r.motivo === "sem_permissao" && (await H((i) => !revealedOrder.some((x) => x.index === i), livre)));
+  // 1.7.10.5.3 (JF + Henrique): trava da dica. Sem pedido, o Mestre não abre; com o pedido, abre o pedido
+  conf("Trava ligada: o celular do Mestre vê os outros números travados", await esperar(gM, () => rede.retrato.dicaTravada === true && document.querySelectorAll(".rede-mestre .number-btn.travada").length > 0));
+  r = await mandar(gM, "escolherDica", livre);
+  conf("Trava: o Mestre não abre dica que ninguém pediu", r && !r.ok && (await H((i) => !revealedOrder.some((x) => x.index === i), livre)));
+  const outra = await H((l) => currentCard.clues.findIndex((c, i) => i !== l && !revealedOrder.some((x) => x.index === i)), livre);
+  // fail safe manual: segurar um número travado pede a confirmação (aqui cancela); o "forçar" passa pela trava
+  await gM.evaluate(() => document.querySelector(".rede-mestre .number-btn.travada").dispatchEvent(new PointerEvent("pointerdown", { bubbles: true })));
+  conf("Fail safe manual: segurar o número pede 'Abrir sem pedido'", await esperar(gM, () => !!document.getElementById("redeForcarSim")));
+  await gM.evaluate(() => document.getElementById("redeForcarNao").click());
+  conf("Abrir sem pedido passa pela trava (e só ele)", await H((o) => dicaPodeAbrir(o, true) && !dicaPodeAbrir(o), outra));
+  // fail safe automático: o aparelho de quem está na vez cai e a trava sai sozinha
+  conf("Fail safe automático: aparelho de quem está na vez caiu, trava sai", await H((id) => { const a = rede.assentos[id], v = a.visto; a.visto = 0; const solta = !dicaTravada(); a.visto = v; return solta && dicaTravada(); }, ids.vez));
+  r = await mandar(gV, "pedirDica", livre);
+  conf("Quem está na vez pede a dica no aparelho dele", r && r.ok && (await esperar(gM, (i) => rede.retrato.pedidoDica && rede.retrato.pedidoDica.pos === i, livre)));
+  r = await mandar(gM, "escolherDica", outra);
+  conf("Trava: com pedido, outro número continua travado", r && !r.ok);
+  const revAntesAbrir = await H(() => partidaRevisao);
   r = await mandar(gM, "escolherDica", livre);
   conf("O Mestre abre a dica", r && r.ok && (await H((i) => revealedOrder.some((x) => x.index === i), livre)));
   // 1.7.10.5.2 (bug achado pela Júlia e pelo Henrique): o Mestre em outro aparelho via "Dica N: null"
   const txtPend = await H(() => String(currentCard.clues[pendingIndex].text));
   conf("Mestre remoto vê o texto da dica pendente (não null)", (await esperar(gM, (t) => rede.segredo && rede.segredo.dica && rede.segredo.dica.texto === t, txtPend)) && !/null/.test(await gM.evaluate(() => (document.body.innerText.match(/Dica \d+:[^\n]*/g) || []).join(" "))) && (await gV.evaluate(() => !rede.segredo)));
   conf("O telão mostra quem pediu a dica",await esperar(gV, () => /pedida por/.test(document.getElementById("telao").textContent)));
-  conf("Revisão subiu uma vez", (await H(() => partidaRevisao)) === revAntes + 1);
+  conf("Revisão subiu uma vez", (await H(() => partidaRevisao)) === revAntesAbrir + 1 && revAntesAbrir >= revAntes);
   conf("Painel do Mestre com Acertou/Errou/Pulou", await esperar(gM, () => ["acertou", "errou"].every((a) => rede.painel.opcoes.some((o) => o.a === a)) && rede.painel.opcoes.some((o) => o.d[0] === "pular")));
   // 6) repetido e revisão velha
   await gM.evaluate(async () => {

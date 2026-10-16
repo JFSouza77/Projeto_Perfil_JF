@@ -175,7 +175,7 @@ function telaoDesenhar(r, alvo) {
   // os números de dica pra todo mundo: livre, a que está sendo lida (em destaque) e as já usadas
   const usadas = c ? new Set(c.abertas.map((d) => d.pos)) : new Set();
   const numeros = c && c.totalDicas && r.estadoCarta !== "hidden"
-    ? `<div class="telao-numeros" aria-label="Números de dica">${Array.from({ length: c.totalDicas }, (_, i) => `<span class="${i === c.pendente ? "agora" : usadas.has(i) ? "usada" : r.pedidoDica && r.pedidoDica.pos === i ? "pedida" : "livre"}">${i + 1}</span>`).join("")}</div>`
+    ? `<div class="telao-numeros" aria-label="Números de dica">${Array.from({ length: c.totalDicas }, (_, i) => `<span class="${i === c.pendente ? "agora" : usadas.has(i) ? "usada" : r.pedidoDica && r.pedidoDica.pos === i ? "pedida" : "livre"}">${usadas.has(i) && i !== c.pendente ? '<i class="ficha" aria-hidden="true"></i>' : ""}${i + 1}</span>`).join("")}</div>`
     : "";
   box.innerHTML = `
     <header class="telao-topo"><b>📺 Perfil JF</b><span>rodada ${r.rodada}${r.ultimaRodada ? " · última" : ""} · revisão ${r.revisao}</span></header>

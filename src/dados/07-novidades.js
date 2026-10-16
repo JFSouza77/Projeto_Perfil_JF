@@ -6,6 +6,18 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.5.3",
+    data: "15/10/2026 · 23:46",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "Dicas como no Perfil de tabuleiro.",
+    itens: [
+      "🔒 Só abre a dica pedida: no online, quem está na vez escolhe a dica no próprio celular e o Mestre só consegue abrir aquela. Ideia do Henrique (Carro Pika).",
+      "🆘 Celular caiu: se o aparelho de quem está na vez desconectar, a trava sai sozinha. E o Mestre pode segurar um número e tocar em Abrir sem pedido pra seguir o jogo.",
+      "🔴 Ficha vermelha: a dica que já foi aberta ganha uma fichinha vermelha por cima do número, igual à do tabuleiro.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.5.2",
     data: "15/10/2026 · 21:58",
     nome: "Multiplayer Update · Online de verdade",

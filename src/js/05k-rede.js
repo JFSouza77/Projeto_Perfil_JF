@@ -1466,6 +1466,45 @@ function redePedidosPintar() {
   const todos = box.querySelector("#redeAceitarTodos");
   if (todos) todos.addEventListener("click", redeAprovarTodos);
 }
+// 1.7.10.5.3 (ideia do JF com o Henrique, como no Perfil de tabuleiro): no online, quem está na vez escolhe a dica
+// no próprio aparelho e o Mestre só abre a dica escolhida. Fail safe automático: a trava sai sozinha se o aparelho
+// de quem está na vez cair (ou se ele joga no aparelho do host ou no mesmo aparelho do Mestre). Fail safe manual:
+// o Mestre segura um número e confirma "Abrir sem pedido".
+function dicaTravada() {
+  if (!salaOnlineAberta() || CURRENT_MODE === "express" || cardState !== "revealed" || pendingIndex !== null || !currentCard || gameEnded) return false;
+  const vez = jogadorIdDe(responderIndex), mestre = jogadorIdDe(mestreIndex);
+  if (!vez || vez === mestre || redeNoHost(vez)) return false;
+  const a = rede.assentos[vez];
+  if (!redeOnline(a)) return false;
+  const am = rede.assentos[mestre];
+  if (am && !redeNoHost(mestre) && am.sessao === a.sessao) return false;
+  return true;
+}
+function dicaPodeAbrir(idx, forcar) {
+  if (forcar === true || typeof dicaTravada !== "function" || !dicaTravada()) return true;
+  const ped = pedidoDicaAtual();
+  return !!ped && ped.idx === idx;
+}
+// Segurar um número travado (650 ms) pede a confirmação do "Abrir sem pedido"
+function dicaSegurarParaForcar(grid, aoSegurar) {
+  let t = null, alvo = null;
+  const soltar = () => {
+    clearTimeout(t);
+    t = null;
+  };
+  grid.addEventListener("pointerdown", (e) => {
+    alvo = e.target.closest(".number-btn.travada");
+    if (!alvo) return;
+    const idx = parseInt(alvo.dataset.idx !== undefined ? alvo.dataset.idx : alvo.dataset.dica);
+    t = setTimeout(() => {
+      t = null;
+      grid.dataset.segurou = "1";
+      aoSegurar(idx);
+    }, 650);
+  });
+  ["pointerup", "pointerleave", "pointercancel"].forEach((ev) => grid.addEventListener(ev, soltar));
+  grid.addEventListener("contextmenu", (e) => e.target.closest(".number-btn.travada") && e.preventDefault());
+}
 // Quem pode mandar o quê (o host confere antes da porta de sempre).
 const REDE_SO_MESTRE = [
   "sacarCarta", "virarCarta", "roletaCategoria", "acertou", "errou", "palpiteAcertou", "palpiteErrou", "especialSeguir",
@@ -2417,8 +2456,16 @@ function redeMestreCartaMontar(box) {
       const abertas = new Set(c.abertas.map((d) => d.pos));
       let grade = "";
       const ped = r.pedidoDica; // 1.7.10.5: número pedido por quem está na vez
-      for (let i = 0; i < c.totalDicas; i++) grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}${ped && ped.pos === i ? " pedida" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : ""}>${i + 1}</button>`;
-      controles = `${ped ? `<div class="pedido-dica">👉 ${nome(ped.por)} pediu a dica <b>${ped.pos + 1}</b>. Toque nela pra abrir.</div>` : ""}<div class="pick-label">${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)</div><div class="number-grid">${grade}</div>`;
+      // 1.7.10.5.3: com a trava, só o número pedido abre; segurar um número pede o "Abrir sem pedido"
+      const trava = !!r.dicaTravada;
+      if (rede.dicaForcar != null && (!trava || abertas.has(rede.dicaForcar) || rede.dicaForcarRev !== r.revisao)) rede.dicaForcar = null;
+      for (let i = 0; i < c.totalDicas; i++) {
+        const travada = trava && !abertas.has(i) && !(ped && ped.pos === i);
+        grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}${ped && ped.pos === i ? " pedida" : ""}${travada ? " travada" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : travada ? ' title="Segure pra abrir sem pedido"' : ""}>${abertas.has(i) ? '<span class="ficha" aria-hidden="true"></span>' : ""}${i + 1}</button>`;
+      }
+      const forcar = rede.dicaForcar != null ? `<div class="dica-forcar">Abrir a dica <b>${rede.dicaForcar + 1}</b> sem pedido? <button type="button" class="rede-btn rede-ok" id="redeForcarSim">Abrir</button><button type="button" class="rede-btn" id="redeForcarNao">Cancelar</button></div>` : "";
+      const rotulo = trava && !ped ? `👉 ${nome(r.vezId)} escolhe a dica no aparelho dele (${c.totalDicas - c.abertas.length} restantes). Travou? Segure um número.` : `${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)`;
+      controles = `${ped ? `<div class="pedido-dica">👉 ${nome(ped.por)} pediu a dica <b>${ped.pos + 1}</b>. Toque nela pra abrir.</div>` : ""}${forcar}<div class="pick-label">${rotulo}</div><div class="number-grid">${grade}</div>`;
     }
     h = `<div class="card rede-carta-mestre" style="--card-glow:${cor}">
       <div class="answer-header cat-neon" style="--cat:${cor};"><span class="cat-selo">${CAT_SELO_ICONE[cat] || "🃏"} ${escapeHtml((GEM_INFO[cat] || {}).name || cat)}</span>Diga aos jogadores: "Eu sou ${formatLabelUppercase(CATEGORY_LABELS[cat] || escapeHtml(cat))}."</div>
@@ -2443,7 +2490,26 @@ function redeMestreCartaMontar(box) {
       if (o) redeMandar(o.a, ...o.d);
     }),
   );
-  sec.querySelectorAll(".number-btn[data-dica]:not(.aberta)").forEach((b) => b.addEventListener("click", () => redeMandar("escolherDica", +b.dataset.dica)));
+  sec.querySelectorAll(".number-btn[data-dica]:not(.aberta):not(.travada)").forEach((b) => b.addEventListener("click", () => redeMandar("escolherDica", +b.dataset.dica)));
+  const gradeEl = sec.querySelector(".number-grid");
+  if (gradeEl)
+    dicaSegurarParaForcar(gradeEl, (idx) => {
+      rede.dicaForcar = idx;
+      rede.dicaForcarRev = rede.retrato ? rede.retrato.revisao : null;
+      redeConvidadoDesenhar();
+    });
+  const fSim = sec.querySelector("#redeForcarSim");
+  if (fSim) {
+    fSim.addEventListener("click", () => {
+      const idx = rede.dicaForcar;
+      rede.dicaForcar = null;
+      redeMandar("escolherDica", idx, true);
+    });
+    sec.querySelector("#redeForcarNao").addEventListener("click", () => {
+      rede.dicaForcar = null;
+      redeConvidadoDesenhar();
+    });
+  }
   const rb = sec.querySelector("#redeResp");
   if (rb)
     rb.addEventListener("click", () => {

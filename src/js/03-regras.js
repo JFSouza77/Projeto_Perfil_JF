@@ -505,6 +505,7 @@ function palpitarAgora(key) {
 // 1.7.10.5 (pedido do JF) · Pedir dica de qualquer aparelho: quem está na vez toca no número e o Mestre recebe o
 // pedido em destaque (quem abre continua sendo o Mestre, regra da 1.7.9.6). Agiliza com Mestre distraído.
 let pedidoDica = null; // { idx, por, carta }
+let dicaForcarIdx = null; // 1.7.10.5.3: número que o Mestre segurou pra abrir sem pedido (espera a confirmação)
 function pedidoDicaAtual() {
   if (!pedidoDica || pedidoDica.carta !== cartaSeq || pendingIndex !== null || cardState !== "revealed") return null;
   if (revealedOrder.some((r) => r.index === pedidoDica.idx)) return null;
