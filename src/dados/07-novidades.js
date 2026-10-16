@@ -6,18 +6,10 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
-    v: "Beta 1.7.10.7",
+    v: "Beta 1.7.10.5.1",
     data: "15/10/2026 · 21:28",
     nome: "Multiplayer Update · Online de verdade",
     t: "Ajustes por dentro: o C.A.O.S. conhece um pouco melhor quem joga com ele.",
-    itens: [],
-    qol: [],
-  },
-  {
-    v: "Beta 1.7.10.6",
-    data: "15/10/2026 · 19:30",
-    nome: "Multiplayer Update · Online de verdade",
-    t: "Ajustes por dentro: o C.A.O.S. ficou um pouco mais esperto com a turma.",
     itens: [],
     qol: [],
   },
