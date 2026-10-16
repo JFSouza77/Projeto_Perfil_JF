@@ -5,6 +5,7 @@ compatibility_date = "2026-09-01"
 
 [vars]
 # sites que podem pedir a lista de salas e a ponte (separados por vírgula). O arquivo offline e o localhost já valem.
+# Domínio próprio: acrescente aqui ANTES de trocar o endereço (ex.: "https://jfsouza77.github.io,https://www.dominio.com.br").
 ORIGENS = "https://jfsouza77.github.io"
 
 [[durable_objects.bindings]]

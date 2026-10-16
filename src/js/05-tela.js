@@ -2185,7 +2185,7 @@ function resultadoTexto() {
     (CURRENT_FORMAT === "equipe" ? " · Equipes" : "");
   const t = [cab, "", ...linhas];
   if (mvp) t.push("", "🌟 Estrela da partida: " + mvp.name);
-  t.push("", "Jogue também: " + JOGO_URL);
+  t.push("", "Jogue também: " + jogoSiteAtual());
   return t.join("\n");
 }
 async function compartilharResultado() {

@@ -6,6 +6,18 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.5.5",
+    data: "16/10/2026 · 19:19",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "Faxina geral: cartas conferidas, modo claro mais legível e a casa arrumada.",
+    itens: [
+      "☀️ Modo claro mais legível: botões com letra clara demais no modo claro ficaram mais escuros e fáceis de ler.",
+      "🌐 Pergunta do online maior: o botão Não, todo mundo neste aparelho ficou maior e mais fácil de tocar.",
+      "🃏 As 1000 cartas conferidas: dicas, números das cartas e textos passaram por uma revisão completa.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.5.4",
     data: "16/10/2026 · 15:20",
     nome: "Multiplayer Update · Online de verdade",

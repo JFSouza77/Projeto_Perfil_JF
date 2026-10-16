@@ -584,3 +584,14 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
 @media (prefers-reduced-motion: reduce) {
   .number-btn.pedida, .telao-numeros .pedida { animation: none; }
 }
+
+/* 1.7.10.5.5 (auditoria de botões): "Não, todo mundo neste aparelho" com área de toque de 44 px e legível no Claro */
+#redePerguntaNao {
+  min-height: 44px;
+  padding: 10px 18px;
+}
+body.claro #redePerguntaNao {
+  color: #6b4204;
+  border-color: #c98a1e;
+  background: #fff4dc;
+}

@@ -14,7 +14,7 @@
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1815;
+const JOGO_BUILD = 1816;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -308,7 +308,7 @@ const GEMS_MIN_PLAYERS = 4;
 // "A Moda da Casa": no começo da partida o C.A.O.S. sorteia UM destes modos para a mesa toda.
 const CASA_MODOS = ["tabuleiro", "pontos", "joias"];
 // Meta de pontos da Moda da Casa (quando o sorteio cai em Pontos), por número de jogadores.
-// Simulação de equilíbrio (sim.js, 10 mil partidas por mesa): 200 deixa Pontos com a mesma
+// Simulação de equilíbrio (ferramentas/simular_equilibrio.js, 10 mil partidas por mesa): 200 deixa Pontos com a mesma
 // duração do Tabuleiro em qualquer mesa (a tabela 200..400 deixava Pontos até 141% mais longo).
 const CASA_META_PONTOS = { 2: 200, 3: 200, 4: 200, 5: 200, 6: 200 };
 // Na Moda da Casa sorteada em Joias, a joia vale com 1 dica real a mais que o limite do modo
@@ -945,8 +945,18 @@ const MODE_LABELS = {
   oldschool: "Perfil Old School",
 };
 const PAUSE_TIP_MS = 8e3;
-// Endereço público do jogo (vai no texto de Compartilhar resultado).
-const JOGO_URL = "https://jfsouza77.github.io/Projeto_Perfil_JF/";
+// ENDEREÇOS (1.7.10.5.5, portas pro domínio próprio): pra trocar o endereço do jogo, muda SÓ aqui
+// (JOGO_SITE) e põe o domínio novo em ORIGENS no servidor/wrangler.toml. O servidor da sala é REDE_SERVIDOR
+// (js/05k). Passo a passo e cuidados (save de cada aparelho fica no endereço antigo): docs/Dominio_Preparacao.md.
+const JOGO_SITE = "https://jfsouza77.github.io/Projeto_Perfil_JF/";
+// O endereço de onde o jogo foi aberto (no domínio novo, já aponta pra ele); no arquivo offline, o JOGO_SITE.
+function jogoSiteAtual() {
+  try {
+    if (/^https?:$/.test(location.protocol) && !/^(localhost|127\.|\[::1\])/.test(location.hostname))
+      return location.origin + location.pathname.replace(/[^/]*$/, "");
+  } catch (e) {}
+  return JOGO_SITE;
+}
 const ADM_CRIADOR_HASH = "f10d7ed5";
 const CAOS_PAUSA_DEGRAUS = [
   { s: 40, emo: "tedio", d: [0, -0.5, -0.5] },

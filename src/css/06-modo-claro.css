@@ -539,3 +539,28 @@ body.claro .caos-pergunta button[data-v="digitar"] {
   border-color: #5b21b6;
   color: #fff;
 }
+/* 1.7.10.5.5 (auditoria de contraste no Claro, mínimo WCAG AA): texto colorido mais escuro nos chips, nos botões
+   secundários e na condição de vitória; botões cheios com fundo um pouco mais escuro pra letra branca aparecer. */
+body.claro .btn-start.btn-neo {
+  color: color-mix(in srgb, var(--mc, #6d4ad8) 45%, #1b1d33);
+}
+body.claro .splash-menu .chip,
+body.claro .splash-settings .chip {
+  color: color-mix(in srgb, var(--cc) 40%, #1b1d33);
+}
+body.claro .wincond-btn:not(.on) {
+  color: color-mix(in srgb, var(--wc, #6d4ad8) 42%, #1b1d33);
+}
+body.claro .btn-start.btn-neo.neo-solid:not(.neo-ghost),
+body.claro .btn-start.btn-neo.mc-confirm,
+body.claro .btn-neo.neo-solid:not(.neo-ghost):after,
+body.claro .btn-neo.mc-confirm:after {
+  background: color-mix(in srgb, var(--mc, #6d4ad8) 52%, #1b1d33);
+}
+body.claro #btnTutorial2.btn-neo {
+  color: color-mix(in srgb, var(--mc, #eab308) 32%, #1b1d33) !important;
+}
+body.claro #welcomeScreen .btn-sec,
+body.claro .btn-sec {
+  color: color-mix(in srgb, var(--cc, #6d4ad8) 40%, #1b1d33);
+}

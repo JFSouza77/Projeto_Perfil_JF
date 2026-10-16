@@ -1,4 +1,20 @@
-# Cérebro do C.A.O.S. 4.0 (mapa da 1.7.5.3)
+# Cérebro do C.A.O.S. (mapa atualizado na 1.7.10.5.5 · C.A.O.S. 4.4.2)
+
+> A base (camadas, gerador e memória) é da 4.0 (1.7.5.3). O que mudou da 4.1 à 4.4.2 está logo abaixo.
+
+## Da 4.1 à 4.4.2 (1.7.10.x, partidas online)
+
+| Parte | O que faz | Onde |
+|---|---|---|
+| **Pulmão / ritmo (4.3)** | Comentário só começa depois que o anterior **terminou** + um respiro (3,5 s; 9 s se já falou 6 vezes no minuto; em dobro se falou demais nas últimas 3 cartas). Máximo de **6 comentários por carta** (4.4.2) e 12 em 3 cartas. Avisos de regra e falas importantes não entram na conta. | `CAOS_FALAS_POR_CARTA`, `CAOS_RESPIRO_*` (js/01) · `caosRespiroAgora`, `caosToastBloquear` (07/01) · `caosFalaAgendar` (js/04) |
+| **Ouvintes (4.3)** | Cada dispositivo avisa quando liga/desliga a voz e quando pula uma fala. Todos calaram: ele fica quieto (só regra). Parte calou: rancor com quem calou e carinho com quem ainda ouve (decisão do JF). | `07-caos/12-ouvintes.js` |
+| **Motores de fala (4.4)** | O gerador tenta até 10 combinações e fica com a de melhor nota: não gruda fecho genérico, não empilha ideia, não repete expressão, não troca o tom. Frase que depende de contexto (ex.: "errou de novo") só sai com o contexto verdadeiro. A emoção do balão sai do conteúdo da frase. | `caosGerAvaliar`, `caosGerLapidar` (07/10) · `caosContextoOk` (07/01) · `caosEmocaoDoTexto` (07/05) · teste `ferramentas/caos_auditar_geradores.js` |
+| **Resposta ao toque (4.4.1)** | Tocar numa dica já aberta é pergunta direta: ele responde na hora (passa pelo respiro); se está falando, o toque não gasta chance. | `caosDicaRepetida` (07/06) |
+| **Voz nos dispositivos (4.4.2)** | A fala que vai pra rede leva a emoção e o id do evento. No dispositivo do convidado a voz usa a emoção (`"__emo:<emoção>"`), a fila não corta a fala do meio (a próxima espera o fim da voz), fala repetida não sai e fala velha (>12 s) é descartada. | `redeHostFala`, `redeFalaMostrar`, `redeFalaProxima` (js/05k) · `caosSpeak` (js/06) |
+| **Destino da fala** | Fala com alguém (vocativo, ou `caosFalarPara`) que está em outro dispositivo vai só pro dispositivo dele; fala que só cita a pessoa é da mesa. | `redeFalaSoLonge`, `redeFalaComQuem` (js/05k) · `caosCanalRegistrar` (07/11) |
+| **Easter egg da turma** | Piadas internas com limite e intervalo, nunca no Júnior. Não entra em NOVIDADES/HISTÓRICO. | `07-caos/13-amigos.js` |
+| **Cansaço** | Sempre programado em partida longa (decisão do JF, `CAOS_FATIGUE_CHANCE = 1`). | `rollCaosFatiguePlan` |
+
 
 O C.A.O.S. é o apresentador do jogo. Ele **nunca** pontua e nunca muda turno nem estado da partida: só comenta.
 Este documento mostra as camadas do cérebro dele, onde cada uma está no código e como testar.
@@ -13,7 +29,7 @@ Este documento mostra as camadas do cérebro dele, onde cada uma está no códig
 | **Console de emoções** | Dez emoções com teto e decaimento próprios: alegria, tristeza, raiva, medo, nojo, ansiedade, tédio, vergonha, curiosidade e carinho. A que estiver mais alta (acima de 3,8) vira a emoção do momento. Duas altas ao mesmo tempo viram **mistura**, como magoado (raiva com tristeza) ou empolgação nervosa (alegria com ansiedade). | `CAOS_CONSOLE`, `CAOS_CONSOLE_CFG`, `CAOS_CONSOLE_MISTURAS` (js/01) · `caosSentir`, `caosConsoleEvento`, `caosConsoleAvancar` (js/07) |
 | **Matriz de humor** | Quatro humores de voz e de fala: frustrado, orgulhoso, entediado e desafiante. Saem do console e do humor contínuo. | `caosHumorMatriz` · `CI_HUMORES` |
 | **Escada de rostos** | O rosto não pula de feliz para furioso direto: passa por rostos vizinhos. | `CAOS_EMO_VIZ`, `caosEscada` |
-| **Cansaço** | Em algumas partidas ele cansa depois de 60–70 min reais e pode sair da partida depois de 90–105 min. Se a tensão estourar duas vezes, também sai. | `rollCaosFatiguePlan`, `caosMaybeCheckOutFromTension` |
+| **Cansaço** | Em toda partida longa ele cansa depois de 60–70 min reais e pode sair da partida depois de 90–105 min. Se a tensão estourar duas vezes, também sai. | `rollCaosFatiguePlan`, `caosMaybeCheckOutFromTension` |
 | **Memória** | Fichas por jogador (partidas, vitórias, acertos por categoria, última vez), recordes, rivais, cartas difíceis, nicks e avaliações 👍/👎. Tudo tem teto (veja abaixo). | js/08 (`fichaUpd`, `memGravar`) e js/07 |
 
 ## Gerador de falas por gatilho (novo na 1.7.5.1)

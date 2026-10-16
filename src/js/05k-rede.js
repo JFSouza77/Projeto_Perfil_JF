@@ -54,7 +54,7 @@ const REDE_DO_HOST = ["bemvindo", "escolha", "recusa", "retrato", "segredo", "re
 const REDE_HOST_SUMIU_MS = typeof window !== "undefined" && Number.isFinite(window.__REDE_HOST_SUMIU_MS) ? window.__REDE_HOST_SUMIU_MS : 60000;
 const REDE_ONLINE_MS = 15000; // sem notícia há mais que isso: o convidado conta como fora
 const REDE_LETRAS_SALA = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // sem I e O (não confundem com 1 e 0)
-const REDE_SITE = "https://jfsouza77.github.io/Projeto_Perfil_JF/"; // link pros convidados (o host pode estar no offline)
+const REDE_SITE = JOGO_SITE; // link pros convidados quando o host está no offline (ver ENDEREÇOS em js/01)
 const REDE_PEER_PREFIXO = "perfiljf-sala-";
 const REDE_HOST_KEY = "perfil5_rede_host";
 const REDE_VOTO_MS = 20000;
@@ -224,7 +224,9 @@ const REDE_ICE = [
    Apresenta os aparelhos (no lugar do servidor público do PeerJS), lista as salas da mesma rede e entrega
    a ponte TURN do Cloudflare (1.000 GB/mês grátis). Vazio = só o público, como antes. Com ele, o público
    fica de reserva: o host abre a sala nos dois, e o convidado tenta o nosso e, se não achar, o público. */
-const REDE_SERVIDOR = "perfil-jf-sala.joaofe0000.workers.dev"; // endereço do Worker (conta do JF, 10/10/2026)
+// endereço do Worker (conta do JF, 10/10/2026). Com domínio próprio, pode virar um subdomínio (ex.: sala.dominio):
+// ver docs/Dominio_Preparacao.md
+const REDE_SERVIDOR = "perfil-jf-sala.joaofe0000.workers.dev";
 const REDE_SERVIDOR_CHAVE = "perfiljf";
 const REDE_PONTE_KEY = "perfil5_rede_ponte";
 let redePonte = null; // { iceServers, validade } vindo do servidor nosso
@@ -2865,7 +2867,7 @@ function redePerguntarSala() {
   const ov = document.createElement("div");
   ov.id = "redePergunta";
   ov.className = "jf-modal-bg";
-  ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Vai jogar online?</h3><p>Abrindo a sala, este aparelho vira o <b>host</b> da partida. Os outros entram com o <b>código da sala</b> (ou pelo link), você aceita a entrada e cada um cria o próprio jogador no dispositivo dele.</p><button type="button" class="btn-start btn-neo neo-solid neo-still" id="redePerguntaSim" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">🌐 Sim, abrir a sala</button><button type="button" class="chip" id="redePerguntaNao" style="margin-top:10px">Não, todo mundo neste aparelho</button></div>`;
+  ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Vai jogar online?</h3><p>Abrindo a sala, este aparelho vira o <b>host</b> da partida. Os outros entram com o <b>código da sala</b> (ou pelo link), você aceita a entrada e cada um cria o próprio jogador no dispositivo dele.</p><button type="button" class="btn-start btn-neo neo-solid neo-still" id="redePerguntaSim" style="--mc:#0891b2; --mc-glow:rgba(8,145,178,0.35);">🌐 Sim, abrir a sala</button><button type="button" class="chip" id="redePerguntaNao" style="margin-top:10px">Não, todo mundo neste aparelho</button></div>`;
   ov.querySelector("#redePerguntaSim").addEventListener("click", () => {
     ov.remove();
     redeTravasPerguntar(() => redeAbrirSala("internet") && redePainelHost());

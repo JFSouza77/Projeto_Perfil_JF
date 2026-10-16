@@ -6,6 +6,16 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.5.5 · 16/10/2026 · "Multiplayer Update · Online de verdade" = QoL DE CONFERÊNCIA (pedido do JF: estrutura, otimização, correção).
+          1) Cartas: 1000 cartas, 0 erros; auditor ganha checagens fixas (espaço sobrando, vírgula no fim, aspas,
+          turma desconhecida, "N letras" que não bate, número de carta pulado). 2) Casa: TypeScript passado por cima do
+          JS (ferramentas/checar_nomes.js, entra no npm run testes): 0 nome inexistente; ESLint: 0 código morto de verdade
+          (o que parecia sem uso é chamado por botão ou pelo build); sim.js → ferramentas/simular_equilibrio.js;
+          src/LEIA-ME.md refeito. 3) C.A.O.S.: 168 bancos e 17 geradores, todos em uso; docs/CAOS_Cerebro.md atualizado
+          da 4.1 à 4.4.2. 4) Acessibilidade: auditor de botões entende color-mix e passou a ver o Claro de verdade: 18
+          botões com contraste fraco corrigidos (texto mais escuro, botão cheio mais escuro) e o "Não" da pergunta do online
+          com 44 px; a bateria cobra BOTÕES OK. 5) Domínio: endereços num lugar só (JOGO_SITE, jogoSiteAtual), ORIGENS
+          comentado e docs/Dominio_Preparacao.md (nada trocado no ar).
   1.7.10.5.4 · 16/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.4.2: VOZ NOS DISPOSITIVOS + FALA MENOS.
           Revisão do pacote do GPT de 16/10 conferida no código (docs/Revisao_Pacote_GPT_2026-10-16.md). Corrigido: a voz
           no dispositivo do convidado saía sempre calma (agora usa a emoção da fala, "__emo:"); a fila do convidado cortava
@@ -825,7 +835,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.5.4</title>
+<title>Perfil JF · Beta 1.7.10.5.5</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6987,6 +6997,31 @@ body.claro .caos-pergunta button[data-v="digitar"] {
   border-color: #5b21b6;
   color: #fff;
 }
+/* 1.7.10.5.5 (auditoria de contraste no Claro, mínimo WCAG AA): texto colorido mais escuro nos chips, nos botões
+   secundários e na condição de vitória; botões cheios com fundo um pouco mais escuro pra letra branca aparecer. */
+body.claro .btn-start.btn-neo {
+  color: color-mix(in srgb, var(--mc, #6d4ad8) 45%, #1b1d33);
+}
+body.claro .splash-menu .chip,
+body.claro .splash-settings .chip {
+  color: color-mix(in srgb, var(--cc) 40%, #1b1d33);
+}
+body.claro .wincond-btn:not(.on) {
+  color: color-mix(in srgb, var(--wc, #6d4ad8) 42%, #1b1d33);
+}
+body.claro .btn-start.btn-neo.neo-solid:not(.neo-ghost),
+body.claro .btn-start.btn-neo.mc-confirm,
+body.claro .btn-neo.neo-solid:not(.neo-ghost):after,
+body.claro .btn-neo.mc-confirm:after {
+  background: color-mix(in srgb, var(--mc, #6d4ad8) 52%, #1b1d33);
+}
+body.claro #btnTutorial2.btn-neo {
+  color: color-mix(in srgb, var(--mc, #eab308) 32%, #1b1d33) !important;
+}
+body.claro #welcomeScreen .btn-sec,
+body.claro .btn-sec {
+  color: color-mix(in srgb, var(--cc, #6d4ad8) 40%, #1b1d33);
+}
 /* ----------------------------------------------------------------------
  * 7. BOTÕES ACESSÍVEIS (1.7.6 · Parte 2): resultado da auditoria dos botões
  * (ferramentas/auditar_botoes.js). Área de toque de pelo menos 44 px, contraste
@@ -9110,6 +9145,17 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
 @media (prefers-reduced-motion: reduce) {
   .number-btn.pedida, .telao-numeros .pedida { animation: none; }
 }
+
+/* 1.7.10.5.5 (auditoria de botões): "Não, todo mundo neste aparelho" com área de toque de 44 px e legível no Claro */
+#redePerguntaNao {
+  min-height: 44px;
+  padding: 10px 18px;
+}
+body.claro #redePerguntaNao {
+  color: #6b4204;
+  border-color: #c98a1e;
+  background: #fff4dc;
+}
 </style>
 </head>
 <body class="noturno">
@@ -9166,7 +9212,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.5.4 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.4.2 · Atualizada em 16/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.5.5 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.4.2 · Atualizada em 16/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -9434,7 +9480,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1815;
+const JOGO_BUILD = 1816;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -9728,7 +9774,7 @@ const GEMS_MIN_PLAYERS = 4;
 // "A Moda da Casa": no começo da partida o C.A.O.S. sorteia UM destes modos para a mesa toda.
 const CASA_MODOS = ["tabuleiro", "pontos", "joias"];
 // Meta de pontos da Moda da Casa (quando o sorteio cai em Pontos), por número de jogadores.
-// Simulação de equilíbrio (sim.js, 10 mil partidas por mesa): 200 deixa Pontos com a mesma
+// Simulação de equilíbrio (ferramentas/simular_equilibrio.js, 10 mil partidas por mesa): 200 deixa Pontos com a mesma
 // duração do Tabuleiro em qualquer mesa (a tabela 200..400 deixava Pontos até 141% mais longo).
 const CASA_META_PONTOS = { 2: 200, 3: 200, 4: 200, 5: 200, 6: 200 };
 // Na Moda da Casa sorteada em Joias, a joia vale com 1 dica real a mais que o limite do modo
@@ -10365,8 +10411,18 @@ const MODE_LABELS = {
   oldschool: "Perfil Old School",
 };
 const PAUSE_TIP_MS = 8e3;
-// Endereço público do jogo (vai no texto de Compartilhar resultado).
-const JOGO_URL = "https://jfsouza77.github.io/Projeto_Perfil_JF/";
+// ENDEREÇOS (1.7.10.5.5, portas pro domínio próprio): pra trocar o endereço do jogo, muda SÓ aqui
+// (JOGO_SITE) e põe o domínio novo em ORIGENS no servidor/wrangler.toml. O servidor da sala é REDE_SERVIDOR
+// (js/05k). Passo a passo e cuidados (save de cada aparelho fica no endereço antigo): docs/Dominio_Preparacao.md.
+const JOGO_SITE = "https://jfsouza77.github.io/Projeto_Perfil_JF/";
+// O endereço de onde o jogo foi aberto (no domínio novo, já aponta pra ele); no arquivo offline, o JOGO_SITE.
+function jogoSiteAtual() {
+  try {
+    if (/^https?:$/.test(location.protocol) && !/^(localhost|127\.|\[::1\])/.test(location.hostname))
+      return location.origin + location.pathname.replace(/[^/]*$/, "");
+  } catch (e) {}
+  return JOGO_SITE;
+}
 const ADM_CRIADOR_HASH = "f10d7ed5";
 const CAOS_PAUSA_DEGRAUS = [
   { s: 40, emo: "tedio", d: [0, -0.5, -0.5] },
@@ -16141,7 +16197,7 @@ function resultadoTexto() {
     (CURRENT_FORMAT === "equipe" ? " · Equipes" : "");
   const t = [cab, "", ...linhas];
   if (mvp) t.push("", "🌟 Estrela da partida: " + mvp.name);
-  t.push("", "Jogue também: " + JOGO_URL);
+  t.push("", "Jogue também: " + jogoSiteAtual());
   return t.join("\n");
 }
 async function compartilharResultado() {
@@ -20331,7 +20387,7 @@ const REDE_DO_HOST = ["bemvindo", "escolha", "recusa", "retrato", "segredo", "re
 const REDE_HOST_SUMIU_MS = typeof window !== "undefined" && Number.isFinite(window.__REDE_HOST_SUMIU_MS) ? window.__REDE_HOST_SUMIU_MS : 60000;
 const REDE_ONLINE_MS = 15000; // sem notícia há mais que isso: o convidado conta como fora
 const REDE_LETRAS_SALA = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // sem I e O (não confundem com 1 e 0)
-const REDE_SITE = "https://jfsouza77.github.io/Projeto_Perfil_JF/"; // link pros convidados (o host pode estar no offline)
+const REDE_SITE = JOGO_SITE; // link pros convidados quando o host está no offline (ver ENDEREÇOS em js/01)
 const REDE_PEER_PREFIXO = "perfiljf-sala-";
 const REDE_HOST_KEY = "perfil5_rede_host";
 const REDE_VOTO_MS = 20000;
@@ -20501,7 +20557,9 @@ const REDE_ICE = [
    Apresenta os aparelhos (no lugar do servidor público do PeerJS), lista as salas da mesma rede e entrega
    a ponte TURN do Cloudflare (1.000 GB/mês grátis). Vazio = só o público, como antes. Com ele, o público
    fica de reserva: o host abre a sala nos dois, e o convidado tenta o nosso e, se não achar, o público. */
-const REDE_SERVIDOR = "perfil-jf-sala.joaofe0000.workers.dev"; // endereço do Worker (conta do JF, 10/10/2026)
+// endereço do Worker (conta do JF, 10/10/2026). Com domínio próprio, pode virar um subdomínio (ex.: sala.dominio):
+// ver docs/Dominio_Preparacao.md
+const REDE_SERVIDOR = "perfil-jf-sala.joaofe0000.workers.dev";
 const REDE_SERVIDOR_CHAVE = "perfiljf";
 const REDE_PONTE_KEY = "perfil5_rede_ponte";
 let redePonte = null; // { iceServers, validade } vindo do servidor nosso
@@ -23142,7 +23200,7 @@ function redePerguntarSala() {
   const ov = document.createElement("div");
   ov.id = "redePergunta";
   ov.className = "jf-modal-bg";
-  ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Vai jogar online?</h3><p>Abrindo a sala, este aparelho vira o <b>host</b> da partida. Os outros entram com o <b>código da sala</b> (ou pelo link), você aceita a entrada e cada um cria o próprio jogador no dispositivo dele.</p><button type="button" class="btn-start btn-neo neo-solid neo-still" id="redePerguntaSim" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">🌐 Sim, abrir a sala</button><button type="button" class="chip" id="redePerguntaNao" style="margin-top:10px">Não, todo mundo neste aparelho</button></div>`;
+  ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Vai jogar online?</h3><p>Abrindo a sala, este aparelho vira o <b>host</b> da partida. Os outros entram com o <b>código da sala</b> (ou pelo link), você aceita a entrada e cada um cria o próprio jogador no dispositivo dele.</p><button type="button" class="btn-start btn-neo neo-solid neo-still" id="redePerguntaSim" style="--mc:#0891b2; --mc-glow:rgba(8,145,178,0.35);">🌐 Sim, abrir a sala</button><button type="button" class="chip" id="redePerguntaNao" style="margin-top:10px">Não, todo mundo neste aparelho</button></div>`;
   ov.querySelector("#redePerguntaSim").addEventListener("click", () => {
     ov.remove();
     redeTravasPerguntar(() => redeAbrirSala("internet") && redePainelHost());
@@ -28399,7 +28457,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.5.4 · C.A.O.S. 4.4.2</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.5.5 · C.A.O.S. 4.4.2</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -33530,7 +33588,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5.4 · C.A.O.S. 4.4.2)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5.5 · C.A.O.S. 4.4.2)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -37033,7 +37091,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.5.4 · C.A.O.S. 4.4.2");
+  L.push("- **Versão:** Beta 1.7.10.5.5 · C.A.O.S. 4.4.2");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -37556,7 +37614,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.5.4 · C.A.O.S. 4.4.2",
+        versao: "Beta 1.7.10.5.5 · C.A.O.S. 4.4.2",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -72955,6 +73013,18 @@ const PAUSE_TIPS = [
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.10.5.5",
+    data: "16/10/2026 · 19:19",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "Faxina geral: cartas conferidas, modo claro mais legível e a casa arrumada.",
+    itens: [
+      "☀️ Modo claro mais legível: botões com letra clara demais no modo claro ficaram mais escuros e fáceis de ler.",
+      "🌐 Pergunta do online maior: o botão Não, todo mundo neste aparelho ficou maior e mais fácil de tocar.",
+      "🃏 As 1000 cartas conferidas: dicas, números das cartas e textos passaram por uma revisão completa.",
+    ],
+    qol: [],
+  },
   {
     v: "Beta 1.7.10.5.4",
     data: "16/10/2026 · 15:20",

@@ -3,10 +3,10 @@
 // Reproduz as regras do modo Clássico (Versus) com o baralho real do mestre e compara
 // os três modos da Moda da Casa: Tabuleiro, Pontos e Joias.
 //
-//   node sim.js                    10 mil partidas por modo e por nº de jogadores (2 a 6)
-//   node sim.js --partidas 2000    outra quantidade
-//   node sim.js --historico arq.json   calibra a chance de acerto com partidas exportadas
-//   node sim.js --meta 200,250,300,350,400 --trava 2 --joias 4 --limite 5   testar outros números
+//   node ferramentas/simular_equilibrio.js                    10 mil partidas por modo e por nº de jogadores (2 a 6)
+//   node ferramentas/simular_equilibrio.js --partidas 2000    outra quantidade
+//   node ferramentas/simular_equilibrio.js --historico arq.json   calibra a chance de acerto com partidas exportadas
+//   node ferramentas/simular_equilibrio.js --meta 200,250,300,350,400 --trava 2 --joias 4 --limite 5   testar outros números
 //
 // Regras reproduzidas (iguais ao jogo):
 //   - carta de 20 entradas (dicas + especiais reais do baralho); quem responde escolhe um número;
@@ -51,11 +51,11 @@ let CURVA = (k) => Math.min(0.9, 0.06 + 0.035 * k); // k = dicas reais vistas (1
 // ---------------------------------------------------------------- baralho real
 function carregarBaralho() {
   const mestre = fs
-    .readdirSync(__dirname)
+    .readdirSync(path.join(__dirname, ".."))
     .filter((f) => /^Perfil_JF_Mestre_.*\.html$/.test(f))
     .sort()
     .pop();
-  const html = fs.readFileSync(path.join(__dirname, mestre), "utf8");
+  const html = fs.readFileSync(path.join(__dirname, "..", mestre), "utf8");
   const js = /<script>([\s\S]*?)<\/script>/.exec(html)[1];
   const ast = acorn.parse(js, { ecmaVersion: "latest" });
   for (const n of ast.body)
