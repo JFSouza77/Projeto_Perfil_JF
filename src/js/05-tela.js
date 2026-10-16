@@ -654,7 +654,7 @@ function render() {
       ${VERSO_EMBLEMA_SVG}
       <div class="verso-frase">Você sabe dizer quem sou?!</div>
       <div class="mestre-da-vez">Mestre da rodada: ${mestreBadge}</div>
-      <div>Só o Mestre segura o celular e vira a carta quando estiver pronto.</div>
+      <div>Só o Mestre segura o dispositivo e vira a carta quando estiver pronto.</div>
       <button class="flip-btn" id="flipBtn">↻ Virar carta</button>
     `;
     drawBtn.style.display = "none";
@@ -2748,14 +2748,14 @@ function buildRulesSummaryHtml() {
   if (c.express) {
     li.push("🎯 <b>Objetivo:</b> somar mais pontos até o baralho acabar.");
     li.push(
-      '🎙️ <b>Mestre:</b> segura o celular, fala a categoria (<i>"Eu sou uma PESSOA"</i>) e lê as dicas. <b>Nunca</b> fala a resposta.',
+      '🎙️ <b>Mestre:</b> segura o dispositivo, fala a categoria (<i>"Eu sou uma PESSOA"</i>) e lê as dicas. <b>Nunca</b> fala a resposta.',
     );
     li.push("💬 <b>Jogo:</b> as dicas abrem sozinhas. Quem souber, fala. O Mestre toca em <b>Acertou</b> e escolhe quem foi.");
     li.push(`🧮 <b>Pontos:</b> 11 menos as dicas abertas. A carta tem ${c.card} e cada vez tem ${c.turn}s.`);
   } else {
     li.push(`🎯 <b>Objetivo (${WIN_CONDITIONS[winCond()].label}):</b> ${winCondRuleText(c.goal)}`);
     li.push(
-      '🎙️ <b>Mestre:</b> segura o celular, fala a categoria (<i>"Eu sou uma PESSOA"</i>) e lê as dicas. <b>Nunca</b> fala a resposta.',
+      '🎙️ <b>Mestre:</b> segura o dispositivo, fala a categoria (<i>"Eu sou uma PESSOA"</i>) e lê as dicas. <b>Nunca</b> fala a resposta.',
     );
     li.push(
       `💬 <b>Sua vez:</b> escolha um número de 1 a ${c.hard ? 10 : 20}, ouça a dica e dê <b>um</b> palpite. Errou? A vez passa.`,
@@ -2815,7 +2815,7 @@ function buildRulesHtml() {
     );
   } else {
     li.push(
-      `💬 <b>A vez:</b> só quem está na vez responde. Escolha um número, ouça a dica e dê <b>um</b> palpite.${typeof salaOnlineAberta === "function" && salaOnlineAberta() ? " No online, você toca no número no seu celular e o Mestre só abre a dica pedida." : ""}`,
+      `💬 <b>A vez:</b> só quem está na vez responde. Escolha um número, ouça a dica e dê <b>um</b> palpite.${typeof salaOnlineAberta === "function" && salaOnlineAberta() ? " No online, você toca no número no seu dispositivo e o Mestre só abre a dica pedida." : ""}`,
     );
     li.push(
       `⏱️ <b>Tempo:</b> ${c.pick}s pra escolher a dica e ${c.resp}s pra responder. Não escolheu a tempo? Perde a vez. Não respondeu? Conta como erro.`,

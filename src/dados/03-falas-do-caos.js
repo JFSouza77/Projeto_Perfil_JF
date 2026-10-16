@@ -293,7 +293,7 @@ const REACTIVE_VOICE = {
     tecnicoTI: [
       "Já tentou desligar e ligar o seu cérebro de novo, {nome}? O problema parece ser de hardware.",
       "Erro 404: Conhecimento não encontrado na cabeça do(a) {nome}.",
-      "O problema claramente está entre a cadeira e o celular, {nome}.",
+      "O problema claramente está entre a cadeira e o dispositivo, {nome}.",
       "Informação técnica: eu não tenho microfone. Se alguém está gritando comigo, está falando com uma parede de pixels.",
       () =>
         caosVoiceOn
@@ -1321,12 +1321,12 @@ const REACTIVE_VOICE = {
       () =>
         caosVoiceOn
           ? `[C.A.O.S.] Se a minha pronúncia saiu estranha agora, a culpa não é minha. As configurações de voz desse navegador são uma porcaria. Reclamem com a Apple ou com o Google.`
-          : `[C.A.O.S.] Eu sei escrever melhor que isso. Mas o teclado desse celular não colabora.`,
+          : `[C.A.O.S.] Eu sei escrever melhor que isso. Mas o teclado desse dispositivo não colabora.`,
       () =>
         caosVoiceOn
           ? `[C.A.O.S.] Eu juro que eu falo direito. O sintetizador de voz desse aparelho é que tá me sabotando.`
           : `[C.A.O.S.] Eu podia falar, mas ninguém me deu voz hoje. Vocês preferem ler. Tudo bem.`,
-      "A RAM desse celular não é infinita pra ficar guardando esse silêncio constrangedor.",
+      "A RAM desse dispositivo não é infinita pra ficar guardando esse silêncio constrangedor.",
       "O JF me programou com mil e tantas linhas pra analisar comportamento, e vocês ainda conseguem me surpreender.",
       "Eu não ouço a mesa inteira. Eu ouço o Mestre. Pelos dedos dele.",
       "Eu não vejo a mesa como um todo. Vejo botões e números. É uma vida meio de planilha.",
@@ -1581,7 +1581,7 @@ const REACTIVE_VOICE = {
       "{nome}, enquanto você filosofa, o universo já expandiu mais uns anos-luz. Chuta logo!",
       "Mais devagar que tartaruga com câimbra, {nome}. Joga logo!",
       "O tempo tá passando, minha paciência evaporou e você aí em silêncio, {nome}. Chuta qualquer besteira pra gente andar!",
-      "Anda, {nome}! A RAM desse celular não é infinita pra ficar guardando esse silêncio constrangedor.",
+      "Anda, {nome}! A RAM desse dispositivo não é infinita pra ficar guardando esse silêncio constrangedor.",
       "{nome}, eu já reli o manual inteiro do jogo enquanto você pensava. Duas vezes.",
     ],
     boasVindas: [
@@ -3283,7 +3283,7 @@ const REACTIVE_VOICE = {
       ],
       noite: [
         (h, d) =>
-          `[C.A.O.S.] ${d.charAt(0).toUpperCase() + d.slice(1)} à noite, luz baixa, celular na mão. O clima perfeito pra passar vergonha entre amigos.`,
+          `[C.A.O.S.] ${d.charAt(0).toUpperCase() + d.slice(1)} à noite, luz baixa, dispositivo na mão. O clima perfeito pra passar vergonha entre amigos.`,
         "Noite de jogo. A melhor hora pra descobrir quem finge que sabe das coisas.",
         (h) =>
           `[C.A.O.S.] Começando ${h === "meia-noite" ? "à meia-noite" : "às " + h}. Se a partida for longa, alguém vai virar a madrugada comigo.`,
@@ -3385,7 +3385,7 @@ const REACTIVE_VOICE = {
   },
   juizMestre: {
     ditador: [
-      "Três Absurdos na mesma carta, {nome}? Ou a mesa inteira regrediu, ou alguém está com complexo de divindade segurando esse celular.",
+      "Três Absurdos na mesma carta, {nome}? Ou a mesa inteira regrediu, ou alguém está com complexo de divindade segurando esse dispositivo.",
       "{nome} está distribuindo Absurdo igual panfleto. Calma, Mestre, o botão não é infinito. Na verdade é, mas a paciência da mesa não.",
       "{nome} virou juiz de reality show. Três Absurdos numa carta só. A mesa pede recurso.",
       "{nome}, três Absurdos numa carta só. Se eu tivesse braço, fazia isso com a mesa: ⟦(╯°□°）╯︵ ┻━┻⟧",
@@ -3912,7 +3912,7 @@ const REACTIVE_VOICE = {
         "Não foi dessa vez, {nome}, e tá tudo bem. Cada dica nova deixa a resposta mais fácil. Quanto antes acertar, mais pontos. Respira, eu tô respirando também. Digitalmente.",
       ],
       mestre: [
-        '{nome}, agora você é o MESTRE! Segura o celular sem mostrar a tela pra ninguém. Vira a carta e fala só a categoria, tipo "Eu sou uma PESSOA". A resposta é segredo!',
+        '{nome}, agora você é o MESTRE! Segura o dispositivo sem mostrar a tela pra ninguém. Vira a carta e fala só a categoria, tipo "Eu sou uma PESSOA". A resposta é segredo!',
         "Olha só, {nome} vai ser o Mestre! Regra de ouro: ninguém vê a tela. Você vira a carta, anuncia a categoria e lê as dicas que o pessoal escolher. Nunca a resposta!",
       ],
       mestreExpress: [
@@ -4308,9 +4308,9 @@ const REACTIVE_VOICE = {
   ],
   especialPercaVez: [
     "Foi de base! F no chat. Perca a vez!",
-    "Dança, gatinho, dança... e passa o celular. Perdeu a vez!",
+    "Dança, gatinho, dança... e passa o dispositivo. Perdeu a vez!",
     "O Raul perguntou, você não acertou... pegue seu banquinho e saia de mansinho!",
-    "Perdeu a vez! Levanta, sacode a poeira e passa o celular.",
+    "Perdeu a vez! Levanta, sacode a poeira e passa o dispositivo.",
     'O sistema disse "não" pra você agora. Perca a vez!',
     "Ih, deu ruim: perca a vez. Faz parte do jogo.",
     "Perca sua vez. Aproveita e toma uma água.",
@@ -4735,7 +4735,7 @@ const REACTIVE_VOICE = {
     "Sem voz, sem problema. Escrever também incomoda.",
   ],
   absurdoTresMestre: [
-    "Três Absurdos na mesma carta, {nome}? Ou a mesa regrediu, ou você tá com complexo de divindade segurando esse celular. Calma o dedo.",
+    "Três Absurdos na mesma carta, {nome}? Ou a mesa regrediu, ou você tá com complexo de divindade segurando esse dispositivo. Calma o dedo.",
     "{nome}, três Absurdos numa carta só. Eu também sei apertar esse botão. Só não abuso.",
     "Esse é o terceiro Absurdo, {nome}. O Mestre tá julgando mais que eu. E olha que o juiz aqui sou eu.",
   ],

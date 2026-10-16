@@ -14,6 +14,7 @@
           número só na T2 (telão e celulares; a tela do Mestre fica como era). Testes novos no teste_rede.
           C.A.O.S. 4.4.1 (relato do JF): tocar na dica já aberta não fazia ele reagir (o respiro da 4.3 cortava a fala
           calado e gastava a chance). Agora é resposta ao toque: passa pelo respiro; se ele está falando, não gasta nada.
+          Regras e manual conferidos com as mecânicas novas (passo 3, Ficha de palpite, Online: como funciona e Quem toca o quê).
   1.7.10.5.2 · 15/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.4: MOTORES DE FALA CALIBRADOS. + CORREÇÃO: Mestre em outro aparelho via "Dica N: null" (a dica pendente saiu do retrato na 4.2; agora vai junto com a resposta, só pro aparelho do Mestre). Achado pela Gameez (Júlia) e pelo Henrique (Carro Pika).
           Pedido do JF: as falas montadas têm que fazer sentido. 1) Auditoria (ferramentas/caos_auditar_geradores.js): 4.800
           falas dos 18 geradores; ~35% saíam com defeito (fecho genérico grudado, ideias empilhadas, mesma expressão em dois
@@ -10614,7 +10615,7 @@ let expressWhoFreeze = null;
 let expressTargetAction = null;
 let rouletteToken = 0;
 let roletaRetomar = false; // 1.7.10.1: recarregou no meio do giro: a roleta gira de novo (não pousa sozinha)
-let roletaPousou = false; // 1.7.10.1: a roleta desta carta já parou na categoria (só então os celulares veem a categoria)
+let roletaPousou = false; // 1.7.10.1: a roleta desta carta já parou na categoria (só então os dispositivos veem a categoria)
 let roletaCarta = null; // 1.7.8.9: carta cuja roleta já foi aberta (render() redesenha a roleta, não as costas)
 let answerRevealUntil = 0;
 // Carta cuja resposta o Mestre já escondeu com um toque (antes da 1ª dica).
@@ -14601,7 +14602,7 @@ function render() {
       ${VERSO_EMBLEMA_SVG}
       <div class="verso-frase">Você sabe dizer quem sou?!</div>
       <div class="mestre-da-vez">Mestre da rodada: ${mestreBadge}</div>
-      <div>Só o Mestre segura o celular e vira a carta quando estiver pronto.</div>
+      <div>Só o Mestre segura o dispositivo e vira a carta quando estiver pronto.</div>
       <button class="flip-btn" id="flipBtn">↻ Virar carta</button>
     `;
     drawBtn.style.display = "none";
@@ -16695,14 +16696,14 @@ function buildRulesSummaryHtml() {
   if (c.express) {
     li.push("🎯 <b>Objetivo:</b> somar mais pontos até o baralho acabar.");
     li.push(
-      '🎙️ <b>Mestre:</b> segura o celular, fala a categoria (<i>"Eu sou uma PESSOA"</i>) e lê as dicas. <b>Nunca</b> fala a resposta.',
+      '🎙️ <b>Mestre:</b> segura o dispositivo, fala a categoria (<i>"Eu sou uma PESSOA"</i>) e lê as dicas. <b>Nunca</b> fala a resposta.',
     );
     li.push("💬 <b>Jogo:</b> as dicas abrem sozinhas. Quem souber, fala. O Mestre toca em <b>Acertou</b> e escolhe quem foi.");
     li.push(`🧮 <b>Pontos:</b> 11 menos as dicas abertas. A carta tem ${c.card} e cada vez tem ${c.turn}s.`);
   } else {
     li.push(`🎯 <b>Objetivo (${WIN_CONDITIONS[winCond()].label}):</b> ${winCondRuleText(c.goal)}`);
     li.push(
-      '🎙️ <b>Mestre:</b> segura o celular, fala a categoria (<i>"Eu sou uma PESSOA"</i>) e lê as dicas. <b>Nunca</b> fala a resposta.',
+      '🎙️ <b>Mestre:</b> segura o dispositivo, fala a categoria (<i>"Eu sou uma PESSOA"</i>) e lê as dicas. <b>Nunca</b> fala a resposta.',
     );
     li.push(
       `💬 <b>Sua vez:</b> escolha um número de 1 a ${c.hard ? 10 : 20}, ouça a dica e dê <b>um</b> palpite. Errou? A vez passa.`,
@@ -16762,7 +16763,7 @@ function buildRulesHtml() {
     );
   } else {
     li.push(
-      `💬 <b>A vez:</b> só quem está na vez responde. Escolha um número, ouça a dica e dê <b>um</b> palpite.`,
+      `💬 <b>A vez:</b> só quem está na vez responde. Escolha um número, ouça a dica e dê <b>um</b> palpite.${typeof salaOnlineAberta === "function" && salaOnlineAberta() ? " No online, você toca no número no seu dispositivo e o Mestre só abre a dica pedida." : ""}`,
     );
     li.push(
       `⏱️ <b>Tempo:</b> ${c.pick}s pra escolher a dica e ${c.resp}s pra responder. Não escolheu a tempo? Perde a vez. Não respondeu? Conta como erro.`,
@@ -17857,7 +17858,7 @@ function acessPainelAbrir() {
         <input id="acessVolVoz" type="range" min="0" max="1" step="0.05" value="${acessCfg.volVoz}"></div>
       <div class="acess-grupo"><label class="acess-rot" for="acessVolSom">🎵 Volume dos sons <b>${Math.round(acessCfg.volSom * 100)}%</b></label>
         <input id="acessVolSom" type="range" min="0" max="1" step="0.05" value="${acessCfg.volSom}"></div>
-      <div class="acess-nota">🥔 O Modo Batata (menu ⋮) é outra coisa: deixa o jogo leve pra celular fraco e desliga neon, brilho e efeitos.</div>
+      <div class="acess-nota">🥔 O Modo Batata (menu ⋮) é outra coisa: deixa o jogo leve pra dispositivo fraco e desliga neon, brilho e efeitos.</div>
       <div class="acess-nota">🌎 Idioma: Português (Brasil). Outros idiomas vêm numa próxima atualização.</div>
       <div class="acess-acoes"><button type="button" class="acess-fechar" id="acessFechar">Pronto</button></div>`;
     box.querySelectorAll("[data-letra]").forEach((b) =>
@@ -19863,7 +19864,7 @@ const TAB_LOBBY_SEG = 60;
 const TAB_LOBBY_KEY = "perfil5_tab_lobby";
 let tabLobbyPendente = false; // uma carta acabou (checkWinnerThenDraw): abre quando a próxima estiver pronta
 let tabLobbyRelogio = null;
-let tabLobbyFim = 0; // quando o intervalo acaba (vai pros celulares da sala: só o host segue)
+let tabLobbyFim = 0; // quando o intervalo acaba (vai pros dispositivos da sala: só o host segue)
 let tabLobbyAntes = null; // casa de cada peça no lobby anterior (pra mostrar quanto andou)
 let tabLobbyAntesVelho = null; // o de antes do último lobby (o Desfazer volta pra ele)
 
@@ -21366,7 +21367,7 @@ function redeCadastroInfo() {
   const na = players.filter((p) => redeOnline(rede.assentos[p.id])).map((p) => escapeHtml(p.name));
   const esperando = Object.keys(rede.esperando).length;
   info.innerHTML =
-    `Cadastre todo mundo aqui: cada um escolhe o próprio nome no celular.` +
+    `Cadastre todo mundo aqui: cada um escolhe o próprio nome no dispositivo.` +
     (na.length ? `<br>🟢 Na sala: ${na.join(", ")}` : "") +
     (esperando ? `<br>⏳ ${esperando} aparelho${esperando === 1 ? "" : "s"} esperando o nome aparecer` : "");
 }
@@ -21683,7 +21684,7 @@ function redeHostAdicionarPerfil(perfil) {
     idade: isEquipe ? (faixa ? (faixa === "crianca" ? "menor" : "maior") : null) : IDADE_OPCOES.some((o) => o.id === perfil.idade) ? perfil.idade : null,
     team: null,
     nickMs: null,
-    aparelho: "celular",
+    aparelho: "dispositivo",
   };
   players.push(p);
   try {
@@ -22009,7 +22010,7 @@ function redeHostPublicar(forcar) {
 }
 
 /* --- 1.7.9.4 · Tela do host quando o Mestre está em outro aparelho (relato do JF no 1º teste: a Anne era a
-   Mestre no tablet dela e o celular do host continuava com a tela do Mestre, com carta e resposta) ---
+   Mestre no tablet dela e o dispositivo do host continuava com a tela do Mestre, com carta e resposta) ---
    Se o Mestre da vez está na sala num aparelho próprio, este aparelho vira a tela de um jogador: o mesmo
    retrato público dos convidados, os números da dica na vez de quem joga aqui e o Pausar. A carta, a
    resposta e os botões do Mestre ficam escondidos por baixo. Mestre sem aparelho (joga no do host), ou que
@@ -22028,7 +22029,7 @@ function redeSemAparelho() {
 function redeAvisarSemAparelho() {
   const nomes = redeSemAparelho().map((p) => p.name);
   caosAvisoModal(
-    `Antes de começar, diga onde cada um joga: ${nomes.join(", ")} ${nomes.length === 1 ? "ainda não está" : "ainda não estão"} na sala. Entre pelo celular ou marque em "Quem joga neste aparelho?".`,
+    `Antes de começar, diga onde cada um joga: ${nomes.join(", ")} ${nomes.length === 1 ? "ainda não está" : "ainda não estão"} na sala. Entre pelo dispositivo ou marque em "Quem joga neste aparelho?".`,
     () => redePainelHost(),
   );
 }
@@ -22083,7 +22084,7 @@ function redeHostVista() {
   let h = `<div class="rede-eu">${eus.length ? `Neste aparelho: <b>${eus.map(nome).join("</b> e <b>")}</b>${vez ? ` · 👉 vez de ${nome(daVez)}` : ""}` : "Este aparelho é a mesa"}</div>`;
   h += `<div class="rede-segredo">🔒 A carta e a resposta estão no aparelho de <b>${mestre ? nome(mestre) : "quem é o Mestre"}</b> (Mestre da vez).</div>`;
   if (vez && cardState === "revealed" && pendingIndex === null && !pausedAt)
-    h += `<div class="rede-rot">👉 Sua vez: fale um número de dica pro Mestre abrir.</div>`; // 1.7.9.6: só o Mestre abre
+    h += `<div class="rede-rot">👉 Sua vez: toque no número (ou fale) e o Mestre abre a dica.</div>`; // 1.7.9.6: só o Mestre abre
   const ops = [];
   eus.forEach((p) => redeOpcoes(p.id).forEach((o) => o.a !== "pausar" && ops.push({ ...o, quem: p.id })));
   if (ops.length) h += `<div class="rede-acoes">${ops.map((o, i) => `<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`).join("")}</div>`;
@@ -22130,8 +22131,8 @@ function redeVotacaoAbrir(tipo, pedidoPor) {
     const m = jogadorPorId(pedidoPor) || players[mestreIndex] || { name: "O Mestre" };
     showToastMessage(
       tipo === "descartar"
-        ? `[C.A.O.S.] ${m.name} quer DESCARTAR esta carta porque achou difícil demais. Todos de acordo? Votem no celular.`
-        : `[C.A.O.S.] ${m.name} quer DESISTIR desta carta. Todos de acordo? Votem no celular.`,
+        ? `[C.A.O.S.] ${m.name} quer DESCARTAR esta carta porque achou difícil demais. Todos de acordo? Votem no dispositivo.`
+        : `[C.A.O.S.] ${m.name} quer DESISTIR desta carta. Todos de acordo? Votem no dispositivo.`,
       null,
       true,
     );
@@ -23112,7 +23113,7 @@ function redePerguntarSala() {
   const ov = document.createElement("div");
   ov.id = "redePergunta";
   ov.className = "jf-modal-bg";
-  ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Vai jogar online?</h3><p>Abrindo a sala, este aparelho vira o <b>host</b> da partida. Os outros entram com o <b>código da sala</b> (ou pelo link), você aceita a entrada e cada um cria o próprio jogador no celular dele.</p><button type="button" class="btn-start btn-neo neo-solid neo-still" id="redePerguntaSim" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">🌐 Sim, abrir a sala</button><button type="button" class="chip" id="redePerguntaNao" style="margin-top:10px">Não, todo mundo neste aparelho</button></div>`;
+  ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Vai jogar online?</h3><p>Abrindo a sala, este aparelho vira o <b>host</b> da partida. Os outros entram com o <b>código da sala</b> (ou pelo link), você aceita a entrada e cada um cria o próprio jogador no dispositivo dele.</p><button type="button" class="btn-start btn-neo neo-solid neo-still" id="redePerguntaSim" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">🌐 Sim, abrir a sala</button><button type="button" class="chip" id="redePerguntaNao" style="margin-top:10px">Não, todo mundo neste aparelho</button></div>`;
   ov.querySelector("#redePerguntaSim").addEventListener("click", () => {
     ov.remove();
     redeTravasPerguntar(() => redeAbrirSala("internet") && redePainelHost());
@@ -23208,7 +23209,7 @@ function redeQrHtml(link) {
     const qr = qrcode(0, "M");
     qr.addData(link);
     qr.make();
-    return `<div class="rede-qr" aria-label="QR Code do link da sala">${qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true })}</div><div class="rede-qr-rot">📷 Quem está perto: aponte a câmera do celular</div>`;
+    return `<div class="rede-qr" aria-label="QR Code do link da sala">${qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true })}</div><div class="rede-qr-rot">📷 Quem está perto: aponte a câmera do dispositivo</div>`;
   } catch (e) {
     return "";
   }
@@ -23246,7 +23247,7 @@ function redePainelHost() {
     if (!ov.isConnected && ov._montado) return;
     if (!rede || rede.papel !== "host") {
       const temNet = redeTemInternet();
-      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Jogar online</h3><p>Abra uma sala: cada jogador entra pelo link no próprio celular, escolhe quem é e joga de lá. Este aparelho continua com a partida.</p><button type="button" class="chip" id="redeComo">❓ Como funciona (passo a passo)</button>${
+      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Jogar online</h3><p>Abra uma sala: cada jogador entra pelo link no próprio dispositivo, escolhe quem é e joga de lá. Este aparelho continua com a partida.</p><button type="button" class="chip" id="redeComo">❓ Como funciona (passo a passo)</button>${
         temNet ? `<button type="button" class="btn-start btn-neo neo-solid neo-still" id="redeAbrirNet" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">Abrir sala pela internet</button>` : `<p><small>Este navegador não tem como abrir sala pela internet.</small></p>`
       }<button type="button" class="chip" id="redeAbrirLocal">Ensaio neste navegador (abas)</button><button type="button" class="chip" id="redeOk" style="margin-top:10px">Fechar</button></div>`;
       const net = ov.querySelector("#redeAbrirNet");
@@ -23288,7 +23289,7 @@ function redePainelHost() {
       ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Sala ${rede.sala}</h3><div class="rede-estado">${rede.modo === "local" ? "🧪 Ensaio em abas deste navegador" : REDE_ESTADO_HOST[est] || est}</div>${erro}<div class="rede-codigo-rot">Código da sala</div><div class="rede-codigo">${rede.sala}</div>${redeQrHtml(redeLinkDaSala())}<p class="rede-rot">Quem vai jogar abre o jogo, toca em <b>🌐 Jogar online</b> e digita o código. Ou mande o link:</p><code class="rede-link">${escapeHtml(redeLinkDaSala())}</code><button type="button" class="chip" id="redeCopiar">📋 Copiar link</button>${
         navigator.share ? '<button type="button" class="chip" id="redeCompartilhar">📤 Compartilhar</button>' : ""
       }<div class="rede-rot-eu">Quem joga neste aparelho? <small>(pode marcar mais de um)</small><div class="rede-eu-lista">${opcoesEu || "<small>Ninguém cadastrado ainda.</small>"}</div><small>${
-        players.length ? "Marque quem joga neste aparelho, inclusive quem não tem celular e divide este. Nenhum marcado = o aparelho é só a mesa. A carta só aparece aqui quando o Mestre é alguém daqui (ou não tem aparelho)." : "Mande o código (ou o link): cada um cria o próprio jogador no celular, e você aceita a entrada aqui. Quem joga neste aparelho você cadastra como sempre."
+        players.length ? "Marque quem joga neste aparelho, inclusive quem não tem dispositivo e divide este. Nenhum marcado = o aparelho é só a mesa. A carta só aparece aqui quando o Mestre é alguém daqui (ou não tem aparelho)." : "Mande o código (ou o link): cada um cria o próprio jogador no dispositivo, e você aceita a entrada aqui. Quem joga neste aparelho você cadastra como sempre."
       }</small></div><ul class="rede-lista">${lugares}</ul>${
         rede.modo === "local" ? '<button type="button" class="chip" id="redeAbrirAba">Abrir uma aba de convidado</button>' : ""
       }<button type="button" class="chip" id="redeComoSala">❓ Como funciona</button><button type="button" class="chip" id="redeFecharSala">Fechar a sala</button><button type="button" class="chip" id="redeOk" style="margin-top:10px">Fechar</button></div>`;
@@ -33739,10 +33740,10 @@ function caosVinculoCorte() {
   if (m) caosVincRessent(m, 1, "cortou a fala");
 }
 function caosVinculoNaoCurti() {
-  if (salaOnlineAberta()) return; // C.A.O.S. 4.2: o 👎 no online não é de quem "segura o celular"
+  if (salaOnlineAberta()) return; // C.A.O.S. 4.2: o 👎 no online não é de quem "segura o dispositivo"
   const m = mestreIndex !== null && mestreIndex !== void 0 && starterChosen && !gameEnded ? players[mestreIndex] : null;
   if (!m || !caosVincElegivelDesafeto(m)) return;
-  caosVincRessent(m, 1, "👎 (palpite: quem segurava o celular)");
+  caosVincRessent(m, 1, "👎 (palpite: quem segurava o dispositivo)");
   if (!caosVinc.acusou[m.name] && Math.random() < 0.4) {
     caosVinc.acusou[m.name] = 1;
     caosFalaAgendar(() => getRandomReaction(REACTIVE_VOICE.vinculo.acusa, m.name), 1800, "baixa");
@@ -66668,7 +66669,7 @@ const REACTIVE_VOICE = {
     tecnicoTI: [
       "Já tentou desligar e ligar o seu cérebro de novo, {nome}? O problema parece ser de hardware.",
       "Erro 404: Conhecimento não encontrado na cabeça do(a) {nome}.",
-      "O problema claramente está entre a cadeira e o celular, {nome}.",
+      "O problema claramente está entre a cadeira e o dispositivo, {nome}.",
       "Informação técnica: eu não tenho microfone. Se alguém está gritando comigo, está falando com uma parede de pixels.",
       () =>
         caosVoiceOn
@@ -67696,12 +67697,12 @@ const REACTIVE_VOICE = {
       () =>
         caosVoiceOn
           ? `[C.A.O.S.] Se a minha pronúncia saiu estranha agora, a culpa não é minha. As configurações de voz desse navegador são uma porcaria. Reclamem com a Apple ou com o Google.`
-          : `[C.A.O.S.] Eu sei escrever melhor que isso. Mas o teclado desse celular não colabora.`,
+          : `[C.A.O.S.] Eu sei escrever melhor que isso. Mas o teclado desse dispositivo não colabora.`,
       () =>
         caosVoiceOn
           ? `[C.A.O.S.] Eu juro que eu falo direito. O sintetizador de voz desse aparelho é que tá me sabotando.`
           : `[C.A.O.S.] Eu podia falar, mas ninguém me deu voz hoje. Vocês preferem ler. Tudo bem.`,
-      "A RAM desse celular não é infinita pra ficar guardando esse silêncio constrangedor.",
+      "A RAM desse dispositivo não é infinita pra ficar guardando esse silêncio constrangedor.",
       "O JF me programou com mil e tantas linhas pra analisar comportamento, e vocês ainda conseguem me surpreender.",
       "Eu não ouço a mesa inteira. Eu ouço o Mestre. Pelos dedos dele.",
       "Eu não vejo a mesa como um todo. Vejo botões e números. É uma vida meio de planilha.",
@@ -67956,7 +67957,7 @@ const REACTIVE_VOICE = {
       "{nome}, enquanto você filosofa, o universo já expandiu mais uns anos-luz. Chuta logo!",
       "Mais devagar que tartaruga com câimbra, {nome}. Joga logo!",
       "O tempo tá passando, minha paciência evaporou e você aí em silêncio, {nome}. Chuta qualquer besteira pra gente andar!",
-      "Anda, {nome}! A RAM desse celular não é infinita pra ficar guardando esse silêncio constrangedor.",
+      "Anda, {nome}! A RAM desse dispositivo não é infinita pra ficar guardando esse silêncio constrangedor.",
       "{nome}, eu já reli o manual inteiro do jogo enquanto você pensava. Duas vezes.",
     ],
     boasVindas: [
@@ -69658,7 +69659,7 @@ const REACTIVE_VOICE = {
       ],
       noite: [
         (h, d) =>
-          `[C.A.O.S.] ${d.charAt(0).toUpperCase() + d.slice(1)} à noite, luz baixa, celular na mão. O clima perfeito pra passar vergonha entre amigos.`,
+          `[C.A.O.S.] ${d.charAt(0).toUpperCase() + d.slice(1)} à noite, luz baixa, dispositivo na mão. O clima perfeito pra passar vergonha entre amigos.`,
         "Noite de jogo. A melhor hora pra descobrir quem finge que sabe das coisas.",
         (h) =>
           `[C.A.O.S.] Começando ${h === "meia-noite" ? "à meia-noite" : "às " + h}. Se a partida for longa, alguém vai virar a madrugada comigo.`,
@@ -69760,7 +69761,7 @@ const REACTIVE_VOICE = {
   },
   juizMestre: {
     ditador: [
-      "Três Absurdos na mesma carta, {nome}? Ou a mesa inteira regrediu, ou alguém está com complexo de divindade segurando esse celular.",
+      "Três Absurdos na mesma carta, {nome}? Ou a mesa inteira regrediu, ou alguém está com complexo de divindade segurando esse dispositivo.",
       "{nome} está distribuindo Absurdo igual panfleto. Calma, Mestre, o botão não é infinito. Na verdade é, mas a paciência da mesa não.",
       "{nome} virou juiz de reality show. Três Absurdos numa carta só. A mesa pede recurso.",
       "{nome}, três Absurdos numa carta só. Se eu tivesse braço, fazia isso com a mesa: ⟦(╯°□°）╯︵ ┻━┻⟧",
@@ -70287,7 +70288,7 @@ const REACTIVE_VOICE = {
         "Não foi dessa vez, {nome}, e tá tudo bem. Cada dica nova deixa a resposta mais fácil. Quanto antes acertar, mais pontos. Respira, eu tô respirando também. Digitalmente.",
       ],
       mestre: [
-        '{nome}, agora você é o MESTRE! Segura o celular sem mostrar a tela pra ninguém. Vira a carta e fala só a categoria, tipo "Eu sou uma PESSOA". A resposta é segredo!',
+        '{nome}, agora você é o MESTRE! Segura o dispositivo sem mostrar a tela pra ninguém. Vira a carta e fala só a categoria, tipo "Eu sou uma PESSOA". A resposta é segredo!',
         "Olha só, {nome} vai ser o Mestre! Regra de ouro: ninguém vê a tela. Você vira a carta, anuncia a categoria e lê as dicas que o pessoal escolher. Nunca a resposta!",
       ],
       mestreExpress: [
@@ -70683,9 +70684,9 @@ const REACTIVE_VOICE = {
   ],
   especialPercaVez: [
     "Foi de base! F no chat. Perca a vez!",
-    "Dança, gatinho, dança... e passa o celular. Perdeu a vez!",
+    "Dança, gatinho, dança... e passa o dispositivo. Perdeu a vez!",
     "O Raul perguntou, você não acertou... pegue seu banquinho e saia de mansinho!",
-    "Perdeu a vez! Levanta, sacode a poeira e passa o celular.",
+    "Perdeu a vez! Levanta, sacode a poeira e passa o dispositivo.",
     'O sistema disse "não" pra você agora. Perca a vez!',
     "Ih, deu ruim: perca a vez. Faz parte do jogo.",
     "Perca sua vez. Aproveita e toma uma água.",
@@ -71110,7 +71111,7 @@ const REACTIVE_VOICE = {
     "Sem voz, sem problema. Escrever também incomoda.",
   ],
   absurdoTresMestre: [
-    "Três Absurdos na mesma carta, {nome}? Ou a mesa regrediu, ou você tá com complexo de divindade segurando esse celular. Calma o dedo.",
+    "Três Absurdos na mesma carta, {nome}? Ou a mesa regrediu, ou você tá com complexo de divindade segurando esse dispositivo. Calma o dedo.",
     "{nome}, três Absurdos numa carta só. Eu também sei apertar esse botão. Só não abuso.",
     "Esse é o terceiro Absurdo, {nome}. O Mestre tá julgando mais que eu. E olha que o juiz aqui sou eu.",
   ],
@@ -72399,7 +72400,7 @@ const TUTORIAL_STEPS = [
     sec: 2,
     icon: "🎙️",
     title: "O Mestre",
-    text: "A cada carta, uma pessoa é o <b>Mestre</b>: segura o celular, <b>não mostra a tela</b> pra ninguém e lê tudo em voz alta. Os outros tentam adivinhar. Na carta seguinte, o celular passa pro próximo da roda.",
+    text: "A cada carta, uma pessoa é o <b>Mestre</b>: segura o dispositivo, <b>não mostra a tela</b> pra ninguém e lê tudo em voz alta. Os outros tentam adivinhar. Na carta seguinte, o dispositivo passa pro próximo da roda.",
   },
   {
     sec: 2,
@@ -72419,7 +72420,7 @@ const TUTORIAL_STEPS = [
     sec: 2,
     icon: "🔢",
     title: "3. Quem está na vez escolhe um número",
-    text: "O jogador da vez fala um número de 1 a 20. O Mestre toca nele e <b>lê a dica em voz alta</b>. Os números são embaralhados: nenhum é “mais fácil”.<br>⏱️ Tem um tempo pra escolher o número e outro pra responder (aparece na tela). Acabou o de escolher = perde a vez.",
+    text: "O jogador da vez fala um número de 1 a 20. O Mestre toca nele e <b>lê a dica em voz alta</b>. Os números são embaralhados: nenhum é “mais fácil”.<br>⏱️ Tem um tempo pra escolher o número e outro pra responder (aparece na tela). Acabou o de escolher = perde a vez.<br>🌐 No online, quem está na vez <b>toca no número no próprio dispositivo</b> e o Mestre só consegue abrir aquela dica.",
     mock: '<div class="number-grid" style="grid-template-columns:repeat(5,1fr);"><button class="number-btn">1</button><button class="number-btn">2</button><button class="number-btn" disabled>3</button><button class="number-btn">4</button><button class="number-btn">5</button></div>',
   },
   {
@@ -72447,7 +72448,7 @@ const TUTORIAL_STEPS = [
     sec: 2,
     icon: "🃏",
     title: "Ficha de palpite",
-    text: "Uma das instruções é o <b>Palpite a qualquer hora</b>: quem tira ganha uma <b>ficha</b> que vale o jogo todo. Com ela, dá pra chutar <b>fora da sua vez</b>, em qualquer carta, enquanto houver dica na tela. Errou o palpite? Sem castigo, só gasta a ficha.<br>⚠️ Cada um guarda <b>no máximo uma</b>. Tirou a instrução já tendo ficha? Não ganha outra e ainda <b>perde a vez</b> (e o C.A.O.S. te chama de fominha).<br>Precisa de 3 jogadores ou mais, e não existe no Hardcore nem no Express.",
+    text: "Uma das instruções é o <b>Palpite a qualquer hora</b>: quem tira ganha uma <b>ficha</b> que vale o jogo todo. Com ela, dá pra chutar <b>fora da sua vez</b>, em qualquer carta, enquanto houver dica na tela. Errou o palpite? Sem castigo, só gasta a ficha. No online, quem tem a ficha toca em <b>🃏 Palpitar agora</b> no próprio dispositivo e o Mestre julga esse palpite.<br>⚠️ Cada um guarda <b>no máximo uma</b>. Tirou a instrução já tendo ficha? Não ganha outra e ainda <b>perde a vez</b> (e o C.A.O.S. te chama de fominha).<br>Precisa de 3 jogadores ou mais, e não existe no Hardcore nem no Express.",
   },
   {
     sec: 3,
@@ -72501,7 +72502,7 @@ const TUTORIAL_STEPS = [
     sec: 4,
     icon: "🤐",
     title: "Como calar (ou silenciar) o C.A.O.S.",
-    text: "<ul><li>🔈 A <b>voz</b> começa <b>desligada</b>. Pra ouvir, toque em <b>🗣️ Voz</b> na tela inicial ou em <b>Calar/Ligar a voz</b> na pausa. Online, cada celular liga a sua.</li><li>🔇 No balão dele, o <b>🔇</b> silencia o C.A.O.S. <b>até o fim da carta</b>; na pausa, <b>🔊 Religar o C.A.O.S. nesta carta</b> desfaz.</li><li>⏭️ O <b>⏭️</b> no balão pula só aquela fala.</li><li>🌷 Achou ele chato com você? Mude o seu <b>nível de zoeira</b> pra Suave (no cadastro ou pelo ADM).</li></ul>",
+    text: "<ul><li>🔈 A <b>voz</b> começa <b>desligada</b>. Pra ouvir, toque em <b>🗣️ Voz</b> na tela inicial ou em <b>Calar/Ligar a voz</b> na pausa. Online, cada dispositivo liga a sua.</li><li>🔇 No balão dele, o <b>🔇</b> silencia o C.A.O.S. <b>até o fim da carta</b>; na pausa, <b>🔊 Religar o C.A.O.S. nesta carta</b> desfaz.</li><li>⏭️ O <b>⏭️</b> no balão pula só aquela fala.</li><li>🌷 Achou ele chato com você? Mude o seu <b>nível de zoeira</b> pra Suave (no cadastro ou pelo ADM).</li></ul>",
   },
   {
     sec: 4,
@@ -72533,7 +72534,7 @@ const TUTORIAL_STEPS = [
     sec: 5,
     icon: "📤",
     title: "Save de Bolso",
-    text: "<b>📤 Exportar partida</b> copia um <b>código</b> com a partida inteira (dá pra mandar no WhatsApp). No outro celular, <b>📥 Importar partida</b>, cola o código e continua de onde parou. Os dois botões ficam na tela de regras (e o Exportar também na pausa).",
+    text: "<b>📤 Exportar partida</b> copia um <b>código</b> com a partida inteira (dá pra mandar no WhatsApp). No outro dispositivo, <b>📥 Importar partida</b>, cola o código e continua de onde parou. Os dois botões ficam na tela de regras (e o Exportar também na pausa).",
     dark: true,
     mock: '<div style="display:flex; gap:10px;"><div class="btn-start btn-neo neo-small" style="--mc:#34d399; --mc-glow:rgba(52,211,153,0.3);">📤 Exportar</div><div class="btn-start btn-neo neo-small" style="--mc:#60a5fa; --mc-glow:rgba(96,165,250,0.3);">📥 Importar</div></div>',
   },
@@ -72541,7 +72542,7 @@ const TUTORIAL_STEPS = [
     sec: 5,
     icon: "📳",
     title: "Ajustes do aparelho",
-    text: "Na tela inicial, no menu <b>⋮</b> do canto de cima:<ul><li>🔊 <b>Som</b> liga/desliga os efeitos;</li><li>📳 <b>Vibrar</b> faz o celular tremer nos acertos, erros e sustos;</li><li>🗣️ <b>Voz</b>: o C.A.O.S. fala em voz alta; 🎚️ <b>Ajustar voz</b> muda velocidade, tom e a voz;</li><li>🥔 <b>Batata</b>: tira as animações pesadas (celular fraco ou bateria acabando);</li><li>📲 <b>Instalar o app</b>: põe o jogo na tela inicial (Android e iPhone);</li><li>🌙 <b>Noturno</b> / ☀️ <b>Claro</b>: troca o visual do jogo. O Noturno (padrão) é todo escuro; o Claro tem fundo lavanda e cartas brancas;</li><li>♿ <b>Acessibilidade</b>: letra maior, mais tempo, dicas lidas em voz alta, volume da voz e dos sons, alto contraste e menos movimento. Vale pra todos os modos e também fica na Pausa;</li><li>🧠 <b>Memória do C.A.O.S.</b>: 📤 Levar e 📥 Trazer passam o que ele lembra pra outro aparelho.</li></ul>",
+    text: "Na tela inicial, no menu <b>⋮</b> do canto de cima:<ul><li>🔊 <b>Som</b> liga/desliga os efeitos;</li><li>📳 <b>Vibrar</b> faz o dispositivo tremer nos acertos, erros e sustos;</li><li>🗣️ <b>Voz</b>: o C.A.O.S. fala em voz alta; 🎚️ <b>Ajustar voz</b> muda velocidade, tom e a voz;</li><li>🥔 <b>Batata</b>: tira as animações pesadas (dispositivo fraco ou bateria acabando);</li><li>📲 <b>Instalar o app</b>: põe o jogo na tela inicial (Android e iPhone);</li><li>🌙 <b>Noturno</b> / ☀️ <b>Claro</b>: troca o visual do jogo. O Noturno (padrão) é todo escuro; o Claro tem fundo lavanda e cartas brancas;</li><li>♿ <b>Acessibilidade</b>: letra maior, mais tempo, dicas lidas em voz alta, volume da voz e dos sons, alto contraste e menos movimento. Vale pra todos os modos e também fica na Pausa;</li><li>🧠 <b>Memória do C.A.O.S.</b>: 📤 Levar e 📥 Trazer passam o que ele lembra pra outro aparelho.</li></ul>",
     dark: true,
     mock: '<div class="tut-row"><span class="tut-chip" style="--mc:#f5c344;">🔊 Som</span><span class="tut-chip" style="--mc:#f5c344;">📳 Vibrar</span><span class="tut-chip" style="--mc:#f5c344;">🗣️ Voz</span><span class="tut-chip" style="--mc:#f5c344;">🥔 Batata</span></div>',
   },
@@ -72557,22 +72558,22 @@ const TUTORIAL_STEPS = [
     sec: 6,
     icon: "🌐",
     title: "Jogar online: como funciona",
-    text: "No online, <b>cada pessoa joga no próprio celular</b>, na mesma sala ou cada um na sua casa (com uma chamada de voz, por exemplo).<ul><li>📱 <b>Um aparelho é o host:</b> é nele que a partida é montada e fica guardada. Pode ser o celular de quem joga ou um tablet/computador só pra mesa;</li><li>🔗 <b>Os outros entram por um link</b> e escolhem quem são. Eles não precisam montar nada;</li><li>🔒 <b>Só o celular do Mestre vê a resposta.</b> Quem está na vez escolhe o número da dica no próprio celular.</li></ul>Ainda é <b>beta</b>: no mesmo Wi-Fi funciona melhor. Os próximos passos ensinam a abrir e a entrar.",
+    text: "No online, <b>cada pessoa joga no próprio dispositivo</b>, na mesma sala ou cada um na sua casa (com uma chamada de voz, por exemplo).<ul><li>📱 <b>Um aparelho é o host:</b> é nele que a partida é montada e fica guardada. Pode ser o dispositivo de quem joga ou um dispositivo só pra mesa;</li><li>🔗 <b>Os outros entram por um link</b> e escolhem quem são. Eles não precisam montar nada;</li><li>🔒 <b>Só o dispositivo do Mestre vê a resposta.</b> Quem está na vez escolhe o número da dica no próprio dispositivo, e o Mestre só abre a dica pedida.</li></ul>Ainda é <b>beta</b>: no mesmo Wi-Fi funciona melhor. Os próximos passos ensinam a abrir e a entrar.",
     dark: true,
-    mock: '<div class="tut-sala"><span class="tut-sala-selo">🧪 BETA</span><div class="tut-sala-rot">Sala</div><div class="tut-sala-cod">K7P2</div><div class="tut-sala-sub">1 host · cada um no seu celular</div></div>',
+    mock: '<div class="tut-sala"><span class="tut-sala-selo">🧪 BETA</span><div class="tut-sala-rot">Sala</div><div class="tut-sala-cod">K7P2</div><div class="tut-sala-sub">1 host · cada um no seu dispositivo</div></div>',
   },
   {
     sec: 6,
     icon: "📡",
     title: "Abrir uma sala (no aparelho do host)",
-    text: "<ol><li>Toque em <b>Jogar</b>, escolha o formato (Versus ou Equipe) e o modo;</li><li>O jogo pergunta <b>Vai jogar online?</b>: toque em <b>🌐 Sim, abrir a sala</b>. Este aparelho vira o <b>host</b>;</li><li>Aparece o <b>código da sala</b> (4 letras) e o <b>QR Code</b>. Quem está perto aponta a câmera do celular pro QR; quem está longe recebe o código ou o link (<b>📋 Copiar</b> ou <b>📤 Compartilhar</b>);</li><li>Quando alguém pedir pra entrar, aparece <b>🙋 Pedido pra entrar</b>: toque em <b>✅ Aceitar</b>. Cada um cria o próprio jogador no celular dele, e ele entra no cadastro sozinho;</li><li>Quem vai jogar <b>neste</b> aparelho você cadastra aqui mesmo, como sempre;</li><li>Sorteie quem começa. O jogo pergunta <b>Quem joga neste aparelho?</b>: marque o seu nome e o de quem divide o aparelho com você (ou ninguém, se o aparelho fica só na mesa).</li></ol>Disse \"Não\" e mudou de ideia? Toque em <b>🌐 Vai jogar online?</b> na tela dos jogadores, ou na <b>⏸️ Pausa</b>, em <b>🌐 Jogar online</b>.",
+    text: "<ol><li>Toque em <b>Jogar</b>, escolha o formato (Versus ou Equipe) e o modo;</li><li>O jogo pergunta <b>Vai jogar online?</b>: toque em <b>🌐 Sim, abrir a sala</b>. Este aparelho vira o <b>host</b>;</li><li>Aparece o <b>código da sala</b> (4 letras) e o <b>QR Code</b>. Quem está perto aponta a câmera do dispositivo pro QR; quem está longe recebe o código ou o link (<b>📋 Copiar</b> ou <b>📤 Compartilhar</b>);</li><li>Quando alguém pedir pra entrar, aparece <b>🙋 Pedido pra entrar</b>: toque em <b>✅ Aceitar</b>. Cada um cria o próprio jogador no dispositivo dele, e ele entra no cadastro sozinho;</li><li>Quem vai jogar <b>neste</b> aparelho você cadastra aqui mesmo, como sempre;</li><li>Sorteie quem começa. O jogo pergunta <b>Quem joga neste aparelho?</b>: marque o seu nome e o de quem divide o aparelho com você (ou ninguém, se o aparelho fica só na mesa).</li></ol>Disse \"Não\" e mudou de ideia? Toque em <b>🌐 Vai jogar online?</b> na tela dos jogadores, ou na <b>⏸️ Pausa</b>, em <b>🌐 Jogar online</b>.",
     dark: true,
     mock: '<div class="tut-sala"><div class="tut-sala-rot">Código da sala</div><div class="tut-sala-cod">K7P2</div><div class="tut-sala-sub">🙋 Ana quer entrar · ✅ Aceitar</div></div>',
   },
   {
     sec: 6,
     icon: "🔗",
-    title: "Entrar na sala (no seu celular)",
+    title: "Entrar na sala (no seu dispositivo)",
     text: "<ol><li>Abra o jogo e toque em <b>🌐 Jogar online</b>, na tela inicial;</li><li>Digite o <b>código da sala</b> que aparece no aparelho do host e toque em <b>Entrar na sala</b> (ou abra o link que o host mandou). No mesmo Wi-Fi, a sala também aparece em <b>📶 Salas na sua rede</b>: é só tocar nela;</li><li><b>Crie o seu jogador</b>: nome, cor, emoji, zoeira e idade. Toque em <b>🙋 Pedir pra entrar</b>;</li><li>Espere o host <b>aceitar</b>. Pronto: você está na sala e aparece no cadastro.</li></ol>Se o host já cadastrou você, toque no seu nome na lista, embaixo do formulário. Partida já começada? Só dá pra escolher um nome da lista.<br>Se aparecer <b>\"versão diferente\"</b>, recarregue a página pra atualizar o jogo.<br>💡 Com a sala aberta, o jogo mantém a <b>tela acesa</b> sozinho. Se você trocar de app, a conexão pode cair: é só voltar pro jogo.",
     dark: true,
     mock: '<div class="tut-sala"><div class="tut-sala-rot">🌐 Sala K7P2</div><div class="tut-sala-cod" style="font-size:1.1rem">🙋 Crie o seu jogador</div><div class="tut-sala-sub">Nome · Cor · Emoji · Zoeira → Pedir pra entrar</div></div>',
@@ -72581,13 +72582,13 @@ const TUTORIAL_STEPS = [
     sec: 6,
     icon: "🎙️",
     title: "Quem toca o quê",
-    text: "Cada celular só mostra o que é seu:<ul><li>🎙️ <b>Mestre:</b> vê a carta como na tela de sempre: vira a carta, vê a resposta, <b>abre as dicas</b>, dá o veredito (Acertou, Errou, Pulou, Absurdo), resolve as instruções especiais e o palpite;</li><li>👉 <b>Quem está na vez:</b> fala o número da dica, e o Mestre abre. Todo mundo vê a dica e quem pediu;</li><li>🤖 <b>O C.A.O.S.</b> fala em todos os celulares; o que é só pra uma pessoa aparece só no celular dela;</li><li>🏟️ <b>Quem caiu na casa de bônus:</b> escolhe contra quem é o duelo;</li><li>⏸️ <b>Qualquer um</b> pode pausar e continuar;</li><li>🗳️ <b>Descartar e Desistir</b> viram votação: o Mestre pede e a mesa vota no celular;</li><li>📱 <b>O host</b> é o único que toca em <b>Próxima carta</b> no intervalo. Quando o Mestre está em outro aparelho, o host vê a mesma tela dos jogadores (sem a resposta). Se o Mestre não tem aparelho, ele usa o do host, que mostra tudo.</li></ul>",
+    text: "Cada dispositivo só mostra o que é seu:<ul><li>🎙️ <b>Mestre:</b> vê a carta como na tela de sempre: vira a carta, vê a resposta, <b>abre as dicas</b>, dá o veredito (Acertou, Errou, Pulou, Absurdo), resolve as instruções especiais e o palpite;</li><li>👉 <b>Quem está na vez:</b> toca no número da dica no próprio dispositivo. O Mestre só consegue abrir a dica pedida. Todo mundo vê a dica, quem pediu, e as dicas já abertas ganham uma <b>🔴 ficha vermelha</b>;</li><li>🆘 <b>Travou?</b> Se o dispositivo de quem está na vez cair, a trava sai sozinha. E o Mestre pode <b>segurar um número</b> e tocar em <b>Abrir sem pedido</b> pra seguir o jogo;</li><li>🃏 <b>Quem tem a ficha de palpite:</b> toca em <b>Palpitar agora</b> no próprio dispositivo, e o Mestre julga esse palpite;</li><li>🤖 <b>O C.A.O.S.</b> fala em todos os dispositivos; o que é só pra uma pessoa aparece só no dispositivo dela;</li><li>🏟️ <b>Quem caiu na casa de bônus:</b> escolhe contra quem é o duelo;</li><li>⏸️ <b>Qualquer um</b> pode pausar e continuar;</li><li>🗳️ <b>Descartar e Desistir</b> viram votação: o Mestre pede e a mesa vota no dispositivo;</li><li>📱 <b>O host</b> é o único que toca em <b>Próxima carta</b> no intervalo. Quando o Mestre está em outro aparelho, o host vê a mesma tela dos jogadores (sem a resposta). Se o Mestre não tem aparelho, ele usa o do host, que mostra tudo.</li></ul>",
   },
   {
     sec: 6,
     icon: "🆘",
     title: "Se a conexão cair",
-    text: "<ul><li>🔄 <b>Caiu ou fechou sem querer?</b> Abra o link de novo: você volta pro mesmo lugar;</li><li>📱 <b>O host recarregou?</b> A sala volta sozinha, com o mesmo código, e todo mundo se reconecta;</li><li>👑 <b>O host sumiu de vez?</b> Em uns 15 segundos, quem foi o <b>2º Mestre</b> da partida assume a sala, sem perder nada. Se o host voltar, entra como jogador;</li><li>🌉 <b>Pela ponte ou direto?</b> No painel da sala, ao lado de cada nome, aparece se o celular está ligado direto ou pela ponte (normal no 4G/5G) e quanto a conexão demora. O host também pode <b>✕ tirar</b> um aparelho da sala;</li><li>📶 <b>Não abriu?</b> No 4G/5G, quando a ligação direta é bloqueada, o jogo passa por uma ponte na internet (leva uns segundos a mais). Se mesmo assim não abrir, tente todos no <b>mesmo Wi-Fi</b>;</li><li>📴 <b>Todo mundo saiu?</b> A partida online não continua só no host: em 45 segundos o jogo pausa e avisa, e se ninguém voltar em 5 minutos a partida é encerrada. Fechar a sala no meio da partida também encerra.</li></ul>Pra sair da sala, toque em <b>✕ Sair da sala</b>, no fim da tela.",
+    text: "<ul><li>🔄 <b>Caiu ou fechou sem querer?</b> Abra o link de novo: você volta pro mesmo lugar;</li><li>📱 <b>O host recarregou?</b> A sala volta sozinha, com o mesmo código, e todo mundo se reconecta;</li><li>👑 <b>O host sumiu de vez?</b> Em uns 15 segundos, quem foi o <b>2º Mestre</b> da partida assume a sala, sem perder nada. Se o host voltar, entra como jogador;</li><li>🌉 <b>Pela ponte ou direto?</b> No painel da sala, ao lado de cada nome, aparece se o dispositivo está ligado direto ou pela ponte (normal no 4G/5G) e quanto a conexão demora. O host também pode <b>✕ tirar</b> um aparelho da sala;</li><li>📶 <b>Não abriu?</b> No 4G/5G, quando a ligação direta é bloqueada, o jogo passa por uma ponte na internet (leva uns segundos a mais). Se mesmo assim não abrir, tente todos no <b>mesmo Wi-Fi</b>;</li><li>📴 <b>Todo mundo saiu?</b> A partida online não continua só no host: em 45 segundos o jogo pausa e avisa, e se ninguém voltar em 5 minutos a partida é encerrada. Fechar a sala no meio da partida também encerra.</li></ul>Pra sair da sala, toque em <b>✕ Sair da sala</b>, no fim da tela.",
   },
   {
     sec: 6,
@@ -72607,8 +72608,8 @@ const TUTORIAL_RAPIDO = [
   },
   {
     icon: "🎙️",
-    title: "O Mestre segura o celular",
-    text: "A cada carta, uma pessoa é o <b>Mestre</b>: segura o celular, <b>esconde a tela</b> e lê as dicas em voz alta. Na próxima carta, o celular passa pro lado.",
+    title: "O Mestre segura o dispositivo",
+    text: "A cada carta, uma pessoa é o <b>Mestre</b>: segura o dispositivo, <b>esconde a tela</b> e lê as dicas em voz alta. Na próxima carta, o dispositivo passa pro lado.",
     mock: '<div class="answer-line-name answer-toggle">🙈 Resposta escondida — toque pra ver (5 s)</div>',
   },
   {
@@ -72654,8 +72655,8 @@ const TUTORIAL_RAPIDO = [
   {
     icon: "🌐",
     title: "Jogando online (beta)",
-    text: "Dá pra jogar <b>cada um no seu celular</b>:<ul><li>📡 Na partida, <b>⏸️ Pausar → 🌐 Jogar online → Abrir sala</b>;</li><li>📋 <b>Copie o link</b> e mande no grupo;</li><li>🔗 Cada um abre o link e <b>escolhe quem é</b>;</li><li>🔒 Só o celular do <b>Mestre</b> vê a resposta.</li></ul>O passo a passo completo está no <b>📖 Manual</b>, capítulo <b>Online</b>.",
-    mock: '<div class="tut-sala"><span class="tut-sala-selo">🧪 BETA</span><div class="tut-sala-rot">Sala</div><div class="tut-sala-cod">K7P2</div><div class="tut-sala-sub">Abra o link no seu celular pra entrar</div></div>',
+    text: "Dá pra jogar <b>cada um no seu dispositivo</b>:<ul><li>📡 Na partida, <b>⏸️ Pausar → 🌐 Jogar online → Abrir sala</b>;</li><li>📋 <b>Copie o link</b> e mande no grupo;</li><li>🔗 Cada um abre o link e <b>escolhe quem é</b>;</li><li>🔒 Só o dispositivo do <b>Mestre</b> vê a resposta.</li></ul>O passo a passo completo está no <b>📖 Manual</b>, capítulo <b>Online</b>.",
+    mock: '<div class="tut-sala"><span class="tut-sala-selo">🧪 BETA</span><div class="tut-sala-rot">Sala</div><div class="tut-sala-cod">K7P2</div><div class="tut-sala-sub">Abra o link no seu dispositivo pra entrar</div></div>',
     dark: true,
   },
   {
@@ -72668,7 +72669,7 @@ const PAUSE_TIPS = [
   // 1.7.9.12: dicas do online
   {
     when: () => typeof rede === "undefined" || !rede,
-    text: () => "Dá pra jogar cada um no seu celular: na próxima partida, responda Sim em \"Vai jogar online?\" depois de escolher o modo. Quem entra digita o código da sala e cria o próprio jogador. Já começou? Toque em 🌐 Jogar online aqui na pausa.",
+    text: () => "Dá pra jogar cada um no seu dispositivo: na próxima partida, responda Sim em \"Vai jogar online?\" depois de escolher o modo. Quem entra digita o código da sala e cria o próprio jogador. Já começou? Toque em 🌐 Jogar online aqui na pausa.",
   },
   {
     when: () => typeof rede !== "undefined" && !!rede && rede.papel === "host",
@@ -72706,7 +72707,7 @@ const PAUSE_TIPS = [
   },
   {
     when: () => true,
-    text: () => "Mestre: segure o celular inclinado pra você. Tem sempre alguém tentando espiar a tela.",
+    text: () => "Mestre: segure o dispositivo inclinado pra você. Tem sempre alguém tentando espiar a tela.",
   },
   {
     when: () => WIN_CONDITION === "casa" && CURRENT_MODE !== "express",
@@ -72736,7 +72737,7 @@ const PAUSE_TIPS = [
   {
     when: () => true,
     text: () =>
-      "No celular, segure o dedo num botão por meio segundo pra ver pra que ele serve — sem apertar de verdade.",
+      "No dispositivo, segure o dedo num botão por meio segundo pra ver pra que ele serve — sem apertar de verdade.",
   },
   {
     when: () => CURRENT_MODE !== "express" && (CURRENT_FORMAT === "equipe" || players.length >= 3),
@@ -72752,7 +72753,7 @@ const PAUSE_TIPS = [
   {
     when: () => true,
     text: () =>
-      "Toque no balão do C.A.O.S. pra pular a fala dele. Funciona. Mas ele anota quem foi (é o Mestre que segura o celular) e não esquece fácil.",
+      "Toque no balão do C.A.O.S. pra pular a fala dele. Funciona. Mas ele anota quem foi (é o Mestre que segura o dispositivo) e não esquece fácil.",
   },
   {
     when: () => CURRENT_MODE !== "express",
@@ -72812,7 +72813,7 @@ const PAUSE_TIPS = [
   {
     when: () => true,
     text: () =>
-      "O Mestre segura o celular, lê as dicas em voz alta e marca Acertou ou Errou. Nunca mostre a tela pra quem está respondendo!",
+      "O Mestre segura o dispositivo, lê as dicas em voz alta e marca Acertou ou Errou. Nunca mostre a tela pra quem está respondendo!",
   },
   {
     when: () => CURRENT_MODE !== "express",
@@ -72834,17 +72835,17 @@ const PAUSE_TIPS = [
   {
     when: () => true,
     text: () =>
-      'Celular travou ou alguém saiu do app? O jogo pausa sozinho e o tempo fica congelado até alguém tocar em "Voltar pro jogo".',
+      'Dispositivo travou ou alguém saiu do app? O jogo pausa sozinho e o tempo fica congelado até alguém tocar em "Voltar pro jogo".',
   },
   {
     when: () => true,
     text: () =>
-      'Quer continuar a partida em outro celular? Toque em "📤 Exportar partida" aqui embaixo e mande o código.',
+      'Quer continuar a partida em outro dispositivo? Toque em "📤 Exportar partida" aqui embaixo e mande o código.',
   },
   {
     when: () => true,
     text: () =>
-      "Celular esquentando ou com pouca bateria? Na tela inicial, no menu ⋮ do canto de cima, tem o 🥔 Modo Batata, que tira as animações pesadas.",
+      "Dispositivo esquentando ou com pouca bateria? Na tela inicial, no menu ⋮ do canto de cima, tem o 🥔 Modo Batata, que tira as animações pesadas.",
   },
   {
     when: () => CURRENT_MODE === "hardcore",
@@ -72924,12 +72925,12 @@ const NOVIDADES = [
     nome: "Multiplayer Update · Online de verdade",
     t: "Dicas como no Perfil de tabuleiro. C.A.O.S. 4.4.1.",
     itens: [
-      "🔒 Só abre a dica pedida: no online, quem está na vez escolhe a dica no próprio celular e o Mestre só consegue abrir aquela. Ideia do Henrique (Carro Pika).",
-      "🆘 Celular caiu: se o aparelho de quem está na vez desconectar, a trava sai sozinha. E o Mestre pode segurar um número e tocar em Abrir sem pedido pra seguir o jogo.",
+      "🔒 Só abre a dica pedida: no online, quem está na vez escolhe a dica no próprio dispositivo e o Mestre só consegue abrir aquela. Ideia do Henrique (Carro Pika).",
+      "🆘 Dispositivo caiu: se o aparelho de quem está na vez desconectar, a trava sai sozinha. E o Mestre pode segurar um número e tocar em Abrir sem pedido pra seguir o jogo.",
       "🔴 Ficha vermelha: na tela dos jogadores, a dica que já foi aberta ganha uma fichinha vermelha por cima do número, igual à do tabuleiro.",
-      "👆 Tocou na dica aberta, ele responde: tocar de novo numa dica que já saiu volta a fazer o C.A.O.S. comentar, também no computador.",
+      "👆 Tocou na dica aberta, ele responde: tocar de novo numa dica que já saiu volta a fazer o C.A.O.S. comentar, também no navegador.",
     ],
-    qol: [],
+    qol: ["📖 Regras e manual em dia: o capítulo Online explica a trava da dica, o Abrir sem pedido, o Palpitar agora e a ficha vermelha."],
   },
   {
     v: "Beta 1.7.10.5.2",
@@ -72940,7 +72941,7 @@ const NOVIDADES = [
       "🧠 Falas com sentido: quando o C.A.O.S. monta uma frase, ele confere se as partes combinam. Acabaram os finais soltos tipo Enfim ou Bora seguir grudados em qualquer coisa, a mesma palavra repetida e as ideias empilhadas sem ligação.",
       "🎭 Cara de quem fala: o rostinho e a cor do balão agora acompanham o que ele diz. Se a frase é triste, o balão fica triste.",
       "🔁 Errou de novo só quando é de novo: ele não diz que você errou de novo no seu primeiro erro.",
-      "🔎 Dica do Mestre no celular: quem era Mestre num aparelho que não é o do host via Dica null na dica escolhida. Agora aparece o texto certo. Achado pela Gameez (Júlia) e pelo Henrique (Carro Pika).",
+      "🔎 Dica do Mestre no dispositivo: quem era Mestre num aparelho que não é o do host via Dica null na dica escolhida. Agora aparece o texto certo. Achado pela Gameez (Júlia) e pelo Henrique (Carro Pika).",
       "👑 Troca de host avisada: quando o host cai e outra pessoa assume a sala, o C.A.O.S. avisa a mesa como devia.",
     ],
     qol: [],
@@ -72977,7 +72978,7 @@ const NOVIDADES = [
     itens: [
       "🤐 C.A.O.S. fala bem menos: comentário só de vez em quando, com respiro entre um e outro. Se falar muito em algumas cartas seguidas, ele mesmo segura a língua. Avisos de regra continuam. Valeu, Vitinho, Rafa e Henrique, que aguentaram ele numa partida online!",
       "🎯 Fala no aparelho certo: quando o C.A.O.S. fala com alguém que joga em outro aparelho, a fala vai só pra essa pessoa. Valeu, Vitinho, Rafa e Henrique!",
-      "🪟 Trocar de janela não pausa: no online, minimizar ou trocar de janela no computador de quem abriu a sala não pausa mais a partida de todo mundo. Valeu, Vitinho e Typingg, que acharam esse problema!",
+      "🪟 Trocar de janela não pausa: no online, minimizar ou trocar de janela no dispositivo de quem abriu a sala não pausa mais a partida de todo mundo. Valeu, Vitinho e Typingg, que acharam esse problema!",
       "🔢 Números de dica na tela: todo mundo vê quais números ainda estão livres, qual está sendo lido e as dicas com o número que foi pedido. O texto da dica aparece pra mesa quando o Mestre marca Acertou ou Errou. Valeu, Vitinho, Rafa e Henrique!",
       "🏠 Selo HOST: dá pra ver quem abriu e cuida da sala. Valeu, Vitinho, Rafa e Henrique!",
       "🔊 Ouvir de novo: na revisão das falas do fim da partida, toque em 🔊 pra ouvir cada fala de novo.",
@@ -72993,7 +72994,7 @@ const NOVIDADES = [
     nome: "Multiplayer Update · Online de verdade",
     t: "Chegou o C.A.O.S. 4.1.4: voz nova, mais emoção e uma fala mais caprichada.",
     itens: [
-      "🎙️ C.A.O.S. 4.1 com voz nova: com internet, ele fala com uma voz brasileira natural, igual em todo aparelho, no lugar da voz robótica do celular.",
+      "🎙️ C.A.O.S. 4.1 com voz nova: com internet, ele fala com uma voz brasileira natural, igual em todo aparelho, no lugar da voz robótica do dispositivo.",
       "🎭 C.A.O.S. 4.1.1 com mais emoção: com a voz nova, ele fala mais alto quando está bravo ou em festa, mais baixo quando está triste ou espiando, faz pausas de verdade nas reticências e capricha nas palavras em CAIXA ALTA.",
       "🗣️ C.A.O.S. 4.1.4 fala melhor: a risada parou de sair engasgada, palavras esticadas como PASTEEEL saem certinhas, no dia a dia ele fala com a voz normal dele, com vergonha fala mais baixo e devagar e o deboche ficou seco e provocativo.",
     ],
@@ -73003,13 +73004,13 @@ const NOVIDADES = [
     v: "Beta 1.7.10.3",
     data: "13/10/2026 · 10:03",
     nome: "Multiplayer Update · Online de verdade",
-    t: "Regras mais fáceis de achar e a voz do C.A.O.S. em todos os celulares.",
+    t: "Regras mais fáceis de achar e a voz do C.A.O.S. em todos os dispositivos.",
     itens: [
       "🗂️ O que vale em cada categoria: o Manual explica o que entra em Ano, Pessoa, Lugar e Coisa (e Animal, no Júnior). Pessoa também vale grupo, dupla e banda. Quem apontou foram o Vitinho e o Typingg, que testaram o online!",
       "🤖 C.A.O.S. lembra a regra: na primeira carta de cada categoria da partida, ele lembra o que aquela categoria inclui.",
       "🔎 Busca nas regras: no Manual, digite uma palavra (grupo, calar, joia) e vá direto pro passo certo.",
-      "🔊 Voz em todos os celulares: no online, cada celular fala com a voz do C.A.O.S. quando ela está ligada nele. Quem joga pelo celular tem o próprio botão de voz.",
-      "🎙️ Ligar a Voz do C.A.O.S.: no cadastro dos jogadores, se a voz estiver desligada, ele pergunta em cada aparelho (celulares do online também). Sim liga a voz ali. Não deixa ele meio tristinho, mas os balões continuam.",
+      "🔊 Voz em todos os dispositivos: no online, cada dispositivo fala com a voz do C.A.O.S. quando ela está ligada nele. Quem joga pelo dispositivo tem o próprio botão de voz.",
+      "🎙️ Ligar a Voz do C.A.O.S.: no cadastro dos jogadores, se a voz estiver desligada, ele pergunta em cada aparelho (dispositivos do online também). Sim liga a voz ali. Não deixa ele meio tristinho, mas os balões continuam.",
     ],
     qol: ["🤐 Como calar o C.A.O.S.: um passo novo no Manual mostra todos os jeitos de calar ou silenciar (valeu, Vitinho e Typingg)."],
   },
@@ -73019,7 +73020,7 @@ const NOVIDADES = [
     nome: "Multiplayer Update · Online de verdade",
     t: "O C.A.O.S. ganhou uma voz nova e agora começa calado.",
     itens: [
-      "🎙️ Voz nova do C.A.O.S.: com internet, ele fala com uma voz brasileira mais natural, igual em todo aparelho. Sem internet, volta a voz do celular.",
+      "🎙️ Voz nova do C.A.O.S.: com internet, ele fala com uma voz brasileira mais natural, igual em todo aparelho. Sem internet, volta a voz do dispositivo.",
       "🤐 C.A.O.S. começa calado: a voz vem desligada. Pra ouvir, toque em Voz na tela inicial ou na pausa. Os balões continuam aparecendo. Pedido do Typingg depois de testar com o Vitinho.",
     ],
     qol: [],
@@ -73030,12 +73031,12 @@ const NOVIDADES = [
     nome: "Multiplayer Update · Online de verdade",
     t: "Correções do online depois do primeiro teste com cada um numa internet.",
     itens: [
-      "🎰 Roleta em todos os celulares: quem joga no próprio celular vê a roleta da categoria girar e parar, igual à tela do host.",
-      "🙈 Categoria só depois da roleta: o celular não mostra mais a categoria antes da hora, e Animal aparece como Coisa, igual ao host.",
-      "🏆 Como se vence no celular: o topo da tela mostra a modalidade da partida e o objetivo.",
+      "🎰 Roleta em todos os dispositivos: quem joga no próprio dispositivo vê a roleta da categoria girar e parar, igual à tela do host.",
+      "🙈 Categoria só depois da roleta: o dispositivo não mostra mais a categoria antes da hora, e Animal aparece como Coisa, igual ao host.",
+      "🏆 Como se vence no dispositivo: o topo da tela mostra a modalidade da partida e o objetivo.",
       "🗺️ Tabuleiro no intervalo: com a carta na mesa, o tabuleiro inteiro sai da frente e volta no intervalo entre as cartas.",
       "⏳ Host com 1 minuto: quem é host pode sair do jogo por até 1 minuto, pra atender uma mensagem ou tirar um print, sem perder a sala.",
-      "📱 Cada um no seu aparelho: com a sala aberta, a partida só começa quando todo jogador estiver no próprio celular ou marcado no aparelho do host.",
+      "📱 Cada um no seu aparelho: com a sala aberta, a partida só começa quando todo jogador estiver no próprio dispositivo ou marcado no aparelho do host.",
     ],
     qol: ["🔤 Botão da sala: com a sala aberta, o botão da pausa mostra o código da sala e quem está dentro."],
   },
@@ -73045,14 +73046,14 @@ const NOVIDADES = [
     nome: "Multiplayer Update · Online de verdade",
     t: "Servidor e ponte próprios: cada um joga na sua internet, sem rotear. E o online ficou mais firme.",
     itens: [
-      "🌉 Ponte própria: quem está no 4G ou 5G e quem está no Wi-Fi jogam juntos, cada um na sua internet. Não precisa mais rotear o celular.",
+      "🌉 Ponte própria: quem está no 4G ou 5G e quem está no Wi-Fi jogam juntos, cada um na sua internet. Não precisa mais rotear o dispositivo.",
       "🛟 Servidor de reserva: se o servidor da sala cair, o jogo passa pro de reserva sozinho e a partida segue.",
       "📶 Salas na sua rede: na tela Jogar online aparecem as salas abertas no mesmo Wi-Fi. É só tocar e o host aceita. Sala do Júnior não aparece (entra pelo código ou QR Code).",
       "📞 Ligação no meio do jogo: o host que atende uma ligação volta pra partida sem bagunça. Se demorar, o 2º Mestre assume e o host volta como jogador, no próprio nome.",
       "⏳ Mais tempo pra voltar: se todo mundo sair da sala, a partida espera 5 minutos antes de encerrar (eram 2).",
-      "🔄 Atualizar junto: se o host atualizar o jogo no meio da partida, os celulares atualizam sozinhos e voltam pro mesmo lugar.",
-      "🤖 C.A.O.S. no celular certo: quando ele fala com você, aparece e fala no SEU celular, com o rostinho e o humor dele, igual no host.",
-      "🙈 Perto ou Longe no lugar certo: com o Mestre em outro celular, a pergunta do chute não aparece no aparelho do host.",
+      "🔄 Atualizar junto: se o host atualizar o jogo no meio da partida, os dispositivos atualizam sozinhos e voltam pro mesmo lugar.",
+      "🤖 C.A.O.S. no dispositivo certo: quando ele fala com você, aparece e fala no SEU dispositivo, com o rostinho e o humor dele, igual no host.",
+      "🙈 Perto ou Longe no lugar certo: com o Mestre em outro dispositivo, a pergunta do chute não aparece no aparelho do host.",
       "⚑ Reportar carta: achou uma carta com erro? Pausa, Mais opções, Reportar esta carta. Vai direto pro JF.",
       "🔁 Nome repetido: tentou cadastrar alguém que já está na partida? A tela treme, mostra o nome na lista e o C.A.O.S. comenta.",
     ],
@@ -73083,8 +73084,8 @@ const NOVIDADES = [
     nome: "Rooms and Network Update · Sala de perto",
     t: "QR Code pra entrar de perto, conexão de cada um à vista e o host pode tirar alguém da sala.",
     itens: [
-      "📷 QR Code da sala: o painel da sala mostra um QR Code. Quem está perto aponta a câmera do celular e já cai na sala.",
-      "🌉 Direto ou pela ponte: no painel, ao lado de cada nome, aparece se o celular está ligado direto (mesmo Wi-Fi) ou pela ponte (4G/5G) e quanto a conexão demora. No celular de quem entrou aparece o mesmo selo.",
+      "📷 QR Code da sala: o painel da sala mostra um QR Code. Quem está perto aponta a câmera do dispositivo e já cai na sala.",
+      "🌉 Direto ou pela ponte: no painel, ao lado de cada nome, aparece se o dispositivo está ligado direto (mesmo Wi-Fi) ou pela ponte (4G/5G) e quanto a conexão demora. No dispositivo de quem entrou aparece o mesmo selo.",
       "✕ Tirar da sala: o host pode tirar um aparelho da sala. Pra voltar, ele precisa pedir de novo.",
       "🎲 Código sem confusão: se o código sorteado já estiver sendo usado por outra sala, o jogo sorteia outro na hora.",
     ],
@@ -73096,7 +73097,7 @@ const NOVIDADES = [
     nome: "Rooms and Network Update · Sala blindada",
     t: "Revisão de segurança do online: a sala aguenta aparelho bagunceiro sem atrapalhar a partida.",
     itens: [
-      "🛡️ Nome limpo: o nome que alguém cria no celular entra sem símbolos estranhos, pra não bagunçar a tela do host.",
+      "🛡️ Nome limpo: o nome que alguém cria no dispositivo entra sem símbolos estranhos, pra não bagunçar a tela do host.",
       "🚦 Sem enxurrada: um aparelho que manda coisa demais de uma vez é segurado, e a partida segue normal pra mesa.",
       "🙋 Pedidos com limite: no máximo 6 pedidos de entrada esperando ao mesmo tempo. Pedido sem resposta expira em 3 minutos.",
       "⏱️ Partida começou: quem ainda estava criando o jogador recebe o aviso e pode escolher um nome da lista.",
@@ -73109,14 +73110,14 @@ const NOVIDADES = [
     v: "Beta 1.7.9.6",
     data: "10/10/2026 · 10:54",
     nome: "Rooms and Network Update · Entrada na sala",
-    t: "Abrir a sala ficou no caminho do jogo, cada um cria o próprio jogador, e o C.A.O.S. fala em todos os celulares.",
+    t: "Abrir a sala ficou no caminho do jogo, cada um cria o próprio jogador, e o C.A.O.S. fala em todos os dispositivos.",
     itens: [
       "🌐 Vai jogar online: depois de escolher o modo, o jogo pergunta se é pra abrir a sala. Com Sim, este aparelho vira o host e mostra o código da sala.",
       "🔑 Entrar com o código: na tela inicial, toque em Jogar online e digite as 4 letras que aparecem no aparelho do host. O link continua valendo.",
-      "🙋 Cada um cria o seu jogador: quem entra escolhe nome, cor, emoji, zoeira e idade no próprio celular e pede pra entrar. É o mesmo cadastro do host, com as cores e os emojis exclusivos de cada dono.",
+      "🙋 Cada um cria o seu jogador: quem entra escolhe nome, cor, emoji, zoeira e idade no próprio dispositivo e pede pra entrar. É o mesmo cadastro do host, com as cores e os emojis exclusivos de cada dono.",
       "✅ O host aceita: cada pedido aparece no aparelho do host, que aceita ou recusa. Quem já foi aceito volta sem pedir de novo.",
       "🎙️ Só o Mestre abre as dicas: quem está na vez fala o número, e o Mestre abre. Todo mundo vê a dica e quem pediu.",
-      "🤖 C.A.O.S. em todos os celulares: as falas dele aparecem no celular de cada um, e o que é só pra uma pessoa aparece só no celular dela.",
+      "🤖 C.A.O.S. em todos os dispositivos: as falas dele aparecem no dispositivo de cada um, e o que é só pra uma pessoa aparece só no dispositivo dela.",
     ],
     qol: [
       "💡 Botão da sala mais visível: o Vai jogar online da tela dos jogadores ganhou destaque.",
@@ -73127,10 +73128,10 @@ const NOVIDADES = [
     v: "Beta 1.7.9.5",
     data: "10/10/2026 · 00:15",
     nome: "Rooms and Network Update · Carta do Mestre",
-    t: "No online, quem é o Mestre vê a carta de verdade no próprio celular, e a sala aguenta Reiniciar e app fechado.",
+    t: "No online, quem é o Mestre vê a carta de verdade no próprio dispositivo, e a sala aguenta Reiniciar e app fechado.",
     itens: [
-      "🃏 Carta do Mestre no celular dele: no online, o Mestre vê a carta como na tela de sempre. A categoria, a resposta, as dicas, a grade de números e os botões Acertou, Errou, Pulou e Absurdo.",
-      "🔄 Reiniciar com a sala aberta: depois de Reiniciar, quem estava na sala volta pra escolha do nome. Se o host cadastrar o mesmo nome de novo, o celular volta pro lugar sozinho.",
+      "🃏 Carta do Mestre no dispositivo dele: no online, o Mestre vê a carta como na tela de sempre. A categoria, a resposta, as dicas, a grade de números e os botões Acertou, Errou, Pulou e Absurdo.",
+      "🔄 Reiniciar com a sala aberta: depois de Reiniciar, quem estava na sala volta pra escolha do nome. Se o host cadastrar o mesmo nome de novo, o dispositivo volta pro lugar sozinho.",
       "📱 Host que fechou o app: se outro aparelho assumiu a sala enquanto o host estava fora, ao abrir de novo ele entra como jogador e vê a partida de agora, sem ficar preso na carta antiga.",
     ],
     qol: [
@@ -73141,10 +73142,10 @@ const NOVIDADES = [
     v: "Beta 1.7.9.4",
     data: "09/10/2026 · 23:45",
     nome: "Rooms and Network Update · Sala primeiro",
-    t: "No online, a sala abre antes do cadastro, e o celular do host respeita quem é o Mestre.",
+    t: "No online, a sala abre antes do cadastro, e o dispositivo do host respeita quem é o Mestre.",
     itens: [
       "🌐 Sala antes do cadastro: na tela dos jogadores, toque em Vai jogar online? e mande o link. Quem abrir fica esperando, e o nome aparece pra escolher assim que for cadastrado.",
-      "🔒 Host sem spoiler: quando o Mestre está no próprio celular, o aparelho do host vira tela de jogador, sem a carta e sem a resposta. Se o Mestre não tiver aparelho, o host mostra tudo, como antes.",
+      "🔒 Host sem spoiler: quando o Mestre está no próprio dispositivo, o aparelho do host vira tela de jogador, sem a carta e sem a resposta. Se o Mestre não tiver aparelho, o host mostra tudo, como antes.",
       "📱 Quem joga neste aparelho: quando a partida começa com a sala aberta, o jogo pergunta quem está com o aparelho do host.",
     ],
     qol: [
@@ -73156,15 +73157,15 @@ const NOVIDADES = [
     v: "Beta 1.7.9.3",
     data: "09/10/2026 · 21:04",
     nome: "Rooms and Network Update · Online",
-    t: "Chegou o online (beta): cada um joga no próprio celular, com passo a passo e ponte pro 4G.",
+    t: "Chegou o online (beta): cada um joga no próprio dispositivo, com passo a passo e ponte pro 4G.",
     itens: [
-      "🌐 Jogar online: na partida, toque em Pausar e depois em Jogar online. Esse aparelho abre a sala e guarda a partida. Mande o link pra mesa: cada um abre no seu celular e escolhe quem é.",
-      "🔒 Resposta só pro Mestre: só o celular de quem lê a carta mostra a resposta. Quem está na vez escolhe o número da dica no próprio celular.",
-      "🎙️ Botões de cada um: o Mestre dá o veredito, resolve as especiais e o palpite pelo celular dele. Cada celular só mostra o que aquela pessoa pode tocar.",
-      "🗳️ Votação da mesa: no online, Descartar e Desistir viram votação. O Mestre pede, a mesa vota no celular e a maioria decide.",
-      "⏸️ Intervalo do host: entre as cartas, só quem hospeda toca em Próxima carta. Os outros veem o Tabuleiro, os Pontos e as Joias no próprio celular.",
-      "🌉 Conexão pelo 4G e 5G: quando a rede do celular não deixa os aparelhos se ligarem direto, a partida passa por uma ponte na internet. Vale também pra Wi-Fi mais fechado.",
-      "☀️ Tela sempre acesa: com a sala aberta, o celular não apaga a tela sozinho, pra conexão não cair no meio da carta.",
+      "🌐 Jogar online: na partida, toque em Pausar e depois em Jogar online. Esse aparelho abre a sala e guarda a partida. Mande o link pra mesa: cada um abre no seu dispositivo e escolhe quem é.",
+      "🔒 Resposta só pro Mestre: só o dispositivo de quem lê a carta mostra a resposta. Quem está na vez escolhe o número da dica no próprio dispositivo.",
+      "🎙️ Botões de cada um: o Mestre dá o veredito, resolve as especiais e o palpite pelo dispositivo dele. Cada dispositivo só mostra o que aquela pessoa pode tocar.",
+      "🗳️ Votação da mesa: no online, Descartar e Desistir viram votação. O Mestre pede, a mesa vota no dispositivo e a maioria decide.",
+      "⏸️ Intervalo do host: entre as cartas, só quem hospeda toca em Próxima carta. Os outros veem o Tabuleiro, os Pontos e as Joias no próprio dispositivo.",
+      "🌉 Conexão pelo 4G e 5G: quando a rede do dispositivo não deixa os aparelhos se ligarem direto, a partida passa por uma ponte na internet. Vale também pra Wi-Fi mais fechado.",
+      "☀️ Tela sempre acesa: com a sala aberta, o dispositivo não apaga a tela sozinho, pra conexão não cair no meio da carta.",
       "🔄 Caiu ou recarregou: é só abrir o link de novo pra voltar pro mesmo lugar. Se quem hospeda recarregar, a sala volta sozinha com o mesmo código.",
       "👑 Troca de host: se o aparelho que hospeda cair de vez, quem foi o 2º Mestre assume a mesma sala, sem perder nada. Se o host antigo voltar, entra como jogador no lugar dele.",
       "📖 Capítulo Online no manual: como abrir a sala, como entrar pelo link, quem toca o quê e o que fazer se a conexão cair. O botão Como funciona da sala e da tela inicial abre direto ali.",
@@ -73173,7 +73174,7 @@ const NOVIDADES = [
       "🆕 Versão igual pra todos: quem estiver com outra versão do jogo recebe o aviso pra atualizar antes de entrar.",
     ],
     qol: [
-      "🔌 Reconexão mais esperta: se a conexão com o host parecer viva mas não chegar nada, o celular abre uma conexão nova sozinho.",
+      "🔌 Reconexão mais esperta: se a conexão com o host parecer viva mas não chegar nada, o dispositivo abre uma conexão nova sozinho.",
       "🔢 Numeração arrumada: as versões pequenas de cada update da 1.7 foram juntadas e renumeradas, e a lista ficou bem mais curta. Esta é a 1.7.9.3.",
       "🧪 Beta: o online ainda está em teste. Se a conexão não abrir, tente com todo mundo no mesmo Wi-Fi.",
     ],
@@ -73210,7 +73211,7 @@ const NOVIDADES = [
       "🎙️ O C.A.O.S. vê o tabuleiro: ele comenta quando o tabuleiro abre, quando vocês dão zoom ou medem distância, e reclama de quem pula sem nem olhar.",
       "📍 Partida mais limpa: durante a carta fica só a linha com pontinhos. Tocando nela, aparece quem está na frente.",
       "📺 No telão também: a segunda tela mostra o mesmo tabuleiro, com a mesma forma.",
-      "🐢 Menos movimento de verdade: na Acessibilidade, ele só tira o que treme, pula, gira ou desliza. Cores e brilho continuam. O Modo Batata segue separado, pra celular mais fraco.",
+      "🐢 Menos movimento de verdade: na Acessibilidade, ele só tira o que treme, pula, gira ou desliza. Cores e brilho continuam. O Modo Batata segue separado, pra dispositivo mais fraco.",
     ],
     qol: [
       "🔕 Desligar o intervalo: no tabuleiro grande tem o botão pra desligar ou ligar de novo o tabuleiro entre as cartas, neste aparelho.",
@@ -73242,7 +73243,7 @@ const NOVIDADES = [
       "🏠 Moda da Casa mais clara: “Bora jogar!” virou o botão principal, e “Como funciona este modo?” fica logo abaixo.",
       "✨ Botões novos nas janelas: os botões das janelas do C.A.O.S. ganharam relevo, brilho e resposta ao toque.",
       "🎰 Roleta não some mais: se a partida for pausada no meio da roleta da categoria, ela volta já parada na categoria certa.",
-      "📺 Sair do telão: o telão ganhou um botão de sair, que faltava no celular.",
+      "📺 Sair do telão: o telão ganhou um botão de sair, que faltava no dispositivo.",
       "🙌 Créditos de volta: as ideias que vieram de quem joga voltaram a levar o nome de quem deu, como as do Pedro, do Felipe, do Bruno Levanti e do Klaus.",
     ],
     qol: [
@@ -73261,8 +73262,8 @@ const NOVIDADES = [
       "↩️ Desfazer: depois de Acertou, Errou, Pulou, Absurdo ou palpite, aparece “Desfazer” no alto da tela por 8 segundos. Só o último veredito, e não vale se ele acabou a partida.",
       "📺 Telão: numa segunda aba (ou num segundo monitor), a mesa vê o placar, o Mestre, a vez, as dicas abertas e o relógio, ao vivo. Nunca mostra a resposta.",
       "🛡️ Toque repetido não conta dobrado: uma jogada enviada duas vezes pelo mesmo toque vale uma vez só.",
-      "🌐 Jogadas em ordem: cada jogada fica registrada na ordem. No online, um celular atrasado não consegue aplicar uma jogada velha.",
-      "🙈 Resposta protegida: os celulares da mesa recebem placar, vez, dicas abertas e relógio, mas nunca a resposta nem as dicas fechadas.",
+      "🌐 Jogadas em ordem: cada jogada fica registrada na ordem. No online, um dispositivo atrasado não consegue aplicar uma jogada velha.",
+      "🙈 Resposta protegida: os dispositivos da mesa recebem placar, vez, dicas abertas e relógio, mas nunca a resposta nem as dicas fechadas.",
       "💾 Dica certa na partida salva: se o texto de uma dica for corrigido numa atualização, a partida salva continua com a dica certa aberta.",
       "🤫 Aviso só pro Mestre: o aviso de tempo extra é só pra ele.",
       "🕊️ Evento de piedade sempre aparece: ele não deixa mais de aparecer quando já tem um balão do C.A.O.S. na tela.",
@@ -73281,7 +73282,7 @@ const NOVIDADES = [
       "🔒 Cadeado nas joias: quem já ganhou as 2 joias da rodada aparece com um cadeado no placar, pra todo mundo saber que a próxima só vem na rodada seguinte.",
       "🔊 Ouvir este passo: no tutorial, o C.A.O.S. lê o passo em voz alta pra quem aprende melhor ouvindo.",
       "🃏 Carta animada: a carta vira com uma animação curta (desligada no Modo Batata e pra quem pede menos movimento).",
-      "🖥️ Tela larga no computador: o jogo usa a largura da tela de verdade. Carta, regras e janelas ficam mais fáceis de ler, e a carta inteira cabe sem rolar.",
+      "🖥️ Tela larga: o jogo usa a largura da tela de verdade. Carta, regras e janelas ficam mais fáceis de ler, e a carta inteira cabe sem rolar.",
       "⏳ Tempo extra discreto: quando o Mestre ganha tempo extra, o C.A.O.S. avisa sem dizer o motivo pra mesa toda.",
       "💾 Importar mais seguro: um código estragado, gigante ou de uma versão mais nova é recusado sem apagar a partida deste aparelho.",
     ],
@@ -73310,7 +73311,7 @@ const NOVIDADES = [
       "💾 Saves antigos: partidas salvas em versões anteriores continuam abrindo normalmente.",
       "💎 Trava de joias corrigida: quando o ADM tirava alguém da partida, a trava de 2 joias por rodada podia passar pro jogador do lado.",
       "✋ Acertou longe do Errou: mais espaço entre os dois, pra ninguém tocar no errado no susto.",
-      "🔠 Letra Grande e Enorme: dicas e respostas longas quebram a linha certinho, e a grade de números cabe até em celular pequeno.",
+      "🔠 Letra Grande e Enorme: dicas e respostas longas quebram a linha certinho, e a grade de números cabe até em dispositivo pequeno.",
       "⚠︎ Absurdo explicado: é o chute que foi absurdo (nada a ver com a dica), não a dica.",
       "⚙️ Acessibilidade à prova de erro: um ajuste estranho salvo no aparelho volta pro padrão em vez de ligar uma opção sozinho.",
     ],
@@ -73335,7 +73336,7 @@ const NOVIDADES = [
       "🤫 C.A.O.S. espera a janela: com uma janela aberta, ele espera ela fechar pra falar, e quando a piada já fechou, não emenda mais nada.",
       "🤖 Falas corrigidas: “E mesmo assim não foi, Fulano.” termina certo, e ele não diz que hesitou depois de uma frase em que não hesitou.",
       "🃏 Verso com formato de carta: mais estreito e mais alto, como uma carta de verdade.",
-      "⏱️ Duração certa: o tempo de partida conta só o tempo jogando. Pausa, app fechado e celular bloqueado ficam de fora.",
+      "⏱️ Duração certa: o tempo de partida conta só o tempo jogando. Pausa, app fechado e dispositivo bloqueado ficam de fora.",
       "🔥 Perto ou Longe: a pergunta fica 25 segundos na tela, e depois de escolher ainda dá pra digitar o chute.",
       "⏸️ Pausa alinhada: todos os botões com a mesma largura.",
     ],
@@ -73354,7 +73355,7 @@ const NOVIDADES = [
       "🎓 Convite pro tutorial: na primeira vez que o jogo abre num aparelho, e quando alguém toca em 🐣 Sou iniciante, o C.A.O.S. pergunta uma vez se querem fazer o tutorial.",
     ],
     qol: [
-      "📱 Cada aparelho com o seu: o ajuste de acessibilidade fica guardado no próprio celular.",
+      "📱 Cada aparelho com o seu: o ajuste de acessibilidade fica guardado no próprio dispositivo.",
       "⌨️ Contorno no botão escolhido: aparece quando se usa teclado ou leitor de tela, e o campo do nome diz o que é.",
       "🔘 Botão desligado visível: no menu ⋮, ele tem borda tracejada em vez de ficar quase apagado.",
       "✕ Fechar o tutorial: botão maior e visível no tema Claro.",
@@ -73564,7 +73565,7 @@ const NOVIDADES = [
       "🎮 Jogar flutuando: o botão Jogar flutua de leve (parado no Modo Batata).",
       "📱 Ícone novo: o ? neon na frente de uma carta com o P de Perfil.",
       "⏰ Tempo esgotado justo: o próximo não perde mais 5 segundos durante o aviso.",
-      "💬 Balão mais legível: no celular, a fala vai embaixo, na largura toda.",
+      "💬 Balão mais legível: no dispositivo, a fala vai embaixo, na largura toda.",
     ],
   },
   {

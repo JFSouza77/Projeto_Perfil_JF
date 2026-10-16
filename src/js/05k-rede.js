@@ -1098,7 +1098,7 @@ function redeCadastroInfo() {
   const na = players.filter((p) => redeOnline(rede.assentos[p.id])).map((p) => escapeHtml(p.name));
   const esperando = Object.keys(rede.esperando).length;
   info.innerHTML =
-    `Cadastre todo mundo aqui: cada um escolhe o próprio nome no celular.` +
+    `Cadastre todo mundo aqui: cada um escolhe o próprio nome no dispositivo.` +
     (na.length ? `<br>🟢 Na sala: ${na.join(", ")}` : "") +
     (esperando ? `<br>⏳ ${esperando} aparelho${esperando === 1 ? "" : "s"} esperando o nome aparecer` : "");
 }
@@ -1415,7 +1415,7 @@ function redeHostAdicionarPerfil(perfil) {
     idade: isEquipe ? (faixa ? (faixa === "crianca" ? "menor" : "maior") : null) : IDADE_OPCOES.some((o) => o.id === perfil.idade) ? perfil.idade : null,
     team: null,
     nickMs: null,
-    aparelho: "celular",
+    aparelho: "dispositivo",
   };
   players.push(p);
   try {
@@ -1741,7 +1741,7 @@ function redeHostPublicar(forcar) {
 }
 
 /* --- 1.7.9.4 · Tela do host quando o Mestre está em outro aparelho (relato do JF no 1º teste: a Anne era a
-   Mestre no tablet dela e o celular do host continuava com a tela do Mestre, com carta e resposta) ---
+   Mestre no tablet dela e o dispositivo do host continuava com a tela do Mestre, com carta e resposta) ---
    Se o Mestre da vez está na sala num aparelho próprio, este aparelho vira a tela de um jogador: o mesmo
    retrato público dos convidados, os números da dica na vez de quem joga aqui e o Pausar. A carta, a
    resposta e os botões do Mestre ficam escondidos por baixo. Mestre sem aparelho (joga no do host), ou que
@@ -1760,7 +1760,7 @@ function redeSemAparelho() {
 function redeAvisarSemAparelho() {
   const nomes = redeSemAparelho().map((p) => p.name);
   caosAvisoModal(
-    `Antes de começar, diga onde cada um joga: ${nomes.join(", ")} ${nomes.length === 1 ? "ainda não está" : "ainda não estão"} na sala. Entre pelo celular ou marque em "Quem joga neste aparelho?".`,
+    `Antes de começar, diga onde cada um joga: ${nomes.join(", ")} ${nomes.length === 1 ? "ainda não está" : "ainda não estão"} na sala. Entre pelo dispositivo ou marque em "Quem joga neste aparelho?".`,
     () => redePainelHost(),
   );
 }
@@ -1862,8 +1862,8 @@ function redeVotacaoAbrir(tipo, pedidoPor) {
     const m = jogadorPorId(pedidoPor) || players[mestreIndex] || { name: "O Mestre" };
     showToastMessage(
       tipo === "descartar"
-        ? `[C.A.O.S.] ${m.name} quer DESCARTAR esta carta porque achou difícil demais. Todos de acordo? Votem no celular.`
-        : `[C.A.O.S.] ${m.name} quer DESISTIR desta carta. Todos de acordo? Votem no celular.`,
+        ? `[C.A.O.S.] ${m.name} quer DESCARTAR esta carta porque achou difícil demais. Todos de acordo? Votem no dispositivo.`
+        : `[C.A.O.S.] ${m.name} quer DESISTIR desta carta. Todos de acordo? Votem no dispositivo.`,
       null,
       true,
     );
@@ -2844,7 +2844,7 @@ function redePerguntarSala() {
   const ov = document.createElement("div");
   ov.id = "redePergunta";
   ov.className = "jf-modal-bg";
-  ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Vai jogar online?</h3><p>Abrindo a sala, este aparelho vira o <b>host</b> da partida. Os outros entram com o <b>código da sala</b> (ou pelo link), você aceita a entrada e cada um cria o próprio jogador no celular dele.</p><button type="button" class="btn-start btn-neo neo-solid neo-still" id="redePerguntaSim" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">🌐 Sim, abrir a sala</button><button type="button" class="chip" id="redePerguntaNao" style="margin-top:10px">Não, todo mundo neste aparelho</button></div>`;
+  ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Vai jogar online?</h3><p>Abrindo a sala, este aparelho vira o <b>host</b> da partida. Os outros entram com o <b>código da sala</b> (ou pelo link), você aceita a entrada e cada um cria o próprio jogador no dispositivo dele.</p><button type="button" class="btn-start btn-neo neo-solid neo-still" id="redePerguntaSim" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">🌐 Sim, abrir a sala</button><button type="button" class="chip" id="redePerguntaNao" style="margin-top:10px">Não, todo mundo neste aparelho</button></div>`;
   ov.querySelector("#redePerguntaSim").addEventListener("click", () => {
     ov.remove();
     redeTravasPerguntar(() => redeAbrirSala("internet") && redePainelHost());
@@ -2940,7 +2940,7 @@ function redeQrHtml(link) {
     const qr = qrcode(0, "M");
     qr.addData(link);
     qr.make();
-    return `<div class="rede-qr" aria-label="QR Code do link da sala">${qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true })}</div><div class="rede-qr-rot">📷 Quem está perto: aponte a câmera do celular</div>`;
+    return `<div class="rede-qr" aria-label="QR Code do link da sala">${qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true })}</div><div class="rede-qr-rot">📷 Quem está perto: aponte a câmera do dispositivo</div>`;
   } catch (e) {
     return "";
   }
@@ -2978,7 +2978,7 @@ function redePainelHost() {
     if (!ov.isConnected && ov._montado) return;
     if (!rede || rede.papel !== "host") {
       const temNet = redeTemInternet();
-      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Jogar online</h3><p>Abra uma sala: cada jogador entra pelo link no próprio celular, escolhe quem é e joga de lá. Este aparelho continua com a partida.</p><button type="button" class="chip" id="redeComo">❓ Como funciona (passo a passo)</button>${
+      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Jogar online</h3><p>Abra uma sala: cada jogador entra pelo link no próprio dispositivo, escolhe quem é e joga de lá. Este aparelho continua com a partida.</p><button type="button" class="chip" id="redeComo">❓ Como funciona (passo a passo)</button>${
         temNet ? `<button type="button" class="btn-start btn-neo neo-solid neo-still" id="redeAbrirNet" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">Abrir sala pela internet</button>` : `<p><small>Este navegador não tem como abrir sala pela internet.</small></p>`
       }<button type="button" class="chip" id="redeAbrirLocal">Ensaio neste navegador (abas)</button><button type="button" class="chip" id="redeOk" style="margin-top:10px">Fechar</button></div>`;
       const net = ov.querySelector("#redeAbrirNet");
@@ -3020,7 +3020,7 @@ function redePainelHost() {
       ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Sala ${rede.sala}</h3><div class="rede-estado">${rede.modo === "local" ? "🧪 Ensaio em abas deste navegador" : REDE_ESTADO_HOST[est] || est}</div>${erro}<div class="rede-codigo-rot">Código da sala</div><div class="rede-codigo">${rede.sala}</div>${redeQrHtml(redeLinkDaSala())}<p class="rede-rot">Quem vai jogar abre o jogo, toca em <b>🌐 Jogar online</b> e digita o código. Ou mande o link:</p><code class="rede-link">${escapeHtml(redeLinkDaSala())}</code><button type="button" class="chip" id="redeCopiar">📋 Copiar link</button>${
         navigator.share ? '<button type="button" class="chip" id="redeCompartilhar">📤 Compartilhar</button>' : ""
       }<div class="rede-rot-eu">Quem joga neste aparelho? <small>(pode marcar mais de um)</small><div class="rede-eu-lista">${opcoesEu || "<small>Ninguém cadastrado ainda.</small>"}</div><small>${
-        players.length ? "Marque quem joga neste aparelho, inclusive quem não tem celular e divide este. Nenhum marcado = o aparelho é só a mesa. A carta só aparece aqui quando o Mestre é alguém daqui (ou não tem aparelho)." : "Mande o código (ou o link): cada um cria o próprio jogador no celular, e você aceita a entrada aqui. Quem joga neste aparelho você cadastra como sempre."
+        players.length ? "Marque quem joga neste aparelho, inclusive quem não tem dispositivo e divide este. Nenhum marcado = o aparelho é só a mesa. A carta só aparece aqui quando o Mestre é alguém daqui (ou não tem aparelho)." : "Mande o código (ou o link): cada um cria o próprio jogador no dispositivo, e você aceita a entrada aqui. Quem joga neste aparelho você cadastra como sempre."
       }</small></div><ul class="rede-lista">${lugares}</ul>${
         rede.modo === "local" ? '<button type="button" class="chip" id="redeAbrirAba">Abrir uma aba de convidado</button>' : ""
       }<button type="button" class="chip" id="redeComoSala">❓ Como funciona</button><button type="button" class="chip" id="redeFecharSala">Fechar a sala</button><button type="button" class="chip" id="redeOk" style="margin-top:10px">Fechar</button></div>`;

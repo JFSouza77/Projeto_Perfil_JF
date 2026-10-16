@@ -125,7 +125,7 @@ function acessPainelAbrir() {
         <input id="acessVolVoz" type="range" min="0" max="1" step="0.05" value="${acessCfg.volVoz}"></div>
       <div class="acess-grupo"><label class="acess-rot" for="acessVolSom">🎵 Volume dos sons <b>${Math.round(acessCfg.volSom * 100)}%</b></label>
         <input id="acessVolSom" type="range" min="0" max="1" step="0.05" value="${acessCfg.volSom}"></div>
-      <div class="acess-nota">🥔 O Modo Batata (menu ⋮) é outra coisa: deixa o jogo leve pra celular fraco e desliga neon, brilho e efeitos.</div>
+      <div class="acess-nota">🥔 O Modo Batata (menu ⋮) é outra coisa: deixa o jogo leve pra dispositivo fraco e desliga neon, brilho e efeitos.</div>
       <div class="acess-nota">🌎 Idioma: Português (Brasil). Outros idiomas vêm numa próxima atualização.</div>
       <div class="acess-acoes"><button type="button" class="acess-fechar" id="acessFechar">Pronto</button></div>`;
     box.querySelectorAll("[data-letra]").forEach((b) =>
