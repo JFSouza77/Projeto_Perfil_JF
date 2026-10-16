@@ -14,7 +14,7 @@
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1814;
+const JOGO_BUILD = 1815;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -545,12 +545,13 @@ const CAOS_BALAO_POS_VOZ_MS = 600;
 // atropelando a outra. Agora: até 10 comentários por carta, e o próximo só começa depois que o anterior
 // TERMINOU, com um respiro. "Ouvido interno": se ele falou muito no último minuto, o respiro aumenta; se
 // falou muito nas últimas 3 cartas, dobra. Avisos, regras e falas importantes não entram nessa conta.
-const CAOS_FALAS_POR_CARTA = 10;
+// C.A.O.S. 4.4.2 (JF, 16/10: "ainda tá falando demais"): 10 → 6 comentários por carta; 18 → 12 em 3 cartas.
+const CAOS_FALAS_POR_CARTA = 6;
 const CAOS_RESPIRO_MS = 3500; // silêncio mínimo depois que a fala anterior terminou
 const CAOS_RESPIRO_RAJADA_MS = 9000; // respiro quando ele já falou CAOS_RAJADA_FALAS vezes no último minuto
 const CAOS_RAJADA_FALAS = 6;
 const CAOS_FALA_INICIO_MIN_MS = 6000; // entre o começo de uma fala e o da próxima (fala curtinha não vira metralhadora)
-const CAOS_FALAS_3_CARTAS = 18; // passou disso nas últimas 3 cartas: respiro em dobro
+const CAOS_FALAS_3_CARTAS = 12; // passou disso nas últimas 3 cartas: respiro em dobro
 const CAOS_COLOR_NAMES = {
   "#dc2626": "vermelho-sangue",
   "#6366f1": "índigo",

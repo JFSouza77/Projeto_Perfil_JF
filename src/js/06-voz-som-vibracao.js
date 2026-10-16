@@ -128,6 +128,9 @@ function caosSpeechChunks(txt) {
   return out;
 }
 function caosSpeak(msg, humorForcado, onEnd, onPedaco, vir) {
+  // C.A.O.S. 4.4.2: "__emo:<emoção>" = fala vinda do host, com a emoção dela (no dispositivo do convidado)
+  const emoRede = typeof humorForcado === "string" && humorForcado.indexOf("__emo:") === 0 ? humorForcado.slice(6) : null;
+  if (emoRede) humorForcado = "__normal";
   if (caosMudoCarta && humorForcado !== "__normal") return false;
   if (!caosVoiceOn || !CAOS_VOICE_OK || typeof msg !== "string" || msg.indexOf("[C.A.O.S.]") === -1) return false;
   const txtP = caosSpeechText(msg, true),
@@ -141,7 +144,8 @@ function caosSpeak(msg, humorForcado, onEnd, onPedaco, vir) {
     const st0 = CAOS_VOICE_STYLE[caosMood()] || CAOS_VOICE_STYLE.normal;
     const hm = (!humorForcado && typeof caosEmoFalaAtual !== "undefined" && CAOS_VOICE_EMO[caosEmoFalaAtual]) ||
       CAOS_VOICE_MATRIZ[humorForcado || caosHumorMatriz()] || [1, 1];
-    const st = humorForcado === "__normal" ? [1.05, 1.05] : [st0[0] * hm[0], st0[1] * hm[1]];
+    const hmR = emoRede && CAOS_VOICE_EMO[emoRede];
+    const st = hmR ? [1.05 * hmR[0], 1.05 * hmR[1]] : humorForcado === "__normal" ? [1.05, 1.05] : [st0[0] * hm[0], st0[1] * hm[1]];
     const voice = caosPickVoice();
     caosVoiceCancel();
     let partes = caosSpeechChunks(txtP),
@@ -160,7 +164,9 @@ function caosSpeak(msg, humorForcado, onEnd, onPedaco, vir) {
     if (vir && corteV >= 0) vir.corteReal = corteV;
     const hmV = corteV >= 0 && vir && CAOS_VOICE_EMO[vir.para];
     const emo0 =
-      humorForcado === "__normal"
+      hmR
+        ? emoRede
+        : humorForcado === "__normal"
         ? "calmo"
         : (!humorForcado && typeof caosEmoFalaAtual !== "undefined" && CAOS_VOICE_EMO[caosEmoFalaAtual] && caosEmoFalaAtual) ||
           CAOS_VOZ_MATRIZ_EMO[humorForcado || caosHumorMatriz()] ||

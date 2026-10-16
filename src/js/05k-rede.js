@@ -714,7 +714,8 @@ function redeValidar(bruto) {
       (m.quem === undefined || (Array.isArray(m.quem) && m.quem.length <= 8 && m.quem.every(jogadorIdValido))) &&
       (m.emo === undefined || (typeof m.emo === "string" && /^[a-z]{2,20}$/.test(m.emo))) &&
       (m.face === undefined || txt(m.face, 24)) &&
-      (m.rotulo === undefined || txt(m.rotulo, 24)),
+      (m.rotulo === undefined || txt(m.rotulo, 24)) &&
+      (m.ev === undefined || txt(m.ev, 80)),
     bemvindo: () => jogadorIdValido(m.jogadorId),
     escolha: () => Array.isArray(m.lugares) && m.lugares.length <= 12 && m.lugares.every((l) => l && jogadorIdValido(l.id) && typeof l.nome === "string"),
     recusa: () => txt(m.motivo, 40) && (m.versao === undefined || txt(m.versao, 20)) && (m.build === undefined || Number.isInteger(m.build)),
@@ -1196,6 +1197,8 @@ function redeHostFala(f) {
   if (typeof f.emo === "string" && /^[a-z]{2,20}$/.test(f.emo)) visual.emo = f.emo;
   if (typeof f.face === "string" && f.face.length <= 24) visual.face = f.face;
   if (typeof f.rotulo === "string" && f.rotulo.length <= 24) visual.rotulo = f.rotulo;
+  // C.A.O.S. 4.4.2: id do evento da fala (o dispositivo não mostra nem fala duas vezes a mesma)
+  if (typeof f.eventId === "string" && f.eventId.length <= 80) visual.ev = f.eventId;
   // C.A.O.S. 4.2 (partida online: "não chega direto no jogador"): fala particular, ou que fala COM quem está
   // em outro aparelho, vai só pro aparelho dessa pessoa (antes ia pra sala toda e ninguém sabia que era com ele)
   if (f.privado || redeFalaSoLonge(f)) {
@@ -1225,20 +1228,28 @@ function redeFalaComQuem(f) {
   return (f.para || []).some((d) => {
     if (!d || !d.id || !d.nome) return false;
     const n = String(d.nome).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    return new RegExp(`(^|[.!?]\\s+)${n}\\s*[,!?:]|[,;]\\s*${n}\\s*[.!?…]*\\s*$`, "u").test(t);
+    // C.A.O.S. 4.4.2 (revisão do GPT): também "Ei, Henrique, …" / "Olha, Henrique: …" (nome entre vírgulas no começo)
+    return new RegExp(`(^|[.!?]\\s+)${n}\\s*[,!?:]|[,;]\\s*${n}\\s*[.!?…]*\\s*$|^[^.!?]{0,14}[,!]\\s*${n}\\s*[,!?:]`, "u").test(t);
   });
 }
 // No celular do convidado: balão da fala (e a voz, quando a fala é com ele).
+// C.A.O.S. 4.4.2 (revisão do GPT, conferida no código): a fila não corta mais a voz no meio. A próxima fala só
+// começa quando a atual TERMINA de ser falada (ou o tempo de leitura acaba, com a voz desligada). Fala repetida
+// (mesmo evento) é ignorada; fala que ficou velha na fila (mais de 12 s) é descartada em vez de sair atrasada.
 function redeFalaMostrar(m) {
-  rede.falas = (rede.falas || []).concat({ texto: m.texto, minha: Array.isArray(m.quem) && m.quem.includes(rede.eu), emo: m.emo || null, face: m.face || null, rotulo: m.rotulo || null }).slice(-3);
-  if (!rede.falaAtiva) redeFalaProxima();
-  else if (rede.falas.length > 1) {
-    // fila crescendo: encurta a fala da tela
-    clearTimeout(rede.falaTimer);
-    rede.falaTimer = setTimeout(redeFalaProxima, 1500);
+  rede.falasVistas = rede.falasVistas || [];
+  if (m.ev) {
+    if (rede.falasVistas.includes(m.ev)) return;
+    rede.falasVistas.push(m.ev);
+    if (rede.falasVistas.length > 60) rede.falasVistas.shift();
   }
+  rede.falas = (rede.falas || []).concat({ texto: m.texto, minha: Array.isArray(m.quem) && m.quem.includes(rede.eu), emo: m.emo || null, face: m.face || null, rotulo: m.rotulo || null, t: Date.now() });
+  // no máximo 3 esperando: a mais antiga das que esperam sai
+  while (rede.falas.length > 3) rede.falas.shift();
+  if (!rede.falaAtiva) redeFalaProxima();
 }
 function redeFalaProxima() {
+  if (rede && rede.falas) while (rede.falas.length && Date.now() - (rede.falas[0].t || 0) > 12000) rede.falas.shift();
   const f = rede && rede.falas && rede.falas.shift();
   let el = document.getElementById("redeFala");
   if (!f) {
@@ -1279,13 +1290,23 @@ function redeFalaProxima() {
     `<div class="rede-fala-txt">[C.A.O.S.] ${escapeHtml(f.texto)}</div>`;
   // 1.7.10.3 (relato do JF: a voz só saía no host): o celular fala tudo o que mostra, se a voz dele estiver ligada
   // (cada aparelho liga a sua no botão 🗣️ Voz do C.A.O.S.; começa desligada, então não vira eco na mesma sala)
-  try {
-    caosSpeak("[C.A.O.S.] " + f.texto, "__normal");
-  } catch (e) {}
+  // C.A.O.S. 4.4.2: a voz do dispositivo usa a emoção da fala (antes saía sempre no tom calmo)
   clearTimeout(rede.falaTimer);
-  // com fala esperando na fila, esta fica menos tempo (o celular não fica atrasado em relação à mesa)
-  const ms = Math.min(9000, Math.max(3500, f.texto.length * 70));
-  rede.falaTimer = setTimeout(redeFalaProxima, rede.falas.length ? Math.min(ms, 2500) : ms);
+  const minMs = Math.min(9000, Math.max(3500, f.texto.length * 70));
+  const ini = Date.now(), serie = (rede.falaSerie = (rede.falaSerie || 0) + 1);
+  let falou = false;
+  const seguir = () => {
+    if (!rede || rede.falaSerie !== serie) return;
+    clearTimeout(rede.falaTimer);
+    // depois da voz, o balão fica um pouquinho; sem fila, fica o tempo de leitura
+    const resto = rede.falas.length ? 700 : Math.max(700, minMs - (Date.now() - ini));
+    rede.falaTimer = setTimeout(redeFalaProxima, resto);
+  };
+  try {
+    falou = !!caosSpeak("[C.A.O.S.] " + f.texto, f.emo && typeof CAOS_VOICE_EMO !== "undefined" && CAOS_VOICE_EMO[f.emo] ? "__emo:" + f.emo : "__normal", seguir);
+  } catch (e) {}
+  // sem voz: tempo de leitura; com voz: trava de segurança se o fim da fala nunca chegar
+  rede.falaTimer = setTimeout(falou ? seguir : redeFalaProxima, falou ? Math.max(minMs * 2.5, 15000) : minMs);
 }
 /* --- 1.7.9.7 · Sala blindada: o que vem de outro aparelho é limpo e tem limite ---
    Nome criado pelo convidado: sem caracteres de HTML nem invisíveis (o nome aparece em janelas e falas do

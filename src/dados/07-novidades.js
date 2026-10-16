@@ -6,6 +6,19 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.5.4",
+    data: "16/10/2026 · 15:20",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "C.A.O.S. 4.4.2: fala menos e soa melhor em cada dispositivo.",
+    itens: [
+      "🎭 Voz com emoção em todo dispositivo: no online, a voz do C.A.O.S. no seu dispositivo agora acompanha a emoção da fala. Antes ela saía sempre calma, mesmo com o balão bravo.",
+      "🫁 Uma fala de cada vez: no seu dispositivo, a próxima fala só começa quando a anterior termina. Nada de voz cortada no meio, e fala que ficou velha na fila não sai atrasada.",
+      "🤐 Fala menos: no máximo 6 comentários por carta (eram 10). Avisos de regra continuam passando.",
+      "🎯 Fala com você no seu dispositivo: frases como Ei, Fulano, … agora vão direto pro dispositivo da pessoa.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.5.3",
     data: "15/10/2026 · 23:46",
     nome: "Multiplayer Update · Online de verdade",
