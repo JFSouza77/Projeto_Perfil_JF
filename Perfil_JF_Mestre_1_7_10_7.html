@@ -6,14 +6,10 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
-  1.7.10.6 · 15/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.3.1: PRESENTES DO JF.
-          Cor, emoji e nick exclusivos pra quem testou o online com o JF (PRESENTES em 01-configuracao.js, presenteDe em
-          03-regras.js; COR_EXCLUSIVA, paleta, cadastro local e do celular reconhecem): Carro Pika (Henrique) roxo-diabinho
-          GRAD_DIABINHO + 😈; BsLordRafa (Rafa) vermelho-sangue GRAD_SANGUE + 💣/🦇 trocando a cada carta
-          (presentesGirarEmojis no drawHidden); Vitinho/VineFA azul shinobi GRAD_SHINOBI + 🥷; Typingg/Typingg_KK/TheDevil
-          preto espadachim GRAD_KIRITO + ⚔️. Degradê escuro: nome claro brilhando (.presente-name, como o Ônix). No Júnior
-          os emojis que não são de criança ficam de fora (PRESENTE_FORA_JUNIOR); no Modo Batata, cor sólida. C.A.O.S.: falas
-          de chegada de cada um (REACTIVE_VOICE.presente). Ideia anotada pro Modo C.A.O.S.: "É HORA DO DUELO!" (Rafa).
+  1.7.10.7 · 15/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.3.2: ajustes internos do C.A.O.S.
+          (easter eggs; detalhes só com o JF).
+  1.7.10.6 · 15/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.3.1: ajustes internos do C.A.O.S.
+          (easter eggs; detalhes só com o JF).
   1.7.10.5 · 15/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.3: OUVINTES, RESPIRO E PALPITAR AGORA.
           Retorno do JF sobre a 4.2: falar muito não é problema (5 a 10 por carta ok); o problema era falar muito em pouco
           tempo. Cordas vocais: CAOS_FALAS_POR_CARTA 2 → 10; no lugar do intervalo fixo de 20 s, o comentário só sai
@@ -806,7 +802,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.6</title>
+<title>Perfil JF · Beta 1.7.10.7</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -9095,7 +9091,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.6 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.3.1 · Atualizada em 15/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.7 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.3.2 · Atualizada em 15/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -9363,7 +9359,7 @@ body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1811;
+const JOGO_BUILD = 1812;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -11742,6 +11738,7 @@ function resetDeck() {
   caosSaidasTensao = 0;
   caosCortes = { total: 0, por: {}, rancor: {} };
   caosOuvintesZerar();
+  caosAmigosZerar();
   caosAviaoLast = -99;
   caosAcidLastCard = -99;
   caosAcidLastIdx = null;
@@ -11862,6 +11859,7 @@ function drawHidden() {
     if (!falou && stats.totalDrawn >= 3 && stats.totalDrawn <= 5) falou = maybeShowNameReminder();
     if (!falou) falou = caosRelogioNaCarta();
     if (!falou) falou = caosOuvintesNaCarta();
+    if (!falou) falou = caosAmigosNaCarta();
     if (!falou) falou = caosMesaNaCarta();
     if (!falou) maybeShowCardChatter();
   }
@@ -12411,6 +12409,10 @@ function markCorrect(playerIdxOverride) {
     milestoneSpoke: toastSerial !== toastAntesDePontuar,
   });
   caosIniAcerto(scorer);
+  {
+    const piada = caosAmigoFala(scorer, "acerto", 0.3);
+    if (piada) caosFalaAgendar(() => piada, 2600);
+  }
   caosIniExplica(
     scorer,
     "pontos",
@@ -12518,7 +12520,8 @@ function markWrong(tipo) {
       fxShake();
     }
     {
-      const prio = caosCerebroAnne(tipo, missedPlayer) || caosCerebroDiagnostico(missedPlayer);
+      const prio =
+        caosCerebroAnne(tipo, missedPlayer) || caosCerebroDiagnostico(missedPlayer) || (!tipo && caosAmigoFala(missedPlayer, "erro", 0.35));
       if (prio) {
         caosNoteSpeech(true);
         showToastMessage(prio, proceed);
@@ -15389,7 +15392,7 @@ const COR_EXCLUSIVA = {
   RGB: { de: "do JF", dono: (n) => isJfName(n) },
   GRAD_PRINCESA: { de: "da Anne", dono: (n) => isAnneName(n) },
 };
-// 1.7.10.6: as cores de presente também têm dono
+// easter egg: essas cores não aparecem na paleta; quem tem o nick ganha sozinho
 PRESENTES.forEach((pr) => (COR_EXCLUSIVA[pr.cor] = { de: "do " + pr.nome, dono: (n) => presenteDe(n) === pr }));
 function corReservada(c) {
   const inp = document.getElementById("playerNameInput"),
@@ -15472,7 +15475,7 @@ function caosEscolhaTomada(tipo, valor, btn) {
 function coresDaPaleta() {
   const isBatata = document.body.classList.contains("batata-mode");
   return PLAYER_COLORS.slice(0, -1)
-    .concat(["GRAD_PRINCESA", "RGB"], PRESENTES.map((p) => p.cor))
+    .concat(["GRAD_PRINCESA", "RGB"])
     .filter((c) => !(isBatata && (c === "RGB" || GRADIENTS[c])));
 }
 function renderColorPicker() {
@@ -28162,7 +28165,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.6 · C.A.O.S. 4.3.1</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.7 · C.A.O.S. 4.3.2</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -31078,6 +31081,10 @@ function caosEmocaoDaFala(bank) {
     e = { elogio: "orgulho", zoeira: "deboche", comentario: "pensando", eu: "orgulho" }[b.split(".")[1]] || "pensando";
   else if (b.startsWith("virada.")) e = (caosViradaPend && caosViradaPend.de) || null;
   else if (b === "mesa.apostaErrou") e = "vergonha";
+  else if (b.startsWith("amigos.")) {
+    const [, quem, mom] = b.split(".");
+    e = mom === "acerto" ? "surpresa" : mom === "chegou" ? { rafa: "festa", henrique: "espiando" }[quem] || "deboche" : "deboche";
+  } else if (b.startsWith("dragons.")) e = b === "dragons.trio" ? "festa" : "deboche";
   else if (b.startsWith("matrizHumor."))
     e =
       { frustrado: "raiva", orgulhoso: "orgulho", entediado: "tedio", desafiante: "desafio" }[b.split(".")[1]] || null;
@@ -31488,7 +31495,7 @@ function caosNeuralDesenhar(cv, t) {
     const C = caosConsole || {};
     const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
 tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
-${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.3.1`;
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.3.2`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }
@@ -32055,9 +32062,8 @@ function caosWelcomePlayer(p) {
     const g = caosGerarFala("jfChegou", p);
     if (g) return showToastMessage(g);
     bank = REACTIVE_VOICE.nickReacao.jf;
-  } else if (presenteDe(name) && p.color === presenteDe(name).cor && REACTIVE_VOICE.presente[presenteDe(name).id] && R() < 0.85) {
-    // 1.7.10.6: quem ganhou presente do JF chega com a cor exclusiva, e o C.A.O.S. repara
-    bank = REACTIVE_VOICE.presente[presenteDe(name).id];
+  } else if (presenteDe(name) && REACTIVE_VOICE.amigos[presenteDe(name).id] && CURRENT_MODE !== "junior" && R() < 0.9) {
+    bank = REACTIVE_VOICE.amigos[presenteDe(name).id].chegou;
   }
   else {
     {
@@ -33259,7 +33265,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.6 · C.A.O.S. 4.3.1)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.7 · C.A.O.S. 4.3.2)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -34917,6 +34923,84 @@ function caosQuemPulouAqui() {
   if (ids.length === 1) return jogadorIdxPorId(ids[0]);
   if (ids.includes(players[mestreIndex].id)) return mestreIndex;
   return null;
+}
+/* Easter egg (pedido do JF): piadas internas com quem tem nick reconhecido (PRESENTES) e as falas "Dragons",
+   que só valem com o JF na mesa junto de alguém do servidor. Pouco por partida: no máximo CAOS_AMIGOS_MAX por pessoa,
+   com cartas de intervalo, e nunca no Júnior. Falas citam o nome no meio da frase (sem vocativo) pra serem da mesa toda. */
+const CAOS_AMIGOS_MAX = 4; // por pessoa, por partida (fora a chegada)
+const CAOS_AMIGOS_INTERVALO = 3; // cartas entre uma piada interna e outra (de qualquer amigo)
+const CAOS_DRAGONS_MAX = 3; // falas Dragons por partida
+const CAOS_DRAGONS_INTERVALO = 4;
+const CAOS_DRAGONS_IDS = ["vitinho", "rafa", "typingg"];
+let caosAmigosEstado = { n: {}, ult: -99, drag: 0, dragUlt: -99 };
+
+function caosAmigosZerar() {
+  caosAmigosEstado = { n: {}, ult: -99, drag: 0, dragUlt: -99 };
+}
+function caosAmigosLiberado() {
+  return typeof CURRENT_MODE !== "undefined" && CURRENT_MODE !== "junior" && !caosSilenced && starterChosen && !gameEnded;
+}
+// Uma piada interna pro jogador p no momento (vez/erro/acerto), respeitando o limite. Devolve o texto ou null.
+function caosAmigoFala(p, momento, chance) {
+  try {
+    if (!p || !caosAmigosLiberado() || Math.random() > (chance === undefined ? 1 : chance)) return null;
+    const pr = presenteDe(p.name), B = pr && REACTIVE_VOICE.amigos[pr.id];
+    if (!B || !B[momento]) return null;
+    const carta = stats ? stats.totalDrawn : 0;
+    if ((caosAmigosEstado.n[pr.id] || 0) >= CAOS_AMIGOS_MAX || carta - caosAmigosEstado.ult < CAOS_AMIGOS_INTERVALO) return null;
+    const t = getRandomReaction(B[momento], p.name);
+    if (!t) return null;
+    caosAmigosEstado.n[pr.id] = (caosAmigosEstado.n[pr.id] || 0) + 1;
+    caosAmigosEstado.ult = carta;
+    caosLog("amigos", `${p.name}: piada interna (${momento}, ${caosAmigosEstado.n[pr.id]}ª)`);
+    return t;
+  } catch (e) {
+    return null;
+  }
+}
+// Carta nova: às vezes uma piada com quem está na vez (ou o Mestre); senão, talvez uma Dragons.
+function caosAmigosNaCarta() {
+  if (!caosAmigosLiberado()) return false;
+  const foco = [players[responderIndex], players[mestreIndex]].filter(Boolean);
+  for (const p of foco) {
+    const t = caosAmigoFala(p, "vez", 0.3);
+    if (t) {
+      caosFalaAgendar(() => t, 1600);
+      return true;
+    }
+  }
+  return caosDragonsNaCarta();
+}
+// Dragons: com o JF na mesa e pelo menos um do servidor (Vitinho, Rafa, Typingg), ele zoa o "ancião" de vez em quando.
+// Com os três juntos, às vezes chama os três pra implicar junto.
+function caosDragonsNaCarta() {
+  try {
+    if (!caosAmigosLiberado()) return false;
+    const jf = players.find((p) => isJfName(p.name));
+    const turma = players.filter((p) => {
+      const pr = presenteDe(p.name);
+      return pr && CAOS_DRAGONS_IDS.includes(pr.id);
+    });
+    const carta = stats ? stats.totalDrawn : 0;
+    if (!jf || !turma.length || carta < 2) return false;
+    if (caosAmigosEstado.drag >= CAOS_DRAGONS_MAX || carta - caosAmigosEstado.dragUlt < CAOS_DRAGONS_INTERVALO) return false;
+    if (Math.random() > 0.22) return false;
+    const D = REACTIVE_VOICE.dragons;
+    const ids = new Set(turma.map((p) => presenteDe(p.name).id));
+    let t;
+    if (ids.size >= 3 && Math.random() < 0.45) {
+      const [a, b, c] = CAOS_DRAGONS_IDS.map((id) => turma.find((p) => presenteDe(p.name).id === id).name);
+      t = getRandomReaction(D.trio, a, b, c);
+    } else t = getRandomReaction(D.um, turma[Math.floor(Math.random() * turma.length)].name);
+    if (!t) return false;
+    caosAmigosEstado.drag++;
+    caosAmigosEstado.dragUlt = carta;
+    caosLog("amigos", `Dragons (${caosAmigosEstado.drag}ª)`);
+    caosFalaAgendar(() => t, 1800);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 /* ======================================================================
  * 8. SALVAMENTO E MEMÓRIA (ARMAZENAMENTO, SALVAR/CARREGAR, EXPORTAR/IMPORTAR, FICHAS)
@@ -36607,7 +36691,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.6 · C.A.O.S. 4.3.1");
+  L.push("- **Versão:** Beta 1.7.10.7 · C.A.O.S. 4.3.2");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -37130,7 +37214,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.6 · C.A.O.S. 4.3.1",
+        versao: "Beta 1.7.10.7 · C.A.O.S. 4.3.2",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -70573,27 +70657,118 @@ const REACTIVE_VOICE = {
       "Categoria Animal estreando. Lembrando: vale animal de verdade e animal fictício ou mitológico.",
     ],
   },
-  // 1.7.10.6 · Presentes do JF: a chegada de quem tem cor e emoji exclusivos
-  presente: {
-    henrique: [
-      "{nome} chegou de roxo diabinho. Presente do JF. Combina demais, e isso me preocupa.",
-      "Olha o {nome} com o diabinho roxo. Essa cor ninguém mais pode usar. Nem eu.",
-      "{nome} na mesa, roxo e preto. Eu já sabia que vinha confusão.",
+  // Easter egg: piadas internas (chegada, vez, erro, acerto). Nome no meio da frase: são falas da mesa toda.
+  amigos: {
+    henrique: {
+      chegou: [
+        "Primeira pergunta da noite pro {nome}: tá sóbrio hoje?",
+        "{nome} chegou. Antes de tudo: bebeu hoje ou dá pra confiar nas respostas?",
+        "Olha o {nome} de roxo diabinho. Pergunta de rotina: hoje é suco ou é cerveja?",
+      ],
+      vez: [
+        "Vez do {nome}. Teste do bafômetro primeiro, depois a dica.",
+        "O {nome} pilota carro de corrida e estuda medicina. Se errar essa, é porque bebeu.",
+        "Cuidado com o {nome}: ele já levou multa até na Alemanha. Acelera, mas não na resposta.",
+        "Futuro doutor {nome} na vez. Diagnóstico da carta, por favor.",
+        "Pergunta séria pro {nome}: hoje você tá sóbrio mesmo?",
+      ],
+      erro: [
+        "Errou. O {nome} jura que tá sóbrio, mas o bafômetro discorda.",
+        "Até a polícia alemã acerta mais que o {nome} nessa.",
+        "Doutor {nome}, esse diagnóstico aí ia matar o paciente.",
+      ],
+      acerto: [
+        "O {nome} acertou. Comprovado: hoje ele tá sóbrio.",
+        "Acerto na velocidade de quem toma multa na Alemanha. O {nome} pisou fundo.",
+        "Diagnóstico certeiro do doutor {nome}. Pode receitar.",
+      ],
+    },
+    rafa: {
+      chegou: [
+        "Kabum? {nome} na mesa! Já trouxe as bombas?",
+        "{nome} chegou. Kabum? Kabum!",
+        "Kabum? Olha quem chegou: {nome}, o piromaníaco oficial da mesa.",
+      ],
+      vez: [
+        "Vez do {nome}. Corta o fio vermelho ou o azul?",
+        "O {nome} aprendeu a ler russo só pra entender manual de bomba. Uma carta de Perfil não assusta ele.",
+        "Silêncio, que o {nome} vai desarmar essa carta.",
+        "Atenção: o {nome} está na vez. Se acertar, kabum. Se errar, kabum também.",
+        "O {nome} é discreto igual o Batman. Até a hora que explode tudo.",
+      ],
+      erro: [
+        "Kabum. Explodiu na mão do {nome}.",
+        "Cortou o fio errado. O {nome} vai ter que reler o manual em russo.",
+        "O Oppenheimer da mesa errou. O {nome} vai culpar a TNT.",
+      ],
+      acerto: [
+        "Bomba desarmada! O {nome} acertou.",
+        "KABUM! Acerto do {nome}. O Oppenheimer aprovaria.",
+        "Fio certo, carta certa. O {nome} nunca erra quando tem bomba no meio.",
+      ],
+    },
+    vitinho: {
+      chegou: [
+        "{nome} chegou. Lembrando: na idade, marca a opção pra menores de 12, tá bom?",
+        "Olha o caçula da mesa: {nome}. Já fez a lição de casa?",
+        "{nome} na área. Quem deixou a criança jogar depois das dez?",
+      ],
+      vez: [
+        "Vez do {nome}. Essa carta é pra maiores de 12, mas vou abrir uma exceção.",
+        "O {nome} tem 12 anos e responde melhor que muito adulto aqui. Ou não.",
+        "Calma com o {nome}, gente, ele ainda tem 12 anos.",
+        "Ninja de 12 anos na vez: {nome}. O Kakashi ficaria orgulhoso.",
+      ],
+      erro: [
+        "O {nome} errou. Normal, ainda tem 12 anos.",
+        "Errou. Alguém chama a mãe do {nome}?",
+        "Nem o Sharingan salvou o {nome} nessa.",
+      ],
+      acerto: [
+        "O {nome} acertou! Com 12 anos! Prodígio.",
+        "Acerto do {nome}. Ganhou uma hora a mais de videogame hoje.",
+        "Ninja não avisa, ninja acerta. Boa do {nome}.",
+      ],
+    },
+    typingg: {
+      chegou: [
+        "Chegou o burguês: {nome}. Aqui não tem Game Pass, viu?",
+        "{nome} na mesa. Dinheiro aqui não ajuda. A não ser que você pague pra mim.",
+        "Link Start! O {nome} entrou no servidor.",
+      ],
+      vez: [
+        "Vez do {nome}. Não adianta comprar a resposta, aqui não tem loja.",
+        "O {nome} queria comprar o passe de batalha das dicas. Não existe. Ainda.",
+        "Se o {nome} me pagar, eu dou uma dica extra. Brincadeira. Ou não.",
+        "O {nome} já viu Sword Art Online mais vezes do que eu já falei errou. E olha que eu falo muito.",
+        "Espadachim preto na vez: {nome}. Star Burst Stream nessa carta.",
+      ],
+      erro: [
+        "Errou. Nem o dinheiro do {nome} salvou essa.",
+        "O {nome} errou. Nessa hora o Kirito usaria as duas espadas.",
+        "Faltou comprar o DLC da resposta. O {nome} fica pra próxima.",
+      ],
+      acerto: [
+        "Acertou sem pagar nada! O {nome} tá aprendendo.",
+        "O {nome} acertou. Item lendário de graça, raro pra um burguês.",
+        "Acerto do {nome}. Subiu de nível em Aincrad.",
+      ],
+    },
+  },
+  // Easter egg Dragons: só com o JF na mesa e alguém do servidor. Zoa o "ancião" (sem vocativo: é da mesa toda).
+  dragons: {
+    um: [
+      "Aviso pro {nome}: o ancião JF está na mesa. Respeitem os mais velhos.",
+      "Pergunta pro {nome}: o JF já pagou o seu salário esse mês? Pois é, nem o meu.",
+      "O JF tá jogando com o {nome}. Diferença de idade: uns três dinossauros.",
+      "Vovô JF na mesa. Alguém ajuda ele com a letra miúda das dicas? O {nome} se oferece.",
+      "Respeitem o ancião do servidor, JF. Ele não paga salário, mas cobra presença. O {nome} sabe bem.",
+      "O {nome} tá na mesma partida que o dinossauro JF. Isso aqui virou museu.",
     ],
-    rafa: [
-      "{nome} chegou. Vermelho-sangue e uma bomba. O Oppenheimer da mesa está entre nós.",
-      "Cuidado: {nome} na área. Discreto como um morcego, explosivo como uma TNT nuclear.",
-      "{nome} entrou. A cada carta ele troca de bomba pra morcego. Ninguém sabe qual vai aparecer. Nem ele.",
-    ],
-    vitinho: [
-      "{nome} chegou de azul shinobi. Ninja de verdade não avisa que chegou, mas eu aviso.",
-      "Olha o ninja da mesa: {nome}. Copiar resposta com o Sharingan não vale, hein.",
-      "{nome} entrou em silêncio, estilo Kakashi. Eu vi mesmo assim.",
-    ],
-    typingg: [
-      "{nome} chegou de preto, com duas espadas. Isso aqui não é Aincrad, mas pode lutar.",
-      "Duas espadas, roupa preta: {nome} na mesa. Só falta o Star Burst Stream nas dicas.",
-      "{nome} entrou. Espadachim preto confirmado. Presente do JF, nem adianta pedir a cor.",
+    trio: [
+      (a, b, c) => `[C.A.O.S.] O JF tá cercado: ${a}, ${b} e ${c} na mesa. Pergunta oficial dos três: cadê o salário, vovô?`,
+      (a, b, c) => `[C.A.O.S.] Reunião do servidor: ${a}, ${b} e ${c} contra o dinossauro JF. Eu fico do lado de quem pagar.`,
+      (a, b, c) => `[C.A.O.S.] Os três juntos: ${a}, ${b} e ${c}. Hoje o ancião JF não tem paz.`,
     ],
   },
   // C.A.O.S. 4.3 · Ouvintes da sala (pedido do JF): todo mundo calou, alguém voltou, ciúmes de quem ainda ouve.
@@ -72439,19 +72614,20 @@ const PAUSE_TIPS = [
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.7",
+    data: "15/10/2026 · 21:28",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "Ajustes por dentro: o C.A.O.S. conhece um pouco melhor quem joga com ele.",
+    itens: [],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.6",
     data: "15/10/2026 · 19:30",
     nome: "Multiplayer Update · Online de verdade",
-    t: "Presentes pra quem testou o online: cores e emojis exclusivos, e o C.A.O.S. repara quando eles chegam.",
-    itens: [
-      "😈 Presente do Henrique: com o nick Carro Pika, ele ganha o degradê roxo-diabinho e o emoji de diabinho roxo.",
-      "💣 Presente do Rafa: com o nick BsLordRafa, ele ganha o vermelho-sangue, e o emoji troca entre bomba e morcego a cada carta.",
-      "🥷 Presente do Vitinho: com Vitinho ou VineFA, ele ganha o azul shinobi e o emoji de ninja.",
-      "⚔️ Presente do Typingg: com Typingg, Typingg_KK ou TheDevil, ele ganha o preto espadachim e as duas espadas.",
-    ],
-    qol: [
-      "🔒 Só deles: essas cores e emojis ficam com cadeado pra todo o resto da mesa.",
-    ],
+    t: "Ajustes por dentro: o C.A.O.S. ficou um pouco mais esperto com a turma.",
+    itens: [],
+    qol: [],
   },
   {
     v: "Beta 1.7.10.5",

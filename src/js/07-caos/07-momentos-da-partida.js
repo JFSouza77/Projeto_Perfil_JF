@@ -24,9 +24,8 @@ function caosWelcomePlayer(p) {
     const g = caosGerarFala("jfChegou", p);
     if (g) return showToastMessage(g);
     bank = REACTIVE_VOICE.nickReacao.jf;
-  } else if (presenteDe(name) && p.color === presenteDe(name).cor && REACTIVE_VOICE.presente[presenteDe(name).id] && R() < 0.85) {
-    // 1.7.10.6: quem ganhou presente do JF chega com a cor exclusiva, e o C.A.O.S. repara
-    bank = REACTIVE_VOICE.presente[presenteDe(name).id];
+  } else if (presenteDe(name) && REACTIVE_VOICE.amigos[presenteDe(name).id] && CURRENT_MODE !== "junior" && R() < 0.9) {
+    bank = REACTIVE_VOICE.amigos[presenteDe(name).id].chegou;
   }
   else {
     {

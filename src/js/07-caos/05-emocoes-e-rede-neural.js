@@ -503,6 +503,10 @@ function caosEmocaoDaFala(bank) {
     e = { elogio: "orgulho", zoeira: "deboche", comentario: "pensando", eu: "orgulho" }[b.split(".")[1]] || "pensando";
   else if (b.startsWith("virada.")) e = (caosViradaPend && caosViradaPend.de) || null;
   else if (b === "mesa.apostaErrou") e = "vergonha";
+  else if (b.startsWith("amigos.")) {
+    const [, quem, mom] = b.split(".");
+    e = mom === "acerto" ? "surpresa" : mom === "chegou" ? { rafa: "festa", henrique: "espiando" }[quem] || "deboche" : "deboche";
+  } else if (b.startsWith("dragons.")) e = b === "dragons.trio" ? "festa" : "deboche";
   else if (b.startsWith("matrizHumor."))
     e =
       { frustrado: "raiva", orgulhoso: "orgulho", entediado: "tedio", desafiante: "desafio" }[b.split(".")[1]] || null;
@@ -913,7 +917,7 @@ function caosNeuralDesenhar(cv, t) {
     const C = caosConsole || {};
     const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
 tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
-${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.3.1`;
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.3.2`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }

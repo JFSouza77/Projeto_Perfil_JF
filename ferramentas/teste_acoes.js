@@ -432,6 +432,44 @@ const ARQ = acharMestre(process.argv[2]);
       out.palpiteAgora = temNumeros && naoDeOutro && pedido && pedidoSome && caioVe && dudaNao && mestreSemFicha && julgaCaio && umPorVez && errouSegue;
       out.palpiteAgoraDiag = JSON.stringify({ temNumeros, naoDeOutro, pedido, pedidoSome, caioVe, dudaNao, mestreSemFicha, julgaCaio, umPorVez, errouSegue });
     }
+    // Easter egg: piadas internas (limite por partida, intervalo, nunca no Júnior), Dragons só com o JF + turma,
+    // falas da mesa toda (sem vocativo) e cores de presente fora da paleta
+    {
+      const jogAntes = players, iniAntes = starterChosen, fimAntes = gameEnded, modoAntes = CURRENT_MODE, silAntes = caosSilenced, statsAntes = stats.totalDrawn, randAntes = Math.random;
+      const agendarOrig = caosFalaAgendar, ditas = [];
+      caosFalaAgendar = (fn) => ditas.push(fn());
+      const mk = (n, i) => ({ id: jogadorIdNovo(), name: n, score: 0, position: 0, color: PLAYER_COLORS[i], avatar: '😀', humor: 'normal', gems: {} });
+      starterChosen = true; gameEnded = false; caosSilenced = false; CURRENT_MODE = 'classico';
+      players = ['Carro Pika', 'Ana'].map(mk);
+      caosAmigosZerar();
+      let n = 0;
+      for (let c = 1; c <= 40; c++) { stats.totalDrawn = c; if (caosAmigoFala(players[0], 'vez')) n++; }
+      const limite = n === CAOS_AMIGOS_MAX;
+      caosAmigosZerar(); stats.totalDrawn = 5;
+      const a1 = !!caosAmigoFala(players[0], 'vez'), a2 = !caosAmigoFala(players[0], 'erro');
+      const intervalo = a1 && a2;
+      caosAmigosZerar(); CURRENT_MODE = 'junior'; stats.totalDrawn = 9;
+      const semJunior = !caosAmigoFala(players[0], 'vez'); CURRENT_MODE = 'classico';
+      Math.random = () => 0.01;
+      players = ['Ana', 'Vitinho'].map(mk); caosAmigosZerar(); stats.totalDrawn = 6; ditas.length = 0;
+      const semJf = !caosDragonsNaCarta();
+      players = ['JF', 'Vitinho', 'BsLordRafa', 'Typingg'].map(mk); caosAmigosZerar(); stats.totalDrawn = 6;
+      const comJf = caosDragonsNaCarta() && ditas.length === 1 && /JF/.test(ditas[0]);
+      Math.random = randAntes;
+      // nenhuma piada é vocativa (fala da mesa toda, não particular)
+      const nomes = { henrique: 'Carro Pika', rafa: 'BsLordRafa', vitinho: 'Vitinho', typingg: 'Typingg' };
+      const todas = [];
+      Object.keys(REACTIVE_VOICE.amigos).forEach((id) => Object.values(REACTIVE_VOICE.amigos[id]).forEach((l) => l.forEach((x) => todas.push([typeof x === 'function' ? x(nomes[id]) : x.replace(/\{nome\}/g, nomes[id]), nomes[id]]))));
+      REACTIVE_VOICE.dragons.um.forEach((x) => todas.push([typeof x === 'function' ? x('Vitinho') : x.replace(/\{nome\}/g, 'Vitinho'), 'Vitinho']));
+      const vocativas = todas.filter(([t, nm]) => redeFalaComQuem({ texto: t.replace(/^\[C\.A\.O\.S\.\]\s*/, ''), para: [{ id: 'x', nome: nm }] }));
+      const daMesa = vocativas.length === 0;
+      const foraDaPaleta = !coresDaPaleta().some((c) => PRESENTES.some((p) => p.cor === c)) && sanitizePlayerColor('Typingg_KK', '#ff0000') === 'GRAD_KIRITO';
+      caosFalaAgendar = agendarOrig; Math.random = randAntes;
+      players = jogAntes; starterChosen = iniAntes; gameEnded = fimAntes; CURRENT_MODE = modoAntes; caosSilenced = silAntes; stats.totalDrawn = statsAntes;
+      caosAmigosZerar();
+      out.amigos = limite && intervalo && semJunior && semJf && comJf && daMesa && foraDaPaleta;
+      out.amigosDiag = JSON.stringify({ limite, n, intervalo, semJunior, semJf, comJf, daMesa, vocativas: vocativas.map((v) => v[0]).slice(0, 3), foraDaPaleta });
+    }
     // 1.7.10.3: busca nas regras e o lembrete da primeira carta de cada categoria
     {
       openTutorial('manual');
@@ -546,6 +584,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['C.A.O.S. 4.3: comentário espera a fala anterior terminar + respiro (até 10 por carta), aviso de regra passa, no online Alt-Tab não pausa e pular fala não marca ninguém, e o que ele já apresentou volta no save', r.caos42],
     ['C.A.O.S. 4.3: pular fala marca quem pulou (aparelho do host e celular); todos calaram = quieto (regra passa); parte calou = ciúmes; quem religa traz ele de volta', r.caos43],
     ['1.7.10.5: quem está na vez pede a dica no aparelho (o Mestre recebe o pedido); quem tem a ficha toca em Palpitar agora e o Mestre julga só esse palpite; errou, a ficha volta e a vez segue', r.palpiteAgora],
+    ['Easter egg: piadas internas com limite e intervalo (nunca no Júnior), Dragons só com o JF e a turma, falas da mesa toda e cores escondidas da paleta', r.amigos],
     ['Cadastro: o C.A.O.S. pergunta da voz (não pergunta se já está ligada); Sim liga; Não ganha fala triste e segue sem voz', r.vozPergunta],
     ['1.7.10.3: busca nas regras acha "grupo"; o C.A.O.S. lembra o que vale na 1ª carta de cada categoria (Júnior sem animal em Coisa)', r.regrasEPrimeira],
     ['1.7.10.1: com a sala aberta, a partida só começa quando todo jogador tem aparelho', r.semAparelho],

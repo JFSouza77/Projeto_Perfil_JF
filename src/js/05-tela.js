@@ -1516,7 +1516,7 @@ const COR_EXCLUSIVA = {
   RGB: { de: "do JF", dono: (n) => isJfName(n) },
   GRAD_PRINCESA: { de: "da Anne", dono: (n) => isAnneName(n) },
 };
-// 1.7.10.6: as cores de presente também têm dono
+// easter egg: essas cores não aparecem na paleta; quem tem o nick ganha sozinho
 PRESENTES.forEach((pr) => (COR_EXCLUSIVA[pr.cor] = { de: "do " + pr.nome, dono: (n) => presenteDe(n) === pr }));
 function corReservada(c) {
   const inp = document.getElementById("playerNameInput"),
@@ -1599,7 +1599,7 @@ function caosEscolhaTomada(tipo, valor, btn) {
 function coresDaPaleta() {
   const isBatata = document.body.classList.contains("batata-mode");
   return PLAYER_COLORS.slice(0, -1)
-    .concat(["GRAD_PRINCESA", "RGB"], PRESENTES.map((p) => p.cor))
+    .concat(["GRAD_PRINCESA", "RGB"])
     .filter((c) => !(isBatata && (c === "RGB" || GRADIENTS[c])));
 }
 function renderColorPicker() {

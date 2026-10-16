@@ -43,6 +43,7 @@ js/07-caos/09-vinculos-silencio-e-balao.js
 js/07-caos/10-gerador-de-falas.js
 js/07-caos/11-espinha.js
 js/07-caos/12-ouvintes.js
+js/07-caos/13-amigos.js
 js/08-salvamento.js
 js/09-utilitarios.js
 dados/01-emocoes-do-caos.js
