@@ -7,8 +7,6 @@ CAOS_GERADORES.inicioPrimeiro = {
   meio: {
     geral: [
       "Sem pressão. Muita pressão.",
-      "Boa sorte.",
-      "Eu estou de olho.",
       "Começar bem é meio caminho. Começar mal é história pra mim.",
       "Respira e escolhe uma dica.",
       "A mesa inteira está olhando. Eu também.",
@@ -22,8 +20,8 @@ CAOS_GERADORES.inicioPrimeiro = {
   inteira: {
     geral: [
       "{nome} começa respondendo. Sem pressão. Muita pressão.",
-      "Quem vai sofrer primeiro é {nome}. Boa sorte.",
-      "O primeiro a responder é {nome}. Eu estou de olho.",
+      "Quem vai sofrer primeiro é {nome}. A mesa toda tá torcendo. Contra.",
+      "O primeiro a responder é {nome}. Eu já comecei a anotar.",
     ],
   },
 };

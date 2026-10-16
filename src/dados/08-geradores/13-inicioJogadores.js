@@ -30,7 +30,15 @@ CAOS_GERADORES.inicioJogadores = {
     ],
   },
   fecho: {
-    geral: ["Bora.", "Eu já escolhi meu favorito. Não vou contar.", "Que comece a bagunça.", "Vamos nessa."],
+    geral: [
+      "Eu já escolhi meu favorito. Não vou contar.",
+      "Já decorei os nomes. Os erros eu decoro durante.",
+      "Cada um com seu caderninho na minha memória.",
+      "Prometo ser imparcial. Prometo mal, mas prometo.",
+      "Quero ver quem vai ser o primeiro a reclamar da carta.",
+    ],
+    fimDeSemana: ["Fim de semana, então a partida pode ir longe."],
+    sexta: ["Sexta-feira. Já vi que ninguém vai dormir cedo."],
     noite: ["E ainda é de noite, então ninguém tem pressa."],
     madrugada: ["De madrugada. Que coragem."],
   },

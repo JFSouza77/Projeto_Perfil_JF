@@ -10,7 +10,7 @@ const NOVIDADES = [
     data: "15/10/2026 · 21:28",
     nome: "Multiplayer Update · Online de verdade",
     t: "Ajustes por dentro: o C.A.O.S. conhece um pouco melhor quem joga com ele.",
-    itens: [],
+    itens: ["🥚 Tem coisa escondida: algumas mesas vão ouvir o C.A.O.S. falar umas coisas que as outras não ouvem. Joga com a turma pra descobrir."],
     qol: [],
   },
   {

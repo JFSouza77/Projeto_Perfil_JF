@@ -860,7 +860,7 @@ function redeHostRetomar() {
       // o C.A.O.S. anuncia a troca (gerador hostCaiu, pronto desde a 1.7.5.1)
       try {
         const nome = (jogadorPorId(s.eu) || {}).name || "alguém";
-        const fala = typeof caosGerarFala === "function" ? caosGerarFala("hostCaiu", null, { antigo: s.antigo || "host", nome }) : "";
+        const fala = typeof caosGerarFala === "function" ? caosGerarFala("hostCaiu", null, { vars: { antigo: s.antigo || "host", nome } }) : "";
         showToastMessage(fala ? "[C.A.O.S.] " + fala : `[C.A.O.S.] ${nome} assumiu a sala. Nada se perdeu.`, null, true);
         caosLog("rede", `assumiu a sala ${s.sala} no lugar de ${s.antigo || "?"}`);
       } catch (e) {}

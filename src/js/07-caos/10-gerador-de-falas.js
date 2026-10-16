@@ -183,6 +183,65 @@ function caosGerSlot(g, slot, def, ctx, usadas, ja) {
   }
   return null;
 }
+// Motor de coerência (pedido do JF: "as frases devem fazer sentido"). Avalia a fala montada pedaço por pedaço
+// e aponta o que não conversa: fecho genérico grudado no fim, começo órfão ("Mas…"), ideias demais, nome repetido,
+// a mesma expressão em dois pedaços, duas chamadas pra ação, sentimento bom com fecho de quem está mal.
+const CAOS_GER_FECHO_GENERICO =
+  /^(bora|bora seguir|enfim|mas sigo firme|voltando ao jogo|vamos nessa|que comece|que comece a bagunça|boa sorte|eu tô de olho|eu estou de olho|sem pressão\. muita pressão|agora é sério\. mais ou menos)[.!]?$/i;
+const CAOS_GER_ACAO = /\b(bora|vamos jogar|vamos nessa|que comece|bora jogar|vamos continuar|bora continuar)\b/i;
+const CAOS_GER_ORFA = /^(mas|já|até|enquanto isso|também|e (?!aí))\b/i;
+const CAOS_GER_POSITIVO = /(bom humor|gostando|divertido|tranquilo|em paz|gosto dessa mesa|legais|orgulhoso)/i;
+const CAOS_GER_FECHO_TRISTE = /(mas sigo firme|^passa\.|respira)/i;
+let caosGerUltPedacos = []; // os pedaços da última fala montada (a auditoria usa)
+function caosGerBigramas(t) {
+  const pal = String(t)
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .split(/[^a-z]+/)
+    .filter(Boolean);
+  const out = new Set();
+  for (let i = 0; i < pal.length - 1; i++) if (pal[i].length >= 4 || pal[i + 1].length >= 4) out.add(pal[i] + " " + pal[i + 1]);
+  return out;
+}
+function caosGerFrases(t) {
+  return String(t)
+    .split(/(?<=[.!?…])\s+/)
+    .filter(Boolean);
+}
+function caosGerAvaliar(pedacos, nomes) {
+  const ps = pedacos.filter((x) => x && x.trim());
+  const txt = ps.join(" ");
+  const def = [];
+  if (!ps.length) return ["vazia"];
+  if (CAOS_GER_ORFA.test(ps[0].trim())) def.push("orfa");
+  if (caosGerFrases(txt).length >= 5) def.push("empilhada");
+  if ((nomes || []).some((n) => n && (txt.match(new RegExp("(^|[^\\p{L}])" + n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?![\\p{L}])", "gu")) || []).length >= 2))
+    def.push("nome2x");
+  for (let i = 0; i < ps.length && !def.includes("repete"); i++) {
+    const bi = caosGerBigramas(ps[i]);
+    for (let j = i + 1; j < ps.length; j++) if ([...caosGerBigramas(ps[j])].some((x) => bi.has(x))) {
+      def.push("repete");
+      break;
+    }
+  }
+  if (ps.filter((x) => CAOS_GER_ACAO.test(x)).length >= 2) def.push("acao2x");
+  const ult = ps[ps.length - 1].trim();
+  if (ps.length > 1 && CAOS_GER_FECHO_GENERICO.test(ult)) def.push("rabinho");
+  if (CAOS_GER_POSITIVO.test(txt) && CAOS_GER_FECHO_TRISTE.test(ult)) def.push("tom");
+  return def;
+}
+// Lapida a melhor tentativa quando nenhuma saiu perfeita: tira o fecho genérico e os pedaços (do fim pro começo)
+// que repetem nome, expressão ou chamada pra ação. Nunca tira o primeiro pedaço.
+function caosGerLapidar(pedacos, nomes) {
+  let ps = pedacos.filter((x) => x && x.trim());
+  for (let guard = 0; guard < 4 && ps.length > 1; guard++) {
+    const def = caosGerAvaliar(ps, nomes).filter((d) => d !== "orfa" && d !== "vazia");
+    if (!def.length) break;
+    ps = ps.slice(0, -1);
+  }
+  return ps;
+}
 // Monta uma fala do gatilho. extra = { tags: [...], vars: {...} } acrescenta contexto
 // próprio do momento. Devolve "" quando o gerador não existe ou não deu pra montar.
 function caosGerarFala(g, p, extra) {
@@ -193,49 +252,67 @@ function caosGerarFala(g, p, extra) {
     (extra.tags || []).forEach((t) => ctx.tags.add(t));
     Object.assign(ctx.vars, extra.vars || {});
   }
+  // o humor do momento escolhe fechos que combinam (sentimento bom não fecha com "mas passa")
+  {
+    const emo = [...ctx.tags].find((t) => /^emo_/.test(t)) || "";
+    if (/^emo_(alegria|calmo|carinho|curiosidade)$/.test(emo)) ctx.tags.add("valPos");
+    else if (emo || [...ctx.tags].some((t) => /^mist_/.test(t))) ctx.tags.add("valNeg");
+  }
   const mem = caosGerMemoria(),
     mg = mem[g] || (mem[g] = {}),
     ult = mg._ult || (mg._ult = []);
-  let txt = "";
-  for (let tent = 0; tent < 6; tent++) {
+  const nomes = players.map((x) => x && x.name).filter(Boolean);
+  let txt = "",
+    melhor = null;
+  const acabamento = (t) =>
+    caosGerPreenche(t, ctx.vars)
+      .replace(/\s+/g, " ")
+      .trim()
+      .replace(/(^|[.!?]\s+)([a-zà-ú])/g, (m, a, b) => a + b.toUpperCase());
+  for (let tent = 0; tent < 10; tent++) {
     const usadas = new Set(),
       ja = new Set();
     const molde = caosPickNR("ger." + g, G.moldes);
     let falhou = false;
-    const montada = molde.replace(/\{(\w+)\}/g, (m, slot) => {
+    const pedacos = [];
+    molde.replace(/\{(\w+)\}/g, (m, slot) => {
       if (!G[slot]) return m;
       const t = caosGerSlot(g, slot, G[slot], ctx, usadas, ja);
       if (t == null) falhou = true;
-      else caosGerPalavras(t).forEach((w) => ja.add(w));
+      else {
+        caosGerPalavras(t).forEach((w) => ja.add(w));
+        pedacos.push(acabamento(t));
+      }
       return t || "";
     });
-    if (falhou) continue;
-    txt = caosGerPreenche(montada, ctx.vars)
-      .replace(/\s+/g, " ")
-      .trim()
-      .replace(/(^|[.!?]\s+)([a-zà-ú])/g, (m, a, b) => a + b.toUpperCase());
-    if (/\{\w+\}/.test(txt) || caosHasProfanity(txt, [ctx.vars.nome || ""])) {
-      txt = "";
-      continue;
-    }
-    if (txt.length > CAOS_GER_MAX && tent < 5) {
-      txt = "";
-      continue;
-    }
+    if (falhou || !pedacos.length) continue;
+    const cand = acabamento(pedacos.join(" "));
+    if (/\{\w+\}/.test(cand) || caosHasProfanity(cand, [ctx.vars.nome || ""])) continue;
+    if (cand.length > CAOS_GER_MAX) continue;
     // impressão curta da fala (a memória salva fica pequena)
     let h = 0;
-    for (const ch of txt) h = (h * 31 + ch.charCodeAt(0)) | 0;
+    for (const ch of cand) h = (h * 31 + ch.charCodeAt(0)) | 0;
     const chave = (h >>> 0).toString(36);
-    if (ult.includes(chave) && tent < 5) continue;
+    // repetir uma fala recente não é proibido (calar é pior), só perde pra uma que não repete
+    const repetida = ult.includes(chave);
     // respeita o 👎: fala montada que a mesa não curtiu não volta
-    const nota = caosRatingsLoad()["gerador|" + g + "|" + txt.slice(0, 49)];
-    if (nota && nota.down > nota.up && tent < 5) {
-      txt = "";
-      continue;
+    const nota = caosRatingsLoad()["gerador|" + g + "|" + cand.slice(0, 49)];
+    if (nota && nota.down > nota.up) continue;
+    const def = caosGerAvaliar(pedacos, nomes);
+    const nota2 = def.length + (repetida ? 0.5 : 0);
+    if (!melhor || nota2 < melhor.nota) melhor = { pedacos, def, chave, nota: nota2 };
+    if (!nota2) break;
+  }
+  if (melhor) {
+    let ps = melhor.def.length ? caosGerLapidar(melhor.pedacos, nomes) : melhor.pedacos;
+    // começo órfão sem conserto: não fala (melhor calar que falar sem sentido)
+    if (caosGerAvaliar(ps, nomes).includes("orfa")) ps = [];
+    if (ps.length) {
+      txt = acabamento(ps.join(" "));
+      caosGerUltPedacos = ps;
+      ult.push(melhor.chave);
+      while (ult.length > CAOS_GER_ULTIMAS) ult.shift();
     }
-    ult.push(chave);
-    while (ult.length > CAOS_GER_ULTIMAS) ult.shift();
-    break;
   }
   caosGerGravar();
   if (!txt) return "";
