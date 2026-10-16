@@ -7,11 +7,13 @@ node build.js --testar --publicar   monta o Mestre, gera debug/compacta/offline,
 node montar.js                      só monta o Mestre (Perfil_JF_Mestre_X_Y_Z.html)
 node ferramentas/auditar_cartas.js  confere as cartas (só reporta)
 node ferramentas/caos_teste_geradores.js / caos_teste_estresse.js   testes do C.A.O.S. (só reportam)
+node ferramentas/checar_nomes.js    TypeScript por cima do JS: acha nome de função/variável que não existe
+npm run testes / npm run auditar    a bateria rápida e a conferência de cartas e botões
 ```
 
 - **Edite só os arquivos de `src/`.** O Mestre e as saídas são gerados, então nunca edite esses à mão.
 - A versão vem do `<title>` em `html/01-cabeca.html`, e o nome do Mestre sai dela.
-- Ao trocar de versão, apague o Mestre antigo com `git rm`. As saídas antigas (`Perfil_JF_X_Y_Z*.html`) **ficam** no repositório, pela regra do Klaus.
+- Ao trocar de versão, apague o Mestre antigo com `git rm`. Das saídas (`Perfil_JF_X_Y_Z*.html`) ficam só as 3 versões mais novas (`node ferramentas/limpar_versoes.js --apagar`); as antigas estão no Git e no acervo do Drive.
 - Todo arquivo `.html`, `.css` ou `.js` de `src/` precisa estar em `ordem.txt`. A montagem para com erro se sobrar ou faltar algum.
 
 ## O que tem em cada parte
@@ -19,15 +21,23 @@ node ferramentas/caos_teste_geradores.js / caos_teste_estresse.js   testes do C.
 | Parte | Conteúdo |
 |---|---|
 | `html/01-cabeca.html` | Comentário com o HISTÓRICO, `<head>`, `<title>` com a versão, e termina em `<style>` |
-| `css/01…06` | CSS, na ordem em que foi escrito. A ordem importa, porque regras de baixo vencem as de cima. `06-modo-claro.css` é o tema Claro |
+| `css/01…10` | CSS, na ordem em que foi escrito. A ordem importa, porque regras de baixo vencem as de cima. `01-base`, `02-painel-caos`, `03-botoes-e-telas`, `04-verso-hall-novidades`, `05-noturno-e-celular`, `06-modo-claro` (tema Claro), `07-botoes-acessiveis`, `08-computador` (tela larga), `09-tabuleiro`, `10-rede` (online, telão e T2) |
 | `html/02-corpo.html` | `</style>`, todo o HTML das telas, e termina em `<script>` |
 | `js/01-configuracao.js` | Índice do script e a seção 1: constantes, limites, tempos e chaves de save |
 | `js/02-estado.js` | Seção 2: variáveis globais da partida e do C.A.O.S. |
+| `js/02b-identidade.js` / `02c-sorteio.js` | Id fixo dos jogadores e das cartas (`matchId`); sorteio de regra que dá pra repetir nos testes (`sorteioSemear`) |
 | `js/03-regras.js` | Seção 3: vitória, pontos, joias, tabuleiro, baralhos por modo e equipes |
 | `js/04-turno-e-rodada.js` | Seção 4: sorteio de carta, dicas, acerto/erro, especiais, timers, pausa, início e fim |
 | `js/05-tela.js` | Seção 5: renderização, menus, cadastro, tutorial, painéis e efeitos |
+| `js/05b…05f` | Acessibilidade (05b), sugestão de tutorial (05c), ajuda do Mestre (05d), tutorial de vitória (05e), tempo de jogo (05f) |
+| `js/05g-acoes.js` | Ações com nome (`ACOES`, `dispatchAction`), revisão da partida, desfazer e o retrato que vai pra rede |
+| `js/05h-telao.js` | Telão / T2: a tela dos jogadores (no aparelho de cada um e na TV) |
+| `js/05i-tabuleiro.js` / `05j-lobby-placar.js` | Tabuleiro (mini na partida, zoom no lobby) e lobby/placar |
+| `js/05k-rede.js` | Online: salas, assentos, mensagens, quem pode mandar o quê, trava da dica, falas nos dispositivos |
+| `js/05l-peerjs.js` / `05m-qrcode.js` | Bibliotecas embutidas (PeerJS e QR Code). Não editar à mão |
+| `js/05n-reportar-carta.js` | Botão Reportar carta (fila e envio pro servidor) |
 | `js/06-voz-som-vibracao.js` | Seção 6 |
-| `js/07-caos/` | Seção 7, o C.A.O.S., em 11 partes (o mapa do cérebro está em `docs/CAOS_Cerebro.md`): `01-nucleo-e-falas` (temperamento, vetor de emoção, escolha e decoração das falas), `02-cerebro-adm` (o painel Cérebro da área ADM), `03-memoria-e-mesa` (fichas, recordes, rivais, leitura da mesa e casal), `04-lexico-e-relogio` (gerador de acerto/erro, relógio e tema da carta), `05-emocoes-e-rede-neural` (console de emoções, misturas, escada de rostos e rede neural), `06-humanizacao` (perguntas, implicância, silêncio e animações), `07-momentos-da-partida` (boas-vindas, início, falas espontâneas e efeitos), `08-hall-janelas-e-pausa` (comentários do Hall, janelas e pausa longa), `09-vinculos-silencio-e-balao` (favorito/desafeto, 🔇, chute e o balão `showToastMessage`), `10-gerador-de-falas` e `11-espinha` (as 3 leis e o canal) |
+| `js/07-caos/` | Seção 7, o C.A.O.S., em 13 partes (o mapa do cérebro está em `docs/CAOS_Cerebro.md`): `01-nucleo-e-falas` (temperamento, vetor de emoção, escolha e decoração das falas), `02-cerebro-adm` (o painel Cérebro da área ADM), `03-memoria-e-mesa` (fichas, recordes, rivais, leitura da mesa e casal), `04-lexico-e-relogio` (gerador de acerto/erro, relógio e tema da carta), `05-emocoes-e-rede-neural` (console de emoções, misturas, escada de rostos e rede neural), `06-humanizacao` (perguntas, implicância, silêncio e animações), `07-momentos-da-partida` (boas-vindas, início, falas espontâneas e efeitos), `08-hall-janelas-e-pausa` (comentários do Hall, janelas e pausa longa), `09-vinculos-silencio-e-balao` (favorito/desafeto, 🔇, chute e o balão `showToastMessage`), `10-gerador-de-falas` (gerador e motores de coerência), `11-espinha` (as 3 leis e o canal), `12-ouvintes` (quem calou/pulou, ciúmes) e `13-amigos` (piadas internas, easter egg) |
 | `js/08-salvamento.js` | Seção 8: armazenamento, salvar/carregar, exportar/importar e fichas |
 | `js/09-utilitarios.js` | Seção 9: texto, cores, sorteio e números |
 | `dados/01-emocoes-do-caos.js` | Início da seção 10: `CAOS_EMOS` |

@@ -1,7 +1,7 @@
 # Perfil JF
 
 Jogo de adivinhação por dicas (estilo Perfil) com o apresentador **C.A.O.S.**, feito pra jogar no celular, no
-computador ou numa TV. **Versão atual: Beta 1.7.10.5 · C.A.O.S. 4.3** (15/10/2026).
+computador ou numa TV. **Versão atual: Beta 1.7.10.5.5 · C.A.O.S. 4.4.2** (16/10/2026).
 
 - **Um aparelho só:** o jogo inteiro roda num HTML, sem precisar de internet (tem a versão `_offline`).
 - **Online:** cada jogador entra pelo próprio aparelho, de qualquer lugar. Quem abre a sala é o host.
@@ -17,9 +17,11 @@ computador ou numa TV. **Versão atual: Beta 1.7.10.5 · C.A.O.S. 4.3** (15/10/2
   (`src/dados/07-novidades.js`, regras em `docs/Regras_dos_Logs.md`), build, testes, PR.
 
 ## Testes
-- `npm run testes` (ações, duelo, identidade, telão e C.A.O.S.), `npm run auditar` (cartas e botões).
+- `npm run testes` (nomes via TypeScript, ações, duelo, identidade, telão e C.A.O.S.), `npm run auditar` (cartas e botões:
+  toque, nome, contraste e texto vazando nos temas Noturno e Claro).
 - `npm run rede` e `node ferramentas/teste_online.js` testam o online com vários aparelhos simulados.
-- `npm run simular` joga partidas inteiras; `npm run macaco` toca na tela ao acaso procurando travas.
+- `npm run simular` joga partidas inteiras; `npm run macaco` toca na tela ao acaso procurando travas;
+  `npm run equilibrio` compara a duração e a justiça das condições de vitória.
 
 ## Servidor do online (Cloudflare)
 - Código em `servidor/` (`worker.js`); passo a passo em `servidor/LEIA-ME.md`.
@@ -44,6 +46,7 @@ Ideias e testes de quem jogou levam crédito nas novidades do jogo.
 - `docs/Publico_dos_Modos.md`: para quem é cada modo (Old School, Júnior, Clássico).
 - `docs/Regras_dos_Logs.md` e `docs/Correcoes_de_Cartas.md`: regras das novidades e correções de cartas.
 - `docs/Estado_da_Partida.md`: o estado do jogo, peça por peça.
+- `docs/Dominio_Preparacao.md`: o que já está pronto pro domínio próprio e o passo a passo da troca.
 - `docs/brainstorm/`: ideias em discussão (Modo C.A.O.S., Corrida contra o Tempo, Telemetria).
 - `docs/Parecer_do_Klaus_Rumo_a_Release_1_0.md` e `docs/Resposta_ao_Parecer_do_Klaus.md`: o caminho até a 1.0.
 - Históricos (já cumpridos): `docs/Status_do_Roteiro.md`, `docs/Roteiro_Multiplayer.md`,

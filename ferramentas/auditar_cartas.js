@@ -10,6 +10,8 @@
 //          resposta repetida; total de cartas múltiplo de 5; Júnior sem carta de ANO;
 //          contas das cartas de ANO (soma, par/ímpar, bissexto, divisível, romanos, Copa, Olimpíada);
 //          vício "quatro dígitos" / "calendário gregoriano" em ANO.
+//   (1.7.10.5.5) ERRO também: texto com espaço sobrando, vírgula no fim, aspas sem fechar, turma
+//          desconhecida, "N letras" que não bate com a resposta. AVISO: número de carta pulado.
 //   AVISO  vazamento (dica com a resposta ou parte dela); eco (duas dicas muito parecidas);
 //          dica que começa remetendo a outra; frase genérica; mais de 3 dicas de conta em ANO.
 //   Avisos são pistas pra uma pessoa conferir; nem todo aviso é erro.
@@ -189,6 +191,37 @@ function auditar(cartas) {
       if (contas > 3) aviso(c, "ano", `${contas} dicas de conta (máximo 3)`);
     }
   }
+  // 1.7.10.5.5 (QoL de conferência): formato do texto, turma da carta, números das cartas e contas de letras
+  const CLASSES = [undefined, "livre", "junior", "oldschool", "hardcore"];
+  const NUM = { uma: 1, duas: 2, dois: 2, três: 3, quatro: 4, cinco: 5, seis: 6, sete: 7, oito: 8, nove: 9, dez: 10, onze: 11, doze: 12 };
+  const soLetras = (s) => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z]/g, "");
+  for (const c of cartas) {
+    if (!CLASSES.includes(c.class)) erro(c, "turma", `class desconhecida: ${c.class}`);
+    if (c.a !== String(c.a).trim() || /\s{2}/.test(c.a)) erro(c, "texto", `resposta com espaço sobrando: "${c.a}"`);
+    (c.q || []).forEach((t, k) => {
+      const i = k + 1;
+      if (typeof t !== "string") return erro(c, "texto", `#${i} não é texto`);
+      if (t !== t.trim() || /\s{2,}/.test(t)) erro(c, "texto", `#${i} com espaço sobrando: "${t}"`);
+      if (/[,;:]$/.test(t)) erro(c, "texto", `#${i} termina em vírgula/dois-pontos: "${t}"`);
+      if ((t.match(/"/g) || []).length % 2) erro(c, "texto", `#${i} com aspas sem fechar: "${t}"`);
+      if (/^[a-zà-ú]/.test(t)) aviso(c, "texto", `#${i} começa com letra minúscula: "${t}"`);
+      if (t.length > 170) aviso(c, "texto", `#${i} muito longa (${t.length} letras)`);
+      const m = t.match(/\b(\d+|uma|duas|dois|três|quatro|cinco|seis|sete|oito|nove|dez|onze|doze) letras/i);
+      if (m && c.cat !== "ANO" && !/abrevia/i.test(t)) {
+        const n = +m[1] || NUM[m[1].toLowerCase()];
+        const partes = String(c.a).split(/[\s-]+/).map((w) => soLetras(w).length);
+        if (soLetras(c.a).length !== n && !partes.includes(n)) erro(c, "letras", `#${i} diz ${n} letras, mas "${c.a}" não tem: "${t}"`);
+      }
+    });
+  }
+  // números das cartas: sem buraco (carta removida tem que ser registrada, não pulada sem querer)
+  const porCatN = {};
+  cartas.forEach((c) => /^[A-Z]+-\d{4}$/.test(c.id || "") && (porCatN[c.cat] = porCatN[c.cat] || []).push(+c.id.slice(-4)));
+  Object.entries(porCatN).forEach(([cat, ns]) => {
+    const tem = new Set(ns), max = Math.max(...ns), faltam = [];
+    for (let n = 1; n <= max; n++) if (!tem.has(n)) faltam.push(n);
+    if (faltam.length) avisos.push({ carta: cat, tipo: "id", msg: `números sem carta: ${faltam.slice(0, 20).join(", ")}` });
+  });
   return { erros, avisos };
 }
 

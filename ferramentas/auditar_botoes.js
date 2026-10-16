@@ -14,6 +14,12 @@ const CONTRASTE_GRANDE = 3;
 // Roda dentro da página: mede cada botão visível.
 function medir(tela) {
   const parse = (c) => {
+    // 1.7.10.5.5: color-mix() sai como "color(srgb r g b / a)" com valores de 0 a 1
+    const cs = String(c).match(/color\(srgb ([^)]+)\)/);
+    if (cs) {
+      const p = cs[1].split(/[ /]+/).filter(Boolean).map(Number);
+      return { r: p[0] * 255, g: p[1] * 255, b: p[2] * 255, a: p.length > 3 ? p[3] : 1 };
+    }
     const m = String(c).match(/rgba?\(([^)]+)\)/);
     if (!m) return null;
     const p = m[1].split(/[ ,/]+/).filter(Boolean).map(Number);
@@ -298,4 +304,8 @@ function medir(tela) {
   vazando.forEach((b) => console.log(linha(b, `${b.w}×${b.h}`)));
   console.log(erros.length ? "\nErros na página:\n  " + erros.join("\n  ") : "\nSem erro na página.");
   if (SAIDA_JSON) require("fs").writeFileSync(SAIDA_JSON, JSON.stringify(lista, null, 1));
+  // 1.7.10.5.5: a bateria cobra tudo zerado (toque, nome, contraste e texto vazando)
+  const tudoOk = !pequenos.length && !semNome.length && !baixoContraste.length && !vazando.length && !erros.length;
+  console.log(tudoOk ? "BOTÕES OK" : "BOTÕES COM PROBLEMA");
+  process.exitCode = tudoOk ? 0 : 1;
 })();
