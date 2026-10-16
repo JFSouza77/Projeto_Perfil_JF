@@ -4587,27 +4587,118 @@ const REACTIVE_VOICE = {
       "Categoria Animal estreando. Lembrando: vale animal de verdade e animal fictício ou mitológico.",
     ],
   },
-  // 1.7.10.6 · Presentes do JF: a chegada de quem tem cor e emoji exclusivos
-  presente: {
-    henrique: [
-      "{nome} chegou de roxo diabinho. Presente do JF. Combina demais, e isso me preocupa.",
-      "Olha o {nome} com o diabinho roxo. Essa cor ninguém mais pode usar. Nem eu.",
-      "{nome} na mesa, roxo e preto. Eu já sabia que vinha confusão.",
+  // Easter egg: piadas internas (chegada, vez, erro, acerto). Nome no meio da frase: são falas da mesa toda.
+  amigos: {
+    henrique: {
+      chegou: [
+        "Primeira pergunta da noite pro {nome}: tá sóbrio hoje?",
+        "{nome} chegou. Antes de tudo: bebeu hoje ou dá pra confiar nas respostas?",
+        "Olha o {nome} de roxo diabinho. Pergunta de rotina: hoje é suco ou é cerveja?",
+      ],
+      vez: [
+        "Vez do {nome}. Teste do bafômetro primeiro, depois a dica.",
+        "O {nome} pilota carro de corrida e estuda medicina. Se errar essa, é porque bebeu.",
+        "Cuidado com o {nome}: ele já levou multa até na Alemanha. Acelera, mas não na resposta.",
+        "Futuro doutor {nome} na vez. Diagnóstico da carta, por favor.",
+        "Pergunta séria pro {nome}: hoje você tá sóbrio mesmo?",
+      ],
+      erro: [
+        "Errou. O {nome} jura que tá sóbrio, mas o bafômetro discorda.",
+        "Até a polícia alemã acerta mais que o {nome} nessa.",
+        "Doutor {nome}, esse diagnóstico aí ia matar o paciente.",
+      ],
+      acerto: [
+        "O {nome} acertou. Comprovado: hoje ele tá sóbrio.",
+        "Acerto na velocidade de quem toma multa na Alemanha. O {nome} pisou fundo.",
+        "Diagnóstico certeiro do doutor {nome}. Pode receitar.",
+      ],
+    },
+    rafa: {
+      chegou: [
+        "Kabum? {nome} na mesa! Já trouxe as bombas?",
+        "{nome} chegou. Kabum? Kabum!",
+        "Kabum? Olha quem chegou: {nome}, o piromaníaco oficial da mesa.",
+      ],
+      vez: [
+        "Vez do {nome}. Corta o fio vermelho ou o azul?",
+        "O {nome} aprendeu a ler russo só pra entender manual de bomba. Uma carta de Perfil não assusta ele.",
+        "Silêncio, que o {nome} vai desarmar essa carta.",
+        "Atenção: o {nome} está na vez. Se acertar, kabum. Se errar, kabum também.",
+        "O {nome} é discreto igual o Batman. Até a hora que explode tudo.",
+      ],
+      erro: [
+        "Kabum. Explodiu na mão do {nome}.",
+        "Cortou o fio errado. O {nome} vai ter que reler o manual em russo.",
+        "O Oppenheimer da mesa errou. O {nome} vai culpar a TNT.",
+      ],
+      acerto: [
+        "Bomba desarmada! O {nome} acertou.",
+        "KABUM! Acerto do {nome}. O Oppenheimer aprovaria.",
+        "Fio certo, carta certa. O {nome} nunca erra quando tem bomba no meio.",
+      ],
+    },
+    vitinho: {
+      chegou: [
+        "{nome} chegou. Lembrando: na idade, marca a opção pra menores de 12, tá bom?",
+        "Olha o caçula da mesa: {nome}. Já fez a lição de casa?",
+        "{nome} na área. Quem deixou a criança jogar depois das dez?",
+      ],
+      vez: [
+        "Vez do {nome}. Essa carta é pra maiores de 12, mas vou abrir uma exceção.",
+        "O {nome} tem 12 anos e responde melhor que muito adulto aqui. Ou não.",
+        "Calma com o {nome}, gente, ele ainda tem 12 anos.",
+        "Ninja de 12 anos na vez: {nome}. O Kakashi ficaria orgulhoso.",
+      ],
+      erro: [
+        "O {nome} errou. Normal, ainda tem 12 anos.",
+        "Errou. Alguém chama a mãe do {nome}?",
+        "Nem o Sharingan salvou o {nome} nessa.",
+      ],
+      acerto: [
+        "O {nome} acertou! Com 12 anos! Prodígio.",
+        "Acerto do {nome}. Ganhou uma hora a mais de videogame hoje.",
+        "Ninja não avisa, ninja acerta. Boa do {nome}.",
+      ],
+    },
+    typingg: {
+      chegou: [
+        "Chegou o burguês: {nome}. Aqui não tem Game Pass, viu?",
+        "{nome} na mesa. Dinheiro aqui não ajuda. A não ser que você pague pra mim.",
+        "Link Start! O {nome} entrou no servidor.",
+      ],
+      vez: [
+        "Vez do {nome}. Não adianta comprar a resposta, aqui não tem loja.",
+        "O {nome} queria comprar o passe de batalha das dicas. Não existe. Ainda.",
+        "Se o {nome} me pagar, eu dou uma dica extra. Brincadeira. Ou não.",
+        "O {nome} já viu Sword Art Online mais vezes do que eu já falei errou. E olha que eu falo muito.",
+        "Espadachim preto na vez: {nome}. Star Burst Stream nessa carta.",
+      ],
+      erro: [
+        "Errou. Nem o dinheiro do {nome} salvou essa.",
+        "O {nome} errou. Nessa hora o Kirito usaria as duas espadas.",
+        "Faltou comprar o DLC da resposta. O {nome} fica pra próxima.",
+      ],
+      acerto: [
+        "Acertou sem pagar nada! O {nome} tá aprendendo.",
+        "O {nome} acertou. Item lendário de graça, raro pra um burguês.",
+        "Acerto do {nome}. Subiu de nível em Aincrad.",
+      ],
+    },
+  },
+  // Easter egg Dragons: só com o JF na mesa e alguém do servidor. Zoa o "ancião" (sem vocativo: é da mesa toda).
+  dragons: {
+    um: [
+      "Aviso pro {nome}: o ancião JF está na mesa. Respeitem os mais velhos.",
+      "Pergunta pro {nome}: o JF já pagou o seu salário esse mês? Pois é, nem o meu.",
+      "O JF tá jogando com o {nome}. Diferença de idade: uns três dinossauros.",
+      "Vovô JF na mesa. Alguém ajuda ele com a letra miúda das dicas? O {nome} se oferece.",
+      "Respeitem o ancião do servidor, JF. Ele não paga salário, mas cobra presença. O {nome} sabe bem.",
+      "O {nome} tá na mesma partida que o dinossauro JF. Isso aqui virou museu.",
     ],
-    rafa: [
-      "{nome} chegou. Vermelho-sangue e uma bomba. O Oppenheimer da mesa está entre nós.",
-      "Cuidado: {nome} na área. Discreto como um morcego, explosivo como uma TNT nuclear.",
-      "{nome} entrou. A cada carta ele troca de bomba pra morcego. Ninguém sabe qual vai aparecer. Nem ele.",
-    ],
-    vitinho: [
-      "{nome} chegou de azul shinobi. Ninja de verdade não avisa que chegou, mas eu aviso.",
-      "Olha o ninja da mesa: {nome}. Copiar resposta com o Sharingan não vale, hein.",
-      "{nome} entrou em silêncio, estilo Kakashi. Eu vi mesmo assim.",
-    ],
-    typingg: [
-      "{nome} chegou de preto, com duas espadas. Isso aqui não é Aincrad, mas pode lutar.",
-      "Duas espadas, roupa preta: {nome} na mesa. Só falta o Star Burst Stream nas dicas.",
-      "{nome} entrou. Espadachim preto confirmado. Presente do JF, nem adianta pedir a cor.",
+    trio: [
+      (a, b, c) => `[C.A.O.S.] O JF tá cercado: ${a}, ${b} e ${c} na mesa. Pergunta oficial dos três: cadê o salário, vovô?`,
+      (a, b, c) => `[C.A.O.S.] Reunião do servidor: ${a}, ${b} e ${c} contra o dinossauro JF. Eu fico do lado de quem pagar.`,
+      (a, b, c) => `[C.A.O.S.] Os três juntos: ${a}, ${b} e ${c}. Hoje o ancião JF não tem paz.`,
     ],
   },
   // C.A.O.S. 4.3 · Ouvintes da sala (pedido do JF): todo mundo calou, alguém voltou, ciúmes de quem ainda ouve.

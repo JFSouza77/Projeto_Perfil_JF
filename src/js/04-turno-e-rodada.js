@@ -288,6 +288,7 @@ function resetDeck() {
   caosSaidasTensao = 0;
   caosCortes = { total: 0, por: {}, rancor: {} };
   caosOuvintesZerar();
+  caosAmigosZerar();
   caosAviaoLast = -99;
   caosAcidLastCard = -99;
   caosAcidLastIdx = null;
@@ -408,6 +409,7 @@ function drawHidden() {
     if (!falou && stats.totalDrawn >= 3 && stats.totalDrawn <= 5) falou = maybeShowNameReminder();
     if (!falou) falou = caosRelogioNaCarta();
     if (!falou) falou = caosOuvintesNaCarta();
+    if (!falou) falou = caosAmigosNaCarta();
     if (!falou) falou = caosMesaNaCarta();
     if (!falou) maybeShowCardChatter();
   }
@@ -957,6 +959,10 @@ function markCorrect(playerIdxOverride) {
     milestoneSpoke: toastSerial !== toastAntesDePontuar,
   });
   caosIniAcerto(scorer);
+  {
+    const piada = caosAmigoFala(scorer, "acerto", 0.3);
+    if (piada) caosFalaAgendar(() => piada, 2600);
+  }
   caosIniExplica(
     scorer,
     "pontos",
@@ -1064,7 +1070,8 @@ function markWrong(tipo) {
       fxShake();
     }
     {
-      const prio = caosCerebroAnne(tipo, missedPlayer) || caosCerebroDiagnostico(missedPlayer);
+      const prio =
+        caosCerebroAnne(tipo, missedPlayer) || caosCerebroDiagnostico(missedPlayer) || (!tipo && caosAmigoFala(missedPlayer, "erro", 0.35));
       if (prio) {
         caosNoteSpeech(true);
         showToastMessage(prio, proceed);
