@@ -305,6 +305,10 @@ function caosDicaRepetida(idx) {
   if (!currentCard || gameEnded || cardState !== "revealed" || pendingIndex !== null) return;
   const agora = Date.now();
   if (agora - caosRepetidaAt < 6e3 || caosRepetidaN >= 4) return;
+  // C.A.O.S. 4.4.1 (relato do JF: "clico trocentas vezes e ele não reage"): é resposta a um toque, não comentário
+  // solto. O respiro da 4.3 cortava a fala calado e ainda gastava a chance. Agora: se ele está falando (ou a sala
+  // calou ele), o toque não gasta nada; senão ele responde na hora, sem esperar o respiro.
+  if (activeToastState || (typeof caosSalaCalada === "function" && caosSalaCalada())) return;
   const e = revealedOrder.find((r) => r.index === idx);
   const v = players[responderIndex];
   if (!e || !v) return;
@@ -317,7 +321,12 @@ function caosDicaRepetida(idx) {
   if (bank === B.normal && (isJfName(v.name) || isAnneName(v.name)) && Math.random() < 0.6)
     bank = isJfName(v.name) ? B.sonso : B.sonsa;
   caosLog("dicaRepetida", `${v.name} tocou na dica ${idx + 1} (pedida por ${dono})`);
-  showToastMessage(getRandomReaction(bank, v.name, dono), null, false, false, true);
+  caosFalaDaFila = true;
+  try {
+    showToastMessage(getRandomReaction(bank, v.name, dono), null, false, false, true);
+  } finally {
+    caosFalaDaFila = false;
+  }
 }
 function caosBezier(c, x) {
   if (x <= 0 || x >= 1) return x;

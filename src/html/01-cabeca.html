@@ -6,6 +6,15 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.5.3 · 15/10/2026 · "Multiplayer Update · Online de verdade" = TRAVA DA DICA + FICHA VERMELHA (ideia do JF com o Henrique) · C.A.O.S. 4.4.1.
+          Online: quem está na vez escolhe a dica no aparelho dele e o Mestre só abre a dica pedida (dicaTravada/dicaPodeAbrir,
+          conferido na porta escolherDica). Fail safe automático: a trava sai se o aparelho de quem está na vez cair, se ele
+          joga no aparelho do host ou no mesmo aparelho do Mestre. Fail safe manual: segurar um número (650 ms) e confirmar
+          "Abrir sem pedido" (escolherDica com forcar). Dica aberta ganha a ficha vermelha do Perfil de tabuleiro por cima do
+          número só na T2 (telão e celulares; a tela do Mestre fica como era). Testes novos no teste_rede.
+          C.A.O.S. 4.4.1 (relato do JF): tocar na dica já aberta não fazia ele reagir (o respiro da 4.3 cortava a fala
+          calado e gastava a chance). Agora é resposta ao toque: passa pelo respiro; se ele está falando, não gasta nada.
+          Regras e manual conferidos com as mecânicas novas (passo 3, Ficha de palpite, Online: como funciona e Quem toca o quê).
   1.7.10.5.2 · 15/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.4: MOTORES DE FALA CALIBRADOS. + CORREÇÃO: Mestre em outro aparelho via "Dica N: null" (a dica pendente saiu do retrato na 4.2; agora vai junto com a resposta, só pro aparelho do Mestre). Achado pela Gameez (Júlia) e pelo Henrique (Carro Pika).
           Pedido do JF: as falas montadas têm que fazer sentido. 1) Auditoria (ferramentas/caos_auditar_geradores.js): 4.800
           falas dos 18 geradores; ~35% saíam com defeito (fecho genérico grudado, ideias empilhadas, mesma expressão em dois
@@ -809,7 +818,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.5.2</title>
+<title>Perfil JF · Beta 1.7.10.5.3</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

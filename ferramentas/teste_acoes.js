@@ -405,7 +405,9 @@ const ARQ = acharMestre(process.argv[2]);
       const opsBeto = redeOpcoes(b2.id);
       const temNumeros = opsBeto.filter((o) => o.a === 'pedirDica').length === 10;
       const naoDeOutro = !redePodeComandar('pedirDica', c.id, [6]) && redePodeComandar('pedirDica', b2.id, [6]);
-      dispatchAction({ type: 'pedirDica', data: [6], actorId: b2.id });
+      const rPed = dispatchAction({ type: 'pedirDica', data: [6], actorId: b2.id });
+      // 1.7.10.5.3: trava da dica (Beto em outro aparelho): o Mestre só abre a pedida; forçar passa
+      const trava = rPed.ok && dicaTravada() && dispatchAction({ type: 'escolherDica', data: [3], actorId: a.id }).ok === false && dicaPodeAbrir(3, true) && dicaPodeAbrir(6);
       const opsMestre = redeOpcoes(a.id);
       const pedido = !!opsMestre.find((o) => o.a === 'escolherDica' && o.d[0] === 6 && /pedida por/.test(o.t)) && retratoPartida('mesa').pedidoDica.pos === 6 && pendingIndex === null;
       chooseClue(6);
@@ -425,12 +427,23 @@ const ARQ = acharMestre(process.argv[2]);
       dispatchAction({ type: 'palpiteErrou', data: [c.id], actorId: a.id });
       if (activeToastState) closeActiveToast();
       const errouSegue = !palpiteHolders[c.id] && palpiteStock === 5 && pendingIndex === pendDepois && responderIndex === 1 && !palpiteVezAtual() && redeOpcoes(a.id).some((o) => o.a === 'acertou');
+      // C.A.O.S. 4.4.1 (relato do JF): tocar na dica aberta faz ele responder mesmo no respiro; falando, o toque não gasta
+      pendingIndex = null; if (activeToastState) closeActiveToast();
+      const silRep = caosSilenced; caosSilenced = false;
+      caosRepetidaAt = 0; caosRepetidaN = 0; caosFalaFimAt = Date.now(); caosUltimaFalaAt = Date.now();
+      caosDicaRepetida(6);
+      const respondeu = !!activeToastState && caosRepetidaN === 1;
+      caosRepetidaAt = 0; caosDicaRepetida(6);
+      const naoGasta = caosRepetidaN === 1;
+      if (activeToastState) closeActiveToast();
+      caosSilenced = silRep;
+      out.dicaRepetida = respondeu && naoGasta; out.dicaRepetidaDiag = JSON.stringify({ respondeu, naoGasta, n: caosRepetidaN });
       rede = redeAntes;
       players = jogAntes; starterChosen = iniAntes; gameEnded = fimAntes; mestreIndex = mAntes; responderIndex = rAntes;
       currentCard = cartaAntes; cardState = estAntes; pendingIndex = pendAntes; revealedOrder = revAntes; palpiteHolders = holdAntes; palpiteStock = stockAntes; CURRENT_MODE = modoAntes; CURRENT_FORMAT = fmtAntes;
       palpiteVez = null; pedidoDica = null;
-      out.palpiteAgora = temNumeros && naoDeOutro && pedido && pedidoSome && caioVe && dudaNao && mestreSemFicha && julgaCaio && umPorVez && errouSegue;
-      out.palpiteAgoraDiag = JSON.stringify({ temNumeros, naoDeOutro, pedido, pedidoSome, caioVe, dudaNao, mestreSemFicha, julgaCaio, umPorVez, errouSegue });
+      out.palpiteAgora = trava && temNumeros && naoDeOutro && pedido && pedidoSome && caioVe && dudaNao && mestreSemFicha && julgaCaio && umPorVez && errouSegue;
+      out.palpiteAgoraDiag = JSON.stringify({ trava, temNumeros, naoDeOutro, pedido, pedidoSome, caioVe, dudaNao, mestreSemFicha, julgaCaio, umPorVez, errouSegue });
     }
     // Easter egg: piadas internas (limite por partida, intervalo, nunca no Júnior), Dragons só com o JF + turma,
     // falas da mesa toda (sem vocativo) e cores de presente fora da paleta
@@ -584,6 +597,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['C.A.O.S. 4.3: comentário espera a fala anterior terminar + respiro (até 10 por carta), aviso de regra passa, no online Alt-Tab não pausa e pular fala não marca ninguém, e o que ele já apresentou volta no save', r.caos42],
     ['C.A.O.S. 4.3: pular fala marca quem pulou (aparelho do host e celular); todos calaram = quieto (regra passa); parte calou = ciúmes; quem religa traz ele de volta', r.caos43],
     ['1.7.10.5: quem está na vez pede a dica no aparelho (o Mestre recebe o pedido); quem tem a ficha toca em Palpitar agora e o Mestre julga só esse palpite; errou, a ficha volta e a vez segue', r.palpiteAgora],
+    ['1.7.10.5.3: trava da dica (o Mestre só abre a pedida, forçar passa); C.A.O.S. 4.4.1: tocar na dica aberta faz ele responder mesmo no respiro', r.dicaRepetida && r.palpiteAgora],
     ['Easter egg: piadas internas com limite e intervalo (nunca no Júnior), Dragons só com o JF e a turma, falas da mesa toda e cores escondidas da paleta', r.amigos],
     ['Cadastro: o C.A.O.S. pergunta da voz (não pergunta se já está ligada); Sim liga; Não ganha fala triste e segue sem voz', r.vozPergunta],
     ['1.7.10.3: busca nas regras acha "grupo"; o C.A.O.S. lembra o que vale na 1ª carta de cada categoria (Júnior sem animal em Coisa)', r.regrasEPrimeira],

@@ -158,10 +158,24 @@ const PASSO_CELULAR = () => {
   if (c && r.estadoCarta === "revealed" && c.pendente === null && souMestre) {
     const usadas = new Set(c.abertas.map((x) => x.pos));
     const livres = Array.from({ length: c.totalDicas }, (_, i) => i).filter((i) => !usadas.has(i));
+    // 1.7.10.5.3: com a trava, abre a dica pedida; sem pedido, às vezes usa o "Abrir sem pedido" (fail safe)
+    if (livres.length && r.dicaTravada) {
+      if (r.pedidoDica) redeMandar("escolherDica", r.pedidoDica.pos);
+      else if (sorte < 0.15) redeMandar("escolherDica", livres[Math.floor(Math.random() * livres.length)], true);
+      else return "esperando pedido";
+      return "dica";
+    }
     if (livres.length) {
       redeMandar("escolherDica", livres[Math.floor(Math.random() * livres.length)]);
       return "dica";
     }
+  }
+  // quem está na vez pede a dica no próprio dispositivo
+  const pedir = ops.filter((o) => o.a === "pedirDica");
+  if (pedir.length && !r.pedidoDica) {
+    const o = pedir[Math.floor(Math.random() * pedir.length)];
+    redeMandar(o.a, ...o.d);
+    return "pedirDica";
   }
   const o = escolher();
   if (!o) return "nada";
@@ -182,6 +196,14 @@ const PASSO_HOST = () => {
     // dica: o Mestre do aparelho do host abre uma livre
     if (jogadorIdDe(mestreIndex) === jid && cardState === "revealed" && pendingIndex === null && currentCard) {
       const livres = currentCard.clues.map((x, i) => i).filter((i) => acoesDicaLivre(i));
+      // 1.7.10.5.3: com a trava, abre a pedida; sem pedido, às vezes força (fail safe)
+      if (livres.length && dicaTravada()) {
+        const ped = pedidoDicaAtual();
+        if (ped) chooseClue(ped.idx);
+        else if (sorte < 0.15) chooseClue(livres[Math.floor(Math.random() * livres.length)], true);
+        else continue;
+        return "dica";
+      }
       if (livres.length) {
         chooseClue(livres[Math.floor(Math.random() * livres.length)]);
         return "dica";

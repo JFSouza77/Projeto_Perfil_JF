@@ -879,6 +879,58 @@ body.batata-mode .ft-ic:after {
 .number-btn.aberta:after {
   display: none;
 }
+/* 1.7.10.5.3 (ideia do JF): a dica aberta ganha a ficha vermelha do Perfil de tabuleiro, por cima do número (só na T2) */
+.telao-numeros .usada {
+  position: relative;
+}
+.telao-numeros .ficha {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 72%;
+  max-width: 34px;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ff9b9b 0 12%, #e23b3b 32%, #a51616 78%, #7c0d0d 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.45), inset 0 0 0 2px rgba(255, 255, 255, 0.18), inset 0 -2px 3px rgba(0, 0, 0, 0.35);
+  opacity: 0.86;
+  pointer-events: none;
+}
+.telao-numeros .ficha:after {
+  content: "";
+  position: absolute;
+  inset: 22%;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(255, 255, 255, 0.35);
+}
+body.batata-mode .telao-numeros .ficha {
+  background: #c62828;
+  box-shadow: none;
+}
+body.batata-mode .telao-numeros .ficha:after {
+  display: none;
+}
+.number-btn.travada {
+  opacity: 0.55;
+  cursor: not-allowed;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.dica-forcar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  margin: 6px 0 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(226, 59, 59, 0.14);
+  border: 1px solid rgba(226, 59, 59, 0.45);
+  font-size: 0.9rem;
+}
 .card .guess-btns > button,
 .card .mesa-btns button,
 .card .continue-btn,

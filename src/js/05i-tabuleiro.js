@@ -543,7 +543,7 @@ const TAB_LOBBY_SEG = 60;
 const TAB_LOBBY_KEY = "perfil5_tab_lobby";
 let tabLobbyPendente = false; // uma carta acabou (checkWinnerThenDraw): abre quando a próxima estiver pronta
 let tabLobbyRelogio = null;
-let tabLobbyFim = 0; // quando o intervalo acaba (vai pros celulares da sala: só o host segue)
+let tabLobbyFim = 0; // quando o intervalo acaba (vai pros dispositivos da sala: só o host segue)
 let tabLobbyAntes = null; // casa de cada peça no lobby anterior (pra mostrar quanto andou)
 let tabLobbyAntesVelho = null; // o de antes do último lobby (o Desfazer volta pra ele)
 

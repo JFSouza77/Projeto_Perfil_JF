@@ -126,10 +126,10 @@ function caosVinculoCorte() {
   if (m) caosVincRessent(m, 1, "cortou a fala");
 }
 function caosVinculoNaoCurti() {
-  if (salaOnlineAberta()) return; // C.A.O.S. 4.2: o 👎 no online não é de quem "segura o celular"
+  if (salaOnlineAberta()) return; // C.A.O.S. 4.2: o 👎 no online não é de quem "segura o dispositivo"
   const m = mestreIndex !== null && mestreIndex !== void 0 && starterChosen && !gameEnded ? players[mestreIndex] : null;
   if (!m || !caosVincElegivelDesafeto(m)) return;
-  caosVincRessent(m, 1, "👎 (palpite: quem segurava o celular)");
+  caosVincRessent(m, 1, "👎 (palpite: quem segurava o dispositivo)");
   if (!caosVinc.acusou[m.name] && Math.random() < 0.4) {
     caosVinc.acusou[m.name] = 1;
     caosFalaAgendar(() => getRandomReaction(REACTIVE_VOICE.vinculo.acusa, m.name), 1800, "baixa");

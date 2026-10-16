@@ -1098,7 +1098,7 @@ function redeCadastroInfo() {
   const na = players.filter((p) => redeOnline(rede.assentos[p.id])).map((p) => escapeHtml(p.name));
   const esperando = Object.keys(rede.esperando).length;
   info.innerHTML =
-    `Cadastre todo mundo aqui: cada um escolhe o próprio nome no celular.` +
+    `Cadastre todo mundo aqui: cada um escolhe o próprio nome no dispositivo.` +
     (na.length ? `<br>🟢 Na sala: ${na.join(", ")}` : "") +
     (esperando ? `<br>⏳ ${esperando} aparelho${esperando === 1 ? "" : "s"} esperando o nome aparecer` : "");
 }
@@ -1415,7 +1415,7 @@ function redeHostAdicionarPerfil(perfil) {
     idade: isEquipe ? (faixa ? (faixa === "crianca" ? "menor" : "maior") : null) : IDADE_OPCOES.some((o) => o.id === perfil.idade) ? perfil.idade : null,
     team: null,
     nickMs: null,
-    aparelho: "celular",
+    aparelho: "dispositivo",
   };
   players.push(p);
   try {
@@ -1465,6 +1465,45 @@ function redePedidosPintar() {
   box.querySelectorAll("[data-ses]").forEach((b) => b.addEventListener("click", () => redeAprovarPedido(b.dataset.ses, b.dataset.sim === "1")));
   const todos = box.querySelector("#redeAceitarTodos");
   if (todos) todos.addEventListener("click", redeAprovarTodos);
+}
+// 1.7.10.5.3 (ideia do JF com o Henrique, como no Perfil de tabuleiro): no online, quem está na vez escolhe a dica
+// no próprio aparelho e o Mestre só abre a dica escolhida. Fail safe automático: a trava sai sozinha se o aparelho
+// de quem está na vez cair (ou se ele joga no aparelho do host ou no mesmo aparelho do Mestre). Fail safe manual:
+// o Mestre segura um número e confirma "Abrir sem pedido".
+function dicaTravada() {
+  if (!salaOnlineAberta() || CURRENT_MODE === "express" || cardState !== "revealed" || pendingIndex !== null || !currentCard || gameEnded) return false;
+  const vez = jogadorIdDe(responderIndex), mestre = jogadorIdDe(mestreIndex);
+  if (!vez || vez === mestre || redeNoHost(vez)) return false;
+  const a = rede.assentos[vez];
+  if (!redeOnline(a)) return false;
+  const am = rede.assentos[mestre];
+  if (am && !redeNoHost(mestre) && am.sessao === a.sessao) return false;
+  return true;
+}
+function dicaPodeAbrir(idx, forcar) {
+  if (forcar === true || typeof dicaTravada !== "function" || !dicaTravada()) return true;
+  const ped = pedidoDicaAtual();
+  return !!ped && ped.idx === idx;
+}
+// Segurar um número travado (650 ms) pede a confirmação do "Abrir sem pedido"
+function dicaSegurarParaForcar(grid, aoSegurar) {
+  let t = null, alvo = null;
+  const soltar = () => {
+    clearTimeout(t);
+    t = null;
+  };
+  grid.addEventListener("pointerdown", (e) => {
+    alvo = e.target.closest(".number-btn.travada");
+    if (!alvo) return;
+    const idx = parseInt(alvo.dataset.idx !== undefined ? alvo.dataset.idx : alvo.dataset.dica);
+    t = setTimeout(() => {
+      t = null;
+      grid.dataset.segurou = "1";
+      aoSegurar(idx);
+    }, 650);
+  });
+  ["pointerup", "pointerleave", "pointercancel"].forEach((ev) => grid.addEventListener(ev, soltar));
+  grid.addEventListener("contextmenu", (e) => e.target.closest(".number-btn.travada") && e.preventDefault());
 }
 // Quem pode mandar o quê (o host confere antes da porta de sempre).
 const REDE_SO_MESTRE = [
@@ -1702,7 +1741,7 @@ function redeHostPublicar(forcar) {
 }
 
 /* --- 1.7.9.4 · Tela do host quando o Mestre está em outro aparelho (relato do JF no 1º teste: a Anne era a
-   Mestre no tablet dela e o celular do host continuava com a tela do Mestre, com carta e resposta) ---
+   Mestre no tablet dela e o dispositivo do host continuava com a tela do Mestre, com carta e resposta) ---
    Se o Mestre da vez está na sala num aparelho próprio, este aparelho vira a tela de um jogador: o mesmo
    retrato público dos convidados, os números da dica na vez de quem joga aqui e o Pausar. A carta, a
    resposta e os botões do Mestre ficam escondidos por baixo. Mestre sem aparelho (joga no do host), ou que
@@ -1721,7 +1760,7 @@ function redeSemAparelho() {
 function redeAvisarSemAparelho() {
   const nomes = redeSemAparelho().map((p) => p.name);
   caosAvisoModal(
-    `Antes de começar, diga onde cada um joga: ${nomes.join(", ")} ${nomes.length === 1 ? "ainda não está" : "ainda não estão"} na sala. Entre pelo celular ou marque em "Quem joga neste aparelho?".`,
+    `Antes de começar, diga onde cada um joga: ${nomes.join(", ")} ${nomes.length === 1 ? "ainda não está" : "ainda não estão"} na sala. Entre pelo dispositivo ou marque em "Quem joga neste aparelho?".`,
     () => redePainelHost(),
   );
 }
@@ -1776,7 +1815,7 @@ function redeHostVista() {
   let h = `<div class="rede-eu">${eus.length ? `Neste aparelho: <b>${eus.map(nome).join("</b> e <b>")}</b>${vez ? ` · 👉 vez de ${nome(daVez)}` : ""}` : "Este aparelho é a mesa"}</div>`;
   h += `<div class="rede-segredo">🔒 A carta e a resposta estão no aparelho de <b>${mestre ? nome(mestre) : "quem é o Mestre"}</b> (Mestre da vez).</div>`;
   if (vez && cardState === "revealed" && pendingIndex === null && !pausedAt)
-    h += `<div class="rede-rot">👉 Sua vez: fale um número de dica pro Mestre abrir.</div>`; // 1.7.9.6: só o Mestre abre
+    h += `<div class="rede-rot">👉 Sua vez: toque no número (ou fale) e o Mestre abre a dica.</div>`; // 1.7.9.6: só o Mestre abre
   const ops = [];
   eus.forEach((p) => redeOpcoes(p.id).forEach((o) => o.a !== "pausar" && ops.push({ ...o, quem: p.id })));
   if (ops.length) h += `<div class="rede-acoes">${ops.map((o, i) => `<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`).join("")}</div>`;
@@ -1823,8 +1862,8 @@ function redeVotacaoAbrir(tipo, pedidoPor) {
     const m = jogadorPorId(pedidoPor) || players[mestreIndex] || { name: "O Mestre" };
     showToastMessage(
       tipo === "descartar"
-        ? `[C.A.O.S.] ${m.name} quer DESCARTAR esta carta porque achou difícil demais. Todos de acordo? Votem no celular.`
-        : `[C.A.O.S.] ${m.name} quer DESISTIR desta carta. Todos de acordo? Votem no celular.`,
+        ? `[C.A.O.S.] ${m.name} quer DESCARTAR esta carta porque achou difícil demais. Todos de acordo? Votem no dispositivo.`
+        : `[C.A.O.S.] ${m.name} quer DESISTIR desta carta. Todos de acordo? Votem no dispositivo.`,
       null,
       true,
     );
@@ -2417,8 +2456,16 @@ function redeMestreCartaMontar(box) {
       const abertas = new Set(c.abertas.map((d) => d.pos));
       let grade = "";
       const ped = r.pedidoDica; // 1.7.10.5: número pedido por quem está na vez
-      for (let i = 0; i < c.totalDicas; i++) grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}${ped && ped.pos === i ? " pedida" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : ""}>${i + 1}</button>`;
-      controles = `${ped ? `<div class="pedido-dica">👉 ${nome(ped.por)} pediu a dica <b>${ped.pos + 1}</b>. Toque nela pra abrir.</div>` : ""}<div class="pick-label">${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)</div><div class="number-grid">${grade}</div>`;
+      // 1.7.10.5.3: com a trava, só o número pedido abre; segurar um número pede o "Abrir sem pedido"
+      const trava = !!r.dicaTravada;
+      if (rede.dicaForcar != null && (!trava || abertas.has(rede.dicaForcar) || rede.dicaForcarRev !== r.revisao)) rede.dicaForcar = null;
+      for (let i = 0; i < c.totalDicas; i++) {
+        const travada = trava && !abertas.has(i) && !(ped && ped.pos === i);
+        grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}${ped && ped.pos === i ? " pedida" : ""}${travada ? " travada" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : travada ? ' title="Segure pra abrir sem pedido"' : ""}>${i + 1}</button>`;
+      }
+      const forcar = rede.dicaForcar != null ? `<div class="dica-forcar">Abrir a dica <b>${rede.dicaForcar + 1}</b> sem pedido? <button type="button" class="rede-btn rede-ok" id="redeForcarSim">Abrir</button><button type="button" class="rede-btn" id="redeForcarNao">Cancelar</button></div>` : "";
+      const rotulo = trava && !ped ? `👉 ${nome(r.vezId)} escolhe a dica no aparelho dele (${c.totalDicas - c.abertas.length} restantes). Travou? Segure um número.` : `${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)`;
+      controles = `${ped ? `<div class="pedido-dica">👉 ${nome(ped.por)} pediu a dica <b>${ped.pos + 1}</b>. Toque nela pra abrir.</div>` : ""}${forcar}<div class="pick-label">${rotulo}</div><div class="number-grid">${grade}</div>`;
     }
     h = `<div class="card rede-carta-mestre" style="--card-glow:${cor}">
       <div class="answer-header cat-neon" style="--cat:${cor};"><span class="cat-selo">${CAT_SELO_ICONE[cat] || "🃏"} ${escapeHtml((GEM_INFO[cat] || {}).name || cat)}</span>Diga aos jogadores: "Eu sou ${formatLabelUppercase(CATEGORY_LABELS[cat] || escapeHtml(cat))}."</div>
@@ -2443,7 +2490,26 @@ function redeMestreCartaMontar(box) {
       if (o) redeMandar(o.a, ...o.d);
     }),
   );
-  sec.querySelectorAll(".number-btn[data-dica]:not(.aberta)").forEach((b) => b.addEventListener("click", () => redeMandar("escolherDica", +b.dataset.dica)));
+  sec.querySelectorAll(".number-btn[data-dica]:not(.aberta):not(.travada)").forEach((b) => b.addEventListener("click", () => redeMandar("escolherDica", +b.dataset.dica)));
+  const gradeEl = sec.querySelector(".number-grid");
+  if (gradeEl)
+    dicaSegurarParaForcar(gradeEl, (idx) => {
+      rede.dicaForcar = idx;
+      rede.dicaForcarRev = rede.retrato ? rede.retrato.revisao : null;
+      redeConvidadoDesenhar();
+    });
+  const fSim = sec.querySelector("#redeForcarSim");
+  if (fSim) {
+    fSim.addEventListener("click", () => {
+      const idx = rede.dicaForcar;
+      rede.dicaForcar = null;
+      redeMandar("escolherDica", idx, true);
+    });
+    sec.querySelector("#redeForcarNao").addEventListener("click", () => {
+      rede.dicaForcar = null;
+      redeConvidadoDesenhar();
+    });
+  }
   const rb = sec.querySelector("#redeResp");
   if (rb)
     rb.addEventListener("click", () => {
@@ -2778,7 +2844,7 @@ function redePerguntarSala() {
   const ov = document.createElement("div");
   ov.id = "redePergunta";
   ov.className = "jf-modal-bg";
-  ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Vai jogar online?</h3><p>Abrindo a sala, este aparelho vira o <b>host</b> da partida. Os outros entram com o <b>código da sala</b> (ou pelo link), você aceita a entrada e cada um cria o próprio jogador no celular dele.</p><button type="button" class="btn-start btn-neo neo-solid neo-still" id="redePerguntaSim" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">🌐 Sim, abrir a sala</button><button type="button" class="chip" id="redePerguntaNao" style="margin-top:10px">Não, todo mundo neste aparelho</button></div>`;
+  ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Vai jogar online?</h3><p>Abrindo a sala, este aparelho vira o <b>host</b> da partida. Os outros entram com o <b>código da sala</b> (ou pelo link), você aceita a entrada e cada um cria o próprio jogador no dispositivo dele.</p><button type="button" class="btn-start btn-neo neo-solid neo-still" id="redePerguntaSim" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">🌐 Sim, abrir a sala</button><button type="button" class="chip" id="redePerguntaNao" style="margin-top:10px">Não, todo mundo neste aparelho</button></div>`;
   ov.querySelector("#redePerguntaSim").addEventListener("click", () => {
     ov.remove();
     redeTravasPerguntar(() => redeAbrirSala("internet") && redePainelHost());
@@ -2874,7 +2940,7 @@ function redeQrHtml(link) {
     const qr = qrcode(0, "M");
     qr.addData(link);
     qr.make();
-    return `<div class="rede-qr" aria-label="QR Code do link da sala">${qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true })}</div><div class="rede-qr-rot">📷 Quem está perto: aponte a câmera do celular</div>`;
+    return `<div class="rede-qr" aria-label="QR Code do link da sala">${qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true })}</div><div class="rede-qr-rot">📷 Quem está perto: aponte a câmera do dispositivo</div>`;
   } catch (e) {
     return "";
   }
@@ -2912,7 +2978,7 @@ function redePainelHost() {
     if (!ov.isConnected && ov._montado) return;
     if (!rede || rede.papel !== "host") {
       const temNet = redeTemInternet();
-      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Jogar online</h3><p>Abra uma sala: cada jogador entra pelo link no próprio celular, escolhe quem é e joga de lá. Este aparelho continua com a partida.</p><button type="button" class="chip" id="redeComo">❓ Como funciona (passo a passo)</button>${
+      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Jogar online</h3><p>Abra uma sala: cada jogador entra pelo link no próprio dispositivo, escolhe quem é e joga de lá. Este aparelho continua com a partida.</p><button type="button" class="chip" id="redeComo">❓ Como funciona (passo a passo)</button>${
         temNet ? `<button type="button" class="btn-start btn-neo neo-solid neo-still" id="redeAbrirNet" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">Abrir sala pela internet</button>` : `<p><small>Este navegador não tem como abrir sala pela internet.</small></p>`
       }<button type="button" class="chip" id="redeAbrirLocal">Ensaio neste navegador (abas)</button><button type="button" class="chip" id="redeOk" style="margin-top:10px">Fechar</button></div>`;
       const net = ov.querySelector("#redeAbrirNet");
@@ -2954,7 +3020,7 @@ function redePainelHost() {
       ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Sala ${rede.sala}</h3><div class="rede-estado">${rede.modo === "local" ? "🧪 Ensaio em abas deste navegador" : REDE_ESTADO_HOST[est] || est}</div>${erro}<div class="rede-codigo-rot">Código da sala</div><div class="rede-codigo">${rede.sala}</div>${redeQrHtml(redeLinkDaSala())}<p class="rede-rot">Quem vai jogar abre o jogo, toca em <b>🌐 Jogar online</b> e digita o código. Ou mande o link:</p><code class="rede-link">${escapeHtml(redeLinkDaSala())}</code><button type="button" class="chip" id="redeCopiar">📋 Copiar link</button>${
         navigator.share ? '<button type="button" class="chip" id="redeCompartilhar">📤 Compartilhar</button>' : ""
       }<div class="rede-rot-eu">Quem joga neste aparelho? <small>(pode marcar mais de um)</small><div class="rede-eu-lista">${opcoesEu || "<small>Ninguém cadastrado ainda.</small>"}</div><small>${
-        players.length ? "Marque quem joga neste aparelho, inclusive quem não tem celular e divide este. Nenhum marcado = o aparelho é só a mesa. A carta só aparece aqui quando o Mestre é alguém daqui (ou não tem aparelho)." : "Mande o código (ou o link): cada um cria o próprio jogador no celular, e você aceita a entrada aqui. Quem joga neste aparelho você cadastra como sempre."
+        players.length ? "Marque quem joga neste aparelho, inclusive quem não tem dispositivo e divide este. Nenhum marcado = o aparelho é só a mesa. A carta só aparece aqui quando o Mestre é alguém daqui (ou não tem aparelho)." : "Mande o código (ou o link): cada um cria o próprio jogador no dispositivo, e você aceita a entrada aqui. Quem joga neste aparelho você cadastra como sempre."
       }</small></div><ul class="rede-lista">${lugares}</ul>${
         rede.modo === "local" ? '<button type="button" class="chip" id="redeAbrirAba">Abrir uma aba de convidado</button>' : ""
       }<button type="button" class="chip" id="redeComoSala">❓ Como funciona</button><button type="button" class="chip" id="redeFecharSala">Fechar a sala</button><button type="button" class="chip" id="redeOk" style="margin-top:10px">Fechar</button></div>`;
