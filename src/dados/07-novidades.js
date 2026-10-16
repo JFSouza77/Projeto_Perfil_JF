@@ -6,6 +6,19 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.5.2",
+    data: "15/10/2026 · 21:58",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "C.A.O.S. 4.4: as falas dele fazem mais sentido.",
+    itens: [
+      "🧠 Falas com sentido: quando o C.A.O.S. monta uma frase, ele confere se as partes combinam. Acabaram os finais soltos tipo Enfim ou Bora seguir grudados em qualquer coisa, a mesma palavra repetida e as ideias empilhadas sem ligação.",
+      "🎭 Cara de quem fala: o rostinho e a cor do balão agora acompanham o que ele diz. Se a frase é triste, o balão fica triste.",
+      "🔁 Errou de novo só quando é de novo: ele não diz que você errou de novo no seu primeiro erro.",
+      "👑 Troca de host avisada: quando o host cai e outra pessoa assume a sala, o C.A.O.S. avisa a mesa como devia.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.5.1",
     data: "15/10/2026 · 21:28",
     nome: "Multiplayer Update · Online de verdade",

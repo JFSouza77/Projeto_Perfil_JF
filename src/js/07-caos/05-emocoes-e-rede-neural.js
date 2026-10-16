@@ -465,11 +465,33 @@ function caosEscada(emo, bank, forte) {
   caosEmoFalaAtual = fim;
   return fim;
 }
+// Motores de fala, passo 4: a emoção da fala montada vem do que ela diz (antes vinha só do tipo do gerador:
+// "Tô meio pra baixo" saía com cara de deboche). A primeira regra que bater vale; nada bateu = regra antiga.
+const CAOS_EMO_DO_TEXTO = [
+  ["nostalgia", /saudade|bons tempos|partidas antigas/i],
+  ["triste", /triste|pra baixo|cinzento|chorar|magoad/i],
+  ["raiva", /irritad|contando até dez|respira, c\.a\.o\.s|mau humor|rabugent|processando com força|não chega perto/i],
+  ["medo", /medo|frio no circuito|pressentimento|alguma coisa vai acontecer/i],
+  ["ansiedade", /ansios|nervos|suspense|acelerado/i],
+  ["tedio", /entediad|tá devagar|me surpreendam|conta uma piada/i],
+  ["vergonha", /vergonha|fingir que eu não disse|rindo sem graça/i],
+  ["carinho", /gosto dessa mesa|coração mole|vocês são legais|bem-vind|que bom te ver|obrigado|com carinho|eu perdoo|torço baixinho/i],
+  ["orgulho", /bom humor|gostando dessa|divertido|orgulhos|parabéns|foi boa|acertou/i],
+  ["calmo", /tranquilo|em paz|clima bom/i],
+  ["espiando", /curioso|reparando|de olho/i],
+];
+function caosEmocaoDoTexto(t) {
+  const s = String(t || "");
+  for (const [e, re] of CAOS_EMO_DO_TEXTO) if (re.test(s)) return e;
+  return null;
+}
 function caosEmocaoDaFala(bank) {
   caosConsoleAvancar(bank);
   let e = null;
   const b = String(bank || "");
-  if (b.startsWith("gerador.")) {
+  if (b.startsWith("gerador.") && caosLastPick && caosLastPick.bank === b && caosEmocaoDoTexto(caosLastPick.text)) {
+    e = caosEmocaoDoTexto(caosLastPick.text);
+  } else if (b.startsWith("gerador.")) {
     const [, tipo, prat] = b.split(".");
     e =
       tipo === "acerto"
@@ -917,7 +939,7 @@ function caosNeuralDesenhar(cv, t) {
     const C = caosConsole || {};
     const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
 tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
-${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.3.2`;
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.4`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }
