@@ -2815,7 +2815,7 @@ function buildRulesHtml() {
     );
   } else {
     li.push(
-      `💬 <b>A vez:</b> só quem está na vez responde. Escolha um número, ouça a dica e dê <b>um</b> palpite.`,
+      `💬 <b>A vez:</b> só quem está na vez responde. Escolha um número, ouça a dica e dê <b>um</b> palpite.${typeof salaOnlineAberta === "function" && salaOnlineAberta() ? " No online, você toca no número no seu celular e o Mestre só abre a dica pedida." : ""}`,
     );
     li.push(
       `⏱️ <b>Tempo:</b> ${c.pick}s pra escolher a dica e ${c.resp}s pra responder. Não escolheu a tempo? Perde a vez. Não respondeu? Conta como erro.`,

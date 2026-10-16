@@ -16,7 +16,7 @@ const NOVIDADES = [
       "🔴 Ficha vermelha: na tela dos jogadores, a dica que já foi aberta ganha uma fichinha vermelha por cima do número, igual à do tabuleiro.",
       "👆 Tocou na dica aberta, ele responde: tocar de novo numa dica que já saiu volta a fazer o C.A.O.S. comentar, também no computador.",
     ],
-    qol: [],
+    qol: ["📖 Regras e manual em dia: o capítulo Online explica a trava da dica, o Abrir sem pedido, o Palpitar agora e a ficha vermelha."],
   },
   {
     v: "Beta 1.7.10.5.2",

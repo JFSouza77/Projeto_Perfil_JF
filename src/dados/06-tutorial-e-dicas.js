@@ -107,7 +107,7 @@ const TUTORIAL_STEPS = [
     sec: 2,
     icon: "🔢",
     title: "3. Quem está na vez escolhe um número",
-    text: "O jogador da vez fala um número de 1 a 20. O Mestre toca nele e <b>lê a dica em voz alta</b>. Os números são embaralhados: nenhum é “mais fácil”.<br>⏱️ Tem um tempo pra escolher o número e outro pra responder (aparece na tela). Acabou o de escolher = perde a vez.",
+    text: "O jogador da vez fala um número de 1 a 20. O Mestre toca nele e <b>lê a dica em voz alta</b>. Os números são embaralhados: nenhum é “mais fácil”.<br>⏱️ Tem um tempo pra escolher o número e outro pra responder (aparece na tela). Acabou o de escolher = perde a vez.<br>🌐 No online, quem está na vez <b>toca no número no próprio celular</b> e o Mestre só consegue abrir aquela dica.",
     mock: '<div class="number-grid" style="grid-template-columns:repeat(5,1fr);"><button class="number-btn">1</button><button class="number-btn">2</button><button class="number-btn" disabled>3</button><button class="number-btn">4</button><button class="number-btn">5</button></div>',
   },
   {
@@ -135,7 +135,7 @@ const TUTORIAL_STEPS = [
     sec: 2,
     icon: "🃏",
     title: "Ficha de palpite",
-    text: "Uma das instruções é o <b>Palpite a qualquer hora</b>: quem tira ganha uma <b>ficha</b> que vale o jogo todo. Com ela, dá pra chutar <b>fora da sua vez</b>, em qualquer carta, enquanto houver dica na tela. Errou o palpite? Sem castigo, só gasta a ficha.<br>⚠️ Cada um guarda <b>no máximo uma</b>. Tirou a instrução já tendo ficha? Não ganha outra e ainda <b>perde a vez</b> (e o C.A.O.S. te chama de fominha).<br>Precisa de 3 jogadores ou mais, e não existe no Hardcore nem no Express.",
+    text: "Uma das instruções é o <b>Palpite a qualquer hora</b>: quem tira ganha uma <b>ficha</b> que vale o jogo todo. Com ela, dá pra chutar <b>fora da sua vez</b>, em qualquer carta, enquanto houver dica na tela. Errou o palpite? Sem castigo, só gasta a ficha. No online, quem tem a ficha toca em <b>🃏 Palpitar agora</b> no próprio celular e o Mestre julga esse palpite.<br>⚠️ Cada um guarda <b>no máximo uma</b>. Tirou a instrução já tendo ficha? Não ganha outra e ainda <b>perde a vez</b> (e o C.A.O.S. te chama de fominha).<br>Precisa de 3 jogadores ou mais, e não existe no Hardcore nem no Express.",
   },
   {
     sec: 3,
@@ -245,7 +245,7 @@ const TUTORIAL_STEPS = [
     sec: 6,
     icon: "🌐",
     title: "Jogar online: como funciona",
-    text: "No online, <b>cada pessoa joga no próprio celular</b>, na mesma sala ou cada um na sua casa (com uma chamada de voz, por exemplo).<ul><li>📱 <b>Um aparelho é o host:</b> é nele que a partida é montada e fica guardada. Pode ser o celular de quem joga ou um tablet/computador só pra mesa;</li><li>🔗 <b>Os outros entram por um link</b> e escolhem quem são. Eles não precisam montar nada;</li><li>🔒 <b>Só o celular do Mestre vê a resposta.</b> Quem está na vez escolhe o número da dica no próprio celular.</li></ul>Ainda é <b>beta</b>: no mesmo Wi-Fi funciona melhor. Os próximos passos ensinam a abrir e a entrar.",
+    text: "No online, <b>cada pessoa joga no próprio celular</b>, na mesma sala ou cada um na sua casa (com uma chamada de voz, por exemplo).<ul><li>📱 <b>Um aparelho é o host:</b> é nele que a partida é montada e fica guardada. Pode ser o celular de quem joga ou um tablet/computador só pra mesa;</li><li>🔗 <b>Os outros entram por um link</b> e escolhem quem são. Eles não precisam montar nada;</li><li>🔒 <b>Só o celular do Mestre vê a resposta.</b> Quem está na vez escolhe o número da dica no próprio celular, e o Mestre só abre a dica pedida.</li></ul>Ainda é <b>beta</b>: no mesmo Wi-Fi funciona melhor. Os próximos passos ensinam a abrir e a entrar.",
     dark: true,
     mock: '<div class="tut-sala"><span class="tut-sala-selo">🧪 BETA</span><div class="tut-sala-rot">Sala</div><div class="tut-sala-cod">K7P2</div><div class="tut-sala-sub">1 host · cada um no seu celular</div></div>',
   },
@@ -269,7 +269,7 @@ const TUTORIAL_STEPS = [
     sec: 6,
     icon: "🎙️",
     title: "Quem toca o quê",
-    text: "Cada celular só mostra o que é seu:<ul><li>🎙️ <b>Mestre:</b> vê a carta como na tela de sempre: vira a carta, vê a resposta, <b>abre as dicas</b>, dá o veredito (Acertou, Errou, Pulou, Absurdo), resolve as instruções especiais e o palpite;</li><li>👉 <b>Quem está na vez:</b> fala o número da dica, e o Mestre abre. Todo mundo vê a dica e quem pediu;</li><li>🤖 <b>O C.A.O.S.</b> fala em todos os celulares; o que é só pra uma pessoa aparece só no celular dela;</li><li>🏟️ <b>Quem caiu na casa de bônus:</b> escolhe contra quem é o duelo;</li><li>⏸️ <b>Qualquer um</b> pode pausar e continuar;</li><li>🗳️ <b>Descartar e Desistir</b> viram votação: o Mestre pede e a mesa vota no celular;</li><li>📱 <b>O host</b> é o único que toca em <b>Próxima carta</b> no intervalo. Quando o Mestre está em outro aparelho, o host vê a mesma tela dos jogadores (sem a resposta). Se o Mestre não tem aparelho, ele usa o do host, que mostra tudo.</li></ul>",
+    text: "Cada celular só mostra o que é seu:<ul><li>🎙️ <b>Mestre:</b> vê a carta como na tela de sempre: vira a carta, vê a resposta, <b>abre as dicas</b>, dá o veredito (Acertou, Errou, Pulou, Absurdo), resolve as instruções especiais e o palpite;</li><li>👉 <b>Quem está na vez:</b> toca no número da dica no próprio celular. O Mestre só consegue abrir a dica pedida. Todo mundo vê a dica, quem pediu, e as dicas já abertas ganham uma <b>🔴 ficha vermelha</b>;</li><li>🆘 <b>Travou?</b> Se o celular de quem está na vez cair, a trava sai sozinha. E o Mestre pode <b>segurar um número</b> e tocar em <b>Abrir sem pedido</b> pra seguir o jogo;</li><li>🃏 <b>Quem tem a ficha de palpite:</b> toca em <b>Palpitar agora</b> no próprio celular, e o Mestre julga esse palpite;</li><li>🤖 <b>O C.A.O.S.</b> fala em todos os celulares; o que é só pra uma pessoa aparece só no celular dela;</li><li>🏟️ <b>Quem caiu na casa de bônus:</b> escolhe contra quem é o duelo;</li><li>⏸️ <b>Qualquer um</b> pode pausar e continuar;</li><li>🗳️ <b>Descartar e Desistir</b> viram votação: o Mestre pede e a mesa vota no celular;</li><li>📱 <b>O host</b> é o único que toca em <b>Próxima carta</b> no intervalo. Quando o Mestre está em outro aparelho, o host vê a mesma tela dos jogadores (sem a resposta). Se o Mestre não tem aparelho, ele usa o do host, que mostra tudo.</li></ul>",
   },
   {
     sec: 6,

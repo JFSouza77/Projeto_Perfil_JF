@@ -690,7 +690,7 @@ async function rodarSalaPrimeiro(b) {
   // 1.7.9.6 (regra do JF): só o Mestre abre a dica; quem está na vez só fala o número
   conf(
     "Na vez de quem está no host: o aviso pra falar o número, sem botões de dica",
-    await esperar(host, () => !!document.getElementById("redeHostVista") && /fale um número/.test(document.getElementById("redeHostVista").textContent) && !document.querySelector("#redeHostVista [data-dica]"), null, 12000),
+    await esperar(host, () => !!document.getElementById("redeHostVista") && /toque no número/.test(document.getElementById("redeHostVista").textContent) && !document.querySelector("#redeHostVista [data-dica]"), null, 12000),
   );
   const livreH = await host.evaluate(() => currentCard.clues.findIndex((c) => c.type === "clue"));
   await g.evaluate((i) => redeMandar("escolherDica", i), livreH);
