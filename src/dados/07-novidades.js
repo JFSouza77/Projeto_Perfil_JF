@@ -14,6 +14,7 @@ const NOVIDADES = [
       "🧠 Falas com sentido: quando o C.A.O.S. monta uma frase, ele confere se as partes combinam. Acabaram os finais soltos tipo Enfim ou Bora seguir grudados em qualquer coisa, a mesma palavra repetida e as ideias empilhadas sem ligação.",
       "🎭 Cara de quem fala: o rostinho e a cor do balão agora acompanham o que ele diz. Se a frase é triste, o balão fica triste.",
       "🔁 Errou de novo só quando é de novo: ele não diz que você errou de novo no seu primeiro erro.",
+      "🔎 Dica do Mestre no celular: quem era Mestre num aparelho que não é o do host via Dica null na dica escolhida. Agora aparece o texto certo. Achado pela Gameez (Júlia) e pelo Henrique (Carro Pika).",
       "👑 Troca de host avisada: quando o host cai e outra pessoa assume a sala, o C.A.O.S. avisa a mesa como devia.",
     ],
     qol: [],

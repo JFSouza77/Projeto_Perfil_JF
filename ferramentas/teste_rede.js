@@ -384,7 +384,10 @@ async function rodar(b, modo, porta, turn) {
   conf("Quem está na vez não abre a dica (regra do JF: só o Mestre)", r && !r.ok && r.motivo === "sem_permissao" && (await H((i) => !revealedOrder.some((x) => x.index === i), livre)));
   r = await mandar(gM, "escolherDica", livre);
   conf("O Mestre abre a dica", r && r.ok && (await H((i) => revealedOrder.some((x) => x.index === i), livre)));
-  conf("O telão mostra quem pediu a dica", await esperar(gV, () => /pedida por/.test(document.getElementById("telao").textContent)));
+  // 1.7.10.5.2 (bug achado pela Júlia e pelo Henrique): o Mestre em outro aparelho via "Dica N: null"
+  const txtPend = await H(() => String(currentCard.clues[pendingIndex].text));
+  conf("Mestre remoto vê o texto da dica pendente (não null)", (await esperar(gM, (t) => rede.segredo && rede.segredo.dica && rede.segredo.dica.texto === t, txtPend)) && !/null/.test(await gM.evaluate(() => (document.body.innerText.match(/Dica \d+:[^\n]*/g) || []).join(" "))) && (await gV.evaluate(() => !rede.segredo)));
+  conf("O telão mostra quem pediu a dica",await esperar(gV, () => /pedida por/.test(document.getElementById("telao").textContent)));
   conf("Revisão subiu uma vez", (await H(() => partidaRevisao)) === revAntes + 1);
   conf("Painel do Mestre com Acertou/Errou/Pulou", await esperar(gM, () => ["acertou", "errou"].every((a) => rede.painel.opcoes.some((o) => o.a === a)) && rede.painel.opcoes.some((o) => o.d[0] === "pular")));
   // 6) repetido e revisão velha
