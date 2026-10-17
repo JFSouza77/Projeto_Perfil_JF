@@ -49,7 +49,9 @@ function corridaParado() {
     corridaIntervaloAberto() ||
     !!activeToastState ||
     !!timeoutOverlayMessage ||
-    caosJanelaImportanteAberta() // tutorial, aviso ou janela do C.A.O.S. aberta
+    // tutorial, aviso ou janela do C.A.O.S. aberta: só congela no jogo local (no online, uma janela no host não
+    // pode parar a sala inteira; quem pausa a sala é o botão Pausar)
+    (caosJanelaImportanteAberta() && !(typeof salaOnlineAberta === "function" && salaOnlineAberta()))
   );
 }
 function corridaZerar() {
