@@ -16,6 +16,9 @@
           dígitos), A acertou, E errou, R conferir resposta. 3) Som de carta virando (playSfx "virar"). 4) Tensão nos
           últimos 10 s: tique-taque baixinho e borda pulsando de leve até os 6 s (fx-alerta); depois o bipe e a borda
           vermelha de sempre; sem animação com Menos movimento. Manual: "Quem toca o quê" e "Pronto!" atualizados.
+          5) Troféus do C.A.O.S. no fim (estatísticas): Pai Diná (menos dicas por acerto), Tartaruga Ninja (mais tempo pra
+          acertar), Inimigo do Acerto (mais palpites errados) e Veredito dos Mestres (nota 0 a 10 por carta lida; cartasPartida
+          ganha o campo mestre). Só com dado de verdade (mínimo 2); tocar no troféu faz o C.A.O.S. comentar.
           Teste novo no teste_rede (seletor, sem_permissao do Mestre, fail safe, toque aplica).
   1.7.10.5.6 · 16/10/2026 · "Multiplayer Update · Online de verdade" = T2 E LOBBY COM CARA DE JOGO + CORREÇÕES DA AUDITORIA (pedido do JF).
           1) Cartas da partida (cartasPartida, salvo e desfeito junto): categoria, resposta, quem acertou, em quantas dicas
@@ -10841,6 +10844,10 @@ const CAOS_COMENT_TOM = {
   facil: "elogio",
   mvp: "elogio",
   muralha: "elogio",
+  paidina: "elogio",
+  tartaruga: "zoeira",
+  inimigo: "zoeira",
+  notamestre: "elogio",
   semdono: "zoeira",
   pulos: "zoeira",
   absurdos: "zoeira",
@@ -12919,6 +12926,7 @@ function cartaPartidaRegistrar(quemIdx, dicas, dicaIdx) {
     cat: gemCategoryFor(currentCard.category),
     resp: currentCard.answer,
     quem: quemIdx >= 0 && players[quemIdx] ? players[quemIdx].id : null,
+    mestre: currentCard.isBonus ? null : jogadorIdDe(mestreIndex), // 1.7.10.5.7: pro Veredito dos Mestres
     dicas,
     dicaNum: d ? dicaIdx + 1 : null,
     dicaTxt: d ? String(d.text).slice(0, 240) : null,
@@ -16693,11 +16701,20 @@ function buildStatsHtml() {
     }
   }
   if (CURRENT_MODE !== "express") destaques += caosAuditoriaHtml();
+  const trofeus = trofeusHtml(larga);
   return `
     <div class="stats-box hall-box resumo-box">
       <h3>📊 Resumo da partida</h3><div class="hall-sub">toque num número e o C.A.O.S. comenta</div>
       <ul class="stats-list hall-grid">${numeros}${destaques}</ul>
-    </div>
+    </div>${
+      trofeus
+        ? `
+    <div class="stats-box hall-box trofeus-box">
+      <h3>🏆 Troféus do C.A.O.S.</h3><div class="hall-sub">toque num troféu e o C.A.O.S. comenta</div>
+      <ul class="stats-list hall-grid">${trofeus}</ul>
+    </div>`
+        : ""
+    }
   `;
 }
 // Texto curto do resultado (o ranking como aparece na tela) para mandar no WhatsApp etc.
@@ -18331,6 +18348,57 @@ document.addEventListener("click", (e) => {
   render();
   if (typeof redeHostPublicar === "function") redeHostPublicar(true);
 });
+
+/* 1.7.10.5.7 (pedido do JF) · Troféus do C.A.O.S. no fim da partida: Pai Diná (menos dicas por acerto), Tartaruga
+   Ninja (mais tempo pra acertar), Inimigo do Acerto (mais palpites errados) e o Veredito dos Mestres (nota de 0 a
+   10 pra quem leu as cartas: acerto com poucas dicas vale mais; carta que ninguém matou vale pouco). Só aparece
+   troféu com dado de verdade (mínimo de 2 acertos ou 2 erros). */
+function trofeusHtml(larga) {
+  const pj = (nome) => players.find((p) => p.name === nome);
+  const nomeH = (p) => (p ? playerNameHtml(p.name, p.color, p.avatar) : "?");
+  const acertos = history.filter((h) => typeof h.cluesUsed === "number" && h.playerName);
+  const por = {};
+  acertos.forEach((h) => {
+    const o = (por[h.playerName] = por[h.playerName] || { n: 0, d: 0, nt: 0, t: 0 });
+    o.n++;
+    o.d += h.cluesUsed;
+    if (typeof h.timeTakenMs === "number" && h.timeTakenMs >= 1500) (o.nt++, (o.t += h.timeTakenMs));
+  });
+  let h = "";
+  const dina = Object.entries(por)
+    .filter(([, o]) => o.n >= 2)
+    .map(([nome, o]) => ({ nome, med: Math.round((o.d / o.n) * 10) / 10, n: o.n }))
+    .sort((a, b) => a.med - b.med || b.n - a.n)[0];
+  if (dina)
+    h += larga("🔮", "Troféu Pai Diná", nomeH(pj(dina.nome)), `acertou com ${caosNumBR(dina.med)} dica${dina.med === 1 ? "" : "s"} em média`, "#c084fc", { t: "paidina", n: dina.nome, v: dina.med });
+  const tart = Object.entries(por)
+    .filter(([, o]) => o.nt >= 2)
+    .map(([nome, o]) => ({ nome, seg: Math.round(o.t / o.nt / 1000) }))
+    .sort((a, b) => b.seg - a.seg)[0];
+  if (tart)
+    h += larga("🐢", "Troféu Tartaruga Ninja", nomeH(pj(tart.nome)), `${tart.seg} s em média pra acertar`, "#4ade80", { t: "tartaruga", n: tart.nome, v: tart.seg });
+  const ini = players.filter((p) => (p.errosPartida || 0) >= 2).sort((a, b) => b.errosPartida - a.errosPartida)[0];
+  if (ini)
+    h += larga("🎯", "Troféu Inimigo do Acerto", nomeH(ini), `${ini.errosPartida} palpites furados`, "#f87171", { t: "inimigo", n: ini.name, v: ini.errosPartida });
+  // Veredito dos Mestres: média das notas das cartas que cada um leu
+  const notas = {};
+  (cartasPartida || []).forEach((c) => {
+    if (!c.mestre) return;
+    const nota = c.quem ? Math.max(1, 10 - Math.max(0, c.dicas - 1) * 0.5) : 0.5;
+    const o = (notas[c.mestre] = notas[c.mestre] || { s: 0, n: 0 });
+    o.s += nota;
+    o.n++;
+  });
+  const vered = Object.entries(notas)
+    .map(([id, o]) => ({ p: jogadorPorId(id), nota: Math.round((o.s / o.n) * 2) / 2, n: o.n }))
+    .filter((x) => x.p)
+    .sort((a, b) => b.nota - a.nota);
+  if (vered.length) {
+    const lista = vered.map((x) => `${nomeH(x.p)} <b>${caosNumBR(x.nota)}</b>`).join(" · ");
+    h += larga("🎙️", "Veredito dos Mestres", lista, "nota de 0 a 10: carta acertada com poucas dicas vale mais", "#fbbf24", { t: "notamestre", n: vered[0].p.name, v: vered[0].nota });
+  }
+  return h;
+}
 /* ----------------------------------------------------------------------
  * 5b. ACESSIBILIDADE (1.7.6): configuração do aparelho, pra todos os modos.
  * Antes ela existia só no Old School Acessibilidade. Agora fica no menu ⋮ (e na Pausa):
@@ -34023,6 +34091,15 @@ function caosComentFato(d) {
         fr: `as cartas lidas por ${n} pediram ${v} dicas em média`,
         np: `ler cartas que pedem ${v} dicas em média`,
       };
+    // 1.7.10.5.7 · Troféus do C.A.O.S.
+    case "paidina":
+      return { fr: `${n} acertou com ${v} ${pl(d.v, "dica", "dicas")} em média`, np: `acertar com ${v} dicas em média` };
+    case "tartaruga":
+      return { fr: `${n} levou ${v} segundos em média pra acertar`, np: `levar ${v} segundos pra acertar` };
+    case "inimigo":
+      return { fr: `${n} errou ${v} ${pl(d.v, "palpite", "palpites")} nessa partida`, np: `errar ${v} palpites` };
+    case "notamestre":
+      return { fr: `${n} tirou nota ${v} como Mestre`, np: `tirar nota ${v} como Mestre` };
     case "precoce":
       return { fr: `${n} errou ${v} vezes chutando na 1ª dica`, np: `chutar na 1ª dica ${v} vezes` };
     case "inimizade":
@@ -36889,6 +36966,7 @@ function sanitizeLoadedState(s) {
       cat: c.cat,
       resp: c.resp,
       quem: typeof c.quem === "string" ? c.quem.slice(0, 40) : null,
+      mestre: typeof c.mestre === "string" ? c.mestre.slice(0, 40) : null,
       dicas: Math.max(0, Math.floor(num(c.dicas, 0))),
       dicaNum: Number.isInteger(c.dicaNum) && c.dicaNum > 0 ? c.dicaNum : null,
       dicaTxt: typeof c.dicaTxt === "string" ? c.dicaTxt.slice(0, 240) : null,
@@ -73841,12 +73919,13 @@ const NOVIDADES = [
     v: "Beta 1.7.10.5.7",
     data: "17/10/2026 · 09:53",
     nome: "Multiplayer Update · Online de verdade",
-    t: "Quem abre a especial escolhe o alvo no próprio dispositivo, e o jogo ganhou som e teclado.",
+    t: "Quem abre a especial escolhe o alvo no próprio dispositivo, troféus no fim e o jogo ganhou som e teclado.",
     itens: [
       "🎯 Você escolhe o alvo: no online, quem abre a dica Escolha um jogador toca no cartão do jogador na tela dos jogadores. Todo mundo vê, e o Mestre não precisa fazer nada.",
       "⌨️ Atalhos de teclado: Espaço vira a carta, os números abrem a dica, A é Acertou, E é Errou e R confere a resposta.",
       "🃏 Som de carta virando: a carta agora faz barulho de carta quando o Mestre vira.",
       "⏳ Últimos segundos com tensão: nos 10 segundos finais, tique-taque baixinho e a borda da tela pulsando.",
+      "🏆 Troféus do C.A.O.S.: no fim da partida, nas estatísticas, saem os troféus Pai Diná, Tartaruga Ninja, Inimigo do Acerto e a nota de cada Mestre.",
     ],
     qol: [],
   },
