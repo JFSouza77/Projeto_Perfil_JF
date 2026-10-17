@@ -98,6 +98,15 @@ function caosComentFato(d) {
         fr: `as cartas lidas por ${n} pediram ${v} dicas em média`,
         np: `ler cartas que pedem ${v} dicas em média`,
       };
+    // 1.7.10.5.7 · Troféus do C.A.O.S.
+    case "paidina":
+      return { fr: `${n} acertou com ${v} ${pl(d.v, "dica", "dicas")} em média`, np: `acertar com ${v} dicas em média` };
+    case "tartaruga":
+      return { fr: `${n} levou ${v} segundos em média pra acertar`, np: `levar ${v} segundos pra acertar` };
+    case "inimigo":
+      return { fr: `${n} errou ${v} ${pl(d.v, "palpite", "palpites")} nessa partida`, np: `errar ${v} palpites` };
+    case "notamestre":
+      return { fr: `${n} tirou nota ${v} como Mestre`, np: `tirar nota ${v} como Mestre` };
     case "precoce":
       return { fr: `${n} errou ${v} vezes chutando na 1ª dica`, np: `chutar na 1ª dica ${v} vezes` };
     case "inimizade":

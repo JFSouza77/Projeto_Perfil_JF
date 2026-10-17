@@ -677,6 +677,7 @@ function sanitizeLoadedState(s) {
       cat: c.cat,
       resp: c.resp,
       quem: typeof c.quem === "string" ? c.quem.slice(0, 40) : null,
+      mestre: typeof c.mestre === "string" ? c.mestre.slice(0, 40) : null,
       dicas: Math.max(0, Math.floor(num(c.dicas, 0))),
       dicaNum: Number.isInteger(c.dicaNum) && c.dicaNum > 0 ? c.dicaNum : null,
       dicaTxt: typeof c.dicaTxt === "string" ? c.dicaTxt.slice(0, 240) : null,

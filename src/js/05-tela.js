@@ -2173,11 +2173,20 @@ function buildStatsHtml() {
     }
   }
   if (CURRENT_MODE !== "express") destaques += caosAuditoriaHtml();
+  const trofeus = trofeusHtml(larga);
   return `
     <div class="stats-box hall-box resumo-box">
       <h3>📊 Resumo da partida</h3><div class="hall-sub">toque num número e o C.A.O.S. comenta</div>
       <ul class="stats-list hall-grid">${numeros}${destaques}</ul>
-    </div>
+    </div>${
+      trofeus
+        ? `
+    <div class="stats-box hall-box trofeus-box">
+      <h3>🏆 Troféus do C.A.O.S.</h3><div class="hall-sub">toque num troféu e o C.A.O.S. comenta</div>
+      <ul class="stats-list hall-grid">${trofeus}</ul>
+    </div>`
+        : ""
+    }
   `;
 }
 // Texto curto do resultado (o ranking como aparece na tela) para mandar no WhatsApp etc.
@@ -3811,3 +3820,54 @@ document.addEventListener("click", (e) => {
   render();
   if (typeof redeHostPublicar === "function") redeHostPublicar(true);
 });
+
+/* 1.7.10.5.7 (pedido do JF) · Troféus do C.A.O.S. no fim da partida: Pai Diná (menos dicas por acerto), Tartaruga
+   Ninja (mais tempo pra acertar), Inimigo do Acerto (mais palpites errados) e o Veredito dos Mestres (nota de 0 a
+   10 pra quem leu as cartas: acerto com poucas dicas vale mais; carta que ninguém matou vale pouco). Só aparece
+   troféu com dado de verdade (mínimo de 2 acertos ou 2 erros). */
+function trofeusHtml(larga) {
+  const pj = (nome) => players.find((p) => p.name === nome);
+  const nomeH = (p) => (p ? playerNameHtml(p.name, p.color, p.avatar) : "?");
+  const acertos = history.filter((h) => typeof h.cluesUsed === "number" && h.playerName);
+  const por = {};
+  acertos.forEach((h) => {
+    const o = (por[h.playerName] = por[h.playerName] || { n: 0, d: 0, nt: 0, t: 0 });
+    o.n++;
+    o.d += h.cluesUsed;
+    if (typeof h.timeTakenMs === "number" && h.timeTakenMs >= 1500) (o.nt++, (o.t += h.timeTakenMs));
+  });
+  let h = "";
+  const dina = Object.entries(por)
+    .filter(([, o]) => o.n >= 2)
+    .map(([nome, o]) => ({ nome, med: Math.round((o.d / o.n) * 10) / 10, n: o.n }))
+    .sort((a, b) => a.med - b.med || b.n - a.n)[0];
+  if (dina)
+    h += larga("🔮", "Troféu Pai Diná", nomeH(pj(dina.nome)), `acertou com ${caosNumBR(dina.med)} dica${dina.med === 1 ? "" : "s"} em média`, "#c084fc", { t: "paidina", n: dina.nome, v: dina.med });
+  const tart = Object.entries(por)
+    .filter(([, o]) => o.nt >= 2)
+    .map(([nome, o]) => ({ nome, seg: Math.round(o.t / o.nt / 1000) }))
+    .sort((a, b) => b.seg - a.seg)[0];
+  if (tart)
+    h += larga("🐢", "Troféu Tartaruga Ninja", nomeH(pj(tart.nome)), `${tart.seg} s em média pra acertar`, "#4ade80", { t: "tartaruga", n: tart.nome, v: tart.seg });
+  const ini = players.filter((p) => (p.errosPartida || 0) >= 2).sort((a, b) => b.errosPartida - a.errosPartida)[0];
+  if (ini)
+    h += larga("🎯", "Troféu Inimigo do Acerto", nomeH(ini), `${ini.errosPartida} palpites furados`, "#f87171", { t: "inimigo", n: ini.name, v: ini.errosPartida });
+  // Veredito dos Mestres: média das notas das cartas que cada um leu
+  const notas = {};
+  (cartasPartida || []).forEach((c) => {
+    if (!c.mestre) return;
+    const nota = c.quem ? Math.max(1, 10 - Math.max(0, c.dicas - 1) * 0.5) : 0.5;
+    const o = (notas[c.mestre] = notas[c.mestre] || { s: 0, n: 0 });
+    o.s += nota;
+    o.n++;
+  });
+  const vered = Object.entries(notas)
+    .map(([id, o]) => ({ p: jogadorPorId(id), nota: Math.round((o.s / o.n) * 2) / 2, n: o.n }))
+    .filter((x) => x.p)
+    .sort((a, b) => b.nota - a.nota);
+  if (vered.length) {
+    const lista = vered.map((x) => `${nomeH(x.p)} <b>${caosNumBR(x.nota)}</b>`).join(" · ");
+    h += larga("🎙️", "Veredito dos Mestres", lista, "nota de 0 a 10: carta acertada com poucas dicas vale mais", "#fbbf24", { t: "notamestre", n: vered[0].p.name, v: vered[0].nota });
+  }
+  return h;
+}
