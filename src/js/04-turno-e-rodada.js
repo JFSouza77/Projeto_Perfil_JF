@@ -165,7 +165,7 @@ function joiasTravaAvisar(scorerIdx) {
 }
 // Moda da Casa: sorteia o modo da mesa (sem repetir o da partida anterior) e anuncia com suspense.
 function casaSortearModo() {
-  if (CURRENT_MODE === "express" || CURRENT_MODE === "corrida" || WIN_CONDITION !== "casa" || casaSorteado) return;
+  if (CURRENT_MODE === "express" || CURRENT_MODE === "corrida" || CURRENT_MODE === "caos" || WIN_CONDITION !== "casa" || casaSorteado) return;
   let ultimo = "";
   try {
     ultimo = JFStore.getItem(CASA_ULTIMO_KEY) || "";

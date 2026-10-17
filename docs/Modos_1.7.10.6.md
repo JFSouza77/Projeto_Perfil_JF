@@ -52,6 +52,34 @@ Ideia que o JF trouxe da conversa com o Gemini (handoff atualizado em 17/10, 15:
 - T2 mostra o Mestre da vez, a categoria, a dica atual e as dicas já abertas **só daquela carta**.
 - Provocação mais forte, sem xingar e sem atacar a pessoa.
 
+### Modo C.A.O.S.: handoff de 17/10 (Lojinha com Pontos de Caos, drops e eventos) · implementado
+
+Arquivo: `src/js/05q-modo-caos.js` (constantes MC_* em `01-configuracao.js`). Teste: `teste_online.js --so=caos`.
+A Mochila saiu (substituída pela lojinha com PC, como diz o handoff).
+
+- Base: só online, 3+ jogadores, cada um no próprio dispositivo (o host conta como um), sem menor de 12 marcado
+  (o cadastro só tem "menos de 12 / 12+": o 16+ fica no aviso do modo). Carta secreta por pessoa por rodada,
+  10 dicas (só dicas de verdade nesta 1ª versão; as especiais do Express ficam pra depois do playtest).
+  O dono vê a própria resposta no painel dele.
+- Vez: o Mestre roda; a dica abre sozinha 1,5 s depois. Janela de 15 s. **Palpite falado com "Palpitar agora"**
+  (decisão do JF): o primeiro trava, o Mestre julga (se ele cair, o host julga). Errou: não tenta de novo nessa dica.
+  Ninguém: hiberna; 10 dicas sem acerto: carta morta (resposta aparece).
+- Tempo: 10 min de partida, rodada até 5 min, intervalo de 15 s congelado. Duelo, carta bônus e intervalo não comem
+  o relógio.
+- PC: +10 por rodada, +5 acertando nos 5 primeiros segundos, +30 Piñata, +50 carta bônus da batata, −10 imposto.
+- Lojinha (no intervalo, preços do handoff): ✂️ Corte de Fio 15 (janela vai pra 6 s; só com mais de 7 s sobrando),
+  🫁 Fôlego 20, 🤐 Mordaça 30 (o Mestre não; Garganta Limpa na dica seguinte), ⚡ Desfibrilador 35 (quando a carta
+  for hibernar: a próxima dica só pra ele + 8 s pra responder sozinho), 🧊 Congelar Mesa 40 (nos 3 primeiros s
+  da dica; os outros travados até os 7 s), 🪞 Espelho 45, 🛡️ Kevlar 60. O que foi comprado é segredo de quem comprou.
+- Eventos (o C.A.O.S. faz de verdade): ⏩ Turbo (2/partida), 💸 Imposto da Preguiça (3/partida, quem não tocou em
+  Palpitar paga — é o equivalente do "palpite vazio" já que o palpite é falado), 🥔 Batata Quente (2/partida, dura
+  3 dicas; **Passar pro próximo** ou **Segurar a Batata** = encara a carta bônus na hora, pedido do JF), carta bônus
+  com até 5 dicas automáticas e um juiz que recebe a resposta, 🧤 Mão Leve (1/partida, entregue em segredo no
+  intervalo pra alguém da metade de baixo), 🪅 Piñata (até 3, no intervalo, digitar a palavra), ⚔️ Roubo (2/partida:
+  ladrão abaixo do topo × alguém com placar ≥ e pelo menos 1 carta; Dado, Cara ou Coroa, Jokenpô ou Par ou Ímpar,
+  escolhas fechadas no host) e 🔁 Revanche dobro ou nada. Espelho e Kevlar valem no roubo, na Mão Leve e na batata.
+- Nada de evento no primeiro minuto.
+
 ## Peça ao C.A.O.S.
 
 Entra nestas versões: o jogador pede pra ele falar mais/menos e usar humor mais leve/mais ácido. Preferência

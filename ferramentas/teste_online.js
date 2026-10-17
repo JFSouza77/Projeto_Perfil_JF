@@ -386,6 +386,13 @@ async function partidaModoCaos(b, sv) {
       }, [resp.Ana, resp.Caio]);
       return beto === resp.Beto && !vaza;
     })());
+    const SHOTS = process.env.MC_SHOTS; // pasta pra fotos da tela (conferência visual)
+    if (SHOTS) {
+      await host.waitForTimeout(2500);
+      await host.screenshot({ path: SHOTS + "/mc_host.png", fullPage: true });
+      await c1.g.screenshot({ path: SHOTS + "/mc_conv.png", fullPage: true });
+    }
+    let fotoInt = false;
     const t0 = Date.now();
     let passos = 0;
     const vistos = new Set();
@@ -396,6 +403,10 @@ async function partidaModoCaos(b, sv) {
       for (const g of [c1.g, c2.g]) vistos.add(await g.evaluate(PASSO_MC, false).catch(() => "erro"));
       await host.waitForTimeout(150);
       passos++;
+      if (SHOTS && !fotoInt && (await c1.g.evaluate(() => rede.retrato && rede.retrato.mc && rede.retrato.mc.fase === "intervalo").catch(() => false))) {
+        fotoInt = true;
+        await c1.g.screenshot({ path: SHOTS + "/mc_intervalo.png", fullPage: true });
+      }
     }
     const fim = await host.evaluate(() => gameEnded).catch(() => false);
     if (!fim) console.log("DIAG MC: " + (await host.evaluate(() => JSON.stringify({ fase: mc && mc.fase, geral: mc && mcRelogioMs(mc.geral), rodada: mc && mc.rodada, feed: mc && mc.feed }))));

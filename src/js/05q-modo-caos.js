@@ -849,7 +849,11 @@ function mcTelaHtml(r, eu, opcoes, priv) {
   let centro = "";
   const C = M.carta;
   if (M.fase === "intervalo") {
-    centro = `<div class="mc-bloco"><h3>☕ Intervalo · ${cont(M.intervalo, false)} s</h3><p>Relógios congelados. Lojinha aberta (botões do seu painel).</p>${M.pinata ? (M.pinata.ganhou ? `<p>🪅 ${nome(M.pinata.ganhou)} arrebentou a Piñata!</p>` : `<div class="mc-pinata">🪅 <b>PIÑATA!</b> Digite primeiro: <b class="mc-palavra">${escapeHtml(M.pinata.palavra)}</b><form class="mc-pinata-form"><input type="text" class="mc-pinata-txt" maxlength="20" autocomplete="off" aria-label="Palavra da Piñata"><button type="submit">Mandar</button></form></div>`) : ""}</div>`;
+    const saldo = priv ? priv.pc : 0;
+    const vitrine = Object.keys(MC_LOJA)
+      .map((k) => `<li class="${priv && saldo >= MC_LOJA[k].preco ? "" : "mc-caro"}">${MC_LOJA[k].ic} <b>${MC_LOJA[k].nome}</b> · ${MC_LOJA[k].preco} PC<small>${escapeHtml(MC_LOJA[k].desc)}</small></li>`)
+      .join("");
+    centro = `<div class="mc-bloco"><h3>☕ Intervalo · ${cont(M.intervalo, false)} s</h3><p>Relógios congelados. 🛒 Lojinha do C.A.O.S. aberta: compre nos botões abaixo.</p><ul class="mc-vitrine">${vitrine}</ul>${M.pinata ? (M.pinata.ganhou ? `<p>🪅 ${nome(M.pinata.ganhou)} arrebentou a Piñata!</p>` : `<div class="mc-pinata">🪅 <b>PIÑATA!</b> Digite primeiro: <b class="mc-palavra">${escapeHtml(M.pinata.palavra)}</b><form class="mc-pinata-form"><input type="text" class="mc-pinata-txt" maxlength="20" autocomplete="off" aria-label="Palavra da Piñata"><button type="submit">Mandar</button></form></div>`) : ""}</div>`;
   } else if (M.fase === "desafio" && M.desafio) {
     const d = M.desafio;
     centro = `<div class="mc-bloco mc-batata"><h3>🥔 Carta bônus de ${nome(d.com)} · ${escapeHtml(TELAO_CAT[d.cat] || d.cat)}</h3><ol class="mc-dicas">${d.dicas.map((t) => `<li>${escapeHtml(t)}</li>`).join("")}</ol><p>${d.buzz ? `🗣️ ${nome(d.com)} está respondendo… ${nome(d.juiz)} julga.` : `Próxima dica em ${d.proxEm ? `<b class="mc-cont" data-fim="${d.proxEm}">…</b> s` : "…"} (${d.dicas.length}/${d.total})`}</p></div>`;

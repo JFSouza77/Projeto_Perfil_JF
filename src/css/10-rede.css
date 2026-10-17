@@ -1208,3 +1208,18 @@ body.claro .mc-juiz,
 body.claro .mc-desfib {
   color: #92400e;
 }
+.mc-vitrine {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.mc-vitrine li small {
+  display: block;
+  opacity: 0.75;
+  font-size: 0.78rem;
+}
+.mc-vitrine li.mc-caro {
+  opacity: 0.5;
+}
