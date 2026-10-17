@@ -134,7 +134,7 @@ const VITORIA_TUTORIAIS = {
     {
       icon: "⌛",
       title: "Dois relógios",
-      text: `O <b>geral</b> começa com ${CORRIDA_TEMPO_MS / 60e3} min e ganha <b>+${CORRIDA_BONUS_MS / 1e3} s</b> a cada carta acertada. Cada <b>carta</b> tem ${corridaRelogioTxt(CORRIDA_CARTA_MS)}; acabou, ela sai sem dono.`,
+      text: `O <b>geral</b> começa com ${CORRIDA_TEMPO_MS / 60e3} min e ganha <b>+${CORRIDA_BONUS_MS / 1e3} s</b> a cada carta acertada. Cada <b>carta</b> tem ${corridaRelogioTxt(corridaHardcore ? CORRIDA_CARTA_HC_MS : CORRIDA_CARTA_MS)}${corridaHardcore ? " (correndo 1,5×)" : ""}. Carta que morre sem acerto custa <b>1 minuto</b> pra mesa toda. Errou: −1 s na carta; pulou: −2 s.`,
     },
     {
       icon: "👉",

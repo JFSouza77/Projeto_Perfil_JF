@@ -50,6 +50,10 @@ const ACOES = {
   expressCartaPerdida: { fn: "expressCardLost", pode: () => acoesEmJogo() && CURRENT_MODE === "express" && cardState === "revealed" && !!cardEndAt && cardSecondsLeft() <= 0 },
   admRemover: { fn: "admRemoverJogador", pode: (r) => acoesEmJogo() && CURRENT_FORMAT !== "equipe" && !!players[r] && players.length > 2 },
   tempoAcabou: { fn: "onTimerExpired", pode: () => acoesEmJogo() },
+  // 1.7.10.6 · Corrida: Lojinha de Sobrevivência (comprar no intervalo, usar o item guardado na carta)
+  corridaComprar: { fn: "corridaComprar", pode: (item, id) => acoesEmJogo() && corridaPodeComprar(item, id) },
+  corridaUsar: { fn: "corridaUsar", pode: (item, id) => acoesEmJogo() && corridaPodeUsar(item, id) },
+  corridaProxima: { fn: "corridaRelampagoProxima", pode: () => acoesComDica() && CURRENT_MODE === "corrida" && corridaRelampago() },
   pausar: { fn: "pauseGame", pode: () => acoesEmJogo() },
   continuar: { fn: "resumeGame", pode: () => starterChosen && !gameEnded },
   encerrar: { fn: "endGame", pode: () => acoesEmJogo() },

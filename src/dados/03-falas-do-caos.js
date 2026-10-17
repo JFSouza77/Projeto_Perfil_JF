@@ -5002,3 +5002,44 @@ REACTIVE_VOICE.corrida.derreteu = [
   "Trinta segundos. Essa carta já foi um prêmio. Agora é lembrança.",
   "A carta tá derretendo e vocês aí, pensando. Lindo de ver.",
 ];
+// Corrida: eventos (Bomba-Relógio, carta morta, Juízo Final, Duelo, Lojinha)
+Object.assign(REACTIVE_VOICE.corrida, {
+  bomba: [
+    "💣 BOMBA-RELÓGIO armada. Se essa carta morrer, a mesa perde um minuto inteiro. Cada erro tira 5 segundos. Boa sorte, vocês vão precisar.",
+    "💣 Tic-tac. Essa carta é uma bomba. Desarma acertando. Erra muito e explode no colo de todo mundo.",
+    "💣 Eu escondi uma bomba nessa carta. Acertou, ganha vinte segundos. Deixou morrer, BOOM, menos um minuto.",
+  ],
+  explodiu: [
+    "💥 BOOOM! Menos um minuto. Parabéns aos envolvidos.",
+    "💥 Explodiu. Eu avisei. Um minuto a menos pra todo mundo.",
+    "💥 Bomba detonada. Eu até sinto o cheiro de pólvora daqui.",
+  ],
+  morreu: [
+    "Carta morta. Menos um minuto no relógio. Vocês deixaram ela morrer, hein.",
+    "Ninguém salvou a carta. A mesa paga: um minuto a menos.",
+    "Mais uma carta pro cemitério. E o relógio cobrou a conta.",
+  ],
+  juizo: [
+    "⚖️ JUÍZO FINAL! Último minuto. As dicas abrem sozinhas. Sabe? Bate na mesa!",
+    "⚖️ Chegou o Juízo Final. Agora não tem escolha de dica, não tem tempo extra. Só reflexo.",
+    "⚖️ Último minuto, criaturas. Juízo Final. Quem bater primeiro responde.",
+  ],
+  duelo: [
+    "⚔️ É HORA DO DUELO! {nome} pro ringue. O relógio da mesa para e a carta corre em dobro. Quem vencer rouba pontos do outro!",
+    "⚔️ Eu decidi: DUELO! {nome}, só vocês dois respondem. A carta voa em dobro. Bora!",
+    "⚔️ Duelo do C.A.O.S.! {nome}, um contra o outro. O resto da mesa só assiste e torce.",
+  ],
+  dueloVenceu: [
+    "⚔️ {nome} venceu o duelo! E levou um pedaço do placar do adversário.",
+    "⚔️ Duelo decidido: {nome} saiu do ringue com a carta e com o troco.",
+  ],
+  dueloNinguem: [
+    "🔥 {nome} erraram tudo. Carta destruída. Que vergonha alheia.",
+    "🔥 Nenhum dos dois acertou. Eu queimei a carta pra ninguém ver esse vexame.",
+  ],
+  compra: [
+    "{nome} foi às compras. Gastar ponto pra sobreviver. Respeito.",
+    "{nome} abriu a carteira. Espero que valha a pena.",
+    "Olha {nome} investindo no futuro. Ou jogando dinheiro fora. Veremos.",
+  ],
+});

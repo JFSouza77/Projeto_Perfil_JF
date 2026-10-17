@@ -610,8 +610,9 @@ function iniciar() {
       );
     }),
   );
-  document.getElementById("confirmCorridaTempoBtn").addEventListener("click", () => selectMode("corrida", null, "tempo"));
-  document.getElementById("confirmCorridaCartasBtn").addEventListener("click", () => selectMode("corrida", null, "cartas"));
+  const corridaHc = () => (document.getElementById("corridaHardcoreChk").checked ? "-hc" : "");
+  document.getElementById("confirmCorridaTempoBtn").addEventListener("click", () => selectMode("corrida", null, "tempo" + corridaHc()));
+  document.getElementById("confirmCorridaCartasBtn").addEventListener("click", () => selectMode("corrida", null, "cartas" + corridaHc()));
   document
     .getElementById("confirmOldSchoolBtn")
     .addEventListener("click", () => selectMode("oldschool", null, "padrao"));

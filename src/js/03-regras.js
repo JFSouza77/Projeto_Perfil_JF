@@ -447,6 +447,7 @@ function palpiteParticipants() {
   return CURRENT_FORMAT === "equipe" ? teamOrder.length : players.length;
 }
 function palpiteAvailable() {
+  if (CURRENT_MODE === "corrida" && corridaRelampago()) return true; // relâmpago: qualquer um bate na mesa
   return palpiteEnabled() && palpiteParticipants() >= 3;
 }
 function palpiteKeyOf(playerIdx) {
@@ -468,6 +469,7 @@ function grantPalpite(playerIdx) {
   return "ganhou";
 }
 function consumePalpite(key) {
+  if (CURRENT_MODE === "corrida" && corridaRelampago()) return true; // bater na mesa não gasta ficha
   if (palpiteCount(key) <= 0) return false;
   palpiteHolders[key]--;
   if (palpiteHolders[key] <= 0) delete palpiteHolders[key];
@@ -476,6 +478,9 @@ function consumePalpite(key) {
 }
 function palpiteEligibleHolders() {
   if (!palpiteAvailable() || !currentCard) return [];
+  // Corrida no relâmpago (Hardcore / Juízo Final): todo mundo menos o Mestre pode bater na mesa (no duelo, os dois)
+  if (CURRENT_MODE === "corrida" && corridaRelampago())
+    return players.filter((p, i) => i !== mestreIndex && corridaPodeResponder(i)).map((p) => p.id);
   const blocked = new Set([palpiteKeyOf(mestreIndex), palpiteKeyOf(responderIndex)]);
   let keys = Object.keys(palpiteHolders).filter((k) => palpiteHolders[k] > 0 && !blocked.has(k));
   if (currentCard.isBonus) return [];
@@ -534,6 +539,7 @@ function palpiteHit(key) {
 function palpiteMiss(key) {
   if (pendingIndex === null || gameEnded || !palpiteEligibleHolders().includes(key)) return;
   palpiteVez = null;
+  if (CURRENT_MODE === "corrida" && corridaRelampago()) return corridaRelampagoErrou(key);
   consumePalpite(key);
   const d = entityDisplay(key);
   showToastMessage(`🃏 ${d.name} errou o palpite — sem penalidade, a ficha voltou pro estoque.`, null, true);
@@ -557,6 +563,8 @@ function especialDeCasa(item) {
   return !!item && item.type === "special" && /casa|escolha um jogador/i.test(item.text || "");
 }
 function buildCorridaClueSet(shuffledClues) {
+  // Hardcore: as dicas abrem sozinhas, então sem especiais (só dica de verdade)
+  if (corridaHardcore) return shuffle(shuffledClues.filter((c) => c.type === "clue")).slice(0, 10);
   return buildHardcoreClueSet(
     shuffledClues.filter((c) => !especialDeCasa(c)).map((c) => (c.type === "special" && isWildcardSpecial(c.text) ? { ...c, text: "Rouba a vez" } : c)),
   );
@@ -720,6 +728,8 @@ function buildPalpiteBoxHtml() {
       return `<div class="palpite-row"><span>🃏 ${playerNameHtml(d.name, d.color, d.avatar)}${n > 1 ? " ×" + n : ""}</span><span><button class="btn-correct palpite-hit" data-key="${k}">✓ Acertou</button> <button class="btn-wrong palpite-miss" data-key="${k}">✕ Errou</button></span></div>`;
     })
     .join("");
+  if (CURRENT_MODE === "corrida" && corridaRelampago())
+    return `<div class="palpite-box cr-quem-bateu"><div class="palpite-title">✋ Quem bateu na mesa primeiro?</div>${rows}</div>`;
   return `<div class="palpite-box"><div class="palpite-title">🃏 Alguém usou ${CURRENT_MODE === "corrida" ? "o Rouba a vez" : "o palpite a qualquer hora"}? (fichas no estoque: ${palpiteStock})</div>${rows}</div>`;
 }
 

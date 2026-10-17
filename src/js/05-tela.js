@@ -66,7 +66,7 @@ function updateModeNotice() {
     hardcore: "Perfil JF — Hardcore (15+)",
     junior: "Perfil JF — Júnior (6+)",
     express: `Perfil JF — Express ${expressFlavor === "hardcore" ? "Hardcore" : "Clássico"}`,
-    corrida: `Perfil JF — Corrida contra o Tempo · ${corridaVitoria === "tempo" ? "Tempo" : "Cartas"} (12+)`,
+    corrida: `Perfil JF — Corrida contra o Tempo · ${corridaVitoria === "tempo" ? "Tempo" : "Cartas"}${corridaHardcore ? " · Hardcore" : ""} (12+)`,
   };
   const notices = {
     classico: "",
@@ -904,12 +904,16 @@ function render() {
           ${pvTela ? (() => {
             const d = entityDisplay(pvTela.key);
             return `<div class="guess-btns palpite-vez" style="flex-direction:column;"><div class="palpite-vez-tit">🃏 ${playerNameHtml(d.name, d.color, d.avatar)} pediu o palpite!</div><button class="btn-correct palpite-hit" data-key="${pvTela.key}">🃏 ${escapeHtml(d.name)} acertou</button><button class="btn-wrong palpite-miss" data-key="${pvTela.key}">🃏 ${escapeHtml(d.name)} errou</button></div>`;
-          })() : `<div class="guess-btns" style="flex-direction:column;">
+          })() : CURRENT_MODE === "corrida" && corridaRelampago() ? `<div class="guess-btns" style="flex-direction:column;">
+            <div class="cr-relampago-tit">⚡ ${corridaJuizo && !corridaHardcore ? "JUÍZO FINAL" : "RELÂMPAGO"}: quem souber, bate na mesa!</div>
+            <button class="btn-wrong" id="corridaProximaBtn">➡️ Ninguém sabe: próxima dica</button>
+          </div>
+          ${palpiteHtml}${corridaItensHostHtml()}` : `<div class="guess-btns" style="flex-direction:column;">
             ${correctButtonsHtml}
             <button class="btn-wrong" id="wrongBtn">✕ Errou</button>
             ${'<div class="mesa-btns"><button type="button" class="btn-pular" id="pularBtn" title="A pessoa não tinha palpite: passa a vez sem contar como erro" aria-label="Pulou: não tinha palpite, passa a vez">» Pulou</button><button type="button" class="btn-absurdo" id="absurdoBtn" title="O chute foi absurdo (nada a ver com a dica): conta como erro e o C.A.O.S. fica sabendo" aria-label="Absurdo: o chute não tinha nada a ver, conta como erro">⚠︎ Absurdo</button></div>'}
           </div>
-          ${palpiteHtml}`}`;
+          ${palpiteHtml}${CURRENT_MODE === "corrida" ? corridaItensHostHtml() : ""}`}`;
       }
     } else {
       const totalEntries = currentCard.clues.length;
@@ -929,7 +933,7 @@ function render() {
         ${forcarHtml}
         <div class="pick-label">${trava && !ped ? `👉 ${responderName} escolhe a dica no aparelho dele (${remaining} restantes). Travou? Segure um número.` : `${responderName}, escolha uma dica de 1 a ${totalEntries} (${remaining} restantes)`}</div>
         <div id="timerDisplay" class="pick-timer">◷ ${secondsLeft()}s</div>
-        <div class="number-grid">${grid}</div>`;
+        <div class="number-grid">${grid}</div>${CURRENT_MODE === "corrida" ? corridaItensHostHtml() : ""}`;
     }
     if (CURRENT_MODE === "express" && pendingIndex !== null && !expressAskWho) controlsHtml += expressRodaHtml();
     if (pendingIndex !== null && currentCard.clues[pendingIndex].type === "clue") {
@@ -975,6 +979,7 @@ function render() {
     `;
     drawBtn.style.display = "none";
     wireAnswerToggle();
+    area.querySelectorAll("[data-cr-usar]").forEach((b) => b.addEventListener("click", () => dispatchAction({ type: "corridaUsar", data: [b.dataset.crUsar, b.dataset.crQuem] })));
     if (CURRENT_MODE === "express") updateTimerDisplay();
     if (pendingIndex !== null) {
       const item = currentCard.clues[pendingIndex];
@@ -989,9 +994,11 @@ function render() {
         if (continueBtn) continueBtn.addEventListener("click", continueAfterSpecial);
         if (loseTurnBtn) loseTurnBtn.addEventListener("click", loseTurnAfterSpecial);
       } else if (CURRENT_MODE !== "express") {
-        document.getElementById("correctBtn").addEventListener("click", function () {
+        document.getElementById("correctBtn")?.addEventListener("click", function () {
           markCorrect(parseInt(this.dataset.scorer));
         });
+        // 1.7.10.6 · Corrida: relâmpago (ninguém bateu → próxima dica) e itens guardados da lojinha
+        document.getElementById("corridaProximaBtn")?.addEventListener("click", () => dispatchAction({ type: "corridaProxima", data: [] }));
         const wildcardBtn = document.getElementById("correctWildcardBtn");
         if (wildcardBtn)
           wildcardBtn.addEventListener("click", function () {
@@ -1003,7 +1010,7 @@ function render() {
         area
           .querySelectorAll(".palpite-miss")
           .forEach((b) => b.addEventListener("click", () => palpiteMiss(b.dataset.key)));
-        document.getElementById("wrongBtn").addEventListener("click", () => markWrong());
+        document.getElementById("wrongBtn")?.addEventListener("click", () => markWrong());
         {
           const pb = document.getElementById("pularBtn");
           if (pb) pb.addEventListener("click", () => markWrong("pular"));
@@ -2346,6 +2353,7 @@ function renderFinalScreen() {
       )
       .join("");
   }
+  if (CURRENT_MODE === "corrida") headerHtml += corridaCoroasHtml(); // 1.7.10.6: Senhor do Tempo e Colecionador
   const statsHtml = showStats ? buildStatsHtml() : "";
   let historyHtml = "";
   if (showHistory) {
@@ -2615,7 +2623,7 @@ function atualizarRotuloModo() {
     junior: "🧒 Júnior",
     hardcore: "💀 Hardcore",
     express: `🔥 Express ${expressFlavor === "hardcore" ? "Hardcore" : "Clássico"}`,
-    corrida: `⏱️ Corrida · ${corridaVitoria === "tempo" ? "Tempo" : "Cartas"}`,
+    corrida: `⏱️ Corrida · ${corridaVitoria === "tempo" ? "Tempo" : "Cartas"}${corridaHardcore ? " 💀" : ""}`,
   };
   el.textContent = `${nomes[CURRENT_MODE] || CURRENT_MODE} · ${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}`;
 }

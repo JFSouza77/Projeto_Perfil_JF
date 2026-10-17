@@ -31,6 +31,7 @@ js/05l-peerjs.js
 js/05m-qrcode.js
 js/05n-reportar-carta.js
 js/05o-corrida.js
+js/05p-corrida-eventos.js
 js/06-voz-som-vibracao.js
 js/07-caos/01-nucleo-e-falas.js
 js/07-caos/02-cerebro-adm.js

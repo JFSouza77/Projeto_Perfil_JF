@@ -93,3 +93,25 @@ Equalizador/perfil de voz versionado, fadiga entre partidas, orquestração por 
 
 Observação: a regra antiga dizia "o C.A.O.S. comenta, mas não muda regra". Bomba e Duelo são o C.A.O.S. mexendo na partida
 de propósito: é uma mudança de filosofia que o JF está aprovando agora.
+
+## Corrida: spec consolidada do JF (17/10, ~16:30) · implementado
+
+Arquivo: `src/js/05p-corrida-eventos.js` (constantes em `01-configuracao.js`, bloco CORRIDA_*). Teste: `ferramentas/teste_corrida.js`.
+
+- **Penalidades:** errou, a carta perde 1 s; pulou, 2 s (estouro de tempo da resposta conta como erro; demorar pra escolher, não).
+- **Carta morta** (tempo ou dicas acabaram, sem acerto): −1 min no geral. Não vale no duelo nem no desempate.
+- **Bomba-Relógio:** 2 por partida (4 no Hardcore), a partir da 3ª carta, espaçadas, nunca nos 3 min finais. Tic-tac,
+  borda laranja, aviso no intervalo. Cada erro/pulo: −5 s no geral; desarmou: +20 s; morreu: −1 min.
+- **Juízo Final** (≤ 60 s): dicas abrem sozinhas, qualquer um bate na mesa (no online, "✋ Bater na mesa!"); errou,
+  −1 s e a próxima abre na hora; ninguém bateu em 10 s, a próxima abre sem castigo. Acerto não dá +10 s.
+- **Hardcore** (caixinha na tela de modos, vale pra Tempo e Cartas): carta de 1:30 a 1,5×, relâmpago o jogo todo,
+  sem especiais, mais bombas. Extreme (2×) fica pra depois do playtest.
+- **Duelo do C.A.O.S.:** até 2 por partida (3+ jogadores), a partir da 5ª carta, nunca nos 3 min finais nem no Juízo.
+  Sorteia 2 duelistas e o Mestre. Geral congela, carta 2×, só os dois respondem. Vencedor rouba 25 pontos (Tempo).
+  Ninguém acertou: carta destruída (sem −1 min). Depois o Mestre volta pra roda normal.
+- **Lojinha de Sobrevivência** (só online + Tempo, no intervalo; estoque 1–5 de cada, sorteado no começo):
+  🧊 Congelar Mesa 40 · 🫁 Fôlego 20 · 🛡️ Escudo de Kevlar 60 · ✂️ Corte de Fio 15 · ⚡ Desfibrilador 35 (preços meus,
+  pra playtest). Corte de Fio e Desfibrilador ficam guardados e são usados na carta (no dispositivo de cada um; os do
+  dispositivo do host aparecem como botões na tela do host).
+- **Coroas** na tela final: ⏱️ Senhor do Tempo e 🃏 Colecionador (mesma pessoa: 🏆 Dono da Corrida).
+- Offline: tudo menos a lojinha.

@@ -346,6 +346,30 @@ const CORRIDA_BONUS_MS = 10e3;
 const CORRIDA_CARTA_MS = 150e3;
 const CORRIDA_VEZ_SEG = 15;
 const CORRIDA_INTERVALO_SEG = 15;
+// Eventos da Corrida (spec do JF de 17/10 à noite + balanceamento): penalidades, carta morta, bomba, duelo, Hardcore
+const CORRIDA_CARTA_HC_MS = 90e3; // Hardcore: 1:30 de carta…
+const CORRIDA_VEL_HC = 1.5; // …correndo 1,5× (Extreme 2× fica pra depois do playtest)
+const CORRIDA_VEZ_HC_SEG = 10; // Hardcore: 10 s pra escolher e 10 pra responder
+const CORRIDA_JANELA_SEG = 10; // relâmpago (Hardcore / Juízo Final): a dica fica aberta 10 s esperando alguém bater
+const CORRIDA_ERRO_MS = 1e3; // errou: a carta perde 1 s
+const CORRIDA_PULO_MS = 2e3; // pulou ("nem tentou"): a carta perde 2 s
+const CORRIDA_MORTE_MS = 60e3; // carta que morre sem acerto: o geral perde 1 min
+const CORRIDA_JUIZO_MS = 60e3; // último minuto = Juízo Final
+const CORRIDA_BOMBA_ERRO_MS = 5e3; // na Bomba-Relógio, cada erro/pulo tira 5 s do geral
+const CORRIDA_BOMBA_BONUS_MS = 20e3; // e desarmar dá +20 s (em vez de +10)
+const CORRIDA_BOMBA_QUOTA = { normal: 2, hardcore: 4 };
+const CORRIDA_EVENTO_FORA_MS = 3 * 60e3; // bomba e duelo não saem nos 3 min finais
+const CORRIDA_DUELO_MAX = 2;
+const CORRIDA_DUELO_VEL = 2; // no duelo a carta corre 2× e o geral congela
+const CORRIDA_DUELO_ROUBO = 25; // quem vence o duelo rouba 25 pontos de quem perdeu (Tempo)
+// Lojinha de Sobrevivência: só online, só na vitória por Tempo, só no intervalo. Estoque de 1 a 5 de cada por partida.
+const CORRIDA_LOJA = {
+  congelar: { ic: "🧊", nome: "Congelar Mesa", preco: 40, desc: "o relógio geral para 15 s na próxima carta (vale pra mesa toda)" },
+  folego: { ic: "🫁", nome: "Fôlego", preco: 20, desc: "+15 s nas suas vezes na próxima carta" },
+  escudo: { ic: "🛡️", nome: "Escudo de Kevlar", preco: 60, desc: "se a próxima carta morrer, a mesa não perde 1 min" },
+  corte: { ic: "✂️", nome: "Corte de Fio", preco: 15, desc: "guarda: pula a sua vez sem gastar dica e sem os −2 s" },
+  desfib: { ic: "⚡", nome: "Desfibrilador", preco: 35, desc: "guarda: +15 s no relógio da carta, na hora que quiser" },
+};
 // Emblema do verso da carta: anéis neon, losangos dourados, o "P" dentro do "?" e o olho do C.A.O.S.
 const VERSO_EMBLEMA_SVG = `<svg class="back-icon verso-emblema" viewBox="0 0 160 160" aria-hidden="true" focusable="false">
   <defs>

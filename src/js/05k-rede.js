@@ -1564,7 +1564,7 @@ function dicaSegurarParaForcar(grid, aoSegurar) {
 const REDE_SO_MESTRE = [
   "sacarCarta", "virarCarta", "roletaCategoria", "acertou", "errou", "palpiteAcertou", "palpiteErrou", "especialSeguir",
   "especialPerdeVez", "moverJogador", "moverEquipe", "descartarCarta", "desistirCarta", "desfazer", "expressPassar",
-  "expressPular", "expressInverter", "expressMirar", "expressAlvo",
+  "expressPular", "expressInverter", "expressMirar", "expressAlvo", "corridaProxima",
 ];
 const REDE_QUALQUER_UM = ["pausar", "continuar"];
 const REDE_SO_HOST = ["tempoAcabou", "expressCartaPerdida", "admRemover", "encerrar"];
@@ -1580,6 +1580,7 @@ function redePodeComandar(acao, jid, dados) {
   // 1.7.10.5: quem está na vez pede a dica no próprio aparelho (o Mestre abre); a ficha de palpite é de quem tem
   if (acao === "pedirDica") return !ehMestre && jogadorIdDe(responderIndex) === jid;
   if (acao === "palpitarAgora") return !ehMestre && !!dados && dados[0] === palpiteKeyOf(jogadorIdxPorId(jid));
+  if (acao === "corridaComprar" || acao === "corridaUsar") return !!dados && dados[1] === jid; // cada um gasta o seu
   if (acao === "bonusAdversario") {
     const e = pendingBonusQueue && pendingBonusQueue[0];
     if (!e) return false;
@@ -1632,7 +1633,18 @@ function redeOpcoes(jid) {
   const meuIdx = jogadorIdxPorId(jid), minhaChave = palpiteKeyOf(meuIdx);
   if (!ehMestre && cardState === "revealed" && pendingIndex !== null && currentCard && currentCard.clues[pendingIndex].type === "clue" && CURRENT_MODE !== "express") {
     const pv = palpiteVezAtual();
-    if (!pv && palpiteEligibleHolders().includes(minhaChave)) add("palpitarAgora", [minhaChave], CURRENT_MODE === "corrida" ? "🃏 Roubar a vez!" : "🃏 Palpitar agora!", "ok", CURRENT_MODE === "corrida" ? "Rouba a vez" : "Palpite a qualquer hora");
+    const relampago = CURRENT_MODE === "corrida" && corridaRelampago();
+    if (!pv && palpiteEligibleHolders().includes(minhaChave))
+      add("palpitarAgora", [minhaChave], relampago ? "✋ Bater na mesa!" : CURRENT_MODE === "corrida" ? "🃏 Roubar a vez!" : "🃏 Palpitar agora!", "ok", relampago ? "⚡ Sabe a resposta? Quem bater primeiro responde" : CURRENT_MODE === "corrida" ? "Rouba a vez" : "Palpite a qualquer hora");
+  }
+  // 1.7.10.6 · Corrida: lojinha no intervalo e itens guardados durante a carta
+  if (CURRENT_MODE === "corrida") {
+    if (corridaIntervaloAberto() && corridaEstoque)
+      Object.keys(CORRIDA_LOJA).forEach((k) => {
+        const it = CORRIDA_LOJA[k];
+        if (corridaPodeComprar(k, jid)) add("corridaComprar", [k, jid], `${it.ic} ${it.nome} · ${it.preco} pts (${corridaEstoque[k]} no estoque)`, "", `🛒 Lojinha · você tem ${(players[meuIdx] || {}).score || 0} pts`);
+      });
+    ["desfib", "corte"].forEach((k) => corridaPodeUsar(k, jid) && add("corridaUsar", [k, jid], `${CORRIDA_LOJA[k].ic} Usar ${CORRIDA_LOJA[k].nome}`, "ok", "🎒 Seus itens"));
   }
   // 1.7.10.5: quem está na vez pede a dica pelo número; o Mestre recebe o pedido e abre
   if (!ehMestre && cardState === "revealed" && pendingIndex === null && currentCard && jogadorIdDe(responderIndex) === jid && CURRENT_MODE !== "express") {

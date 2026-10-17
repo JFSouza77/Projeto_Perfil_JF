@@ -206,7 +206,7 @@ function nextResponder(fromIndex, mestre) {
   let c = nextIndex(fromIndex);
   if (c === mestre) c = nextIndex(c);
   // desempate relâmpago da Corrida: só os empatados respondem
-  for (let n = players.length; corridaDesempate && n > 0 && (c === mestre || !corridaPodeResponder(c)); n--) c = nextIndex(c);
+  for (let n = players.length; corridaRestritos() && n > 0 && (c === mestre || !corridaPodeResponder(c)); n--) c = nextIndex(c);
   return c;
 }
 function nextResponderStep(fromIndex, attemptsLeft) {
@@ -470,6 +470,7 @@ function drawHidden() {
   render();
   saveGameState();
   tabLobbyTalvez();
+  if (CURRENT_MODE === "corrida") corridaBombaArmar();
   corridaIntervaloTalvez();
 }
 function beginBonusChoice() {
@@ -593,6 +594,7 @@ function resolveExhaustionIfNeeded() {
   if (revealedOrder.length >= currentCard.clues.length || corridaFim) {
     clearCardTimer();
     if (corridaFim) corridaAvisarCartaPerdida();
+    if (CURRENT_MODE === "corrida") corridaCartaMorreu(); // −1 min no geral (Escudo de Kevlar segura; duelo e desempate não)
     stats.totalExhausted++;
     cartaPartidaRegistrar(-1, revealedOrder.filter((r) => r.item.type === "clue").length, null);
     caosImplicFim(99);
@@ -670,9 +672,11 @@ function startTimer(kind) {
     special: SPECIAL_TIME_LIMIT + acessTempoExtra("special") + mestreTempoExtra("special"),
     turn: expressTimes().turn + acessTempoExtra("turn") + mestreTempoExtra("turn"),
   };
+  if (CURRENT_MODE === "corrida") corridaAjustarVez(durations, kind); // Hardcore 10+10 s, Fôlego +15 s, janela do relâmpago
   timerKind = kind;
   timerEndAt = Date.now() + durations[kind] * 1e3;
   resumeTimerInterval();
+  if (CURRENT_MODE === "corrida" && kind === "pick") corridaRelampagoAgendar(); // Hardcore / Juízo Final: a dica abre sozinha
   if (kind === "pick" || kind === "turn") setTimeout(() => caosIniMostrar(players[responderIndex], "vez"), 60);
 }
 function resumeTimerInterval() {
@@ -771,6 +775,8 @@ function onTimerExpired(kind) {
         render();
       });
     }
+  } else if (kind === "response" && CURRENT_MODE === "corrida" && corridaRelampago()) {
+    corridaRelampagoProxima(); // ninguém bateu na mesa: abre a próxima, sem castigo
   } else if (kind === "response") {
     mestreObsEstouro();
     const skippedName = players[responderIndex] ? escapeHtml(players[responderIndex].name) : "?";
@@ -1079,6 +1085,7 @@ function markWrong(tipo) {
   streakScorerIdx = null;
   streakCount = 0;
   const missedPlayer = players[responderIndex];
+  if (CURRENT_MODE === "corrida") corridaPenalidade(tipo); // carta −1 s (erro) / −2 s (pulou); bomba: geral −5 s
   // contexto pro C.A.O.S.: quantas vezes essa pessoa errou nesta partida ("errou de novo" só vale da 2ª em diante)
   if (missedPlayer && tipo !== "pular") missedPlayer.errosPartida = (missedPlayer.errosPartida || 0) + 1;
   const missIdx = players.indexOf(missedPlayer);
@@ -1818,7 +1825,8 @@ function selectMode(mode, expressCategories, flavor) {
     );
   } else if (mode === "corrida") {
     WINNING_SCORE = 0;
-    corridaVitoria = flavor === "cartas" ? "cartas" : "tempo";
+    corridaVitoria = /^cartas/.test(flavor || "") ? "cartas" : "tempo";
+    corridaHardcore = /-hc$/.test(flavor || "");
     allCards = baralhoClassico();
   } else if (mode === "oldschool") {
     WINNING_SCORE = 200;
