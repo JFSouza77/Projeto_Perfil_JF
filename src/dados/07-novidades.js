@@ -6,6 +6,17 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.5.8",
+    data: "17/10/2026 · 10:24",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "C.A.O.S. 4.4.3: o balão dele mostra o que ele está sentindo.",
+    itens: [
+      "🎭 Balão com emoção: bravo, o balão do C.A.O.S. chacoalha; orgulhoso, pulsa; na festa, pula; triste, murcha. Funciona em todos os dispositivos.",
+      "🧘 Respeita quem prefere calma: com Menos movimento ou Modo Batata, o balão fica parado.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.5.7",
     data: "17/10/2026 · 09:53",
     nome: "Multiplayer Update · Online de verdade",

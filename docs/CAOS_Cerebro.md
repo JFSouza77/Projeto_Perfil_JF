@@ -2,7 +2,7 @@
 
 > A base (camadas, gerador e memória) é da 4.0 (1.7.5.3). O que mudou da 4.1 à 4.4.2 está logo abaixo.
 
-## Da 4.1 à 4.4.2 (1.7.10.x, partidas online)
+## Da 4.1 à 4.4.3 (1.7.10.x, partidas online)
 
 | Parte | O que faz | Onde |
 |---|---|---|
@@ -11,6 +11,7 @@
 | **Motores de fala (4.4)** | O gerador tenta até 10 combinações e fica com a de melhor nota: não gruda fecho genérico, não empilha ideia, não repete expressão, não troca o tom. Frase que depende de contexto (ex.: "errou de novo") só sai com o contexto verdadeiro. A emoção do balão sai do conteúdo da frase. | `caosGerAvaliar`, `caosGerLapidar` (07/10) · `caosContextoOk` (07/01) · `caosEmocaoDoTexto` (07/05) · teste `ferramentas/caos_auditar_geradores.js` |
 | **Resposta ao toque (4.4.1)** | Tocar numa dica já aberta é pergunta direta: ele responde na hora (passa pelo respiro); se está falando, o toque não gasta chance. | `caosDicaRepetida` (07/06) |
 | **Voz nos dispositivos (4.4.2)** | A fala que vai pra rede leva a emoção e o id do evento. No dispositivo do convidado a voz usa a emoção (`"__emo:<emoção>"`), a fila não corta a fala do meio (a próxima espera o fim da voz), fala repetida não sai e fala velha (>12 s) é descartada. | `redeHostFala`, `redeFalaMostrar`, `redeFalaProxima` (js/05k) · `caosSpeak` (js/06) |
+| **Balão com emoção (4.4.3)** | O balão mexe conforme a emoção (bravo chacoalha, orgulho pulsa, festa pula, triste murcha, pensando flutua…), só CSS com translate/rotate/scale. Host e convidado. Parado com Batata, Menos movimento e prefers-reduced-motion. | `@keyframes emo*` (css/03) · `data-emo` em `.jf-toast-overlay` e `.rede-fala` (js/05k) |
 | **Destino da fala** | Fala com alguém (vocativo, ou `caosFalarPara`) que está em outro dispositivo vai só pro dispositivo dele; fala que só cita a pessoa é da mesa. | `redeFalaSoLonge`, `redeFalaComQuem` (js/05k) · `caosCanalRegistrar` (07/11) |
 | **Easter egg da turma** | Piadas internas com limite e intervalo, nunca no Júnior. Não entra em NOVIDADES/HISTÓRICO. | `07-caos/13-amigos.js` |
 | **Cansaço** | Sempre programado em partida longa (decisão do JF, `CAOS_FATIGUE_CHANCE = 1`). | `rollCaosFatiguePlan` |
