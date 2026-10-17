@@ -1287,7 +1287,7 @@ function redeFalaProxima() {
     } catch (e) {}
   const rotulo = f.rotulo || (E ? E.nome : null);
   el.style.setProperty("--emo-cor", E ? E.cor : "#a78bfa");
-  if (E) el.dataset.emo = f.emo; // 1.7.10.5.8: o balão do convidado mexe conforme a emoção (CSS)
+  if (E) el.dataset.emo = f.emo; // C.A.O.S. 4.4.3: o balão do convidado mexe conforme a emoção (CSS)
   el.innerHTML =
     `<div class="rede-fala-topo"><span class="rede-fala-rosto">${escapeHtml(face || "🤖")}</span>${rotulo ? `<span class="rede-fala-rotulo">${escapeHtml(rotulo)}</span>` : ""}</div>` +
     `<div class="rede-fala-txt">[C.A.O.S.] ${escapeHtml(f.texto)}</div>`;

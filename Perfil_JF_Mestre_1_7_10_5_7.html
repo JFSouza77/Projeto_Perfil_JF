@@ -6,14 +6,7 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
-  1.7.10.5.8 · 17/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.4.3: BALÃO COM EMOÇÃO (pedido do JF).
-          O balão da fala mexe conforme a emoção, só com CSS (translate/rotate/scale, sem brigar com o transform que
-          posiciona o balão): bravo chacoalha e dá trancos, fúria treme sem parar, orgulho pulsa, carinho é batida de
-          coração, festa dá pulinhos, surpresa estoura, deboche ginga, desafio chega mais perto, julgando entorta, tédio
-          boceja, triste e vergonha murcham, medo e ansiedade arrepiam, alívio respira, pensando flutua, nojo recua.
-          Vale no host (.jf-toast-overlay) e no convidado (.rede-fala, que agora leva data-emo). Desligado no Modo Batata,
-          com Menos movimento e com prefers-reduced-motion.
-  1.7.10.5.7 · 17/10/2026 · "Multiplayer Update · Online de verdade" = SELETOR DE ALVO NA T2 + SOM E TECLADO (pedido do JF).
+  1.7.10.5.7 · 17/10/2026 · "Multiplayer Update · Online de verdade" = SELETOR DE ALVO NA T2 + TROFÉUS + SOM E TECLADO · C.A.O.S. 4.4.3 (pedido do JF).
           1) Especial "escolha um jogador" no online: quem abriu a dica escolhe o alvo no próprio dispositivo, tocando no
           cartão do jogador na T2 (todo mundo vê; alvoNoAparelho/alvoEspecialPublico, retrato.alvoEspecial). A tela do Mestre
           só espera, com "Escolher por aqui" de emergência; o Mestre remoto não recebe os botões de alvo e a porta recusa o
@@ -26,6 +19,11 @@
           5) Troféus do C.A.O.S. no fim (estatísticas): Pai Diná (menos dicas por acerto), Tartaruga Ninja (mais tempo pra
           acertar), Inimigo do Acerto (mais palpites errados) e Veredito dos Mestres (nota 0 a 10 por carta lida; cartasPartida
           ganha o campo mestre). Só com dado de verdade (mínimo 2); tocar no troféu faz o C.A.O.S. comentar.
+          6) C.A.O.S. 4.4.3: o balão da fala mexe conforme a emoção, só com CSS (translate/rotate/scale): bravo chacoalha,
+          fúria treme, orgulho pulsa, carinho é batida de coração, festa pula, surpresa estoura, deboche ginga, triste e
+          vergonha murcham, medo arrepia, alívio respira, pensando flutua. Host e convidado (.rede-fala leva data-emo);
+          parado com Batata, Menos movimento e prefers-reduced-motion. (Publicado um tempo como 1.7.10.5.8 e juntado aqui
+          a pedido do JF; o build interno segue 1819.)
           Teste novo no teste_rede (seletor, sem_permissao do Mestre, fail safe, toque aplica).
   1.7.10.5.6 · 16/10/2026 · "Multiplayer Update · Online de verdade" = T2 E LOBBY COM CARA DE JOGO + CORREÇÕES DA AUDITORIA (pedido do JF).
           1) Cartas da partida (cartasPartida, salvo e desfeito junto): categoria, resposta, quem acertou, em quantas dicas
@@ -869,7 +867,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.5.8</title>
+<title>Perfil JF · Beta 1.7.10.5.7</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -4952,7 +4950,7 @@ body.batata-mode .card .flip-btn:before {
 .tut-busca-nada { opacity: 0.7; font-size: 0.9rem; padding: 4px 2px; }
 body.claro .tut-busca input, body.claro .tut-busca-item { border-color: rgba(0, 0, 0, 0.18); background: rgba(0, 0, 0, 0.04); }
 
-/* 1.7.10.5.8 (pedido do JF) · O balão do C.A.O.S. mexe conforme a emoção: treme bravo, pulsa orgulhoso, pula na
+/* 1.7.10.5.7 · C.A.O.S. 4.4.3 (pedido do JF) · O balão do C.A.O.S. mexe conforme a emoção: treme bravo, pulsa orgulhoso, pula na
    festa, entorta no deboche, murcha triste... Vale no balão do host (.jf-toast-overlay) e no do convidado (.rede-fala).
    Usa translate/rotate/scale (propriedades separadas), pra não brigar com o transform que posiciona o balão.
    Sem movimento no Modo Batata, com Menos movimento e com prefers-reduced-motion. */
@@ -9851,7 +9849,7 @@ body.claro .pt-resumo li {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.5.8 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.4.3 · Atualizada em 17/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.5.7 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.4.3 · Atualizada em 17/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -22566,7 +22564,7 @@ function redeFalaProxima() {
     } catch (e) {}
   const rotulo = f.rotulo || (E ? E.nome : null);
   el.style.setProperty("--emo-cor", E ? E.cor : "#a78bfa");
-  if (E) el.dataset.emo = f.emo; // 1.7.10.5.8: o balão do convidado mexe conforme a emoção (CSS)
+  if (E) el.dataset.emo = f.emo; // C.A.O.S. 4.4.3: o balão do convidado mexe conforme a emoção (CSS)
   el.innerHTML =
     `<div class="rede-fala-topo"><span class="rede-fala-rosto">${escapeHtml(face || "🤖")}</span>${rotulo ? `<span class="rede-fala-rotulo">${escapeHtml(rotulo)}</span>` : ""}</div>` +
     `<div class="rede-fala-txt">[C.A.O.S.] ${escapeHtml(f.texto)}</div>`;
@@ -29487,7 +29485,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.5.8 · C.A.O.S. 4.4.3</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.5.7 · C.A.O.S. 4.4.3</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -34627,7 +34625,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5.8 · C.A.O.S. 4.4.3)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5.7 · C.A.O.S. 4.4.3)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -38147,7 +38145,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.5.8 · C.A.O.S. 4.4.3");
+  L.push("- **Versão:** Beta 1.7.10.5.7 · C.A.O.S. 4.4.3");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -38670,7 +38668,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.5.8 · C.A.O.S. 4.4.3",
+        versao: "Beta 1.7.10.5.7 · C.A.O.S. 4.4.3",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -74070,27 +74068,17 @@ const PAUSE_TIPS = [
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
-    v: "Beta 1.7.10.5.8",
-    data: "17/10/2026 · 10:24",
-    nome: "Multiplayer Update · Online de verdade",
-    t: "C.A.O.S. 4.4.3: o balão dele mostra o que ele está sentindo.",
-    itens: [
-      "🎭 Balão com emoção: bravo, o balão do C.A.O.S. chacoalha; orgulhoso, pulsa; na festa, pula; triste, murcha. Funciona em todos os dispositivos.",
-      "🧘 Respeita quem prefere calma: com Menos movimento ou Modo Batata, o balão fica parado.",
-    ],
-    qol: [],
-  },
-  {
     v: "Beta 1.7.10.5.7",
     data: "17/10/2026 · 09:53",
     nome: "Multiplayer Update · Online de verdade",
-    t: "Quem abre a especial escolhe o alvo no próprio dispositivo, troféus no fim e o jogo ganhou som e teclado.",
+    t: "Quem abre a especial escolhe o alvo no próprio dispositivo, troféus no fim, som, teclado e C.A.O.S. 4.4.3.",
     itens: [
       "🎯 Você escolhe o alvo: no online, quem abre a dica Escolha um jogador toca no cartão do jogador na tela dos jogadores. Todo mundo vê, e o Mestre não precisa fazer nada.",
       "⌨️ Atalhos de teclado: Espaço vira a carta, os números abrem a dica, A é Acertou, E é Errou e R confere a resposta.",
       "🃏 Som de carta virando: a carta agora faz barulho de carta quando o Mestre vira.",
       "⏳ Últimos segundos com tensão: nos 10 segundos finais, tique-taque baixinho e a borda da tela pulsando.",
       "🏆 Troféus do C.A.O.S.: no fim da partida, nas estatísticas, saem os troféus Pai Diná, Tartaruga Ninja, Inimigo do Acerto e a nota de cada Mestre.",
+      "🎭 Balão com emoção: bravo, o balão do C.A.O.S. chacoalha; orgulhoso, pulsa; na festa, pula; triste, murcha. Com Menos movimento ou Modo Batata, fica parado.",
     ],
     qol: [],
   },

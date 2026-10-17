@@ -1083,7 +1083,7 @@ body.batata-mode .card .flip-btn:before {
 .tut-busca-nada { opacity: 0.7; font-size: 0.9rem; padding: 4px 2px; }
 body.claro .tut-busca input, body.claro .tut-busca-item { border-color: rgba(0, 0, 0, 0.18); background: rgba(0, 0, 0, 0.04); }
 
-/* 1.7.10.5.8 (pedido do JF) · O balão do C.A.O.S. mexe conforme a emoção: treme bravo, pulsa orgulhoso, pula na
+/* 1.7.10.5.7 · C.A.O.S. 4.4.3 (pedido do JF) · O balão do C.A.O.S. mexe conforme a emoção: treme bravo, pulsa orgulhoso, pula na
    festa, entorta no deboche, murcha triste... Vale no balão do host (.jf-toast-overlay) e no do convidado (.rede-fala).
    Usa translate/rotate/scale (propriedades separadas), pra não brigar com o transform que posiciona o balão.
    Sem movimento no Modo Batata, com Menos movimento e com prefers-reduced-motion. */
