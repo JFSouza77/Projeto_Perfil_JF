@@ -1,0 +1,7 @@
+Origem: https://github.com/alirezarezvani/claude-skills (engineering-team/playwright-pro/skills/fix), commit 19392f7a08264ed00486a251f5b2098321771f94
+Licença: MIT (Alireza Rezvani), cópia em LICENSE. Instalada a pedido do JF em 17/10/2026.
+Adaptação: só a skill "fix" do plugin playwright-pro, renomeada pra playwright-fix (o nome "fix" pegaria qualquer pedido).
+Ficaram de fora os ganchos (hooks), as integrações BrowserStack/TestRail (MCP), o pw-init, o generate e o migrate.
+Neste projeto os testes são scripts node + playwright em ferramentas/ (teste_*.js), sem @playwright/test nem
+playwright.config: rode com "node ferramentas/teste_X.js" no lugar de "npx playwright test", e NUNCA rode
+"playwright install" (o Chromium já vem no ambiente). A taxonomia de teste instável (flaky-taxonomy.md) vale igual.
