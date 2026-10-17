@@ -27948,6 +27948,7 @@ function corridaPlacarHtml() {
 function corridaIntervaloAbrir() {
   corridaIntervaloFechar();
   corridaDobrar();
+  corridaLojaPreparar(); // a sala pode ter aberto depois do começo da partida
   const m = players[mestreIndex];
   const ultima = cartasPartida[cartasPartida.length - 1];
   const ultimaTxt = !ultima

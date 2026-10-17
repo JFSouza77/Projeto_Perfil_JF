@@ -118,6 +118,11 @@ async function montar(host, cen) {
     const pa = document.getElementById("playAreaSection");
     if (pa) pa.style.display = "block";
     beginGameplay();
+    // 1.7.10.6: a Corrida começa com o relógio curto (senão a partida do teste dura 30 min)
+    if (cen.modo === "corrida") {
+      corridaDobrar();
+      corridaRestaMs = cen.relogio || 150e3;
+    }
     await new Promise((r) => setTimeout(r, 300));
     if (activeToastState) closeActiveToast();
     return redeAbrirSala("internet");
@@ -145,6 +150,13 @@ const PASSO_CELULAR = () => {
   const sorte = Math.random();
   const escolher = () => {
     for (const a of ["continuar", "bonusAdversario", "sacarCarta", "roletaCategoria", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"]) if (tem(a) >= 0) return ops[tem(a)];
+    // 1.7.10.6 · Corrida: compra na lojinha, usa item, bate na mesa, julga quem bateu, passa a dica
+    if (tem("corridaComprar") >= 0 && sorte < 0.5) return ops[tem("corridaComprar")];
+    if (tem("corridaUsar") >= 0 && sorte < 0.3) return ops[tem("corridaUsar")];
+    if (tem("palpitarAgora") >= 0 && sorte < 0.5) return ops[tem("palpitarAgora")];
+    if (tem("palpiteAcertou") >= 0 && sorte < 0.4) return ops[tem("palpiteAcertou")];
+    if (tem("palpiteErrou") >= 0) return ops[tem("palpiteErrou")];
+    if (tem("corridaProxima") >= 0 && sorte < 0.3) return ops[tem("corridaProxima")];
     const ac = ops.filter((o) => o.a === "acertou");
     if (ac.length && sorte < 0.3) return ac[Math.floor(Math.random() * ac.length)];
     if (tem("errou") >= 0) return ops[tem("errou")];
@@ -212,6 +224,8 @@ const PASSO_HOST = () => {
     let o = null;
     for (const a of ["continuar", "bonusAdversario", "sacarCarta", "roletaCategoria", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"])
       if (!o && tem(a) >= 0) o = ops[tem(a)];
+    for (const [a, chance] of [["corridaComprar", 0.5], ["corridaUsar", 0.3], ["palpitarAgora", 0.5], ["palpiteAcertou", 0.4], ["palpiteErrou", 1], ["corridaProxima", 0.3]])
+      if (!o && tem(a) >= 0 && sorte < chance) o = ops[tem(a)];
     const ac = ops.filter((x) => x.a === "acertou");
     if (!o && ac.length && sorte < 0.3) o = ac[Math.floor(Math.random() * ac.length)];
     if (!o && tem("errou") >= 0) o = ops[tem("errou")];
@@ -421,6 +435,10 @@ async function atualizacao(b, sv) {
       await partidaInteira(b, sv, { rot: "Versus Clássico até o fim", formato: "versus", modo: "classico", cond: "tabuleiro", nomes: ["Ana", "Beto", "Caio"] });
       await partidaInteira(b, sv, { rot: "Equipe até o fim", formato: "equipe", modo: "classico", cond: "tabuleiro", equipes: 2, nomes: ["Ana", "Beto", "Caio", "Davi"] });
       await partidaInteira(b, sv, { rot: "Express até o fim", formato: "versus", modo: "express", sabor: "classico", nomes: ["Ana", "Beto", "Caio"] });
+    }
+    if (!SO || SO === "partidas" || SO === "corrida") {
+      await partidaInteira(b, sv, { rot: "Corrida · Tempo até o fim", formato: "versus", modo: "corrida", sabor: "tempo", relogio: 150e3, nomes: ["Ana", "Beto", "Caio"] });
+      await partidaInteira(b, sv, { rot: "Corrida · Tempo Hardcore até o fim", formato: "versus", modo: "corrida", sabor: "tempo-hc", relogio: 120e3, nomes: ["Ana", "Beto", "Caio"] });
     }
     if (!SO || SO === "fundo") await segundoPlano(b, sv);
     if (!SO || SO === "versao") await atualizacao(b, sv);
