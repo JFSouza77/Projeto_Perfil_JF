@@ -5043,3 +5043,11 @@ Object.assign(REACTIVE_VOICE.corrida, {
     "Olha {nome} investindo no futuro. Ou jogando dinheiro fora. Veremos.",
   ],
 });
+// 1.7.10.6 · Peça ao C.A.O.S.: a resposta dele quando alguém faz um pedido
+REACTIVE_VOICE.pedirCaos = {
+  menos: ["Anotado, {nome}. Vou falar menos com você. Vai sentir saudade.", "Tá bom, {nome}. Fico na minha com você. Por enquanto."],
+  mais: ["Opa, {nome} quer mais de mim. Pode deixar, vou caprichar.", "{nome}, você pediu. Agora aguenta."],
+  leve: ["Combinado, {nome}. Comigo agora é na pluma.", "{nome}, vou pegar leve. Mas só com você."],
+  acido: ["{nome} pediu pimenta. Hoje você vira meu alvo preferido.", "Humor ácido pra {nome}? Finalmente alguém que me entende."],
+  normal: ["Voltei ao normal com você, {nome}.", "Ok, {nome}. Do jeito de sempre."],
+};

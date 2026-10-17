@@ -1567,12 +1567,14 @@ const REDE_SO_MESTRE = [
   "expressPular", "expressInverter", "expressMirar", "expressAlvo", "corridaProxima",
 ];
 const REDE_QUALQUER_UM = ["pausar", "continuar"];
+// (Peça ao C.A.O.S.: cada um só muda o próprio pedido — conferido em redePodeComandar)
 const REDE_SO_HOST = ["tempoAcabou", "expressCartaPerdida", "admRemover", "encerrar"];
 function redePodeComandar(acao, jid, dados) {
   if (!jid || jogadorIdxPorId(jid) < 0) return false;
   if (/^mc[A-Z]/.test(acao)) return CURRENT_MODE === "caos" && mcPodeComandar(acao, jid, dados); // 1.7.10.6
   if (REDE_SO_HOST.includes(acao)) return false;
   if (REDE_QUALQUER_UM.includes(acao)) return true;
+  if (acao === "pedirCaos") return !!dados && dados[0] === jid;
   const ehMestre = jogadorIdDe(mestreIndex) === jid;
   // 1.7.10.5.7: na especial "escolha um jogador" com o seletor na T2, o alvo é de quem abriu a dica
   if ((acao === "moverJogador" || acao === "moverEquipe") && alvoNoAparelho()) return jogadorIdDe(responderIndex) === jid;
@@ -2312,7 +2314,8 @@ function redeConvidadoIniciar(sala) {
 // 1.7.10.3: no celular do convidado também tem o botão da voz do C.A.O.S. (começa desligada)
 function redeSairHtml() {
   const voz = typeof CAOS_VOICE_OK !== "undefined" && CAOS_VOICE_OK ? `<button type="button" class="rede-como rede-voz" onclick="redeVozTrocar()">${caosVoiceOn ? "🗣️ Voz do C.A.O.S.: ligada" : "🤐 Voz do C.A.O.S.: desligada"}</button>` : "";
-  return voz + '<button type="button" class="rede-como" onclick="openTutorial(\'manual:online\')">❓ Como funciona o online</button><button type="button" class="telao-sair" onclick="redeSairDaSala()">✕ Sair da sala</button>';
+  const pedir = rede && rede.retrato && rede.retrato.iniciada ? '<button type="button" class="rede-como" onclick="pedirCaosConvidado()">🙋 Peça ao C.A.O.S.</button>' : "";
+  return voz + pedir + '<button type="button" class="rede-como" onclick="openTutorial(\'manual:online\')">❓ Como funciona o online</button><button type="button" class="telao-sair" onclick="redeSairDaSala()">✕ Sair da sala</button>';
 }
 function redeVozTrocar() {
   try {

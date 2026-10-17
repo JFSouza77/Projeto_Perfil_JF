@@ -1224,6 +1224,8 @@ function markWrong(tipo) {
               ? { silencio: 28, contexto: 32, micro: 8, personalidade: 8, generica: 24 }
               : { silencio: 28, micro: 12, personalidade: 10, generica: 50 },
       );
+      // 1.7.10.6: Peça ao C.A.O.S. ("fala mais comigo"): metade dos silêncios vira comentário
+      if (kind === "silencio" && missedPlayer.pedeCaos && missedPlayer.pedeCaos.fala === 1 && Math.random() < 0.5) kind = cand ? "contexto" : "generica";
       const recentes = caosFalasUltimos(45e3);
       if (
         !zero &&
@@ -1266,6 +1268,7 @@ function markWrong(tipo) {
       Math.random() < 0.08
     )
       caosFalsoCarregamento();
+    if (msg && caosPedidoCala(missedPlayer)) msg = ""; // 1.7.10.6: Peça ao C.A.O.S. ("fala menos comigo")
     caosNoteSpeech(!!msg);
     if (!msg) {
       proceed();

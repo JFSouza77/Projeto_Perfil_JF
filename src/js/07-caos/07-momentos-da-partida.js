@@ -575,6 +575,7 @@ function maybeShowAcertoFlavor(scorerIdx, realCluesRevealed, timeTakenMs, ctx) {
     const extra = [continuidade, marcadoFlavor].filter(Boolean).join(" ");
     if (extra) reactionMsg = caosJoinExtra(extra, reactionMsg, pickPrincipal);
   }
+  if (reactionMsg && caosPedidoCala(player)) reactionMsg = ""; // 1.7.10.6: Peça ao C.A.O.S. ("fala menos comigo")
   caosNoteSpeech(!!reactionMsg || !!ctx.gemAwarded);
   if (reactionMsg && !ctx.gemAwarded && !ctx.milestoneSpoke) {
     if (sfx) playSfx(sfx);

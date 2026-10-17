@@ -68,6 +68,8 @@ const ACOES = {
   mcMaoLeve: { fn: "mcMaoLeve", pode: (id, alvo) => mcPodeMaoLeve(id, alvo) },
   mcComprar: { fn: "mcComprar", pode: (item, id) => mcPodeComprar(item, id) },
   mcPinata: { fn: "mcPinata", pode: (id, txt) => mcPodePinata(id, txt) },
+  // 1.7.10.6 · Peça ao C.A.O.S.: preferência pessoal (falar mais/menos, humor leve/ácido); não muda regra
+  pedirCaos: { fn: "pedirCaos", pode: (id, campo, valor) => !!jogadorPorId(id) && ((campo === "fala" && [-1, 0, 1].includes(valor)) || (campo === "humor" && [null, "leve", "acido"].includes(valor))) },
   pausar: { fn: "pauseGame", pode: () => acoesEmJogo() },
   continuar: { fn: "resumeGame", pode: () => starterChosen && !gameEnded },
   encerrar: { fn: "endGame", pode: () => acoesEmJogo() },
@@ -184,9 +186,11 @@ function acoesFoto() {
 // 1.7.10.6: o que muda nos modos novos sem mexer no placar (itens da Corrida, estado do Modo C.A.O.S.) também é jogada
 function acoesFotoModos() {
   try {
+    const pedidos = players.some((p) => p.pedeCaos) ? "|pc" + JSON.stringify(players.map((p) => p.pedeCaos || 0)) : "";
+    if (pedidos && CURRENT_MODE !== "corrida" && CURRENT_MODE !== "caos") return pedidos;
     if (CURRENT_MODE === "corrida")
-      return "|cr" + JSON.stringify([corridaItens, corridaEstoque, corridaEscudo, corridaFolego, corridaCongelaMs > 0, Math.round(corridaCartaRestaMs / 1000)]);
-    if (CURRENT_MODE === "caos" && typeof mcFoto === "function") return "|mc" + mcFoto();
+      return pedidos + "|cr" + JSON.stringify([corridaItens, corridaEstoque, corridaEscudo, corridaFolego, corridaCongelaMs > 0, Math.round(corridaCartaRestaMs / 1000)]);
+    if (CURRENT_MODE === "caos" && typeof mcFoto === "function") return pedidos + "|mc" + mcFoto();
   } catch (e) {}
   return "";
 }

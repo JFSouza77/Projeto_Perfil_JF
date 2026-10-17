@@ -5115,6 +5115,38 @@ html.acess-calmo :is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo],
 body.batata-mode :is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo] {
   animation: none !important;
 }
+/* 1.7.10.6 · Peça ao C.A.O.S. */
+.pc-modal .pc-sub {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+.pc-lista {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  max-height: 60vh;
+  overflow: auto;
+}
+.pc-ops {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.pc-op {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(167, 139, 250, 0.5);
+  background: rgba(167, 139, 250, 0.08);
+  color: inherit;
+  cursor: pointer;
+}
+.pc-op.on {
+  background: rgba(167, 139, 250, 0.35);
+  font-weight: 700;
+}
 /* Verso da carta (1.7.3): moldura dupla neon, cantos dourados e o emblema "P dentro do ?". */
 .card.face-down {
   position: relative;
@@ -10484,6 +10516,7 @@ body.claro .mc-desfib {
       <button class="btn-sec" id="pauseVozBtn" type="button">🤐 Calar a voz</button>
       <button class="btn-sec" id="pauseAcessBtn" type="button">♿ Acessibilidade</button>
       <button class="btn-sec" id="pauseVitoriaBtn" type="button">🏆 Como se ganha</button>
+      <button class="btn-sec" id="pausePedirCaosBtn" type="button">🙋 Peça ao C.A.O.S.</button>
     </div>
     <button class="btn-sec" id="pauseTutBtn" type="button" style="display:none; --cc:#22d3ee;">🎓 Primeira vez? Tutorial de 2 minutos</button>
     <button class="btn-sec" id="pauseReligarBtn" type="button" style="display:none;">🔊 Religar o C.A.O.S. nesta carta</button>
@@ -12138,7 +12171,16 @@ function humorFamilia(p) {
 function humorEscolhido(p) {
   return humorFamilia(p) ? "familia" : playerHumor(p);
 }
+// 1.7.10.6 · Peça ao C.A.O.S.: o jogador pediu humor mais leve ou mais ácido (preferência dele, não muda regra)
 function playerHumor(p) {
+  const base = playerHumorBase(p);
+  const pc = p && p.pedeCaos;
+  if (!pc || !pc.humor || (p && p.iniciante)) return base;
+  if (pc.humor === "leve") return base === "zero" ? "zero" : "suave";
+  if (pc.humor === "acido") return typeof CURRENT_MODE !== "undefined" && CURRENT_MODE === "junior" ? "normal" : "acido";
+  return base;
+}
+function playerHumorBase(p) {
   if (p && p.iniciante) return "suave";
   // C.A.O.S. 4.3: no online, se uma parte da mesa calou ele, quem ainda ouve ganha o tratamento suave (ciúmes)
   if (typeof caosFiel === "function" && caosFiel(p)) return "suave";
@@ -14078,6 +14120,8 @@ function markWrong(tipo) {
               ? { silencio: 28, contexto: 32, micro: 8, personalidade: 8, generica: 24 }
               : { silencio: 28, micro: 12, personalidade: 10, generica: 50 },
       );
+      // 1.7.10.6: Peça ao C.A.O.S. ("fala mais comigo"): metade dos silêncios vira comentário
+      if (kind === "silencio" && missedPlayer.pedeCaos && missedPlayer.pedeCaos.fala === 1 && Math.random() < 0.5) kind = cand ? "contexto" : "generica";
       const recentes = caosFalasUltimos(45e3);
       if (
         !zero &&
@@ -14120,6 +14164,7 @@ function markWrong(tipo) {
       Math.random() < 0.08
     )
       caosFalsoCarregamento();
+    if (msg && caosPedidoCala(missedPlayer)) msg = ""; // 1.7.10.6: Peça ao C.A.O.S. ("fala menos comigo")
     caosNoteSpeech(!!msg);
     if (!msg) {
       proceed();
@@ -20233,6 +20278,8 @@ const ACOES = {
   mcMaoLeve: { fn: "mcMaoLeve", pode: (id, alvo) => mcPodeMaoLeve(id, alvo) },
   mcComprar: { fn: "mcComprar", pode: (item, id) => mcPodeComprar(item, id) },
   mcPinata: { fn: "mcPinata", pode: (id, txt) => mcPodePinata(id, txt) },
+  // 1.7.10.6 · Peça ao C.A.O.S.: preferência pessoal (falar mais/menos, humor leve/ácido); não muda regra
+  pedirCaos: { fn: "pedirCaos", pode: (id, campo, valor) => !!jogadorPorId(id) && ((campo === "fala" && [-1, 0, 1].includes(valor)) || (campo === "humor" && [null, "leve", "acido"].includes(valor))) },
   pausar: { fn: "pauseGame", pode: () => acoesEmJogo() },
   continuar: { fn: "resumeGame", pode: () => starterChosen && !gameEnded },
   encerrar: { fn: "endGame", pode: () => acoesEmJogo() },
@@ -20349,9 +20396,11 @@ function acoesFoto() {
 // 1.7.10.6: o que muda nos modos novos sem mexer no placar (itens da Corrida, estado do Modo C.A.O.S.) também é jogada
 function acoesFotoModos() {
   try {
+    const pedidos = players.some((p) => p.pedeCaos) ? "|pc" + JSON.stringify(players.map((p) => p.pedeCaos || 0)) : "";
+    if (pedidos && CURRENT_MODE !== "corrida" && CURRENT_MODE !== "caos") return pedidos;
     if (CURRENT_MODE === "corrida")
-      return "|cr" + JSON.stringify([corridaItens, corridaEstoque, corridaEscudo, corridaFolego, corridaCongelaMs > 0, Math.round(corridaCartaRestaMs / 1000)]);
-    if (CURRENT_MODE === "caos" && typeof mcFoto === "function") return "|mc" + mcFoto();
+      return pedidos + "|cr" + JSON.stringify([corridaItens, corridaEstoque, corridaEscudo, corridaFolego, corridaCongelaMs > 0, Math.round(corridaCartaRestaMs / 1000)]);
+    if (CURRENT_MODE === "caos" && typeof mcFoto === "function") return pedidos + "|mc" + mcFoto();
   } catch (e) {}
   return "";
 }
@@ -23688,12 +23737,14 @@ const REDE_SO_MESTRE = [
   "expressPular", "expressInverter", "expressMirar", "expressAlvo", "corridaProxima",
 ];
 const REDE_QUALQUER_UM = ["pausar", "continuar"];
+// (Peça ao C.A.O.S.: cada um só muda o próprio pedido — conferido em redePodeComandar)
 const REDE_SO_HOST = ["tempoAcabou", "expressCartaPerdida", "admRemover", "encerrar"];
 function redePodeComandar(acao, jid, dados) {
   if (!jid || jogadorIdxPorId(jid) < 0) return false;
   if (/^mc[A-Z]/.test(acao)) return CURRENT_MODE === "caos" && mcPodeComandar(acao, jid, dados); // 1.7.10.6
   if (REDE_SO_HOST.includes(acao)) return false;
   if (REDE_QUALQUER_UM.includes(acao)) return true;
+  if (acao === "pedirCaos") return !!dados && dados[0] === jid;
   const ehMestre = jogadorIdDe(mestreIndex) === jid;
   // 1.7.10.5.7: na especial "escolha um jogador" com o seletor na T2, o alvo é de quem abriu a dica
   if ((acao === "moverJogador" || acao === "moverEquipe") && alvoNoAparelho()) return jogadorIdDe(responderIndex) === jid;
@@ -24433,7 +24484,8 @@ function redeConvidadoIniciar(sala) {
 // 1.7.10.3: no celular do convidado também tem o botão da voz do C.A.O.S. (começa desligada)
 function redeSairHtml() {
   const voz = typeof CAOS_VOICE_OK !== "undefined" && CAOS_VOICE_OK ? `<button type="button" class="rede-como rede-voz" onclick="redeVozTrocar()">${caosVoiceOn ? "🗣️ Voz do C.A.O.S.: ligada" : "🤐 Voz do C.A.O.S.: desligada"}</button>` : "";
-  return voz + '<button type="button" class="rede-como" onclick="openTutorial(\'manual:online\')">❓ Como funciona o online</button><button type="button" class="telao-sair" onclick="redeSairDaSala()">✕ Sair da sala</button>';
+  const pedir = rede && rede.retrato && rede.retrato.iniciada ? '<button type="button" class="rede-como" onclick="pedirCaosConvidado()">🙋 Peça ao C.A.O.S.</button>' : "";
+  return voz + pedir + '<button type="button" class="rede-como" onclick="openTutorial(\'manual:online\')">❓ Como funciona o online</button><button type="button" class="telao-sair" onclick="redeSairDaSala()">✕ Sair da sala</button>';
 }
 function redeVozTrocar() {
   try {
@@ -36855,6 +36907,7 @@ function maybeShowAcertoFlavor(scorerIdx, realCluesRevealed, timeTakenMs, ctx) {
     const extra = [continuidade, marcadoFlavor].filter(Boolean).join(" ");
     if (extra) reactionMsg = caosJoinExtra(extra, reactionMsg, pickPrincipal);
   }
+  if (reactionMsg && caosPedidoCala(player)) reactionMsg = ""; // 1.7.10.6: Peça ao C.A.O.S. ("fala menos comigo")
   caosNoteSpeech(!!reactionMsg || !!ctx.gemAwarded);
   if (reactionMsg && !ctx.gemAwarded && !ctx.milestoneSpoke) {
     if (sfx) playSfx(sfx);
@@ -37633,6 +37686,69 @@ function caosRetaFinalTalvez() {
       "media",
     );
   } catch (e) {}
+}
+/* --- 1.7.10.6 · Peça ao C.A.O.S. (pedido do JF) ---
+ * Cada jogador pede pra ele falar mais ou menos com ele e usar humor mais leve ou mais ácido. É preferência
+ * pessoal de quem pediu: nunca fura o mudo, não muda regra nem placar. Fica no jogador (e no save). */
+function caosPedidoCala(p) {
+  return !!(p && p.pedeCaos && p.pedeCaos.fala === -1 && Math.random() < 0.6);
+}
+function pedirCaos(id, campo, valor) {
+  const p = jogadorPorId(id);
+  if (!p) return;
+  p.pedeCaos = p.pedeCaos || { fala: 0, humor: null };
+  p.pedeCaos[campo] = valor;
+  const R = REACTIVE_VOICE.pedirCaos || {};
+  const k = campo === "fala" ? (valor === 1 ? "mais" : valor === -1 ? "menos" : "normal") : valor === "leve" ? "leve" : valor === "acido" ? "acido" : "normal";
+  const fala = R[k] && getRandomReaction(R[k], p.name);
+  caosLog("pedido", `${p.name} pediu: ${campo} = ${valor}`);
+  if (fala) showToastMessage(fala); // respeita o mudo: se ele estiver calado, o pedido vale do mesmo jeito
+  else fxFloat(`🙋 Anotado, ${p.name}`, "#a78bfa");
+  saveGameState();
+}
+function pedirCaosAbrir() {
+  document.getElementById("pedirCaosOv")?.remove();
+  const ov = document.createElement("div");
+  ov.id = "pedirCaosOv";
+  ov.className = "caos-modal-ov";
+  const linha = (p) => {
+    const pc = p.pedeCaos || { fala: 0, humor: null };
+    const b = (campo, valor, txt) => `<button type="button" class="pc-op${pc[campo] === valor ? " on" : ""}" data-id="${escapeHtml(p.id)}" data-campo="${campo}" data-valor="${valor === null ? "" : valor}">${txt}</button>`;
+    return `<li><b>${playerNameHtml(p.name, p.color, p.avatar)}</b><div class="pc-ops">${b("fala", -1, "🤫 Fale menos comigo")}${b("fala", 0, "Normal")}${b("fala", 1, "🗣️ Fale mais")}</div><div class="pc-ops">${b("humor", "leve", "🌸 Mais leve")}${b("humor", null, "Normal")}${CURRENT_MODE === "junior" ? "" : b("humor", "acido", "🌶️ Mais ácido")}</div></li>`;
+  };
+  // no online, cada convidado pede no próprio dispositivo; aqui ficam os jogadores deste dispositivo
+  const daqui = players.filter((p) => !(typeof rede !== "undefined" && rede && rede.papel === "host") || redeNoHost(p.id));
+  ov.innerHTML = `<div class="caos-modal pc-modal" role="dialog" aria-modal="true" aria-labelledby="pcTit"><h3 id="pcTit">🙋 Peça ao C.A.O.S.</h3><p class="pc-sub">É só pra você: ele muda o jeito de falar com quem pediu. Não muda regra, placar, nem fura o mudo.</p><ul class="pc-lista">${daqui.map(linha).join("")}</ul><button type="button" class="btn-sec" id="pcFechar">Fechar</button></div>`;
+  document.body.appendChild(ov);
+  ov.querySelector("#pcFechar").addEventListener("click", () => ov.remove());
+  ov.querySelectorAll(".pc-op").forEach((b) =>
+    b.addEventListener("click", () => {
+      const v = b.dataset.valor === "" ? null : b.dataset.campo === "fala" ? +b.dataset.valor : b.dataset.valor;
+      dispatchAction({ type: "pedirCaos", data: [b.dataset.id, b.dataset.campo, v] });
+      pedirCaosAbrir();
+    }),
+  );
+}
+// convidado (online): o mesmo pedido, pelo próprio dispositivo (o host aplica)
+function pedirCaosConvidado() {
+  if (typeof rede === "undefined" || !rede || !rede.eu) return;
+  document.getElementById("pedirCaosOv")?.remove();
+  const pc = (rede.pedeCaos = rede.pedeCaos || { fala: 0, humor: null });
+  const ov = document.createElement("div");
+  ov.id = "pedirCaosOv";
+  ov.className = "caos-modal-ov";
+  const b = (campo, valor, txt) => `<button type="button" class="pc-op${pc[campo] === valor ? " on" : ""}" data-campo="${campo}" data-valor="${valor === null ? "" : valor}">${txt}</button>`;
+  ov.innerHTML = `<div class="caos-modal pc-modal" role="dialog" aria-modal="true" aria-labelledby="pcTit"><h3 id="pcTit">🙋 Peça ao C.A.O.S.</h3><p class="pc-sub">Só pra você: ele muda o jeito de falar com você. Não muda regra, placar, nem fura o mudo.</p><div class="pc-ops">${b("fala", -1, "🤫 Fale menos comigo")}${b("fala", 0, "Normal")}${b("fala", 1, "🗣️ Fale mais")}</div><div class="pc-ops">${b("humor", "leve", "🌸 Mais leve")}${b("humor", null, "Normal")}${b("humor", "acido", "🌶️ Mais ácido")}</div><button type="button" class="btn-sec" id="pcFechar" style="margin-top:10px">Fechar</button></div>`;
+  document.body.appendChild(ov);
+  ov.querySelector("#pcFechar").addEventListener("click", () => ov.remove());
+  ov.querySelectorAll(".pc-op").forEach((x) =>
+    x.addEventListener("click", () => {
+      const v = x.dataset.valor === "" ? null : x.dataset.campo === "fala" ? +x.dataset.valor : x.dataset.valor;
+      pc[x.dataset.campo] = v;
+      redeMandar("pedirCaos", rede.eu, x.dataset.campo, v);
+      pedirCaosConvidado();
+    }),
+  );
 }
 function caosVinculoReset() {
   caosVinc = {
@@ -39864,7 +39980,10 @@ function sanitizeLoadedState(s) {
         isBlocked: !!p.isBlocked,
         color: okColors.has(p.color) ? p.color : PLAYER_COLORS[i % PLAYER_COLORS.length],
         avatar: jfSafeAvatar(p.avatar),
-        humor: playerHumor(p),
+        humor: playerHumorBase(p),
+        ...(p.pedeCaos && typeof p.pedeCaos === "object"
+          ? { pedeCaos: { fala: [-1, 0, 1].includes(p.pedeCaos.fala) ? p.pedeCaos.fala : 0, humor: ["leve", "acido"].includes(p.pedeCaos.humor) ? p.pedeCaos.humor : null } }
+          : {}),
         ageBracket: AGE_BRACKETS.some((b) => b.id === p.ageBracket) ? p.ageBracket : null,
         team: teamIds.includes(p.team) ? p.team : null,
         gems,
@@ -75470,6 +75589,14 @@ Object.assign(REACTIVE_VOICE.corrida, {
     "Olha {nome} investindo no futuro. Ou jogando dinheiro fora. Veremos.",
   ],
 });
+// 1.7.10.6 · Peça ao C.A.O.S.: a resposta dele quando alguém faz um pedido
+REACTIVE_VOICE.pedirCaos = {
+  menos: ["Anotado, {nome}. Vou falar menos com você. Vai sentir saudade.", "Tá bom, {nome}. Fico na minha com você. Por enquanto."],
+  mais: ["Opa, {nome} quer mais de mim. Pode deixar, vou caprichar.", "{nome}, você pediu. Agora aguenta."],
+  leve: ["Combinado, {nome}. Comigo agora é na pluma.", "{nome}, vou pegar leve. Mas só com você."],
+  acido: ["{nome} pediu pimenta. Hoje você vira meu alvo preferido.", "Humor ácido pra {nome}? Finalmente alguém que me entende."],
+  normal: ["Voltei ao normal com você, {nome}.", "Ok, {nome}. Do jeito de sempre."],
+};
 const CAOS_AVATAR_TIPO = {
   fofo: new Set(AVATARS_KIDS.concat(["🦄", "👶", "🍦"])),
   sombrio: new Set(["💀", "😈", "🐺", "🐍", "🧛", "🧟", "🥷", "🦈", "👻"]),
@@ -79371,6 +79498,7 @@ function iniciar() {
   document.getElementById("btnTutorial2").addEventListener("click", () => openTutorial("rapido"));
   document.getElementById("pauseTutBtn").addEventListener("click", () => openTutorial("rapido"));
   document.getElementById("pauseVitoriaBtn").addEventListener("click", () => openTutorial("vitoria:" + winCond()));
+  document.getElementById("pausePedirCaosBtn").addEventListener("click", () => pedirCaosAbrir());
   ["btnManual", "pauseManualBtn"].forEach((id) => {
     const b = document.getElementById(id);
     if (b) b.addEventListener("click", () => openTutorial("manual"));

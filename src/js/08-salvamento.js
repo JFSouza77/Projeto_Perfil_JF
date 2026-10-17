@@ -532,7 +532,10 @@ function sanitizeLoadedState(s) {
         isBlocked: !!p.isBlocked,
         color: okColors.has(p.color) ? p.color : PLAYER_COLORS[i % PLAYER_COLORS.length],
         avatar: jfSafeAvatar(p.avatar),
-        humor: playerHumor(p),
+        humor: playerHumorBase(p),
+        ...(p.pedeCaos && typeof p.pedeCaos === "object"
+          ? { pedeCaos: { fala: [-1, 0, 1].includes(p.pedeCaos.fala) ? p.pedeCaos.fala : 0, humor: ["leve", "acido"].includes(p.pedeCaos.humor) ? p.pedeCaos.humor : null } }
+          : {}),
         ageBracket: AGE_BRACKETS.some((b) => b.id === p.ageBracket) ? p.ageBracket : null,
         team: teamIds.includes(p.team) ? p.team : null,
         gems,

@@ -85,6 +85,15 @@ A Mochila saiu (substituída pela lojinha com PC, como diz o handoff).
 Entra nestas versões: o jogador pede pra ele falar mais/menos e usar humor mais leve/mais ácido. Preferência
 pessoal (de quem pediu), nunca fura o mudo, não muda regra nem placar.
 
+### Peça ao C.A.O.S. · implementado (17/10)
+
+- Pausa → 🙋 **Peça ao C.A.O.S.** (jogadores do dispositivo); no online cada convidado tem o botão no próprio
+  dispositivo. Opções por jogador: 🤫 fale menos / normal / 🗣️ fale mais; 🌸 mais leve / normal / 🌶️ mais ácido
+  (sem ácido no Júnior).
+- Fale menos: 60% das falas de erro/acerto dirigidas a essa pessoa viram silêncio. Fale mais: metade dos silêncios
+  sorteados no erro dela viram comentário. Humor: troca o humor da pessoa (o do cadastro fica guardado).
+- Nunca fura o mudo, não muda regra nem placar. Fica no save.
+
 ## Fica pra depois
 
 Equalizador/perfil de voz versionado, fadiga entre partidas, orquestração por intenção sobre os geradores.

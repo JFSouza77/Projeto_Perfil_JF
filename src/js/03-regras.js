@@ -65,7 +65,16 @@ function humorFamilia(p) {
 function humorEscolhido(p) {
   return humorFamilia(p) ? "familia" : playerHumor(p);
 }
+// 1.7.10.6 · Peça ao C.A.O.S.: o jogador pediu humor mais leve ou mais ácido (preferência dele, não muda regra)
 function playerHumor(p) {
+  const base = playerHumorBase(p);
+  const pc = p && p.pedeCaos;
+  if (!pc || !pc.humor || (p && p.iniciante)) return base;
+  if (pc.humor === "leve") return base === "zero" ? "zero" : "suave";
+  if (pc.humor === "acido") return typeof CURRENT_MODE !== "undefined" && CURRENT_MODE === "junior" ? "normal" : "acido";
+  return base;
+}
+function playerHumorBase(p) {
   if (p && p.iniciante) return "suave";
   // C.A.O.S. 4.3: no online, se uma parte da mesa calou ele, quem ainda ouve ganha o tratamento suave (ciúmes)
   if (typeof caosFiel === "function" && caosFiel(p)) return "suave";
