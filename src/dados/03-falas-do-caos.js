@@ -4995,3 +4995,10 @@ REACTIVE_VOICE.corrida = {
     "⚡ Relógio zerado e empate. Que delícia. {nome}: desempate relâmpago, agora!",
   ],
 };
+// Corrida · Tempo: a carta derretendo (uma vez por carta, quando passa dos 30 s finais)
+REACTIVE_VOICE.corrida.derreteu = [
+  "Vocês enrolaram tanto que essa carta não vale nem um chiclete mastigado agora.",
+  "Olha o valor dessa carta derretendo. Tá virando troco de padaria.",
+  "Trinta segundos. Essa carta já foi um prêmio. Agora é lembrança.",
+  "A carta tá derretendo e vocês aí, pensando. Lindo de ver.",
+];

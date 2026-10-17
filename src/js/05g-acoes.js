@@ -567,8 +567,11 @@ function desfazerNome(tipo, args) {
 }
 function desfazerOferecer(tipo, args, foto) {
   desfazerLimpar();
-  const quem = tipo === "acertou" ? (players[args && args[0] !== undefined ? args[0] : responderIndex] || {}).name || null : null;
-  desfazerOferta = { tipo, foto, nome: desfazerNome(tipo, args), quem, ate: Date.now() + DESFAZER_MS };
+  // quem respondeu é o da foto (de antes do veredito): depois dele a vez já andou pro próximo
+  const vez = foto && Number.isInteger(foto.responderIndex) ? foto.responderIndex : responderIndex;
+  const idx = args && args[0] !== undefined && args[0] !== null ? args[0] : vez;
+  const quem = tipo === "acertou" ? (players[idx] || {}).name || null : null;
+  desfazerOferta = { tipo, foto, nome: tipo === "acertou" ? "Acertou" + (quem ? " (" + quem + ")" : "") : desfazerNome(tipo, args), quem, ate: Date.now() + DESFAZER_MS };
   try {
     const b = document.createElement("button");
     b.type = "button";

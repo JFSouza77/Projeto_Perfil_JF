@@ -603,12 +603,15 @@ function iniciar() {
         () => {
           if (m === "express") confirmExpress("classico");
           else if (m === "oldschool") selectMode("oldschool", null, "padrao");
+          else if (m === "corrida") selectMode("corrida", null, "tempo");
           else document.getElementById("modeConfirmBtn").click();
         },
         () => resetModeSelectionUI(),
       );
     }),
   );
+  document.getElementById("confirmCorridaTempoBtn").addEventListener("click", () => selectMode("corrida", null, "tempo"));
+  document.getElementById("confirmCorridaCartasBtn").addEventListener("click", () => selectMode("corrida", null, "cartas"));
   document
     .getElementById("confirmOldSchoolBtn")
     .addEventListener("click", () => selectMode("oldschool", null, "padrao"));

@@ -122,6 +122,7 @@ function corridaTicar() {
     corridaCartaDesde = null;
   }
   corridaAvisarTempo();
+  corridaAvisarDerreteu();
   if (!corridaAcabou && !corridaDesempate && corridaGeralMs() <= 0) {
     corridaAcabou = true;
     corridaDobrar();
@@ -180,12 +181,43 @@ function corridaAvisarTempo() {
     }
   }
 }
+// Corrida · Tempo: quando a carta entra nos 30 s finais, às vezes o C.A.O.S. comenta (uma vez por carta)
+let corridaDerreteuCarta = -1;
+function corridaAvisarDerreteu() {
+  if (corridaVitoria !== "tempo" || cardState !== "revealed" || corridaDerreteuCarta === cartaSeq) return;
+  const ms = corridaCartaMs();
+  if (ms > 30e3 || ms < 25e3) return;
+  corridaDerreteuCarta = cartaSeq;
+  const V = REACTIVE_VOICE.corrida;
+  if (V && V.derreteu && Math.random() < 0.5) {
+    const fala = getRandomReaction(V.derreteu);
+    if (fala) caosFalaAgendar(() => fala, 100, "baixa");
+  }
+}
 function corridaLiderNome() {
   const top = corridaPlacar()[0];
   return top ? top.name : "alguém";
 }
 function corridaPlacar() {
-  return players.slice().sort((a, b) => (b.score || 0) - (a.score || 0));
+  return players.slice().sort((a, b) => corridaRank(b) - corridaRank(a));
+}
+/* Pontuação (decisão do JF, 17/10): na Corrida · Tempo a carta vale os segundos que sobravam no relógio dela na hora
+   do acerto (acertou com 1:45 sobrando = 105 pontos); na Corrida · Cartas, cada carta vale 1. */
+function corridaValorCarta() {
+  return corridaVitoria === "tempo" ? Math.max(1, Math.ceil(corridaCartaMs() / 1e3)) : 1;
+}
+function corridaCartasDe(p) {
+  return p ? cartasPartida.filter((c) => c.quem === p.id).length : 0;
+}
+// pra ordenar: no Tempo, empate em pontos desempata por quem tem mais cartas (fração nunca chega a 1)
+function corridaRank(p) {
+  if (!p) return 0;
+  return (p.score || 0) + (corridaVitoria === "tempo" ? Math.min(corridaCartasDe(p), 999) / 1000 : 0);
+}
+function corridaValorTxt(p) {
+  const n = corridaCartasDe(p);
+  const cartas = `${n} carta${n === 1 ? "" : "s"}`;
+  return corridaVitoria === "tempo" ? `${p.score || 0} pts · ${cartas}` : cartas;
 }
 // Barra dos relógios na tela do host/mesa (o online desenha a dele a partir do retrato)
 function corridaDesenharBarra() {
@@ -200,6 +232,7 @@ function corridaDesenharBarra() {
     corre: !!corridaDesde,
     acabou: corridaAcabou,
     desempate: !!corridaDesempate,
+    tempo: corridaVitoria === "tempo",
   });
   if (html !== corridaBarraTxt) {
     corridaBarraTxt = html;
@@ -217,7 +250,12 @@ function corridaBarraHtml(d) {
     d.carta === null || d.carta === undefined
       ? ""
       : `<span class="cr-carta${d.carta <= 30e3 ? " cr-pouco" : ""}" title="Tempo da carta">🃏 carta <b>${corridaRelogioTxt(d.carta)}</b></span>`;
-  return g + c;
+  // Tempo: o valor da carta derretendo na tela (acertou agora, leva isso)
+  const v =
+    d.tempo && d.carta !== null && d.carta !== undefined
+      ? `<span class="cr-vale${d.carta <= 30e3 ? " cr-pouco" : ""}" title="Quanto a carta vale se acertar agora">💰 vale <b>${Math.max(1, Math.ceil(d.carta / 1e3))}</b></span>`
+      : "";
+  return g + c + v;
 }
 
 /* --- fim de carta, intervalo, fim de partida, desempate --- */
@@ -240,7 +278,7 @@ function corridaEncerrar() {
   if (gameEnded) return;
   const max = Math.max(0, ...players.map((p) => p.score || 0));
   const empatados = players.filter((p) => (p.score || 0) === max);
-  if (empatados.length >= 2 && !corridaDesempateFeito && deck.length > 0) return corridaDesempateComecar(empatados);
+  if (corridaVitoria === "cartas" && empatados.length >= 2 && !corridaDesempateFeito && deck.length > 0) return corridaDesempateComecar(empatados);
   endGame();
 }
 function corridaPodeResponder(i) {
@@ -295,11 +333,10 @@ function corridaIntervaloTalvez() {
 }
 function corridaPlacarHtml() {
   const lista = corridaPlacar();
-  const max = lista.length ? lista[0].score || 0 : 0;
+  const max = lista.length ? corridaRank(lista[0]) : 0;
   return `<ol class="cr-placar">${lista
     .map((p) => {
-      const n = p.score || 0;
-      return `<li class="${n === max && n > 0 ? "cr-lider" : ""}" style="--pc:${corDoJogador(p.color)}"><span>${playerNameHtml(p.name, p.color, p.avatar)}</span><b>${n} carta${n === 1 ? "" : "s"}</b></li>`;
+      return `<li class="${corridaRank(p) === max && max > 0 ? "cr-lider" : ""}" style="--pc:${corDoJogador(p.color)}"><span>${playerNameHtml(p.name, p.color, p.avatar)}</span><b>${corridaValorTxt(p)}</b></li>`;
     })
     .join("")}</ol>`;
 }
@@ -311,7 +348,7 @@ function corridaIntervaloAbrir() {
   const ultimaTxt = !ultima
     ? ""
     : ultima.quem
-      ? `✅ <b>${escapeHtml((jogadorPorId(ultima.quem) || {}).name || "Alguém")}</b> ficou com <b>${escapeHtml(ultima.resp)}</b> (${ultima.dicas} dica${ultima.dicas === 1 ? "" : "s"}) · +${CORRIDA_BONUS_MS / 1e3} s no relógio`
+      ? `✅ <b>${escapeHtml((jogadorPorId(ultima.quem) || {}).name || "Alguém")}</b> ficou com <b>${escapeHtml(ultima.resp)}</b> (${ultima.dicas} dica${ultima.dicas === 1 ? "" : "s"}${ultima.pts ? ` · <b>+${ultima.pts} pts</b>` : ""}) · +${CORRIDA_BONUS_MS / 1e3} s no relógio`
       : `❌ <b>${escapeHtml(ultima.resp)}</b> saiu sem dono`;
   const ov = document.createElement("div");
   ov.id = "corridaIntervalo";
@@ -364,19 +401,24 @@ function corridaRegrasHtml(resumo) {
   const min = CORRIDA_TEMPO_MS / 60e3,
     bonus = CORRIDA_BONUS_MS / 1e3,
     carta = corridaRelogioTxt(CORRIDA_CARTA_MS),
-    vez = CORRIDA_VEZ_SEG;
+    vez = CORRIDA_VEZ_SEG,
+    tempo = corridaVitoria === "tempo";
   const li = [
-    `🎯 <b>Objetivo:</b> quem acerta <b>fica com a carta</b>. Vence quem tiver mais cartas quando o relógio geral zerar. Não tem tabuleiro, pontos nem joias.`,
-    `⏱️ <b>Relógio geral:</b> ${min} min. Cada carta acertada dá <b>+${bonus} s</b>. Zerou: a resposta que estava rolando termina e não sai carta nova.`,
+    tempo
+      ? `🎯 <b>Objetivo (⏱️ Tempo):</b> a carta vale <b>os segundos que sobravam no relógio dela</b> na hora do acerto (acertou com 1:45 sobrando = 105 pontos). Vence quem somar mais pontos quando o relógio geral zerar.`
+      : `🎯 <b>Objetivo (🃏 Cartas):</b> quem acerta <b>fica com a carta</b> e cada carta vale 1. Vence quem tiver mais cartas quando o relógio geral zerar.`,
+    `⏱️ <b>Relógio geral:</b> ${min} min. Cada carta acertada dá <b>+${bonus} s</b>. Zerou: a resposta que estava rolando termina (Último Suspiro) e não sai carta nova.`,
     '🎙️ <b>Mestre:</b> roda a cada carta, como no Clássico. Fala a categoria e lê a dica pedida. <b>Nunca</b> fala a resposta.',
     `💬 <b>A vez:</b> segue a roda. ${vez} s pra escolher o número e ${vez} s pra responder. Errou ou o tempo acabou? Passa pro próximo.`,
-    `🃏 <b>Carta:</b> ${carta} pra alguém acertar (não reinicia quando a vez passa). Acabou o tempo ou as 10 dicas? Sai sem dono.`,
+    `🃏 <b>Carta:</b> ${carta} pra alguém acertar (não reinicia quando a vez passa)${tempo ? " e o valor dela vai derretendo na tela" : ""}. Acabou o tempo ou as 10 dicas? Sai sem dono.`,
   ];
   if (!resumo) {
     li.push(
       `☕ <b>Intervalo:</b> ${CORRIDA_INTERVALO_SEG} s entre as cartas pra ver o placar, com o relógio geral <b>congelado</b>. Dá pra pular.`,
       "⭐ <b>Especiais:</b> sem tabuleiro, as de andar casas saem. <b>Perca sua vez</b> passa a vez. <b>Rouba a vez</b> (o antigo Palpite a qualquer hora) dá uma ficha: quem tem pode responder fora da vez. Precisa de 3+ jogadores.",
-      "⚡ <b>Empate no fim:</b> desempate relâmpago. Sai uma carta e só os empatados respondem: quem acertar primeiro leva. Ninguém acertou? Fica empate.",
+      tempo
+        ? "⚖️ <b>Empate no fim:</b> vence quem tiver mais cartas. Empatou nisso também? Vitória dividida."
+        : "⚡ <b>Empate no fim:</b> desempate relâmpago. Sai uma carta e só os empatados respondem: quem acertar primeiro leva. Ninguém acertou? Fica empate.",
       "⏸️ <b>Pausa:</b> pausar congela os dois relógios. As falas do C.A.O.S. também não comem o seu tempo.",
     );
   }
@@ -395,17 +437,26 @@ function corridaRetrato() {
     cartaFimEm: corridaCartaDesde ? corridaCartaDesde + corridaCartaRestaMs : null,
     acabou: corridaAcabou,
     desempate: !!corridaDesempate,
+    vitoria: corridaVitoria,
+    cartas: Object.fromEntries(players.map((p) => [p.id, corridaCartasDe(p)])),
   };
 }
 // do retrato pro formato da barra (no convidado, na hora do host)
 function corridaDoRetrato(c) {
   const agora = typeof redeAgora === "function" ? redeAgora() : Date.now();
   const ms = (fim, resta) => Math.max(0, fim ? fim - agora : resta || 0);
-  return { geral: ms(c.fimEm, c.resta), carta: ms(c.cartaFimEm, c.cartaResta), corre: !!c.fimEm, acabou: !!c.acabou, desempate: !!c.desempate };
+  return { geral: ms(c.fimEm, c.resta), carta: ms(c.cartaFimEm, c.cartaResta), corre: !!c.fimEm, acabou: !!c.acabou, desempate: !!c.desempate, tempo: c.vitoria === "tempo" };
 }
 function corridaTalvezPublicar() {
   const k = [!!corridaDesde, !!corridaCartaDesde, corridaAcabou, !!corridaDesempate].join("|");
   if (k === corridaPublicado) return;
   corridaPublicado = k;
   if (typeof redeHostPublicar === "function") redeHostPublicar();
+}
+
+// placar da T2 / dispositivos (a partir do retrato)
+function corridaValorRetrato(r, j) {
+  const n = (r.corrida && r.corrida.cartas && r.corrida.cartas[j.id]) || 0;
+  const cartas = `${n} carta${n === 1 ? "" : "s"}`;
+  return r.corrida && r.corrida.vitoria === "tempo" ? `⏱️ ${j.pontos} pts · ${cartas}` : `🃏 ${cartas}`;
 }

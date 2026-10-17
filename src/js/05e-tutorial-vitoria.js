@@ -126,7 +126,10 @@ const VITORIA_TUTORIAIS = {
     {
       icon: "⏱️",
       title: "Corrida contra o Tempo",
-      text: `Quem acerta <b>fica com a carta</b>. Não tem tabuleiro, pontos nem joias: vence quem tiver <b>mais cartas</b> quando o relógio geral zerar.`,
+      text:
+        corridaVitoria === "tempo"
+          ? `Aqui o tempo é a pontuação: a carta vale <b>os segundos que sobravam no relógio dela</b> quando alguém acerta. Acertou com 1:45 sobrando? <b>105 pontos</b>. Vence quem somar mais quando o relógio geral zerar.`
+          : `Quem acerta <b>fica com a carta</b> e cada carta vale 1. Não tem tabuleiro nem joias: vence quem tiver <b>mais cartas</b> quando o relógio geral zerar.`,
     },
     {
       icon: "⌛",
@@ -146,9 +149,13 @@ const VITORIA_TUTORIAIS = {
     {
       icon: "⚡",
       title: "Empatou?",
-      text: "Desempate relâmpago: sai uma carta e só os empatados respondem. Quem acertar primeiro leva.",
+      text:
+        corridaVitoria === "tempo"
+          ? "Empate nos pontos: vence quem tiver mais cartas. Empatou nisso também? Vitória dividida."
+          : "Desempate relâmpago: sai uma carta e só os empatados respondem. Quem acertar primeiro leva.",
     },
   ],
+  corridaTempo: () => VITORIA_TUTORIAIS.corrida(), // o mesmo, com a vitória por Tempo (visto separado do Cartas)
   casa: () => [
     {
       icon: "🏠",
@@ -181,7 +188,7 @@ const VITORIA_TUTORIAIS = {
   ],
 };
 function vitoriaTutNome(cond) {
-  if (cond === "corrida") return "⏱️ Corrida contra o Tempo";
+  if (cond === "corrida" || cond === "corridaTempo") return `⏱️ Corrida · ${corridaVitoria === "tempo" ? "Tempo" : "Cartas"}`;
   const w = WIN_CONDITIONS[cond];
   return w ? w.icon + " " + w.label : "";
 }
@@ -214,7 +221,7 @@ function vitoriaTutTalvez(cond) {
 }
 // Começo da partida (beginGameplay). Na Moda da Casa quem chama é a roleta, depois do sorteio.
 function vitoriaTutInicio() {
-  if (CURRENT_MODE === "corrida") return void setTimeout(() => vitoriaTutTalvez("corrida"), 500);
+  if (CURRENT_MODE === "corrida") return void setTimeout(() => vitoriaTutTalvez(corridaVitoria === "tempo" ? "corridaTempo" : "corrida"), 500);
   if (CURRENT_MODE === "express" || WIN_CONDITION === "casa") return;
   setTimeout(() => vitoriaTutTalvez(winCond()), 500);
 }

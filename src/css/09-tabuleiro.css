@@ -845,3 +845,13 @@ body.claro .corrida-relogios .cr-desempate {
 body.claro .cr-placar li {
   background: rgba(0, 0, 0, 0.04);
 }
+.corrida-relogios .cr-vale {
+  border-color: rgba(251, 191, 36, 0.55);
+  background: rgba(251, 191, 36, 0.12);
+  color: #fde68a;
+}
+body.claro .corrida-relogios .cr-vale {
+  color: #92400e;
+  border-color: #d97706;
+  background: rgba(217, 119, 6, 0.08);
+}

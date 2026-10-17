@@ -353,7 +353,8 @@ function teamScore(id) {
 }
 function rankValue(holder, teamId) {
   const w = winCond();
-  if (w === "express" || w === "corrida") return holder.score || 0; // na Corrida, score = cartas conquistadas
+  if (w === "corrida") return corridaRank(holder); // pontos (Tempo) ou cartas; no Tempo, empate desempata por cartas
+  if (w === "express") return holder.score || 0;
   if (w === "pontos") return teamId ? teamScore(teamId) : holder.score || 0;
   if (w === "joias") return gemTotal(holder);
   return holder.position || 0;

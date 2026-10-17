@@ -974,9 +974,10 @@ function markCorrect(playerIdxOverride) {
   if (CURRENT_MODE === "corrida") {
     // Corrida: quem acertou fica com a carta (vale 1, com 1 dica ou com 10) e o relógio geral ganha 10 s
     const scorerC = players[scorerIdx];
-    scorerC.score = (scorerC.score || 0) + 1;
+    const ptsC = corridaValorCarta(); // Tempo: os segundos que sobravam na carta; Cartas: 1
+    scorerC.score = (scorerC.score || 0) + ptsC;
     corridaBonus();
-    fxFloat(`🃏 +1 carta · ⏱️ +${CORRIDA_BONUS_MS / 1e3} s`, "#4ade80");
+    fxFloat(corridaVitoria === "tempo" ? `⏱️ +${ptsC} pts · +${CORRIDA_BONUS_MS / 1e3} s no relógio` : `🃏 +1 carta · ⏱️ +${CORRIDA_BONUS_MS / 1e3} s`, "#4ade80");
     maybeShowAcertoFlavor(scorerIdx, realCluesRevealed, timeTakenMs, { caosSurpresa: caosSurpresaAcerto });
     caosIniAcerto(scorerC);
     caosMemAcerto(scorerIdx, realCluesRevealed, timeTakenMs);
@@ -988,7 +989,7 @@ function markCorrect(playerIdxOverride) {
       playerAvatar: scorerC.avatar,
       category: currentCard.category,
       answer: currentCard.answer,
-      points: 1,
+      points: ptsC,
       cluesUsed: realCluesRevealed,
       timeTakenMs,
       mestreName: players[currentMestreIdx].name,
@@ -997,6 +998,7 @@ function markCorrect(playerIdxOverride) {
       wasBonus: false,
     });
     cartaPartidaRegistrar(scorerIdx, realCluesRevealed, pendingIndex);
+    if (corridaVitoria === "tempo") cartasPartida[cartasPartida.length - 1].pts = ptsC;
     pendingStartTime = null;
     pendingIndex = null;
     if (history.length > 150) history = history.slice(-150);
@@ -1816,6 +1818,7 @@ function selectMode(mode, expressCategories, flavor) {
     );
   } else if (mode === "corrida") {
     WINNING_SCORE = 0;
+    corridaVitoria = flavor === "cartas" ? "cartas" : "tempo";
     allCards = baralhoClassico();
   } else if (mode === "oldschool") {
     WINNING_SCORE = 200;

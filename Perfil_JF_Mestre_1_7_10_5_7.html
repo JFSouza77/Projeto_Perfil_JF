@@ -8889,6 +8889,16 @@ body.claro .corrida-relogios .cr-desempate {
 body.claro .cr-placar li {
   background: rgba(0, 0, 0, 0.04);
 }
+.corrida-relogios .cr-vale {
+  border-color: rgba(251, 191, 36, 0.55);
+  background: rgba(251, 191, 36, 0.12);
+  color: #fde68a;
+}
+body.claro .corrida-relogios .cr-vale {
+  color: #92400e;
+  border-color: #d97706;
+  background: rgba(217, 119, 6, 0.08);
+}
 /* 1.7.9.7 · Rede: tela do convidado (em cima do telão) e painel da sala */
 .rede-sala {
   text-align: center;
@@ -10049,6 +10059,11 @@ body.claro .pt-resumo li {
     <button class="btn-start mc-confirm btn-neo" id="modeConfirmBtn" style="display:none;">🚀 Iniciar</button>
     <button type="button" class="mc-back" id="modeBackBtn">← Trocar formato (Versus / Equipe)</button>
     
+    <div id="corridaConfigBox" class="rules-box" style="display:none; margin-top:14px;">
+      <h3>⏱️ Como a Corrida vai ser decidida?</h3>
+      <button class="btn-start btn-neo neo-long" id="confirmCorridaTempoBtn" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.4); margin-bottom:12px;">⏱️ Tempo · a carta vale os segundos que sobravam nela</button>
+      <button class="btn-start btn-neo neo-long" id="confirmCorridaCartasBtn" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35);">🃏 Cartas · cada carta acertada vale 1</button>
+    </div>
     <div id="oldSchoolConfigBox" class="rules-box" style="display:none; margin-top:14px;">
       <h3>📻 Como a mesa prefere jogar?</h3>
       <button class="btn-start btn-neo neo-long" id="confirmOldSchoolBtn" style="--mc:#d6a15e; --mc-glow:rgba(214,161,94,0.4); margin-bottom:12px;">📻 Old School (padrão · 90 s pra responder)</button>
@@ -11277,6 +11292,8 @@ let ffaWrongCount = 0;
 let bonusOrigMestreIdx = null;
 let CURRENT_MODE = "classico";
 let oldSchoolAcess = false;
+// 1.7.10.6 · Corrida contra o Tempo: "tempo" (pontos = segundos que sobravam na carta) ou "cartas" (1 carta = 1 ponto)
+let corridaVitoria = "tempo";
 let RESPONSE_TIME_LIMIT_BY_MODE = { classico: 90, hardcore: 60, express: 60, junior: 90, oldschool: 90, corrida: CORRIDA_VEZ_SEG };
 let expressSelectedCategories = [];
 let expressFlavor = "classico";
@@ -12012,7 +12029,8 @@ function teamScore(id) {
 }
 function rankValue(holder, teamId) {
   const w = winCond();
-  if (w === "express" || w === "corrida") return holder.score || 0; // na Corrida, score = cartas conquistadas
+  if (w === "corrida") return corridaRank(holder); // pontos (Tempo) ou cartas; no Tempo, empate desempata por cartas
+  if (w === "express") return holder.score || 0;
   if (w === "pontos") return teamId ? teamScore(teamId) : holder.score || 0;
   if (w === "joias") return gemTotal(holder);
   return holder.position || 0;
@@ -13387,9 +13405,10 @@ function markCorrect(playerIdxOverride) {
   if (CURRENT_MODE === "corrida") {
     // Corrida: quem acertou fica com a carta (vale 1, com 1 dica ou com 10) e o relógio geral ganha 10 s
     const scorerC = players[scorerIdx];
-    scorerC.score = (scorerC.score || 0) + 1;
+    const ptsC = corridaValorCarta(); // Tempo: os segundos que sobravam na carta; Cartas: 1
+    scorerC.score = (scorerC.score || 0) + ptsC;
     corridaBonus();
-    fxFloat(`🃏 +1 carta · ⏱️ +${CORRIDA_BONUS_MS / 1e3} s`, "#4ade80");
+    fxFloat(corridaVitoria === "tempo" ? `⏱️ +${ptsC} pts · +${CORRIDA_BONUS_MS / 1e3} s no relógio` : `🃏 +1 carta · ⏱️ +${CORRIDA_BONUS_MS / 1e3} s`, "#4ade80");
     maybeShowAcertoFlavor(scorerIdx, realCluesRevealed, timeTakenMs, { caosSurpresa: caosSurpresaAcerto });
     caosIniAcerto(scorerC);
     caosMemAcerto(scorerIdx, realCluesRevealed, timeTakenMs);
@@ -13401,7 +13420,7 @@ function markCorrect(playerIdxOverride) {
       playerAvatar: scorerC.avatar,
       category: currentCard.category,
       answer: currentCard.answer,
-      points: 1,
+      points: ptsC,
       cluesUsed: realCluesRevealed,
       timeTakenMs,
       mestreName: players[currentMestreIdx].name,
@@ -13410,6 +13429,7 @@ function markCorrect(playerIdxOverride) {
       wasBonus: false,
     });
     cartaPartidaRegistrar(scorerIdx, realCluesRevealed, pendingIndex);
+    if (corridaVitoria === "tempo") cartasPartida[cartasPartida.length - 1].pts = ptsC;
     pendingStartTime = null;
     pendingIndex = null;
     if (history.length > 150) history = history.slice(-150);
@@ -14229,6 +14249,7 @@ function selectMode(mode, expressCategories, flavor) {
     );
   } else if (mode === "corrida") {
     WINNING_SCORE = 0;
+    corridaVitoria = flavor === "cartas" ? "cartas" : "tempo";
     allCards = baralhoClassico();
   } else if (mode === "oldschool") {
     WINNING_SCORE = 200;
@@ -14982,7 +15003,7 @@ function updateModeNotice() {
     hardcore: "Perfil JF — Hardcore (15+)",
     junior: "Perfil JF — Júnior (6+)",
     express: `Perfil JF — Express ${expressFlavor === "hardcore" ? "Hardcore" : "Clássico"}`,
-    corrida: "Perfil JF — Corrida contra o Tempo (12+)",
+    corrida: `Perfil JF — Corrida contra o Tempo · ${corridaVitoria === "tempo" ? "Tempo" : "Cartas"} (12+)`,
   };
   const notices = {
     classico: "",
@@ -14991,7 +15012,7 @@ function updateModeNotice() {
       : "📻 Cartas de adulto, dicas mais difíceis e nenhum animal.",
     hardcore: "💀 10 dicas por carta, 60s pra responder, pontos em dobro. Recomendado 15+.",
     junior: `🧒 ${cartasNoModo()} cartas pra criançada: Animal, Pessoa, Lugar e Coisa. Meta de 150 casas.`,
-    corrida: `⏱️ Quem acerta fica com a carta. ${CORRIDA_TEMPO_MS / 60e3} min de relógio (+${CORRIDA_BONUS_MS / 1e3} s por acerto), carta de 2:30, vez de ${CORRIDA_VEZ_SEG}+${CORRIDA_VEZ_SEG} s. Vence quem tiver mais cartas.`,
+    corrida: `⏱️ ${corridaVitoria === "tempo" ? "A carta vale os segundos que sobravam no relógio dela. Vence quem somar mais pontos." : "Quem acerta fica com a carta. Vence quem tiver mais cartas."} ${CORRIDA_TEMPO_MS / 60e3} min de relógio (+${CORRIDA_BONUS_MS / 1e3} s por acerto), carta de 2:30, vez de ${CORRIDA_VEZ_SEG}+${CORRIDA_VEZ_SEG} s.`,
     express: `🔥 Categorias: ${expressSelectedCategories.join(", ")} · sem tabuleiro · 50 cartas · carta de ${rulesCtx().card} e vez de ${rulesCtx().turn}s.`,
   };
   title.textContent = names[CURRENT_MODE] || "Perfil JF";
@@ -15815,7 +15836,7 @@ function render() {
         const pvTela = palpiteVezAtual();
         controlsHtml = `
           <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ${item.text}</div>
-          <div style="text-align:center; opacity:0.75; font-size:0.85rem; margin-bottom:4px;">${CURRENT_MODE === "corrida" ? `Acertou: fica com a carta e o relógio ganha +${CORRIDA_BONUS_MS / 1e3} s` : `Vale ${pointsIfCorrect} pontos se acertar agora (${quemGanhaNm} ganha ${mestreGainDisplay})`}</div>
+          <div style="text-align:center; opacity:0.75; font-size:0.85rem; margin-bottom:4px;">${CURRENT_MODE === "corrida" ? (corridaVitoria === "tempo" ? `Acertou: leva os segundos que sobram na carta (o 💰 lá em cima) e +${CORRIDA_BONUS_MS / 1e3} s no relógio` : `Acertou: fica com a carta e o relógio ganha +${CORRIDA_BONUS_MS / 1e3} s`) : `Vale ${pointsIfCorrect} pontos se acertar agora (${quemGanhaNm} ganha ${mestreGainDisplay})`}</div>
           ${spotlightTimerHtml}
           ${pvTela ? (() => {
             const d = entityDisplay(pvTela.key);
@@ -16368,7 +16389,7 @@ function renderMiniScoreboard() {
       list.innerHTML = corridaPlacar()
         .map(
           (p) =>
-            `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: 🃏 ${p.score || 0}${palpiteBadge(p.id)}</li>`,
+            `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${corridaValorTxt(p)}${palpiteBadge(p.id)}</li>`,
         )
         .join("");
     } else if (CURRENT_MODE === "express") {
@@ -17169,11 +17190,14 @@ function renderFinalScreen() {
   let headerHtml, rankingHtml;
   const wc = winCond();
   const cartasTxt = (v) => `${v} carta${v === 1 ? "" : "s"}`;
+  // Corrida · Tempo: o rank é pontos + cartas/1000 (corridaRank); aqui separa de volta
+  const corridaTxt = (v) =>
+    corridaVitoria === "tempo" ? `${Math.floor(v)} pts e ${cartasTxt(Math.round((v % 1) * 1000))}` : cartasTxt(v);
   const rankTxt = (v) =>
-    wc === "corrida" ? cartasTxt(v) : wc === "pontos" ? `${v} pts` : wc === "joias" ? `${v} joia${v === 1 ? "" : "s"}` : `casa ${v}`;
+    wc === "corrida" ? corridaTxt(v) : wc === "pontos" ? `${v} pts` : wc === "joias" ? `${v} joia${v === 1 ? "" : "s"}` : `casa ${v}`;
   const rankHead = (v) =>
     wc === "corrida"
-      ? `ficou com ${cartasTxt(v)}${corridaDesempateFeito ? " (no desempate relâmpago)" : ""}`
+      ? `${corridaVitoria === "tempo" ? "somou" : "ficou com"} ${corridaTxt(v)}${corridaDesempateFeito ? " (no desempate relâmpago)" : ""}`
       : wc === "pontos"
       ? `com ${v} pontos`
       : wc === "joias"
@@ -17253,7 +17277,7 @@ function renderFinalScreen() {
         (p) => `
     <li class="${p.rank === 1 && !allZero ? "first-place" : ""}">
       <span>${(!allZero && medals[p.rank - 1]) || p.rank + "º"} ${playerNameHtml(p.name, p.color, p.avatar)}</span>
-      <span>${wc === "corrida" ? `🃏 ${cartasTxt(p.score || 0)}` : isExpress ? `${p.score} ponto${p.score === 1 ? "" : "s"}` : `${p.score} pts — casa ${p.position}`}${gemBadgesHtml(p)}</span>
+      <span>${wc === "corrida" ? (corridaVitoria === "tempo" ? "⏱️ " : "🃏 ") + corridaValorTxt(p) : isExpress ? `${p.score} ponto${p.score === 1 ? "" : "s"}` : `${p.score} pts — casa ${p.position}`}${gemBadgesHtml(p)}</span>
     </li>
   `,
       )
@@ -17504,7 +17528,7 @@ function renderModeCardDescs() {
   );
   set(
     "mcDescCorrida",
-    `Quem acerta fica com a carta. Relógio de ${CORRIDA_TEMPO_MS / 60e3} min (+${CORRIDA_BONUS_MS / 1e3} s por acerto), carta de 2:30, ${CORRIDA_VEZ_SEG} s pra escolher e ${CORRIDA_VEZ_SEG} pra responder. Sem tabuleiro.`,
+    `Relógio de ${CORRIDA_TEMPO_MS / 60e3} min (+${CORRIDA_BONUS_MS / 1e3} s por acerto), carta de 2:30, vez de ${CORRIDA_VEZ_SEG}+${CORRIDA_VEZ_SEG} s. Duas vitórias: ⏱️ Tempo (a carta vale os segundos que sobravam) ou 🃏 Cartas.`,
   );
   set(
     "mcDescOldschool",
@@ -17528,7 +17552,7 @@ function atualizarRotuloModo() {
     junior: "🧒 Júnior",
     hardcore: "💀 Hardcore",
     express: `🔥 Express ${expressFlavor === "hardcore" ? "Hardcore" : "Clássico"}`,
-    corrida: "⏱️ Corrida contra o Tempo",
+    corrida: `⏱️ Corrida · ${corridaVitoria === "tempo" ? "Tempo" : "Cartas"}`,
   };
   el.textContent = `${nomes[CURRENT_MODE] || CURRENT_MODE} · ${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}`;
 }
@@ -17537,6 +17561,7 @@ function resetModeSelectionUI() {
   renderModeCardDescs();
   document.getElementById("expressConfigBox").style.display = "none";
   document.getElementById("oldSchoolConfigBox").style.display = "none";
+  document.getElementById("corridaConfigBox").style.display = "none";
   document.getElementById("modeConfirmBtn").style.display = "none";
   const equipeMode = CURRENT_FORMAT === "equipe";
   document.getElementById("modeWrapExpress").style.display = equipeMode ? "none" : "";
@@ -18030,7 +18055,8 @@ function selectPendingMode(mode) {
   const confirmBtn = document.getElementById("modeConfirmBtn");
   const expressBox = document.getElementById("expressConfigBox");
   document.getElementById("oldSchoolConfigBox").style.display = mode === "oldschool" ? "block" : "none";
-  if (mode === "express" || mode === "oldschool") {
+  document.getElementById("corridaConfigBox").style.display = mode === "corrida" ? "block" : "none";
+  if (mode === "express" || mode === "oldschool" || mode === "corrida") {
     confirmBtn.style.display = "none";
     expressBox.style.display = mode === "express" ? "block" : "none";
   } else {
@@ -19518,7 +19544,10 @@ const VITORIA_TUTORIAIS = {
     {
       icon: "⏱️",
       title: "Corrida contra o Tempo",
-      text: `Quem acerta <b>fica com a carta</b>. Não tem tabuleiro, pontos nem joias: vence quem tiver <b>mais cartas</b> quando o relógio geral zerar.`,
+      text:
+        corridaVitoria === "tempo"
+          ? `Aqui o tempo é a pontuação: a carta vale <b>os segundos que sobravam no relógio dela</b> quando alguém acerta. Acertou com 1:45 sobrando? <b>105 pontos</b>. Vence quem somar mais quando o relógio geral zerar.`
+          : `Quem acerta <b>fica com a carta</b> e cada carta vale 1. Não tem tabuleiro nem joias: vence quem tiver <b>mais cartas</b> quando o relógio geral zerar.`,
     },
     {
       icon: "⌛",
@@ -19538,9 +19567,13 @@ const VITORIA_TUTORIAIS = {
     {
       icon: "⚡",
       title: "Empatou?",
-      text: "Desempate relâmpago: sai uma carta e só os empatados respondem. Quem acertar primeiro leva.",
+      text:
+        corridaVitoria === "tempo"
+          ? "Empate nos pontos: vence quem tiver mais cartas. Empatou nisso também? Vitória dividida."
+          : "Desempate relâmpago: sai uma carta e só os empatados respondem. Quem acertar primeiro leva.",
     },
   ],
+  corridaTempo: () => VITORIA_TUTORIAIS.corrida(), // o mesmo, com a vitória por Tempo (visto separado do Cartas)
   casa: () => [
     {
       icon: "🏠",
@@ -19573,7 +19606,7 @@ const VITORIA_TUTORIAIS = {
   ],
 };
 function vitoriaTutNome(cond) {
-  if (cond === "corrida") return "⏱️ Corrida contra o Tempo";
+  if (cond === "corrida" || cond === "corridaTempo") return `⏱️ Corrida · ${corridaVitoria === "tempo" ? "Tempo" : "Cartas"}`;
   const w = WIN_CONDITIONS[cond];
   return w ? w.icon + " " + w.label : "";
 }
@@ -19606,7 +19639,7 @@ function vitoriaTutTalvez(cond) {
 }
 // Começo da partida (beginGameplay). Na Moda da Casa quem chama é a roleta, depois do sorteio.
 function vitoriaTutInicio() {
-  if (CURRENT_MODE === "corrida") return void setTimeout(() => vitoriaTutTalvez("corrida"), 500);
+  if (CURRENT_MODE === "corrida") return void setTimeout(() => vitoriaTutTalvez(corridaVitoria === "tempo" ? "corridaTempo" : "corrida"), 500);
   if (CURRENT_MODE === "express" || WIN_CONDITION === "casa") return;
   setTimeout(() => vitoriaTutTalvez(winCond()), 500);
 }
@@ -20234,8 +20267,11 @@ function desfazerNome(tipo, args) {
 }
 function desfazerOferecer(tipo, args, foto) {
   desfazerLimpar();
-  const quem = tipo === "acertou" ? (players[args && args[0] !== undefined ? args[0] : responderIndex] || {}).name || null : null;
-  desfazerOferta = { tipo, foto, nome: desfazerNome(tipo, args), quem, ate: Date.now() + DESFAZER_MS };
+  // quem respondeu é o da foto (de antes do veredito): depois dele a vez já andou pro próximo
+  const vez = foto && Number.isInteger(foto.responderIndex) ? foto.responderIndex : responderIndex;
+  const idx = args && args[0] !== undefined && args[0] !== null ? args[0] : vez;
+  const quem = tipo === "acertou" ? (players[idx] || {}).name || null : null;
+  desfazerOferta = { tipo, foto, nome: tipo === "acertou" ? "Acertou" + (quem ? " (" + quem + ")" : "") : desfazerNome(tipo, args), quem, ate: Date.now() + DESFAZER_MS };
   try {
     const b = document.createElement("button");
     b.type = "button";
@@ -20492,11 +20528,12 @@ function telaoDesenhar(r, alvo) {
     return j && isSafeColor(j.cor) ? corDoJogador(j.cor) : "#a78bfa";
   };
   const porPontos = r.vitoria === "pontos" || r.vitoria === "corrida";
-  const ordem = [...r.jogadores].sort((a, b) => (porPontos ? b.pontos - a.pontos : b.casa - a.casa));
+  const cartasJ = (j) => (r.corrida && r.corrida.cartas && r.corrida.cartas[j.id]) || 0;
+  const ordem = [...r.jogadores].sort((a, b) => (porPontos ? b.pontos - a.pontos || cartasJ(b) - cartasJ(a) : b.casa - a.casa));
   const placar = ordem
     .map((j, i) => {
       const joias = Object.keys(j.joias || {}).length;
-      const val = r.vitoria === "corrida" ? `🃏 ${j.pontos} carta${j.pontos === 1 ? "" : "s"}` : r.vitoria === "pontos" ? j.pontos + " pts" : r.vitoria === "joias" ? joias + "/4 joias" : "casa " + j.casa;
+      const val = r.vitoria === "corrida" ? corridaValorRetrato(r, j) : r.vitoria === "pontos" ? j.pontos + " pts" : r.vitoria === "joias" ? joias + "/4 joias" : "casa " + j.casa;
       const tags = (j.id === r.mestreId ? '<span class="tp-tag">🎙️ Mestre</span>' : "") + (j.id === r.vezId ? '<span class="tp-tag tp-vez">👉 vez</span>' : "");
       return `<li style="--pc:${cor(j.id)}"${i === 0 ? ' class="tp-lider"' : ""}><span class="tp-nome"><i class="tp-cor" aria-hidden="true"></i>${nome(j.id)}${tags}</span><b>${escapeHtml(val)}</b></li>`;
     })
@@ -21387,7 +21424,8 @@ function lobbyPontosHtml(antes, ctx) {
   const ents = (ctx ? ctx.ents.slice() : lobbyEntidades()).sort((a, b) => b.pts - a.pts);
   const valePontos = ctx ? ctx.vitoria === "pontos" : winCond() === "pontos";
   const corrida = ctx ? ctx.vitoria === "corrida" : winCond() === "corrida"; // 1.7.10.6: na Corrida, pontos = cartas
-  const un = (n) => (corrida ? `${n} carta${n === 1 ? "" : "s"}` : `${n} pt${n === 1 ? "" : "s"}`);
+  const corridaCartas = corrida && !(ctx ? ctx.corridaTempo : corridaVitoria === "tempo"); // Corrida · Cartas
+  const un = (n) => (corridaCartas ? `${n} carta${n === 1 ? "" : "s"}` : `${n} pt${n === 1 ? "" : "s"}`);
   const meta = valePontos ? (ctx ? ctx.metaPts : metaPontos()) : 0;
   const escala = Math.max(meta, ...ents.map((e) => e.pts), 1);
   const ant = (e) => (antes && antes.pts && typeof antes.pts[e.k] === "number" ? antes.pts[e.k] : null);
@@ -21410,7 +21448,9 @@ function lobbyPontosHtml(antes, ctx) {
   const cab = valePontos
     ? `🎯 Vence quem chegar a <b>${meta} pontos</b>${(ctx ? ctx.equipe : CURRENT_FORMAT === "equipe") ? " (soma da equipe)" : ""}.`
     : corrida
-      ? "⏱️ Vence quem tiver <b>mais cartas</b> quando o relógio zerar."
+      ? corridaCartas
+        ? "🃏 Vence quem tiver <b>mais cartas</b> quando o relógio zerar."
+        : "⏱️ Vence quem somar <b>mais pontos</b> (os segundos que sobravam em cada carta acertada) quando o relógio zerar."
       : "Nesta partida os pontos não decidem quem vence. Valem pela glória.";
   return `<div class="lp-cab">${cab}</div>${podio}<ul class="lp-lista">${barras}</ul>`;
 }
@@ -21521,7 +21561,8 @@ function lobbyContextoDoRetrato(r) {
     cats,
     vitoria: w,
     metaPts: (r.meta && r.meta.pontos) || 0,
-    temJoias: w !== "pontos" && w !== "tabuleiro",
+    temJoias: w !== "pontos" && w !== "tabuleiro" && w !== "corrida",
+    corridaTempo: !!(r.corrida && r.corrida.vitoria === "tempo"),
     valeJoias: w === "joias" || w === "express" || (w === "casa" && r.jogadores.length >= GEMS_MIN_PLAYERS),
   };
 }
@@ -21565,7 +21606,7 @@ function cartasPartidaHtml(lista, nomeTxt, nomeHtml) {
       const cor = (GEM_INFO[c.cat] || {}).color || "#a78bfa";
       const cat = `${CAT_SELO_ICONE[c.cat] || "🃏"} ${escapeHtml(c.cat.charAt(0) + c.cat.slice(1).toLowerCase())}`;
       const dicas = `${c.dicas} dica${c.dicas === 1 ? "" : "s"}`;
-      const res = c.quem ? `✅ ${nomeDe(c.quem)} · ${dicas}` : `❌ Ninguém acertou · ${dicas}`;
+      const res = c.quem ? `✅ ${nomeDe(c.quem)} · ${dicas}${c.pts ? ` · ⏱️ +${c.pts} pts` : ""}` : `❌ Ninguém acertou · ${dicas}`;
       const det = c.quem
         ? c.dicaNum
           ? `<p>${escapeHtml(nomeTxt(c.quem))} acertou na <b>dica ${c.dicaNum}</b>${c.dicaTxt ? `: “${escapeHtml(c.dicaTxt)}”` : ""}</p>`
@@ -27430,6 +27471,7 @@ function corridaTicar() {
     corridaCartaDesde = null;
   }
   corridaAvisarTempo();
+  corridaAvisarDerreteu();
   if (!corridaAcabou && !corridaDesempate && corridaGeralMs() <= 0) {
     corridaAcabou = true;
     corridaDobrar();
@@ -27488,12 +27530,43 @@ function corridaAvisarTempo() {
     }
   }
 }
+// Corrida · Tempo: quando a carta entra nos 30 s finais, às vezes o C.A.O.S. comenta (uma vez por carta)
+let corridaDerreteuCarta = -1;
+function corridaAvisarDerreteu() {
+  if (corridaVitoria !== "tempo" || cardState !== "revealed" || corridaDerreteuCarta === cartaSeq) return;
+  const ms = corridaCartaMs();
+  if (ms > 30e3 || ms < 25e3) return;
+  corridaDerreteuCarta = cartaSeq;
+  const V = REACTIVE_VOICE.corrida;
+  if (V && V.derreteu && Math.random() < 0.5) {
+    const fala = getRandomReaction(V.derreteu);
+    if (fala) caosFalaAgendar(() => fala, 100, "baixa");
+  }
+}
 function corridaLiderNome() {
   const top = corridaPlacar()[0];
   return top ? top.name : "alguém";
 }
 function corridaPlacar() {
-  return players.slice().sort((a, b) => (b.score || 0) - (a.score || 0));
+  return players.slice().sort((a, b) => corridaRank(b) - corridaRank(a));
+}
+/* Pontuação (decisão do JF, 17/10): na Corrida · Tempo a carta vale os segundos que sobravam no relógio dela na hora
+   do acerto (acertou com 1:45 sobrando = 105 pontos); na Corrida · Cartas, cada carta vale 1. */
+function corridaValorCarta() {
+  return corridaVitoria === "tempo" ? Math.max(1, Math.ceil(corridaCartaMs() / 1e3)) : 1;
+}
+function corridaCartasDe(p) {
+  return p ? cartasPartida.filter((c) => c.quem === p.id).length : 0;
+}
+// pra ordenar: no Tempo, empate em pontos desempata por quem tem mais cartas (fração nunca chega a 1)
+function corridaRank(p) {
+  if (!p) return 0;
+  return (p.score || 0) + (corridaVitoria === "tempo" ? Math.min(corridaCartasDe(p), 999) / 1000 : 0);
+}
+function corridaValorTxt(p) {
+  const n = corridaCartasDe(p);
+  const cartas = `${n} carta${n === 1 ? "" : "s"}`;
+  return corridaVitoria === "tempo" ? `${p.score || 0} pts · ${cartas}` : cartas;
 }
 // Barra dos relógios na tela do host/mesa (o online desenha a dele a partir do retrato)
 function corridaDesenharBarra() {
@@ -27508,6 +27581,7 @@ function corridaDesenharBarra() {
     corre: !!corridaDesde,
     acabou: corridaAcabou,
     desempate: !!corridaDesempate,
+    tempo: corridaVitoria === "tempo",
   });
   if (html !== corridaBarraTxt) {
     corridaBarraTxt = html;
@@ -27525,7 +27599,12 @@ function corridaBarraHtml(d) {
     d.carta === null || d.carta === undefined
       ? ""
       : `<span class="cr-carta${d.carta <= 30e3 ? " cr-pouco" : ""}" title="Tempo da carta">🃏 carta <b>${corridaRelogioTxt(d.carta)}</b></span>`;
-  return g + c;
+  // Tempo: o valor da carta derretendo na tela (acertou agora, leva isso)
+  const v =
+    d.tempo && d.carta !== null && d.carta !== undefined
+      ? `<span class="cr-vale${d.carta <= 30e3 ? " cr-pouco" : ""}" title="Quanto a carta vale se acertar agora">💰 vale <b>${Math.max(1, Math.ceil(d.carta / 1e3))}</b></span>`
+      : "";
+  return g + c + v;
 }
 
 /* --- fim de carta, intervalo, fim de partida, desempate --- */
@@ -27548,7 +27627,7 @@ function corridaEncerrar() {
   if (gameEnded) return;
   const max = Math.max(0, ...players.map((p) => p.score || 0));
   const empatados = players.filter((p) => (p.score || 0) === max);
-  if (empatados.length >= 2 && !corridaDesempateFeito && deck.length > 0) return corridaDesempateComecar(empatados);
+  if (corridaVitoria === "cartas" && empatados.length >= 2 && !corridaDesempateFeito && deck.length > 0) return corridaDesempateComecar(empatados);
   endGame();
 }
 function corridaPodeResponder(i) {
@@ -27603,11 +27682,10 @@ function corridaIntervaloTalvez() {
 }
 function corridaPlacarHtml() {
   const lista = corridaPlacar();
-  const max = lista.length ? lista[0].score || 0 : 0;
+  const max = lista.length ? corridaRank(lista[0]) : 0;
   return `<ol class="cr-placar">${lista
     .map((p) => {
-      const n = p.score || 0;
-      return `<li class="${n === max && n > 0 ? "cr-lider" : ""}" style="--pc:${corDoJogador(p.color)}"><span>${playerNameHtml(p.name, p.color, p.avatar)}</span><b>${n} carta${n === 1 ? "" : "s"}</b></li>`;
+      return `<li class="${corridaRank(p) === max && max > 0 ? "cr-lider" : ""}" style="--pc:${corDoJogador(p.color)}"><span>${playerNameHtml(p.name, p.color, p.avatar)}</span><b>${corridaValorTxt(p)}</b></li>`;
     })
     .join("")}</ol>`;
 }
@@ -27619,7 +27697,7 @@ function corridaIntervaloAbrir() {
   const ultimaTxt = !ultima
     ? ""
     : ultima.quem
-      ? `✅ <b>${escapeHtml((jogadorPorId(ultima.quem) || {}).name || "Alguém")}</b> ficou com <b>${escapeHtml(ultima.resp)}</b> (${ultima.dicas} dica${ultima.dicas === 1 ? "" : "s"}) · +${CORRIDA_BONUS_MS / 1e3} s no relógio`
+      ? `✅ <b>${escapeHtml((jogadorPorId(ultima.quem) || {}).name || "Alguém")}</b> ficou com <b>${escapeHtml(ultima.resp)}</b> (${ultima.dicas} dica${ultima.dicas === 1 ? "" : "s"}${ultima.pts ? ` · <b>+${ultima.pts} pts</b>` : ""}) · +${CORRIDA_BONUS_MS / 1e3} s no relógio`
       : `❌ <b>${escapeHtml(ultima.resp)}</b> saiu sem dono`;
   const ov = document.createElement("div");
   ov.id = "corridaIntervalo";
@@ -27672,19 +27750,24 @@ function corridaRegrasHtml(resumo) {
   const min = CORRIDA_TEMPO_MS / 60e3,
     bonus = CORRIDA_BONUS_MS / 1e3,
     carta = corridaRelogioTxt(CORRIDA_CARTA_MS),
-    vez = CORRIDA_VEZ_SEG;
+    vez = CORRIDA_VEZ_SEG,
+    tempo = corridaVitoria === "tempo";
   const li = [
-    `🎯 <b>Objetivo:</b> quem acerta <b>fica com a carta</b>. Vence quem tiver mais cartas quando o relógio geral zerar. Não tem tabuleiro, pontos nem joias.`,
-    `⏱️ <b>Relógio geral:</b> ${min} min. Cada carta acertada dá <b>+${bonus} s</b>. Zerou: a resposta que estava rolando termina e não sai carta nova.`,
+    tempo
+      ? `🎯 <b>Objetivo (⏱️ Tempo):</b> a carta vale <b>os segundos que sobravam no relógio dela</b> na hora do acerto (acertou com 1:45 sobrando = 105 pontos). Vence quem somar mais pontos quando o relógio geral zerar.`
+      : `🎯 <b>Objetivo (🃏 Cartas):</b> quem acerta <b>fica com a carta</b> e cada carta vale 1. Vence quem tiver mais cartas quando o relógio geral zerar.`,
+    `⏱️ <b>Relógio geral:</b> ${min} min. Cada carta acertada dá <b>+${bonus} s</b>. Zerou: a resposta que estava rolando termina (Último Suspiro) e não sai carta nova.`,
     '🎙️ <b>Mestre:</b> roda a cada carta, como no Clássico. Fala a categoria e lê a dica pedida. <b>Nunca</b> fala a resposta.',
     `💬 <b>A vez:</b> segue a roda. ${vez} s pra escolher o número e ${vez} s pra responder. Errou ou o tempo acabou? Passa pro próximo.`,
-    `🃏 <b>Carta:</b> ${carta} pra alguém acertar (não reinicia quando a vez passa). Acabou o tempo ou as 10 dicas? Sai sem dono.`,
+    `🃏 <b>Carta:</b> ${carta} pra alguém acertar (não reinicia quando a vez passa)${tempo ? " e o valor dela vai derretendo na tela" : ""}. Acabou o tempo ou as 10 dicas? Sai sem dono.`,
   ];
   if (!resumo) {
     li.push(
       `☕ <b>Intervalo:</b> ${CORRIDA_INTERVALO_SEG} s entre as cartas pra ver o placar, com o relógio geral <b>congelado</b>. Dá pra pular.`,
       "⭐ <b>Especiais:</b> sem tabuleiro, as de andar casas saem. <b>Perca sua vez</b> passa a vez. <b>Rouba a vez</b> (o antigo Palpite a qualquer hora) dá uma ficha: quem tem pode responder fora da vez. Precisa de 3+ jogadores.",
-      "⚡ <b>Empate no fim:</b> desempate relâmpago. Sai uma carta e só os empatados respondem: quem acertar primeiro leva. Ninguém acertou? Fica empate.",
+      tempo
+        ? "⚖️ <b>Empate no fim:</b> vence quem tiver mais cartas. Empatou nisso também? Vitória dividida."
+        : "⚡ <b>Empate no fim:</b> desempate relâmpago. Sai uma carta e só os empatados respondem: quem acertar primeiro leva. Ninguém acertou? Fica empate.",
       "⏸️ <b>Pausa:</b> pausar congela os dois relógios. As falas do C.A.O.S. também não comem o seu tempo.",
     );
   }
@@ -27703,19 +27786,28 @@ function corridaRetrato() {
     cartaFimEm: corridaCartaDesde ? corridaCartaDesde + corridaCartaRestaMs : null,
     acabou: corridaAcabou,
     desempate: !!corridaDesempate,
+    vitoria: corridaVitoria,
+    cartas: Object.fromEntries(players.map((p) => [p.id, corridaCartasDe(p)])),
   };
 }
 // do retrato pro formato da barra (no convidado, na hora do host)
 function corridaDoRetrato(c) {
   const agora = typeof redeAgora === "function" ? redeAgora() : Date.now();
   const ms = (fim, resta) => Math.max(0, fim ? fim - agora : resta || 0);
-  return { geral: ms(c.fimEm, c.resta), carta: ms(c.cartaFimEm, c.cartaResta), corre: !!c.fimEm, acabou: !!c.acabou, desempate: !!c.desempate };
+  return { geral: ms(c.fimEm, c.resta), carta: ms(c.cartaFimEm, c.cartaResta), corre: !!c.fimEm, acabou: !!c.acabou, desempate: !!c.desempate, tempo: c.vitoria === "tempo" };
 }
 function corridaTalvezPublicar() {
   const k = [!!corridaDesde, !!corridaCartaDesde, corridaAcabou, !!corridaDesempate].join("|");
   if (k === corridaPublicado) return;
   corridaPublicado = k;
   if (typeof redeHostPublicar === "function") redeHostPublicar();
+}
+
+// placar da T2 / dispositivos (a partir do retrato)
+function corridaValorRetrato(r, j) {
+  const n = (r.corrida && r.corrida.cartas && r.corrida.cartas[j.id]) || 0;
+  const cartas = `${n} carta${n === 1 ? "" : "s"}`;
+  return r.corrida && r.corrida.vitoria === "tempo" ? `⏱️ ${j.pontos} pts · ${cartas}` : `🃏 ${cartas}`;
 }
 /* ======================================================================
  * 6. VOZ, SOM E VIBRAÇÃO
@@ -37611,6 +37703,7 @@ function saveGameState() {
       ultimaRodada,
       ultimaRodadaQuem,
       oldSchoolAcess,
+      corridaVitoria,
       caosRitmoLog,
       caosEmoHist,
       caosExtra: caosExtraSalvar(),
@@ -37844,6 +37937,7 @@ function sanitizeLoadedState(s) {
       dicaNum: Number.isInteger(c.dicaNum) && c.dicaNum > 0 ? c.dicaNum : null,
       dicaTxt: typeof c.dicaTxt === "string" ? c.dicaTxt.slice(0, 240) : null,
       bonus: !!c.bonus,
+      ...(Number.isInteger(c.pts) && c.pts >= 0 && c.pts <= 3600 ? { pts: c.pts } : {}), // 1.7.10.6: Corrida (Tempo)
     }));
   if (!Array.isArray(s.expressSelectedCategories)) s.expressSelectedCategories = [];
   s.expressSelectedCategories = s.expressSelectedCategories
@@ -37907,6 +38001,7 @@ function loadGameState() {
       allCards = CURRENT_MODE === "hardcore" ? baralhoHardcore() : baralhoClassico();
     }
     oldSchoolAcess = CURRENT_MODE === "oldschool" && !!state.oldSchoolAcess;
+    corridaVitoria = state.corridaVitoria === "cartas" ? "cartas" : "tempo";
     aplicarAcessibilidade();
     CURRENT_FORMAT = state.CURRENT_FORMAT || "versus";
     teams = state.teams || {};
@@ -73243,6 +73338,13 @@ REACTIVE_VOICE.corrida = {
     "⚡ Relógio zerado e empate. Que delícia. {nome}: desempate relâmpago, agora!",
   ],
 };
+// Corrida · Tempo: a carta derretendo (uma vez por carta, quando passa dos 30 s finais)
+REACTIVE_VOICE.corrida.derreteu = [
+  "Vocês enrolaram tanto que essa carta não vale nem um chiclete mastigado agora.",
+  "Olha o valor dessa carta derretendo. Tá virando troco de padaria.",
+  "Trinta segundos. Essa carta já foi um prêmio. Agora é lembrança.",
+  "A carta tá derretendo e vocês aí, pensando. Lindo de ver.",
+];
 const CAOS_AVATAR_TIPO = {
   fofo: new Set(AVATARS_KIDS.concat(["🦄", "👶", "🍦"])),
   sombrio: new Set(["💀", "😈", "🐺", "🐍", "🧛", "🧟", "🥷", "🦈", "👻"]),
@@ -77166,12 +77268,15 @@ function iniciar() {
         () => {
           if (m === "express") confirmExpress("classico");
           else if (m === "oldschool") selectMode("oldschool", null, "padrao");
+          else if (m === "corrida") selectMode("corrida", null, "tempo");
           else document.getElementById("modeConfirmBtn").click();
         },
         () => resetModeSelectionUI(),
       );
     }),
   );
+  document.getElementById("confirmCorridaTempoBtn").addEventListener("click", () => selectMode("corrida", null, "tempo"));
+  document.getElementById("confirmCorridaCartasBtn").addEventListener("click", () => selectMode("corrida", null, "cartas"));
   document
     .getElementById("confirmOldSchoolBtn")
     .addEventListener("click", () => selectMode("oldschool", null, "padrao"));

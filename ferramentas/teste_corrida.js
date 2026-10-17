@@ -14,7 +14,7 @@ const ARQ = acharMestre(process.argv[2]);
   await ctx.addInitScript(() => {
     try {
       localStorage.setItem("perfil5_tutorial_visto", "x");
-      localStorage.setItem("perfil5_tut_vitoria_vistos", JSON.stringify(["corrida"]));
+      localStorage.setItem("perfil5_tut_vitoria_vistos", JSON.stringify(["corrida", "corridaTempo"]));
     } catch (e) {}
     if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
   });
@@ -34,7 +34,7 @@ const ARQ = acharMestre(process.argv[2]);
     document.querySelectorAll(".caos-modal-ov,.jf-modal-bg").forEach((x) => x.remove());
     CURRENT_FORMAT = "versus";
     players = ["Ana", "Beto", "Caio"].map((n, i) => ({ id: jogadorIdNovo(), name: n, score: 0, position: 0, color: PLAYER_COLORS[i], avatar: "😀", humor: "normal", gems: {} }));
-    selectMode("corrida");
+    selectMode("corrida", null, "cartas");
     o.cardModo = !!document.getElementById("modeWrapCorrida");
     o.regras = /mais cartas/.test(document.getElementById("rulesList").innerHTML) && /Rouba a vez/.test(document.getElementById("rulesList").innerHTML);
     starterDrawCount = 1;
@@ -137,6 +137,57 @@ const ARQ = acharMestre(process.argv[2]);
     o.parou = !corridaTique;
     return o;
   });
+  // Corrida · Tempo: a carta vale os segundos que sobravam; empate em pontos desempata por cartas (sem desempate relâmpago)
+  const rt = await p.evaluate(async () => {
+    const o = {};
+    const esp = (ms) => new Promise((ok) => setTimeout(ok, ms));
+    const f = () => {
+      if (activeToastState) closeActiveToast();
+      document.querySelectorAll(".caos-modal-ov").forEach((x) => x.remove());
+    };
+    const livre = () => currentCard.clues.map((c, i) => i).filter((i) => currentCard.clues[i].type === "clue" && !revealedOrder.some((x) => x.index === i));
+    resetGame();
+    CURRENT_FORMAT = "versus";
+    players = ["Ana", "Beto", "Caio"].map((n, i) => ({ id: jogadorIdNovo(), name: n, score: 0, position: 0, color: PLAYER_COLORS[i], avatar: "😀", humor: "normal", gems: {} }));
+    selectMode("corrida", null, "tempo");
+    o.tempoRegras = /segundos que sobravam/.test(document.getElementById("rulesList").innerHTML);
+    starterDrawCount = 1;
+    mestreIndex = 0;
+    responderIndex = 1;
+    ["splashScreen", "welcomeScreen", "playerPanel"].forEach((id) => (document.getElementById(id).style.display = "none"));
+    document.getElementById("gameScreen").style.display = "flex";
+    beginGameplay();
+    await esp(300);
+    f();
+    flipCard();
+    f();
+    await esp(400);
+    f();
+    corridaDobrar();
+    corridaCartaRestaMs = 105400; // 1:45 sobrando
+    o.valeNaTela = /vale\s*106/.test(document.getElementById("corridaRelogios").innerText) || (await esp(400), /vale\s*10[56]/.test(document.getElementById("corridaRelogios").innerText));
+    chooseClue(livre()[0]);
+    f();
+    toqueJogoUltimo = 0;
+    markCorrect();
+    await esp(100);
+    o.pontosPorTempo = players[1].score >= 104 && players[1].score <= 106 && cartasPartida[cartasPartida.length - 1].pts === players[1].score;
+    o.placarTempo = /pts · 1 carta/.test(document.getElementById("miniScoreboard").innerText);
+    // empate em pontos, Caio com mais cartas → Caio vence sem desempate relâmpago
+    players[1].score = 200;
+    players[2].score = 200;
+    cartasPartida.push({ n: 99, cat: "PESSOA", resp: "x", quem: players[2].id, mestre: null, dicas: 1, dicaNum: null, dicaTxt: null, bonus: false, pts: 50 });
+    cartasPartida.push({ n: 98, cat: "PESSOA", resp: "y", quem: players[2].id, mestre: null, dicas: 1, dicaNum: null, dicaTxt: null, bonus: false, pts: 50 });
+    corridaIntervaloFechar();
+    corridaAcabou = true;
+    await esp(600);
+    f();
+    await esp(300);
+    o.semDesempateNoTempo = gameEnded && !corridaDesempate;
+    o.cartasDesempatam = /Caio venceu/.test(document.getElementById("winnerArea").innerText);
+    return o;
+  });
+  Object.assign(r, rt);
   // save e volta: os dois relógios continuam de onde estavam
   const r2 = await p.evaluate(async () => {
     const esp = (ms) => new Promise((ok) => setTimeout(ok, ms));
@@ -147,7 +198,7 @@ const ARQ = acharMestre(process.argv[2]);
     resetGame();
     CURRENT_FORMAT = "versus";
     players = ["Ana", "Beto"].map((n, i) => ({ id: jogadorIdNovo(), name: n, score: 0, position: 0, color: PLAYER_COLORS[i], avatar: "😀", humor: "normal", gems: {} }));
-    selectMode("corrida");
+    selectMode("corrida"); // padrão: Tempo
     starterDrawCount = 1;
     mestreIndex = 0;
     responderIndex = 1;

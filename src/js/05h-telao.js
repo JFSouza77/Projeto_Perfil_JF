@@ -197,11 +197,12 @@ function telaoDesenhar(r, alvo) {
     return j && isSafeColor(j.cor) ? corDoJogador(j.cor) : "#a78bfa";
   };
   const porPontos = r.vitoria === "pontos" || r.vitoria === "corrida";
-  const ordem = [...r.jogadores].sort((a, b) => (porPontos ? b.pontos - a.pontos : b.casa - a.casa));
+  const cartasJ = (j) => (r.corrida && r.corrida.cartas && r.corrida.cartas[j.id]) || 0;
+  const ordem = [...r.jogadores].sort((a, b) => (porPontos ? b.pontos - a.pontos || cartasJ(b) - cartasJ(a) : b.casa - a.casa));
   const placar = ordem
     .map((j, i) => {
       const joias = Object.keys(j.joias || {}).length;
-      const val = r.vitoria === "corrida" ? `🃏 ${j.pontos} carta${j.pontos === 1 ? "" : "s"}` : r.vitoria === "pontos" ? j.pontos + " pts" : r.vitoria === "joias" ? joias + "/4 joias" : "casa " + j.casa;
+      const val = r.vitoria === "corrida" ? corridaValorRetrato(r, j) : r.vitoria === "pontos" ? j.pontos + " pts" : r.vitoria === "joias" ? joias + "/4 joias" : "casa " + j.casa;
       const tags = (j.id === r.mestreId ? '<span class="tp-tag">🎙️ Mestre</span>' : "") + (j.id === r.vezId ? '<span class="tp-tag tp-vez">👉 vez</span>' : "");
       return `<li style="--pc:${cor(j.id)}"${i === 0 ? ' class="tp-lider"' : ""}><span class="tp-nome"><i class="tp-cor" aria-hidden="true"></i>${nome(j.id)}${tags}</span><b>${escapeHtml(val)}</b></li>`;
     })

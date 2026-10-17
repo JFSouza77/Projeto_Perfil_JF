@@ -24,6 +24,18 @@ fica com a carta.
   mais cartas.** Empate: **desempate relâmpago** (1 carta; quem acertar primeiro leva; ninguém acertou = empate).
 - O C.A.O.S. comenta, mas não muda regra.
 
+### Duas vitórias na Corrida (JF, 17/10, "já é oficial")
+
+Ideia que o JF trouxe da conversa com o Gemini (handoff atualizado em 17/10, 15:28):
+
+- **⏱️ Tempo** (padrão): a carta vale **os segundos que sobravam no relógio dela** na hora do acerto (acertou com
+  1:45 sobrando = 105 pontos). O valor fica "derretendo" na tela (💰 vale N). Vence quem somar mais pontos.
+  Empate em pontos: vence quem tem mais cartas; empatou de novo, vitória dividida (sem desempate relâmpago).
+- **🃏 Cartas**: o que já estava: cada carta vale 1, empate vai pro desempate relâmpago.
+- Último Suspiro (Buzzer Beater): relógio geral zerou com resposta em andamento, ela termina; não sai carta nova.
+- A escolha é na tela de modos (como o Old School): ⏱️ Tempo ou 🃏 Cartas.
+- Ainda não entrou: a Corrida Hardcore do handoff (carta de 1:30, vez de 10+10 s). Fica pra decisão do JF.
+
 ## Modo C.A.O.S.
 
 - **Só online**, um dispositivo por pessoa, individual. **16+** (todos os jogadores com 16 anos ou mais) e nunca

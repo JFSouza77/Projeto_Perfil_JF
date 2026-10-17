@@ -450,6 +450,7 @@ function saveGameState() {
       ultimaRodada,
       ultimaRodadaQuem,
       oldSchoolAcess,
+      corridaVitoria,
       caosRitmoLog,
       caosEmoHist,
       caosExtra: caosExtraSalvar(),
@@ -683,6 +684,7 @@ function sanitizeLoadedState(s) {
       dicaNum: Number.isInteger(c.dicaNum) && c.dicaNum > 0 ? c.dicaNum : null,
       dicaTxt: typeof c.dicaTxt === "string" ? c.dicaTxt.slice(0, 240) : null,
       bonus: !!c.bonus,
+      ...(Number.isInteger(c.pts) && c.pts >= 0 && c.pts <= 3600 ? { pts: c.pts } : {}), // 1.7.10.6: Corrida (Tempo)
     }));
   if (!Array.isArray(s.expressSelectedCategories)) s.expressSelectedCategories = [];
   s.expressSelectedCategories = s.expressSelectedCategories
@@ -746,6 +748,7 @@ function loadGameState() {
       allCards = CURRENT_MODE === "hardcore" ? baralhoHardcore() : baralhoClassico();
     }
     oldSchoolAcess = CURRENT_MODE === "oldschool" && !!state.oldSchoolAcess;
+    corridaVitoria = state.corridaVitoria === "cartas" ? "cartas" : "tempo";
     aplicarAcessibilidade();
     CURRENT_FORMAT = state.CURRENT_FORMAT || "versus";
     teams = state.teams || {};

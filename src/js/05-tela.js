@@ -66,7 +66,7 @@ function updateModeNotice() {
     hardcore: "Perfil JF — Hardcore (15+)",
     junior: "Perfil JF — Júnior (6+)",
     express: `Perfil JF — Express ${expressFlavor === "hardcore" ? "Hardcore" : "Clássico"}`,
-    corrida: "Perfil JF — Corrida contra o Tempo (12+)",
+    corrida: `Perfil JF — Corrida contra o Tempo · ${corridaVitoria === "tempo" ? "Tempo" : "Cartas"} (12+)`,
   };
   const notices = {
     classico: "",
@@ -75,7 +75,7 @@ function updateModeNotice() {
       : "📻 Cartas de adulto, dicas mais difíceis e nenhum animal.",
     hardcore: "💀 10 dicas por carta, 60s pra responder, pontos em dobro. Recomendado 15+.",
     junior: `🧒 ${cartasNoModo()} cartas pra criançada: Animal, Pessoa, Lugar e Coisa. Meta de 150 casas.`,
-    corrida: `⏱️ Quem acerta fica com a carta. ${CORRIDA_TEMPO_MS / 60e3} min de relógio (+${CORRIDA_BONUS_MS / 1e3} s por acerto), carta de 2:30, vez de ${CORRIDA_VEZ_SEG}+${CORRIDA_VEZ_SEG} s. Vence quem tiver mais cartas.`,
+    corrida: `⏱️ ${corridaVitoria === "tempo" ? "A carta vale os segundos que sobravam no relógio dela. Vence quem somar mais pontos." : "Quem acerta fica com a carta. Vence quem tiver mais cartas."} ${CORRIDA_TEMPO_MS / 60e3} min de relógio (+${CORRIDA_BONUS_MS / 1e3} s por acerto), carta de 2:30, vez de ${CORRIDA_VEZ_SEG}+${CORRIDA_VEZ_SEG} s.`,
     express: `🔥 Categorias: ${expressSelectedCategories.join(", ")} · sem tabuleiro · 50 cartas · carta de ${rulesCtx().card} e vez de ${rulesCtx().turn}s.`,
   };
   title.textContent = names[CURRENT_MODE] || "Perfil JF";
@@ -899,7 +899,7 @@ function render() {
         const pvTela = palpiteVezAtual();
         controlsHtml = `
           <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ${item.text}</div>
-          <div style="text-align:center; opacity:0.75; font-size:0.85rem; margin-bottom:4px;">${CURRENT_MODE === "corrida" ? `Acertou: fica com a carta e o relógio ganha +${CORRIDA_BONUS_MS / 1e3} s` : `Vale ${pointsIfCorrect} pontos se acertar agora (${quemGanhaNm} ganha ${mestreGainDisplay})`}</div>
+          <div style="text-align:center; opacity:0.75; font-size:0.85rem; margin-bottom:4px;">${CURRENT_MODE === "corrida" ? (corridaVitoria === "tempo" ? `Acertou: leva os segundos que sobram na carta (o 💰 lá em cima) e +${CORRIDA_BONUS_MS / 1e3} s no relógio` : `Acertou: fica com a carta e o relógio ganha +${CORRIDA_BONUS_MS / 1e3} s`) : `Vale ${pointsIfCorrect} pontos se acertar agora (${quemGanhaNm} ganha ${mestreGainDisplay})`}</div>
           ${spotlightTimerHtml}
           ${pvTela ? (() => {
             const d = entityDisplay(pvTela.key);
@@ -1452,7 +1452,7 @@ function renderMiniScoreboard() {
       list.innerHTML = corridaPlacar()
         .map(
           (p) =>
-            `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: 🃏 ${p.score || 0}${palpiteBadge(p.id)}</li>`,
+            `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${corridaValorTxt(p)}${palpiteBadge(p.id)}</li>`,
         )
         .join("");
     } else if (CURRENT_MODE === "express") {
@@ -2253,11 +2253,14 @@ function renderFinalScreen() {
   let headerHtml, rankingHtml;
   const wc = winCond();
   const cartasTxt = (v) => `${v} carta${v === 1 ? "" : "s"}`;
+  // Corrida · Tempo: o rank é pontos + cartas/1000 (corridaRank); aqui separa de volta
+  const corridaTxt = (v) =>
+    corridaVitoria === "tempo" ? `${Math.floor(v)} pts e ${cartasTxt(Math.round((v % 1) * 1000))}` : cartasTxt(v);
   const rankTxt = (v) =>
-    wc === "corrida" ? cartasTxt(v) : wc === "pontos" ? `${v} pts` : wc === "joias" ? `${v} joia${v === 1 ? "" : "s"}` : `casa ${v}`;
+    wc === "corrida" ? corridaTxt(v) : wc === "pontos" ? `${v} pts` : wc === "joias" ? `${v} joia${v === 1 ? "" : "s"}` : `casa ${v}`;
   const rankHead = (v) =>
     wc === "corrida"
-      ? `ficou com ${cartasTxt(v)}${corridaDesempateFeito ? " (no desempate relâmpago)" : ""}`
+      ? `${corridaVitoria === "tempo" ? "somou" : "ficou com"} ${corridaTxt(v)}${corridaDesempateFeito ? " (no desempate relâmpago)" : ""}`
       : wc === "pontos"
       ? `com ${v} pontos`
       : wc === "joias"
@@ -2337,7 +2340,7 @@ function renderFinalScreen() {
         (p) => `
     <li class="${p.rank === 1 && !allZero ? "first-place" : ""}">
       <span>${(!allZero && medals[p.rank - 1]) || p.rank + "º"} ${playerNameHtml(p.name, p.color, p.avatar)}</span>
-      <span>${wc === "corrida" ? `🃏 ${cartasTxt(p.score || 0)}` : isExpress ? `${p.score} ponto${p.score === 1 ? "" : "s"}` : `${p.score} pts — casa ${p.position}`}${gemBadgesHtml(p)}</span>
+      <span>${wc === "corrida" ? (corridaVitoria === "tempo" ? "⏱️ " : "🃏 ") + corridaValorTxt(p) : isExpress ? `${p.score} ponto${p.score === 1 ? "" : "s"}` : `${p.score} pts — casa ${p.position}`}${gemBadgesHtml(p)}</span>
     </li>
   `,
       )
@@ -2588,7 +2591,7 @@ function renderModeCardDescs() {
   );
   set(
     "mcDescCorrida",
-    `Quem acerta fica com a carta. Relógio de ${CORRIDA_TEMPO_MS / 60e3} min (+${CORRIDA_BONUS_MS / 1e3} s por acerto), carta de 2:30, ${CORRIDA_VEZ_SEG} s pra escolher e ${CORRIDA_VEZ_SEG} pra responder. Sem tabuleiro.`,
+    `Relógio de ${CORRIDA_TEMPO_MS / 60e3} min (+${CORRIDA_BONUS_MS / 1e3} s por acerto), carta de 2:30, vez de ${CORRIDA_VEZ_SEG}+${CORRIDA_VEZ_SEG} s. Duas vitórias: ⏱️ Tempo (a carta vale os segundos que sobravam) ou 🃏 Cartas.`,
   );
   set(
     "mcDescOldschool",
@@ -2612,7 +2615,7 @@ function atualizarRotuloModo() {
     junior: "🧒 Júnior",
     hardcore: "💀 Hardcore",
     express: `🔥 Express ${expressFlavor === "hardcore" ? "Hardcore" : "Clássico"}`,
-    corrida: "⏱️ Corrida contra o Tempo",
+    corrida: `⏱️ Corrida · ${corridaVitoria === "tempo" ? "Tempo" : "Cartas"}`,
   };
   el.textContent = `${nomes[CURRENT_MODE] || CURRENT_MODE} · ${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}`;
 }
@@ -2621,6 +2624,7 @@ function resetModeSelectionUI() {
   renderModeCardDescs();
   document.getElementById("expressConfigBox").style.display = "none";
   document.getElementById("oldSchoolConfigBox").style.display = "none";
+  document.getElementById("corridaConfigBox").style.display = "none";
   document.getElementById("modeConfirmBtn").style.display = "none";
   const equipeMode = CURRENT_FORMAT === "equipe";
   document.getElementById("modeWrapExpress").style.display = equipeMode ? "none" : "";
@@ -3114,7 +3118,8 @@ function selectPendingMode(mode) {
   const confirmBtn = document.getElementById("modeConfirmBtn");
   const expressBox = document.getElementById("expressConfigBox");
   document.getElementById("oldSchoolConfigBox").style.display = mode === "oldschool" ? "block" : "none";
-  if (mode === "express" || mode === "oldschool") {
+  document.getElementById("corridaConfigBox").style.display = mode === "corrida" ? "block" : "none";
+  if (mode === "express" || mode === "oldschool" || mode === "corrida") {
     confirmBtn.style.display = "none";
     expressBox.style.display = mode === "express" ? "block" : "none";
   } else {
