@@ -265,8 +265,16 @@ async function partidaInteira(b, sv, cen) {
     const placar = await host.evaluate(() => JSON.stringify(players.map((p) => [p.id, p.score, p.position])));
     const iguais = async (g) => g.evaluate((pl) => JSON.stringify((rede.retrato.jogadores || []).map((p) => [p.id, p.pontos, p.casa])) === pl, placar);
     conf(`[${rot}] O placar dos celulares bate com o do host`, (await iguais(c1.g)) && (await iguais(c2.g)));
-    const segredo = await host.evaluate(() => (currentCard && currentCard.answer) || "");
-    conf(`[${rot}] Nenhum retrato da mesa levou resposta`, !segredo || !(await c2.g.evaluate((s) => JSON.stringify(rede.retrato).includes(JSON.stringify(s)), segredo)));
+    // 1.7.10.5.6: as cartas da partida (partida.historico) levam a resposta de carta JÁ encerrada, de propósito;
+    // fora delas nenhuma resposta, e a carta da vez só entra no histórico depois de encerrada
+    const seg = await host.evaluate(() => ({ resp: (currentCard && currentCard.answer) || "", encerrada: !!currentCard && cartasPartida.some((c) => c.resp === currentCard.answer) }));
+    const vazou = !!seg.resp && (await c2.g.evaluate((s) => {
+      const r = JSON.parse(JSON.stringify(rede.retrato));
+      const hist = (r.partida && r.partida.historico) || [];
+      if (r.partida) delete r.partida.historico;
+      return JSON.stringify(r).includes(JSON.stringify(s.resp)) || (!s.encerrada && hist.some((c) => c.resp === s.resp));
+    }, seg));
+    conf(`[${rot}] Nenhum retrato da mesa levou resposta`, !vazou);
   } finally {
     await m.fechar();
   }
