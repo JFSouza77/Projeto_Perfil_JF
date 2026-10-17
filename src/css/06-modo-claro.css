@@ -570,3 +570,14 @@ body.claro .spotlight-timer,
 body.claro .pick-timer {
   color: #7a5200;
 }
+body.claro .splash-embreve.splash-novos {
+  background: #ecfeff;
+  border-color: #0e7490;
+}
+body.claro .splash-novos .eb-selo {
+  background: #0e7490;
+  color: #fff;
+}
+body.claro .splash-novos .eb-titulo {
+  color: #0e5f73;
+}

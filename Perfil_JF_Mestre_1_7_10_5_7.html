@@ -24,6 +24,7 @@
           vergonha murcham, medo arrepia, alívio respira, pensando flutua. Host e convidado (.rede-fala leva data-emo);
           parado com Batata, Menos movimento e prefers-reduced-motion. (Publicado um tempo como 1.7.10.5.8 e juntado aqui
           a pedido do JF; o build interno segue 1819.)
+          7) Tela inicial: aviso "🔜 Em breve · 2 novos modos" (Modo C.A.O.S. e Corrida contra o Tempo), embaixo do online.
           Teste novo no teste_rede (seletor, sem_permissao do Mestre, fail safe, toque aplica).
   1.7.10.5.6 · 16/10/2026 · "Multiplayer Update · Online de verdade" = T2 E LOBBY COM CARA DE JOGO + CORREÇÕES DA AUDITORIA (pedido do JF).
           1) Cartas da partida (cartasPartida, salvo e desfeito junto): categoria, resposta, quem acertou, em quantas dicas
@@ -3219,6 +3220,25 @@ html.acess-calmo #scoreboard li.cad-repetido,body.batata-mode #scoreboard li.cad
   text-shadow:
     0 0 2px var(--pn-b, #a855f7),
     0 0 7px var(--pn-b, #a855f7) !important;
+}
+
+/* 1.7.10.5.7 (pedido do JF): aviso "Em breve: 2 novos modos" embaixo do online, no mesmo estilo, em ciano */
+.splash-embreve.splash-novos {
+  margin-top: 10px;
+  border-color: #22d3ee;
+  animation-name: novosPulsa;
+}
+.splash-novos .eb-selo {
+  background: #22d3ee;
+  color: #062a33;
+}
+.splash-novos .eb-titulo {
+  color: #67e8f9;
+  text-shadow: 0 0 8px #06b6d48c;
+}
+@keyframes novosPulsa {
+  0%, 100% { box-shadow: 0 0 8px #22d3ee33; }
+  50% { box-shadow: 0 0 18px #22d3ee80; }
 }
 .wincond-warn {
   color: #ffd166;
@@ -7240,6 +7260,17 @@ body.claro .spotlight-timer,
 body.claro .pick-timer {
   color: #7a5200;
 }
+body.claro .splash-embreve.splash-novos {
+  background: #ecfeff;
+  border-color: #0e7490;
+}
+body.claro .splash-novos .eb-selo {
+  background: #0e7490;
+  color: #fff;
+}
+body.claro .splash-novos .eb-titulo {
+  color: #0e5f73;
+}
 /* ----------------------------------------------------------------------
  * 7. BOTÕES ACESSÍVEIS (1.7.6 · Parte 2): resultado da auditoria dos botões
  * (ferramentas/auditar_botoes.js). Área de toque de pelo menos 44 px, contraste
@@ -9853,6 +9884,8 @@ body.claro .pt-resumo li {
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
+    <!-- 1.7.10.5.7 (pedido do JF): o que vem na 1.7.10.6 -->
+    <div class="splash-embreve splash-novos" id="splashNovosModos" role="note" aria-label="Em breve: dois novos modos, Modo C.A.O.S. e Corrida contra o Tempo"><span class="eb-selo">🔜 Em breve</span><b class="eb-titulo">2 novos modos</b><span class="eb-sub">🌀 Modo C.A.O.S. · ⏱️ Corrida contra o Tempo</span></div>
   </section>
 
   
@@ -74079,6 +74112,7 @@ const NOVIDADES = [
       "⏳ Últimos segundos com tensão: nos 10 segundos finais, tique-taque baixinho e a borda da tela pulsando.",
       "🏆 Troféus do C.A.O.S.: no fim da partida, nas estatísticas, saem os troféus Pai Diná, Tartaruga Ninja, Inimigo do Acerto e a nota de cada Mestre.",
       "🎭 Balão com emoção: bravo, o balão do C.A.O.S. chacoalha; orgulhoso, pulsa; na festa, pula; triste, murcha. Com Menos movimento ou Modo Batata, fica parado.",
+      "🔜 Vem aí: dois modos novos estão chegando, o Modo C.A.O.S. e a Corrida contra o Tempo. O aviso já está na tela inicial.",
     ],
     qol: [],
   },
