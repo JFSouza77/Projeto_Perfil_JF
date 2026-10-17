@@ -78,3 +78,18 @@ Equalizador/perfil de voz versionado, fadiga entre partidas, orquestração por 
 - Save guarda os dois relógios (e o desempate). Online: o retrato leva os prazos; a T2 e os dispositivos mostram a
   barra dos relógios; o intervalo de 15 s aparece pra todos com o placar em cartas.
 - Só Versus (no Equipe o card do modo some). Fora do Modo Aleatório por enquanto.
+
+## Corrida: ideias do Gemini + áudio do JF (17/10, noite) · balanceamento proposto (aguardando o JF)
+
+| Ideia | Veredito | Ajuste pra não quebrar |
+|---|---|---|
+| Dois vencedores: **Senhor do Tempo** (mais pontos) e **Colecionador** (mais cartas) | Entra | O vencedor oficial continua sendo o da vitória escolhida; o outro ganha a coroa na tela final (e o C.A.O.S. zoa). Mesma pessoa nas duas: "Dono da Corrida". |
+| **Bomba-Relógio** | Entra | Anunciada antes da carta. Expirou: −60 s no relógio geral (nunca deixa menos de 30 s). 2 por partida no normal, 4 no Hardcore. Não sai nos 3 min finais. Alguém acertou: desarmou, o C.A.O.S. comemora. |
+| **Juízo Final** (último minuto) | Entra, sem "cuspir" dica a cada 3 s | Tela pulsa vermelho, tique-taque. A dica abre sozinha a cada 8 s (como o Express) e qualquer um responde (Palpitar agora / o Mestre marca quem foi). Sem os +10 s por acerto (senão o minuto final nunca acaba). |
+| **Corrida Hardcore** | Entra | Relógio da carta corre 1,5×. Dicas abrem sozinhas e quem souber aperta pra responder. Bombas mais frequentes. Pontos = o que o relógio da carta mostra (sem multiplicador: ele já derrete mais rápido). |
+| **Corrida Extreme** (2×) | Depois | Só depois de jogar o Hardcore 1,5× e ver se dá. |
+| **Duelo de Vida ou Morte** | Depois do 1º teste | Raro (no máximo 2 por partida, nunca nos 3 min finais), o C.A.O.S. escolhe os 2 mais colados no placar (não aleatório). Relógio geral congela, o da carta corre 2×. Roubo de 25 pontos (50 é mais do que muita carta vale). Os dois erraram: carta destruída. Precisa do botão de resposta rápida funcionando no online. |
+| **Loja de Tempo** (Sacrifício) | Depois do 1º teste, versão limitada | Só no Tempo. Custa 30 pontos, 1 vez por pessoa por partida: congela o relógio da carta por 10 s. "Dica de graça" não entra (a dica é de todo mundo, e quem tá na frente compraria vantagem). |
+
+Observação: a regra antiga dizia "o C.A.O.S. comenta, mas não muda regra". Bomba e Duelo são o C.A.O.S. mexendo na partida
+de propósito: é uma mudança de filosofia que o JF está aprovando agora.
