@@ -6,6 +6,13 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.5.8 · 17/10/2026 · "Multiplayer Update · Online de verdade" = C.A.O.S. 4.4.3: BALÃO COM EMOÇÃO (pedido do JF).
+          O balão da fala mexe conforme a emoção, só com CSS (translate/rotate/scale, sem brigar com o transform que
+          posiciona o balão): bravo chacoalha e dá trancos, fúria treme sem parar, orgulho pulsa, carinho é batida de
+          coração, festa dá pulinhos, surpresa estoura, deboche ginga, desafio chega mais perto, julgando entorta, tédio
+          boceja, triste e vergonha murcham, medo e ansiedade arrepiam, alívio respira, pensando flutua, nojo recua.
+          Vale no host (.jf-toast-overlay) e no convidado (.rede-fala, que agora leva data-emo). Desligado no Modo Batata,
+          com Menos movimento e com prefers-reduced-motion.
   1.7.10.5.7 · 17/10/2026 · "Multiplayer Update · Online de verdade" = SELETOR DE ALVO NA T2 + SOM E TECLADO (pedido do JF).
           1) Especial "escolha um jogador" no online: quem abriu a dica escolhe o alvo no próprio dispositivo, tocando no
           cartão do jogador na T2 (todo mundo vê; alvoNoAparelho/alvoEspecialPublico, retrato.alvoEspecial). A tela do Mestre
@@ -862,7 +869,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.5.7</title>
+<title>Perfil JF · Beta 1.7.10.5.8</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -4944,6 +4951,152 @@ body.batata-mode .card .flip-btn:before {
 .tut-busca-item small { display: block; opacity: 0.75; margin-top: 2px; }
 .tut-busca-nada { opacity: 0.7; font-size: 0.9rem; padding: 4px 2px; }
 body.claro .tut-busca input, body.claro .tut-busca-item { border-color: rgba(0, 0, 0, 0.18); background: rgba(0, 0, 0, 0.04); }
+
+/* 1.7.10.5.8 (pedido do JF) · O balão do C.A.O.S. mexe conforme a emoção: treme bravo, pulsa orgulhoso, pula na
+   festa, entorta no deboche, murcha triste... Vale no balão do host (.jf-toast-overlay) e no do convidado (.rede-fala).
+   Usa translate/rotate/scale (propriedades separadas), pra não brigar com o transform que posiciona o balão.
+   Sem movimento no Modo Batata, com Menos movimento e com prefers-reduced-motion. */
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo] {
+  animation-fill-mode: both;
+}
+/* bravo: chacoalha na entrada e dá um tranco de vez em quando */
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="raiva"] {
+  animation: emoTreme 0.45s ease-in-out 1, emoTranco 2.6s ease-in-out 0.45s infinite;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="furia"] {
+  animation: emoTreme 0.32s linear infinite;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="nojo"] {
+  animation: emoRecua 0.6s ease-out 1;
+}
+/* orgulho e carinho: pulsa (orgulho estufa o peito, carinho é batida de coração) */
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="orgulho"] {
+  animation: emoPulsa 1.6s ease-in-out infinite;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="carinho"] {
+  animation: emoCoracao 1.3s ease-in-out infinite;
+}
+/* festa: pulinhos; surpresa: estoura na entrada */
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="festa"] {
+  animation: emoPula 0.7s cubic-bezier(0.3, 0.7, 0.4, 1) 3, emoPulsa 1.8s ease-in-out 2.1s infinite;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="surpresa"] {
+  animation: emoEstoura 0.55s cubic-bezier(0.2, 1.4, 0.4, 1) 1;
+}
+/* deboche e desafio: entorta / chega mais perto */
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="deboche"] {
+  animation: emoGinga 2.4s ease-in-out infinite;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="desafio"] {
+  animation: emoEncara 0.5s ease-out 1 both;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="julgando"] {
+  animation: emoJulga 0.8s ease-out 1 both;
+}
+/* tédio, tristeza e vergonha: murcha */
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="tedio"] {
+  animation: emoBoceja 3.2s ease-in-out infinite;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="triste"] {
+  animation: emoMurcha 1.2s ease-out 1 both;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="vergonha"] {
+  animation: emoEncolhe 0.7s ease-out 1 both;
+}
+/* medo e ansiedade: tremidinha miúda; alívio e pensando: respira / flutua */
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala):is([data-emo="medo"], [data-emo="ansiedade"], [data-emo="preocupado"]) {
+  animation: emoArrepio 0.18s linear 6, emoRespira 2s ease-in-out 1.1s infinite;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala):is([data-emo="alivio"], [data-emo="esperanca"], [data-emo="nostalgia"]) {
+  animation: emoRespira 3s ease-in-out infinite;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="pensando"] {
+  animation: emoFlutua 2.4s ease-in-out infinite;
+}
+@keyframes emoTreme {
+  0%, 100% { translate: 0 0; rotate: 0deg; }
+  20% { translate: -4px 0; rotate: -1.2deg; }
+  40% { translate: 4px 0; rotate: 1.2deg; }
+  60% { translate: -3px 0; rotate: -0.8deg; }
+  80% { translate: 3px 0; rotate: 0.8deg; }
+}
+@keyframes emoTranco {
+  0%, 82%, 100% { translate: 0 0; }
+  86% { translate: -3px 0; }
+  90% { translate: 3px 0; }
+  94% { translate: -2px 0; }
+}
+@keyframes emoRecua {
+  0% { translate: 0 0; rotate: 0deg; }
+  40% { translate: 8px -2px; rotate: 3deg; }
+  100% { translate: 2px 0; rotate: 1deg; }
+}
+@keyframes emoPulsa {
+  0%, 100% { scale: 1; }
+  50% { scale: 1.045; }
+}
+@keyframes emoCoracao {
+  0%, 40%, 100% { scale: 1; }
+  12% { scale: 1.05; }
+  24% { scale: 1.01; }
+  32% { scale: 1.04; }
+}
+@keyframes emoPula {
+  0%, 100% { translate: 0 0; }
+  40% { translate: 0 -10px; }
+  70% { translate: 0 1px; }
+}
+@keyframes emoEstoura {
+  0% { scale: 0.85; }
+  60% { scale: 1.09; }
+  100% { scale: 1; }
+}
+@keyframes emoGinga {
+  0%, 100% { rotate: -1.6deg; }
+  50% { rotate: 1.6deg; }
+}
+@keyframes emoEncara {
+  0% { scale: 1; }
+  100% { scale: 1.04; rotate: -1deg; }
+}
+@keyframes emoJulga {
+  0% { rotate: 0deg; }
+  100% { rotate: -2deg; translate: 0 1px; }
+}
+@keyframes emoBoceja {
+  0%, 100% { translate: 0 0; scale: 1; }
+  45% { translate: 0 3px; scale: 0.985; }
+}
+@keyframes emoMurcha {
+  0% { translate: 0 0; scale: 1; }
+  100% { translate: 0 5px; scale: 0.97; }
+}
+@keyframes emoEncolhe {
+  0% { scale: 1; }
+  100% { scale: 0.95; }
+}
+@keyframes emoArrepio {
+  0%, 100% { translate: 0 0; }
+  25% { translate: -1.5px 0.5px; }
+  75% { translate: 1.5px -0.5px; }
+}
+@keyframes emoRespira {
+  0%, 100% { scale: 1; }
+  50% { scale: 1.02; }
+}
+@keyframes emoFlutua {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo] {
+    animation: none !important;
+  }
+}
+html.acess-calmo :is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo],
+body.batata-mode :is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo] {
+  animation: none !important;
+}
 /* Verso da carta (1.7.3): moldura dupla neon, cantos dourados e o emblema "P dentro do ?". */
 .card.face-down {
   position: relative;
@@ -9698,7 +9851,7 @@ body.claro .pt-resumo li {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.5.7 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.4.2 · Atualizada em 17/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.5.8 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.4.3 · Atualizada em 17/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -9966,7 +10119,7 @@ body.claro .pt-resumo li {
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1818;
+const JOGO_BUILD = 1819;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -22413,6 +22566,7 @@ function redeFalaProxima() {
     } catch (e) {}
   const rotulo = f.rotulo || (E ? E.nome : null);
   el.style.setProperty("--emo-cor", E ? E.cor : "#a78bfa");
+  if (E) el.dataset.emo = f.emo; // 1.7.10.5.8: o balão do convidado mexe conforme a emoção (CSS)
   el.innerHTML =
     `<div class="rede-fala-topo"><span class="rede-fala-rosto">${escapeHtml(face || "🤖")}</span>${rotulo ? `<span class="rede-fala-rotulo">${escapeHtml(rotulo)}</span>` : ""}</div>` +
     `<div class="rede-fala-txt">[C.A.O.S.] ${escapeHtml(f.texto)}</div>`;
@@ -29333,7 +29487,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.5.7 · C.A.O.S. 4.4.2</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.5.8 · C.A.O.S. 4.4.3</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -32685,7 +32839,7 @@ function caosNeuralDesenhar(cv, t) {
     const C = caosConsole || {};
     const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
 tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
-${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.4.2`;
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.4.3`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }
@@ -34473,7 +34627,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5.7 · C.A.O.S. 4.4.2)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5.8 · C.A.O.S. 4.4.3)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -37993,7 +38147,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.5.7 · C.A.O.S. 4.4.2");
+  L.push("- **Versão:** Beta 1.7.10.5.8 · C.A.O.S. 4.4.3");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -38516,7 +38670,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.5.7 · C.A.O.S. 4.4.2",
+        versao: "Beta 1.7.10.5.8 · C.A.O.S. 4.4.3",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -73915,6 +74069,17 @@ const PAUSE_TIPS = [
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.10.5.8",
+    data: "17/10/2026 · 10:24",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "C.A.O.S. 4.4.3: o balão dele mostra o que ele está sentindo.",
+    itens: [
+      "🎭 Balão com emoção: bravo, o balão do C.A.O.S. chacoalha; orgulhoso, pulsa; na festa, pula; triste, murcha. Funciona em todos os dispositivos.",
+      "🧘 Respeita quem prefere calma: com Menos movimento ou Modo Batata, o balão fica parado.",
+    ],
+    qol: [],
+  },
   {
     v: "Beta 1.7.10.5.7",
     data: "17/10/2026 · 09:53",

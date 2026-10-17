@@ -1082,3 +1082,149 @@ body.batata-mode .card .flip-btn:before {
 .tut-busca-item small { display: block; opacity: 0.75; margin-top: 2px; }
 .tut-busca-nada { opacity: 0.7; font-size: 0.9rem; padding: 4px 2px; }
 body.claro .tut-busca input, body.claro .tut-busca-item { border-color: rgba(0, 0, 0, 0.18); background: rgba(0, 0, 0, 0.04); }
+
+/* 1.7.10.5.8 (pedido do JF) · O balão do C.A.O.S. mexe conforme a emoção: treme bravo, pulsa orgulhoso, pula na
+   festa, entorta no deboche, murcha triste... Vale no balão do host (.jf-toast-overlay) e no do convidado (.rede-fala).
+   Usa translate/rotate/scale (propriedades separadas), pra não brigar com o transform que posiciona o balão.
+   Sem movimento no Modo Batata, com Menos movimento e com prefers-reduced-motion. */
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo] {
+  animation-fill-mode: both;
+}
+/* bravo: chacoalha na entrada e dá um tranco de vez em quando */
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="raiva"] {
+  animation: emoTreme 0.45s ease-in-out 1, emoTranco 2.6s ease-in-out 0.45s infinite;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="furia"] {
+  animation: emoTreme 0.32s linear infinite;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="nojo"] {
+  animation: emoRecua 0.6s ease-out 1;
+}
+/* orgulho e carinho: pulsa (orgulho estufa o peito, carinho é batida de coração) */
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="orgulho"] {
+  animation: emoPulsa 1.6s ease-in-out infinite;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="carinho"] {
+  animation: emoCoracao 1.3s ease-in-out infinite;
+}
+/* festa: pulinhos; surpresa: estoura na entrada */
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="festa"] {
+  animation: emoPula 0.7s cubic-bezier(0.3, 0.7, 0.4, 1) 3, emoPulsa 1.8s ease-in-out 2.1s infinite;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="surpresa"] {
+  animation: emoEstoura 0.55s cubic-bezier(0.2, 1.4, 0.4, 1) 1;
+}
+/* deboche e desafio: entorta / chega mais perto */
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="deboche"] {
+  animation: emoGinga 2.4s ease-in-out infinite;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="desafio"] {
+  animation: emoEncara 0.5s ease-out 1 both;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="julgando"] {
+  animation: emoJulga 0.8s ease-out 1 both;
+}
+/* tédio, tristeza e vergonha: murcha */
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="tedio"] {
+  animation: emoBoceja 3.2s ease-in-out infinite;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="triste"] {
+  animation: emoMurcha 1.2s ease-out 1 both;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="vergonha"] {
+  animation: emoEncolhe 0.7s ease-out 1 both;
+}
+/* medo e ansiedade: tremidinha miúda; alívio e pensando: respira / flutua */
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala):is([data-emo="medo"], [data-emo="ansiedade"], [data-emo="preocupado"]) {
+  animation: emoArrepio 0.18s linear 6, emoRespira 2s ease-in-out 1.1s infinite;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala):is([data-emo="alivio"], [data-emo="esperanca"], [data-emo="nostalgia"]) {
+  animation: emoRespira 3s ease-in-out infinite;
+}
+:is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo="pensando"] {
+  animation: emoFlutua 2.4s ease-in-out infinite;
+}
+@keyframes emoTreme {
+  0%, 100% { translate: 0 0; rotate: 0deg; }
+  20% { translate: -4px 0; rotate: -1.2deg; }
+  40% { translate: 4px 0; rotate: 1.2deg; }
+  60% { translate: -3px 0; rotate: -0.8deg; }
+  80% { translate: 3px 0; rotate: 0.8deg; }
+}
+@keyframes emoTranco {
+  0%, 82%, 100% { translate: 0 0; }
+  86% { translate: -3px 0; }
+  90% { translate: 3px 0; }
+  94% { translate: -2px 0; }
+}
+@keyframes emoRecua {
+  0% { translate: 0 0; rotate: 0deg; }
+  40% { translate: 8px -2px; rotate: 3deg; }
+  100% { translate: 2px 0; rotate: 1deg; }
+}
+@keyframes emoPulsa {
+  0%, 100% { scale: 1; }
+  50% { scale: 1.045; }
+}
+@keyframes emoCoracao {
+  0%, 40%, 100% { scale: 1; }
+  12% { scale: 1.05; }
+  24% { scale: 1.01; }
+  32% { scale: 1.04; }
+}
+@keyframes emoPula {
+  0%, 100% { translate: 0 0; }
+  40% { translate: 0 -10px; }
+  70% { translate: 0 1px; }
+}
+@keyframes emoEstoura {
+  0% { scale: 0.85; }
+  60% { scale: 1.09; }
+  100% { scale: 1; }
+}
+@keyframes emoGinga {
+  0%, 100% { rotate: -1.6deg; }
+  50% { rotate: 1.6deg; }
+}
+@keyframes emoEncara {
+  0% { scale: 1; }
+  100% { scale: 1.04; rotate: -1deg; }
+}
+@keyframes emoJulga {
+  0% { rotate: 0deg; }
+  100% { rotate: -2deg; translate: 0 1px; }
+}
+@keyframes emoBoceja {
+  0%, 100% { translate: 0 0; scale: 1; }
+  45% { translate: 0 3px; scale: 0.985; }
+}
+@keyframes emoMurcha {
+  0% { translate: 0 0; scale: 1; }
+  100% { translate: 0 5px; scale: 0.97; }
+}
+@keyframes emoEncolhe {
+  0% { scale: 1; }
+  100% { scale: 0.95; }
+}
+@keyframes emoArrepio {
+  0%, 100% { translate: 0 0; }
+  25% { translate: -1.5px 0.5px; }
+  75% { translate: 1.5px -0.5px; }
+}
+@keyframes emoRespira {
+  0%, 100% { scale: 1; }
+  50% { scale: 1.02; }
+}
+@keyframes emoFlutua {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo] {
+    animation: none !important;
+  }
+}
+html.acess-calmo :is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo],
+body.batata-mode :is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo] {
+  animation: none !important;
+}
