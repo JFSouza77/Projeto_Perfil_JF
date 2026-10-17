@@ -276,12 +276,12 @@ async function partidaInteira(b, sv, cen) {
     let r;
     if (cen.modo === "corrida") {
       // os robôs acertam rápido demais (cada acerto dá +10 s e o relógio só cresce): depois de 90 s jogando, o relógio
-      // cai pra 75 s, entra no Juízo Final (lá acerto não dá tempo) e a partida tem que acabar sozinha
+      // cai pra 55 s, entra no Juízo Final (lá acerto não dá tempo) e a partida tem que acabar sozinha
       await jogarAteOFim(host, [c1.g, c2.g], 90000);
       await host.evaluate(() => {
         if (gameEnded) return;
         corridaDobrar();
-        corridaRestaMs = Math.min(corridaRestaMs, 75e3);
+        corridaRestaMs = Math.min(corridaRestaMs, 55e3);
       });
       r = await jogarAteOFim(host, [c1.g, c2.g], cen.limite || 360000);
       conf(`[${rot}] Passou pelo Juízo Final`, await host.evaluate(() => corridaJuizo || corridaAcabou));
