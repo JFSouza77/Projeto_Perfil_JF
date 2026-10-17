@@ -273,7 +273,19 @@ async function partidaInteira(b, sv, cen) {
     conf(`[${rot}] Os 2 celulares entraram`, c1.ok && c2.ok);
     // o host joga como o 1º; no Equipe, o 4º divide o aparelho do host
     await host.evaluate((ids) => redeDefinirNoHost(ids), [await host.evaluate((n) => players.find((p) => p.name === n).id, cen.nomes[0]), ...(cen.nomes[3] ? [await host.evaluate((n) => players.find((p) => p.name === n).id, cen.nomes[3])] : [])]);
-    const r = await jogarAteOFim(host, [c1.g, c2.g], cen.limite || 360000);
+    let r;
+    if (cen.modo === "corrida") {
+      // os robôs acertam rápido demais (cada acerto dá +10 s e o relógio só cresce): depois de 90 s jogando, o relógio
+      // cai pra 75 s, entra no Juízo Final (lá acerto não dá tempo) e a partida tem que acabar sozinha
+      await jogarAteOFim(host, [c1.g, c2.g], 90000);
+      await host.evaluate(() => {
+        if (gameEnded) return;
+        corridaDobrar();
+        corridaRestaMs = Math.min(corridaRestaMs, 75e3);
+      });
+      r = await jogarAteOFim(host, [c1.g, c2.g], cen.limite || 360000);
+      conf(`[${rot}] Passou pelo Juízo Final`, await host.evaluate(() => corridaJuizo || corridaAcabou));
+    } else r = await jogarAteOFim(host, [c1.g, c2.g], cen.limite || 360000);
     if (!r.fim && cen.modo === "corrida")
       console.log("DIAG " + rot + ": " + (await host.evaluate(() => JSON.stringify({ g: Math.round(corridaGeralMs() / 1000), c: Math.round(corridaCartaMs() / 1000), cs: cardState, pi: pendingIndex, tk: timerKind, tl: secondsLeft(), toast: !!activeToastState, ov: !!timeoutOverlayMessage, jan: caosJanelaImportanteAberta(), pausa: !!pausedAt, int: corridaIntervaloAberto(), cartas: stats.totalDrawn, acabou: corridaAcabou, juizo: corridaJuizo, duelo: !!corridaDuelo, desemp: !!corridaDesempate, mestre: jogadorIdDe(mestreIndex), hostEu: rede.hostEu, rev: partidaRevisao }))));
     conf(`[${rot}] A partida foi até o fim (${r.passos} passos, ${r.seg} s)`, r.fim);
