@@ -1,0 +1,1 @@
+Origem: github.com/mattpocock/skills (engineering/improve-codebase-architecture), MIT. Instalado a pedido do JF em 16/10/2026.
