@@ -4,7 +4,9 @@
  *  · Bomba-Relógio: o C.A.O.S. anuncia antes da carta. Cada erro/pulo tira 5 s do geral; desarmar dá +20 s.
  *  · Juízo Final: no último minuto as dicas abrem sozinhas e qualquer um bate na mesa (sem os +10 s por acerto).
  *  · Hardcore: carta de 1:30 correndo 1,5×, as dicas abrem sozinhas o jogo todo, mais bombas.
- *  · Duelo do C.A.O.S.: ele sorteia 2 duelistas e o Mestre; o geral congela, a carta corre 2×, quem vence rouba 25.
+ *  · Duelo: o jogo sorteia 2 duelistas e o Mestre; o geral congela, a carta corre 2×, quem vence rouba 25.
+ * Quem sorteia bomba e duelo é o JOGO (regra do JF): na Corrida o C.A.O.S. é só o mestre de cerimônias e anuncia
+ * como se a ideia fosse dele. Os anúncios furam o mudo (é informação de regra), mesmo com ele calado.
  *  · Lojinha de Sobrevivência (só online, só Tempo): no intervalo, gasta pontos em 5 itens com estoque limitado.
  * O "relâmpago" (Hardcore e Juízo Final) reaproveita o Palpitar agora: todo mundo tem o direito de bater na mesa. */
 let corridaJuizo = false; // entrou no último minuto
@@ -205,7 +207,7 @@ function corridaBombaArmar() {
   const fala =
     (V && V.bomba && getRandomReaction(V.bomba)) ||
     `💣 BOMBA-RELÓGIO! Se essa carta morrer, a mesa perde 1 minuto. Cada erro tira ${CORRIDA_BOMBA_ERRO_MS / 1e3} s. Acertou? +${CORRIDA_BOMBA_BONUS_MS / 1e3} s.`;
-  caosFalaAgendar(() => fala, 400, "sempre");
+  setTimeout(() => !gameEnded && corridaBomba === cartaSeq && showToastMessage(fala, null, true), 400); // fura o mudo: é regra
   corridaClassesCorpo();
   return true;
 }
@@ -392,26 +394,32 @@ function corridaUsar(item, id) {
   render();
   saveGameState();
 }
-// HTML da lojinha pra um jogador (no intervalo): itens com preço, estoque e o botão
-function corridaLojaHtml(id, ehHost) {
-  if (!corridaEstoque) return "";
-  const p = jogadorPorId(id);
-  if (!p) return "";
+/* A lojinha é UMA só pra mesa toda (pedido do JF): o mesmo estoque, ao vivo em todo dispositivo e na T2; quem comprar
+   primeiro leva (o host atende um pedido de cada vez, e o segundo já encontra o estoque menor).
+   estoque: { item: unidades }; compradores: [{ id, nome, pts }] (quem pode comprar NESTE dispositivo; vazio = só vitrine) */
+function corridaLojaVitrineHtml(estoque, compradores) {
+  if (!estoque) return "";
   const linhas = Object.keys(CORRIDA_LOJA)
     .map((k) => {
       const it = CORRIDA_LOJA[k],
-        pode = corridaPodeComprar(k, id);
-      const attr = ehHost ? `data-cr-comprar="${k}" data-cr-quem="${escapeHtml(id)}"` : "";
-      return `<li><button type="button" class="cr-loja-item"${attr ? " " + attr : ""} ${pode ? "" : "disabled"}><span class="cr-li-ic">${it.ic}</span><span class="cr-li-txt"><b>${it.nome}</b><small>${it.desc}</small></span><span class="cr-li-preco">${it.preco}<small>${corridaEstoque[k]} no estoque</small></span></button></li>`;
+        n = estoque[k] || 0;
+      const btns = (compradores || [])
+        .map((c) => {
+          const pode = n > 0 && c.pts >= it.preco && corridaPodeComprar(k, c.id);
+          return `<button type="button" class="cr-loja-comprar" data-cr-comprar="${k}" data-cr-quem="${escapeHtml(c.id)}" ${pode ? "" : "disabled"}>${(compradores || []).length > 1 ? escapeHtml(c.nome) + " compra" : "Comprar"}</button>`;
+        })
+        .join("");
+      return `<li class="cr-loja-item${n > 0 ? "" : " cr-esgotado"}"><span class="cr-li-ic">${it.ic}</span><span class="cr-li-txt"><b>${it.nome}</b><small>${it.desc}</small>${btns ? `<span class="cr-li-btns">${btns}</span>` : ""}</span><span class="cr-li-preco">${it.preco}<small>${n > 0 ? `${n} no estoque` : "esgotado"}</small></span></li>`;
     })
     .join("");
-  return `<div class="cr-loja"><div class="cr-loja-tit">🛒 Lojinha de ${escapeHtml(p.name)} · <b>${p.score || 0}</b> pts</div><ul>${linhas}</ul></div>`;
+  const saldo = (compradores || []).map((c) => `${escapeHtml(c.nome)}: <b>${c.pts}</b>`).join(" · ");
+  return `<div class="cr-loja"><div class="cr-loja-tit">🛒 Lojinha de Sobrevivência <small>(uma só pra mesa: quem comprar primeiro leva)</small></div>${saldo ? `<div class="cr-loja-saldo">💰 ${saldo}</div>` : ""}<ul>${linhas}</ul></div>`;
 }
-// no host: lojinha só pros jogadores que estão no próprio dispositivo do host (os outros compram no deles)
+// no host: a vitrine da mesa, com os botões de quem joga no próprio dispositivo do host
 function corridaLojaHostHtml() {
   if (!corridaLojaLigada() || !corridaEstoque) return "";
-  const locais = players.filter((p) => typeof redeNoHost !== "function" || redeNoHost(p.id));
-  return locais.map((p) => corridaLojaHtml(p.id, true)).join("");
+  const locais = players.filter((p) => typeof redeNoHost !== "function" || redeNoHost(p.id)).map((p) => ({ id: p.id, nome: p.name, pts: p.score || 0 }));
+  return corridaLojaVitrineHtml(corridaEstoque, locais);
 }
 function corridaIntervaloRedesenharLoja() {
   const box = document.getElementById("crLojaHost");

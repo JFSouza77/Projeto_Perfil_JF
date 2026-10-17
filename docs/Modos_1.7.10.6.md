@@ -91,8 +91,9 @@ Equalizador/perfil de voz versionado, fadiga entre partidas, orquestração por 
 | **Duelo de Vida ou Morte** | Depois do 1º teste | Raro (no máximo 2 por partida, nunca nos 3 min finais), o C.A.O.S. escolhe os 2 mais colados no placar (não aleatório). Relógio geral congela, o da carta corre 2×. Roubo de 25 pontos (50 é mais do que muita carta vale). Os dois erraram: carta destruída. Precisa do botão de resposta rápida funcionando no online. |
 | **Loja de Tempo** (Sacrifício) | Depois do 1º teste, versão limitada | Só no Tempo. Custa 30 pontos, 1 vez por pessoa por partida: congela o relógio da carta por 10 s. "Dica de graça" não entra (a dica é de todo mundo, e quem tá na frente compraria vantagem). |
 
-Observação: a regra antiga dizia "o C.A.O.S. comenta, mas não muda regra". Bomba e Duelo são o C.A.O.S. mexendo na partida
-de propósito: é uma mudança de filosofia que o JF está aprovando agora.
+Observação (corrigida pelo JF, 17/10): na Corrida o C.A.O.S. **continua só comentarista**, agora como mestre de
+cerimônias. Quem sorteia bomba, duelo e anúncios é o **jogo**; o C.A.O.S. só finge que foi ele, pra deixar dinâmico.
+Quem efetivamente mexe na partida é o C.A.O.S. do **Modo C.A.O.S.** (outro modo).
 
 ## Corrida: spec consolidada do JF (17/10, ~16:30) · implementado
 
@@ -109,7 +110,8 @@ Arquivo: `src/js/05p-corrida-eventos.js` (constantes em `01-configuracao.js`, bl
 - **Duelo do C.A.O.S.:** até 2 por partida (3+ jogadores), a partir da 5ª carta, nunca nos 3 min finais nem no Juízo.
   Sorteia 2 duelistas e o Mestre. Geral congela, carta 2×, só os dois respondem. Vencedor rouba 25 pontos (Tempo).
   Ninguém acertou: carta destruída (sem −1 min). Depois o Mestre volta pra roda normal.
-- **Lojinha de Sobrevivência** (só online + Tempo, no intervalo; estoque 1–5 de cada, sorteado no começo):
+- **Lojinha de Sobrevivência** (só online + Tempo, no intervalo; estoque 1–5 de cada, sorteado no começo). **Uma só pra
+  mesa toda**, a mesma vitrine ao vivo no host, nos dispositivos e na T2; quem comprar primeiro leva (JF, 17/10):
   🧊 Congelar Mesa 40 · 🫁 Fôlego 20 · 🛡️ Escudo de Kevlar 60 · ✂️ Corte de Fio 15 · ⚡ Desfibrilador 35 (preços meus,
   pra playtest). Corte de Fio e Desfibrilador ficam guardados e são usados na carta (no dispositivo de cada um; os do
   dispositivo do host aparecem como botões na tela do host).

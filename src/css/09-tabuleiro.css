@@ -1007,3 +1007,36 @@ body.claro .cr-li-preco {
 body.claro .cr-relampago-tit {
   color: #b45309;
 }
+.cr-loja li.cr-loja-item {
+  cursor: default;
+}
+.cr-loja .cr-esgotado {
+  opacity: 0.45;
+}
+.cr-li-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+.cr-loja-comprar {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(251, 191, 36, 0.6);
+  background: rgba(251, 191, 36, 0.14);
+  color: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.cr-loja-comprar:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.cr-loja-tit small,
+.cr-loja-saldo {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+.cr-loja-saldo {
+  margin-bottom: 6px;
+}
