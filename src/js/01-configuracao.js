@@ -338,7 +338,14 @@ const JOIAS_POR_RODADA = 2;
 // Última rodada: quando alguém bate a meta, a rodada termina para todos terem jogado o
 // mesmo número de vezes (menos no Express). Vence quem estiver na frente no fim da rodada.
 const ULTIMA_RODADA = true;
-const PALPITE_MODES_OK = ["classico", "junior", "oldschool"];
+const PALPITE_MODES_OK = ["classico", "junior", "oldschool", "corrida"];
+// 1.7.10.6 · Corrida contra o Tempo (regras do JF em docs/Modos_1.7.10.6.md): relógio geral de 30 min (+10 s por
+// carta acertada), carta de 2:30, 15 s pra escolher a dica e 15 s pra responder, intervalo de 15 s congelado.
+const CORRIDA_TEMPO_MS = 30 * 60e3;
+const CORRIDA_BONUS_MS = 10e3;
+const CORRIDA_CARTA_MS = 150e3;
+const CORRIDA_VEZ_SEG = 15;
+const CORRIDA_INTERVALO_SEG = 15;
 // Emblema do verso da carta: anéis neon, losangos dourados, o "P" dentro do "?" e o olho do C.A.O.S.
 const VERSO_EMBLEMA_SVG = `<svg class="back-icon verso-emblema" viewBox="0 0 160 160" aria-hidden="true" focusable="false">
   <defs>
@@ -353,7 +360,7 @@ const VERSO_EMBLEMA_SVG = `<svg class="back-icon verso-emblema" viewBox="0 0 160
   <text class="vs-p" fill="#7c3aed" x="80" y="70" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="700">P</text>
   <g transform="translate(81 121)"><ellipse rx="11" ry="7" fill="url(#vsGrad)"/><ellipse rx="11" ry="7" fill="none" stroke="#fde68a" stroke-opacity=".7" stroke-width="1"/><circle r="3" fill="#fde68a"/></g>
 </svg>`;
-const DECK_LIMITE = { classico: 400, hardcore: 300, oldschool: 240, junior: 250, express: 50 };
+const DECK_LIMITE = { classico: 400, hardcore: 300, oldschool: 240, junior: 250, express: 50, corrida: 400 };
 const CAOS_VOICE_OK =
   typeof window !== "undefined" && "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
 const CAOS_MASTER_RE =
@@ -939,6 +946,7 @@ const MODE_WRAP_IDS = {
   express: "modeWrapExpress",
   junior: "modeWrapJunior",
   oldschool: "modeWrapOldschool",
+  corrida: "modeWrapCorrida",
   random: "modeWrapRandom",
 };
 const MODE_LABELS = {
@@ -947,6 +955,7 @@ const MODE_LABELS = {
   express: "Perfil Express",
   junior: "Perfil Júnior",
   oldschool: "Perfil Old School",
+  corrida: "Corrida contra o Tempo",
 };
 const PAUSE_TIP_MS = 8e3;
 // ENDEREÇOS (1.7.10.5.5, portas pro domínio próprio): pra trocar o endereço do jogo, muda SÓ aqui

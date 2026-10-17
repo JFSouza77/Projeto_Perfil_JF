@@ -380,6 +380,7 @@ function retratoPartida(papel) {
     joiasRodada: { ...joiasRodada },
     vencedorJoias: gemWinner ? { tipo: gemWinner.kind, id: gemWinner.id } : null,
     relogio: { tipo: timerKind || null, fimEm: timerEndAt || null, cartaFimEm: cardEndAt || null, pausado: !!pausedAt },
+    corrida: typeof corridaRetrato === "function" ? corridaRetrato() : null, // 1.7.10.6: relógios da Corrida
     // 1.7.10.5.6 (pedido do JF): resumo da partida pra T2 e pro lobby: tempo de jogo (sem pausa), cartas viradas e as
     // últimas cartas resolvidas (só carta encerrada, então a resposta pode ir)
     partida: {
@@ -460,6 +461,7 @@ function desfazerFotografar() {
     timerKind,
     timerResta: timerEndAt ? Math.max(1000, timerEndAt - agora) : null,
     cartaResta: cardEndAt ? Math.max(1000, cardEndAt - agora) : null,
+    corrida: typeof corridaSalvar === "function" ? corridaSalvar() : null, // 1.7.10.6: o +10 s do acerto desfeito sai
     caos: desfazerCaosFoto(),
   };
 }
@@ -548,6 +550,10 @@ function desfazerAplicar(f) {
   pendingStartTime = Date.now();
   // o que o veredito deixou agendado (ex.: seguir depois do balão) não vale mais
   cartaSeq++;
+  if (f.corrida && typeof corridaRetomar === "function") {
+    corridaIntervaloFechar();
+    corridaRetomar(f.corrida); // depois do cartaSeq++: o relógio da carta continua de onde estava
+  }
   desfazerCaosAplicar(f.caos);
 }
 function desfazerNome(tipo, args) {

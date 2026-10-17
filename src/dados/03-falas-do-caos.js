@@ -4971,3 +4971,27 @@ const REACTIVE_VOICE = {
     ],
   },
 };
+// 1.7.10.6 · Corrida contra o Tempo: avisos do relógio geral e o desempate relâmpago
+REACTIVE_VOICE.corrida = {
+  rouba: [
+    "{nome}, ficha de ROUBA A VEZ! Na hora que tiver certeza, mesmo na vez de outra pessoa, avisa o Mestre e responde. É uma só, então escolhe bem.",
+    "{nome}, você pode roubar a vez! Sabe a resposta na vez do outro? Fala pro Mestre e manda. Errou, sem castigo.",
+  ],
+  cinco: [
+    "Cinco minutos no relógio. {nome} tá na frente e já tá contando vitória.",
+    "Cinco minutos. Quem tá atrás, essa é a hora de acordar.",
+    "Faltam cinco minutos. {nome}, segura essa coleção aí.",
+    "Cinco minutinhos. Eu, se fosse vocês, parava de pensar tanto.",
+  ],
+  um: [
+    "Último minuto! Agora é no desespero.",
+    "Um minuto! {nome} lidera. Alguém vai deixar?",
+    "Sessenta segundos. Cada carta vale ouro agora.",
+    "Último minuto, gente. Respira e chuta com fé.",
+  ],
+  desempate: [
+    "⚡ DESEMPATE RELÂMPAGO! {nome}: uma carta, quem acertar primeiro leva tudo.",
+    "⚡ Empatou?! Então é desempate relâmpago. {nome}, uma carta só. Quem acertar, ganha.",
+    "⚡ Relógio zerado e empate. Que delícia. {nome}: desempate relâmpago, agora!",
+  ],
+};

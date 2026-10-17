@@ -1632,7 +1632,7 @@ function redeOpcoes(jid) {
   const meuIdx = jogadorIdxPorId(jid), minhaChave = palpiteKeyOf(meuIdx);
   if (!ehMestre && cardState === "revealed" && pendingIndex !== null && currentCard && currentCard.clues[pendingIndex].type === "clue" && CURRENT_MODE !== "express") {
     const pv = palpiteVezAtual();
-    if (!pv && palpiteEligibleHolders().includes(minhaChave)) add("palpitarAgora", [minhaChave], "🃏 Palpitar agora!", "ok", "Palpite a qualquer hora");
+    if (!pv && palpiteEligibleHolders().includes(minhaChave)) add("palpitarAgora", [minhaChave], CURRENT_MODE === "corrida" ? "🃏 Roubar a vez!" : "🃏 Palpitar agora!", "ok", CURRENT_MODE === "corrida" ? "Rouba a vez" : "Palpite a qualquer hora");
   }
   // 1.7.10.5: quem está na vez pede a dica pelo número; o Mestre recebe o pedido e abre
   if (!ehMestre && cardState === "revealed" && pendingIndex === null && currentCard && jogadorIdDe(responderIndex) === jid && CURRENT_MODE !== "express") {

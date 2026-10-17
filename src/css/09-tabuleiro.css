@@ -730,3 +730,118 @@ body.claro .lp-bloco {
 .joia-f.joia-mini.jf-ANIMAL {
   padding-top: 0.5em;
 }
+
+/* 1.7.10.6 · Corrida contra o Tempo: relógio geral + relógio da carta, placar de cartas e intervalo */
+.corrida-relogios {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 4px 0 8px;
+  font-variant-numeric: tabular-nums;
+}
+.corrida-relogios[hidden] {
+  display: none;
+}
+.corrida-relogios > span {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(34, 211, 238, 0.45);
+  background: rgba(34, 211, 238, 0.1);
+  color: #cffafe;
+  font-size: 1rem;
+}
+.corrida-relogios b {
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
+}
+.corrida-relogios .cr-carta {
+  border-color: rgba(167, 139, 250, 0.45);
+  background: rgba(167, 139, 250, 0.1);
+  color: #ede9fe;
+}
+.corrida-relogios .cr-parado {
+  opacity: 0.75;
+}
+.corrida-relogios .cr-pouco {
+  border-color: #f87171;
+  background: rgba(248, 113, 113, 0.16);
+  color: #fecaca;
+  animation: crPulso 1s ease-in-out infinite;
+}
+.corrida-relogios .cr-zerou,
+.corrida-relogios .cr-desempate {
+  border-color: #fbbf24;
+  background: rgba(251, 191, 36, 0.16);
+  color: #fef3c7;
+  font-weight: 700;
+}
+@keyframes crPulso {
+  50% {
+    box-shadow: 0 0 14px rgba(248, 113, 113, 0.55);
+  }
+}
+body.calmo .corrida-relogios .cr-pouco,
+body.batata .corrida-relogios .cr-pouco {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .corrida-relogios .cr-pouco {
+    animation: none;
+  }
+}
+.cr-placar {
+  list-style: none;
+  margin: 10px 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.cr-placar li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border-left: 4px solid var(--pc, #a78bfa);
+  background: rgba(255, 255, 255, 0.05);
+}
+.cr-placar li.cr-lider {
+  background: rgba(251, 191, 36, 0.12);
+}
+.cr-placar li.cr-lider b::before {
+  content: "👑 ";
+}
+.cr-ultima {
+  margin: 8px 0 4px;
+  font-size: 0.95rem;
+}
+.cr-cartas summary {
+  cursor: pointer;
+  font-weight: 700;
+  margin: 6px 0;
+}
+body.claro .corrida-relogios > span {
+  color: #0e7490;
+  background: rgba(34, 211, 238, 0.12);
+  border-color: #0891b2;
+}
+body.claro .corrida-relogios .cr-carta {
+  color: #5b21b6;
+  border-color: #7c3aed;
+  background: rgba(124, 58, 237, 0.08);
+}
+body.claro .corrida-relogios .cr-pouco {
+  color: #b91c1c;
+  border-color: #dc2626;
+  background: rgba(220, 38, 38, 0.08);
+}
+body.claro .corrida-relogios .cr-zerou,
+body.claro .corrida-relogios .cr-desempate {
+  color: #92400e;
+  border-color: #d97706;
+}
+body.claro .cr-placar li {
+  background: rgba(0, 0, 0, 0.04);
+}

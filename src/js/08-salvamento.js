@@ -435,6 +435,7 @@ function saveGameState() {
       caosCortes,
       gemWinner,
       cardEndAt,
+      corrida: corridaSalvar(),
       pausedCardRemaining,
       expressWhoFreeze,
       bonusOrigMestreIdx,
@@ -494,7 +495,7 @@ function saveSegundos(v) {
 }
 function sanitizeLoadedState(s) {
   if (!s || typeof s !== "object") return;
-  const MODES = ["classico", "hardcore", "express", "junior", "oldschool"];
+  const MODES = ["classico", "hardcore", "express", "junior", "oldschool", "corrida"];
   if (!MODES.includes(s.CURRENT_MODE)) s.CURRENT_MODE = "classico";
   if (s.CURRENT_FORMAT !== "versus" && s.CURRENT_FORMAT !== "equipe") s.CURRENT_FORMAT = "versus";
   const num = (v, d) => (typeof v === "number" && Number.isFinite(v) ? v : d);
@@ -915,6 +916,8 @@ function loadGameState() {
           joiasRodada[String(k).slice(0, 12)] = Math.max(0, Math.min(JOIAS_POR_RODADA, Math.floor(v)));
       });
     cardEndAt = saveNum(state.cardEndAt) || null;
+    corridaZerar();
+    if (CURRENT_MODE === "corrida" && state.corrida && typeof state.corrida === "object") corridaRetomar(state.corrida);
     if (state.expressWhoFreeze && typeof state.expressWhoFreeze === "object" && CURRENT_MODE === "express") {
       const f = state.expressWhoFreeze,
         ok = (v) => typeof v === "number" && isFinite(v) && v >= 0;
@@ -1004,6 +1007,7 @@ function loadGameState() {
       if (players.length > 0) renderFinalScreen();
     } else {
       render();
+      if (CURRENT_MODE === "corrida" && starterChosen) corridaIniciar();
       if (CURRENT_MODE === "express" && cardEndAt && cardSecondsLeft() <= 0) {
         expressCardLost();
       } else if (timerEndAt && timerKind) {

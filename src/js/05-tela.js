@@ -66,6 +66,7 @@ function updateModeNotice() {
     hardcore: "Perfil JF — Hardcore (15+)",
     junior: "Perfil JF — Júnior (6+)",
     express: `Perfil JF — Express ${expressFlavor === "hardcore" ? "Hardcore" : "Clássico"}`,
+    corrida: "Perfil JF — Corrida contra o Tempo (12+)",
   };
   const notices = {
     classico: "",
@@ -74,6 +75,7 @@ function updateModeNotice() {
       : "📻 Cartas de adulto, dicas mais difíceis e nenhum animal.",
     hardcore: "💀 10 dicas por carta, 60s pra responder, pontos em dobro. Recomendado 15+.",
     junior: `🧒 ${cartasNoModo()} cartas pra criançada: Animal, Pessoa, Lugar e Coisa. Meta de 150 casas.`,
+    corrida: `⏱️ Quem acerta fica com a carta. ${CORRIDA_TEMPO_MS / 60e3} min de relógio (+${CORRIDA_BONUS_MS / 1e3} s por acerto), carta de 2:30, vez de ${CORRIDA_VEZ_SEG}+${CORRIDA_VEZ_SEG} s. Vence quem tiver mais cartas.`,
     express: `🔥 Categorias: ${expressSelectedCategories.join(", ")} · sem tabuleiro · 50 cartas · carta de ${rulesCtx().card} e vez de ${rulesCtx().turn}s.`,
   };
   title.textContent = names[CURRENT_MODE] || "Perfil JF";
@@ -200,7 +202,9 @@ function updateTimerDisplay() {
     const cardPart =
       CURRENT_MODE === "express" && cardEndAt
         ? ` · carta <b>${Math.floor(cardSecondsLeft() / 60)}:${String(cardSecondsLeft() % 60).padStart(2, "0")}</b>`
-        : "";
+        : CURRENT_MODE === "corrida" && starterChosen
+          ? ` · carta <b>${corridaRelogioTxt(corridaCartaMs())}</b> · ⏱️ <b>${corridaAcabou && !corridaDesempate ? "0:00" : corridaRelogioTxt(corridaGeralMs())}</b>`
+          : "";
     const labelPart = cardPart ? "vez " : "";
     el.innerHTML = `◷ ${labelPart}<span class="timer-number ${isBig ? "timer-big" : ""} ${isBlinkStep ? "timer-blink-on" : ""}">${left}s</span>${cardPart}`;
   }
@@ -711,13 +715,13 @@ function render() {
               const e = revealedOrder.find((r) => r.index === pendingIndex);
               const res = e ? e.palpiteResult : null;
               if (res === "ganhou")
-                return `${responderName} guardou uma <b>ficha de palpite</b> 🃏 — ela vale o jogo inteiro, até ser usada (fichas no estoque agora: ${palpiteStock}). A vez passa normalmente.`;
+                return `${responderName} guardou uma <b>ficha de ${CURRENT_MODE === "corrida" ? "Rouba a vez" : "palpite"}</b> 🃏 — ela vale o jogo inteiro, até ser usada (fichas no estoque agora: ${palpiteStock}). A vez passa normalmente.`;
               if (res === "fominha")
-                return `${responderName} já tem uma ficha de palpite 🃏 — cada um guarda no máximo <b>uma</b>. A instrução não vale, ${responderName} perde a vez e a ficha fica no estoque.`;
+                return `${responderName} já tem uma ficha de ${CURRENT_MODE === "corrida" ? "Rouba a vez" : "palpite"} 🃏 — cada um guarda no máximo <b>uma</b>. A instrução não vale, ${responderName} perde a vez e a ficha fica no estoque.`;
               if (res === "sem-estoque")
-                return "Todas as 5 fichas de palpite já estão com jogadores — a instrução fica sem efeito. Quem tirou não perde a vez: escolha outra dica.";
+                return "Todas as 5 fichas já estão com jogadores — a instrução fica sem efeito. Quem tirou não perde a vez: escolha outra dica.";
               return palpiteEnabled()
-                ? "O palpite a qualquer hora precisa de 3 ou mais participantes — a instrução fica sem efeito. Quem tirou não perde a vez: escolha outra dica."
+                ? `${CURRENT_MODE === "corrida" ? "O Rouba a vez" : "O palpite a qualquer hora"} precisa de 3 ou mais participantes — a instrução fica sem efeito. Quem tirou não perde a vez: escolha outra dica.`
                 : "O palpite a qualquer hora não vale neste modo — a instrução fica sem efeito. Quem tirou não perde a vez: escolha outra dica.";
             })()}</div>
             ${spotlightTimerHtml}
@@ -895,7 +899,7 @@ function render() {
         const pvTela = palpiteVezAtual();
         controlsHtml = `
           <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ${item.text}</div>
-          <div style="text-align:center; opacity:0.75; font-size:0.85rem; margin-bottom:4px;">Vale ${pointsIfCorrect} pontos se acertar agora (${quemGanhaNm} ganha ${mestreGainDisplay})</div>
+          <div style="text-align:center; opacity:0.75; font-size:0.85rem; margin-bottom:4px;">${CURRENT_MODE === "corrida" ? `Acertou: fica com a carta e o relógio ganha +${CORRIDA_BONUS_MS / 1e3} s` : `Vale ${pointsIfCorrect} pontos se acertar agora (${quemGanhaNm} ganha ${mestreGainDisplay})`}</div>
           ${spotlightTimerHtml}
           ${pvTela ? (() => {
             const d = entityDisplay(pvTela.key);
@@ -1315,7 +1319,7 @@ function renderBonusDuelInfo() {
 function renderBoardTrack() {
   const track = document.getElementById("boardTrack");
   if (!track) return;
-  if (CURRENT_MODE === "express" || players.length === 0) {
+  if (CURRENT_MODE === "express" || CURRENT_MODE === "corrida" || players.length === 0) {
     track.innerHTML = "";
     return;
   }
@@ -1444,7 +1448,14 @@ function corDoJogador(c) {
 function renderMiniScoreboard() {
   const list = document.getElementById("miniScoreboard");
   if (list) {
-    if (CURRENT_MODE === "express") {
+    if (CURRENT_MODE === "corrida") {
+      list.innerHTML = corridaPlacar()
+        .map(
+          (p) =>
+            `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: 🃏 ${p.score || 0}${palpiteBadge(p.id)}</li>`,
+        )
+        .join("");
+    } else if (CURRENT_MODE === "express") {
       const sorted = [...players].sort((a, b) => b.score - a.score);
       list.innerHTML = sorted
         .map(
@@ -2241,10 +2252,13 @@ function renderFinalScreen() {
   const isExpress = CURRENT_MODE === "express";
   let headerHtml, rankingHtml;
   const wc = winCond();
+  const cartasTxt = (v) => `${v} carta${v === 1 ? "" : "s"}`;
   const rankTxt = (v) =>
-    wc === "pontos" ? `${v} pts` : wc === "joias" ? `${v} joia${v === 1 ? "" : "s"}` : `casa ${v}`;
+    wc === "corrida" ? cartasTxt(v) : wc === "pontos" ? `${v} pts` : wc === "joias" ? `${v} joia${v === 1 ? "" : "s"}` : `casa ${v}`;
   const rankHead = (v) =>
-    wc === "pontos"
+    wc === "corrida"
+      ? `ficou com ${cartasTxt(v)}${corridaDesempateFeito ? " (no desempate relâmpago)" : ""}`
+      : wc === "pontos"
       ? `com ${v} pontos`
       : wc === "joias"
         ? `com ${v} joia${v === 1 ? "" : "s"} (o baralho acabou antes das ${GEMS_TO_WIN})`
@@ -2307,7 +2321,7 @@ function renderFinalScreen() {
     } else if (allZero) {
       headerHtml = isExpress
         ? `<h2>🏁 Jogo encerrado</h2><p style="opacity:0.8;">Ninguém pontuou nessa partida</p>`
-        : `<h2>🏁 Jogo encerrado</h2><p style="opacity:0.8;">${wc === "pontos" ? "Ninguém pontuou" : wc === "joias" ? "Ninguém ganhou joia" : "Ninguém andou casa"} nessa partida</p>`;
+        : `<h2>🏁 Jogo encerrado</h2><p style="opacity:0.8;">${wc === "corrida" ? "Ninguém ficou com carta" : wc === "pontos" ? "Ninguém pontuou" : wc === "joias" ? "Ninguém ganhou joia" : "Ninguém andou casa"} nessa partida</p>`;
     } else if (tiedTop.length > 1) {
       const names = tiedTop.map((p) => escapeHtml(p.name)).join(" e ");
       headerHtml = isExpress
@@ -2323,7 +2337,7 @@ function renderFinalScreen() {
         (p) => `
     <li class="${p.rank === 1 && !allZero ? "first-place" : ""}">
       <span>${(!allZero && medals[p.rank - 1]) || p.rank + "º"} ${playerNameHtml(p.name, p.color, p.avatar)}</span>
-      <span>${isExpress ? `${p.score} ponto${p.score === 1 ? "" : "s"}` : `${p.score} pts — casa ${p.position}`}${gemBadgesHtml(p)}</span>
+      <span>${wc === "corrida" ? `🃏 ${cartasTxt(p.score || 0)}` : isExpress ? `${p.score} ponto${p.score === 1 ? "" : "s"}` : `${p.score} pts — casa ${p.position}`}${gemBadgesHtml(p)}</span>
     </li>
   `,
       )
@@ -2573,6 +2587,10 @@ function renderModeCardDescs() {
     `Sem tabuleiro: 50 cartas, pontos = 11 − dicas, carta de ${Math.floor(X.hardcore.card / 60)}:${String(X.hardcore.card % 60).padStart(2, "0")} a ${Math.floor(X.classico.card / 60)}:${String(X.classico.card % 60).padStart(2, "0")} e especiais estilo UNO.`,
   );
   set(
+    "mcDescCorrida",
+    `Quem acerta fica com a carta. Relógio de ${CORRIDA_TEMPO_MS / 60e3} min (+${CORRIDA_BONUS_MS / 1e3} s por acerto), carta de 2:30, ${CORRIDA_VEZ_SEG} s pra escolher e ${CORRIDA_VEZ_SEG} pra responder. Sem tabuleiro.`,
+  );
+  set(
     "mcDescOldschool",
     "Cartas de quem viveu a época: dicas mais difíceis, sem animais, coisas de adulto. C.A.O.S. mais comentarista, menos palhaço.",
   );
@@ -2594,6 +2612,7 @@ function atualizarRotuloModo() {
     junior: "🧒 Júnior",
     hardcore: "💀 Hardcore",
     express: `🔥 Express ${expressFlavor === "hardcore" ? "Hardcore" : "Clássico"}`,
+    corrida: "⏱️ Corrida contra o Tempo",
   };
   el.textContent = `${nomes[CURRENT_MODE] || CURRENT_MODE} · ${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}`;
 }
@@ -2606,6 +2625,7 @@ function resetModeSelectionUI() {
   const equipeMode = CURRENT_FORMAT === "equipe";
   document.getElementById("modeWrapExpress").style.display = equipeMode ? "none" : "";
   document.getElementById("modeWrapJunior").style.display = equipeMode ? "none" : "";
+  document.getElementById("modeWrapCorrida").style.display = equipeMode ? "none" : "";
   document.querySelectorAll(".expressCatChk").forEach((cb) => {
     cb.checked = false;
     cb.disabled = false;
@@ -2721,7 +2741,7 @@ function casaAnunciar() {
 function renderWinCondPicker() {
   const wrap = document.getElementById("winCondWrap");
   if (!wrap) return;
-  if (CURRENT_MODE === "express") {
+  if (CURRENT_MODE === "express" || CURRENT_MODE === "corrida") {
     wrap.style.display = "none";
     return;
   }
@@ -2773,6 +2793,7 @@ function cartasNoModo() {
 function buildRulesSummaryHtml() {
   const c = rulesCtx(),
     li = [];
+  if (CURRENT_MODE === "corrida") return corridaRegrasHtml(true);
   if (c.express) {
     li.push("🎯 <b>Objetivo:</b> somar mais pontos até o baralho acabar.");
     li.push(
@@ -2801,6 +2822,7 @@ function buildRulesSummaryHtml() {
 function buildRulesHtml() {
   const c = rulesCtx(),
     li = [];
+  if (CURRENT_MODE === "corrida") return corridaRegrasHtml(false);
   // 1. Objetivo
   li.push(
     c.express

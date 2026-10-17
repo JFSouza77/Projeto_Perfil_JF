@@ -8774,6 +8774,121 @@ body.claro .lp-bloco {
 .joia-f.joia-mini.jf-ANIMAL {
   padding-top: 0.5em;
 }
+
+/* 1.7.10.6 · Corrida contra o Tempo: relógio geral + relógio da carta, placar de cartas e intervalo */
+.corrida-relogios {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 4px 0 8px;
+  font-variant-numeric: tabular-nums;
+}
+.corrida-relogios[hidden] {
+  display: none;
+}
+.corrida-relogios > span {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(34, 211, 238, 0.45);
+  background: rgba(34, 211, 238, 0.1);
+  color: #cffafe;
+  font-size: 1rem;
+}
+.corrida-relogios b {
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
+}
+.corrida-relogios .cr-carta {
+  border-color: rgba(167, 139, 250, 0.45);
+  background: rgba(167, 139, 250, 0.1);
+  color: #ede9fe;
+}
+.corrida-relogios .cr-parado {
+  opacity: 0.75;
+}
+.corrida-relogios .cr-pouco {
+  border-color: #f87171;
+  background: rgba(248, 113, 113, 0.16);
+  color: #fecaca;
+  animation: crPulso 1s ease-in-out infinite;
+}
+.corrida-relogios .cr-zerou,
+.corrida-relogios .cr-desempate {
+  border-color: #fbbf24;
+  background: rgba(251, 191, 36, 0.16);
+  color: #fef3c7;
+  font-weight: 700;
+}
+@keyframes crPulso {
+  50% {
+    box-shadow: 0 0 14px rgba(248, 113, 113, 0.55);
+  }
+}
+body.calmo .corrida-relogios .cr-pouco,
+body.batata .corrida-relogios .cr-pouco {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .corrida-relogios .cr-pouco {
+    animation: none;
+  }
+}
+.cr-placar {
+  list-style: none;
+  margin: 10px 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.cr-placar li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border-left: 4px solid var(--pc, #a78bfa);
+  background: rgba(255, 255, 255, 0.05);
+}
+.cr-placar li.cr-lider {
+  background: rgba(251, 191, 36, 0.12);
+}
+.cr-placar li.cr-lider b::before {
+  content: "👑 ";
+}
+.cr-ultima {
+  margin: 8px 0 4px;
+  font-size: 0.95rem;
+}
+.cr-cartas summary {
+  cursor: pointer;
+  font-weight: 700;
+  margin: 6px 0;
+}
+body.claro .corrida-relogios > span {
+  color: #0e7490;
+  background: rgba(34, 211, 238, 0.12);
+  border-color: #0891b2;
+}
+body.claro .corrida-relogios .cr-carta {
+  color: #5b21b6;
+  border-color: #7c3aed;
+  background: rgba(124, 58, 237, 0.08);
+}
+body.claro .corrida-relogios .cr-pouco {
+  color: #b91c1c;
+  border-color: #dc2626;
+  background: rgba(220, 38, 38, 0.08);
+}
+body.claro .corrida-relogios .cr-zerou,
+body.claro .corrida-relogios .cr-desempate {
+  color: #92400e;
+  border-color: #d97706;
+}
+body.claro .cr-placar li {
+  background: rgba(0, 0, 0, 0.04);
+}
 /* 1.7.9.7 · Rede: tela do convidado (em cima do telão) e painel da sala */
 .rede-sala {
   text-align: center;
@@ -9928,6 +10043,7 @@ body.claro .pt-resumo li {
       <div class="mode-select-wrap mc-wrap" id="modeWrapHardcore" style="--mc:#f87171; --mc-glow:rgba(248,113,113,0.45);"><button class="mode-btn mc-card" id="modeBtnHardcore"><span class="mc-icon">💀</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Hardcore</span><span class="mc-badge">15+</span></span><span class="mc-desc" id="mcDescHardcore"></span></span></button></div>
       <div class="mode-select-wrap mc-wrap" id="modeWrapOldschool" style="--mc:#d6a15e; --mc-glow:rgba(214,161,94,0.45);"><button class="mode-btn mc-card" id="modeBtnOldschool"><span class="mc-icon">📻</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Old School</span><span class="mc-badge">20+</span></span><span class="mc-desc" id="mcDescOldschool"></span></span></button></div>
       <div class="mode-select-wrap mc-wrap" id="modeWrapExpress" style="--mc:#f97316; --mc-glow:rgba(249,115,22,0.45);"><button class="mode-btn mc-card" id="modeBtnExpress"><span class="mc-icon">🔥</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Express</span><span class="mc-badge">Rápido</span></span><span class="mc-desc" id="mcDescExpress"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="modeWrapCorrida" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.45);"><button class="mode-btn mc-card" id="modeBtnCorrida"><span class="mc-icon">⏱️</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Corrida contra o Tempo</span><span class="mc-badge">Novo · 12+</span></span><span class="mc-desc" id="mcDescCorrida"></span></span></button></div>
       <div class="mode-select-wrap mc-wrap mc-rainbow" id="modeWrapRandom" style="--mc:#fbbf24; --mc-glow:rgba(251,191,36,0.45);"><button class="mode-btn mc-card" id="modeBtnRandom"><span class="mc-icon">🎰</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Modo Aleatório</span><span class="mc-badge">Surpresa</span></span><span class="mc-desc" id="mcDescRandom"></span></span></button></div>
     </div>
     <button class="btn-start mc-confirm btn-neo" id="modeConfirmBtn" style="display:none;">🚀 Iniciar</button>
@@ -10121,6 +10237,7 @@ body.claro .pt-resumo li {
 
   
   <div id="playAreaSection" style="display:none; width:100%; flex-direction:column; align-items:center;">
+    <div class="corrida-relogios" id="corridaRelogios" role="timer" aria-live="off" hidden></div>
     <ul class="mini-scoreboard" id="miniScoreboard"></ul>
     <div class="board-track" id="boardTrack"></div>
     <div class="deck-info" id="deckInfo">Carregando baralho...</div>
@@ -10489,7 +10606,14 @@ const JOIAS_POR_RODADA = 2;
 // Última rodada: quando alguém bate a meta, a rodada termina para todos terem jogado o
 // mesmo número de vezes (menos no Express). Vence quem estiver na frente no fim da rodada.
 const ULTIMA_RODADA = true;
-const PALPITE_MODES_OK = ["classico", "junior", "oldschool"];
+const PALPITE_MODES_OK = ["classico", "junior", "oldschool", "corrida"];
+// 1.7.10.6 · Corrida contra o Tempo (regras do JF em docs/Modos_1.7.10.6.md): relógio geral de 30 min (+10 s por
+// carta acertada), carta de 2:30, 15 s pra escolher a dica e 15 s pra responder, intervalo de 15 s congelado.
+const CORRIDA_TEMPO_MS = 30 * 60e3;
+const CORRIDA_BONUS_MS = 10e3;
+const CORRIDA_CARTA_MS = 150e3;
+const CORRIDA_VEZ_SEG = 15;
+const CORRIDA_INTERVALO_SEG = 15;
 // Emblema do verso da carta: anéis neon, losangos dourados, o "P" dentro do "?" e o olho do C.A.O.S.
 const VERSO_EMBLEMA_SVG = `<svg class="back-icon verso-emblema" viewBox="0 0 160 160" aria-hidden="true" focusable="false">
   <defs>
@@ -10504,7 +10628,7 @@ const VERSO_EMBLEMA_SVG = `<svg class="back-icon verso-emblema" viewBox="0 0 160
   <text class="vs-p" fill="#7c3aed" x="80" y="70" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="700">P</text>
   <g transform="translate(81 121)"><ellipse rx="11" ry="7" fill="url(#vsGrad)"/><ellipse rx="11" ry="7" fill="none" stroke="#fde68a" stroke-opacity=".7" stroke-width="1"/><circle r="3" fill="#fde68a"/></g>
 </svg>`;
-const DECK_LIMITE = { classico: 400, hardcore: 300, oldschool: 240, junior: 250, express: 50 };
+const DECK_LIMITE = { classico: 400, hardcore: 300, oldschool: 240, junior: 250, express: 50, corrida: 400 };
 const CAOS_VOICE_OK =
   typeof window !== "undefined" && "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
 const CAOS_MASTER_RE =
@@ -11090,6 +11214,7 @@ const MODE_WRAP_IDS = {
   express: "modeWrapExpress",
   junior: "modeWrapJunior",
   oldschool: "modeWrapOldschool",
+  corrida: "modeWrapCorrida",
   random: "modeWrapRandom",
 };
 const MODE_LABELS = {
@@ -11098,6 +11223,7 @@ const MODE_LABELS = {
   express: "Perfil Express",
   junior: "Perfil Júnior",
   oldschool: "Perfil Old School",
+  corrida: "Corrida contra o Tempo",
 };
 const PAUSE_TIP_MS = 8e3;
 // ENDEREÇOS (1.7.10.5.5, portas pro domínio próprio): pra trocar o endereço do jogo, muda SÓ aqui
@@ -11151,7 +11277,7 @@ let ffaWrongCount = 0;
 let bonusOrigMestreIdx = null;
 let CURRENT_MODE = "classico";
 let oldSchoolAcess = false;
-let RESPONSE_TIME_LIMIT_BY_MODE = { classico: 90, hardcore: 60, express: 60, junior: 90, oldschool: 90 };
+let RESPONSE_TIME_LIMIT_BY_MODE = { classico: 90, hardcore: 60, express: 60, junior: 90, oldschool: 90, corrida: CORRIDA_VEZ_SEG };
 let expressSelectedCategories = [];
 let expressFlavor = "classico";
 let expressStealSavedResponder = null;
@@ -11837,13 +11963,14 @@ function checkBonusLanding(playerIdx, oldPosition, newPosition) {
   }
 }
 function isWildcardSpecial(text) {
-  return typeof text === "string" && text.toLowerCase().includes("palpite");
+  return typeof text === "string" && /palpite|rouba a vez/i.test(text);
 }
 function currentGemCategories() {
   return CURRENT_MODE === "junior" ? ["ANIMAL", "PESSOA", "LUGAR", "COISA"] : ["ANO", "PESSOA", "LUGAR", "COISA"];
 }
 function winCond() {
   if (CURRENT_MODE === "express") return "express";
+  if (CURRENT_MODE === "corrida") return "corrida";
   const w = WIN_CONDITIONS[WIN_CONDITION] ? WIN_CONDITION : "casa";
   // Na Moda da Casa, depois do sorteio vale o comportamento do modo sorteado.
   if (w === "casa" && CASA_MODOS.includes(casaSorteado)) return casaSorteado;
@@ -11870,7 +11997,7 @@ function joiasComTrava() {
 }
 function gemsAwarded() {
   const w = winCond();
-  return w !== "pontos" && w !== "tabuleiro";
+  return w !== "pontos" && w !== "tabuleiro" && w !== "corrida";
 }
 function gemsCountForWin() {
   const w = winCond();
@@ -11885,7 +12012,7 @@ function teamScore(id) {
 }
 function rankValue(holder, teamId) {
   const w = winCond();
-  if (w === "express") return holder.score || 0;
+  if (w === "express" || w === "corrida") return holder.score || 0; // na Corrida, score = cartas conquistadas
   if (w === "pontos") return teamId ? teamScore(teamId) : holder.score || 0;
   if (w === "joias") return gemTotal(holder);
   return holder.position || 0;
@@ -11893,7 +12020,7 @@ function rankValue(holder, teamId) {
 function victoryReached() {
   if (gemWinner) return true;
   const w = winCond();
-  if (w === "express" || w === "joias") return false;
+  if (w === "express" || w === "joias" || w === "corrida") return false;
   const eq = CURRENT_FORMAT === "equipe";
   if (w === "pontos") {
     const meta = metaPontos();
@@ -11913,6 +12040,8 @@ function winCondRuleText(goal) {
 function winCondRuleTextBase(goal) {
   const g = goal || WINNING_SCORE || 200,
     w = winCond();
+  if (w === "corrida")
+    return `Vence quem tiver <b>mais cartas</b> quando o relógio geral (${CORRIDA_TEMPO_MS / 60e3} min, +${CORRIDA_BONUS_MS / 1e3} s por carta acertada) zerar. Empate: <b>desempate relâmpago</b>.`;
   if (w === "joias")
     return `Vence quem juntar as <b>${GEMS_TO_WIN} joias</b>. O tabuleiro anda, mas chegar na casa ${g} não vence. Máximo de <b>${JOIAS_POR_RODADA} joias por ${CURRENT_FORMAT === "equipe" ? "equipe" : "jogador"} em cada rodada</b>.`;
   if (w === "pontos")
@@ -12080,6 +12209,16 @@ function buildHardcoreClueSet(shuffledClues) {
   const chosenReals = shuffle(reals).slice(0, 10 - chosenSpecials.length);
   return shuffle([...chosenReals, ...chosenSpecials]);
 }
+// Corrida contra o Tempo: sem tabuleiro, as especiais de casa saem ("Avance/Volte N casas", "Escolha um jogador…").
+// Ficam "Perca sua vez" e o palpite (que na Corrida é o "Rouba a vez"). 10 dicas, 1 ou 2 especiais (≥ 8 normais).
+function especialDeCasa(item) {
+  return !!item && item.type === "special" && /casa|escolha um jogador/i.test(item.text || "");
+}
+function buildCorridaClueSet(shuffledClues) {
+  return buildHardcoreClueSet(
+    shuffledClues.filter((c) => !especialDeCasa(c)).map((c) => (c.type === "special" && isWildcardSpecial(c.text) ? { ...c, text: "Rouba a vez" } : c)),
+  );
+}
 function isJfPlayer(p) {
   return !!p && isJfName(p.name);
 }
@@ -12222,7 +12361,7 @@ function gemBadgesHtml(holder) {
 // 1.7.10.5 (pedido do JF): selo amarelo (a cor da ficha no Perfil de mesa) em quem tem ficha de palpite
 function palpiteBadge(key) {
   const n = palpiteCount(key);
-  return n > 0 ? ` <span class="selo-palpite" title="Tem ficha de palpite a qualquer hora">🃏${n > 1 ? "×" + n : ""}</span>` : "";
+  return n > 0 ? ` <span class="selo-palpite" title="Tem ficha de ${CURRENT_MODE === "corrida" ? "Rouba a vez" : "palpite a qualquer hora"}">🃏${n > 1 ? "×" + n : ""}</span>` : "";
 }
 function buildPalpiteBoxHtml() {
   // 1.7.10.5: no online, quem tem aparelho próprio na sala usa o botão Palpitar agora lá (sai daqui)
@@ -12239,7 +12378,7 @@ function buildPalpiteBoxHtml() {
       return `<div class="palpite-row"><span>🃏 ${playerNameHtml(d.name, d.color, d.avatar)}${n > 1 ? " ×" + n : ""}</span><span><button class="btn-correct palpite-hit" data-key="${k}">✓ Acertou</button> <button class="btn-wrong palpite-miss" data-key="${k}">✕ Errou</button></span></div>`;
     })
     .join("");
-  return `<div class="palpite-box"><div class="palpite-title">🃏 Alguém usou o palpite a qualquer hora? (fichas no estoque: ${palpiteStock})</div>${rows}</div>`;
+  return `<div class="palpite-box"><div class="palpite-title">🃏 Alguém usou ${CURRENT_MODE === "corrida" ? "o Rouba a vez" : "o palpite a qualquer hora"}? (fichas no estoque: ${palpiteStock})</div>${rows}</div>`;
 }
 
 
@@ -12439,7 +12578,7 @@ function joiasTravaAvisar(scorerIdx) {
 }
 // Moda da Casa: sorteia o modo da mesa (sem repetir o da partida anterior) e anuncia com suspense.
 function casaSortearModo() {
-  if (CURRENT_MODE === "express" || WIN_CONDITION !== "casa" || casaSorteado) return;
+  if (CURRENT_MODE === "express" || CURRENT_MODE === "corrida" || WIN_CONDITION !== "casa" || casaSorteado) return;
   let ultimo = "";
   try {
     ultimo = JFStore.getItem(CASA_ULTIMO_KEY) || "";
@@ -12472,13 +12611,15 @@ function advanceToNextCardTurn() {
     rodadaChecarVirada();
     return;
   }
-  mestreIndex = nextIndex(mestreIndex);
+  mestreIndex = corridaDesempate ? corridaDesempateMestre(nextIndex(mestreIndex)) : nextIndex(mestreIndex);
   responderIndex = nextResponder(mestreIndex, mestreIndex);
   rodadaChecarVirada();
 }
 function nextResponder(fromIndex, mestre) {
   let c = nextIndex(fromIndex);
   if (c === mestre) c = nextIndex(c);
+  // desempate relâmpago da Corrida: só os empatados respondem
+  for (let n = players.length; corridaDesempate && n > 0 && (c === mestre || !corridaPodeResponder(c)); n--) c = nextIndex(c);
   return c;
 }
 function nextResponderStep(fromIndex, attemptsLeft) {
@@ -12540,6 +12681,7 @@ function resetDeck() {
   if (typeof partidaOnline !== "undefined") partidaOnline = false; // 1.7.9.9: partida nova começa sem ser online
   tabForma = null; // 1.7.9.2: partida nova, tabuleiro novo
   tabLobbyZerar(); // 1.7.9.4
+  corridaZerar(); // 1.7.10.6
   sorteioContagem = 0;
   acoesZerar();
   caosCatSeq = [];
@@ -12705,7 +12847,8 @@ function drawHidden() {
   if (!palpiteEnabled()) {
     currentCard.clues = currentCard.clues.filter((c) => !(c.type === "special" && isWildcardSpecial(c.text)));
   }
-  if (CURRENT_MODE === "hardcore" || CURRENT_MODE === "express") {
+  if (CURRENT_MODE === "corrida") currentCard.clues = buildCorridaClueSet(currentCard.clues);
+  else if (CURRENT_MODE === "hardcore" || CURRENT_MODE === "express") {
     currentCard.clues = buildHardcoreClueSet(currentCard.clues);
   }
   if (CURRENT_MODE !== "express" && pendingBonusQueue.length > 0) {
@@ -12740,6 +12883,7 @@ function drawHidden() {
   render();
   saveGameState();
   tabLobbyTalvez();
+  corridaIntervaloTalvez();
 }
 function beginBonusChoice() {
   cardState = "bonusChoice";
@@ -12800,7 +12944,8 @@ function caosExplicarPalpite(p) {
       localStorage.setItem(PALPITE_EXPLICADO_KEY, JSON.stringify(lista.slice(-200)));
     } catch (e) {}
     caosLog("palpite", `${p.name}: explicação da ficha (1ª vez)`);
-    caosFalaAgendar(() => getRandomReaction(REACTIVE_VOICE.iniciante.explica.palpite, p.name), 1500, "regra");
+    const lista2 = CURRENT_MODE === "corrida" ? REACTIVE_VOICE.corrida.rouba : REACTIVE_VOICE.iniciante.explica.palpite;
+    caosFalaAgendar(() => getRandomReaction(lista2, p.name), 1500, "regra");
   } catch (e) {}
 }
 function caosPrimeiraCategoria() {
@@ -12814,6 +12959,10 @@ function caosPrimeiraCategoria() {
   } catch (e) {}
 }
 function checkWinnerThenDraw() {
+  if (CURRENT_MODE === "corrida") {
+    corridaDepoisDaCarta();
+    return;
+  }
   tabLobbyPendente = true; // 1.7.9.4: a carta acabou; o lobby do tabuleiro abre quando a próxima estiver pronta
   renderScoreboard();
   renderMiniScoreboard();
@@ -12853,8 +13002,10 @@ function checkWinnerThenDraw() {
 }
 function resolveExhaustionIfNeeded() {
   if (!currentCard || gameEnded) return true;
-  if (revealedOrder.length >= currentCard.clues.length) {
+  const corridaFim = corridaCartaAcabou();
+  if (revealedOrder.length >= currentCard.clues.length || corridaFim) {
     clearCardTimer();
+    if (corridaFim) corridaAvisarCartaPerdida();
     stats.totalExhausted++;
     cartaPartidaRegistrar(-1, revealedOrder.filter((r) => r.item.type === "clue").length, null);
     caosImplicFim(99);
@@ -12895,7 +13046,7 @@ function resolveExhaustionIfNeeded() {
       showToastMessage(getRandomReaction(REACTIVE_VOICE.esgotouComResposta, currentCard.answer));
     }
     expressStealSavedResponder = null;
-    if (CURRENT_MODE !== "express") {
+    if (CURRENT_MODE !== "express" && CURRENT_MODE !== "corrida") {
       const totalCardPoints = currentCard.clues.length;
       const bonusMultiplier = currentCard && currentCard.isBonus ? 2 : 1;
       const hardcoreMultiplier = CURRENT_MODE === "hardcore" ? 2 : 1;
@@ -12927,7 +13078,7 @@ function startTimer(kind) {
   clearTimer();
   timerSerial++;
   const durations = {
-    pick: PICK_TIME_LIMIT + acessTempoExtra("pick"),
+    pick: (CURRENT_MODE === "corrida" ? CORRIDA_VEZ_SEG : PICK_TIME_LIMIT) + acessTempoExtra("pick"),
     response: RESPONSE_TIME_LIMIT + acessTempoExtra("response") + mestreTempoExtra("response"),
     special: SPECIAL_TIME_LIMIT + acessTempoExtra("special") + mestreTempoExtra("special"),
     turn: expressTimes().turn + acessTempoExtra("turn") + mestreTempoExtra("turn"),
@@ -13230,6 +13381,39 @@ function markCorrect(playerIdxOverride) {
     if (history.length > 150) history = history.slice(-150);
     mestreIndex = nextIndex(mestreIndex);
     responderIndex = nextResponder(mestreIndex, mestreIndex);
+    checkWinnerThenDraw();
+    return;
+  }
+  if (CURRENT_MODE === "corrida") {
+    // Corrida: quem acertou fica com a carta (vale 1, com 1 dica ou com 10) e o relógio geral ganha 10 s
+    const scorerC = players[scorerIdx];
+    scorerC.score = (scorerC.score || 0) + 1;
+    corridaBonus();
+    fxFloat(`🃏 +1 carta · ⏱️ +${CORRIDA_BONUS_MS / 1e3} s`, "#4ade80");
+    maybeShowAcertoFlavor(scorerIdx, realCluesRevealed, timeTakenMs, { caosSurpresa: caosSurpresaAcerto });
+    caosIniAcerto(scorerC);
+    caosMemAcerto(scorerIdx, realCluesRevealed, timeTakenMs);
+    caosMesaRegistrar("acerto", scorerC);
+    caosMesaMimica(restoRelogio, scorerC, players[currentMestreIdx]);
+    history.push({
+      playerName: scorerC.name,
+      playerColor: scorerC.color,
+      playerAvatar: scorerC.avatar,
+      category: currentCard.category,
+      answer: currentCard.answer,
+      points: 1,
+      cluesUsed: realCluesRevealed,
+      timeTakenMs,
+      mestreName: players[currentMestreIdx].name,
+      mestreColor: players[currentMestreIdx].color,
+      mestrePoints: 0,
+      wasBonus: false,
+    });
+    cartaPartidaRegistrar(scorerIdx, realCluesRevealed, pendingIndex);
+    pendingStartTime = null;
+    pendingIndex = null;
+    if (history.length > 150) history = history.slice(-150);
+    advanceToNextCardTurn();
     checkWinnerThenDraw();
     return;
   }
@@ -13863,6 +14047,7 @@ function endGame() {
     caosMemFimDePartida();
   } catch (e) {}
   setTimeout(caosIniFormatura, 4500);
+  corridaParar();
   clearTimer();
   clearCardTimer();
   clearOverlayTimeout();
@@ -14042,6 +14227,9 @@ function selectMode(mode, expressCategories, flavor) {
     allCards = ADULT_CARDS.filter(
       (c) => c.category !== "ANO" && (c.classificacao === "junior" || c.classificacao === "livre"),
     );
+  } else if (mode === "corrida") {
+    WINNING_SCORE = 0;
+    allCards = baralhoClassico();
   } else if (mode === "oldschool") {
     WINNING_SCORE = 200;
     oldSchoolAcess = flavor === "acess";
@@ -14314,6 +14502,7 @@ function beginGameplay() {
     p.famLim = 1 + Math.floor(Math.random() * 5);
   });
   casaSortearModo();
+  if (CURRENT_MODE === "corrida") corridaIniciar();
   vitoriaTutInicio();
   syncGameplayPanels();
   updateDrawAvailability();
@@ -14403,7 +14592,7 @@ function desistirCarta() {
     drawHidden();
     return;
   }
-  const mult = CURRENT_MODE === "hardcore" ? 2 : 1,
+  const mult = CURRENT_MODE === "hardcore" ? 2 : CURRENT_MODE === "corrida" ? 0 : 1, // Corrida: ninguém ganha carta
     ganho = rev * mult,
     nome = caosNomeMestre();
   if (ganho > 0) creditPoints(mestreIndex, ganho, true);
@@ -14793,6 +14982,7 @@ function updateModeNotice() {
     hardcore: "Perfil JF — Hardcore (15+)",
     junior: "Perfil JF — Júnior (6+)",
     express: `Perfil JF — Express ${expressFlavor === "hardcore" ? "Hardcore" : "Clássico"}`,
+    corrida: "Perfil JF — Corrida contra o Tempo (12+)",
   };
   const notices = {
     classico: "",
@@ -14801,6 +14991,7 @@ function updateModeNotice() {
       : "📻 Cartas de adulto, dicas mais difíceis e nenhum animal.",
     hardcore: "💀 10 dicas por carta, 60s pra responder, pontos em dobro. Recomendado 15+.",
     junior: `🧒 ${cartasNoModo()} cartas pra criançada: Animal, Pessoa, Lugar e Coisa. Meta de 150 casas.`,
+    corrida: `⏱️ Quem acerta fica com a carta. ${CORRIDA_TEMPO_MS / 60e3} min de relógio (+${CORRIDA_BONUS_MS / 1e3} s por acerto), carta de 2:30, vez de ${CORRIDA_VEZ_SEG}+${CORRIDA_VEZ_SEG} s. Vence quem tiver mais cartas.`,
     express: `🔥 Categorias: ${expressSelectedCategories.join(", ")} · sem tabuleiro · 50 cartas · carta de ${rulesCtx().card} e vez de ${rulesCtx().turn}s.`,
   };
   title.textContent = names[CURRENT_MODE] || "Perfil JF";
@@ -14927,7 +15118,9 @@ function updateTimerDisplay() {
     const cardPart =
       CURRENT_MODE === "express" && cardEndAt
         ? ` · carta <b>${Math.floor(cardSecondsLeft() / 60)}:${String(cardSecondsLeft() % 60).padStart(2, "0")}</b>`
-        : "";
+        : CURRENT_MODE === "corrida" && starterChosen
+          ? ` · carta <b>${corridaRelogioTxt(corridaCartaMs())}</b> · ⏱️ <b>${corridaAcabou && !corridaDesempate ? "0:00" : corridaRelogioTxt(corridaGeralMs())}</b>`
+          : "";
     const labelPart = cardPart ? "vez " : "";
     el.innerHTML = `◷ ${labelPart}<span class="timer-number ${isBig ? "timer-big" : ""} ${isBlinkStep ? "timer-blink-on" : ""}">${left}s</span>${cardPart}`;
   }
@@ -15438,13 +15631,13 @@ function render() {
               const e = revealedOrder.find((r) => r.index === pendingIndex);
               const res = e ? e.palpiteResult : null;
               if (res === "ganhou")
-                return `${responderName} guardou uma <b>ficha de palpite</b> 🃏 — ela vale o jogo inteiro, até ser usada (fichas no estoque agora: ${palpiteStock}). A vez passa normalmente.`;
+                return `${responderName} guardou uma <b>ficha de ${CURRENT_MODE === "corrida" ? "Rouba a vez" : "palpite"}</b> 🃏 — ela vale o jogo inteiro, até ser usada (fichas no estoque agora: ${palpiteStock}). A vez passa normalmente.`;
               if (res === "fominha")
-                return `${responderName} já tem uma ficha de palpite 🃏 — cada um guarda no máximo <b>uma</b>. A instrução não vale, ${responderName} perde a vez e a ficha fica no estoque.`;
+                return `${responderName} já tem uma ficha de ${CURRENT_MODE === "corrida" ? "Rouba a vez" : "palpite"} 🃏 — cada um guarda no máximo <b>uma</b>. A instrução não vale, ${responderName} perde a vez e a ficha fica no estoque.`;
               if (res === "sem-estoque")
-                return "Todas as 5 fichas de palpite já estão com jogadores — a instrução fica sem efeito. Quem tirou não perde a vez: escolha outra dica.";
+                return "Todas as 5 fichas já estão com jogadores — a instrução fica sem efeito. Quem tirou não perde a vez: escolha outra dica.";
               return palpiteEnabled()
-                ? "O palpite a qualquer hora precisa de 3 ou mais participantes — a instrução fica sem efeito. Quem tirou não perde a vez: escolha outra dica."
+                ? `${CURRENT_MODE === "corrida" ? "O Rouba a vez" : "O palpite a qualquer hora"} precisa de 3 ou mais participantes — a instrução fica sem efeito. Quem tirou não perde a vez: escolha outra dica.`
                 : "O palpite a qualquer hora não vale neste modo — a instrução fica sem efeito. Quem tirou não perde a vez: escolha outra dica.";
             })()}</div>
             ${spotlightTimerHtml}
@@ -15622,7 +15815,7 @@ function render() {
         const pvTela = palpiteVezAtual();
         controlsHtml = `
           <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ${item.text}</div>
-          <div style="text-align:center; opacity:0.75; font-size:0.85rem; margin-bottom:4px;">Vale ${pointsIfCorrect} pontos se acertar agora (${quemGanhaNm} ganha ${mestreGainDisplay})</div>
+          <div style="text-align:center; opacity:0.75; font-size:0.85rem; margin-bottom:4px;">${CURRENT_MODE === "corrida" ? `Acertou: fica com a carta e o relógio ganha +${CORRIDA_BONUS_MS / 1e3} s` : `Vale ${pointsIfCorrect} pontos se acertar agora (${quemGanhaNm} ganha ${mestreGainDisplay})`}</div>
           ${spotlightTimerHtml}
           ${pvTela ? (() => {
             const d = entityDisplay(pvTela.key);
@@ -16042,7 +16235,7 @@ function renderBonusDuelInfo() {
 function renderBoardTrack() {
   const track = document.getElementById("boardTrack");
   if (!track) return;
-  if (CURRENT_MODE === "express" || players.length === 0) {
+  if (CURRENT_MODE === "express" || CURRENT_MODE === "corrida" || players.length === 0) {
     track.innerHTML = "";
     return;
   }
@@ -16171,7 +16364,14 @@ function corDoJogador(c) {
 function renderMiniScoreboard() {
   const list = document.getElementById("miniScoreboard");
   if (list) {
-    if (CURRENT_MODE === "express") {
+    if (CURRENT_MODE === "corrida") {
+      list.innerHTML = corridaPlacar()
+        .map(
+          (p) =>
+            `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: 🃏 ${p.score || 0}${palpiteBadge(p.id)}</li>`,
+        )
+        .join("");
+    } else if (CURRENT_MODE === "express") {
       const sorted = [...players].sort((a, b) => b.score - a.score);
       list.innerHTML = sorted
         .map(
@@ -16968,10 +17168,13 @@ function renderFinalScreen() {
   const isExpress = CURRENT_MODE === "express";
   let headerHtml, rankingHtml;
   const wc = winCond();
+  const cartasTxt = (v) => `${v} carta${v === 1 ? "" : "s"}`;
   const rankTxt = (v) =>
-    wc === "pontos" ? `${v} pts` : wc === "joias" ? `${v} joia${v === 1 ? "" : "s"}` : `casa ${v}`;
+    wc === "corrida" ? cartasTxt(v) : wc === "pontos" ? `${v} pts` : wc === "joias" ? `${v} joia${v === 1 ? "" : "s"}` : `casa ${v}`;
   const rankHead = (v) =>
-    wc === "pontos"
+    wc === "corrida"
+      ? `ficou com ${cartasTxt(v)}${corridaDesempateFeito ? " (no desempate relâmpago)" : ""}`
+      : wc === "pontos"
       ? `com ${v} pontos`
       : wc === "joias"
         ? `com ${v} joia${v === 1 ? "" : "s"} (o baralho acabou antes das ${GEMS_TO_WIN})`
@@ -17034,7 +17237,7 @@ function renderFinalScreen() {
     } else if (allZero) {
       headerHtml = isExpress
         ? `<h2>🏁 Jogo encerrado</h2><p style="opacity:0.8;">Ninguém pontuou nessa partida</p>`
-        : `<h2>🏁 Jogo encerrado</h2><p style="opacity:0.8;">${wc === "pontos" ? "Ninguém pontuou" : wc === "joias" ? "Ninguém ganhou joia" : "Ninguém andou casa"} nessa partida</p>`;
+        : `<h2>🏁 Jogo encerrado</h2><p style="opacity:0.8;">${wc === "corrida" ? "Ninguém ficou com carta" : wc === "pontos" ? "Ninguém pontuou" : wc === "joias" ? "Ninguém ganhou joia" : "Ninguém andou casa"} nessa partida</p>`;
     } else if (tiedTop.length > 1) {
       const names = tiedTop.map((p) => escapeHtml(p.name)).join(" e ");
       headerHtml = isExpress
@@ -17050,7 +17253,7 @@ function renderFinalScreen() {
         (p) => `
     <li class="${p.rank === 1 && !allZero ? "first-place" : ""}">
       <span>${(!allZero && medals[p.rank - 1]) || p.rank + "º"} ${playerNameHtml(p.name, p.color, p.avatar)}</span>
-      <span>${isExpress ? `${p.score} ponto${p.score === 1 ? "" : "s"}` : `${p.score} pts — casa ${p.position}`}${gemBadgesHtml(p)}</span>
+      <span>${wc === "corrida" ? `🃏 ${cartasTxt(p.score || 0)}` : isExpress ? `${p.score} ponto${p.score === 1 ? "" : "s"}` : `${p.score} pts — casa ${p.position}`}${gemBadgesHtml(p)}</span>
     </li>
   `,
       )
@@ -17300,6 +17503,10 @@ function renderModeCardDescs() {
     `Sem tabuleiro: 50 cartas, pontos = 11 − dicas, carta de ${Math.floor(X.hardcore.card / 60)}:${String(X.hardcore.card % 60).padStart(2, "0")} a ${Math.floor(X.classico.card / 60)}:${String(X.classico.card % 60).padStart(2, "0")} e especiais estilo UNO.`,
   );
   set(
+    "mcDescCorrida",
+    `Quem acerta fica com a carta. Relógio de ${CORRIDA_TEMPO_MS / 60e3} min (+${CORRIDA_BONUS_MS / 1e3} s por acerto), carta de 2:30, ${CORRIDA_VEZ_SEG} s pra escolher e ${CORRIDA_VEZ_SEG} pra responder. Sem tabuleiro.`,
+  );
+  set(
     "mcDescOldschool",
     "Cartas de quem viveu a época: dicas mais difíceis, sem animais, coisas de adulto. C.A.O.S. mais comentarista, menos palhaço.",
   );
@@ -17321,6 +17528,7 @@ function atualizarRotuloModo() {
     junior: "🧒 Júnior",
     hardcore: "💀 Hardcore",
     express: `🔥 Express ${expressFlavor === "hardcore" ? "Hardcore" : "Clássico"}`,
+    corrida: "⏱️ Corrida contra o Tempo",
   };
   el.textContent = `${nomes[CURRENT_MODE] || CURRENT_MODE} · ${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}`;
 }
@@ -17333,6 +17541,7 @@ function resetModeSelectionUI() {
   const equipeMode = CURRENT_FORMAT === "equipe";
   document.getElementById("modeWrapExpress").style.display = equipeMode ? "none" : "";
   document.getElementById("modeWrapJunior").style.display = equipeMode ? "none" : "";
+  document.getElementById("modeWrapCorrida").style.display = equipeMode ? "none" : "";
   document.querySelectorAll(".expressCatChk").forEach((cb) => {
     cb.checked = false;
     cb.disabled = false;
@@ -17448,7 +17657,7 @@ function casaAnunciar() {
 function renderWinCondPicker() {
   const wrap = document.getElementById("winCondWrap");
   if (!wrap) return;
-  if (CURRENT_MODE === "express") {
+  if (CURRENT_MODE === "express" || CURRENT_MODE === "corrida") {
     wrap.style.display = "none";
     return;
   }
@@ -17500,6 +17709,7 @@ function cartasNoModo() {
 function buildRulesSummaryHtml() {
   const c = rulesCtx(),
     li = [];
+  if (CURRENT_MODE === "corrida") return corridaRegrasHtml(true);
   if (c.express) {
     li.push("🎯 <b>Objetivo:</b> somar mais pontos até o baralho acabar.");
     li.push(
@@ -17528,6 +17738,7 @@ function buildRulesSummaryHtml() {
 function buildRulesHtml() {
   const c = rulesCtx(),
     li = [];
+  if (CURRENT_MODE === "corrida") return corridaRegrasHtml(false);
   // 1. Objetivo
   li.push(
     c.express
@@ -19302,6 +19513,34 @@ const VITORIA_TUTORIAIS = {
       text: `O tabuleiro anda normalmente, mas chegar na casa ${vitoriaCasaFinal()} <b>não vence</b>. Aqui o que vale são as joias.`,
     },
   ],
+  // 1.7.10.6: a Corrida contra o Tempo abre isto na 1ª partida de cada dispositivo
+  corrida: () => [
+    {
+      icon: "⏱️",
+      title: "Corrida contra o Tempo",
+      text: `Quem acerta <b>fica com a carta</b>. Não tem tabuleiro, pontos nem joias: vence quem tiver <b>mais cartas</b> quando o relógio geral zerar.`,
+    },
+    {
+      icon: "⌛",
+      title: "Dois relógios",
+      text: `O <b>geral</b> começa com ${CORRIDA_TEMPO_MS / 60e3} min e ganha <b>+${CORRIDA_BONUS_MS / 1e3} s</b> a cada carta acertada. Cada <b>carta</b> tem ${corridaRelogioTxt(CORRIDA_CARTA_MS)}; acabou, ela sai sem dono.`,
+    },
+    {
+      icon: "👉",
+      title: "A vez segue a roda",
+      text: `O Mestre roda a cada carta. Na sua vez: <b>${CORRIDA_VEZ_SEG} s</b> pra escolher o número e <b>${CORRIDA_VEZ_SEG} s</b> pra responder. Errou ou demorou? Passa pro próximo.`,
+    },
+    {
+      icon: "☕",
+      title: "Intervalo congelado",
+      text: `Entre uma carta e outra, ${CORRIDA_INTERVALO_SEG} s pra ver o placar. O relógio geral <b>para</b> nessa hora (e na pausa e nas falas do C.A.O.S.).`,
+    },
+    {
+      icon: "⚡",
+      title: "Empatou?",
+      text: "Desempate relâmpago: sai uma carta e só os empatados respondem. Quem acertar primeiro leva.",
+    },
+  ],
   casa: () => [
     {
       icon: "🏠",
@@ -19334,6 +19573,7 @@ const VITORIA_TUTORIAIS = {
   ],
 };
 function vitoriaTutNome(cond) {
+  if (cond === "corrida") return "⏱️ Corrida contra o Tempo";
   const w = WIN_CONDITIONS[cond];
   return w ? w.icon + " " + w.label : "";
 }
@@ -19366,6 +19606,7 @@ function vitoriaTutTalvez(cond) {
 }
 // Começo da partida (beginGameplay). Na Moda da Casa quem chama é a roleta, depois do sorteio.
 function vitoriaTutInicio() {
+  if (CURRENT_MODE === "corrida") return void setTimeout(() => vitoriaTutTalvez("corrida"), 500);
   if (CURRENT_MODE === "express" || WIN_CONDITION === "casa") return;
   setTimeout(() => vitoriaTutTalvez(winCond()), 500);
 }
@@ -19806,6 +20047,7 @@ function retratoPartida(papel) {
     joiasRodada: { ...joiasRodada },
     vencedorJoias: gemWinner ? { tipo: gemWinner.kind, id: gemWinner.id } : null,
     relogio: { tipo: timerKind || null, fimEm: timerEndAt || null, cartaFimEm: cardEndAt || null, pausado: !!pausedAt },
+    corrida: typeof corridaRetrato === "function" ? corridaRetrato() : null, // 1.7.10.6: relógios da Corrida
     // 1.7.10.5.6 (pedido do JF): resumo da partida pra T2 e pro lobby: tempo de jogo (sem pausa), cartas viradas e as
     // últimas cartas resolvidas (só carta encerrada, então a resposta pode ir)
     partida: {
@@ -19886,6 +20128,7 @@ function desfazerFotografar() {
     timerKind,
     timerResta: timerEndAt ? Math.max(1000, timerEndAt - agora) : null,
     cartaResta: cardEndAt ? Math.max(1000, cardEndAt - agora) : null,
+    corrida: typeof corridaSalvar === "function" ? corridaSalvar() : null, // 1.7.10.6: o +10 s do acerto desfeito sai
     caos: desfazerCaosFoto(),
   };
 }
@@ -19974,6 +20217,10 @@ function desfazerAplicar(f) {
   pendingStartTime = Date.now();
   // o que o veredito deixou agendado (ex.: seguir depois do balão) não vale mais
   cartaSeq++;
+  if (f.corrida && typeof corridaRetomar === "function") {
+    corridaIntervaloFechar();
+    corridaRetomar(f.corrida); // depois do cartaSeq++: o relógio da carta continua de onde estava
+  }
   desfazerCaosAplicar(f.caos);
 }
 function desfazerNome(tipo, args) {
@@ -20181,9 +20428,9 @@ function telaoRoletaAnimar(raiz) {
 const TELAO_VITORIA_IC = { casa: "🏠", tabuleiro: "🏁", pontos: "🔢", joias: "💎", express: "⚡" };
 function telaoObjetivoHtml(r) {
   const w = (typeof WIN_CONDITIONS !== "undefined" && WIN_CONDITIONS[r.vitoria]) || null;
-  const nome = w ? w.label : r.vitoria;
+  const nome = w ? w.label : r.vitoria === "corrida" ? "Corrida contra o Tempo" : r.vitoria;
   if (!nome) return "";
-  return `<details class="telao-objetivo" data-k="obj"><summary>${TELAO_VITORIA_IC[r.vitoria] || (w && w.icon) || "🏆"} Como se vence: <b>${escapeHtml(nome)}</b></summary>${r.objetivo ? `<p>${escapeHtml(r.objetivo)}</p>` : ""}</details>`;
+  return `<details class="telao-objetivo" data-k="obj"><summary>${TELAO_VITORIA_IC[r.vitoria] || (w && w.icon) || (r.vitoria === "corrida" ? "⏱️" : "🏆")} Como se vence: <b>${escapeHtml(nome)}</b></summary>${r.objetivo ? `<p>${escapeHtml(r.objetivo)}</p>` : ""}</details>`;
 }
 // 1.7.10.1 (pedido do JF): o tabuleiro inteiro só no intervalo (lobby antes da próxima carta), no fim e antes
 // da primeira carta; com carta na mesa, ele sai da frente (o placar logo abaixo mostra a casa de cada um)
@@ -20244,11 +20491,12 @@ function telaoDesenhar(r, alvo) {
     const j = jog(id);
     return j && isSafeColor(j.cor) ? corDoJogador(j.cor) : "#a78bfa";
   };
-  const ordem = [...r.jogadores].sort((a, b) => (r.vitoria === "pontos" ? b.pontos - a.pontos : b.casa - a.casa));
+  const porPontos = r.vitoria === "pontos" || r.vitoria === "corrida";
+  const ordem = [...r.jogadores].sort((a, b) => (porPontos ? b.pontos - a.pontos : b.casa - a.casa));
   const placar = ordem
     .map((j, i) => {
       const joias = Object.keys(j.joias || {}).length;
-      const val = r.vitoria === "pontos" ? j.pontos + " pts" : r.vitoria === "joias" ? joias + "/4 joias" : "casa " + j.casa;
+      const val = r.vitoria === "corrida" ? `🃏 ${j.pontos} carta${j.pontos === 1 ? "" : "s"}` : r.vitoria === "pontos" ? j.pontos + " pts" : r.vitoria === "joias" ? joias + "/4 joias" : "casa " + j.casa;
       const tags = (j.id === r.mestreId ? '<span class="tp-tag">🎙️ Mestre</span>' : "") + (j.id === r.vezId ? '<span class="tp-tag tp-vez">👉 vez</span>' : "");
       return `<li style="--pc:${cor(j.id)}"${i === 0 ? ' class="tp-lider"' : ""}><span class="tp-nome"><i class="tp-cor" aria-hidden="true"></i>${nome(j.id)}${tags}</span><b>${escapeHtml(val)}</b></li>`;
     })
@@ -20286,6 +20534,7 @@ function telaoDesenhar(r, alvo) {
       <div class="tv-mestre" style="--pc:${cor(r.mestreId)}"><small>🎙️ Mestre</small><b>${nome(r.mestreId)}</b></div>
       <div class="tv-relogio"><small>⏱️ Tempo</small><b id="telaoRelogio">—</b></div>
     </section>
+    ${r.corrida ? `<div class="corrida-relogios" id="telaoCorrida">${corridaBarraHtml(corridaDoRetrato(r.corrida))}</div>` : ""}
     ${carta}
     ${telaoMostraTabuleiro(r) ? tabHtmlTelao(r) : ""}
     <section class="telao-placar"><h2 class="tp-tit">Placar</h2><ol>${placar}</ol></section>
@@ -20304,6 +20553,11 @@ function telaoRelogio() {
   // tempo de jogo andando entre um retrato e outro (parado na pausa, no intervalo e no fim)
   const tj = document.getElementById("telaoTempo");
   if (tj && r.partida && r.iniciada && !r.fim && !rel.pausado && !r.intervalo) tj.textContent = partidaTempoTxt((r.partida.tempoMs || 0) + (Date.now() - (r._em || Date.now())));
+  const tc = document.getElementById("telaoCorrida");
+  if (tc && r.corrida) {
+    const html = corridaBarraHtml(corridaDoRetrato(r.corrida));
+    if (tc.innerHTML !== html) tc.innerHTML = html;
+  }
   if (rel.pausado) {
     el.textContent = "pausado";
     el.classList.remove("tv-pouco");
@@ -21016,6 +21270,7 @@ function tabLobbyFechar() {
 }
 // Fim do intervalo (pro retrato da sala), ou null quando não tem intervalo aberto.
 function tabLobbyFimEm() {
+  if (CURRENT_MODE === "corrida") return corridaIntervaloFim && corridaIntervaloAberto() ? corridaIntervaloFim : null;
   return tabLobbyFim && document.getElementById("tabLobby") ? tabLobbyFim : null;
 }
 // Desfazer o veredito: o lobby fecha e a conta de "quanto andou" volta pro lobby de antes.
@@ -21131,6 +21386,8 @@ function lobbyGanhoSelo(d) {
 function lobbyPontosHtml(antes, ctx) {
   const ents = (ctx ? ctx.ents.slice() : lobbyEntidades()).sort((a, b) => b.pts - a.pts);
   const valePontos = ctx ? ctx.vitoria === "pontos" : winCond() === "pontos";
+  const corrida = ctx ? ctx.vitoria === "corrida" : winCond() === "corrida"; // 1.7.10.6: na Corrida, pontos = cartas
+  const un = (n) => (corrida ? `${n} carta${n === 1 ? "" : "s"}` : `${n} pt${n === 1 ? "" : "s"}`);
   const meta = valePontos ? (ctx ? ctx.metaPts : metaPontos()) : 0;
   const escala = Math.max(meta, ...ents.map((e) => e.pts), 1);
   const ant = (e) => (antes && antes.pts && typeof antes.pts[e.k] === "number" ? antes.pts[e.k] : null);
@@ -21138,11 +21395,11 @@ function lobbyPontosHtml(antes, ctx) {
   const top = ents.slice(0, 3).filter((e) => e.pts > 0);
   const degrau = (e, lugar) =>
     e
-      ? `<div class="lp-degrau lp-${lugar}" style="--pc:${e.cor}"><div class="lp-tok">${e.tok}</div><div class="lp-nome">${e.nome}</div><div class="lp-bloco"><b>${["", "🥇", "🥈", "🥉"][lugar]}</b><span>${e.pts} pt${e.pts === 1 ? "" : "s"}</span></div></div>`
+      ? `<div class="lp-degrau lp-${lugar}" style="--pc:${e.cor}"><div class="lp-tok">${e.tok}</div><div class="lp-nome">${e.nome}</div><div class="lp-bloco"><b>${["", "🥇", "🥈", "🥉"][lugar]}</b><span>${un(e.pts)}</span></div></div>`
       : `<div class="lp-degrau lp-${lugar} lp-vazio"><div class="lp-bloco"></div></div>`;
   const podio = top.length
     ? `<div class="lp-podio">${degrau(top[1], 2)}${degrau(top[0], 1)}${degrau(top[2], 3)}</div>`
-    : `<div class="lp-vazio-txt">Ninguém pontuou ainda. O pódio tá esperando.</div>`;
+    : `<div class="lp-vazio-txt">${corrida ? "Ninguém ficou com carta ainda." : "Ninguém pontuou ainda."} O pódio tá esperando.</div>`;
   const barras = ents
     .map((e) => {
       const a = ant(e);
@@ -21152,7 +21409,9 @@ function lobbyPontosHtml(antes, ctx) {
     .join("");
   const cab = valePontos
     ? `🎯 Vence quem chegar a <b>${meta} pontos</b>${(ctx ? ctx.equipe : CURRENT_FORMAT === "equipe") ? " (soma da equipe)" : ""}.`
-    : "Nesta partida os pontos não decidem quem vence. Valem pela glória.";
+    : corrida
+      ? "⏱️ Vence quem tiver <b>mais cartas</b> quando o relógio zerar."
+      : "Nesta partida os pontos não decidem quem vence. Valem pela glória.";
   return `<div class="lp-cab">${cab}</div>${podio}<ul class="lp-lista">${barras}</ul>`;
 }
 
@@ -22959,7 +23218,7 @@ function redeOpcoes(jid) {
   const meuIdx = jogadorIdxPorId(jid), minhaChave = palpiteKeyOf(meuIdx);
   if (!ehMestre && cardState === "revealed" && pendingIndex !== null && currentCard && currentCard.clues[pendingIndex].type === "clue" && CURRENT_MODE !== "express") {
     const pv = palpiteVezAtual();
-    if (!pv && palpiteEligibleHolders().includes(minhaChave)) add("palpitarAgora", [minhaChave], "🃏 Palpitar agora!", "ok", "Palpite a qualquer hora");
+    if (!pv && palpiteEligibleHolders().includes(minhaChave)) add("palpitarAgora", [minhaChave], CURRENT_MODE === "corrida" ? "🃏 Roubar a vez!" : "🃏 Palpitar agora!", "ok", CURRENT_MODE === "corrida" ? "Rouba a vez" : "Palpite a qualquer hora");
   }
   // 1.7.10.5: quem está na vez pede a dica pelo número; o Mestre recebe o pedido e abre
   if (!ehMestre && cardState === "revealed" && pendingIndex === null && currentCard && jogadorIdDe(responderIndex) === jid && CURRENT_MODE !== "express") {
@@ -27046,6 +27305,417 @@ function cartaReportarAbrir() {
   );
   ov.querySelector("#repFechar").addEventListener("click", () => ov.remove());
   document.body.appendChild(ov);
+}
+/* --- 1.7.10.6 · CORRIDA CONTRA O TEMPO (regras do JF: docs/Modos_1.7.10.6.md) ---
+ * É o jeito que o JF jogava com os sobrinhos: quem acerta fica com a carta. Sem tabuleiro, pontos ou joias.
+ *  · Relógio geral de 30 min (+10 s por carta acertada). Zerou: a resposta em andamento termina e não começa
+ *    carta nova. Vence quem tiver mais cartas; empate → desempate relâmpago.
+ *  · Cada carta tem 2:30, que não reinicia por erro nem troca de vez. Acabou: a carta sai sem dono.
+ *  · A vez segue a roda (15 s pra escolher a dica + 15 s pra responder; isso é o startTimer de sempre).
+ *  · Entre as cartas, intervalo de 15 s com o relógio geral congelado.
+ * Os relógios guardam "quanto falta" + "corre desde": o tique de 250 ms decide se cada um corre (pausa, fala do
+ * C.A.O.S., aviso na tela e intervalo congelam), então não tem prazo pra empurrar em cada lugar que para o jogo. */
+let corridaRestaMs = CORRIDA_TEMPO_MS;
+let corridaDesde = null;
+let corridaCartaRestaMs = CORRIDA_CARTA_MS;
+let corridaCartaDesde = null;
+let corridaCartaDaVez = -1; // cartaSeq da carta cujo relógio está valendo
+let corridaAcabou = false; // o relógio geral zerou
+let corridaDesempate = null; // { ids: [ids dos empatados], cartas: quantas ainda dá pra jogar }
+let corridaDesempateFeito = false;
+let corridaIntervaloPendente = false;
+let corridaIntervaloFim = 0; // vai pro retrato da sala
+let corridaIntervaloRelogio = null;
+let corridaAvisos = {};
+let corridaTique = null;
+let corridaBarraTxt = "";
+
+function corridaAtiva() {
+  return CURRENT_MODE === "corrida";
+}
+function corridaGeralMs() {
+  return Math.max(0, corridaRestaMs - (corridaDesde ? Date.now() - corridaDesde : 0));
+}
+function corridaCartaMs() {
+  return Math.max(0, corridaCartaRestaMs - (corridaCartaDesde ? Date.now() - corridaCartaDesde : 0));
+}
+function corridaRelogioTxt(ms) {
+  const s = Math.ceil(ms / 1e3);
+  return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+}
+function corridaIntervaloAberto() {
+  return !!document.getElementById("corridaIntervalo");
+}
+// O jogo está parado (pausa, fala do C.A.O.S., aviso na tela, intervalo)?
+function corridaParado() {
+  return (
+    !starterChosen ||
+    gameEnded ||
+    !!pausedAt ||
+    document.getElementById("pauseScreen").style.display === "block" ||
+    corridaIntervaloAberto() ||
+    !!activeToastState ||
+    !!timeoutOverlayMessage ||
+    caosJanelaImportanteAberta() // tutorial, aviso ou janela do C.A.O.S. aberta
+  );
+}
+function corridaZerar() {
+  corridaParar();
+  corridaRestaMs = CORRIDA_TEMPO_MS;
+  corridaCartaRestaMs = CORRIDA_CARTA_MS;
+  corridaDesde = corridaCartaDesde = null;
+  corridaCartaDaVez = -1;
+  corridaAcabou = false;
+  corridaDesempate = null;
+  corridaDesempateFeito = false;
+  corridaIntervaloPendente = false;
+  corridaAvisos = {};
+}
+function corridaIniciar() {
+  if (!corridaAtiva()) return;
+  corridaTique = corridaTique || setInterval(corridaTicar, 250);
+  corridaTicar();
+}
+// partida voltando do save: os relógios voltam do quanto faltava
+function corridaRetomar(salvo) {
+  if (!corridaAtiva() || !salvo) return;
+  corridaRestaMs = Math.max(0, Math.min(Number(salvo.resta) || 0, 4 * 3600e3));
+  corridaCartaRestaMs = Math.max(0, Math.min(Number(salvo.carta) || 0, CORRIDA_CARTA_MS));
+  corridaCartaDaVez = cartaSeq;
+  corridaAcabou = !!salvo.acabou;
+  corridaDesempateFeito = !!salvo.desempateFeito;
+  corridaDesempate = salvo.desempate && Array.isArray(salvo.desempate.ids) ? { ids: salvo.desempate.ids.slice(0, 6), cartas: Number(salvo.desempate.cartas) || 1 } : null;
+  corridaAvisos = salvo.avisos && typeof salvo.avisos === "object" ? salvo.avisos : {};
+  corridaDesde = corridaCartaDesde = null;
+  if (starterChosen && !gameEnded) corridaIniciar();
+}
+function corridaSalvar() {
+  if (!corridaAtiva()) return null;
+  return { resta: corridaGeralMs(), carta: corridaCartaMs(), acabou: corridaAcabou, desempate: corridaDesempate, desempateFeito: corridaDesempateFeito, avisos: corridaAvisos };
+}
+function corridaParar() {
+  clearInterval(corridaTique);
+  corridaTique = null;
+  corridaDobrar();
+  corridaIntervaloFechar();
+  const b = document.getElementById("corridaRelogios");
+  if (b) b.hidden = true;
+}
+// "dobra" o tempo que correu pra dentro do quanto falta (o relógio para aqui)
+function corridaDobrar() {
+  if (corridaDesde) corridaRestaMs = corridaGeralMs();
+  if (corridaCartaDesde) corridaCartaRestaMs = corridaCartaMs();
+  corridaDesde = corridaCartaDesde = null;
+}
+function corridaTicar() {
+  if (!corridaAtiva() || gameEnded) return corridaParar();
+  // carta nova: o relógio dela começa cheio
+  if (currentCard && cartaSeq !== corridaCartaDaVez) {
+    corridaCartaDaVez = cartaSeq;
+    corridaCartaRestaMs = CORRIDA_CARTA_MS;
+    corridaCartaDesde = null;
+  }
+  const parado = corridaParado();
+  const geralCorre = !parado && !corridaAcabou && !corridaDesempate && (cardState === "hidden" || cardState === "revealed");
+  const cartaCorre = !parado && cardState === "revealed";
+  const agora = Date.now();
+  if (geralCorre && !corridaDesde) corridaDesde = agora;
+  if (!geralCorre && corridaDesde) {
+    corridaRestaMs = corridaGeralMs();
+    corridaDesde = null;
+  }
+  if (cartaCorre && !corridaCartaDesde) corridaCartaDesde = agora;
+  if (!cartaCorre && corridaCartaDesde) {
+    corridaCartaRestaMs = corridaCartaMs();
+    corridaCartaDesde = null;
+  }
+  corridaAvisarTempo();
+  if (!corridaAcabou && !corridaDesempate && corridaGeralMs() <= 0) {
+    corridaAcabou = true;
+    corridaDobrar();
+    caosLog("corrida", "o relógio geral zerou");
+  }
+  corridaDesenharBarra();
+  corridaTalvezPublicar();
+  if (parado || pendingOverlayAction) return;
+  // com dica pendente (resposta ou especial em andamento), espera o veredito: ele chama o fim da carta
+  if (cardState === "revealed" && pendingIndex === null && corridaCartaAcabou()) {
+    clearTimer();
+    resolveExhaustionIfNeeded();
+    return;
+  }
+  // o relógio zerou antes de o Mestre abrir a carta: não começa carta nova
+  if (cardState === "hidden" && corridaAcabou && !corridaDesempate) corridaEncerrar();
+}
+// A carta acabou (tempo da carta, ou relógio geral zerado fora do desempate)?
+function corridaCartaAcabou() {
+  if (!corridaAtiva() || !currentCard) return false;
+  return corridaCartaMs() <= 0 || (corridaAcabou && !corridaDesempate);
+}
+function corridaAvisarCartaPerdida() {
+  const geral = corridaAcabou && !corridaDesempate;
+  fxFloat(geral ? "⏱️ Acabou o tempo!" : "⌛ A carta acabou o tempo", "#fb923c");
+  playSfx("erro");
+  caosLog("corrida", geral ? "carta encerrada pelo relógio geral" : "carta perdeu no tempo (2:30)");
+}
+function corridaBonus() {
+  if (!corridaAtiva() || corridaDesempate || corridaAcabou) return;
+  if (corridaDesde) corridaRestaMs = corridaGeralMs();
+  corridaDesde = null;
+  corridaRestaMs += CORRIDA_BONUS_MS;
+}
+// marcos do relógio geral: o C.A.O.S. avisa (uma vez cada)
+function corridaAvisarTempo() {
+  if (corridaAcabou || corridaDesempate) return;
+  const ms = corridaGeralMs();
+  const marcos = [
+    ["cinco", 5 * 60e3, "⏱️ 5 minutos!"],
+    ["um", 60e3, "⏱️ Último minuto!"],
+    ["dez", 10e3, "⏱️ 10 segundos!"],
+  ];
+  for (const [k, lim, txt] of marcos) {
+    if (ms > lim || corridaAvisos[k]) continue;
+    // voltou do save já abaixo do marco: marca sem avisar
+    corridaAvisos[k] = true;
+    if (lim - ms > 3e3) continue;
+    fxFloat(txt, "#fbbf24");
+    playSfx(k === "dez" ? "tique" : "virar");
+    vibrar("tempo");
+    const V = REACTIVE_VOICE.corrida;
+    if (k !== "dez" && V && V[k]) {
+      const fala = getRandomReaction(V[k], corridaLiderNome());
+      if (fala) caosFalaAgendar(() => fala, 200, "baixa");
+    }
+  }
+}
+function corridaLiderNome() {
+  const top = corridaPlacar()[0];
+  return top ? top.name : "alguém";
+}
+function corridaPlacar() {
+  return players.slice().sort((a, b) => (b.score || 0) - (a.score || 0));
+}
+// Barra dos relógios na tela do host/mesa (o online desenha a dele a partir do retrato)
+function corridaDesenharBarra() {
+  const b = document.getElementById("corridaRelogios");
+  if (!b) return;
+  const visivel = corridaAtiva() && starterChosen && !gameEnded;
+  b.hidden = !visivel;
+  if (!visivel) return;
+  const html = corridaBarraHtml({
+    geral: corridaGeralMs(),
+    carta: cardState === "revealed" || cardState === "hidden" ? corridaCartaMs() : null,
+    corre: !!corridaDesde,
+    acabou: corridaAcabou,
+    desempate: !!corridaDesempate,
+  });
+  if (html !== corridaBarraTxt) {
+    corridaBarraTxt = html;
+    b.innerHTML = html;
+  }
+}
+// d = { geral, carta, corre, acabou, desempate } (o convidado monta o mesmo a partir do retrato)
+function corridaBarraHtml(d) {
+  const g = d.desempate
+    ? `<span class="cr-geral cr-desempate">⚡ Desempate relâmpago</span>`
+    : d.acabou
+      ? `<span class="cr-geral cr-zerou">⏱️ 0:00 · última resposta</span>`
+      : `<span class="cr-geral${d.geral <= 60e3 ? " cr-pouco" : ""}${d.corre ? "" : " cr-parado"}" title="Relógio geral da partida">⏱️ <b>${corridaRelogioTxt(d.geral)}</b></span>`;
+  const c =
+    d.carta === null || d.carta === undefined
+      ? ""
+      : `<span class="cr-carta${d.carta <= 30e3 ? " cr-pouco" : ""}" title="Tempo da carta">🃏 carta <b>${corridaRelogioTxt(d.carta)}</b></span>`;
+  return g + c;
+}
+
+/* --- fim de carta, intervalo, fim de partida, desempate --- */
+function corridaDepoisDaCarta() {
+  renderScoreboard();
+  renderMiniScoreboard();
+  if (corridaDesempate) {
+    const ultima = cartasPartida[cartasPartida.length - 1];
+    if (ultima && ultima.quem) return endGame(); // quem acertou primeiro leva
+    corridaDesempate.cartas--;
+    if (corridaDesempate.cartas <= 0) return endGame(); // ninguém acertou: fica empate
+    drawHidden();
+    return;
+  }
+  if (corridaAcabou || deck.length === 0) return corridaEncerrar();
+  corridaIntervaloPendente = true;
+  drawHidden();
+}
+function corridaEncerrar() {
+  if (gameEnded) return;
+  const max = Math.max(0, ...players.map((p) => p.score || 0));
+  const empatados = players.filter((p) => (p.score || 0) === max);
+  if (empatados.length >= 2 && !corridaDesempateFeito && deck.length > 0) return corridaDesempateComecar(empatados);
+  endGame();
+}
+function corridaPodeResponder(i) {
+  return !corridaDesempate || (!!players[i] && corridaDesempate.ids.includes(players[i].id));
+}
+// No desempate o Mestre é quem não está empatado (se tiver); se todo mundo empatou, a roda segue
+function corridaDesempateMestre(candidato) {
+  if (!corridaDesempate) return candidato;
+  for (let i = 0, c = candidato; i < players.length; i++, c = nextIndex(c)) if (!corridaPodeResponder(c)) return c;
+  return candidato;
+}
+function corridaDesempateComecar(empatados) {
+  corridaDesempateFeito = true;
+  corridaIntervaloFechar();
+  const ids = empatados.map((p) => p.id);
+  const todos = empatados.length === players.length;
+  // todo mundo empatado: cada um lê uma vez (no máximo), pra ninguém ficar sem responder
+  corridaDesempate = { ids, cartas: todos ? empatados.length : 1 };
+  // fichas de "rouba a vez" voltam pro estoque: no desempate, só a roda
+  palpiteHolders = {};
+  palpiteStock = Math.max(palpiteStock, 1);
+  // a carta escondida (não aberta) volta pro baralho; a do desempate sai nova
+  if (currentCard && cardState === "hidden") {
+    const raw = cardsByAnswer.get(currentCard.answer);
+    if (raw) deck.push(raw);
+  }
+  clearTimer();
+  currentCard = null;
+  cardState = "none";
+  pendingIndex = null;
+  revealedOrder = [];
+  mestreIndex = corridaDesempateMestre(mestreIndex);
+  responderIndex = nextResponder(mestreIndex, mestreIndex);
+  caosLog("corrida", "desempate relâmpago: " + empatados.map((p) => p.name).join(", "));
+  const nomes = empatados.map((p) => p.name).join(" × ");
+  const V = REACTIVE_VOICE.corrida;
+  const fala = (V && getRandomReaction(V.desempate, nomes)) || `⚡ DESEMPATE RELÂMPAGO! ${nomes}: uma carta, quem acertar primeiro leva.`;
+  playSfx("flash");
+  render();
+  saveGameState();
+  showToastMessage(fala, () => {
+    if (!gameEnded && corridaDesempate && cardState === "none") drawHidden();
+  }, true);
+}
+
+/* Intervalo de 15 s entre as cartas (relógio geral congelado): placar das cartas e a lista da partida. */
+function corridaIntervaloTalvez() {
+  if (!corridaIntervaloPendente) return;
+  corridaIntervaloPendente = false;
+  if (!corridaAtiva() || gameEnded || !starterChosen || cardState !== "hidden" || corridaDesempate) return;
+  corridaIntervaloAbrir();
+}
+function corridaPlacarHtml() {
+  const lista = corridaPlacar();
+  const max = lista.length ? lista[0].score || 0 : 0;
+  return `<ol class="cr-placar">${lista
+    .map((p) => {
+      const n = p.score || 0;
+      return `<li class="${n === max && n > 0 ? "cr-lider" : ""}" style="--pc:${corDoJogador(p.color)}"><span>${playerNameHtml(p.name, p.color, p.avatar)}</span><b>${n} carta${n === 1 ? "" : "s"}</b></li>`;
+    })
+    .join("")}</ol>`;
+}
+function corridaIntervaloAbrir() {
+  corridaIntervaloFechar();
+  corridaDobrar();
+  const m = players[mestreIndex];
+  const ultima = cartasPartida[cartasPartida.length - 1];
+  const ultimaTxt = !ultima
+    ? ""
+    : ultima.quem
+      ? `✅ <b>${escapeHtml((jogadorPorId(ultima.quem) || {}).name || "Alguém")}</b> ficou com <b>${escapeHtml(ultima.resp)}</b> (${ultima.dicas} dica${ultima.dicas === 1 ? "" : "s"}) · +${CORRIDA_BONUS_MS / 1e3} s no relógio`
+      : `❌ <b>${escapeHtml(ultima.resp)}</b> saiu sem dono`;
+  const ov = document.createElement("div");
+  ov.id = "corridaIntervalo";
+  ov.className = "jf-modal-bg tb-lobby-bg";
+  ov.innerHTML = `<div class="jf-modal tb-modal tb-lobby cr-intervalo" role="dialog" aria-modal="true" aria-labelledby="crIntTit">
+    <div class="tb-lobby-topo"><h3 id="crIntTit">⏱️ Intervalo</h3><button type="button" class="btn-neo neo-solid neo-still tb-lobby-pular" id="crIntPular" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">Próxima carta ▶</button></div>
+    <div class="tb-lobby-tempo" aria-hidden="true"><div class="tb-lobby-barra" id="crIntBarra"></div></div>
+    <div class="tb-lobby-sub">Relógio geral congelado em <b>${corridaRelogioTxt(corridaGeralMs())}</b> · <b id="crIntSeg">${CORRIDA_INTERVALO_SEG}</b> s</div>
+    ${ultimaTxt ? `<div class="cr-ultima">${ultimaTxt}</div>` : ""}
+    ${m ? `<div class="tb-lobby-prox">📖 Próximo Mestre: ${playerNameHtml(m.name, m.color, m.avatar)}</div>` : ""}
+    ${corridaPlacarHtml()}
+    <details class="cr-cartas"><summary>🃏 Cartas da partida</summary>${cartasPartidaHostHtml()}</details>
+  </div>`;
+  document.body.appendChild(ov);
+  ov.querySelector("#crIntPular").addEventListener("click", corridaIntervaloFechar);
+  let fim = Date.now() + CORRIDA_INTERVALO_SEG * 1e3,
+    antes = Date.now();
+  corridaIntervaloFim = fim;
+  if (typeof redeHostPublicar === "function") redeHostPublicar(true);
+  corridaIntervaloRelogio = setInterval(() => {
+    const t = Date.now(),
+      passou = t - antes;
+    antes = t;
+    if (!ov.isConnected || gameEnded || cardState !== "hidden") return corridaIntervaloFechar();
+    if ((document.hidden && !(typeof salaOnlineAberta === "function" && salaOnlineAberta())) || pausaEstaAberta()) {
+      fim += passou;
+      corridaIntervaloFim = fim;
+      return;
+    }
+    const resta = Math.max(0, fim - t);
+    const seg = ov.querySelector("#crIntSeg"),
+      barra = ov.querySelector("#crIntBarra");
+    if (seg) seg.textContent = String(Math.ceil(resta / 1e3));
+    if (barra) barra.style.width = ((resta / (CORRIDA_INTERVALO_SEG * 1e3)) * 100).toFixed(1) + "%";
+    if (resta <= 0) corridaIntervaloFechar();
+  }, 250);
+}
+function corridaIntervaloFechar() {
+  clearInterval(corridaIntervaloRelogio);
+  corridaIntervaloRelogio = null;
+  const ov = document.getElementById("corridaIntervalo");
+  if (!ov) return;
+  ov.remove();
+  corridaIntervaloFim = 0;
+  if (typeof redeHostPublicar === "function") redeHostPublicar(true);
+}
+
+/* Regras na tela de cadastro (resumo e completas) */
+function corridaRegrasHtml(resumo) {
+  const min = CORRIDA_TEMPO_MS / 60e3,
+    bonus = CORRIDA_BONUS_MS / 1e3,
+    carta = corridaRelogioTxt(CORRIDA_CARTA_MS),
+    vez = CORRIDA_VEZ_SEG;
+  const li = [
+    `🎯 <b>Objetivo:</b> quem acerta <b>fica com a carta</b>. Vence quem tiver mais cartas quando o relógio geral zerar. Não tem tabuleiro, pontos nem joias.`,
+    `⏱️ <b>Relógio geral:</b> ${min} min. Cada carta acertada dá <b>+${bonus} s</b>. Zerou: a resposta que estava rolando termina e não sai carta nova.`,
+    '🎙️ <b>Mestre:</b> roda a cada carta, como no Clássico. Fala a categoria e lê a dica pedida. <b>Nunca</b> fala a resposta.',
+    `💬 <b>A vez:</b> segue a roda. ${vez} s pra escolher o número e ${vez} s pra responder. Errou ou o tempo acabou? Passa pro próximo.`,
+    `🃏 <b>Carta:</b> ${carta} pra alguém acertar (não reinicia quando a vez passa). Acabou o tempo ou as 10 dicas? Sai sem dono.`,
+  ];
+  if (!resumo) {
+    li.push(
+      `☕ <b>Intervalo:</b> ${CORRIDA_INTERVALO_SEG} s entre as cartas pra ver o placar, com o relógio geral <b>congelado</b>. Dá pra pular.`,
+      "⭐ <b>Especiais:</b> sem tabuleiro, as de andar casas saem. <b>Perca sua vez</b> passa a vez. <b>Rouba a vez</b> (o antigo Palpite a qualquer hora) dá uma ficha: quem tem pode responder fora da vez. Precisa de 3+ jogadores.",
+      "⚡ <b>Empate no fim:</b> desempate relâmpago. Sai uma carta e só os empatados respondem: quem acertar primeiro leva. Ninguém acertou? Fica empate.",
+      "⏸️ <b>Pausa:</b> pausar congela os dois relógios. As falas do C.A.O.S. também não comem o seu tempo.",
+    );
+  }
+  return li.map((t) => "<li>" + t + "</li>").join("");
+}
+
+/* Online: os relógios vão no retrato como prazo (correndo) ou "quanto falta" (parado), na hora do host.
+   Fica estável enquanto nada muda; o host republica quando um relógio para ou volta a correr. */
+let corridaPublicado = "";
+function corridaRetrato() {
+  if (!corridaAtiva() || !starterChosen) return null;
+  return {
+    resta: corridaDesde ? null : Math.round(corridaRestaMs),
+    fimEm: corridaDesde ? corridaDesde + corridaRestaMs : null,
+    cartaResta: corridaCartaDesde ? null : Math.round(corridaCartaRestaMs),
+    cartaFimEm: corridaCartaDesde ? corridaCartaDesde + corridaCartaRestaMs : null,
+    acabou: corridaAcabou,
+    desempate: !!corridaDesempate,
+  };
+}
+// do retrato pro formato da barra (no convidado, na hora do host)
+function corridaDoRetrato(c) {
+  const agora = typeof redeAgora === "function" ? redeAgora() : Date.now();
+  const ms = (fim, resta) => Math.max(0, fim ? fim - agora : resta || 0);
+  return { geral: ms(c.fimEm, c.resta), carta: ms(c.cartaFimEm, c.cartaResta), corre: !!c.fimEm, acabou: !!c.acabou, desempate: !!c.desempate };
+}
+function corridaTalvezPublicar() {
+  const k = [!!corridaDesde, !!corridaCartaDesde, corridaAcabou, !!corridaDesempate].join("|");
+  if (k === corridaPublicado) return;
+  corridaPublicado = k;
+  if (typeof redeHostPublicar === "function") redeHostPublicar();
 }
 /* ======================================================================
  * 6. VOZ, SOM E VIBRAÇÃO
@@ -36926,6 +37596,7 @@ function saveGameState() {
       caosCortes,
       gemWinner,
       cardEndAt,
+      corrida: corridaSalvar(),
       pausedCardRemaining,
       expressWhoFreeze,
       bonusOrigMestreIdx,
@@ -36985,7 +37656,7 @@ function saveSegundos(v) {
 }
 function sanitizeLoadedState(s) {
   if (!s || typeof s !== "object") return;
-  const MODES = ["classico", "hardcore", "express", "junior", "oldschool"];
+  const MODES = ["classico", "hardcore", "express", "junior", "oldschool", "corrida"];
   if (!MODES.includes(s.CURRENT_MODE)) s.CURRENT_MODE = "classico";
   if (s.CURRENT_FORMAT !== "versus" && s.CURRENT_FORMAT !== "equipe") s.CURRENT_FORMAT = "versus";
   const num = (v, d) => (typeof v === "number" && Number.isFinite(v) ? v : d);
@@ -37406,6 +38077,8 @@ function loadGameState() {
           joiasRodada[String(k).slice(0, 12)] = Math.max(0, Math.min(JOIAS_POR_RODADA, Math.floor(v)));
       });
     cardEndAt = saveNum(state.cardEndAt) || null;
+    corridaZerar();
+    if (CURRENT_MODE === "corrida" && state.corrida && typeof state.corrida === "object") corridaRetomar(state.corrida);
     if (state.expressWhoFreeze && typeof state.expressWhoFreeze === "object" && CURRENT_MODE === "express") {
       const f = state.expressWhoFreeze,
         ok = (v) => typeof v === "number" && isFinite(v) && v >= 0;
@@ -37495,6 +38168,7 @@ function loadGameState() {
       if (players.length > 0) renderFinalScreen();
     } else {
       render();
+      if (CURRENT_MODE === "corrida" && starterChosen) corridaIniciar();
       if (CURRENT_MODE === "express" && cardEndAt && cardSecondsLeft() <= 0) {
         expressCardLost();
       } else if (timerEndAt && timerKind) {
@@ -72545,6 +73219,30 @@ const REACTIVE_VOICE = {
     ],
   },
 };
+// 1.7.10.6 · Corrida contra o Tempo: avisos do relógio geral e o desempate relâmpago
+REACTIVE_VOICE.corrida = {
+  rouba: [
+    "{nome}, ficha de ROUBA A VEZ! Na hora que tiver certeza, mesmo na vez de outra pessoa, avisa o Mestre e responde. É uma só, então escolhe bem.",
+    "{nome}, você pode roubar a vez! Sabe a resposta na vez do outro? Fala pro Mestre e manda. Errou, sem castigo.",
+  ],
+  cinco: [
+    "Cinco minutos no relógio. {nome} tá na frente e já tá contando vitória.",
+    "Cinco minutos. Quem tá atrás, essa é a hora de acordar.",
+    "Faltam cinco minutos. {nome}, segura essa coleção aí.",
+    "Cinco minutinhos. Eu, se fosse vocês, parava de pensar tanto.",
+  ],
+  um: [
+    "Último minuto! Agora é no desespero.",
+    "Um minuto! {nome} lidera. Alguém vai deixar?",
+    "Sessenta segundos. Cada carta vale ouro agora.",
+    "Último minuto, gente. Respira e chuta com fé.",
+  ],
+  desempate: [
+    "⚡ DESEMPATE RELÂMPAGO! {nome}: uma carta, quem acertar primeiro leva tudo.",
+    "⚡ Empatou?! Então é desempate relâmpago. {nome}, uma carta só. Quem acertar, ganha.",
+    "⚡ Relógio zerado e empate. Que delícia. {nome}: desempate relâmpago, agora!",
+  ],
+};
 const CAOS_AVATAR_TIPO = {
   fofo: new Set(AVATARS_KIDS.concat(["🦄", "👶", "🍦"])),
   sombrio: new Set(["💀", "😈", "🐺", "🐍", "🧛", "🧟", "🥷", "🦈", "👻"]),
@@ -75584,6 +76282,14 @@ CAOS_GERADORES.inicioModo = {
       "Old School. Quem lembra de fita VHS já sai na frente.",
       "Modo Old School. Hoje a nostalgia joga junto.",
     ],
+    modo_corrida: [
+      "Corrida contra o Tempo. Quem acerta leva a carta pra casa. Eu levo o relógio.",
+      "Corrida: trinta minutos e um relógio que não tem pena de ninguém.",
+      "Corrida contra o Tempo. Pensa rápido. Pensar devagar é pros outros modos.",
+      "Modo Corrida. Cada carta vale uma. Cada segundo vale mais.",
+      "Corrida contra o Tempo. O relógio já começou a rir de vocês.",
+      "Corrida. Hoje a coleção de cartas decide tudo. E o tempo decide a coleção.",
+    ],
     modo_equipe: [
       "Modo Equipe. Ninguém fica sozinho. Nem na culpa.",
       "Equipe: vitória compartilhada e culpa dividida em partes iguais.",
@@ -76449,6 +77155,7 @@ function iniciar() {
     ["express", "modeBtnExpress"],
     ["random", "modeBtnRandom"],
     ["oldschool", "modeBtnOldschool"],
+    ["corrida", "modeBtnCorrida"],
   ].forEach(([m, id]) =>
     document.getElementById(id).addEventListener("click", () => {
       unlockAudio();

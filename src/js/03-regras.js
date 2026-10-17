@@ -304,13 +304,14 @@ function checkBonusLanding(playerIdx, oldPosition, newPosition) {
   }
 }
 function isWildcardSpecial(text) {
-  return typeof text === "string" && text.toLowerCase().includes("palpite");
+  return typeof text === "string" && /palpite|rouba a vez/i.test(text);
 }
 function currentGemCategories() {
   return CURRENT_MODE === "junior" ? ["ANIMAL", "PESSOA", "LUGAR", "COISA"] : ["ANO", "PESSOA", "LUGAR", "COISA"];
 }
 function winCond() {
   if (CURRENT_MODE === "express") return "express";
+  if (CURRENT_MODE === "corrida") return "corrida";
   const w = WIN_CONDITIONS[WIN_CONDITION] ? WIN_CONDITION : "casa";
   // Na Moda da Casa, depois do sorteio vale o comportamento do modo sorteado.
   if (w === "casa" && CASA_MODOS.includes(casaSorteado)) return casaSorteado;
@@ -337,7 +338,7 @@ function joiasComTrava() {
 }
 function gemsAwarded() {
   const w = winCond();
-  return w !== "pontos" && w !== "tabuleiro";
+  return w !== "pontos" && w !== "tabuleiro" && w !== "corrida";
 }
 function gemsCountForWin() {
   const w = winCond();
@@ -352,7 +353,7 @@ function teamScore(id) {
 }
 function rankValue(holder, teamId) {
   const w = winCond();
-  if (w === "express") return holder.score || 0;
+  if (w === "express" || w === "corrida") return holder.score || 0; // na Corrida, score = cartas conquistadas
   if (w === "pontos") return teamId ? teamScore(teamId) : holder.score || 0;
   if (w === "joias") return gemTotal(holder);
   return holder.position || 0;
@@ -360,7 +361,7 @@ function rankValue(holder, teamId) {
 function victoryReached() {
   if (gemWinner) return true;
   const w = winCond();
-  if (w === "express" || w === "joias") return false;
+  if (w === "express" || w === "joias" || w === "corrida") return false;
   const eq = CURRENT_FORMAT === "equipe";
   if (w === "pontos") {
     const meta = metaPontos();
@@ -380,6 +381,8 @@ function winCondRuleText(goal) {
 function winCondRuleTextBase(goal) {
   const g = goal || WINNING_SCORE || 200,
     w = winCond();
+  if (w === "corrida")
+    return `Vence quem tiver <b>mais cartas</b> quando o relógio geral (${CORRIDA_TEMPO_MS / 60e3} min, +${CORRIDA_BONUS_MS / 1e3} s por carta acertada) zerar. Empate: <b>desempate relâmpago</b>.`;
   if (w === "joias")
     return `Vence quem juntar as <b>${GEMS_TO_WIN} joias</b>. O tabuleiro anda, mas chegar na casa ${g} não vence. Máximo de <b>${JOIAS_POR_RODADA} joias por ${CURRENT_FORMAT === "equipe" ? "equipe" : "jogador"} em cada rodada</b>.`;
   if (w === "pontos")
@@ -547,6 +550,16 @@ function buildHardcoreClueSet(shuffledClues) {
   const chosenReals = shuffle(reals).slice(0, 10 - chosenSpecials.length);
   return shuffle([...chosenReals, ...chosenSpecials]);
 }
+// Corrida contra o Tempo: sem tabuleiro, as especiais de casa saem ("Avance/Volte N casas", "Escolha um jogador…").
+// Ficam "Perca sua vez" e o palpite (que na Corrida é o "Rouba a vez"). 10 dicas, 1 ou 2 especiais (≥ 8 normais).
+function especialDeCasa(item) {
+  return !!item && item.type === "special" && /casa|escolha um jogador/i.test(item.text || "");
+}
+function buildCorridaClueSet(shuffledClues) {
+  return buildHardcoreClueSet(
+    shuffledClues.filter((c) => !especialDeCasa(c)).map((c) => (c.type === "special" && isWildcardSpecial(c.text) ? { ...c, text: "Rouba a vez" } : c)),
+  );
+}
 function isJfPlayer(p) {
   return !!p && isJfName(p.name);
 }
@@ -689,7 +702,7 @@ function gemBadgesHtml(holder) {
 // 1.7.10.5 (pedido do JF): selo amarelo (a cor da ficha no Perfil de mesa) em quem tem ficha de palpite
 function palpiteBadge(key) {
   const n = palpiteCount(key);
-  return n > 0 ? ` <span class="selo-palpite" title="Tem ficha de palpite a qualquer hora">🃏${n > 1 ? "×" + n : ""}</span>` : "";
+  return n > 0 ? ` <span class="selo-palpite" title="Tem ficha de ${CURRENT_MODE === "corrida" ? "Rouba a vez" : "palpite a qualquer hora"}">🃏${n > 1 ? "×" + n : ""}</span>` : "";
 }
 function buildPalpiteBoxHtml() {
   // 1.7.10.5: no online, quem tem aparelho próprio na sala usa o botão Palpitar agora lá (sai daqui)
@@ -706,7 +719,7 @@ function buildPalpiteBoxHtml() {
       return `<div class="palpite-row"><span>🃏 ${playerNameHtml(d.name, d.color, d.avatar)}${n > 1 ? " ×" + n : ""}</span><span><button class="btn-correct palpite-hit" data-key="${k}">✓ Acertou</button> <button class="btn-wrong palpite-miss" data-key="${k}">✕ Errou</button></span></div>`;
     })
     .join("");
-  return `<div class="palpite-box"><div class="palpite-title">🃏 Alguém usou o palpite a qualquer hora? (fichas no estoque: ${palpiteStock})</div>${rows}</div>`;
+  return `<div class="palpite-box"><div class="palpite-title">🃏 Alguém usou ${CURRENT_MODE === "corrida" ? "o Rouba a vez" : "o palpite a qualquer hora"}? (fichas no estoque: ${palpiteStock})</div>${rows}</div>`;
 }
 
 

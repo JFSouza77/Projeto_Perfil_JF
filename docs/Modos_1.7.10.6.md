@@ -48,3 +48,21 @@ pessoal (de quem pediu), nunca fura o mudo, não muda regra nem placar.
 ## Fica pra depois
 
 Equalizador/perfil de voz versionado, fadiga entre partidas, orquestração por intenção sobre os geradores.
+
+## Corrida: como ficou no código (17/10)
+
+- Arquivo próprio: `src/js/05o-corrida.js` (relógios, intervalo, fim, desempate, regras, retrato do online).
+- Os relógios guardam "quanto falta" + "corre desde". Um tique de 250 ms decide se cada um corre: param na pausa,
+  nas falas do C.A.O.S., nos avisos de tempo esgotado, no tutorial e no intervalo. O da carta só corre com a carta
+  aberta; o geral também corre com a carta escondida (o Mestre não enrola).
+- `p.score` = cartas conquistadas (placar, ranking, tela final e o "Pontos" do lobby viram "cartas").
+- Especiais de casa saem; "Um palpite a qualquer hora" aparece como **Rouba a vez** (mesma ficha do palpite; no
+  online o botão vira "Roubar a vez!"). 10 dicas por carta, 1 ou 2 especiais.
+- Fim de carta por tempo: se tem resposta pendente, espera o veredito. Relógio geral zerado: idem, e não sai carta
+  nova. Desistir da carta não dá carta pro Mestre.
+- Desempate relâmpago: só os empatados respondem; o Mestre é alguém fora do empate (se tiver). Todo mundo empatado:
+  até uma carta por empatado, cada um lendo uma vez. Ninguém acertou: empate. Fichas de Rouba a vez voltam pro estoque.
+- Desfazer o acerto tira a carta e os +10 s; o relógio da carta continua de onde estava.
+- Save guarda os dois relógios (e o desempate). Online: o retrato leva os prazos; a T2 e os dispositivos mostram a
+  barra dos relógios; o intervalo de 15 s aparece pra todos com o placar em cartas.
+- Só Versus (no Equipe o card do modo some). Fora do Modo Aleatório por enquanto.

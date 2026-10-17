@@ -700,6 +700,7 @@ function tabLobbyFechar() {
 }
 // Fim do intervalo (pro retrato da sala), ou null quando não tem intervalo aberto.
 function tabLobbyFimEm() {
+  if (CURRENT_MODE === "corrida") return corridaIntervaloFim && corridaIntervaloAberto() ? corridaIntervaloFim : null;
   return tabLobbyFim && document.getElementById("tabLobby") ? tabLobbyFim : null;
 }
 // Desfazer o veredito: o lobby fecha e a conta de "quanto andou" volta pro lobby de antes.

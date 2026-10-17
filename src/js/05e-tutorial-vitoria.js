@@ -121,6 +121,34 @@ const VITORIA_TUTORIAIS = {
       text: `O tabuleiro anda normalmente, mas chegar na casa ${vitoriaCasaFinal()} <b>não vence</b>. Aqui o que vale são as joias.`,
     },
   ],
+  // 1.7.10.6: a Corrida contra o Tempo abre isto na 1ª partida de cada dispositivo
+  corrida: () => [
+    {
+      icon: "⏱️",
+      title: "Corrida contra o Tempo",
+      text: `Quem acerta <b>fica com a carta</b>. Não tem tabuleiro, pontos nem joias: vence quem tiver <b>mais cartas</b> quando o relógio geral zerar.`,
+    },
+    {
+      icon: "⌛",
+      title: "Dois relógios",
+      text: `O <b>geral</b> começa com ${CORRIDA_TEMPO_MS / 60e3} min e ganha <b>+${CORRIDA_BONUS_MS / 1e3} s</b> a cada carta acertada. Cada <b>carta</b> tem ${corridaRelogioTxt(CORRIDA_CARTA_MS)}; acabou, ela sai sem dono.`,
+    },
+    {
+      icon: "👉",
+      title: "A vez segue a roda",
+      text: `O Mestre roda a cada carta. Na sua vez: <b>${CORRIDA_VEZ_SEG} s</b> pra escolher o número e <b>${CORRIDA_VEZ_SEG} s</b> pra responder. Errou ou demorou? Passa pro próximo.`,
+    },
+    {
+      icon: "☕",
+      title: "Intervalo congelado",
+      text: `Entre uma carta e outra, ${CORRIDA_INTERVALO_SEG} s pra ver o placar. O relógio geral <b>para</b> nessa hora (e na pausa e nas falas do C.A.O.S.).`,
+    },
+    {
+      icon: "⚡",
+      title: "Empatou?",
+      text: "Desempate relâmpago: sai uma carta e só os empatados respondem. Quem acertar primeiro leva.",
+    },
+  ],
   casa: () => [
     {
       icon: "🏠",
@@ -153,6 +181,7 @@ const VITORIA_TUTORIAIS = {
   ],
 };
 function vitoriaTutNome(cond) {
+  if (cond === "corrida") return "⏱️ Corrida contra o Tempo";
   const w = WIN_CONDITIONS[cond];
   return w ? w.icon + " " + w.label : "";
 }
@@ -185,6 +214,7 @@ function vitoriaTutTalvez(cond) {
 }
 // Começo da partida (beginGameplay). Na Moda da Casa quem chama é a roleta, depois do sorteio.
 function vitoriaTutInicio() {
+  if (CURRENT_MODE === "corrida") return void setTimeout(() => vitoriaTutTalvez("corrida"), 500);
   if (CURRENT_MODE === "express" || WIN_CONDITION === "casa") return;
   setTimeout(() => vitoriaTutTalvez(winCond()), 500);
 }

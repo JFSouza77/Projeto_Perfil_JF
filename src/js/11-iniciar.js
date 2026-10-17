@@ -592,6 +592,7 @@ function iniciar() {
     ["express", "modeBtnExpress"],
     ["random", "modeBtnRandom"],
     ["oldschool", "modeBtnOldschool"],
+    ["corrida", "modeBtnCorrida"],
   ].forEach(([m, id]) =>
     document.getElementById(id).addEventListener("click", () => {
       unlockAudio();

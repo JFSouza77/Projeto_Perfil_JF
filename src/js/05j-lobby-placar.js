@@ -92,6 +92,8 @@ function lobbyGanhoSelo(d) {
 function lobbyPontosHtml(antes, ctx) {
   const ents = (ctx ? ctx.ents.slice() : lobbyEntidades()).sort((a, b) => b.pts - a.pts);
   const valePontos = ctx ? ctx.vitoria === "pontos" : winCond() === "pontos";
+  const corrida = ctx ? ctx.vitoria === "corrida" : winCond() === "corrida"; // 1.7.10.6: na Corrida, pontos = cartas
+  const un = (n) => (corrida ? `${n} carta${n === 1 ? "" : "s"}` : `${n} pt${n === 1 ? "" : "s"}`);
   const meta = valePontos ? (ctx ? ctx.metaPts : metaPontos()) : 0;
   const escala = Math.max(meta, ...ents.map((e) => e.pts), 1);
   const ant = (e) => (antes && antes.pts && typeof antes.pts[e.k] === "number" ? antes.pts[e.k] : null);
@@ -99,11 +101,11 @@ function lobbyPontosHtml(antes, ctx) {
   const top = ents.slice(0, 3).filter((e) => e.pts > 0);
   const degrau = (e, lugar) =>
     e
-      ? `<div class="lp-degrau lp-${lugar}" style="--pc:${e.cor}"><div class="lp-tok">${e.tok}</div><div class="lp-nome">${e.nome}</div><div class="lp-bloco"><b>${["", "🥇", "🥈", "🥉"][lugar]}</b><span>${e.pts} pt${e.pts === 1 ? "" : "s"}</span></div></div>`
+      ? `<div class="lp-degrau lp-${lugar}" style="--pc:${e.cor}"><div class="lp-tok">${e.tok}</div><div class="lp-nome">${e.nome}</div><div class="lp-bloco"><b>${["", "🥇", "🥈", "🥉"][lugar]}</b><span>${un(e.pts)}</span></div></div>`
       : `<div class="lp-degrau lp-${lugar} lp-vazio"><div class="lp-bloco"></div></div>`;
   const podio = top.length
     ? `<div class="lp-podio">${degrau(top[1], 2)}${degrau(top[0], 1)}${degrau(top[2], 3)}</div>`
-    : `<div class="lp-vazio-txt">Ninguém pontuou ainda. O pódio tá esperando.</div>`;
+    : `<div class="lp-vazio-txt">${corrida ? "Ninguém ficou com carta ainda." : "Ninguém pontuou ainda."} O pódio tá esperando.</div>`;
   const barras = ents
     .map((e) => {
       const a = ant(e);
@@ -113,7 +115,9 @@ function lobbyPontosHtml(antes, ctx) {
     .join("");
   const cab = valePontos
     ? `🎯 Vence quem chegar a <b>${meta} pontos</b>${(ctx ? ctx.equipe : CURRENT_FORMAT === "equipe") ? " (soma da equipe)" : ""}.`
-    : "Nesta partida os pontos não decidem quem vence. Valem pela glória.";
+    : corrida
+      ? "⏱️ Vence quem tiver <b>mais cartas</b> quando o relógio zerar."
+      : "Nesta partida os pontos não decidem quem vence. Valem pela glória.";
   return `<div class="lp-cab">${cab}</div>${podio}<ul class="lp-lista">${barras}</ul>`;
 }
 
