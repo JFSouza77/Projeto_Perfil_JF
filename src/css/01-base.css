@@ -610,7 +610,7 @@ body.fx-urgente:after {
   text-align: center;
 }
 .splash-embreve .eb-selo {
-  font-size: 0.66rem;
+  font-size: 0.72rem; /* 1.7.10.5.6 (auditoria): era 0.66rem */
   font-weight: 900;
   letter-spacing: 1.5px;
   text-transform: uppercase;

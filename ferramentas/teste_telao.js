@@ -52,7 +52,8 @@ const ARQ = acharMestre(process.argv[2]);
   const telao = await ctx.newPage();
   telao.on('pageerror', (e) => erros.push('telão: ' + e.message));
   await telao.goto(url + '#telao');
-  await telao.waitForFunction(() => document.getElementById('telao') && /revisão/.test(document.getElementById('telao').textContent), null, { timeout: 8000 }).catch(() => {});
+  await telao.waitForFunction(() => document.getElementById('telao') && document.getElementById('telao').dataset.rev, null, { timeout: 8000 }).catch(() => {});
+
   // ações no jogo: abre duas dicas com um Errou no meio
   await jogo.evaluate(() => {
     const livres = () => currentCard.clues.map((c, i) => i).filter((i) => currentCard.clues[i].type === 'clue' && !revealedOrder.some((x) => x.index === i));
@@ -69,11 +70,27 @@ const ARQ = acharMestre(process.argv[2]);
   });
   await telao.waitForTimeout(600);
   const j = await jogo.evaluate(() => ({ rev: partidaRevisao, resposta: currentCard.answer, abertas: revealedOrder.map((x) => x.item.text), mestre: players[mestreIndex].name, vez: players[responderIndex].name, pendente: pendingIndex !== null, fechadas: currentCard.clues.filter((c, i) => !revealedOrder.some((x) => x.index === i)).map((c) => c.text) }));
-  const t = await telao.evaluate(() => ({ txt: document.getElementById('telao').innerText, rev: telaoUltimo && telaoUltimo.revisao, bloqueado: saveBloqueado, iniciou: starterChosen, pecas: document.querySelectorAll('#tabCaixaTelao .tb-peao').length, forma: telaoUltimo && telaoUltimo.tabuleiro }));
+  const t = await telao.evaluate(() => ({ txt: document.getElementById('telao').innerText, rev: telaoUltimo && telaoUltimo.revisao, revTela: +document.getElementById('telao').dataset.rev, bloqueado: saveBloqueado, iniciou: starterChosen, pecas: document.querySelectorAll('#tabCaixaTelao .tb-peao').length, forma: telaoUltimo && telaoUltimo.tabuleiro }));
   const formaJogo = await jogo.evaluate(() => tabForma);
   // 1.7.10.1 (pedido do JF): no meio da carta o telão não mostra o tabuleiro; no intervalo mostra
   const durante = t.pecas;
   const intervalo = await telao.evaluate(() => { const r = JSON.parse(JSON.stringify(telaoUltimo)); r.intervalo = true; telaoDesenhar(r); return document.querySelectorAll('#tabCaixaTelao .tb-peao').length; });
+  // 1.7.10.5.6 (relato do JF): antes de o Mestre tocar em Virar carta o rolo da categoria fica parado; gira só com a roleta dele
+  const rolo = await telao.evaluate(async () => {
+    const ver = async (girando) => {
+      const r = JSON.parse(JSON.stringify(telaoUltimo));
+      r.estadoCarta = 'hidden';
+      r.carta.categoria = null;
+      r.carta.roleta = { cats: ['ANO', 'PESSOA', 'LUGAR', 'COISA'], girando };
+      telaoDesenhar(r);
+      const el = document.getElementById('telaoReel');
+      const a = el && el.textContent;
+      await new Promise((ok) => setTimeout(ok, 500));
+      return el ? (a === el.textContent ? 'parado' : 'girando') : 'sem rolo';
+    };
+    return (await ver(false)) + '/' + (await ver(true));
+  });
+  await telao.evaluate(() => telaoUltimo && telaoDesenhar(telaoUltimo));
   // retrato velho é ignorado
   await jogo.evaluate(() => { const r = retratoPartida('mesa'); r.revisao = 1; r.jogadores[0].nome = 'VELHO'; telaoCanal.postMessage({ tipo: 'retrato', retrato: r }); });
   await telao.waitForTimeout(300);
@@ -87,7 +104,8 @@ const ARQ = acharMestre(process.argv[2]);
   const saiu = await telao.evaluate(() => !location.hash.includes('telao') && !document.getElementById('telao') && typeof telaoModo === 'function' && !telaoModo()).catch(() => false);
   const savedAt = (s) => (JSON.parse(s || '{}').savedAt || 0);
   const linhas = [
-    ['Telão chega na mesma revisão do jogo', t.rev === j.rev && t.txt.includes('revisão ' + j.rev)],
+    ['Telão chega na mesma revisão do jogo', t.rev === j.rev && t.revTela === j.rev],
+    ['Antes de virar a carta, o rolo da categoria fica parado; gira só com a roleta do Mestre (1.7.10.5.6)', rolo === 'parado/girando'],
     ['Telão mostra Mestre e vez', t.txt.includes(j.mestre) && t.txt.includes(j.vez)],
     ['Telão mostra as dicas abertas (a que o Mestre está lendo, só depois do veredito)', j.abertas.every((d, i) => (i === j.abertas.length - 1 && j.pendente ? !t.txt.includes(d) && t.txt.includes('Mestre está lendo') : t.txt.includes(d)))],
     ['Telão nunca mostra a resposta nem dica fechada', !t.txt.includes(j.resposta) && j.fechadas.every((d) => !t.txt.includes(d))],

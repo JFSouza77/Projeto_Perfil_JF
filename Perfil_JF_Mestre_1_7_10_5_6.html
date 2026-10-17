@@ -6,6 +6,19 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.5.6 · 16/10/2026 · "Multiplayer Update · Online de verdade" = T2 E LOBBY COM CARA DE JOGO + CORREÇÕES DA AUDITORIA (pedido do JF).
+          1) Cartas da partida (cartasPartida, salvo e desfeito junto): categoria, resposta, quem acertou, em quantas dicas
+          e qual dica matou a carta; carta esgotada entra como "ninguém acertou". Vai no retrato (partida.historico, só carta
+          encerrada) com tempo de jogo, cartas viradas e acertos. 2) T2 refeita: vez em destaque na cor do jogador, Mestre e
+          relógio (sem quebrar linha), estado da carta numa faixa (lendo a dica N, pediu a dica N, vai palpitar, intervalo),
+          carta tingida pela categoria, dica mais nova em cima, placar com cor e selos, "Cartas da partida" clicável;
+          funciona no tema Claro (antes era letra branca no creme); "revisão N" saiu da tela (fica em data-rev).
+          3) Rolo da categoria na T2 parado ("???") até o Mestre tocar em Virar carta (antes girava sem parar).
+          4) Lobby (host e convidados): resumo (tempo de jogo, rodada, cartas, acertos) e aba 🗂️ Cartas.
+          5) Tela do Mestre: com a dica aberta, só o "👁️ Conferir resposta" de baixo (o de cima some até o veredito).
+          6) Auditoria: "Dica N:" e relógio legíveis no Claro; balão "pensando" do C.A.O.S. no canto na tela larga (cobria o
+          título); selo Beta e legenda do tabuleiro com 11 px ou mais. Testes: teste_telao (rolo parado, data-rev) e
+          teste_acoes (cartas da partida no lobby e no retrato, Desfazer tira a carta).
   1.7.10.5.5 · 16/10/2026 · "Multiplayer Update · Online de verdade" = QoL DE CONFERÊNCIA (pedido do JF: estrutura, otimização, correção).
           1) Cartas: 1000 cartas, 0 erros; auditor ganha checagens fixas (espaço sobrando, vírgula no fim, aspas,
           turma desconhecida, "N letras" que não bate, número de carta pulado). 2) Casa: TypeScript passado por cima do
@@ -835,7 +848,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.5.5</title>
+<title>Perfil JF · Beta 1.7.10.5.6</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1453,7 +1466,7 @@ body.fx-urgente:after {
   text-align: center;
 }
 .splash-embreve .eb-selo {
-  font-size: 0.66rem;
+  font-size: 0.72rem; /* 1.7.10.5.6 (auditoria): era 0.66rem */
   font-weight: 900;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -4113,6 +4126,17 @@ body.batata-mode .btn-start.btn-neo {
 }
 .jf-toast-overlay.caos-emo.caos-thinking {
   letter-spacing: 0;
+}
+/* 1.7.10.5.6 (auditoria): na tela larga o balão "pensando" cobria o título; ele fica no canto até virar fala */
+@media (min-width: 900px) {
+  .jf-toast-overlay.caos-thinking {
+    left: auto;
+    right: 18px;
+    transform: translateY(-20px);
+  }
+  .jf-toast-overlay.caos-thinking.show {
+    transform: translateY(0);
+  }
 }
 .jf-toast-overlay.caos-emo .toast-skip {
   flex: 0 0 auto;
@@ -7022,6 +7046,12 @@ body.claro #welcomeScreen .btn-sec,
 body.claro .btn-sec {
   color: color-mix(in srgb, var(--cc, #6d4ad8) 40%, #1b1d33);
 }
+/* 1.7.10.5.6 (auditoria): "Dica N:" e o relógio da carta eram amarelo sobre creme (contraste 2:1) */
+body.claro .pending-box .pending-num,
+body.claro .spotlight-timer,
+body.claro .pick-timer {
+  color: #7a5200;
+}
 /* ----------------------------------------------------------------------
  * 7. BOTÕES ACESSÍVEIS (1.7.6 · Parte 2): resultado da auditoria dos botões
  * (ferramentas/auditar_botoes.js). Área de toque de pelo menos 44 px, contraste
@@ -7518,56 +7548,7 @@ body.claro .desfazer-btn {
   font-weight: 800;
   padding: 40px 12px;
 }
-.telao-topo {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 12px;
-  font-size: 1.3rem;
-  opacity: 0.9;
-}
-.telao-vez {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  text-align: center;
-}
-.telao-vez > div,
-.telao-carta,
-.telao-placar {
-  background: #ffffff10;
-  border: 1px solid #ffffff22;
-  border-radius: 16px;
-  padding: 14px 16px;
-}
-.telao-vez b {
-  font-size: 1.5rem;
-}
-.telao-cat {
-  font-size: 1.3rem;
-  font-weight: 800;
-  margin-bottom: 8px;
-}
-.telao-dicas li {
-  font-size: 1.35rem;
-  line-height: 1.5;
-  padding: 6px 0;
-}
-.telao-dicas li.telao-agora {
-  color: #fde68a;
-  font-weight: 800;
-}
-.telao-placar ol {
-  margin: 0;
-  padding-left: 1.4em;
-}
-.telao-placar li {
-  font-size: 1.3rem;
-  padding: 4px 0;
-}
-.telao-placar li span {
-  margin-right: 12px;
-}
+/* 1.7.10.5.6: o resto da T2 (vez, carta, placar, cartas da partida) fica em 10-rede.css */
 
 /* 1.7.8.6 (feedback): pausa enxuta */
 .pause-grade {
@@ -7946,8 +7927,8 @@ html.acess-calmo .fx-shake {
   align-items: center;
   gap: 8px;
   margin-top: 6px;
-  font-size: 0.66rem;
-  opacity: 0.78;
+  font-size: 0.72rem; /* 1.7.10.5.6 (auditoria): era 0.66rem, menor que 11 px */
+  opacity: 0.85;
 }
 .tb-legenda-grande {
   justify-content: center;
@@ -9089,11 +9070,9 @@ body.claro button.splash-embreve .eb-sub {
 .telao-objetivo { margin: 8px 0; padding: 8px 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.85rem; text-align: left; }
 .telao-objetivo summary { cursor: pointer; }
 .telao-objetivo p { margin: 6px 0 0; opacity: 0.85; }
-body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba(0, 0, 0, 0.12); }
 /* C.A.O.S. 4.2: selo HOST e números de dica na T2 */
 .selo-host { display: inline-block; margin-left: 4px; padding: 0 5px; border-radius: 6px; font-size: 0.62em; font-weight: 800; letter-spacing: 0.04em; vertical-align: middle; background: #f59e0b; color: #1a1a2e; }
 .telao-numeros { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 8px; }
-.telao-numeros span { min-width: 1.9em; text-align: center; padding: 2px 4px; border-radius: 6px; font-size: 0.85em; font-weight: 700; background: rgba(255,255,255,0.12); }
 .telao-numeros span.usada { color: #fff; }
 .telao-numeros span.agora { background: #f59e0b; color: #1a1a2e; box-shadow: 0 0 0 2px #fde68a; }
 /* 1.7.10.5 (pedido do JF): ficha de palpite (selo amarelo), Palpitar agora e pedido de dica pelo aparelho */
@@ -9156,6 +9135,408 @@ body.claro #redePerguntaNao {
   border-color: #c98a1e;
   background: #fff4dc;
 }
+
+/* 1.7.10.5.6 (pedido do JF: "muito cru... tudo cinza") · T2 com hierarquia e nos dois temas
+   1º de quem é a vez e o relógio · 2º a carta (estado, categoria, números, dicas) · 3º placar · 4º consulta */
+.telao {
+  --t-fg: #f1f5f9;
+  --t-sub: #b9c1da;
+  --t-sec: rgba(255, 255, 255, 0.06);
+  --t-borda: rgba(255, 255, 255, 0.13);
+  --t-num: rgba(255, 255, 255, 0.12);
+  color: var(--t-fg);
+  gap: 14px;
+}
+body.claro .telao {
+  --t-fg: #1e1b2e;
+  --t-sub: #4a4560;
+  --t-sec: #ffffff;
+  --t-borda: rgba(30, 27, 46, 0.16);
+  --t-num: rgba(30, 27, 46, 0.09);
+}
+.telao-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  font-size: 1.15rem;
+}
+.tt-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 0.92rem;
+  color: var(--t-sub);
+  font-variant-numeric: tabular-nums;
+}
+.telao-vez {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "vez vez" "mestre relogio";
+  gap: 10px;
+}
+.telao-vez > div,
+.telao-carta,
+.telao-placar {
+  background: var(--t-sec);
+  border: 1px solid var(--t-borda);
+  border-radius: 16px;
+  padding: 12px 14px;
+  min-width: 0;
+}
+.telao-vez small {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--t-sub);
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.telao-vez b {
+  display: block;
+  font-size: clamp(1.15rem, 3.4vw, 1.6rem);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.telao-vez .tv-vez {
+  grid-area: vez;
+  background: color-mix(in srgb, var(--pc) 20%, var(--t-sec));
+  border: 2px solid var(--pc);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--pc) 22%, transparent);
+}
+.telao-vez .tv-vez b {
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
+}
+.telao-vez .tv-mestre {
+  grid-area: mestre;
+}
+.telao-vez .tv-relogio {
+  grid-area: relogio;
+  text-align: center;
+}
+#telaoRelogio {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
+}
+#telaoRelogio.tv-pouco {
+  color: #f87171;
+}
+body.claro #telaoRelogio.tv-pouco {
+  color: #b91c1c;
+}
+@media (min-width: 760px) {
+  .telao-vez {
+    grid-template-columns: 2fr 1.4fr 1fr;
+    grid-template-areas: "vez mestre relogio";
+  }
+}
+/* a carta: tingida pela cor da categoria */
+.telao-carta {
+  background: color-mix(in srgb, var(--cat, #a78bfa) 10%, var(--t-sec));
+  border-color: color-mix(in srgb, var(--cat, #a78bfa) 45%, transparent);
+}
+.tc-estado {
+  margin: -2px 0 10px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--cat, #a78bfa) 18%, transparent);
+  font-weight: 700;
+  text-align: center;
+  font-size: 1.02rem;
+}
+.tc-estado.tc-lendo {
+  background: rgba(245, 158, 11, 0.18);
+  outline: 1px solid rgba(245, 158, 11, 0.6);
+}
+.tc-estado.tc-palpite {
+  background: rgba(251, 191, 36, 0.18);
+  outline: 2px solid #fbbf24;
+}
+.tc-estado.tc-pedido {
+  background: rgba(96, 165, 250, 0.18);
+  outline: 1px solid #60a5fa;
+}
+.telao-cat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin-bottom: 8px;
+}
+.tc-selo {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--cat, #a78bfa);
+  color: #fff;
+  font-weight: 800;
+  font-size: clamp(1.05rem, 3.2vw, 1.35rem);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+.tc-conta {
+  color: var(--t-sub);
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+.tc-conta b {
+  color: var(--t-fg);
+  font-size: 1.1em;
+}
+.telao-numeros span {
+  min-width: 1.9em;
+  text-align: center;
+  padding: 3px 4px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  font-weight: 700;
+  background: var(--t-num);
+  font-variant-numeric: tabular-nums;
+}
+.telao-dicas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.telao-dicas li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: clamp(1.05rem, 3vw, 1.35rem);
+  line-height: 1.4;
+  padding: 6px 8px;
+  border-radius: 10px;
+}
+.td-n {
+  flex: none;
+  min-width: 1.8em;
+  padding: 1px 0;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--cat, #a78bfa) 30%, transparent);
+  text-align: center;
+  font-weight: 800;
+  font-size: 0.85em;
+  font-variant-numeric: tabular-nums;
+}
+.telao-dicas li.telao-agora {
+  background: rgba(245, 158, 11, 0.14);
+  color: #fde68a;
+  font-weight: 700;
+}
+body.claro .telao-dicas li.telao-agora {
+  color: #7a4a00;
+}
+.telao-sem-dica {
+  color: var(--t-sub);
+  opacity: 1;
+}
+/* placar */
+.tp-tit {
+  margin: 0 0 6px;
+  font-size: 0.95rem;
+  color: var(--t-sub);
+}
+.telao-placar ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.telao-placar li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  font-size: clamp(1.05rem, 3vw, 1.3rem);
+  border-top: 1px solid var(--t-borda);
+}
+.telao-placar li:first-child {
+  border-top: 0;
+}
+.telao-placar li b {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.telao-placar li.tp-lider b {
+  color: #fbbf24;
+}
+body.claro .telao-placar li.tp-lider b {
+  color: #9a6700;
+}
+.tp-nome {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.tp-cor {
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--pc);
+  vertical-align: 0.05em;
+}
+.tp-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 7px;
+  border-radius: 999px;
+  border: 1px solid var(--t-borda);
+  font-size: 0.7em;
+  font-weight: 700;
+  color: var(--t-sub);
+  vertical-align: middle;
+}
+.tp-tag.tp-vez {
+  border-color: var(--pc);
+  color: var(--t-fg);
+}
+/* consulta: como se vence e cartas da partida */
+.telao-objetivo,
+.telao-hist {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--t-sec);
+  border: 1px solid var(--t-borda);
+  font-size: 0.95rem;
+}
+.telao-hist > summary,
+.telao-objetivo > summary {
+  cursor: pointer;
+  min-height: 28px;
+  font-weight: 700;
+}
+.th-n {
+  display: inline-block;
+  min-width: 1.6em;
+  margin-left: 4px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--t-num);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.cp-lista {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+.cp-item details {
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--cat) 45%, transparent);
+  background: color-mix(in srgb, var(--cat) 9%, transparent);
+  padding: 8px 12px;
+}
+.cp-item summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cp-item summary::-webkit-details-marker {
+  display: none;
+}
+.cp-topo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+}
+.cp-cat {
+  padding: 1px 9px;
+  border-radius: 999px;
+  background: var(--cat);
+  color: #fff;
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+.cp-bonus {
+  font-weight: 700;
+  color: #fbbf24;
+}
+body.claro .cp-bonus {
+  color: #9a6700;
+}
+.cp-n {
+  margin-left: auto;
+  opacity: 0.8;
+  font-variant-numeric: tabular-nums;
+}
+.cp-resp {
+  font-size: 1.12rem;
+}
+.cp-res {
+  font-size: 0.9rem;
+  opacity: 0.88;
+}
+.cp-item.cp-esgotou .cp-resp {
+  opacity: 0.85;
+}
+.cp-item details[open] > summary .cp-res::after {
+  content: " ▴";
+}
+.cp-item details:not([open]) > summary .cp-res::after {
+  content: " ▾";
+}
+.cp-item p {
+  margin: 8px 0 2px;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+.cp-vazio {
+  margin: 10px 0 2px;
+  opacity: 0.8;
+}
+/* resumo da partida (lobby do host e dos convidados) */
+.pt-resumo {
+  list-style: none;
+  margin: 10px 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+.pt-resumo li {
+  padding: 7px 4px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  text-align: center;
+}
+.pt-resumo b {
+  display: block;
+  font-size: 1.02rem;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.pt-resumo small {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+body.claro .pt-resumo li {
+  background: #ffffff;
+  border-color: rgba(30, 27, 46, 0.16);
+}
+.lb-painel[data-aba="cartas"],
+.rede-lobby .cp-lista {
+  max-height: 46vh;
+  overflow-y: auto;
+}
+/* rolo parado antes de o Mestre virar a carta */
+.telao-roleta[data-pousou="0"][data-girando="0"] .roulette-reel {
+  letter-spacing: 0.2em;
+  opacity: 0.75;
+}
 </style>
 </head>
 <body class="noturno">
@@ -9212,7 +9593,7 @@ body.claro #redePerguntaNao {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.5.5 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.4.2 · Atualizada em 16/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.5.6 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.4.2 · Atualizada em 16/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -9480,7 +9861,7 @@ body.claro #redePerguntaNao {
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1816;
+const JOGO_BUILD = 1817;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -10487,6 +10868,8 @@ let timerKind = null;
 let RESPONSE_TIME_LIMIT = 90;
 let playDirection = 1;
 let history = [];
+// 1.7.10.5.6 (pedido do JF): toda carta resolvida da partida (acertada ou esgotada), pra T2 e pro lobby
+let cartasPartida = [];
 let stats = { totalDrawn: 0, totalDiscarded: 0, totalExhausted: 0 };
 let mercyEventUsed = false;
 let pendingStartTime = null;
@@ -11858,6 +12241,7 @@ function resetDeck() {
   expressWhoFreeze = null;
   expressAskWho = false;
   history = [];
+  cartasPartida = [];
   showHistory = false;
   showStats = false;
   consecutiveDiscards = 0;
@@ -12163,6 +12547,7 @@ function resolveExhaustionIfNeeded() {
   if (revealedOrder.length >= currentCard.clues.length) {
     clearCardTimer();
     stats.totalExhausted++;
+    cartaPartidaRegistrar(-1, revealedOrder.filter((r) => r.item.type === "clue").length, null);
     caosImplicFim(99);
     if (CURRENT_MODE !== "express") {
       caosEventoContexto = "carta esgotada — ninguém acertou";
@@ -12421,6 +12806,23 @@ function chooseClue(idx) {
   render();
   saveGameState();
 }
+/* 1.7.10.5.6 (pedido do JF) · Cartas da partida: categoria, resposta, quem acertou, em quantas dicas e qual dica
+   matou a carta. Só entra carta resolvida, então a resposta pode ir pra T2 e pro lobby. */
+function cartaPartidaRegistrar(quemIdx, dicas, dicaIdx) {
+  if (!currentCard) return;
+  const d = Number.isInteger(dicaIdx) ? currentCard.clues[dicaIdx] : null;
+  cartasPartida.push({
+    n: stats.totalDrawn,
+    cat: gemCategoryFor(currentCard.category),
+    resp: currentCard.answer,
+    quem: quemIdx >= 0 && players[quemIdx] ? players[quemIdx].id : null,
+    dicas,
+    dicaNum: d ? dicaIdx + 1 : null,
+    dicaTxt: d ? String(d.text).slice(0, 240) : null,
+    bonus: !!currentCard.isBonus,
+  });
+  if (cartasPartida.length > 150) cartasPartida = cartasPartida.slice(-150);
+}
 function markCorrect(playerIdxOverride) {
   if (pendingIndex === null || gameEnded) return;
   const item = currentCard.clues[pendingIndex];
@@ -12512,6 +12914,7 @@ function markCorrect(playerIdxOverride) {
       mestrePoints: 0,
       wasBonus: false,
     });
+    cartaPartidaRegistrar(scorerIdx, realCluesRevealed, pendingIndex);
     pendingStartTime = null;
     pendingIndex = null;
     if (history.length > 150) history = history.slice(-150);
@@ -12574,6 +12977,7 @@ function markCorrect(playerIdxOverride) {
     mestrePoints: finalPointsMestre,
     wasBonus: currentCard.isBonus || false,
   });
+  cartaPartidaRegistrar(scorerIdx, realCluesRevealed, pendingIndex);
   pendingStartTime = null;
   pendingIndex = null;
   if (history.length > 150) history = history.slice(-150);
@@ -12911,6 +13315,7 @@ function expressCardLost() {
   clearCardTimer();
   usedAtLeastOnce = true;
   stats.totalExhausted++;
+  cartaPartidaRegistrar(-1, revealedOrder.filter((r) => r.item.type === "clue").length, null);
   consecutiveDiscards = 0;
   consecutiveExhausted++;
   caosPrediction = null;
@@ -15224,6 +15629,9 @@ function roletaDesenhar(jaPousada) {
   spin();
 }
 function answerLineHtml() {
+  // 1.7.10.5.6 (pedido do JF: "poluição visual"): com a dica aberta esperando o veredito, a resposta fica só no
+  // "👁️ Conferir resposta" de baixo, junto do Acertou/Errou; o de cima some até o veredito
+  if (!answerLivre() && pendingIndex !== null && currentCard.clues[pendingIndex] && currentCard.clues[pendingIndex].type === "clue") return "";
   const open = answerLivre() || Date.now() < answerRevealUntil;
   return `<button type="button" id="answerToggle" class="answer-line-name answer-toggle${open ? " open" : ""}${answerLivre() ? " livre" : ""}">${answerTexto(open)}</button>${answerLivre() ? `<div class="ans-hint" id="ansHint">👆 toque pra esconder · some sozinha na ${CURRENT_MODE === "express" ? "2ª" : "1ª"} dica</div>` : ""}`;
 }
@@ -18945,6 +19353,15 @@ function retratoPartida(papel) {
     joiasRodada: { ...joiasRodada },
     vencedorJoias: gemWinner ? { tipo: gemWinner.kind, id: gemWinner.id } : null,
     relogio: { tipo: timerKind || null, fimEm: timerEndAt || null, cartaFimEm: cardEndAt || null, pausado: !!pausedAt },
+    // 1.7.10.5.6 (pedido do JF): resumo da partida pra T2 e pro lobby: tempo de jogo (sem pausa), cartas viradas e as
+    // últimas cartas resolvidas (só carta encerrada, então a resposta pode ir)
+    partida: {
+      tempoMs: typeof tempoJogoMs === "number" ? Math.round(tempoJogoMs) : 0,
+      cartas: stats.totalDrawn,
+      acertos: cartasPartida.filter((c) => c.quem).length,
+      esgotadas: cartasPartida.filter((c) => !c.quem).length,
+      historico: cartasPartida.slice(-40),
+    },
   };
 }
 
@@ -18995,6 +19412,7 @@ function desfazerFotografar() {
     joiasRodada: desfazerCopia(joiasRodada),
     gemWinner: desfazerCopia(gemWinner),
     history: desfazerCopia(history),
+    cartasPartida: desfazerCopia(cartasPartida),
     stats: desfazerCopia(stats),
     rodadaAtual,
     primeiroMestreId,
@@ -19074,6 +19492,7 @@ function desfazerAplicar(f) {
   joiasRodada = f.joiasRodada;
   gemWinner = f.gemWinner;
   history = f.history;
+  cartasPartida = f.cartasPartida || [];
   stats = f.stats;
   rodadaAtual = f.rodadaAtual;
   primeiroMestreId = f.primeiroMestreId;
@@ -19289,13 +19708,14 @@ function telaoRoletaHtml(c) {
   const pousou = !!c.categoria;
   const cor = pousou ? (GEM_INFO[c.categoria] || {}).color || "#e94560" : "#a78bfa";
   const dica = pousou ? "🗣️ A categoria da carta" : c.roleta && c.roleta.girando ? "🎰 sorteando a categoria..." : "🃏 O Mestre vai virar a carta";
-  return `<div class="roulette telao-roleta" style="--cat:${cor};" data-cats="${escapeHtml(cats.join(","))}" data-pousou="${pousou ? 1 : 0}"><div class="roulette-phrase">"Eu sou <span class="roulette-reel${pousou ? " landed" : ""}" id="telaoReel">${pousou ? label(c.categoria) : label(cats[0])}</span>"</div><div class="roulette-hint">${dica}</div></div>`;
+  return `<div class="roulette telao-roleta" style="--cat:${cor};" data-cats="${escapeHtml(cats.join(","))}" data-pousou="${pousou ? 1 : 0}" data-girando="${c.roleta && c.roleta.girando ? 1 : 0}"><div class="roulette-phrase">"Eu sou <span class="roulette-reel${pousou ? " landed" : ""}" id="telaoReel">${pousou ? label(c.categoria) : c.roleta && c.roleta.girando ? label(cats[0]) : "???"}</span>"</div><div class="roulette-hint">${dica}</div></div>`;
 }
 function telaoRoletaAnimar(raiz) {
   clearInterval(telaoRoletaTimer);
   telaoRoletaTimer = null;
   const box = raiz && raiz.querySelector(".telao-roleta");
-  if (!box || box.dataset.pousou === "1") return;
+  // 1.7.10.5.6 (relato do JF): antes de o Mestre tocar em Virar carta o rolo fica parado; só gira junto com a roleta dele
+  if (!box || box.dataset.pousou === "1" || box.dataset.girando !== "1") return;
   const reel = box.querySelector(".roulette-reel"), cats = box.dataset.cats.split(",").filter(Boolean);
   if (!reel || cats.length < 2 || (typeof visualFxAllowed === "function" && !visualFxAllowed())) return;
   let i = 0;
@@ -19310,18 +19730,42 @@ function telaoObjetivoHtml(r) {
   const w = (typeof WIN_CONDITIONS !== "undefined" && WIN_CONDITIONS[r.vitoria]) || null;
   const nome = w ? w.label : r.vitoria;
   if (!nome) return "";
-  return `<details class="telao-objetivo"><summary>${TELAO_VITORIA_IC[r.vitoria] || (w && w.icon) || "🏆"} Como se vence: <b>${escapeHtml(nome)}</b></summary>${r.objetivo ? `<p>${escapeHtml(r.objetivo)}</p>` : ""}</details>`;
+  return `<details class="telao-objetivo" data-k="obj"><summary>${TELAO_VITORIA_IC[r.vitoria] || (w && w.icon) || "🏆"} Como se vence: <b>${escapeHtml(nome)}</b></summary>${r.objetivo ? `<p>${escapeHtml(r.objetivo)}</p>` : ""}</details>`;
 }
 // 1.7.10.1 (pedido do JF): o tabuleiro inteiro só no intervalo (lobby antes da próxima carta), no fim e antes
 // da primeira carta; com carta na mesa, ele sai da frente (o placar logo abaixo mostra a casa de cada um)
 function telaoMostraTabuleiro(r) {
   return !!(r.intervalo || r.fim || !r.carta || r.estadoCarta === "none");
 }
+/* 1.7.10.5.6 (pedido do JF: "muito cru... tudo cinza") · T2 com hierarquia: primeiro de quem é a vez e o relógio,
+   depois a carta (estado, categoria, números e dicas), o placar e, por último, o que é de consulta (como se vence
+   e as cartas da partida, clicáveis). Os <details> abertos continuam abertos quando chega retrato novo. */
+function telaoEstadoHtml(r, nomeTxt) {
+  const c = r.carta;
+  if (r.fim || !c) return "";
+  if (r.intervalo) return `<div class="tc-estado">⏸️ Intervalo: a próxima carta já vem</div>`;
+  if (r.palpiteVez) return `<div class="tc-estado tc-palpite">🃏 <b>${escapeHtml(nomeTxt(r.palpiteVez))}</b> vai palpitar! O Mestre julga.</div>`;
+  if (r.estadoCarta === "hidden") return "";
+  if (c.pendente !== null && c.pendente !== undefined) return `<div class="tc-estado tc-lendo">🎙️ O Mestre está lendo a dica <b>${c.pendente + 1}</b></div>`;
+  if (r.pedidoDica) return `<div class="tc-estado tc-pedido">👉 ${escapeHtml(nomeTxt(r.pedidoDica.por))} pediu a dica <b>${r.pedidoDica.pos + 1}</b></div>`;
+  if (r.estadoCarta === "revealed") return `<div class="tc-estado">👉 <b>${escapeHtml(nomeTxt(r.vezId))}</b> escolhe a próxima dica</div>`;
+  return "";
+}
 function telaoDesenhar(r, alvo) {
   const box = alvo || document.getElementById("telao"); // 1.7.9.4: o host desenha na própria tela de jogador
   if (!box) return;
+  if (!r._em) r._em = Date.now(); // pro tempo de jogo andar entre um retrato e outro
+  // o que estava aberto (como se vence, cartas da partida e cada carta) continua aberto
+  const abertos = new Set([...box.querySelectorAll("details[data-k][open]")].map((d) => d.dataset.k));
+  const jog = (id) => r.jogadores.find((p) => p.id === id);
+  const nomeTxt = (id) => {
+    const j = jog(id);
+    if (j) return j.nome;
+    const eq = r.equipes && r.equipes.find((e) => e.id === id);
+    return eq ? "Equipe " + ((TEAM_INFO[eq.id] || {}).label || eq.id) : "Alguém";
+  };
   const nome = (id) => {
-    const j = r.jogadores.find((p) => p.id === id);
+    const j = jog(id);
     // C.A.O.S. 4.2 (relato da partida online: ninguém sabia quem era o host): selo HOST (quem cuida da sala; não
     // é o Mestre, que é o dono da carta da vez)
     // 1.7.10.5 (pedido do JF): selo amarelo em quem tem a ficha de palpite a qualquer hora
@@ -19332,12 +19776,17 @@ function telaoDesenhar(r, alvo) {
           (ficha ? ' <span class="selo-palpite" title="Tem ficha de palpite a qualquer hora">🃏</span>' : "")
       : "—";
   };
-  const placar = [...r.jogadores]
-    .sort((a, b) => (r.vitoria === "pontos" ? b.pontos - a.pontos : b.casa - a.casa))
-    .map((j) => {
+  const cor = (id) => {
+    const j = jog(id);
+    return j && isSafeColor(j.cor) ? corDoJogador(j.cor) : "#a78bfa";
+  };
+  const ordem = [...r.jogadores].sort((a, b) => (r.vitoria === "pontos" ? b.pontos - a.pontos : b.casa - a.casa));
+  const placar = ordem
+    .map((j, i) => {
       const joias = Object.keys(j.joias || {}).length;
       const val = r.vitoria === "pontos" ? j.pontos + " pts" : r.vitoria === "joias" ? joias + "/4 joias" : "casa " + j.casa;
-      return `<li><span>${nome(j.id)}</span><b>${escapeHtml(val)}</b></li>`;
+      const tags = (j.id === r.mestreId ? '<span class="tp-tag">🎙️ Mestre</span>' : "") + (j.id === r.vezId ? '<span class="tp-tag tp-vez">👉 vez</span>' : "");
+      return `<li style="--pc:${cor(j.id)}"${i === 0 ? ' class="tp-lider"' : ""}><span class="tp-nome"><i class="tp-cor" aria-hidden="true"></i>${nome(j.id)}${tags}</span><b>${escapeHtml(val)}</b></li>`;
     })
     .join("");
   const c = r.carta;
@@ -19345,7 +19794,9 @@ function telaoDesenhar(r, alvo) {
   // não como 1), e a que o Mestre está lendo só mostra o texto depois do veredito
   const dicas = c
     ? c.abertas
-        .map((d) => `<li value="${d.pos + 1}"${d.pos === c.pendente ? ' class="telao-agora"' : ""}>${d.texto == null ? "🔒 <i>O Mestre está lendo esta dica…</i>" : (d.tipo === "special" ? "⭐ " : "") + escapeHtml(d.texto)}${d.pedidaPor ? ` <small class="telao-quem">· pedida por ${nome(d.pedidaPor)}</small>` : ""}</li>`) // 1.7.9.6: quem pediu
+        .slice()
+        .reverse() // a mais nova em cima: é a que a mesa está discutindo
+        .map((d) => `<li value="${d.pos + 1}"${d.pos === c.pendente ? ' class="telao-agora"' : ""}><span class="td-n">${d.pos + 1}</span><span class="td-txt">${d.texto == null ? "🔒 <i>O texto aparece depois do veredito</i>" : (d.tipo === "special" ? "⭐ " : "") + escapeHtml(d.texto)}${d.pedidaPor ? ` <small class="telao-quem">· pedida por ${nome(d.pedidaPor)}</small>` : ""}</span></li>`) // 1.7.9.6: quem pediu
         .join("")
     : "";
   // os números de dica pra todo mundo: livre, a que está sendo lida (em destaque) e as já usadas
@@ -19353,21 +19804,31 @@ function telaoDesenhar(r, alvo) {
   const numeros = c && c.totalDicas && r.estadoCarta !== "hidden"
     ? `<div class="telao-numeros" aria-label="Números de dica">${Array.from({ length: c.totalDicas }, (_, i) => `<span class="${i === c.pendente ? "agora" : usadas.has(i) ? "usada" : r.pedidoDica && r.pedidoDica.pos === i ? "pedida" : "livre"}">${usadas.has(i) && i !== c.pendente ? '<i class="ficha" aria-hidden="true"></i>' : ""}${i + 1}</span>`).join("")}</div>`
     : "";
+  const catCor = c && c.categoria ? (GEM_INFO[c.categoria] || {}).color || "#a78bfa" : "#a78bfa";
+  const p = r.partida || {};
+  const carta =
+    c && r.estadoCarta === "hidden"
+      ? `<section class="telao-carta" style="--cat:${catCor}">${telaoEstadoHtml(r, nomeTxt)}${telaoRoletaHtml(c)}</section>`
+      : c && c.categoria
+        ? `<section class="telao-carta" style="--cat:${catCor}">${telaoEstadoHtml(r, nomeTxt)}<div class="telao-cat"><span class="tc-selo">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)}</span><span class="tc-conta"><b>${c.abertas.length}</b> de ${c.totalDicas} dicas</span></div>${numeros}${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>`
+        : "";
+  const hist = Array.isArray(p.historico) ? p.historico : [];
+  box.dataset.rev = String(r.revisao);
   box.innerHTML = `
-    <header class="telao-topo"><b>📺 Perfil JF</b><span>rodada ${r.rodada}${r.ultimaRodada ? " · última" : ""} · revisão ${r.revisao}</span></header>
+    <header class="telao-topo"><b>📺 Perfil JF</b><span class="tt-info"><span>Rodada ${r.rodada}${r.ultimaRodada ? " · <b>última</b>" : ""}</span><span>⏱️ <span id="telaoTempo">${partidaTempoTxt(p.tempoMs || 0)}</span></span><span>🃏 ${p.cartas || 0}</span></span></header>
     ${r.fim ? '<div class="telao-espera">🏁 Fim de partida</div>' : ""}
     <section class="telao-vez">
-      <div>🎙️ Mestre<br><b>${nome(r.mestreId)}</b></div>
-      <div>👉 Vez de<br><b>${nome(r.vezId)}</b></div>
-      <div>⏱️ <b id="telaoRelogio">—</b></div>
+      <div class="tv-vez" style="--pc:${cor(r.vezId)}"><small>👉 Vez de</small><b>${nome(r.vezId)}</b></div>
+      <div class="tv-mestre" style="--pc:${cor(r.mestreId)}"><small>🎙️ Mestre</small><b>${nome(r.mestreId)}</b></div>
+      <div class="tv-relogio"><small>⏱️ Tempo</small><b id="telaoRelogio">—</b></div>
     </section>
-    ${r.palpiteVez ? `<div class="telao-palpite-vez">🃏 <b>${(() => { const j = r.jogadores.find((p) => p.id === r.palpiteVez); const eq = !j && r.equipes && r.equipes.find((e) => e.id === r.palpiteVez); return j ? escapeHtml(j.nome) : eq ? "Equipe " + escapeHtml(String(eq.id)) : "Alguém"; })()}</b> vai palpitar! O Mestre julga esse palpite.</div>` : ""}
-    ${r.pedidoDica ? `<div class="telao-pedido">👉 ${nome(r.pedidoDica.por)} pediu a dica <b>${r.pedidoDica.pos + 1}</b></div>` : ""}
-    ${telaoObjetivoHtml(r)}
-    ${c && r.estadoCarta === "hidden" ? `<section class="telao-carta">${telaoRoletaHtml(c)}</section>` : c && c.categoria ? `<section class="telao-carta"><div class="telao-cat">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)} · ${c.abertas.length} de ${c.totalDicas} dicas</div>${numeros}${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>` : ""}
+    ${carta}
     ${telaoMostraTabuleiro(r) ? tabHtmlTelao(r) : ""}
-    <section class="telao-placar"><ol>${placar}</ol></section>
+    <section class="telao-placar"><h2 class="tp-tit">Placar</h2><ol>${placar}</ol></section>
+    ${telaoObjetivoHtml(r)}
+    <details class="telao-hist" data-k="hist"><summary>🗂️ Cartas da partida <span class="th-n">${hist.length}</span></summary>${cartasPartidaHtml(hist, nomeTxt, (id) => (jog(id) ? escapeHtml((jog(id).avatar ? jog(id).avatar + " " : "") + jog(id).nome) : "Alguém"))}</details>
     ${TELAO_SAIR}`;
+  box.querySelectorAll("details[data-k]").forEach((d) => abertos.has(d.dataset.k) && (d.open = true));
   tabPecasTelao(r); // 1.7.9.2: o mesmo tabuleiro do jogo
   telaoRoletaAnimar(box);
   telaoRelogio();
@@ -19375,13 +19836,19 @@ function telaoDesenhar(r, alvo) {
 function telaoRelogio() {
   const el = document.getElementById("telaoRelogio");
   if (!el || !telaoUltimo) return;
-  const rel = telaoUltimo.relogio || {};
+  const r = telaoUltimo, rel = r.relogio || {};
+  // tempo de jogo andando entre um retrato e outro (parado na pausa, no intervalo e no fim)
+  const tj = document.getElementById("telaoTempo");
+  if (tj && r.partida && r.iniciada && !r.fim && !rel.pausado && !r.intervalo) tj.textContent = partidaTempoTxt((r.partida.tempoMs || 0) + (Date.now() - (r._em || Date.now())));
   if (rel.pausado) {
     el.textContent = "pausado";
+    el.classList.remove("tv-pouco");
     return;
   }
   const fim = rel.fimEm || rel.cartaFimEm;
-  el.textContent = fim ? Math.max(0, Math.ceil((fim - Date.now()) / 1000)) + " s" : "—";
+  const seg = fim ? Math.max(0, Math.ceil((fim - Date.now()) / 1000)) : null;
+  el.textContent = seg === null ? "—" : seg + " s";
+  el.classList.toggle("tv-pouco", seg !== null && seg <= 10);
 }
 /* ----------------------------------------------------------------------
  * 5i. TABULEIRO DE VERDADE (1.7.9.2 · Rooms and Network Update · Board Update)
@@ -19984,11 +20451,13 @@ function tabLobbyAbrir() {
     <div class="tb-lobby-tempo" aria-hidden="true"><div class="tb-lobby-barra" id="tbLobbyBarra"></div></div>
     <div class="tb-lobby-sub"><b id="tbLobbySeg">${TAB_LOBBY_SEG}</b> s pra ver o placar e combinar a estratégia</div>
     <div class="tb-lobby-prox">${prox}</div>
+    ${partidaResumoHtml(partidaResumoDados())}
     ${lobbyAbasHtml(aba)}
     <div class="lb-painel" data-aba="tabuleiro">${tabHtmlGrande("tabCaixaLobby")}
     <ul class="tg-list">${tabuleiroLinhasHtml(antes && antes.pos)}</ul></div>
     <div class="lb-painel" data-aba="pontos" hidden>${lobbyPontosHtml(antes)}</div>
     ${lobbyAbasDisponiveis().includes("joias") ? `<div class="lb-painel" data-aba="joias" hidden>${lobbyJoiasHtml(antes)}</div>` : ""}
+    <div class="lb-painel" data-aba="cartas" hidden>${cartasPartidaHostHtml()}</div>
   </div>`;
   document.body.appendChild(ov);
   tabLobbyAbertoEm = Date.now();
@@ -20118,6 +20587,7 @@ const LOBBY_ABAS = {
   tabuleiro: { ic: "🗺️", nome: "Tabuleiro" },
   pontos: { ic: "🏆", nome: "Pontos" },
   joias: { ic: "💎", nome: "Joias" },
+  cartas: { ic: "🗂️", nome: "Cartas" }, // 1.7.10.5.6
 };
 // Quem aparece no lobby: as equipes (no formato Equipe) ou os jogadores. A chave k é a mesma dos peões.
 function lobbyEntidades() {
@@ -20163,7 +20633,7 @@ function lobbyFotoZero(f) {
   return z;
 }
 function lobbyAbasDisponiveis() {
-  return ["tabuleiro", "pontos"].concat(gemsAwarded() ? ["joias"] : []);
+  return ["tabuleiro", "pontos"].concat(gemsAwarded() ? ["joias"] : [], ["cartas"]);
 }
 // Abre na aba que decide a partida (Moda da Casa: a do modo sorteado; antes do sorteio, Tabuleiro).
 function lobbyAbaInicial() {
@@ -20175,6 +20645,7 @@ function lobbyVale(aba) {
   const w = winCond();
   if (aba === "tabuleiro") return boardCountsForWin();
   if (aba === "pontos") return w === "pontos";
+  if (aba === "cartas") return false;
   return gemsCountForWin();
 }
 function lobbyAbasHtml(inicial) {
@@ -20330,6 +20801,65 @@ function lobbyContextoDoRetrato(r) {
     temJoias: w !== "pontos" && w !== "tabuleiro",
     valeJoias: w === "joias" || w === "express" || (w === "casa" && r.jogadores.length >= GEMS_MIN_PLAYERS),
   };
+}
+
+/* --- 1.7.10.5.6 (pedido do JF) · Resumo da partida e Cartas da partida ---
+ * O lobby (host e convidados) e a T2 mostram há quanto tempo a mesa joga, quantas cartas já foram e a lista das
+ * cartas encerradas: categoria, resposta, quem acertou, em quantas dicas e (tocando) qual dica matou a carta.
+ * Só carta encerrada entra (cartasPartida, 04-turno-e-rodada.js), então mostrar a resposta não entrega nada. */
+function partidaTempoTxt(ms) {
+  const m = Math.floor(Math.max(0, ms || 0) / 6e4);
+  if (m < 1) return "0 min";
+  return m < 60 ? m + " min" : Math.floor(m / 60) + " h " + String(m % 60).padStart(2, "0");
+}
+// dados do resumo: no host, das variáveis da partida; no convidado, do retrato
+function partidaResumoDados(r) {
+  if (r) {
+    const p = r.partida || {};
+    return { tempoMs: p.tempoMs || 0, cartas: p.cartas || 0, acertos: p.acertos || 0, esgotadas: p.esgotadas || 0, rodada: r.rodada, ultima: !!r.ultimaRodada };
+  }
+  return {
+    tempoMs: typeof tempoJogoMs === "number" ? tempoJogoMs : 0,
+    cartas: stats.totalDrawn,
+    acertos: cartasPartida.filter((c) => c.quem).length,
+    esgotadas: cartasPartida.filter((c) => !c.quem).length,
+    rodada: rodadaAtual,
+    ultima: !!ultimaRodada,
+  };
+}
+function partidaResumoHtml(d) {
+  const item = (ic, v, rot) => `<li><b>${ic} ${v}</b><small>${rot}</small></li>`;
+  return `<ul class="pt-resumo" aria-label="Resumo da partida">${item("⏱️", partidaTempoTxt(d.tempoMs), "de jogo")}${item("🔄", d.rodada || 1, d.ultima ? "última rodada" : "rodada")}${item("🃏", d.cartas, d.cartas === 1 ? "carta" : "cartas")}${item("✅", d.acertos, d.acertos === 1 ? "acerto" : "acertos")}</ul>`;
+}
+// nomeTxt(id) → nome puro; nomeHtml(id) → nome com avatar e selos (opcional)
+function cartasPartidaHtml(lista, nomeTxt, nomeHtml) {
+  if (!lista || !lista.length) return '<p class="cp-vazio">Nenhuma carta encerrada ainda. A primeira já vem.</p>';
+  const nomeDe = nomeHtml || ((id) => escapeHtml(nomeTxt(id)));
+  return `<ol class="cp-lista">${lista
+    .slice()
+    .reverse()
+    .map((c) => {
+      const cor = (GEM_INFO[c.cat] || {}).color || "#a78bfa";
+      const cat = `${CAT_SELO_ICONE[c.cat] || "🃏"} ${escapeHtml(c.cat.charAt(0) + c.cat.slice(1).toLowerCase())}`;
+      const dicas = `${c.dicas} dica${c.dicas === 1 ? "" : "s"}`;
+      const res = c.quem ? `✅ ${nomeDe(c.quem)} · ${dicas}` : `❌ Ninguém acertou · ${dicas}`;
+      const det = c.quem
+        ? c.dicaNum
+          ? `<p>${escapeHtml(nomeTxt(c.quem))} acertou na <b>dica ${c.dicaNum}</b>${c.dicaTxt ? `: “${escapeHtml(c.dicaTxt)}”` : ""}</p>`
+          : `<p>${escapeHtml(nomeTxt(c.quem))} acertou com ${dicas}.</p>`
+        : `<p>A carta acabou com ${dicas} aberta${c.dicas === 1 ? "" : "s"} e ninguém matou.</p>`;
+      return `<li class="cp-item${c.quem ? "" : " cp-esgotou"}" style="--cat:${cor}"><details data-k="cp${c.n}"><summary><span class="cp-topo"><span class="cp-cat">${cat}</span>${c.bonus ? '<span class="cp-bonus">⭐ bônus</span>' : ""}<span class="cp-n">carta ${c.n}</span></span><b class="cp-resp">${escapeHtml(c.resp)}</b><span class="cp-res">${res}</span></summary>${det}</details></li>`;
+    })
+    .join("")}</ol>`;
+}
+// as cartas da partida no host (lobby entre as cartas)
+function cartasPartidaHostHtml() {
+  const txt = (id) => (jogadorPorId(id) || {}).name || "Alguém";
+  const html = (id) => {
+    const p = jogadorPorId(id);
+    return p ? playerNameHtml(p.name, p.color, p.avatar) : "Alguém";
+  };
+  return cartasPartidaHtml(cartasPartida, txt, html);
 }
 /* ----------------------------------------------------------------------
  * 5k. REDE: SALA, PROTOCOLO, PAPÉIS E RELÓGIO
@@ -22738,6 +23268,7 @@ function redeConvidadoDesenhar() {
   const barra = document.createElement("section");
   barra.className = "rede-barra";
   barra.innerHTML = redeBotoesHtml();
+  if (rede.retrato.intervalo) box.querySelector(".telao-hist")?.remove(); // o lobby já tem a aba Cartas
   const topo = box.querySelector(".telao-vez");
   if (topo) topo.after(barra);
   else box.appendChild(barra);
@@ -23027,13 +23558,17 @@ function redeBotoesHtml() {
   if (r.fim) return h;
   if (r.intervalo) {
     // 1.7.9.11: o placar do intervalo no celular de cada um (Pontos e Joias; o tabuleiro está logo abaixo)
+    // 1.7.10.5.6 (pedido do JF): cara de lobby, com o resumo da partida e as cartas que já foram
     h += `<div class="rede-intervalo">⏸️ Intervalo entre as cartas. O host segue em <b id="redeIntervaloSeg">…</b> s.</div>`;
     try {
+      h += partidaResumoHtml(partidaResumoDados(r));
       const ctx = lobbyContextoDoRetrato(r);
-      const abas = ["pontos"].concat(ctx.temJoias ? ["joias"] : []);
+      const abas = ["pontos"].concat(ctx.temJoias ? ["joias"] : [], ["cartas"]);
       const aba = abas.includes(rede.abaLobby) ? rede.abaLobby : r.vitoria === "joias" && ctx.temJoias ? "joias" : "pontos";
       h += `<div class="lb-abas rede-lobby-abas">${abas.map((a) => `<button type="button" class="lb-aba${a === aba ? " on" : ""}" data-aba-rede="${a}">${LOBBY_ABAS[a].ic} ${LOBBY_ABAS[a].nome}</button>`).join("")}</div>`;
-      h += `<div class="rede-lobby">${aba === "joias" ? lobbyJoiasHtml(null, ctx) : lobbyPontosHtml(null, ctx)}</div>`;
+      const nomeTxt = (id) => (r.jogadores.find((j) => j.id === id) || { nome: "Alguém" }).nome;
+      const cartas = () => cartasPartidaHtml((r.partida && r.partida.historico) || [], nomeTxt);
+      h += `<div class="rede-lobby">${aba === "joias" ? lobbyJoiasHtml(null, ctx) : aba === "cartas" ? cartas() : lobbyPontosHtml(null, ctx)}</div>`;
     } catch (e) {}
   }
   const v = r.votacao;
@@ -28457,7 +28992,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.5.5 · C.A.O.S. 4.4.2</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.5.6 · C.A.O.S. 4.4.2</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -33588,7 +34123,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5.5 · C.A.O.S. 4.4.2)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5.6 · C.A.O.S. 4.4.2)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -35801,6 +36336,7 @@ function saveGameState() {
       revealedOrder,
       pendingIndex,
       history,
+      cartasPartida,
       palpiteHolders,
       palpiteStock,
       timerEndAt,
@@ -36071,6 +36607,20 @@ function sanitizeLoadedState(s) {
       cluesUsed: num(h.cluesUsed, 0),
       timeTakenMs: typeof h.timeTakenMs === "number" ? h.timeTakenMs : null,
     }));
+  // 1.7.10.5.6: cartas da partida (só carta que existe, texto curto)
+  s.cartasPartida = (Array.isArray(s.cartasPartida) ? s.cartasPartida : [])
+    .filter((c) => c && answers.has(c.resp) && Object.prototype.hasOwnProperty.call(GEM_INFO, c.cat))
+    .slice(-150)
+    .map((c) => ({
+      n: Math.max(0, Math.floor(num(c.n, 0))),
+      cat: c.cat,
+      resp: c.resp,
+      quem: typeof c.quem === "string" ? c.quem.slice(0, 40) : null,
+      dicas: Math.max(0, Math.floor(num(c.dicas, 0))),
+      dicaNum: Number.isInteger(c.dicaNum) && c.dicaNum > 0 ? c.dicaNum : null,
+      dicaTxt: typeof c.dicaTxt === "string" ? c.dicaTxt.slice(0, 240) : null,
+      bonus: !!c.bonus,
+    }));
   if (!Array.isArray(s.expressSelectedCategories)) s.expressSelectedCategories = [];
   s.expressSelectedCategories = s.expressSelectedCategories
     .filter((c) => ["ANO", "PESSOA", "LUGAR", "COISA"].includes(c))
@@ -36216,6 +36766,7 @@ function loadGameState() {
         ? state.pendingIndex
         : null;
     history = state.history || [];
+    cartasPartida = state.cartasPartida || [];
     palpiteHolders = state.palpiteHolders || {};
     palpiteStock = typeof state.palpiteStock === "number" ? state.palpiteStock : PALPITE_STOCK;
     timerEndAt = saveNum(state.timerEndAt) || null;
@@ -37091,7 +37642,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.5.5 · C.A.O.S. 4.4.2");
+  L.push("- **Versão:** Beta 1.7.10.5.6 · C.A.O.S. 4.4.2");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -37614,7 +38165,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.5.5 · C.A.O.S. 4.4.2",
+        versao: "Beta 1.7.10.5.6 · C.A.O.S. 4.4.2",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -73013,6 +73564,21 @@ const PAUSE_TIPS = [
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.10.5.6",
+    data: "16/10/2026 · 23:57",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "Tela dos jogadores nova, lobby com cara de lobby e a tela do Mestre mais limpa.",
+    itens: [
+      "📺 Tela dos jogadores nova: de quem é a vez fica em destaque, com o relógio do lado e o que está acontecendo na carta numa faixa só. Funciona no modo claro também.",
+      "🗂️ Cartas da partida: toque pra ver cada carta que já foi, com a categoria, a resposta, quem acertou, em quantas dicas e qual dica matou.",
+      "⏸️ Lobby com cara de lobby: entre as cartas aparecem o tempo de jogo, a rodada, as cartas viradas, os acertos e a aba Cartas.",
+      "🎰 Roleta parada até virar: a roleta da categoria só gira quando o Mestre toca em Virar carta.",
+      "👁️ Um Conferir resposta só: com a dica aberta, a tela do Mestre mostra a resposta só no botão de baixo, perto do Acertou e do Errou.",
+      "☀️ Modo claro mais legível: o número da dica e o relógio da carta ficaram mais escuros.",
+    ],
+    qol: [],
+  },
   {
     v: "Beta 1.7.10.5.5",
     data: "16/10/2026 · 19:19",

@@ -275,6 +275,7 @@ function resetDeck() {
   expressWhoFreeze = null;
   expressAskWho = false;
   history = [];
+  cartasPartida = [];
   showHistory = false;
   showStats = false;
   consecutiveDiscards = 0;
@@ -580,6 +581,7 @@ function resolveExhaustionIfNeeded() {
   if (revealedOrder.length >= currentCard.clues.length) {
     clearCardTimer();
     stats.totalExhausted++;
+    cartaPartidaRegistrar(-1, revealedOrder.filter((r) => r.item.type === "clue").length, null);
     caosImplicFim(99);
     if (CURRENT_MODE !== "express") {
       caosEventoContexto = "carta esgotada — ninguém acertou";
@@ -838,6 +840,23 @@ function chooseClue(idx) {
   render();
   saveGameState();
 }
+/* 1.7.10.5.6 (pedido do JF) · Cartas da partida: categoria, resposta, quem acertou, em quantas dicas e qual dica
+   matou a carta. Só entra carta resolvida, então a resposta pode ir pra T2 e pro lobby. */
+function cartaPartidaRegistrar(quemIdx, dicas, dicaIdx) {
+  if (!currentCard) return;
+  const d = Number.isInteger(dicaIdx) ? currentCard.clues[dicaIdx] : null;
+  cartasPartida.push({
+    n: stats.totalDrawn,
+    cat: gemCategoryFor(currentCard.category),
+    resp: currentCard.answer,
+    quem: quemIdx >= 0 && players[quemIdx] ? players[quemIdx].id : null,
+    dicas,
+    dicaNum: d ? dicaIdx + 1 : null,
+    dicaTxt: d ? String(d.text).slice(0, 240) : null,
+    bonus: !!currentCard.isBonus,
+  });
+  if (cartasPartida.length > 150) cartasPartida = cartasPartida.slice(-150);
+}
 function markCorrect(playerIdxOverride) {
   if (pendingIndex === null || gameEnded) return;
   const item = currentCard.clues[pendingIndex];
@@ -929,6 +948,7 @@ function markCorrect(playerIdxOverride) {
       mestrePoints: 0,
       wasBonus: false,
     });
+    cartaPartidaRegistrar(scorerIdx, realCluesRevealed, pendingIndex);
     pendingStartTime = null;
     pendingIndex = null;
     if (history.length > 150) history = history.slice(-150);
@@ -991,6 +1011,7 @@ function markCorrect(playerIdxOverride) {
     mestrePoints: finalPointsMestre,
     wasBonus: currentCard.isBonus || false,
   });
+  cartaPartidaRegistrar(scorerIdx, realCluesRevealed, pendingIndex);
   pendingStartTime = null;
   pendingIndex = null;
   if (history.length > 150) history = history.slice(-150);
@@ -1328,6 +1349,7 @@ function expressCardLost() {
   clearCardTimer();
   usedAtLeastOnce = true;
   stats.totalExhausted++;
+  cartaPartidaRegistrar(-1, revealedOrder.filter((r) => r.item.type === "clue").length, null);
   consecutiveDiscards = 0;
   consecutiveExhausted++;
   caosPrediction = null;

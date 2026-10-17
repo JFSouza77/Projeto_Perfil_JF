@@ -12,6 +12,7 @@ const LOBBY_ABAS = {
   tabuleiro: { ic: "🗺️", nome: "Tabuleiro" },
   pontos: { ic: "🏆", nome: "Pontos" },
   joias: { ic: "💎", nome: "Joias" },
+  cartas: { ic: "🗂️", nome: "Cartas" }, // 1.7.10.5.6
 };
 // Quem aparece no lobby: as equipes (no formato Equipe) ou os jogadores. A chave k é a mesma dos peões.
 function lobbyEntidades() {
@@ -57,7 +58,7 @@ function lobbyFotoZero(f) {
   return z;
 }
 function lobbyAbasDisponiveis() {
-  return ["tabuleiro", "pontos"].concat(gemsAwarded() ? ["joias"] : []);
+  return ["tabuleiro", "pontos"].concat(gemsAwarded() ? ["joias"] : [], ["cartas"]);
 }
 // Abre na aba que decide a partida (Moda da Casa: a do modo sorteado; antes do sorteio, Tabuleiro).
 function lobbyAbaInicial() {
@@ -69,6 +70,7 @@ function lobbyVale(aba) {
   const w = winCond();
   if (aba === "tabuleiro") return boardCountsForWin();
   if (aba === "pontos") return w === "pontos";
+  if (aba === "cartas") return false;
   return gemsCountForWin();
 }
 function lobbyAbasHtml(inicial) {
@@ -224,4 +226,63 @@ function lobbyContextoDoRetrato(r) {
     temJoias: w !== "pontos" && w !== "tabuleiro",
     valeJoias: w === "joias" || w === "express" || (w === "casa" && r.jogadores.length >= GEMS_MIN_PLAYERS),
   };
+}
+
+/* --- 1.7.10.5.6 (pedido do JF) · Resumo da partida e Cartas da partida ---
+ * O lobby (host e convidados) e a T2 mostram há quanto tempo a mesa joga, quantas cartas já foram e a lista das
+ * cartas encerradas: categoria, resposta, quem acertou, em quantas dicas e (tocando) qual dica matou a carta.
+ * Só carta encerrada entra (cartasPartida, 04-turno-e-rodada.js), então mostrar a resposta não entrega nada. */
+function partidaTempoTxt(ms) {
+  const m = Math.floor(Math.max(0, ms || 0) / 6e4);
+  if (m < 1) return "0 min";
+  return m < 60 ? m + " min" : Math.floor(m / 60) + " h " + String(m % 60).padStart(2, "0");
+}
+// dados do resumo: no host, das variáveis da partida; no convidado, do retrato
+function partidaResumoDados(r) {
+  if (r) {
+    const p = r.partida || {};
+    return { tempoMs: p.tempoMs || 0, cartas: p.cartas || 0, acertos: p.acertos || 0, esgotadas: p.esgotadas || 0, rodada: r.rodada, ultima: !!r.ultimaRodada };
+  }
+  return {
+    tempoMs: typeof tempoJogoMs === "number" ? tempoJogoMs : 0,
+    cartas: stats.totalDrawn,
+    acertos: cartasPartida.filter((c) => c.quem).length,
+    esgotadas: cartasPartida.filter((c) => !c.quem).length,
+    rodada: rodadaAtual,
+    ultima: !!ultimaRodada,
+  };
+}
+function partidaResumoHtml(d) {
+  const item = (ic, v, rot) => `<li><b>${ic} ${v}</b><small>${rot}</small></li>`;
+  return `<ul class="pt-resumo" aria-label="Resumo da partida">${item("⏱️", partidaTempoTxt(d.tempoMs), "de jogo")}${item("🔄", d.rodada || 1, d.ultima ? "última rodada" : "rodada")}${item("🃏", d.cartas, d.cartas === 1 ? "carta" : "cartas")}${item("✅", d.acertos, d.acertos === 1 ? "acerto" : "acertos")}</ul>`;
+}
+// nomeTxt(id) → nome puro; nomeHtml(id) → nome com avatar e selos (opcional)
+function cartasPartidaHtml(lista, nomeTxt, nomeHtml) {
+  if (!lista || !lista.length) return '<p class="cp-vazio">Nenhuma carta encerrada ainda. A primeira já vem.</p>';
+  const nomeDe = nomeHtml || ((id) => escapeHtml(nomeTxt(id)));
+  return `<ol class="cp-lista">${lista
+    .slice()
+    .reverse()
+    .map((c) => {
+      const cor = (GEM_INFO[c.cat] || {}).color || "#a78bfa";
+      const cat = `${CAT_SELO_ICONE[c.cat] || "🃏"} ${escapeHtml(c.cat.charAt(0) + c.cat.slice(1).toLowerCase())}`;
+      const dicas = `${c.dicas} dica${c.dicas === 1 ? "" : "s"}`;
+      const res = c.quem ? `✅ ${nomeDe(c.quem)} · ${dicas}` : `❌ Ninguém acertou · ${dicas}`;
+      const det = c.quem
+        ? c.dicaNum
+          ? `<p>${escapeHtml(nomeTxt(c.quem))} acertou na <b>dica ${c.dicaNum}</b>${c.dicaTxt ? `: “${escapeHtml(c.dicaTxt)}”` : ""}</p>`
+          : `<p>${escapeHtml(nomeTxt(c.quem))} acertou com ${dicas}.</p>`
+        : `<p>A carta acabou com ${dicas} aberta${c.dicas === 1 ? "" : "s"} e ninguém matou.</p>`;
+      return `<li class="cp-item${c.quem ? "" : " cp-esgotou"}" style="--cat:${cor}"><details data-k="cp${c.n}"><summary><span class="cp-topo"><span class="cp-cat">${cat}</span>${c.bonus ? '<span class="cp-bonus">⭐ bônus</span>' : ""}<span class="cp-n">carta ${c.n}</span></span><b class="cp-resp">${escapeHtml(c.resp)}</b><span class="cp-res">${res}</span></summary>${det}</details></li>`;
+    })
+    .join("")}</ol>`;
+}
+// as cartas da partida no host (lobby entre as cartas)
+function cartasPartidaHostHtml() {
+  const txt = (id) => (jogadorPorId(id) || {}).name || "Alguém";
+  const html = (id) => {
+    const p = jogadorPorId(id);
+    return p ? playerNameHtml(p.name, p.color, p.avatar) : "Alguém";
+  };
+  return cartasPartidaHtml(cartasPartida, txt, html);
 }

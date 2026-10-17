@@ -208,7 +208,10 @@ async function jogar(b, cen, semente) {
         if (players.map((p) => p.id).join() !== ids) quebra("id de jogador mudou");
         // 1.7.8.1: o retrato público nunca leva a resposta da carta em jogo
         if (typeof retratoPartida === "function" && passo % 10 === 0 && currentCard) {
-          const pub = JSON.stringify(retratoPartida("mesa"));
+          // 1.7.10.5.6: partida.historico leva a resposta de carta já encerrada (de propósito); fora dele, nunca
+          const rr = retratoPartida("mesa");
+          if (rr.partida && cartasPartida.some((c) => c.resp === currentCard.answer)) delete rr.partida.historico;
+          const pub = JSON.stringify(rr);
           if (pub.includes('"' + currentCard.answer + '"') || (currentCard.id && pub.includes(currentCard.id))) quebra("retrato público com a resposta");
         }
         // 1.7.8: a revisão da partida só cresce, e o registro de ações acompanha
@@ -244,6 +247,7 @@ async function jogar(b, cen, semente) {
         final: (() => {
           const f = retratoPartida("mestre");
           delete f.relogio;
+          if (f.partida) delete f.partida.tempoMs; // 1.7.10.5.6: tempo de jogo é relógio de parede
           delete f.matchId; // o replay é outra partida: o matchId é novo
           delete f.tabuleiro; // e a forma do tabuleiro (só desenho) é sorteada de novo
           return JSON.stringify(f);
@@ -323,6 +327,7 @@ async function replay(b, cen, semente, original) {
     await assentar();
     const f = retratoPartida("mestre");
     delete f.relogio;
+    if (f.partida) delete f.partida.tempoMs; // 1.7.10.5.6: tempo de jogo é relógio de parede
           delete f.matchId; // o replay é outra partida: o matchId é novo
           delete f.tabuleiro; // e a forma do tabuleiro (só desenho) é sorteada de novo
     return { divergiu, avisoMeio, repetidas, final: JSON.stringify(f) };

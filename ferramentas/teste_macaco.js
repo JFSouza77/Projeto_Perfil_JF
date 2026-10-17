@@ -66,7 +66,8 @@ let x = SEM >>> 0; const rnd = () => ((x = (x * 1664525 + 1013904223) >>> 0) / 4
       if (!['none','hidden','revealed','bonusChoice'].includes(cardState) && cardState) p.push('cardState estranho ' + cardState);
       if (mestreIndex < 0 || mestreIndex >= players.length) p.push('mestreIndex fora ' + mestreIndex);
       if (responderIndex < 0 || responderIndex >= players.length) p.push('responderIndex fora ' + responderIndex);
-      try { const m = JSON.stringify(retratoPartida('mesa')); if (currentCard && currentCard.answer && currentCard.answer.length > 3 && m.includes('"' + currentCard.answer + '"')) p.push('RESPOSTA NO RETRATO DA MESA'); } catch (e) { p.push('retrato quebrou ' + e.message); }
+      // 1.7.10.5.6: partida.historico leva a resposta de carta já encerrada (de propósito); fora dele, nunca
+      try { const rr = retratoPartida('mesa'); const enc = !!currentCard && cartasPartida.some((c) => c.resp === currentCard.answer); if (rr.partida && enc) delete rr.partida.historico; const m = JSON.stringify(rr); if (currentCard && currentCard.answer && currentCard.answer.length > 3 && m.includes('"' + currentCard.answer + '"')) p.push('RESPOSTA NO RETRATO DA MESA'); } catch (e) { p.push('retrato quebrou ' + e.message); }
       document.querySelectorAll('[id]').forEach((e) => {}); 
       const ids = {}; document.querySelectorAll('[id]').forEach((e) => { ids[e.id] = (ids[e.id] || 0) + 1; }); Object.keys(ids).forEach((k) => { if (ids[k] > 1 && !/^$/.test(k)) p.push('id duplicado #' + k); });
       return p;

@@ -599,11 +599,13 @@ function tabLobbyAbrir() {
     <div class="tb-lobby-tempo" aria-hidden="true"><div class="tb-lobby-barra" id="tbLobbyBarra"></div></div>
     <div class="tb-lobby-sub"><b id="tbLobbySeg">${TAB_LOBBY_SEG}</b> s pra ver o placar e combinar a estratégia</div>
     <div class="tb-lobby-prox">${prox}</div>
+    ${partidaResumoHtml(partidaResumoDados())}
     ${lobbyAbasHtml(aba)}
     <div class="lb-painel" data-aba="tabuleiro">${tabHtmlGrande("tabCaixaLobby")}
     <ul class="tg-list">${tabuleiroLinhasHtml(antes && antes.pos)}</ul></div>
     <div class="lb-painel" data-aba="pontos" hidden>${lobbyPontosHtml(antes)}</div>
     ${lobbyAbasDisponiveis().includes("joias") ? `<div class="lb-painel" data-aba="joias" hidden>${lobbyJoiasHtml(antes)}</div>` : ""}
+    <div class="lb-painel" data-aba="cartas" hidden>${cartasPartidaHostHtml()}</div>
   </div>`;
   document.body.appendChild(ov);
   tabLobbyAbertoEm = Date.now();

@@ -397,6 +397,7 @@ function saveGameState() {
       revealedOrder,
       pendingIndex,
       history,
+      cartasPartida,
       palpiteHolders,
       palpiteStock,
       timerEndAt,
@@ -667,6 +668,20 @@ function sanitizeLoadedState(s) {
       cluesUsed: num(h.cluesUsed, 0),
       timeTakenMs: typeof h.timeTakenMs === "number" ? h.timeTakenMs : null,
     }));
+  // 1.7.10.5.6: cartas da partida (só carta que existe, texto curto)
+  s.cartasPartida = (Array.isArray(s.cartasPartida) ? s.cartasPartida : [])
+    .filter((c) => c && answers.has(c.resp) && Object.prototype.hasOwnProperty.call(GEM_INFO, c.cat))
+    .slice(-150)
+    .map((c) => ({
+      n: Math.max(0, Math.floor(num(c.n, 0))),
+      cat: c.cat,
+      resp: c.resp,
+      quem: typeof c.quem === "string" ? c.quem.slice(0, 40) : null,
+      dicas: Math.max(0, Math.floor(num(c.dicas, 0))),
+      dicaNum: Number.isInteger(c.dicaNum) && c.dicaNum > 0 ? c.dicaNum : null,
+      dicaTxt: typeof c.dicaTxt === "string" ? c.dicaTxt.slice(0, 240) : null,
+      bonus: !!c.bonus,
+    }));
   if (!Array.isArray(s.expressSelectedCategories)) s.expressSelectedCategories = [];
   s.expressSelectedCategories = s.expressSelectedCategories
     .filter((c) => ["ANO", "PESSOA", "LUGAR", "COISA"].includes(c))
@@ -812,6 +827,7 @@ function loadGameState() {
         ? state.pendingIndex
         : null;
     history = state.history || [];
+    cartasPartida = state.cartasPartida || [];
     palpiteHolders = state.palpiteHolders || {};
     palpiteStock = typeof state.palpiteStock === "number" ? state.palpiteStock : PALPITE_STOCK;
     timerEndAt = saveNum(state.timerEndAt) || null;
@@ -1687,7 +1703,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.5.5 · C.A.O.S. 4.4.2");
+  L.push("- **Versão:** Beta 1.7.10.5.6 · C.A.O.S. 4.4.2");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2210,7 +2226,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.5.5 · C.A.O.S. 4.4.2",
+        versao: "Beta 1.7.10.5.6 · C.A.O.S. 4.4.2",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,

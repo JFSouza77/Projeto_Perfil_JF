@@ -1,0 +1,4 @@
+Origem: https://github.com/alirezarezvani/claude-skills (engineering-team/playwright-pro/skills/pw-review), commit 19392f7a08264ed00486a251f5b2098321771f94
+Licença: MIT (Alireza Rezvani), cópia em LICENSE. Instalada a pedido do JF em 17/10/2026.
+Adaptação: skill "pw-review" do plugin playwright-pro, renomeada pra playwright-review. Os testes daqui são scripts
+node + playwright em ferramentas/ (teste_*.js), não *.spec.ts; use a lista de anti-padrões (anti-patterns.md) neles.

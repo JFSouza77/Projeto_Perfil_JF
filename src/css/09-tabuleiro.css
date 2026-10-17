@@ -117,8 +117,8 @@
   align-items: center;
   gap: 8px;
   margin-top: 6px;
-  font-size: 0.66rem;
-  opacity: 0.78;
+  font-size: 0.72rem; /* 1.7.10.5.6 (auditoria): era 0.66rem, menor que 11 px */
+  opacity: 0.85;
 }
 .tb-legenda-grande {
   justify-content: center;
