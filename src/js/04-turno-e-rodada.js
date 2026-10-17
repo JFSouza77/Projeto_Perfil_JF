@@ -487,6 +487,7 @@ function flipCard() {
   roletaCarta = null;
   roletaPousou = false;
   cardState = "revealed";
+  playSfx("virar"); // 1.7.10.5.7
   if (CURRENT_MODE === "express") startExpressCard();
   else startTimer("pick");
   maybeAnnounceCrystalBall();

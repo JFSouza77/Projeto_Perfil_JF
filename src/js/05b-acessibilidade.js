@@ -195,3 +195,59 @@ document.addEventListener(
   },
   true,
 );
+
+/* --- Atalhos de teclado (1.7.10.5.7, sugestão aprovada pelo JF) ---
+ * Pra quem joga com teclado (Mestre no computador ou na TV com teclado): Espaço vira a carta (ou segue a
+ * especial), os números abrem a dica (dois dígitos: digite rápido, ex. 1 e 2 = dica 12), A = Acertou, E = Errou,
+ * R = conferir a resposta. Só aperta o botão que já está na tela: nenhuma regra nova, nada no telão nem no convidado. */
+let atalhoNum = "",
+  atalhoNumTimer = null;
+function atalhoTocar(el) {
+  if (!el || el.disabled || el.offsetParent === null) return false;
+  const antes = typeof acoesOrigemAtual !== "undefined" ? acoesOrigemAtual : null;
+  try {
+    if (typeof acoesOrigemAtual !== "undefined") acoesOrigemAtual = "toque";
+    toqueJogoUltimo = 0;
+    el.click();
+  } finally {
+    if (typeof acoesOrigemAtual !== "undefined") acoesOrigemAtual = antes;
+  }
+  return true;
+}
+function atalhoAbrirDica(n) {
+  atalhoNum = "";
+  clearTimeout(atalhoNumTimer);
+  const b = document.querySelector(`#cardArea .number-btn[data-idx="${n - 1}"]:not(.aberta)`);
+  if (b) atalhoTocar(b);
+}
+document.addEventListener("keydown", (e) => {
+  if (e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
+  const t = e.target;
+  if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+  const jogo = document.getElementById("gameScreen");
+  if (!jogo || jogo.style.display === "none" || document.getElementById("telao") || (typeof rede !== "undefined" && rede && rede.papel === "convidado")) return;
+  if (document.querySelector(".jf-modal-bg, .caos-modal-ov, #tutorialOverlay") || document.getElementById("pauseScreen").style.display === "block") return;
+  const k = e.key;
+  if (k === " ") {
+    const alvo = ["#rouletteDoneBtn", "#flipBtn", "#continueSpecialBtn", "#drawBtn"].map((s) => document.querySelector(s)).find((el) => el && el.offsetParent !== null && el.style.display !== "none");
+    if (alvo && atalhoTocar(alvo)) e.preventDefault();
+    return;
+  }
+  if (/^[0-9]$/.test(k)) {
+    const total = currentCard && currentCard.clues ? currentCard.clues.length : 0;
+    if (!total || cardState !== "revealed") return;
+    atalhoNum += k;
+    clearTimeout(atalhoNumTimer);
+    const n = +atalhoNum;
+    // espera o 2º dígito só se ele ainda pode formar um número de dica (ex.: "1" com 20 dicas pode virar 12)
+    if (atalhoNum.length >= 2 || n * 10 > total) {
+      if (n >= 1 && n <= total) atalhoAbrirDica(n);
+      atalhoNum = "";
+    } else atalhoNumTimer = setTimeout(() => (n >= 1 && n <= total ? atalhoAbrirDica(n) : (atalhoNum = "")), 650);
+    e.preventDefault();
+    return;
+  }
+  const mapa = { a: "#correctBtn", e: "#wrongBtn", r: "#conferirBtn" };
+  const sel = mapa[k.toLowerCase()];
+  if (sel && atalhoTocar(document.querySelector(sel))) e.preventDefault();
+});

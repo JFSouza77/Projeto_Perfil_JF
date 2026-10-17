@@ -156,6 +156,17 @@ function telaoEstadoHtml(r, nomeTxt) {
   if (r.estadoCarta === "revealed") return `<div class="tc-estado">👉 <b>${escapeHtml(nomeTxt(r.vezId))}</b> escolhe a próxima dica</div>`;
   return "";
 }
+// 1.7.10.5.7 (pedido do JF): seletor de alvo da especial "escolha um jogador" (só quem abriu a dica toca; o
+// convidado liga os botões em redeConvidadoDesenhar)
+function telaoAlvoHtml(r, nomeTxt) {
+  const ae = r.alvoEspecial;
+  if (!ae || !Array.isArray(ae.alvos)) return "";
+  const verbo = `${ae.n > 0 ? "avançar" : "voltar"} ${Math.abs(ae.n)} casas`;
+  const cards = ae.alvos
+    .map((a) => `<button type="button" class="ta-alvo${ae.n > 0 ? " ta-bom" : ""}" data-alvo="${escapeHtml(String(a.k))}" style="--pc:${isSafeColor(a.cor) ? corDoJogador(a.cor) : "#a78bfa"}" disabled><span class="ta-av" aria-hidden="true">${escapeHtml(a.avatar || "●")}</span><b>${escapeHtml(a.nome)}</b><small>casa ${a.casa | 0}</small></button>`)
+    .join("");
+  return `<div class="ta-escolha"><div class="tc-estado tc-pedido ta-tit">🎯 <b>${escapeHtml(nomeTxt(ae.quem))}</b> escolhe quem vai ${verbo}</div><div class="ta-alvos">${cards}</div><small class="ta-pe">${ae.n > 0 ? "⬆️" : "⬇️"} ${verbo} · se o tempo acabar, o jogo sorteia</small></div>`;
+}
 function telaoDesenhar(r, alvo) {
   const box = alvo || document.getElementById("telao"); // 1.7.9.4: o host desenha na própria tela de jogador
   if (!box) return;
@@ -215,7 +226,7 @@ function telaoDesenhar(r, alvo) {
     c && r.estadoCarta === "hidden"
       ? `<section class="telao-carta" style="--cat:${catCor}">${telaoEstadoHtml(r, nomeTxt)}${telaoRoletaHtml(c)}</section>`
       : c && c.categoria
-        ? `<section class="telao-carta" style="--cat:${catCor}">${telaoEstadoHtml(r, nomeTxt)}<div class="telao-cat"><span class="tc-selo">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)}</span><span class="tc-conta"><b>${c.abertas.length}</b> de ${c.totalDicas} dicas</span></div>${numeros}${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>`
+        ? `<section class="telao-carta" style="--cat:${catCor}">${r.alvoEspecial ? telaoAlvoHtml(r, nomeTxt) : telaoEstadoHtml(r, nomeTxt)}<div class="telao-cat"><span class="tc-selo">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)}</span><span class="tc-conta"><b>${c.abertas.length}</b> de ${c.totalDicas} dicas</span></div>${numeros}${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>`
         : "";
   const hist = Array.isArray(p.historico) ? p.historico : [];
   box.dataset.rev = String(r.revisao);

@@ -209,10 +209,16 @@ function updateTimerDisplay() {
     playBeep(440, 0.1);
     if (left <= 3) vibrar("tique");
   }
-  if (left > 5) lastBeepSecond = null;
-  fxUrgente(
-    left <= 5 && left > 0 && !!timerInterval && document.getElementById("pauseScreen").style.display !== "block",
-  );
+  // 1.7.10.5.7 (sugestão aprovada pelo JF): dos 10 aos 6 s, tique-taque baixinho e a borda pulsando de leve;
+  // nos 5 últimos, o bipe e a borda vermelha de sempre
+  const rodando = !!timerInterval && document.getElementById("pauseScreen").style.display !== "block";
+  if (rodando && left <= 10 && left > 5 && left !== lastBeepSecond) {
+    lastBeepSecond = left;
+    playSfx(left % 2 ? "taque" : "tique");
+  }
+  if (left > 10) lastBeepSecond = null;
+  fxUrgente(left <= 5 && left > 0 && rodando); // (desligar o urgente também tira o alerta)
+  document.body.classList.toggle("fx-alerta", rodando && left <= 10 && left > 5 && visualFxAllowed());
 }
 function ciSanearLog(arr, max) {
   if (!Array.isArray(arr)) return [];
@@ -812,7 +818,16 @@ function render() {
               autoOnclick = mst ? `applySpecialMove(${mestreIndex}, ${moveVal})` : "loseTurnAfterSpecial()";
             }
           }
-          controlsHtml = soDois
+          // 1.7.10.5.7 (pedido do JF): no online, quem abriu a dica escolhe o alvo na T2; o Mestre só espera
+          // (o "Escolher por aqui" é a saída de emergência, e o tempo esgotado sorteia como sempre)
+          const alvoLonge = !soDois && typeof alvoNoAparelho === "function" && alvoNoAparelho() && alvoAquiChave !== stats.totalDrawn + ":" + pendingIndex;
+          controlsHtml = alvoLonge
+            ? `
+            <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ⭐ ${item.text}</div>
+            ${spotlightTimerHtml}
+            <div class="pedido-dica">🎯 ${responderName} escolhe no dispositivo dele quem vai ${moveText} 2 casas. Se o tempo acabar, o jogo sorteia.</div>
+            <button type="button" class="discard-btn" id="alvoAquiBtn">Escolher por aqui</button>`
+            : soDois
             ? `
             <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ⭐ ${item.text}</div>
             <div style="text-align:center; opacity:0.85; font-size:0.85rem; margin:8px 0;">Com só 2 ${CURRENT_FORMAT === "equipe" ? "equipes" : "jogadores"} ninguém pode escolher a si mesmo — o efeito vai direto pra <b>${autoName}</b>.</div>
@@ -1969,6 +1984,7 @@ function fxUrgente(on) {
   if (!b) return;
   if (on && visualFxAllowed()) b.classList.add("fx-urgente");
   else b.classList.remove("fx-urgente");
+  if (!on) b.classList.remove("fx-alerta");
 }
 function visualFxAllowed() {
   if (document.body.classList.contains("batata-mode")) return false;
@@ -3786,3 +3802,12 @@ function cadAtualizarBotao() {
   } catch (e) {}
 }
 
+
+// 1.7.10.5.7: "Escolher por aqui" (o Mestre assume o seletor de alvo da especial nesta dica)
+let alvoAquiChave = null;
+document.addEventListener("click", (e) => {
+  if (!e.target.closest || !e.target.closest("#alvoAquiBtn")) return;
+  alvoAquiChave = stats.totalDrawn + ":" + pendingIndex;
+  render();
+  if (typeof redeHostPublicar === "function") redeHostPublicar(true);
+});

@@ -6,6 +6,17 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.5.7 · 17/10/2026 · "Multiplayer Update · Online de verdade" = SELETOR DE ALVO NA T2 + SOM E TECLADO (pedido do JF).
+          1) Especial "escolha um jogador" no online: quem abriu a dica escolhe o alvo no próprio dispositivo, tocando no
+          cartão do jogador na T2 (todo mundo vê; alvoNoAparelho/alvoEspecialPublico, retrato.alvoEspecial). A tela do Mestre
+          só espera, com "Escolher por aqui" de emergência; o Mestre remoto não recebe os botões de alvo e a porta recusa o
+          alvo dele (sem_permissao). Fail safe como o da trava da dica: sem dispositivo próprio, no host, no mesmo
+          dispositivo do Mestre ou com o dele caído, volta a ser como era; tempo esgotado sorteia. Offline: igual.
+          2) Atalhos de teclado (só apertam o botão que já está na tela): Espaço vira/segue, números abrem a dica (dois
+          dígitos), A acertou, E errou, R conferir resposta. 3) Som de carta virando (playSfx "virar"). 4) Tensão nos
+          últimos 10 s: tique-taque baixinho e borda pulsando de leve até os 6 s (fx-alerta); depois o bipe e a borda
+          vermelha de sempre; sem animação com Menos movimento. Manual: "Quem toca o quê" e "Pronto!" atualizados.
+          Teste novo no teste_rede (seletor, sem_permissao do Mestre, fail safe, toque aplica).
   1.7.10.5.6 · 16/10/2026 · "Multiplayer Update · Online de verdade" = T2 E LOBBY COM CARA DE JOGO + CORREÇÕES DA AUDITORIA (pedido do JF).
           1) Cartas da partida (cartasPartida, salvo e desfeito junto): categoria, resposta, quem acertou, em quantas dicas
           e qual dica matou a carta; carta esgotada entra como "ninguém acertou". Vai no retrato (partida.historico, só carta
@@ -848,7 +859,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.5.6</title>
+<title>Perfil JF · Beta 1.7.10.5.7</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
