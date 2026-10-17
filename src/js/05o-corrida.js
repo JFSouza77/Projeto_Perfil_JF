@@ -221,6 +221,24 @@ function corridaLiderNome() {
 function corridaPlacar() {
   return players.slice().sort((a, b) => corridaRank(b) - corridaRank(a));
 }
+// Corrida em equipe: o placar é da equipe (soma do que cada um conquistou)
+function corridaCartasEquipe(teamId) {
+  return players.filter((p) => p.team === teamId).reduce((s, p) => s + corridaCartasDe(p), 0);
+}
+function corridaRankEquipe(teamId) {
+  return teamScore(teamId) + (corridaVitoria === "tempo" ? Math.min(corridaCartasEquipe(teamId), 999) / 1000 : 0);
+}
+function corridaEntidades() {
+  if (CURRENT_FORMAT !== "equipe") return corridaPlacar().map((p) => ({ k: p.id, html: playerNameHtml(p.name, p.color, p.avatar), cor: corDoJogador(p.color), rank: corridaRank(p), txt: corridaValorTxt(p) }));
+  return teamOrder
+    .map((id) => {
+      const info = TEAM_INFO[id],
+        n = corridaCartasEquipe(id);
+      const cartas = `${n} carta${n === 1 ? "" : "s"}`;
+      return { k: id, html: `${info.emoji} Equipe ${escapeHtml(info.label)}`, cor: corDoJogador(info.color), rank: corridaRankEquipe(id), txt: corridaVitoria === "tempo" ? `${teamScore(id)} pts · ${cartas}` : cartas };
+    })
+    .sort((a, b) => b.rank - a.rank);
+}
 /* Pontuação (decisão do JF, 17/10): na Corrida · Tempo a carta vale os segundos que sobravam no relógio dela na hora
    do acerto (acertou com 1:45 sobrando = 105 pontos); na Corrida · Cartas, cada carta vale 1. */
 function corridaValorCarta() {
@@ -311,7 +329,7 @@ function corridaEncerrar() {
   if (gameEnded) return;
   const max = Math.max(0, ...players.map((p) => p.score || 0));
   const empatados = players.filter((p) => (p.score || 0) === max);
-  if (corridaVitoria === "cartas" && empatados.length >= 2 && !corridaDesempateFeito && deck.length > 0) return corridaDesempateComecar(empatados);
+  if (CURRENT_FORMAT !== "equipe" && corridaVitoria === "cartas" && empatados.length >= 2 && !corridaDesempateFeito && deck.length > 0) return corridaDesempateComecar(empatados);
   endGame();
 }
 // desempate e duelo: só os escolhidos respondem
@@ -370,11 +388,11 @@ function corridaIntervaloTalvez() {
   corridaIntervaloAbrir();
 }
 function corridaPlacarHtml() {
-  const lista = corridaPlacar();
-  const max = lista.length ? corridaRank(lista[0]) : 0;
+  const lista = corridaEntidades();
+  const max = lista.length ? lista[0].rank : 0;
   return `<ol class="cr-placar">${lista
-    .map((p) => {
-      return `<li class="${corridaRank(p) === max && max > 0 ? "cr-lider" : ""}" style="--pc:${corDoJogador(p.color)}"><span>${playerNameHtml(p.name, p.color, p.avatar)}</span><b>${corridaValorTxt(p)}</b></li>`;
+    .map((e) => {
+      return `<li class="${e.rank === max && max > 0 ? "cr-lider" : ""}" style="--pc:${e.cor}"><span>${e.html}</span><b>${e.txt}</b></li>`;
     })
     .join("")}</ol>`;
 }

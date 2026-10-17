@@ -2043,20 +2043,16 @@ function redrawMestre() {
   saveGameState();
 }
 function runTeamFormation(n) {
-  // 2 equipes: 4 jogadores (2 + 2) ou 6 (3 + 3). 3 equipes: 6 jogadores (2 + 2 + 2).
-  if (n === 2 && players.length !== 4 && players.length !== 6) {
-    caosAvisoModal("2 equipes precisam de 4 jogadores (2 por equipe) ou 6 (3 por equipe). Hoje tem " + players.length + ".");
-    return;
-  }
-  if (n === 3 && players.length !== 6) {
-    caosAvisoModal("3 equipes precisam de EXATAMENTE 6 jogadores (2 por equipe). Hoje tem " + players.length + ".");
+  // 1.7.10.6: equipes do mesmo tamanho, pelo menos 2 em cada (até 5 equipes e 10 jogadores)
+  if (!equipeQuantidadesValidas(players.length).includes(n)) {
+    caosAvisoModal(`${n} equipes não fecham com ${players.length} jogadores (cada equipe precisa do mesmo tamanho, com pelo menos 2). ${equipeDicaTxt()}`);
     return;
   }
   formTeamsBalancedByAge(n);
   renderTeamRosterPreview();
   document.getElementById("teamCountChoice").style.display = "none";
   document.getElementById("teamRosterPreview").style.display = "block";
-  if (n === 3) {
+  if (n >= 3) {
     document.getElementById("teamSubModeChoice").style.display = "block";
     if (typeof paintSubModeChoice === "function") paintSubModeChoice(equipeSubMode === "ffa" ? "ffa" : "duelo");
   } else {
@@ -2080,7 +2076,7 @@ function beginGameplay() {
       getRandomReaction(
         REACTIVE_VOICE.inicioInvalido,
         CURRENT_FORMAT === "equipe"
-          ? "o Modo Equipe precisa de 4 ou 6 jogadores, todos com equipe"
+          ? "o Modo Equipe precisa de 4, 6, 8, 9 ou 10 jogadores, todos com equipe"
           : `precisa de pelo menos ${MIN_PLAYERS} jogadores`,
       ),
       null,
@@ -2436,7 +2432,7 @@ function admDevolverCarta() {
   if (typeof expressWhoFreeze !== "undefined") expressWhoFreeze = null;
 }
 function admRemoverJogador(r) {
-  if (CURRENT_FORMAT === "equipe") return "no Equipe as equipes precisam de 4 ou 6 jogadores";
+  if (CURRENT_FORMAT === "equipe") return "no Equipe as equipes precisam ficar do mesmo tamanho (4, 6, 8, 9 ou 10 jogadores)";
   if (!players[r] || players.length <= 2) return "a partida precisa de pelo menos 2 jogadores";
   const saiu = players[r];
   admDevolverCarta();

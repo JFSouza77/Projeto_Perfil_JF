@@ -772,6 +772,8 @@ function iniciar() {
   });
   document.getElementById("teamCount2Btn").addEventListener("click", () => runTeamFormation(2));
   document.getElementById("teamCount3Btn").addEventListener("click", () => runTeamFormation(3));
+  document.getElementById("teamCount4Btn").addEventListener("click", () => runTeamFormation(4));
+  document.getElementById("teamCount5Btn").addEventListener("click", () => runTeamFormation(5));
   document.getElementById("subModeDueloBtn").addEventListener("click", () => {
     equipeSubMode = "duelo";
     paintSubModeChoice("duelo");
@@ -796,7 +798,7 @@ function iniciar() {
     }
     if (!isValidEquipeCount(players.length) || !players.every((p) => p.team && teams[p.team])) {
       caosAvisoModal(
-        "O Modo Equipe precisa de EXATAMENTE 4 ou 6 jogadores, todos com equipe. Sorteie as equipes de novo.",
+        "O Modo Equipe precisa de 4, 6, 8, 9 ou 10 jogadores, todos com equipe. Sorteie as equipes de novo.",
       );
       return;
     }

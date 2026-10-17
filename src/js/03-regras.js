@@ -354,7 +354,7 @@ function teamScore(id) {
 }
 function rankValue(holder, teamId) {
   const w = winCond();
-  if (w === "corrida") return corridaRank(holder); // pontos (Tempo) ou cartas; no Tempo, empate desempata por cartas
+  if (w === "corrida") return teamId ? corridaRankEquipe(teamId) : corridaRank(holder); // pontos (Tempo) ou cartas; no Tempo, empate desempata por cartas
   if (w === "express" || w === "caos") return holder.score || 0; // Modo C.A.O.S.: score = cartas capturadas
   if (w === "pontos") return teamId ? teamScore(teamId) : holder.score || 0;
   if (w === "joias") return gemTotal(holder);
@@ -482,7 +482,9 @@ function palpiteEligibleHolders() {
   if (!palpiteAvailable() || !currentCard) return [];
   // Corrida no relâmpago (Hardcore / Juízo Final): todo mundo menos o Mestre pode bater na mesa (no duelo, os dois)
   if (CURRENT_MODE === "corrida" && corridaRelampago())
-    return players.filter((p, i) => i !== mestreIndex && corridaPodeResponder(i)).map((p) => p.id);
+    return players
+      .filter((p, i) => i !== mestreIndex && corridaPodeResponder(i) && !(CURRENT_FORMAT === "equipe" && players[mestreIndex] && p.team === players[mestreIndex].team))
+      .map((p) => p.id);
   const blocked = new Set([palpiteKeyOf(mestreIndex), palpiteKeyOf(responderIndex)]);
   let keys = Object.keys(palpiteHolders).filter((k) => palpiteHolders[k] > 0 && !blocked.has(k));
   if (currentCard.isBonus) return [];
@@ -490,6 +492,7 @@ function palpiteEligibleHolders() {
 }
 function palpiteEligibleScorers() {
   const keys = palpiteEligibleHolders();
+  if (CURRENT_MODE === "corrida" && corridaRelampago()) return keys.map((k) => jogadorIdxPorId(k)).filter((i) => i >= 0); // ids de jogador
   if (CURRENT_FORMAT === "equipe") return players.map((p, i) => i).filter((i) => keys.includes(players[i].team));
   return keys.map((k) => jogadorIdxPorId(k)).filter((i) => i >= 0);
 }
@@ -614,8 +617,16 @@ function applySpecialMove(targetIdx, amount) {
   maybeShowMoveSpecialFlavor(p.name, amount, targetIdx !== responderIndex);
   afterMoveSpecial();
 }
+// 1.7.10.6 (até 10 jogadores, 5 equipes): quantas equipes dá pra formar com n jogadores, todas do mesmo tamanho e
+// com pelo menos 2 em cada (4 → 2 · 6 → 2 ou 3 · 8 → 2 ou 4 · 9 → 3 · 10 → 2 ou 5)
+function equipeQuantidadesValidas(n) {
+  const max = Object.keys(TEAM_INFO).length;
+  const ok = [];
+  for (let k = 2; k <= max; k++) if (n % k === 0 && n / k >= 2) ok.push(k);
+  return ok;
+}
 function isValidEquipeCount(n) {
-  return n === 4 || n === 6;
+  return equipeQuantidadesValidas(n).length > 0;
 }
 function hasEnoughPlayersForFormat() {
   return CURRENT_FORMAT === "equipe" ? isValidEquipeCount(players.length) : players.length >= MIN_PLAYERS;
@@ -764,4 +775,7 @@ function nomeImproprio(n) {
   // a palavra sozinha ("Pika"), e também colada no resto ("CarroPika" vira "carro pika" só se tiver espaço)
   if (palavras.some((w) => NOME_PROIBIDO_PALAVRA.test(w) || NOME_PROIBIDO_PALAVRA.test(w.replace(/(.)\1+/g, "$1")))) return true;
   return NOME_PROIBIDO_TRECHO.test(t.replace(/ /g, ""));
+}
+function equipeDicaTxt() {
+  return "Dá certo com: 4 (2 equipes), 6 (2 ou 3), 8 (2 ou 4), 9 (3) e 10 (2 ou 5).";
 }

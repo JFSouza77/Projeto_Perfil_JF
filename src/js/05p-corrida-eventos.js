@@ -260,7 +260,7 @@ function corridaRelampagoErrou(key) {
 
 /* --- Duelo do C.A.O.S. --- */
 function corridaDueloTalvez() {
-  if (players.length < 3 || corridaDuelos >= CORRIDA_DUELO_MAX || corridaJuizo || corridaDesempate) return false;
+  if (CURRENT_FORMAT === "equipe" || players.length < 3 || corridaDuelos >= CORRIDA_DUELO_MAX || corridaJuizo || corridaDesempate) return false;
   if (stats.totalDrawn < 5 || stats.totalDrawn - corridaUltimoEvento < 4 || corridaGeralMs() <= CORRIDA_EVENTO_FORA_MS) return false;
   if (sorteioRegra() >= 0.12) return false;
   corridaDueloComecar();

@@ -26,7 +26,7 @@ const DEBUG = true;
 const TIMER_KINDS = ["pick", "response", "special", "turn"];
 const SAVE_VERSION = 12; // 12 (1.7.7.1): jogador com id; palpite, joias da rodada, vencedor por joias, 1º Mestre e ADM principal por id
 const MIN_PLAYERS = 2;
-const MAX_PLAYERS = 6;
+const MAX_PLAYERS = 10; // 1.7.10.6 (pedido do JF): de 6 pra 10, em todos os modos
 const CAOS_EMO_GRAVE = {
   erroEscalada: 1,
   juizMestre: 1,
@@ -162,6 +162,9 @@ const TEAM_INFO = {
   red: { label: "Vermelha", color: "#e94560", emoji: "🔴" },
   blue: { label: "Azul", color: "#38bdf8", emoji: "🔵" },
   green: { label: "Verde", color: "#10b981", emoji: "🟢" },
+  // 1.7.10.6 (pedido do JF): RGB + preto e branco, 5 equipes pra sempre dar pra dividir até 10 jogadores
+  black: { label: "Preta", color: "#4b5563", emoji: "⚫" },
+  white: { label: "Branca", color: "#f1f5f9", emoji: "⚪" },
 };
 const AGE_BRACKETS = [
   { id: "crianca", label: "6-12", cor: "#22c55e" },
@@ -341,7 +344,7 @@ const ULTIMA_RODADA = true;
 const PALPITE_MODES_OK = ["classico", "junior", "oldschool", "corrida"];
 // 1.7.10.6 · Corrida contra o Tempo (regras do JF em docs/Modos_1.7.10.6.md): relógio geral de 30 min (+10 s por
 // carta acertada), carta de 2:30, 15 s pra escolher a dica e 15 s pra responder, intervalo de 15 s congelado.
-const CORRIDA_TEMPO_MS = 30 * 60e3;
+const CORRIDA_TEMPO_MS = 20 * 60e3; // 1.7.10.6: 20 min (o JF deixou o balanceamento comigo: dá ~12 cartas, cada um lê 2 ou 3 vezes)
 const CORRIDA_BONUS_MS = 10e3;
 const CORRIDA_CARTA_MS = 150e3;
 const CORRIDA_VEZ_SEG = 15;

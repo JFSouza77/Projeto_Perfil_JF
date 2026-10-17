@@ -10570,10 +10570,12 @@ body.claro .mc-desfib {
       <div id="teamCountChoice">
         <p style="opacity:0.8; font-size:0.85rem; text-align:center;">Quantas equipes?</p>
         <div style="display:flex; gap:8px; justify-content:center;">
-          <button class="main-btn" id="teamCount2Btn" style="flex:1;">2 equipes</button>
-          <button class="main-btn" id="teamCount3Btn" style="flex:1;">3 equipes</button>
+          <button class="main-btn" id="teamCount2Btn" style="flex:1;">2</button>
+          <button class="main-btn" id="teamCount3Btn" style="flex:1;">3</button>
+          <button class="main-btn" id="teamCount4Btn" style="flex:1;">4</button>
+          <button class="main-btn" id="teamCount5Btn" style="flex:1;">5</button>
         </div>
-        <p style="opacity:0.7; font-size:0.75rem; text-align:center; margin-top:6px;">4 jogadores: 2 equipes de 2 · 6 jogadores: 2 equipes de 3 ou 3 equipes de 2</p>
+        <p style="opacity:0.7; font-size:0.75rem; text-align:center; margin-top:6px;">Equipes do mesmo tamanho, 2+ em cada: 4 → 2 · 6 → 2 ou 3 · 8 → 2 ou 4 · 9 → 3 · 10 → 2 ou 5</p>
       </div>
       <div id="teamRosterPreview" style="display:none; margin-top:10px; font-size:0.85rem;"></div>
       <div id="teamSubModeChoice" style="display:none; margin-top:10px;">
@@ -10656,7 +10658,7 @@ const DEBUG = true;
 const TIMER_KINDS = ["pick", "response", "special", "turn"];
 const SAVE_VERSION = 12; // 12 (1.7.7.1): jogador com id; palpite, joias da rodada, vencedor por joias, 1º Mestre e ADM principal por id
 const MIN_PLAYERS = 2;
-const MAX_PLAYERS = 6;
+const MAX_PLAYERS = 10; // 1.7.10.6 (pedido do JF): de 6 pra 10, em todos os modos
 const CAOS_EMO_GRAVE = {
   erroEscalada: 1,
   juizMestre: 1,
@@ -10792,6 +10794,9 @@ const TEAM_INFO = {
   red: { label: "Vermelha", color: "#e94560", emoji: "🔴" },
   blue: { label: "Azul", color: "#38bdf8", emoji: "🔵" },
   green: { label: "Verde", color: "#10b981", emoji: "🟢" },
+  // 1.7.10.6 (pedido do JF): RGB + preto e branco, 5 equipes pra sempre dar pra dividir até 10 jogadores
+  black: { label: "Preta", color: "#4b5563", emoji: "⚫" },
+  white: { label: "Branca", color: "#f1f5f9", emoji: "⚪" },
 };
 const AGE_BRACKETS = [
   { id: "crianca", label: "6-12", cor: "#22c55e" },
@@ -10971,7 +10976,7 @@ const ULTIMA_RODADA = true;
 const PALPITE_MODES_OK = ["classico", "junior", "oldschool", "corrida"];
 // 1.7.10.6 · Corrida contra o Tempo (regras do JF em docs/Modos_1.7.10.6.md): relógio geral de 30 min (+10 s por
 // carta acertada), carta de 2:30, 15 s pra escolher a dica e 15 s pra responder, intervalo de 15 s congelado.
-const CORRIDA_TEMPO_MS = 30 * 60e3;
+const CORRIDA_TEMPO_MS = 20 * 60e3; // 1.7.10.6: 20 min (o JF deixou o balanceamento comigo: dá ~12 cartas, cada um lê 2 ou 3 vezes)
 const CORRIDA_BONUS_MS = 10e3;
 const CORRIDA_CARTA_MS = 150e3;
 const CORRIDA_VEZ_SEG = 15;
@@ -12422,7 +12427,7 @@ function teamScore(id) {
 }
 function rankValue(holder, teamId) {
   const w = winCond();
-  if (w === "corrida") return corridaRank(holder); // pontos (Tempo) ou cartas; no Tempo, empate desempata por cartas
+  if (w === "corrida") return teamId ? corridaRankEquipe(teamId) : corridaRank(holder); // pontos (Tempo) ou cartas; no Tempo, empate desempata por cartas
   if (w === "express" || w === "caos") return holder.score || 0; // Modo C.A.O.S.: score = cartas capturadas
   if (w === "pontos") return teamId ? teamScore(teamId) : holder.score || 0;
   if (w === "joias") return gemTotal(holder);
@@ -12550,7 +12555,9 @@ function palpiteEligibleHolders() {
   if (!palpiteAvailable() || !currentCard) return [];
   // Corrida no relâmpago (Hardcore / Juízo Final): todo mundo menos o Mestre pode bater na mesa (no duelo, os dois)
   if (CURRENT_MODE === "corrida" && corridaRelampago())
-    return players.filter((p, i) => i !== mestreIndex && corridaPodeResponder(i)).map((p) => p.id);
+    return players
+      .filter((p, i) => i !== mestreIndex && corridaPodeResponder(i) && !(CURRENT_FORMAT === "equipe" && players[mestreIndex] && p.team === players[mestreIndex].team))
+      .map((p) => p.id);
   const blocked = new Set([palpiteKeyOf(mestreIndex), palpiteKeyOf(responderIndex)]);
   let keys = Object.keys(palpiteHolders).filter((k) => palpiteHolders[k] > 0 && !blocked.has(k));
   if (currentCard.isBonus) return [];
@@ -12558,6 +12565,7 @@ function palpiteEligibleHolders() {
 }
 function palpiteEligibleScorers() {
   const keys = palpiteEligibleHolders();
+  if (CURRENT_MODE === "corrida" && corridaRelampago()) return keys.map((k) => jogadorIdxPorId(k)).filter((i) => i >= 0); // ids de jogador
   if (CURRENT_FORMAT === "equipe") return players.map((p, i) => i).filter((i) => keys.includes(players[i].team));
   return keys.map((k) => jogadorIdxPorId(k)).filter((i) => i >= 0);
 }
@@ -12682,8 +12690,16 @@ function applySpecialMove(targetIdx, amount) {
   maybeShowMoveSpecialFlavor(p.name, amount, targetIdx !== responderIndex);
   afterMoveSpecial();
 }
+// 1.7.10.6 (até 10 jogadores, 5 equipes): quantas equipes dá pra formar com n jogadores, todas do mesmo tamanho e
+// com pelo menos 2 em cada (4 → 2 · 6 → 2 ou 3 · 8 → 2 ou 4 · 9 → 3 · 10 → 2 ou 5)
+function equipeQuantidadesValidas(n) {
+  const max = Object.keys(TEAM_INFO).length;
+  const ok = [];
+  for (let k = 2; k <= max; k++) if (n % k === 0 && n / k >= 2) ok.push(k);
+  return ok;
+}
 function isValidEquipeCount(n) {
-  return n === 4 || n === 6;
+  return equipeQuantidadesValidas(n).length > 0;
 }
 function hasEnoughPlayersForFormat() {
   return CURRENT_FORMAT === "equipe" ? isValidEquipeCount(players.length) : players.length >= MIN_PLAYERS;
@@ -12832,6 +12848,9 @@ function nomeImproprio(n) {
   // a palavra sozinha ("Pika"), e também colada no resto ("CarroPika" vira "carro pika" só se tiver espaço)
   if (palavras.some((w) => NOME_PROIBIDO_PALAVRA.test(w) || NOME_PROIBIDO_PALAVRA.test(w.replace(/(.)\1+/g, "$1")))) return true;
   return NOME_PROIBIDO_TRECHO.test(t.replace(/ /g, ""));
+}
+function equipeDicaTxt() {
+  return "Dá certo com: 4 (2 equipes), 6 (2 ou 3), 8 (2 ou 4), 9 (3) e 10 (2 ou 5).";
 }
 /* ======================================================================
  * 4. TURNO E RODADA (SORTEIO DE CARTA, DICAS, ACERTO/ERRO, ESPECIAIS, TIMERS, PAUSA, INÍCIO E FIM)
@@ -14878,20 +14897,16 @@ function redrawMestre() {
   saveGameState();
 }
 function runTeamFormation(n) {
-  // 2 equipes: 4 jogadores (2 + 2) ou 6 (3 + 3). 3 equipes: 6 jogadores (2 + 2 + 2).
-  if (n === 2 && players.length !== 4 && players.length !== 6) {
-    caosAvisoModal("2 equipes precisam de 4 jogadores (2 por equipe) ou 6 (3 por equipe). Hoje tem " + players.length + ".");
-    return;
-  }
-  if (n === 3 && players.length !== 6) {
-    caosAvisoModal("3 equipes precisam de EXATAMENTE 6 jogadores (2 por equipe). Hoje tem " + players.length + ".");
+  // 1.7.10.6: equipes do mesmo tamanho, pelo menos 2 em cada (até 5 equipes e 10 jogadores)
+  if (!equipeQuantidadesValidas(players.length).includes(n)) {
+    caosAvisoModal(`${n} equipes não fecham com ${players.length} jogadores (cada equipe precisa do mesmo tamanho, com pelo menos 2). ${equipeDicaTxt()}`);
     return;
   }
   formTeamsBalancedByAge(n);
   renderTeamRosterPreview();
   document.getElementById("teamCountChoice").style.display = "none";
   document.getElementById("teamRosterPreview").style.display = "block";
-  if (n === 3) {
+  if (n >= 3) {
     document.getElementById("teamSubModeChoice").style.display = "block";
     if (typeof paintSubModeChoice === "function") paintSubModeChoice(equipeSubMode === "ffa" ? "ffa" : "duelo");
   } else {
@@ -14915,7 +14930,7 @@ function beginGameplay() {
       getRandomReaction(
         REACTIVE_VOICE.inicioInvalido,
         CURRENT_FORMAT === "equipe"
-          ? "o Modo Equipe precisa de 4 ou 6 jogadores, todos com equipe"
+          ? "o Modo Equipe precisa de 4, 6, 8, 9 ou 10 jogadores, todos com equipe"
           : `precisa de pelo menos ${MIN_PLAYERS} jogadores`,
       ),
       null,
@@ -15271,7 +15286,7 @@ function admDevolverCarta() {
   if (typeof expressWhoFreeze !== "undefined") expressWhoFreeze = null;
 }
 function admRemoverJogador(r) {
-  if (CURRENT_FORMAT === "equipe") return "no Equipe as equipes precisam de 4 ou 6 jogadores";
+  if (CURRENT_FORMAT === "equipe") return "no Equipe as equipes precisam ficar do mesmo tamanho (4, 6, 8, 9 ou 10 jogadores)";
   if (!players[r] || players.length <= 2) return "a partida precisa de pelo menos 2 jogadores";
   const saiu = players[r];
   admDevolverCarta();
@@ -15920,12 +15935,13 @@ function updateDrawAvailability() {
   warning.style.display = enoughPlayers ? "none" : "block";
   warning.textContent =
     CURRENT_FORMAT === "equipe"
-      ? `O Modo Equipe precisa de EXATAMENTE 4 ou 6 jogadores (com 6: 2 equipes de 3 ou 3 equipes de 2) — agora tem ${players.length}.`
+      ? `O Modo Equipe precisa de um número de jogadores que divida certinho (4, 6, 8, 9 ou 10) — agora tem ${players.length}.`
       : `Adicione pelo menos ${MIN_PLAYERS} jogadores para começar (máximo ${MAX_PLAYERS}).`;
-  const team2Btn = document.getElementById("teamCount2Btn");
-  const team3Btn = document.getElementById("teamCount3Btn");
-  if (team2Btn) team2Btn.disabled = players.length !== 4 && players.length !== 6;
-  if (team3Btn) team3Btn.disabled = players.length !== 6;
+  const validas = equipeQuantidadesValidas(players.length);
+  [2, 3, 4, 5].forEach((k) => {
+    const b = document.getElementById("teamCount" + k + "Btn");
+    if (b) b.disabled = !validas.includes(k);
+  });
   iniAtualizarBotao();
   renderWinCondPicker();
 }
@@ -16827,11 +16843,8 @@ function renderMiniScoreboard() {
   const list = document.getElementById("miniScoreboard");
   if (list) {
     if (CURRENT_MODE === "corrida") {
-      list.innerHTML = corridaPlacar()
-        .map(
-          (p) =>
-            `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${corridaValorTxt(p)}${palpiteBadge(p.id)}</li>`,
-        )
+      list.innerHTML = corridaEntidades()
+        .map((e) => `<li style="--pc:${e.cor}">${e.html}: ${e.txt}${palpiteBadge(e.k)}</li>`)
         .join("");
     } else if (CURRENT_MODE === "express") {
       const sorted = [...players].sort((a, b) => b.score - a.score);
@@ -17678,7 +17691,7 @@ function renderFinalScreen() {
           .join(", ");
         return `<li class="${rank === 1 && !allZero ? "first-place" : ""}">
         <span>${(!allZero && medals[rank - 1]) || rank + "º"} ${info.emoji} Equipe ${info.label} <span style="opacity:0.7; font-size:0.8em;">(${escapeHtml(members)})</span></span>
-        <span>${wc === "pontos" ? `${teamScore(id)} pts — ` : ""}casa ${teams[id].position}${gemBadgesHtml(teams[id])}</span>
+        <span>${wc === "corrida" ? (corridaEntidades().find((e) => e.k === id) || {}).txt || "" : `${wc === "pontos" ? `${teamScore(id)} pts — ` : ""}casa ${teams[id].position}${gemBadgesHtml(teams[id])}`}</span>
       </li>`;
       })
       .join("");
@@ -17989,7 +18002,7 @@ function renderModeCardDescs() {
       : "O jogo sorteia o modo: Júnior, Clássico, Hardcore, Old School ou Express.",
   );
   set("mcDescVersus", `Cada um por si. De ${MIN_PLAYERS} a ${MAX_PLAYERS} jogadores, o Mestre roda a cada carta.`);
-  set("mcDescEquipe", "Times sorteados equilibrando as idades. Exatamente 4 ou 6 jogadores. Clássico, Hardcore ou Old School.");
+  set("mcDescEquipe", "Times sorteados equilibrando as idades. 4, 6, 8, 9 ou 10 jogadores, até 5 equipes (🔴🔵🟢⚫⚪).");
 }
 function atualizarRotuloModo() {
   const el = document.getElementById("trocarModoLabel");
@@ -18015,7 +18028,7 @@ function resetModeSelectionUI() {
   const equipeMode = CURRENT_FORMAT === "equipe";
   document.getElementById("modeWrapExpress").style.display = equipeMode ? "none" : "";
   document.getElementById("modeWrapJunior").style.display = equipeMode ? "none" : "";
-  document.getElementById("modeWrapCorrida").style.display = equipeMode ? "none" : "";
+  document.getElementById("modeWrapCorrida").style.display = ""; // 1.7.10.6: Corrida também em equipe
   document.getElementById("modeWrapCaos").style.display = equipeMode ? "none" : "";
   document.querySelectorAll(".expressCatChk").forEach((cb) => {
     cb.checked = false;
@@ -18225,8 +18238,8 @@ function buildRulesHtml() {
   // 2. Quem joga
   li.push(
     c.equipe
-      ? "👥 <b>Equipes:</b> 4 jogadores (2 equipes de 2) ou 6 (2 equipes de 3, ou 3 equipes de 2), sorteadas equilibrando as idades. A cada carta uma equipe lê e outra responde. Com 3 equipes: <b>Duelo de Guildas</b> (uma responde) ou <b>Mestre vs Todos</b> (as outras respondem em ordem)."
-      : "👥 <b>Jogadores:</b> de 2 a 6. Sorteiem o primeiro Mestre (dá pra sortear de novo até 2 vezes). Depois a roda segue sempre na mesma ordem.",
+      ? "👥 <b>Equipes:</b> de 2 a 5 equipes do mesmo tamanho, com pelo menos 2 em cada (4, 6, 8, 9 ou 10 jogadores), sorteadas equilibrando as idades. A cada carta uma equipe lê e outra responde. Com 3 ou mais equipes: <b>Duelo de Guildas</b> (uma responde) ou <b>Mestre vs Todos</b> (as outras respondem em ordem)."
+      : "👥 <b>Jogadores:</b> de 2 a 10. Sorteiem o primeiro Mestre (dá pra sortear de novo até 2 vezes). Depois a roda segue sempre na mesma ordem.",
   );
   // 3. Cartas
   if (c.express)
@@ -18744,7 +18757,7 @@ function admPainel(ov, nivel) {
     if (CURRENT_FORMAT === "equipe")
       sRem.insertAdjacentHTML(
         "beforeend",
-        '<div class="ci-empty">No Equipe não dá: as equipes precisam de exatamente 4 ou 6 jogadores.</div>',
+        '<div class="ci-empty">No Equipe não dá: as equipes precisam ficar do mesmo tamanho (4, 6, 8, 9 ou 10 jogadores).</div>',
       );
     else if (players.length <= 2)
       sRem.insertAdjacentHTML(
@@ -28069,6 +28082,24 @@ function corridaLiderNome() {
 function corridaPlacar() {
   return players.slice().sort((a, b) => corridaRank(b) - corridaRank(a));
 }
+// Corrida em equipe: o placar é da equipe (soma do que cada um conquistou)
+function corridaCartasEquipe(teamId) {
+  return players.filter((p) => p.team === teamId).reduce((s, p) => s + corridaCartasDe(p), 0);
+}
+function corridaRankEquipe(teamId) {
+  return teamScore(teamId) + (corridaVitoria === "tempo" ? Math.min(corridaCartasEquipe(teamId), 999) / 1000 : 0);
+}
+function corridaEntidades() {
+  if (CURRENT_FORMAT !== "equipe") return corridaPlacar().map((p) => ({ k: p.id, html: playerNameHtml(p.name, p.color, p.avatar), cor: corDoJogador(p.color), rank: corridaRank(p), txt: corridaValorTxt(p) }));
+  return teamOrder
+    .map((id) => {
+      const info = TEAM_INFO[id],
+        n = corridaCartasEquipe(id);
+      const cartas = `${n} carta${n === 1 ? "" : "s"}`;
+      return { k: id, html: `${info.emoji} Equipe ${escapeHtml(info.label)}`, cor: corDoJogador(info.color), rank: corridaRankEquipe(id), txt: corridaVitoria === "tempo" ? `${teamScore(id)} pts · ${cartas}` : cartas };
+    })
+    .sort((a, b) => b.rank - a.rank);
+}
 /* Pontuação (decisão do JF, 17/10): na Corrida · Tempo a carta vale os segundos que sobravam no relógio dela na hora
    do acerto (acertou com 1:45 sobrando = 105 pontos); na Corrida · Cartas, cada carta vale 1. */
 function corridaValorCarta() {
@@ -28159,7 +28190,7 @@ function corridaEncerrar() {
   if (gameEnded) return;
   const max = Math.max(0, ...players.map((p) => p.score || 0));
   const empatados = players.filter((p) => (p.score || 0) === max);
-  if (corridaVitoria === "cartas" && empatados.length >= 2 && !corridaDesempateFeito && deck.length > 0) return corridaDesempateComecar(empatados);
+  if (CURRENT_FORMAT !== "equipe" && corridaVitoria === "cartas" && empatados.length >= 2 && !corridaDesempateFeito && deck.length > 0) return corridaDesempateComecar(empatados);
   endGame();
 }
 // desempate e duelo: só os escolhidos respondem
@@ -28218,11 +28249,11 @@ function corridaIntervaloTalvez() {
   corridaIntervaloAbrir();
 }
 function corridaPlacarHtml() {
-  const lista = corridaPlacar();
-  const max = lista.length ? corridaRank(lista[0]) : 0;
+  const lista = corridaEntidades();
+  const max = lista.length ? lista[0].rank : 0;
   return `<ol class="cr-placar">${lista
-    .map((p) => {
-      return `<li class="${corridaRank(p) === max && max > 0 ? "cr-lider" : ""}" style="--pc:${corDoJogador(p.color)}"><span>${playerNameHtml(p.name, p.color, p.avatar)}</span><b>${corridaValorTxt(p)}</b></li>`;
+    .map((e) => {
+      return `<li class="${e.rank === max && max > 0 ? "cr-lider" : ""}" style="--pc:${e.cor}"><span>${e.html}</span><b>${e.txt}</b></li>`;
     })
     .join("")}</ol>`;
 }
@@ -28627,7 +28658,7 @@ function corridaRelampagoErrou(key) {
 
 /* --- Duelo do C.A.O.S. --- */
 function corridaDueloTalvez() {
-  if (players.length < 3 || corridaDuelos >= CORRIDA_DUELO_MAX || corridaJuizo || corridaDesempate) return false;
+  if (CURRENT_FORMAT === "equipe" || players.length < 3 || corridaDuelos >= CORRIDA_DUELO_MAX || corridaJuizo || corridaDesempate) return false;
   if (stats.totalDrawn < 5 || stats.totalDrawn - corridaUltimoEvento < 4 || corridaGeralMs() <= CORRIDA_EVENTO_FORA_MS) return false;
   if (sorteioRegra() >= 0.12) return false;
   corridaDueloComecar();
@@ -76426,7 +76457,7 @@ const TUTORIAL_STEPS = [
     sec: 0,
     icon: "⚔️",
     title: "Versus ou Equipe?",
-    text: "<b>Versus</b>: cada um por si, de 2 a 6 pessoas. <b>Equipe</b>: exatamente 4 ou 6 pessoas (com 6, dá pra fazer 2 equipes de 3 ou 3 equipes de 2), e o jogo sorteia os times equilibrando as idades.<br>Tocar num cartão só <b>marca</b> (ele acende e flutua). Pra seguir, toque em <b>✅ Continuar</b> — assim ninguém entra no lugar errado sem querer.",
+    text: "<b>Versus</b>: cada um por si, de 2 a 10 pessoas. <b>Equipe</b>: 4, 6, 8, 9 ou 10 pessoas, em 2 a 5 equipes do mesmo tamanho (🔴🔵🟢⚫⚪), e o jogo sorteia os times equilibrando as idades.<br>Tocar num cartão só <b>marca</b> (ele acende e flutua). Pra seguir, toque em <b>✅ Continuar</b> — assim ninguém entra no lugar errado sem querer.",
     dark: true,
     mock:
       '<div class="mc-list">' +
@@ -79531,6 +79562,8 @@ function iniciar() {
   });
   document.getElementById("teamCount2Btn").addEventListener("click", () => runTeamFormation(2));
   document.getElementById("teamCount3Btn").addEventListener("click", () => runTeamFormation(3));
+  document.getElementById("teamCount4Btn").addEventListener("click", () => runTeamFormation(4));
+  document.getElementById("teamCount5Btn").addEventListener("click", () => runTeamFormation(5));
   document.getElementById("subModeDueloBtn").addEventListener("click", () => {
     equipeSubMode = "duelo";
     paintSubModeChoice("duelo");
@@ -79555,7 +79588,7 @@ function iniciar() {
     }
     if (!isValidEquipeCount(players.length) || !players.every((p) => p.team && teams[p.team])) {
       caosAvisoModal(
-        "O Modo Equipe precisa de EXATAMENTE 4 ou 6 jogadores, todos com equipe. Sorteie as equipes de novo.",
+        "O Modo Equipe precisa de 4, 6, 8, 9 ou 10 jogadores, todos com equipe. Sorteie as equipes de novo.",
       );
       return;
     }

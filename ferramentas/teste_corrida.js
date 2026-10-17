@@ -45,7 +45,7 @@ const ARQ = acharMestre(process.argv[2]);
     beginGameplay();
     await esp(400);
     f();
-    o.relogioInicial = Math.round(corridaGeralMs() / 1000) === 1800;
+    o.relogioInicial = Math.round(corridaGeralMs() / 1000) === CORRIDA_TEMPO_MS / 1000;
     o.dezDicas = currentCard.clues.length === 10;
     o.semCasa = !currentCard.clues.some((c) => especialDeCasa(c));
     o.semTabuleiro = document.getElementById("boardTrack").innerHTML === "";
@@ -428,6 +428,69 @@ const ARQ = acharMestre(process.argv[2]);
     return o;
   });
   Object.assign(r, re);
+  // 1.7.10.6: Corrida em equipe e até 10 jogadores / 5 equipes
+  const rq = await p.evaluate(async () => {
+    const o = {};
+    const esp = (ms) => new Promise((ok) => setTimeout(ok, ms));
+    const f = () => {
+      if (activeToastState) closeActiveToast();
+      document.querySelectorAll(".caos-modal-ov").forEach((x) => x.remove());
+    };
+    const livre = () => currentCard.clues.map((c, i) => i).filter((i) => currentCard.clues[i].type === "clue" && !revealedOrder.some((x) => x.index === i));
+    resetGame();
+    o.max10 = MAX_PLAYERS === 10;
+    o.divisoes = JSON.stringify([4, 5, 6, 7, 8, 9, 10].map((n) => equipeQuantidadesValidas(n))) === JSON.stringify([[2], [], [2, 3], [], [2, 4], [3], [2, 5]]);
+    CURRENT_FORMAT = "equipe";
+    players = Array.from({ length: 10 }, (_, i) => ({ id: jogadorIdNovo(), name: "J" + i, score: 0, position: 0, color: "#888888", avatar: AVATARS[i], humor: "normal", ageBracket: "adulto", team: null, gems: {} }));
+    selectMode("corrida", null, "tempo");
+    formTeamsBalancedByAge(5);
+    o.cincoEquipes = Object.keys(teams).length === 5 && Object.values(teams).every((t) => t.members.length === 2) && !!teams.black && !!teams.white;
+    // Corrida em equipe com 4 (2 × 2)
+    resetGame();
+    CURRENT_FORMAT = "equipe";
+    players = ["Ana", "Beto", "Caio", "Duda"].map((n, i) => ({ id: jogadorIdNovo(), name: n, score: 0, position: 0, color: "#888888", avatar: AVATARS[i], humor: "normal", ageBracket: "adulto", team: null, gems: {} }));
+    selectMode("corrida", null, "tempo");
+    formTeamsBalancedByAge(2);
+    equipeSubMode = "duelo";
+    drawEquipeOrder();
+    starterDrawCount = 1;
+    ["splashScreen", "welcomeScreen", "playerPanel", "orderRevealSection"].forEach((id) => (document.getElementById(id).style.display = "none"));
+    document.getElementById("gameScreen").style.display = "flex";
+    beginGameplay();
+    await esp(300);
+    f();
+    flipCard();
+    f();
+    await esp(300);
+    f();
+    const timeQueResponde = players[responderIndex].team;
+    o.leituraOutraEquipe = players[mestreIndex].team !== timeQueResponde;
+    chooseClue(livre()[0]);
+    f();
+    toqueJogoUltimo = 0;
+    markCorrect();
+    await esp(200);
+    o.pontoDaEquipe = teamScore(timeQueResponde) > 0 && /Equipe/.test(document.getElementById("miniScoreboard").innerText);
+    corridaIntervaloFechar();
+    await esp(200);
+    f();
+    // Juízo Final em equipe: só quem não é da equipe do Mestre bate na mesa
+    corridaDobrar();
+    corridaRestaMs = 50e3;
+    flipCard();
+    f();
+    for (let t = 0; t < 40 && pendingIndex === null; t++) {
+      await esp(150);
+      f();
+    }
+    const timeMestre = players[mestreIndex].team;
+    o.juizoEquipe = corridaJuizo && palpiteEligibleHolders().length === 2 && palpiteEligibleHolders().every((id) => jogadorPorId(id).team !== timeMestre);
+    endGame();
+    await esp(300);
+    o.fimEquipe = /Equipe/.test(document.getElementById("winnerArea").innerText) && /pts/.test(document.getElementById("winnerArea").innerText);
+    return o;
+  });
+  Object.assign(r, rq);
   // save e volta: os dois relógios continuam de onde estavam
   const r2 = await p.evaluate(async () => {
     const esp = (ms) => new Promise((ok) => setTimeout(ok, ms));
@@ -458,7 +521,8 @@ const ARQ = acharMestre(process.argv[2]);
   });
   await p.reload();
   await p.waitForFunction(() => typeof saveGameState === "function" && !document.getElementById("goToRulesBtn").disabled);
-  await p.waitForTimeout(600);
+  await p.waitForFunction(() => CURRENT_MODE === "corrida" && !!corridaTique, null, { timeout: 8000 }).catch(() => {});
+  await p.waitForTimeout(300);
   const r3 = await p.evaluate(() => ({
     modo: CURRENT_MODE,
     g: Math.round(corridaGeralMs() / 1000),
