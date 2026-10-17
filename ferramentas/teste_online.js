@@ -274,6 +274,8 @@ async function partidaInteira(b, sv, cen) {
     // o host joga como o 1º; no Equipe, o 4º divide o aparelho do host
     await host.evaluate((ids) => redeDefinirNoHost(ids), [await host.evaluate((n) => players.find((p) => p.name === n).id, cen.nomes[0]), ...(cen.nomes[3] ? [await host.evaluate((n) => players.find((p) => p.name === n).id, cen.nomes[3])] : [])]);
     const r = await jogarAteOFim(host, [c1.g, c2.g], cen.limite || 360000);
+    if (!r.fim && cen.modo === "corrida")
+      console.log("DIAG " + rot + ": " + (await host.evaluate(() => JSON.stringify({ g: Math.round(corridaGeralMs() / 1000), c: Math.round(corridaCartaMs() / 1000), cs: cardState, pi: pendingIndex, tk: timerKind, tl: secondsLeft(), toast: !!activeToastState, ov: !!timeoutOverlayMessage, jan: caosJanelaImportanteAberta(), pausa: !!pausedAt, int: corridaIntervaloAberto(), cartas: stats.totalDrawn, acabou: corridaAcabou, juizo: corridaJuizo, duelo: !!corridaDuelo, desemp: !!corridaDesempate, mestre: jogadorIdDe(mestreIndex), hostEu: rede.hostEu, rev: partidaRevisao }))));
     conf(`[${rot}] A partida foi até o fim (${r.passos} passos, ${r.seg} s)`, r.fim);
     conf(`[${rot}] Os celulares viram o fim da partida`, (await esperar(c1.g, () => rede.retrato && rede.retrato.fim, null, 15000)) && (await esperar(c2.g, () => rede.retrato && rede.retrato.fim, null, 15000)));
     const placar = await host.evaluate(() => JSON.stringify(players.map((p) => [p.id, p.score, p.position])));
@@ -437,7 +439,7 @@ async function atualizacao(b, sv) {
       await partidaInteira(b, sv, { rot: "Express até o fim", formato: "versus", modo: "express", sabor: "classico", nomes: ["Ana", "Beto", "Caio"] });
     }
     if (!SO || SO === "partidas" || SO === "corrida") {
-      await partidaInteira(b, sv, { rot: "Corrida · Tempo até o fim", formato: "versus", modo: "corrida", sabor: "tempo", relogio: 150e3, nomes: ["Ana", "Beto", "Caio"] });
+      await partidaInteira(b, sv, { rot: "Corrida · Tempo até o fim", formato: "versus", modo: "corrida", sabor: "tempo", relogio: 90e3, limite: 300000, nomes: ["Ana", "Beto", "Caio"] });
       await partidaInteira(b, sv, { rot: "Corrida · Tempo Hardcore até o fim", formato: "versus", modo: "corrida", sabor: "tempo-hc", relogio: 120e3, nomes: ["Ana", "Beto", "Caio"] });
     }
     if (!SO || SO === "fundo") await segundoPlano(b, sv);
