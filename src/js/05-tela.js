@@ -209,10 +209,16 @@ function updateTimerDisplay() {
     playBeep(440, 0.1);
     if (left <= 3) vibrar("tique");
   }
-  if (left > 5) lastBeepSecond = null;
-  fxUrgente(
-    left <= 5 && left > 0 && !!timerInterval && document.getElementById("pauseScreen").style.display !== "block",
-  );
+  // 1.7.10.5.7 (sugestão aprovada pelo JF): dos 10 aos 6 s, tique-taque baixinho e a borda pulsando de leve;
+  // nos 5 últimos, o bipe e a borda vermelha de sempre
+  const rodando = !!timerInterval && document.getElementById("pauseScreen").style.display !== "block";
+  if (rodando && left <= 10 && left > 5 && left !== lastBeepSecond) {
+    lastBeepSecond = left;
+    playSfx(left % 2 ? "taque" : "tique");
+  }
+  if (left > 10) lastBeepSecond = null;
+  fxUrgente(left <= 5 && left > 0 && rodando); // (desligar o urgente também tira o alerta)
+  document.body.classList.toggle("fx-alerta", rodando && left <= 10 && left > 5 && visualFxAllowed());
 }
 function ciSanearLog(arr, max) {
   if (!Array.isArray(arr)) return [];
@@ -812,7 +818,16 @@ function render() {
               autoOnclick = mst ? `applySpecialMove(${mestreIndex}, ${moveVal})` : "loseTurnAfterSpecial()";
             }
           }
-          controlsHtml = soDois
+          // 1.7.10.5.7 (pedido do JF): no online, quem abriu a dica escolhe o alvo na T2; o Mestre só espera
+          // (o "Escolher por aqui" é a saída de emergência, e o tempo esgotado sorteia como sempre)
+          const alvoLonge = !soDois && typeof alvoNoAparelho === "function" && alvoNoAparelho() && alvoAquiChave !== stats.totalDrawn + ":" + pendingIndex;
+          controlsHtml = alvoLonge
+            ? `
+            <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ⭐ ${item.text}</div>
+            ${spotlightTimerHtml}
+            <div class="pedido-dica">🎯 ${responderName} escolhe no dispositivo dele quem vai ${moveText} 2 casas. Se o tempo acabar, o jogo sorteia.</div>
+            <button type="button" class="discard-btn" id="alvoAquiBtn">Escolher por aqui</button>`
+            : soDois
             ? `
             <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ⭐ ${item.text}</div>
             <div style="text-align:center; opacity:0.85; font-size:0.85rem; margin:8px 0;">Com só 2 ${CURRENT_FORMAT === "equipe" ? "equipes" : "jogadores"} ninguém pode escolher a si mesmo — o efeito vai direto pra <b>${autoName}</b>.</div>
@@ -1969,6 +1984,7 @@ function fxUrgente(on) {
   if (!b) return;
   if (on && visualFxAllowed()) b.classList.add("fx-urgente");
   else b.classList.remove("fx-urgente");
+  if (!on) b.classList.remove("fx-alerta");
 }
 function visualFxAllowed() {
   if (document.body.classList.contains("batata-mode")) return false;
@@ -2157,11 +2173,20 @@ function buildStatsHtml() {
     }
   }
   if (CURRENT_MODE !== "express") destaques += caosAuditoriaHtml();
+  const trofeus = trofeusHtml(larga);
   return `
     <div class="stats-box hall-box resumo-box">
       <h3>📊 Resumo da partida</h3><div class="hall-sub">toque num número e o C.A.O.S. comenta</div>
       <ul class="stats-list hall-grid">${numeros}${destaques}</ul>
-    </div>
+    </div>${
+      trofeus
+        ? `
+    <div class="stats-box hall-box trofeus-box">
+      <h3>🏆 Troféus do C.A.O.S.</h3><div class="hall-sub">toque num troféu e o C.A.O.S. comenta</div>
+      <ul class="stats-list hall-grid">${trofeus}</ul>
+    </div>`
+        : ""
+    }
   `;
 }
 // Texto curto do resultado (o ranking como aparece na tela) para mandar no WhatsApp etc.
@@ -3786,3 +3811,63 @@ function cadAtualizarBotao() {
   } catch (e) {}
 }
 
+
+// 1.7.10.5.7: "Escolher por aqui" (o Mestre assume o seletor de alvo da especial nesta dica)
+let alvoAquiChave = null;
+document.addEventListener("click", (e) => {
+  if (!e.target.closest || !e.target.closest("#alvoAquiBtn")) return;
+  alvoAquiChave = stats.totalDrawn + ":" + pendingIndex;
+  render();
+  if (typeof redeHostPublicar === "function") redeHostPublicar(true);
+});
+
+/* 1.7.10.5.7 (pedido do JF) · Troféus do C.A.O.S. no fim da partida: Pai Diná (menos dicas por acerto), Tartaruga
+   Ninja (mais tempo pra acertar), Inimigo do Acerto (mais palpites errados) e o Veredito dos Mestres (nota de 0 a
+   10 pra quem leu as cartas: acerto com poucas dicas vale mais; carta que ninguém matou vale pouco). Só aparece
+   troféu com dado de verdade (mínimo de 2 acertos ou 2 erros). */
+function trofeusHtml(larga) {
+  const pj = (nome) => players.find((p) => p.name === nome);
+  const nomeH = (p) => (p ? playerNameHtml(p.name, p.color, p.avatar) : "?");
+  const acertos = history.filter((h) => typeof h.cluesUsed === "number" && h.playerName);
+  const por = {};
+  acertos.forEach((h) => {
+    const o = (por[h.playerName] = por[h.playerName] || { n: 0, d: 0, nt: 0, t: 0 });
+    o.n++;
+    o.d += h.cluesUsed;
+    if (typeof h.timeTakenMs === "number" && h.timeTakenMs >= 1500) (o.nt++, (o.t += h.timeTakenMs));
+  });
+  let h = "";
+  const dina = Object.entries(por)
+    .filter(([, o]) => o.n >= 2)
+    .map(([nome, o]) => ({ nome, med: Math.round((o.d / o.n) * 10) / 10, n: o.n }))
+    .sort((a, b) => a.med - b.med || b.n - a.n)[0];
+  if (dina)
+    h += larga("🔮", "Troféu Pai Diná", nomeH(pj(dina.nome)), `acertou com ${caosNumBR(dina.med)} dica${dina.med === 1 ? "" : "s"} em média`, "#c084fc", { t: "paidina", n: dina.nome, v: dina.med });
+  const tart = Object.entries(por)
+    .filter(([, o]) => o.nt >= 2)
+    .map(([nome, o]) => ({ nome, seg: Math.round(o.t / o.nt / 1000) }))
+    .sort((a, b) => b.seg - a.seg)[0];
+  if (tart)
+    h += larga("🐢", "Troféu Tartaruga Ninja", nomeH(pj(tart.nome)), `${tart.seg} s em média pra acertar`, "#4ade80", { t: "tartaruga", n: tart.nome, v: tart.seg });
+  const ini = players.filter((p) => (p.errosPartida || 0) >= 2).sort((a, b) => b.errosPartida - a.errosPartida)[0];
+  if (ini)
+    h += larga("🎯", "Troféu Inimigo do Acerto", nomeH(ini), `${ini.errosPartida} palpites furados`, "#f87171", { t: "inimigo", n: ini.name, v: ini.errosPartida });
+  // Veredito dos Mestres: média das notas das cartas que cada um leu
+  const notas = {};
+  (cartasPartida || []).forEach((c) => {
+    if (!c.mestre) return;
+    const nota = c.quem ? Math.max(1, 10 - Math.max(0, c.dicas - 1) * 0.5) : 0.5;
+    const o = (notas[c.mestre] = notas[c.mestre] || { s: 0, n: 0 });
+    o.s += nota;
+    o.n++;
+  });
+  const vered = Object.entries(notas)
+    .map(([id, o]) => ({ p: jogadorPorId(id), nota: Math.round((o.s / o.n) * 2) / 2, n: o.n }))
+    .filter((x) => x.p)
+    .sort((a, b) => b.nota - a.nota);
+  if (vered.length) {
+    const lista = vered.map((x) => `${nomeH(x.p)} <b>${caosNumBR(x.nota)}</b>`).join(" · ");
+    h += larga("🎙️", "Veredito dos Mestres", lista, "nota de 0 a 10: carta acertada com poucas dicas vale mais", "#fbbf24", { t: "notamestre", n: vered[0].p.name, v: vered[0].nota });
+  }
+  return h;
+}

@@ -6,6 +6,20 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.5.7",
+    data: "17/10/2026 · 09:53",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "Quem abre a especial escolhe o alvo no próprio dispositivo, troféus no fim e o jogo ganhou som e teclado.",
+    itens: [
+      "🎯 Você escolhe o alvo: no online, quem abre a dica Escolha um jogador toca no cartão do jogador na tela dos jogadores. Todo mundo vê, e o Mestre não precisa fazer nada.",
+      "⌨️ Atalhos de teclado: Espaço vira a carta, os números abrem a dica, A é Acertou, E é Errou e R confere a resposta.",
+      "🃏 Som de carta virando: a carta agora faz barulho de carta quando o Mestre vira.",
+      "⏳ Últimos segundos com tensão: nos 10 segundos finais, tique-taque baixinho e a borda da tela pulsando.",
+      "🏆 Troféus do C.A.O.S.: no fim da partida, nas estatísticas, saem os troféus Pai Diná, Tartaruga Ninja, Inimigo do Acerto e a nota de cada Mestre.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.5.6",
     data: "16/10/2026 · 23:57",
     nome: "Multiplayer Update · Online de verdade",

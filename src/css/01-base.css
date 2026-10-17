@@ -547,6 +547,29 @@ body.fx-urgente:after {
   z-index: 9990;
   box-shadow: inset 0 0 90px 18px #ef44448c;
 }
+/* 1.7.10.5.7: dos 10 aos 6 s a borda pulsa de leve (nos 5 últimos fica a vermelha forte de cima) */
+body.fx-alerta:not(.fx-urgente):after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9990;
+  box-shadow: inset 0 0 70px 10px #f9731655;
+  animation: alertaPulsa 1s ease-in-out infinite;
+}
+@keyframes alertaPulsa {
+  50% {
+    box-shadow: inset 0 0 90px 16px #ef444477;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.fx-alerta:not(.fx-urgente):after {
+    animation: none;
+  }
+}
+html.acess-calmo body.fx-alerta:not(.fx-urgente):after {
+  animation: none;
+}
 .splash-dice {
   font-size: 5rem;
   z-index: 2;

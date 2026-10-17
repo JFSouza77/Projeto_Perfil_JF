@@ -1503,6 +1503,37 @@ function dicaTravada() {
   if (am && !redeNoHost(mestre) && am.sessao === a.sessao) return false;
   return true;
 }
+/* 1.7.10.5.7 (pedido do JF) · Especial "escolha um jogador" no online: quem abriu a dica escolhe o alvo no próprio
+   dispositivo, tocando no cartão do jogador na T2 (todo mundo vê); a tela do Mestre só espera. Fail safe como o da
+   trava da dica: sem dispositivo próprio (ou com o dele caído) volta a ser como era; o tempo esgotado sorteia o alvo. */
+function alvoNoAparelho() {
+  if (!salaOnlineAberta() || CURRENT_MODE === "express" || cardState !== "revealed" || pendingIndex === null || !currentCard || gameEnded || pausedAt) return false;
+  const mv = acoesMovimento();
+  if (!mv || !mv.escolha || (CURRENT_FORMAT !== "equipe" && palpiteParticipants() < 3)) return false;
+  if (typeof alvoAquiChave !== "undefined" && alvoAquiChave === stats.totalDrawn + ":" + pendingIndex) return false; // o Mestre assumiu
+  const vez = jogadorIdDe(responderIndex), mestre = jogadorIdDe(mestreIndex);
+  if (!vez || vez === mestre || redeNoHost(vez)) return false;
+  const a = rede.assentos[vez];
+  if (!redeOnline(a)) return false;
+  const am = rede.assentos[mestre];
+  if (am && !redeNoHost(mestre) && am.sessao === a.sessao) return false;
+  return true;
+}
+function alvoEspecialPublico() {
+  if (!alvoNoAparelho()) return null;
+  const mv = acoesMovimento(), resp = responderIndex;
+  if (CURRENT_FORMAT === "equipe") {
+    const minha = players[resp] && players[resp].team;
+    return {
+      quem: jogadorIdDe(resp), n: mv.n, equipe: true,
+      alvos: teamOrder.filter((id) => id !== minha).map((id) => ({ k: id, nome: `Equipe ${TEAM_INFO[id].label}`, avatar: TEAM_INFO[id].emoji, cor: TEAM_INFO[id].color, casa: teams[id].position || 0 })),
+    };
+  }
+  return {
+    quem: jogadorIdDe(resp), n: mv.n, equipe: false,
+    alvos: players.map((p, i) => i).filter((i) => i !== resp).map((i) => ({ k: i, nome: players[i].name, avatar: players[i].avatar || "", cor: players[i].color, casa: players[i].position || 0 })),
+  };
+}
 function dicaPodeAbrir(idx, forcar) {
   if (forcar === true || typeof dicaTravada !== "function" || !dicaTravada()) return true;
   const ped = pedidoDicaAtual();
@@ -1541,6 +1572,8 @@ function redePodeComandar(acao, jid, dados) {
   if (REDE_SO_HOST.includes(acao)) return false;
   if (REDE_QUALQUER_UM.includes(acao)) return true;
   const ehMestre = jogadorIdDe(mestreIndex) === jid;
+  // 1.7.10.5.7: na especial "escolha um jogador" com o seletor na T2, o alvo é de quem abriu a dica
+  if ((acao === "moverJogador" || acao === "moverEquipe") && alvoNoAparelho()) return jogadorIdDe(responderIndex) === jid;
   if (REDE_SO_MESTRE.includes(acao)) return ehMestre;
   if (acao === "escolherDica") return ehMestre; // 1.7.9.6 (regra do JF): só o Mestre abre as dicas; quem está na vez fala o número
   // 1.7.10.5: quem está na vez pede a dica no próprio aparelho (o Mestre abre); a ficha de palpite é de quem tem
@@ -1635,7 +1668,9 @@ function redeOpcoes(jid) {
         else {
           const mv = acoesMovimento();
           if (mv && !mv.escolha) add("moverJogador", [resp, mv.n], `${mv.n > 0 ? "➡️ Avançar" : "⬅️ Voltar"} ${Math.abs(mv.n)} casa${Math.abs(mv.n) === 1 ? "" : "s"} e passar a vez`, mv.n > 0 ? "ok" : "nao");
-          else if (mv && mv.escolha) {
+          else if (mv && mv.escolha && alvoNoAparelho()) {
+            // 1.7.10.5.7: o alvo está com quem abriu a dica (seletor na T2); o Mestre só espera
+          } else if (mv && mv.escolha) {
             const g = `Quem vai ${mv.n > 0 ? "avançar" : "voltar"} ${Math.abs(mv.n)} casas?`;
             if (CURRENT_FORMAT === "equipe") {
               const minha = players[resp] && players[resp].team;
@@ -1736,6 +1771,7 @@ function redeHostPublicar(forcar) {
   r.sucessor = redeSucessor();
   r.hostNome = rede.hostEu ? (jogadorPorId(rede.hostEu) || {}).name || null : null;
   r.hostId = rede.hostEu || null; // C.A.O.S. 4.2: selo HOST nas telas
+  r.alvoEspecial = alvoEspecialPublico(); // 1.7.10.5.7: seletor de alvo na T2
   redeEnviar("retrato", { r, anne: anneLigada() });
   redeHostRecuperacao(false);
   Object.keys(rede.assentos).forEach((jid) => {
@@ -1825,6 +1861,7 @@ function redeHostVista() {
   }
   const r = retratoPartida("mesa");
   r.votacao = rede.votacao ? redeVotacaoPublica() : null;
+  r.alvoEspecial = alvoEspecialPublico();
   telaoUltimo = r; // pro relógio
   telaoDesenhar(r, box);
   const sair = box.querySelector(".telao-sair");
@@ -2406,6 +2443,24 @@ function redeConvidadoDesenhar() {
   barra.className = "rede-barra";
   barra.innerHTML = redeBotoesHtml();
   if (rede.retrato.intervalo) box.querySelector(".telao-hist")?.remove(); // o lobby já tem a aba Cartas
+  // 1.7.10.5.7: o seletor de alvo da especial: só quem abriu a dica toca
+  const ae = rede.retrato.alvoEspecial;
+  if (ae && ae.quem === rede.eu) {
+    const sel = box.querySelector(".ta-escolha");
+    if (sel) {
+      sel.classList.add("ta-minha");
+      const tit = sel.querySelector(".ta-tit");
+      if (tit) tit.innerHTML = `🎯 <b>Você</b> escolhe quem vai ${ae.n > 0 ? "avançar" : "voltar"} ${Math.abs(ae.n)} casas`;
+      sel.querySelectorAll(".ta-alvo").forEach((b) => {
+        b.disabled = false;
+        b.addEventListener("click", () => {
+          sel.querySelectorAll(".ta-alvo").forEach((x) => (x.disabled = true));
+          if (ae.equipe) redeMandar("moverEquipe", b.dataset.alvo, ae.n, true);
+          else redeMandar("moverJogador", +b.dataset.alvo, ae.n);
+        });
+      });
+    }
+  }
   const topo = box.querySelector(".telao-vez");
   if (topo) topo.after(barra);
   else box.appendChild(barra);
@@ -2473,7 +2528,8 @@ function redeMestreCartaMontar(box) {
     const pend = c.pendente === null || c.pendente === undefined ? null : c.abertas.find((d) => d.pos === c.pendente);
     if (pend) {
       const especial = grupo((o) => o.g !== "Mais" && !["acertou", "errou", "palpiteAcertou", "palpiteErrou"].includes(o.a));
-      controles = `<div class="pending-box spotlight-box"><span class="pending-num">Dica ${pend.pos + 1}:</span> ${pend.tipo === "special" ? "⭐ " : ""}${escapeHtml(textoDe(pend))}</div>
+      const alvoEsp = r.alvoEspecial ? `<div class="pedido-dica">🎯 ${escapeHtml((r.jogadores.find((j) => j.id === r.alvoEspecial.quem) || { nome: "Quem abriu" }).nome)} escolhe o alvo no dispositivo dele. Se o tempo acabar, o jogo sorteia.</div>` : "";
+      controles = `<div class="pending-box spotlight-box"><span class="pending-num">Dica ${pend.pos + 1}:</span> ${pend.tipo === "special" ? "⭐ " : ""}${escapeHtml(textoDe(pend))}</div>${alvoEsp}
         <div class="guess-btns" style="flex-direction:column;">${grupo((o) => o.a === "acertou")}${grupo((o) => o.a === "errou" && !o.d.length)}<div class="mesa-btns">${grupo((o) => o.a === "errou" && o.d.length)}</div></div>
         ${especial}${grupo((o) => o.a === "palpiteAcertou" || o.a === "palpiteErrou")}`;
     } else {

@@ -674,6 +674,28 @@ function playSfx(type) {
       sfxNote(audioCtx, 2093, now + fim + 0.05, 0.25, { vol: 0.025, type: "sine" });
       return;
     }
+    // 1.7.10.5.7 (sugestão aprovada pelo JF): carta virando (sopro curto de papel + estalo) e tique-taque dos últimos 10 s
+    if (type === "virar") {
+      const n = Math.floor(audioCtx.sampleRate * 0.22), buf = audioCtx.createBuffer(1, n, audioCtx.sampleRate), d = buf.getChannelData(0);
+      for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2);
+      const src = audioCtx.createBufferSource(), filtro = audioCtx.createBiquadFilter(), g = audioCtx.createGain();
+      src.buffer = buf;
+      filtro.type = "bandpass";
+      filtro.frequency.setValueAtTime(900, now);
+      filtro.frequency.exponentialRampToValueAtTime(3200, now + 0.18);
+      g.gain.setValueAtTime(0.16, now);
+      g.gain.exponentialRampToValueAtTime(1e-4, now + 0.22);
+      src.connect(filtro);
+      filtro.connect(g);
+      g.connect(audioCtx.destination);
+      src.start(now);
+      sfxNote(audioCtx, 1320, now + 0.19, 0.05, { vol: 0.05, type: "triangle" });
+      return;
+    }
+    if (type === "tique" || type === "taque") {
+      sfxNote(audioCtx, type === "tique" ? 1800 : 1350, now, 0.035, { vol: 0.05, type: "square" });
+      return;
+    }
     if (type === "acerto") {
       sfxNote(audioCtx, 659.25, now, 0.1, { vol: 0.13 });
       sfxNote(audioCtx, 987.77, now + 0.1, 0.2, { vol: 0.13 });

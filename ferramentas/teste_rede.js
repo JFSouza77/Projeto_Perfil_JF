@@ -427,6 +427,31 @@ async function rodar(b, modo, porta, turn) {
     return rede.respostas[id];
   });
   conf("Comando com revisão velha é recusado (revisao_obsoleta)", velho && !velho.ok && velho.motivo === "revisao_obsoleta");
+  // 1.7.10.5.7 (pedido do JF): especial "escolha um jogador": quem abriu escolhe o alvo na T2, o Mestre só espera
+  await H((vez) => {
+    if (activeToastState) closeActiveToast();
+    if (pendingIndex !== null) { toqueJogoUltimo = 0; markWrong(); }
+    if (activeToastState) closeActiveToast();
+    responderIndex = jogadorIdxPorId(vez);
+    const i = currentCard.clues.findIndex((c, k) => !revealedOrder.some((x) => x.index === k));
+    currentCard.clues[i] = { ...currentCard.clues[i], type: "special", text: "Escolha um jogador para voltar 2 casas" };
+    chooseClue(i);
+    redeHostPublicar(true);
+  }, ids.vez);
+  conf("Seletor de alvo: quem abriu a especial vê os cartões ligados na T2", await esperar(gV, () => document.querySelectorAll(".ta-escolha.ta-minha .ta-alvo:not(:disabled)").length === 2));
+  conf("Seletor de alvo: os outros veem a escolha, sem poder tocar", await esperar(gM, () => !!rede.retrato.alvoEspecial && /escolhe o alvo/.test(document.body.innerText) && !rede.painel.opcoes.some((o) => o.a === "moverJogador")));
+  r = await mandar(gM, "moverJogador", await H((id) => jogadorIdxPorId(id), ids.mestre), -2);
+  conf("Seletor de alvo: o Mestre não escolhe por quem abriu (sem_permissao)", r && !r.ok && r.motivo === "sem_permissao");
+  conf("Seletor de alvo: dispositivo de quem abriu caiu, volta pro Mestre (fail safe)", await H((id) => { const a = rede.assentos[id], v = a.visto; a.visto = 0; const solta = !alvoNoAparelho(); a.visto = v; return solta && alvoNoAparelho(); }, ids.vez));
+  await gV.evaluate(() => document.querySelector(".ta-escolha.ta-minha .ta-alvo:not(:disabled)").click());
+  conf("Seletor de alvo: o toque no cartão aplica o efeito e a vez segue", await esperar(host, () => pendingIndex === null && acoesLog.some((x) => x.a === "moverJogador")));
+  // devolve a mesa como estava (vez de quem está na vez, com uma dica aberta) pro resto do teste
+  await H((vez) => {
+    if (activeToastState) closeActiveToast();
+    responderIndex = jogadorIdxPorId(vez);
+    chooseClue(currentCard.clues.findIndex((c, k) => c.type === "clue" && !revealedOrder.some((x) => x.index === k)));
+    redeHostPublicar(true);
+  }, ids.vez);
   // 7) lixo na sala
   const revLixo = await H(() => partidaRevisao);
   if (modo === "local") {

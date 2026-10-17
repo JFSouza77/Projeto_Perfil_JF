@@ -487,6 +487,7 @@ function flipCard() {
   roletaCarta = null;
   roletaPousou = false;
   cardState = "revealed";
+  playSfx("virar"); // 1.7.10.5.7
   if (CURRENT_MODE === "express") startExpressCard();
   else startTimer("pick");
   maybeAnnounceCrystalBall();
@@ -850,6 +851,7 @@ function cartaPartidaRegistrar(quemIdx, dicas, dicaIdx) {
     cat: gemCategoryFor(currentCard.category),
     resp: currentCard.answer,
     quem: quemIdx >= 0 && players[quemIdx] ? players[quemIdx].id : null,
+    mestre: currentCard.isBonus ? null : jogadorIdDe(mestreIndex), // 1.7.10.5.7: pro Veredito dos Mestres
     dicas,
     dicaNum: d ? dicaIdx + 1 : null,
     dicaTxt: d ? String(d.text).slice(0, 240) : null,

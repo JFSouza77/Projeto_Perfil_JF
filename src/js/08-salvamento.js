@@ -677,6 +677,7 @@ function sanitizeLoadedState(s) {
       cat: c.cat,
       resp: c.resp,
       quem: typeof c.quem === "string" ? c.quem.slice(0, 40) : null,
+      mestre: typeof c.mestre === "string" ? c.mestre.slice(0, 40) : null,
       dicas: Math.max(0, Math.floor(num(c.dicas, 0))),
       dicaNum: Number.isInteger(c.dicaNum) && c.dicaNum > 0 ? c.dicaNum : null,
       dicaTxt: typeof c.dicaTxt === "string" ? c.dicaTxt.slice(0, 240) : null,
@@ -1703,7 +1704,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.5.6 · C.A.O.S. 4.4.2");
+  L.push("- **Versão:** Beta 1.7.10.5.7 · C.A.O.S. 4.4.2");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2226,7 +2227,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.5.6 · C.A.O.S. 4.4.2",
+        versao: "Beta 1.7.10.5.7 · C.A.O.S. 4.4.2",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
