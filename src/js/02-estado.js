@@ -46,6 +46,8 @@ let timerKind = null;
 let RESPONSE_TIME_LIMIT = 90;
 let playDirection = 1;
 let history = [];
+// 1.7.10.5.6 (pedido do JF): toda carta resolvida da partida (acertada ou esgotada), pra T2 e pro lobby
+let cartasPartida = [];
 let stats = { totalDrawn: 0, totalDiscarded: 0, totalExhausted: 0 };
 let mercyEventUsed = false;
 let pendingStartTime = null;

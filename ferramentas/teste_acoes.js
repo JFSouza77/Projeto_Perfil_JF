@@ -137,6 +137,15 @@ const ARQ = acharMestre(process.argv[2]);
       const pts = document.querySelector('#tabLobby .lb-aba[data-aba="pontos"]');
       if (pts) pts.click();
       const painelPts = document.querySelector('#tabLobby .lb-painel[data-aba="pontos"]');
+      // 1.7.10.5.6 (pedido do JF): resumo da partida e aba Cartas com a carta que acabou de ser acertada
+      const cp = cartasPartida[cartasPartida.length - 1];
+      const pubL = retratoPartida('mesa');
+      const abaC = document.querySelector('#tabLobby .lb-aba[data-aba="cartas"]');
+      if (abaC) abaC.click();
+      const painelC = document.querySelector('#tabLobby .lb-painel[data-aba="cartas"]');
+      out.cartasPartida = !!cp && !!cp.quem && cp.dicaNum > 0 && !!cp.dicaTxt && cp.n === stats.totalDrawn - 1 && pubL.partida.historico.length === cartasPartida.length && pubL.partida.cartas === stats.totalDrawn && pubL.partida.acertos >= 1 && !!painelC && !painelC.hidden && painelC.textContent.includes(cp.resp) && !!document.querySelector('#tabLobby .pt-resumo') && partidaRevisao === revLobby;
+      out.cartasN = cartasPartida.length;
+      if (pts) pts.click();
       out.lobbyAbas = abas.includes('tabuleiro') && abas.includes('pontos') && abas.includes('joias') === gemsAwarded() && !!on && on.dataset.aba === lobbyAbaInicial() && !!painelPts && !painelPts.hidden && !!painelPts.querySelector('.lp-lista') && partidaRevisao === revLobby;
     }
     await espera(60);
@@ -154,7 +163,7 @@ const ARQ = acharMestre(process.argv[2]);
     await espera(30); fechar();
     out.lobbyDesfeito = !document.getElementById('tabLobby');
     out.caosVoltou = JSON.stringify(caosExtraSalvar()) === caosAntes && JSON.stringify((caosCardMem && caosCardMem.porCarta || {})[currentCard.answer] || null) === memAntes && caosMatchLog.length === mlAntes;
-    out.desfezIgual = semRelogio(retratoPartida('mestre')) === antesAcerto && history.length === histAntes && deck.length === deckAntes;
+    out.desfezIgual = semRelogio(retratoPartida('mestre')) === antesAcerto && history.length === histAntes && deck.length === deckAntes && cartasPartida.length === out.cartasN - 1;
     out.desfazerNoRegistro = partidaRevisao === revAntesD + 2 && acoesLog[acoesLog.length - 1].a === 'desfazer' && !document.getElementById('desfazerBtn');
     out.relogioVoltou = !!timerKind && !!timerEndAt;
     // outra jogada fecha a janela do desfazer
@@ -589,6 +598,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.9.4: desfazer o veredito fecha o lobby', r.lobbyDesfeito],
     ['1.7.9.9: o Desfazer vira fala de VAR do C.A.O.S. (calado: aviso simples)', r.desfazerVar],
     ['1.7.9.6: lobby com abas (Tabuleiro, Pontos e Joias quando a partida dá joias), abrindo na que decide', r.lobbyAbas],
+    ['1.7.10.5.6: cartas da partida (categoria, resposta, quem, quantas dicas e qual dica) no lobby e no retrato, com resumo; o Desfazer tira a carta da lista', r.cartasPartida && r.desfezIgual],
     ['1.7.9.5: na partida o "toque pra ampliar" mostra só a lista, sem o tabuleiro grande', r.ampliarSemDesenho],
     ['1.7.9.5: Menos movimento (acessibilidade) e Modo Batata são coisas separadas', r.calmoSeparado],
     ['1.7.10: Reportar carta anota no aparelho, sem resposta na janela e sem mexer na partida', r.reportar],

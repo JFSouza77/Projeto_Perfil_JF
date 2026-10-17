@@ -6,6 +6,21 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.5.6",
+    data: "16/10/2026 · 23:57",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "Tela dos jogadores nova, lobby com cara de lobby e a tela do Mestre mais limpa.",
+    itens: [
+      "📺 Tela dos jogadores nova: de quem é a vez fica em destaque, com o relógio do lado e o que está acontecendo na carta numa faixa só. Funciona no modo claro também.",
+      "🗂️ Cartas da partida: toque pra ver cada carta que já foi, com a categoria, a resposta, quem acertou, em quantas dicas e qual dica matou.",
+      "⏸️ Lobby com cara de lobby: entre as cartas aparecem o tempo de jogo, a rodada, as cartas viradas, os acertos e a aba Cartas.",
+      "🎰 Roleta parada até virar: a roleta da categoria só gira quando o Mestre toca em Virar carta.",
+      "👁️ Um Conferir resposta só: com a dica aberta, a tela do Mestre mostra a resposta só no botão de baixo, perto do Acertou e do Errou.",
+      "☀️ Modo claro mais legível: o número da dica e o relógio da carta ficaram mais escuros.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.5.5",
     data: "16/10/2026 · 19:19",
     nome: "Multiplayer Update · Online de verdade",

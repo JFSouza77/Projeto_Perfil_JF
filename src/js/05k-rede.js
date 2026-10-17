@@ -2405,6 +2405,7 @@ function redeConvidadoDesenhar() {
   const barra = document.createElement("section");
   barra.className = "rede-barra";
   barra.innerHTML = redeBotoesHtml();
+  if (rede.retrato.intervalo) box.querySelector(".telao-hist")?.remove(); // o lobby já tem a aba Cartas
   const topo = box.querySelector(".telao-vez");
   if (topo) topo.after(barra);
   else box.appendChild(barra);
@@ -2694,13 +2695,17 @@ function redeBotoesHtml() {
   if (r.fim) return h;
   if (r.intervalo) {
     // 1.7.9.11: o placar do intervalo no celular de cada um (Pontos e Joias; o tabuleiro está logo abaixo)
+    // 1.7.10.5.6 (pedido do JF): cara de lobby, com o resumo da partida e as cartas que já foram
     h += `<div class="rede-intervalo">⏸️ Intervalo entre as cartas. O host segue em <b id="redeIntervaloSeg">…</b> s.</div>`;
     try {
+      h += partidaResumoHtml(partidaResumoDados(r));
       const ctx = lobbyContextoDoRetrato(r);
-      const abas = ["pontos"].concat(ctx.temJoias ? ["joias"] : []);
+      const abas = ["pontos"].concat(ctx.temJoias ? ["joias"] : [], ["cartas"]);
       const aba = abas.includes(rede.abaLobby) ? rede.abaLobby : r.vitoria === "joias" && ctx.temJoias ? "joias" : "pontos";
       h += `<div class="lb-abas rede-lobby-abas">${abas.map((a) => `<button type="button" class="lb-aba${a === aba ? " on" : ""}" data-aba-rede="${a}">${LOBBY_ABAS[a].ic} ${LOBBY_ABAS[a].nome}</button>`).join("")}</div>`;
-      h += `<div class="rede-lobby">${aba === "joias" ? lobbyJoiasHtml(null, ctx) : lobbyPontosHtml(null, ctx)}</div>`;
+      const nomeTxt = (id) => (r.jogadores.find((j) => j.id === id) || { nome: "Alguém" }).nome;
+      const cartas = () => cartasPartidaHtml((r.partida && r.partida.historico) || [], nomeTxt);
+      h += `<div class="rede-lobby">${aba === "joias" ? lobbyJoiasHtml(null, ctx) : aba === "cartas" ? cartas() : lobbyPontosHtml(null, ctx)}</div>`;
     } catch (e) {}
   }
   const v = r.votacao;

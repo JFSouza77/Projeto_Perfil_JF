@@ -6,6 +6,19 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.5.6 · 16/10/2026 · "Multiplayer Update · Online de verdade" = T2 E LOBBY COM CARA DE JOGO + CORREÇÕES DA AUDITORIA (pedido do JF).
+          1) Cartas da partida (cartasPartida, salvo e desfeito junto): categoria, resposta, quem acertou, em quantas dicas
+          e qual dica matou a carta; carta esgotada entra como "ninguém acertou". Vai no retrato (partida.historico, só carta
+          encerrada) com tempo de jogo, cartas viradas e acertos. 2) T2 refeita: vez em destaque na cor do jogador, Mestre e
+          relógio (sem quebrar linha), estado da carta numa faixa (lendo a dica N, pediu a dica N, vai palpitar, intervalo),
+          carta tingida pela categoria, dica mais nova em cima, placar com cor e selos, "Cartas da partida" clicável;
+          funciona no tema Claro (antes era letra branca no creme); "revisão N" saiu da tela (fica em data-rev).
+          3) Rolo da categoria na T2 parado ("???") até o Mestre tocar em Virar carta (antes girava sem parar).
+          4) Lobby (host e convidados): resumo (tempo de jogo, rodada, cartas, acertos) e aba 🗂️ Cartas.
+          5) Tela do Mestre: com a dica aberta, só o "👁️ Conferir resposta" de baixo (o de cima some até o veredito).
+          6) Auditoria: "Dica N:" e relógio legíveis no Claro; balão "pensando" do C.A.O.S. no canto na tela larga (cobria o
+          título); selo Beta e legenda do tabuleiro com 11 px ou mais. Testes: teste_telao (rolo parado, data-rev) e
+          teste_acoes (cartas da partida no lobby e no retrato, Desfazer tira a carta).
   1.7.10.5.5 · 16/10/2026 · "Multiplayer Update · Online de verdade" = QoL DE CONFERÊNCIA (pedido do JF: estrutura, otimização, correção).
           1) Cartas: 1000 cartas, 0 erros; auditor ganha checagens fixas (espaço sobrando, vírgula no fim, aspas,
           turma desconhecida, "N letras" que não bate, número de carta pulado). 2) Casa: TypeScript passado por cima do
@@ -835,7 +848,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.5.5</title>
+<title>Perfil JF · Beta 1.7.10.5.6</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

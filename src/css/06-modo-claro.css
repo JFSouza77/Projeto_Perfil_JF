@@ -564,3 +564,9 @@ body.claro #welcomeScreen .btn-sec,
 body.claro .btn-sec {
   color: color-mix(in srgb, var(--cc, #6d4ad8) 40%, #1b1d33);
 }
+/* 1.7.10.5.6 (auditoria): "Dica N:" e o relógio da carta eram amarelo sobre creme (contraste 2:1) */
+body.claro .pending-box .pending-num,
+body.claro .spotlight-timer,
+body.claro .pick-timer {
+  color: #7a5200;
+}

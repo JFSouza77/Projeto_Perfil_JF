@@ -528,11 +528,9 @@ body.claro button.splash-embreve .eb-sub {
 .telao-objetivo { margin: 8px 0; padding: 8px 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.85rem; text-align: left; }
 .telao-objetivo summary { cursor: pointer; }
 .telao-objetivo p { margin: 6px 0 0; opacity: 0.85; }
-body.claro .telao-objetivo { background: rgba(0, 0, 0, 0.04); border-color: rgba(0, 0, 0, 0.12); }
 /* C.A.O.S. 4.2: selo HOST e números de dica na T2 */
 .selo-host { display: inline-block; margin-left: 4px; padding: 0 5px; border-radius: 6px; font-size: 0.62em; font-weight: 800; letter-spacing: 0.04em; vertical-align: middle; background: #f59e0b; color: #1a1a2e; }
 .telao-numeros { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 8px; }
-.telao-numeros span { min-width: 1.9em; text-align: center; padding: 2px 4px; border-radius: 6px; font-size: 0.85em; font-weight: 700; background: rgba(255,255,255,0.12); }
 .telao-numeros span.usada { color: #fff; }
 .telao-numeros span.agora { background: #f59e0b; color: #1a1a2e; box-shadow: 0 0 0 2px #fde68a; }
 /* 1.7.10.5 (pedido do JF): ficha de palpite (selo amarelo), Palpitar agora e pedido de dica pelo aparelho */
@@ -594,4 +592,406 @@ body.claro #redePerguntaNao {
   color: #6b4204;
   border-color: #c98a1e;
   background: #fff4dc;
+}
+
+/* 1.7.10.5.6 (pedido do JF: "muito cru... tudo cinza") · T2 com hierarquia e nos dois temas
+   1º de quem é a vez e o relógio · 2º a carta (estado, categoria, números, dicas) · 3º placar · 4º consulta */
+.telao {
+  --t-fg: #f1f5f9;
+  --t-sub: #b9c1da;
+  --t-sec: rgba(255, 255, 255, 0.06);
+  --t-borda: rgba(255, 255, 255, 0.13);
+  --t-num: rgba(255, 255, 255, 0.12);
+  color: var(--t-fg);
+  gap: 14px;
+}
+body.claro .telao {
+  --t-fg: #1e1b2e;
+  --t-sub: #4a4560;
+  --t-sec: #ffffff;
+  --t-borda: rgba(30, 27, 46, 0.16);
+  --t-num: rgba(30, 27, 46, 0.09);
+}
+.telao-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  font-size: 1.15rem;
+}
+.tt-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 0.92rem;
+  color: var(--t-sub);
+  font-variant-numeric: tabular-nums;
+}
+.telao-vez {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "vez vez" "mestre relogio";
+  gap: 10px;
+}
+.telao-vez > div,
+.telao-carta,
+.telao-placar {
+  background: var(--t-sec);
+  border: 1px solid var(--t-borda);
+  border-radius: 16px;
+  padding: 12px 14px;
+  min-width: 0;
+}
+.telao-vez small {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--t-sub);
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.telao-vez b {
+  display: block;
+  font-size: clamp(1.15rem, 3.4vw, 1.6rem);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.telao-vez .tv-vez {
+  grid-area: vez;
+  background: color-mix(in srgb, var(--pc) 20%, var(--t-sec));
+  border: 2px solid var(--pc);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--pc) 22%, transparent);
+}
+.telao-vez .tv-vez b {
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
+}
+.telao-vez .tv-mestre {
+  grid-area: mestre;
+}
+.telao-vez .tv-relogio {
+  grid-area: relogio;
+  text-align: center;
+}
+#telaoRelogio {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
+}
+#telaoRelogio.tv-pouco {
+  color: #f87171;
+}
+body.claro #telaoRelogio.tv-pouco {
+  color: #b91c1c;
+}
+@media (min-width: 760px) {
+  .telao-vez {
+    grid-template-columns: 2fr 1.4fr 1fr;
+    grid-template-areas: "vez mestre relogio";
+  }
+}
+/* a carta: tingida pela cor da categoria */
+.telao-carta {
+  background: color-mix(in srgb, var(--cat, #a78bfa) 10%, var(--t-sec));
+  border-color: color-mix(in srgb, var(--cat, #a78bfa) 45%, transparent);
+}
+.tc-estado {
+  margin: -2px 0 10px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--cat, #a78bfa) 18%, transparent);
+  font-weight: 700;
+  text-align: center;
+  font-size: 1.02rem;
+}
+.tc-estado.tc-lendo {
+  background: rgba(245, 158, 11, 0.18);
+  outline: 1px solid rgba(245, 158, 11, 0.6);
+}
+.tc-estado.tc-palpite {
+  background: rgba(251, 191, 36, 0.18);
+  outline: 2px solid #fbbf24;
+}
+.tc-estado.tc-pedido {
+  background: rgba(96, 165, 250, 0.18);
+  outline: 1px solid #60a5fa;
+}
+.telao-cat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin-bottom: 8px;
+}
+.tc-selo {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--cat, #a78bfa);
+  color: #fff;
+  font-weight: 800;
+  font-size: clamp(1.05rem, 3.2vw, 1.35rem);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+.tc-conta {
+  color: var(--t-sub);
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+.tc-conta b {
+  color: var(--t-fg);
+  font-size: 1.1em;
+}
+.telao-numeros span {
+  min-width: 1.9em;
+  text-align: center;
+  padding: 3px 4px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  font-weight: 700;
+  background: var(--t-num);
+  font-variant-numeric: tabular-nums;
+}
+.telao-dicas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.telao-dicas li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: clamp(1.05rem, 3vw, 1.35rem);
+  line-height: 1.4;
+  padding: 6px 8px;
+  border-radius: 10px;
+}
+.td-n {
+  flex: none;
+  min-width: 1.8em;
+  padding: 1px 0;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--cat, #a78bfa) 30%, transparent);
+  text-align: center;
+  font-weight: 800;
+  font-size: 0.85em;
+  font-variant-numeric: tabular-nums;
+}
+.telao-dicas li.telao-agora {
+  background: rgba(245, 158, 11, 0.14);
+  color: #fde68a;
+  font-weight: 700;
+}
+body.claro .telao-dicas li.telao-agora {
+  color: #7a4a00;
+}
+.telao-sem-dica {
+  color: var(--t-sub);
+  opacity: 1;
+}
+/* placar */
+.tp-tit {
+  margin: 0 0 6px;
+  font-size: 0.95rem;
+  color: var(--t-sub);
+}
+.telao-placar ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.telao-placar li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  font-size: clamp(1.05rem, 3vw, 1.3rem);
+  border-top: 1px solid var(--t-borda);
+}
+.telao-placar li:first-child {
+  border-top: 0;
+}
+.telao-placar li b {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.telao-placar li.tp-lider b {
+  color: #fbbf24;
+}
+body.claro .telao-placar li.tp-lider b {
+  color: #9a6700;
+}
+.tp-nome {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.tp-cor {
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--pc);
+  vertical-align: 0.05em;
+}
+.tp-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 7px;
+  border-radius: 999px;
+  border: 1px solid var(--t-borda);
+  font-size: 0.7em;
+  font-weight: 700;
+  color: var(--t-sub);
+  vertical-align: middle;
+}
+.tp-tag.tp-vez {
+  border-color: var(--pc);
+  color: var(--t-fg);
+}
+/* consulta: como se vence e cartas da partida */
+.telao-objetivo,
+.telao-hist {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--t-sec);
+  border: 1px solid var(--t-borda);
+  font-size: 0.95rem;
+}
+.telao-hist > summary,
+.telao-objetivo > summary {
+  cursor: pointer;
+  min-height: 28px;
+  font-weight: 700;
+}
+.th-n {
+  display: inline-block;
+  min-width: 1.6em;
+  margin-left: 4px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--t-num);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.cp-lista {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+.cp-item details {
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--cat) 45%, transparent);
+  background: color-mix(in srgb, var(--cat) 9%, transparent);
+  padding: 8px 12px;
+}
+.cp-item summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cp-item summary::-webkit-details-marker {
+  display: none;
+}
+.cp-topo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+}
+.cp-cat {
+  padding: 1px 9px;
+  border-radius: 999px;
+  background: var(--cat);
+  color: #fff;
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+.cp-bonus {
+  font-weight: 700;
+  color: #fbbf24;
+}
+body.claro .cp-bonus {
+  color: #9a6700;
+}
+.cp-n {
+  margin-left: auto;
+  opacity: 0.8;
+  font-variant-numeric: tabular-nums;
+}
+.cp-resp {
+  font-size: 1.12rem;
+}
+.cp-res {
+  font-size: 0.9rem;
+  opacity: 0.88;
+}
+.cp-item.cp-esgotou .cp-resp {
+  opacity: 0.85;
+}
+.cp-item details[open] > summary .cp-res::after {
+  content: " ▴";
+}
+.cp-item details:not([open]) > summary .cp-res::after {
+  content: " ▾";
+}
+.cp-item p {
+  margin: 8px 0 2px;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+.cp-vazio {
+  margin: 10px 0 2px;
+  opacity: 0.8;
+}
+/* resumo da partida (lobby do host e dos convidados) */
+.pt-resumo {
+  list-style: none;
+  margin: 10px 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+.pt-resumo li {
+  padding: 7px 4px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  text-align: center;
+}
+.pt-resumo b {
+  display: block;
+  font-size: 1.02rem;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.pt-resumo small {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+body.claro .pt-resumo li {
+  background: #ffffff;
+  border-color: rgba(30, 27, 46, 0.16);
+}
+.lb-painel[data-aba="cartas"],
+.rede-lobby .cp-lista {
+  max-height: 46vh;
+  overflow-y: auto;
+}
+/* rolo parado antes de o Mestre virar a carta */
+.telao-roleta[data-pousou="0"][data-girando="0"] .roulette-reel {
+  letter-spacing: 0.2em;
+  opacity: 0.75;
 }

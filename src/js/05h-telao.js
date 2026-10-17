@@ -113,13 +113,14 @@ function telaoRoletaHtml(c) {
   const pousou = !!c.categoria;
   const cor = pousou ? (GEM_INFO[c.categoria] || {}).color || "#e94560" : "#a78bfa";
   const dica = pousou ? "🗣️ A categoria da carta" : c.roleta && c.roleta.girando ? "🎰 sorteando a categoria..." : "🃏 O Mestre vai virar a carta";
-  return `<div class="roulette telao-roleta" style="--cat:${cor};" data-cats="${escapeHtml(cats.join(","))}" data-pousou="${pousou ? 1 : 0}"><div class="roulette-phrase">"Eu sou <span class="roulette-reel${pousou ? " landed" : ""}" id="telaoReel">${pousou ? label(c.categoria) : label(cats[0])}</span>"</div><div class="roulette-hint">${dica}</div></div>`;
+  return `<div class="roulette telao-roleta" style="--cat:${cor};" data-cats="${escapeHtml(cats.join(","))}" data-pousou="${pousou ? 1 : 0}" data-girando="${c.roleta && c.roleta.girando ? 1 : 0}"><div class="roulette-phrase">"Eu sou <span class="roulette-reel${pousou ? " landed" : ""}" id="telaoReel">${pousou ? label(c.categoria) : c.roleta && c.roleta.girando ? label(cats[0]) : "???"}</span>"</div><div class="roulette-hint">${dica}</div></div>`;
 }
 function telaoRoletaAnimar(raiz) {
   clearInterval(telaoRoletaTimer);
   telaoRoletaTimer = null;
   const box = raiz && raiz.querySelector(".telao-roleta");
-  if (!box || box.dataset.pousou === "1") return;
+  // 1.7.10.5.6 (relato do JF): antes de o Mestre tocar em Virar carta o rolo fica parado; só gira junto com a roleta dele
+  if (!box || box.dataset.pousou === "1" || box.dataset.girando !== "1") return;
   const reel = box.querySelector(".roulette-reel"), cats = box.dataset.cats.split(",").filter(Boolean);
   if (!reel || cats.length < 2 || (typeof visualFxAllowed === "function" && !visualFxAllowed())) return;
   let i = 0;
@@ -134,18 +135,42 @@ function telaoObjetivoHtml(r) {
   const w = (typeof WIN_CONDITIONS !== "undefined" && WIN_CONDITIONS[r.vitoria]) || null;
   const nome = w ? w.label : r.vitoria;
   if (!nome) return "";
-  return `<details class="telao-objetivo"><summary>${TELAO_VITORIA_IC[r.vitoria] || (w && w.icon) || "🏆"} Como se vence: <b>${escapeHtml(nome)}</b></summary>${r.objetivo ? `<p>${escapeHtml(r.objetivo)}</p>` : ""}</details>`;
+  return `<details class="telao-objetivo" data-k="obj"><summary>${TELAO_VITORIA_IC[r.vitoria] || (w && w.icon) || "🏆"} Como se vence: <b>${escapeHtml(nome)}</b></summary>${r.objetivo ? `<p>${escapeHtml(r.objetivo)}</p>` : ""}</details>`;
 }
 // 1.7.10.1 (pedido do JF): o tabuleiro inteiro só no intervalo (lobby antes da próxima carta), no fim e antes
 // da primeira carta; com carta na mesa, ele sai da frente (o placar logo abaixo mostra a casa de cada um)
 function telaoMostraTabuleiro(r) {
   return !!(r.intervalo || r.fim || !r.carta || r.estadoCarta === "none");
 }
+/* 1.7.10.5.6 (pedido do JF: "muito cru... tudo cinza") · T2 com hierarquia: primeiro de quem é a vez e o relógio,
+   depois a carta (estado, categoria, números e dicas), o placar e, por último, o que é de consulta (como se vence
+   e as cartas da partida, clicáveis). Os <details> abertos continuam abertos quando chega retrato novo. */
+function telaoEstadoHtml(r, nomeTxt) {
+  const c = r.carta;
+  if (r.fim || !c) return "";
+  if (r.intervalo) return `<div class="tc-estado">⏸️ Intervalo: a próxima carta já vem</div>`;
+  if (r.palpiteVez) return `<div class="tc-estado tc-palpite">🃏 <b>${escapeHtml(nomeTxt(r.palpiteVez))}</b> vai palpitar! O Mestre julga.</div>`;
+  if (r.estadoCarta === "hidden") return "";
+  if (c.pendente !== null && c.pendente !== undefined) return `<div class="tc-estado tc-lendo">🎙️ O Mestre está lendo a dica <b>${c.pendente + 1}</b></div>`;
+  if (r.pedidoDica) return `<div class="tc-estado tc-pedido">👉 ${escapeHtml(nomeTxt(r.pedidoDica.por))} pediu a dica <b>${r.pedidoDica.pos + 1}</b></div>`;
+  if (r.estadoCarta === "revealed") return `<div class="tc-estado">👉 <b>${escapeHtml(nomeTxt(r.vezId))}</b> escolhe a próxima dica</div>`;
+  return "";
+}
 function telaoDesenhar(r, alvo) {
   const box = alvo || document.getElementById("telao"); // 1.7.9.4: o host desenha na própria tela de jogador
   if (!box) return;
+  if (!r._em) r._em = Date.now(); // pro tempo de jogo andar entre um retrato e outro
+  // o que estava aberto (como se vence, cartas da partida e cada carta) continua aberto
+  const abertos = new Set([...box.querySelectorAll("details[data-k][open]")].map((d) => d.dataset.k));
+  const jog = (id) => r.jogadores.find((p) => p.id === id);
+  const nomeTxt = (id) => {
+    const j = jog(id);
+    if (j) return j.nome;
+    const eq = r.equipes && r.equipes.find((e) => e.id === id);
+    return eq ? "Equipe " + ((TEAM_INFO[eq.id] || {}).label || eq.id) : "Alguém";
+  };
   const nome = (id) => {
-    const j = r.jogadores.find((p) => p.id === id);
+    const j = jog(id);
     // C.A.O.S. 4.2 (relato da partida online: ninguém sabia quem era o host): selo HOST (quem cuida da sala; não
     // é o Mestre, que é o dono da carta da vez)
     // 1.7.10.5 (pedido do JF): selo amarelo em quem tem a ficha de palpite a qualquer hora
@@ -156,12 +181,17 @@ function telaoDesenhar(r, alvo) {
           (ficha ? ' <span class="selo-palpite" title="Tem ficha de palpite a qualquer hora">🃏</span>' : "")
       : "—";
   };
-  const placar = [...r.jogadores]
-    .sort((a, b) => (r.vitoria === "pontos" ? b.pontos - a.pontos : b.casa - a.casa))
-    .map((j) => {
+  const cor = (id) => {
+    const j = jog(id);
+    return j && isSafeColor(j.cor) ? corDoJogador(j.cor) : "#a78bfa";
+  };
+  const ordem = [...r.jogadores].sort((a, b) => (r.vitoria === "pontos" ? b.pontos - a.pontos : b.casa - a.casa));
+  const placar = ordem
+    .map((j, i) => {
       const joias = Object.keys(j.joias || {}).length;
       const val = r.vitoria === "pontos" ? j.pontos + " pts" : r.vitoria === "joias" ? joias + "/4 joias" : "casa " + j.casa;
-      return `<li><span>${nome(j.id)}</span><b>${escapeHtml(val)}</b></li>`;
+      const tags = (j.id === r.mestreId ? '<span class="tp-tag">🎙️ Mestre</span>' : "") + (j.id === r.vezId ? '<span class="tp-tag tp-vez">👉 vez</span>' : "");
+      return `<li style="--pc:${cor(j.id)}"${i === 0 ? ' class="tp-lider"' : ""}><span class="tp-nome"><i class="tp-cor" aria-hidden="true"></i>${nome(j.id)}${tags}</span><b>${escapeHtml(val)}</b></li>`;
     })
     .join("");
   const c = r.carta;
@@ -169,7 +199,9 @@ function telaoDesenhar(r, alvo) {
   // não como 1), e a que o Mestre está lendo só mostra o texto depois do veredito
   const dicas = c
     ? c.abertas
-        .map((d) => `<li value="${d.pos + 1}"${d.pos === c.pendente ? ' class="telao-agora"' : ""}>${d.texto == null ? "🔒 <i>O Mestre está lendo esta dica…</i>" : (d.tipo === "special" ? "⭐ " : "") + escapeHtml(d.texto)}${d.pedidaPor ? ` <small class="telao-quem">· pedida por ${nome(d.pedidaPor)}</small>` : ""}</li>`) // 1.7.9.6: quem pediu
+        .slice()
+        .reverse() // a mais nova em cima: é a que a mesa está discutindo
+        .map((d) => `<li value="${d.pos + 1}"${d.pos === c.pendente ? ' class="telao-agora"' : ""}><span class="td-n">${d.pos + 1}</span><span class="td-txt">${d.texto == null ? "🔒 <i>O texto aparece depois do veredito</i>" : (d.tipo === "special" ? "⭐ " : "") + escapeHtml(d.texto)}${d.pedidaPor ? ` <small class="telao-quem">· pedida por ${nome(d.pedidaPor)}</small>` : ""}</span></li>`) // 1.7.9.6: quem pediu
         .join("")
     : "";
   // os números de dica pra todo mundo: livre, a que está sendo lida (em destaque) e as já usadas
@@ -177,21 +209,31 @@ function telaoDesenhar(r, alvo) {
   const numeros = c && c.totalDicas && r.estadoCarta !== "hidden"
     ? `<div class="telao-numeros" aria-label="Números de dica">${Array.from({ length: c.totalDicas }, (_, i) => `<span class="${i === c.pendente ? "agora" : usadas.has(i) ? "usada" : r.pedidoDica && r.pedidoDica.pos === i ? "pedida" : "livre"}">${usadas.has(i) && i !== c.pendente ? '<i class="ficha" aria-hidden="true"></i>' : ""}${i + 1}</span>`).join("")}</div>`
     : "";
+  const catCor = c && c.categoria ? (GEM_INFO[c.categoria] || {}).color || "#a78bfa" : "#a78bfa";
+  const p = r.partida || {};
+  const carta =
+    c && r.estadoCarta === "hidden"
+      ? `<section class="telao-carta" style="--cat:${catCor}">${telaoEstadoHtml(r, nomeTxt)}${telaoRoletaHtml(c)}</section>`
+      : c && c.categoria
+        ? `<section class="telao-carta" style="--cat:${catCor}">${telaoEstadoHtml(r, nomeTxt)}<div class="telao-cat"><span class="tc-selo">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)}</span><span class="tc-conta"><b>${c.abertas.length}</b> de ${c.totalDicas} dicas</span></div>${numeros}${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>`
+        : "";
+  const hist = Array.isArray(p.historico) ? p.historico : [];
+  box.dataset.rev = String(r.revisao);
   box.innerHTML = `
-    <header class="telao-topo"><b>📺 Perfil JF</b><span>rodada ${r.rodada}${r.ultimaRodada ? " · última" : ""} · revisão ${r.revisao}</span></header>
+    <header class="telao-topo"><b>📺 Perfil JF</b><span class="tt-info"><span>Rodada ${r.rodada}${r.ultimaRodada ? " · <b>última</b>" : ""}</span><span>⏱️ <span id="telaoTempo">${partidaTempoTxt(p.tempoMs || 0)}</span></span><span>🃏 ${p.cartas || 0}</span></span></header>
     ${r.fim ? '<div class="telao-espera">🏁 Fim de partida</div>' : ""}
     <section class="telao-vez">
-      <div>🎙️ Mestre<br><b>${nome(r.mestreId)}</b></div>
-      <div>👉 Vez de<br><b>${nome(r.vezId)}</b></div>
-      <div>⏱️ <b id="telaoRelogio">—</b></div>
+      <div class="tv-vez" style="--pc:${cor(r.vezId)}"><small>👉 Vez de</small><b>${nome(r.vezId)}</b></div>
+      <div class="tv-mestre" style="--pc:${cor(r.mestreId)}"><small>🎙️ Mestre</small><b>${nome(r.mestreId)}</b></div>
+      <div class="tv-relogio"><small>⏱️ Tempo</small><b id="telaoRelogio">—</b></div>
     </section>
-    ${r.palpiteVez ? `<div class="telao-palpite-vez">🃏 <b>${(() => { const j = r.jogadores.find((p) => p.id === r.palpiteVez); const eq = !j && r.equipes && r.equipes.find((e) => e.id === r.palpiteVez); return j ? escapeHtml(j.nome) : eq ? "Equipe " + escapeHtml(String(eq.id)) : "Alguém"; })()}</b> vai palpitar! O Mestre julga esse palpite.</div>` : ""}
-    ${r.pedidoDica ? `<div class="telao-pedido">👉 ${nome(r.pedidoDica.por)} pediu a dica <b>${r.pedidoDica.pos + 1}</b></div>` : ""}
-    ${telaoObjetivoHtml(r)}
-    ${c && r.estadoCarta === "hidden" ? `<section class="telao-carta">${telaoRoletaHtml(c)}</section>` : c && c.categoria ? `<section class="telao-carta"><div class="telao-cat">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)} · ${c.abertas.length} de ${c.totalDicas} dicas</div>${numeros}${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>` : ""}
+    ${carta}
     ${telaoMostraTabuleiro(r) ? tabHtmlTelao(r) : ""}
-    <section class="telao-placar"><ol>${placar}</ol></section>
+    <section class="telao-placar"><h2 class="tp-tit">Placar</h2><ol>${placar}</ol></section>
+    ${telaoObjetivoHtml(r)}
+    <details class="telao-hist" data-k="hist"><summary>🗂️ Cartas da partida <span class="th-n">${hist.length}</span></summary>${cartasPartidaHtml(hist, nomeTxt, (id) => (jog(id) ? escapeHtml((jog(id).avatar ? jog(id).avatar + " " : "") + jog(id).nome) : "Alguém"))}</details>
     ${TELAO_SAIR}`;
+  box.querySelectorAll("details[data-k]").forEach((d) => abertos.has(d.dataset.k) && (d.open = true));
   tabPecasTelao(r); // 1.7.9.2: o mesmo tabuleiro do jogo
   telaoRoletaAnimar(box);
   telaoRelogio();
@@ -199,11 +241,17 @@ function telaoDesenhar(r, alvo) {
 function telaoRelogio() {
   const el = document.getElementById("telaoRelogio");
   if (!el || !telaoUltimo) return;
-  const rel = telaoUltimo.relogio || {};
+  const r = telaoUltimo, rel = r.relogio || {};
+  // tempo de jogo andando entre um retrato e outro (parado na pausa, no intervalo e no fim)
+  const tj = document.getElementById("telaoTempo");
+  if (tj && r.partida && r.iniciada && !r.fim && !rel.pausado && !r.intervalo) tj.textContent = partidaTempoTxt((r.partida.tempoMs || 0) + (Date.now() - (r._em || Date.now())));
   if (rel.pausado) {
     el.textContent = "pausado";
+    el.classList.remove("tv-pouco");
     return;
   }
   const fim = rel.fimEm || rel.cartaFimEm;
-  el.textContent = fim ? Math.max(0, Math.ceil((fim - Date.now()) / 1000)) + " s" : "—";
+  const seg = fim ? Math.max(0, Math.ceil((fim - Date.now()) / 1000)) : null;
+  el.textContent = seg === null ? "—" : seg + " s";
+  el.classList.toggle("tv-pouco", seg !== null && seg <= 10);
 }

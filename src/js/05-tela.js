@@ -1212,6 +1212,9 @@ function roletaDesenhar(jaPousada) {
   spin();
 }
 function answerLineHtml() {
+  // 1.7.10.5.6 (pedido do JF: "poluição visual"): com a dica aberta esperando o veredito, a resposta fica só no
+  // "👁️ Conferir resposta" de baixo, junto do Acertou/Errou; o de cima some até o veredito
+  if (!answerLivre() && pendingIndex !== null && currentCard.clues[pendingIndex] && currentCard.clues[pendingIndex].type === "clue") return "";
   const open = answerLivre() || Date.now() < answerRevealUntil;
   return `<button type="button" id="answerToggle" class="answer-line-name answer-toggle${open ? " open" : ""}${answerLivre() ? " livre" : ""}">${answerTexto(open)}</button>${answerLivre() ? `<div class="ans-hint" id="ansHint">👆 toque pra esconder · some sozinha na ${CURRENT_MODE === "express" ? "2ª" : "1ª"} dica</div>` : ""}`;
 }

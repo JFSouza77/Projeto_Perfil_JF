@@ -302,6 +302,17 @@ body.batata-mode .btn-start.btn-neo {
 .jf-toast-overlay.caos-emo.caos-thinking {
   letter-spacing: 0;
 }
+/* 1.7.10.5.6 (auditoria): na tela larga o balão "pensando" cobria o título; ele fica no canto até virar fala */
+@media (min-width: 900px) {
+  .jf-toast-overlay.caos-thinking {
+    left: auto;
+    right: 18px;
+    transform: translateY(-20px);
+  }
+  .jf-toast-overlay.caos-thinking.show {
+    transform: translateY(0);
+  }
+}
 .jf-toast-overlay.caos-emo .toast-skip {
   flex: 0 0 auto;
   margin-left: 4px;

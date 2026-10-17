@@ -380,6 +380,15 @@ function retratoPartida(papel) {
     joiasRodada: { ...joiasRodada },
     vencedorJoias: gemWinner ? { tipo: gemWinner.kind, id: gemWinner.id } : null,
     relogio: { tipo: timerKind || null, fimEm: timerEndAt || null, cartaFimEm: cardEndAt || null, pausado: !!pausedAt },
+    // 1.7.10.5.6 (pedido do JF): resumo da partida pra T2 e pro lobby: tempo de jogo (sem pausa), cartas viradas e as
+    // últimas cartas resolvidas (só carta encerrada, então a resposta pode ir)
+    partida: {
+      tempoMs: typeof tempoJogoMs === "number" ? Math.round(tempoJogoMs) : 0,
+      cartas: stats.totalDrawn,
+      acertos: cartasPartida.filter((c) => c.quem).length,
+      esgotadas: cartasPartida.filter((c) => !c.quem).length,
+      historico: cartasPartida.slice(-40),
+    },
   };
 }
 
@@ -430,6 +439,7 @@ function desfazerFotografar() {
     joiasRodada: desfazerCopia(joiasRodada),
     gemWinner: desfazerCopia(gemWinner),
     history: desfazerCopia(history),
+    cartasPartida: desfazerCopia(cartasPartida),
     stats: desfazerCopia(stats),
     rodadaAtual,
     primeiroMestreId,
@@ -509,6 +519,7 @@ function desfazerAplicar(f) {
   joiasRodada = f.joiasRodada;
   gemWinner = f.gemWinner;
   history = f.history;
+  cartasPartida = f.cartasPartida || [];
   stats = f.stats;
   rodadaAtual = f.rodadaAtual;
   primeiroMestreId = f.primeiroMestreId;
