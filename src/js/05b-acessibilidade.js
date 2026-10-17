@@ -228,6 +228,8 @@ document.addEventListener("keydown", (e) => {
   if (!jogo || jogo.style.display === "none" || document.getElementById("telao") || (typeof rede !== "undefined" && rede && rede.papel === "convidado")) return;
   if (document.querySelector(".jf-modal-bg, .caos-modal-ov, #tutorialOverlay") || document.getElementById("pauseScreen").style.display === "block") return;
   const k = e.key;
+  // com um botão focado, Espaço e Enter já apertam ESSE botão (padrão do navegador): o atalho não entra junto
+  if ((k === " " || k === "Enter") && t && t.closest && t.closest("button, a, [role='button'], summary")) return;
   if (k === " ") {
     const alvo = ["#rouletteDoneBtn", "#flipBtn", "#continueSpecialBtn", "#drawBtn"].map((s) => document.querySelector(s)).find((el) => el && el.offsetParent !== null && el.style.display !== "none");
     if (alvo && atalhoTocar(alvo)) e.preventDefault();

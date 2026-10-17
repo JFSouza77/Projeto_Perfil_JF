@@ -343,7 +343,7 @@ body.claro .tb-tema-oldschool {
   vertical-align: 1px;
 }
 .tg-andou.tg-subiu {
-  background: #16a34a;
+  background: #15803d; /* 1.7.10.5.7 (axe): #16a34a dava 3,3:1 com o branco */
   color: #fff;
 }
 .tg-andou.tg-desceu {
