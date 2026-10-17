@@ -269,6 +269,8 @@ function resetDeck() {
   tabForma = null; // 1.7.9.2: partida nova, tabuleiro novo
   tabLobbyZerar(); // 1.7.9.4
   corridaZerar(); // 1.7.10.6
+  mcZerar();
+  document.getElementById("mcTela")?.remove();
   sorteioContagem = 0;
   acoesZerar();
   caosCatSeq = [];
@@ -1644,6 +1646,11 @@ function endGame() {
   } catch (e) {}
   setTimeout(caosIniFormatura, 4500);
   corridaParar();
+  if (CURRENT_MODE === "caos") {
+    clearInterval(mcTique);
+    mcTique = null;
+    document.getElementById("mcTela")?.remove();
+  }
   clearTimer();
   clearCardTimer();
   clearOverlayTimeout();
@@ -1823,6 +1830,9 @@ function selectMode(mode, expressCategories, flavor) {
     allCards = ADULT_CARDS.filter(
       (c) => c.category !== "ANO" && (c.classificacao === "junior" || c.classificacao === "livre"),
     );
+  } else if (mode === "caos") {
+    WINNING_SCORE = 0;
+    allCards = baralhoClassico();
   } else if (mode === "corrida") {
     WINNING_SCORE = 0;
     corridaVitoria = /^cartas/.test(flavor || "") ? "cartas" : "tempo";
@@ -2078,6 +2088,7 @@ function beginGameplay() {
     );
     return;
   }
+  if (CURRENT_MODE === "caos" && !mcPodeComecar()) return;
   starterChosen = true;
   if (!caosPartidaInicioAt) {
     caosPartidaInicioAt = Date.now();
@@ -2101,6 +2112,14 @@ function beginGameplay() {
   });
   casaSortearModo();
   if (CURRENT_MODE === "corrida") corridaIniciar();
+  if (CURRENT_MODE === "caos") {
+    // Modo C.A.O.S.: a partida é só dele (sem carta da mesa); ele mesmo desenha a tela
+    syncGameplayPanels();
+    requestWakeLock();
+    mcIniciar();
+    saveGameState();
+    return;
+  }
   vitoriaTutInicio();
   syncGameplayPanels();
   updateDrawAvailability();

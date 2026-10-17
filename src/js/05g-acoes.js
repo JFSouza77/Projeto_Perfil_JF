@@ -54,6 +54,20 @@ const ACOES = {
   corridaComprar: { fn: "corridaComprar", pode: (item, id) => acoesEmJogo() && corridaPodeComprar(item, id) },
   corridaUsar: { fn: "corridaUsar", pode: (item, id) => acoesEmJogo() && corridaPodeUsar(item, id) },
   corridaProxima: { fn: "corridaRelampagoProxima", pode: () => acoesComDica() && CURRENT_MODE === "corrida" && corridaRelampago() },
+  // 1.7.10.6 · Modo C.A.O.S. (quem pode mandar cada um, a rede confere em mcPodeComandar)
+  mcPalpitar: { fn: "mcPalpitar", pode: (id) => mcPodePalpitar(id) },
+  mcVeredito: { fn: "mcVeredito", pode: (ok) => mcPodeVeredito() && typeof ok === "boolean" },
+  mcDesfib: { fn: "mcUsarDesfib", pode: (id) => mcAtivo() && mc.fase === "desfibOferta" && !!mc.desfib && !!mc.desfib.oferta && mc.desfib.oferta.includes(id) },
+  mcBatataPassar: { fn: "mcBatataPassar", pode: (id) => mcPodeBatata(id) },
+  mcBatataSegurar: { fn: "mcBatataSegurar", pode: (id) => mcPodeBatata(id) },
+  mcDesafioBater: { fn: "mcDesafioBater", pode: (id) => mcAtivo() && mc.fase === "desafio" && !!mc.desafio && mc.desafio.com === id && !mc.desafio.buzz },
+  mcDesafioVeredito: { fn: "mcDesafioVeredito", pode: (ok) => mcAtivo() && mc.fase === "desafio" && !!mc.desafio && !!mc.desafio.buzz && typeof ok === "boolean" },
+  mcDuelo: { fn: "mcDueloEscolher", pode: (id, v) => mcPodeEscolherDuelo(id, v) },
+  mcRevanche: { fn: "mcRevanche", pode: (id) => mcPodeRevanche(id) },
+  mcUsar: { fn: "mcUsar", pode: (item, id, alvo) => mcPodeUsar(item, id, alvo) },
+  mcMaoLeve: { fn: "mcMaoLeve", pode: (id, alvo) => mcPodeMaoLeve(id, alvo) },
+  mcComprar: { fn: "mcComprar", pode: (item, id) => mcPodeComprar(item, id) },
+  mcPinata: { fn: "mcPinata", pode: (id, txt) => mcPodePinata(id, txt) },
   pausar: { fn: "pauseGame", pode: () => acoesEmJogo() },
   continuar: { fn: "resumeGame", pode: () => starterChosen && !gameEnded },
   encerrar: { fn: "endGame", pode: () => acoesEmJogo() },
@@ -165,7 +179,16 @@ function acoesRegistrar(tipo, args, origem) {
 // O que conta como "a partida mudou": a foto da espinha mais a pausa (1.7.9: pausar e voltar
 // não mudavam a foto, então não subiam a revisão nem avisavam o telão).
 function acoesFoto() {
-  return caosEspinhaFoto() + (typeof pausedAt !== "undefined" && pausedAt ? "|pausada" : "");
+  return caosEspinhaFoto() + (typeof pausedAt !== "undefined" && pausedAt ? "|pausada" : "") + acoesFotoModos();
+}
+// 1.7.10.6: o que muda nos modos novos sem mexer no placar (itens da Corrida, estado do Modo C.A.O.S.) também é jogada
+function acoesFotoModos() {
+  try {
+    if (CURRENT_MODE === "corrida")
+      return "|cr" + JSON.stringify([corridaItens, corridaEstoque, corridaEscudo, corridaFolego, corridaCongelaMs > 0, Math.round(corridaCartaRestaMs / 1000)]);
+    if (CURRENT_MODE === "caos" && typeof mcFoto === "function") return "|mc" + mcFoto();
+  } catch (e) {}
+  return "";
 }
 // Casca de uma função do motor: só a chamada de fora conta como ação.
 function acoesEnvolver(fnNome) {
@@ -385,6 +408,7 @@ function retratoPartida(papel) {
     vencedorJoias: gemWinner ? { tipo: gemWinner.kind, id: gemWinner.id } : null,
     relogio: { tipo: timerKind || null, fimEm: timerEndAt || null, cartaFimEm: cardEndAt || null, pausado: !!pausedAt },
     corrida: typeof corridaRetrato === "function" ? corridaRetrato() : null, // 1.7.10.6: relógios da Corrida
+    mc: typeof mcRetrato === "function" ? mcRetrato() : null, // 1.7.10.6: Modo C.A.O.S. (só o público)
     // 1.7.10.5.6 (pedido do JF): resumo da partida pra T2 e pro lobby: tempo de jogo (sem pausa), cartas viradas e as
     // últimas cartas resolvidas (só carta encerrada, então a resposta pode ir)
     partida: {

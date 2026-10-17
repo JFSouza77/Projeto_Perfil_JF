@@ -1570,6 +1570,7 @@ const REDE_QUALQUER_UM = ["pausar", "continuar"];
 const REDE_SO_HOST = ["tempoAcabou", "expressCartaPerdida", "admRemover", "encerrar"];
 function redePodeComandar(acao, jid, dados) {
   if (!jid || jogadorIdxPorId(jid) < 0) return false;
+  if (/^mc[A-Z]/.test(acao)) return CURRENT_MODE === "caos" && mcPodeComandar(acao, jid, dados); // 1.7.10.6
   if (REDE_SO_HOST.includes(acao)) return false;
   if (REDE_QUALQUER_UM.includes(acao)) return true;
   const ehMestre = jogadorIdDe(mestreIndex) === jid;
@@ -1614,6 +1615,7 @@ function redeHostComando(m, jid) {
 
 /* --- Painel de cada jogador: os botões que ele pode tocar agora (o host calcula) --- */
 function redeOpcoes(jid) {
+  if (CURRENT_MODE === "caos" && typeof mc !== "undefined" && mc) return mcOpcoes(jid); // 1.7.10.6: o painel é do Modo C.A.O.S.
   const op = [];
   const add = (a, d, t, c, g) => op.push({ a, d: d || [], t, ...(c ? { c } : {}), ...(g ? { g } : {}) });
   if (!starterChosen || gameEnded || jogadorIdxPorId(jid) < 0) return op;
@@ -1791,10 +1793,12 @@ function redeHostPublicar(forcar) {
     const a = rede.assentos[jid];
     if (!redeOnline(a)) return;
     const opcoes = redeOpcoes(jid);
-    const chave = JSON.stringify(opcoes) + "|" + partidaRevisao;
+    // 1.7.10.6 · Modo C.A.O.S.: o que é só desse jogador (a carta dele, PC, itens…) vai junto, só pra ele
+    const extra = CURRENT_MODE === "caos" && typeof mcPrivado === "function" ? mcPrivado(jid) : null;
+    const chave = JSON.stringify([opcoes, extra]) + "|" + partidaRevisao;
     if (!forcar && rede.paineis[jid] === chave) return;
     rede.paineis[jid] = chave;
-    redeEnviar("painel", { revisao: partidaRevisao, opcoes }, a.sessao);
+    redeEnviar("painel", { revisao: partidaRevisao, opcoes, ...(extra ? { extra } : {}) }, a.sessao);
   });
   const mid = jogadorIdDe(mestreIndex);
   const a = mid && rede.assentos[mid];
@@ -2177,7 +2181,7 @@ function redeConvidadoReceber(m) {
   }
   if (m.t === "painel") {
     if (rede.painel && m.revisao < rede.painel.revisao) return;
-    rede.painel = { revisao: m.revisao, opcoes: m.opcoes };
+    rede.painel = { revisao: m.revisao, opcoes: m.opcoes, extra: m.extra && typeof m.extra === "object" ? m.extra : null };
     return avisar();
   }
   if (m.t === "recuperacao") {
@@ -2401,6 +2405,7 @@ function redeConvidadoTiques() {
   if (iv && r.intervalo) iv.textContent = s(r.intervalo);
   const vs = document.getElementById("redeVotoSeg");
   if (vs && r.votacao) vs.textContent = s(r.votacao.ate);
+  if (r.mc && typeof mcContagens === "function") mcContagens();
 }
 function redeConvidadoDesenhar() {
   const box = document.getElementById("telao");
@@ -2443,6 +2448,7 @@ function redeConvidadoDesenhar() {
     box.innerHTML = `${sala}<div class="telao-espera">✅ Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b><br><small>Esperando o host terminar o cadastro e começar a partida…</small></div><ul class="rede-lista">${mesa}</ul>${redeSairHtml()}`;
     return;
   }
+  if (rede.retrato.mc) return mcDesenharConvidado(box); // 1.7.10.6: Modo C.A.O.S. tem tela própria
   telaoUltimo = rede.retrato;
   telaoDesenhar(rede.retrato);
   // troca o "sair do telão" pelo "sair da sala" e põe a sala e os botões do meu papel

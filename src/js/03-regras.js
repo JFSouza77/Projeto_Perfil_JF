@@ -312,6 +312,7 @@ function currentGemCategories() {
 function winCond() {
   if (CURRENT_MODE === "express") return "express";
   if (CURRENT_MODE === "corrida") return "corrida";
+  if (CURRENT_MODE === "caos") return "caos";
   const w = WIN_CONDITIONS[WIN_CONDITION] ? WIN_CONDITION : "casa";
   // Na Moda da Casa, depois do sorteio vale o comportamento do modo sorteado.
   if (w === "casa" && CASA_MODOS.includes(casaSorteado)) return casaSorteado;
@@ -338,7 +339,7 @@ function joiasComTrava() {
 }
 function gemsAwarded() {
   const w = winCond();
-  return w !== "pontos" && w !== "tabuleiro" && w !== "corrida";
+  return w !== "pontos" && w !== "tabuleiro" && w !== "corrida" && w !== "caos";
 }
 function gemsCountForWin() {
   const w = winCond();
@@ -354,7 +355,7 @@ function teamScore(id) {
 function rankValue(holder, teamId) {
   const w = winCond();
   if (w === "corrida") return corridaRank(holder); // pontos (Tempo) ou cartas; no Tempo, empate desempata por cartas
-  if (w === "express") return holder.score || 0;
+  if (w === "express" || w === "caos") return holder.score || 0; // Modo C.A.O.S.: score = cartas capturadas
   if (w === "pontos") return teamId ? teamScore(teamId) : holder.score || 0;
   if (w === "joias") return gemTotal(holder);
   return holder.position || 0;
@@ -362,7 +363,7 @@ function rankValue(holder, teamId) {
 function victoryReached() {
   if (gemWinner) return true;
   const w = winCond();
-  if (w === "express" || w === "joias" || w === "corrida") return false;
+  if (w === "express" || w === "joias" || w === "corrida" || w === "caos") return false;
   const eq = CURRENT_FORMAT === "equipe";
   if (w === "pontos") {
     const meta = metaPontos();
@@ -382,6 +383,7 @@ function winCondRuleText(goal) {
 function winCondRuleTextBase(goal) {
   const g = goal || WINNING_SCORE || 200,
     w = winCond();
+  if (w === "caos") return "Vence quem tiver <b>mais cartas</b> quando os 10 minutos acabarem.";
   if (w === "corrida")
     return `Vence quem tiver <b>mais cartas</b> quando o relógio geral (${CORRIDA_TEMPO_MS / 60e3} min, +${CORRIDA_BONUS_MS / 1e3} s por carta acertada) zerar. Empate: <b>desempate relâmpago</b>.`;
   if (w === "joias")

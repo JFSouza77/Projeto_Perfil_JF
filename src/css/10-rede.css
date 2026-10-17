@@ -1063,3 +1063,148 @@ body.claro .pt-resumo li {
   text-align: center;
   color: var(--t-sub, #b9c1da);
 }
+
+/* 1.7.10.6 · Modo C.A.O.S. (host e convidados usam a mesma tela) */
+#mcTela,
+.mc-tela {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.mc-tela {
+  display: grid;
+  gap: 10px;
+  padding: 6px 4px 12px;
+}
+.mc-relogios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+}
+.mc-relogios > span {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(232, 121, 249, 0.45);
+  background: rgba(232, 121, 249, 0.1);
+}
+.mc-relogios .mc-ev {
+  border-color: rgba(248, 113, 113, 0.6);
+  background: rgba(248, 113, 113, 0.14);
+  font-weight: 700;
+}
+.mc-bloco {
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(232, 121, 249, 0.35);
+  background: rgba(232, 121, 249, 0.06);
+}
+.mc-bloco h3 {
+  margin: 0 0 6px;
+}
+.mc-cat {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.mc-estado {
+  margin: 6px 0;
+  font-weight: 700;
+  color: #fbbf24;
+}
+.mc-dicas {
+  margin: 6px 0 0;
+  padding-left: 24px;
+  display: grid;
+  gap: 4px;
+}
+.mc-dicas .mc-agora {
+  font-weight: 800;
+  font-size: 1.08rem;
+}
+.mc-janela {
+  font-size: 1.3rem;
+}
+.mc-ultimo,
+.mc-meu {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+}
+.mc-meu {
+  border: 1px dashed rgba(167, 139, 250, 0.55);
+}
+.mc-juiz,
+.mc-desfib {
+  margin-top: 6px;
+  color: #fde68a;
+}
+.mc-grupo {
+  margin-top: 4px;
+}
+.mc-grupo-tit {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  margin-bottom: 4px;
+}
+.mc-botoes .rede-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.mc-placar {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.mc-placar li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+.mc-placar li.mc-mestre {
+  outline: 1px solid rgba(232, 121, 249, 0.6);
+}
+.mc-feed {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.85rem;
+  opacity: 0.85;
+  display: grid;
+  gap: 2px;
+}
+.mc-pinata {
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(251, 191, 36, 0.12);
+}
+.mc-palavra {
+  font-size: 1.2rem;
+  letter-spacing: 0.04em;
+}
+.mc-pinata-form {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+.mc-pinata-txt {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(251, 191, 36, 0.6);
+  background: rgba(0, 0, 0, 0.25);
+  color: inherit;
+  font-size: 1rem;
+}
+body.claro .mc-estado,
+body.claro .mc-juiz,
+body.claro .mc-desfib {
+  color: #92400e;
+}

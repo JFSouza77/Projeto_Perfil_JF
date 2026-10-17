@@ -67,6 +67,7 @@ function updateModeNotice() {
     junior: "Perfil JF — Júnior (6+)",
     express: `Perfil JF — Express ${expressFlavor === "hardcore" ? "Hardcore" : "Clássico"}`,
     corrida: `Perfil JF — Corrida contra o Tempo · ${corridaVitoria === "tempo" ? "Tempo" : "Cartas"}${corridaHardcore ? " · Hardcore" : ""} (12+)`,
+    caos: "Perfil JF — Modo C.A.O.S. (16+ · online)",
   };
   const notices = {
     classico: "",
@@ -75,6 +76,7 @@ function updateModeNotice() {
       : "📻 Cartas de adulto, dicas mais difíceis e nenhum animal.",
     hardcore: "💀 10 dicas por carta, 60s pra responder, pontos em dobro. Recomendado 15+.",
     junior: `🧒 ${cartasNoModo()} cartas pra criançada: Animal, Pessoa, Lugar e Coisa. Meta de 150 casas.`,
+    caos: "🌀 Só online, cada um no seu dispositivo (abra a sala e chame todo mundo antes de começar). 16+.",
     corrida: `⏱️ ${corridaVitoria === "tempo" ? "A carta vale os segundos que sobravam no relógio dela. Vence quem somar mais pontos." : "Quem acerta fica com a carta. Vence quem tiver mais cartas."} ${CORRIDA_TEMPO_MS / 60e3} min de relógio (+${CORRIDA_BONUS_MS / 1e3} s por acerto), carta de 2:30, vez de ${CORRIDA_VEZ_SEG}+${CORRIDA_VEZ_SEG} s.`,
     express: `🔥 Categorias: ${expressSelectedCategories.join(", ")} · sem tabuleiro · 50 cartas · carta de ${rulesCtx().card} e vez de ${rulesCtx().turn}s.`,
   };
@@ -583,6 +585,7 @@ function anunciarVez() {
   } catch (e) {}
 }
 function render() {
+  if (CURRENT_MODE === "caos" && typeof mc !== "undefined" && mc && !gameEnded) return mcDesenharHost(); // 1.7.10.6
   anunciarVez();
   const area = document.getElementById("cardArea");
   const drawBtn = document.getElementById("drawBtn");
@@ -1326,7 +1329,7 @@ function renderBonusDuelInfo() {
 function renderBoardTrack() {
   const track = document.getElementById("boardTrack");
   if (!track) return;
-  if (CURRENT_MODE === "express" || CURRENT_MODE === "corrida" || players.length === 0) {
+  if (CURRENT_MODE === "express" || CURRENT_MODE === "corrida" || CURRENT_MODE === "caos" || players.length === 0) {
     track.innerHTML = "";
     return;
   }
@@ -2264,9 +2267,11 @@ function renderFinalScreen() {
   const corridaTxt = (v) =>
     corridaVitoria === "tempo" ? `${Math.floor(v)} pts e ${cartasTxt(Math.round((v % 1) * 1000))}` : cartasTxt(v);
   const rankTxt = (v) =>
-    wc === "corrida" ? corridaTxt(v) : wc === "pontos" ? `${v} pts` : wc === "joias" ? `${v} joia${v === 1 ? "" : "s"}` : `casa ${v}`;
+    wc === "caos" ? cartasTxt(v) : wc === "corrida" ? corridaTxt(v) : wc === "pontos" ? `${v} pts` : wc === "joias" ? `${v} joia${v === 1 ? "" : "s"}` : `casa ${v}`;
   const rankHead = (v) =>
-    wc === "corrida"
+    wc === "caos"
+      ? `capturou ${cartasTxt(v)}`
+      : wc === "corrida"
       ? `${corridaVitoria === "tempo" ? "somou" : "ficou com"} ${corridaTxt(v)}${corridaDesempateFeito ? " (no desempate relâmpago)" : ""}`
       : wc === "pontos"
       ? `com ${v} pontos`
@@ -2331,7 +2336,7 @@ function renderFinalScreen() {
     } else if (allZero) {
       headerHtml = isExpress
         ? `<h2>🏁 Jogo encerrado</h2><p style="opacity:0.8;">Ninguém pontuou nessa partida</p>`
-        : `<h2>🏁 Jogo encerrado</h2><p style="opacity:0.8;">${wc === "corrida" ? "Ninguém ficou com carta" : wc === "pontos" ? "Ninguém pontuou" : wc === "joias" ? "Ninguém ganhou joia" : "Ninguém andou casa"} nessa partida</p>`;
+        : `<h2>🏁 Jogo encerrado</h2><p style="opacity:0.8;">${wc === "corrida" || wc === "caos" ? "Ninguém ficou com carta" : wc === "pontos" ? "Ninguém pontuou" : wc === "joias" ? "Ninguém ganhou joia" : "Ninguém andou casa"} nessa partida</p>`;
     } else if (tiedTop.length > 1) {
       const names = tiedTop.map((p) => escapeHtml(p.name)).join(" e ");
       headerHtml = isExpress
@@ -2347,7 +2352,7 @@ function renderFinalScreen() {
         (p) => `
     <li class="${p.rank === 1 && !allZero ? "first-place" : ""}">
       <span>${(!allZero && medals[p.rank - 1]) || p.rank + "º"} ${playerNameHtml(p.name, p.color, p.avatar)}</span>
-      <span>${wc === "corrida" ? (corridaVitoria === "tempo" ? "⏱️ " : "🃏 ") + corridaValorTxt(p) : isExpress ? `${p.score} ponto${p.score === 1 ? "" : "s"}` : `${p.score} pts — casa ${p.position}`}${gemBadgesHtml(p)}</span>
+      <span>${wc === "caos" ? `🃏 ${cartasTxt(p.score || 0)}` : wc === "corrida" ? (corridaVitoria === "tempo" ? "⏱️ " : "🃏 ") + corridaValorTxt(p) : isExpress ? `${p.score} ponto${p.score === 1 ? "" : "s"}` : `${p.score} pts — casa ${p.position}`}${gemBadgesHtml(p)}</span>
     </li>
   `,
       )
@@ -2598,6 +2603,10 @@ function renderModeCardDescs() {
     `Sem tabuleiro: 50 cartas, pontos = 11 − dicas, carta de ${Math.floor(X.hardcore.card / 60)}:${String(X.hardcore.card % 60).padStart(2, "0")} a ${Math.floor(X.classico.card / 60)}:${String(X.classico.card % 60).padStart(2, "0")} e especiais estilo UNO.`,
   );
   set(
+    "mcDescCaos",
+    `Só online, cada um no seu dispositivo. Todo mundo tem uma carta secreta; quem acertar primeiro captura. ${MC_TEMPO_MS / 60e3} min, lojinha com Pontos de Caos e o C.A.O.S. aprontando de verdade.`,
+  );
+  set(
     "mcDescCorrida",
     `Relógio de ${CORRIDA_TEMPO_MS / 60e3} min (+${CORRIDA_BONUS_MS / 1e3} s por acerto), carta de 2:30, vez de ${CORRIDA_VEZ_SEG}+${CORRIDA_VEZ_SEG} s. Duas vitórias: ⏱️ Tempo (a carta vale os segundos que sobravam) ou 🃏 Cartas.`,
   );
@@ -2624,6 +2633,7 @@ function atualizarRotuloModo() {
     hardcore: "💀 Hardcore",
     express: `🔥 Express ${expressFlavor === "hardcore" ? "Hardcore" : "Clássico"}`,
     corrida: `⏱️ Corrida · ${corridaVitoria === "tempo" ? "Tempo" : "Cartas"}${corridaHardcore ? " 💀" : ""}`,
+    caos: "🌀 Modo C.A.O.S.",
   };
   el.textContent = `${nomes[CURRENT_MODE] || CURRENT_MODE} · ${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}`;
 }
@@ -2638,6 +2648,7 @@ function resetModeSelectionUI() {
   document.getElementById("modeWrapExpress").style.display = equipeMode ? "none" : "";
   document.getElementById("modeWrapJunior").style.display = equipeMode ? "none" : "";
   document.getElementById("modeWrapCorrida").style.display = equipeMode ? "none" : "";
+  document.getElementById("modeWrapCaos").style.display = equipeMode ? "none" : "";
   document.querySelectorAll(".expressCatChk").forEach((cb) => {
     cb.checked = false;
     cb.disabled = false;
@@ -2753,7 +2764,7 @@ function casaAnunciar() {
 function renderWinCondPicker() {
   const wrap = document.getElementById("winCondWrap");
   if (!wrap) return;
-  if (CURRENT_MODE === "express" || CURRENT_MODE === "corrida") {
+  if (CURRENT_MODE === "express" || CURRENT_MODE === "corrida" || CURRENT_MODE === "caos") {
     wrap.style.display = "none";
     return;
   }
@@ -2806,6 +2817,7 @@ function buildRulesSummaryHtml() {
   const c = rulesCtx(),
     li = [];
   if (CURRENT_MODE === "corrida") return corridaRegrasHtml(true);
+  if (CURRENT_MODE === "caos") return mcRegrasHtml();
   if (c.express) {
     li.push("🎯 <b>Objetivo:</b> somar mais pontos até o baralho acabar.");
     li.push(
@@ -2835,6 +2847,7 @@ function buildRulesHtml() {
   const c = rulesCtx(),
     li = [];
   if (CURRENT_MODE === "corrida") return corridaRegrasHtml(false);
+  if (CURRENT_MODE === "caos") return mcRegrasHtml();
   // 1. Objetivo
   li.push(
     c.express

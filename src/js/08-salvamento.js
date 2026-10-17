@@ -436,6 +436,7 @@ function saveGameState() {
       gemWinner,
       cardEndAt,
       corrida: corridaSalvar(),
+      mc: typeof mcSalvar === "function" ? mcSalvar() : null,
       pausedCardRemaining,
       expressWhoFreeze,
       bonusOrigMestreIdx,
@@ -497,7 +498,7 @@ function saveSegundos(v) {
 }
 function sanitizeLoadedState(s) {
   if (!s || typeof s !== "object") return;
-  const MODES = ["classico", "hardcore", "express", "junior", "oldschool", "corrida"];
+  const MODES = ["classico", "hardcore", "express", "junior", "oldschool", "corrida", "caos"];
   if (!MODES.includes(s.CURRENT_MODE)) s.CURRENT_MODE = "classico";
   if (s.CURRENT_FORMAT !== "versus" && s.CURRENT_FORMAT !== "equipe") s.CURRENT_FORMAT = "versus";
   const num = (v, d) => (typeof v === "number" && Number.isFinite(v) ? v : d);
@@ -922,6 +923,7 @@ function loadGameState() {
       });
     cardEndAt = saveNum(state.cardEndAt) || null;
     corridaZerar();
+    if (CURRENT_MODE === "caos") mcRetomar(state.mc);
     if (CURRENT_MODE === "corrida" && state.corrida && typeof state.corrida === "object") corridaRetomar(state.corrida);
     if (state.expressWhoFreeze && typeof state.expressWhoFreeze === "object" && CURRENT_MODE === "express") {
       const f = state.expressWhoFreeze,
@@ -1013,6 +1015,7 @@ function loadGameState() {
     } else {
       render();
       if (CURRENT_MODE === "corrida" && starterChosen) corridaIniciar();
+      if (CURRENT_MODE === "caos" && starterChosen && mc && !mcTique) mcTique = setInterval(mcTicar, 250);
       if (CURRENT_MODE === "express" && cardEndAt && cardSecondsLeft() <= 0) {
         expressCardLost();
       } else if (timerEndAt && timerKind) {

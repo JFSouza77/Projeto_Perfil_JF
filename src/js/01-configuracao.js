@@ -362,6 +362,24 @@ const CORRIDA_EVENTO_FORA_MS = 3 * 60e3; // bomba e duelo não saem nos 3 min fi
 const CORRIDA_DUELO_MAX = 2;
 const CORRIDA_DUELO_VEL = 2; // no duelo a carta corre 2× e o geral congela
 const CORRIDA_DUELO_ROUBO = 25; // quem vence o duelo rouba 25 pontos de quem perdeu (Tempo)
+// 1.7.10.6 · Modo C.A.O.S. (handoff do JF de 17/10, docs/Modos_1.7.10.6.md): online, 16+, um dispositivo por pessoa
+const MC_TEMPO_MS = 10 * 60e3; // partida
+const MC_RODADA_MS = 5 * 60e3; // rodada (no máximo)
+const MC_JANELA_SEG = 15; // janela de palpite de cada dica
+const MC_TURBO_SEG = 5; // Modo Turbo
+const MC_INTERVALO_SEG = 15; // lobby entre rodadas (tudo congelado)
+const MC_RAPIDO_MS = 5e3; // acertou nos 5 primeiros segundos da janela: bônus de PC
+const MC_PC = { rodada: 10, rapido: 5, pinata: 30, batata: 50, imposto: 10 };
+const MC_LOJA = {
+  corte: { ic: "✂️", nome: "Corte de Fio", preco: 15, desc: "corta a janela da dica atual pra 6 s (todo mundo vê o tempo voar)" },
+  folego: { ic: "🫁", nome: "Fôlego", preco: 20, desc: "errou? uma 2ª tentativa na mesma dica" },
+  mordaca: { ic: "🤐", nome: "Mordaça", preco: 30, desc: "trava o botão de palpite de alguém nesta dica (o Mestre não)" },
+  desfib: { ic: "⚡", nome: "Desfibrilador", preco: 35, desc: "quando a carta for hibernar: a próxima dica só pra você, tentativa solo" },
+  congelar: { ic: "🧊", nome: "Congelar Mesa", preco: 40, desc: "os outros ficam travados nos 7 primeiros segundos da dica" },
+  espelho: { ic: "🪞", nome: "Espelho Refletor", preco: 45, desc: "fica guardado: devolve a próxima agressão (roubo, mordaça, punição)" },
+  kevlar: { ic: "🛡️", nome: "Escudo de Kevlar", preco: 60, desc: "fica guardado: anula 1 roubo ou punição que tiraria carta sua" },
+};
+const MC_PINATA_PALAVRAS = ["EU QUERO", "CAOS", "ME DA", "BOOM", "PINHATA", "AGORA", "SOCORRO", "PERFIL"];
 // Lojinha de Sobrevivência: só online, só na vitória por Tempo, só no intervalo. Estoque de 1 a 5 de cada por partida.
 const CORRIDA_LOJA = {
   congelar: { ic: "🧊", nome: "Congelar Mesa", preco: 40, desc: "o relógio geral para 15 s na próxima carta (vale pra mesa toda)" },
@@ -384,7 +402,7 @@ const VERSO_EMBLEMA_SVG = `<svg class="back-icon verso-emblema" viewBox="0 0 160
   <text class="vs-p" fill="#7c3aed" x="80" y="70" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="700">P</text>
   <g transform="translate(81 121)"><ellipse rx="11" ry="7" fill="url(#vsGrad)"/><ellipse rx="11" ry="7" fill="none" stroke="#fde68a" stroke-opacity=".7" stroke-width="1"/><circle r="3" fill="#fde68a"/></g>
 </svg>`;
-const DECK_LIMITE = { classico: 400, hardcore: 300, oldschool: 240, junior: 250, express: 50, corrida: 400 };
+const DECK_LIMITE = { classico: 400, hardcore: 300, oldschool: 240, junior: 250, express: 50, corrida: 400, caos: 400 };
 const CAOS_VOICE_OK =
   typeof window !== "undefined" && "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
 const CAOS_MASTER_RE =
@@ -971,6 +989,7 @@ const MODE_WRAP_IDS = {
   junior: "modeWrapJunior",
   oldschool: "modeWrapOldschool",
   corrida: "modeWrapCorrida",
+  caos: "modeWrapCaos",
   random: "modeWrapRandom",
 };
 const MODE_LABELS = {
@@ -980,6 +999,7 @@ const MODE_LABELS = {
   junior: "Perfil Júnior",
   oldschool: "Perfil Old School",
   corrida: "Corrida contra o Tempo",
+  caos: "Modo C.A.O.S.",
 };
 const PAUSE_TIP_MS = 8e3;
 // ENDEREÇOS (1.7.10.5.5, portas pro domínio próprio): pra trocar o endereço do jogo, muda SÓ aqui
