@@ -2345,3 +2345,22 @@ html.acess-calmo #scoreboard li.cad-repetido,body.batata-mode #scoreboard li.cad
     0 0 2px var(--pn-b, #a855f7),
     0 0 7px var(--pn-b, #a855f7) !important;
 }
+
+/* 1.7.10.5.7 (pedido do JF): aviso "Em breve: 2 novos modos" embaixo do online, no mesmo estilo, em ciano */
+.splash-embreve.splash-novos {
+  margin-top: 10px;
+  border-color: #22d3ee;
+  animation-name: novosPulsa;
+}
+.splash-novos .eb-selo {
+  background: #22d3ee;
+  color: #062a33;
+}
+.splash-novos .eb-titulo {
+  color: #67e8f9;
+  text-shadow: 0 0 8px #06b6d48c;
+}
+@keyframes novosPulsa {
+  0%, 100% { box-shadow: 0 0 8px #22d3ee33; }
+  50% { box-shadow: 0 0 18px #22d3ee80; }
+}

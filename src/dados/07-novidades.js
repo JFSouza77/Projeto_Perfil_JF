@@ -17,6 +17,7 @@ const NOVIDADES = [
       "⏳ Últimos segundos com tensão: nos 10 segundos finais, tique-taque baixinho e a borda da tela pulsando.",
       "🏆 Troféus do C.A.O.S.: no fim da partida, nas estatísticas, saem os troféus Pai Diná, Tartaruga Ninja, Inimigo do Acerto e a nota de cada Mestre.",
       "🎭 Balão com emoção: bravo, o balão do C.A.O.S. chacoalha; orgulhoso, pulsa; na festa, pula; triste, murcha. Com Menos movimento ou Modo Batata, fica parado.",
+      "🔜 Vem aí: dois modos novos estão chegando, o Modo C.A.O.S. e a Corrida contra o Tempo. O aviso já está na tela inicial.",
     ],
     qol: [],
   },
