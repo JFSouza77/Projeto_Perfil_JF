@@ -1736,3 +1736,22 @@ body.batata-mode.aviso-treme {
     animation-iteration-count: 1 !important;
   }
 }
+/* 1.7.10.7: Espectar duelo (quem está fora vê a resposta) */
+.telao-duelo .td-espiar {
+  align-self: center;
+  margin-top: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 2px solid #fde68a;
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+.telao-duelo .td-espia {
+  align-self: center;
+  margin-top: 6px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.4);
+}

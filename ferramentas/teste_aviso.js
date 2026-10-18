@@ -69,6 +69,20 @@ const PRINTS = (process.argv.find((a) => a.startsWith('--prints=')) || '').slice
     const h = document.getElementById('avisoMesaOv')?.innerHTML || '';
     if (/<img|<b>oi/.test(h)) p.push('HTML do aviso não foi escapado: ' + h);
     avisoZerar();
+    // 1.7.10.7: Espectar duelo — quem está fora do duelo vê o botão e, depois, a resposta; duelista e Mestre não
+    const redeAntes = rede;
+    const d = { fase: 'duelo', quem: 'A', contra: 'B', mestre: 'C', equipe: false, ids: ['ja', 'jb', 'jc'] };
+    rede = { papel: 'convidado', eu: 'jd', retrato: { duelo: d, matchId: 'm1' }, espia: null };
+    if (!/td-espiar/.test(telaoDueloHtml(d))) p.push('quem está fora do duelo não vê o Espectar');
+    rede.espia = { resposta: 'Pelé', matchId: 'm1' };
+    if (!/Pelé/.test(telaoDueloHtml(d))) p.push('o espectador não vê a resposta');
+    rede.eu = 'ja';
+    if (/td-espiar|Pelé/.test(telaoDueloHtml(d))) p.push('duelista consegue espectar');
+    rede.eu = 'jc';
+    if (/td-espiar|Pelé/.test(telaoDueloHtml(d))) p.push('o Mestre do duelo vê o Espectar');
+    rede.eu = 'jd';
+    if (/td-espiar|Pelé/.test(telaoDueloHtml({ ...d, equipe: true }))) p.push('Espectar apareceu no duelo de equipes');
+    rede = redeAntes;
     return p;
   });
   problemas.push(...r1);

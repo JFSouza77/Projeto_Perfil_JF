@@ -1138,6 +1138,7 @@ function redeHostReceber(m) {
   if (m.t === "pedido") return redeHostPedidoPerfil(m);
   if (m.t === "cmd") return redeHostComando(m, a);
   if (m.t === "voto") return a && redeVotar(a, m.votacao, m.sim);
+  if (m.t === "espiar") return a && redeHostEspiar(a, m.de);
   if (m.t === "sinal") return a && redeHostSinal(a, m);
 }
 // C.A.O.S. 4.3: sinal do celular. "pulou" = a pessoa daquele aparelho pulou a fala (o C.A.O.S. marca ela, não o
@@ -1861,6 +1862,43 @@ function redeHostPublicar(forcar) {
    caiu da sala: a tela de sempre volta sozinha. No intervalo entre as cartas fica a tela de sempre (o host
    toca em Próxima carta, e a carta já acabou). */
 // 1.7.9.9 · Jogadores do aparelho do host: o principal (hostEu) e quem divide o aparelho com ele.
+// 1.7.10.7 (pedido do JF): "Espectar duelo". Quem está fora do duelo de bônus (nem duelista nem Mestre) pode ver
+// a resposta no próprio dispositivo; não muda nada na partida (só os dois duelistas respondem).
+function redeEspiarEu() {
+  if (!rede) return null;
+  return rede.papel === "convidado" ? rede.eu : rede.hostEu;
+}
+function redeEspiarPode(d) {
+  const eu = redeEspiarEu();
+  return !!d && d.fase === "duelo" && !d.equipe && Array.isArray(d.ids) && !!eu && !d.ids.includes(eu);
+}
+function redeEspiaResposta() {
+  if (!rede) return null;
+  if (rede.papel === "host") return rede.espiaLocal === cartaSeq && currentCard && currentCard.isBonus ? currentCard.answer : null;
+  const r = rede.retrato;
+  return rede.espia && r && r.duelo && r.duelo.fase === "duelo" && rede.espia.matchId === r.matchId ? rede.espia.resposta : null;
+}
+function redeEspiarDuelo() {
+  if (!rede) return;
+  if (rede.papel === "convidado") return redeEnviar("espiar", {});
+  rede.espiaLocal = cartaSeq;
+  redeHostVista();
+}
+function redeHostEspiar(jid, ses) {
+  const d = typeof acoesDueloRetrato === "function" ? acoesDueloRetrato() : null;
+  if (!d || d.fase !== "duelo" || d.equipe || !Array.isArray(d.ids) || d.ids.includes(jid) || !currentCard || gameEnded) return;
+  redeEnviar("espia", { resposta: currentCard.answer, matchId: matchId || null }, ses);
+  try {
+    caosLog("rede", `${(jogadorPorId(jid) || {}).name || "alguém"} espectou o duelo`);
+  } catch (e) {}
+}
+document.addEventListener("click", (ev) => {
+  const b = ev.target && ev.target.closest && ev.target.closest(".td-espiar");
+  if (b) {
+    b.disabled = true;
+    redeEspiarDuelo();
+  }
+});
 function redeNoHost(jid) {
   return !!rede && !!jid && (jid === rede.hostEu || (rede.hostJunto || []).includes(jid));
 }
@@ -2245,6 +2283,7 @@ function redeConvidadoReceber(m) {
     if (rede.segredo && (r.mestreId !== rede.eu || !r.carta || r.fim || r.matchId !== rede.segredo.matchId)) rede.segredo = null;
     // o pacote de recuperação só fica com quem é o sucessor agora
     if (rede.recuperacao && !redeSouSucessor(r)) rede.recuperacao = null;
+    if (rede.espia && (!r.duelo || r.duelo.fase !== "duelo" || r.fim)) rede.espia = null; // 1.7.10.7: espiada vale só no duelo
     return avisar();
   }
   if (m.t === "painel") {
@@ -2261,6 +2300,10 @@ function redeConvidadoReceber(m) {
   if (m.t === "segredo") {
     const r = rede.retrato;
     rede.segredo = m.resposta ? { revisao: m.revisao, resposta: m.resposta, matchId: r ? r.matchId : null, dica: m.dica || null } : null;
+    return avisar();
+  }
+  if (m.t === "espia") {
+    rede.espia = typeof m.resposta === "string" ? { resposta: m.resposta.slice(0, 120), matchId: m.matchId || null } : null;
     return avisar();
   }
   if (m.t === "resp") {
