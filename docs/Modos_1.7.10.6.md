@@ -219,3 +219,36 @@ assumia e a sala ficava parada pra sempre.
 Antes "carta bônus não dá joia" (e no Só Joias o duelo não valia nada: a Anne acertou o duelo e ficou sem a
 joia). Agora a carta bônus dá joia com as regras de sempre (limite de dicas, uma por categoria, trava da
 rodada). Regras e tutorial atualizados. `teste_duelo.js` confere.
+
+## Idade obrigatória e 16+ (JF, 18/10) · implementado
+
+- Faixas: **menos de 12**, **12 a 15** e **16 ou mais** (nova). Ninguém entra no cadastro nem começa a partida sem
+  idade; save antigo com "12 ou mais" vira "12 a 15". Nome do JF entra como 16+.
+- O dispositivo lembra **nome → faixa**. Nome conhecido já vem com a faixa marcada; se marcar uma faixa **maior** que
+  a lembrada, pede confirmação ("✅ Confirmo" / "✏️ Corrigir"). Vale no cadastro local e no pedido de entrada online
+  (o host vê o aviso no pedido).
+- **Modo C.A.O.S.: todo mundo 16+.** Quem não for fica de fora (aviso com os nomes).
+
+## Lojinhas com vitrine sorteada (JF, 18/10: "eu sou o arquiteto, você é o engenheiro") · implementado
+
+Cada modo tem nomes próprios. A cada intervalo a vitrine é outra: N itens do catálogo sorteados pelo peso, **1 a 3
+de cada**, preço **±20%** (de 5 em 5). Uma só pra mesa, quem compra primeiro leva.
+
+**Corrida (4 na vitrine, paga com pontos):** ⏸️ Pausa Dramática ~30 (geral congela 15 s) · 🌬️ Segundo Fôlego ~25
+(+15 s nas suas vezes da próxima carta) · 🧯 Seguro do Relógio ~40 (segura o −1 min da carta morta) · 🎟️ Passe Livre
+~15 (passa a vez sem gastar dica) · ⚡ Choque de Tempo ~30 (+15 s na carta) · 🐷 Cofrinho ~25 (+40 no seu próximo
+acerto) · ⏳ Ampulheta Extra ~35 (+30 s no geral) · 🧲 Ímã de Pontos ~20 (20% do acerto dos outros na próxima carta).
+
+**Modo C.A.O.S. (5 na vitrine, paga com PC):** ✂️ Tesoura do Caos ~15 · 💖 Vida Extra ~20 · 🤐 Mordaça ~30 ·
+🧟 Ressurreição ~35 · 🥶 Era do Gelo ~40 · 🪞 Espelho Refletor ~45 · 🦺 Colete Anti-Caos ~60 · 👁️ Olho do C.A.O.S. ~45
+(1ª letra da resposta, só pra você, naquela dica) · 💸 Assalto Relâmpago ~25 (na compra, leva 15 PC de quem tem mais;
+o Colete segura, o Espelho devolve).
+
+## Debug final da 1.7.10.6 (18/10)
+
+- Batata Quente segurada antes da dica abrir pulava a vez daquele Mestre: agora a vez continua dele.
+- Mensagens com os nomes antigos dos itens trocadas pelos novos; textos sem gênero ("só Fulano pode palpitar").
+- Contraste dos botões de humor (claro e escuro) acima de 4,5:1.
+- Testes: o save da Corrida recarregava 0 ms depois de gravar (o navegador às vezes perde a última escrita; agora
+  espera a gravação, como o importar); a dica repetida era conferida com o Beto em outro dispositivo (a fala ia certo
+  pro celular dele). Nenhum dos dois era erro do jogo.
