@@ -469,8 +469,18 @@ body.claro .tb-zoom .tb-peao.tb-sel {
   color: #140b2e;
   opacity: 1;
 }
+/* 1.7.10.6 (JF): o 🎯 de "decide a partida" vazava pra fora da aba; agora é um selinho no canto, dentro dela */
+.lb-aba {
+  position: relative;
+  overflow: hidden;
+  padding-right: 10px;
+}
 .lb-vale {
-  font-size: 0.72rem;
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  font-size: 0.62rem;
+  line-height: 1;
 }
 .lb-painel[hidden] {
   display: none;
