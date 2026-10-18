@@ -1459,3 +1459,25 @@ body:not(.claro) .telao-vez b {
 .rede-eu-pergunta .rede-acoes {
   margin-top: 8px;
 }
+/* 1.7.10.6.1 (Henrique): quem está respondendo no Modo C.A.O.S. aparece grande, pra mesa toda parar e ouvir */
+.mc-respondendo {
+  display: block;
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-weight: 900;
+  color: #fde047;
+  text-shadow: 0 0 10px #facc1580;
+  animation: vezPulsa 1.6s ease-in-out infinite;
+}
+.mc-estado small {
+  display: block;
+  margin-top: 2px;
+  opacity: 0.85;
+}
+body.claro .mc-respondendo {
+  color: #92400e;
+  text-shadow: none;
+}
+html.acess-calmo .mc-respondendo,
+body.batata-mode .mc-respondendo {
+  animation: none;
+}

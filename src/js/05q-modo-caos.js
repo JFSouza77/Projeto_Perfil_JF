@@ -1,6 +1,6 @@
 /* --- 1.7.10.6 · MODO C.A.O.S. (handoff do JF de 17/10 + decisões dele; docs/Modos_1.7.10.6.md) ---
  * Só online, 16+, um dispositivo por pessoa, individual. Cada um recebe UMA carta secreta por rodada (10 dicas).
- * O Mestre roda: na vez dele, uma dica da carta DELE abre pra todo mundo e a janela de 15 s começa. Quem souber
+ * O Mestre roda: na vez dele, uma dica da carta DELE abre pra todo mundo e a janela de 25 s começa. Quem souber
  * toca em "Palpitar agora" (o primeiro trava a vez), fala a resposta e o Mestre marca Acertou/Errou (decisão do JF:
  * palpite falado, não digitado). Acertou: captura a carta (1 carta = 1 ponto) e a resposta aparece pra todos.
  * Ninguém acertou: a carta hiberna e volta na próxima vez desse Mestre, na dica seguinte.
@@ -154,7 +154,7 @@ function mcComecarVez() {
   mestreIndex = jogadorIdxPorId(mcMestreId());
   mc.fase = "abrindo";
   mc.janela = null;
-  mc.abrirEm = mcAgora() + 1500;
+  mc.abrirEm = mcAgora() + MC_PAUSA_VEZ_MS;
   if (mcEventoNaVez()) return; // o C.A.O.S. aprontou alguma coisa antes da dica (duelo, batata…)
   mcMudou();
 }
@@ -788,6 +788,7 @@ function mcRetrato() {
     cartas: Object.fromEntries(Object.keys(mc.cartas).map((k) => [k, { cat: mc.cartas[k].cat, aberta: mc.cartas[k].aberta, estado: mc.cartas[k].estado, por: mc.cartas[k].por }])),
     janela: j ? { relogio: relo(j.relogio), dur: j.dur, buzz: j.buzz, tentaram: j.tentaram.slice(), congela: j.congela ? { por: j.congela.por, ate: j.congela.ate } : null, mordaca: j.mordaca, imposto: j.imposto, corte: j.corte } : null,
     turbo: mc.turbo,
+    abrirEm: mc.fase === "abrindo" ? mc.abrirEm : null,
     pc: { ...mc.pc },
     vitrine: mc.vitrine ? { estoque: { ...mc.vitrine.estoque }, precos: { ...mc.vitrine.precos } } : null,
     batata: mc.batata ? { ...mc.batata } : null,
@@ -917,8 +918,8 @@ function mcTelaHtml(r, eu, opcoes, priv) {
   } else if (C) {
     const j = M.janela;
     let estado = "";
-    if (M.fase === "abrindo") estado = `🎙️ Vez de ${nome(M.mestre)}: a dica ${C.aberta + 1} já vai abrir…`;
-    else if (M.fase === "julgando" && j && j.buzz) estado = `🗣️ ${nome(j.buzz)} está respondendo! ${nome(M.mestre)} julga.`;
+    if (M.fase === "abrindo") estado = `🎙️ Vez de ${nome(M.mestre)}: a dica ${C.aberta + 1} abre ${M.abrirEm ? `em <b class="mc-cont" data-fim="${M.abrirEm}">…</b> s` : "já já"}`;
+    else if (M.fase === "julgando" && j && j.buzz) estado = `<span class="mc-respondendo">🗣️ ${nome(j.buzz)} está respondendo!</span><small>${nome(M.mestre)} julga.</small>`;
     else if (M.fase === "janela" && j) estado = `✋ Quem souber, palpita! <b class="mc-cont mc-janela" data-fim="${fimDe(j.relogio)}">…</b> s${j.congela && Date.now() < j.congela.ate ? ` · 🥶 só ${nome(j.congela.por)} agora` : ""}${j.mordaca ? ` · 🤐 ${nome(j.mordaca)} amordaçado` : ""}`;
     else if (M.fase === "desfibOferta") estado = `${MC_LOJA.desfib.ic} A carta vai hibernar… alguém tem ${MC_LOJA.desfib.nome}?`;
     else if (M.fase === "desfibSolo" && M.desfib) estado = `${MC_LOJA.desfib.ic} ${nome(M.desfib.id)} está numa tentativa solo com a ${MC_LOJA.desfib.nome}!`;

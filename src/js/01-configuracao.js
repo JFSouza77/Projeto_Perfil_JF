@@ -14,7 +14,7 @@
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1822;
+const JOGO_BUILD = 1823;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -369,8 +369,9 @@ const CORRIDA_DUELO_ROUBO = 25; // quem vence o duelo rouba 25 pontos de quem pe
 // 1.7.10.6 · Modo C.A.O.S. (handoff do JF de 17/10, docs/Modos_1.7.10.6.md): online, 16+, um dispositivo por pessoa
 const MC_TEMPO_MS = 10 * 60e3; // partida
 const MC_RODADA_MS = 5 * 60e3; // rodada (no máximo)
-const MC_JANELA_SEG = 15; // janela de palpite de cada dica
-const MC_TURBO_SEG = 5; // Modo Turbo
+const MC_JANELA_SEG = 25; // janela de palpite de cada dica (1.7.10.6.1, galera: "rápido demais": era 15)
+const MC_TURBO_SEG = 8; // Modo Turbo (era 5)
+const MC_PAUSA_VEZ_MS = 4500; // 1.7.10.6.1 (Henrique): respiro antes da próxima carta, com o resultado na tela (era 1,5 s)
 const MC_INTERVALO_SEG = 15; // lobby entre rodadas (tudo congelado)
 const MC_RAPIDO_MS = 5e3; // acertou nos 5 primeiros segundos da janela: bônus de PC
 const MC_PC = { rodada: 10, rapido: 5, pinata: 30, batata: 50, imposto: 10 };

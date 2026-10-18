@@ -528,6 +528,18 @@ const ARQ = acharMestre(process.argv[2]);
       starterChosen = false;
       redeFechar();
       out.semAparelho = abriu && barrou && liberou;
+      // 1.7.10.6.1 (JF perdeu o duelo pro Henrique): no duelo da carta bônus a ficha vale só pros dois duelistas
+      {
+        const pAntes = players, cAntes = currentCard, mAntes = mestreIndex, rAntes = responderIndex, hAntes = palpiteHolders, fAntes = CURRENT_FORMAT;
+        CURRENT_FORMAT = 'versus';
+        players = ['Ana', 'Beto', 'Caio', 'Duda'].map((n, i) => ({ id: 'j_duel' + i, name: n, score: 0, position: 0, color: PLAYER_COLORS[i], avatar: '😀', humor: 'normal', gems: {}, idade: 'doze' }));
+        currentCard = { isBonus: true, bonusLanderPlayerIdx: 0, bonusOpponentPlayerIdx: 1, clues: [{ type: 'clue', text: 'x' }], answer: 'X', category: 'COISA' };
+        mestreIndex = 2; responderIndex = 1;
+        palpiteHolders = { j_duel0: 1, j_duel3: 1 };
+        const el = palpiteAvailable() ? palpiteEligibleHolders() : null;
+        out.palpiteDuelo = !!el && el.includes('j_duel0') && !el.includes('j_duel3');
+        players = pAntes; currentCard = cAntes; mestreIndex = mAntes; responderIndex = rAntes; palpiteHolders = hAntes; CURRENT_FORMAT = fAntes;
+      }
       players = salvos; starterChosen = iniAntes;
     }
     // 1.7.10: Reportar carta anota no aparelho (sem mostrar a resposta na janela, sem mexer na partida)
@@ -620,6 +632,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.10.3: busca nas regras acha "grupo"; o C.A.O.S. lembra o que vale na 1ª carta de cada categoria (Júnior sem animal em Coisa)', r.regrasEPrimeira],
     ['1.7.10.1: com a sala aberta, a partida só começa quando todo jogador tem aparelho', r.semAparelho],
     ['1.7.10.6.1: o host que recarregou religa sozinho quem joga nele (lojinha, dica e rouba a vez de volta)', r.hostReligou],
+    ['1.7.10.6.1: no duelo da carta bônus a ficha de palpite vale pros duelistas (e só pra eles)', r.palpiteDuelo],
   ];
   linhas.forEach(([n, ok]) => console.log(`${ok ? 'ok    ' : 'FALHOU'}  ${n}`));
   const tudo = linhas.every((l) => l[1]) && !erros.length;
