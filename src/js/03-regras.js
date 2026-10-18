@@ -497,7 +497,12 @@ function palpiteEligibleHolders() {
       .map((p) => p.id);
   const blocked = new Set([palpiteKeyOf(mestreIndex), palpiteKeyOf(responderIndex)]);
   let keys = Object.keys(palpiteHolders).filter((k) => palpiteHolders[k] > 0 && !blocked.has(k));
-  if (currentCard.isBonus) return [];
+  // 1.7.10.6.1 (JF: "perdi de graça pro Henrique"): no duelo da carta bônus a ficha vale, mas só entre os dois
+  // duelistas: quem tem a ficha rouba a tentativa do outro. O resto da mesa não entra no duelo.
+  if (currentCard.isBonus) {
+    const duelistas = [palpiteKeyOf(currentCard.bonusLanderPlayerIdx), palpiteKeyOf(currentCard.bonusOpponentPlayerIdx)].filter(Boolean);
+    return keys.filter((k) => duelistas.includes(k));
+  }
   return keys;
 }
 function palpiteEligibleScorers() {

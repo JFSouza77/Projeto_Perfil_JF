@@ -6,6 +6,19 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.6.2",
+    data: "18/10/2026",
+    nome: "Multiplayer Update · Corrida e Modo C.A.O.S.",
+    t: "Ajustes do primeiro Modo C.A.O.S. online e do duelo da carta bônus.",
+    itens: [
+      "🃏 Palpite no duelo: na carta bônus, a ficha de palpite vale pros dois duelistas. Quem tem a ficha rouba a tentativa do outro.",
+      "🌀 Modo C.A.O.S. no host: o dispositivo que abriu a sala mostra a tela do modo, com a dica e a categoria.",
+      "⏳ Modo C.A.O.S. com mais calma: janela de 25 s por dica e um respiro antes da próxima carta, com o resultado na tela (ideia do Henrique).",
+      "🗣️ Quem está respondendo aparece grande na tela de todo mundo (ideia do Henrique).",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.6.1",
     data: "18/10/2026",
     nome: "Multiplayer Update · Corrida e Modo C.A.O.S.",

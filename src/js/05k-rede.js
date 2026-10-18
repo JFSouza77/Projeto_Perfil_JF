@@ -1904,6 +1904,8 @@ function redeDefinirNoHost(ids) {
 }
 function redeMestreLonge() {
   if (!rede || rede.papel !== "host" || !starterChosen || gameEnded) return false;
+  // 1.7.10.6.1 (print do JF): no Modo C.A.O.S. o host tem a tela própria do modo (com a dica e a categoria)
+  if (CURRENT_MODE === "caos") return false;
   if (typeof tabLobbyFimEm === "function" && tabLobbyFimEm()) return false;
   const mid = jogadorIdDe(mestreIndex);
   return !!mid && !redeNoHost(mid) && redeOnline(rede.assentos[mid]);

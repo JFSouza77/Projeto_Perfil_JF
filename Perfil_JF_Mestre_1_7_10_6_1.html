@@ -10639,6 +10639,28 @@ body:not(.claro) .telao-vez b {
 .rede-eu-pergunta .rede-acoes {
   margin-top: 8px;
 }
+/* 1.7.10.6.1 (Henrique): quem está respondendo no Modo C.A.O.S. aparece grande, pra mesa toda parar e ouvir */
+.mc-respondendo {
+  display: block;
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-weight: 900;
+  color: #fde047;
+  text-shadow: 0 0 10px #facc1580;
+  animation: vezPulsa 1.6s ease-in-out infinite;
+}
+.mc-estado small {
+  display: block;
+  margin-top: 2px;
+  opacity: 0.85;
+}
+body.claro .mc-respondendo {
+  color: #92400e;
+  text-shadow: none;
+}
+html.acess-calmo .mc-respondendo,
+body.batata-mode .mc-respondendo {
+  animation: none;
+}
 </style>
 </head>
 <body class="noturno">
@@ -11332,8 +11354,9 @@ const CORRIDA_DUELO_ROUBO = 25; // quem vence o duelo rouba 25 pontos de quem pe
 // 1.7.10.6 · Modo C.A.O.S. (handoff do JF de 17/10, docs/Modos_1.7.10.6.md): online, 16+, um dispositivo por pessoa
 const MC_TEMPO_MS = 10 * 60e3; // partida
 const MC_RODADA_MS = 5 * 60e3; // rodada (no máximo)
-const MC_JANELA_SEG = 15; // janela de palpite de cada dica
-const MC_TURBO_SEG = 5; // Modo Turbo
+const MC_JANELA_SEG = 25; // janela de palpite de cada dica (1.7.10.6.1, galera: "rápido demais": era 15)
+const MC_TURBO_SEG = 8; // Modo Turbo (era 5)
+const MC_PAUSA_VEZ_MS = 4500; // 1.7.10.6.1 (Henrique): respiro antes da próxima carta, com o resultado na tela (era 1,5 s)
 const MC_INTERVALO_SEG = 15; // lobby entre rodadas (tudo congelado)
 const MC_RAPIDO_MS = 5e3; // acertou nos 5 primeiros segundos da janela: bônus de PC
 const MC_PC = { rodada: 10, rapido: 5, pinata: 30, batata: 50, imposto: 10 };
@@ -12920,7 +12943,12 @@ function palpiteEligibleHolders() {
       .map((p) => p.id);
   const blocked = new Set([palpiteKeyOf(mestreIndex), palpiteKeyOf(responderIndex)]);
   let keys = Object.keys(palpiteHolders).filter((k) => palpiteHolders[k] > 0 && !blocked.has(k));
-  if (currentCard.isBonus) return [];
+  // 1.7.10.6.1 (JF: "perdi de graça pro Henrique"): no duelo da carta bônus a ficha vale, mas só entre os dois
+  // duelistas: quem tem a ficha rouba a tentativa do outro. O resto da mesa não entra no duelo.
+  if (currentCard.isBonus) {
+    const duelistas = [palpiteKeyOf(currentCard.bonusLanderPlayerIdx), palpiteKeyOf(currentCard.bonusOpponentPlayerIdx)].filter(Boolean);
+    return keys.filter((k) => duelistas.includes(k));
+  }
   return keys;
 }
 function palpiteEligibleScorers() {
@@ -24636,6 +24664,8 @@ function redeDefinirNoHost(ids) {
 }
 function redeMestreLonge() {
   if (!rede || rede.papel !== "host" || !starterChosen || gameEnded) return false;
+  // 1.7.10.6.1 (print do JF): no Modo C.A.O.S. o host tem a tela própria do modo (com a dica e a categoria)
+  if (CURRENT_MODE === "caos") return false;
   if (typeof tabLobbyFimEm === "function" && tabLobbyFimEm()) return false;
   const mid = jogadorIdDe(mestreIndex);
   return !!mid && !redeNoHost(mid) && redeOnline(rede.assentos[mid]);
@@ -29835,7 +29865,7 @@ function mcComecarVez() {
   mestreIndex = jogadorIdxPorId(mcMestreId());
   mc.fase = "abrindo";
   mc.janela = null;
-  mc.abrirEm = mcAgora() + 1500;
+  mc.abrirEm = mcAgora() + MC_PAUSA_VEZ_MS;
   if (mcEventoNaVez()) return; // o C.A.O.S. aprontou alguma coisa antes da dica (duelo, batata…)
   mcMudou();
 }
@@ -30469,6 +30499,7 @@ function mcRetrato() {
     cartas: Object.fromEntries(Object.keys(mc.cartas).map((k) => [k, { cat: mc.cartas[k].cat, aberta: mc.cartas[k].aberta, estado: mc.cartas[k].estado, por: mc.cartas[k].por }])),
     janela: j ? { relogio: relo(j.relogio), dur: j.dur, buzz: j.buzz, tentaram: j.tentaram.slice(), congela: j.congela ? { por: j.congela.por, ate: j.congela.ate } : null, mordaca: j.mordaca, imposto: j.imposto, corte: j.corte } : null,
     turbo: mc.turbo,
+    abrirEm: mc.fase === "abrindo" ? mc.abrirEm : null,
     pc: { ...mc.pc },
     vitrine: mc.vitrine ? { estoque: { ...mc.vitrine.estoque }, precos: { ...mc.vitrine.precos } } : null,
     batata: mc.batata ? { ...mc.batata } : null,
@@ -30598,8 +30629,8 @@ function mcTelaHtml(r, eu, opcoes, priv) {
   } else if (C) {
     const j = M.janela;
     let estado = "";
-    if (M.fase === "abrindo") estado = `🎙️ Vez de ${nome(M.mestre)}: a dica ${C.aberta + 1} já vai abrir…`;
-    else if (M.fase === "julgando" && j && j.buzz) estado = `🗣️ ${nome(j.buzz)} está respondendo! ${nome(M.mestre)} julga.`;
+    if (M.fase === "abrindo") estado = `🎙️ Vez de ${nome(M.mestre)}: a dica ${C.aberta + 1} abre ${M.abrirEm ? `em <b class="mc-cont" data-fim="${M.abrirEm}">…</b> s` : "já já"}`;
+    else if (M.fase === "julgando" && j && j.buzz) estado = `<span class="mc-respondendo">🗣️ ${nome(j.buzz)} está respondendo!</span><small>${nome(M.mestre)} julga.</small>`;
     else if (M.fase === "janela" && j) estado = `✋ Quem souber, palpita! <b class="mc-cont mc-janela" data-fim="${fimDe(j.relogio)}">…</b> s${j.congela && Date.now() < j.congela.ate ? ` · 🥶 só ${nome(j.congela.por)} agora` : ""}${j.mordaca ? ` · 🤐 ${nome(j.mordaca)} amordaçado` : ""}`;
     else if (M.fase === "desfibOferta") estado = `${MC_LOJA.desfib.ic} A carta vai hibernar… alguém tem ${MC_LOJA.desfib.nome}?`;
     else if (M.fase === "desfibSolo" && M.desfib) estado = `${MC_LOJA.desfib.ic} ${nome(M.desfib.id)} está numa tentativa solo com a ${MC_LOJA.desfib.nome}!`;
