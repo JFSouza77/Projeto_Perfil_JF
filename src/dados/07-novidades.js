@@ -6,6 +6,23 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.7",
+    data: "18/10/2026",
+    nome: "Multiplayer Update · Avisos da Mesa",
+    t: "Avisos grandes pra mesa toda, o Modo C.A.O.S. organizado e o duelo com espectador.",
+    itens: [
+      "📣 Aviso da mesa: duelo, batata, roubo, bomba e companhia escurecem a tela, tremem e vibram. Enquanto o aviso aparece, o tempo para pra todo mundo.",
+      "⚔️ Chamado pro duelo: quem foi desafiado vê o aviso e só tem um botão, o Bora! O Mestre do duelo também fica sabendo.",
+      "✊ Duelos animados: no Modo C.A.O.S., a mãozinha balança no jokenpô e no par ou ímpar, o dado rola e a moeda gira.",
+      "🧤 Mão Leve secreta: só quem foi roubado fica sabendo.",
+      "🌀 Modo C.A.O.S. organizado: um evento por vez entre as vezes, uma linha fixa no topo dizendo de quem é a vez e a dica, e o intervalo com a lojinha numa tela só dela.",
+      "👀 Espectar duelo: quem está fora do duelo pode ver a resposta no próprio celular. Não sopra!",
+      "📖 Regras com calma: cada passo do tutorial e do manual fica pelo menos 5 segundos na tela.",
+      "💻 Host sem chatice: quem não entrou pelo próprio celular joga no dispositivo do host com um toque.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.6.2",
     data: "18/10/2026",
     nome: "Multiplayer Update · Corrida e Modo C.A.O.S.",
@@ -59,11 +76,11 @@ const NOVIDADES = [
     nome: "Multiplayer Update · Online de verdade",
     t: "Correções da partida online: tudo mais fácil de entender, duelo pra mesa toda e a sala não trava quando o host cai.",
     itens: [
-      "👆 Botões que chamam: o próximo passo do Mestre (virar a carta, já falei a categoria, puxar a próxima, abrir a dica pedida) fica grande, amarelo e piscando (ideia da Anne).",
-      "🎙️ Você sabe seu papel: no seu dispositivo aparece em destaque se você é o Mestre ou se é a sua vez (ideia da Anne).",
-      "📺 Tela dos jogadores mais clara: primeiro quem é o Mestre, depois de quem é a vez e depois a categoria da carta (ideia da Anne).",
+      "👆 Botões que chamam: o próximo passo do Mestre (virar a carta, já falei a categoria, puxar a próxima, abrir a dica pedida) fica grande, amarelo e piscando.",
+      "🎙️ Você sabe seu papel: no seu dispositivo aparece em destaque se você é o Mestre ou se é a sua vez.",
+      "📺 Tela dos jogadores mais clara: primeiro quem é o Mestre, depois de quem é a vez e depois a categoria da carta.",
       "⚡ Pedido de dica na hora: o Mestre vê na hora o número que você pediu. Travou? Toque em qualquer número pra abrir sem pedido.",
-      "🏟️ Duelo pra todo mundo: quando alguém cai na casa de bônus, a mesa toda fica sabendo. Quem caiu escolhe quem desafia e quem vai ser o Mestre do duelo (ideia da Anne).",
+      "🏟️ Duelo pra todo mundo: quando alguém cai na casa de bônus, a mesa toda fica sabendo. Quem caiu escolhe quem desafia e quem vai ser o Mestre do duelo.",
       "💎 Carta bônus dá joia: acertou o duelo com poucas dicas, leva a joia da categoria.",
       "🔌 O host caiu? A sala não trava: outro dispositivo assume, com contagem na tela, e a partida continua de onde parou.",
       "🃏 Carta que travava depois do acerto: corrigido (relato do Henrique). A carta acertada sai da mesa na hora.",

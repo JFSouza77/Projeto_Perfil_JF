@@ -1138,7 +1138,7 @@ function mcRegrasHtml() {
     `🛒 <b>Lojinha (no intervalo, uma só pra mesa):</b> a cada intervalo aparecem ${MC_VITRINE} itens sorteados, com preço e estoque variando. Catálogo: ${Object.values(MC_LOJA)
       .map((it) => `${it.ic} ${it.nome} (~${it.preco})`)
       .join(", ")}.`,
-    "🌀 <b>O C.A.O.S. apronta:</b> ⏩ Turbo (janela de 5 s), 💸 Imposto da Preguiça (quem não tenta paga PC), 🥔 Batata Quente (passe ou segure; quem ficar com ela encara a carta bônus), 🧤 Mão Leve (furto secreto), 🪅 Piñata (digite primeiro) e ⚔️ roubos com duelo (dado, moeda, jokenpô, par ou ímpar) e revanche dobro ou nada.",
+    `🌀 <b>O C.A.O.S. apronta</b> (um evento por vez, sempre entre uma vez e outra, com aviso grande na tela): ⏩ Turbo (janela de ${MC_TURBO_SEG} s), 💸 Imposto da Preguiça (quem não tenta paga PC), 🥔 Batata Quente (passe ou segure; quem ficar com ela encara a carta bônus), 🧤 Mão Leve (furto secreto), 🪅 Piñata (digite primeiro) e ⚔️ roubos com duelo (dado, moeda, jokenpô, par ou ímpar) e revanche dobro ou nada.`,
   ];
   return li.map((t) => "<li>" + t + "</li>").join("");
 }

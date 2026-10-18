@@ -71,6 +71,10 @@ A Mochila saiu (substituída pela lojinha com PC, como diz o handoff).
   🫁 Fôlego 20, 🤐 Mordaça 30 (o Mestre não; Garganta Limpa na dica seguinte), ⚡ Desfibrilador 35 (quando a carta
   for hibernar: a próxima dica só pra ele + 8 s pra responder sozinho), 🧊 Congelar Mesa 40 (nos 3 primeiros s
   da dica; os outros travados até os 7 s), 🪞 Espelho 45, 🛡️ Kevlar 60. O que foi comprado é segredo de quem comprou.
+- 1.7.10.7 (combinado com o JF): no máximo um evento por vez, sorteado no começo da vez (Imposto entra no mesmo
+  sorteio e vale pra 1ª dica dela), sempre com o aviso da mesa (tela escura, tempo congelado). Sem feed rolando: uma
+  linha fixa "Agora: vez de X · dica N" e só a última novidade. Intervalo com tela própria (lojinha e Piñata). Mão Leve
+  é segredo: só o roubado recebe o aviso. Resultado dos duelos animado (mãozinha, dado, moeda).
 - Eventos (o C.A.O.S. faz de verdade): ⏩ Turbo (2/partida), 💸 Imposto da Preguiça (3/partida, quem não tocou em
   Palpitar paga — é o equivalente do "palpite vazio" já que o palpite é falado), 🥔 Batata Quente (2/partida, dura
   3 dicas; **Passar pro próximo** ou **Segurar a Batata** = encara a carta bônus na hora, pedido do JF), carta bônus
