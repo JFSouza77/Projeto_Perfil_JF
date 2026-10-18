@@ -381,6 +381,7 @@ function saveGameState() {
               bonusMestreIdx: currentCard.bonusMestreIdx,
               bonusLanderPlayerIdx: currentCard.bonusLanderPlayerIdx,
               bonusOpponentPlayerIdx: currentCard.bonusOpponentPlayerIdx,
+              bonusReaderIdx: Number.isInteger(currentCard.bonusReaderIdx) ? currentCard.bonusReaderIdx : null,
             }
           : null,
       cardState,
@@ -633,7 +634,7 @@ function sanitizeLoadedState(s) {
       (e) =>
         e && entityOk(e.landerIdx) && (e.opponentIdx === null || e.opponentIdx === void 0 || entityOk(e.opponentIdx)),
     )
-    .map((e) => ({ landerIdx: e.landerIdx, opponentIdx: e.opponentIdx === void 0 ? null : e.opponentIdx }));
+    .map((e) => ({ landerIdx: e.landerIdx, opponentIdx: e.opponentIdx === void 0 ? null : e.opponentIdx, readerIdx: idxOk(e.readerIdx) ? e.readerIdx : null }));
   if (s.currentCardBonusData && typeof s.currentCardBonusData === "object") {
     const b = s.currentCardBonusData;
     if (
@@ -794,6 +795,7 @@ function loadGameState() {
         currentCard.bonusMestreIdx = state.currentCardBonusData.bonusMestreIdx;
         currentCard.bonusLanderPlayerIdx = state.currentCardBonusData.bonusLanderPlayerIdx;
         currentCard.bonusOpponentPlayerIdx = state.currentCardBonusData.bonusOpponentPlayerIdx;
+        currentCard.bonusReaderIdx = Number.isInteger(state.currentCardBonusData.bonusReaderIdx) && players[state.currentCardBonusData.bonusReaderIdx] ? state.currentCardBonusData.bonusReaderIdx : null;
       } else if (currentCard) {
         currentCard.isBonus = false;
       }

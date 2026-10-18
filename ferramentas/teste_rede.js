@@ -533,14 +533,15 @@ async function rodar(b, modo, porta, turn) {
   // 14) troca de host: o host some de vez; o sucessor (2º Mestre: Beto) assume a mesma sala
   {
     const okV = await esperar(gV, (id) => rede.retrato.sucessor === id && !!rede.recuperacao, ids.vez, 15000);
-    const okM = await esperar(gM, () => rede.recuperacao === null, null, 5000);
+    // 1.7.10.6: o 2º da fila (reserva) também recebe o pacote; quem está fora da fila, não
+    const okM = await esperar(gM, () => (Array.isArray(rede.retrato.sucessores) && rede.retrato.sucessores.includes(rede.eu)) === !!rede.recuperacao, null, 5000);
     if (!okV || !okM) {
       const dv = await gV.evaluate(() => ({ suc: rede.retrato.sucessor, eu: rede.eu, rec: !!rede.recuperacao }));
       const dh = await H(() => ({ hostEu: rede.hostEu, on: Object.keys(rede.assentos).filter((k) => redeOnline(rede.assentos[k])), pm: primeiroMestreId, rec: rede.recEnviada }));
       const dm = await gM.evaluate(() => ({ rec: !!rede.recuperacao, suc: rede.retrato.sucessor, eu: rede.eu, est: rede.estado }));
       console.log("[sucessor]", modo, JSON.stringify(dv), JSON.stringify(dh), JSON.stringify(dm));
     }
-    conf("O host aponta o sucessor (2º Mestre) e manda o pacote só pra ele", okV && okM);
+    conf("O host aponta o sucessor (2º Mestre) e manda o pacote só pra ele e pro reserva", okV && okM);
   }
   const revTroca = await H(() => partidaRevisao);
   const placarTroca = await H(() => JSON.stringify(players.map((p) => [p.id, p.score, p.position])));

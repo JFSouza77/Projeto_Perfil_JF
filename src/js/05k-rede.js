@@ -51,6 +51,7 @@ const REDE_MAX_NORMAL = 64 * 1024; // o resto das mensagens
 const REDE_DO_CONVIDADO = ["oi", "cmd", "ping", "tchau", "voto", "pedido", "sinal"];
 const REDE_DO_HOST = ["bemvindo", "escolha", "recusa", "retrato", "segredo", "resp", "pong", "painel", "recuperacao", "aguarde", "fala"];
 // 1.7.10.1 (pedido do JF): 1 min sem notícia do host antes do sucessor assumir (dá tempo de voltar de outro app)
+const REDE_RESERVA_MS = typeof window !== "undefined" && Number.isFinite(window.__REDE_RESERVA_MS) ? window.__REDE_RESERVA_MS : 20000;
 const REDE_HOST_SUMIU_MS = typeof window !== "undefined" && Number.isFinite(window.__REDE_HOST_SUMIU_MS) ? window.__REDE_HOST_SUMIU_MS : 60000;
 const REDE_ONLINE_MS = 15000; // sem notícia há mais que isso: o convidado conta como fora
 const REDE_LETRAS_SALA = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // sem I e O (não confundem com 1 e 0)
@@ -1540,8 +1541,16 @@ function dicaPodeAbrir(idx, forcar) {
   const ped = pedidoDicaAtual();
   return !!ped && ped.idx === idx;
 }
-// Segurar um número travado (650 ms) pede a confirmação do "Abrir sem pedido"
+// Tocar (ou segurar) um número travado pede a confirmação do "Abrir sem pedido".
+// 1.7.10.6 (relato do JF: a Mestra tocava no número e nada acontecia, "travou"): antes só o segurar (650 ms)
+// funcionava e ninguém sabia; o toque simples agora também abre a confirmação.
 function dicaSegurarParaForcar(grid, aoSegurar) {
+  grid.addEventListener("click", (e) => {
+    const b = e.target.closest && e.target.closest(".number-btn.travada");
+    if (!b) return;
+    if (grid.dataset.segurou) return void delete grid.dataset.segurou; // o segurar já pediu
+    aoSegurar(parseInt(b.dataset.idx !== undefined ? b.dataset.idx : b.dataset.dica));
+  });
   let t = null, alvo = null;
   const soltar = () => {
     clearTimeout(t);
@@ -1580,7 +1589,7 @@ function redePodeComandar(acao, jid, dados) {
   // 1.7.10.5: quem está na vez pede a dica no próprio aparelho (o Mestre abre); a ficha de palpite é de quem tem
   if (acao === "pedirDica") return !ehMestre && jogadorIdDe(responderIndex) === jid;
   if (acao === "palpitarAgora") return !ehMestre && !!dados && dados[0] === palpiteKeyOf(jogadorIdxPorId(jid));
-  if (acao === "bonusAdversario") {
+  if (acao === "bonusAdversario" || acao === "bonusMestre") {
     const e = pendingBonusQueue && pendingBonusQueue[0];
     if (!e) return false;
     const p = players[jogadorIdxPorId(jid)];
@@ -1626,7 +1635,8 @@ function redeOpcoes(jid) {
     const e = pendingBonusQueue[0];
     if (CURRENT_FORMAT === "equipe")
       teamOrder.filter((id) => id !== e.landerIdx).forEach((id) => add("bonusAdversario", [id], `${TEAM_INFO[id].emoji} Equipe ${TEAM_INFO[id].label}`, "", "🏟️ Contra quem é o duelo?"));
-    else players.forEach((p, i) => i !== e.landerIdx && add("bonusAdversario", [i], nome(i), "", "🏟️ Contra quem é o duelo?"));
+    else if (bonusFase() === "adversario") players.forEach((p, i) => i !== e.landerIdx && add("bonusAdversario", [i], nome(i) + (i === mestreIndex ? " (Mestre agora)" : ""), "", "🏟️ Você caiu na casa de bônus! Quem você desafia?"));
+    else bonusMestreCandidatos(e).forEach((i) => add("bonusMestre", [i], "🎙️ " + nome(i) + (i === mestreIndex ? " (Mestre agora)" : ""), "", "🎙️ E quem vai ser o Mestre do duelo?"));
   }
   // 1.7.10.5 (pedido do JF): quem tem a ficha de palpite "rouba" a tentativa no próprio aparelho
   const meuIdx = jogadorIdxPorId(jid), minhaChave = palpiteKeyOf(meuIdx);
@@ -1642,15 +1652,17 @@ function redeOpcoes(jid) {
     });
   }
   if (ehMestre) {
-    if (cardState === "none") add("sacarCarta", [], "🃏 Puxar carta", "ok");
+    // 1.7.10.6 (JF, partida com a galera de 11 a 13 anos): o próximo passo do Mestre é um botão grande que pisca
+    // ("cta"), pra quem não viu o tutorial bater o olho e saber onde tocar
+    if (cardState === "none") add("sacarCarta", [], "🃏 Puxar a próxima carta", "cta", "👆 Sua vez de Mestre");
     if (cardState === "revealed" && pendingIndex === null && currentCard) {
       const ped = pedidoDicaAtual();
-      if (ped) add("escolherDica", [ped.idx], `👉 Abrir a dica ${ped.idx + 1} (pedida por ${nome(jogadorIdxPorId(ped.por))})`, "ok");
+      if (ped) add("escolherDica", [ped.idx], `👉 Abrir a dica ${ped.idx + 1} (pedida por ${nome(jogadorIdxPorId(ped.por))})`, "cta");
     }
     // 1.7.10.1: o Mestre no celular gira a roleta (todos veem) e, com ela parada, mostra a carta
     if (cardState === "hidden") {
-      if (roletaCarta !== currentCard) add("roletaCategoria", [], "↻ Virar carta", "ok");
-      else if (roletaPousou) add("virarCarta", [], "✓ Falei! Mostrar a carta", "ok");
+      if (roletaCarta !== currentCard) add("roletaCategoria", [], "🎰 Virar a carta (sorteia a categoria)", "cta", "👆 Toque pra começar a carta");
+      else if (roletaPousou) add("virarCarta", [], "✓ Já falei a categoria! Mostrar a carta", "cta", "🗣️ Fale a categoria em voz alta e toque aqui");
     }
     if (cardState === "revealed" && pendingIndex !== null && currentCard) {
       const item = currentCard.clues[pendingIndex], txt = String(item.text || "").toLowerCase();
@@ -1717,19 +1729,27 @@ function redeOpcoes(jid) {
 // Sucessor (regra do JF): na ordem dos Mestres da partida (a partir do 2º, contando do primeiro Mestre),
 // o primeiro jogador que está na sala, online, e não é o próprio host.
 function redeSucessor() {
-  if (!rede || rede.papel !== "host" || !players.length) return null;
+  return redeSucessores()[0] || null;
+}
+// 1.7.10.6 (relato do JF: o dispositivo do host descarregou e ninguém assumiu): o sucessor e um reserva. Os
+// dois recebem o pacote; o reserva só assume se o sucessor não assumir em REDE_RESERVA_MS (o sucessor podia
+// estar em segundo plano, e aí a sala ficava parada pra sempre).
+function redeSucessores() {
+  if (!rede || rede.papel !== "host" || !players.length) return [];
   let ini = jogadorIdxPorId(primeiroMestreId);
   if (ini < 0) ini = 0;
-  for (let k = 1; k <= players.length; k++) {
+  const lista = [];
+  for (let k = 1; k <= players.length && lista.length < 2; k++) {
     const p = players[(ini + k) % players.length];
-    if (p && !redeNoHost(p.id) && redeOnline(rede.assentos[p.id])) return p.id;
+    if (p && !redeNoHost(p.id) && redeOnline(rede.assentos[p.id]) && !lista.includes(p.id)) lista.push(p.id);
   }
-  return null;
+  return lista;
 }
 // Pacote de recuperação: o save completo, só pro sucessor (no máximo a cada 3 s, ou quando ele muda).
 function redeHostRecuperacao(forcar) {
-  const suc = redeSucessor();
-  const a = suc && rede.assentos[suc];
+  const sucs = redeSucessores();
+  const suc = sucs.join(",");
+  const a = sucs.length && rede.assentos[sucs[0]];
   if (!a || !starterChosen || gameEnded) return;
   const chave = suc + "|" + partidaRevisao;
   if (rede.recEnviada === chave && !forcar) return;
@@ -1750,10 +1770,13 @@ function redeHostRecuperacao(forcar) {
     estado = JFStore.getItem("perfil200_state");
   } catch (e) {}
   if (!estado) return;
-  if (redeEnviar("recuperacao", { estado, revisao: partidaRevisao, matchId: matchId || null, aprovados: Object.keys(rede.aprovados || {}).slice(-39).concat(rede.chaveHost || []) }, a.sessao)) {
+  const pacote = { estado, revisao: partidaRevisao, matchId: matchId || null, aprovados: Object.keys(rede.aprovados || {}).slice(-39).concat(rede.chaveHost || []) };
+  if (redeEnviar("recuperacao", pacote, a.sessao)) {
     rede.recEnviada = chave;
     rede.recQuando = Date.now();
   }
+  const b = sucs[1] && rede.assentos[sucs[1]];
+  if (b && b.sessao !== a.sessao) redeEnviar("recuperacao", pacote, b.sessao);
 }
 // Retrato público pra todos, o painel de cada um e a resposta só pro Mestre.
 function redeHostPublicar(forcar) {
@@ -1769,7 +1792,8 @@ function redeHostPublicar(forcar) {
   // extras da sala (não fazem parte do retrato da partida): intervalo e votação
   r.intervalo = typeof tabLobbyFimEm === "function" ? tabLobbyFimEm() : null;
   r.votacao = rede.votacao ? redeVotacaoPublica() : null;
-  r.sucessor = redeSucessor();
+  r.sucessores = redeSucessores();
+  r.sucessor = r.sucessores[0] || null;
   r.hostNome = rede.hostEu ? (jogadorPorId(rede.hostEu) || {}).name || null : null;
   r.hostId = rede.hostEu || null; // C.A.O.S. 4.2: selo HOST nas telas
   r.alvoEspecial = alvoEspecialPublico(); // 1.7.10.5.7: seletor de alvo na T2
@@ -1874,6 +1898,7 @@ function redeHostVista() {
   const daVez = eus.find((p) => jogadorIdDe(responderIndex) === p.id);
   const vez = !!daVez;
   let h = `<div class="rede-eu">${eus.length ? `Neste aparelho: <b>${eus.map(nome).join("</b> e <b>")}</b>${vez ? ` · 👉 vez de ${nome(daVez)}` : ""}` : "Este aparelho é a mesa"}</div>`;
+  if (starterChosen && !gameEnded) h += redePapelHtml({ mestre: false, vez });
   h += `<div class="rede-segredo">🔒 A carta e a resposta estão no aparelho de <b>${mestre ? nome(mestre) : "quem é o Mestre"}</b> (Mestre da vez).</div>`;
   if (vez && cardState === "revealed" && pendingIndex === null && !pausedAt)
     h += `<div class="rede-rot">👉 Sua vez: toque no número (ou fale) e o Mestre abre a dica.</div>`; // 1.7.9.6: só o Mestre abre
@@ -2160,7 +2185,7 @@ function redeConvidadoReceber(m) {
     // trava 3: a resposta sai da memória quando a carta acaba ou quando não sou mais o Mestre
     if (rede.segredo && (r.mestreId !== rede.eu || !r.carta || r.fim || r.matchId !== rede.segredo.matchId)) rede.segredo = null;
     // o pacote de recuperação só fica com quem é o sucessor agora
-    if (rede.recuperacao && r.sucessor !== rede.eu) rede.recuperacao = null;
+    if (rede.recuperacao && !redeSouSucessor(r)) rede.recuperacao = null;
     return avisar();
   }
   if (m.t === "painel") {
@@ -2170,7 +2195,7 @@ function redeConvidadoReceber(m) {
   }
   if (m.t === "recuperacao") {
     // só guarda se o retrato mais recente diz que eu sou o sucessor (mensagem fora de ordem não fica)
-    if (rede.retrato && rede.retrato.sucessor === rede.eu) rede.recuperacao = { estado: m.estado, revisao: m.revisao, matchId: m.matchId, aprovados: m.aprovados || [] };
+    if (rede.retrato && redeSouSucessor(rede.retrato)) rede.recuperacao = { estado: m.estado, revisao: m.revisao, matchId: m.matchId, aprovados: m.aprovados || [] };
     return;
   }
   if (m.t === "segredo") {
@@ -2366,13 +2391,22 @@ const REDE_CONEXAO = {
   reconectando: "🔌 A conexão caiu. Reconectando…",
   erro: "⚠️ Sem conexão com o servidor da sala. Tentando de novo…",
 };
+// Posição deste dispositivo na fila de quem assume (0 = sucessor, 1 = reserva, -1 = fora)
+function redePosSucessor(r) {
+  const l = r && Array.isArray(r.sucessores) ? r.sucessores : r && r.sucessor ? [r.sucessor] : [];
+  return rede && rede.eu ? l.indexOf(rede.eu) : -1;
+}
+function redeSouSucessor(r) {
+  return redePosSucessor(r) >= 0;
+}
 // A cada meio segundo: contagem do intervalo e da votação (sem redesenhar a tela toda).
 function redeConvidadoTiques() {
   if (!rede || !rede.retrato) return;
   // o host sumiu: se eu sou o sucessor (e tenho o pacote), assumo; senão, aviso e espero
   const sumiu = rede.estado === "dentro" && Date.now() - rede.ultimoHost > REDE_HOST_SUMIU_MS;
-  if (sumiu && !rede.assumindo && rede.retrato.sucessor === rede.eu && rede.recuperacao) return redeAssumir();
-  if (rede.recuperacao && rede.retrato.sucessor !== rede.eu) rede.recuperacao = null;
+  const vez = redeSouSucessor(rede.retrato) ? redePosSucessor(rede.retrato) : -1;
+  if (vez >= 0 && !rede.assumindo && rede.recuperacao && rede.estado === "dentro" && Date.now() - rede.ultimoHost > REDE_HOST_SUMIU_MS + vez * REDE_RESERVA_MS) return redeAssumir();
+  if (rede.recuperacao && vez < 0) rede.recuperacao = null;
   // sem notícia do host: a cada 10 s, força uma conexão nova (o novo host pode já estar na sala)
   if (sumiu && typeof rede.transporte.reconectar === "function" && Date.now() - (rede.ultimaReconexao || 0) > 10000) {
     rede.ultimaReconexao = Date.now();
@@ -2383,6 +2417,8 @@ function redeConvidadoTiques() {
     rede.avisoSumiu = aviso;
     redeConvidadoDesenhar();
   }
+  const as = document.getElementById("redeAssumeSeg");
+  if (as) as.textContent = String(Math.max(0, Math.ceil((rede.ultimoHost + REDE_HOST_SUMIU_MS - Date.now()) / 1000)));
   const r = rede.retrato;
   const s = (ate) => Math.max(0, Math.ceil((ate - redeAgora()) / 1000));
   const iv = document.getElementById("redeIntervaloSeg");
@@ -2398,7 +2434,10 @@ function redeConvidadoDesenhar() {
   if (rede.assumindo) conexao = `<div class="rede-conexao">👑 O host caiu: este aparelho está assumindo a sala…</div>`;
   else if (rede.avisoSumiu && rede.retrato) {
     const suc = rede.retrato.sucessor && rede.retrato.jogadores.find((j) => j.id === rede.retrato.sucessor);
-    conexao = `<div class="rede-conexao">🔌 Sem notícia do host…${suc ? ` Se ele não voltar, ${escapeHtml(suc.nome)} assume a sala.` : ""}</div>`;
+    // 1.7.10.6 (relato do JF: o dispositivo dele descarregou e a mesa não sabia o que esperar): contagem de quando o
+    // sucessor assume, pra ninguém fechar a página antes
+    const seg = Math.max(0, Math.ceil((rede.ultimoHost + REDE_HOST_SUMIU_MS - Date.now()) / 1000));
+    conexao = `<div class="rede-conexao">🔌 Sem notícia do host…${suc ? ` Se ele não voltar, <b>${suc.id === rede.eu ? "este dispositivo" : escapeHtml(suc.nome)}</b> assume a sala em <b id="redeAssumeSeg">${seg}</b> s. Não feche a página!` : ""}</div>`;
   }
   const selo = rede.estado === "dentro" && rede.via && rede.via !== "local" ? `<span class="rede-selo">${rede.via === "ponte" ? "🌉 pela ponte" : "📶 direta"}${Number.isFinite(rede.ms) ? " · " + Math.round(rede.ms) + " ms" : ""}</span>` : "";
   const sala = `<div class="rede-sala">🌐 Sala <b>${rede.sala}</b>${selo}</div>${conexao}`;
@@ -2542,10 +2581,10 @@ function redeMestreCartaMontar(box) {
       if (rede.dicaForcar != null && (!trava || abertas.has(rede.dicaForcar) || rede.dicaForcarRev !== r.revisao)) rede.dicaForcar = null;
       for (let i = 0; i < c.totalDicas; i++) {
         const travada = trava && !abertas.has(i) && !(ped && ped.pos === i);
-        grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}${ped && ped.pos === i ? " pedida" : ""}${travada ? " travada" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : travada ? ' title="Segure pra abrir sem pedido"' : ""}>${i + 1}</button>`;
+        grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}${ped && ped.pos === i ? " pedida" : ""}${travada ? " travada" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : travada ? ' title="Toque pra abrir sem pedido"' : ""}>${i + 1}</button>`;
       }
       const forcar = rede.dicaForcar != null ? `<div class="dica-forcar">Abrir a dica <b>${rede.dicaForcar + 1}</b> sem pedido? <button type="button" class="rede-btn rede-ok" id="redeForcarSim">Abrir</button><button type="button" class="rede-btn" id="redeForcarNao">Cancelar</button></div>` : "";
-      const rotulo = trava && !ped ? `👉 ${nome(r.vezId)} escolhe a dica no aparelho dele (${c.totalDicas - c.abertas.length} restantes). Travou? Segure um número.` : `${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)`;
+      const rotulo = trava && !ped ? `👉 ${nome(r.vezId)} escolhe a dica no aparelho dele (${c.totalDicas - c.abertas.length} restantes). Travou? Toque num número pra abrir sem pedido.` : `${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)`;
       controles = `${ped ? `<div class="pedido-dica">👉 ${nome(ped.por)} pediu a dica <b>${ped.pos + 1}</b>. Toque nela pra abrir.</div>` : ""}${forcar}<div class="pick-label">${rotulo}</div><div class="number-grid">${grade}</div>`;
     }
     h = `<div class="card rede-carta-mestre" style="--card-glow:${cor}">
@@ -2745,11 +2784,19 @@ function redePedirEntrada(perfil) {
   redeConvidadoDesenhar();
   return true;
 }
+// 1.7.10.6 (JF: "qualquer um que bata o olho tem que entender"): faixa grande com o papel de quem está neste
+// dispositivo agora: Mestre ou na vez (quem não está em nenhum dos dois não ganha faixa, só acompanha a T2)
+function redePapelHtml(papel) {
+  if (papel.mestre) return `<div class="rede-papel rp-mestre" role="status">🎙️ VOCÊ É O MESTRE<small>Você vê a carta, lê a dica que pedirem e diz se acertou.</small></div>`;
+  if (papel.vez) return `<div class="rede-papel rp-vez" role="status">👉 É A SUA VEZ!<small>Escolha um número de dica, ouça o Mestre e tente adivinhar.</small></div>`;
+  return "";
+}
 function redeBotoesHtml() {
   const r = rede.retrato, eu = r.jogadores.find((j) => j.id === rede.eu);
   const papel = redeMeuPapel();
   let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 sua vez" : ""}</div>`;
   if (r.fim) return h;
+  if (!r.intervalo && r.iniciada) h += redePapelHtml(papel);
   if (r.intervalo) {
     // 1.7.9.11: o placar do intervalo no celular de cada um (Pontos e Joias; o tabuleiro está logo abaixo)
     // 1.7.10.5.6 (pedido do JF): cara de lobby, com o resumo da partida e as cartas que já foram

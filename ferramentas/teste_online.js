@@ -56,6 +56,7 @@ async function mesa(b, sv, rot) {
         if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
         if (window.__REDE_SERVIDOR === undefined) window.__REDE_SERVIDOR = false;
     if (window.__REDE_HOST_SUMIU_MS === undefined) window.__REDE_HOST_SUMIU_MS = 15000; // (o jogo espera 1 min; o teste, 15 s)
+    if (window.__REDE_RESERVA_MS === undefined) window.__REDE_RESERVA_MS = 8000; // (o reserva espera +20 s; o teste, +8 s)
     window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, key: chave, config: { iceServers: [] } };
       },
       [sv.porta, sv.chave],
@@ -144,7 +145,7 @@ const PASSO_CELULAR = () => {
   const tem = (a) => ops.findIndex((o) => o.a === a);
   const sorte = Math.random();
   const escolher = () => {
-    for (const a of ["continuar", "bonusAdversario", "sacarCarta", "roletaCategoria", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"]) if (tem(a) >= 0) return ops[tem(a)];
+    for (const a of ["continuar", "bonusAdversario", "bonusMestre", "sacarCarta", "roletaCategoria", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"]) if (tem(a) >= 0) return ops[tem(a)];
     const ac = ops.filter((o) => o.a === "acertou");
     if (ac.length && sorte < 0.3) return ac[Math.floor(Math.random() * ac.length)];
     if (tem("errou") >= 0) return ops[tem("errou")];
@@ -210,7 +211,7 @@ const PASSO_HOST = () => {
       }
     }
     let o = null;
-    for (const a of ["continuar", "bonusAdversario", "sacarCarta", "roletaCategoria", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"])
+    for (const a of ["continuar", "bonusAdversario", "bonusMestre", "sacarCarta", "roletaCategoria", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"])
       if (!o && tem(a) >= 0) o = ops[tem(a)];
     const ac = ops.filter((x) => x.a === "acertou");
     if (!o && ac.length && sorte < 0.3) o = ac[Math.floor(Math.random() * ac.length)];
@@ -375,6 +376,58 @@ async function segundoPlano(b, sv) {
   }
 }
 
+// 1.7.10.6 (relato do JF: o dispositivo do host descarregou e a sala travou): o host morre de vez (página fechada)
+// e o sucessor está "dormindo" (não assume). O reserva tem que assumir e a partida continuar de onde estava.
+async function hostMorreu(b, sv) {
+  const rot = "host morreu";
+  const m = await mesa(b, sv, rot);
+  try {
+    const host = await m.abrir("");
+    const nomes = ["JF", "Anne", "Jhenny", "Sofia"];
+    const sala = await montar(host, { formato: "versus", modo: "classico", cond: "tabuleiro", nomes });
+    await esperar(host, () => rede && rede.transporte.estado === "aberta");
+    const cs = [];
+    for (const n of nomes.slice(1)) cs.push(await entrar(m, host, sala, n));
+    await host.evaluate((id) => redeDefinirNoHost([id]), await host.evaluate(() => players.find((p) => p.name === "JF").id));
+    conf(`[${rot}] Mesa montada (JF no host, 3 dispositivos)`, cs.every((c) => c.ok));
+    await jogarAteOFim(host, cs.map((c) => c.g), 6000);
+    await host.waitForTimeout(2500); // o pacote de recuperação chega no sucessor e no reserva
+    const sucs = await host.evaluate(() => redeSucessores());
+    conf(`[${rot}] Tem sucessor e reserva`, sucs.length === 2);
+    const pg = (id) => cs.find((c) => c.id === id).g;
+    const temPacote = await pg(sucs[1]).evaluate(() => !!(rede && rede.recuperacao));
+    conf(`[${rot}] O reserva também recebeu o pacote da partida`, temPacote);
+    const revAntes = await host.evaluate(() => partidaRevisao);
+    // o sucessor "dorme" (segundo plano): não assume
+    await pg(sucs[0]).evaluate(() => (redeAssumir = () => false));
+    await host.close({ runBeforeUnload: false });
+    const papel = (g) => g.evaluate(() => (rede ? rede.papel + ":" + (rede.papel === "host" ? rede.transporte.estado : rede.estado) : "nada")).catch(() => "recarregando");
+    let novo = null, t0 = Date.now();
+    while (Date.now() - t0 < 90000) {
+      if ((await papel(pg(sucs[1]))) === "host:aberta") { novo = pg(sucs[1]); break; }
+      await cs[0].g.waitForTimeout(1000);
+    }
+    conf(`[${rot}] O reserva assumiu a sala (${Math.round((Date.now() - t0) / 1000)} s)`, !!novo);
+    if (novo) {
+      conf(`[${rot}] Nada se perdeu (mesma revisão ou à frente)`, await novo.evaluate((r) => partidaRevisao >= r && starterChosen && !gameEnded, revAntes));
+      const outros = cs.filter((c) => c.id !== sucs[1]).map((c) => c.g);
+      let voltaram = true;
+      for (const g of outros) voltaram = voltaram && (await esperar(g, () => rede && rede.papel === "convidado" && rede.estado === "dentro", null, 40000));
+      conf(`[${rot}] Os outros dois voltaram pra sala do novo host`, voltaram);
+      // o JF ficou sem dispositivo: quem assumiu joga por ele também (a tela do host mostra o jogo inteiro)
+      await novo.evaluate(() => redeDefinirNoHost(redeJogadoresNoHost().concat(players.find((p) => p.name === "JF").id)));
+      const antes = await novo.evaluate(() => partidaRevisao);
+      await jogarAteOFim(novo, outros, 15000);
+      const andou = (await novo.evaluate(() => partidaRevisao)) > antes;
+      if (!andou) for (const g of outros) console.log("DIAG conv:", await g.evaluate(() => JSON.stringify({ eu: rede.eu, est: rede.estado, rev: rede.retrato && rede.retrato.revisao, ops: (rede.painel && rede.painel.opcoes || []).map((o) => o.a), pend: Object.keys(rede.pendentes).length, resp: Object.values(rede.respostas).slice(-2) })));
+      if (!andou) console.log("DIAG caiu:", await novo.evaluate(() => JSON.stringify({ m: (players[mestreIndex] || {}).name, v: (players[responderIndex] || {}).name, cs: cardState, pi: pendingIndex, noHost: redeJogadoresNoHost().map((id) => jogadorPorId(id).name), toast: !!activeToastState, pausa: !!pausedAt, modais: [...document.querySelectorAll(".caos-modal-ov, .jf-modal-bg")].map((o) => o.textContent.slice(0, 80)), tk: timerKind, ops: redeJogadoresNoHost().map((id) => redeOpcoes(id).map((o) => o.a)) })));
+      conf(`[${rot}] A partida continua`, andou);
+    }
+  } finally {
+    await m.fechar();
+  }
+}
+
 // O host atualiza o jogo no meio da partida
 async function atualizacao(b, sv) {
   const rot = "atualização";
@@ -413,6 +466,104 @@ async function atualizacao(b, sv) {
   }
 }
 
+// 1.7.10.6 · relato do Henrique (online): "desafiei o Rafa, o Vitinho acertou e a questão travou". Mesa de 4 com
+// 3 dispositivos de fora: força duelos bônus Henrique × Rafa (com o Rafa de Mestre, o leitor é emprestado) e os
+// robôs jogam pelo painel. O Vitinho ainda tenta marcar acerto pra ele e "Palpitar agora" no meio do duelo.
+// Confere: quem responde é sempre duelista, o Mestre nunca é duelista, o leitor emprestado volta, os
+// dispositivos veem o mesmo Mestre e a mesma carta do host, e a partida nunca fica parada.
+async function dueloOnline(b, sv) {
+  const rot = "Duelo bônus online (relato Henrique)";
+  const m = await mesa(b, sv, rot);
+  try {
+    const host = await m.abrir("");
+    const nomes = ["JF", "Henrique", "Rafa", "Vitinho"];
+    const sala = await montar(host, { formato: "versus", modo: "classico", cond: "tabuleiro", nomes });
+    conf(`[${rot}] Sala aberta`, await esperar(host, () => rede && rede.transporte.estado === "aberta"));
+    const cs = [];
+    for (const n of nomes.slice(1)) cs.push(await entrar(m, host, sala, n));
+    conf(`[${rot}] Os 3 dispositivos entraram`, cs.every((c) => c.ok));
+    await host.evaluate((id) => redeDefinirNoHost([id]), await host.evaluate(() => players.find((p) => p.name === "JF").id));
+    await host.evaluate(() => {
+      WINNING_SCORE = 9999;
+      const orig = dispatchAction;
+      dispatchAction = function (cmd) {
+        const r = orig.apply(this, arguments);
+        const nm = (i) => (players[i] ? players[i].name[0] : "-");
+        const est = () => `{${cardState[0]}${currentCard && currentCard.isBonus ? "B" + nm(currentCard.bonusLanderPlayerIdx) + nm(currentCard.bonusOpponentPlayerIdx) : ""} M${nm(mestreIndex)} R${nm(responderIndex)}}`;
+        if (r && r.ok) window.__ultAcao = ((window.__ultAcao || "") + " " + cmd.type + JSON.stringify(cmd.data || []) + est()).slice(-600);
+        return r;
+      };
+    });
+    const vit = cs[2];
+    const problemas = [];
+    let duelos = 0, acertos = 0, tentativas = 0, parado = 0, revAntes = -1;
+    const t0 = Date.now();
+    while (Date.now() - t0 < 150000 && duelos < 14) {
+      // carta nova escondida e sem duelo: vira duelo Henrique × Rafa (metade das vezes com o Rafa de Mestre)
+      const forc = await host.evaluate(() => {
+        if (gameEnded || cardState !== "hidden" || !currentCard || currentCard.isBonus || activeToastState) return false;
+        const h = players.findIndex((p) => p.name === "Henrique"), r = players.findIndex((p) => p.name === "Rafa");
+        devolverAoBaralho(cardsByAnswer.get(currentCard.answer) || currentCard);
+        currentCard = null;
+        if (Math.random() < 0.6) mestreIndex = r;
+        pendingBonusQueue.push({ landerIdx: h, opponentIdx: r });
+        drawHidden();
+        return !!(currentCard && currentCard.isBonus);
+      }).catch(() => false);
+      if (forc) { duelos++; await host.evaluate(() => (window.__ultAcao = (window.__ultAcao || "") + " FORCA")); }
+      // o Vitinho tenta se meter no duelo
+      const meio = await host.evaluate(() => !!(currentCard && currentCard.isBonus && pendingIndex !== null)).catch(() => false);
+      if (meio && Math.random() < 0.5) {
+        tentativas++;
+        await vit.g.evaluate((id) => {
+          const i = (rede.retrato.jogadores || []).findIndex((p) => p.id === id);
+          redeMandar(Math.random() < 0.5 ? "acertou" : "palpitarAgora", Math.random() < 0.5 ? i : id);
+        }, vit.id).catch(() => {});
+      }
+      const antesAc = await host.evaluate(() => history.length).catch(() => 0);
+      const ph = await host.evaluate(PASSO_HOST).catch(() => "");
+      if (ph && ph !== "nada") await host.evaluate((ph) => { const nm = (i) => (players[i] ? players[i].name[0] : "-"); window.__ultAcao = ((window.__ultAcao || "") + " HOST:" + ph + `{${cardState[0]}${currentCard && currentCard.isBonus ? "B" + nm(currentCard.bonusLanderPlayerIdx) + nm(currentCard.bonusOpponentPlayerIdx) : ""} M${nm(mestreIndex)} R${nm(responderIndex)}}`).slice(-600); }, ph);
+      for (const c of cs) await c.g.evaluate(PASSO_CELULAR).catch(() => {});
+      await host.waitForTimeout(120);
+      const st = await host.evaluate(() => {
+        const out = { rev: partidaRevisao, hist: history.length, fim: gameEnded, mestre: jogadorIdDe(mestreIndex), cs: cardState };
+        if (currentCard && currentCard.isBonus) {
+          const a = currentCard.bonusLanderPlayerIdx, b = currentCard.bonusOpponentPlayerIdx;
+          out.bonus = cardState !== "bonusChoice"; // na escolha do adversário a carta bônus velha ainda está na memória
+          out.respDuelista = responderIndex === a || responderIndex === b;
+          out.mestreFora = mestreIndex !== a && mestreIndex !== b;
+          out.diag = JSON.stringify({ a: players[a] && players[a].name, b: players[b] && players[b].name, resp: players[responderIndex] && players[responderIndex].name, mestre: players[mestreIndex] && players[mestreIndex].name, orig: bonusOrigMestreIdx, cs: cardState, pi: pendingIndex, rev: revealedOrder.length, ult: (window.__ultAcao || "") });
+        } else out.emprestado = bonusOrigMestreIdx !== null && bonusOrigMestreIdx !== void 0;
+        return out;
+      }).catch(() => null);
+      if (!st) continue;
+      if (st.hist > antesAc) acertos++;
+      if (st.bonus && (!st.respDuelista || !st.mestreFora) && process.env.DUELO_DIAG) console.log("DIAG", st.diag);
+      if (st.bonus && !st.respDuelista) problemas.push("quem responde não é duelista");
+      if (st.bonus && !st.mestreFora) problemas.push("Mestre é duelista");
+      if (!st.bonus && st.emprestado && st.cs !== "bonusChoice") problemas.push("leitor emprestado não voltou");
+      if (st.fim) break;
+      parado = st.rev === revAntes ? parado + 1 : 0;
+      revAntes = st.rev;
+      if (parado > 200) {
+        problemas.push("partida parada: " + JSON.stringify(await host.evaluate(() => ({ cs: cardState, pi: pendingIndex, tk: timerKind, bonus: !!(currentCard && currentCard.isBonus), toast: !!activeToastState }))));
+        break;
+      }
+    }
+    // no fim, os dispositivos veem o mesmo Mestre e o mesmo estado da carta
+    await host.waitForTimeout(1500);
+    const hs = await host.evaluate(() => ({ m: jogadorIdDe(mestreIndex), e: cardState }));
+    let iguais = true;
+    for (const c of cs) iguais = iguais && (await esperar(c.g, (h) => rede.retrato && rede.retrato.mestreId === h.m && rede.retrato.estadoCarta === h.e, hs, 8000));
+    console.log(`DUELO ONLINE: ${duelos} duelos, ${acertos} cartas acertadas, ${tentativas} tentativas do Vitinho`);
+    conf(`[${rot}] Jogou ${duelos} duelos (≥ 6)`, duelos >= 6);
+    conf(`[${rot}] Nunca travou e as regras do duelo valeram em todo passo`, [...new Set(problemas)].length === 0 || console.log("  " + [...new Set(problemas)].join(" | ")));
+    conf(`[${rot}] Os dispositivos veem o mesmo Mestre e a mesma carta do host`, iguais);
+  } finally {
+    await m.fechar();
+  }
+}
+
 (async () => {
   const b = await navegador();
   const sv = await servidorPeer();
@@ -422,7 +573,9 @@ async function atualizacao(b, sv) {
       await partidaInteira(b, sv, { rot: "Equipe até o fim", formato: "equipe", modo: "classico", cond: "tabuleiro", equipes: 2, nomes: ["Ana", "Beto", "Caio", "Davi"] });
       await partidaInteira(b, sv, { rot: "Express até o fim", formato: "versus", modo: "express", sabor: "classico", nomes: ["Ana", "Beto", "Caio"] });
     }
+    if (!SO || SO === "partidas" || SO === "duelo") await dueloOnline(b, sv);
     if (!SO || SO === "fundo") await segundoPlano(b, sv);
+    if (!SO || SO === "fundo" || SO === "caiu") await hostMorreu(b, sv);
     if (!SO || SO === "versao") await atualizacao(b, sv);
   } finally {
     sv.fechar();

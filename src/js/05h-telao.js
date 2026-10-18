@@ -167,6 +167,15 @@ function telaoAlvoHtml(r, nomeTxt) {
     .join("");
   return `<div class="ta-escolha"><div class="tc-estado tc-pedido ta-tit">🎯 <b>${escapeHtml(nomeTxt(ae.quem))}</b> escolhe quem vai ${verbo}</div><div class="ta-alvos">${cards}</div><small class="ta-pe">${ae.n > 0 ? "⬆️" : "⬇️"} ${verbo} · se o tempo acabar, o jogo sorteia</small></div>`;
 }
+// 1.7.10.6 (pedido do JF): faixa do duelo de bônus em todo dispositivo (antes só quem caiu na casa sabia)
+function telaoDueloHtml(d) {
+  const e = (x) => escapeHtml(String(x || "?"));
+  let txt;
+  if (d.fase === "adversario") txt = `<b>${e(d.quem)}</b> caiu na casa de bônus e está escolhendo quem desafia${d.equipe ? "" : " (e depois quem vai ser o Mestre)"}.`;
+  else if (d.fase === "mestre") txt = `<b>${e(d.quem)}</b> desafiou <b>${e(d.contra)}</b>! Agora escolhe quem vai ser o Mestre do duelo.`;
+  else txt = `<b>${e(d.quem)}</b> × <b>${e(d.contra)}</b>${d.mestre ? ` · 🎙️ Mestre: <b>${e(d.mestre)}</b>` : ""}. Só os dois respondem, a vez alterna e a carta vale em dobro.`;
+  return `<section class="telao-duelo" role="status"><span class="td-tit">🏟️ Duelo de bônus</span><span class="td-txt">${txt}</span></section>`;
+}
 function telaoDesenhar(r, alvo) {
   const box = alvo || document.getElementById("telao"); // 1.7.9.4: o host desenha na própria tela de jogador
   if (!box) return;
@@ -233,9 +242,11 @@ function telaoDesenhar(r, alvo) {
   box.innerHTML = `
     <header class="telao-topo"><b>📺 Perfil JF</b><span class="tt-info"><span>Rodada ${r.rodada}${r.ultimaRodada ? " · <b>última</b>" : ""}</span><span>⏱️ <span id="telaoTempo">${partidaTempoTxt(p.tempoMs || 0)}</span></span><span>🃏 ${p.cartas || 0}</span></span></header>
     ${r.fim ? '<div class="telao-espera">🏁 Fim de partida</div>' : ""}
+    ${r.duelo && !r.fim ? telaoDueloHtml(r.duelo) : ""}
     <section class="telao-vez">
-      <div class="tv-vez" style="--pc:${cor(r.vezId)}"><small>👉 Vez de</small><b>${nome(r.vezId)}</b></div>
-      <div class="tv-mestre" style="--pc:${cor(r.mestreId)}"><small>🎙️ Mestre</small><b>${nome(r.mestreId)}</b></div>
+      <div class="tv-mestre" style="--pc:${cor(r.mestreId)}"><small>🎙️ Mestre (lê as dicas)</small><b>${nome(r.mestreId)}</b></div>
+      <div class="tv-vez" style="--pc:${cor(r.vezId)}"><small>👉 Vez de (escolhe a dica e responde)</small><b>${nome(r.vezId)}</b></div>
+      <div class="tv-cat" style="--cat:${catCor}"><small>🃏 Categoria</small><b>${c && c.categoria && r.estadoCarta !== "hidden" ? escapeHtml(TELAO_CAT[c.categoria] || c.categoria) : c ? "sorteando…" : "—"}</b></div>
       <div class="tv-relogio"><small>⏱️ Tempo</small><b id="telaoRelogio">—</b></div>
     </section>
     ${carta}
