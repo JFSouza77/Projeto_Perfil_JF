@@ -554,6 +554,104 @@ async function atualizacao(b, sv) {
   }
 }
 
+// 1.7.10.6 · relato do Henrique (online): "desafiei o Rafa, o Vitinho acertou e a questão travou". Mesa de 4 com
+// 3 dispositivos de fora: força duelos bônus Henrique × Rafa (com o Rafa de Mestre, o leitor é emprestado) e os
+// robôs jogam pelo painel. O Vitinho ainda tenta marcar acerto pra ele e "Palpitar agora" no meio do duelo.
+// Confere: quem responde é sempre duelista, o Mestre nunca é duelista, o leitor emprestado volta, os
+// dispositivos veem o mesmo Mestre e a mesma carta do host, e a partida nunca fica parada.
+async function dueloOnline(b, sv) {
+  const rot = "Duelo bônus online (relato Henrique)";
+  const m = await mesa(b, sv, rot);
+  try {
+    const host = await m.abrir("");
+    const nomes = ["JF", "Henrique", "Rafa", "Vitinho"];
+    const sala = await montar(host, { formato: "versus", modo: "classico", cond: "tabuleiro", nomes });
+    conf(`[${rot}] Sala aberta`, await esperar(host, () => rede && rede.transporte.estado === "aberta"));
+    const cs = [];
+    for (const n of nomes.slice(1)) cs.push(await entrar(m, host, sala, n));
+    conf(`[${rot}] Os 3 dispositivos entraram`, cs.every((c) => c.ok));
+    await host.evaluate((id) => redeDefinirNoHost([id]), await host.evaluate(() => players.find((p) => p.name === "JF").id));
+    await host.evaluate(() => {
+      WINNING_SCORE = 9999;
+      const orig = dispatchAction;
+      dispatchAction = function (cmd) {
+        const r = orig.apply(this, arguments);
+        const nm = (i) => (players[i] ? players[i].name[0] : "-");
+        const est = () => `{${cardState[0]}${currentCard && currentCard.isBonus ? "B" + nm(currentCard.bonusLanderPlayerIdx) + nm(currentCard.bonusOpponentPlayerIdx) : ""} M${nm(mestreIndex)} R${nm(responderIndex)}}`;
+        if (r && r.ok) window.__ultAcao = ((window.__ultAcao || "") + " " + cmd.type + JSON.stringify(cmd.data || []) + est()).slice(-600);
+        return r;
+      };
+    });
+    const vit = cs[2];
+    const problemas = [];
+    let duelos = 0, acertos = 0, tentativas = 0, parado = 0, revAntes = -1;
+    const t0 = Date.now();
+    while (Date.now() - t0 < 150000 && duelos < 14) {
+      // carta nova escondida e sem duelo: vira duelo Henrique × Rafa (metade das vezes com o Rafa de Mestre)
+      const forc = await host.evaluate(() => {
+        if (gameEnded || cardState !== "hidden" || !currentCard || currentCard.isBonus || activeToastState) return false;
+        const h = players.findIndex((p) => p.name === "Henrique"), r = players.findIndex((p) => p.name === "Rafa");
+        devolverAoBaralho(cardsByAnswer.get(currentCard.answer) || currentCard);
+        currentCard = null;
+        if (Math.random() < 0.6) mestreIndex = r;
+        pendingBonusQueue.push({ landerIdx: h, opponentIdx: r });
+        drawHidden();
+        return !!(currentCard && currentCard.isBonus);
+      }).catch(() => false);
+      if (forc) { duelos++; await host.evaluate(() => (window.__ultAcao = (window.__ultAcao || "") + " FORCA")); }
+      // o Vitinho tenta se meter no duelo
+      const meio = await host.evaluate(() => !!(currentCard && currentCard.isBonus && pendingIndex !== null)).catch(() => false);
+      if (meio && Math.random() < 0.5) {
+        tentativas++;
+        await vit.g.evaluate((id) => {
+          const i = (rede.retrato.jogadores || []).findIndex((p) => p.id === id);
+          redeMandar(Math.random() < 0.5 ? "acertou" : "palpitarAgora", Math.random() < 0.5 ? i : id);
+        }, vit.id).catch(() => {});
+      }
+      const antesAc = await host.evaluate(() => history.length).catch(() => 0);
+      const ph = await host.evaluate(PASSO_HOST).catch(() => "");
+      if (ph && ph !== "nada") await host.evaluate((ph) => { const nm = (i) => (players[i] ? players[i].name[0] : "-"); window.__ultAcao = ((window.__ultAcao || "") + " HOST:" + ph + `{${cardState[0]}${currentCard && currentCard.isBonus ? "B" + nm(currentCard.bonusLanderPlayerIdx) + nm(currentCard.bonusOpponentPlayerIdx) : ""} M${nm(mestreIndex)} R${nm(responderIndex)}}`).slice(-600); }, ph);
+      for (const c of cs) await c.g.evaluate(PASSO_CELULAR).catch(() => {});
+      await host.waitForTimeout(120);
+      const st = await host.evaluate(() => {
+        const out = { rev: partidaRevisao, hist: history.length, fim: gameEnded, mestre: jogadorIdDe(mestreIndex), cs: cardState };
+        if (currentCard && currentCard.isBonus) {
+          const a = currentCard.bonusLanderPlayerIdx, b = currentCard.bonusOpponentPlayerIdx;
+          out.bonus = cardState !== "bonusChoice"; // na escolha do adversário a carta bônus velha ainda está na memória
+          out.respDuelista = responderIndex === a || responderIndex === b;
+          out.mestreFora = mestreIndex !== a && mestreIndex !== b;
+          out.diag = JSON.stringify({ a: players[a] && players[a].name, b: players[b] && players[b].name, resp: players[responderIndex] && players[responderIndex].name, mestre: players[mestreIndex] && players[mestreIndex].name, orig: bonusOrigMestreIdx, cs: cardState, pi: pendingIndex, rev: revealedOrder.length, ult: (window.__ultAcao || "") });
+        } else out.emprestado = bonusOrigMestreIdx !== null && bonusOrigMestreIdx !== void 0;
+        return out;
+      }).catch(() => null);
+      if (!st) continue;
+      if (st.hist > antesAc) acertos++;
+      if (st.bonus && (!st.respDuelista || !st.mestreFora) && process.env.DUELO_DIAG) console.log("DIAG", st.diag);
+      if (st.bonus && !st.respDuelista) problemas.push("quem responde não é duelista");
+      if (st.bonus && !st.mestreFora) problemas.push("Mestre é duelista");
+      if (!st.bonus && st.emprestado && st.cs !== "bonusChoice") problemas.push("leitor emprestado não voltou");
+      if (st.fim) break;
+      parado = st.rev === revAntes ? parado + 1 : 0;
+      revAntes = st.rev;
+      if (parado > 200) {
+        problemas.push("partida parada: " + JSON.stringify(await host.evaluate(() => ({ cs: cardState, pi: pendingIndex, tk: timerKind, bonus: !!(currentCard && currentCard.isBonus), toast: !!activeToastState }))));
+        break;
+      }
+    }
+    // no fim, os dispositivos veem o mesmo Mestre e o mesmo estado da carta
+    await host.waitForTimeout(1500);
+    const hs = await host.evaluate(() => ({ m: jogadorIdDe(mestreIndex), e: cardState }));
+    let iguais = true;
+    for (const c of cs) iguais = iguais && (await esperar(c.g, (h) => rede.retrato && rede.retrato.mestreId === h.m && rede.retrato.estadoCarta === h.e, hs, 8000));
+    console.log(`DUELO ONLINE: ${duelos} duelos, ${acertos} cartas acertadas, ${tentativas} tentativas do Vitinho`);
+    conf(`[${rot}] Jogou ${duelos} duelos (≥ 6)`, duelos >= 6);
+    conf(`[${rot}] Nunca travou e as regras do duelo valeram em todo passo`, [...new Set(problemas)].length === 0 || console.log("  " + [...new Set(problemas)].join(" | ")));
+    conf(`[${rot}] Os dispositivos veem o mesmo Mestre e a mesma carta do host`, iguais);
+  } finally {
+    await m.fechar();
+  }
+}
+
 (async () => {
   const b = await navegador();
   const sv = await servidorPeer();
@@ -568,6 +666,7 @@ async function atualizacao(b, sv) {
       await partidaInteira(b, sv, { rot: "Corrida · Tempo Hardcore até o fim", formato: "versus", modo: "corrida", sabor: "tempo-hc", relogio: 120e3, nomes: ["Ana", "Beto", "Caio"] });
     }
     if (!SO || SO === "partidas" || SO === "caos") await partidaModoCaos(b, sv);
+    if (!SO || SO === "partidas" || SO === "duelo") await dueloOnline(b, sv);
     if (!SO || SO === "fundo") await segundoPlano(b, sv);
     if (!SO || SO === "versao") await atualizacao(b, sv);
   } finally {
