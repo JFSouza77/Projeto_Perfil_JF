@@ -928,6 +928,18 @@ function caosToastBloquear() {
   try {
     if (document.getElementById("pauseScreen").style.display === "block") return true;
     if (caosFalaEssencial) return false;
+    // 1.7.10.6.1 (JF: "o C.A.O.S. falando muito quebra a concentração"): na Corrida, com a carta correndo, comentário
+    // nenhum; entre as cartas, no máximo um. Aviso de regra e anúncio (bomba, Juízo Final, desempate) passam igual.
+    if (CURRENT_MODE === "corrida" && starterChosen && !gameEnded) {
+      if (cardState === "revealed") {
+        caosLog("orcamento", "fala cortada (Corrida: carta correndo)");
+        return true;
+      }
+      if (stats && caosFalaCartaRef === stats.totalDrawn && caosFalaCartaN >= 1) {
+        caosLog("orcamento", "fala cortada (Corrida: já falou nesta carta)");
+        return true;
+      }
+    }
     // C.A.O.S. 4.3: a sala inteira calou ele: só aviso de regra passa
     if (caosSalaCalada()) {
       caosLog("ouvintes", "fala cortada (a sala toda calou o C.A.O.S.)");

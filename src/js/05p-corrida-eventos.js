@@ -477,8 +477,15 @@ function corridaLojaVitrineHtml(estoque, compradores, precos) {
       return `<li class="cr-loja-item${n > 0 ? "" : " cr-esgotado"}"><span class="cr-li-ic">${it.ic}</span><span class="cr-li-txt"><b>${it.nome}</b><small>${it.desc}</small>${btns ? `<span class="cr-li-btns">${btns}</span>` : ""}</span><span class="cr-li-preco">${pr(k)}<small>${n > 0 ? `${n} no estoque` : "esgotado"}</small></span></li>`;
     })
     .join("");
-  const saldo = (compradores || []).map((c) => `${escapeHtml(c.nome)}: <b>${c.pts}</b>`).join(" · ");
-  return `<div class="cr-loja"><div class="cr-loja-tit">🛒 Lojinha de Sobrevivência <small>(uma só pra mesa: quem comprar primeiro leva · a vitrine muda a cada intervalo)</small></div>${saldo ? `<div class="cr-loja-saldo">💰 ${saldo}</div>` : ""}<ul>${linhas}</ul></div>`;
+  // 1.7.10.6.1 (JF: "não aparece onde e como usar os itens"): o que cada um tem guardado e como usa
+  const guardados = (id) => {
+    const inv = corridaItens[id] || {};
+    const t = ["corte", "desfib"].filter((k) => inv[k] > 0).map((k) => `${CORRIDA_LOJA[k].ic}×${inv[k]}`).join(" ");
+    return t ? ` · 🎒 ${t}` : "";
+  };
+  const saldo = (compradores || []).map((c) => `${escapeHtml(c.nome)}: <b>${c.pts}</b>${guardados(c.id)}`).join(" · ");
+  const como = `<div class="cr-loja-como">🎒 Itens com <b>guarda</b> ficam com você: na carta, aparece o botão <b>Usar</b> na sua tela (o Passe Livre só na sua vez). Os outros valem na hora da compra.</div>`;
+  return `<div class="cr-loja"><div class="cr-loja-tit">🛒 Lojinha de Sobrevivência <small>(uma só pra mesa: quem comprar primeiro leva · a vitrine muda a cada intervalo)</small></div>${saldo ? `<div class="cr-loja-saldo">💰 ${saldo}</div>` : ""}<ul>${linhas}</ul>${como}</div>`;
 }
 // no host: a vitrine da mesa, com os botões de quem joga no próprio dispositivo do host
 function corridaLojaHostHtml() {

@@ -1052,3 +1052,13 @@ body.claro .cr-relampago-tit {
 .cr-loja-saldo {
   margin-bottom: 6px;
 }
+/* 1.7.10.6.1: como usar os itens guardados */
+.cr-loja-como {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  background: #22d3ee14;
+  border: 1px solid #22d3ee55;
+}

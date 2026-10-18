@@ -2,8 +2,8 @@
  * É o jeito que o JF jogava com os sobrinhos: quem acerta fica com a carta. Sem tabuleiro, pontos ou joias.
  *  · Relógio geral de 30 min (+10 s por carta acertada). Zerou: a resposta em andamento termina e não começa
  *    carta nova. Vence quem tiver mais cartas; empate → desempate relâmpago.
- *  · Cada carta tem 2:30, que não reinicia por erro nem troca de vez. Acabou: a carta sai sem dono.
- *  · A vez segue a roda (15 s pra escolher a dica + 15 s pra responder; isso é o startTimer de sempre).
+ *  · Cada carta tem 3:00, que não reinicia por erro nem troca de vez. Acabou: a carta sai sem dono.
+ *  · A vez segue a roda (25 s pra escolher a dica + 25 s pra responder; isso é o startTimer de sempre).
  *  · Entre as cartas, intervalo de 15 s com o relógio geral congelado.
  * Os relógios guardam "quanto falta" + "corre desde": o tique de 250 ms decide se cada um corre (pausa, fala do
  * C.A.O.S., aviso na tela e intervalo congelam), então não tem prazo pra empurrar em cada lugar que para o jogo. */
@@ -158,7 +158,7 @@ function corridaAvisarCartaPerdida() {
   const geral = corridaAcabou && !corridaDesempate;
   fxFloat(geral ? "⏱️ Acabou o tempo!" : "⌛ A carta acabou o tempo", "#fb923c");
   playSfx("erro");
-  caosLog("corrida", geral ? "carta encerrada pelo relógio geral" : "carta perdeu no tempo (2:30)");
+  caosLog("corrida", geral ? "carta encerrada pelo relógio geral" : "carta perdeu no tempo (fim do relógio da carta)");
 }
 // +10 s no geral por acerto; a Bomba-Relógio desarmada dá +20 s; no Juízo Final e no duelo, nada
 function corridaBonus() {

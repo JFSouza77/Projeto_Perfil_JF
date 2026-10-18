@@ -51,10 +51,10 @@ const ARQ = acharMestre(process.argv[2]);
     o.semTabuleiro = document.getElementById("boardTrack").innerHTML === "";
     flipCard();
     f();
-    o.vez15 = timerKind === "pick" && secondsLeft() === 15;
+    o.vez15 = timerKind === "pick" && secondsLeft() === CORRIDA_VEZ_SEG; // 1.7.10.6.1: 25 s
     chooseClue(livre()[0]);
     f();
-    o.resp15 = timerKind === "response" && secondsLeft() === 15;
+    o.resp15 = timerKind === "response" && secondsLeft() === CORRIDA_VEZ_SEG;
     const gAntes = corridaGeralMs();
     toqueJogoUltimo = 0;
     markCorrect();
@@ -546,7 +546,7 @@ const ARQ = acharMestre(process.argv[2]);
     // como no importar: espera o navegador confirmar a gravação antes de recarregar (recarregar 0 ms depois às vezes
     // perde a última escrita no próprio Chromium e o teste via um save de meio segundo antes)
     await JFStore.flushNow();
-    await esp(400);
+    await esp(1000);
     return true;
   });
   await p.reload();

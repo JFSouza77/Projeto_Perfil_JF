@@ -859,6 +859,8 @@ function redeHostRetomar() {
     if (!sala) return;
     if (jogadorIdValido(s.eu) && jogadorIdxPorId(s.eu) >= 0) rede.hostEu = s.eu;
     rede.hostJunto = (Array.isArray(s.junto) ? s.junto : []).filter((id) => jogadorIdValido(id) && jogadorIdxPorId(id) >= 0 && id !== rede.hostEu);
+    // 1.7.10.6.1 (relato do JF): os jogadores podem ainda não ter voltado do save aqui; guarda pra religar depois
+    rede.hostEuSalvo = jogadorIdValido(s.eu) ? [s.eu].concat(Array.isArray(s.junto) ? s.junto.filter(jogadorIdValido) : []) : null;
     (Array.isArray(s.aprovados) ? s.aprovados : []).forEach((c) => typeof c === "string" && (rede.aprovados[c] = true));
     if (typeof s.chave === "string" && /^[a-z0-9]{12,32}$/.test(s.chave)) rede.chaveHost = s.chave;
     redeHostGuardar();
@@ -1806,6 +1808,7 @@ function redeHostPublicar(forcar) {
   if (!rede || rede.papel !== "host") return;
   if (!starterChosen && !forcar) return;
   if (starterChosen && !gameEnded && redeAlguemLonge()) partidaOnline = true; // 1.7.9.9: marca na hora
+  if (starterChosen && !rede.hostEu && players.length) redeHostEuReligar();
   // 1.7.9.4: a partida começou com a sala aberta e ninguém disse quem joga neste aparelho: pergunta uma vez
   if (starterChosen && !rede.hostEu && !rede.perguntouEu && players.length) {
     rede.perguntouEu = true;
@@ -1872,6 +1875,19 @@ function redeAvisarSemAparelho() {
     `Antes de começar, diga onde cada um joga: ${nomes.join(", ")} ${nomes.length === 1 ? "ainda não está" : "ainda não estão"} na sala. Entre pelo dispositivo ou marque em "Quem joga neste aparelho?".`,
     () => redePainelHost(),
   );
+}
+// 1.7.10.6.1 (relato do JF: como host, não comprava na lojinha nem escolhia a própria dica): o aparelho do host
+// perdia quem joga nele (recarregou antes do save voltar, ou a sala abriu no meio da partida). Religa sozinho: primeiro
+// quem estava guardado; senão, quem não tem dispositivo próprio na sala (ninguém mais pode estar jogando por ele).
+function redeHostEuReligar() {
+  if (!rede || rede.papel !== "host" || rede.hostEu) return;
+  let lista = (rede.hostEuSalvo || []).filter((id) => jogadorIdxPorId(id) >= 0 && !redeOnline(rede.assentos[id]));
+  if (!lista.length) lista = players.filter((p) => !rede.assentos[p.id]).map((p) => p.id);
+  if (!lista.length) return;
+  rede.hostEu = lista[0];
+  rede.hostJunto = lista.slice(1);
+  rede.hostEuSalvo = null;
+  redeHostGuardar();
 }
 function redeJogadoresNoHost() {
   if (!rede) return [];
