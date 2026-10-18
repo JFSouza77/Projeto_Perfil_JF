@@ -248,6 +248,7 @@ function maybeAnnounceCrystalBall() {
 function caosCategoryLabel(cat) {
   return CATEGORY_LABELS[cat] || cat;
 }
+let previsaoSaqueVez = 0; // drawHidden avança: o saque do balão da previsão só vale se ninguém sacou antes
 function maybeAnnounceCardPrediction() {
   if (caosSilenced || caosCardPrediction || deck.length === 0 || activeToastState) return false;
   if (Math.random() > 0.04) return false;
@@ -266,7 +267,19 @@ function maybeAnnounceCardPrediction() {
   const msg = guessedAnswer
     ? getRandomReaction(REACTIVE_VOICE.previsaoCartaComResposta, caosCategoryLabel(guessedCategory), guessedAnswer)
     : getRandomReaction(REACTIVE_VOICE.previsaoCartaSoCategoria, caosCategoryLabel(guessedCategory));
-  showToastMessage(msg, () => drawHidden());
+  // 1.7.10.6 (relato do Henrique): a carta que acabou sai da mesa já. Antes ela ficava "revelada" enquanto o
+  // balão falava, com o Mestre novo já na vez: online parecia que a pergunta travou sem resposta (e dava pra
+  // abrir dica da carta velha). Qualquer saque antes do balão fechar cancela o saque do balão (sem carta em dobro).
+  const vez = ++previsaoSaqueVez;
+  currentCard = null;
+  cardState = "none";
+  pendingIndex = null;
+  revealedOrder = [];
+  render();
+  saveGameState();
+  showToastMessage(msg, () => {
+    if (!gameEnded && cardState === "none" && vez === previsaoSaqueVez) drawHidden();
+  });
   return true;
 }
 // 1.7.5.2: nome curto das misturas pra etiqueta do gerador de pensamento.

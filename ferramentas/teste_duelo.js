@@ -108,6 +108,31 @@ const ARQ = acharMestre(process.argv[2]);
         }
       }
     }
+    // 1.7.10.6 · a "previsão da próxima carta" do C.A.O.S. (4% depois de cada carta): a carta que acabou sai da mesa
+    // na hora (antes ficava revelada com o Mestre novo, parecendo travada) e o balão não saca carta em dobro
+    for (const sacaAntes of [false, true]) {
+      gameEnded = false;
+      caosSilenced = false;
+      caosCardPrediction = null;
+      if (activeToastState) closeActiveToast();
+      drawHidden();
+      flipCard();
+      const antes = stats.totalDrawn, rnd = Math.random;
+      Math.random = () => 0.01;
+      let anunciou;
+      const bloq = caosToastBloquear, mudo = caosMudoCarta;
+      caosToastBloquear = () => false; // o balão aparece de verdade (sem respiro/orçamento de fala)
+      caosMudoCarta = false;
+      try { anunciou = maybeAnnounceCardPrediction(); } finally { Math.random = rnd; caosToastBloquear = bloq; caosMudoCarta = mudo; }
+      if (!activeToastState) problemas.push('previsão: o balão não apareceu');
+      if (!anunciou) { problemas.push('previsão não anunciou'); continue; }
+      if (currentCard || cardState !== 'none') problemas.push(`previsão: a carta velha ficou na mesa (${cardState})`);
+      if (sacaAntes) drawHidden();
+      closeActiveToast();
+      await espera(5);
+      if (cardState !== 'hidden' || stats.totalDrawn !== antes + 1) problemas.push(`previsão${sacaAntes ? ' (sacou antes)' : ''}: ${cardState}, ${stats.totalDrawn - antes} carta(s) sacada(s)`);
+      caosSilenced = true;
+    }
     return { duelos, palpites, passos, desfeitos, problemas: problemas.slice(0, 15) };
   });
   console.log(JSON.stringify(r, null, 1));

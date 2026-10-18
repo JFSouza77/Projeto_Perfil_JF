@@ -385,6 +385,7 @@ function discardAndDraw() {
   drawHidden();
 }
 function drawHidden() {
+  previsaoSaqueVez++;
   roletaCarta = null;
   roletaPousou = false;
   clearTimer();

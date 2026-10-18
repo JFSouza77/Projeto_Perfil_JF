@@ -154,3 +154,19 @@ Arquivo: `src/js/05p-corrida-eventos.js` (constantes em `01-configuracao.js`, bl
   dispositivo do host aparecem como botões na tela do host).
 - **Coroas** na tela final: ⏱️ Senhor do Tempo e 🃏 Colecionador (mesma pessoa: 🏆 Dono da Corrida).
 - Offline: tudo menos a lojinha.
+
+## Carta presa depois do acerto (relato do Henrique) · corrigido (18/10)
+
+Relato: no duelo bônus online (Henrique × Rafa), o Vitinho acertou, o Henrique virou Mestre e a pergunta ficou
+na tela como se ninguém tivesse respondido.
+
+- Causa achada: depois de cada carta, 4% das vezes o C.A.O.S. anuncia a "previsão da próxima carta" e o jogo só
+  sacava a próxima quando o balão fechava. Nesse meio-tempo a carta acertada continuava "revelada" na mesa, com o
+  Mestre novo já na vez (online dava até pra abrir dica da carta velha). Se o balão demorava (voz, janela aberta,
+  fila de falas), parecia travado.
+- Correção: a carta que acabou sai da mesa na hora do anúncio; o balão saca a próxima quando fecha, e qualquer
+  saque feito antes cancela o do balão (sem carta em dobro). Vale pra todos os modos, não só pro duelo.
+- Testes: `teste_duelo.js` ganhou a checagem da previsão; `teste_online.js --so=duelo` (novo) força duelos
+  Henrique × Rafa numa mesa de 4 com 3 dispositivos, o Vitinho tentando marcar acerto e "Palpitar agora" no meio,
+  e confere a cada passo: quem responde é duelista, o Mestre não é, o leitor emprestado volta, os dispositivos veem
+  o mesmo Mestre e a mesma carta do host, e nada fica parado.
