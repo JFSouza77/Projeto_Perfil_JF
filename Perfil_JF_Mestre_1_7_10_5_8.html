@@ -6,6 +6,26 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.5.8 · 18/10/2026 · "Multiplayer Update · Online de verdade" = CORREÇÕES DA PARTIDA ONLINE · C.A.O.S. 4.4.4 (pedido do JF;
+          as correções feitas durante a 1.7.10.6, sem os modos novos). Build 1820.
+          1) Carta presa depois do acerto (relato do Henrique): a "previsão da próxima carta" do C.A.O.S. deixava a carta
+          acertada revelada na mesa com o Mestre novo já na vez até o balão fechar; agora ela sai da mesa na hora e o
+          balão saca a próxima (qualquer saque antes cancela o dele: previsaoSaqueVez, sem carta em dobro).
+          2) Botões de próximo passo ("cta": grandes, amarelos, pulsando; param com Menos movimento/Batata): Virar a
+          carta, Já falei a categoria, Puxar a próxima carta, Abrir a dica pedida. Faixa do papel no dispositivo
+          ("VOCÊ É O MESTRE" / "É A SUA VEZ!"). T2 na ordem Mestre → vez → categoria, Mestre e vez em destaque.
+          3) Pedido de dica e Palpitar agora chegam na hora (não mexem na revisão: só iam na batida de 4 s;
+          redeAvisarJa). Número travado: o toque já pede "Abrir sem pedido" (antes só segurar 650 ms).
+          4) Host que cai de vez: o pacote da partida vai pro sucessor e pra um reserva (redeSucessores); o reserva
+          assume 20 s depois se o sucessor não assumir (REDE_RESERVA_MS). A mesa vê a contagem de quando alguém assume.
+          5) Duelo de bônus: aviso pra mesa toda quando alguém cai na casa, faixa na T2 de todo dispositivo
+          (retrato.duelo), quem caiu escolhe o adversário e depois o Mestre do duelo (bonusMestre; com uma pessoa de fora
+          ela é a Mestre; Equipe segue automático), aviso "X chamou Y pra duelar e Z pra ser o Mestre". Carta bônus
+          agora dá joia (decisão do JF), com as regras de sempre.
+          6) C.A.O.S. 4.4.4: "Jh" no começo do nome é J na voz e risada grudada no nick não é lida; a voz nova não cai
+          mais na robótica por 10 min depois de uma falha (confere de novo em 1 min, tenta sem resposta ainda) e espera
+          4 s pelo 1º pedaço. 7) Joia de Animal: padding em % virava torre no placar das joias (agora em em).
+          Testes: teste_duelo (previsão, escolha do Mestre, carta bônus dá joia), teste_online --so=duelo e --so=caiu.
   1.7.10.5.7 · 17/10/2026 · "Multiplayer Update · Online de verdade" = SELETOR DE ALVO NA T2 + TROFÉUS + SOM E TECLADO · C.A.O.S. 4.4.3 (pedido do JF).
           1) Especial "escolha um jogador" no online: quem abriu a dica escolhe o alvo no próprio dispositivo, tocando no
           cartão do jogador na T2 (todo mundo vê; alvoNoAparelho/alvoEspecialPublico, retrato.alvoEspecial). A tela do Mestre
@@ -868,7 +888,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.5.7</title>
+<title>Perfil JF · Beta 1.7.10.5.8</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -10004,7 +10024,7 @@ body.batata-mode .rede-papel.rp-vez {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.5.7 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.4.3 · Atualizada em 17/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.5.8 · Multiplayer Update · Online de verdade<br>C.A.O.S. 4.4.4 · Atualizada em 18/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -10274,7 +10294,7 @@ body.batata-mode .rede-papel.rp-vez {
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1819;
+const JOGO_BUILD = 1820;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -23653,6 +23673,7 @@ function redeEntrarSala(sala, transporteFabrica) {
 }
 function redeConvidadoReceber(m) {
   rede.ultimoHost = Date.now();
+  rede.tentouAntesDeAssumir = 0;
   if (rede.hostSessao && m.de !== rede.hostSessao) {
     // outro aparelho virou host da sala: me apresento de novo pra ele
     rede.hostSessao = m.de;
@@ -23954,7 +23975,14 @@ function redeConvidadoTiques() {
   // o host sumiu: se eu sou o sucessor (e tenho o pacote), assumo; senão, aviso e espero
   const sumiu = rede.estado === "dentro" && Date.now() - rede.ultimoHost > REDE_HOST_SUMIU_MS;
   const vez = redeSouSucessor(rede.retrato) ? redePosSucessor(rede.retrato) : -1;
-  if (vez >= 0 && !rede.assumindo && rede.recuperacao && rede.estado === "dentro" && Date.now() - rede.ultimoHost > REDE_HOST_SUMIU_MS + vez * REDE_RESERVA_MS) return redeAssumir();
+  // antes de assumir, tenta reconectar e espera 5 s: se outro dispositivo já assumiu (o sucessor acordou atrasado do
+  // segundo plano), a notícia do host novo chega e ninguém vira um segundo host
+  if (vez >= 0 && !rede.assumindo && rede.recuperacao && rede.estado === "dentro" && Date.now() - rede.ultimoHost > REDE_HOST_SUMIU_MS + vez * REDE_RESERVA_MS) {
+    if (!rede.tentouAntesDeAssumir) {
+      rede.tentouAntesDeAssumir = Date.now();
+      if (typeof rede.transporte.reconectar === "function") rede.transporte.reconectar();
+    } else if (Date.now() - rede.tentouAntesDeAssumir > 5000) return redeAssumir();
+  }
   if (rede.recuperacao && vez < 0) rede.recuperacao = null;
   // sem notícia do host: a cada 10 s, força uma conexão nova (o novo host pode já estar na sala)
   if (sumiu && typeof rede.transporte.reconectar === "function" && Date.now() - (rede.ultimaReconexao || 0) > 10000) {
@@ -29814,7 +29842,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.5.7 · C.A.O.S. 4.4.3</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.5.8 · C.A.O.S. 4.4.4</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -33166,7 +33194,7 @@ function caosNeuralDesenhar(cv, t) {
     const C = caosConsole || {};
     const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
 tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
-${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.4.3`;
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.4.4`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }
@@ -34967,7 +34995,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5.7 · C.A.O.S. 4.4.3)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5.8 · C.A.O.S. 4.4.4)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -38489,7 +38517,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.5.7 · C.A.O.S. 4.4.3");
+  L.push("- **Versão:** Beta 1.7.10.5.8 · C.A.O.S. 4.4.4");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -39012,7 +39040,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.5.7 · C.A.O.S. 4.4.3",
+        versao: "Beta 1.7.10.5.8 · C.A.O.S. 4.4.4",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -74411,6 +74439,25 @@ const PAUSE_TIPS = [
 //    fica só com a frase "t" e itens vazios;
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
+  {
+    v: "Beta 1.7.10.5.8",
+    data: "18/10/2026 · 10:00",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "Correções da partida online: tudo mais fácil de entender, duelo pra mesa toda e a sala não trava quando o host cai.",
+    itens: [
+      "👆 Botões que chamam: o próximo passo do Mestre (virar a carta, já falei a categoria, puxar a próxima, abrir a dica pedida) fica grande, amarelo e piscando.",
+      "🎙️ Você sabe seu papel: no seu dispositivo aparece em destaque se você é o Mestre ou se é a sua vez.",
+      "📺 Tela dos jogadores mais clara: primeiro quem é o Mestre, depois de quem é a vez e depois a categoria da carta.",
+      "⚡ Pedido de dica na hora: o Mestre vê na hora o número que você pediu. Travou? Toque em qualquer número pra abrir sem pedido.",
+      "🏟️ Duelo pra todo mundo: quando alguém cai na casa de bônus, a mesa toda fica sabendo. Quem caiu escolhe quem desafia e quem vai ser o Mestre do duelo.",
+      "💎 Carta bônus dá joia: acertou o duelo com poucas dicas, leva a joia da categoria.",
+      "🔌 O host caiu? A sala não trava: outro dispositivo assume, com contagem na tela, e a partida continua de onde parou.",
+      "🃏 Carta que travava depois do acerto: corrigido (relato do Henrique). A carta acertada sai da mesa na hora.",
+      "🗣️ Voz do C.A.O.S.: nomes com Jh agora soam certo, e a voz nova não cai mais tanto na voz robótica.",
+      "🔺 Joia de Animal: voltou a ser um triângulo bonitinho no placar das joias.",
+    ],
+    qol: [],
+  },
   {
     v: "Beta 1.7.10.5.7",
     data: "17/10/2026 · 09:53",

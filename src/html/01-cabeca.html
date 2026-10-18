@@ -6,6 +6,26 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  1.7.10.5.8 · 18/10/2026 · "Multiplayer Update · Online de verdade" = CORREÇÕES DA PARTIDA ONLINE · C.A.O.S. 4.4.4 (pedido do JF;
+          as correções feitas durante a 1.7.10.6, sem os modos novos). Build 1820.
+          1) Carta presa depois do acerto (relato do Henrique): a "previsão da próxima carta" do C.A.O.S. deixava a carta
+          acertada revelada na mesa com o Mestre novo já na vez até o balão fechar; agora ela sai da mesa na hora e o
+          balão saca a próxima (qualquer saque antes cancela o dele: previsaoSaqueVez, sem carta em dobro).
+          2) Botões de próximo passo ("cta": grandes, amarelos, pulsando; param com Menos movimento/Batata): Virar a
+          carta, Já falei a categoria, Puxar a próxima carta, Abrir a dica pedida. Faixa do papel no dispositivo
+          ("VOCÊ É O MESTRE" / "É A SUA VEZ!"). T2 na ordem Mestre → vez → categoria, Mestre e vez em destaque.
+          3) Pedido de dica e Palpitar agora chegam na hora (não mexem na revisão: só iam na batida de 4 s;
+          redeAvisarJa). Número travado: o toque já pede "Abrir sem pedido" (antes só segurar 650 ms).
+          4) Host que cai de vez: o pacote da partida vai pro sucessor e pra um reserva (redeSucessores); o reserva
+          assume 20 s depois se o sucessor não assumir (REDE_RESERVA_MS). A mesa vê a contagem de quando alguém assume.
+          5) Duelo de bônus: aviso pra mesa toda quando alguém cai na casa, faixa na T2 de todo dispositivo
+          (retrato.duelo), quem caiu escolhe o adversário e depois o Mestre do duelo (bonusMestre; com uma pessoa de fora
+          ela é a Mestre; Equipe segue automático), aviso "X chamou Y pra duelar e Z pra ser o Mestre". Carta bônus
+          agora dá joia (decisão do JF), com as regras de sempre.
+          6) C.A.O.S. 4.4.4: "Jh" no começo do nome é J na voz e risada grudada no nick não é lida; a voz nova não cai
+          mais na robótica por 10 min depois de uma falha (confere de novo em 1 min, tenta sem resposta ainda) e espera
+          4 s pelo 1º pedaço. 7) Joia de Animal: padding em % virava torre no placar das joias (agora em em).
+          Testes: teste_duelo (previsão, escolha do Mestre, carta bônus dá joia), teste_online --so=duelo e --so=caiu.
   1.7.10.5.7 · 17/10/2026 · "Multiplayer Update · Online de verdade" = SELETOR DE ALVO NA T2 + TROFÉUS + SOM E TECLADO · C.A.O.S. 4.4.3 (pedido do JF).
           1) Especial "escolha um jogador" no online: quem abriu a dica escolhe o alvo no próprio dispositivo, tocando no
           cartão do jogador na T2 (todo mundo vê; alvoNoAparelho/alvoEspecialPublico, retrato.alvoEspecial). A tela do Mestre
@@ -868,7 +888,7 @@
 <meta name="author" content="JF (JFSouza77)">
 <meta name="copyright" content="© 2026 JF (JFSouza77). Todos os direitos reservados.">
 <meta name="format-detection" content="telephone=no">
-<title>Perfil JF · Beta 1.7.10.5.7</title>
+<title>Perfil JF · Beta 1.7.10.5.8</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
