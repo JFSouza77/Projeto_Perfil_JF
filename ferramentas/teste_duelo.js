@@ -114,6 +114,7 @@ const ARQ = acharMestre(process.argv[2]);
       gameEnded = false;
       caosSilenced = false;
       caosCardPrediction = null;
+      pendingBonusQueue = []; // sem duelo na fila (senão o saque vai, certo, pra escolha do adversário)
       if (activeToastState) closeActiveToast();
       drawHidden();
       flipCard();
