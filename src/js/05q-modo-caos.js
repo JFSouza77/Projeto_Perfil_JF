@@ -718,6 +718,24 @@ function mcPinata(id, txt) {
 /* --- tique: relógios e prazos --- */
 function mcTicar() {
   if (!mcAtivo()) return;
+  // 1.7.10.7: aviso da mesa na tela: tudo para e os prazos andam junto
+  const tickAntes = mc.ultTick || mcAgora();
+  mc.ultTick = mcAgora();
+  if (typeof avisoCongeladoDesde === "function") {
+    const d = avisoCongeladoDesde(tickAntes);
+    if (d > 0) {
+      if (mc.abrirEm) mc.abrirEm += d;
+      if (mc.intervalo) mc.intervalo.fimEm += d;
+      if (mc.desafio && mc.desafio.proxEm) mc.desafio.proxEm += d;
+      if (mc.duelo && mc.duelo.ate) mc.duelo.ate += d;
+      if (mc.desfib && mc.desfib.ate) mc.desfib.ate += d;
+      [mc.geral, mc.rodadaT, mc.janela && mc.janela.relogio].forEach((r) => r && r.fimEm && (r.fimEm += d));
+    }
+    if (avisoMesaCongela()) {
+      [mc.geral, mc.rodadaT, mc.janela && mc.janela.relogio].forEach(mcRelogioParar);
+      return mcContagens();
+    }
+  }
   const pausado = !!pausedAt;
   const joga = !pausado && ["abrindo", "janela", "julgando", "desfibOferta", "desfibSolo"].includes(mc.fase);
   [mc.geral, mc.rodadaT].forEach((r) => (joga ? mcRelogioCorrer(r) : mcRelogioParar(r)));

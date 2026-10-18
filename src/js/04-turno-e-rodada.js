@@ -278,6 +278,7 @@ function resetDeck() {
   tabForma = null; // 1.7.9.2: partida nova, tabuleiro novo
   tabLobbyZerar(); // 1.7.9.4
   corridaZerar(); // 1.7.10.6
+  if (typeof avisoZerar === "function") avisoZerar(); // 1.7.10.7
   mcZerar();
   document.getElementById("mcTela")?.remove();
   sorteioContagem = 0;
@@ -742,6 +743,18 @@ function resumeTimerInterval() {
   if (timerInterval) clearInterval(timerInterval);
   lastTimerTick = Date.now();
   timerInterval = setInterval(() => {
+    // 1.7.10.7: aviso da mesa na tela: o tempo da vez e da carta espera
+    if (typeof avisoCongeladoDesde === "function") {
+      const d = avisoCongeladoDesde(lastTimerTick);
+      if (d > 0) {
+        if (timerEndAt) timerEndAt += d;
+        if (cardEndAt) cardEndAt += d;
+      }
+      if (avisoMesaCongela()) {
+        lastTimerTick = Date.now();
+        return;
+      }
+    }
     lastTimerTick = Date.now();
     updateTimerDisplay();
     maybeShowTimeWarning();

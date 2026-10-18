@@ -49,6 +49,7 @@ function corridaParado() {
     corridaIntervaloAberto() ||
     !!activeToastState ||
     !!timeoutOverlayMessage ||
+    (typeof avisoMesaCongela === "function" && avisoMesaCongela()) ||
     // tutorial, aviso ou janela do C.A.O.S. aberta: só congela no jogo local (no online, uma janela no host não
     // pode parar a sala inteira; quem pausa a sala é o botão Pausar)
     (caosJanelaImportanteAberta() && !(typeof salaOnlineAberta === "function" && salaOnlineAberta()))
@@ -105,8 +106,16 @@ function corridaDobrar() {
   if (corridaCartaDesde) corridaCartaRestaMs = corridaCartaMs();
   corridaDesde = corridaCartaDesde = null;
 }
+let corridaUltTick = 0;
 function corridaTicar() {
   if (!corridaAtiva() || gameEnded) return corridaParar();
+  // 1.7.10.7: o tempo em que o aviso da mesa ficou na tela não conta
+  const congelou = corridaUltTick && typeof avisoCongeladoDesde === "function" ? avisoCongeladoDesde(corridaUltTick) : 0;
+  corridaUltTick = Date.now();
+  if (congelou > 0) {
+    if (corridaDesde) corridaDesde += congelou;
+    if (corridaCartaDesde) corridaCartaDesde += congelou;
+  }
   // carta nova: o relógio dela começa cheio
   if (currentCard && cartaSeq !== corridaCartaDaVez) {
     corridaCartaDaVez = cartaSeq;

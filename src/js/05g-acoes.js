@@ -286,6 +286,9 @@ function dispatchAction(cmd) {
     pode = false;
   }
   if (!pode) return { ok: false, motivo: "fora_de_hora", revisao: partidaRevisao };
+  // 1.7.10.7: enquanto o aviso da mesa está na tela, os comandos esperam (pausar/continuar passam)
+  if (typeof avisoMesaCongela === "function" && avisoMesaCongela() && !["pausar", "continuar"].includes(c.type))
+    return { ok: false, motivo: "aviso_na_tela", revisao: partidaRevisao };
   const antes = partidaRevisao;
   acoesOrigemAtual = "comando";
   acoesComandoAtual = typeof c.commandId === "string" ? c.commandId : null;

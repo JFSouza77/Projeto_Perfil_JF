@@ -1831,10 +1831,11 @@ function redeHostPublicar(forcar) {
     const opcoes = redeOpcoes(jid);
     // 1.7.10.6 · Modo C.A.O.S.: o que é só desse jogador (a carta dele, PC, itens…) vai junto, só pra ele
     const extra = CURRENT_MODE === "caos" && typeof mcPrivado === "function" ? mcPrivado(jid) : null;
-    const chave = JSON.stringify([opcoes, extra]) + "|" + partidaRevisao;
+    const aviso = typeof avisoParaJogador === "function" ? avisoParaJogador(jid) : null;
+    const chave = JSON.stringify([opcoes, extra, aviso && aviso.id]) + "|" + partidaRevisao;
     if (!forcar && rede.paineis[jid] === chave) return;
     rede.paineis[jid] = chave;
-    redeEnviar("painel", { revisao: partidaRevisao, opcoes, ...(extra ? { extra } : {}) }, a.sessao);
+    redeEnviar("painel", { revisao: partidaRevisao, opcoes, ...(extra ? { extra } : {}), ...(aviso ? { aviso } : {}) }, a.sessao);
   });
   const mid = jogadorIdDe(mestreIndex);
   const a = mid && rede.assentos[mid];
@@ -2238,7 +2239,8 @@ function redeConvidadoReceber(m) {
   }
   if (m.t === "painel") {
     if (rede.painel && m.revisao < rede.painel.revisao) return;
-    rede.painel = { revisao: m.revisao, opcoes: m.opcoes, extra: m.extra && typeof m.extra === "object" ? m.extra : null };
+    rede.painel = { revisao: m.revisao, opcoes: m.opcoes, extra: m.extra && typeof m.extra === "object" ? m.extra : null, aviso: typeof avisoLimpar === "function" ? avisoLimpar(m.aviso) : null };
+    if (typeof avisoDesenharConvidado === "function") avisoDesenharConvidado();
     return avisar();
   }
   if (m.t === "recuperacao") {
