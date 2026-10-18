@@ -24531,6 +24531,7 @@ function redeEntrarSala(sala, transporteFabrica) {
 }
 function redeConvidadoReceber(m) {
   rede.ultimoHost = Date.now();
+  rede.tentouAntesDeAssumir = 0;
   if (rede.hostSessao && m.de !== rede.hostSessao) {
     // outro aparelho virou host da sala: me apresento de novo pra ele
     rede.hostSessao = m.de;
@@ -24833,7 +24834,14 @@ function redeConvidadoTiques() {
   // o host sumiu: se eu sou o sucessor (e tenho o pacote), assumo; senão, aviso e espero
   const sumiu = rede.estado === "dentro" && Date.now() - rede.ultimoHost > REDE_HOST_SUMIU_MS;
   const vez = redeSouSucessor(rede.retrato) ? redePosSucessor(rede.retrato) : -1;
-  if (vez >= 0 && !rede.assumindo && rede.recuperacao && rede.estado === "dentro" && Date.now() - rede.ultimoHost > REDE_HOST_SUMIU_MS + vez * REDE_RESERVA_MS) return redeAssumir();
+  // antes de assumir, tenta reconectar e espera 5 s: se outro dispositivo já assumiu (o sucessor acordou atrasado do
+  // segundo plano), a notícia do host novo chega e ninguém vira um segundo host
+  if (vez >= 0 && !rede.assumindo && rede.recuperacao && rede.estado === "dentro" && Date.now() - rede.ultimoHost > REDE_HOST_SUMIU_MS + vez * REDE_RESERVA_MS) {
+    if (!rede.tentouAntesDeAssumir) {
+      rede.tentouAntesDeAssumir = Date.now();
+      if (typeof rede.transporte.reconectar === "function") rede.transporte.reconectar();
+    } else if (Date.now() - rede.tentouAntesDeAssumir > 5000) return redeAssumir();
+  }
   if (rede.recuperacao && vez < 0) rede.recuperacao = null;
   // sem notícia do host: a cada 10 s, força uma conexão nova (o novo host pode já estar na sala)
   if (sumiu && typeof rede.transporte.reconectar === "function" && Date.now() - (rede.ultimaReconexao || 0) > 10000) {
