@@ -104,8 +104,11 @@ const ARQ = acharMestre(process.argv[2]);
     corridaDobrar();
     corridaRestaMs = 200;
     await esp(800);
-    f(); // o aviso do Juízo Final congelou o relógio: sai, e o relógio volta a correr
-    await esp(500);
+    // o aviso do Juízo Final congela o relógio: tira o aviso e espera o relógio zerar (com folga pra máquina lenta)
+    for (let i = 0; i < 40 && !corridaAcabou; i++) {
+      f();
+      await esp(150);
+    }
     f();
     o.esperaPendente = corridaAcabou && cardState === "revealed" && pendingIndex !== null && !gameEnded;
     players[respondeu].score = 0;
