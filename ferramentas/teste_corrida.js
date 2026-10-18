@@ -543,6 +543,10 @@ const ARQ = acharMestre(process.argv[2]);
     corridaRestaMs = 754000;
     corridaCartaRestaMs = 81000;
     saveGameState();
+    // como no importar: espera o navegador confirmar a gravação antes de recarregar (recarregar 0 ms depois às vezes
+    // perde a última escrita no próprio Chromium e o teste via um save de meio segundo antes)
+    await JFStore.flushNow();
+    await esp(400);
     return true;
   });
   await p.reload();

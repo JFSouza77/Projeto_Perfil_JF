@@ -6388,7 +6388,7 @@ body:not(.batata-mode) .splash-dice {
 }
 .humor-btn {
   background: transparent !important;
-  color: var(--hc) !important;
+  color: color-mix(in srgb, var(--hc) 55%, #fff) !important; /* 1.7.10.6: a cor pura (Ácido, Nível 0) ficava abaixo de 4,5:1 no escuro */
   border: 1.5px solid var(--hc) !important;
   box-shadow: 0 0 8px color-mix(in srgb, var(--hc) 30%, transparent);
   opacity: 0.8;
@@ -6919,7 +6919,8 @@ body.claro .humor-btn {
   border: 1.5px solid color-mix(in srgb, var(--hc) 65%, #1b1d33) !important;
 }
 body.claro .humor-btn.on {
-  background: color-mix(in srgb, var(--hc) 80%, #1b1d33) !important;
+  /* 1.7.10.6 (auditoria): 80% deixava o texto branco abaixo de 4,5:1 (roxo do "C.A.O.S. decide" em 3,8:1) */
+  background: color-mix(in srgb, var(--hc) 50%, #1b1d33) !important;
   color: #fff !important;
 }
 body.claro .mc-back {
@@ -6984,7 +6985,7 @@ body.claro .mc-back {
   opacity: 1;
 }
 body.claro .humor-btn:not(.on) {
-  color: color-mix(in srgb, var(--hc) 55%, #1b1d33) !important;
+  color: color-mix(in srgb, var(--hc) 45%, #1b1d33) !important; /* 1.7.10.6: 55% deixava o amarelo em 3,8:1 */
   opacity: 1;
 }
 body.claro .tem-escolha > .humor-btn:not(.on) {
@@ -13721,7 +13722,7 @@ function resolveExhaustionIfNeeded() {
   if (revealedOrder.length >= currentCard.clues.length || corridaFim) {
     clearCardTimer();
     if (corridaFim) corridaAvisarCartaPerdida();
-    if (CURRENT_MODE === "corrida") corridaCartaMorreu(); // −1 min no geral (Escudo de Kevlar segura; duelo e desempate não)
+    if (CURRENT_MODE === "corrida") corridaCartaMorreu(); // −1 min no geral (Seguro do Relógio segura; duelo e desempate não)
     stats.totalExhausted++;
     cartaPartidaRegistrar(-1, revealedOrder.filter((r) => r.item.type === "clue").length, null);
     caosImplicFim(99);
@@ -28508,7 +28509,7 @@ function corridaTicar() {
     corridaCartaDesde = null;
   }
   const parado = corridaParado();
-  // o geral congela no desempate, no duelo e enquanto durar o "Congelar Mesa" da lojinha
+  // o geral congela no desempate, no duelo e enquanto durar o "Pausa Dramática" da lojinha
   let geralCorre = !parado && !corridaAcabou && !corridaDesempate && !corridaDuelo && (cardState === "hidden" || cardState === "revealed");
   geralCorre = corridaCongelamento(geralCorre);
   const cartaCorre = !parado && cardState === "revealed";
@@ -28932,7 +28933,7 @@ function corridaValorRetrato(r, j) {
 }
 /* --- 1.7.10.6 · CORRIDA: EVENTOS (spec do JF de 17/10 à noite, com o balanceamento em docs/Modos_1.7.10.6.md) ---
  *  · Penalidades: errou, a carta perde 1 s; pulou ("nem tentou"), perde 2 s. Carta que morre sem acerto: o geral
- *    perde 1 min (o Escudo de Kevlar segura; no duelo e no desempate não vale).
+ *    perde 1 min (o Seguro do Relógio segura; no duelo e no desempate não vale).
  *  · Bomba-Relógio: o C.A.O.S. anuncia antes da carta. Cada erro/pulo tira 5 s do geral; desarmar dá +20 s.
  *  · Juízo Final: no último minuto as dicas abrem sozinhas e qualquer um bate na mesa (sem os +10 s por acerto).
  *  · Hardcore: carta de 1:30 correndo 1,5×, as dicas abrem sozinhas o jogo todo, mais bombas.
@@ -28949,9 +28950,9 @@ let corridaDuelo = null; // { ids: [2 duelistas], mestreAntes, carta }
 let corridaDuelos = 0;
 let corridaUltimoEvento = 0; // stats.totalDrawn do último evento (bomba/duelo), pra espaçar
 let corridaSemDicas = -1; // cartaSeq da carta que ficou sem dica no relâmpago (acaba como esgotada)
-let corridaCongelaMs = 0; // Congelar Mesa (lojinha): quanto do geral ainda fica congelado
+let corridaCongelaMs = 0; // Pausa Dramática (lojinha): quanto do geral ainda fica congelado
 let corridaCongelaTique = 0;
-let corridaEscudo = -1; // cartaSeq que o Escudo de Kevlar protege
+let corridaEscudo = -1; // cartaSeq que o Seguro do Relógio protege
 let corridaFolego = {}; // id → cartaSeq em que a pessoa tem +15 s nas vezes
 let corridaItens = {}; // id → { corte: n, desfib: n }
 let corridaEstoque = null; // { item: unidades } (só com a lojinha ligada; só os itens da vitrine deste intervalo)
@@ -29046,7 +29047,7 @@ function corridaRelampago() {
 function corridaBombaAgora() {
   return CURRENT_MODE === "corrida" && corridaBomba === cartaSeq && !!currentCard;
 }
-// prazos da vez: Hardcore 10+10 s; relâmpago: a janela da dica; Fôlego (lojinha): +15 s pra quem comprou
+// prazos da vez: Hardcore 10+10 s; relâmpago: a janela da dica; Segundo Fôlego (lojinha): +15 s pra quem comprou
 function corridaAjustarVez(dur, kind) {
   if (corridaHardcore) {
     dur.pick = Math.min(dur.pick, CORRIDA_VEZ_HC_SEG + acessTempoExtra("pick"));
@@ -29059,7 +29060,7 @@ function corridaAjustarVez(dur, kind) {
     dur.response += 15;
   }
 }
-// Congelar Mesa: enquanto tiver saldo, o geral não corre (o saldo gasta no lugar dele)
+// Pausa Dramática: enquanto tiver saldo, o geral não corre (o saldo gasta no lugar dele)
 function corridaCongelamento(geralCorre) {
   const agora = Date.now();
   const passou = corridaCongelaTique ? agora - corridaCongelaTique : 0;
@@ -29108,14 +29109,14 @@ function corridaPenalidade(tipo) {
     fxFloat(`💣 −${CORRIDA_BOMBA_ERRO_MS / 1e3} s no relógio`, "#f87171");
   }
 }
-// carta morta sem acerto: −1 min no geral (Escudo de Kevlar segura; no duelo e no desempate não vale)
+// carta morta sem acerto: −1 min no geral (Seguro do Relógio segura; no duelo e no desempate não vale)
 function corridaCartaMorreu() {
   if (corridaDuelo || corridaDesempate || corridaAcabou) return;
   const bomba = corridaBombaAgora();
   if (corridaEscudo === cartaSeq) {
     corridaEscudo = -1;
-    fxFloat("🛡️ Escudo de Kevlar segurou o −1 min!", "#38bdf8");
-    caosLog("corrida", "Escudo de Kevlar absorveu a carta morta");
+    fxFloat(`${CORRIDA_LOJA.escudo.ic} ${CORRIDA_LOJA.escudo.nome} segurou o −1 min!`, "#38bdf8");
+    caosLog("corrida", "Seguro do Relógio absorveu a carta morta");
     return;
   }
   corridaGeralMudar(-CORRIDA_MORTE_MS);
@@ -29375,10 +29376,10 @@ function corridaUsar(item, id) {
     corridaCartaMudar(15e3);
     fxFloat(`⚡ ${p.name}: +15 s na carta!`, "#4ade80");
   } else {
-    // Corte de Fio: passa a vez sem gastar dica e sem os −2 s
+    // Passe Livre: passa a vez sem gastar dica e sem os −2 s
     clearTimer();
     responderIndex = advanceResponderAfterFailure();
-    fxFloat(`✂️ ${p.name} cortou o fio e passou a vez`, "#a78bfa");
+    fxFloat(`${CORRIDA_LOJA.corte.ic} ${p.name} usou o ${CORRIDA_LOJA.corte.nome} e passou a vez`, "#a78bfa");
     startTimer("pick");
   }
   playSfx("pick");
@@ -29428,7 +29429,7 @@ function corridaLojaLigarBotoes(box) {
     b.addEventListener("click", () => dispatchAction({ type: "corridaComprar", data: [b.dataset.crComprar, b.dataset.crQuem] })),
   );
 }
-// itens guardados dos jogadores do host, durante a carta (Corte de Fio na vez, Desfibrilador a qualquer hora)
+// itens guardados dos jogadores do host, durante a carta (Passe Livre na vez, Choque de Tempo a qualquer hora)
 function corridaItensHostHtml() {
   if (CURRENT_MODE !== "corrida" || cardState !== "revealed") return "";
   const btns = [];
@@ -29872,7 +29873,7 @@ function mcUsar(item, id, alvo) {
     mcLog(`💖 ${mcNome(id)} usou uma ${MC_LOJA.folego.nome} e pode tentar de novo.`);
   } else if (item === "congelar") {
     j.congela = { por: id, ate: j.inicio + 7000 };
-    mcAnunciar(`🥶 ${mcNome(id)} chamou a ${MC_LOJA.congelar.nome}: só ele pode bater nos primeiros 7 segundos.`);
+    mcAnunciar(`🥶 ${mcNome(id)} chamou a ${MC_LOJA.congelar.nome}: só ${mcNome(id)} pode palpitar nos primeiros 7 segundos.`);
   } else if (item === "olho") {
     // a 1ª letra da resposta, só no dispositivo de quem usou (mcPrivado), enquanto durar esta dica
     const c = mc.cartas[mcMestreId()];
@@ -29886,7 +29887,7 @@ function mcUsar(item, id, alvo) {
       mc.inv[alvo].espelho--;
       vitima = id;
       autor = alvo;
-      mcAnunciar(`🪞 O Espelho de ${mcNome(alvo)} refletiu a Mordaça! ${mcNome(id)} ficou amordaçado.`);
+      mcAnunciar(`🪞 O Espelho de ${mcNome(alvo)} refletiu a Mordaça! ${mcNome(id)} levou a mordaça.`);
     } else mcAnunciar(`🤐 ${mcNome(id)} amordaçou ${mcNome(alvo)} nesta dica.`);
     j.mordaca = vitima;
     mc.garganta[vitima] = j.serial + 1; // Garganta Limpa: imune na próxima dica
@@ -29937,7 +29938,9 @@ function mcBatataSegurar(id) {
   if (!mcPodeBatata(id)) return;
   mcAnunciar(`🥔 ${mcNome(id)} SEGUROU a batata! Carta bônus agora.`);
   if (mc.janela) mcRelogioParar(mc.janela.relogio);
+  const naAbertura = mc.fase === "abrindo";
   mcDesafioComecar(id);
+  if (naAbertura && mc.desafio) mc.desafio.mesmaVez = true; // segurou antes da dica abrir: a vez desse Mestre não se perde
 }
 // Carta bônus da batata (Hardcore): até 5 dicas abrem sozinhas; o portador bate e responde; quem julga recebe a resposta
 function mcDesafioComecar(id) {
@@ -29995,7 +29998,8 @@ function mcDesafioPerdeu() {
   mcDesafioFim();
 }
 function mcDesafioFim() {
-  const volta = mc.desafio ? mc.desafio.voltaFase : "abrindo";
+  const volta = mc.desafio ? mc.desafio.voltaFase : "abrindo",
+    mesmaVez = !!(mc.desafio && mc.desafio.mesmaVez);
   mc.desafio = null;
   // segurou no meio de uma janela: ela volta de onde parou; senão, segue a roda
   if (volta === "janela" && mc.janela) {
@@ -30003,7 +30007,7 @@ function mcDesafioFim() {
     mcRelogioCorrer(mc.janela.relogio);
     return mcMudou();
   }
-  mc.vez = (mc.vez + 1) % mc.ordem.length;
+  if (!mesmaVez) mc.vez = (mc.vez + 1) % mc.ordem.length;
   mcComecarVez();
 }
 
@@ -30287,7 +30291,7 @@ function mcOpcoes(id) {
     const p = jogadorPorId(x);
     return p ? (p.avatar ? p.avatar + " " : "") + p.name : "?";
   };
-  if (mcPodePalpitar(id)) add("mcPalpitar", [id], mc.fase === "desfibSolo" ? "⚡ Responder (tentativa solo)" : "✋ Palpitar agora!", "ok");
+  if (mcPodePalpitar(id)) add("mcPalpitar", [id], mc.fase === "desfibSolo" ? "🧟 Responder (tentativa solo)" : "✋ Palpitar agora!", "ok");
   if (mc.fase === "julgando" && mcJuiz() === id && mc.janela && mc.janela.buzz) {
     add("mcVeredito", [true], `✅ ${nome(mc.janela.buzz)} acertou`, "ok", "Você julga");
     add("mcVeredito", [false], `❌ ${nome(mc.janela.buzz)} errou`, "nao", "Você julga");
@@ -30378,7 +30382,7 @@ function mcTelaHtml(r, eu, opcoes, priv) {
     let estado = "";
     if (M.fase === "abrindo") estado = `🎙️ Vez de ${nome(M.mestre)}: a dica ${C.aberta + 1} já vai abrir…`;
     else if (M.fase === "julgando" && j && j.buzz) estado = `🗣️ ${nome(j.buzz)} está respondendo! ${nome(M.mestre)} julga.`;
-    else if (M.fase === "janela" && j) estado = `✋ Quem souber, palpita! <b class="mc-cont mc-janela" data-fim="${fimDe(j.relogio)}">…</b> s${j.congela && Date.now() < j.congela.ate ? ` · 🧊 só ${nome(j.congela.por)} agora` : ""}${j.mordaca ? ` · 🤐 ${nome(j.mordaca)} amordaçado` : ""}`;
+    else if (M.fase === "janela" && j) estado = `✋ Quem souber, palpita! <b class="mc-cont mc-janela" data-fim="${fimDe(j.relogio)}">…</b> s${j.congela && Date.now() < j.congela.ate ? ` · 🥶 só ${nome(j.congela.por)} agora` : ""}${j.mordaca ? ` · 🤐 ${nome(j.mordaca)} amordaçado` : ""}`;
     else if (M.fase === "desfibOferta") estado = `${MC_LOJA.desfib.ic} A carta vai hibernar… alguém tem ${MC_LOJA.desfib.nome}?`;
     else if (M.fase === "desfibSolo" && M.desfib) estado = `${MC_LOJA.desfib.ic} ${nome(M.desfib.id)} está numa tentativa solo com a ${MC_LOJA.desfib.nome}!`;
     centro = `<div class="mc-bloco"><div class="mc-cat">🎙️ Carta de ${nome(M.mestre)} · <span class="tc-selo">${escapeHtml(TELAO_CAT[C.cat] || C.cat)}</span> · ${C.aberta}/${C.total} dicas</div><div class="mc-estado">${estado}</div><ol class="mc-dicas">${C.dicas

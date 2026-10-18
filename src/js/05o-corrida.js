@@ -114,7 +114,7 @@ function corridaTicar() {
     corridaCartaDesde = null;
   }
   const parado = corridaParado();
-  // o geral congela no desempate, no duelo e enquanto durar o "Congelar Mesa" da lojinha
+  // o geral congela no desempate, no duelo e enquanto durar o "Pausa Dramática" da lojinha
   let geralCorre = !parado && !corridaAcabou && !corridaDesempate && !corridaDuelo && (cardState === "hidden" || cardState === "revealed");
   geralCorre = corridaCongelamento(geralCorre);
   const cartaCorre = !parado && cardState === "revealed";

@@ -410,7 +410,7 @@ function mcUsar(item, id, alvo) {
     mcLog(`💖 ${mcNome(id)} usou uma ${MC_LOJA.folego.nome} e pode tentar de novo.`);
   } else if (item === "congelar") {
     j.congela = { por: id, ate: j.inicio + 7000 };
-    mcAnunciar(`🥶 ${mcNome(id)} chamou a ${MC_LOJA.congelar.nome}: só ele pode bater nos primeiros 7 segundos.`);
+    mcAnunciar(`🥶 ${mcNome(id)} chamou a ${MC_LOJA.congelar.nome}: só ${mcNome(id)} pode palpitar nos primeiros 7 segundos.`);
   } else if (item === "olho") {
     // a 1ª letra da resposta, só no dispositivo de quem usou (mcPrivado), enquanto durar esta dica
     const c = mc.cartas[mcMestreId()];
@@ -424,7 +424,7 @@ function mcUsar(item, id, alvo) {
       mc.inv[alvo].espelho--;
       vitima = id;
       autor = alvo;
-      mcAnunciar(`🪞 O Espelho de ${mcNome(alvo)} refletiu a Mordaça! ${mcNome(id)} ficou amordaçado.`);
+      mcAnunciar(`🪞 O Espelho de ${mcNome(alvo)} refletiu a Mordaça! ${mcNome(id)} levou a mordaça.`);
     } else mcAnunciar(`🤐 ${mcNome(id)} amordaçou ${mcNome(alvo)} nesta dica.`);
     j.mordaca = vitima;
     mc.garganta[vitima] = j.serial + 1; // Garganta Limpa: imune na próxima dica
@@ -475,7 +475,9 @@ function mcBatataSegurar(id) {
   if (!mcPodeBatata(id)) return;
   mcAnunciar(`🥔 ${mcNome(id)} SEGUROU a batata! Carta bônus agora.`);
   if (mc.janela) mcRelogioParar(mc.janela.relogio);
+  const naAbertura = mc.fase === "abrindo";
   mcDesafioComecar(id);
+  if (naAbertura && mc.desafio) mc.desafio.mesmaVez = true; // segurou antes da dica abrir: a vez desse Mestre não se perde
 }
 // Carta bônus da batata (Hardcore): até 5 dicas abrem sozinhas; o portador bate e responde; quem julga recebe a resposta
 function mcDesafioComecar(id) {
@@ -533,7 +535,8 @@ function mcDesafioPerdeu() {
   mcDesafioFim();
 }
 function mcDesafioFim() {
-  const volta = mc.desafio ? mc.desafio.voltaFase : "abrindo";
+  const volta = mc.desafio ? mc.desafio.voltaFase : "abrindo",
+    mesmaVez = !!(mc.desafio && mc.desafio.mesmaVez);
   mc.desafio = null;
   // segurou no meio de uma janela: ela volta de onde parou; senão, segue a roda
   if (volta === "janela" && mc.janela) {
@@ -541,7 +544,7 @@ function mcDesafioFim() {
     mcRelogioCorrer(mc.janela.relogio);
     return mcMudou();
   }
-  mc.vez = (mc.vez + 1) % mc.ordem.length;
+  if (!mesmaVez) mc.vez = (mc.vez + 1) % mc.ordem.length;
   mcComecarVez();
 }
 
@@ -825,7 +828,7 @@ function mcOpcoes(id) {
     const p = jogadorPorId(x);
     return p ? (p.avatar ? p.avatar + " " : "") + p.name : "?";
   };
-  if (mcPodePalpitar(id)) add("mcPalpitar", [id], mc.fase === "desfibSolo" ? "⚡ Responder (tentativa solo)" : "✋ Palpitar agora!", "ok");
+  if (mcPodePalpitar(id)) add("mcPalpitar", [id], mc.fase === "desfibSolo" ? "🧟 Responder (tentativa solo)" : "✋ Palpitar agora!", "ok");
   if (mc.fase === "julgando" && mcJuiz() === id && mc.janela && mc.janela.buzz) {
     add("mcVeredito", [true], `✅ ${nome(mc.janela.buzz)} acertou`, "ok", "Você julga");
     add("mcVeredito", [false], `❌ ${nome(mc.janela.buzz)} errou`, "nao", "Você julga");
@@ -916,7 +919,7 @@ function mcTelaHtml(r, eu, opcoes, priv) {
     let estado = "";
     if (M.fase === "abrindo") estado = `🎙️ Vez de ${nome(M.mestre)}: a dica ${C.aberta + 1} já vai abrir…`;
     else if (M.fase === "julgando" && j && j.buzz) estado = `🗣️ ${nome(j.buzz)} está respondendo! ${nome(M.mestre)} julga.`;
-    else if (M.fase === "janela" && j) estado = `✋ Quem souber, palpita! <b class="mc-cont mc-janela" data-fim="${fimDe(j.relogio)}">…</b> s${j.congela && Date.now() < j.congela.ate ? ` · 🧊 só ${nome(j.congela.por)} agora` : ""}${j.mordaca ? ` · 🤐 ${nome(j.mordaca)} amordaçado` : ""}`;
+    else if (M.fase === "janela" && j) estado = `✋ Quem souber, palpita! <b class="mc-cont mc-janela" data-fim="${fimDe(j.relogio)}">…</b> s${j.congela && Date.now() < j.congela.ate ? ` · 🥶 só ${nome(j.congela.por)} agora` : ""}${j.mordaca ? ` · 🤐 ${nome(j.mordaca)} amordaçado` : ""}`;
     else if (M.fase === "desfibOferta") estado = `${MC_LOJA.desfib.ic} A carta vai hibernar… alguém tem ${MC_LOJA.desfib.nome}?`;
     else if (M.fase === "desfibSolo" && M.desfib) estado = `${MC_LOJA.desfib.ic} ${nome(M.desfib.id)} está numa tentativa solo com a ${MC_LOJA.desfib.nome}!`;
     centro = `<div class="mc-bloco"><div class="mc-cat">🎙️ Carta de ${nome(M.mestre)} · <span class="tc-selo">${escapeHtml(TELAO_CAT[C.cat] || C.cat)}</span> · ${C.aberta}/${C.total} dicas</div><div class="mc-estado">${estado}</div><ol class="mc-dicas">${C.dicas

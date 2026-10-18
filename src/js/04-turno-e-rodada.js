@@ -653,7 +653,7 @@ function resolveExhaustionIfNeeded() {
   if (revealedOrder.length >= currentCard.clues.length || corridaFim) {
     clearCardTimer();
     if (corridaFim) corridaAvisarCartaPerdida();
-    if (CURRENT_MODE === "corrida") corridaCartaMorreu(); // −1 min no geral (Escudo de Kevlar segura; duelo e desempate não)
+    if (CURRENT_MODE === "corrida") corridaCartaMorreu(); // −1 min no geral (Seguro do Relógio segura; duelo e desempate não)
     stats.totalExhausted++;
     cartaPartidaRegistrar(-1, revealedOrder.filter((r) => r.item.type === "clue").length, null);
     caosImplicFim(99);

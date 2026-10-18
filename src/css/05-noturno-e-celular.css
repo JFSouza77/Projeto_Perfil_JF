@@ -392,7 +392,7 @@ body:not(.batata-mode) .splash-dice {
 }
 .humor-btn {
   background: transparent !important;
-  color: var(--hc) !important;
+  color: color-mix(in srgb, var(--hc) 55%, #fff) !important; /* 1.7.10.6: a cor pura (Ácido, Nível 0) ficava abaixo de 4,5:1 no escuro */
   border: 1.5px solid var(--hc) !important;
   box-shadow: 0 0 8px color-mix(in srgb, var(--hc) 30%, transparent);
   opacity: 0.8;

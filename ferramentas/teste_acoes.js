@@ -438,6 +438,8 @@ const ARQ = acharMestre(process.argv[2]);
       const errouSegue = !palpiteHolders[c.id] && palpiteStock === 5 && pendingIndex === pendDepois && responderIndex === 1 && !palpiteVezAtual() && redeOpcoes(a.id).some((o) => o.a === 'acertou');
       // C.A.O.S. 4.4.1 (relato do JF): tocar na dica aberta faz ele responder mesmo no respiro; falando, o toque não gasta
       pendingIndex = null; if (activeToastState) closeActiveToast();
+      // (sem a sala: com o Beto em outro aparelho, a fala que chama ele pelo nome vai só pro celular dele)
+      rede = redeAntes;
       const silRep = caosSilenced; caosSilenced = false;
       caosRepetidaAt = 0; caosRepetidaN = 0; caosFalaFimAt = Date.now(); caosUltimaFalaAt = Date.now();
       caosDicaRepetida(6);
@@ -511,7 +513,7 @@ const ARQ = acharMestre(process.argv[2]);
     {
       const salvos = players, iniAntes = starterChosen;
       starterChosen = false;
-      players = [{ id: 'j_semap1', name: 'Bia', score: 0, position: 0, color: PLAYER_COLORS[0], avatar: '😀', humor: 'normal', gems: {} }, { id: 'j_semap2', name: 'Caio', score: 0, position: 0, color: PLAYER_COLORS[1], avatar: '😎', humor: 'normal', gems: {} }];
+      players = [{ id: 'j_semap1', name: 'Bia', score: 0, position: 0, color: PLAYER_COLORS[0], avatar: '😀', humor: 'normal', gems: {}, idade: 'doze' }, { id: 'j_semap2', name: 'Caio', score: 0, position: 0, color: PLAYER_COLORS[1], avatar: '😎', humor: 'normal', gems: {}, idade: 'doze' }];
       const abriu = !!redeAbrirSala('local');
       const tela = document.getElementById('welcomeScreen').style.display;
       document.getElementById('startGameBtn').click();

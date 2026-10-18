@@ -1,6 +1,6 @@
 /* --- 1.7.10.6 · CORRIDA: EVENTOS (spec do JF de 17/10 à noite, com o balanceamento em docs/Modos_1.7.10.6.md) ---
  *  · Penalidades: errou, a carta perde 1 s; pulou ("nem tentou"), perde 2 s. Carta que morre sem acerto: o geral
- *    perde 1 min (o Escudo de Kevlar segura; no duelo e no desempate não vale).
+ *    perde 1 min (o Seguro do Relógio segura; no duelo e no desempate não vale).
  *  · Bomba-Relógio: o C.A.O.S. anuncia antes da carta. Cada erro/pulo tira 5 s do geral; desarmar dá +20 s.
  *  · Juízo Final: no último minuto as dicas abrem sozinhas e qualquer um bate na mesa (sem os +10 s por acerto).
  *  · Hardcore: carta de 1:30 correndo 1,5×, as dicas abrem sozinhas o jogo todo, mais bombas.
@@ -17,9 +17,9 @@ let corridaDuelo = null; // { ids: [2 duelistas], mestreAntes, carta }
 let corridaDuelos = 0;
 let corridaUltimoEvento = 0; // stats.totalDrawn do último evento (bomba/duelo), pra espaçar
 let corridaSemDicas = -1; // cartaSeq da carta que ficou sem dica no relâmpago (acaba como esgotada)
-let corridaCongelaMs = 0; // Congelar Mesa (lojinha): quanto do geral ainda fica congelado
+let corridaCongelaMs = 0; // Pausa Dramática (lojinha): quanto do geral ainda fica congelado
 let corridaCongelaTique = 0;
-let corridaEscudo = -1; // cartaSeq que o Escudo de Kevlar protege
+let corridaEscudo = -1; // cartaSeq que o Seguro do Relógio protege
 let corridaFolego = {}; // id → cartaSeq em que a pessoa tem +15 s nas vezes
 let corridaItens = {}; // id → { corte: n, desfib: n }
 let corridaEstoque = null; // { item: unidades } (só com a lojinha ligada; só os itens da vitrine deste intervalo)
@@ -114,7 +114,7 @@ function corridaRelampago() {
 function corridaBombaAgora() {
   return CURRENT_MODE === "corrida" && corridaBomba === cartaSeq && !!currentCard;
 }
-// prazos da vez: Hardcore 10+10 s; relâmpago: a janela da dica; Fôlego (lojinha): +15 s pra quem comprou
+// prazos da vez: Hardcore 10+10 s; relâmpago: a janela da dica; Segundo Fôlego (lojinha): +15 s pra quem comprou
 function corridaAjustarVez(dur, kind) {
   if (corridaHardcore) {
     dur.pick = Math.min(dur.pick, CORRIDA_VEZ_HC_SEG + acessTempoExtra("pick"));
@@ -127,7 +127,7 @@ function corridaAjustarVez(dur, kind) {
     dur.response += 15;
   }
 }
-// Congelar Mesa: enquanto tiver saldo, o geral não corre (o saldo gasta no lugar dele)
+// Pausa Dramática: enquanto tiver saldo, o geral não corre (o saldo gasta no lugar dele)
 function corridaCongelamento(geralCorre) {
   const agora = Date.now();
   const passou = corridaCongelaTique ? agora - corridaCongelaTique : 0;
@@ -176,14 +176,14 @@ function corridaPenalidade(tipo) {
     fxFloat(`💣 −${CORRIDA_BOMBA_ERRO_MS / 1e3} s no relógio`, "#f87171");
   }
 }
-// carta morta sem acerto: −1 min no geral (Escudo de Kevlar segura; no duelo e no desempate não vale)
+// carta morta sem acerto: −1 min no geral (Seguro do Relógio segura; no duelo e no desempate não vale)
 function corridaCartaMorreu() {
   if (corridaDuelo || corridaDesempate || corridaAcabou) return;
   const bomba = corridaBombaAgora();
   if (corridaEscudo === cartaSeq) {
     corridaEscudo = -1;
-    fxFloat("🛡️ Escudo de Kevlar segurou o −1 min!", "#38bdf8");
-    caosLog("corrida", "Escudo de Kevlar absorveu a carta morta");
+    fxFloat(`${CORRIDA_LOJA.escudo.ic} ${CORRIDA_LOJA.escudo.nome} segurou o −1 min!`, "#38bdf8");
+    caosLog("corrida", "Seguro do Relógio absorveu a carta morta");
     return;
   }
   corridaGeralMudar(-CORRIDA_MORTE_MS);
@@ -443,10 +443,10 @@ function corridaUsar(item, id) {
     corridaCartaMudar(15e3);
     fxFloat(`⚡ ${p.name}: +15 s na carta!`, "#4ade80");
   } else {
-    // Corte de Fio: passa a vez sem gastar dica e sem os −2 s
+    // Passe Livre: passa a vez sem gastar dica e sem os −2 s
     clearTimer();
     responderIndex = advanceResponderAfterFailure();
-    fxFloat(`✂️ ${p.name} cortou o fio e passou a vez`, "#a78bfa");
+    fxFloat(`${CORRIDA_LOJA.corte.ic} ${p.name} usou o ${CORRIDA_LOJA.corte.nome} e passou a vez`, "#a78bfa");
     startTimer("pick");
   }
   playSfx("pick");
@@ -496,7 +496,7 @@ function corridaLojaLigarBotoes(box) {
     b.addEventListener("click", () => dispatchAction({ type: "corridaComprar", data: [b.dataset.crComprar, b.dataset.crQuem] })),
   );
 }
-// itens guardados dos jogadores do host, durante a carta (Corte de Fio na vez, Desfibrilador a qualquer hora)
+// itens guardados dos jogadores do host, durante a carta (Passe Livre na vez, Choque de Tempo a qualquer hora)
 function corridaItensHostHtml() {
   if (CURRENT_MODE !== "corrida" || cardState !== "revealed") return "";
   const btns = [];
