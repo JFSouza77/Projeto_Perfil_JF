@@ -173,6 +173,8 @@ na tela como se ninguém tivesse respondido.
 
 ## QoL da partida online de 18/10 (JF, namorada, cunhada e prima: 11 a 13 anos)
 
+Ideias da Anne (crédito pedido pelo JF): duelo pra mesa toda, Mestre do duelo, destaque dos nomes e dos papéis, botões que chamam.
+
 - **Botões de próximo passo** ("cta"): grandes, amarelos e pulsando (param no modo calmo/batata e com
   movimento reduzido). Valem pro Mestre: "🎰 Virar a carta (sorteia a categoria)", "✓ Já falei a categoria!
   Mostrar a carta" (no dispositivo e na tela do host), "🃏 Puxar a próxima carta" e "👉 Abrir a dica X
