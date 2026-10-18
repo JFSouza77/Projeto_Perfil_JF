@@ -403,7 +403,7 @@ const CORRIDA_LOJA = {
   corte: { ic: "🎟️", nome: "Passe Livre", preco: 15, peso: 3, desc: "guarda: pula a sua vez sem gastar dica e sem os −2 s" },
   desfib: { ic: "⚡", nome: "Choque de Tempo", preco: 30, peso: 2, desc: "guarda: +15 s no relógio da carta, na hora que quiser" },
   cofrinho: { ic: "🐷", nome: "Cofrinho", preco: 25, peso: 2, desc: "a sua próxima carta acertada vale +40 pontos (dura até você acertar)" },
-  ampulheta: { ic: "⏳", nome: "Ampulheta Extra", preco: 35, peso: 1, max: 1, desc: "+30 s no relógio geral na hora (bom pra quem está atrás)" },
+  ampulheta: { ic: "⏳", nome: "Ampulheta Extra", preco: 35, peso: 1, max: 1, desc: "+30 s no relógio geral na hora (bom pra quem está atrás; no Juízo Final não sai)" },
   ima: { ic: "🧲", nome: "Ímã de Pontos", preco: 20, peso: 2, desc: "se outro jogador acertar a próxima carta, você leva 20% do valor dela" },
 };
 const CORRIDA_VITRINE = 4;

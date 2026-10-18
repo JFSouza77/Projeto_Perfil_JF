@@ -377,6 +377,8 @@ function corridaPodeComprar(item, id) {
     p = jogadorPorId(id);
   if (!it || !p || !corridaLojaLigada() || !corridaIntervaloAberto() || !corridaEstoque) return false;
   if ((corridaEstoque[item] || 0) <= 0 || (p.score || 0) < corridaPreco(item)) return false;
+  // Juízo Final: acerto não dá mais tempo, então os itens de tempo também saem de cena (senão a partida não acaba)
+  if ((item === "ampulheta" || item === "congelar") && (corridaJuizo || corridaAcabou)) return false;
   if (item === "ima" && corridaIma[id] === cartaSeq) return false;
   if (item === "escudo" && corridaEscudo === cartaSeq) return false; // um escudo por carta basta
   if (item === "folego" && corridaFolego[id] === cartaSeq) return false;
