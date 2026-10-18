@@ -1183,14 +1183,30 @@ body.claro .pt-resumo li {
 .mc-placar li.mc-mestre {
   outline: 1px solid rgba(232, 121, 249, 0.6);
 }
-.mc-feed {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  font-size: 0.85rem;
+/* 1.7.10.7: linha fixa do "agora" (fica grudada no topo), a última novidade e o intervalo em tela própria */
+.mc-agora-linha {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  padding: 10px 14px;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: #fff;
+  background: linear-gradient(90deg, rgba(124, 58, 237, 0.92), rgba(192, 38, 211, 0.92));
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  font-variant-numeric: tabular-nums;
+}
+.mc-novidade {
+  font-size: 0.9rem;
+  text-align: center;
   opacity: 0.85;
-  display: grid;
-  gap: 2px;
+  min-height: 1.3em;
+}
+.mc-tela-intervalo .mc-bloco {
+  border-color: rgba(251, 191, 36, 0.55);
+  background: rgba(251, 191, 36, 0.08);
 }
 .mc-pinata {
   margin-top: 8px;
@@ -1480,4 +1496,262 @@ body.claro .mc-respondendo {
 html.acess-calmo .mc-respondendo,
 body.batata-mode .mc-respondendo {
   animation: none;
+}
+
+/* ===== 1.7.10.7 · Aviso da mesa (pedido do JF): tela escura, caixa grande e animada, tudo congelado ===== */
+.aviso-mesa-ov {
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(5, 3, 15, 0.82);
+  backdrop-filter: blur(3px);
+  animation: avisoFundo 0.25s ease-out;
+}
+@keyframes avisoFundo {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.aviso-mesa {
+  width: min(92vw, 520px);
+  box-sizing: border-box;
+  padding: 22px 20px 18px;
+  border-radius: 22px;
+  text-align: center;
+  color: #fff;
+  background: radial-gradient(circle at 50% 0%, #4c1d95, #1e1b4b 70%);
+  border: 3px solid #facc15;
+  box-shadow: 0 0 0 4px #facc1533, 0 0 40px #facc1566, 0 20px 50px #000a;
+  animation: avisoEntra 0.45s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+@keyframes avisoEntra {
+  from { transform: scale(0.4) rotate(-6deg); opacity: 0; }
+  to { transform: scale(1) rotate(0); opacity: 1; }
+}
+.aviso-tit {
+  font-size: clamp(1.5rem, 6vw, 2.2rem);
+  font-weight: 900;
+  line-height: 1.15;
+  margin-top: 8px;
+  text-shadow: 0 0 6px #fff, 0 0 18px #fde047;
+}
+.aviso-txt {
+  margin-top: 8px;
+  font-size: 1.05rem;
+  line-height: 1.35;
+  color: #f1f5f9;
+}
+.aviso-barra {
+  height: 6px;
+  margin: 14px 0 12px;
+  border-radius: 99px;
+  background: #ffffff22;
+  overflow: hidden;
+}
+.aviso-barra i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #facc15, #f97316);
+  animation: avisoBarra var(--aviso-ms, 4500ms) linear forwards;
+}
+@keyframes avisoBarra {
+  from { width: 100%; }
+  to { width: 0; }
+}
+.aviso-ok {
+  min-height: 48px;
+  min-width: 160px;
+  padding: 10px 22px;
+  border-radius: 14px;
+  border: 2px solid #facc15;
+  background: #facc15;
+  color: #1c1917;
+  font-weight: 900;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+.aviso-anim {
+  font-size: 4rem;
+  line-height: 1.1;
+  min-height: 4.6rem;
+}
+.aviso-ic {
+  display: inline-block;
+  animation: avisoPula 0.6s ease-in-out infinite alternate;
+}
+@keyframes avisoPula {
+  from { transform: translateY(0) scale(1); }
+  to { transform: translateY(-10px) scale(1.12); }
+}
+/* batata quente: pula e gira; bomba: treme; turbo: avança; imposto: cai; juízo: balança */
+.aviso-batata .aviso-ic { animation: avisoBatata 0.5s ease-in-out infinite alternate; }
+@keyframes avisoBatata {
+  from { transform: rotate(-20deg) translateY(0); }
+  to { transform: rotate(20deg) translateY(-14px); }
+}
+.aviso-bomba .aviso-ic { animation: avisoTremeIc 0.12s linear infinite; }
+@keyframes avisoTremeIc {
+  0% { transform: translate(0, 0) rotate(0); }
+  25% { transform: translate(-3px, 1px) rotate(-6deg); }
+  50% { transform: translate(3px, -1px) rotate(6deg); }
+  75% { transform: translate(-2px, -2px) rotate(-3deg); }
+}
+.aviso-turbo .aviso-ic { animation: avisoTurbo 0.5s ease-in infinite; }
+@keyframes avisoTurbo {
+  from { transform: translateX(-40px); opacity: 0.3; }
+  to { transform: translateX(40px); opacity: 1; }
+}
+.aviso-imposto .aviso-ic { animation: avisoCai 0.7s ease-in infinite; }
+@keyframes avisoCai {
+  from { transform: translateY(-24px); opacity: 0; }
+  to { transform: translateY(10px); opacity: 1; }
+}
+.aviso-juizo .aviso-ic { animation: avisoBalanca 0.9s ease-in-out infinite alternate; transform-origin: 50% 0; }
+@keyframes avisoBalanca {
+  from { transform: rotate(-14deg); }
+  to { transform: rotate(14deg); }
+}
+/* duelo: duas espadas que se cruzam */
+.aviso-espadas {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+}
+.aviso-espadas span:first-child { animation: espadaE 0.7s ease-in-out infinite alternate; }
+.aviso-espadas span:last-child { animation: espadaD 0.7s ease-in-out infinite alternate; }
+@keyframes espadaE {
+  from { transform: translateX(-30px) rotate(-30deg); }
+  to { transform: translateX(8px) rotate(25deg); }
+}
+@keyframes espadaD {
+  from { transform: translateX(30px) scaleX(-1) rotate(-30deg); }
+  to { transform: translateX(-8px) scaleX(-1) rotate(25deg); }
+}
+/* Mão Leve: duas luvas que vão e voltam, de fininho */
+.aviso-maos span {
+  display: inline-block;
+  animation: maoLeve 0.8s ease-in-out infinite alternate;
+}
+.aviso-maos span:last-child {
+  animation-delay: 0.4s;
+  transform: scaleX(-1);
+}
+@keyframes maoLeve {
+  from { transform: translateX(-26px) rotate(-15deg); }
+  to { transform: translateX(26px) rotate(15deg); }
+}
+.aviso-maoleve {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 4px #a855f733, 0 0 40px #a855f766, 0 20px 50px #000a;
+}
+/* jokenpô, dado, par ou ímpar, moeda: balança 3 vezes e mostra o resultado */
+.aviso-duelo-anim {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+.aviso-x {
+  font-size: 2rem;
+  color: #fde047;
+}
+.aviso-lado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 6.5rem;
+}
+.aviso-nome {
+  font-size: 0.95rem;
+  font-weight: 800;
+  margin-top: 4px;
+}
+.aviso-mao {
+  position: relative;
+  min-height: 4.6rem;
+}
+.aviso-mao .am-ini {
+  display: inline-block;
+  transform-origin: 50% 90%;
+  animation: maoSacode 0.42s ease-in-out 4, somePronto 0s 1.7s forwards;
+}
+.aviso-mao .am-fim {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%) scale(0.3);
+  white-space: nowrap;
+  opacity: 0;
+  animation: revela 0.35s 1.7s cubic-bezier(0.2, 1.6, 0.4, 1) forwards;
+}
+.aviso-moeda .am-ini {
+  animation: moedaGira 0.3s linear 6, somePronto 0s 1.8s forwards;
+}
+.aviso-moeda .am-fim,
+.aviso-parimpar .am-fim {
+  font-size: 2.4rem;
+}
+@keyframes maoSacode {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-22px) rotate(-12deg); }
+}
+@keyframes moedaGira {
+  from { transform: rotateY(0); }
+  to { transform: rotateY(360deg); }
+}
+@keyframes somePronto {
+  to { opacity: 0; }
+}
+@keyframes revela {
+  to { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+/* a tela inteira treme quando o aviso chega */
+body.aviso-treme {
+  animation: telaTreme 0.5s ease-in-out;
+}
+@keyframes telaTreme {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-8px, 2px); }
+  40% { transform: translate(7px, -3px); }
+  60% { transform: translate(-5px, 2px); }
+  80% { transform: translate(3px, -1px); }
+}
+body.claro .aviso-mesa {
+  background: radial-gradient(circle at 50% 0%, #6d28d9, #312e81 70%);
+}
+html.acess-calmo .aviso-mesa *,
+body.batata-mode .aviso-mesa *,
+html.acess-calmo body.aviso-treme,
+body.batata-mode.aviso-treme {
+  animation-duration: 0.01s !important;
+  animation-iteration-count: 1 !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .aviso-mesa *,
+  body.aviso-treme {
+    animation-duration: 0.01s !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+/* 1.7.10.7: Espectar duelo (quem está fora vê a resposta) */
+.telao-duelo .td-espiar {
+  align-self: center;
+  margin-top: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 2px solid #fde68a;
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+.telao-duelo .td-espia {
+  align-self: center;
+  margin-top: 6px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.4);
 }

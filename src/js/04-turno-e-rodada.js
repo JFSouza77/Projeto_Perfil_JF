@@ -278,6 +278,7 @@ function resetDeck() {
   tabForma = null; // 1.7.9.2: partida nova, tabuleiro novo
   tabLobbyZerar(); // 1.7.9.4
   corridaZerar(); // 1.7.10.6
+  if (typeof avisoZerar === "function") avisoZerar(); // 1.7.10.7
   mcZerar();
   document.getElementById("mcTela")?.remove();
   sorteioContagem = 0;
@@ -543,7 +544,20 @@ function duelAnunciar() {
   const lados = eq
     ? `Equipe ${entityDisplay(currentCard.bonusLandedByIdx).name} (${n(a)}) × Equipe ${entityDisplay(currentCard.bonusMestreIdx).name} (${n(b)})`
     : `${n(a)} chamou ${n(b)} pra duelar`;
-  showToastMessage(`⚔️ ${lados}${eq ? "" : ` e ${n(mestreIndex)} pra ser o Mestre`}! Carta em dobro: ${n(a)} começa respondendo, e a vez alterna entre os dois.`, null, true, true);
+  // 1.7.10.7 (pedido do JF): a tela escurece e a caixa avisa todo mundo; quem foi chamado vê "te chamou" e só
+  // tem o "Bora!" (não tem recusa); o Mestre do duelo vê que é ele quem lê (só pra avisar)
+  const id = (i) => (players[i] ? players[i].id : null);
+  const variantes = {};
+  if (id(b)) variantes[id(b)] = { titulo: `${n(a)} te chamou pro duelo!`, texto: `Carta em dobro. ${n(a)} começa respondendo e a vez alterna entre vocês dois.` };
+  if (!eq && id(mestreIndex)) variantes[id(mestreIndex)] = { ic: "🎙️", titulo: "Você é o Mestre do duelo!", texto: `Você lê as dicas pra ${n(a)} e ${n(b)}.` };
+  if (id(a)) variantes[id(a)] = { titulo: `Você chamou ${n(b)} pro duelo!`, texto: "Carta em dobro. Você começa respondendo." };
+  avisoMostrar({
+    ic: "⚔️",
+    titulo: eq ? "Duelo de equipes!" : `${n(a)} chamou ${n(b)} pro duelo!`,
+    texto: eq ? `${lados}. Carta em dobro.` : `${n(mestreIndex)} é o Mestre. Carta em dobro: ${n(a)} começa respondendo, e a vez alterna entre os dois.`,
+    anim: "duelo",
+    variantes,
+  });
 }
 function flipCard() {
   if (cardState !== "hidden") return;
@@ -742,6 +756,18 @@ function resumeTimerInterval() {
   if (timerInterval) clearInterval(timerInterval);
   lastTimerTick = Date.now();
   timerInterval = setInterval(() => {
+    // 1.7.10.7: aviso da mesa na tela: o tempo da vez e da carta espera
+    if (typeof avisoCongeladoDesde === "function") {
+      const d = avisoCongeladoDesde(lastTimerTick);
+      if (d > 0) {
+        if (timerEndAt) timerEndAt += d;
+        if (cardEndAt) cardEndAt += d;
+      }
+      if (avisoMesaCongela()) {
+        lastTimerTick = Date.now();
+        return;
+      }
+    }
     lastTimerTick = Date.now();
     updateTimerDisplay();
     maybeShowTimeWarning();

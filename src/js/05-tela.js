@@ -3013,6 +3013,7 @@ function openTutorial(tipo) {
       }
     });
     document.getElementById("tutNext").addEventListener("click", () => {
+      if (Date.now() < tutLiberaEm) return; // 1.7.10.7: pelo menos 5 s em cada passo
       if (tutorialPos < tutorialLista.length - 1) {
         tutorialPos++;
         renderTutorial();
@@ -3143,9 +3144,34 @@ function renderTutorial() {
   const box = document.querySelector("#tutorialOverlay .tut-box");
   if (box) box.scrollTop = 0;
   document.getElementById("tutBack").style.visibility = tutorialPos === 0 ? "hidden" : "visible";
-  document.getElementById("tutNext").textContent = last ? "🎮 Bora jogar!" : "Próximo ➡️";
+  tutTravarProximo(last);
   // No rápido, o manual completo aparece no último passo.
   document.getElementById("tutManual").style.display = rapido && last ? "" : "none";
+}
+// 1.7.10.7 (pedido do JF): "pelo menos demorar 5 segundos para cada passo". O Próximo só libera depois de 5 s
+// no passo (passo que a pessoa já leu, voltando, libera na hora)
+let tutPassoMs = 5000;
+let tutLiberaEm = 0;
+let tutLidos = new Set();
+let tutTravaTimer = null;
+function tutTravarProximo(last) {
+  const btn = document.getElementById("tutNext");
+  if (!btn) return;
+  const chave = tutorialTipo + "|" + tutorialPos;
+  const rotulo = last ? "🎮 Bora jogar!" : "Próximo ➡️";
+  tutLiberaEm = tutLidos.has(chave) ? 0 : Date.now() + tutPassoMs;
+  tutLidos.add(chave);
+  clearInterval(tutTravaTimer);
+  const pinta = () => {
+    const falta = Math.ceil((tutLiberaEm - Date.now()) / 1000);
+    const preso = falta > 0;
+    btn.disabled = preso;
+    btn.classList.toggle("tut-espera", preso);
+    btn.textContent = preso ? `${rotulo} (${falta})` : rotulo;
+    if (!preso) clearInterval(tutTravaTimer);
+  };
+  pinta();
+  if (tutLiberaEm) tutTravaTimer = setInterval(pinta, 250);
 }
 function closeTutorial() {
   tutCalar();

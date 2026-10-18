@@ -207,6 +207,7 @@ function medir(tela) {
     await c("#btnAcessibilidade");
     await anotar("painel acessibilidade");
     await c("#acessFechar");
+    await page.evaluate(() => (tutPassoMs = 0)); // 1.7.10.7: os 5 s por passo valem pra gente, não pro robô
     await c("#btnTutorial");
     await anotar("tutorial rápido");
     for (let i = 0; i < 12 && (await page.locator("#tutManual:visible").count()) === 0; i++) await c("#tutNext");

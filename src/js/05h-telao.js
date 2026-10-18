@@ -174,7 +174,15 @@ function telaoDueloHtml(d) {
   if (d.fase === "adversario") txt = `<b>${e(d.quem)}</b> caiu na casa de bônus e está escolhendo quem desafia${d.equipe ? "" : " (e depois quem vai ser o Mestre)"}.`;
   else if (d.fase === "mestre") txt = `<b>${e(d.quem)}</b> desafiou <b>${e(d.contra)}</b>! Agora escolhe quem vai ser o Mestre do duelo.`;
   else txt = `<b>${e(d.quem)}</b> × <b>${e(d.contra)}</b>${d.mestre ? ` · 🎙️ Mestre: <b>${e(d.mestre)}</b>` : ""}. Só os dois respondem, a vez alterna e a carta vale em dobro.`;
-  return `<section class="telao-duelo" role="status"><span class="td-tit">🏟️ Duelo de bônus</span><span class="td-txt">${txt}</span></section>`;
+  // 1.7.10.7 (pedido do JF): quem está fora do duelo pode espectar e ver a resposta no próprio dispositivo
+  let espia = "";
+  if (typeof redeEspiarPode === "function" && redeEspiarPode(d)) {
+    const resp = redeEspiaResposta();
+    espia = resp
+      ? `<span class="td-espia">👀 Resposta: <b>${e(resp)}</b> <small>(só você vê, não sopra!)</small></span>`
+      : `<button type="button" class="td-espiar">👀 Espectar duelo (ver a resposta)</button>`;
+  }
+  return `<section class="telao-duelo" role="status"><span class="td-tit">🏟️ Duelo de bônus</span><span class="td-txt">${txt}</span>${espia}</section>`;
 }
 function telaoDesenhar(r, alvo) {
   const box = alvo || document.getElementById("telao"); // 1.7.9.4: o host desenha na própria tela de jogador

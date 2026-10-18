@@ -528,7 +528,7 @@ function iniciar() {
     // 1.7.10.6 (pedido do JF): ninguém começa sem idade (quem falta ganha a pergunta e o botão segue sozinho)
     if (players.some((p) => !idadeNorm(p.idade))) return idadeCompletarAntes(() => document.getElementById("startGameBtn").click());
     // 1.7.10.1 (pedido do JF): com a sala aberta, cada jogador precisa de um aparelho (o celular dele ou o do host)
-    if (typeof redeSemAparelho === "function" && redeSemAparelho().length) return redeAvisarSemAparelho();
+    if (typeof redeSemAparelho === "function" && redeSemAparelho().length) return redeAvisarSemAparelho(() => document.getElementById("startGameBtn").click());
     document.getElementById("welcomeScreen").style.display = "none";
     document.getElementById("gameScreen").style.display = "flex";
     syncGameplayPanels();
