@@ -2638,8 +2638,8 @@ function renderModeCardDescs() {
       ? "O jogo sorteia entre Clássico, Hardcore e Old School (no Equipe só tem tabuleiro)."
       : "O jogo sorteia o modo: Júnior, Clássico, Hardcore, Old School ou Express.",
   );
-  set("mcDescVersus", `Cada um por si. De ${MIN_PLAYERS} a ${MAX_PLAYERS} jogadores, o Mestre roda a cada carta.`);
-  set("mcDescEquipe", "Times sorteados equilibrando as idades. 4, 6, 8, 9 ou 10 jogadores, até 5 equipes (🔴🔵🟢⚫⚪).");
+  set("mcDescVersus", `Cada um por si. De ${MIN_PLAYERS} a ${MAX_PLAYERS} jogadores, o Mestre roda a cada carta. Todos os modos, inclusive a Corrida e o Modo C.A.O.S.`);
+  set("mcDescEquipe", "Times sorteados equilibrando as idades. 4, 6, 8, 9 ou 10 jogadores, até 5 equipes (🔴🔵🟢⚫⚪). Clássico, Hardcore, Old School ou Corrida.");
 }
 function atualizarRotuloModo() {
   const el = document.getElementById("trocarModoLabel");
