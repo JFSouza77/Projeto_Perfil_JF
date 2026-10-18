@@ -6,6 +6,25 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.5.8",
+    data: "18/10/2026 · 10:00",
+    nome: "Multiplayer Update · Online de verdade",
+    t: "Correções da partida online: tudo mais fácil de entender, duelo pra mesa toda e a sala não trava quando o host cai.",
+    itens: [
+      "👆 Botões que chamam: o próximo passo do Mestre (virar a carta, já falei a categoria, puxar a próxima, abrir a dica pedida) fica grande, amarelo e piscando.",
+      "🎙️ Você sabe seu papel: no seu dispositivo aparece em destaque se você é o Mestre ou se é a sua vez.",
+      "📺 Tela dos jogadores mais clara: primeiro quem é o Mestre, depois de quem é a vez e depois a categoria da carta.",
+      "⚡ Pedido de dica na hora: o Mestre vê na hora o número que você pediu. Travou? Toque em qualquer número pra abrir sem pedido.",
+      "🏟️ Duelo pra todo mundo: quando alguém cai na casa de bônus, a mesa toda fica sabendo. Quem caiu escolhe quem desafia e quem vai ser o Mestre do duelo.",
+      "💎 Carta bônus dá joia: acertou o duelo com poucas dicas, leva a joia da categoria.",
+      "🔌 O host caiu? A sala não trava: outro dispositivo assume, com contagem na tela, e a partida continua de onde parou.",
+      "🃏 Carta que travava depois do acerto: corrigido (relato do Henrique). A carta acertada sai da mesa na hora.",
+      "🗣️ Voz do C.A.O.S.: nomes com Jh agora soam certo, e a voz nova não cai mais tanto na voz robótica.",
+      "🔺 Joia de Animal: voltou a ser um triângulo bonitinho no placar das joias.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.5.7",
     data: "17/10/2026 · 09:53",
     nome: "Multiplayer Update · Online de verdade",
