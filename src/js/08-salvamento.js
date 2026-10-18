@@ -555,7 +555,7 @@ function sanitizeLoadedState(s) {
             }
           : {}),
         ...(p.formado === true ? { formado: true } : {}),
-        ...(p.idade === "menor" || p.idade === "maior" ? { idade: p.idade } : {}),
+        ...(idadeNorm(p.idade) ? { idade: idadeNorm(p.idade) } : {}),
         ...(p.mestreAjuda === true ? { mestreAjuda: true } : {}),
         ...(p.mestreAjudaPerguntado === true ? { mestreAjudaPerguntado: true } : {}),
         ...(p.mestreAjudaAvisado === true ? { mestreAjudaAvisado: true } : {}),

@@ -1050,7 +1050,7 @@ function redeOpcoesCadastro() {
     avataresUsados: players.map((p) => p.avatar),
     humores: humorOpcoesModo().map((o) => ({ id: o.id, nome: o.label, dica: o.hint || "", cor: HUMOR_COR[o.id] || "#fbbf24" })),
     humorPadrao: CURRENT_MODE === "junior" ? "familia" : "normal",
-    idades: equipe ? AGE_BRACKETS.map((b) => ({ id: b.id, nome: b.label, cor: b.cor })) : IDADE_OPCOES.map((o) => ({ id: o.id, nome: o.label, cor: o.id === "menor" ? "#22d3ee" : "#a78bfa" })),
+    idades: equipe ? AGE_BRACKETS.map((b) => ({ id: b.id, nome: b.label, cor: b.cor })) : IDADE_OPCOES.map((o) => ({ id: o.id, nome: o.label, cor: o.cor })),
   };
 }
 function redeHostEsperando() {
@@ -1437,12 +1437,13 @@ function redeHostAdicionarPerfil(perfil) {
     humor: humor === "caos" ? caosSortearHumor() : humor,
     humorCaos: humor === "caos" || void 0,
     ageBracket: faixa,
-    idade: isEquipe ? (faixa ? (faixa === "crianca" ? "menor" : "maior") : null) : IDADE_OPCOES.some((o) => o.id === perfil.idade) ? perfil.idade : null,
+    idade: isEquipe ? idadeDaFaixa(faixa) : idadeNorm(perfil.idade),
     team: null,
     nickMs: null,
     aparelho: "dispositivo",
   };
   players.push(p);
+  if (p.idade) idadeLembrar(p.name, p.idade); // 1.7.10.6: o host também lembra a idade desse nome
   try {
     caosMemCadastro(p);
   } catch (e) {}
@@ -1481,8 +1482,14 @@ function redePedidosPintar() {
     box.setAttribute("role", "dialog");
     document.body.appendChild(box);
   }
+  // 1.7.10.6: nome que o host conhece numa faixa de idade menor do que a marcada agora: aviso no pedido
+  const avisoIdade = (pf) => {
+    const nova = CURRENT_FORMAT === "equipe" ? idadeDaFaixa(pf.faixa) : idadeNorm(pf.idade);
+    const ant = idadeSubiu(pf.nome, nova);
+    return ant ? `<br><small>⚠️ Aqui esse nome estava como ${escapeHtml(idadeLabel(ant))}; agora marcou ${escapeHtml(idadeLabel(nova))}.</small>` : "";
+  };
   const quem = (p) =>
-    p.tipo === "perfil" ? `${escapeHtml(p.perfil.avatar || "🙂")} <b>${escapeHtml(p.perfil.nome)}</b> quer entrar` : `Alguém quer entrar como <b>${escapeHtml((jogadorPorId(p.jogadorId) || {}).name || "?")}</b>`;
+    p.tipo === "perfil" ? `${escapeHtml(p.perfil.avatar || "🙂")} <b>${escapeHtml(p.perfil.nome)}</b> quer entrar${avisoIdade(p.perfil)}` : `Alguém quer entrar como <b>${escapeHtml((jogadorPorId(p.jogadorId) || {}).name || "?")}</b>`;
   box.innerHTML =
     `<div class="rede-pedidos-tit">🙋 Pedido${lista.length > 1 ? "s" : ""} pra entrar na sala ${rede.sala}</div>` +
     lista.map((ses) => `<div class="rede-pedido"><span>${quem(rede.pedidos[ses])}</span><span><button type="button" class="rede-btn rede-ok" data-sim="1" data-ses="${ses}">✅ Aceitar</button><button type="button" class="rede-btn rede-nao" data-sim="0" data-ses="${ses}">❌</button></span></div>`).join("") +
@@ -2747,7 +2754,7 @@ function redeEscolhaDesenhar(box, sala) {
       <div class="rede-rot">😀 Emoji</div><div class="avatar-picker-row rede-paleta">${emojis}</div>
       <div class="rede-rot">🎭 Zoeira · Como o C.A.O.S. pode zoar você?</div><div class="color-picker-row rede-paleta tem-escolha">${humores}</div>
       ${hAtual && hAtual.dica ? `<div class="rede-dica-humor">${escapeHtml(hAtual.dica)}</div>` : ""}
-      <div class="rede-rot">${cad.equipe ? "Faixa etária" : "Idade <small>(opcional · com menos de 12, ganha tempo extra pra ler quando for o Mestre)</small>"}</div><div class="color-picker-row rede-paleta${r.idade ? " tem-escolha" : ""}">${idades}</div>
+      <div class="rede-rot">${cad.equipe ? "🎂 Faixa etária <small>(obrigatória)</small>" : "🎂 Idade <small>(obrigatória · com menos de 12, ganha tempo extra pra ler quando for o Mestre; o Modo C.A.O.S. é 16+)</small>"}</div><div class="color-picker-row rede-paleta${r.idade ? " tem-escolha" : ""}">${idades}</div>
       ${rede.erroCadastro ? `<div class="rede-aviso">${escapeHtml(rede.erroCadastro)}</div>` : ""}
       <button type="button" class="btn-start btn-neo neo-solid neo-still" id="redePedir" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">🙋 Pedir pra entrar</button>
     </div>`;
@@ -2777,7 +2784,7 @@ function redeEscolhaDesenhar(box, sala) {
           rede.erroCadastro = campo === "cor" && COR_EXCLUSIVA[b.dataset[attr]] ? `Essa é a cor exclusiva ${COR_EXCLUSIVA[b.dataset[attr]].de}.` : "Esse já tem dono. Escolha outro.";
         } else {
           rede.erroCadastro = null;
-          r[campo] = r[campo] === b.dataset[attr] && campo === "idade" ? null : b.dataset[attr];
+          r[campo] = b.dataset[attr];
         }
         redeEscolhaDesenhar(box, sala);
       }),
@@ -2803,8 +2810,24 @@ function redePedirEntrada(perfil) {
     redeConvidadoDesenhar();
     return false;
   }
-  rede.erroCadastro = null;
   const cad = rede.cadastro || {};
+  // 1.7.10.6 (pedido do JF): idade obrigatória; nome que este dispositivo conhece numa faixa maior pede confirmação
+  if (!r.idade && !isJfName(nome)) {
+    rede.erroCadastro = cad.equipe ? "Escolha a faixa etária." : "Escolha a idade.";
+    redeConvidadoDesenhar();
+    return false;
+  }
+  const idadeR = cad.equipe ? idadeDaFaixa(r.idade) : idadeNorm(r.idade);
+  if (!perfil && !r.idadeOk && idadeSubiu(nome, idadeR)) {
+    idadeConfirmarSubida(nome, idadeR, () => {
+      r.idadeOk = true;
+      redePedirEntrada();
+    });
+    return false;
+  }
+  r.idadeOk = false;
+  if (idadeR) idadeLembrar(nome, idadeR);
+  rede.erroCadastro = null;
   const p = { nome, cor: r.cor || null, avatar: r.avatar || null, humor: r.humor || null };
   if (cad.equipe) p.faixa = r.idade || null;
   else p.idade = r.idade || null;

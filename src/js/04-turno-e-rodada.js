@@ -1629,6 +1629,7 @@ function undoTeamFormation() {
   });
   resetTeamSetupUI();
 }
+let idadeAddConfirmada = null; // 1.7.10.6: nome cuja subida de idade já foi confirmada (o addPlayer volta sozinho)
 function addPlayer() {
   const input = document.getElementById("playerNameInput");
   const name = input.value.trim();
@@ -1652,8 +1653,18 @@ function addPlayer() {
     iniProximo();
     return;
   }
-  undoTeamFormation();
   const isEquipe = CURRENT_FORMAT === "equipe";
+  // 1.7.10.6 (pedido do JF): nome conhecido marcado numa faixa de idade maior do que a lembrada pede confirmação
+  const idadeNova = isJfName(name) ? "dezesseis" : idadeDoCadastro(isEquipe);
+  if (!iniFluxo && idadeAddConfirmada !== name && idadeSubiu(name, idadeNova)) {
+    idadeConfirmarSubida(name, idadeNova, () => {
+      idadeAddConfirmada = name;
+      addPlayer();
+    });
+    return;
+  }
+  idadeAddConfirmada = null;
+  undoTeamFormation();
   players.push({
     id: jogadorIdNovo(),
     name,
@@ -1665,7 +1676,7 @@ function addPlayer() {
     humor: selectedHumor === "caos" ? caosSortearHumor() : selectedHumor,
     humorCaos: selectedHumor === "caos" || void 0,
     ageBracket: isEquipe ? selectedAgeBracket : null,
-    idade: idadeDoCadastro(isEquipe),
+    idade: idadeNova,
     team: null,
     nickMs: nickWaitStart ? Date.now() - nickWaitStart : null,
     ...(iniFluxo ? { iniciante: true, ini: { dicas: 0, feitas: [], acertou: false } } : {}),
@@ -1674,6 +1685,7 @@ function addPlayer() {
     players[players.length - 1].humor = "suave";
     iniEncerrar();
   }
+  idadeLembrar(name, idadeNova);
   nickWaitReset();
   hideNickSuggest();
   idadeLimpar();

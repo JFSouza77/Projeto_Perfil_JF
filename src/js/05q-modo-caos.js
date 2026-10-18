@@ -1019,6 +1019,8 @@ function mcPodeComecar() {
   if (players.length < 3) return avisar("O Modo C.A.O.S. precisa de pelo menos 3 jogadores.");
   const semAparelho = players.filter((p) => p.id !== rede.hostEu && !redeOnline(rede.assentos[p.id]));
   if (semAparelho.length) return avisar(`No Modo C.A.O.S. cada um joga no próprio dispositivo. Falta entrar: ${semAparelho.map((p) => p.name).join(", ")}.`);
-  if (players.some((p) => p.idade === "menor")) return avisar("O Modo C.A.O.S. é 16+. Tem jogador marcado com menos de 12 anos.");
+  // 1.7.10.6 (pedido do JF): 16+ de verdade: todo mundo marcado "16 ou mais" no cadastro
+  const novos = players.filter((p) => !jogador16(p));
+  if (novos.length) return avisar(`O Modo C.A.O.S. é só pra 16+. Fica de fora: ${novos.map((p) => p.name).join(", ")}${novos.some((p) => !idadeNorm(p.idade)) ? " (sem idade marcada)" : ""}.`);
   return true;
 }

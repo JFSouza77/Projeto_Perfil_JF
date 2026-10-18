@@ -10725,7 +10725,7 @@ body.batata-mode .rede-papel.rp-vez {
       <div class="color-picker-row" id="ageBracketRow" style="justify-content:center; flex-wrap:wrap; gap:8px;"></div>
     </div>
     <div style="text-align:center; margin-bottom:8px;" id="idadeWrap">
-      <div class="idade-rot">Idade <small>(opcional · com menos de 12, ganha tempo extra pra ler quando for o Mestre)</small></div>
+      <div class="idade-rot">🎂 Idade <small>(obrigatória · com menos de 12, ganha tempo extra pra ler quando for o Mestre; o Modo C.A.O.S. é 16+)</small></div>
       <div class="color-picker-row" id="idadeRow" role="group" aria-label="Idade" style="justify-content:center; flex-wrap:wrap; gap:8px;"></div>
     </div>
     <!-- Adicionar fica depois de tudo que precisa ser escolhido (nome, cor, emoji, zoeira) -->
@@ -14679,6 +14679,7 @@ function undoTeamFormation() {
   });
   resetTeamSetupUI();
 }
+let idadeAddConfirmada = null; // 1.7.10.6: nome cuja subida de idade já foi confirmada (o addPlayer volta sozinho)
 function addPlayer() {
   const input = document.getElementById("playerNameInput");
   const name = input.value.trim();
@@ -14702,8 +14703,18 @@ function addPlayer() {
     iniProximo();
     return;
   }
-  undoTeamFormation();
   const isEquipe = CURRENT_FORMAT === "equipe";
+  // 1.7.10.6 (pedido do JF): nome conhecido marcado numa faixa de idade maior do que a lembrada pede confirmação
+  const idadeNova = isJfName(name) ? "dezesseis" : idadeDoCadastro(isEquipe);
+  if (!iniFluxo && idadeAddConfirmada !== name && idadeSubiu(name, idadeNova)) {
+    idadeConfirmarSubida(name, idadeNova, () => {
+      idadeAddConfirmada = name;
+      addPlayer();
+    });
+    return;
+  }
+  idadeAddConfirmada = null;
+  undoTeamFormation();
   players.push({
     id: jogadorIdNovo(),
     name,
@@ -14715,7 +14726,7 @@ function addPlayer() {
     humor: selectedHumor === "caos" ? caosSortearHumor() : selectedHumor,
     humorCaos: selectedHumor === "caos" || void 0,
     ageBracket: isEquipe ? selectedAgeBracket : null,
-    idade: idadeDoCadastro(isEquipe),
+    idade: idadeNova,
     team: null,
     nickMs: nickWaitStart ? Date.now() - nickWaitStart : null,
     ...(iniFluxo ? { iniciante: true, ini: { dicas: 0, feitas: [], acertou: false } } : {}),
@@ -14724,6 +14735,7 @@ function addPlayer() {
     players[players.length - 1].humor = "suave";
     iniEncerrar();
   }
+  idadeLembrar(name, idadeNova);
   nickWaitReset();
   hideNickSuggest();
   idadeLimpar();
@@ -19482,8 +19494,10 @@ function cadPodeAdicionar() {
   const inp = document.getElementById("playerNameInput");
   const nome = inp ? inp.value.trim() : "";
   if (nome.length < 2) return false;
-  if (isJfName(nome) || isAnneName(nome) || presenteDe(nome)) return true;
+  if (isJfName(nome)) return true;
   const eq = CURRENT_FORMAT === "equipe";
+  if (!eq && !selectedIdade) return false; // 1.7.10.6: idade obrigatória (no Equipe, a faixa etária)
+  if (isAnneName(nome) || presenteDe(nome)) return eq ? !!cadFaixa : true;
   if (!eq && !cadCor) return false;
   if (!cadEmoji) return false;
   if (!humorPreMarcado() && !cadHumor) return false;
@@ -19494,9 +19508,11 @@ function cadFaltaTexto() {
   const inp = document.getElementById("playerNameInput");
   const nome = inp ? inp.value.trim() : "";
   if (nome.length < 2) return "Escreva o nome (2 a 15 letras).";
-  if (isJfName(nome) || isAnneName(nome) || presenteDe(nome)) return "";
+  if (isJfName(nome)) return "";
   const f = [],
     eq = CURRENT_FORMAT === "equipe";
+  if (isAnneName(nome) || presenteDe(nome)) return (eq ? cadFaixa : selectedIdade) ? "" : "Falta escolher: " + (eq ? "faixa de idade." : "idade.");
+  if (!eq && !selectedIdade) f.push("idade");
   if (!eq && !cadCor) f.push("cor");
   if (!cadEmoji) f.push("emoji");
   if (!humorPreMarcado() && !cadHumor) f.push("zoeira do C.A.O.S.");
@@ -19941,10 +19957,70 @@ function tutPausaAtualizar() {
  * a mesa: o C.A.O.S. só observa e sugere (as 3 leis da espinha continuam valendo).
  * ---------------------------------------------------------------------- */
 const MESTRE_TEMPO_EXTRA = { response: 20, special: 10, turn: 8, card: 40 };
+// 1.7.10.6 (pedido do JF): idade obrigatória, em 3 faixas (o Modo C.A.O.S. é 16+). "maior" (12+, de antes da
+// 1.7.10.6) vale como "12 a 15": não dá pra saber se tem 16, então não libera o Modo C.A.O.S.
 const IDADE_OPCOES = [
-  { id: "menor", label: "🧒 Menos de 12" },
-  { id: "maior", label: "🧑 12 ou mais" },
+  { id: "menor", label: "🧒 Menos de 12", cor: "#22d3ee" },
+  { id: "doze", label: "🧑 12 a 15", cor: "#a78bfa" },
+  { id: "dezesseis", label: "🧔 16 ou mais", cor: "#f472b6" },
 ];
+const IDADE_RANK = { menor: 0, doze: 1, dezesseis: 2 };
+function idadeNorm(v) {
+  return v === "maior" ? "doze" : IDADE_RANK[v] !== undefined ? v : null;
+}
+function idadeLabel(v) {
+  const o = IDADE_OPCOES.find((x) => x.id === idadeNorm(v));
+  return o ? o.label.replace(/^\S+\s/, "") : "?";
+}
+// faixa etária do Equipe → idade (6-12 → menos de 12; 12-16 → 12 a 15; 16-18 e 18+ → 16 ou mais)
+function idadeDaFaixa(f) {
+  return f === "crianca" ? "menor" : f === "pre" ? "doze" : f === "jovem" || f === "adulto" ? "dezesseis" : null;
+}
+function jogador16(p) {
+  return !!p && idadeNorm(p.idade) === "dezesseis";
+}
+/* Memória de idade por nick, neste dispositivo (pedido do JF): o jogo lembra a faixa de cada nome. Se um nome
+   conhecido aparece numa faixa MAIOR do que a lembrada (ex.: era "menos de 12" e agora marcou "12 a 15"), pede
+   confirmação antes. Faixa menor ou igual passa direto (e a memória acompanha). */
+const IDADE_MEM_KEY = "perfil5_idade_nicks";
+function idadeMemoria() {
+  try {
+    const m = JSON.parse(JFStore.getItem(IDADE_MEM_KEY) || "{}");
+    return m && typeof m === "object" ? m : {};
+  } catch (e) {
+    return {};
+  }
+}
+function idadeConhecida(nome) {
+  const k = nameKeyPlain(String(nome || ""));
+  return k ? idadeNorm(idadeMemoria()[k]) : null;
+}
+function idadeLembrar(nome, idade) {
+  const k = nameKeyPlain(String(nome || "")), v = idadeNorm(idade);
+  if (!k || !v) return;
+  try {
+    const m = idadeMemoria();
+    m[k] = v;
+    const ks = Object.keys(m);
+    if (ks.length > 300) ks.slice(0, ks.length - 300).forEach((x) => delete m[x]);
+    JFStore.setItem(IDADE_MEM_KEY, JSON.stringify(m));
+  } catch (e) {}
+}
+// A faixa nova é maior do que a que este dispositivo lembra pra esse nome?
+function idadeSubiu(nome, nova) {
+  const ant = idadeConhecida(nome), v = idadeNorm(nova);
+  return !!ant && !!v && IDADE_RANK[v] > IDADE_RANK[ant] ? ant : null;
+}
+function idadeConfirmarSubida(nome, nova, seguir) {
+  const ant = idadeSubiu(nome, nova);
+  if (!ant) return seguir();
+  caosConfirmarModal(
+    `🔎 "${nome}" já jogou neste dispositivo marcado como ${idadeLabel(ant)}.\n\nAgora está marcado como ${idadeLabel(nova)}. Confirma?`,
+    "✅ Confirmo",
+    "✏️ Corrigir",
+    seguir,
+  );
+}
 let selectedIdade = null;
 let mestreObsEstourou = false; // o tempo acabou: o veredito que vem logo depois não conta duas vezes
 function jogadorMenor12(p) {
@@ -19967,22 +20043,39 @@ function mestreAjudaMotivo(p) {
   return "mesa";
 }
 
-/* --- Cadastro: botão de idade (opcional, só no Versus; no Equipe vale a faixa etária) --- */
+/* --- Cadastro: botão de idade (obrigatório desde a 1.7.10.6; no Equipe vale a faixa etária) --- */
 function renderIdadePicker() {
   const row = document.getElementById("idadeRow");
   if (!row) return;
   row.innerHTML = IDADE_OPCOES.map(
     (o) =>
-      `<button type="button" class="main-btn age-swatch idade-btn${o.id === selectedIdade ? " on" : ""}" data-idade="${o.id}" style="--hc:${o.id === "menor" ? "#22d3ee" : "#a78bfa"};" aria-pressed="${o.id === selectedIdade}">${o.label}</button>`,
+      `<button type="button" class="main-btn age-swatch idade-btn${o.id === selectedIdade ? " on" : ""}" data-idade="${o.id}" style="--hc:${o.cor};" aria-pressed="${o.id === selectedIdade}">${o.label}</button>`,
   ).join("");
   row.classList.toggle("tem-escolha", !!selectedIdade);
   row.querySelectorAll("[data-idade]").forEach((b) =>
     b.addEventListener("click", () => {
-      // tocar de novo no marcado desmarca (é opcional)
       selectedIdade = selectedIdade === b.dataset.idade ? null : b.dataset.idade;
+      idadeSugerida = null;
       renderIdadePicker();
+      if (typeof cadAtualizarBotao === "function") cadAtualizarBotao();
     }),
   );
+}
+// Nome digitado que este dispositivo já conhece: a idade lembrada já vem marcada (dá pra trocar)
+let idadeSugerida = null;
+function idadeSugerirDoNome(nome) {
+  const k = idadeConhecida(nome);
+  if (k && (!selectedIdade || selectedIdade === idadeSugerida)) {
+    if (selectedIdade !== k) {
+      selectedIdade = k;
+      idadeSugerida = k;
+      renderIdadePicker();
+    }
+  } else if (!k && selectedIdade && selectedIdade === idadeSugerida) {
+    selectedIdade = null;
+    idadeSugerida = null;
+    renderIdadePicker();
+  }
 }
 function idadeMostrar(isEquipe) {
   const w = document.getElementById("idadeWrap");
@@ -19991,12 +20084,45 @@ function idadeMostrar(isEquipe) {
 }
 // Idade do jogador novo (no Equipe, sai da faixa etária).
 function idadeDoCadastro(isEquipe) {
-  if (isEquipe) return selectedAgeBracket ? (selectedAgeBracket === "crianca" ? "menor" : "maior") : null;
-  return selectedIdade;
+  if (isEquipe) return idadeDaFaixa(selectedAgeBracket);
+  return idadeNorm(selectedIdade);
 }
 function idadeLimpar() {
   selectedIdade = null;
+  idadeSugerida = null;
   renderIdadePicker();
+}
+// Antes de começar: todo jogador precisa de idade. Quem não tem (jogador de antes da 1.7.10.6, sala aberta…)
+// ganha a pergunta numa janela só, um por um; com todos preenchidos, segue.
+function idadeCompletarAntes(seguir) {
+  const falta = players.filter((p) => !idadeNorm(p.idade) && !isJfName(p.name));
+  players.forEach((p) => {
+    if (!idadeNorm(p.idade) && isJfName(p.name)) p.idade = "dezesseis";
+  });
+  if (!falta.length) return seguir();
+  const p = falta[0];
+  const { ov, box } = caosModalBase();
+  ov.id = "idadeFaltaModal";
+  const row = caosModalRow();
+  IDADE_OPCOES.forEach((o) =>
+    row.append(
+      caosModalBtn(o.label, o.cor, () => {
+        const marcar = () => {
+          p.idade = o.id;
+          if (CURRENT_FORMAT === "equipe" && !p.ageBracket) p.ageBracket = o.id === "menor" ? "crianca" : o.id === "doze" ? "pre" : "adulto";
+          idadeLembrar(p.name, o.id);
+          saveGameState();
+          idadeCompletarAntes(seguir);
+        };
+        ov.remove();
+        idadeConfirmarSubida(p.name, o.id, marcar);
+      }),
+    ),
+  );
+  const fechar = caosModalRow();
+  fechar.append(caosModalBtn("Voltar", "#444a66", () => ov.remove()));
+  box.append(caosModalMsg(`🎂 Qual a idade de ${(p.avatar ? p.avatar + " " : "") + p.name}?\n\nA idade é obrigatória: com menos de 12 o Mestre ganha tempo extra pra ler, e o Modo C.A.O.S. é só pra 16+.`), row, fechar);
+  document.body.appendChild(ov);
 }
 
 /* --- Observação do C.A.O.S.: ritmo de cada Mestre --- */
@@ -23479,7 +23605,7 @@ function redeOpcoesCadastro() {
     avataresUsados: players.map((p) => p.avatar),
     humores: humorOpcoesModo().map((o) => ({ id: o.id, nome: o.label, dica: o.hint || "", cor: HUMOR_COR[o.id] || "#fbbf24" })),
     humorPadrao: CURRENT_MODE === "junior" ? "familia" : "normal",
-    idades: equipe ? AGE_BRACKETS.map((b) => ({ id: b.id, nome: b.label, cor: b.cor })) : IDADE_OPCOES.map((o) => ({ id: o.id, nome: o.label, cor: o.id === "menor" ? "#22d3ee" : "#a78bfa" })),
+    idades: equipe ? AGE_BRACKETS.map((b) => ({ id: b.id, nome: b.label, cor: b.cor })) : IDADE_OPCOES.map((o) => ({ id: o.id, nome: o.label, cor: o.cor })),
   };
 }
 function redeHostEsperando() {
@@ -23866,12 +23992,13 @@ function redeHostAdicionarPerfil(perfil) {
     humor: humor === "caos" ? caosSortearHumor() : humor,
     humorCaos: humor === "caos" || void 0,
     ageBracket: faixa,
-    idade: isEquipe ? (faixa ? (faixa === "crianca" ? "menor" : "maior") : null) : IDADE_OPCOES.some((o) => o.id === perfil.idade) ? perfil.idade : null,
+    idade: isEquipe ? idadeDaFaixa(faixa) : idadeNorm(perfil.idade),
     team: null,
     nickMs: null,
     aparelho: "dispositivo",
   };
   players.push(p);
+  if (p.idade) idadeLembrar(p.name, p.idade); // 1.7.10.6: o host também lembra a idade desse nome
   try {
     caosMemCadastro(p);
   } catch (e) {}
@@ -23910,8 +24037,14 @@ function redePedidosPintar() {
     box.setAttribute("role", "dialog");
     document.body.appendChild(box);
   }
+  // 1.7.10.6: nome que o host conhece numa faixa de idade menor do que a marcada agora: aviso no pedido
+  const avisoIdade = (pf) => {
+    const nova = CURRENT_FORMAT === "equipe" ? idadeDaFaixa(pf.faixa) : idadeNorm(pf.idade);
+    const ant = idadeSubiu(pf.nome, nova);
+    return ant ? `<br><small>⚠️ Aqui esse nome estava como ${escapeHtml(idadeLabel(ant))}; agora marcou ${escapeHtml(idadeLabel(nova))}.</small>` : "";
+  };
   const quem = (p) =>
-    p.tipo === "perfil" ? `${escapeHtml(p.perfil.avatar || "🙂")} <b>${escapeHtml(p.perfil.nome)}</b> quer entrar` : `Alguém quer entrar como <b>${escapeHtml((jogadorPorId(p.jogadorId) || {}).name || "?")}</b>`;
+    p.tipo === "perfil" ? `${escapeHtml(p.perfil.avatar || "🙂")} <b>${escapeHtml(p.perfil.nome)}</b> quer entrar${avisoIdade(p.perfil)}` : `Alguém quer entrar como <b>${escapeHtml((jogadorPorId(p.jogadorId) || {}).name || "?")}</b>`;
   box.innerHTML =
     `<div class="rede-pedidos-tit">🙋 Pedido${lista.length > 1 ? "s" : ""} pra entrar na sala ${rede.sala}</div>` +
     lista.map((ses) => `<div class="rede-pedido"><span>${quem(rede.pedidos[ses])}</span><span><button type="button" class="rede-btn rede-ok" data-sim="1" data-ses="${ses}">✅ Aceitar</button><button type="button" class="rede-btn rede-nao" data-sim="0" data-ses="${ses}">❌</button></span></div>`).join("") +
@@ -25176,7 +25309,7 @@ function redeEscolhaDesenhar(box, sala) {
       <div class="rede-rot">😀 Emoji</div><div class="avatar-picker-row rede-paleta">${emojis}</div>
       <div class="rede-rot">🎭 Zoeira · Como o C.A.O.S. pode zoar você?</div><div class="color-picker-row rede-paleta tem-escolha">${humores}</div>
       ${hAtual && hAtual.dica ? `<div class="rede-dica-humor">${escapeHtml(hAtual.dica)}</div>` : ""}
-      <div class="rede-rot">${cad.equipe ? "Faixa etária" : "Idade <small>(opcional · com menos de 12, ganha tempo extra pra ler quando for o Mestre)</small>"}</div><div class="color-picker-row rede-paleta${r.idade ? " tem-escolha" : ""}">${idades}</div>
+      <div class="rede-rot">${cad.equipe ? "🎂 Faixa etária <small>(obrigatória)</small>" : "🎂 Idade <small>(obrigatória · com menos de 12, ganha tempo extra pra ler quando for o Mestre; o Modo C.A.O.S. é 16+)</small>"}</div><div class="color-picker-row rede-paleta${r.idade ? " tem-escolha" : ""}">${idades}</div>
       ${rede.erroCadastro ? `<div class="rede-aviso">${escapeHtml(rede.erroCadastro)}</div>` : ""}
       <button type="button" class="btn-start btn-neo neo-solid neo-still" id="redePedir" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">🙋 Pedir pra entrar</button>
     </div>`;
@@ -25206,7 +25339,7 @@ function redeEscolhaDesenhar(box, sala) {
           rede.erroCadastro = campo === "cor" && COR_EXCLUSIVA[b.dataset[attr]] ? `Essa é a cor exclusiva ${COR_EXCLUSIVA[b.dataset[attr]].de}.` : "Esse já tem dono. Escolha outro.";
         } else {
           rede.erroCadastro = null;
-          r[campo] = r[campo] === b.dataset[attr] && campo === "idade" ? null : b.dataset[attr];
+          r[campo] = b.dataset[attr];
         }
         redeEscolhaDesenhar(box, sala);
       }),
@@ -25232,8 +25365,24 @@ function redePedirEntrada(perfil) {
     redeConvidadoDesenhar();
     return false;
   }
-  rede.erroCadastro = null;
   const cad = rede.cadastro || {};
+  // 1.7.10.6 (pedido do JF): idade obrigatória; nome que este dispositivo conhece numa faixa maior pede confirmação
+  if (!r.idade && !isJfName(nome)) {
+    rede.erroCadastro = cad.equipe ? "Escolha a faixa etária." : "Escolha a idade.";
+    redeConvidadoDesenhar();
+    return false;
+  }
+  const idadeR = cad.equipe ? idadeDaFaixa(r.idade) : idadeNorm(r.idade);
+  if (!perfil && !r.idadeOk && idadeSubiu(nome, idadeR)) {
+    idadeConfirmarSubida(nome, idadeR, () => {
+      r.idadeOk = true;
+      redePedirEntrada();
+    });
+    return false;
+  }
+  r.idadeOk = false;
+  if (idadeR) idadeLembrar(nome, idadeR);
+  rede.erroCadastro = null;
   const p = { nome, cor: r.cor || null, avatar: r.avatar || null, humor: r.humor || null };
   if (cad.equipe) p.faixa = r.idade || null;
   else p.idade = r.idade || null;
@@ -30251,7 +30400,9 @@ function mcPodeComecar() {
   if (players.length < 3) return avisar("O Modo C.A.O.S. precisa de pelo menos 3 jogadores.");
   const semAparelho = players.filter((p) => p.id !== rede.hostEu && !redeOnline(rede.assentos[p.id]));
   if (semAparelho.length) return avisar(`No Modo C.A.O.S. cada um joga no próprio dispositivo. Falta entrar: ${semAparelho.map((p) => p.name).join(", ")}.`);
-  if (players.some((p) => p.idade === "menor")) return avisar("O Modo C.A.O.S. é 16+. Tem jogador marcado com menos de 12 anos.");
+  // 1.7.10.6 (pedido do JF): 16+ de verdade: todo mundo marcado "16 ou mais" no cadastro
+  const novos = players.filter((p) => !jogador16(p));
+  if (novos.length) return avisar(`O Modo C.A.O.S. é só pra 16+. Fica de fora: ${novos.map((p) => p.name).join(", ")}${novos.some((p) => !idadeNorm(p.idade)) ? " (sem idade marcada)" : ""}.`);
   return true;
 }
 /* ======================================================================
@@ -40340,7 +40491,7 @@ function sanitizeLoadedState(s) {
             }
           : {}),
         ...(p.formado === true ? { formado: true } : {}),
-        ...(p.idade === "menor" || p.idade === "maior" ? { idade: p.idade } : {}),
+        ...(idadeNorm(p.idade) ? { idade: idadeNorm(p.idade) } : {}),
         ...(p.mestreAjuda === true ? { mestreAjuda: true } : {}),
         ...(p.mestreAjudaPerguntado === true ? { mestreAjudaPerguntado: true } : {}),
         ...(p.mestreAjudaAvisado === true ? { mestreAjudaAvisado: true } : {}),
@@ -79685,6 +79836,8 @@ function iniciar() {
     try {
       renderColorPicker();
       cadPrevs();
+      idadeSugerirDoNome(document.getElementById("playerNameInput").value.trim()); // 1.7.10.6: nome conhecido já vem com a idade
+      cadAtualizarBotao();
     } catch (e) {}
   });
   document.getElementById("colorPickerRow").addEventListener("click", (ev) => {
@@ -79798,6 +79951,8 @@ function iniciar() {
   });
   document.getElementById("startGameBtn").addEventListener("click", () => {
     unlockAudio();
+    // 1.7.10.6 (pedido do JF): ninguém começa sem idade (quem falta ganha a pergunta e o botão segue sozinho)
+    if (players.some((p) => !idadeNorm(p.idade))) return idadeCompletarAntes(() => document.getElementById("startGameBtn").click());
     // 1.7.10.1 (pedido do JF): com a sala aberta, cada jogador precisa de um aparelho (o celular dele ou o do host)
     if (typeof redeSemAparelho === "function" && redeSemAparelho().length) return redeAvisarSemAparelho();
     document.getElementById("welcomeScreen").style.display = "none";

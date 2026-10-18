@@ -410,6 +410,8 @@ function iniciar() {
     try {
       renderColorPicker();
       cadPrevs();
+      idadeSugerirDoNome(document.getElementById("playerNameInput").value.trim()); // 1.7.10.6: nome conhecido já vem com a idade
+      cadAtualizarBotao();
     } catch (e) {}
   });
   document.getElementById("colorPickerRow").addEventListener("click", (ev) => {
@@ -523,6 +525,8 @@ function iniciar() {
   });
   document.getElementById("startGameBtn").addEventListener("click", () => {
     unlockAudio();
+    // 1.7.10.6 (pedido do JF): ninguém começa sem idade (quem falta ganha a pergunta e o botão segue sozinho)
+    if (players.some((p) => !idadeNorm(p.idade))) return idadeCompletarAntes(() => document.getElementById("startGameBtn").click());
     // 1.7.10.1 (pedido do JF): com a sala aberta, cada jogador precisa de um aparelho (o celular dele ou o do host)
     if (typeof redeSemAparelho === "function" && redeSemAparelho().length) return redeAvisarSemAparelho();
     document.getElementById("welcomeScreen").style.display = "none";

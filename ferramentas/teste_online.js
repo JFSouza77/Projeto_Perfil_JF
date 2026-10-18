@@ -99,7 +99,7 @@ async function montar(host, cen) {
     caosSilenced = true;
     CURRENT_FORMAT = cen.formato;
     const eq = cen.formato === "equipe";
-    players = cen.nomes.map((n, i) => ({ id: jogadorIdNovo(), name: n, score: 0, position: 0, isBlocked: false, color: eq ? "#888888" : PLAYER_COLORS[i], avatar: AVATARS[i], humor: "normal", ageBracket: eq ? "adulto" : null, team: null, gems: {} }));
+    players = cen.nomes.map((n, i) => ({ id: jogadorIdNovo(), name: n, score: 0, position: 0, isBlocked: false, color: eq ? "#888888" : PLAYER_COLORS[i], avatar: AVATARS[i], humor: "normal", ageBracket: eq ? "adulto" : null, idade: "dezesseis", team: null, gems: {} }));
     selectMode(cen.modo, null, cen.sabor);
     if (cen.cond) WIN_CONDITION = cen.cond;
     starterDrawCount = 1;

@@ -3843,8 +3843,10 @@ function cadPodeAdicionar() {
   const inp = document.getElementById("playerNameInput");
   const nome = inp ? inp.value.trim() : "";
   if (nome.length < 2) return false;
-  if (isJfName(nome) || isAnneName(nome) || presenteDe(nome)) return true;
+  if (isJfName(nome)) return true;
   const eq = CURRENT_FORMAT === "equipe";
+  if (!eq && !selectedIdade) return false; // 1.7.10.6: idade obrigatória (no Equipe, a faixa etária)
+  if (isAnneName(nome) || presenteDe(nome)) return eq ? !!cadFaixa : true;
   if (!eq && !cadCor) return false;
   if (!cadEmoji) return false;
   if (!humorPreMarcado() && !cadHumor) return false;
@@ -3855,9 +3857,11 @@ function cadFaltaTexto() {
   const inp = document.getElementById("playerNameInput");
   const nome = inp ? inp.value.trim() : "";
   if (nome.length < 2) return "Escreva o nome (2 a 15 letras).";
-  if (isJfName(nome) || isAnneName(nome) || presenteDe(nome)) return "";
+  if (isJfName(nome)) return "";
   const f = [],
     eq = CURRENT_FORMAT === "equipe";
+  if (isAnneName(nome) || presenteDe(nome)) return (eq ? cadFaixa : selectedIdade) ? "" : "Falta escolher: " + (eq ? "faixa de idade." : "idade.");
+  if (!eq && !selectedIdade) f.push("idade");
   if (!eq && !cadCor) f.push("cor");
   if (!cadEmoji) f.push("emoji");
   if (!humorPreMarcado() && !cadHumor) f.push("zoeira do C.A.O.S.");

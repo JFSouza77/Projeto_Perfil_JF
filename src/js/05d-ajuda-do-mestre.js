@@ -17,10 +17,70 @@
  * a mesa: o C.A.O.S. só observa e sugere (as 3 leis da espinha continuam valendo).
  * ---------------------------------------------------------------------- */
 const MESTRE_TEMPO_EXTRA = { response: 20, special: 10, turn: 8, card: 40 };
+// 1.7.10.6 (pedido do JF): idade obrigatória, em 3 faixas (o Modo C.A.O.S. é 16+). "maior" (12+, de antes da
+// 1.7.10.6) vale como "12 a 15": não dá pra saber se tem 16, então não libera o Modo C.A.O.S.
 const IDADE_OPCOES = [
-  { id: "menor", label: "🧒 Menos de 12" },
-  { id: "maior", label: "🧑 12 ou mais" },
+  { id: "menor", label: "🧒 Menos de 12", cor: "#22d3ee" },
+  { id: "doze", label: "🧑 12 a 15", cor: "#a78bfa" },
+  { id: "dezesseis", label: "🧔 16 ou mais", cor: "#f472b6" },
 ];
+const IDADE_RANK = { menor: 0, doze: 1, dezesseis: 2 };
+function idadeNorm(v) {
+  return v === "maior" ? "doze" : IDADE_RANK[v] !== undefined ? v : null;
+}
+function idadeLabel(v) {
+  const o = IDADE_OPCOES.find((x) => x.id === idadeNorm(v));
+  return o ? o.label.replace(/^\S+\s/, "") : "?";
+}
+// faixa etária do Equipe → idade (6-12 → menos de 12; 12-16 → 12 a 15; 16-18 e 18+ → 16 ou mais)
+function idadeDaFaixa(f) {
+  return f === "crianca" ? "menor" : f === "pre" ? "doze" : f === "jovem" || f === "adulto" ? "dezesseis" : null;
+}
+function jogador16(p) {
+  return !!p && idadeNorm(p.idade) === "dezesseis";
+}
+/* Memória de idade por nick, neste dispositivo (pedido do JF): o jogo lembra a faixa de cada nome. Se um nome
+   conhecido aparece numa faixa MAIOR do que a lembrada (ex.: era "menos de 12" e agora marcou "12 a 15"), pede
+   confirmação antes. Faixa menor ou igual passa direto (e a memória acompanha). */
+const IDADE_MEM_KEY = "perfil5_idade_nicks";
+function idadeMemoria() {
+  try {
+    const m = JSON.parse(JFStore.getItem(IDADE_MEM_KEY) || "{}");
+    return m && typeof m === "object" ? m : {};
+  } catch (e) {
+    return {};
+  }
+}
+function idadeConhecida(nome) {
+  const k = nameKeyPlain(String(nome || ""));
+  return k ? idadeNorm(idadeMemoria()[k]) : null;
+}
+function idadeLembrar(nome, idade) {
+  const k = nameKeyPlain(String(nome || "")), v = idadeNorm(idade);
+  if (!k || !v) return;
+  try {
+    const m = idadeMemoria();
+    m[k] = v;
+    const ks = Object.keys(m);
+    if (ks.length > 300) ks.slice(0, ks.length - 300).forEach((x) => delete m[x]);
+    JFStore.setItem(IDADE_MEM_KEY, JSON.stringify(m));
+  } catch (e) {}
+}
+// A faixa nova é maior do que a que este dispositivo lembra pra esse nome?
+function idadeSubiu(nome, nova) {
+  const ant = idadeConhecida(nome), v = idadeNorm(nova);
+  return !!ant && !!v && IDADE_RANK[v] > IDADE_RANK[ant] ? ant : null;
+}
+function idadeConfirmarSubida(nome, nova, seguir) {
+  const ant = idadeSubiu(nome, nova);
+  if (!ant) return seguir();
+  caosConfirmarModal(
+    `🔎 "${nome}" já jogou neste dispositivo marcado como ${idadeLabel(ant)}.\n\nAgora está marcado como ${idadeLabel(nova)}. Confirma?`,
+    "✅ Confirmo",
+    "✏️ Corrigir",
+    seguir,
+  );
+}
 let selectedIdade = null;
 let mestreObsEstourou = false; // o tempo acabou: o veredito que vem logo depois não conta duas vezes
 function jogadorMenor12(p) {
@@ -43,22 +103,39 @@ function mestreAjudaMotivo(p) {
   return "mesa";
 }
 
-/* --- Cadastro: botão de idade (opcional, só no Versus; no Equipe vale a faixa etária) --- */
+/* --- Cadastro: botão de idade (obrigatório desde a 1.7.10.6; no Equipe vale a faixa etária) --- */
 function renderIdadePicker() {
   const row = document.getElementById("idadeRow");
   if (!row) return;
   row.innerHTML = IDADE_OPCOES.map(
     (o) =>
-      `<button type="button" class="main-btn age-swatch idade-btn${o.id === selectedIdade ? " on" : ""}" data-idade="${o.id}" style="--hc:${o.id === "menor" ? "#22d3ee" : "#a78bfa"};" aria-pressed="${o.id === selectedIdade}">${o.label}</button>`,
+      `<button type="button" class="main-btn age-swatch idade-btn${o.id === selectedIdade ? " on" : ""}" data-idade="${o.id}" style="--hc:${o.cor};" aria-pressed="${o.id === selectedIdade}">${o.label}</button>`,
   ).join("");
   row.classList.toggle("tem-escolha", !!selectedIdade);
   row.querySelectorAll("[data-idade]").forEach((b) =>
     b.addEventListener("click", () => {
-      // tocar de novo no marcado desmarca (é opcional)
       selectedIdade = selectedIdade === b.dataset.idade ? null : b.dataset.idade;
+      idadeSugerida = null;
       renderIdadePicker();
+      if (typeof cadAtualizarBotao === "function") cadAtualizarBotao();
     }),
   );
+}
+// Nome digitado que este dispositivo já conhece: a idade lembrada já vem marcada (dá pra trocar)
+let idadeSugerida = null;
+function idadeSugerirDoNome(nome) {
+  const k = idadeConhecida(nome);
+  if (k && (!selectedIdade || selectedIdade === idadeSugerida)) {
+    if (selectedIdade !== k) {
+      selectedIdade = k;
+      idadeSugerida = k;
+      renderIdadePicker();
+    }
+  } else if (!k && selectedIdade && selectedIdade === idadeSugerida) {
+    selectedIdade = null;
+    idadeSugerida = null;
+    renderIdadePicker();
+  }
 }
 function idadeMostrar(isEquipe) {
   const w = document.getElementById("idadeWrap");
@@ -67,12 +144,45 @@ function idadeMostrar(isEquipe) {
 }
 // Idade do jogador novo (no Equipe, sai da faixa etária).
 function idadeDoCadastro(isEquipe) {
-  if (isEquipe) return selectedAgeBracket ? (selectedAgeBracket === "crianca" ? "menor" : "maior") : null;
-  return selectedIdade;
+  if (isEquipe) return idadeDaFaixa(selectedAgeBracket);
+  return idadeNorm(selectedIdade);
 }
 function idadeLimpar() {
   selectedIdade = null;
+  idadeSugerida = null;
   renderIdadePicker();
+}
+// Antes de começar: todo jogador precisa de idade. Quem não tem (jogador de antes da 1.7.10.6, sala aberta…)
+// ganha a pergunta numa janela só, um por um; com todos preenchidos, segue.
+function idadeCompletarAntes(seguir) {
+  const falta = players.filter((p) => !idadeNorm(p.idade) && !isJfName(p.name));
+  players.forEach((p) => {
+    if (!idadeNorm(p.idade) && isJfName(p.name)) p.idade = "dezesseis";
+  });
+  if (!falta.length) return seguir();
+  const p = falta[0];
+  const { ov, box } = caosModalBase();
+  ov.id = "idadeFaltaModal";
+  const row = caosModalRow();
+  IDADE_OPCOES.forEach((o) =>
+    row.append(
+      caosModalBtn(o.label, o.cor, () => {
+        const marcar = () => {
+          p.idade = o.id;
+          if (CURRENT_FORMAT === "equipe" && !p.ageBracket) p.ageBracket = o.id === "menor" ? "crianca" : o.id === "doze" ? "pre" : "adulto";
+          idadeLembrar(p.name, o.id);
+          saveGameState();
+          idadeCompletarAntes(seguir);
+        };
+        ov.remove();
+        idadeConfirmarSubida(p.name, o.id, marcar);
+      }),
+    ),
+  );
+  const fechar = caosModalRow();
+  fechar.append(caosModalBtn("Voltar", "#444a66", () => ov.remove()));
+  box.append(caosModalMsg(`🎂 Qual a idade de ${(p.avatar ? p.avatar + " " : "") + p.name}?\n\nA idade é obrigatória: com menos de 12 o Mestre ganha tempo extra pra ler, e o Modo C.A.O.S. é só pra 16+.`), row, fechar);
+  document.body.appendChild(ov);
 }
 
 /* --- Observação do C.A.O.S.: ritmo de cada Mestre --- */
