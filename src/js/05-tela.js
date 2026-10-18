@@ -1172,6 +1172,10 @@ function cartaFraseSobe(topoAntes) {
 // que fecha) redesenhava as costas e o Mestre tinha que virar de novo. Agora o render() redesenha a
 // roleta já pousada na categoria. (roletaCarta mora em 02-estado.js)
 // a roleta parou: a categoria vai pros celulares (e o Mestre no celular ganha o "Falei! Mostrar a carta")
+// a aba do host foi pro segundo plano no meio do giro: pousa já (a sala não fica esperando o navegador acordar)
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden && cardState === "hidden" && currentCard && roletaCarta === currentCard && !roletaPousou) roletaPousar();
+});
 function roletaPousar() {
   if (roletaPousou || cardState !== "hidden" || !currentCard || roletaCarta !== currentCard) return;
   roletaPousou = true;
@@ -1233,7 +1237,11 @@ function roletaDesenhar(jaPousada) {
     if (!jaPousada) caosRoletaSom("pouso");
     roletaPousar();
   };
-  if (jaPousada || !visualFxAllowed() || cats.length < 2) {
+  // 1.7.10.6.1 (relato do JF: o Rafa, Mestre no celular, ficou sem o botão de mostrar a carta): com a aba do host em
+  // segundo plano o navegador quase para os timers e a roleta não pousava; com o Mestre em outro dispositivo, a
+  // animação daqui nem é vista. Nos dois casos ela pousa na hora.
+  const semAnimar = document.hidden || (typeof redeMestreLonge === "function" && redeMestreLonge());
+  if (jaPousada || semAnimar || !visualFxAllowed() || cats.length < 2) {
     finish();
     return;
   }

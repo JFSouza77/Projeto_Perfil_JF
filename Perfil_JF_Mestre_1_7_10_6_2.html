@@ -10,7 +10,8 @@
           Henrique). Build 1823. Ficha de palpite vale no duelo da carta bônus, só pros duelistas (as regras já diziam isso;
           o código bloqueava). Host no Modo C.A.O.S. mostra a tela do modo (a vista "Mestre em outro aparelho" cobria).
           Modo C.A.O.S.: janela de 25 s (era 15), Turbo 8 s, 4,5 s de respiro antes da próxima carta com contagem,
-          "está respondendo" grande.
+          "está respondendo" grande. Roleta pousa na hora com a aba do host em segundo plano ou o Mestre em outro
+          dispositivo (o Rafa ficou sem o botão de mostrar a carta: o navegador quase parava os timers da aba escondida).
   1.7.10.6.1 · 18/10/2026 · AJUSTES DA PRIMEIRA CORRIDA ONLINE · C.A.O.S. 4.5.1 (relato do JF). Build 1822.
           Corrida: vez de 25 + 25 s (era 15 + 15), Hardcore 15 + 15, janela do relâmpago 15 s, carta de 3:00, absurdo −3 s (erro −1, pulou −2).
           C.A.O.S. calado com a carta correndo e no máximo 1 comentário entre as cartas. Host que perdia quem joga no
@@ -17029,6 +17030,10 @@ function cartaFraseSobe(topoAntes) {
 // que fecha) redesenhava as costas e o Mestre tinha que virar de novo. Agora o render() redesenha a
 // roleta já pousada na categoria. (roletaCarta mora em 02-estado.js)
 // a roleta parou: a categoria vai pros celulares (e o Mestre no celular ganha o "Falei! Mostrar a carta")
+// a aba do host foi pro segundo plano no meio do giro: pousa já (a sala não fica esperando o navegador acordar)
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden && cardState === "hidden" && currentCard && roletaCarta === currentCard && !roletaPousou) roletaPousar();
+});
 function roletaPousar() {
   if (roletaPousou || cardState !== "hidden" || !currentCard || roletaCarta !== currentCard) return;
   roletaPousou = true;
@@ -17090,7 +17095,11 @@ function roletaDesenhar(jaPousada) {
     if (!jaPousada) caosRoletaSom("pouso");
     roletaPousar();
   };
-  if (jaPousada || !visualFxAllowed() || cats.length < 2) {
+  // 1.7.10.6.1 (relato do JF: o Rafa, Mestre no celular, ficou sem o botão de mostrar a carta): com a aba do host em
+  // segundo plano o navegador quase para os timers e a roleta não pousava; com o Mestre em outro dispositivo, a
+  // animação daqui nem é vista. Nos dois casos ela pousa na hora.
+  const semAnimar = document.hidden || (typeof redeMestreLonge === "function" && redeMestreLonge());
+  if (jaPousada || semAnimar || !visualFxAllowed() || cats.length < 2) {
     finish();
     return;
   }
@@ -78076,6 +78085,7 @@ const NOVIDADES = [
       "🌀 Modo C.A.O.S. no host: o dispositivo que abriu a sala mostra a tela do modo, com a dica e a categoria.",
       "⏳ Modo C.A.O.S. com mais calma: janela de 25 s por dica e um respiro antes da próxima carta, com o resultado na tela (ideia do Henrique).",
       "🗣️ Quem está respondendo aparece grande na tela de todo mundo (ideia do Henrique).",
+      "🎰 Mestre no celular sem travar: com a aba do host em segundo plano, o botão de mostrar a carta às vezes não aparecia. Agora a roleta pousa na hora.",
     ],
     qol: [],
   },

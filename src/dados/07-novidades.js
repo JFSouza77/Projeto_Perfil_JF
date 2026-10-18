@@ -15,6 +15,7 @@ const NOVIDADES = [
       "🌀 Modo C.A.O.S. no host: o dispositivo que abriu a sala mostra a tela do modo, com a dica e a categoria.",
       "⏳ Modo C.A.O.S. com mais calma: janela de 25 s por dica e um respiro antes da próxima carta, com o resultado na tela (ideia do Henrique).",
       "🗣️ Quem está respondendo aparece grande na tela de todo mundo (ideia do Henrique).",
+      "🎰 Mestre no celular sem travar: com a aba do host em segundo plano, o botão de mostrar a carta às vezes não aparecia. Agora a roleta pousa na hora.",
     ],
     qol: [],
   },
