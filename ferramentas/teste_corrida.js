@@ -380,15 +380,41 @@ const ARQ = acharMestre(process.argv[2]);
     const lojaOrig = window.corridaLojaLigada;
     window.corridaLojaLigada = () => true;
     corridaEstoque = null;
-    corridaLojaPreparar();
-    o.estoque = Object.values(corridaEstoque).every((n) => n >= 1 && n <= 5);
+    // 1.7.10.6: vitrine sorteada: CORRIDA_VITRINE itens, 1 a 3 de cada, preço ±20% de 5 em 5; muda a cada intervalo
+    const vitrines = [];
+    for (let i = 0; i < 40; i++) {
+      corridaLojaPreparar();
+      vitrines.push(JSON.stringify(Object.keys(corridaEstoque).sort()));
+      const ks = Object.keys(corridaEstoque);
+      if (ks.length !== CORRIDA_VITRINE || ks.some((k) => !CORRIDA_LOJA[k] || corridaEstoque[k] < 1 || corridaEstoque[k] > 3 || corridaPrecos[k] % 5 || Math.abs(corridaPrecos[k] - CORRIDA_LOJA[k].preco) > CORRIDA_LOJA[k].preco * 0.2 + 2.5)) o.estoque = false;
+    }
+    if (o.estoque !== false) o.estoque = true;
+    o.vitrineVaria = new Set(vitrines).size > 5;
     if (!corridaIntervaloAberto()) corridaIntervaloAbrir();
+    // vitrine fixa pro resto do teste (o sorteio já foi conferido acima)
+    corridaEstoque = { desfib: 2, corte: 2, cofrinho: 1, ampulheta: 1, ima: 1 };
+    corridaPrecos = Object.fromEntries(Object.keys(corridaEstoque).map((k) => [k, CORRIDA_LOJA[k].preco]));
     const comprador = players.find((q) => q.score >= 60);
+    comprador.score += 200;
     const pts0 = comprador.score;
     const est0 = corridaEstoque.desfib;
     dispatchAction({ type: "corridaComprar", data: ["desfib", comprador.id] });
     dispatchAction({ type: "corridaComprar", data: ["corte", comprador.id] });
-    o.comprou = comprador.score === pts0 - 50 && corridaEstoque.desfib === est0 - 1 && corridaItens[comprador.id].desfib === 1;
+    o.comprou = comprador.score === pts0 - CORRIDA_LOJA.desfib.preco - CORRIDA_LOJA.corte.preco && corridaEstoque.desfib === est0 - 1 && corridaItens[comprador.id].desfib === 1;
+    o.foraDaVitrineNaoCompra = !corridaPodeComprar("escudo", comprador.id);
+    // Cofrinho (+40 no próximo acerto de quem comprou), Ímã (20% do acerto dos outros) e Ampulheta (+30 s no geral)
+    const outro = players.find((q) => q !== comprador);
+    outro.score += 100;
+    dispatchAction({ type: "corridaComprar", data: ["cofrinho", comprador.id] });
+    dispatchAction({ type: "corridaComprar", data: ["ima", outro.id] });
+    const gAntes = corridaGeralMs();
+    dispatchAction({ type: "corridaComprar", data: ["ampulheta", comprador.id] });
+    o.ampulheta = Math.abs(corridaGeralMs() - gAntes - 30e3) < 400;
+    const sOutro = outro.score;
+    const extra = corridaLojaNoAcerto(comprador, 100);
+    o.cofrinho = extra === CORRIDA_COFRINHO_PTS && corridaLojaNoAcerto(comprador, 100) === 0;
+    o.ima = outro.score === sOutro + 40; // 2 acertos de 100 do comprador: 20 + 20
+    corridaIma = {};
     o.semDinheiroNaoCompra = (() => {
       const pobre = players.find((q) => q.score < 15) || players[0];
       const sc = pobre.score;

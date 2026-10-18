@@ -22,7 +22,10 @@ let corridaCongelaTique = 0;
 let corridaEscudo = -1; // cartaSeq que o Escudo de Kevlar protege
 let corridaFolego = {}; // id → cartaSeq em que a pessoa tem +15 s nas vezes
 let corridaItens = {}; // id → { corte: n, desfib: n }
-let corridaEstoque = null; // { item: unidades } (só com a lojinha ligada)
+let corridaEstoque = null; // { item: unidades } (só com a lojinha ligada; só os itens da vitrine deste intervalo)
+let corridaPrecos = {}; // { item: preço } da vitrine deste intervalo
+let corridaCofrinho = {}; // id → cofrinhos guardados (cada um: +CORRIDA_COFRINHO_PTS no próximo acerto da pessoa)
+let corridaIma = {}; // id → cartaSeq em que o Ímã de Pontos vale
 let corridaTiqueSom = 0;
 
 function corridaEventosZerar() {
@@ -39,6 +42,9 @@ function corridaEventosZerar() {
   corridaFolego = {};
   corridaItens = {};
   corridaEstoque = null;
+  corridaPrecos = {};
+  corridaCofrinho = {};
+  corridaIma = {};
   document.body.classList.remove("cr-juizo", "cr-bomba", "cr-duelo");
 }
 function corridaEventosSalvar() {
@@ -54,6 +60,9 @@ function corridaEventosSalvar() {
     folego: Object.keys(corridaFolego).filter((k) => corridaFolego[k] === cartaSeq),
     itens: corridaItens,
     estoque: corridaEstoque,
+    precos: corridaPrecos,
+    cofrinho: corridaCofrinho,
+    ima: Object.keys(corridaIma).filter((k) => corridaIma[k] === cartaSeq),
   };
 }
 function corridaEventosRetomar(e) {
@@ -76,8 +85,14 @@ function corridaEventosRetomar(e) {
       .forEach((id) => (corridaItens[String(id)] = { corte: n(e.itens[id] && e.itens[id].corte, 5), desfib: n(e.itens[id] && e.itens[id].desfib, 5) }));
   if (e.estoque && typeof e.estoque === "object") {
     corridaEstoque = {};
-    Object.keys(CORRIDA_LOJA).forEach((k) => (corridaEstoque[k] = n(e.estoque[k], 5)));
+    Object.keys(CORRIDA_LOJA).forEach((k) => {
+      if (e.estoque[k] === undefined) return;
+      corridaEstoque[k] = n(e.estoque[k], 5);
+      corridaPrecos[k] = e.precos && e.precos[k] ? n(e.precos[k], 500) : CORRIDA_LOJA[k].preco;
+    });
   }
+  if (e.cofrinho && typeof e.cofrinho === "object") Object.keys(e.cofrinho).slice(0, 10).forEach((id) => (corridaCofrinho[String(id)] = n(e.cofrinho[id], 9)));
+  if (Array.isArray(e.ima)) e.ima.slice(0, 10).forEach((id) => (corridaIma[String(id)] = cartaSeq));
   corridaClassesCorpo();
 }
 
@@ -327,17 +342,41 @@ function corridaDueloFim() {
 function corridaLojaLigada() {
   return CURRENT_MODE === "corrida" && corridaVitoria === "tempo" && typeof salaOnlineAberta === "function" && salaOnlineAberta();
 }
+/* 1.7.10.6 (pedido do JF): vitrine sorteada (Corrida e Modo C.A.O.S.): n itens do catálogo (pelo peso), 1 a 3 de
+   cada, preço variando ±20% de 5 em 5 (mínimo 5). Devolve { estoque: { item: unidades }, precos: { item: preço } }. */
+function lojaVitrineSortear(catalogo, n) {
+  const bolsa = Object.keys(catalogo).map((k) => ({ k, w: catalogo[k].peso || 1 }));
+  const estoque = {},
+    precos = {};
+  for (let i = 0; i < n && bolsa.length; i++) {
+    const tot = bolsa.reduce((s, x) => s + x.w, 0);
+    let r = sorteioRegra() * tot,
+      j = 0;
+    while (j < bolsa.length - 1 && r >= bolsa[j].w) r -= bolsa[j++].w;
+    const k = bolsa.splice(j, 1)[0].k;
+    estoque[k] = 1 + Math.floor(sorteioRegra() * 3);
+    const fator = [0.8, 0.9, 1, 1, 1.1, 1.2][Math.floor(sorteioRegra() * 6)];
+    precos[k] = Math.max(5, Math.round((catalogo[k].preco * fator) / 5) * 5);
+  }
+  return { estoque, precos };
+}
+// a cada intervalo a vitrine é outra (o que sobrou da anterior some)
 function corridaLojaPreparar() {
-  if (!corridaLojaLigada() || corridaEstoque) return;
-  corridaEstoque = {};
-  Object.keys(CORRIDA_LOJA).forEach((k) => (corridaEstoque[k] = 1 + Math.floor(sorteioRegra() * 5)));
-  caosLog("corrida", "lojinha aberta: " + JSON.stringify(corridaEstoque));
+  if (!corridaLojaLigada()) return;
+  const v = lojaVitrineSortear(CORRIDA_LOJA, CORRIDA_VITRINE);
+  corridaEstoque = v.estoque;
+  corridaPrecos = v.precos;
+  caosLog("corrida", "vitrine da lojinha: " + Object.keys(v.estoque).map((k) => `${CORRIDA_LOJA[k].nome} ${v.precos[k]}×${v.estoque[k]}`).join(", "));
+}
+function corridaPreco(item) {
+  return corridaPrecos[item] || (CORRIDA_LOJA[item] || {}).preco || 0;
 }
 function corridaPodeComprar(item, id) {
   const it = CORRIDA_LOJA[item],
     p = jogadorPorId(id);
   if (!it || !p || !corridaLojaLigada() || !corridaIntervaloAberto() || !corridaEstoque) return false;
-  if ((corridaEstoque[item] || 0) <= 0 || (p.score || 0) < it.preco) return false;
+  if ((corridaEstoque[item] || 0) <= 0 || (p.score || 0) < corridaPreco(item)) return false;
+  if (item === "ima" && corridaIma[id] === cartaSeq) return false;
   if (item === "escudo" && corridaEscudo === cartaSeq) return false; // um escudo por carta basta
   if (item === "folego" && corridaFolego[id] === cartaSeq) return false;
   return true;
@@ -345,18 +384,22 @@ function corridaPodeComprar(item, id) {
 function corridaComprar(item, id) {
   if (!corridaPodeComprar(item, id)) return;
   const it = CORRIDA_LOJA[item],
-    p = jogadorPorId(id);
-  p.score -= it.preco;
+    p = jogadorPorId(id),
+    preco = corridaPreco(item);
+  p.score -= preco;
   corridaEstoque[item]--;
   if (item === "congelar") corridaCongelaMs += 15e3;
   else if (item === "folego") corridaFolego[id] = cartaSeq;
   else if (item === "escudo") corridaEscudo = cartaSeq;
+  else if (item === "cofrinho") corridaCofrinho[id] = (corridaCofrinho[id] || 0) + 1;
+  else if (item === "ampulheta") corridaGeralMudar(30e3);
+  else if (item === "ima") corridaIma[id] = cartaSeq;
   else {
     corridaItens[id] = corridaItens[id] || { corte: 0, desfib: 0 };
     corridaItens[id][item]++;
   }
   playSfx("joia");
-  fxFloat(`${it.ic} ${p.name} comprou ${it.nome} (−${it.preco})`, "#fbbf24");
+  fxFloat(`${it.ic} ${p.name} comprou ${it.nome} (−${preco})`, "#fbbf24");
   caosLog("corrida", `${p.name} comprou ${it.nome}`);
   const V = REACTIVE_VOICE.corrida;
   if (V && V.compra && Math.random() < 0.5) {
@@ -366,6 +409,23 @@ function corridaComprar(item, id) {
   corridaIntervaloRedesenharLoja();
   renderMiniScoreboard();
   saveGameState();
+}
+// no acerto (vitória por Tempo): Cofrinho de quem acertou e Ímã dos outros. Devolve os pontos extras de quem acertou.
+function corridaLojaNoAcerto(scorer, pts) {
+  if (!scorer || corridaVitoria !== "tempo") return 0;
+  let extra = 0;
+  if ((corridaCofrinho[scorer.id] || 0) > 0) {
+    corridaCofrinho[scorer.id]--;
+    extra = CORRIDA_COFRINHO_PTS;
+    fxFloat(`🐷 Cofrinho de ${scorer.name}: +${extra}!`, "#f472b6");
+  }
+  players.forEach((p) => {
+    if (p === scorer || corridaIma[p.id] !== cartaSeq) return;
+    const ganho = Math.max(1, Math.round(pts * CORRIDA_IMA_FRACAO));
+    p.score = (p.score || 0) + ganho;
+    fxFloat(`🧲 Ímã de ${p.name}: +${ganho}`, "#60a5fa");
+  });
+  return extra;
 }
 function corridaPodeUsar(item, id) {
   const p = jogadorPorId(id),
@@ -397,29 +457,31 @@ function corridaUsar(item, id) {
 /* A lojinha é UMA só pra mesa toda (pedido do JF): o mesmo estoque, ao vivo em todo dispositivo e na T2; quem comprar
    primeiro leva (o host atende um pedido de cada vez, e o segundo já encontra o estoque menor).
    estoque: { item: unidades }; compradores: [{ id, nome, pts }] (quem pode comprar NESTE dispositivo; vazio = só vitrine) */
-function corridaLojaVitrineHtml(estoque, compradores) {
+function corridaLojaVitrineHtml(estoque, compradores, precos) {
   if (!estoque) return "";
-  const linhas = Object.keys(CORRIDA_LOJA)
+  const pr = (k) => (precos && precos[k]) || CORRIDA_LOJA[k].preco;
+  const linhas = Object.keys(estoque)
+    .filter((k) => CORRIDA_LOJA[k])
     .map((k) => {
       const it = CORRIDA_LOJA[k],
         n = estoque[k] || 0;
       const btns = (compradores || [])
         .map((c) => {
-          const pode = n > 0 && c.pts >= it.preco && corridaPodeComprar(k, c.id);
+          const pode = n > 0 && c.pts >= pr(k) && corridaPodeComprar(k, c.id);
           return `<button type="button" class="cr-loja-comprar" data-cr-comprar="${k}" data-cr-quem="${escapeHtml(c.id)}" ${pode ? "" : "disabled"}>${(compradores || []).length > 1 ? escapeHtml(c.nome) + " compra" : "Comprar"}</button>`;
         })
         .join("");
-      return `<li class="cr-loja-item${n > 0 ? "" : " cr-esgotado"}"><span class="cr-li-ic">${it.ic}</span><span class="cr-li-txt"><b>${it.nome}</b><small>${it.desc}</small>${btns ? `<span class="cr-li-btns">${btns}</span>` : ""}</span><span class="cr-li-preco">${it.preco}<small>${n > 0 ? `${n} no estoque` : "esgotado"}</small></span></li>`;
+      return `<li class="cr-loja-item${n > 0 ? "" : " cr-esgotado"}"><span class="cr-li-ic">${it.ic}</span><span class="cr-li-txt"><b>${it.nome}</b><small>${it.desc}</small>${btns ? `<span class="cr-li-btns">${btns}</span>` : ""}</span><span class="cr-li-preco">${pr(k)}<small>${n > 0 ? `${n} no estoque` : "esgotado"}</small></span></li>`;
     })
     .join("");
   const saldo = (compradores || []).map((c) => `${escapeHtml(c.nome)}: <b>${c.pts}</b>`).join(" · ");
-  return `<div class="cr-loja"><div class="cr-loja-tit">🛒 Lojinha de Sobrevivência <small>(uma só pra mesa: quem comprar primeiro leva)</small></div>${saldo ? `<div class="cr-loja-saldo">💰 ${saldo}</div>` : ""}<ul>${linhas}</ul></div>`;
+  return `<div class="cr-loja"><div class="cr-loja-tit">🛒 Lojinha de Sobrevivência <small>(uma só pra mesa: quem comprar primeiro leva · a vitrine muda a cada intervalo)</small></div>${saldo ? `<div class="cr-loja-saldo">💰 ${saldo}</div>` : ""}<ul>${linhas}</ul></div>`;
 }
 // no host: a vitrine da mesa, com os botões de quem joga no próprio dispositivo do host
 function corridaLojaHostHtml() {
   if (!corridaLojaLigada() || !corridaEstoque) return "";
   const locais = players.filter((p) => typeof redeNoHost !== "function" || redeNoHost(p.id)).map((p) => ({ id: p.id, nome: p.name, pts: p.score || 0 }));
-  return corridaLojaVitrineHtml(corridaEstoque, locais);
+  return corridaLojaVitrineHtml(corridaEstoque, locais, corridaPrecos);
 }
 function corridaIntervaloRedesenharLoja() {
   const box = document.getElementById("crLojaHost");

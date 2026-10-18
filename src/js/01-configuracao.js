@@ -383,14 +383,24 @@ const MC_LOJA = {
   kevlar: { ic: "🛡️", nome: "Escudo de Kevlar", preco: 60, desc: "fica guardado: anula 1 roubo ou punição que tiraria carta sua" },
 };
 const MC_PINATA_PALAVRAS = ["EU QUERO", "CAOS", "ME DA", "BOOM", "PINHATA", "AGORA", "SOCORRO", "PERFIL"];
-// Lojinha de Sobrevivência: só online, só na vitória por Tempo, só no intervalo. Estoque de 1 a 5 de cada por partida.
+/* Lojinha de Sobrevivência: só online, só na vitória por Tempo, só no intervalo, uma só pra mesa (quem compra primeiro
+   leva). 1.7.10.6 (pedido do JF): nomes próprios da Corrida (diferentes dos do Modo C.A.O.S.), catálogo maior e
+   vitrine sorteada a cada intervalo: CORRIDA_VITRINE itens, 1 a 3 de cada, preço variando ±20% (de 5 em 5).
+   Balanceamento: na vitória por Tempo um acerto vale ~60–140 pontos, então item barato é aposta e item caro é
+   seguro. "peso" = chance relativa de aparecer na vitrine. */
 const CORRIDA_LOJA = {
-  congelar: { ic: "🧊", nome: "Congelar Mesa", preco: 40, desc: "o relógio geral para 15 s na próxima carta (vale pra mesa toda)" },
-  folego: { ic: "🫁", nome: "Fôlego", preco: 20, desc: "+15 s nas suas vezes na próxima carta" },
-  escudo: { ic: "🛡️", nome: "Escudo de Kevlar", preco: 60, desc: "se a próxima carta morrer, a mesa não perde 1 min" },
-  corte: { ic: "✂️", nome: "Corte de Fio", preco: 15, desc: "guarda: pula a sua vez sem gastar dica e sem os −2 s" },
-  desfib: { ic: "⚡", nome: "Desfibrilador", preco: 35, desc: "guarda: +15 s no relógio da carta, na hora que quiser" },
+  congelar: { ic: "⏸️", nome: "Pausa Dramática", preco: 30, peso: 3, desc: "o relógio geral para 15 s na próxima carta (vale pra mesa toda)" },
+  folego: { ic: "🌬️", nome: "Segundo Fôlego", preco: 25, peso: 3, desc: "+15 s em cada vez sua na próxima carta" },
+  escudo: { ic: "🧯", nome: "Seguro do Relógio", preco: 40, peso: 2, desc: "se a próxima carta morrer, a mesa não perde 1 min" },
+  corte: { ic: "🎟️", nome: "Passe Livre", preco: 15, peso: 3, desc: "guarda: pula a sua vez sem gastar dica e sem os −2 s" },
+  desfib: { ic: "⚡", nome: "Choque de Tempo", preco: 30, peso: 2, desc: "guarda: +15 s no relógio da carta, na hora que quiser" },
+  cofrinho: { ic: "🐷", nome: "Cofrinho", preco: 25, peso: 2, desc: "a sua próxima carta acertada vale +40 pontos (dura até você acertar)" },
+  ampulheta: { ic: "⏳", nome: "Ampulheta Extra", preco: 35, peso: 2, desc: "+30 s no relógio geral na hora (bom pra quem está atrás)" },
+  ima: { ic: "🧲", nome: "Ímã de Pontos", preco: 20, peso: 2, desc: "se outro jogador acertar a próxima carta, você leva 20% do valor dela" },
 };
+const CORRIDA_VITRINE = 4;
+const CORRIDA_COFRINHO_PTS = 40;
+const CORRIDA_IMA_FRACAO = 0.2;
 // Emblema do verso da carta: anéis neon, losangos dourados, o "P" dentro do "?" e o olho do C.A.O.S.
 const VERSO_EMBLEMA_SVG = `<svg class="back-icon verso-emblema" viewBox="0 0 160 160" aria-hidden="true" focusable="false">
   <defs>

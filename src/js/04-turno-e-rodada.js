@@ -1040,7 +1040,7 @@ function markCorrect(playerIdxOverride) {
     // Corrida: quem acertou fica com a carta (vale 1, com 1 dica ou com 10) e o relógio geral ganha 10 s
     const scorerC = players[scorerIdx];
     const ptsC = corridaValorCarta(); // Tempo: os segundos que sobravam na carta; Cartas: 1
-    scorerC.score = (scorerC.score || 0) + ptsC;
+    scorerC.score = (scorerC.score || 0) + ptsC + corridaLojaNoAcerto(scorerC, ptsC); // 1.7.10.6: Cofrinho e Ímã
     corridaBonus();
     fxFloat(corridaVitoria === "tempo" ? `⏱️ +${ptsC} pts · +${CORRIDA_BONUS_MS / 1e3} s no relógio` : `🃏 +1 carta · ⏱️ +${CORRIDA_BONUS_MS / 1e3} s`, "#4ade80");
     maybeShowAcertoFlavor(scorerIdx, realCluesRevealed, timeTakenMs, { caosSurpresa: caosSurpresaAcerto });

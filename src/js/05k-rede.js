@@ -1663,7 +1663,7 @@ function redeOpcoes(jid) {
     if (corridaIntervaloAberto() && corridaEstoque)
       Object.keys(CORRIDA_LOJA).forEach((k) => {
         const it = CORRIDA_LOJA[k];
-        if (corridaPodeComprar(k, jid)) add("corridaComprar", [k, jid], `${it.ic} ${it.nome} · ${it.preco} pts (${corridaEstoque[k]} no estoque)`, "", `🛒 Lojinha · você tem ${(players[meuIdx] || {}).score || 0} pts`);
+        if (corridaPodeComprar(k, jid)) add("corridaComprar", [k, jid], `${it.ic} ${it.nome} · ${corridaPreco(k)} pts (${corridaEstoque[k]} no estoque)`, "", `🛒 Lojinha · você tem ${(players[meuIdx] || {}).score || 0} pts`);
       });
     ["desfib", "corte"].forEach((k) => corridaPodeUsar(k, jid) && add("corridaUsar", [k, jid], `${CORRIDA_LOJA[k].ic} Usar ${CORRIDA_LOJA[k].nome}`, "ok", "🎒 Seus itens"));
   }

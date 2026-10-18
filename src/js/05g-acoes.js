@@ -190,7 +190,7 @@ function acoesFotoModos() {
     const pedidos = players.some((p) => p.pedeCaos) ? "|pc" + JSON.stringify(players.map((p) => p.pedeCaos || 0)) : "";
     if (pedidos && CURRENT_MODE !== "corrida" && CURRENT_MODE !== "caos") return pedidos;
     if (CURRENT_MODE === "corrida")
-      return pedidos + "|cr" + JSON.stringify([corridaItens, corridaEstoque, corridaEscudo, corridaFolego, corridaCongelaMs > 0, Math.round(corridaCartaRestaMs / 1000)]);
+      return pedidos + "|cr" + JSON.stringify([corridaItens, corridaEstoque, corridaPrecos, corridaCofrinho, corridaIma, corridaEscudo, corridaFolego, corridaCongelaMs > 0, Math.round(corridaCartaRestaMs / 1000)]);
     if (CURRENT_MODE === "caos" && typeof mcFoto === "function") return pedidos + "|mc" + mcFoto();
   } catch (e) {}
   return "";

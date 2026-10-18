@@ -255,7 +255,7 @@ function telaoDesenhar(r, alvo) {
     ${carta}
     ${telaoMostraTabuleiro(r) ? tabHtmlTelao(r) : ""}
     <section class="telao-placar"><h2 class="tp-tit">Placar</h2><ol>${placar}</ol></section>
-    ${r.intervalo && r.corrida && r.corrida.estoque ? corridaLojaVitrineHtml(r.corrida.estoque, []) : ""}
+    ${r.intervalo && r.corrida && r.corrida.estoque ? corridaLojaVitrineHtml(r.corrida.estoque, [], r.corrida.precos) : ""}
     ${telaoObjetivoHtml(r)}
     <details class="telao-hist" data-k="hist"><summary>🗂️ Cartas da partida <span class="th-n">${hist.length}</span></summary>${cartasPartidaHtml(hist, nomeTxt, (id) => (jog(id) ? escapeHtml((jog(id).avatar ? jog(id).avatar + " " : "") + jog(id).nome) : "Alguém"))}</details>
     ${TELAO_SAIR}`;

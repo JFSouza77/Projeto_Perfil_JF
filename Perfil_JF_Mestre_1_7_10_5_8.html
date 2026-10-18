@@ -11192,14 +11192,24 @@ const MC_LOJA = {
   kevlar: { ic: "🛡️", nome: "Escudo de Kevlar", preco: 60, desc: "fica guardado: anula 1 roubo ou punição que tiraria carta sua" },
 };
 const MC_PINATA_PALAVRAS = ["EU QUERO", "CAOS", "ME DA", "BOOM", "PINHATA", "AGORA", "SOCORRO", "PERFIL"];
-// Lojinha de Sobrevivência: só online, só na vitória por Tempo, só no intervalo. Estoque de 1 a 5 de cada por partida.
+/* Lojinha de Sobrevivência: só online, só na vitória por Tempo, só no intervalo, uma só pra mesa (quem compra primeiro
+   leva). 1.7.10.6 (pedido do JF): nomes próprios da Corrida (diferentes dos do Modo C.A.O.S.), catálogo maior e
+   vitrine sorteada a cada intervalo: CORRIDA_VITRINE itens, 1 a 3 de cada, preço variando ±20% (de 5 em 5).
+   Balanceamento: na vitória por Tempo um acerto vale ~60–140 pontos, então item barato é aposta e item caro é
+   seguro. "peso" = chance relativa de aparecer na vitrine. */
 const CORRIDA_LOJA = {
-  congelar: { ic: "🧊", nome: "Congelar Mesa", preco: 40, desc: "o relógio geral para 15 s na próxima carta (vale pra mesa toda)" },
-  folego: { ic: "🫁", nome: "Fôlego", preco: 20, desc: "+15 s nas suas vezes na próxima carta" },
-  escudo: { ic: "🛡️", nome: "Escudo de Kevlar", preco: 60, desc: "se a próxima carta morrer, a mesa não perde 1 min" },
-  corte: { ic: "✂️", nome: "Corte de Fio", preco: 15, desc: "guarda: pula a sua vez sem gastar dica e sem os −2 s" },
-  desfib: { ic: "⚡", nome: "Desfibrilador", preco: 35, desc: "guarda: +15 s no relógio da carta, na hora que quiser" },
+  congelar: { ic: "⏸️", nome: "Pausa Dramática", preco: 30, peso: 3, desc: "o relógio geral para 15 s na próxima carta (vale pra mesa toda)" },
+  folego: { ic: "🌬️", nome: "Segundo Fôlego", preco: 25, peso: 3, desc: "+15 s em cada vez sua na próxima carta" },
+  escudo: { ic: "🧯", nome: "Seguro do Relógio", preco: 40, peso: 2, desc: "se a próxima carta morrer, a mesa não perde 1 min" },
+  corte: { ic: "🎟️", nome: "Passe Livre", preco: 15, peso: 3, desc: "guarda: pula a sua vez sem gastar dica e sem os −2 s" },
+  desfib: { ic: "⚡", nome: "Choque de Tempo", preco: 30, peso: 2, desc: "guarda: +15 s no relógio da carta, na hora que quiser" },
+  cofrinho: { ic: "🐷", nome: "Cofrinho", preco: 25, peso: 2, desc: "a sua próxima carta acertada vale +40 pontos (dura até você acertar)" },
+  ampulheta: { ic: "⏳", nome: "Ampulheta Extra", preco: 35, peso: 2, desc: "+30 s no relógio geral na hora (bom pra quem está atrás)" },
+  ima: { ic: "🧲", nome: "Ímã de Pontos", preco: 20, peso: 2, desc: "se outro jogador acertar a próxima carta, você leva 20% do valor dela" },
 };
+const CORRIDA_VITRINE = 4;
+const CORRIDA_COFRINHO_PTS = 40;
+const CORRIDA_IMA_FRACAO = 0.2;
 // Emblema do verso da carta: anéis neon, losangos dourados, o "P" dentro do "?" e o olho do C.A.O.S.
 const VERSO_EMBLEMA_SVG = `<svg class="back-icon verso-emblema" viewBox="0 0 160 160" aria-hidden="true" focusable="false">
   <defs>
@@ -14090,7 +14100,7 @@ function markCorrect(playerIdxOverride) {
     // Corrida: quem acertou fica com a carta (vale 1, com 1 dica ou com 10) e o relógio geral ganha 10 s
     const scorerC = players[scorerIdx];
     const ptsC = corridaValorCarta(); // Tempo: os segundos que sobravam na carta; Cartas: 1
-    scorerC.score = (scorerC.score || 0) + ptsC;
+    scorerC.score = (scorerC.score || 0) + ptsC + corridaLojaNoAcerto(scorerC, ptsC); // 1.7.10.6: Cofrinho e Ímã
     corridaBonus();
     fxFloat(corridaVitoria === "tempo" ? `⏱️ +${ptsC} pts · +${CORRIDA_BONUS_MS / 1e3} s no relógio` : `🃏 +1 carta · ⏱️ +${CORRIDA_BONUS_MS / 1e3} s`, "#4ade80");
     maybeShowAcertoFlavor(scorerIdx, realCluesRevealed, timeTakenMs, { caosSurpresa: caosSurpresaAcerto });
@@ -20757,7 +20767,7 @@ function acoesFotoModos() {
     const pedidos = players.some((p) => p.pedeCaos) ? "|pc" + JSON.stringify(players.map((p) => p.pedeCaos || 0)) : "";
     if (pedidos && CURRENT_MODE !== "corrida" && CURRENT_MODE !== "caos") return pedidos;
     if (CURRENT_MODE === "corrida")
-      return pedidos + "|cr" + JSON.stringify([corridaItens, corridaEstoque, corridaEscudo, corridaFolego, corridaCongelaMs > 0, Math.round(corridaCartaRestaMs / 1000)]);
+      return pedidos + "|cr" + JSON.stringify([corridaItens, corridaEstoque, corridaPrecos, corridaCofrinho, corridaIma, corridaEscudo, corridaFolego, corridaCongelaMs > 0, Math.round(corridaCartaRestaMs / 1000)]);
     if (CURRENT_MODE === "caos" && typeof mcFoto === "function") return pedidos + "|mc" + mcFoto();
   } catch (e) {}
   return "";
@@ -21502,7 +21512,7 @@ function telaoDesenhar(r, alvo) {
     ${carta}
     ${telaoMostraTabuleiro(r) ? tabHtmlTelao(r) : ""}
     <section class="telao-placar"><h2 class="tp-tit">Placar</h2><ol>${placar}</ol></section>
-    ${r.intervalo && r.corrida && r.corrida.estoque ? corridaLojaVitrineHtml(r.corrida.estoque, []) : ""}
+    ${r.intervalo && r.corrida && r.corrida.estoque ? corridaLojaVitrineHtml(r.corrida.estoque, [], r.corrida.precos) : ""}
     ${telaoObjetivoHtml(r)}
     <details class="telao-hist" data-k="hist"><summary>🗂️ Cartas da partida <span class="th-n">${hist.length}</span></summary>${cartasPartidaHtml(hist, nomeTxt, (id) => (jog(id) ? escapeHtml((jog(id).avatar ? jog(id).avatar + " " : "") + jog(id).nome) : "Alguém"))}</details>
     ${TELAO_SAIR}`;
@@ -24218,7 +24228,7 @@ function redeOpcoes(jid) {
     if (corridaIntervaloAberto() && corridaEstoque)
       Object.keys(CORRIDA_LOJA).forEach((k) => {
         const it = CORRIDA_LOJA[k];
-        if (corridaPodeComprar(k, jid)) add("corridaComprar", [k, jid], `${it.ic} ${it.nome} · ${it.preco} pts (${corridaEstoque[k]} no estoque)`, "", `🛒 Lojinha · você tem ${(players[meuIdx] || {}).score || 0} pts`);
+        if (corridaPodeComprar(k, jid)) add("corridaComprar", [k, jid], `${it.ic} ${it.nome} · ${corridaPreco(k)} pts (${corridaEstoque[k]} no estoque)`, "", `🛒 Lojinha · você tem ${(players[meuIdx] || {}).score || 0} pts`);
       });
     ["desfib", "corte"].forEach((k) => corridaPodeUsar(k, jid) && add("corridaUsar", [k, jid], `${CORRIDA_LOJA[k].ic} Usar ${CORRIDA_LOJA[k].nome}`, "ok", "🎒 Seus itens"));
   }
@@ -28857,7 +28867,7 @@ function corridaRegrasHtml(resumo) {
       `💣 <b>Bomba-Relógio:</b> de vez em quando o jogo arma uma carta (e o C.A.O.S. anuncia como se fosse ideia dele) (${hc ? CORRIDA_BOMBA_QUOTA.hardcore : CORRIDA_BOMBA_QUOTA.normal} por partida). Cada erro tira ${CORRIDA_BOMBA_ERRO_MS / 1e3} s do relógio geral; desarmar dá <b>+${CORRIDA_BOMBA_BONUS_MS / 1e3} s</b>; se ela morrer, BOOM: −1 min.`,
       `⚔️ <b>Duelo:</b> até ${CORRIDA_DUELO_MAX} por partida (3+ jogadores), o jogo sorteia dois duelistas e o Mestre (o C.A.O.S. faz o show). O relógio geral para, a carta corre <b>2×</b> e só os dois respondem. ${tempo ? `Quem vence rouba ${CORRIDA_DUELO_ROUBO} pontos do outro. ` : ""}Ninguém acertou? Carta destruída.`,
       "⚖️ <b>Juízo Final:</b> no último minuto as dicas abrem sozinhas e qualquer um bate na mesa. Acertar não dá mais tempo.",
-      `☕ <b>Intervalo:</b> ${CORRIDA_INTERVALO_SEG} s entre as cartas pra ver o placar, com o relógio geral <b>congelado</b>.${tempo ? " <b>No online</b>, é a hora da 🛒 <b>Lojinha de Sobrevivência</b>, uma só pra mesa toda (quem comprar primeiro leva): gaste pontos em 🧊 Congelar Mesa, 🫁 Fôlego, 🛡️ Escudo de Kevlar, ✂️ Corte de Fio e ⚡ Desfibrilador (estoque limitado)." : ""}`,
+      `☕ <b>Intervalo:</b> ${CORRIDA_INTERVALO_SEG} s entre as cartas pra ver o placar, com o relógio geral <b>congelado</b>.${tempo ? ` <b>No online</b>, é a hora da 🛒 <b>Lojinha de Sobrevivência</b>, uma só pra mesa toda (quem comprar primeiro leva): gaste pontos nos itens da vitrine, que muda a cada intervalo (${Object.values(CORRIDA_LOJA).map((it) => it.ic + " " + it.nome).join(", ")}; estoque limitado).` : ""}`,
       hc ? "⭐ <b>Especiais:</b> no Hardcore não tem (as dicas abrem sozinhas)." : "⭐ <b>Especiais:</b> sem tabuleiro, as de andar casas saem. <b>Perca sua vez</b> passa a vez. <b>Rouba a vez</b> (o antigo Palpite a qualquer hora) dá uma ficha pra responder fora da vez (3+ jogadores).",
       tempo
         ? "⚖️ <b>Empate no fim:</b> vence quem tiver mais cartas; empatou de novo, vitória dividida. Na tela final ainda saem as coroas de ⏱️ <b>Senhor do Tempo</b> e 🃏 <b>Colecionador</b>."
@@ -28888,6 +28898,7 @@ function corridaRetrato() {
     duelo: corridaDuelo ? corridaDuelo.ids.slice() : null,
     vel: corridaVelocidade(),
     estoque: corridaEstoque ? { ...corridaEstoque } : null,
+    precos: corridaEstoque ? { ...corridaPrecos } : null,
   };
 }
 // do retrato pro formato da barra (no convidado, na hora do host)
@@ -28935,7 +28946,10 @@ let corridaCongelaTique = 0;
 let corridaEscudo = -1; // cartaSeq que o Escudo de Kevlar protege
 let corridaFolego = {}; // id → cartaSeq em que a pessoa tem +15 s nas vezes
 let corridaItens = {}; // id → { corte: n, desfib: n }
-let corridaEstoque = null; // { item: unidades } (só com a lojinha ligada)
+let corridaEstoque = null; // { item: unidades } (só com a lojinha ligada; só os itens da vitrine deste intervalo)
+let corridaPrecos = {}; // { item: preço } da vitrine deste intervalo
+let corridaCofrinho = {}; // id → cofrinhos guardados (cada um: +CORRIDA_COFRINHO_PTS no próximo acerto da pessoa)
+let corridaIma = {}; // id → cartaSeq em que o Ímã de Pontos vale
 let corridaTiqueSom = 0;
 
 function corridaEventosZerar() {
@@ -28952,6 +28966,9 @@ function corridaEventosZerar() {
   corridaFolego = {};
   corridaItens = {};
   corridaEstoque = null;
+  corridaPrecos = {};
+  corridaCofrinho = {};
+  corridaIma = {};
   document.body.classList.remove("cr-juizo", "cr-bomba", "cr-duelo");
 }
 function corridaEventosSalvar() {
@@ -28967,6 +28984,9 @@ function corridaEventosSalvar() {
     folego: Object.keys(corridaFolego).filter((k) => corridaFolego[k] === cartaSeq),
     itens: corridaItens,
     estoque: corridaEstoque,
+    precos: corridaPrecos,
+    cofrinho: corridaCofrinho,
+    ima: Object.keys(corridaIma).filter((k) => corridaIma[k] === cartaSeq),
   };
 }
 function corridaEventosRetomar(e) {
@@ -28989,8 +29009,14 @@ function corridaEventosRetomar(e) {
       .forEach((id) => (corridaItens[String(id)] = { corte: n(e.itens[id] && e.itens[id].corte, 5), desfib: n(e.itens[id] && e.itens[id].desfib, 5) }));
   if (e.estoque && typeof e.estoque === "object") {
     corridaEstoque = {};
-    Object.keys(CORRIDA_LOJA).forEach((k) => (corridaEstoque[k] = n(e.estoque[k], 5)));
+    Object.keys(CORRIDA_LOJA).forEach((k) => {
+      if (e.estoque[k] === undefined) return;
+      corridaEstoque[k] = n(e.estoque[k], 5);
+      corridaPrecos[k] = e.precos && e.precos[k] ? n(e.precos[k], 500) : CORRIDA_LOJA[k].preco;
+    });
   }
+  if (e.cofrinho && typeof e.cofrinho === "object") Object.keys(e.cofrinho).slice(0, 10).forEach((id) => (corridaCofrinho[String(id)] = n(e.cofrinho[id], 9)));
+  if (Array.isArray(e.ima)) e.ima.slice(0, 10).forEach((id) => (corridaIma[String(id)] = cartaSeq));
   corridaClassesCorpo();
 }
 
@@ -29240,17 +29266,41 @@ function corridaDueloFim() {
 function corridaLojaLigada() {
   return CURRENT_MODE === "corrida" && corridaVitoria === "tempo" && typeof salaOnlineAberta === "function" && salaOnlineAberta();
 }
+/* 1.7.10.6 (pedido do JF): vitrine sorteada (Corrida e Modo C.A.O.S.): n itens do catálogo (pelo peso), 1 a 3 de
+   cada, preço variando ±20% de 5 em 5 (mínimo 5). Devolve { estoque: { item: unidades }, precos: { item: preço } }. */
+function lojaVitrineSortear(catalogo, n) {
+  const bolsa = Object.keys(catalogo).map((k) => ({ k, w: catalogo[k].peso || 1 }));
+  const estoque = {},
+    precos = {};
+  for (let i = 0; i < n && bolsa.length; i++) {
+    const tot = bolsa.reduce((s, x) => s + x.w, 0);
+    let r = sorteioRegra() * tot,
+      j = 0;
+    while (j < bolsa.length - 1 && r >= bolsa[j].w) r -= bolsa[j++].w;
+    const k = bolsa.splice(j, 1)[0].k;
+    estoque[k] = 1 + Math.floor(sorteioRegra() * 3);
+    const fator = [0.8, 0.9, 1, 1, 1.1, 1.2][Math.floor(sorteioRegra() * 6)];
+    precos[k] = Math.max(5, Math.round((catalogo[k].preco * fator) / 5) * 5);
+  }
+  return { estoque, precos };
+}
+// a cada intervalo a vitrine é outra (o que sobrou da anterior some)
 function corridaLojaPreparar() {
-  if (!corridaLojaLigada() || corridaEstoque) return;
-  corridaEstoque = {};
-  Object.keys(CORRIDA_LOJA).forEach((k) => (corridaEstoque[k] = 1 + Math.floor(sorteioRegra() * 5)));
-  caosLog("corrida", "lojinha aberta: " + JSON.stringify(corridaEstoque));
+  if (!corridaLojaLigada()) return;
+  const v = lojaVitrineSortear(CORRIDA_LOJA, CORRIDA_VITRINE);
+  corridaEstoque = v.estoque;
+  corridaPrecos = v.precos;
+  caosLog("corrida", "vitrine da lojinha: " + Object.keys(v.estoque).map((k) => `${CORRIDA_LOJA[k].nome} ${v.precos[k]}×${v.estoque[k]}`).join(", "));
+}
+function corridaPreco(item) {
+  return corridaPrecos[item] || (CORRIDA_LOJA[item] || {}).preco || 0;
 }
 function corridaPodeComprar(item, id) {
   const it = CORRIDA_LOJA[item],
     p = jogadorPorId(id);
   if (!it || !p || !corridaLojaLigada() || !corridaIntervaloAberto() || !corridaEstoque) return false;
-  if ((corridaEstoque[item] || 0) <= 0 || (p.score || 0) < it.preco) return false;
+  if ((corridaEstoque[item] || 0) <= 0 || (p.score || 0) < corridaPreco(item)) return false;
+  if (item === "ima" && corridaIma[id] === cartaSeq) return false;
   if (item === "escudo" && corridaEscudo === cartaSeq) return false; // um escudo por carta basta
   if (item === "folego" && corridaFolego[id] === cartaSeq) return false;
   return true;
@@ -29258,18 +29308,22 @@ function corridaPodeComprar(item, id) {
 function corridaComprar(item, id) {
   if (!corridaPodeComprar(item, id)) return;
   const it = CORRIDA_LOJA[item],
-    p = jogadorPorId(id);
-  p.score -= it.preco;
+    p = jogadorPorId(id),
+    preco = corridaPreco(item);
+  p.score -= preco;
   corridaEstoque[item]--;
   if (item === "congelar") corridaCongelaMs += 15e3;
   else if (item === "folego") corridaFolego[id] = cartaSeq;
   else if (item === "escudo") corridaEscudo = cartaSeq;
+  else if (item === "cofrinho") corridaCofrinho[id] = (corridaCofrinho[id] || 0) + 1;
+  else if (item === "ampulheta") corridaGeralMudar(30e3);
+  else if (item === "ima") corridaIma[id] = cartaSeq;
   else {
     corridaItens[id] = corridaItens[id] || { corte: 0, desfib: 0 };
     corridaItens[id][item]++;
   }
   playSfx("joia");
-  fxFloat(`${it.ic} ${p.name} comprou ${it.nome} (−${it.preco})`, "#fbbf24");
+  fxFloat(`${it.ic} ${p.name} comprou ${it.nome} (−${preco})`, "#fbbf24");
   caosLog("corrida", `${p.name} comprou ${it.nome}`);
   const V = REACTIVE_VOICE.corrida;
   if (V && V.compra && Math.random() < 0.5) {
@@ -29279,6 +29333,23 @@ function corridaComprar(item, id) {
   corridaIntervaloRedesenharLoja();
   renderMiniScoreboard();
   saveGameState();
+}
+// no acerto (vitória por Tempo): Cofrinho de quem acertou e Ímã dos outros. Devolve os pontos extras de quem acertou.
+function corridaLojaNoAcerto(scorer, pts) {
+  if (!scorer || corridaVitoria !== "tempo") return 0;
+  let extra = 0;
+  if ((corridaCofrinho[scorer.id] || 0) > 0) {
+    corridaCofrinho[scorer.id]--;
+    extra = CORRIDA_COFRINHO_PTS;
+    fxFloat(`🐷 Cofrinho de ${scorer.name}: +${extra}!`, "#f472b6");
+  }
+  players.forEach((p) => {
+    if (p === scorer || corridaIma[p.id] !== cartaSeq) return;
+    const ganho = Math.max(1, Math.round(pts * CORRIDA_IMA_FRACAO));
+    p.score = (p.score || 0) + ganho;
+    fxFloat(`🧲 Ímã de ${p.name}: +${ganho}`, "#60a5fa");
+  });
+  return extra;
 }
 function corridaPodeUsar(item, id) {
   const p = jogadorPorId(id),
@@ -29310,29 +29381,31 @@ function corridaUsar(item, id) {
 /* A lojinha é UMA só pra mesa toda (pedido do JF): o mesmo estoque, ao vivo em todo dispositivo e na T2; quem comprar
    primeiro leva (o host atende um pedido de cada vez, e o segundo já encontra o estoque menor).
    estoque: { item: unidades }; compradores: [{ id, nome, pts }] (quem pode comprar NESTE dispositivo; vazio = só vitrine) */
-function corridaLojaVitrineHtml(estoque, compradores) {
+function corridaLojaVitrineHtml(estoque, compradores, precos) {
   if (!estoque) return "";
-  const linhas = Object.keys(CORRIDA_LOJA)
+  const pr = (k) => (precos && precos[k]) || CORRIDA_LOJA[k].preco;
+  const linhas = Object.keys(estoque)
+    .filter((k) => CORRIDA_LOJA[k])
     .map((k) => {
       const it = CORRIDA_LOJA[k],
         n = estoque[k] || 0;
       const btns = (compradores || [])
         .map((c) => {
-          const pode = n > 0 && c.pts >= it.preco && corridaPodeComprar(k, c.id);
+          const pode = n > 0 && c.pts >= pr(k) && corridaPodeComprar(k, c.id);
           return `<button type="button" class="cr-loja-comprar" data-cr-comprar="${k}" data-cr-quem="${escapeHtml(c.id)}" ${pode ? "" : "disabled"}>${(compradores || []).length > 1 ? escapeHtml(c.nome) + " compra" : "Comprar"}</button>`;
         })
         .join("");
-      return `<li class="cr-loja-item${n > 0 ? "" : " cr-esgotado"}"><span class="cr-li-ic">${it.ic}</span><span class="cr-li-txt"><b>${it.nome}</b><small>${it.desc}</small>${btns ? `<span class="cr-li-btns">${btns}</span>` : ""}</span><span class="cr-li-preco">${it.preco}<small>${n > 0 ? `${n} no estoque` : "esgotado"}</small></span></li>`;
+      return `<li class="cr-loja-item${n > 0 ? "" : " cr-esgotado"}"><span class="cr-li-ic">${it.ic}</span><span class="cr-li-txt"><b>${it.nome}</b><small>${it.desc}</small>${btns ? `<span class="cr-li-btns">${btns}</span>` : ""}</span><span class="cr-li-preco">${pr(k)}<small>${n > 0 ? `${n} no estoque` : "esgotado"}</small></span></li>`;
     })
     .join("");
   const saldo = (compradores || []).map((c) => `${escapeHtml(c.nome)}: <b>${c.pts}</b>`).join(" · ");
-  return `<div class="cr-loja"><div class="cr-loja-tit">🛒 Lojinha de Sobrevivência <small>(uma só pra mesa: quem comprar primeiro leva)</small></div>${saldo ? `<div class="cr-loja-saldo">💰 ${saldo}</div>` : ""}<ul>${linhas}</ul></div>`;
+  return `<div class="cr-loja"><div class="cr-loja-tit">🛒 Lojinha de Sobrevivência <small>(uma só pra mesa: quem comprar primeiro leva · a vitrine muda a cada intervalo)</small></div>${saldo ? `<div class="cr-loja-saldo">💰 ${saldo}</div>` : ""}<ul>${linhas}</ul></div>`;
 }
 // no host: a vitrine da mesa, com os botões de quem joga no próprio dispositivo do host
 function corridaLojaHostHtml() {
   if (!corridaLojaLigada() || !corridaEstoque) return "";
   const locais = players.filter((p) => typeof redeNoHost !== "function" || redeNoHost(p.id)).map((p) => ({ id: p.id, nome: p.name, pts: p.score || 0 }));
-  return corridaLojaVitrineHtml(corridaEstoque, locais);
+  return corridaLojaVitrineHtml(corridaEstoque, locais, corridaPrecos);
 }
 function corridaIntervaloRedesenharLoja() {
   const box = document.getElementById("crLojaHost");

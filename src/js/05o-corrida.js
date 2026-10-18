@@ -481,7 +481,7 @@ function corridaRegrasHtml(resumo) {
       `💣 <b>Bomba-Relógio:</b> de vez em quando o jogo arma uma carta (e o C.A.O.S. anuncia como se fosse ideia dele) (${hc ? CORRIDA_BOMBA_QUOTA.hardcore : CORRIDA_BOMBA_QUOTA.normal} por partida). Cada erro tira ${CORRIDA_BOMBA_ERRO_MS / 1e3} s do relógio geral; desarmar dá <b>+${CORRIDA_BOMBA_BONUS_MS / 1e3} s</b>; se ela morrer, BOOM: −1 min.`,
       `⚔️ <b>Duelo:</b> até ${CORRIDA_DUELO_MAX} por partida (3+ jogadores), o jogo sorteia dois duelistas e o Mestre (o C.A.O.S. faz o show). O relógio geral para, a carta corre <b>2×</b> e só os dois respondem. ${tempo ? `Quem vence rouba ${CORRIDA_DUELO_ROUBO} pontos do outro. ` : ""}Ninguém acertou? Carta destruída.`,
       "⚖️ <b>Juízo Final:</b> no último minuto as dicas abrem sozinhas e qualquer um bate na mesa. Acertar não dá mais tempo.",
-      `☕ <b>Intervalo:</b> ${CORRIDA_INTERVALO_SEG} s entre as cartas pra ver o placar, com o relógio geral <b>congelado</b>.${tempo ? " <b>No online</b>, é a hora da 🛒 <b>Lojinha de Sobrevivência</b>, uma só pra mesa toda (quem comprar primeiro leva): gaste pontos em 🧊 Congelar Mesa, 🫁 Fôlego, 🛡️ Escudo de Kevlar, ✂️ Corte de Fio e ⚡ Desfibrilador (estoque limitado)." : ""}`,
+      `☕ <b>Intervalo:</b> ${CORRIDA_INTERVALO_SEG} s entre as cartas pra ver o placar, com o relógio geral <b>congelado</b>.${tempo ? ` <b>No online</b>, é a hora da 🛒 <b>Lojinha de Sobrevivência</b>, uma só pra mesa toda (quem comprar primeiro leva): gaste pontos nos itens da vitrine, que muda a cada intervalo (${Object.values(CORRIDA_LOJA).map((it) => it.ic + " " + it.nome).join(", ")}; estoque limitado).` : ""}`,
       hc ? "⭐ <b>Especiais:</b> no Hardcore não tem (as dicas abrem sozinhas)." : "⭐ <b>Especiais:</b> sem tabuleiro, as de andar casas saem. <b>Perca sua vez</b> passa a vez. <b>Rouba a vez</b> (o antigo Palpite a qualquer hora) dá uma ficha pra responder fora da vez (3+ jogadores).",
       tempo
         ? "⚖️ <b>Empate no fim:</b> vence quem tiver mais cartas; empatou de novo, vitória dividida. Na tela final ainda saem as coroas de ⏱️ <b>Senhor do Tempo</b> e 🃏 <b>Colecionador</b>."
@@ -512,6 +512,7 @@ function corridaRetrato() {
     duelo: corridaDuelo ? corridaDuelo.ids.slice() : null,
     vel: corridaVelocidade(),
     estoque: corridaEstoque ? { ...corridaEstoque } : null,
+    precos: corridaEstoque ? { ...corridaPrecos } : null,
   };
 }
 // do retrato pro formato da barra (no convidado, na hora do host)
