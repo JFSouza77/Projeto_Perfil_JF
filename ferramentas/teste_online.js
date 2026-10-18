@@ -56,6 +56,7 @@ async function mesa(b, sv, rot) {
         if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
         if (window.__REDE_SERVIDOR === undefined) window.__REDE_SERVIDOR = false;
     if (window.__REDE_HOST_SUMIU_MS === undefined) window.__REDE_HOST_SUMIU_MS = 15000; // (o jogo espera 1 min; o teste, 15 s)
+    if (window.__REDE_RESERVA_MS === undefined) window.__REDE_RESERVA_MS = 8000; // (o reserva espera +20 s; o teste, +8 s)
     window.__REDE_PEER_CONFIG = { host: "127.0.0.1", port: porta, path: "/", secure: false, key: chave, config: { iceServers: [] } };
       },
       [sv.porta, sv.chave],
@@ -516,6 +517,58 @@ async function segundoPlano(b, sv) {
   }
 }
 
+// 1.7.10.6 (relato do JF: o dispositivo do host descarregou e a sala travou): o host morre de vez (página fechada)
+// e o sucessor está "dormindo" (não assume). O reserva tem que assumir e a partida continuar de onde estava.
+async function hostMorreu(b, sv) {
+  const rot = "host morreu";
+  const m = await mesa(b, sv, rot);
+  try {
+    const host = await m.abrir("");
+    const nomes = ["JF", "Anne", "Jhenny", "Sofia"];
+    const sala = await montar(host, { formato: "versus", modo: "classico", cond: "tabuleiro", nomes });
+    await esperar(host, () => rede && rede.transporte.estado === "aberta");
+    const cs = [];
+    for (const n of nomes.slice(1)) cs.push(await entrar(m, host, sala, n));
+    await host.evaluate((id) => redeDefinirNoHost([id]), await host.evaluate(() => players.find((p) => p.name === "JF").id));
+    conf(`[${rot}] Mesa montada (JF no host, 3 dispositivos)`, cs.every((c) => c.ok));
+    await jogarAteOFim(host, cs.map((c) => c.g), 6000);
+    await host.waitForTimeout(2500); // o pacote de recuperação chega no sucessor e no reserva
+    const sucs = await host.evaluate(() => redeSucessores());
+    conf(`[${rot}] Tem sucessor e reserva`, sucs.length === 2);
+    const pg = (id) => cs.find((c) => c.id === id).g;
+    const temPacote = await pg(sucs[1]).evaluate(() => !!(rede && rede.recuperacao));
+    conf(`[${rot}] O reserva também recebeu o pacote da partida`, temPacote);
+    const revAntes = await host.evaluate(() => partidaRevisao);
+    // o sucessor "dorme" (segundo plano): não assume
+    await pg(sucs[0]).evaluate(() => (redeAssumir = () => false));
+    await host.close({ runBeforeUnload: false });
+    const papel = (g) => g.evaluate(() => (rede ? rede.papel + ":" + (rede.papel === "host" ? rede.transporte.estado : rede.estado) : "nada")).catch(() => "recarregando");
+    let novo = null, t0 = Date.now();
+    while (Date.now() - t0 < 90000) {
+      if ((await papel(pg(sucs[1]))) === "host:aberta") { novo = pg(sucs[1]); break; }
+      await cs[0].g.waitForTimeout(1000);
+    }
+    conf(`[${rot}] O reserva assumiu a sala (${Math.round((Date.now() - t0) / 1000)} s)`, !!novo);
+    if (novo) {
+      conf(`[${rot}] Nada se perdeu (mesma revisão ou à frente)`, await novo.evaluate((r) => partidaRevisao >= r && starterChosen && !gameEnded, revAntes));
+      const outros = cs.filter((c) => c.id !== sucs[1]).map((c) => c.g);
+      let voltaram = true;
+      for (const g of outros) voltaram = voltaram && (await esperar(g, () => rede && rede.papel === "convidado" && rede.estado === "dentro", null, 40000));
+      conf(`[${rot}] Os outros dois voltaram pra sala do novo host`, voltaram);
+      // o JF ficou sem dispositivo: quem assumiu joga por ele também (a tela do host mostra o jogo inteiro)
+      await novo.evaluate(() => redeDefinirNoHost(redeJogadoresNoHost().concat(players.find((p) => p.name === "JF").id)));
+      const antes = await novo.evaluate(() => partidaRevisao);
+      await jogarAteOFim(novo, outros, 15000);
+      const andou = (await novo.evaluate(() => partidaRevisao)) > antes;
+      if (!andou) for (const g of outros) console.log("DIAG conv:", await g.evaluate(() => JSON.stringify({ eu: rede.eu, est: rede.estado, rev: rede.retrato && rede.retrato.revisao, ops: (rede.painel && rede.painel.opcoes || []).map((o) => o.a), pend: Object.keys(rede.pendentes).length, resp: Object.values(rede.respostas).slice(-2) })));
+      if (!andou) console.log("DIAG caiu:", await novo.evaluate(() => JSON.stringify({ m: (players[mestreIndex] || {}).name, v: (players[responderIndex] || {}).name, cs: cardState, pi: pendingIndex, noHost: redeJogadoresNoHost().map((id) => jogadorPorId(id).name), toast: !!activeToastState, pausa: !!pausedAt, modais: [...document.querySelectorAll(".caos-modal-ov, .jf-modal-bg")].map((o) => o.textContent.slice(0, 80)), tk: timerKind, ops: redeJogadoresNoHost().map((id) => redeOpcoes(id).map((o) => o.a)) })));
+      conf(`[${rot}] A partida continua`, andou);
+    }
+  } finally {
+    await m.fechar();
+  }
+}
+
 // O host atualiza o jogo no meio da partida
 async function atualizacao(b, sv) {
   const rot = "atualização";
@@ -668,6 +721,7 @@ async function dueloOnline(b, sv) {
     if (!SO || SO === "partidas" || SO === "caos") await partidaModoCaos(b, sv);
     if (!SO || SO === "partidas" || SO === "duelo") await dueloOnline(b, sv);
     if (!SO || SO === "fundo") await segundoPlano(b, sv);
+    if (!SO || SO === "fundo" || SO === "caiu") await hostMorreu(b, sv);
     if (!SO || SO === "versao") await atualizacao(b, sv);
   } finally {
     sv.fechar();

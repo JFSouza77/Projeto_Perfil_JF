@@ -22459,6 +22459,7 @@ const REDE_MAX_NORMAL = 64 * 1024; // o resto das mensagens
 const REDE_DO_CONVIDADO = ["oi", "cmd", "ping", "tchau", "voto", "pedido", "sinal"];
 const REDE_DO_HOST = ["bemvindo", "escolha", "recusa", "retrato", "segredo", "resp", "pong", "painel", "recuperacao", "aguarde", "fala"];
 // 1.7.10.1 (pedido do JF): 1 min sem notícia do host antes do sucessor assumir (dá tempo de voltar de outro app)
+const REDE_RESERVA_MS = typeof window !== "undefined" && Number.isFinite(window.__REDE_RESERVA_MS) ? window.__REDE_RESERVA_MS : 20000;
 const REDE_HOST_SUMIU_MS = typeof window !== "undefined" && Number.isFinite(window.__REDE_HOST_SUMIU_MS) ? window.__REDE_HOST_SUMIU_MS : 60000;
 const REDE_ONLINE_MS = 15000; // sem notícia há mais que isso: o convidado conta como fora
 const REDE_LETRAS_SALA = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // sem I e O (não confundem com 1 e 0)
@@ -24152,19 +24153,27 @@ function redeOpcoes(jid) {
 // Sucessor (regra do JF): na ordem dos Mestres da partida (a partir do 2º, contando do primeiro Mestre),
 // o primeiro jogador que está na sala, online, e não é o próprio host.
 function redeSucessor() {
-  if (!rede || rede.papel !== "host" || !players.length) return null;
+  return redeSucessores()[0] || null;
+}
+// 1.7.10.6 (relato do JF: o dispositivo do host descarregou e ninguém assumiu): o sucessor e um reserva. Os
+// dois recebem o pacote; o reserva só assume se o sucessor não assumir em REDE_RESERVA_MS (o sucessor podia
+// estar em segundo plano, e aí a sala ficava parada pra sempre).
+function redeSucessores() {
+  if (!rede || rede.papel !== "host" || !players.length) return [];
   let ini = jogadorIdxPorId(primeiroMestreId);
   if (ini < 0) ini = 0;
-  for (let k = 1; k <= players.length; k++) {
+  const lista = [];
+  for (let k = 1; k <= players.length && lista.length < 2; k++) {
     const p = players[(ini + k) % players.length];
-    if (p && !redeNoHost(p.id) && redeOnline(rede.assentos[p.id])) return p.id;
+    if (p && !redeNoHost(p.id) && redeOnline(rede.assentos[p.id]) && !lista.includes(p.id)) lista.push(p.id);
   }
-  return null;
+  return lista;
 }
 // Pacote de recuperação: o save completo, só pro sucessor (no máximo a cada 3 s, ou quando ele muda).
 function redeHostRecuperacao(forcar) {
-  const suc = redeSucessor();
-  const a = suc && rede.assentos[suc];
+  const sucs = redeSucessores();
+  const suc = sucs.join(",");
+  const a = sucs.length && rede.assentos[sucs[0]];
   if (!a || !starterChosen || gameEnded) return;
   const chave = suc + "|" + partidaRevisao;
   if (rede.recEnviada === chave && !forcar) return;
@@ -24185,10 +24194,13 @@ function redeHostRecuperacao(forcar) {
     estado = JFStore.getItem("perfil200_state");
   } catch (e) {}
   if (!estado) return;
-  if (redeEnviar("recuperacao", { estado, revisao: partidaRevisao, matchId: matchId || null, aprovados: Object.keys(rede.aprovados || {}).slice(-39).concat(rede.chaveHost || []) }, a.sessao)) {
+  const pacote = { estado, revisao: partidaRevisao, matchId: matchId || null, aprovados: Object.keys(rede.aprovados || {}).slice(-39).concat(rede.chaveHost || []) };
+  if (redeEnviar("recuperacao", pacote, a.sessao)) {
     rede.recEnviada = chave;
     rede.recQuando = Date.now();
   }
+  const b = sucs[1] && rede.assentos[sucs[1]];
+  if (b && b.sessao !== a.sessao) redeEnviar("recuperacao", pacote, b.sessao);
 }
 // Retrato público pra todos, o painel de cada um e a resposta só pro Mestre.
 function redeHostPublicar(forcar) {
@@ -24204,7 +24216,8 @@ function redeHostPublicar(forcar) {
   // extras da sala (não fazem parte do retrato da partida): intervalo e votação
   r.intervalo = typeof tabLobbyFimEm === "function" ? tabLobbyFimEm() : null;
   r.votacao = rede.votacao ? redeVotacaoPublica() : null;
-  r.sucessor = redeSucessor();
+  r.sucessores = redeSucessores();
+  r.sucessor = r.sucessores[0] || null;
   r.hostNome = rede.hostEu ? (jogadorPorId(rede.hostEu) || {}).name || null : null;
   r.hostId = rede.hostEu || null; // C.A.O.S. 4.2: selo HOST nas telas
   r.alvoEspecial = alvoEspecialPublico(); // 1.7.10.5.7: seletor de alvo na T2
@@ -24598,7 +24611,7 @@ function redeConvidadoReceber(m) {
     // trava 3: a resposta sai da memória quando a carta acaba ou quando não sou mais o Mestre
     if (rede.segredo && (r.mestreId !== rede.eu || !r.carta || r.fim || r.matchId !== rede.segredo.matchId)) rede.segredo = null;
     // o pacote de recuperação só fica com quem é o sucessor agora
-    if (rede.recuperacao && r.sucessor !== rede.eu) rede.recuperacao = null;
+    if (rede.recuperacao && !redeSouSucessor(r)) rede.recuperacao = null;
     return avisar();
   }
   if (m.t === "painel") {
@@ -24608,7 +24621,7 @@ function redeConvidadoReceber(m) {
   }
   if (m.t === "recuperacao") {
     // só guarda se o retrato mais recente diz que eu sou o sucessor (mensagem fora de ordem não fica)
-    if (rede.retrato && rede.retrato.sucessor === rede.eu) rede.recuperacao = { estado: m.estado, revisao: m.revisao, matchId: m.matchId, aprovados: m.aprovados || [] };
+    if (rede.retrato && redeSouSucessor(rede.retrato)) rede.recuperacao = { estado: m.estado, revisao: m.revisao, matchId: m.matchId, aprovados: m.aprovados || [] };
     return;
   }
   if (m.t === "segredo") {
@@ -24805,13 +24818,22 @@ const REDE_CONEXAO = {
   reconectando: "🔌 A conexão caiu. Reconectando…",
   erro: "⚠️ Sem conexão com o servidor da sala. Tentando de novo…",
 };
+// Posição deste dispositivo na fila de quem assume (0 = sucessor, 1 = reserva, -1 = fora)
+function redePosSucessor(r) {
+  const l = r && Array.isArray(r.sucessores) ? r.sucessores : r && r.sucessor ? [r.sucessor] : [];
+  return rede && rede.eu ? l.indexOf(rede.eu) : -1;
+}
+function redeSouSucessor(r) {
+  return redePosSucessor(r) >= 0;
+}
 // A cada meio segundo: contagem do intervalo e da votação (sem redesenhar a tela toda).
 function redeConvidadoTiques() {
   if (!rede || !rede.retrato) return;
   // o host sumiu: se eu sou o sucessor (e tenho o pacote), assumo; senão, aviso e espero
   const sumiu = rede.estado === "dentro" && Date.now() - rede.ultimoHost > REDE_HOST_SUMIU_MS;
-  if (sumiu && !rede.assumindo && rede.retrato.sucessor === rede.eu && rede.recuperacao) return redeAssumir();
-  if (rede.recuperacao && rede.retrato.sucessor !== rede.eu) rede.recuperacao = null;
+  const vez = redeSouSucessor(rede.retrato) ? redePosSucessor(rede.retrato) : -1;
+  if (vez >= 0 && !rede.assumindo && rede.recuperacao && rede.estado === "dentro" && Date.now() - rede.ultimoHost > REDE_HOST_SUMIU_MS + vez * REDE_RESERVA_MS) return redeAssumir();
+  if (rede.recuperacao && vez < 0) rede.recuperacao = null;
   // sem notícia do host: a cada 10 s, força uma conexão nova (o novo host pode já estar na sala)
   if (sumiu && typeof rede.transporte.reconectar === "function" && Date.now() - (rede.ultimaReconexao || 0) > 10000) {
     rede.ultimaReconexao = Date.now();

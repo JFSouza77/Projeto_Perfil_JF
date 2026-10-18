@@ -199,3 +199,17 @@ na tela como se ninguém tivesse respondido.
   (confere de novo em 1 min, e tenta mesmo sem resposta ainda), e espera 4 s (era 2,5) pelo 1º pedaço.
 - **Joia de Animal**: o respiro da letra era em % (o navegador calcula pela largura da linha), e no placar das
   joias o triângulo virava uma torre. Agora é em em.
+
+### Host que cai de vez (relato do JF, 19/10) · corrigido
+
+O dispositivo do host (JF) descarregou; a Sofia pediu a dica, a Jennifer (Mestra) recebeu mas não abria, e nem
+forçar abria. Com o host morto, nenhum comando chega a lugar nenhum até alguém assumir a sala, e só **um**
+dispositivo (o sucessor) tinha a cópia da partida: se ele estivesse em segundo plano ou travado, ninguém
+assumia e a sala ficava parada pra sempre.
+
+- Agora o host manda a cópia pro sucessor **e pra um reserva** (o próximo da fila). O sucessor assume em 1 min
+  sem notícia do host (como antes); se ele não assumir, o reserva assume 20 s depois.
+- A mesa vê a contagem de quando alguém assume (item do QoL de 18/10).
+- Quem assume vê o jogo inteiro no dispositivo dele e joga também por quem ficou sem dispositivo (o JF).
+- Teste novo: `teste_online.js --so=caiu` (host fecha a página de vez, o sucessor "dorme", o reserva assume,
+  nada se perde e a partida continua). `--so=fundo` roda os dois.
