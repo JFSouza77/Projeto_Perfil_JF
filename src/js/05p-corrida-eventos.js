@@ -1,5 +1,5 @@
 /* --- 1.7.10.6 · CORRIDA: EVENTOS (spec do JF de 17/10 à noite, com o balanceamento em docs/Modos_1.7.10.6.md) ---
- *  · Penalidades: errou, a carta perde 1 s; pulou ("nem tentou"), perde 2 s. Carta que morre sem acerto: o geral
+ *  · Penalidades: errou, a carta perde 3 s; pulou ("nem tentou"), perde 2 s. Carta que morre sem acerto: o geral
  *    perde 1 min (o Seguro do Relógio segura; no duelo e no desempate não vale).
  *  · Bomba-Relógio: o C.A.O.S. anuncia antes da carta. Cada erro/pulo tira 5 s do geral; desarmar dá +20 s.
  *  · Juízo Final: no último minuto as dicas abrem sozinhas e qualquer um bate na mesa (sem os +10 s por acerto).
@@ -170,7 +170,7 @@ function corridaPenalidade(tipo) {
   if (CURRENT_MODE !== "corrida" || !currentCard) return;
   const pulou = tipo === "pular";
   corridaCartaMudar(-(pulou ? CORRIDA_PULO_MS : CORRIDA_ERRO_MS));
-  fxFloat(pulou ? "⏭️ −2 s na carta" : "❌ −1 s na carta", "#fb923c");
+  fxFloat(pulou ? `⏭️ −${CORRIDA_PULO_MS / 1e3} s na carta` : `❌ −${CORRIDA_ERRO_MS / 1e3} s na carta`, "#fb923c");
   if (corridaBombaAgora()) {
     corridaGeralMudar(-CORRIDA_BOMBA_ERRO_MS);
     fxFloat(`💣 −${CORRIDA_BOMBA_ERRO_MS / 1e3} s no relógio`, "#f87171");
@@ -259,7 +259,7 @@ function corridaRelampagoProxima() {
     saveGameState();
   }
 }
-// bateu na mesa e errou: −1 s na carta (e −5 s no geral se for bomba) e a próxima dica abre na hora
+// bateu na mesa e errou: −3 s na carta (e −5 s no geral se for bomba) e a próxima dica abre na hora
 function corridaRelampagoErrou(key) {
   const i = jogadorIdxPorId(key);
   const p = players[i];

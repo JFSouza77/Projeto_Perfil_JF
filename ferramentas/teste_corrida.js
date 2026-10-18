@@ -239,7 +239,7 @@ const ARQ = acharMestre(process.argv[2]);
     await esp(100);
     f();
     parar();
-    o.erroMenos1 = depoisErro <= 99.1e3 && depoisErro >= 98.5e3;
+    o.erroMenos3 = depoisErro <= 97.1e3 && depoisErro >= 96.5e3; // 1.7.10.6.1: erro tira 3 s
     o.puloMenos2 = antesPulo - corridaCartaRestaMs >= 1.9e3 && antesPulo - corridaCartaRestaMs <= 2.5e3;
     // carta morta: −1 min no geral
     await esp(300);

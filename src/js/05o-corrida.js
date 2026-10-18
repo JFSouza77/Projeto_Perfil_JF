@@ -473,7 +473,7 @@ function corridaRegrasHtml(resumo) {
     hc
       ? `💀 <b>Hardcore:</b> a carta tem ${carta} e o relógio dela corre <b>1,5×</b>. As dicas abrem sozinhas: quem souber, <b>bate na mesa</b> (no online, o botão no dispositivo) e responde. Errou, a próxima abre na hora.`
       : `💬 <b>A vez:</b> segue a roda. ${vez} s pra escolher o número e ${vez} s pra responder. A carta tem ${carta} e não reinicia quando a vez passa.`,
-    `❌ <b>Errou:</b> a carta perde 1 s. <b>Pulou</b> (nem tentou): perde 2 s.`,
+    `❌ <b>Errou:</b> a carta perde ${CORRIDA_ERRO_MS / 1e3} s. <b>Pulou</b> (nem tentou): perde ${CORRIDA_PULO_MS / 1e3} s.`,
     '🎙️ <b>Mestre:</b> roda a cada carta. Fala a categoria e lê a dica. <b>Nunca</b> fala a resposta.',
   ];
   if (!resumo) {
