@@ -332,8 +332,9 @@ async function testarNavegador(arquivo) {
       // escolhe cor, emoji e zoeira até o botão Adicionar liberar
       for (let t = 0; t < 4 && (await page.locator("#addPlayerBtn:disabled").count()); t++) {
         await fechaModais();
-        for (const sel of ["#colorPickerRow .color-swatch:not(.tomada)", "#avatarPickerRow .avatar-swatch:not(.tomada)", "#humorPickerRow button"]) {
-          const b = page.locator(sel).nth(t);
+        // 1.7.10.6: a idade também é obrigatória
+        for (const sel of ["#colorPickerRow .color-swatch:not(.tomada)", "#avatarPickerRow .avatar-swatch:not(.tomada)", "#humorPickerRow button", "button.idade-btn[data-idade=\"doze\"]"]) {
+          const b = page.locator(sel).nth(sel.includes("idade") ? 0 : t);
           if (await b.count()) await b.click({ timeout: 1500, force: true }).catch(() => {});
         }
         await page.waitForTimeout(300);
