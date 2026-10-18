@@ -141,6 +141,22 @@ const ARQ = acharMestre(process.argv[2]);
       if (cardState !== 'hidden' || stats.totalDrawn !== antes + 1) problemas.push(`previsão${sacaAntes ? ' (sacou antes)' : ''}: ${cardState}, ${stats.totalDrawn - antes} carta(s) sacada(s)`);
       caosSilenced = true;
     }
+    // 1.7.10.6 (JF): carta bônus também dá joia
+    {
+      gameEnded = false;
+      pendingBonusQueue = [];
+      if (activeToastState) closeActiveToast();
+      drawHidden();
+      const cat = currentGemCategories()[0];
+      currentCard.isBonus = true;
+      currentCard.category = cat;
+      players.forEach((p) => (p.gems = {}));
+      joiasRodada = {};
+      const wc = WIN_CONDITION;
+      WIN_CONDITION = 'joias';
+      if (!awardGemIfEarned(0, 1)) problemas.push('carta bônus não deu joia');
+      WIN_CONDITION = wc;
+    }
     return { duelos, palpites, passos, desfeitos, escolhas, problemas: problemas.slice(0, 15) };
   });
   console.log(JSON.stringify(r, null, 1));

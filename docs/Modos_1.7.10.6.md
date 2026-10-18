@@ -213,3 +213,9 @@ assumia e a sala ficava parada pra sempre.
 - Quem assume vê o jogo inteiro no dispositivo dele e joga também por quem ficou sem dispositivo (o JF).
 - Teste novo: `teste_online.js --so=caiu` (host fecha a página de vez, o sucessor "dorme", o reserva assume,
   nada se perde e a partida continua). `--so=fundo` roda os dois.
+
+### Carta bônus dá joia (decisão do JF, 19/10)
+
+Antes "carta bônus não dá joia" (e no Só Joias o duelo não valia nada: a Anne acertou o duelo e ficou sem a
+joia). Agora a carta bônus dá joia com as regras de sempre (limite de dicas, uma por categoria, trava da
+rodada). Regras e tutorial atualizados. `teste_duelo.js` confere.

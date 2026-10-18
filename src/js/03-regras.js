@@ -429,7 +429,8 @@ function gemCategoryFor(cardCategory) {
   return CURRENT_MODE !== "junior" && cardCategory === "ANIMAL" ? "COISA" : cardCategory;
 }
 function awardGemIfEarned(scorerIdx, realCluesRevealed) {
-  if (!gemsEnabled() || !currentCard || currentCard.isBonus) return null;
+  // 1.7.10.6 (JF: "vamos ser justos"): carta bônus também dá joia (antes não dava, e no Só Joias o duelo não valia nada)
+  if (!gemsEnabled() || !currentCard) return null;
   const cat = gemCategoryFor(currentCard.category);
   if (!currentGemCategories().includes(cat)) return null;
   const limit = gemClueLimit();
