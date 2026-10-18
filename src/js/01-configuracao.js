@@ -373,15 +373,23 @@ const MC_TURBO_SEG = 5; // Modo Turbo
 const MC_INTERVALO_SEG = 15; // lobby entre rodadas (tudo congelado)
 const MC_RAPIDO_MS = 5e3; // acertou nos 5 primeiros segundos da janela: bônus de PC
 const MC_PC = { rodada: 10, rapido: 5, pinata: 30, batata: 50, imposto: 10 };
+/* Lojinha do C.A.O.S. (Pontos de Caos). 1.7.10.6 (pedido do JF): nomes próprios do modo (diferentes dos da Corrida),
+   2 itens novos (Olho do C.A.O.S. e Assalto Relâmpago) e vitrine sorteada a cada intervalo: MC_VITRINE itens, 1 a 3
+   de cada, preço variando ±20%. Balanceamento: ~10 a 25 PC por rodada, então item de 15–25 é toda rodada, 40+ é
+   guardar 2–3 rodadas. "peso" = chance relativa de aparecer. As chaves (corte, folego…) seguem as mesmas no código. */
 const MC_LOJA = {
-  corte: { ic: "✂️", nome: "Corte de Fio", preco: 15, desc: "corta a janela da dica atual pra 6 s (todo mundo vê o tempo voar)" },
-  folego: { ic: "🫁", nome: "Fôlego", preco: 20, desc: "errou? uma 2ª tentativa na mesma dica" },
-  mordaca: { ic: "🤐", nome: "Mordaça", preco: 30, desc: "trava o botão de palpite de alguém nesta dica (o Mestre não)" },
-  desfib: { ic: "⚡", nome: "Desfibrilador", preco: 35, desc: "quando a carta for hibernar: a próxima dica só pra você, tentativa solo" },
-  congelar: { ic: "🧊", nome: "Congelar Mesa", preco: 40, desc: "os outros ficam travados nos 7 primeiros segundos da dica" },
-  espelho: { ic: "🪞", nome: "Espelho Refletor", preco: 45, desc: "fica guardado: devolve a próxima agressão (roubo, mordaça, punição)" },
-  kevlar: { ic: "🛡️", nome: "Escudo de Kevlar", preco: 60, desc: "fica guardado: anula 1 roubo ou punição que tiraria carta sua" },
+  corte: { ic: "✂️", nome: "Tesoura do Caos", preco: 15, peso: 3, desc: "corta a janela da dica atual pra 6 s (todo mundo vê o tempo voar)" },
+  folego: { ic: "💖", nome: "Vida Extra", preco: 20, peso: 3, desc: "errou? uma 2ª tentativa na mesma dica" },
+  mordaca: { ic: "🤐", nome: "Mordaça", preco: 30, peso: 2, desc: "trava o botão de palpite de alguém nesta dica (o Mestre não)" },
+  desfib: { ic: "🧟", nome: "Ressurreição", preco: 35, peso: 2, desc: "quando a carta for hibernar: a próxima dica só pra você, tentativa solo" },
+  congelar: { ic: "🥶", nome: "Era do Gelo", preco: 40, peso: 2, desc: "os outros ficam travados nos 7 primeiros segundos da dica" },
+  espelho: { ic: "🪞", nome: "Espelho Refletor", preco: 45, peso: 2, desc: "fica guardado: devolve a próxima agressão (roubo, mordaça, assalto, punição)" },
+  kevlar: { ic: "🦺", nome: "Colete Anti-Caos", preco: 60, peso: 1, desc: "fica guardado: anula 1 roubo, assalto ou punição contra você" },
+  olho: { ic: "👁️", nome: "Olho do C.A.O.S.", preco: 45, peso: 1, desc: "na janela da dica: a 1ª letra da resposta aparece só pra você" },
+  assalto: { ic: "💸", nome: "Assalto Relâmpago", preco: 25, peso: 2, desc: "na hora da compra: leva 15 PC de quem tem mais PC (fora você)" },
 };
+const MC_VITRINE = 5;
+const MC_ASSALTO_PC = 15;
 const MC_PINATA_PALAVRAS = ["EU QUERO", "CAOS", "ME DA", "BOOM", "PINHATA", "AGORA", "SOCORRO", "PERFIL"];
 /* Lojinha de Sobrevivência: só online, só na vitória por Tempo, só no intervalo, uma só pra mesa (quem compra primeiro
    leva). 1.7.10.6 (pedido do JF): nomes próprios da Corrida (diferentes dos do Modo C.A.O.S.), catálogo maior e
