@@ -480,7 +480,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.5.8 · C.A.O.S. 4.4.4)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.6 · C.A.O.S. 4.5)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -597,4 +597,67 @@ function caosRetaFinalTalvez() {
       "media",
     );
   } catch (e) {}
+}
+/* --- 1.7.10.6 · Peça ao C.A.O.S. (pedido do JF) ---
+ * Cada jogador pede pra ele falar mais ou menos com ele e usar humor mais leve ou mais ácido. É preferência
+ * pessoal de quem pediu: nunca fura o mudo, não muda regra nem placar. Fica no jogador (e no save). */
+function caosPedidoCala(p) {
+  return !!(p && p.pedeCaos && p.pedeCaos.fala === -1 && Math.random() < 0.6);
+}
+function pedirCaos(id, campo, valor) {
+  const p = jogadorPorId(id);
+  if (!p) return;
+  p.pedeCaos = p.pedeCaos || { fala: 0, humor: null };
+  p.pedeCaos[campo] = valor;
+  const R = REACTIVE_VOICE.pedirCaos || {};
+  const k = campo === "fala" ? (valor === 1 ? "mais" : valor === -1 ? "menos" : "normal") : valor === "leve" ? "leve" : valor === "acido" ? "acido" : "normal";
+  const fala = R[k] && getRandomReaction(R[k], p.name);
+  caosLog("pedido", `${p.name} pediu: ${campo} = ${valor}`);
+  if (fala) showToastMessage(fala); // respeita o mudo: se ele estiver calado, o pedido vale do mesmo jeito
+  else fxFloat(`🙋 Anotado, ${p.name}`, "#a78bfa");
+  saveGameState();
+}
+function pedirCaosAbrir() {
+  document.getElementById("pedirCaosOv")?.remove();
+  const ov = document.createElement("div");
+  ov.id = "pedirCaosOv";
+  ov.className = "caos-modal-ov";
+  const linha = (p) => {
+    const pc = p.pedeCaos || { fala: 0, humor: null };
+    const b = (campo, valor, txt) => `<button type="button" class="pc-op${pc[campo] === valor ? " on" : ""}" data-id="${escapeHtml(p.id)}" data-campo="${campo}" data-valor="${valor === null ? "" : valor}">${txt}</button>`;
+    return `<li><b>${playerNameHtml(p.name, p.color, p.avatar)}</b><div class="pc-ops">${b("fala", -1, "🤫 Fale menos comigo")}${b("fala", 0, "Normal")}${b("fala", 1, "🗣️ Fale mais")}</div><div class="pc-ops">${b("humor", "leve", "🌸 Mais leve")}${b("humor", null, "Normal")}${CURRENT_MODE === "junior" ? "" : b("humor", "acido", "🌶️ Mais ácido")}</div></li>`;
+  };
+  // no online, cada convidado pede no próprio dispositivo; aqui ficam os jogadores deste dispositivo
+  const daqui = players.filter((p) => !(typeof rede !== "undefined" && rede && rede.papel === "host") || redeNoHost(p.id));
+  ov.innerHTML = `<div class="caos-modal pc-modal" role="dialog" aria-modal="true" aria-labelledby="pcTit"><h3 id="pcTit">🙋 Peça ao C.A.O.S.</h3><p class="pc-sub">É só pra você: ele muda o jeito de falar com quem pediu. Não muda regra, placar, nem fura o mudo.</p><ul class="pc-lista">${daqui.map(linha).join("")}</ul><button type="button" class="btn-sec" id="pcFechar">Fechar</button></div>`;
+  document.body.appendChild(ov);
+  ov.querySelector("#pcFechar").addEventListener("click", () => ov.remove());
+  ov.querySelectorAll(".pc-op").forEach((b) =>
+    b.addEventListener("click", () => {
+      const v = b.dataset.valor === "" ? null : b.dataset.campo === "fala" ? +b.dataset.valor : b.dataset.valor;
+      dispatchAction({ type: "pedirCaos", data: [b.dataset.id, b.dataset.campo, v] });
+      pedirCaosAbrir();
+    }),
+  );
+}
+// convidado (online): o mesmo pedido, pelo próprio dispositivo (o host aplica)
+function pedirCaosConvidado() {
+  if (typeof rede === "undefined" || !rede || !rede.eu) return;
+  document.getElementById("pedirCaosOv")?.remove();
+  const pc = (rede.pedeCaos = rede.pedeCaos || { fala: 0, humor: null });
+  const ov = document.createElement("div");
+  ov.id = "pedirCaosOv";
+  ov.className = "caos-modal-ov";
+  const b = (campo, valor, txt) => `<button type="button" class="pc-op${pc[campo] === valor ? " on" : ""}" data-campo="${campo}" data-valor="${valor === null ? "" : valor}">${txt}</button>`;
+  ov.innerHTML = `<div class="caos-modal pc-modal" role="dialog" aria-modal="true" aria-labelledby="pcTit"><h3 id="pcTit">🙋 Peça ao C.A.O.S.</h3><p class="pc-sub">Só pra você: ele muda o jeito de falar com você. Não muda regra, placar, nem fura o mudo.</p><div class="pc-ops">${b("fala", -1, "🤫 Fale menos comigo")}${b("fala", 0, "Normal")}${b("fala", 1, "🗣️ Fale mais")}</div><div class="pc-ops">${b("humor", "leve", "🌸 Mais leve")}${b("humor", null, "Normal")}${b("humor", "acido", "🌶️ Mais ácido")}</div><button type="button" class="btn-sec" id="pcFechar" style="margin-top:10px">Fechar</button></div>`;
+  document.body.appendChild(ov);
+  ov.querySelector("#pcFechar").addEventListener("click", () => ov.remove());
+  ov.querySelectorAll(".pc-op").forEach((x) =>
+    x.addEventListener("click", () => {
+      const v = x.dataset.valor === "" ? null : x.dataset.campo === "fala" ? +x.dataset.valor : x.dataset.valor;
+      pc[x.dataset.campo] = v;
+      redeMandar("pedirCaos", rede.eu, x.dataset.campo, v);
+      pedirCaosConvidado();
+    }),
+  );
 }

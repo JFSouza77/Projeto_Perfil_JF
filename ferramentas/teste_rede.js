@@ -628,20 +628,20 @@ async function rodarSalaPrimeiro(b) {
   await g.fill("#redeNome", "");
   await g.evaluate(() => (rede.rascunho = {}));
   const avAna = await g.evaluate(() => rede.cadastro.avatares[3]);
-  await g.evaluate((av) => redePedirEntrada({ nome: "Ana", avatar: av, humor: "suave", idade: "maior" }), avAna);
+  await g.evaluate((av) => redePedirEntrada({ nome: "Ana", avatar: av, humor: "suave", idade: "doze" }), avAna);
   conf("Pediu pra entrar: espera o host aceitar", (await esperar(g, () => rede.estado === "aguardando")) && (await esperar(host, () => !!document.getElementById("redePedidos") && /Ana/.test(document.getElementById("redePedidos").textContent))));
   await host.evaluate(() => document.querySelector('#redePedidos [data-sim="1"]').click());
   conf(
     "O host aceitou: o jogador entra no cadastro como ela criou",
-    await host.evaluate((av) => players.length === 1 && players[0].name === "Ana" && players[0].avatar === av && players[0].humor === "suave" && players[0].idade === "maior", avAna),
+    await host.evaluate((av) => players.length === 1 && players[0].name === "Ana" && players[0].avatar === av && players[0].humor === "suave" && players[0].idade === "doze", avAna),
   );
   // outro aparelho: nome repetido volta pro formulário; depois o host recusa
   // outro celular: sem a identidade guardada do aparelho da Ana
   const g2 = await abrir("#sala=" + sala + "&local", () => Object.keys(localStorage).filter((k) => k.startsWith("perfil5_rede_eu_")).forEach((k) => localStorage.removeItem(k)));
   await esperar(g2, () => rede && rede.estado === "escolhendo" && !!rede.cadastro);
-  await g2.evaluate(() => redePedirEntrada({ nome: "ana" }));
+  await g2.evaluate(() => redePedirEntrada({ nome: "ana", idade: "doze" }));
   conf("Nome repetido: volta pro formulário com o aviso", await esperar(g2, () => rede.estado === "escolhendo" && /Já tem alguém/.test(document.getElementById("telao").textContent)));
-  await g2.evaluate(() => redePedirEntrada({ nome: "Duda" }));
+  await g2.evaluate(() => redePedirEntrada({ nome: "Duda", idade: "dezesseis" }));
   await esperar(host, () => Object.keys(rede.pedidos).length === 1);
   await host.evaluate(() => document.querySelector('#redePedidos [data-sim="0"]').click());
   conf("O host recusou: o aparelho fica de fora", (await esperar(g2, () => rede.estado === "recusado" && rede.motivo === "recusado")) && (await host.evaluate(() => players.length === 1)));

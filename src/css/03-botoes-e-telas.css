@@ -1228,3 +1228,35 @@ html.acess-calmo :is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo],
 body.batata-mode :is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo] {
   animation: none !important;
 }
+/* 1.7.10.6 · Peça ao C.A.O.S. */
+.pc-modal .pc-sub {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+.pc-lista {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  max-height: 60vh;
+  overflow: auto;
+}
+.pc-ops {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.pc-op {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(167, 139, 250, 0.5);
+  background: rgba(167, 139, 250, 0.08);
+  color: inherit;
+  cursor: pointer;
+}
+.pc-op.on {
+  background: rgba(167, 139, 250, 0.35);
+  font-weight: 700;
+}

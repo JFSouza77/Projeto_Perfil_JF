@@ -51,6 +51,26 @@ const ACOES = {
   expressCartaPerdida: { fn: "expressCardLost", pode: () => acoesEmJogo() && CURRENT_MODE === "express" && cardState === "revealed" && !!cardEndAt && cardSecondsLeft() <= 0 },
   admRemover: { fn: "admRemoverJogador", pode: (r) => acoesEmJogo() && CURRENT_FORMAT !== "equipe" && !!players[r] && players.length > 2 },
   tempoAcabou: { fn: "onTimerExpired", pode: () => acoesEmJogo() },
+  // 1.7.10.6 · Corrida: Lojinha de Sobrevivência (comprar no intervalo, usar o item guardado na carta)
+  corridaComprar: { fn: "corridaComprar", pode: (item, id) => acoesEmJogo() && corridaPodeComprar(item, id) },
+  corridaUsar: { fn: "corridaUsar", pode: (item, id) => acoesEmJogo() && corridaPodeUsar(item, id) },
+  corridaProxima: { fn: "corridaRelampagoProxima", pode: () => acoesComDica() && CURRENT_MODE === "corrida" && corridaRelampago() },
+  // 1.7.10.6 · Modo C.A.O.S. (quem pode mandar cada um, a rede confere em mcPodeComandar)
+  mcPalpitar: { fn: "mcPalpitar", pode: (id) => mcPodePalpitar(id) },
+  mcVeredito: { fn: "mcVeredito", pode: (ok) => mcPodeVeredito() && typeof ok === "boolean" },
+  mcDesfib: { fn: "mcUsarDesfib", pode: (id) => mcAtivo() && mc.fase === "desfibOferta" && !!mc.desfib && !!mc.desfib.oferta && mc.desfib.oferta.includes(id) },
+  mcBatataPassar: { fn: "mcBatataPassar", pode: (id) => mcPodeBatata(id) },
+  mcBatataSegurar: { fn: "mcBatataSegurar", pode: (id) => mcPodeBatata(id) },
+  mcDesafioBater: { fn: "mcDesafioBater", pode: (id) => mcAtivo() && mc.fase === "desafio" && !!mc.desafio && mc.desafio.com === id && !mc.desafio.buzz },
+  mcDesafioVeredito: { fn: "mcDesafioVeredito", pode: (ok) => mcAtivo() && mc.fase === "desafio" && !!mc.desafio && !!mc.desafio.buzz && typeof ok === "boolean" },
+  mcDuelo: { fn: "mcDueloEscolher", pode: (id, v) => mcPodeEscolherDuelo(id, v) },
+  mcRevanche: { fn: "mcRevanche", pode: (id) => mcPodeRevanche(id) },
+  mcUsar: { fn: "mcUsar", pode: (item, id, alvo) => mcPodeUsar(item, id, alvo) },
+  mcMaoLeve: { fn: "mcMaoLeve", pode: (id, alvo) => mcPodeMaoLeve(id, alvo) },
+  mcComprar: { fn: "mcComprar", pode: (item, id) => mcPodeComprar(item, id) },
+  mcPinata: { fn: "mcPinata", pode: (id, txt) => mcPodePinata(id, txt) },
+  // 1.7.10.6 · Peça ao C.A.O.S.: preferência pessoal (falar mais/menos, humor leve/ácido); não muda regra
+  pedirCaos: { fn: "pedirCaos", pode: (id, campo, valor) => !!jogadorPorId(id) && ((campo === "fala" && [-1, 0, 1].includes(valor)) || (campo === "humor" && [null, "leve", "acido"].includes(valor))) },
   pausar: { fn: "pauseGame", pode: () => acoesEmJogo() },
   continuar: { fn: "resumeGame", pode: () => starterChosen && !gameEnded },
   encerrar: { fn: "endGame", pode: () => acoesEmJogo() },
@@ -162,7 +182,18 @@ function acoesRegistrar(tipo, args, origem) {
 // O que conta como "a partida mudou": a foto da espinha mais a pausa (1.7.9: pausar e voltar
 // não mudavam a foto, então não subiam a revisão nem avisavam o telão).
 function acoesFoto() {
-  return caosEspinhaFoto() + (typeof pausedAt !== "undefined" && pausedAt ? "|pausada" : "");
+  return caosEspinhaFoto() + (typeof pausedAt !== "undefined" && pausedAt ? "|pausada" : "") + acoesFotoModos();
+}
+// 1.7.10.6: o que muda nos modos novos sem mexer no placar (itens da Corrida, estado do Modo C.A.O.S.) também é jogada
+function acoesFotoModos() {
+  try {
+    const pedidos = players.some((p) => p.pedeCaos) ? "|pc" + JSON.stringify(players.map((p) => p.pedeCaos || 0)) : "";
+    if (pedidos && CURRENT_MODE !== "corrida" && CURRENT_MODE !== "caos") return pedidos;
+    if (CURRENT_MODE === "corrida")
+      return pedidos + "|cr" + JSON.stringify([corridaItens, corridaEstoque, corridaPrecos, corridaCofrinho, corridaIma, corridaEscudo, corridaFolego, corridaCongelaMs > 0, Math.round(corridaCartaRestaMs / 1000)]);
+    if (CURRENT_MODE === "caos" && typeof mcFoto === "function") return pedidos + "|mc" + mcFoto();
+  } catch (e) {}
+  return "";
 }
 // Casca de uma função do motor: só a chamada de fora conta como ação.
 function acoesEnvolver(fnNome) {
@@ -382,6 +413,8 @@ function retratoPartida(papel) {
     joiasRodada: { ...joiasRodada },
     vencedorJoias: gemWinner ? { tipo: gemWinner.kind, id: gemWinner.id } : null,
     relogio: { tipo: timerKind || null, fimEm: timerEndAt || null, cartaFimEm: cardEndAt || null, pausado: !!pausedAt },
+    corrida: typeof corridaRetrato === "function" ? corridaRetrato() : null, // 1.7.10.6: relógios da Corrida
+    mc: typeof mcRetrato === "function" ? mcRetrato() : null, // 1.7.10.6: Modo C.A.O.S. (só o público)
     // 1.7.10.5.6 (pedido do JF): resumo da partida pra T2 e pro lobby: tempo de jogo (sem pausa), cartas viradas e as
     // últimas cartas resolvidas (só carta encerrada, então a resposta pode ir)
     partida: {
@@ -477,6 +510,7 @@ function desfazerFotografar() {
     timerKind,
     timerResta: timerEndAt ? Math.max(1000, timerEndAt - agora) : null,
     cartaResta: cardEndAt ? Math.max(1000, cardEndAt - agora) : null,
+    corrida: typeof corridaSalvar === "function" ? corridaSalvar() : null, // 1.7.10.6: o +10 s do acerto desfeito sai
     caos: desfazerCaosFoto(),
   };
 }
@@ -565,6 +599,10 @@ function desfazerAplicar(f) {
   pendingStartTime = Date.now();
   // o que o veredito deixou agendado (ex.: seguir depois do balão) não vale mais
   cartaSeq++;
+  if (f.corrida && typeof corridaRetomar === "function") {
+    corridaIntervaloFechar();
+    corridaRetomar(f.corrida); // depois do cartaSeq++: o relógio da carta continua de onde estava
+  }
   desfazerCaosAplicar(f.caos);
 }
 function desfazerNome(tipo, args) {
@@ -578,8 +616,11 @@ function desfazerNome(tipo, args) {
 }
 function desfazerOferecer(tipo, args, foto) {
   desfazerLimpar();
-  const quem = tipo === "acertou" ? (players[args && args[0] !== undefined ? args[0] : responderIndex] || {}).name || null : null;
-  desfazerOferta = { tipo, foto, nome: desfazerNome(tipo, args), quem, ate: Date.now() + DESFAZER_MS };
+  // quem respondeu é o da foto (de antes do veredito): depois dele a vez já andou pro próximo
+  const vez = foto && Number.isInteger(foto.responderIndex) ? foto.responderIndex : responderIndex;
+  const idx = args && args[0] !== undefined && args[0] !== null ? args[0] : vez;
+  const quem = tipo === "acertou" ? (players[idx] || {}).name || null : null;
+  desfazerOferta = { tipo, foto, nome: tipo === "acertou" ? "Acertou" + (quem ? " (" + quem + ")" : "") : desfazerNome(tipo, args), quem, ate: Date.now() + DESFAZER_MS };
   try {
     const b = document.createElement("button");
     b.type = "button";

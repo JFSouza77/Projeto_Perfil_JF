@@ -121,6 +121,41 @@ const VITORIA_TUTORIAIS = {
       text: `O tabuleiro anda normalmente, mas chegar na casa ${vitoriaCasaFinal()} <b>não vence</b>. Aqui o que vale são as joias.`,
     },
   ],
+  // 1.7.10.6: a Corrida contra o Tempo abre isto na 1ª partida de cada dispositivo
+  corrida: () => [
+    {
+      icon: "⏱️",
+      title: "Corrida contra o Tempo",
+      text:
+        corridaVitoria === "tempo"
+          ? `Aqui o tempo é a pontuação: a carta vale <b>os segundos que sobravam no relógio dela</b> quando alguém acerta. Acertou com 1:45 sobrando? <b>105 pontos</b>. Vence quem somar mais quando o relógio geral zerar.`
+          : `Quem acerta <b>fica com a carta</b> e cada carta vale 1. Não tem tabuleiro nem joias: vence quem tiver <b>mais cartas</b> quando o relógio geral zerar.`,
+    },
+    {
+      icon: "⌛",
+      title: "Dois relógios",
+      text: `O <b>geral</b> começa com ${CORRIDA_TEMPO_MS / 60e3} min e ganha <b>+${CORRIDA_BONUS_MS / 1e3} s</b> a cada carta acertada. Cada <b>carta</b> tem ${corridaRelogioTxt(corridaHardcore ? CORRIDA_CARTA_HC_MS : CORRIDA_CARTA_MS)}${corridaHardcore ? " (correndo 1,5×)" : ""}. Carta que morre sem acerto custa <b>1 minuto</b> pra mesa toda. Errou: −1 s na carta; pulou: −2 s.`,
+    },
+    {
+      icon: "👉",
+      title: "A vez segue a roda",
+      text: `O Mestre roda a cada carta. Na sua vez: <b>${CORRIDA_VEZ_SEG} s</b> pra escolher o número e <b>${CORRIDA_VEZ_SEG} s</b> pra responder. Errou ou demorou? Passa pro próximo.`,
+    },
+    {
+      icon: "☕",
+      title: "Intervalo congelado",
+      text: `Entre uma carta e outra, ${CORRIDA_INTERVALO_SEG} s pra ver o placar. O relógio geral <b>para</b> nessa hora (e na pausa e nas falas do C.A.O.S.).`,
+    },
+    {
+      icon: "⚡",
+      title: "Empatou?",
+      text:
+        corridaVitoria === "tempo"
+          ? "Empate nos pontos: vence quem tiver mais cartas. Empatou nisso também? Vitória dividida."
+          : "Desempate relâmpago: sai uma carta e só os empatados respondem. Quem acertar primeiro leva.",
+    },
+  ],
+  corridaTempo: () => VITORIA_TUTORIAIS.corrida(), // o mesmo, com a vitória por Tempo (visto separado do Cartas)
   casa: () => [
     {
       icon: "🏠",
@@ -153,6 +188,7 @@ const VITORIA_TUTORIAIS = {
   ],
 };
 function vitoriaTutNome(cond) {
+  if (cond === "corrida" || cond === "corridaTempo") return `⏱️ Corrida · ${corridaVitoria === "tempo" ? "Tempo" : "Cartas"}`;
   const w = WIN_CONDITIONS[cond];
   return w ? w.icon + " " + w.label : "";
 }
@@ -185,6 +221,7 @@ function vitoriaTutTalvez(cond) {
 }
 // Começo da partida (beginGameplay). Na Moda da Casa quem chama é a roleta, depois do sorteio.
 function vitoriaTutInicio() {
+  if (CURRENT_MODE === "corrida") return void setTimeout(() => vitoriaTutTalvez(corridaVitoria === "tempo" ? "corridaTempo" : "corrida"), 500);
   if (CURRENT_MODE === "express" || WIN_CONDITION === "casa") return;
   setTimeout(() => vitoriaTutTalvez(winCond()), 500);
 }

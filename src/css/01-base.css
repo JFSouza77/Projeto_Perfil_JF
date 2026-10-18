@@ -611,7 +611,7 @@ html.acess-calmo body.fx-alerta:not(.fx-urgente):after {
 }
 .splash-buildlog {
   font-size: 0.65rem;
-  opacity: 0.45;
+  opacity: 0.55; /* 1.7.10.5.7 (axe): 0.45 ficava em 4,4:1 */
   margin-top: 14px;
   z-index: 2;
   text-align: center;

@@ -1050,7 +1050,7 @@ function redeOpcoesCadastro() {
     avataresUsados: players.map((p) => p.avatar),
     humores: humorOpcoesModo().map((o) => ({ id: o.id, nome: o.label, dica: o.hint || "", cor: HUMOR_COR[o.id] || "#fbbf24" })),
     humorPadrao: CURRENT_MODE === "junior" ? "familia" : "normal",
-    idades: equipe ? AGE_BRACKETS.map((b) => ({ id: b.id, nome: b.label, cor: b.cor })) : IDADE_OPCOES.map((o) => ({ id: o.id, nome: o.label, cor: o.id === "menor" ? "#22d3ee" : "#a78bfa" })),
+    idades: equipe ? AGE_BRACKETS.map((b) => ({ id: b.id, nome: b.label, cor: b.cor })) : IDADE_OPCOES.map((o) => ({ id: o.id, nome: o.label, cor: o.cor })),
   };
 }
 function redeHostEsperando() {
@@ -1437,12 +1437,13 @@ function redeHostAdicionarPerfil(perfil) {
     humor: humor === "caos" ? caosSortearHumor() : humor,
     humorCaos: humor === "caos" || void 0,
     ageBracket: faixa,
-    idade: isEquipe ? (faixa ? (faixa === "crianca" ? "menor" : "maior") : null) : IDADE_OPCOES.some((o) => o.id === perfil.idade) ? perfil.idade : null,
+    idade: isEquipe ? idadeDaFaixa(faixa) : idadeNorm(perfil.idade),
     team: null,
     nickMs: null,
     aparelho: "dispositivo",
   };
   players.push(p);
+  if (p.idade) idadeLembrar(p.name, p.idade); // 1.7.10.6: o host também lembra a idade desse nome
   try {
     caosMemCadastro(p);
   } catch (e) {}
@@ -1481,8 +1482,14 @@ function redePedidosPintar() {
     box.setAttribute("role", "dialog");
     document.body.appendChild(box);
   }
+  // 1.7.10.6: nome que o host conhece numa faixa de idade menor do que a marcada agora: aviso no pedido
+  const avisoIdade = (pf) => {
+    const nova = CURRENT_FORMAT === "equipe" ? idadeDaFaixa(pf.faixa) : idadeNorm(pf.idade);
+    const ant = idadeSubiu(pf.nome, nova);
+    return ant ? `<br><small>⚠️ Aqui esse nome estava como ${escapeHtml(idadeLabel(ant))}; agora marcou ${escapeHtml(idadeLabel(nova))}.</small>` : "";
+  };
   const quem = (p) =>
-    p.tipo === "perfil" ? `${escapeHtml(p.perfil.avatar || "🙂")} <b>${escapeHtml(p.perfil.nome)}</b> quer entrar` : `Alguém quer entrar como <b>${escapeHtml((jogadorPorId(p.jogadorId) || {}).name || "?")}</b>`;
+    p.tipo === "perfil" ? `${escapeHtml(p.perfil.avatar || "🙂")} <b>${escapeHtml(p.perfil.nome)}</b> quer entrar${avisoIdade(p.perfil)}` : `Alguém quer entrar como <b>${escapeHtml((jogadorPorId(p.jogadorId) || {}).name || "?")}</b>`;
   box.innerHTML =
     `<div class="rede-pedidos-tit">🙋 Pedido${lista.length > 1 ? "s" : ""} pra entrar na sala ${rede.sala}</div>` +
     lista.map((ses) => `<div class="rede-pedido"><span>${quem(rede.pedidos[ses])}</span><span><button type="button" class="rede-btn rede-ok" data-sim="1" data-ses="${ses}">✅ Aceitar</button><button type="button" class="rede-btn rede-nao" data-sim="0" data-ses="${ses}">❌</button></span></div>`).join("") +
@@ -1573,14 +1580,17 @@ function dicaSegurarParaForcar(grid, aoSegurar) {
 const REDE_SO_MESTRE = [
   "sacarCarta", "virarCarta", "roletaCategoria", "acertou", "errou", "palpiteAcertou", "palpiteErrou", "especialSeguir",
   "especialPerdeVez", "moverJogador", "moverEquipe", "descartarCarta", "desistirCarta", "desfazer", "expressPassar",
-  "expressPular", "expressInverter", "expressMirar", "expressAlvo",
+  "expressPular", "expressInverter", "expressMirar", "expressAlvo", "corridaProxima",
 ];
 const REDE_QUALQUER_UM = ["pausar", "continuar"];
+// (Peça ao C.A.O.S.: cada um só muda o próprio pedido — conferido em redePodeComandar)
 const REDE_SO_HOST = ["tempoAcabou", "expressCartaPerdida", "admRemover", "encerrar"];
 function redePodeComandar(acao, jid, dados) {
   if (!jid || jogadorIdxPorId(jid) < 0) return false;
+  if (/^mc[A-Z]/.test(acao)) return CURRENT_MODE === "caos" && mcPodeComandar(acao, jid, dados); // 1.7.10.6
   if (REDE_SO_HOST.includes(acao)) return false;
   if (REDE_QUALQUER_UM.includes(acao)) return true;
+  if (acao === "pedirCaos") return !!dados && dados[0] === jid;
   const ehMestre = jogadorIdDe(mestreIndex) === jid;
   // 1.7.10.5.7: na especial "escolha um jogador" com o seletor na T2, o alvo é de quem abriu a dica
   if ((acao === "moverJogador" || acao === "moverEquipe") && alvoNoAparelho()) return jogadorIdDe(responderIndex) === jid;
@@ -1589,6 +1599,7 @@ function redePodeComandar(acao, jid, dados) {
   // 1.7.10.5: quem está na vez pede a dica no próprio aparelho (o Mestre abre); a ficha de palpite é de quem tem
   if (acao === "pedirDica") return !ehMestre && jogadorIdDe(responderIndex) === jid;
   if (acao === "palpitarAgora") return !ehMestre && !!dados && dados[0] === palpiteKeyOf(jogadorIdxPorId(jid));
+  if (acao === "corridaComprar" || acao === "corridaUsar") return !!dados && dados[1] === jid; // cada um gasta o seu
   if (acao === "bonusAdversario" || acao === "bonusMestre") {
     const e = pendingBonusQueue && pendingBonusQueue[0];
     if (!e) return false;
@@ -1622,6 +1633,7 @@ function redeHostComando(m, jid) {
 
 /* --- Painel de cada jogador: os botões que ele pode tocar agora (o host calcula) --- */
 function redeOpcoes(jid) {
+  if (CURRENT_MODE === "caos" && typeof mc !== "undefined" && mc) return mcOpcoes(jid); // 1.7.10.6: o painel é do Modo C.A.O.S.
   const op = [];
   const add = (a, d, t, c, g) => op.push({ a, d: d || [], t, ...(c ? { c } : {}), ...(g ? { g } : {}) });
   if (!starterChosen || gameEnded || jogadorIdxPorId(jid) < 0) return op;
@@ -1642,7 +1654,18 @@ function redeOpcoes(jid) {
   const meuIdx = jogadorIdxPorId(jid), minhaChave = palpiteKeyOf(meuIdx);
   if (!ehMestre && cardState === "revealed" && pendingIndex !== null && currentCard && currentCard.clues[pendingIndex].type === "clue" && CURRENT_MODE !== "express") {
     const pv = palpiteVezAtual();
-    if (!pv && palpiteEligibleHolders().includes(minhaChave)) add("palpitarAgora", [minhaChave], "🃏 Palpitar agora!", "ok", "Palpite a qualquer hora");
+    const relampago = CURRENT_MODE === "corrida" && corridaRelampago();
+    if (!pv && palpiteEligibleHolders().includes(minhaChave))
+      add("palpitarAgora", [minhaChave], relampago ? "✋ Bater na mesa!" : CURRENT_MODE === "corrida" ? "🃏 Roubar a vez!" : "🃏 Palpitar agora!", "ok", relampago ? "⚡ Sabe a resposta? Quem bater primeiro responde" : CURRENT_MODE === "corrida" ? "Rouba a vez" : "Palpite a qualquer hora");
+  }
+  // 1.7.10.6 · Corrida: lojinha no intervalo e itens guardados durante a carta
+  if (CURRENT_MODE === "corrida") {
+    if (corridaIntervaloAberto() && corridaEstoque)
+      Object.keys(CORRIDA_LOJA).forEach((k) => {
+        const it = CORRIDA_LOJA[k];
+        if (corridaPodeComprar(k, jid)) add("corridaComprar", [k, jid], `${it.ic} ${it.nome} · ${corridaPreco(k)} pts (${corridaEstoque[k]} no estoque)`, "", `🛒 Lojinha · você tem ${(players[meuIdx] || {}).score || 0} pts`);
+      });
+    ["desfib", "corte"].forEach((k) => corridaPodeUsar(k, jid) && add("corridaUsar", [k, jid], `${CORRIDA_LOJA[k].ic} Usar ${CORRIDA_LOJA[k].nome}`, "ok", "🎒 Seus itens"));
   }
   // 1.7.10.5: quem está na vez pede a dica pelo número; o Mestre recebe o pedido e abre
   if (!ehMestre && cardState === "revealed" && pendingIndex === null && currentCard && jogadorIdDe(responderIndex) === jid && CURRENT_MODE !== "express") {
@@ -1803,10 +1826,12 @@ function redeHostPublicar(forcar) {
     const a = rede.assentos[jid];
     if (!redeOnline(a)) return;
     const opcoes = redeOpcoes(jid);
-    const chave = JSON.stringify(opcoes) + "|" + partidaRevisao;
+    // 1.7.10.6 · Modo C.A.O.S.: o que é só desse jogador (a carta dele, PC, itens…) vai junto, só pra ele
+    const extra = CURRENT_MODE === "caos" && typeof mcPrivado === "function" ? mcPrivado(jid) : null;
+    const chave = JSON.stringify([opcoes, extra]) + "|" + partidaRevisao;
     if (!forcar && rede.paineis[jid] === chave) return;
     rede.paineis[jid] = chave;
-    redeEnviar("painel", { revisao: partidaRevisao, opcoes }, a.sessao);
+    redeEnviar("painel", { revisao: partidaRevisao, opcoes, ...(extra ? { extra } : {}) }, a.sessao);
   });
   const mid = jogadorIdDe(mestreIndex);
   const a = mid && rede.assentos[mid];
@@ -2191,7 +2216,7 @@ function redeConvidadoReceber(m) {
   }
   if (m.t === "painel") {
     if (rede.painel && m.revisao < rede.painel.revisao) return;
-    rede.painel = { revisao: m.revisao, opcoes: m.opcoes };
+    rede.painel = { revisao: m.revisao, opcoes: m.opcoes, extra: m.extra && typeof m.extra === "object" ? m.extra : null };
     return avisar();
   }
   if (m.t === "recuperacao") {
@@ -2322,7 +2347,8 @@ function redeConvidadoIniciar(sala) {
 // 1.7.10.3: no celular do convidado também tem o botão da voz do C.A.O.S. (começa desligada)
 function redeSairHtml() {
   const voz = typeof CAOS_VOICE_OK !== "undefined" && CAOS_VOICE_OK ? `<button type="button" class="rede-como rede-voz" onclick="redeVozTrocar()">${caosVoiceOn ? "🗣️ Voz do C.A.O.S.: ligada" : "🤐 Voz do C.A.O.S.: desligada"}</button>` : "";
-  return voz + '<button type="button" class="rede-como" onclick="openTutorial(\'manual:online\')">❓ Como funciona o online</button><button type="button" class="telao-sair" onclick="redeSairDaSala()">✕ Sair da sala</button>';
+  const pedir = rede && rede.retrato && rede.retrato.iniciada ? '<button type="button" class="rede-como" onclick="pedirCaosConvidado()">🙋 Peça ao C.A.O.S.</button>' : "";
+  return voz + pedir + '<button type="button" class="rede-como" onclick="openTutorial(\'manual:online\')">❓ Como funciona o online</button><button type="button" class="telao-sair" onclick="redeSairDaSala()">✕ Sair da sala</button>';
 }
 function redeVozTrocar() {
   try {
@@ -2433,6 +2459,7 @@ function redeConvidadoTiques() {
   if (iv && r.intervalo) iv.textContent = s(r.intervalo);
   const vs = document.getElementById("redeVotoSeg");
   if (vs && r.votacao) vs.textContent = s(r.votacao.ate);
+  if (r.mc && typeof mcContagens === "function") mcContagens();
 }
 function redeConvidadoDesenhar() {
   const box = document.getElementById("telao");
@@ -2478,6 +2505,7 @@ function redeConvidadoDesenhar() {
     box.innerHTML = `${sala}<div class="telao-espera">✅ Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b><br><small>Esperando o host terminar o cadastro e começar a partida…</small></div><ul class="rede-lista">${mesa}</ul>${redeSairHtml()}`;
     return;
   }
+  if (rede.retrato.mc) return mcDesenharConvidado(box); // 1.7.10.6: Modo C.A.O.S. tem tela própria
   telaoUltimo = rede.retrato;
   telaoDesenhar(rede.retrato);
   // troca o "sair do telão" pelo "sair da sala" e põe a sala e os botões do meu papel
@@ -2726,7 +2754,7 @@ function redeEscolhaDesenhar(box, sala) {
       <div class="rede-rot">😀 Emoji</div><div class="avatar-picker-row rede-paleta">${emojis}</div>
       <div class="rede-rot">🎭 Zoeira · Como o C.A.O.S. pode zoar você?</div><div class="color-picker-row rede-paleta tem-escolha">${humores}</div>
       ${hAtual && hAtual.dica ? `<div class="rede-dica-humor">${escapeHtml(hAtual.dica)}</div>` : ""}
-      <div class="rede-rot">${cad.equipe ? "Faixa etária" : "Idade <small>(opcional · com menos de 12, ganha tempo extra pra ler quando for o Mestre)</small>"}</div><div class="color-picker-row rede-paleta${r.idade ? " tem-escolha" : ""}">${idades}</div>
+      <div class="rede-rot">${cad.equipe ? "🎂 Faixa etária <small>(obrigatória)</small>" : "🎂 Idade <small>(obrigatória · com menos de 12, ganha tempo extra pra ler quando for o Mestre; o Modo C.A.O.S. é 16+)</small>"}</div><div class="color-picker-row rede-paleta${r.idade ? " tem-escolha" : ""}">${idades}</div>
       ${rede.erroCadastro ? `<div class="rede-aviso">${escapeHtml(rede.erroCadastro)}</div>` : ""}
       <button type="button" class="btn-start btn-neo neo-solid neo-still" id="redePedir" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">🙋 Pedir pra entrar</button>
     </div>`;
@@ -2756,7 +2784,7 @@ function redeEscolhaDesenhar(box, sala) {
           rede.erroCadastro = campo === "cor" && COR_EXCLUSIVA[b.dataset[attr]] ? `Essa é a cor exclusiva ${COR_EXCLUSIVA[b.dataset[attr]].de}.` : "Esse já tem dono. Escolha outro.";
         } else {
           rede.erroCadastro = null;
-          r[campo] = r[campo] === b.dataset[attr] && campo === "idade" ? null : b.dataset[attr];
+          r[campo] = b.dataset[attr];
         }
         redeEscolhaDesenhar(box, sala);
       }),
@@ -2782,8 +2810,24 @@ function redePedirEntrada(perfil) {
     redeConvidadoDesenhar();
     return false;
   }
-  rede.erroCadastro = null;
   const cad = rede.cadastro || {};
+  // 1.7.10.6 (pedido do JF): idade obrigatória; nome que este dispositivo conhece numa faixa maior pede confirmação
+  if (!r.idade && !isJfName(nome)) {
+    rede.erroCadastro = cad.equipe ? "Escolha a faixa etária." : "Escolha a idade.";
+    redeConvidadoDesenhar();
+    return false;
+  }
+  const idadeR = cad.equipe ? idadeDaFaixa(r.idade) : idadeNorm(r.idade);
+  if (!perfil && !r.idadeOk && idadeSubiu(nome, idadeR)) {
+    idadeConfirmarSubida(nome, idadeR, () => {
+      r.idadeOk = true;
+      redePedirEntrada();
+    });
+    return false;
+  }
+  r.idadeOk = false;
+  if (idadeR) idadeLembrar(nome, idadeR);
+  rede.erroCadastro = null;
   const p = { nome, cor: r.cor || null, avatar: r.avatar || null, humor: r.humor || null };
   if (cad.equipe) p.faixa = r.idade || null;
   else p.idade = r.idade || null;

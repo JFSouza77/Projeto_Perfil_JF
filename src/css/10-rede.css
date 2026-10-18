@@ -1077,6 +1077,166 @@ body.claro .pt-resumo li {
   color: var(--t-sub, #b9c1da);
 }
 
+/* 1.7.10.6 · Modo C.A.O.S. (host e convidados usam a mesma tela) */
+#mcTela,
+.mc-tela {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.mc-tela {
+  display: grid;
+  gap: 10px;
+  padding: 6px 4px 12px;
+}
+.mc-relogios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+}
+.mc-relogios > span {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(232, 121, 249, 0.45);
+  background: rgba(232, 121, 249, 0.1);
+}
+.mc-relogios .mc-ev {
+  border-color: rgba(248, 113, 113, 0.6);
+  background: rgba(248, 113, 113, 0.14);
+  font-weight: 700;
+}
+.mc-bloco {
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(232, 121, 249, 0.35);
+  background: rgba(232, 121, 249, 0.06);
+}
+.mc-bloco h3 {
+  margin: 0 0 6px;
+}
+.mc-cat {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.mc-estado {
+  margin: 6px 0;
+  font-weight: 700;
+  color: #fbbf24;
+}
+.mc-dicas {
+  margin: 6px 0 0;
+  padding-left: 24px;
+  display: grid;
+  gap: 4px;
+}
+.mc-dicas .mc-agora {
+  font-weight: 800;
+  font-size: 1.08rem;
+}
+.mc-janela {
+  font-size: 1.3rem;
+}
+.mc-ultimo,
+.mc-meu {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+}
+.mc-meu {
+  border: 1px dashed rgba(167, 139, 250, 0.55);
+}
+.mc-juiz,
+.mc-desfib {
+  margin-top: 6px;
+  color: #fde68a;
+}
+.mc-grupo {
+  margin-top: 4px;
+}
+.mc-grupo-tit {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  margin-bottom: 4px;
+}
+.mc-botoes .rede-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.mc-placar {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.mc-placar li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+.mc-placar li.mc-mestre {
+  outline: 1px solid rgba(232, 121, 249, 0.6);
+}
+.mc-feed {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.85rem;
+  opacity: 0.85;
+  display: grid;
+  gap: 2px;
+}
+.mc-pinata {
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(251, 191, 36, 0.12);
+}
+.mc-palavra {
+  font-size: 1.2rem;
+  letter-spacing: 0.04em;
+}
+.mc-pinata-form {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+.mc-pinata-txt {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(251, 191, 36, 0.6);
+  background: rgba(0, 0, 0, 0.25);
+  color: inherit;
+  font-size: 1rem;
+}
+body.claro .mc-estado,
+body.claro .mc-juiz,
+body.claro .mc-desfib {
+  color: #92400e;
+}
+.mc-vitrine {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.mc-vitrine li small {
+  display: block;
+  opacity: 0.75;
+  font-size: 0.78rem;
+}
+.mc-vitrine li.mc-caro {
+  opacity: 0.5;
+}
+
 /* 1.7.10.6 (JF, partida online com a galera de 11 a 13 anos): o próximo passo de quem está com a vez é um botão
    grande, amarelo e pulsando ("cta"), pra ninguém ficar perdido sem ter visto o tutorial */
 .rede-btn.rede-cta,
@@ -1182,6 +1342,89 @@ body.batata-mode .rede-papel.rp-vez {
 }
 @media (prefers-reduced-motion: reduce) {
   .rede-papel.rp-vez {
+    animation: none;
+  }
+}
+
+/* 1.7.10.6 (JF, 19/10, print do celular): o botão que chama ficava com letra preta no roxo e, no tablet da Jennifer,
+   fora do centro. Agora: roxo escuro, letra branca em neon, borda amarela pulsando e sempre centralizado. */
+.rede-btn.rede-cta,
+.cta-pulsa {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
+  background: linear-gradient(135deg, #3b0f7a, #6d28d9);
+  border-color: #facc15;
+  color: #fff;
+  text-shadow: 0 0 4px #fff, 0 0 12px #fde047, 0 0 22px #f59e0b;
+}
+.card .flip-btn.cta-pulsa {
+  max-width: 560px;
+  margin: 12px auto 0;
+  background: linear-gradient(135deg, #3b0f7a, #6d28d9) !important;
+  border-color: #facc15 !important;
+  color: #fff !important;
+  text-shadow: 0 0 4px #fff, 0 0 12px #fde047, 0 0 22px #f59e0b;
+}
+.card .flip-btn.cta-pulsa:after {
+  background: linear-gradient(135deg, #3b0f7a, #6d28d9);
+  filter: none;
+}
+body.claro .rede-btn.rede-cta,
+body.claro .cta-pulsa,
+body.claro .card .flip-btn.cta-pulsa {
+  text-shadow: 0 0 6px #fde04799;
+}
+
+/* 1.7.10.6 (JF): a resposta aberta pro Mestre brilha mais e pulsa, pra não passar batido */
+.answer-toggle.open .ans-nome,
+.answer-toggle.livre .ans-nome {
+  animation: ansNeon 1.8s ease-in-out infinite;
+}
+body:not(.claro) .answer-toggle.open .ans-nome,
+body:not(.claro) .answer-toggle.livre .ans-nome {
+  color: #fff;
+  background: #121020;
+  text-shadow: 0 0 6px #fff, 0 0 14px var(--card-glow, #d4a017), 0 0 26px var(--card-glow, #d4a017);
+}
+@keyframes ansNeon {
+  0%,
+  100% {
+    box-shadow: 0 0 6px color-mix(in srgb, var(--card-glow, #d4a017) 45%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 14px var(--card-glow, #d4a017),
+      0 0 28px color-mix(in srgb, var(--card-glow, #d4a017) 60%, transparent);
+  }
+}
+
+/* 1.7.10.6 (JF): "Mestre:" na carta ganha destaque próprio (pílula roxa), igual ao "Vez de:" amarelo */
+.turn-info .mestre-tag {
+  opacity: 1;
+  font-weight: 800;
+  font-size: 1.05rem;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #a855f724;
+  border: 1.5px solid #c084fc;
+  box-shadow: 0 0 10px #c084fc59;
+}
+body.claro .turn-info .mestre-tag {
+  background: #f3e8ff;
+  border-color: #7e22ce;
+  box-shadow: none;
+}
+html.acess-calmo .answer-toggle .ans-nome,
+body.batata-mode .answer-toggle .ans-nome {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .answer-toggle .ans-nome {
     animation: none;
   }
 }

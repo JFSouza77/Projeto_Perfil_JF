@@ -99,7 +99,7 @@ async function montar(host, cen) {
     caosSilenced = true;
     CURRENT_FORMAT = cen.formato;
     const eq = cen.formato === "equipe";
-    players = cen.nomes.map((n, i) => ({ id: jogadorIdNovo(), name: n, score: 0, position: 0, isBlocked: false, color: eq ? "#888888" : PLAYER_COLORS[i], avatar: AVATARS[i], humor: "normal", ageBracket: eq ? "adulto" : null, team: null, gems: {} }));
+    players = cen.nomes.map((n, i) => ({ id: jogadorIdNovo(), name: n, score: 0, position: 0, isBlocked: false, color: eq ? "#888888" : PLAYER_COLORS[i], avatar: AVATARS[i], humor: "normal", ageBracket: eq ? "adulto" : null, idade: "dezesseis", team: null, gems: {} }));
     selectMode(cen.modo, null, cen.sabor);
     if (cen.cond) WIN_CONDITION = cen.cond;
     starterDrawCount = 1;
@@ -118,7 +118,14 @@ async function montar(host, cen) {
     document.getElementById("gameScreen").style.display = "block";
     const pa = document.getElementById("playAreaSection");
     if (pa) pa.style.display = "block";
+    // 1.7.10.6: o Modo C.A.O.S. só começa com a sala aberta e todo mundo dentro (o teste começa depois)
+    if (cen.modo === "caos") return redeAbrirSala("internet");
     beginGameplay();
+    // 1.7.10.6: a Corrida começa com o relógio curto (senão a partida do teste dura 30 min)
+    if (cen.modo === "corrida") {
+      corridaDobrar();
+      corridaRestaMs = cen.relogio || 150e3;
+    }
     await new Promise((r) => setTimeout(r, 300));
     if (activeToastState) closeActiveToast();
     return redeAbrirSala("internet");
@@ -146,6 +153,13 @@ const PASSO_CELULAR = () => {
   const sorte = Math.random();
   const escolher = () => {
     for (const a of ["continuar", "bonusAdversario", "bonusMestre", "sacarCarta", "roletaCategoria", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"]) if (tem(a) >= 0) return ops[tem(a)];
+    // 1.7.10.6 · Corrida: compra na lojinha, usa item, bate na mesa, julga quem bateu, passa a dica
+    if (tem("corridaComprar") >= 0 && sorte < 0.5) return ops[tem("corridaComprar")];
+    if (tem("corridaUsar") >= 0 && sorte < 0.3) return ops[tem("corridaUsar")];
+    if (tem("palpitarAgora") >= 0 && sorte < 0.5) return ops[tem("palpitarAgora")];
+    if (tem("palpiteAcertou") >= 0 && sorte < 0.4) return ops[tem("palpiteAcertou")];
+    if (tem("palpiteErrou") >= 0) return ops[tem("palpiteErrou")];
+    if (tem("corridaProxima") >= 0 && sorte < 0.3) return ops[tem("corridaProxima")];
     const ac = ops.filter((o) => o.a === "acertou");
     if (ac.length && sorte < 0.3) return ac[Math.floor(Math.random() * ac.length)];
     if (tem("errou") >= 0) return ops[tem("errou")];
@@ -213,6 +227,8 @@ const PASSO_HOST = () => {
     let o = null;
     for (const a of ["continuar", "bonusAdversario", "bonusMestre", "sacarCarta", "roletaCategoria", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"])
       if (!o && tem(a) >= 0) o = ops[tem(a)];
+    for (const [a, chance] of [["corridaComprar", 0.5], ["corridaUsar", 0.3], ["palpitarAgora", 0.5], ["palpiteAcertou", 0.4], ["palpiteErrou", 1], ["corridaProxima", 0.3]])
+      if (!o && tem(a) >= 0 && sorte < chance) o = ops[tem(a)];
     const ac = ops.filter((x) => x.a === "acertou");
     if (!o && ac.length && sorte < 0.3) o = ac[Math.floor(Math.random() * ac.length)];
     if (!o && tem("errou") >= 0) o = ops[tem("errou")];
@@ -260,7 +276,21 @@ async function partidaInteira(b, sv, cen) {
     conf(`[${rot}] Os 2 celulares entraram`, c1.ok && c2.ok);
     // o host joga como o 1º; no Equipe, o 4º divide o aparelho do host
     await host.evaluate((ids) => redeDefinirNoHost(ids), [await host.evaluate((n) => players.find((p) => p.name === n).id, cen.nomes[0]), ...(cen.nomes[3] ? [await host.evaluate((n) => players.find((p) => p.name === n).id, cen.nomes[3])] : [])]);
-    const r = await jogarAteOFim(host, [c1.g, c2.g], cen.limite || 360000);
+    let r;
+    if (cen.modo === "corrida") {
+      // os robôs acertam rápido demais (cada acerto dá +10 s e o relógio só cresce): depois de 90 s jogando, o relógio
+      // cai pra 55 s, entra no Juízo Final (lá acerto não dá tempo) e a partida tem que acabar sozinha
+      await jogarAteOFim(host, [c1.g, c2.g], 90000);
+      await host.evaluate(() => {
+        if (gameEnded) return;
+        corridaDobrar();
+        corridaRestaMs = Math.min(corridaRestaMs, 55e3);
+      });
+      r = await jogarAteOFim(host, [c1.g, c2.g], cen.limite || 360000);
+      conf(`[${rot}] Passou pelo Juízo Final`, await host.evaluate(() => corridaJuizo || corridaAcabou));
+    } else r = await jogarAteOFim(host, [c1.g, c2.g], cen.limite || 360000);
+    if (!r.fim && cen.modo === "corrida")
+      console.log("DIAG " + rot + ": " + (await host.evaluate(() => JSON.stringify({ g: Math.round(corridaGeralMs() / 1000), c: Math.round(corridaCartaMs() / 1000), cs: cardState, pi: pendingIndex, tk: timerKind, tl: secondsLeft(), toast: !!activeToastState, ov: !!timeoutOverlayMessage, jan: caosJanelaImportanteAberta(), pausa: !!pausedAt, int: corridaIntervaloAberto(), cartas: stats.totalDrawn, acabou: corridaAcabou, juizo: corridaJuizo, duelo: !!corridaDuelo, desemp: !!corridaDesempate, mestre: jogadorIdDe(mestreIndex), hostEu: rede.hostEu, rev: partidaRevisao }))));
     conf(`[${rot}] A partida foi até o fim (${r.passos} passos, ${r.seg} s)`, r.fim);
     conf(`[${rot}] Os celulares viram o fim da partida`, (await esperar(c1.g, () => rede.retrato && rede.retrato.fim, null, 15000)) && (await esperar(c2.g, () => rede.retrato && rede.retrato.fim, null, 15000)));
     const placar = await host.evaluate(() => JSON.stringify(players.map((p) => [p.id, p.score, p.position])));
@@ -276,6 +306,117 @@ async function partidaInteira(b, sv, cen) {
       return JSON.stringify(r).includes(JSON.stringify(s.resp)) || (!s.encerrada && hist.some((c) => c.resp === s.resp));
     }, seg));
     conf(`[${rot}] Nenhum retrato da mesa levou resposta`, !vazou);
+  } finally {
+    await m.fechar();
+  }
+}
+
+// 1.7.10.6 · Modo C.A.O.S.: host + 2 dispositivos jogando pelo painel até o fim (cada um tem a sua carta)
+const PASSO_MC = (ehHost) => {
+  const lista = [];
+  const ids = ehHost ? redeJogadoresNoHost() : [rede && rede.eu];
+  const r = ehHost ? null : rede && rede.retrato;
+  if (!ehHost && (!rede || rede.estado !== "dentro" || !r || r.fim || Object.keys(rede.pendentes || {}).length)) return "nada";
+  if (ehHost && (!starterChosen || gameEnded)) return "nada";
+  if (ehHost && activeToastState) closeActiveToast();
+  for (const id of ids) {
+    const ops = ehHost ? redeOpcoes(id) : (rede.painel && rede.painel.opcoes) || [];
+    const M = ehHost ? mcRetrato() : r.mc;
+    if (M && M.pinata && !M.pinata.ganhou && Math.random() < 0.3) {
+      if (ehHost) dispatchAction({ type: "mcPinata", data: [id, M.pinata.palavra] });
+      else redeMandar("mcPinata", id, M.pinata.palavra);
+      return "pinata";
+    }
+    const tem = (a) => ops.filter((o) => o.a === a);
+    const sorte = Math.random();
+    const pega = (a, chance) => {
+      const l = tem(a);
+      return l.length && sorte < chance ? l[Math.floor(Math.random() * l.length)] : null;
+    };
+    const o =
+      pega("continuar", 1) ||
+      (tem("mcVeredito").length ? tem("mcVeredito")[sorte < 0.45 ? 0 : 1] : null) ||
+      (tem("mcDesafioVeredito").length ? tem("mcDesafioVeredito")[sorte < 0.5 ? 0 : 1] : null) ||
+      pega("mcDuelo", 1) ||
+      pega("mcRevanche", 1) ||
+      pega("mcDesfib", 0.6) ||
+      pega("mcDesafioBater", 0.5) ||
+      pega("mcBatataSegurar", 0.2) ||
+      pega("mcBatataPassar", 0.5) ||
+      pega("mcComprar", 0.3) ||
+      pega("mcUsar", 0.2) ||
+      pega("mcMaoLeve", 0.3) ||
+      pega("mcPalpitar", 0.25);
+    if (!o) continue;
+    if (ehHost) dispatchAction({ type: o.a, data: o.d });
+    else redeMandar(o.a, ...o.d);
+    lista.push(o.a);
+    return o.a;
+  }
+  return "nada";
+};
+async function partidaModoCaos(b, sv) {
+  const rot = "Modo C.A.O.S. até o fim";
+  const m = await mesa(b, sv, rot);
+  try {
+    const host = await m.abrir("");
+    const cen = { formato: "versus", modo: "caos", nomes: ["Ana", "Beto", "Caio"] };
+    const sala = await montar(host, cen);
+    conf(`[${rot}] Sala aberta`, await esperar(host, () => rede && rede.transporte.estado === "aberta"));
+    const c1 = await entrar(m, host, sala, "Beto");
+    const c2 = await entrar(m, host, sala, "Caio");
+    conf(`[${rot}] Os 2 dispositivos entraram`, c1.ok && c2.ok);
+    await host.evaluate((id) => redeDefinirNoHost([id]), await host.evaluate(() => players.find((p) => p.name === "Ana").id));
+    await host.evaluate(() => {
+      beginGameplay();
+      if (activeToastState) closeActiveToast();
+    });
+    conf(`[${rot}] Começou (cada um com a sua carta)`, await host.evaluate(() => !!mc && Object.keys(mc.cartas).length === 3));
+    // a partida é de 10 min: o teste encurta pra 100 s
+    await host.evaluate(() => {
+      mcRelogioParar(mc.geral);
+      mc.geral.resta = 100e3;
+    });
+    conf(`[${rot}] Cada dispositivo vê só a própria carta`, await (async () => {
+      const resp = await host.evaluate(() => Object.fromEntries(players.map((p) => [p.name, mc.cartas[p.id].resp])));
+      await c1.g.waitForTimeout(1500);
+      const beto = await c1.g.evaluate(() => (rede.painel && rede.painel.extra && rede.painel.extra.carta && rede.painel.extra.carta.resp) || null);
+      const vaza = await c1.g.evaluate((outros) => {
+        const t = JSON.stringify(rede.retrato.mc) + JSON.stringify(rede.painel || {});
+        return outros.some((x) => t.includes(JSON.stringify(x)));
+      }, [resp.Ana, resp.Caio]);
+      return beto === resp.Beto && !vaza;
+    })());
+    const SHOTS = process.env.MC_SHOTS; // pasta pra fotos da tela (conferência visual)
+    if (SHOTS) {
+      await host.waitForTimeout(2500);
+      await host.screenshot({ path: SHOTS + "/mc_host.png", fullPage: true });
+      await c1.g.screenshot({ path: SHOTS + "/mc_conv.png", fullPage: true });
+    }
+    let fotoInt = false;
+    const t0 = Date.now();
+    let passos = 0;
+    const vistos = new Set();
+    while (Date.now() - t0 < 300000) {
+      if (await host.evaluate(() => gameEnded).catch(() => false)) break;
+      const a = await host.evaluate(PASSO_MC, true).catch(() => "erro");
+      vistos.add(a);
+      for (const g of [c1.g, c2.g]) vistos.add(await g.evaluate(PASSO_MC, false).catch(() => "erro"));
+      await host.waitForTimeout(150);
+      passos++;
+      if (SHOTS && !fotoInt && (await c1.g.evaluate(() => rede.retrato && rede.retrato.mc && rede.retrato.mc.fase === "intervalo").catch(() => false))) {
+        fotoInt = true;
+        await c1.g.screenshot({ path: SHOTS + "/mc_intervalo.png", fullPage: true });
+      }
+    }
+    const fim = await host.evaluate(() => gameEnded).catch(() => false);
+    if (!fim) console.log("DIAG MC: " + (await host.evaluate(() => JSON.stringify({ fase: mc && mc.fase, geral: mc && mcRelogioMs(mc.geral), rodada: mc && mc.rodada, feed: mc && mc.feed }))));
+    console.log("MC ações vistas: " + [...vistos].join(", "));
+    conf(`[${rot}] A partida foi até o fim (${passos} passos, ${Math.round((Date.now() - t0) / 1000)} s)`, fim);
+    conf(`[${rot}] Os dispositivos viram o fim`, (await esperar(c1.g, () => rede.retrato && rede.retrato.fim, null, 15000)) && (await esperar(c2.g, () => rede.retrato && rede.retrato.fim, null, 15000)));
+    const placar = await host.evaluate(() => JSON.stringify(players.map((p) => [p.id, p.score])));
+    conf(`[${rot}] O placar dos dispositivos bate com o do host`, await c1.g.evaluate((pl) => JSON.stringify((rede.retrato.jogadores || []).map((p) => [p.id, p.pontos])) === pl, placar));
+    conf(`[${rot}] Teve palpite e veredito pela rede`, vistos.has("mcPalpitar") && vistos.has("mcVeredito"));
   } finally {
     await m.fechar();
   }
@@ -573,6 +714,11 @@ async function dueloOnline(b, sv) {
       await partidaInteira(b, sv, { rot: "Equipe até o fim", formato: "equipe", modo: "classico", cond: "tabuleiro", equipes: 2, nomes: ["Ana", "Beto", "Caio", "Davi"] });
       await partidaInteira(b, sv, { rot: "Express até o fim", formato: "versus", modo: "express", sabor: "classico", nomes: ["Ana", "Beto", "Caio"] });
     }
+    if (!SO || SO === "partidas" || SO === "corrida") {
+      await partidaInteira(b, sv, { rot: "Corrida · Tempo até o fim", formato: "versus", modo: "corrida", sabor: "tempo", relogio: 90e3, limite: 300000, nomes: ["Ana", "Beto", "Caio"] });
+      await partidaInteira(b, sv, { rot: "Corrida · Tempo Hardcore até o fim", formato: "versus", modo: "corrida", sabor: "tempo-hc", relogio: 120e3, nomes: ["Ana", "Beto", "Caio"] });
+    }
+    if (!SO || SO === "partidas" || SO === "caos") await partidaModoCaos(b, sv);
     if (!SO || SO === "partidas" || SO === "duelo") await dueloOnline(b, sv);
     if (!SO || SO === "fundo") await segundoPlano(b, sv);
     if (!SO || SO === "fundo" || SO === "caiu") await hostMorreu(b, sv);

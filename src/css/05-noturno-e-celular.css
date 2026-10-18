@@ -392,7 +392,7 @@ body:not(.batata-mode) .splash-dice {
 }
 .humor-btn {
   background: transparent !important;
-  color: var(--hc) !important;
+  color: color-mix(in srgb, var(--hc) 55%, #fff) !important; /* 1.7.10.6: a cor pura (Ácido, Nível 0) ficava abaixo de 4,5:1 no escuro */
   border: 1.5px solid var(--hc) !important;
   box-shadow: 0 0 8px color-mix(in srgb, var(--hc) 30%, transparent);
   opacity: 0.8;
@@ -743,4 +743,9 @@ body.noturno .ans-nome {
   box-shadow:
     inset 0 0 10px color-mix(in srgb, var(--card-glow, #d4a017) 25%, transparent),
     0 0 8px color-mix(in srgb, var(--card-glow, #d4a017) 35%, transparent);
+}
+
+/* 1.7.10.5.7 (auditoria axe): "Diga aos jogadores…" na cor da categoria, um tom mais claro pra passar de 4,5:1 */
+body:not(.claro) .answer-header.cat-neon {
+  color: color-mix(in srgb, var(--cat) 72%, #fff);
 }

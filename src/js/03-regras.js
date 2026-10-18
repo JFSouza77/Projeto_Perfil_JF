@@ -65,7 +65,16 @@ function humorFamilia(p) {
 function humorEscolhido(p) {
   return humorFamilia(p) ? "familia" : playerHumor(p);
 }
+// 1.7.10.6 · Peça ao C.A.O.S.: o jogador pediu humor mais leve ou mais ácido (preferência dele, não muda regra)
 function playerHumor(p) {
+  const base = playerHumorBase(p);
+  const pc = p && p.pedeCaos;
+  if (!pc || !pc.humor || (p && p.iniciante)) return base;
+  if (pc.humor === "leve") return base === "zero" ? "zero" : "suave";
+  if (pc.humor === "acido") return typeof CURRENT_MODE !== "undefined" && CURRENT_MODE === "junior" ? "normal" : "acido";
+  return base;
+}
+function playerHumorBase(p) {
   if (p && p.iniciante) return "suave";
   // C.A.O.S. 4.3: no online, se uma parte da mesa calou ele, quem ainda ouve ganha o tratamento suave (ciúmes)
   if (typeof caosFiel === "function" && caosFiel(p)) return "suave";
@@ -304,13 +313,15 @@ function checkBonusLanding(playerIdx, oldPosition, newPosition) {
   }
 }
 function isWildcardSpecial(text) {
-  return typeof text === "string" && text.toLowerCase().includes("palpite");
+  return typeof text === "string" && /palpite|rouba a vez/i.test(text);
 }
 function currentGemCategories() {
   return CURRENT_MODE === "junior" ? ["ANIMAL", "PESSOA", "LUGAR", "COISA"] : ["ANO", "PESSOA", "LUGAR", "COISA"];
 }
 function winCond() {
   if (CURRENT_MODE === "express") return "express";
+  if (CURRENT_MODE === "corrida") return "corrida";
+  if (CURRENT_MODE === "caos") return "caos";
   const w = WIN_CONDITIONS[WIN_CONDITION] ? WIN_CONDITION : "casa";
   // Na Moda da Casa, depois do sorteio vale o comportamento do modo sorteado.
   if (w === "casa" && CASA_MODOS.includes(casaSorteado)) return casaSorteado;
@@ -337,7 +348,7 @@ function joiasComTrava() {
 }
 function gemsAwarded() {
   const w = winCond();
-  return w !== "pontos" && w !== "tabuleiro";
+  return w !== "pontos" && w !== "tabuleiro" && w !== "corrida" && w !== "caos";
 }
 function gemsCountForWin() {
   const w = winCond();
@@ -352,7 +363,8 @@ function teamScore(id) {
 }
 function rankValue(holder, teamId) {
   const w = winCond();
-  if (w === "express") return holder.score || 0;
+  if (w === "corrida") return teamId ? corridaRankEquipe(teamId) : corridaRank(holder); // pontos (Tempo) ou cartas; no Tempo, empate desempata por cartas
+  if (w === "express" || w === "caos") return holder.score || 0; // Modo C.A.O.S.: score = cartas capturadas
   if (w === "pontos") return teamId ? teamScore(teamId) : holder.score || 0;
   if (w === "joias") return gemTotal(holder);
   return holder.position || 0;
@@ -360,7 +372,7 @@ function rankValue(holder, teamId) {
 function victoryReached() {
   if (gemWinner) return true;
   const w = winCond();
-  if (w === "express" || w === "joias") return false;
+  if (w === "express" || w === "joias" || w === "corrida" || w === "caos") return false;
   const eq = CURRENT_FORMAT === "equipe";
   if (w === "pontos") {
     const meta = metaPontos();
@@ -380,6 +392,9 @@ function winCondRuleText(goal) {
 function winCondRuleTextBase(goal) {
   const g = goal || WINNING_SCORE || 200,
     w = winCond();
+  if (w === "caos") return "Vence quem tiver <b>mais cartas</b> quando os 10 minutos acabarem.";
+  if (w === "corrida")
+    return `Vence quem tiver <b>mais cartas</b> quando o relógio geral (${CORRIDA_TEMPO_MS / 60e3} min, +${CORRIDA_BONUS_MS / 1e3} s por carta acertada) zerar. Empate: <b>desempate relâmpago</b>.`;
   if (w === "joias")
     return `Vence quem juntar as <b>${GEMS_TO_WIN} joias</b>. O tabuleiro anda, mas chegar na casa ${g} não vence. Máximo de <b>${JOIAS_POR_RODADA} joias por ${CURRENT_FORMAT === "equipe" ? "equipe" : "jogador"} em cada rodada</b>.`;
   if (w === "pontos")
@@ -444,6 +459,7 @@ function palpiteParticipants() {
   return CURRENT_FORMAT === "equipe" ? teamOrder.length : players.length;
 }
 function palpiteAvailable() {
+  if (CURRENT_MODE === "corrida" && corridaRelampago()) return true; // relâmpago: qualquer um bate na mesa
   return palpiteEnabled() && palpiteParticipants() >= 3;
 }
 function palpiteKeyOf(playerIdx) {
@@ -465,6 +481,7 @@ function grantPalpite(playerIdx) {
   return "ganhou";
 }
 function consumePalpite(key) {
+  if (CURRENT_MODE === "corrida" && corridaRelampago()) return true; // bater na mesa não gasta ficha
   if (palpiteCount(key) <= 0) return false;
   palpiteHolders[key]--;
   if (palpiteHolders[key] <= 0) delete palpiteHolders[key];
@@ -473,6 +490,11 @@ function consumePalpite(key) {
 }
 function palpiteEligibleHolders() {
   if (!palpiteAvailable() || !currentCard) return [];
+  // Corrida no relâmpago (Hardcore / Juízo Final): todo mundo menos o Mestre pode bater na mesa (no duelo, os dois)
+  if (CURRENT_MODE === "corrida" && corridaRelampago())
+    return players
+      .filter((p, i) => i !== mestreIndex && corridaPodeResponder(i) && !(CURRENT_FORMAT === "equipe" && players[mestreIndex] && p.team === players[mestreIndex].team))
+      .map((p) => p.id);
   const blocked = new Set([palpiteKeyOf(mestreIndex), palpiteKeyOf(responderIndex)]);
   let keys = Object.keys(palpiteHolders).filter((k) => palpiteHolders[k] > 0 && !blocked.has(k));
   if (currentCard.isBonus) return [];
@@ -480,6 +502,7 @@ function palpiteEligibleHolders() {
 }
 function palpiteEligibleScorers() {
   const keys = palpiteEligibleHolders();
+  if (CURRENT_MODE === "corrida" && corridaRelampago()) return keys.map((k) => jogadorIdxPorId(k)).filter((i) => i >= 0); // ids de jogador
   if (CURRENT_FORMAT === "equipe") return players.map((p, i) => i).filter((i) => keys.includes(players[i].team));
   return keys.map((k) => jogadorIdxPorId(k)).filter((i) => i >= 0);
 }
@@ -540,6 +563,7 @@ function palpiteHit(key) {
 function palpiteMiss(key) {
   if (pendingIndex === null || gameEnded || !palpiteEligibleHolders().includes(key)) return;
   palpiteVez = null;
+  if (CURRENT_MODE === "corrida" && corridaRelampago()) return corridaRelampagoErrou(key);
   consumePalpite(key);
   const d = entityDisplay(key);
   showToastMessage(`🃏 ${d.name} errou o palpite — sem penalidade, a ficha voltou pro estoque.`, null, true);
@@ -556,6 +580,18 @@ function buildHardcoreClueSet(shuffledClues) {
   const chosenSpecials = shuffle(specials).slice(0, specialCount);
   const chosenReals = shuffle(reals).slice(0, 10 - chosenSpecials.length);
   return shuffle([...chosenReals, ...chosenSpecials]);
+}
+// Corrida contra o Tempo: sem tabuleiro, as especiais de casa saem ("Avance/Volte N casas", "Escolha um jogador…").
+// Ficam "Perca sua vez" e o palpite (que na Corrida é o "Rouba a vez"). 10 dicas, 1 ou 2 especiais (≥ 8 normais).
+function especialDeCasa(item) {
+  return !!item && item.type === "special" && /casa|escolha um jogador/i.test(item.text || "");
+}
+function buildCorridaClueSet(shuffledClues) {
+  // Hardcore: as dicas abrem sozinhas, então sem especiais (só dica de verdade)
+  if (corridaHardcore) return shuffle(shuffledClues.filter((c) => c.type === "clue")).slice(0, 10);
+  return buildHardcoreClueSet(
+    shuffledClues.filter((c) => !especialDeCasa(c)).map((c) => (c.type === "special" && isWildcardSpecial(c.text) ? { ...c, text: "Rouba a vez" } : c)),
+  );
 }
 function isJfPlayer(p) {
   return !!p && isJfName(p.name);
@@ -600,8 +636,16 @@ function applySpecialMove(targetIdx, amount) {
   maybeShowMoveSpecialFlavor(p.name, amount, targetIdx !== responderIndex);
   afterMoveSpecial();
 }
+// 1.7.10.6 (até 10 jogadores, 5 equipes): quantas equipes dá pra formar com n jogadores, todas do mesmo tamanho e
+// com pelo menos 2 em cada (4 → 2 · 6 → 2 ou 3 · 8 → 2 ou 4 · 9 → 3 · 10 → 2 ou 5)
+function equipeQuantidadesValidas(n) {
+  const max = Object.keys(TEAM_INFO).length;
+  const ok = [];
+  for (let k = 2; k <= max; k++) if (n % k === 0 && n / k >= 2) ok.push(k);
+  return ok;
+}
 function isValidEquipeCount(n) {
-  return n === 4 || n === 6;
+  return equipeQuantidadesValidas(n).length > 0;
 }
 function hasEnoughPlayersForFormat() {
   return CURRENT_FORMAT === "equipe" ? isValidEquipeCount(players.length) : players.length >= MIN_PLAYERS;
@@ -699,7 +743,7 @@ function gemBadgesHtml(holder) {
 // 1.7.10.5 (pedido do JF): selo amarelo (a cor da ficha no Perfil de mesa) em quem tem ficha de palpite
 function palpiteBadge(key) {
   const n = palpiteCount(key);
-  return n > 0 ? ` <span class="selo-palpite" title="Tem ficha de palpite a qualquer hora">🃏${n > 1 ? "×" + n : ""}</span>` : "";
+  return n > 0 ? ` <span class="selo-palpite" title="Tem ficha de ${CURRENT_MODE === "corrida" ? "Rouba a vez" : "palpite a qualquer hora"}">🃏${n > 1 ? "×" + n : ""}</span>` : "";
 }
 function buildPalpiteBoxHtml() {
   // 1.7.10.5: no online, quem tem aparelho próprio na sala usa o botão Palpitar agora lá (sai daqui)
@@ -716,7 +760,9 @@ function buildPalpiteBoxHtml() {
       return `<div class="palpite-row"><span>🃏 ${playerNameHtml(d.name, d.color, d.avatar)}${n > 1 ? " ×" + n : ""}</span><span><button class="btn-correct palpite-hit" data-key="${k}">✓ Acertou</button> <button class="btn-wrong palpite-miss" data-key="${k}">✕ Errou</button></span></div>`;
     })
     .join("");
-  return `<div class="palpite-box"><div class="palpite-title">🃏 Alguém usou o palpite a qualquer hora? (fichas no estoque: ${palpiteStock})</div>${rows}</div>`;
+  if (CURRENT_MODE === "corrida" && corridaRelampago())
+    return `<div class="palpite-box cr-quem-bateu"><div class="palpite-title">✋ Quem bateu na mesa primeiro?</div>${rows}</div>`;
+  return `<div class="palpite-box"><div class="palpite-title">🃏 Alguém usou ${CURRENT_MODE === "corrida" ? "o Rouba a vez" : "o palpite a qualquer hora"}? (fichas no estoque: ${palpiteStock})</div>${rows}</div>`;
 }
 
 
@@ -748,4 +794,7 @@ function nomeImproprio(n) {
   // a palavra sozinha ("Pika"), e também colada no resto ("CarroPika" vira "carro pika" só se tiver espaço)
   if (palavras.some((w) => NOME_PROIBIDO_PALAVRA.test(w) || NOME_PROIBIDO_PALAVRA.test(w.replace(/(.)\1+/g, "$1")))) return true;
   return NOME_PROIBIDO_TRECHO.test(t.replace(/ /g, ""));
+}
+function equipeDicaTxt() {
+  return "Dá certo com: 4 (2 equipes), 6 (2 ou 3), 8 (2 ou 4), 9 (3) e 10 (2 ou 5).";
 }

@@ -14,7 +14,7 @@
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1820;
+const JOGO_BUILD = 1821;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -26,7 +26,7 @@ const DEBUG = true;
 const TIMER_KINDS = ["pick", "response", "special", "turn"];
 const SAVE_VERSION = 12; // 12 (1.7.7.1): jogador com id; palpite, joias da rodada, vencedor por joias, 1º Mestre e ADM principal por id
 const MIN_PLAYERS = 2;
-const MAX_PLAYERS = 6;
+const MAX_PLAYERS = 10; // 1.7.10.6 (pedido do JF): de 6 pra 10, em todos os modos
 const CAOS_EMO_GRAVE = {
   erroEscalada: 1,
   juizMestre: 1,
@@ -162,6 +162,9 @@ const TEAM_INFO = {
   red: { label: "Vermelha", color: "#e94560", emoji: "🔴" },
   blue: { label: "Azul", color: "#38bdf8", emoji: "🔵" },
   green: { label: "Verde", color: "#10b981", emoji: "🟢" },
+  // 1.7.10.6 (pedido do JF): RGB + preto e branco, 5 equipes pra sempre dar pra dividir até 10 jogadores
+  black: { label: "Preta", color: "#4b5563", emoji: "⚫" },
+  white: { label: "Branca", color: "#f1f5f9", emoji: "⚪" },
 };
 const AGE_BRACKETS = [
   { id: "crianca", label: "6-12", cor: "#22c55e" },
@@ -338,7 +341,74 @@ const JOIAS_POR_RODADA = 2;
 // Última rodada: quando alguém bate a meta, a rodada termina para todos terem jogado o
 // mesmo número de vezes (menos no Express). Vence quem estiver na frente no fim da rodada.
 const ULTIMA_RODADA = true;
-const PALPITE_MODES_OK = ["classico", "junior", "oldschool"];
+const PALPITE_MODES_OK = ["classico", "junior", "oldschool", "corrida"];
+// 1.7.10.6 · Corrida contra o Tempo (regras do JF em docs/Modos_1.7.10.6.md): relógio geral de 30 min (+10 s por
+// carta acertada), carta de 2:30, 15 s pra escolher a dica e 15 s pra responder, intervalo de 15 s congelado.
+const CORRIDA_TEMPO_MS = 20 * 60e3; // 1.7.10.6: 20 min (o JF deixou o balanceamento comigo: dá ~12 cartas, cada um lê 2 ou 3 vezes)
+const CORRIDA_BONUS_MS = 10e3;
+const CORRIDA_CARTA_MS = 150e3;
+const CORRIDA_VEZ_SEG = 15;
+const CORRIDA_INTERVALO_SEG = 15;
+// Eventos da Corrida (spec do JF de 17/10 à noite + balanceamento): penalidades, carta morta, bomba, duelo, Hardcore
+const CORRIDA_CARTA_HC_MS = 90e3; // Hardcore: 1:30 de carta…
+const CORRIDA_VEL_HC = 1.5; // …correndo 1,5× (Extreme 2× fica pra depois do playtest)
+const CORRIDA_VEZ_HC_SEG = 10; // Hardcore: 10 s pra escolher e 10 pra responder
+const CORRIDA_JANELA_SEG = 10; // relâmpago (Hardcore / Juízo Final): a dica fica aberta 10 s esperando alguém bater
+const CORRIDA_ERRO_MS = 1e3; // errou: a carta perde 1 s
+const CORRIDA_PULO_MS = 2e3; // pulou ("nem tentou"): a carta perde 2 s
+const CORRIDA_MORTE_MS = 60e3; // carta que morre sem acerto: o geral perde 1 min
+const CORRIDA_JUIZO_MS = 60e3; // último minuto = Juízo Final
+const CORRIDA_BOMBA_ERRO_MS = 5e3; // na Bomba-Relógio, cada erro/pulo tira 5 s do geral
+const CORRIDA_BOMBA_BONUS_MS = 20e3; // e desarmar dá +20 s (em vez de +10)
+const CORRIDA_BOMBA_QUOTA = { normal: 2, hardcore: 4 };
+const CORRIDA_EVENTO_FORA_MS = 3 * 60e3; // bomba e duelo não saem nos 3 min finais
+const CORRIDA_DUELO_MAX = 2;
+const CORRIDA_DUELO_VEL = 2; // no duelo a carta corre 2× e o geral congela
+const CORRIDA_DUELO_ROUBO = 25; // quem vence o duelo rouba 25 pontos de quem perdeu (Tempo)
+// 1.7.10.6 · Modo C.A.O.S. (handoff do JF de 17/10, docs/Modos_1.7.10.6.md): online, 16+, um dispositivo por pessoa
+const MC_TEMPO_MS = 10 * 60e3; // partida
+const MC_RODADA_MS = 5 * 60e3; // rodada (no máximo)
+const MC_JANELA_SEG = 15; // janela de palpite de cada dica
+const MC_TURBO_SEG = 5; // Modo Turbo
+const MC_INTERVALO_SEG = 15; // lobby entre rodadas (tudo congelado)
+const MC_RAPIDO_MS = 5e3; // acertou nos 5 primeiros segundos da janela: bônus de PC
+const MC_PC = { rodada: 10, rapido: 5, pinata: 30, batata: 50, imposto: 10 };
+/* Lojinha do C.A.O.S. (Pontos de Caos). 1.7.10.6 (pedido do JF): nomes próprios do modo (diferentes dos da Corrida),
+   2 itens novos (Olho do C.A.O.S. e Assalto Relâmpago) e vitrine sorteada a cada intervalo: MC_VITRINE itens, 1 a 3
+   de cada, preço variando ±20%. Balanceamento: ~10 a 25 PC por rodada, então item de 15–25 é toda rodada, 40+ é
+   guardar 2–3 rodadas. "peso" = chance relativa de aparecer. As chaves (corte, folego…) seguem as mesmas no código. */
+const MC_LOJA = {
+  corte: { ic: "✂️", nome: "Tesoura do Caos", preco: 15, peso: 3, desc: "corta a janela da dica atual pra 6 s (todo mundo vê o tempo voar)" },
+  folego: { ic: "💖", nome: "Vida Extra", preco: 20, peso: 3, desc: "errou? uma 2ª tentativa na mesma dica" },
+  mordaca: { ic: "🤐", nome: "Mordaça", preco: 30, peso: 2, desc: "trava o botão de palpite de alguém nesta dica (o Mestre não)" },
+  desfib: { ic: "🧟", nome: "Ressurreição", preco: 35, peso: 2, desc: "quando a carta for hibernar: a próxima dica só pra você, tentativa solo" },
+  congelar: { ic: "🥶", nome: "Era do Gelo", preco: 40, peso: 2, desc: "os outros ficam travados nos 7 primeiros segundos da dica" },
+  espelho: { ic: "🪞", nome: "Espelho Refletor", preco: 45, peso: 2, desc: "fica guardado: devolve a próxima agressão (roubo, mordaça, assalto, punição)" },
+  kevlar: { ic: "🦺", nome: "Colete Anti-Caos", preco: 60, peso: 1, desc: "fica guardado: anula 1 roubo, assalto ou punição contra você" },
+  olho: { ic: "👁️", nome: "Olho do C.A.O.S.", preco: 45, peso: 1, desc: "na janela da dica: a 1ª letra da resposta aparece só pra você" },
+  assalto: { ic: "💸", nome: "Assalto Relâmpago", preco: 25, peso: 2, desc: "na hora da compra: leva 15 PC de quem tem mais PC (fora você)" },
+};
+const MC_VITRINE = 5;
+const MC_ASSALTO_PC = 15;
+const MC_PINATA_PALAVRAS = ["EU QUERO", "CAOS", "ME DA", "BOOM", "PINHATA", "AGORA", "SOCORRO", "PERFIL"];
+/* Lojinha de Sobrevivência: só online, só na vitória por Tempo, só no intervalo, uma só pra mesa (quem compra primeiro
+   leva). 1.7.10.6 (pedido do JF): nomes próprios da Corrida (diferentes dos do Modo C.A.O.S.), catálogo maior e
+   vitrine sorteada a cada intervalo: CORRIDA_VITRINE itens, 1 a 3 de cada, preço variando ±20% (de 5 em 5).
+   Balanceamento: na vitória por Tempo um acerto vale ~60–140 pontos, então item barato é aposta e item caro é
+   seguro. "peso" = chance relativa de aparecer na vitrine. */
+const CORRIDA_LOJA = {
+  congelar: { ic: "⏸️", nome: "Pausa Dramática", preco: 30, peso: 3, max: 1, desc: "o relógio geral para 15 s na próxima carta (vale pra mesa toda)" },
+  folego: { ic: "🌬️", nome: "Segundo Fôlego", preco: 25, peso: 3, desc: "+15 s em cada vez sua na próxima carta" },
+  escudo: { ic: "🧯", nome: "Seguro do Relógio", preco: 40, peso: 2, desc: "se a próxima carta morrer, a mesa não perde 1 min" },
+  corte: { ic: "🎟️", nome: "Passe Livre", preco: 15, peso: 3, desc: "guarda: pula a sua vez sem gastar dica e sem os −2 s" },
+  desfib: { ic: "⚡", nome: "Choque de Tempo", preco: 30, peso: 2, desc: "guarda: +15 s no relógio da carta, na hora que quiser" },
+  cofrinho: { ic: "🐷", nome: "Cofrinho", preco: 25, peso: 2, desc: "a sua próxima carta acertada vale +40 pontos (dura até você acertar)" },
+  ampulheta: { ic: "⏳", nome: "Ampulheta Extra", preco: 35, peso: 1, max: 1, desc: "+30 s no relógio geral na hora (bom pra quem está atrás; no Juízo Final não sai)" },
+  ima: { ic: "🧲", nome: "Ímã de Pontos", preco: 20, peso: 2, desc: "se outro jogador acertar a próxima carta, você leva 20% do valor dela" },
+};
+const CORRIDA_VITRINE = 4;
+const CORRIDA_COFRINHO_PTS = 40;
+const CORRIDA_IMA_FRACAO = 0.2;
 // Emblema do verso da carta: anéis neon, losangos dourados, o "P" dentro do "?" e o olho do C.A.O.S.
 const VERSO_EMBLEMA_SVG = `<svg class="back-icon verso-emblema" viewBox="0 0 160 160" aria-hidden="true" focusable="false">
   <defs>
@@ -353,7 +423,7 @@ const VERSO_EMBLEMA_SVG = `<svg class="back-icon verso-emblema" viewBox="0 0 160
   <text class="vs-p" fill="#7c3aed" x="80" y="70" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="700">P</text>
   <g transform="translate(81 121)"><ellipse rx="11" ry="7" fill="url(#vsGrad)"/><ellipse rx="11" ry="7" fill="none" stroke="#fde68a" stroke-opacity=".7" stroke-width="1"/><circle r="3" fill="#fde68a"/></g>
 </svg>`;
-const DECK_LIMITE = { classico: 400, hardcore: 300, oldschool: 240, junior: 250, express: 50 };
+const DECK_LIMITE = { classico: 400, hardcore: 300, oldschool: 240, junior: 250, express: 50, corrida: 400, caos: 400 };
 const CAOS_VOICE_OK =
   typeof window !== "undefined" && "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
 const CAOS_MASTER_RE =
@@ -939,6 +1009,8 @@ const MODE_WRAP_IDS = {
   express: "modeWrapExpress",
   junior: "modeWrapJunior",
   oldschool: "modeWrapOldschool",
+  corrida: "modeWrapCorrida",
+  caos: "modeWrapCaos",
   random: "modeWrapRandom",
 };
 const MODE_LABELS = {
@@ -947,6 +1019,8 @@ const MODE_LABELS = {
   express: "Perfil Express",
   junior: "Perfil Júnior",
   oldschool: "Perfil Old School",
+  corrida: "Corrida contra o Tempo",
+  caos: "Modo C.A.O.S.",
 };
 const PAUSE_TIP_MS = 8e3;
 // ENDEREÇOS (1.7.10.5.5, portas pro domínio próprio): pra trocar o endereço do jogo, muda SÓ aqui

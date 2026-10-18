@@ -172,7 +172,8 @@ body.claro .humor-btn {
   border: 1.5px solid color-mix(in srgb, var(--hc) 65%, #1b1d33) !important;
 }
 body.claro .humor-btn.on {
-  background: color-mix(in srgb, var(--hc) 80%, #1b1d33) !important;
+  /* 1.7.10.6 (auditoria): 80% deixava o texto branco abaixo de 4,5:1 (roxo do "C.A.O.S. decide" em 3,8:1) */
+  background: color-mix(in srgb, var(--hc) 50%, #1b1d33) !important;
   color: #fff !important;
 }
 body.claro .mc-back {
@@ -237,7 +238,7 @@ body.claro .mc-back {
   opacity: 1;
 }
 body.claro .humor-btn:not(.on) {
-  color: color-mix(in srgb, var(--hc) 55%, #1b1d33) !important;
+  color: color-mix(in srgb, var(--hc) 45%, #1b1d33) !important; /* 1.7.10.6: 55% deixava o amarelo em 3,8:1 */
   opacity: 1;
 }
 body.claro .tem-escolha > .humor-btn:not(.on) {
@@ -258,7 +259,7 @@ body.claro .splash-caos {
 }
 body.claro .splash-caos .sc-face {
   background: transparent;
-  color: color-mix(in srgb, var(--emo-cor, #60a5fa) 70%, #1b1d33);
+  color: color-mix(in srgb, var(--emo-cor, #60a5fa) 60%, #1b1d33);
   text-shadow: none;
 }
 body.claro .splash-caos .sc-txt {
@@ -313,7 +314,7 @@ body.claro .hall-zerar {
   color: #b4123a;
 }
 body.claro .player-name-neon {
-  filter: brightness(0.62) saturate(1.5);
+  filter: brightness(0.5) saturate(1.5); /* 1.7.10.5.7 (axe): era 0.62; amarelo e verde-água ficavam abaixo de 4,5:1 no creme */
 }
 body.claro .hall-tit {
   filter: brightness(0.7) saturate(1.3);
@@ -580,4 +581,14 @@ body.claro .splash-novos .eb-selo {
 }
 body.claro .splash-novos .eb-titulo {
   color: #0e5f73;
+}
+/* 1.7.10.5.7 (auditoria axe): selos e textos dos avisos da tela inicial e o título da categoria na carta */
+body.claro .splash-embreve .eb-selo {
+  background: #b45309;
+}
+body.claro .splash-novos .eb-sub {
+  color: #35505b;
+}
+body.claro .answer-header.cat-neon {
+  color: color-mix(in srgb, var(--cat) 60%, #1b1d33);
 }

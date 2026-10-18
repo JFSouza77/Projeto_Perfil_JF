@@ -343,7 +343,7 @@ body.claro .tb-tema-oldschool {
   vertical-align: 1px;
 }
 .tg-andou.tg-subiu {
-  background: #16a34a;
+  background: #15803d; /* 1.7.10.5.7 (axe): #16a34a dava 3,3:1 com o branco */
   color: #fff;
 }
 .tg-andou.tg-desceu {
@@ -469,8 +469,18 @@ body.claro .tb-zoom .tb-peao.tb-sel {
   color: #140b2e;
   opacity: 1;
 }
+/* 1.7.10.6 (JF): o 🎯 de "decide a partida" vazava pra fora da aba; agora é um selinho no canto, dentro dela */
+.lb-aba {
+  position: relative;
+  overflow: hidden;
+  padding-right: 10px;
+}
 .lb-vale {
-  font-size: 0.72rem;
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  font-size: 0.62rem;
+  line-height: 1;
 }
 .lb-painel[hidden] {
   display: none;
@@ -731,4 +741,314 @@ body.claro .lp-bloco {
 }
 .joia-f.joia-mini.jf-ANIMAL {
   padding-top: 0.5em;
+}
+
+/* 1.7.10.6 · Corrida contra o Tempo: relógio geral + relógio da carta, placar de cartas e intervalo */
+.corrida-relogios {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 4px 0 8px;
+  font-variant-numeric: tabular-nums;
+}
+.corrida-relogios[hidden] {
+  display: none;
+}
+.corrida-relogios > span {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(34, 211, 238, 0.45);
+  background: rgba(34, 211, 238, 0.1);
+  color: #cffafe;
+  font-size: 1rem;
+}
+.corrida-relogios b {
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
+}
+.corrida-relogios .cr-carta {
+  border-color: rgba(167, 139, 250, 0.45);
+  background: rgba(167, 139, 250, 0.1);
+  color: #ede9fe;
+}
+.corrida-relogios .cr-parado {
+  opacity: 0.75;
+}
+.corrida-relogios .cr-pouco {
+  border-color: #f87171;
+  background: rgba(248, 113, 113, 0.16);
+  color: #fecaca;
+  animation: crPulso 1s ease-in-out infinite;
+}
+.corrida-relogios .cr-zerou,
+.corrida-relogios .cr-desempate {
+  border-color: #fbbf24;
+  background: rgba(251, 191, 36, 0.16);
+  color: #fef3c7;
+  font-weight: 700;
+}
+@keyframes crPulso {
+  50% {
+    box-shadow: 0 0 14px rgba(248, 113, 113, 0.55);
+  }
+}
+body.calmo .corrida-relogios .cr-pouco,
+body.batata .corrida-relogios .cr-pouco {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .corrida-relogios .cr-pouco {
+    animation: none;
+  }
+}
+.cr-placar {
+  list-style: none;
+  margin: 10px 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.cr-placar li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border-left: 4px solid var(--pc, #a78bfa);
+  background: rgba(255, 255, 255, 0.05);
+}
+.cr-placar li.cr-lider {
+  background: rgba(251, 191, 36, 0.12);
+}
+.cr-placar li.cr-lider b::before {
+  content: "👑 ";
+}
+.cr-ultima {
+  margin: 8px 0 4px;
+  font-size: 0.95rem;
+}
+.cr-cartas summary {
+  cursor: pointer;
+  font-weight: 700;
+  margin: 6px 0;
+}
+body.claro .corrida-relogios > span {
+  color: #0e7490;
+  background: rgba(34, 211, 238, 0.12);
+  border-color: #0891b2;
+}
+body.claro .corrida-relogios .cr-carta {
+  color: #5b21b6;
+  border-color: #7c3aed;
+  background: rgba(124, 58, 237, 0.08);
+}
+body.claro .corrida-relogios .cr-pouco {
+  color: #b91c1c;
+  border-color: #dc2626;
+  background: rgba(220, 38, 38, 0.08);
+}
+body.claro .corrida-relogios .cr-zerou,
+body.claro .corrida-relogios .cr-desempate {
+  color: #92400e;
+  border-color: #d97706;
+}
+body.claro .cr-placar li {
+  background: rgba(0, 0, 0, 0.04);
+}
+.corrida-relogios .cr-vale {
+  border-color: rgba(251, 191, 36, 0.55);
+  background: rgba(251, 191, 36, 0.12);
+  color: #fde68a;
+}
+body.claro .corrida-relogios .cr-vale {
+  color: #92400e;
+  border-color: #d97706;
+  background: rgba(217, 119, 6, 0.08);
+}
+/* Corrida: eventos (bomba, duelo, Juízo Final), relâmpago, lojinha e coroas */
+.corrida-relogios .cr-ev {
+  border-color: rgba(248, 113, 113, 0.6);
+  background: rgba(248, 113, 113, 0.14);
+  color: #fecaca;
+  font-weight: 700;
+}
+.corrida-relogios .cr-ev-duelo {
+  border-color: rgba(251, 191, 36, 0.6);
+  background: rgba(251, 191, 36, 0.14);
+  color: #fef3c7;
+}
+body.cr-juizo #gameScreen {
+  animation: crJuizo 1.2s ease-in-out infinite;
+}
+@keyframes crJuizo {
+  50% {
+    box-shadow: inset 0 0 60px rgba(239, 68, 68, 0.35);
+  }
+}
+body.cr-bomba #cardArea {
+  box-shadow: 0 0 0 2px rgba(251, 146, 60, 0.75), 0 0 26px rgba(251, 146, 60, 0.35);
+}
+body.cr-duelo #cardArea {
+  box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.8), 0 0 26px rgba(251, 191, 36, 0.35);
+}
+body.calmo.cr-juizo #gameScreen,
+body.batata.cr-juizo #gameScreen {
+  animation: none;
+  box-shadow: inset 0 0 40px rgba(239, 68, 68, 0.3);
+}
+@media (prefers-reduced-motion: reduce) {
+  body.cr-juizo #gameScreen {
+    animation: none;
+  }
+}
+.cr-relampago-tit {
+  text-align: center;
+  font-weight: 800;
+  color: #fbbf24;
+  margin: 4px 0 6px;
+}
+.cr-aviso-bomba {
+  margin: 8px 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(251, 146, 60, 0.6);
+  background: rgba(251, 146, 60, 0.12);
+}
+.cr-hc-opcao {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  text-align: left;
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+.cr-hc-opcao input {
+  margin-top: 4px;
+  transform: scale(1.3);
+}
+.cr-loja {
+  margin-top: 10px;
+  text-align: left;
+}
+.cr-loja-tit {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.cr-loja ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.cr-loja-item {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.cr-loja-item:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.cr-li-ic {
+  font-size: 1.4rem;
+}
+.cr-li-txt {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.cr-li-txt small,
+.cr-li-preco small {
+  opacity: 0.75;
+  font-size: 0.75rem;
+}
+.cr-li-preco {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-weight: 800;
+  color: #fde68a;
+}
+.cr-itens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 8px;
+}
+.cr-usar {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(74, 222, 128, 0.6);
+  background: rgba(74, 222, 128, 0.12);
+  color: inherit;
+  cursor: pointer;
+}
+.cr-coroas {
+  display: grid;
+  gap: 6px;
+  margin: 10px auto 4px;
+  max-width: 420px;
+}
+.cr-coroa {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.45);
+}
+body.claro .corrida-relogios .cr-ev {
+  color: #b91c1c;
+}
+body.claro .corrida-relogios .cr-ev-duelo {
+  color: #92400e;
+}
+body.claro .cr-li-preco {
+  color: #92400e;
+}
+body.claro .cr-relampago-tit {
+  color: #b45309;
+}
+.cr-loja li.cr-loja-item {
+  cursor: default;
+}
+.cr-loja .cr-esgotado {
+  opacity: 0.45;
+}
+.cr-li-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+.cr-loja-comprar {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(251, 191, 36, 0.6);
+  background: rgba(251, 191, 36, 0.14);
+  color: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.cr-loja-comprar:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.cr-loja-tit small,
+.cr-loja-saldo {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+.cr-loja-saldo {
+  margin-bottom: 6px;
 }

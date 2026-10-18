@@ -66,6 +66,8 @@ function updateModeNotice() {
     hardcore: "Perfil JF — Hardcore (15+)",
     junior: "Perfil JF — Júnior (6+)",
     express: `Perfil JF — Express ${expressFlavor === "hardcore" ? "Hardcore" : "Clássico"}`,
+    corrida: `Perfil JF — Corrida contra o Tempo · ${corridaVitoria === "tempo" ? "Tempo" : "Cartas"}${corridaHardcore ? " · Hardcore" : ""} (12+)`,
+    caos: "Perfil JF — Modo C.A.O.S. (16+ · online)",
   };
   const notices = {
     classico: "",
@@ -74,6 +76,8 @@ function updateModeNotice() {
       : "📻 Cartas de adulto, dicas mais difíceis e nenhum animal.",
     hardcore: "💀 10 dicas por carta, 60s pra responder, pontos em dobro. Recomendado 15+.",
     junior: `🧒 ${cartasNoModo()} cartas pra criançada: Animal, Pessoa, Lugar e Coisa. Meta de 150 casas.`,
+    caos: "🌀 Só online, cada um no seu dispositivo (abra a sala e chame todo mundo antes de começar). 16+.",
+    corrida: `⏱️ ${corridaVitoria === "tempo" ? "A carta vale os segundos que sobravam no relógio dela. Vence quem somar mais pontos." : "Quem acerta fica com a carta. Vence quem tiver mais cartas."} ${CORRIDA_TEMPO_MS / 60e3} min de relógio (+${CORRIDA_BONUS_MS / 1e3} s por acerto), carta de 2:30, vez de ${CORRIDA_VEZ_SEG}+${CORRIDA_VEZ_SEG} s.`,
     express: `🔥 Categorias: ${expressSelectedCategories.join(", ")} · sem tabuleiro · 50 cartas · carta de ${rulesCtx().card} e vez de ${rulesCtx().turn}s.`,
   };
   title.textContent = names[CURRENT_MODE] || "Perfil JF";
@@ -200,7 +204,9 @@ function updateTimerDisplay() {
     const cardPart =
       CURRENT_MODE === "express" && cardEndAt
         ? ` · carta <b>${Math.floor(cardSecondsLeft() / 60)}:${String(cardSecondsLeft() % 60).padStart(2, "0")}</b>`
-        : "";
+        : CURRENT_MODE === "corrida" && starterChosen
+          ? ` · carta <b>${corridaRelogioTxt(corridaCartaMs())}</b> · ⏱️ <b>${corridaAcabou && !corridaDesempate ? "0:00" : corridaRelogioTxt(corridaGeralMs())}</b>`
+          : "";
     const labelPart = cardPart ? "vez " : "";
     el.innerHTML = `◷ ${labelPart}<span class="timer-number ${isBig ? "timer-big" : ""} ${isBlinkStep ? "timer-blink-on" : ""}">${left}s</span>${cardPart}`;
   }
@@ -546,12 +552,13 @@ function updateDrawAvailability() {
   warning.style.display = enoughPlayers ? "none" : "block";
   warning.textContent =
     CURRENT_FORMAT === "equipe"
-      ? `O Modo Equipe precisa de EXATAMENTE 4 ou 6 jogadores (com 6: 2 equipes de 3 ou 3 equipes de 2) — agora tem ${players.length}.`
+      ? `O Modo Equipe precisa de um número de jogadores que divida certinho (4, 6, 8, 9 ou 10) — agora tem ${players.length}.`
       : `Adicione pelo menos ${MIN_PLAYERS} jogadores para começar (máximo ${MAX_PLAYERS}).`;
-  const team2Btn = document.getElementById("teamCount2Btn");
-  const team3Btn = document.getElementById("teamCount3Btn");
-  if (team2Btn) team2Btn.disabled = players.length !== 4 && players.length !== 6;
-  if (team3Btn) team3Btn.disabled = players.length !== 6;
+  const validas = equipeQuantidadesValidas(players.length);
+  [2, 3, 4, 5].forEach((k) => {
+    const b = document.getElementById("teamCount" + k + "Btn");
+    if (b) b.disabled = !validas.includes(k);
+  });
   iniAtualizarBotao();
   renderWinCondPicker();
 }
@@ -579,6 +586,7 @@ function anunciarVez() {
   } catch (e) {}
 }
 function render() {
+  if (CURRENT_MODE === "caos" && typeof mc !== "undefined" && mc && !gameEnded) return mcDesenharHost(); // 1.7.10.6
   anunciarVez();
   const area = document.getElementById("cardArea");
   const drawBtn = document.getElementById("drawBtn");
@@ -730,13 +738,13 @@ function render() {
               const e = revealedOrder.find((r) => r.index === pendingIndex);
               const res = e ? e.palpiteResult : null;
               if (res === "ganhou")
-                return `${responderName} guardou uma <b>ficha de palpite</b> 🃏 — ela vale o jogo inteiro, até ser usada (fichas no estoque agora: ${palpiteStock}). A vez passa normalmente.`;
+                return `${responderName} guardou uma <b>ficha de ${CURRENT_MODE === "corrida" ? "Rouba a vez" : "palpite"}</b> 🃏 — ela vale o jogo inteiro, até ser usada (fichas no estoque agora: ${palpiteStock}). A vez passa normalmente.`;
               if (res === "fominha")
-                return `${responderName} já tem uma ficha de palpite 🃏 — cada um guarda no máximo <b>uma</b>. A instrução não vale, ${responderName} perde a vez e a ficha fica no estoque.`;
+                return `${responderName} já tem uma ficha de ${CURRENT_MODE === "corrida" ? "Rouba a vez" : "palpite"} 🃏 — cada um guarda no máximo <b>uma</b>. A instrução não vale, ${responderName} perde a vez e a ficha fica no estoque.`;
               if (res === "sem-estoque")
-                return "Todas as 5 fichas de palpite já estão com jogadores — a instrução fica sem efeito. Quem tirou não perde a vez: escolha outra dica.";
+                return "Todas as 5 fichas já estão com jogadores — a instrução fica sem efeito. Quem tirou não perde a vez: escolha outra dica.";
               return palpiteEnabled()
-                ? "O palpite a qualquer hora precisa de 3 ou mais participantes — a instrução fica sem efeito. Quem tirou não perde a vez: escolha outra dica."
+                ? `${CURRENT_MODE === "corrida" ? "O Rouba a vez" : "O palpite a qualquer hora"} precisa de 3 ou mais participantes — a instrução fica sem efeito. Quem tirou não perde a vez: escolha outra dica.`
                 : "O palpite a qualquer hora não vale neste modo — a instrução fica sem efeito. Quem tirou não perde a vez: escolha outra dica.";
             })()}</div>
             ${spotlightTimerHtml}
@@ -914,17 +922,21 @@ function render() {
         const pvTela = palpiteVezAtual();
         controlsHtml = `
           <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ${item.text}</div>
-          <div style="text-align:center; opacity:0.75; font-size:0.85rem; margin-bottom:4px;">Vale ${pointsIfCorrect} pontos se acertar agora (${quemGanhaNm} ganha ${mestreGainDisplay})</div>
+          <div style="text-align:center; opacity:0.75; font-size:0.85rem; margin-bottom:4px;">${CURRENT_MODE === "corrida" ? (corridaVitoria === "tempo" ? `Acertou: leva os segundos que sobram na carta (o 💰 lá em cima) e +${CORRIDA_BONUS_MS / 1e3} s no relógio` : `Acertou: fica com a carta e o relógio ganha +${CORRIDA_BONUS_MS / 1e3} s`) : `Vale ${pointsIfCorrect} pontos se acertar agora (${quemGanhaNm} ganha ${mestreGainDisplay})`}</div>
           ${spotlightTimerHtml}
           ${pvTela ? (() => {
             const d = entityDisplay(pvTela.key);
             return `<div class="guess-btns palpite-vez" style="flex-direction:column;"><div class="palpite-vez-tit">🃏 ${playerNameHtml(d.name, d.color, d.avatar)} pediu o palpite!</div><button class="btn-correct palpite-hit" data-key="${pvTela.key}">🃏 ${escapeHtml(d.name)} acertou</button><button class="btn-wrong palpite-miss" data-key="${pvTela.key}">🃏 ${escapeHtml(d.name)} errou</button></div>`;
-          })() : `<div class="guess-btns" style="flex-direction:column;">
+          })() : CURRENT_MODE === "corrida" && corridaRelampago() ? `<div class="guess-btns" style="flex-direction:column;">
+            <div class="cr-relampago-tit">⚡ ${corridaJuizo && !corridaHardcore ? "JUÍZO FINAL" : "RELÂMPAGO"}: quem souber, bate na mesa!</div>
+            <button class="btn-wrong" id="corridaProximaBtn">➡️ Ninguém sabe: próxima dica</button>
+          </div>
+          ${palpiteHtml}${corridaItensHostHtml()}` : `<div class="guess-btns" style="flex-direction:column;">
             ${correctButtonsHtml}
             <button class="btn-wrong" id="wrongBtn">✕ Errou</button>
             ${'<div class="mesa-btns"><button type="button" class="btn-pular" id="pularBtn" title="A pessoa não tinha palpite: passa a vez sem contar como erro" aria-label="Pulou: não tinha palpite, passa a vez">» Pulou</button><button type="button" class="btn-absurdo" id="absurdoBtn" title="O chute foi absurdo (nada a ver com a dica): conta como erro e o C.A.O.S. fica sabendo" aria-label="Absurdo: o chute não tinha nada a ver, conta como erro">⚠︎ Absurdo</button></div>'}
           </div>
-          ${palpiteHtml}`}`;
+          ${palpiteHtml}${CURRENT_MODE === "corrida" ? corridaItensHostHtml() : ""}`}`;
       }
     } else {
       const totalEntries = currentCard.clues.length;
@@ -944,7 +956,7 @@ function render() {
         ${forcarHtml}
         <div class="pick-label">${trava && !ped ? `👉 ${responderName} escolhe a dica no aparelho dele (${remaining} restantes). Travou? Toque num número pra abrir sem pedido.` : `${responderName}, escolha uma dica de 1 a ${totalEntries} (${remaining} restantes)`}</div>
         <div id="timerDisplay" class="pick-timer">◷ ${secondsLeft()}s</div>
-        <div class="number-grid">${grid}</div>`;
+        <div class="number-grid">${grid}</div>${CURRENT_MODE === "corrida" ? corridaItensHostHtml() : ""}`;
     }
     if (CURRENT_MODE === "express" && pendingIndex !== null && !expressAskWho) controlsHtml += expressRodaHtml();
     if (pendingIndex !== null && currentCard.clues[pendingIndex].type === "clue") {
@@ -990,6 +1002,7 @@ function render() {
     `;
     drawBtn.style.display = "none";
     wireAnswerToggle();
+    area.querySelectorAll("[data-cr-usar]").forEach((b) => b.addEventListener("click", () => dispatchAction({ type: "corridaUsar", data: [b.dataset.crUsar, b.dataset.crQuem] })));
     if (CURRENT_MODE === "express") updateTimerDisplay();
     if (pendingIndex !== null) {
       const item = currentCard.clues[pendingIndex];
@@ -1004,9 +1017,11 @@ function render() {
         if (continueBtn) continueBtn.addEventListener("click", continueAfterSpecial);
         if (loseTurnBtn) loseTurnBtn.addEventListener("click", loseTurnAfterSpecial);
       } else if (CURRENT_MODE !== "express") {
-        document.getElementById("correctBtn").addEventListener("click", function () {
+        document.getElementById("correctBtn")?.addEventListener("click", function () {
           markCorrect(parseInt(this.dataset.scorer));
         });
+        // 1.7.10.6 · Corrida: relâmpago (ninguém bateu → próxima dica) e itens guardados da lojinha
+        document.getElementById("corridaProximaBtn")?.addEventListener("click", () => dispatchAction({ type: "corridaProxima", data: [] }));
         const wildcardBtn = document.getElementById("correctWildcardBtn");
         if (wildcardBtn)
           wildcardBtn.addEventListener("click", function () {
@@ -1018,7 +1033,7 @@ function render() {
         area
           .querySelectorAll(".palpite-miss")
           .forEach((b) => b.addEventListener("click", () => palpiteMiss(b.dataset.key)));
-        document.getElementById("wrongBtn").addEventListener("click", () => markWrong());
+        document.getElementById("wrongBtn")?.addEventListener("click", () => markWrong());
         {
           const pb = document.getElementById("pularBtn");
           if (pb) pb.addEventListener("click", () => markWrong("pular"));
@@ -1335,7 +1350,7 @@ function renderBonusDuelInfo() {
 function renderBoardTrack() {
   const track = document.getElementById("boardTrack");
   if (!track) return;
-  if (CURRENT_MODE === "express" || players.length === 0) {
+  if (CURRENT_MODE === "express" || CURRENT_MODE === "corrida" || CURRENT_MODE === "caos" || players.length === 0) {
     track.innerHTML = "";
     return;
   }
@@ -1464,7 +1479,11 @@ function corDoJogador(c) {
 function renderMiniScoreboard() {
   const list = document.getElementById("miniScoreboard");
   if (list) {
-    if (CURRENT_MODE === "express") {
+    if (CURRENT_MODE === "corrida") {
+      list.innerHTML = corridaEntidades()
+        .map((e) => `<li style="--pc:${e.cor}">${e.html}: ${e.txt}${palpiteBadge(e.k)}</li>`)
+        .join("");
+    } else if (CURRENT_MODE === "express") {
       const sorted = [...players].sort((a, b) => b.score - a.score);
       list.innerHTML = sorted
         .map(
@@ -2261,10 +2280,18 @@ function renderFinalScreen() {
   const isExpress = CURRENT_MODE === "express";
   let headerHtml, rankingHtml;
   const wc = winCond();
+  const cartasTxt = (v) => `${v} carta${v === 1 ? "" : "s"}`;
+  // Corrida · Tempo: o rank é pontos + cartas/1000 (corridaRank); aqui separa de volta
+  const corridaTxt = (v) =>
+    corridaVitoria === "tempo" ? `${Math.floor(v)} pts e ${cartasTxt(Math.round((v % 1) * 1000))}` : cartasTxt(v);
   const rankTxt = (v) =>
-    wc === "pontos" ? `${v} pts` : wc === "joias" ? `${v} joia${v === 1 ? "" : "s"}` : `casa ${v}`;
+    wc === "caos" ? cartasTxt(v) : wc === "corrida" ? corridaTxt(v) : wc === "pontos" ? `${v} pts` : wc === "joias" ? `${v} joia${v === 1 ? "" : "s"}` : `casa ${v}`;
   const rankHead = (v) =>
-    wc === "pontos"
+    wc === "caos"
+      ? `capturou ${cartasTxt(v)}`
+      : wc === "corrida"
+      ? `${corridaVitoria === "tempo" ? "somou" : "ficou com"} ${corridaTxt(v)}${corridaDesempateFeito ? " (no desempate relâmpago)" : ""}`
+      : wc === "pontos"
       ? `com ${v} pontos`
       : wc === "joias"
         ? `com ${v} joia${v === 1 ? "" : "s"} (o baralho acabou antes das ${GEMS_TO_WIN})`
@@ -2301,7 +2328,7 @@ function renderFinalScreen() {
           .join(", ");
         return `<li class="${rank === 1 && !allZero ? "first-place" : ""}">
         <span>${(!allZero && medals[rank - 1]) || rank + "º"} ${info.emoji} Equipe ${info.label} <span style="opacity:0.7; font-size:0.8em;">(${escapeHtml(members)})</span></span>
-        <span>${wc === "pontos" ? `${teamScore(id)} pts — ` : ""}casa ${teams[id].position}${gemBadgesHtml(teams[id])}</span>
+        <span>${wc === "corrida" ? (corridaEntidades().find((e) => e.k === id) || {}).txt || "" : `${wc === "pontos" ? `${teamScore(id)} pts — ` : ""}casa ${teams[id].position}${gemBadgesHtml(teams[id])}`}</span>
       </li>`;
       })
       .join("");
@@ -2327,7 +2354,7 @@ function renderFinalScreen() {
     } else if (allZero) {
       headerHtml = isExpress
         ? `<h2>🏁 Jogo encerrado</h2><p style="opacity:0.8;">Ninguém pontuou nessa partida</p>`
-        : `<h2>🏁 Jogo encerrado</h2><p style="opacity:0.8;">${wc === "pontos" ? "Ninguém pontuou" : wc === "joias" ? "Ninguém ganhou joia" : "Ninguém andou casa"} nessa partida</p>`;
+        : `<h2>🏁 Jogo encerrado</h2><p style="opacity:0.8;">${wc === "corrida" || wc === "caos" ? "Ninguém ficou com carta" : wc === "pontos" ? "Ninguém pontuou" : wc === "joias" ? "Ninguém ganhou joia" : "Ninguém andou casa"} nessa partida</p>`;
     } else if (tiedTop.length > 1) {
       const names = tiedTop.map((p) => escapeHtml(p.name)).join(" e ");
       headerHtml = isExpress
@@ -2343,12 +2370,13 @@ function renderFinalScreen() {
         (p) => `
     <li class="${p.rank === 1 && !allZero ? "first-place" : ""}">
       <span>${(!allZero && medals[p.rank - 1]) || p.rank + "º"} ${playerNameHtml(p.name, p.color, p.avatar)}</span>
-      <span>${isExpress ? `${p.score} ponto${p.score === 1 ? "" : "s"}` : `${p.score} pts — casa ${p.position}`}${gemBadgesHtml(p)}</span>
+      <span>${wc === "caos" ? `🃏 ${cartasTxt(p.score || 0)}` : wc === "corrida" ? (corridaVitoria === "tempo" ? "⏱️ " : "🃏 ") + corridaValorTxt(p) : isExpress ? `${p.score} ponto${p.score === 1 ? "" : "s"}` : `${p.score} pts — casa ${p.position}`}${gemBadgesHtml(p)}</span>
     </li>
   `,
       )
       .join("");
   }
+  if (CURRENT_MODE === "corrida") headerHtml += corridaCoroasHtml(); // 1.7.10.6: Senhor do Tempo e Colecionador
   const statsHtml = showStats ? buildStatsHtml() : "";
   let historyHtml = "";
   if (showHistory) {
@@ -2593,6 +2621,14 @@ function renderModeCardDescs() {
     `Sem tabuleiro: 50 cartas, pontos = 11 − dicas, carta de ${Math.floor(X.hardcore.card / 60)}:${String(X.hardcore.card % 60).padStart(2, "0")} a ${Math.floor(X.classico.card / 60)}:${String(X.classico.card % 60).padStart(2, "0")} e especiais estilo UNO.`,
   );
   set(
+    "mcDescCaos",
+    `Só online, cada um no seu dispositivo. Todo mundo tem uma carta secreta; quem acertar primeiro captura. ${MC_TEMPO_MS / 60e3} min, lojinha com Pontos de Caos e o C.A.O.S. aprontando de verdade.`,
+  );
+  set(
+    "mcDescCorrida",
+    `Relógio de ${CORRIDA_TEMPO_MS / 60e3} min (+${CORRIDA_BONUS_MS / 1e3} s por acerto), carta de 2:30, vez de ${CORRIDA_VEZ_SEG}+${CORRIDA_VEZ_SEG} s. Duas vitórias: ⏱️ Tempo (a carta vale os segundos que sobravam) ou 🃏 Cartas.`,
+  );
+  set(
     "mcDescOldschool",
     "Cartas de quem viveu a época: dicas mais difíceis, sem animais, coisas de adulto. C.A.O.S. mais comentarista, menos palhaço.",
   );
@@ -2602,8 +2638,8 @@ function renderModeCardDescs() {
       ? "O jogo sorteia entre Clássico, Hardcore e Old School (no Equipe só tem tabuleiro)."
       : "O jogo sorteia o modo: Júnior, Clássico, Hardcore, Old School ou Express.",
   );
-  set("mcDescVersus", `Cada um por si. De ${MIN_PLAYERS} a ${MAX_PLAYERS} jogadores, o Mestre roda a cada carta.`);
-  set("mcDescEquipe", "Times sorteados equilibrando as idades. Exatamente 4 ou 6 jogadores. Clássico, Hardcore ou Old School.");
+  set("mcDescVersus", `Cada um por si. De ${MIN_PLAYERS} a ${MAX_PLAYERS} jogadores, o Mestre roda a cada carta. Todos os modos, inclusive a Corrida e o Modo C.A.O.S.`);
+  set("mcDescEquipe", "Times sorteados equilibrando as idades. 4, 6, 8, 9 ou 10 jogadores, até 5 equipes (🔴🔵🟢⚫⚪). Clássico, Hardcore, Old School ou Corrida.");
 }
 function atualizarRotuloModo() {
   const el = document.getElementById("trocarModoLabel");
@@ -2614,6 +2650,8 @@ function atualizarRotuloModo() {
     junior: "🧒 Júnior",
     hardcore: "💀 Hardcore",
     express: `🔥 Express ${expressFlavor === "hardcore" ? "Hardcore" : "Clássico"}`,
+    corrida: `⏱️ Corrida · ${corridaVitoria === "tempo" ? "Tempo" : "Cartas"}${corridaHardcore ? " 💀" : ""}`,
+    caos: "🌀 Modo C.A.O.S.",
   };
   el.textContent = `${nomes[CURRENT_MODE] || CURRENT_MODE} · ${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}`;
 }
@@ -2622,10 +2660,13 @@ function resetModeSelectionUI() {
   renderModeCardDescs();
   document.getElementById("expressConfigBox").style.display = "none";
   document.getElementById("oldSchoolConfigBox").style.display = "none";
+  document.getElementById("corridaConfigBox").style.display = "none";
   document.getElementById("modeConfirmBtn").style.display = "none";
   const equipeMode = CURRENT_FORMAT === "equipe";
   document.getElementById("modeWrapExpress").style.display = equipeMode ? "none" : "";
   document.getElementById("modeWrapJunior").style.display = equipeMode ? "none" : "";
+  document.getElementById("modeWrapCorrida").style.display = ""; // 1.7.10.6: Corrida também em equipe
+  document.getElementById("modeWrapCaos").style.display = equipeMode ? "none" : "";
   document.querySelectorAll(".expressCatChk").forEach((cb) => {
     cb.checked = false;
     cb.disabled = false;
@@ -2741,7 +2782,7 @@ function casaAnunciar() {
 function renderWinCondPicker() {
   const wrap = document.getElementById("winCondWrap");
   if (!wrap) return;
-  if (CURRENT_MODE === "express") {
+  if (CURRENT_MODE === "express" || CURRENT_MODE === "corrida" || CURRENT_MODE === "caos") {
     wrap.style.display = "none";
     return;
   }
@@ -2793,6 +2834,8 @@ function cartasNoModo() {
 function buildRulesSummaryHtml() {
   const c = rulesCtx(),
     li = [];
+  if (CURRENT_MODE === "corrida") return corridaRegrasHtml(true);
+  if (CURRENT_MODE === "caos") return mcRegrasHtml();
   if (c.express) {
     li.push("🎯 <b>Objetivo:</b> somar mais pontos até o baralho acabar.");
     li.push(
@@ -2821,6 +2864,8 @@ function buildRulesSummaryHtml() {
 function buildRulesHtml() {
   const c = rulesCtx(),
     li = [];
+  if (CURRENT_MODE === "corrida") return corridaRegrasHtml(false);
+  if (CURRENT_MODE === "caos") return mcRegrasHtml();
   // 1. Objetivo
   li.push(
     c.express
@@ -2830,8 +2875,8 @@ function buildRulesHtml() {
   // 2. Quem joga
   li.push(
     c.equipe
-      ? "👥 <b>Equipes:</b> 4 jogadores (2 equipes de 2) ou 6 (2 equipes de 3, ou 3 equipes de 2), sorteadas equilibrando as idades. A cada carta uma equipe lê e outra responde. Com 3 equipes: <b>Duelo de Guildas</b> (uma responde) ou <b>Mestre vs Todos</b> (as outras respondem em ordem)."
-      : "👥 <b>Jogadores:</b> de 2 a 6. Sorteiem o primeiro Mestre (dá pra sortear de novo até 2 vezes). Depois a roda segue sempre na mesma ordem.",
+      ? "👥 <b>Equipes:</b> de 2 a 5 equipes do mesmo tamanho, com pelo menos 2 em cada (4, 6, 8, 9 ou 10 jogadores), sorteadas equilibrando as idades. A cada carta uma equipe lê e outra responde. Com 3 ou mais equipes: <b>Duelo de Guildas</b> (uma responde) ou <b>Mestre vs Todos</b> (as outras respondem em ordem)."
+      : "👥 <b>Jogadores:</b> de 2 a 10. Sorteiem o primeiro Mestre (dá pra sortear de novo até 2 vezes). Depois a roda segue sempre na mesma ordem.",
   );
   // 3. Cartas
   if (c.express)
@@ -3112,7 +3157,8 @@ function selectPendingMode(mode) {
   const confirmBtn = document.getElementById("modeConfirmBtn");
   const expressBox = document.getElementById("expressConfigBox");
   document.getElementById("oldSchoolConfigBox").style.display = mode === "oldschool" ? "block" : "none";
-  if (mode === "express" || mode === "oldschool") {
+  document.getElementById("corridaConfigBox").style.display = mode === "corrida" ? "block" : "none";
+  if (mode === "express" || mode === "oldschool" || mode === "corrida") {
     confirmBtn.style.display = "none";
     expressBox.style.display = mode === "express" ? "block" : "none";
   } else {
@@ -3348,7 +3394,7 @@ function admPainel(ov, nivel) {
     if (CURRENT_FORMAT === "equipe")
       sRem.insertAdjacentHTML(
         "beforeend",
-        '<div class="ci-empty">No Equipe não dá: as equipes precisam de exatamente 4 ou 6 jogadores.</div>',
+        '<div class="ci-empty">No Equipe não dá: as equipes precisam ficar do mesmo tamanho (4, 6, 8, 9 ou 10 jogadores).</div>',
       );
     else if (players.length <= 2)
       sRem.insertAdjacentHTML(
@@ -3797,8 +3843,10 @@ function cadPodeAdicionar() {
   const inp = document.getElementById("playerNameInput");
   const nome = inp ? inp.value.trim() : "";
   if (nome.length < 2) return false;
-  if (isJfName(nome) || isAnneName(nome) || presenteDe(nome)) return true;
+  if (isJfName(nome)) return true;
   const eq = CURRENT_FORMAT === "equipe";
+  if (!eq && !selectedIdade) return false; // 1.7.10.6: idade obrigatória (no Equipe, a faixa etária)
+  if (isAnneName(nome) || presenteDe(nome)) return eq ? !!cadFaixa : true;
   if (!eq && !cadCor) return false;
   if (!cadEmoji) return false;
   if (!humorPreMarcado() && !cadHumor) return false;
@@ -3809,9 +3857,11 @@ function cadFaltaTexto() {
   const inp = document.getElementById("playerNameInput");
   const nome = inp ? inp.value.trim() : "";
   if (nome.length < 2) return "Escreva o nome (2 a 15 letras).";
-  if (isJfName(nome) || isAnneName(nome) || presenteDe(nome)) return "";
+  if (isJfName(nome)) return "";
   const f = [],
     eq = CURRENT_FORMAT === "equipe";
+  if (isAnneName(nome) || presenteDe(nome)) return (eq ? cadFaixa : selectedIdade) ? "" : "Falta escolher: " + (eq ? "faixa de idade." : "idade.");
+  if (!eq && !selectedIdade) f.push("idade");
   if (!eq && !cadCor) f.push("cor");
   if (!cadEmoji) f.push("emoji");
   if (!humorPreMarcado() && !cadHumor) f.push("zoeira do C.A.O.S.");

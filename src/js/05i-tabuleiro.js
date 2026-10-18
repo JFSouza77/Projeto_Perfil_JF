@@ -137,7 +137,7 @@ function tabFormaPontos(forma) {
     // estrela de 5 pontas, começando na ponta de cima
     const v = [];
     for (let k = 0; k <= 10; k++) {
-      const a = -Math.PI / 2 + (Math.PI * k) / 5, r = k % 2 === 0 ? 0.48 : 0.27;
+      const a = -Math.PI / 2 + (Math.PI * k) / 5, r = k % 2 === 0 ? 0.48 : 0.29; // 1.7.10.6: braços um pouco mais largos (era 0,27)
       v.push([0.5 + r * Math.cos(a), 0.5 + r * Math.sin(a)]);
     }
     v[10] = [v[9][0] + (v[10][0] - v[9][0]) * 0.72, v[9][1] + (v[10][1] - v[9][1]) * 0.72];
@@ -178,7 +178,11 @@ function tabGeo(forma, emPe) {
   const chave = forma + (emPe ? "|pe" : "|deitado");
   if (tabGeoCache[chave]) return tabGeoCache[chave];
   const W = emPe ? 60 : 100, H = emPe ? 100 : 56, M = 6;
-  const denso = tabFormaPontos(forma).map(([x, y]) => (emPe ? [M + y * (W - 2 * M), M + x * (H - 2 * M)] : [M + x * (W - 2 * M), M + y * (H - 2 * M)]));
+  // 1.7.10.6 (JF): a Estrela não estica pra encher a caixa nem deita no celular: fica em pé e na proporção certa
+  const S = Math.min(W, H) - 2 * M;
+  const denso = tabFormaPontos(forma).map(([x, y]) =>
+    forma === "estrela" ? [W / 2 + (x - 0.5) * S, H / 2 + (y - 0.5) * S] : emPe ? [M + y * (W - 2 * M), M + x * (H - 2 * M)] : [M + x * (W - 2 * M), M + y * (H - 2 * M)],
+  );
   const acum = [0];
   for (let i = 1; i < denso.length; i++) acum.push(acum[i - 1] + Math.hypot(denso[i][0] - denso[i - 1][0], denso[i][1] - denso[i - 1][1]));
   const total = acum[acum.length - 1];
@@ -700,6 +704,7 @@ function tabLobbyFechar() {
 }
 // Fim do intervalo (pro retrato da sala), ou null quando não tem intervalo aberto.
 function tabLobbyFimEm() {
+  if (CURRENT_MODE === "corrida") return corridaIntervaloFim && corridaIntervaloAberto() ? corridaIntervaloFim : null;
   return tabLobbyFim && document.getElementById("tabLobby") ? tabLobbyFim : null;
 }
 // Desfazer o veredito: o lobby fecha e a conta de "quanto andou" volta pro lobby de antes.

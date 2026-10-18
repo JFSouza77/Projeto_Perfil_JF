@@ -436,6 +436,8 @@ function saveGameState() {
       caosCortes,
       gemWinner,
       cardEndAt,
+      corrida: corridaSalvar(),
+      mc: typeof mcSalvar === "function" ? mcSalvar() : null,
       pausedCardRemaining,
       expressWhoFreeze,
       bonusOrigMestreIdx,
@@ -450,6 +452,8 @@ function saveGameState() {
       ultimaRodada,
       ultimaRodadaQuem,
       oldSchoolAcess,
+      corridaVitoria,
+      corridaHardcore,
       caosRitmoLog,
       caosEmoHist,
       caosExtra: caosExtraSalvar(),
@@ -495,7 +499,7 @@ function saveSegundos(v) {
 }
 function sanitizeLoadedState(s) {
   if (!s || typeof s !== "object") return;
-  const MODES = ["classico", "hardcore", "express", "junior", "oldschool"];
+  const MODES = ["classico", "hardcore", "express", "junior", "oldschool", "corrida", "caos"];
   if (!MODES.includes(s.CURRENT_MODE)) s.CURRENT_MODE = "classico";
   if (s.CURRENT_FORMAT !== "versus" && s.CURRENT_FORMAT !== "equipe") s.CURRENT_FORMAT = "versus";
   const num = (v, d) => (typeof v === "number" && Number.isFinite(v) ? v : d);
@@ -529,7 +533,10 @@ function sanitizeLoadedState(s) {
         isBlocked: !!p.isBlocked,
         color: okColors.has(p.color) ? p.color : PLAYER_COLORS[i % PLAYER_COLORS.length],
         avatar: jfSafeAvatar(p.avatar),
-        humor: playerHumor(p),
+        humor: playerHumorBase(p),
+        ...(p.pedeCaos && typeof p.pedeCaos === "object"
+          ? { pedeCaos: { fala: [-1, 0, 1].includes(p.pedeCaos.fala) ? p.pedeCaos.fala : 0, humor: ["leve", "acido"].includes(p.pedeCaos.humor) ? p.pedeCaos.humor : null } }
+          : {}),
         ageBracket: AGE_BRACKETS.some((b) => b.id === p.ageBracket) ? p.ageBracket : null,
         team: teamIds.includes(p.team) ? p.team : null,
         gems,
@@ -548,7 +555,7 @@ function sanitizeLoadedState(s) {
             }
           : {}),
         ...(p.formado === true ? { formado: true } : {}),
-        ...(p.idade === "menor" || p.idade === "maior" ? { idade: p.idade } : {}),
+        ...(idadeNorm(p.idade) ? { idade: idadeNorm(p.idade) } : {}),
         ...(p.mestreAjuda === true ? { mestreAjuda: true } : {}),
         ...(p.mestreAjudaPerguntado === true ? { mestreAjudaPerguntado: true } : {}),
         ...(p.mestreAjudaAvisado === true ? { mestreAjudaAvisado: true } : {}),
@@ -683,6 +690,7 @@ function sanitizeLoadedState(s) {
       dicaNum: Number.isInteger(c.dicaNum) && c.dicaNum > 0 ? c.dicaNum : null,
       dicaTxt: typeof c.dicaTxt === "string" ? c.dicaTxt.slice(0, 240) : null,
       bonus: !!c.bonus,
+      ...(Number.isInteger(c.pts) && c.pts >= 0 && c.pts <= 3600 ? { pts: c.pts } : {}), // 1.7.10.6: Corrida (Tempo)
     }));
   if (!Array.isArray(s.expressSelectedCategories)) s.expressSelectedCategories = [];
   s.expressSelectedCategories = s.expressSelectedCategories
@@ -746,6 +754,8 @@ function loadGameState() {
       allCards = CURRENT_MODE === "hardcore" ? baralhoHardcore() : baralhoClassico();
     }
     oldSchoolAcess = CURRENT_MODE === "oldschool" && !!state.oldSchoolAcess;
+    corridaVitoria = state.corridaVitoria === "cartas" ? "cartas" : "tempo";
+    corridaHardcore = CURRENT_MODE === "corrida" && state.corridaHardcore === true;
     aplicarAcessibilidade();
     CURRENT_FORMAT = state.CURRENT_FORMAT || "versus";
     teams = state.teams || {};
@@ -917,6 +927,9 @@ function loadGameState() {
           joiasRodada[String(k).slice(0, 12)] = Math.max(0, Math.min(JOIAS_POR_RODADA, Math.floor(v)));
       });
     cardEndAt = saveNum(state.cardEndAt) || null;
+    corridaZerar();
+    if (CURRENT_MODE === "caos") mcRetomar(state.mc);
+    if (CURRENT_MODE === "corrida" && state.corrida && typeof state.corrida === "object") corridaRetomar(state.corrida);
     if (state.expressWhoFreeze && typeof state.expressWhoFreeze === "object" && CURRENT_MODE === "express") {
       const f = state.expressWhoFreeze,
         ok = (v) => typeof v === "number" && isFinite(v) && v >= 0;
@@ -1006,6 +1019,8 @@ function loadGameState() {
       if (players.length > 0) renderFinalScreen();
     } else {
       render();
+      if (CURRENT_MODE === "corrida" && starterChosen) corridaIniciar();
+      if (CURRENT_MODE === "caos" && starterChosen && mc && !mcTique) mcTique = setInterval(mcTicar, 250);
       if (CURRENT_MODE === "express" && cardEndAt && cardSecondsLeft() <= 0) {
         expressCardLost();
       } else if (timerEndAt && timerKind) {
@@ -1706,7 +1721,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.5.8 · C.A.O.S. 4.4.4");
+  L.push("- **Versão:** Beta 1.7.10.6 · C.A.O.S. 4.5");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2229,7 +2244,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.5.8 · C.A.O.S. 4.4.4",
+        versao: "Beta 1.7.10.6 · C.A.O.S. 4.5",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,

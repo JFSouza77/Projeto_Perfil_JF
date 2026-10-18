@@ -21,7 +21,7 @@ const TUTORIAL_STEPS = [
     sec: 0,
     icon: "⚔️",
     title: "Versus ou Equipe?",
-    text: "<b>Versus</b>: cada um por si, de 2 a 6 pessoas. <b>Equipe</b>: exatamente 4 ou 6 pessoas (com 6, dá pra fazer 2 equipes de 3 ou 3 equipes de 2), e o jogo sorteia os times equilibrando as idades.<br>Tocar num cartão só <b>marca</b> (ele acende e flutua). Pra seguir, toque em <b>✅ Continuar</b> — assim ninguém entra no lugar errado sem querer.",
+    text: "<b>Versus</b>: cada um por si, de 2 a 10 pessoas. <b>Equipe</b>: 4, 6, 8, 9 ou 10 pessoas, em 2 a 5 equipes do mesmo tamanho (🔴🔵🟢⚫⚪), e o jogo sorteia os times equilibrando as idades.<br>Tocar num cartão só <b>marca</b> (ele acende e flutua). Pra seguir, toque em <b>✅ Continuar</b> — assim ninguém entra no lugar errado sem querer.",
     dark: true,
     mock:
       '<div class="mc-list">' +
@@ -33,7 +33,7 @@ const TUTORIAL_STEPS = [
     sec: 0,
     icon: "🃏",
     title: "Os modos (e as idades)",
-    text: "O selo neon mostra pra quem é cada modo:<ul><li>🧒 <b>Júnior (6+)</b>: cartas pra criançada, C.A.O.S. mais leve.</li><li>🃏 <b>Clássico (12+)</b>: o Perfil de sempre.</li><li>💀 <b>Hardcore (15+)</b>: só 10 dicas, pontos em dobro, menos tempo.</li><li>📻 <b>Old School (20+)</b>: cartas de quem viveu a época. Tem a versão <b>Acessibilidade</b> (letra maior, mais tempo). E qualquer modo pode ter letra maior e mais tempo pelo ♿ do menu ⋮.</li><li>🔥 <b>Express</b>: rápido, sem tabuleiro.</li><li>🎰 <b>Aleatório</b>: o jogo sorteia.</li></ul>Igual ao formato: toque pra marcar e depois no botão <b>🚀 Iniciar</b>.",
+    text: "O selo neon mostra pra quem é cada modo:<ul><li>🧒 <b>Júnior (6+)</b>: cartas pra criançada, C.A.O.S. mais leve.</li><li>🃏 <b>Clássico (12+)</b>: o Perfil de sempre.</li><li>💀 <b>Hardcore (15+)</b>: só 10 dicas, pontos em dobro, menos tempo.</li><li>📻 <b>Old School (20+)</b>: cartas de quem viveu a época. Tem a versão <b>Acessibilidade</b> (letra maior, mais tempo). E qualquer modo pode ter letra maior e mais tempo pelo ♿ do menu ⋮.</li><li>🔥 <b>Express</b>: rápido, sem tabuleiro.</li><li>⏱️ <b>Corrida contra o Tempo</b>: sem tabuleiro, contra o relógio. Quem acerta fica com a carta (ou com os segundos que sobraram, na vitória por Tempo).</li><li>🌀 <b>Modo C.A.O.S. (16+, só online)</b>: cada um no seu dispositivo, cada um com a sua carta secreta, lojinha e o C.A.O.S. aprontando de verdade.</li><li>🎰 <b>Aleatório</b>: o jogo sorteia.</li></ul>Igual ao formato: toque pra marcar e depois no botão <b>🚀 Iniciar</b>.",
     dark: true,
     mock:
       '<div class="mc-list">' +

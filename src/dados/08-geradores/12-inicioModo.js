@@ -48,6 +48,14 @@ CAOS_GERADORES.inicioModo = {
       "Old School. Quem lembra de fita VHS já sai na frente.",
       "Modo Old School. Hoje a nostalgia joga junto.",
     ],
+    modo_corrida: [
+      "Corrida contra o Tempo. Quem acerta leva a carta pra casa. Eu levo o relógio.",
+      "Corrida: trinta minutos e um relógio que não tem pena de ninguém.",
+      "Corrida contra o Tempo. Pensa rápido. Pensar devagar é pros outros modos.",
+      "Modo Corrida. Cada carta vale uma. Cada segundo vale mais.",
+      "Corrida contra o Tempo. O relógio já começou a rir de vocês.",
+      "Corrida. Hoje a coleção de cartas decide tudo. E o tempo decide a coleção.",
+    ],
     modo_equipe: [
       "Modo Equipe. Ninguém fica sozinho. Nem na culpa.",
       "Equipe: vitória compartilhada e culpa dividida em partes iguais.",

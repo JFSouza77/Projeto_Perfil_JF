@@ -174,7 +174,7 @@ function joiasTravaAvisar(scorerIdx) {
 }
 // Moda da Casa: sorteia o modo da mesa (sem repetir o da partida anterior) e anuncia com suspense.
 function casaSortearModo() {
-  if (CURRENT_MODE === "express" || WIN_CONDITION !== "casa" || casaSorteado) return;
+  if (CURRENT_MODE === "express" || CURRENT_MODE === "corrida" || CURRENT_MODE === "caos" || WIN_CONDITION !== "casa" || casaSorteado) return;
   let ultimo = "";
   try {
     ultimo = JFStore.getItem(CASA_ULTIMO_KEY) || "";
@@ -207,13 +207,15 @@ function advanceToNextCardTurn() {
     rodadaChecarVirada();
     return;
   }
-  mestreIndex = nextIndex(mestreIndex);
+  mestreIndex = corridaDesempate ? corridaDesempateMestre(nextIndex(mestreIndex)) : nextIndex(mestreIndex);
   responderIndex = nextResponder(mestreIndex, mestreIndex);
   rodadaChecarVirada();
 }
 function nextResponder(fromIndex, mestre) {
   let c = nextIndex(fromIndex);
   if (c === mestre) c = nextIndex(c);
+  // desempate relâmpago da Corrida: só os empatados respondem
+  for (let n = players.length; corridaRestritos() && n > 0 && (c === mestre || !corridaPodeResponder(c)); n--) c = nextIndex(c);
   return c;
 }
 function nextResponderStep(fromIndex, attemptsLeft) {
@@ -275,6 +277,9 @@ function resetDeck() {
   if (typeof partidaOnline !== "undefined") partidaOnline = false; // 1.7.9.9: partida nova começa sem ser online
   tabForma = null; // 1.7.9.2: partida nova, tabuleiro novo
   tabLobbyZerar(); // 1.7.9.4
+  corridaZerar(); // 1.7.10.6
+  mcZerar();
+  document.getElementById("mcTela")?.remove();
   sorteioContagem = 0;
   acoesZerar();
   caosCatSeq = [];
@@ -441,7 +446,8 @@ function drawHidden() {
   if (!palpiteEnabled()) {
     currentCard.clues = currentCard.clues.filter((c) => !(c.type === "special" && isWildcardSpecial(c.text)));
   }
-  if (CURRENT_MODE === "hardcore" || CURRENT_MODE === "express") {
+  if (CURRENT_MODE === "corrida") currentCard.clues = buildCorridaClueSet(currentCard.clues);
+  else if (CURRENT_MODE === "hardcore" || CURRENT_MODE === "express") {
     currentCard.clues = buildHardcoreClueSet(currentCard.clues);
   }
   if (CURRENT_MODE !== "express" && pendingBonusQueue.length > 0) {
@@ -478,6 +484,8 @@ function drawHidden() {
   render();
   saveGameState();
   tabLobbyTalvez();
+  if (CURRENT_MODE === "corrida") corridaBombaArmar();
+  corridaIntervaloTalvez();
 }
 function beginBonusChoice() {
   cardState = "bonusChoice";
@@ -583,7 +591,8 @@ function caosExplicarPalpite(p) {
       localStorage.setItem(PALPITE_EXPLICADO_KEY, JSON.stringify(lista.slice(-200)));
     } catch (e) {}
     caosLog("palpite", `${p.name}: explicação da ficha (1ª vez)`);
-    caosFalaAgendar(() => getRandomReaction(REACTIVE_VOICE.iniciante.explica.palpite, p.name), 1500, "regra");
+    const lista2 = CURRENT_MODE === "corrida" ? REACTIVE_VOICE.corrida.rouba : REACTIVE_VOICE.iniciante.explica.palpite;
+    caosFalaAgendar(() => getRandomReaction(lista2, p.name), 1500, "regra");
   } catch (e) {}
 }
 function caosPrimeiraCategoria() {
@@ -597,6 +606,10 @@ function caosPrimeiraCategoria() {
   } catch (e) {}
 }
 function checkWinnerThenDraw() {
+  if (CURRENT_MODE === "corrida") {
+    corridaDepoisDaCarta();
+    return;
+  }
   tabLobbyPendente = true; // 1.7.9.4: a carta acabou; o lobby do tabuleiro abre quando a próxima estiver pronta
   renderScoreboard();
   renderMiniScoreboard();
@@ -636,8 +649,11 @@ function checkWinnerThenDraw() {
 }
 function resolveExhaustionIfNeeded() {
   if (!currentCard || gameEnded) return true;
-  if (revealedOrder.length >= currentCard.clues.length) {
+  const corridaFim = corridaCartaAcabou();
+  if (revealedOrder.length >= currentCard.clues.length || corridaFim) {
     clearCardTimer();
+    if (corridaFim) corridaAvisarCartaPerdida();
+    if (CURRENT_MODE === "corrida") corridaCartaMorreu(); // −1 min no geral (Seguro do Relógio segura; duelo e desempate não)
     stats.totalExhausted++;
     cartaPartidaRegistrar(-1, revealedOrder.filter((r) => r.item.type === "clue").length, null);
     caosImplicFim(99);
@@ -678,7 +694,7 @@ function resolveExhaustionIfNeeded() {
       showToastMessage(getRandomReaction(REACTIVE_VOICE.esgotouComResposta, currentCard.answer));
     }
     expressStealSavedResponder = null;
-    if (CURRENT_MODE !== "express") {
+    if (CURRENT_MODE !== "express" && CURRENT_MODE !== "corrida") {
       const totalCardPoints = currentCard.clues.length;
       const bonusMultiplier = currentCard && currentCard.isBonus ? 2 : 1;
       const hardcoreMultiplier = CURRENT_MODE === "hardcore" ? 2 : 1;
@@ -710,14 +726,16 @@ function startTimer(kind) {
   clearTimer();
   timerSerial++;
   const durations = {
-    pick: PICK_TIME_LIMIT + acessTempoExtra("pick"),
+    pick: (CURRENT_MODE === "corrida" ? CORRIDA_VEZ_SEG : PICK_TIME_LIMIT) + acessTempoExtra("pick"),
     response: RESPONSE_TIME_LIMIT + acessTempoExtra("response") + mestreTempoExtra("response"),
     special: SPECIAL_TIME_LIMIT + acessTempoExtra("special") + mestreTempoExtra("special"),
     turn: expressTimes().turn + acessTempoExtra("turn") + mestreTempoExtra("turn"),
   };
+  if (CURRENT_MODE === "corrida") corridaAjustarVez(durations, kind); // Hardcore 10+10 s, Fôlego +15 s, janela do relâmpago
   timerKind = kind;
   timerEndAt = Date.now() + durations[kind] * 1e3;
   resumeTimerInterval();
+  if (CURRENT_MODE === "corrida" && kind === "pick") corridaRelampagoAgendar(); // Hardcore / Juízo Final: a dica abre sozinha
   if (kind === "pick" || kind === "turn") setTimeout(() => caosIniMostrar(players[responderIndex], "vez"), 60);
 }
 function resumeTimerInterval() {
@@ -816,6 +834,8 @@ function onTimerExpired(kind) {
         render();
       });
     }
+  } else if (kind === "response" && CURRENT_MODE === "corrida" && corridaRelampago()) {
+    corridaRelampagoProxima(); // ninguém bateu na mesa: abre a próxima, sem castigo
   } else if (kind === "response") {
     mestreObsEstouro();
     const skippedName = players[responderIndex] ? escapeHtml(players[responderIndex].name) : "?";
@@ -1016,6 +1036,41 @@ function markCorrect(playerIdxOverride) {
     checkWinnerThenDraw();
     return;
   }
+  if (CURRENT_MODE === "corrida") {
+    // Corrida: quem acertou fica com a carta (vale 1, com 1 dica ou com 10) e o relógio geral ganha 10 s
+    const scorerC = players[scorerIdx];
+    const ptsC = corridaValorCarta(); // Tempo: os segundos que sobravam na carta; Cartas: 1
+    scorerC.score = (scorerC.score || 0) + ptsC + corridaLojaNoAcerto(scorerC, ptsC); // 1.7.10.6: Cofrinho e Ímã
+    corridaBonus();
+    fxFloat(corridaVitoria === "tempo" ? `⏱️ +${ptsC} pts · +${CORRIDA_BONUS_MS / 1e3} s no relógio` : `🃏 +1 carta · ⏱️ +${CORRIDA_BONUS_MS / 1e3} s`, "#4ade80");
+    maybeShowAcertoFlavor(scorerIdx, realCluesRevealed, timeTakenMs, { caosSurpresa: caosSurpresaAcerto });
+    caosIniAcerto(scorerC);
+    caosMemAcerto(scorerIdx, realCluesRevealed, timeTakenMs);
+    caosMesaRegistrar("acerto", scorerC);
+    caosMesaMimica(restoRelogio, scorerC, players[currentMestreIdx]);
+    history.push({
+      playerName: scorerC.name,
+      playerColor: scorerC.color,
+      playerAvatar: scorerC.avatar,
+      category: currentCard.category,
+      answer: currentCard.answer,
+      points: ptsC,
+      cluesUsed: realCluesRevealed,
+      timeTakenMs,
+      mestreName: players[currentMestreIdx].name,
+      mestreColor: players[currentMestreIdx].color,
+      mestrePoints: 0,
+      wasBonus: false,
+    });
+    cartaPartidaRegistrar(scorerIdx, realCluesRevealed, pendingIndex);
+    if (corridaVitoria === "tempo") cartasPartida[cartasPartida.length - 1].pts = ptsC;
+    pendingStartTime = null;
+    pendingIndex = null;
+    if (history.length > 150) history = history.slice(-150);
+    advanceToNextCardTurn();
+    checkWinnerThenDraw();
+    return;
+  }
   const totalCardPoints = currentCard.clues.length;
   const entriesRevealed = revealedOrder.length;
   const pointsForResponder = totalCardPoints - entriesRevealed;
@@ -1089,6 +1144,7 @@ function markWrong(tipo) {
   streakScorerIdx = null;
   streakCount = 0;
   const missedPlayer = players[responderIndex];
+  if (CURRENT_MODE === "corrida") corridaPenalidade(tipo); // carta −1 s (erro) / −2 s (pulou); bomba: geral −5 s
   // contexto pro C.A.O.S.: quantas vezes essa pessoa errou nesta partida ("errou de novo" só vale da 2ª em diante)
   if (missedPlayer && tipo !== "pular") missedPlayer.errosPartida = (missedPlayer.errosPartida || 0) + 1;
   const missIdx = players.indexOf(missedPlayer);
@@ -1225,6 +1281,8 @@ function markWrong(tipo) {
               ? { silencio: 28, contexto: 32, micro: 8, personalidade: 8, generica: 24 }
               : { silencio: 28, micro: 12, personalidade: 10, generica: 50 },
       );
+      // 1.7.10.6: Peça ao C.A.O.S. ("fala mais comigo"): metade dos silêncios vira comentário
+      if (kind === "silencio" && missedPlayer.pedeCaos && missedPlayer.pedeCaos.fala === 1 && Math.random() < 0.5) kind = cand ? "contexto" : "generica";
       const recentes = caosFalasUltimos(45e3);
       if (
         !zero &&
@@ -1267,6 +1325,7 @@ function markWrong(tipo) {
       Math.random() < 0.08
     )
       caosFalsoCarregamento();
+    if (msg && caosPedidoCala(missedPlayer)) msg = ""; // 1.7.10.6: Peça ao C.A.O.S. ("fala menos comigo")
     caosNoteSpeech(!!msg);
     if (!msg) {
       proceed();
@@ -1570,6 +1629,7 @@ function undoTeamFormation() {
   });
   resetTeamSetupUI();
 }
+let idadeAddConfirmada = null; // 1.7.10.6: nome cuja subida de idade já foi confirmada (o addPlayer volta sozinho)
 function addPlayer() {
   const input = document.getElementById("playerNameInput");
   const name = input.value.trim();
@@ -1593,8 +1653,18 @@ function addPlayer() {
     iniProximo();
     return;
   }
-  undoTeamFormation();
   const isEquipe = CURRENT_FORMAT === "equipe";
+  // 1.7.10.6 (pedido do JF): nome conhecido marcado numa faixa de idade maior do que a lembrada pede confirmação
+  const idadeNova = isJfName(name) ? "dezesseis" : idadeDoCadastro(isEquipe);
+  if (!iniFluxo && idadeAddConfirmada !== name && idadeSubiu(name, idadeNova)) {
+    idadeConfirmarSubida(name, idadeNova, () => {
+      idadeAddConfirmada = name;
+      addPlayer();
+    });
+    return;
+  }
+  idadeAddConfirmada = null;
+  undoTeamFormation();
   players.push({
     id: jogadorIdNovo(),
     name,
@@ -1606,7 +1676,7 @@ function addPlayer() {
     humor: selectedHumor === "caos" ? caosSortearHumor() : selectedHumor,
     humorCaos: selectedHumor === "caos" || void 0,
     ageBracket: isEquipe ? selectedAgeBracket : null,
-    idade: idadeDoCadastro(isEquipe),
+    idade: idadeNova,
     team: null,
     nickMs: nickWaitStart ? Date.now() - nickWaitStart : null,
     ...(iniFluxo ? { iniciante: true, ini: { dicas: 0, feitas: [], acertou: false } } : {}),
@@ -1615,6 +1685,7 @@ function addPlayer() {
     players[players.length - 1].humor = "suave";
     iniEncerrar();
   }
+  idadeLembrar(name, idadeNova);
   nickWaitReset();
   hideNickSuggest();
   idadeLimpar();
@@ -1646,6 +1717,12 @@ function endGame() {
     caosMemFimDePartida();
   } catch (e) {}
   setTimeout(caosIniFormatura, 4500);
+  corridaParar();
+  if (CURRENT_MODE === "caos") {
+    clearInterval(mcTique);
+    mcTique = null;
+    document.getElementById("mcTela")?.remove();
+  }
   clearTimer();
   clearCardTimer();
   clearOverlayTimeout();
@@ -1825,6 +1902,14 @@ function selectMode(mode, expressCategories, flavor) {
     allCards = ADULT_CARDS.filter(
       (c) => c.category !== "ANO" && (c.classificacao === "junior" || c.classificacao === "livre"),
     );
+  } else if (mode === "caos") {
+    WINNING_SCORE = 0;
+    allCards = baralhoClassico();
+  } else if (mode === "corrida") {
+    WINNING_SCORE = 0;
+    corridaVitoria = /^cartas/.test(flavor || "") ? "cartas" : "tempo";
+    corridaHardcore = /-hc$/.test(flavor || "");
+    allCards = baralhoClassico();
   } else if (mode === "oldschool") {
     WINNING_SCORE = 200;
     oldSchoolAcess = flavor === "acess";
@@ -2030,20 +2115,16 @@ function redrawMestre() {
   saveGameState();
 }
 function runTeamFormation(n) {
-  // 2 equipes: 4 jogadores (2 + 2) ou 6 (3 + 3). 3 equipes: 6 jogadores (2 + 2 + 2).
-  if (n === 2 && players.length !== 4 && players.length !== 6) {
-    caosAvisoModal("2 equipes precisam de 4 jogadores (2 por equipe) ou 6 (3 por equipe). Hoje tem " + players.length + ".");
-    return;
-  }
-  if (n === 3 && players.length !== 6) {
-    caosAvisoModal("3 equipes precisam de EXATAMENTE 6 jogadores (2 por equipe). Hoje tem " + players.length + ".");
+  // 1.7.10.6: equipes do mesmo tamanho, pelo menos 2 em cada (até 5 equipes e 10 jogadores)
+  if (!equipeQuantidadesValidas(players.length).includes(n)) {
+    caosAvisoModal(`${n} equipes não fecham com ${players.length} jogadores (cada equipe precisa do mesmo tamanho, com pelo menos 2). ${equipeDicaTxt()}`);
     return;
   }
   formTeamsBalancedByAge(n);
   renderTeamRosterPreview();
   document.getElementById("teamCountChoice").style.display = "none";
   document.getElementById("teamRosterPreview").style.display = "block";
-  if (n === 3) {
+  if (n >= 3) {
     document.getElementById("teamSubModeChoice").style.display = "block";
     if (typeof paintSubModeChoice === "function") paintSubModeChoice(equipeSubMode === "ffa" ? "ffa" : "duelo");
   } else {
@@ -2067,7 +2148,7 @@ function beginGameplay() {
       getRandomReaction(
         REACTIVE_VOICE.inicioInvalido,
         CURRENT_FORMAT === "equipe"
-          ? "o Modo Equipe precisa de 4 ou 6 jogadores, todos com equipe"
+          ? "o Modo Equipe precisa de 4, 6, 8, 9 ou 10 jogadores, todos com equipe"
           : `precisa de pelo menos ${MIN_PLAYERS} jogadores`,
       ),
       null,
@@ -2075,6 +2156,7 @@ function beginGameplay() {
     );
     return;
   }
+  if (CURRENT_MODE === "caos" && !mcPodeComecar()) return;
   starterChosen = true;
   if (!caosPartidaInicioAt) {
     caosPartidaInicioAt = Date.now();
@@ -2097,6 +2179,15 @@ function beginGameplay() {
     p.famLim = 1 + Math.floor(Math.random() * 5);
   });
   casaSortearModo();
+  if (CURRENT_MODE === "corrida") corridaIniciar();
+  if (CURRENT_MODE === "caos") {
+    // Modo C.A.O.S.: a partida é só dele (sem carta da mesa); ele mesmo desenha a tela
+    syncGameplayPanels();
+    requestWakeLock();
+    mcIniciar();
+    saveGameState();
+    return;
+  }
   vitoriaTutInicio();
   syncGameplayPanels();
   updateDrawAvailability();
@@ -2186,7 +2277,7 @@ function desistirCarta() {
     drawHidden();
     return;
   }
-  const mult = CURRENT_MODE === "hardcore" ? 2 : 1,
+  const mult = CURRENT_MODE === "hardcore" ? 2 : CURRENT_MODE === "corrida" ? 0 : 1, // Corrida: ninguém ganha carta
     ganho = rev * mult,
     nome = caosNomeMestre();
   if (ganho > 0) creditPoints(mestreIndex, ganho, true);
@@ -2413,7 +2504,7 @@ function admDevolverCarta() {
   if (typeof expressWhoFreeze !== "undefined") expressWhoFreeze = null;
 }
 function admRemoverJogador(r) {
-  if (CURRENT_FORMAT === "equipe") return "no Equipe as equipes precisam de 4 ou 6 jogadores";
+  if (CURRENT_FORMAT === "equipe") return "no Equipe as equipes precisam ficar do mesmo tamanho (4, 6, 8, 9 ou 10 jogadores)";
   if (!players[r] || players.length <= 2) return "a partida precisa de pelo menos 2 jogadores";
   const saiu = players[r];
   admDevolverCarta();

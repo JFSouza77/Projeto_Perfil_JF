@@ -6,16 +6,34 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.6",
+    data: "18/10/2026",
+    nome: "Multiplayer Update · Corrida e Modo C.A.O.S.",
+    t: "Chegaram os dois modos novos: a Corrida contra o Tempo e o Modo C.A.O.S. E agora todo mundo marca a idade no cadastro.",
+    itens: [
+      "⏱️ Corrida contra o Tempo: sem tabuleiro, contra um relógio de 30 minutos. Quem acerta fica com a carta. Dá pra jogar num dispositivo só ou online.",
+      "🏁 Duas vitórias na Corrida: por Cartas (vence quem pegou mais) ou por Tempo (cada carta vale os segundos que sobravam nela).",
+      "💣 Corrida com emoção: bomba no relógio, Hardcore, Juízo Final, duelo e desempate relâmpago quando empata.",
+      "🛒 Lojinha de Sobrevivência: na Corrida online por Tempo, abre no intervalo com Pausa Dramática, Seguro do Relógio, Cofrinho, Ímã de Pontos e mais. A vitrine muda a cada intervalo.",
+      "🌀 Modo C.A.O.S. (16+, só online): cada um no seu dispositivo e com a sua carta secreta. Quem souber toca em Palpitar agora e fala a resposta.",
+      "😈 O C.A.O.S. apronta de verdade: Turbo, Imposto da Preguiça, Batata Quente, Mão Leve, Piñata e roubos com duelo e revanche.",
+      "💠 Lojinha do C.A.O.S.: gaste os Pontos de Caos em Mordaça, Era do Gelo, Espelho Refletor, Olho do C.A.O.S., Assalto Relâmpago e mais. Itens, preços e estoque mudam a cada intervalo.",
+      "🎂 Idade no cadastro: agora é obrigatória, com a faixa nova de 16 ou mais. O dispositivo lembra a idade de cada nome e confere se alguém marcar uma faixa maior.",
+      "🙋 Peça ao C.A.O.S.: pela pausa, cada um pode pedir pra ele falar mais ou menos com você e pegar mais leve ou mais ácido.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.5.8",
     data: "18/10/2026 · 10:00",
     nome: "Multiplayer Update · Online de verdade",
     t: "Correções da partida online: tudo mais fácil de entender, duelo pra mesa toda e a sala não trava quando o host cai.",
     itens: [
-      "👆 Botões que chamam: o próximo passo do Mestre (virar a carta, já falei a categoria, puxar a próxima, abrir a dica pedida) fica grande, amarelo e piscando.",
-      "🎙️ Você sabe seu papel: no seu dispositivo aparece em destaque se você é o Mestre ou se é a sua vez.",
-      "📺 Tela dos jogadores mais clara: primeiro quem é o Mestre, depois de quem é a vez e depois a categoria da carta.",
+      "👆 Botões que chamam: o próximo passo do Mestre (virar a carta, já falei a categoria, puxar a próxima, abrir a dica pedida) fica grande, amarelo e piscando (ideia da Anne).",
+      "🎙️ Você sabe seu papel: no seu dispositivo aparece em destaque se você é o Mestre ou se é a sua vez (ideia da Anne).",
+      "📺 Tela dos jogadores mais clara: primeiro quem é o Mestre, depois de quem é a vez e depois a categoria da carta (ideia da Anne).",
       "⚡ Pedido de dica na hora: o Mestre vê na hora o número que você pediu. Travou? Toque em qualquer número pra abrir sem pedido.",
-      "🏟️ Duelo pra todo mundo: quando alguém cai na casa de bônus, a mesa toda fica sabendo. Quem caiu escolhe quem desafia e quem vai ser o Mestre do duelo.",
+      "🏟️ Duelo pra todo mundo: quando alguém cai na casa de bônus, a mesa toda fica sabendo. Quem caiu escolhe quem desafia e quem vai ser o Mestre do duelo (ideia da Anne).",
       "💎 Carta bônus dá joia: acertou o duelo com poucas dicas, leva a joia da categoria.",
       "🔌 O host caiu? A sala não trava: outro dispositivo assume, com contagem na tela, e a partida continua de onde parou.",
       "🃏 Carta que travava depois do acerto: corrigido (relato do Henrique). A carta acertada sai da mesa na hora.",

@@ -133,9 +133,9 @@ function telaoRoletaAnimar(raiz) {
 const TELAO_VITORIA_IC = { casa: "🏠", tabuleiro: "🏁", pontos: "🔢", joias: "💎", express: "⚡" };
 function telaoObjetivoHtml(r) {
   const w = (typeof WIN_CONDITIONS !== "undefined" && WIN_CONDITIONS[r.vitoria]) || null;
-  const nome = w ? w.label : r.vitoria;
+  const nome = w ? w.label : r.vitoria === "corrida" ? "Corrida contra o Tempo" : r.vitoria;
   if (!nome) return "";
-  return `<details class="telao-objetivo" data-k="obj"><summary>${TELAO_VITORIA_IC[r.vitoria] || (w && w.icon) || "🏆"} Como se vence: <b>${escapeHtml(nome)}</b></summary>${r.objetivo ? `<p>${escapeHtml(r.objetivo)}</p>` : ""}</details>`;
+  return `<details class="telao-objetivo" data-k="obj"><summary>${TELAO_VITORIA_IC[r.vitoria] || (w && w.icon) || (r.vitoria === "corrida" ? "⏱️" : "🏆")} Como se vence: <b>${escapeHtml(nome)}</b></summary>${r.objetivo ? `<p>${escapeHtml(r.objetivo)}</p>` : ""}</details>`;
 }
 // 1.7.10.1 (pedido do JF): o tabuleiro inteiro só no intervalo (lobby antes da próxima carta), no fim e antes
 // da primeira carta; com carta na mesa, ele sai da frente (o placar logo abaixo mostra a casa de cada um)
@@ -205,11 +205,13 @@ function telaoDesenhar(r, alvo) {
     const j = jog(id);
     return j && isSafeColor(j.cor) ? corDoJogador(j.cor) : "#a78bfa";
   };
-  const ordem = [...r.jogadores].sort((a, b) => (r.vitoria === "pontos" ? b.pontos - a.pontos : b.casa - a.casa));
+  const porPontos = r.vitoria === "pontos" || r.vitoria === "corrida";
+  const cartasJ = (j) => (r.corrida && r.corrida.cartas && r.corrida.cartas[j.id]) || 0;
+  const ordem = [...r.jogadores].sort((a, b) => (porPontos ? b.pontos - a.pontos || cartasJ(b) - cartasJ(a) : b.casa - a.casa));
   const placar = ordem
     .map((j, i) => {
       const joias = Object.keys(j.joias || {}).length;
-      const val = r.vitoria === "pontos" ? j.pontos + " pts" : r.vitoria === "joias" ? joias + "/4 joias" : "casa " + j.casa;
+      const val = r.vitoria === "corrida" ? corridaValorRetrato(r, j) : r.vitoria === "pontos" ? j.pontos + " pts" : r.vitoria === "joias" ? joias + "/4 joias" : "casa " + j.casa;
       const tags = (j.id === r.mestreId ? '<span class="tp-tag">🎙️ Mestre</span>' : "") + (j.id === r.vezId ? '<span class="tp-tag tp-vez">👉 vez</span>' : "");
       return `<li style="--pc:${cor(j.id)}"${i === 0 ? ' class="tp-lider"' : ""}><span class="tp-nome"><i class="tp-cor" aria-hidden="true"></i>${nome(j.id)}${tags}</span><b>${escapeHtml(val)}</b></li>`;
     })
@@ -249,9 +251,11 @@ function telaoDesenhar(r, alvo) {
       <div class="tv-cat" style="--cat:${catCor}"><small>🃏 Categoria</small><b>${c && c.categoria && r.estadoCarta !== "hidden" ? escapeHtml(TELAO_CAT[c.categoria] || c.categoria) : c ? "sorteando…" : "—"}</b></div>
       <div class="tv-relogio"><small>⏱️ Tempo</small><b id="telaoRelogio">—</b></div>
     </section>
+    ${r.corrida ? `<div class="corrida-relogios" id="telaoCorrida">${corridaBarraHtml(corridaDoRetrato(r.corrida))}</div>` : ""}
     ${carta}
     ${telaoMostraTabuleiro(r) ? tabHtmlTelao(r) : ""}
     <section class="telao-placar"><h2 class="tp-tit">Placar</h2><ol>${placar}</ol></section>
+    ${r.intervalo && r.corrida && r.corrida.estoque ? corridaLojaVitrineHtml(r.corrida.estoque, [], r.corrida.precos) : ""}
     ${telaoObjetivoHtml(r)}
     <details class="telao-hist" data-k="hist"><summary>🗂️ Cartas da partida <span class="th-n">${hist.length}</span></summary>${cartasPartidaHtml(hist, nomeTxt, (id) => (jog(id) ? escapeHtml((jog(id).avatar ? jog(id).avatar + " " : "") + jog(id).nome) : "Alguém"))}</details>
     ${TELAO_SAIR}`;
@@ -267,6 +271,11 @@ function telaoRelogio() {
   // tempo de jogo andando entre um retrato e outro (parado na pausa, no intervalo e no fim)
   const tj = document.getElementById("telaoTempo");
   if (tj && r.partida && r.iniciada && !r.fim && !rel.pausado && !r.intervalo) tj.textContent = partidaTempoTxt((r.partida.tempoMs || 0) + (Date.now() - (r._em || Date.now())));
+  const tc = document.getElementById("telaoCorrida");
+  if (tc && r.corrida) {
+    const html = corridaBarraHtml(corridaDoRetrato(r.corrida));
+    if (tc.innerHTML !== html) tc.innerHTML = html;
+  }
   if (rel.pausado) {
     el.textContent = "pausado";
     el.classList.remove("tv-pouco");

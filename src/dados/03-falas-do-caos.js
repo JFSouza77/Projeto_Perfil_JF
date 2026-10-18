@@ -4970,4 +4970,84 @@ const REACTIVE_VOICE = {
         `[C.A.O.S.] ${g} está longe da resposta, ${n}, mas a data certa é uma boa surpresa. Tenta mais uma dica.`,
     ],
   },
+  // 1.7.10.6 · Corrida contra o Tempo: avisos do relógio geral e o desempate relâmpago
+  corrida: {
+    rouba: [
+      "{nome}, ficha de ROUBA A VEZ! Na hora que tiver certeza, mesmo na vez de outra pessoa, avisa o Mestre e responde. É uma só, então escolhe bem.",
+      "{nome}, você pode roubar a vez! Sabe a resposta na vez do outro? Fala pro Mestre e manda. Errou, sem castigo.",
+    ],
+    cinco: [
+      "Cinco minutos no relógio. {nome} tá na frente e já tá contando vitória.",
+      "Cinco minutos. Quem tá atrás, essa é a hora de acordar.",
+      "Faltam cinco minutos. {nome}, segura essa coleção aí.",
+      "Cinco minutinhos. Eu, se fosse vocês, parava de pensar tanto.",
+    ],
+    um: [
+      "Último minuto! Agora é no desespero.",
+      "Um minuto! {nome} lidera. Alguém vai deixar?",
+      "Sessenta segundos. Cada carta vale ouro agora.",
+      "Último minuto, gente. Respira e chuta com fé.",
+    ],
+    desempate: [
+      "⚡ DESEMPATE RELÂMPAGO! {nome}: uma carta, quem acertar primeiro leva tudo.",
+      "⚡ Empatou?! Então é desempate relâmpago. {nome}, uma carta só. Quem acertar, ganha.",
+      "⚡ Relógio zerado e empate. Que delícia. {nome}: desempate relâmpago, agora!",
+    ],
+  },
+};
+// Corrida · Tempo: a carta derretendo (uma vez por carta, quando passa dos 30 s finais)
+REACTIVE_VOICE.corrida.derreteu = [
+  "Vocês enrolaram tanto que essa carta não vale nem um chiclete mastigado agora.",
+  "Olha o valor dessa carta derretendo. Tá virando troco de padaria.",
+  "Trinta segundos. Essa carta já foi um prêmio. Agora é lembrança.",
+  "A carta tá derretendo e vocês aí, pensando. Lindo de ver.",
+];
+// Corrida: eventos (Bomba-Relógio, carta morta, Juízo Final, Duelo, Lojinha)
+Object.assign(REACTIVE_VOICE.corrida, {
+  bomba: [
+    "💣 BOMBA-RELÓGIO armada. Se essa carta morrer, a mesa perde um minuto inteiro. Cada erro tira 5 segundos. Boa sorte, vocês vão precisar.",
+    "💣 Tic-tac. Essa carta é uma bomba. Desarma acertando. Erra muito e explode no colo de todo mundo.",
+    "💣 Eu escondi uma bomba nessa carta. Acertou, ganha vinte segundos. Deixou morrer, BOOM, menos um minuto.",
+  ],
+  explodiu: [
+    "💥 BOOOM! Menos um minuto. Parabéns aos envolvidos.",
+    "💥 Explodiu. Eu avisei. Um minuto a menos pra todo mundo.",
+    "💥 Bomba detonada. Eu até sinto o cheiro de pólvora daqui.",
+  ],
+  morreu: [
+    "Carta morta. Menos um minuto no relógio. Vocês deixaram ela morrer, hein.",
+    "Ninguém salvou a carta. A mesa paga: um minuto a menos.",
+    "Mais uma carta pro cemitério. E o relógio cobrou a conta.",
+  ],
+  juizo: [
+    "⚖️ JUÍZO FINAL! Último minuto. As dicas abrem sozinhas. Sabe? Bate na mesa!",
+    "⚖️ Chegou o Juízo Final. Agora não tem escolha de dica, não tem tempo extra. Só reflexo.",
+    "⚖️ Último minuto, criaturas. Juízo Final. Quem bater primeiro responde.",
+  ],
+  duelo: [
+    "⚔️ É HORA DO DUELO! {nome} pro ringue. O relógio da mesa para e a carta corre em dobro. Quem vencer rouba pontos do outro!",
+    "⚔️ Eu decidi: DUELO! {nome}, só vocês dois respondem. A carta voa em dobro. Bora!",
+    "⚔️ Duelo do C.A.O.S.! {nome}, um contra o outro. O resto da mesa só assiste e torce.",
+  ],
+  dueloVenceu: [
+    "⚔️ {nome} venceu o duelo! E levou um pedaço do placar do adversário.",
+    "⚔️ Duelo decidido: {nome} saiu do ringue com a carta e com o troco.",
+  ],
+  dueloNinguem: [
+    "🔥 {nome} erraram tudo. Carta destruída. Que vergonha alheia.",
+    "🔥 Nenhum dos dois acertou. Eu queimei a carta pra ninguém ver esse vexame.",
+  ],
+  compra: [
+    "{nome} foi às compras. Gastar ponto pra sobreviver. Respeito.",
+    "{nome} abriu a carteira. Espero que valha a pena.",
+    "Olha {nome} investindo no futuro. Ou jogando dinheiro fora. Veremos.",
+  ],
+});
+// 1.7.10.6 · Peça ao C.A.O.S.: a resposta dele quando alguém faz um pedido
+REACTIVE_VOICE.pedirCaos = {
+  menos: ["Anotado, {nome}. Vou falar menos com você. Vai sentir saudade.", "Tá bom, {nome}. Fico na minha com você. Por enquanto."],
+  mais: ["Opa, {nome} quer mais de mim. Pode deixar, vou caprichar.", "{nome}, você pediu. Agora aguenta."],
+  leve: ["Combinado, {nome}. Comigo agora é na pluma.", "{nome}, vou pegar leve. Mas só com você."],
+  acido: ["{nome} pediu pimenta. Hoje você vira meu alvo preferido.", "Humor ácido pra {nome}? Finalmente alguém que me entende."],
+  normal: ["Voltei ao normal com você, {nome}.", "Ok, {nome}. Do jeito de sempre."],
 };
