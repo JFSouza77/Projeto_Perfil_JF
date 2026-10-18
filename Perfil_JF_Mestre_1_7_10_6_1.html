@@ -7,9 +7,9 @@
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
   1.7.10.6.1 · 18/10/2026 · AJUSTES DA PRIMEIRA CORRIDA ONLINE · C.A.O.S. 4.5.1 (relato do JF). Build 1822.
-          Corrida: vez de 25 + 25 s (era 15 + 15), Hardcore 15 + 15, janela do relâmpago 15 s, carta de 3:00, erro −3 s.
+          Corrida: vez de 25 + 25 s (era 15 + 15), Hardcore 15 + 15, janela do relâmpago 15 s, carta de 3:00, absurdo −3 s (erro −1, pulou −2).
           C.A.O.S. calado com a carta correndo e no máximo 1 comentário entre as cartas. Host que perdia quem joga no
-          aparelho (lojinha sem botão, dica travada) religa sozinho. Lojinha mostra os itens guardados e como usar.
+          aparelho ao recarregar (lojinha sem botão, dica travada, sem Rouba a vez) religa sozinho; na tela da mesa, botão "Sou Fulano" pra quem não tem dispositivo. Lojinha também na vitória por Cartas, com créditos (os segundos que sobravam na carta; não contam no placar). Lojinha mostra os itens guardados e como usar.
           T2 com legendas mais claras.
   1.7.10.6 · 18/10/2026 · "Multiplayer Update · Corrida e Modo C.A.O.S." = OS DOIS MODOS NOVOS · C.A.O.S. 4.5 (decisões do JF
           de 17 e 18/10; regras em docs/Modos_1.7.10.6.md). Build 1821.
@@ -10626,6 +10626,19 @@ body:not(.claro) .telao-vez b {
 .telao-vez .tv-cat {
   background: color-mix(in srgb, var(--cat) 12%, var(--t-sec));
 }
+/* 1.7.10.6.1: "Você joga neste aparelho?" na tela da mesa do host */
+.rede-eu-pergunta {
+  margin: 8px 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 2px solid #facc15;
+  background: #facc1514;
+  font-weight: 800;
+  text-align: center;
+}
+.rede-eu-pergunta .rede-acoes {
+  margin-top: 8px;
+}
 </style>
 </head>
 <body class="noturno">
@@ -11304,7 +11317,8 @@ const CORRIDA_CARTA_HC_MS = 90e3; // Hardcore: 1:30 de carta…
 const CORRIDA_VEL_HC = 1.5; // …correndo 1,5× (Extreme 2× fica pra depois do playtest)
 const CORRIDA_VEZ_HC_SEG = 15; // Hardcore: 15 s pra escolher e 15 pra responder (1.7.10.6.1: era 10)
 const CORRIDA_JANELA_SEG = 15; // relâmpago (Hardcore / Juízo Final): a dica fica aberta 15 s esperando alguém bater (era 10)
-const CORRIDA_ERRO_MS = 3e3; // errou: a carta perde 3 s (JF, 1.7.10.6.1: era 1 s, "absurdo")
+const CORRIDA_ERRO_MS = 1e3; // errou: a carta perde 1 s
+const CORRIDA_ABSURDO_MS = 3e3; // 1.7.10.6.1 (JF): resposta absurda: a carta perde 3 s
 const CORRIDA_PULO_MS = 2e3; // pulou ("nem tentou"): a carta perde 2 s
 const CORRIDA_MORTE_MS = 60e3; // carta que morre sem acerto: o geral perde 1 min
 const CORRIDA_JUIZO_MS = 60e3; // último minuto = Juízo Final
@@ -14353,7 +14367,7 @@ function markWrong(tipo) {
   streakScorerIdx = null;
   streakCount = 0;
   const missedPlayer = players[responderIndex];
-  if (CURRENT_MODE === "corrida") corridaPenalidade(tipo); // carta −3 s (erro) / −2 s (pulou); bomba: geral −5 s
+  if (CURRENT_MODE === "corrida") corridaPenalidade(tipo); // carta −1 s (erro) / −2 s (pulou) / −3 s (absurdo); bomba: geral −5 s
   // contexto pro C.A.O.S.: quantas vezes essa pessoa errou nesta partida ("errou de novo" só vale da 2ª em diante)
   if (missedPlayer && tipo !== "pular") missedPlayer.errosPartida = (missedPlayer.errosPartida || 0) + 1;
   const missIdx = players.indexOf(missedPlayer);
@@ -24383,7 +24397,7 @@ function redeOpcoes(jid) {
     if (corridaIntervaloAberto() && corridaEstoque)
       Object.keys(CORRIDA_LOJA).forEach((k) => {
         const it = CORRIDA_LOJA[k];
-        if (corridaPodeComprar(k, jid)) add("corridaComprar", [k, jid], `${it.ic} ${it.nome} · ${corridaPreco(k)} pts (${corridaEstoque[k]} no estoque)`, "", `🛒 Lojinha · você tem ${(players[meuIdx] || {}).score || 0} pts`);
+        if (corridaPodeComprar(k, jid)) add("corridaComprar", [k, jid], `${it.ic} ${it.nome} · ${corridaPreco(k)} ${corridaMoeda()} (${corridaEstoque[k]} no estoque)`, "", `🛒 Lojinha · você tem ${corridaSaldo(jid)} ${corridaMoeda()}`);
       });
     ["desfib", "corte"].forEach((k) => corridaPodeUsar(k, jid) && add("corridaUsar", [k, jid], `${CORRIDA_LOJA[k].ic} Usar ${CORRIDA_LOJA[k].nome}`, "ok", "🎒 Seus itens"));
   }
@@ -24594,13 +24608,12 @@ function redeAvisarSemAparelho() {
     () => redePainelHost(),
   );
 }
-// 1.7.10.6.1 (relato do JF: como host, não comprava na lojinha nem escolhia a própria dica): o aparelho do host
-// perdia quem joga nele (recarregou antes do save voltar, ou a sala abriu no meio da partida). Religa sozinho: primeiro
-// quem estava guardado; senão, quem não tem dispositivo próprio na sala (ninguém mais pode estar jogando por ele).
+// 1.7.10.6.1 (relato do JF: como host, não comprava na lojinha, não escolhia a própria dica nem via o Rouba a vez):
+// o aparelho do host perdia quem joga nele quando recarregava antes do save voltar. Religa sozinho quem estava guardado.
+// (Sala aberta no meio da partida não religa sozinha: na tela da mesa tem o botão "Eu jogo neste aparelho".)
 function redeHostEuReligar() {
   if (!rede || rede.papel !== "host" || rede.hostEu) return;
-  let lista = (rede.hostEuSalvo || []).filter((id) => jogadorIdxPorId(id) >= 0 && !redeOnline(rede.assentos[id]));
-  if (!lista.length) lista = players.filter((p) => !rede.assentos[p.id]).map((p) => p.id);
+  const lista = (rede.hostEuSalvo || []).filter((id) => jogadorIdxPorId(id) >= 0 && !redeOnline(rede.assentos[id]));
   if (!lista.length) return;
   rede.hostEu = lista[0];
   rede.hostJunto = lista.slice(1);
@@ -24657,6 +24670,10 @@ function redeHostVista() {
   const daVez = eus.find((p) => jogadorIdDe(responderIndex) === p.id);
   const vez = !!daVez;
   let h = `<div class="rede-eu">${eus.length ? `Neste aparelho: <b>${eus.map(nome).join("</b> e <b>")}</b>${vez ? ` · 👉 vez de ${nome(daVez)}` : ""}` : "Este aparelho é a mesa"}</div>`;
+  // 1.7.10.6.1 (relato do JF): ninguém marcado neste aparelho, mas tem jogador sem dispositivo na sala: um toque resolve
+  const semDisp = !eus.length && starterChosen && !gameEnded ? players.filter((p) => !redeOnline(rede.assentos[p.id])) : [];
+  if (semDisp.length)
+    h += `<div class="rede-eu-pergunta">🙋 Você joga neste aparelho? <span class="rede-acoes">${semDisp.map((p) => `<button type="button" class="rede-btn rede-cta" data-sou="${escapeHtml(p.id)}">Sou ${nome(p)}</button>`).join("")}</span></div>`;
   if (starterChosen && !gameEnded) h += redePapelHtml({ mestre: false, vez });
   h += `<div class="rede-segredo">🔒 A carta e a resposta estão no aparelho de <b>${mestre ? nome(mestre) : "quem é o Mestre"}</b> (Mestre da vez).</div>`;
   if (vez && cardState === "revealed" && pendingIndex === null && !pausedAt)
@@ -24681,6 +24698,7 @@ function redeHostVista() {
       if (o) agir(o.quem, o.a, o.d);
     }),
   );
+  barra.querySelectorAll("[data-sou]").forEach((b) => b.addEventListener("click", () => redeDefinirNoHost([b.dataset.sou])));
   barra.querySelector("#redeVistaPausar").addEventListener("click", () => document.getElementById("pauseBtn")?.click());
   barra.querySelector("#redeVistaSala").addEventListener("click", () => redePainelHost());
   if (!rede.vistaTimer) rede.vistaTimer = setInterval(() => (document.getElementById("redeHostVista") ? telaoRelogio() : null), 500);
@@ -29028,7 +29046,7 @@ function corridaRegrasHtml(resumo) {
     hc
       ? `💀 <b>Hardcore:</b> a carta tem ${carta} e o relógio dela corre <b>1,5×</b>. As dicas abrem sozinhas: quem souber, <b>bate na mesa</b> (no online, o botão no dispositivo) e responde. Errou, a próxima abre na hora.`
       : `💬 <b>A vez:</b> segue a roda. ${vez} s pra escolher o número e ${vez} s pra responder. A carta tem ${carta} e não reinicia quando a vez passa.`,
-    `❌ <b>Errou:</b> a carta perde ${CORRIDA_ERRO_MS / 1e3} s. <b>Pulou</b> (nem tentou): perde ${CORRIDA_PULO_MS / 1e3} s.`,
+    `❌ <b>Errou:</b> a carta perde ${CORRIDA_ERRO_MS / 1e3} s. <b>Pulou</b> (nem tentou): ${CORRIDA_PULO_MS / 1e3} s. <b>Absurdo</b>: ${CORRIDA_ABSURDO_MS / 1e3} s.`,
     '🎙️ <b>Mestre:</b> roda a cada carta. Fala a categoria e lê a dica. <b>Nunca</b> fala a resposta.',
   ];
   if (!resumo) {
@@ -29036,7 +29054,7 @@ function corridaRegrasHtml(resumo) {
       `💣 <b>Bomba-Relógio:</b> de vez em quando o jogo arma uma carta (e o C.A.O.S. anuncia como se fosse ideia dele) (${hc ? CORRIDA_BOMBA_QUOTA.hardcore : CORRIDA_BOMBA_QUOTA.normal} por partida). Cada erro tira ${CORRIDA_BOMBA_ERRO_MS / 1e3} s do relógio geral; desarmar dá <b>+${CORRIDA_BOMBA_BONUS_MS / 1e3} s</b>; se ela morrer, BOOM: −1 min.`,
       `⚔️ <b>Duelo:</b> até ${CORRIDA_DUELO_MAX} por partida (3+ jogadores), o jogo sorteia dois duelistas e o Mestre (o C.A.O.S. faz o show). O relógio geral para, a carta corre <b>2×</b> e só os dois respondem. ${tempo ? `Quem vence rouba ${CORRIDA_DUELO_ROUBO} pontos do outro. ` : ""}Ninguém acertou? Carta destruída.`,
       "⚖️ <b>Juízo Final:</b> no último minuto as dicas abrem sozinhas e qualquer um bate na mesa. Acertar não dá mais tempo.",
-      `☕ <b>Intervalo:</b> ${CORRIDA_INTERVALO_SEG} s entre as cartas pra ver o placar, com o relógio geral <b>congelado</b>.${tempo ? ` <b>No online</b>, é a hora da 🛒 <b>Lojinha de Sobrevivência</b>, uma só pra mesa toda (quem comprar primeiro leva): gaste pontos nos itens da vitrine, que muda a cada intervalo (${Object.values(CORRIDA_LOJA).map((it) => it.ic + " " + it.nome).join(", ")}; estoque limitado).` : ""}`,
+      `☕ <b>Intervalo:</b> ${CORRIDA_INTERVALO_SEG} s entre as cartas pra ver o placar, com o relógio geral <b>congelado</b>. <b>No online</b>, é a hora da 🛒 <b>Lojinha de Sobrevivência</b>, uma só pra mesa toda (quem comprar primeiro leva): gaste ${tempo ? "pontos" : "créditos (cada acerto dá os segundos que sobravam na carta; não contam no placar)"} nos itens da vitrine, que muda a cada intervalo (${Object.values(CORRIDA_LOJA).map((it) => it.ic + " " + it.nome).join(", ")}; estoque limitado).`,
       hc ? "⭐ <b>Especiais:</b> no Hardcore não tem (as dicas abrem sozinhas)." : "⭐ <b>Especiais:</b> sem tabuleiro, as de andar casas saem. <b>Perca sua vez</b> passa a vez. <b>Rouba a vez</b> (o antigo Palpite a qualquer hora) dá uma ficha pra responder fora da vez (3+ jogadores).",
       tempo
         ? "⚖️ <b>Empate no fim:</b> vence quem tiver mais cartas; empatou de novo, vitória dividida. Na tela final ainda saem as coroas de ⏱️ <b>Senhor do Tempo</b> e 🃏 <b>Colecionador</b>."
@@ -29092,7 +29110,7 @@ function corridaValorRetrato(r, j) {
   return r.corrida && r.corrida.vitoria === "tempo" ? `⏱️ ${j.pontos} pts · ${cartas}` : `🃏 ${cartas}`;
 }
 /* --- 1.7.10.6 · CORRIDA: EVENTOS (spec do JF de 17/10 à noite, com o balanceamento em docs/Modos_1.7.10.6.md) ---
- *  · Penalidades: errou, a carta perde 3 s; pulou ("nem tentou"), perde 2 s. Carta que morre sem acerto: o geral
+ *  · Penalidades: errou, a carta perde 1 s; absurdo, 3 s; pulou ("nem tentou"), perde 2 s. Carta que morre sem acerto: o geral
  *    perde 1 min (o Seguro do Relógio segura; no duelo e no desempate não vale).
  *  · Bomba-Relógio: o C.A.O.S. anuncia antes da carta. Cada erro/pulo tira 5 s do geral; desarmar dá +20 s.
  *  · Juízo Final: no último minuto as dicas abrem sozinhas e qualquer um bate na mesa (sem os +10 s por acerto).
@@ -29119,6 +29137,7 @@ let corridaEstoque = null; // { item: unidades } (só com a lojinha ligada; só 
 let corridaPrecos = {}; // { item: preço } da vitrine deste intervalo
 let corridaCofrinho = {}; // id → cofrinhos guardados (cada um: +CORRIDA_COFRINHO_PTS no próximo acerto da pessoa)
 let corridaIma = {}; // id → cartaSeq em que o Ímã de Pontos vale
+let corridaCreditos = {}; // 1.7.10.6.1: id → créditos da lojinha na vitória por Cartas (lá o placar é em cartas)
 let corridaTiqueSom = 0;
 
 function corridaEventosZerar() {
@@ -29138,6 +29157,7 @@ function corridaEventosZerar() {
   corridaPrecos = {};
   corridaCofrinho = {};
   corridaIma = {};
+  corridaCreditos = {};
   document.body.classList.remove("cr-juizo", "cr-bomba", "cr-duelo");
 }
 function corridaEventosSalvar() {
@@ -29156,6 +29176,7 @@ function corridaEventosSalvar() {
     precos: corridaPrecos,
     cofrinho: corridaCofrinho,
     ima: Object.keys(corridaIma).filter((k) => corridaIma[k] === cartaSeq),
+    creditos: corridaCreditos,
   };
 }
 function corridaEventosRetomar(e) {
@@ -29186,6 +29207,7 @@ function corridaEventosRetomar(e) {
   }
   if (e.cofrinho && typeof e.cofrinho === "object") Object.keys(e.cofrinho).slice(0, 10).forEach((id) => (corridaCofrinho[String(id)] = n(e.cofrinho[id], 9)));
   if (Array.isArray(e.ima)) e.ima.slice(0, 10).forEach((id) => (corridaIma[String(id)] = cartaSeq));
+  if (e.creditos && typeof e.creditos === "object") Object.keys(e.creditos).slice(0, 10).forEach((id) => (corridaCreditos[String(id)] = n(e.creditos[id], 99999)));
   corridaClassesCorpo();
 }
 
@@ -29261,9 +29283,10 @@ function corridaJuizoComecar() {
 /* --- penalidades --- */
 function corridaPenalidade(tipo) {
   if (CURRENT_MODE !== "corrida" || !currentCard) return;
-  const pulou = tipo === "pular";
-  corridaCartaMudar(-(pulou ? CORRIDA_PULO_MS : CORRIDA_ERRO_MS));
-  fxFloat(pulou ? `⏭️ −${CORRIDA_PULO_MS / 1e3} s na carta` : `❌ −${CORRIDA_ERRO_MS / 1e3} s na carta`, "#fb923c");
+  // 1.7.10.6.1 (JF): errou −1 s, pulou −2 s, absurdo −3 s
+  const ms = tipo === "pular" ? CORRIDA_PULO_MS : tipo === "absurdo" ? CORRIDA_ABSURDO_MS : CORRIDA_ERRO_MS;
+  corridaCartaMudar(-ms);
+  fxFloat(`${tipo === "pular" ? "⏭️" : tipo === "absurdo" ? "🤪" : "❌"} −${ms / 1e3} s na carta`, "#fb923c");
   if (corridaBombaAgora()) {
     corridaGeralMudar(-CORRIDA_BOMBA_ERRO_MS);
     fxFloat(`💣 −${CORRIDA_BOMBA_ERRO_MS / 1e3} s no relógio`, "#f87171");
@@ -29352,7 +29375,7 @@ function corridaRelampagoProxima() {
     saveGameState();
   }
 }
-// bateu na mesa e errou: −3 s na carta (e −5 s no geral se for bomba) e a próxima dica abre na hora
+// bateu na mesa e errou: −1 s na carta (e −5 s no geral se for bomba) e a próxima dica abre na hora
 function corridaRelampagoErrou(key) {
   const i = jogadorIdxPorId(key);
   const p = players[i];
@@ -29432,8 +29455,24 @@ function corridaDueloFim() {
 }
 
 /* --- Lojinha de Sobrevivência (online · Tempo · no intervalo) --- */
+// 1.7.10.6.1 (JF): a lojinha vale nas duas vitórias. Na de Tempo paga com os pontos do placar; na de Cartas, com
+// créditos (os segundos que sobravam na carta acertada), que não contam no placar.
 function corridaLojaLigada() {
-  return CURRENT_MODE === "corrida" && corridaVitoria === "tempo" && typeof salaOnlineAberta === "function" && salaOnlineAberta();
+  return CURRENT_MODE === "corrida" && typeof salaOnlineAberta === "function" && salaOnlineAberta();
+}
+function corridaSaldo(id) {
+  const p = jogadorPorId(id);
+  if (!p) return 0;
+  return corridaVitoria === "tempo" ? p.score || 0 : corridaCreditos[id] || 0;
+}
+function corridaSaldoMudar(id, n) {
+  const p = jogadorPorId(id);
+  if (!p) return;
+  if (corridaVitoria === "tempo") p.score = Math.max(0, (p.score || 0) + n);
+  else corridaCreditos[id] = Math.max(0, (corridaCreditos[id] || 0) + n);
+}
+function corridaMoeda() {
+  return corridaVitoria === "tempo" ? "pts" : "créditos";
 }
 /* 1.7.10.6 (pedido do JF): vitrine sorteada (Corrida e Modo C.A.O.S.): n itens do catálogo (pelo peso), 1 a 3 de
    cada ("max" no catálogo limita: os itens que dão tempo saem 1 só, senão a partida esticava sem fim), preço
@@ -29469,7 +29508,7 @@ function corridaPodeComprar(item, id) {
   const it = CORRIDA_LOJA[item],
     p = jogadorPorId(id);
   if (!it || !p || !corridaLojaLigada() || !corridaIntervaloAberto() || !corridaEstoque) return false;
-  if ((corridaEstoque[item] || 0) <= 0 || (p.score || 0) < corridaPreco(item)) return false;
+  if ((corridaEstoque[item] || 0) <= 0 || corridaSaldo(id) < corridaPreco(item)) return false;
   // Juízo Final: acerto não dá mais tempo, então os itens de tempo também saem de cena (senão a partida não acaba)
   if ((item === "ampulheta" || item === "congelar") && (corridaJuizo || corridaAcabou)) return false;
   if (item === "ima" && corridaIma[id] === cartaSeq) return false;
@@ -29482,7 +29521,7 @@ function corridaComprar(item, id) {
   const it = CORRIDA_LOJA[item],
     p = jogadorPorId(id),
     preco = corridaPreco(item);
-  p.score -= preco;
+  corridaSaldoMudar(id, -preco);
   corridaEstoque[item]--;
   if (item === "congelar") corridaCongelaMs += 15e3;
   else if (item === "folego") corridaFolego[id] = cartaSeq;
@@ -29508,20 +29547,28 @@ function corridaComprar(item, id) {
 }
 // no acerto (vitória por Tempo): Cofrinho de quem acertou e Ímã dos outros. Devolve os pontos extras de quem acertou.
 function corridaLojaNoAcerto(scorer, pts) {
-  if (!scorer || corridaVitoria !== "tempo") return 0;
+  if (!scorer) return 0;
+  // vitória por Cartas: quem acertou ganha em créditos os segundos que sobravam na carta (o placar segue em cartas)
+  const tempo = corridaVitoria === "tempo";
+  const seg = tempo ? pts : Math.max(0, Math.round(corridaCartaMs() / 1000));
+  if (!tempo && corridaLojaLigada()) {
+    corridaSaldoMudar(scorer.id, seg);
+    fxFloat(`🪙 ${scorer.name}: +${seg} créditos`, "#fbbf24");
+  }
   let extra = 0;
   if ((corridaCofrinho[scorer.id] || 0) > 0) {
     corridaCofrinho[scorer.id]--;
     extra = CORRIDA_COFRINHO_PTS;
-    fxFloat(`🐷 Cofrinho de ${scorer.name}: +${extra}!`, "#f472b6");
+    if (!tempo) corridaSaldoMudar(scorer.id, extra);
+    fxFloat(`🐷 Cofrinho de ${scorer.name}: +${extra}${tempo ? "" : " créditos"}!`, "#f472b6");
   }
   players.forEach((p) => {
     if (p === scorer || corridaIma[p.id] !== cartaSeq) return;
-    const ganho = Math.max(1, Math.round(pts * CORRIDA_IMA_FRACAO));
-    p.score = (p.score || 0) + ganho;
-    fxFloat(`🧲 Ímã de ${p.name}: +${ganho}`, "#60a5fa");
+    const ganho = Math.max(1, Math.round(seg * CORRIDA_IMA_FRACAO));
+    corridaSaldoMudar(p.id, ganho);
+    fxFloat(`🧲 Ímã de ${p.name}: +${ganho}${tempo ? "" : " créditos"}`, "#60a5fa");
   });
-  return extra;
+  return tempo ? extra : 0;
 }
 function corridaPodeUsar(item, id) {
   const p = jogadorPorId(id),
@@ -29583,7 +29630,7 @@ function corridaLojaVitrineHtml(estoque, compradores, precos) {
 // no host: a vitrine da mesa, com os botões de quem joga no próprio dispositivo do host
 function corridaLojaHostHtml() {
   if (!corridaLojaLigada() || !corridaEstoque) return "";
-  const locais = players.filter((p) => typeof redeNoHost !== "function" || redeNoHost(p.id)).map((p) => ({ id: p.id, nome: p.name, pts: p.score || 0 }));
+  const locais = players.filter((p) => typeof redeNoHost !== "function" || redeNoHost(p.id)).map((p) => ({ id: p.id, nome: p.name, pts: corridaSaldo(p.id) }));
   return corridaLojaVitrineHtml(corridaEstoque, locais, corridaPrecos);
 }
 function corridaIntervaloRedesenharLoja() {
@@ -77985,9 +78032,10 @@ const NOVIDADES = [
     t: "Ajustes da primeira Corrida online: mais tempo pra pensar, o C.A.O.S. quieto durante a carta e a lojinha funcionando pro host.",
     itens: [
       "⏳ Mais tempo na Corrida: 25 s pra escolher a dica e 25 s pra responder, e a carta com 3 minutos.",
-      "❌ Errar custa mais: a carta perde 3 s a cada erro.",
+      "❌ Penalidades: errou, a carta perde 1 s; pulou, 2 s; resposta absurda, 3 s.",
       "🤫 C.A.O.S. concentrado: na Corrida ele não comenta com a carta correndo, e entre as cartas fala no máximo uma vez.",
-      "🛒 Lojinha pro host: quem joga no dispositivo que abriu a sala volta a comprar e a escolher a própria dica.",
+      "🛒 Host de volta ao jogo: quem joga no dispositivo que abriu a sala volta a comprar na lojinha, escolher a própria dica e usar o Rouba a vez. Se a tela disser que o dispositivo é só a mesa, toque em Sou (seu nome).",
+      "🪙 Lojinha nas duas Corridas: na vitória por Cartas, cada acerto dá créditos (os segundos que sobravam na carta) pra gastar na lojinha, sem mexer no placar.",
       "🎒 Itens guardados: a lojinha mostra o que você tem guardado e explica onde aparece o botão Usar.",
       "🎨 Tela dos jogadores mais legível: as legendas de Mestre, Vez e Categoria ficaram mais claras.",
     ],

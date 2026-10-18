@@ -1,5 +1,5 @@
 /* --- 1.7.10.6 · CORRIDA: EVENTOS (spec do JF de 17/10 à noite, com o balanceamento em docs/Modos_1.7.10.6.md) ---
- *  · Penalidades: errou, a carta perde 3 s; pulou ("nem tentou"), perde 2 s. Carta que morre sem acerto: o geral
+ *  · Penalidades: errou, a carta perde 1 s; absurdo, 3 s; pulou ("nem tentou"), perde 2 s. Carta que morre sem acerto: o geral
  *    perde 1 min (o Seguro do Relógio segura; no duelo e no desempate não vale).
  *  · Bomba-Relógio: o C.A.O.S. anuncia antes da carta. Cada erro/pulo tira 5 s do geral; desarmar dá +20 s.
  *  · Juízo Final: no último minuto as dicas abrem sozinhas e qualquer um bate na mesa (sem os +10 s por acerto).
@@ -26,6 +26,7 @@ let corridaEstoque = null; // { item: unidades } (só com a lojinha ligada; só 
 let corridaPrecos = {}; // { item: preço } da vitrine deste intervalo
 let corridaCofrinho = {}; // id → cofrinhos guardados (cada um: +CORRIDA_COFRINHO_PTS no próximo acerto da pessoa)
 let corridaIma = {}; // id → cartaSeq em que o Ímã de Pontos vale
+let corridaCreditos = {}; // 1.7.10.6.1: id → créditos da lojinha na vitória por Cartas (lá o placar é em cartas)
 let corridaTiqueSom = 0;
 
 function corridaEventosZerar() {
@@ -45,6 +46,7 @@ function corridaEventosZerar() {
   corridaPrecos = {};
   corridaCofrinho = {};
   corridaIma = {};
+  corridaCreditos = {};
   document.body.classList.remove("cr-juizo", "cr-bomba", "cr-duelo");
 }
 function corridaEventosSalvar() {
@@ -63,6 +65,7 @@ function corridaEventosSalvar() {
     precos: corridaPrecos,
     cofrinho: corridaCofrinho,
     ima: Object.keys(corridaIma).filter((k) => corridaIma[k] === cartaSeq),
+    creditos: corridaCreditos,
   };
 }
 function corridaEventosRetomar(e) {
@@ -93,6 +96,7 @@ function corridaEventosRetomar(e) {
   }
   if (e.cofrinho && typeof e.cofrinho === "object") Object.keys(e.cofrinho).slice(0, 10).forEach((id) => (corridaCofrinho[String(id)] = n(e.cofrinho[id], 9)));
   if (Array.isArray(e.ima)) e.ima.slice(0, 10).forEach((id) => (corridaIma[String(id)] = cartaSeq));
+  if (e.creditos && typeof e.creditos === "object") Object.keys(e.creditos).slice(0, 10).forEach((id) => (corridaCreditos[String(id)] = n(e.creditos[id], 99999)));
   corridaClassesCorpo();
 }
 
@@ -168,9 +172,10 @@ function corridaJuizoComecar() {
 /* --- penalidades --- */
 function corridaPenalidade(tipo) {
   if (CURRENT_MODE !== "corrida" || !currentCard) return;
-  const pulou = tipo === "pular";
-  corridaCartaMudar(-(pulou ? CORRIDA_PULO_MS : CORRIDA_ERRO_MS));
-  fxFloat(pulou ? `⏭️ −${CORRIDA_PULO_MS / 1e3} s na carta` : `❌ −${CORRIDA_ERRO_MS / 1e3} s na carta`, "#fb923c");
+  // 1.7.10.6.1 (JF): errou −1 s, pulou −2 s, absurdo −3 s
+  const ms = tipo === "pular" ? CORRIDA_PULO_MS : tipo === "absurdo" ? CORRIDA_ABSURDO_MS : CORRIDA_ERRO_MS;
+  corridaCartaMudar(-ms);
+  fxFloat(`${tipo === "pular" ? "⏭️" : tipo === "absurdo" ? "🤪" : "❌"} −${ms / 1e3} s na carta`, "#fb923c");
   if (corridaBombaAgora()) {
     corridaGeralMudar(-CORRIDA_BOMBA_ERRO_MS);
     fxFloat(`💣 −${CORRIDA_BOMBA_ERRO_MS / 1e3} s no relógio`, "#f87171");
@@ -259,7 +264,7 @@ function corridaRelampagoProxima() {
     saveGameState();
   }
 }
-// bateu na mesa e errou: −3 s na carta (e −5 s no geral se for bomba) e a próxima dica abre na hora
+// bateu na mesa e errou: −1 s na carta (e −5 s no geral se for bomba) e a próxima dica abre na hora
 function corridaRelampagoErrou(key) {
   const i = jogadorIdxPorId(key);
   const p = players[i];
@@ -339,8 +344,24 @@ function corridaDueloFim() {
 }
 
 /* --- Lojinha de Sobrevivência (online · Tempo · no intervalo) --- */
+// 1.7.10.6.1 (JF): a lojinha vale nas duas vitórias. Na de Tempo paga com os pontos do placar; na de Cartas, com
+// créditos (os segundos que sobravam na carta acertada), que não contam no placar.
 function corridaLojaLigada() {
-  return CURRENT_MODE === "corrida" && corridaVitoria === "tempo" && typeof salaOnlineAberta === "function" && salaOnlineAberta();
+  return CURRENT_MODE === "corrida" && typeof salaOnlineAberta === "function" && salaOnlineAberta();
+}
+function corridaSaldo(id) {
+  const p = jogadorPorId(id);
+  if (!p) return 0;
+  return corridaVitoria === "tempo" ? p.score || 0 : corridaCreditos[id] || 0;
+}
+function corridaSaldoMudar(id, n) {
+  const p = jogadorPorId(id);
+  if (!p) return;
+  if (corridaVitoria === "tempo") p.score = Math.max(0, (p.score || 0) + n);
+  else corridaCreditos[id] = Math.max(0, (corridaCreditos[id] || 0) + n);
+}
+function corridaMoeda() {
+  return corridaVitoria === "tempo" ? "pts" : "créditos";
 }
 /* 1.7.10.6 (pedido do JF): vitrine sorteada (Corrida e Modo C.A.O.S.): n itens do catálogo (pelo peso), 1 a 3 de
    cada ("max" no catálogo limita: os itens que dão tempo saem 1 só, senão a partida esticava sem fim), preço
@@ -376,7 +397,7 @@ function corridaPodeComprar(item, id) {
   const it = CORRIDA_LOJA[item],
     p = jogadorPorId(id);
   if (!it || !p || !corridaLojaLigada() || !corridaIntervaloAberto() || !corridaEstoque) return false;
-  if ((corridaEstoque[item] || 0) <= 0 || (p.score || 0) < corridaPreco(item)) return false;
+  if ((corridaEstoque[item] || 0) <= 0 || corridaSaldo(id) < corridaPreco(item)) return false;
   // Juízo Final: acerto não dá mais tempo, então os itens de tempo também saem de cena (senão a partida não acaba)
   if ((item === "ampulheta" || item === "congelar") && (corridaJuizo || corridaAcabou)) return false;
   if (item === "ima" && corridaIma[id] === cartaSeq) return false;
@@ -389,7 +410,7 @@ function corridaComprar(item, id) {
   const it = CORRIDA_LOJA[item],
     p = jogadorPorId(id),
     preco = corridaPreco(item);
-  p.score -= preco;
+  corridaSaldoMudar(id, -preco);
   corridaEstoque[item]--;
   if (item === "congelar") corridaCongelaMs += 15e3;
   else if (item === "folego") corridaFolego[id] = cartaSeq;
@@ -415,20 +436,28 @@ function corridaComprar(item, id) {
 }
 // no acerto (vitória por Tempo): Cofrinho de quem acertou e Ímã dos outros. Devolve os pontos extras de quem acertou.
 function corridaLojaNoAcerto(scorer, pts) {
-  if (!scorer || corridaVitoria !== "tempo") return 0;
+  if (!scorer) return 0;
+  // vitória por Cartas: quem acertou ganha em créditos os segundos que sobravam na carta (o placar segue em cartas)
+  const tempo = corridaVitoria === "tempo";
+  const seg = tempo ? pts : Math.max(0, Math.round(corridaCartaMs() / 1000));
+  if (!tempo && corridaLojaLigada()) {
+    corridaSaldoMudar(scorer.id, seg);
+    fxFloat(`🪙 ${scorer.name}: +${seg} créditos`, "#fbbf24");
+  }
   let extra = 0;
   if ((corridaCofrinho[scorer.id] || 0) > 0) {
     corridaCofrinho[scorer.id]--;
     extra = CORRIDA_COFRINHO_PTS;
-    fxFloat(`🐷 Cofrinho de ${scorer.name}: +${extra}!`, "#f472b6");
+    if (!tempo) corridaSaldoMudar(scorer.id, extra);
+    fxFloat(`🐷 Cofrinho de ${scorer.name}: +${extra}${tempo ? "" : " créditos"}!`, "#f472b6");
   }
   players.forEach((p) => {
     if (p === scorer || corridaIma[p.id] !== cartaSeq) return;
-    const ganho = Math.max(1, Math.round(pts * CORRIDA_IMA_FRACAO));
-    p.score = (p.score || 0) + ganho;
-    fxFloat(`🧲 Ímã de ${p.name}: +${ganho}`, "#60a5fa");
+    const ganho = Math.max(1, Math.round(seg * CORRIDA_IMA_FRACAO));
+    corridaSaldoMudar(p.id, ganho);
+    fxFloat(`🧲 Ímã de ${p.name}: +${ganho}${tempo ? "" : " créditos"}`, "#60a5fa");
   });
-  return extra;
+  return tempo ? extra : 0;
 }
 function corridaPodeUsar(item, id) {
   const p = jogadorPorId(id),
@@ -490,7 +519,7 @@ function corridaLojaVitrineHtml(estoque, compradores, precos) {
 // no host: a vitrine da mesa, com os botões de quem joga no próprio dispositivo do host
 function corridaLojaHostHtml() {
   if (!corridaLojaLigada() || !corridaEstoque) return "";
-  const locais = players.filter((p) => typeof redeNoHost !== "function" || redeNoHost(p.id)).map((p) => ({ id: p.id, nome: p.name, pts: p.score || 0 }));
+  const locais = players.filter((p) => typeof redeNoHost !== "function" || redeNoHost(p.id)).map((p) => ({ id: p.id, nome: p.name, pts: corridaSaldo(p.id) }));
   return corridaLojaVitrineHtml(corridaEstoque, locais, corridaPrecos);
 }
 function corridaIntervaloRedesenharLoja() {

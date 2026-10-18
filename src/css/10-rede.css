@@ -1446,3 +1446,16 @@ body:not(.claro) .telao-vez b {
 .telao-vez .tv-cat {
   background: color-mix(in srgb, var(--cat) 12%, var(--t-sec));
 }
+/* 1.7.10.6.1: "Você joga neste aparelho?" na tela da mesa do host */
+.rede-eu-pergunta {
+  margin: 8px 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 2px solid #facc15;
+  background: #facc1514;
+  font-weight: 800;
+  text-align: center;
+}
+.rede-eu-pergunta .rede-acoes {
+  margin-top: 8px;
+}

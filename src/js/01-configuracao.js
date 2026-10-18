@@ -354,7 +354,8 @@ const CORRIDA_CARTA_HC_MS = 90e3; // Hardcore: 1:30 de carta…
 const CORRIDA_VEL_HC = 1.5; // …correndo 1,5× (Extreme 2× fica pra depois do playtest)
 const CORRIDA_VEZ_HC_SEG = 15; // Hardcore: 15 s pra escolher e 15 pra responder (1.7.10.6.1: era 10)
 const CORRIDA_JANELA_SEG = 15; // relâmpago (Hardcore / Juízo Final): a dica fica aberta 15 s esperando alguém bater (era 10)
-const CORRIDA_ERRO_MS = 3e3; // errou: a carta perde 3 s (JF, 1.7.10.6.1: era 1 s, "absurdo")
+const CORRIDA_ERRO_MS = 1e3; // errou: a carta perde 1 s
+const CORRIDA_ABSURDO_MS = 3e3; // 1.7.10.6.1 (JF): resposta absurda: a carta perde 3 s
 const CORRIDA_PULO_MS = 2e3; // pulou ("nem tentou"): a carta perde 2 s
 const CORRIDA_MORTE_MS = 60e3; // carta que morre sem acerto: o geral perde 1 min
 const CORRIDA_JUIZO_MS = 60e3; // último minuto = Juízo Final

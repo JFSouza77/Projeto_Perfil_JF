@@ -1665,7 +1665,7 @@ function redeOpcoes(jid) {
     if (corridaIntervaloAberto() && corridaEstoque)
       Object.keys(CORRIDA_LOJA).forEach((k) => {
         const it = CORRIDA_LOJA[k];
-        if (corridaPodeComprar(k, jid)) add("corridaComprar", [k, jid], `${it.ic} ${it.nome} · ${corridaPreco(k)} pts (${corridaEstoque[k]} no estoque)`, "", `🛒 Lojinha · você tem ${(players[meuIdx] || {}).score || 0} pts`);
+        if (corridaPodeComprar(k, jid)) add("corridaComprar", [k, jid], `${it.ic} ${it.nome} · ${corridaPreco(k)} ${corridaMoeda()} (${corridaEstoque[k]} no estoque)`, "", `🛒 Lojinha · você tem ${corridaSaldo(jid)} ${corridaMoeda()}`);
       });
     ["desfib", "corte"].forEach((k) => corridaPodeUsar(k, jid) && add("corridaUsar", [k, jid], `${CORRIDA_LOJA[k].ic} Usar ${CORRIDA_LOJA[k].nome}`, "ok", "🎒 Seus itens"));
   }
@@ -1876,13 +1876,12 @@ function redeAvisarSemAparelho() {
     () => redePainelHost(),
   );
 }
-// 1.7.10.6.1 (relato do JF: como host, não comprava na lojinha nem escolhia a própria dica): o aparelho do host
-// perdia quem joga nele (recarregou antes do save voltar, ou a sala abriu no meio da partida). Religa sozinho: primeiro
-// quem estava guardado; senão, quem não tem dispositivo próprio na sala (ninguém mais pode estar jogando por ele).
+// 1.7.10.6.1 (relato do JF: como host, não comprava na lojinha, não escolhia a própria dica nem via o Rouba a vez):
+// o aparelho do host perdia quem joga nele quando recarregava antes do save voltar. Religa sozinho quem estava guardado.
+// (Sala aberta no meio da partida não religa sozinha: na tela da mesa tem o botão "Eu jogo neste aparelho".)
 function redeHostEuReligar() {
   if (!rede || rede.papel !== "host" || rede.hostEu) return;
-  let lista = (rede.hostEuSalvo || []).filter((id) => jogadorIdxPorId(id) >= 0 && !redeOnline(rede.assentos[id]));
-  if (!lista.length) lista = players.filter((p) => !rede.assentos[p.id]).map((p) => p.id);
+  const lista = (rede.hostEuSalvo || []).filter((id) => jogadorIdxPorId(id) >= 0 && !redeOnline(rede.assentos[id]));
   if (!lista.length) return;
   rede.hostEu = lista[0];
   rede.hostJunto = lista.slice(1);
@@ -1939,6 +1938,10 @@ function redeHostVista() {
   const daVez = eus.find((p) => jogadorIdDe(responderIndex) === p.id);
   const vez = !!daVez;
   let h = `<div class="rede-eu">${eus.length ? `Neste aparelho: <b>${eus.map(nome).join("</b> e <b>")}</b>${vez ? ` · 👉 vez de ${nome(daVez)}` : ""}` : "Este aparelho é a mesa"}</div>`;
+  // 1.7.10.6.1 (relato do JF): ninguém marcado neste aparelho, mas tem jogador sem dispositivo na sala: um toque resolve
+  const semDisp = !eus.length && starterChosen && !gameEnded ? players.filter((p) => !redeOnline(rede.assentos[p.id])) : [];
+  if (semDisp.length)
+    h += `<div class="rede-eu-pergunta">🙋 Você joga neste aparelho? <span class="rede-acoes">${semDisp.map((p) => `<button type="button" class="rede-btn rede-cta" data-sou="${escapeHtml(p.id)}">Sou ${nome(p)}</button>`).join("")}</span></div>`;
   if (starterChosen && !gameEnded) h += redePapelHtml({ mestre: false, vez });
   h += `<div class="rede-segredo">🔒 A carta e a resposta estão no aparelho de <b>${mestre ? nome(mestre) : "quem é o Mestre"}</b> (Mestre da vez).</div>`;
   if (vez && cardState === "revealed" && pendingIndex === null && !pausedAt)
@@ -1963,6 +1966,7 @@ function redeHostVista() {
       if (o) agir(o.quem, o.a, o.d);
     }),
   );
+  barra.querySelectorAll("[data-sou]").forEach((b) => b.addEventListener("click", () => redeDefinirNoHost([b.dataset.sou])));
   barra.querySelector("#redeVistaPausar").addEventListener("click", () => document.getElementById("pauseBtn")?.click());
   barra.querySelector("#redeVistaSala").addEventListener("click", () => redePainelHost());
   if (!rede.vistaTimer) rede.vistaTimer = setInterval(() => (document.getElementById("redeHostVista") ? telaoRelogio() : null), 500);

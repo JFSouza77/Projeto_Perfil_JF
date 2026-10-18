@@ -239,7 +239,7 @@ const ARQ = acharMestre(process.argv[2]);
     await esp(100);
     f();
     parar();
-    o.erroMenos3 = depoisErro <= 97.1e3 && depoisErro >= 96.5e3; // 1.7.10.6.1: erro tira 3 s
+    o.erroMenos1 = depoisErro <= 99.1e3 && depoisErro >= 98.5e3;
     o.puloMenos2 = antesPulo - corridaCartaRestaMs >= 1.9e3 && antesPulo - corridaCartaRestaMs <= 2.5e3;
     // carta morta: −1 min no geral
     await esp(300);
@@ -445,6 +445,26 @@ const ARQ = acharMestre(process.argv[2]);
     dispatchAction({ type: "corridaUsar", data: ["corte", comprador.id] });
     parar();
     o.corteDeFio = players[responderIndex] !== comprador && revealedOrder.length === revC && Math.abs(corridaCartaRestaMs - cc) < 300;
+    // 1.7.10.6.1 (JF): lojinha também na vitória por Cartas, paga com créditos (os segundos que sobravam na carta)
+    {
+      const vit = corridaVitoria, sc = comprador.score;
+      corridaVitoria = "cartas";
+      corridaCreditos = {};
+      corridaCartaDesde = null;
+      corridaCartaRestaMs = 80e3;
+      corridaLojaNoAcerto(comprador, 1);
+      const cred = corridaSaldo(comprador.id);
+      corridaEstoque = { cofrinho: 1 };
+      corridaPrecos = { cofrinho: 25 };
+      if (!corridaIntervaloAberto()) corridaIntervaloAbrir();
+      corridaEstoque = { cofrinho: 1 };
+      corridaPrecos = { cofrinho: 25 };
+      const pode = corridaPodeComprar("cofrinho", comprador.id);
+      corridaComprar("cofrinho", comprador.id);
+      o.lojaCartas = cred === 80 && pode && corridaSaldo(comprador.id) === 55 && comprador.score === sc;
+      corridaIntervaloFechar();
+      corridaVitoria = vit;
+    }
     // coroas
     endGame();
     await esp(300);
