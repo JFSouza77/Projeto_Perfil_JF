@@ -418,7 +418,7 @@ function corridaIntervaloAbrir() {
     ${m ? `<div class="tb-lobby-prox">📖 Próximo Mestre: ${playerNameHtml(m.name, m.color, m.avatar)}</div>` : ""}
     ${corridaBombaAgora() ? `<div class="cr-aviso-bomba">💣 A próxima carta é uma <b>BOMBA-RELÓGIO</b>: cada erro tira ${CORRIDA_BOMBA_ERRO_MS / 1e3} s do relógio; se ela morrer, −1 min.</div>` : ""}
     ${corridaPlacarHtml()}
-    <div id="crLojaHost">${corridaLojaHostHtml()}</div>
+    <div id="crLojaHost">${corridaAcabou ? "" : corridaLojaHostHtml()}</div>
     <details class="cr-cartas"><summary>🃏 Cartas da partida</summary>${cartasPartidaHostHtml()}</details>
   </div>`;
   document.body.appendChild(ov);

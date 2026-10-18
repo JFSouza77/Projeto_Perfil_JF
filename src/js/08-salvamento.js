@@ -1688,7 +1688,7 @@ function caosPartidaMarkdown() {
   };
   const soma = (a, f) => a.reduce((t, x) => t + (Number(f(x)) || 0), 0);
   const modoNome =
-    { classico: "Clássico", hardcore: "Hardcore", junior: "Júnior", express: "Express", oldschool: "Old School" }[
+    { classico: "Clássico", hardcore: "Hardcore", junior: "Júnior", express: "Express", oldschool: "Old School", corrida: "Corrida contra o Tempo", caos: "Modo C.A.O.S." }[
       CURRENT_MODE
     ] || CURRENT_MODE;
   const equipe = CURRENT_FORMAT === "equipe";
@@ -1698,7 +1698,11 @@ function caosPartidaMarkdown() {
     wcLabel =
       CURRENT_MODE === "express"
         ? "Express (pontos)"
-        : WIN_CONDITIONS[WIN_CONDITION]
+        : CURRENT_MODE === "corrida" // 1.7.10.6.1: a Corrida tem vitória própria (o export dizia "A Moda da Casa")
+          ? corridaVitoria === "tempo" ? "Corrida · por Tempo (pontos)" : "Corrida · por Cartas"
+          : CURRENT_MODE === "caos"
+            ? "Modo C.A.O.S. (mais cartas em 10 min)"
+            : WIN_CONDITIONS[WIN_CONDITION]
           ? WIN_CONDITIONS[WIN_CONDITION].label +
             (WIN_CONDITION === "casa" && CASA_MODOS.includes(casaSorteado) ? " (sorteado: " + casaSorteado + ")" : "")
           : wc;

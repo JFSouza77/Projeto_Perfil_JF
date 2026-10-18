@@ -397,6 +397,7 @@ function corridaPodeComprar(item, id) {
   const it = CORRIDA_LOJA[item],
     p = jogadorPorId(id);
   if (!it || !p || !corridaLojaLigada() || !corridaIntervaloAberto() || !corridaEstoque) return false;
+  if (corridaAcabou || gameEnded) return false; // 1.7.10.6.1 (dados da partida do JF): relógio zerou, a lojinha fecha
   if ((corridaEstoque[item] || 0) <= 0 || corridaSaldo(id) < corridaPreco(item)) return false;
   // Juízo Final: acerto não dá mais tempo, então os itens de tempo também saem de cena (senão a partida não acaba)
   if ((item === "ampulheta" || item === "congelar") && (corridaJuizo || corridaAcabou)) return false;

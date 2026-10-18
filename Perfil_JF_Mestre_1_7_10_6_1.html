@@ -28991,7 +28991,7 @@ function corridaIntervaloAbrir() {
     ${m ? `<div class="tb-lobby-prox">📖 Próximo Mestre: ${playerNameHtml(m.name, m.color, m.avatar)}</div>` : ""}
     ${corridaBombaAgora() ? `<div class="cr-aviso-bomba">💣 A próxima carta é uma <b>BOMBA-RELÓGIO</b>: cada erro tira ${CORRIDA_BOMBA_ERRO_MS / 1e3} s do relógio; se ela morrer, −1 min.</div>` : ""}
     ${corridaPlacarHtml()}
-    <div id="crLojaHost">${corridaLojaHostHtml()}</div>
+    <div id="crLojaHost">${corridaAcabou ? "" : corridaLojaHostHtml()}</div>
     <details class="cr-cartas"><summary>🃏 Cartas da partida</summary>${cartasPartidaHostHtml()}</details>
   </div>`;
   document.body.appendChild(ov);
@@ -29508,6 +29508,7 @@ function corridaPodeComprar(item, id) {
   const it = CORRIDA_LOJA[item],
     p = jogadorPorId(id);
   if (!it || !p || !corridaLojaLigada() || !corridaIntervaloAberto() || !corridaEstoque) return false;
+  if (corridaAcabou || gameEnded) return false; // 1.7.10.6.1 (dados da partida do JF): relógio zerou, a lojinha fecha
   if ((corridaEstoque[item] || 0) <= 0 || corridaSaldo(id) < corridaPreco(item)) return false;
   // Juízo Final: acerto não dá mais tempo, então os itens de tempo também saem de cena (senão a partida não acaba)
   if ((item === "ampulheta" || item === "congelar") && (corridaJuizo || corridaAcabou)) return false;
@@ -41990,7 +41991,7 @@ function caosPartidaMarkdown() {
   };
   const soma = (a, f) => a.reduce((t, x) => t + (Number(f(x)) || 0), 0);
   const modoNome =
-    { classico: "Clássico", hardcore: "Hardcore", junior: "Júnior", express: "Express", oldschool: "Old School" }[
+    { classico: "Clássico", hardcore: "Hardcore", junior: "Júnior", express: "Express", oldschool: "Old School", corrida: "Corrida contra o Tempo", caos: "Modo C.A.O.S." }[
       CURRENT_MODE
     ] || CURRENT_MODE;
   const equipe = CURRENT_FORMAT === "equipe";
@@ -42000,7 +42001,11 @@ function caosPartidaMarkdown() {
     wcLabel =
       CURRENT_MODE === "express"
         ? "Express (pontos)"
-        : WIN_CONDITIONS[WIN_CONDITION]
+        : CURRENT_MODE === "corrida" // 1.7.10.6.1: a Corrida tem vitória própria (o export dizia "A Moda da Casa")
+          ? corridaVitoria === "tempo" ? "Corrida · por Tempo (pontos)" : "Corrida · por Cartas"
+          : CURRENT_MODE === "caos"
+            ? "Modo C.A.O.S. (mais cartas em 10 min)"
+            : WIN_CONDITIONS[WIN_CONDITION]
           ? WIN_CONDITIONS[WIN_CONDITION].label +
             (WIN_CONDITION === "casa" && CASA_MODOS.includes(casaSorteado) ? " (sorteado: " + casaSorteado + ")" : "")
           : wc;
