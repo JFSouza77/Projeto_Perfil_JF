@@ -2,8 +2,8 @@
  * É o jeito que o JF jogava com os sobrinhos: quem acerta fica com a carta. Sem tabuleiro, pontos ou joias.
  *  · Relógio geral de 30 min (+10 s por carta acertada). Zerou: a resposta em andamento termina e não começa
  *    carta nova. Vence quem tiver mais cartas; empate → desempate relâmpago.
- *  · Cada carta tem 2:30, que não reinicia por erro nem troca de vez. Acabou: a carta sai sem dono.
- *  · A vez segue a roda (15 s pra escolher a dica + 15 s pra responder; isso é o startTimer de sempre).
+ *  · Cada carta tem 3:00, que não reinicia por erro nem troca de vez. Acabou: a carta sai sem dono.
+ *  · A vez segue a roda (25 s pra escolher a dica + 25 s pra responder; isso é o startTimer de sempre).
  *  · Entre as cartas, intervalo de 15 s com o relógio geral congelado.
  * Os relógios guardam "quanto falta" + "corre desde": o tique de 250 ms decide se cada um corre (pausa, fala do
  * C.A.O.S., aviso na tela e intervalo congelam), então não tem prazo pra empurrar em cada lugar que para o jogo. */
@@ -158,7 +158,7 @@ function corridaAvisarCartaPerdida() {
   const geral = corridaAcabou && !corridaDesempate;
   fxFloat(geral ? "⏱️ Acabou o tempo!" : "⌛ A carta acabou o tempo", "#fb923c");
   playSfx("erro");
-  caosLog("corrida", geral ? "carta encerrada pelo relógio geral" : "carta perdeu no tempo (2:30)");
+  caosLog("corrida", geral ? "carta encerrada pelo relógio geral" : "carta perdeu no tempo (fim do relógio da carta)");
 }
 // +10 s no geral por acerto; a Bomba-Relógio desarmada dá +20 s; no Juízo Final e no duelo, nada
 function corridaBonus() {
@@ -418,7 +418,7 @@ function corridaIntervaloAbrir() {
     ${m ? `<div class="tb-lobby-prox">📖 Próximo Mestre: ${playerNameHtml(m.name, m.color, m.avatar)}</div>` : ""}
     ${corridaBombaAgora() ? `<div class="cr-aviso-bomba">💣 A próxima carta é uma <b>BOMBA-RELÓGIO</b>: cada erro tira ${CORRIDA_BOMBA_ERRO_MS / 1e3} s do relógio; se ela morrer, −1 min.</div>` : ""}
     ${corridaPlacarHtml()}
-    <div id="crLojaHost">${corridaLojaHostHtml()}</div>
+    <div id="crLojaHost">${corridaAcabou ? "" : corridaLojaHostHtml()}</div>
     <details class="cr-cartas"><summary>🃏 Cartas da partida</summary>${cartasPartidaHostHtml()}</details>
   </div>`;
   document.body.appendChild(ov);
@@ -473,7 +473,7 @@ function corridaRegrasHtml(resumo) {
     hc
       ? `💀 <b>Hardcore:</b> a carta tem ${carta} e o relógio dela corre <b>1,5×</b>. As dicas abrem sozinhas: quem souber, <b>bate na mesa</b> (no online, o botão no dispositivo) e responde. Errou, a próxima abre na hora.`
       : `💬 <b>A vez:</b> segue a roda. ${vez} s pra escolher o número e ${vez} s pra responder. A carta tem ${carta} e não reinicia quando a vez passa.`,
-    `❌ <b>Errou:</b> a carta perde 1 s. <b>Pulou</b> (nem tentou): perde 2 s.`,
+    `❌ <b>Errou:</b> a carta perde ${CORRIDA_ERRO_MS / 1e3} s. <b>Pulou</b> (nem tentou): ${CORRIDA_PULO_MS / 1e3} s. <b>Absurdo</b>: ${CORRIDA_ABSURDO_MS / 1e3} s.`,
     '🎙️ <b>Mestre:</b> roda a cada carta. Fala a categoria e lê a dica. <b>Nunca</b> fala a resposta.',
   ];
   if (!resumo) {
@@ -481,7 +481,7 @@ function corridaRegrasHtml(resumo) {
       `💣 <b>Bomba-Relógio:</b> de vez em quando o jogo arma uma carta (e o C.A.O.S. anuncia como se fosse ideia dele) (${hc ? CORRIDA_BOMBA_QUOTA.hardcore : CORRIDA_BOMBA_QUOTA.normal} por partida). Cada erro tira ${CORRIDA_BOMBA_ERRO_MS / 1e3} s do relógio geral; desarmar dá <b>+${CORRIDA_BOMBA_BONUS_MS / 1e3} s</b>; se ela morrer, BOOM: −1 min.`,
       `⚔️ <b>Duelo:</b> até ${CORRIDA_DUELO_MAX} por partida (3+ jogadores), o jogo sorteia dois duelistas e o Mestre (o C.A.O.S. faz o show). O relógio geral para, a carta corre <b>2×</b> e só os dois respondem. ${tempo ? `Quem vence rouba ${CORRIDA_DUELO_ROUBO} pontos do outro. ` : ""}Ninguém acertou? Carta destruída.`,
       "⚖️ <b>Juízo Final:</b> no último minuto as dicas abrem sozinhas e qualquer um bate na mesa. Acertar não dá mais tempo.",
-      `☕ <b>Intervalo:</b> ${CORRIDA_INTERVALO_SEG} s entre as cartas pra ver o placar, com o relógio geral <b>congelado</b>.${tempo ? ` <b>No online</b>, é a hora da 🛒 <b>Lojinha de Sobrevivência</b>, uma só pra mesa toda (quem comprar primeiro leva): gaste pontos nos itens da vitrine, que muda a cada intervalo (${Object.values(CORRIDA_LOJA).map((it) => it.ic + " " + it.nome).join(", ")}; estoque limitado).` : ""}`,
+      `☕ <b>Intervalo:</b> ${CORRIDA_INTERVALO_SEG} s entre as cartas pra ver o placar, com o relógio geral <b>congelado</b>. <b>No online</b>, é a hora da 🛒 <b>Lojinha de Sobrevivência</b>, uma só pra mesa toda (quem comprar primeiro leva): gaste ${tempo ? "pontos" : "créditos (cada acerto dá os segundos que sobravam na carta; não contam no placar)"} nos itens da vitrine, que muda a cada intervalo (${Object.values(CORRIDA_LOJA).map((it) => it.ic + " " + it.nome).join(", ")}; estoque limitado).`,
       hc ? "⭐ <b>Especiais:</b> no Hardcore não tem (as dicas abrem sozinhas)." : "⭐ <b>Especiais:</b> sem tabuleiro, as de andar casas saem. <b>Perca sua vez</b> passa a vez. <b>Rouba a vez</b> (o antigo Palpite a qualquer hora) dá uma ficha pra responder fora da vez (3+ jogadores).",
       tempo
         ? "⚖️ <b>Empate no fim:</b> vence quem tiver mais cartas; empatou de novo, vitória dividida. Na tela final ainda saem as coroas de ⏱️ <b>Senhor do Tempo</b> e 🃏 <b>Colecionador</b>."

@@ -1144,7 +1144,7 @@ function markWrong(tipo) {
   streakScorerIdx = null;
   streakCount = 0;
   const missedPlayer = players[responderIndex];
-  if (CURRENT_MODE === "corrida") corridaPenalidade(tipo); // carta −1 s (erro) / −2 s (pulou); bomba: geral −5 s
+  if (CURRENT_MODE === "corrida") corridaPenalidade(tipo); // carta −1 s (erro) / −2 s (pulou) / −3 s (absurdo); bomba: geral −5 s
   // contexto pro C.A.O.S.: quantas vezes essa pessoa errou nesta partida ("errou de novo" só vale da 2ª em diante)
   if (missedPlayer && tipo !== "pular") missedPlayer.errosPartida = (missedPlayer.errosPartida || 0) + 1;
   const missIdx = players.indexOf(missedPlayer);

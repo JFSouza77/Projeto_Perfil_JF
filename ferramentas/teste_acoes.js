@@ -521,6 +521,11 @@ const ARQ = acharMestre(process.argv[2]);
       document.querySelectorAll('.caos-aviso-ov, #redePainel').forEach((o) => o.remove());
       rede.hostEu = 'j_semap1'; rede.hostJunto = ['j_semap2'];
       const liberou = redeSemAparelho().length === 0;
+      // 1.7.10.6.1 (relato do JF): o host recarregou e perdeu quem joga nele: religa sozinho quem estava guardado
+      starterChosen = true; rede.hostEu = null; rede.hostJunto = []; rede.hostEuSalvo = ['j_semap1']; rede.assentos.j_semap2 = { sessao: 'x', visto: Date.now(), chave: 'k', nome: 'Caio' };
+      redeHostEuReligar();
+      out.hostReligou = rede.hostEu === 'j_semap1' && !(rede.hostJunto || []).length;
+      starterChosen = false;
       redeFechar();
       out.semAparelho = abriu && barrou && liberou;
       players = salvos; starterChosen = iniAntes;
@@ -614,6 +619,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['Cadastro: o C.A.O.S. pergunta da voz (não pergunta se já está ligada); Sim liga; Não ganha fala triste e segue sem voz', r.vozPergunta],
     ['1.7.10.3: busca nas regras acha "grupo"; o C.A.O.S. lembra o que vale na 1ª carta de cada categoria (Júnior sem animal em Coisa)', r.regrasEPrimeira],
     ['1.7.10.1: com a sala aberta, a partida só começa quando todo jogador tem aparelho', r.semAparelho],
+    ['1.7.10.6.1: o host que recarregou religa sozinho quem joga nele (lojinha, dica e rouba a vez de volta)', r.hostReligou],
   ];
   linhas.forEach(([n, ok]) => console.log(`${ok ? 'ok    ' : 'FALHOU'}  ${n}`));
   const tudo = linhas.every((l) => l[1]) && !erros.length;

@@ -1428,3 +1428,34 @@ body.batata-mode .answer-toggle .ans-nome {
     animation: none;
   }
 }
+
+/* 1.7.10.6.1 (JF, print da T2: "essas cores não estão bem contrastadas"): com a cor da pessoa ou da categoria forte
+   (vermelho, roxo), o fundo escurecia demais e a legenda cinza sumia. Fundo mais neutro, legenda clara. */
+body:not(.claro) .telao-vez small {
+  color: #e5e7eb;
+}
+body:not(.claro) .telao-vez b {
+  color: #fff;
+}
+.telao-vez .tv-vez {
+  background: color-mix(in srgb, var(--pc) 13%, var(--t-sec));
+}
+.telao-vez .tv-mestre {
+  background: color-mix(in srgb, var(--pc) 15%, var(--t-sec));
+}
+.telao-vez .tv-cat {
+  background: color-mix(in srgb, var(--cat) 12%, var(--t-sec));
+}
+/* 1.7.10.6.1: "Você joga neste aparelho?" na tela da mesa do host */
+.rede-eu-pergunta {
+  margin: 8px 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 2px solid #facc15;
+  background: #facc1514;
+  font-weight: 800;
+  text-align: center;
+}
+.rede-eu-pergunta .rede-acoes {
+  margin-top: 8px;
+}

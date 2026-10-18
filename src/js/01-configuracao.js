@@ -14,7 +14,7 @@
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1821;
+const JOGO_BUILD = 1822;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -343,18 +343,19 @@ const JOIAS_POR_RODADA = 2;
 const ULTIMA_RODADA = true;
 const PALPITE_MODES_OK = ["classico", "junior", "oldschool", "corrida"];
 // 1.7.10.6 · Corrida contra o Tempo (regras do JF em docs/Modos_1.7.10.6.md): relógio geral de 30 min (+10 s por
-// carta acertada), carta de 2:30, 15 s pra escolher a dica e 15 s pra responder, intervalo de 15 s congelado.
+// carta acertada), carta de 3:00, 25 s pra escolher a dica e 25 s pra responder (1.7.10.6.1), intervalo de 15 s congelado.
 const CORRIDA_TEMPO_MS = 20 * 60e3; // 1.7.10.6: 20 min (o JF deixou o balanceamento comigo: dá ~12 cartas, cada um lê 2 ou 3 vezes)
 const CORRIDA_BONUS_MS = 10e3;
-const CORRIDA_CARTA_MS = 150e3;
-const CORRIDA_VEZ_SEG = 15;
+const CORRIDA_CARTA_MS = 180e3; // 1.7.10.6.1 (JF: "ridiculamente rápido"): 3:00 (era 2:30), pra caber a vez mais longa
+const CORRIDA_VEZ_SEG = 25; // 1.7.10.6.1 (JF): 25 s pra escolher e 25 pra responder (era 15 + 15)
 const CORRIDA_INTERVALO_SEG = 15;
 // Eventos da Corrida (spec do JF de 17/10 à noite + balanceamento): penalidades, carta morta, bomba, duelo, Hardcore
 const CORRIDA_CARTA_HC_MS = 90e3; // Hardcore: 1:30 de carta…
 const CORRIDA_VEL_HC = 1.5; // …correndo 1,5× (Extreme 2× fica pra depois do playtest)
-const CORRIDA_VEZ_HC_SEG = 10; // Hardcore: 10 s pra escolher e 10 pra responder
-const CORRIDA_JANELA_SEG = 10; // relâmpago (Hardcore / Juízo Final): a dica fica aberta 10 s esperando alguém bater
+const CORRIDA_VEZ_HC_SEG = 15; // Hardcore: 15 s pra escolher e 15 pra responder (1.7.10.6.1: era 10)
+const CORRIDA_JANELA_SEG = 15; // relâmpago (Hardcore / Juízo Final): a dica fica aberta 15 s esperando alguém bater (era 10)
 const CORRIDA_ERRO_MS = 1e3; // errou: a carta perde 1 s
+const CORRIDA_ABSURDO_MS = 3e3; // 1.7.10.6.1 (JF): resposta absurda: a carta perde 3 s
 const CORRIDA_PULO_MS = 2e3; // pulou ("nem tentou"): a carta perde 2 s
 const CORRIDA_MORTE_MS = 60e3; // carta que morre sem acerto: o geral perde 1 min
 const CORRIDA_JUIZO_MS = 60e3; // último minuto = Juízo Final

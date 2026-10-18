@@ -6,6 +6,22 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.6.1",
+    data: "18/10/2026",
+    nome: "Multiplayer Update · Corrida e Modo C.A.O.S.",
+    t: "Ajustes da primeira Corrida online: mais tempo pra pensar, o C.A.O.S. quieto durante a carta e a lojinha funcionando pro host.",
+    itens: [
+      "⏳ Mais tempo na Corrida: 25 s pra escolher a dica e 25 s pra responder, e a carta com 3 minutos.",
+      "❌ Penalidades: errou, a carta perde 1 s; pulou, 2 s; resposta absurda, 3 s.",
+      "🤫 C.A.O.S. concentrado: na Corrida ele não comenta com a carta correndo, e entre as cartas fala no máximo uma vez.",
+      "🛒 Host de volta ao jogo: quem joga no dispositivo que abriu a sala volta a comprar na lojinha, escolher a própria dica e usar o Rouba a vez. Se a tela disser que o dispositivo é só a mesa, toque em Sou (seu nome).",
+      "🪙 Lojinha nas duas Corridas: na vitória por Cartas, cada acerto dá créditos (os segundos que sobravam na carta) pra gastar na lojinha, sem mexer no placar.",
+      "🎒 Itens guardados: a lojinha mostra o que você tem guardado e explica onde aparece o botão Usar.",
+      "🎨 Tela dos jogadores mais legível: as legendas de Mestre, Vez e Categoria ficaram mais claras.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.6",
     data: "18/10/2026",
     nome: "Multiplayer Update · Corrida e Modo C.A.O.S.",

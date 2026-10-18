@@ -1688,7 +1688,7 @@ function caosPartidaMarkdown() {
   };
   const soma = (a, f) => a.reduce((t, x) => t + (Number(f(x)) || 0), 0);
   const modoNome =
-    { classico: "Clássico", hardcore: "Hardcore", junior: "Júnior", express: "Express", oldschool: "Old School" }[
+    { classico: "Clássico", hardcore: "Hardcore", junior: "Júnior", express: "Express", oldschool: "Old School", corrida: "Corrida contra o Tempo", caos: "Modo C.A.O.S." }[
       CURRENT_MODE
     ] || CURRENT_MODE;
   const equipe = CURRENT_FORMAT === "equipe";
@@ -1698,7 +1698,11 @@ function caosPartidaMarkdown() {
     wcLabel =
       CURRENT_MODE === "express"
         ? "Express (pontos)"
-        : WIN_CONDITIONS[WIN_CONDITION]
+        : CURRENT_MODE === "corrida" // 1.7.10.6.1: a Corrida tem vitória própria (o export dizia "A Moda da Casa")
+          ? corridaVitoria === "tempo" ? "Corrida · por Tempo (pontos)" : "Corrida · por Cartas"
+          : CURRENT_MODE === "caos"
+            ? "Modo C.A.O.S. (mais cartas em 10 min)"
+            : WIN_CONDITIONS[WIN_CONDITION]
           ? WIN_CONDITIONS[WIN_CONDITION].label +
             (WIN_CONDITION === "casa" && CASA_MODOS.includes(casaSorteado) ? " (sorteado: " + casaSorteado + ")" : "")
           : wc;
@@ -1721,7 +1725,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.6 · C.A.O.S. 4.5");
+  L.push("- **Versão:** Beta 1.7.10.6.1 · C.A.O.S. 4.5.1");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2244,7 +2248,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.6 · C.A.O.S. 4.5",
+        versao: "Beta 1.7.10.6.1 · C.A.O.S. 4.5.1",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
