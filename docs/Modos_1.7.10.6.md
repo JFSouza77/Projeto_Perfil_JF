@@ -170,3 +170,32 @@ na tela como se ninguém tivesse respondido.
   Henrique × Rafa numa mesa de 4 com 3 dispositivos, o Vitinho tentando marcar acerto e "Palpitar agora" no meio,
   e confere a cada passo: quem responde é duelista, o Mestre não é, o leitor emprestado volta, os dispositivos veem
   o mesmo Mestre e a mesma carta do host, e nada fica parado.
+
+## QoL da partida online de 18/10 (JF, namorada, cunhada e prima: 11 a 13 anos)
+
+- **Botões de próximo passo** ("cta"): grandes, amarelos e pulsando (param no modo calmo/batata e com
+  movimento reduzido). Valem pro Mestre: "🎰 Virar a carta (sorteia a categoria)", "✓ Já falei a categoria!
+  Mostrar a carta" (no dispositivo e na tela do host), "🃏 Puxar a próxima carta" e "👉 Abrir a dica X
+  (pedida por …)".
+- **Faixa do papel** no dispositivo: "🎙️ VOCÊ É O MESTRE" (roxa) ou "👉 É A SUA VEZ!" (amarela, pulsando),
+  cada uma com uma linha do que fazer.
+- **T2**: na ordem que a mesa precisa: 1º Mestre (em destaque, com a cor da pessoa e "lê as dicas"), 2º vez
+  (em destaque, "escolhe a dica e responde"), 3º categoria da carta; o tempo fica do lado da categoria.
+- **Pedido de dica e Palpitar agora chegam na hora**: eles não mexem na revisão da partida, então só iam pros
+  outros dispositivos na batida de 4 s (a demora que vocês viram).
+- **"Travou" a dica**: com a trava ligada, os números não pedidos ficavam travados e o toque não fazia nada;
+  só segurar 650 ms abria o "Abrir sem pedido", e ninguém sabia. Agora o toque simples já pede a confirmação
+  (no dispositivo do Mestre e no host). Junto com o atraso de 4 s, é o que explica a Mestra não conseguir abrir
+  a dica pedida e o "forçar" não funcionar.
+- **Host caiu**: a mesa vê a contagem de quando o próximo assume ("… assume a sala em 45 s. Não feche a
+  página!"). O tempo de espera continua 1 min (decisão da 1.7.10.1).
+- **Duelo de bônus pra mesa toda**: aviso na hora em que alguém cai na casa, faixa "🏟️ Duelo de bônus" na T2
+  de todo dispositivo (escolhendo o adversário → escolhendo o Mestre → duelo X × Y · Mestre Z) e um segundo
+  aviso quando o duelo começa ("X chamou Y pra duelar e Z pra ser o Mestre!").
+- **Quem caiu escolhe o Mestre do duelo** (fora os dois duelistas). Com uma pessoa só de fora, ela é a Mestre
+  e o aviso diz. No Equipe continua automático (a equipe de fora lê).
+- **Voz**: "Jh" no começo do nome vira J ("Jhennyfer" saía "Guenifer") e a risada grudada no nick não é lida
+  ("Jhenykkk" → "Jeny"). A voz nova não cai mais na robótica por 10 min depois de uma falha passageira
+  (confere de novo em 1 min, e tenta mesmo sem resposta ainda), e espera 4 s (era 2,5) pelo 1º pedaço.
+- **Joia de Animal**: o respiro da letra era em % (o navegador calcula pela largura da linha), e no placar das
+  joias o triângulo virava uma torre. Agora é em em.

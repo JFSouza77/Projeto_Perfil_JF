@@ -91,6 +91,11 @@ function caosSpeechText(msg, pausa) {
     .replace(/\b[Oo]\(A\)\s*/g, "")
     .replace(/\((a|as|o|os)\)/gi, "")
     .replace(/[\p{Extended_Pictographic}\uFE0F\u200D\u25C6]/gu, "")
+    // 1.7.10.6 (relato do JF: "Jhennyfer" saía "Guenifer"): nome com "Jh" no começo é J em português, e risada
+    // grudada no fim do nick ("Jhenykkk") não entra no nome
+    .replace(/([a-zà-ú]{2,})k{3,}\b/gi, "$1")
+    .replace(/\bJh(?=[aeiouyà-ú])/g, "J")
+    .replace(/\bJH(?=[AEIOUYÀ-Ú])/g, "J")
     // 1.7.10.3.1 (feedback do JF: risada engasgada): em português o H é mudo, então "Hahaha" saía "aaa"
     .replace(/\b(?:k{3,}|(?:ha){2,}h?|(?:há){2,}|(?:rs){2,})\b/gi, "rá rá rá")
     .replace(/\b(?:he){2,}\b/gi, "rê rê")
@@ -225,7 +230,7 @@ function caosFalarAparelho(partes, jeitos, onEnd, onPedaco, corteV, voice) {
    Com a voz "automática" e internet, cada pedaço da fala vem do servidor da sala (POST /voz → MP3 de uma voz
    brasileira do Azure) e toca pelo mesmo áudio dos efeitos (WebAudio, já destravado no primeiro toque).
    Os pedaços são pedidos juntos e tocam em ordem; a mesma fala fica guardada no aparelho (e no servidor).
-   Sem internet, servidor sem a voz configurada, teto do mês, ou o 1º pedaço demorando mais de 2,5 s: a fala
+   Sem internet, servidor sem a voz configurada, teto do mês, ou o 1º pedaço demorando mais de 4 s: a fala
    sai pela voz do aparelho, como antes. Voz escolhida na lista (do aparelho) também usa o aparelho. */
 const vozNuvem = { ok: null, quando: 0, token: 0, fonte: null, cache: new Map() };
 function vozNuvemUrl(c) {
@@ -238,7 +243,9 @@ function vozNuvemUrl(c) {
 function vozNuvemConferir() {
   const url = vozNuvemUrl("/voz/estado");
   if (!url || (typeof navigator !== "undefined" && navigator.onLine === false)) return;
-  if (vozNuvem.ok !== null && Date.now() - vozNuvem.quando < 10 * 60e3) return;
+  // 1.7.10.6 (relato do JF: no tablet às vezes saía a voz robótica antiga): uma falha passageira prendia o
+  // dispositivo 10 min na voz do aparelho; agora "deu certo" vale 10 min e "falhou" é conferido de novo em 1 min
+  if (vozNuvem.ok !== null && Date.now() - vozNuvem.quando < (vozNuvem.ok ? 10 * 60e3 : 60e3)) return;
   vozNuvem.quando = Date.now();
   fetch(url)
     .then((r) => (r.ok ? r.json() : null))
@@ -246,7 +253,9 @@ function vozNuvemConferir() {
     .catch(() => (vozNuvem.ok = false));
 }
 function vozNuvemUsa() {
-  if (caosVoiceName || vozNuvem.ok !== true) return false;
+  if (vozNuvem.ok !== true) vozNuvemConferir();
+  // ainda sem resposta do servidor: tenta a voz nova mesmo assim (se falhar, cai na do aparelho na hora)
+  if (caosVoiceName || vozNuvem.ok === false || !vozNuvemUrl("/voz")) return false;
   if (typeof navigator !== "undefined" && navigator.onLine === false) return false;
   try {
     return !!audioContexto();
@@ -294,7 +303,8 @@ function caosFalarNuvem(partes, jeitos, onEnd, onPedaco, corteV) {
     vozNuvem.token++;
     caosFalarAparelho(partes.slice(desde).map(caosSemPausa), jeitos.slice(desde), onEnd, onPedaco ? (pi, c) => onPedaco(pi + desde, c) : null, corteV >= desde ? corteV - desde : -1);
   };
-  const espera = setTimeout(() => !comecou && plano(0), 2500);
+  // 1.7.10.6: 2,5 s era pouco pra rede de tablet (caía na voz robótica); 4 s ainda é rápido pra mesa
+  const espera = setTimeout(() => !comecou && plano(0), 4000);
   const tocar = (i) => {
     if (token !== vozNuvem.token) return;
     if (i >= partes.length) {

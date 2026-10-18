@@ -8789,7 +8789,9 @@ body.claro .lp-bloco {
 }
 .jf-ANIMAL {
   clip-path: polygon(50% 2%, 98% 94%, 2% 94%);
-  padding-top: 28%;
+  /* 1.7.10.6 (print do JF): era padding-top: 28%, e % de padding vem da largura do PAI: no placar das joias
+     (linha larga) a joia virava uma torre. Em em, a letra desce pro meio do triângulo sem esticar nada. */
+  padding-top: 0.55em;
   box-sizing: border-box;
 }
 .jf-vazia {
@@ -9746,10 +9748,12 @@ body.claro .telao {
   color: var(--t-sub);
   font-variant-numeric: tabular-nums;
 }
+/* 1.7.10.6 (JF, partida online): na ordem que a mesa precisa saber: 1º quem é o Mestre, 2º de quem é a vez,
+   3º a categoria da carta. Mestre e vez em destaque, cada um com a cor da pessoa. */
 .telao-vez {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-areas: "vez vez" "mestre relogio";
+  grid-template-areas: "mestre mestre" "vez vez" "cat relogio";
   gap: 10px;
 }
 .telao-vez > div,
@@ -9785,6 +9789,17 @@ body.claro .telao {
 }
 .telao-vez .tv-mestre {
   grid-area: mestre;
+  background: color-mix(in srgb, var(--pc) 24%, var(--t-sec));
+  border: 3px solid var(--pc);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--pc) 26%, transparent);
+}
+.telao-vez .tv-mestre b {
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
+}
+.telao-vez .tv-cat {
+  grid-area: cat;
+  background: color-mix(in srgb, var(--cat) 22%, var(--t-sec));
+  border: 2px solid color-mix(in srgb, var(--cat) 70%, transparent);
 }
 .telao-vez .tv-relogio {
   grid-area: relogio;
@@ -9803,8 +9818,8 @@ body.claro #telaoRelogio.tv-pouco {
 }
 @media (min-width: 760px) {
   .telao-vez {
-    grid-template-columns: 2fr 1.4fr 1fr;
-    grid-template-areas: "vez mestre relogio";
+    grid-template-columns: 1.6fr 1.6fr 1.2fr 1fr;
+    grid-template-areas: "mestre vez cat relogio";
   }
 }
 /* a carta: tingida pela cor da categoria */
@@ -10340,6 +10355,115 @@ body.claro .mc-desfib {
 }
 .mc-vitrine li.mc-caro {
   opacity: 0.5;
+}
+
+/* 1.7.10.6 (JF, partida online com a galera de 11 a 13 anos): o próximo passo de quem está com a vez é um botão
+   grande, amarelo e pulsando ("cta"), pra ninguém ficar perdido sem ter visto o tutorial */
+.rede-btn.rede-cta,
+.cta-pulsa {
+  flex: 1 1 100%;
+  min-height: 60px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  border: 3px solid #fde68a;
+  background: linear-gradient(135deg, #f59e0b, #facc15);
+  color: #1c1917;
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  box-shadow: 0 0 0 0 #facc15aa, 0 8px 20px #0007;
+  animation: ctaPulsa 1.6s ease-in-out infinite;
+}
+.card .flip-btn.cta-pulsa {
+  width: 100%;
+  border: 3px solid #fde68a !important;
+  background: linear-gradient(135deg, #f59e0b, #facc15) !important;
+  color: #1c1917 !important;
+  text-shadow: none;
+}
+@keyframes ctaPulsa {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 #facc15aa, 0 8px 20px #0007;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 10px #facc1500, 0 8px 20px #0007;
+    transform: scale(1.025);
+  }
+}
+html.acess-calmo .rede-btn.rede-cta,
+html.acess-calmo .cta-pulsa,
+body.batata-mode .rede-btn.rede-cta,
+body.batata-mode .cta-pulsa {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rede-btn.rede-cta,
+  .cta-pulsa {
+    animation: none;
+  }
+}
+/* 1.7.10.6: faixa do duelo de bônus no telão de todo dispositivo */
+.telao-duelo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 3px solid #fbbf24;
+  background: linear-gradient(135deg, #78350fcc, #b45309cc);
+  color: #fff;
+  box-shadow: 0 6px 18px #fbbf2433;
+}
+.telao-duelo .td-tit {
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+.telao-duelo .td-txt {
+  font-size: 1rem;
+  line-height: 1.35;
+}
+/* 1.7.10.6: faixa do papel de quem está no dispositivo (Mestre / sua vez) */
+.rede-papel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 8px 0;
+  padding: 12px 14px;
+  border-radius: 16px;
+  font-size: 1.3rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  text-align: center;
+  color: #fff;
+}
+.rede-papel small {
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  opacity: 0.95;
+}
+.rede-papel.rp-mestre {
+  background: linear-gradient(135deg, #6d28d9, #9333ea);
+  border: 3px solid #c4b5fd;
+}
+.rede-papel.rp-vez {
+  background: linear-gradient(135deg, #b45309, #f59e0b);
+  border: 3px solid #fde68a;
+  animation: ctaPulsa 1.6s ease-in-out infinite;
+}
+html.acess-calmo .rede-papel.rp-vez,
+body.batata-mode .rede-papel.rp-vez {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rede-papel.rp-vez {
+    animation: none;
+  }
 }
 </style>
 </head>
@@ -12630,6 +12754,14 @@ function palpitarAgora(key) {
   // sem balão: a área de julgamento do Mestre já troca pro palpite (JF: o host não pode virar live de notificação)
   playSfx("pick");
   render();
+  redeAvisarJa();
+}
+// 1.7.10.6 (relato do JF: "demorava muito pra aparecer que alguém pediu a dica"): pedido de dica e Palpitar agora
+// não mexem na revisão da partida, então só chegavam nos outros dispositivos na batida de 4 s. Agora vão na hora.
+function redeAvisarJa() {
+  try {
+    if (typeof rede !== "undefined" && rede && rede.papel === "host" && typeof redeHostPublicar === "function") redeHostPublicar(true);
+  } catch (e) {}
 }
 // 1.7.10.5 (pedido do JF) · Pedir dica de qualquer aparelho: quem está na vez toca no número e o Mestre recebe o
 // pedido em destaque (quem abre continua sendo o Mestre, regra da 1.7.9.6). Agiliza com Mestre distraído.
@@ -12647,6 +12779,7 @@ function pedirDica(idx) {
   caosLog("dica", `${(players[responderIndex] || {}).name} pediu a dica ${idx + 1}`);
   playSfx("pick");
   render();
+  redeAvisarJa();
 }
 function palpiteHit(key) {
   if (pendingIndex === null || gameEnded || !palpiteEligibleHolders().includes(key)) return;
@@ -12951,6 +13084,15 @@ function setupBonusDuelTurn() {
     b = currentCard.bonusOpponentPlayerIdx;
   if (!players[a] || !players[b]) return;
   responderIndex = a;
+  // 1.7.10.6 (pedido do JF): quem caiu na casa escolhe também o Mestre do duelo (fora dos duelistas)
+  const esc = currentCard.bonusReaderIdx;
+  if (CURRENT_FORMAT !== "equipe" && Number.isInteger(esc) && players[esc] && esc !== a && esc !== b) {
+    if (esc !== mestreIndex) {
+      bonusOrigMestreIdx = mestreIndex;
+      mestreIndex = esc;
+    }
+    return;
+  }
   if (mestreIndex !== a && mestreIndex !== b) return;
   let reader = null;
   if (CURRENT_FORMAT === "equipe") {
@@ -13268,7 +13410,7 @@ function discardAndDraw() {
   stats.totalDiscarded++;
   caosCardPrediction = null;
   if (currentCard && currentCard.isBonus) {
-    pendingBonusQueue.unshift({ landerIdx: currentCard.bonusLandedByIdx, opponentIdx: currentCard.bonusMestreIdx });
+    pendingBonusQueue.unshift({ landerIdx: currentCard.bonusLandedByIdx, opponentIdx: currentCard.bonusMestreIdx, readerIdx: currentCard.bonusReaderIdx });
   }
   if (deck.length === 0) {
     currentCard = null;
@@ -13346,7 +13488,9 @@ function drawHidden() {
       CURRENT_FORMAT === "equipe" ? duelRepresentante(entry.landerIdx) : entry.landerIdx;
     currentCard.bonusOpponentPlayerIdx =
       CURRENT_FORMAT === "equipe" ? duelRepresentante(entry.opponentIdx) : entry.opponentIdx;
+    currentCard.bonusReaderIdx = Number.isInteger(entry.readerIdx) ? entry.readerIdx : null;
     setupBonusDuelTurn();
+    duelAnunciar();
   } else {
     currentCard.isBonus = false;
   }
@@ -13374,16 +13518,61 @@ function drawHidden() {
 }
 function beginBonusChoice() {
   cardState = "bonusChoice";
+  // 1.7.10.6 (pedido do JF): a mesa toda fica sabendo do duelo, não só quem caiu na casa (o telão de todo
+  // dispositivo mostra a faixa do duelo pelo retrato; aqui vai o aviso falado/escrito)
+  const e = pendingBonusQueue[0];
+  const quem = e ? entityDisplay(e.landerIdx).name : "";
+  playSfx("agonia");
+  fxFloat("🏟️ Duelo de bônus!", "#fbbf24");
+  showToastMessage(`🏟️ DUELO DE BÔNUS! ${quem} parou numa casa de bônus e vai escolher quem desafia${CURRENT_FORMAT === "equipe" ? "" : " e quem vai ser o Mestre"}. A carta vale em dobro!`, null, true, true);
   render();
   saveGameState();
   tabLobbyTalvez();
 }
+// 1.7.10.6: quem pode ser o Mestre do duelo (fora os dois duelistas)
+function bonusMestreCandidatos(e) {
+  if (!e || CURRENT_FORMAT === "equipe" || e.opponentIdx === null || e.opponentIdx === void 0) return [];
+  return players.map((p, i) => i).filter((i) => i !== e.landerIdx && i !== e.opponentIdx);
+}
+// Fase do duelo: "adversario" (escolhendo quem desafia), "mestre" (escolhendo o Mestre) ou null
+function bonusFase() {
+  if (cardState !== "bonusChoice" || !pendingBonusQueue[0]) return null;
+  const e = pendingBonusQueue[0];
+  return e.opponentIdx === null || e.opponentIdx === void 0 ? "adversario" : "mestre";
+}
 function chooseBonusOpponent(idx) {
-  if (cardState !== "bonusChoice" || pendingBonusQueue.length === 0) return;
+  if (bonusFase() !== "adversario") return;
   if (CURRENT_FORMAT !== "equipe" && !players[idx]) return;
   if (CURRENT_FORMAT === "equipe" && !teams[idx]) return;
-  pendingBonusQueue[0].opponentIdx = idx;
+  const e = pendingBonusQueue[0];
+  e.opponentIdx = idx;
+  const cands = bonusMestreCandidatos(e);
+  // com uma pessoa só de fora, ela é a Mestre (o aviso do duelo diz quem é); com 2+, quem caiu escolhe
+  if (cands.length >= 2) {
+    render();
+    saveGameState();
+    return;
+  }
+  e.readerIdx = cands.length ? cands[0] : null;
   drawHidden();
+}
+function chooseBonusMestre(idx) {
+  if (bonusFase() !== "mestre") return;
+  const e = pendingBonusQueue[0];
+  if (!bonusMestreCandidatos(e).includes(idx)) return;
+  e.readerIdx = idx;
+  drawHidden();
+}
+// O duelo começou: aviso pra mesa toda de quem duela e de quem é o Mestre
+function duelAnunciar() {
+  if (!currentCard || !currentCard.isBonus) return;
+  const n = (i) => (players[i] ? players[i].name : "?");
+  const a = currentCard.bonusLanderPlayerIdx, b = currentCard.bonusOpponentPlayerIdx;
+  const eq = CURRENT_FORMAT === "equipe";
+  const lados = eq
+    ? `Equipe ${entityDisplay(currentCard.bonusLandedByIdx).name} (${n(a)}) × Equipe ${entityDisplay(currentCard.bonusMestreIdx).name} (${n(b)})`
+    : `${n(a)} chamou ${n(b)} pra duelar`;
+  showToastMessage(`⚔️ ${lados}${eq ? "" : ` e ${n(mestreIndex)} pra ser o Mestre`}! Carta em dobro: ${n(a)} começa respondendo, e a vez alterna entre os dois.`, null, true, true);
 }
 function flipCard() {
   if (cardState !== "hidden") return;
@@ -15093,7 +15282,7 @@ function desistirCarta() {
     caosEmoNudge(-0.2, -0.4);
   } catch (e) {}
   if (currentCard.isBonus) {
-    pendingBonusQueue.unshift({ landerIdx: currentCard.bonusLandedByIdx, opponentIdx: currentCard.bonusMestreIdx });
+    pendingBonusQueue.unshift({ landerIdx: currentCard.bonusLandedByIdx, opponentIdx: currentCard.bonusMestreIdx, readerIdx: currentCard.bonusReaderIdx });
     if (deck.length === 0) {
       currentCard = null;
       cardState = "none";
@@ -15317,7 +15506,7 @@ function admDevolverCarta() {
   pausedCardRemaining = null;
   if (currentCard) {
     if (currentCard.isBonus && CURRENT_MODE !== "express")
-      pendingBonusQueue.unshift({ landerIdx: currentCard.bonusLandedByIdx, opponentIdx: currentCard.bonusMestreIdx });
+      pendingBonusQueue.unshift({ landerIdx: currentCard.bonusLandedByIdx, opponentIdx: currentCard.bonusMestreIdx, readerIdx: currentCard.bonusReaderIdx });
     devolverAoBaralho(cardsByAnswer.get(currentCard.answer) || currentCard);
   }
   restoreBonusReader();
@@ -16043,6 +16232,25 @@ function render() {
     const lander = entityDisplay(entry.landerIdx);
     const landerHtml = playerNameHtml(lander.name, lander.color, lander.avatar);
     let optionBtns;
+    const fase = bonusFase();
+    if (fase === "mestre") {
+      // 1.7.10.6 (pedido do JF): depois do adversário, quem caiu escolhe o Mestre do duelo
+      const opp = entityDisplay(entry.opponentIdx);
+      const btns = bonusMestreCandidatos(entry)
+        .map((i) => {
+          const p = players[i], sw = playerSwatchAttrs(p.color);
+          return `<button class="btn-correct${sw.cls}" style="margin:4px; padding:10px 14px; border:none; border-radius:8px; ${sw.style}" data-mestre="${i}">🎙️ ${escapeHtml(p.name)}${i === mestreIndex ? " (Mestre agora)" : ""}</button>`;
+        })
+        .join("");
+      area.innerHTML = `
+      <div class="bonus-banner">⭐ Duelo: ${escapeHtml(lander.name)} × ${escapeHtml(opp.name)}</div>
+      <div style="text-align:center; margin:10px 0;"><strong>${landerHtml}</strong>, quem vai ser o <b>Mestre</b> do duelo (quem lê as dicas)?</div>
+      <div style="display:flex; flex-wrap:wrap; justify-content:center;">${btns}</div>
+    `;
+      drawBtn.style.display = "none";
+      area.querySelectorAll("[data-mestre]").forEach((btn) => btn.addEventListener("click", () => chooseBonusMestre(parseInt(btn.dataset.mestre))));
+      return;
+    }
     if (CURRENT_FORMAT === "equipe") {
       optionBtns = teamOrder
         .filter((id) => id !== entry.landerIdx)
@@ -16056,7 +16264,7 @@ function render() {
       optionBtns = players
         .map((p, i) => {
           if (i === entry.landerIdx) return "";
-          const tag = i === mestreIndex ? " (Mestre atual)" : "";
+          const tag = i === mestreIndex ? " (Mestre agora)" : "";
           const sw = playerSwatchAttrs(p.color);
           return `<button class="btn-correct${sw.cls}" style="margin:4px; padding:10px 14px; border:none; border-radius:8px; ${sw.style}" data-opp="${i}">${escapeHtml(p.name)}${tag}</button>`;
         })
@@ -16358,13 +16566,13 @@ function render() {
       for (let i = 0; i < totalEntries; i++) {
         const used = revealedOrder.some((r) => r.index === i);
         const travada = trava && !used && !(ped && ped.idx === i);
-        grid += `<button class="number-btn${used ? " aberta" : ""}${ped && ped.idx === i ? " pedida" : ""}${travada ? " travada" : ""}" data-idx="${i}" ${used ? 'aria-disabled="true" title="Essa dica já foi aberta"' : travada ? 'title="Segure pra abrir sem pedido"' : ""}>${i + 1}</button>`;
+        grid += `<button class="number-btn${used ? " aberta" : ""}${ped && ped.idx === i ? " pedida" : ""}${travada ? " travada" : ""}" data-idx="${i}" ${used ? 'aria-disabled="true" title="Essa dica já foi aberta"' : travada ? 'title="Toque pra abrir sem pedido"' : ""}>${i + 1}</button>`;
       }
       const forcarHtml = dicaForcarIdx !== null ? `<div class="dica-forcar">Abrir a dica <b>${dicaForcarIdx + 1}</b> sem pedido? <button type="button" class="rede-btn rede-ok" id="dicaForcarSim">Abrir</button><button type="button" class="rede-btn" id="dicaForcarNao">Cancelar</button></div>` : "";
       controlsHtml = `
         ${ped ? `<div class="pedido-dica">👉 ${responderName} pediu a dica <b>${ped.idx + 1}</b>. Toque nela pra abrir.</div>` : ""}
         ${forcarHtml}
-        <div class="pick-label">${trava && !ped ? `👉 ${responderName} escolhe a dica no aparelho dele (${remaining} restantes). Travou? Segure um número.` : `${responderName}, escolha uma dica de 1 a ${totalEntries} (${remaining} restantes)`}</div>
+        <div class="pick-label">${trava && !ped ? `👉 ${responderName} escolhe a dica no aparelho dele (${remaining} restantes). Travou? Toque num número pra abrir sem pedido.` : `${responderName}, escolha uma dica de 1 a ${totalEntries} (${remaining} restantes)`}</div>
         <div id="timerDisplay" class="pick-timer">◷ ${secondsLeft()}s</div>
         <div class="number-grid">${grid}</div>${CURRENT_MODE === "corrida" ? corridaItensHostHtml() : ""}`;
     }
@@ -16461,7 +16669,7 @@ function render() {
             caosDicaRepetida(parseInt(btn.dataset.idx));
             return;
           }
-          // 1.7.10.5.3: número travado não abre no toque (o segurar já tratou, se foi o caso)
+          // 1.7.10.5.3: número travado não abre direto: o toque pede a confirmação (dicaSegurarParaForcar)
           if (btn.classList.contains("travada")) {
             delete gridEl.dataset.segurou;
             return;
@@ -16625,7 +16833,7 @@ function roletaDesenhar(jaPousada) {
       <div class="roulette-title">Mestre ${mestreDestaqueHtml()}, diga aos jogadores:</div>
       <div class="roulette-phrase">"Eu sou <span class="roulette-reel" id="rouletteReel">${label(cats[0])}</span>"</div>
       <div class="roulette-hint" id="rouletteHint">🎰 sorteando a categoria...</div>
-      <button type="button" class="flip-btn" id="rouletteDoneBtn" style="display:none;">✓ Falei! Mostrar a carta</button>
+      <button type="button" class="flip-btn cta-pulsa" id="rouletteDoneBtn" style="display:none;">✓ Já falei a categoria! Mostrar a carta</button>
     </div>`;
   if (virar) cartaAnimarClasse(area, "flip-entra");
   const reel = document.getElementById("rouletteReel");
@@ -16754,7 +16962,8 @@ function renderBonusDuelInfo() {
   ) {
     repNote = ` (representantes: ${escapeHtml(players[currentCard.bonusLanderPlayerIdx].name)} vs ${escapeHtml(players[currentCard.bonusOpponentPlayerIdx].name)})`;
   }
-  return `<div class="bonus-duel-info">🏟️ Duelo de casa de bônus: <strong>${landerHtml}</strong> parou exatamente numa casa de bônus e escolheu duelar contra <strong>${opponentHtml}</strong> por esta carta em dobro${repNote}.</div>`;
+  const mestreTxt = CURRENT_FORMAT !== "equipe" && players[mestreIndex] ? ` 🎙️ Mestre do duelo: <strong>${escapeHtml(players[mestreIndex].name)}</strong>.` : "";
+  return `<div class="bonus-duel-info">🏟️ Duelo de casa de bônus: <strong>${landerHtml}</strong> parou exatamente numa casa de bônus e escolheu duelar contra <strong>${opponentHtml}</strong> por esta carta em dobro${repNote}.${mestreTxt}</div>`;
 }
 function renderBoardTrack() {
   const track = document.getElementById("boardTrack");
@@ -20244,7 +20453,8 @@ const ACOES = {
   // jogador e qualquer valor, a qualquer hora)
   moverJogador: { fn: "applySpecialMove", pode: (alvo, n) => acoesMovimentoValido(alvo, n) },
   moverEquipe: { fn: "applyTeamSpecialMove", pode: (eq, n) => acoesMovimentoEquipeValido(eq, n) },
-  bonusAdversario: { fn: "chooseBonusOpponent", pode: () => acoesEmJogo() && cardState === "bonusChoice" },
+  bonusAdversario: { fn: "chooseBonusOpponent", pode: () => acoesEmJogo() && bonusFase() === "adversario" },
+  bonusMestre: { fn: "chooseBonusMestre", pode: () => acoesEmJogo() && bonusFase() === "mestre" },
   // 1.7.9: a mesma regra da tela (até a 5ª dica, no máximo 2 seguidos); o "reembaralhar" saiu de vez
   descartarCarta: { fn: "discardAndDraw", pode: () => podeDescartarCarta() },
   // 1.7.9.10: a ação é a desistência de verdade (antes era só o pedido, e a confirmação da janela mudava
@@ -20590,6 +20800,7 @@ function retratoPartida(papel) {
     iniciada: starterChosen,
     fim: gameEnded,
     estadoCarta: cardState,
+    duelo: acoesDueloRetrato(), // 1.7.10.6: a faixa do duelo de bônus em todo dispositivo
     jogadores: players.map((p) => ({
       id: p.id,
       nome: p.name,
@@ -20634,6 +20845,21 @@ function retratoPartida(papel) {
       historico: cartasPartida.slice(-40),
     },
   };
+}
+
+// 1.7.10.6 (pedido do JF): o duelo de bônus pra mesa toda: quem caiu, contra quem, quem é o Mestre e a fase
+function acoesDueloRetrato() {
+  const id = (i) => (CURRENT_FORMAT === "equipe" ? null : jogadorIdDe(i));
+  const nomeEnt = (k) => (k === null || k === void 0 ? null : entityDisplay(k).name);
+  if (cardState === "bonusChoice" && pendingBonusQueue[0]) {
+    const e = pendingBonusQueue[0];
+    return { fase: bonusFase(), quem: nomeEnt(e.landerIdx), quemId: id(e.landerIdx), contra: nomeEnt(e.opponentIdx), equipe: CURRENT_FORMAT === "equipe" };
+  }
+  if (currentCard && currentCard.isBonus && cardState !== "none") {
+    const n = (i) => (players[i] ? players[i].name : null);
+    return { fase: "duelo", quem: n(currentCard.bonusLanderPlayerIdx), contra: n(currentCard.bonusOpponentPlayerIdx), mestre: n(mestreIndex), equipe: CURRENT_FORMAT === "equipe" };
+  }
+  return null;
 }
 
 /* --- Avisos de mudança (pro ensaio em duas abas da Parte 4 e, depois, pra rede) --- */
@@ -21041,6 +21267,15 @@ function telaoAlvoHtml(r, nomeTxt) {
     .join("");
   return `<div class="ta-escolha"><div class="tc-estado tc-pedido ta-tit">🎯 <b>${escapeHtml(nomeTxt(ae.quem))}</b> escolhe quem vai ${verbo}</div><div class="ta-alvos">${cards}</div><small class="ta-pe">${ae.n > 0 ? "⬆️" : "⬇️"} ${verbo} · se o tempo acabar, o jogo sorteia</small></div>`;
 }
+// 1.7.10.6 (pedido do JF): faixa do duelo de bônus em todo dispositivo (antes só quem caiu na casa sabia)
+function telaoDueloHtml(d) {
+  const e = (x) => escapeHtml(String(x || "?"));
+  let txt;
+  if (d.fase === "adversario") txt = `<b>${e(d.quem)}</b> caiu na casa de bônus e está escolhendo quem desafia${d.equipe ? "" : " (e depois quem vai ser o Mestre)"}.`;
+  else if (d.fase === "mestre") txt = `<b>${e(d.quem)}</b> desafiou <b>${e(d.contra)}</b>! Agora escolhe quem vai ser o Mestre do duelo.`;
+  else txt = `<b>${e(d.quem)}</b> × <b>${e(d.contra)}</b>${d.mestre ? ` · 🎙️ Mestre: <b>${e(d.mestre)}</b>` : ""}. Só os dois respondem, a vez alterna e a carta vale em dobro.`;
+  return `<section class="telao-duelo" role="status"><span class="td-tit">🏟️ Duelo de bônus</span><span class="td-txt">${txt}</span></section>`;
+}
 function telaoDesenhar(r, alvo) {
   const box = alvo || document.getElementById("telao"); // 1.7.9.4: o host desenha na própria tela de jogador
   if (!box) return;
@@ -21109,9 +21344,11 @@ function telaoDesenhar(r, alvo) {
   box.innerHTML = `
     <header class="telao-topo"><b>📺 Perfil JF</b><span class="tt-info"><span>Rodada ${r.rodada}${r.ultimaRodada ? " · <b>última</b>" : ""}</span><span>⏱️ <span id="telaoTempo">${partidaTempoTxt(p.tempoMs || 0)}</span></span><span>🃏 ${p.cartas || 0}</span></span></header>
     ${r.fim ? '<div class="telao-espera">🏁 Fim de partida</div>' : ""}
+    ${r.duelo && !r.fim ? telaoDueloHtml(r.duelo) : ""}
     <section class="telao-vez">
-      <div class="tv-vez" style="--pc:${cor(r.vezId)}"><small>👉 Vez de</small><b>${nome(r.vezId)}</b></div>
-      <div class="tv-mestre" style="--pc:${cor(r.mestreId)}"><small>🎙️ Mestre</small><b>${nome(r.mestreId)}</b></div>
+      <div class="tv-mestre" style="--pc:${cor(r.mestreId)}"><small>🎙️ Mestre (lê as dicas)</small><b>${nome(r.mestreId)}</b></div>
+      <div class="tv-vez" style="--pc:${cor(r.vezId)}"><small>👉 Vez de (escolhe a dica e responde)</small><b>${nome(r.vezId)}</b></div>
+      <div class="tv-cat" style="--cat:${catCor}"><small>🃏 Categoria</small><b>${c && c.categoria && r.estadoCarta !== "hidden" ? escapeHtml(TELAO_CAT[c.categoria] || c.categoria) : c ? "sorteando…" : "—"}</b></div>
       <div class="tv-relogio"><small>⏱️ Tempo</small><b id="telaoRelogio">—</b></div>
     </section>
     ${r.corrida ? `<div class="corrida-relogios" id="telaoCorrida">${corridaBarraHtml(corridaDoRetrato(r.corrida))}</div>` : ""}
@@ -23711,8 +23948,16 @@ function dicaPodeAbrir(idx, forcar) {
   const ped = pedidoDicaAtual();
   return !!ped && ped.idx === idx;
 }
-// Segurar um número travado (650 ms) pede a confirmação do "Abrir sem pedido"
+// Tocar (ou segurar) um número travado pede a confirmação do "Abrir sem pedido".
+// 1.7.10.6 (relato do JF: a Mestra tocava no número e nada acontecia, "travou"): antes só o segurar (650 ms)
+// funcionava e ninguém sabia; o toque simples agora também abre a confirmação.
 function dicaSegurarParaForcar(grid, aoSegurar) {
+  grid.addEventListener("click", (e) => {
+    const b = e.target.closest && e.target.closest(".number-btn.travada");
+    if (!b) return;
+    if (grid.dataset.segurou) return void delete grid.dataset.segurou; // o segurar já pediu
+    aoSegurar(parseInt(b.dataset.idx !== undefined ? b.dataset.idx : b.dataset.dica));
+  });
   let t = null, alvo = null;
   const soltar = () => {
     clearTimeout(t);
@@ -23755,7 +24000,7 @@ function redePodeComandar(acao, jid, dados) {
   if (acao === "pedirDica") return !ehMestre && jogadorIdDe(responderIndex) === jid;
   if (acao === "palpitarAgora") return !ehMestre && !!dados && dados[0] === palpiteKeyOf(jogadorIdxPorId(jid));
   if (acao === "corridaComprar" || acao === "corridaUsar") return !!dados && dados[1] === jid; // cada um gasta o seu
-  if (acao === "bonusAdversario") {
+  if (acao === "bonusAdversario" || acao === "bonusMestre") {
     const e = pendingBonusQueue && pendingBonusQueue[0];
     if (!e) return false;
     const p = players[jogadorIdxPorId(jid)];
@@ -23802,7 +24047,8 @@ function redeOpcoes(jid) {
     const e = pendingBonusQueue[0];
     if (CURRENT_FORMAT === "equipe")
       teamOrder.filter((id) => id !== e.landerIdx).forEach((id) => add("bonusAdversario", [id], `${TEAM_INFO[id].emoji} Equipe ${TEAM_INFO[id].label}`, "", "🏟️ Contra quem é o duelo?"));
-    else players.forEach((p, i) => i !== e.landerIdx && add("bonusAdversario", [i], nome(i), "", "🏟️ Contra quem é o duelo?"));
+    else if (bonusFase() === "adversario") players.forEach((p, i) => i !== e.landerIdx && add("bonusAdversario", [i], nome(i) + (i === mestreIndex ? " (Mestre agora)" : ""), "", "🏟️ Você caiu na casa de bônus! Quem você desafia?"));
+    else bonusMestreCandidatos(e).forEach((i) => add("bonusMestre", [i], "🎙️ " + nome(i) + (i === mestreIndex ? " (Mestre agora)" : ""), "", "🎙️ E quem vai ser o Mestre do duelo?"));
   }
   // 1.7.10.5 (pedido do JF): quem tem a ficha de palpite "rouba" a tentativa no próprio aparelho
   const meuIdx = jogadorIdxPorId(jid), minhaChave = palpiteKeyOf(meuIdx);
@@ -23829,15 +24075,17 @@ function redeOpcoes(jid) {
     });
   }
   if (ehMestre) {
-    if (cardState === "none") add("sacarCarta", [], "🃏 Puxar carta", "ok");
+    // 1.7.10.6 (JF, partida com a galera de 11 a 13 anos): o próximo passo do Mestre é um botão grande que pisca
+    // ("cta"), pra quem não viu o tutorial bater o olho e saber onde tocar
+    if (cardState === "none") add("sacarCarta", [], "🃏 Puxar a próxima carta", "cta", "👆 Sua vez de Mestre");
     if (cardState === "revealed" && pendingIndex === null && currentCard) {
       const ped = pedidoDicaAtual();
-      if (ped) add("escolherDica", [ped.idx], `👉 Abrir a dica ${ped.idx + 1} (pedida por ${nome(jogadorIdxPorId(ped.por))})`, "ok");
+      if (ped) add("escolherDica", [ped.idx], `👉 Abrir a dica ${ped.idx + 1} (pedida por ${nome(jogadorIdxPorId(ped.por))})`, "cta");
     }
     // 1.7.10.1: o Mestre no celular gira a roleta (todos veem) e, com ela parada, mostra a carta
     if (cardState === "hidden") {
-      if (roletaCarta !== currentCard) add("roletaCategoria", [], "↻ Virar carta", "ok");
-      else if (roletaPousou) add("virarCarta", [], "✓ Falei! Mostrar a carta", "ok");
+      if (roletaCarta !== currentCard) add("roletaCategoria", [], "🎰 Virar a carta (sorteia a categoria)", "cta", "👆 Toque pra começar a carta");
+      else if (roletaPousou) add("virarCarta", [], "✓ Já falei a categoria! Mostrar a carta", "cta", "🗣️ Fale a categoria em voz alta e toque aqui");
     }
     if (cardState === "revealed" && pendingIndex !== null && currentCard) {
       const item = currentCard.clues[pendingIndex], txt = String(item.text || "").toLowerCase();
@@ -24063,6 +24311,7 @@ function redeHostVista() {
   const daVez = eus.find((p) => jogadorIdDe(responderIndex) === p.id);
   const vez = !!daVez;
   let h = `<div class="rede-eu">${eus.length ? `Neste aparelho: <b>${eus.map(nome).join("</b> e <b>")}</b>${vez ? ` · 👉 vez de ${nome(daVez)}` : ""}` : "Este aparelho é a mesa"}</div>`;
+  if (starterChosen && !gameEnded) h += redePapelHtml({ mestre: false, vez });
   h += `<div class="rede-segredo">🔒 A carta e a resposta estão no aparelho de <b>${mestre ? nome(mestre) : "quem é o Mestre"}</b> (Mestre da vez).</div>`;
   if (vez && cardState === "revealed" && pendingIndex === null && !pausedAt)
     h += `<div class="rede-rot">👉 Sua vez: toque no número (ou fale) e o Mestre abre a dica.</div>`; // 1.7.9.6: só o Mestre abre
@@ -24573,6 +24822,8 @@ function redeConvidadoTiques() {
     rede.avisoSumiu = aviso;
     redeConvidadoDesenhar();
   }
+  const as = document.getElementById("redeAssumeSeg");
+  if (as) as.textContent = String(Math.max(0, Math.ceil((rede.ultimoHost + REDE_HOST_SUMIU_MS - Date.now()) / 1000)));
   const r = rede.retrato;
   const s = (ate) => Math.max(0, Math.ceil((ate - redeAgora()) / 1000));
   const iv = document.getElementById("redeIntervaloSeg");
@@ -24589,7 +24840,10 @@ function redeConvidadoDesenhar() {
   if (rede.assumindo) conexao = `<div class="rede-conexao">👑 O host caiu: este aparelho está assumindo a sala…</div>`;
   else if (rede.avisoSumiu && rede.retrato) {
     const suc = rede.retrato.sucessor && rede.retrato.jogadores.find((j) => j.id === rede.retrato.sucessor);
-    conexao = `<div class="rede-conexao">🔌 Sem notícia do host…${suc ? ` Se ele não voltar, ${escapeHtml(suc.nome)} assume a sala.` : ""}</div>`;
+    // 1.7.10.6 (relato do JF: o dispositivo dele descarregou e a mesa não sabia o que esperar): contagem de quando o
+    // sucessor assume, pra ninguém fechar a página antes
+    const seg = Math.max(0, Math.ceil((rede.ultimoHost + REDE_HOST_SUMIU_MS - Date.now()) / 1000));
+    conexao = `<div class="rede-conexao">🔌 Sem notícia do host…${suc ? ` Se ele não voltar, <b>${suc.id === rede.eu ? "este dispositivo" : escapeHtml(suc.nome)}</b> assume a sala em <b id="redeAssumeSeg">${seg}</b> s. Não feche a página!` : ""}</div>`;
   }
   const selo = rede.estado === "dentro" && rede.via && rede.via !== "local" ? `<span class="rede-selo">${rede.via === "ponte" ? "🌉 pela ponte" : "📶 direta"}${Number.isFinite(rede.ms) ? " · " + Math.round(rede.ms) + " ms" : ""}</span>` : "";
   const sala = `<div class="rede-sala">🌐 Sala <b>${rede.sala}</b>${selo}</div>${conexao}`;
@@ -24734,10 +24988,10 @@ function redeMestreCartaMontar(box) {
       if (rede.dicaForcar != null && (!trava || abertas.has(rede.dicaForcar) || rede.dicaForcarRev !== r.revisao)) rede.dicaForcar = null;
       for (let i = 0; i < c.totalDicas; i++) {
         const travada = trava && !abertas.has(i) && !(ped && ped.pos === i);
-        grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}${ped && ped.pos === i ? " pedida" : ""}${travada ? " travada" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : travada ? ' title="Segure pra abrir sem pedido"' : ""}>${i + 1}</button>`;
+        grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}${ped && ped.pos === i ? " pedida" : ""}${travada ? " travada" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : travada ? ' title="Toque pra abrir sem pedido"' : ""}>${i + 1}</button>`;
       }
       const forcar = rede.dicaForcar != null ? `<div class="dica-forcar">Abrir a dica <b>${rede.dicaForcar + 1}</b> sem pedido? <button type="button" class="rede-btn rede-ok" id="redeForcarSim">Abrir</button><button type="button" class="rede-btn" id="redeForcarNao">Cancelar</button></div>` : "";
-      const rotulo = trava && !ped ? `👉 ${nome(r.vezId)} escolhe a dica no aparelho dele (${c.totalDicas - c.abertas.length} restantes). Travou? Segure um número.` : `${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)`;
+      const rotulo = trava && !ped ? `👉 ${nome(r.vezId)} escolhe a dica no aparelho dele (${c.totalDicas - c.abertas.length} restantes). Travou? Toque num número pra abrir sem pedido.` : `${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)`;
       controles = `${ped ? `<div class="pedido-dica">👉 ${nome(ped.por)} pediu a dica <b>${ped.pos + 1}</b>. Toque nela pra abrir.</div>` : ""}${forcar}<div class="pick-label">${rotulo}</div><div class="number-grid">${grade}</div>`;
     }
     h = `<div class="card rede-carta-mestre" style="--card-glow:${cor}">
@@ -24937,11 +25191,19 @@ function redePedirEntrada(perfil) {
   redeConvidadoDesenhar();
   return true;
 }
+// 1.7.10.6 (JF: "qualquer um que bata o olho tem que entender"): faixa grande com o papel de quem está neste
+// dispositivo agora: Mestre ou na vez (quem não está em nenhum dos dois não ganha faixa, só acompanha a T2)
+function redePapelHtml(papel) {
+  if (papel.mestre) return `<div class="rede-papel rp-mestre" role="status">🎙️ VOCÊ É O MESTRE<small>Você vê a carta, lê a dica que pedirem e diz se acertou.</small></div>`;
+  if (papel.vez) return `<div class="rede-papel rp-vez" role="status">👉 É A SUA VEZ!<small>Escolha um número de dica, ouça o Mestre e tente adivinhar.</small></div>`;
+  return "";
+}
 function redeBotoesHtml() {
   const r = rede.retrato, eu = r.jogadores.find((j) => j.id === rede.eu);
   const papel = redeMeuPapel();
   let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 sua vez" : ""}</div>`;
   if (r.fim) return h;
+  if (!r.intervalo && r.iniciada) h += redePapelHtml(papel);
   if (r.intervalo) {
     // 1.7.9.11: o placar do intervalo no celular de cada um (Pontos e Joias; o tabuleiro está logo abaixo)
     // 1.7.10.5.6 (pedido do JF): cara de lobby, com o resumo da partida e as cartas que já foram
@@ -30034,6 +30296,11 @@ function caosSpeechText(msg, pausa) {
     .replace(/\b[Oo]\(A\)\s*/g, "")
     .replace(/\((a|as|o|os)\)/gi, "")
     .replace(/[\p{Extended_Pictographic}\uFE0F\u200D\u25C6]/gu, "")
+    // 1.7.10.6 (relato do JF: "Jhennyfer" saía "Guenifer"): nome com "Jh" no começo é J em português, e risada
+    // grudada no fim do nick ("Jhenykkk") não entra no nome
+    .replace(/([a-zà-ú]{2,})k{3,}\b/gi, "$1")
+    .replace(/\bJh(?=[aeiouyà-ú])/g, "J")
+    .replace(/\bJH(?=[AEIOUYÀ-Ú])/g, "J")
     // 1.7.10.3.1 (feedback do JF: risada engasgada): em português o H é mudo, então "Hahaha" saía "aaa"
     .replace(/\b(?:k{3,}|(?:ha){2,}h?|(?:há){2,}|(?:rs){2,})\b/gi, "rá rá rá")
     .replace(/\b(?:he){2,}\b/gi, "rê rê")
@@ -30168,7 +30435,7 @@ function caosFalarAparelho(partes, jeitos, onEnd, onPedaco, corteV, voice) {
    Com a voz "automática" e internet, cada pedaço da fala vem do servidor da sala (POST /voz → MP3 de uma voz
    brasileira do Azure) e toca pelo mesmo áudio dos efeitos (WebAudio, já destravado no primeiro toque).
    Os pedaços são pedidos juntos e tocam em ordem; a mesma fala fica guardada no aparelho (e no servidor).
-   Sem internet, servidor sem a voz configurada, teto do mês, ou o 1º pedaço demorando mais de 2,5 s: a fala
+   Sem internet, servidor sem a voz configurada, teto do mês, ou o 1º pedaço demorando mais de 4 s: a fala
    sai pela voz do aparelho, como antes. Voz escolhida na lista (do aparelho) também usa o aparelho. */
 const vozNuvem = { ok: null, quando: 0, token: 0, fonte: null, cache: new Map() };
 function vozNuvemUrl(c) {
@@ -30181,7 +30448,9 @@ function vozNuvemUrl(c) {
 function vozNuvemConferir() {
   const url = vozNuvemUrl("/voz/estado");
   if (!url || (typeof navigator !== "undefined" && navigator.onLine === false)) return;
-  if (vozNuvem.ok !== null && Date.now() - vozNuvem.quando < 10 * 60e3) return;
+  // 1.7.10.6 (relato do JF: no tablet às vezes saía a voz robótica antiga): uma falha passageira prendia o
+  // dispositivo 10 min na voz do aparelho; agora "deu certo" vale 10 min e "falhou" é conferido de novo em 1 min
+  if (vozNuvem.ok !== null && Date.now() - vozNuvem.quando < (vozNuvem.ok ? 10 * 60e3 : 60e3)) return;
   vozNuvem.quando = Date.now();
   fetch(url)
     .then((r) => (r.ok ? r.json() : null))
@@ -30189,7 +30458,9 @@ function vozNuvemConferir() {
     .catch(() => (vozNuvem.ok = false));
 }
 function vozNuvemUsa() {
-  if (caosVoiceName || vozNuvem.ok !== true) return false;
+  if (vozNuvem.ok !== true) vozNuvemConferir();
+  // ainda sem resposta do servidor: tenta a voz nova mesmo assim (se falhar, cai na do aparelho na hora)
+  if (caosVoiceName || vozNuvem.ok === false || !vozNuvemUrl("/voz")) return false;
   if (typeof navigator !== "undefined" && navigator.onLine === false) return false;
   try {
     return !!audioContexto();
@@ -30237,7 +30508,8 @@ function caosFalarNuvem(partes, jeitos, onEnd, onPedaco, corteV) {
     vozNuvem.token++;
     caosFalarAparelho(partes.slice(desde).map(caosSemPausa), jeitos.slice(desde), onEnd, onPedaco ? (pi, c) => onPedaco(pi + desde, c) : null, corteV >= desde ? corteV - desde : -1);
   };
-  const espera = setTimeout(() => !comecou && plano(0), 2500);
+  // 1.7.10.6: 2,5 s era pouco pra rede de tablet (caía na voz robótica); 4 s ainda é rápido pra mesa
+  const espera = setTimeout(() => !comecou && plano(0), 4000);
   const tocar = (i) => {
     if (token !== vozNuvem.token) return;
     if (i >= partes.length) {
@@ -39843,6 +40115,7 @@ function saveGameState() {
               bonusMestreIdx: currentCard.bonusMestreIdx,
               bonusLanderPlayerIdx: currentCard.bonusLanderPlayerIdx,
               bonusOpponentPlayerIdx: currentCard.bonusOpponentPlayerIdx,
+              bonusReaderIdx: Number.isInteger(currentCard.bonusReaderIdx) ? currentCard.bonusReaderIdx : null,
             }
           : null,
       cardState,
@@ -40102,7 +40375,7 @@ function sanitizeLoadedState(s) {
       (e) =>
         e && entityOk(e.landerIdx) && (e.opponentIdx === null || e.opponentIdx === void 0 || entityOk(e.opponentIdx)),
     )
-    .map((e) => ({ landerIdx: e.landerIdx, opponentIdx: e.opponentIdx === void 0 ? null : e.opponentIdx }));
+    .map((e) => ({ landerIdx: e.landerIdx, opponentIdx: e.opponentIdx === void 0 ? null : e.opponentIdx, readerIdx: idxOk(e.readerIdx) ? e.readerIdx : null }));
   if (s.currentCardBonusData && typeof s.currentCardBonusData === "object") {
     const b = s.currentCardBonusData;
     if (
@@ -40266,6 +40539,7 @@ function loadGameState() {
         currentCard.bonusMestreIdx = state.currentCardBonusData.bonusMestreIdx;
         currentCard.bonusLanderPlayerIdx = state.currentCardBonusData.bonusLanderPlayerIdx;
         currentCard.bonusOpponentPlayerIdx = state.currentCardBonusData.bonusOpponentPlayerIdx;
+        currentCard.bonusReaderIdx = Number.isInteger(state.currentCardBonusData.bonusReaderIdx) && players[state.currentCardBonusData.bonusReaderIdx] ? state.currentCardBonusData.bonusReaderIdx : null;
       } else if (currentCard) {
         currentCard.isBonus = false;
       }

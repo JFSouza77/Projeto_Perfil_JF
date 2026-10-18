@@ -713,7 +713,9 @@ body.claro .lp-bloco {
 }
 .jf-ANIMAL {
   clip-path: polygon(50% 2%, 98% 94%, 2% 94%);
-  padding-top: 28%;
+  /* 1.7.10.6 (print do JF): era padding-top: 28%, e % de padding vem da largura do PAI: no placar das joias
+     (linha larga) a joia virava uma torre. Em em, a letra desce pro meio do triângulo sem esticar nada. */
+  padding-top: 0.55em;
   box-sizing: border-box;
 }
 .jf-vazia {

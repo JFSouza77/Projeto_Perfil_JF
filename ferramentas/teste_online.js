@@ -151,7 +151,7 @@ const PASSO_CELULAR = () => {
   const tem = (a) => ops.findIndex((o) => o.a === a);
   const sorte = Math.random();
   const escolher = () => {
-    for (const a of ["continuar", "bonusAdversario", "sacarCarta", "roletaCategoria", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"]) if (tem(a) >= 0) return ops[tem(a)];
+    for (const a of ["continuar", "bonusAdversario", "bonusMestre", "sacarCarta", "roletaCategoria", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"]) if (tem(a) >= 0) return ops[tem(a)];
     // 1.7.10.6 · Corrida: compra na lojinha, usa item, bate na mesa, julga quem bateu, passa a dica
     if (tem("corridaComprar") >= 0 && sorte < 0.5) return ops[tem("corridaComprar")];
     if (tem("corridaUsar") >= 0 && sorte < 0.3) return ops[tem("corridaUsar")];
@@ -224,7 +224,7 @@ const PASSO_HOST = () => {
       }
     }
     let o = null;
-    for (const a of ["continuar", "bonusAdversario", "sacarCarta", "roletaCategoria", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"])
+    for (const a of ["continuar", "bonusAdversario", "bonusMestre", "sacarCarta", "roletaCategoria", "virarCarta", "expressAlvo", "moverJogador", "moverEquipe", "especialSeguir", "especialPerdeVez", "expressPular", "expressInverter", "expressMirar"])
       if (!o && tem(a) >= 0) o = ops[tem(a)];
     for (const [a, chance] of [["corridaComprar", 0.5], ["corridaUsar", 0.3], ["palpitarAgora", 0.5], ["palpiteAcertou", 0.4], ["palpiteErrou", 1], ["corridaProxima", 0.3]])
       if (!o && tem(a) >= 0 && sorte < chance) o = ops[tem(a)];

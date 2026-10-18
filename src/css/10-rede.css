@@ -628,10 +628,12 @@ body.claro .telao {
   color: var(--t-sub);
   font-variant-numeric: tabular-nums;
 }
+/* 1.7.10.6 (JF, partida online): na ordem que a mesa precisa saber: 1º quem é o Mestre, 2º de quem é a vez,
+   3º a categoria da carta. Mestre e vez em destaque, cada um com a cor da pessoa. */
 .telao-vez {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-areas: "vez vez" "mestre relogio";
+  grid-template-areas: "mestre mestre" "vez vez" "cat relogio";
   gap: 10px;
 }
 .telao-vez > div,
@@ -667,6 +669,17 @@ body.claro .telao {
 }
 .telao-vez .tv-mestre {
   grid-area: mestre;
+  background: color-mix(in srgb, var(--pc) 24%, var(--t-sec));
+  border: 3px solid var(--pc);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--pc) 26%, transparent);
+}
+.telao-vez .tv-mestre b {
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
+}
+.telao-vez .tv-cat {
+  grid-area: cat;
+  background: color-mix(in srgb, var(--cat) 22%, var(--t-sec));
+  border: 2px solid color-mix(in srgb, var(--cat) 70%, transparent);
 }
 .telao-vez .tv-relogio {
   grid-area: relogio;
@@ -685,8 +698,8 @@ body.claro #telaoRelogio.tv-pouco {
 }
 @media (min-width: 760px) {
   .telao-vez {
-    grid-template-columns: 2fr 1.4fr 1fr;
-    grid-template-areas: "vez mestre relogio";
+    grid-template-columns: 1.6fr 1.6fr 1.2fr 1fr;
+    grid-template-areas: "mestre vez cat relogio";
   }
 }
 /* a carta: tingida pela cor da categoria */
@@ -1222,4 +1235,113 @@ body.claro .mc-desfib {
 }
 .mc-vitrine li.mc-caro {
   opacity: 0.5;
+}
+
+/* 1.7.10.6 (JF, partida online com a galera de 11 a 13 anos): o próximo passo de quem está com a vez é um botão
+   grande, amarelo e pulsando ("cta"), pra ninguém ficar perdido sem ter visto o tutorial */
+.rede-btn.rede-cta,
+.cta-pulsa {
+  flex: 1 1 100%;
+  min-height: 60px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  border: 3px solid #fde68a;
+  background: linear-gradient(135deg, #f59e0b, #facc15);
+  color: #1c1917;
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  box-shadow: 0 0 0 0 #facc15aa, 0 8px 20px #0007;
+  animation: ctaPulsa 1.6s ease-in-out infinite;
+}
+.card .flip-btn.cta-pulsa {
+  width: 100%;
+  border: 3px solid #fde68a !important;
+  background: linear-gradient(135deg, #f59e0b, #facc15) !important;
+  color: #1c1917 !important;
+  text-shadow: none;
+}
+@keyframes ctaPulsa {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 #facc15aa, 0 8px 20px #0007;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 10px #facc1500, 0 8px 20px #0007;
+    transform: scale(1.025);
+  }
+}
+html.acess-calmo .rede-btn.rede-cta,
+html.acess-calmo .cta-pulsa,
+body.batata-mode .rede-btn.rede-cta,
+body.batata-mode .cta-pulsa {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rede-btn.rede-cta,
+  .cta-pulsa {
+    animation: none;
+  }
+}
+/* 1.7.10.6: faixa do duelo de bônus no telão de todo dispositivo */
+.telao-duelo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 3px solid #fbbf24;
+  background: linear-gradient(135deg, #78350fcc, #b45309cc);
+  color: #fff;
+  box-shadow: 0 6px 18px #fbbf2433;
+}
+.telao-duelo .td-tit {
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+.telao-duelo .td-txt {
+  font-size: 1rem;
+  line-height: 1.35;
+}
+/* 1.7.10.6: faixa do papel de quem está no dispositivo (Mestre / sua vez) */
+.rede-papel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 8px 0;
+  padding: 12px 14px;
+  border-radius: 16px;
+  font-size: 1.3rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  text-align: center;
+  color: #fff;
+}
+.rede-papel small {
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  opacity: 0.95;
+}
+.rede-papel.rp-mestre {
+  background: linear-gradient(135deg, #6d28d9, #9333ea);
+  border: 3px solid #c4b5fd;
+}
+.rede-papel.rp-vez {
+  background: linear-gradient(135deg, #b45309, #f59e0b);
+  border: 3px solid #fde68a;
+  animation: ctaPulsa 1.6s ease-in-out infinite;
+}
+html.acess-calmo .rede-papel.rp-vez,
+body.batata-mode .rede-papel.rp-vez {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rede-papel.rp-vez {
+    animation: none;
+  }
 }

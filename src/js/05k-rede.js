@@ -1540,8 +1540,16 @@ function dicaPodeAbrir(idx, forcar) {
   const ped = pedidoDicaAtual();
   return !!ped && ped.idx === idx;
 }
-// Segurar um número travado (650 ms) pede a confirmação do "Abrir sem pedido"
+// Tocar (ou segurar) um número travado pede a confirmação do "Abrir sem pedido".
+// 1.7.10.6 (relato do JF: a Mestra tocava no número e nada acontecia, "travou"): antes só o segurar (650 ms)
+// funcionava e ninguém sabia; o toque simples agora também abre a confirmação.
 function dicaSegurarParaForcar(grid, aoSegurar) {
+  grid.addEventListener("click", (e) => {
+    const b = e.target.closest && e.target.closest(".number-btn.travada");
+    if (!b) return;
+    if (grid.dataset.segurou) return void delete grid.dataset.segurou; // o segurar já pediu
+    aoSegurar(parseInt(b.dataset.idx !== undefined ? b.dataset.idx : b.dataset.dica));
+  });
   let t = null, alvo = null;
   const soltar = () => {
     clearTimeout(t);
@@ -1584,7 +1592,7 @@ function redePodeComandar(acao, jid, dados) {
   if (acao === "pedirDica") return !ehMestre && jogadorIdDe(responderIndex) === jid;
   if (acao === "palpitarAgora") return !ehMestre && !!dados && dados[0] === palpiteKeyOf(jogadorIdxPorId(jid));
   if (acao === "corridaComprar" || acao === "corridaUsar") return !!dados && dados[1] === jid; // cada um gasta o seu
-  if (acao === "bonusAdversario") {
+  if (acao === "bonusAdversario" || acao === "bonusMestre") {
     const e = pendingBonusQueue && pendingBonusQueue[0];
     if (!e) return false;
     const p = players[jogadorIdxPorId(jid)];
@@ -1631,7 +1639,8 @@ function redeOpcoes(jid) {
     const e = pendingBonusQueue[0];
     if (CURRENT_FORMAT === "equipe")
       teamOrder.filter((id) => id !== e.landerIdx).forEach((id) => add("bonusAdversario", [id], `${TEAM_INFO[id].emoji} Equipe ${TEAM_INFO[id].label}`, "", "🏟️ Contra quem é o duelo?"));
-    else players.forEach((p, i) => i !== e.landerIdx && add("bonusAdversario", [i], nome(i), "", "🏟️ Contra quem é o duelo?"));
+    else if (bonusFase() === "adversario") players.forEach((p, i) => i !== e.landerIdx && add("bonusAdversario", [i], nome(i) + (i === mestreIndex ? " (Mestre agora)" : ""), "", "🏟️ Você caiu na casa de bônus! Quem você desafia?"));
+    else bonusMestreCandidatos(e).forEach((i) => add("bonusMestre", [i], "🎙️ " + nome(i) + (i === mestreIndex ? " (Mestre agora)" : ""), "", "🎙️ E quem vai ser o Mestre do duelo?"));
   }
   // 1.7.10.5 (pedido do JF): quem tem a ficha de palpite "rouba" a tentativa no próprio aparelho
   const meuIdx = jogadorIdxPorId(jid), minhaChave = palpiteKeyOf(meuIdx);
@@ -1658,15 +1667,17 @@ function redeOpcoes(jid) {
     });
   }
   if (ehMestre) {
-    if (cardState === "none") add("sacarCarta", [], "🃏 Puxar carta", "ok");
+    // 1.7.10.6 (JF, partida com a galera de 11 a 13 anos): o próximo passo do Mestre é um botão grande que pisca
+    // ("cta"), pra quem não viu o tutorial bater o olho e saber onde tocar
+    if (cardState === "none") add("sacarCarta", [], "🃏 Puxar a próxima carta", "cta", "👆 Sua vez de Mestre");
     if (cardState === "revealed" && pendingIndex === null && currentCard) {
       const ped = pedidoDicaAtual();
-      if (ped) add("escolherDica", [ped.idx], `👉 Abrir a dica ${ped.idx + 1} (pedida por ${nome(jogadorIdxPorId(ped.por))})`, "ok");
+      if (ped) add("escolherDica", [ped.idx], `👉 Abrir a dica ${ped.idx + 1} (pedida por ${nome(jogadorIdxPorId(ped.por))})`, "cta");
     }
     // 1.7.10.1: o Mestre no celular gira a roleta (todos veem) e, com ela parada, mostra a carta
     if (cardState === "hidden") {
-      if (roletaCarta !== currentCard) add("roletaCategoria", [], "↻ Virar carta", "ok");
-      else if (roletaPousou) add("virarCarta", [], "✓ Falei! Mostrar a carta", "ok");
+      if (roletaCarta !== currentCard) add("roletaCategoria", [], "🎰 Virar a carta (sorteia a categoria)", "cta", "👆 Toque pra começar a carta");
+      else if (roletaPousou) add("virarCarta", [], "✓ Já falei a categoria! Mostrar a carta", "cta", "🗣️ Fale a categoria em voz alta e toque aqui");
     }
     if (cardState === "revealed" && pendingIndex !== null && currentCard) {
       const item = currentCard.clues[pendingIndex], txt = String(item.text || "").toLowerCase();
@@ -1892,6 +1903,7 @@ function redeHostVista() {
   const daVez = eus.find((p) => jogadorIdDe(responderIndex) === p.id);
   const vez = !!daVez;
   let h = `<div class="rede-eu">${eus.length ? `Neste aparelho: <b>${eus.map(nome).join("</b> e <b>")}</b>${vez ? ` · 👉 vez de ${nome(daVez)}` : ""}` : "Este aparelho é a mesa"}</div>`;
+  if (starterChosen && !gameEnded) h += redePapelHtml({ mestre: false, vez });
   h += `<div class="rede-segredo">🔒 A carta e a resposta estão no aparelho de <b>${mestre ? nome(mestre) : "quem é o Mestre"}</b> (Mestre da vez).</div>`;
   if (vez && cardState === "revealed" && pendingIndex === null && !pausedAt)
     h += `<div class="rede-rot">👉 Sua vez: toque no número (ou fale) e o Mestre abre a dica.</div>`; // 1.7.9.6: só o Mestre abre
@@ -2402,6 +2414,8 @@ function redeConvidadoTiques() {
     rede.avisoSumiu = aviso;
     redeConvidadoDesenhar();
   }
+  const as = document.getElementById("redeAssumeSeg");
+  if (as) as.textContent = String(Math.max(0, Math.ceil((rede.ultimoHost + REDE_HOST_SUMIU_MS - Date.now()) / 1000)));
   const r = rede.retrato;
   const s = (ate) => Math.max(0, Math.ceil((ate - redeAgora()) / 1000));
   const iv = document.getElementById("redeIntervaloSeg");
@@ -2418,7 +2432,10 @@ function redeConvidadoDesenhar() {
   if (rede.assumindo) conexao = `<div class="rede-conexao">👑 O host caiu: este aparelho está assumindo a sala…</div>`;
   else if (rede.avisoSumiu && rede.retrato) {
     const suc = rede.retrato.sucessor && rede.retrato.jogadores.find((j) => j.id === rede.retrato.sucessor);
-    conexao = `<div class="rede-conexao">🔌 Sem notícia do host…${suc ? ` Se ele não voltar, ${escapeHtml(suc.nome)} assume a sala.` : ""}</div>`;
+    // 1.7.10.6 (relato do JF: o dispositivo dele descarregou e a mesa não sabia o que esperar): contagem de quando o
+    // sucessor assume, pra ninguém fechar a página antes
+    const seg = Math.max(0, Math.ceil((rede.ultimoHost + REDE_HOST_SUMIU_MS - Date.now()) / 1000));
+    conexao = `<div class="rede-conexao">🔌 Sem notícia do host…${suc ? ` Se ele não voltar, <b>${suc.id === rede.eu ? "este dispositivo" : escapeHtml(suc.nome)}</b> assume a sala em <b id="redeAssumeSeg">${seg}</b> s. Não feche a página!` : ""}</div>`;
   }
   const selo = rede.estado === "dentro" && rede.via && rede.via !== "local" ? `<span class="rede-selo">${rede.via === "ponte" ? "🌉 pela ponte" : "📶 direta"}${Number.isFinite(rede.ms) ? " · " + Math.round(rede.ms) + " ms" : ""}</span>` : "";
   const sala = `<div class="rede-sala">🌐 Sala <b>${rede.sala}</b>${selo}</div>${conexao}`;
@@ -2563,10 +2580,10 @@ function redeMestreCartaMontar(box) {
       if (rede.dicaForcar != null && (!trava || abertas.has(rede.dicaForcar) || rede.dicaForcarRev !== r.revisao)) rede.dicaForcar = null;
       for (let i = 0; i < c.totalDicas; i++) {
         const travada = trava && !abertas.has(i) && !(ped && ped.pos === i);
-        grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}${ped && ped.pos === i ? " pedida" : ""}${travada ? " travada" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : travada ? ' title="Segure pra abrir sem pedido"' : ""}>${i + 1}</button>`;
+        grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}${ped && ped.pos === i ? " pedida" : ""}${travada ? " travada" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : travada ? ' title="Toque pra abrir sem pedido"' : ""}>${i + 1}</button>`;
       }
       const forcar = rede.dicaForcar != null ? `<div class="dica-forcar">Abrir a dica <b>${rede.dicaForcar + 1}</b> sem pedido? <button type="button" class="rede-btn rede-ok" id="redeForcarSim">Abrir</button><button type="button" class="rede-btn" id="redeForcarNao">Cancelar</button></div>` : "";
-      const rotulo = trava && !ped ? `👉 ${nome(r.vezId)} escolhe a dica no aparelho dele (${c.totalDicas - c.abertas.length} restantes). Travou? Segure um número.` : `${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)`;
+      const rotulo = trava && !ped ? `👉 ${nome(r.vezId)} escolhe a dica no aparelho dele (${c.totalDicas - c.abertas.length} restantes). Travou? Toque num número pra abrir sem pedido.` : `${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)`;
       controles = `${ped ? `<div class="pedido-dica">👉 ${nome(ped.por)} pediu a dica <b>${ped.pos + 1}</b>. Toque nela pra abrir.</div>` : ""}${forcar}<div class="pick-label">${rotulo}</div><div class="number-grid">${grade}</div>`;
     }
     h = `<div class="card rede-carta-mestre" style="--card-glow:${cor}">
@@ -2766,11 +2783,19 @@ function redePedirEntrada(perfil) {
   redeConvidadoDesenhar();
   return true;
 }
+// 1.7.10.6 (JF: "qualquer um que bata o olho tem que entender"): faixa grande com o papel de quem está neste
+// dispositivo agora: Mestre ou na vez (quem não está em nenhum dos dois não ganha faixa, só acompanha a T2)
+function redePapelHtml(papel) {
+  if (papel.mestre) return `<div class="rede-papel rp-mestre" role="status">🎙️ VOCÊ É O MESTRE<small>Você vê a carta, lê a dica que pedirem e diz se acertou.</small></div>`;
+  if (papel.vez) return `<div class="rede-papel rp-vez" role="status">👉 É A SUA VEZ!<small>Escolha um número de dica, ouça o Mestre e tente adivinhar.</small></div>`;
+  return "";
+}
 function redeBotoesHtml() {
   const r = rede.retrato, eu = r.jogadores.find((j) => j.id === rede.eu);
   const papel = redeMeuPapel();
   let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 sua vez" : ""}</div>`;
   if (r.fim) return h;
+  if (!r.intervalo && r.iniciada) h += redePapelHtml(papel);
   if (r.intervalo) {
     // 1.7.9.11: o placar do intervalo no celular de cada um (Pontos e Joias; o tabuleiro está logo abaixo)
     // 1.7.10.5.6 (pedido do JF): cara de lobby, com o resumo da partida e as cartas que já foram

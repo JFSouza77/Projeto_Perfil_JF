@@ -55,6 +55,15 @@ function setupBonusDuelTurn() {
     b = currentCard.bonusOpponentPlayerIdx;
   if (!players[a] || !players[b]) return;
   responderIndex = a;
+  // 1.7.10.6 (pedido do JF): quem caiu na casa escolhe também o Mestre do duelo (fora dos duelistas)
+  const esc = currentCard.bonusReaderIdx;
+  if (CURRENT_FORMAT !== "equipe" && Number.isInteger(esc) && players[esc] && esc !== a && esc !== b) {
+    if (esc !== mestreIndex) {
+      bonusOrigMestreIdx = mestreIndex;
+      mestreIndex = esc;
+    }
+    return;
+  }
   if (mestreIndex !== a && mestreIndex !== b) return;
   let reader = null;
   if (CURRENT_FORMAT === "equipe") {
@@ -372,7 +381,7 @@ function discardAndDraw() {
   stats.totalDiscarded++;
   caosCardPrediction = null;
   if (currentCard && currentCard.isBonus) {
-    pendingBonusQueue.unshift({ landerIdx: currentCard.bonusLandedByIdx, opponentIdx: currentCard.bonusMestreIdx });
+    pendingBonusQueue.unshift({ landerIdx: currentCard.bonusLandedByIdx, opponentIdx: currentCard.bonusMestreIdx, readerIdx: currentCard.bonusReaderIdx });
   }
   if (deck.length === 0) {
     currentCard = null;
@@ -450,7 +459,9 @@ function drawHidden() {
       CURRENT_FORMAT === "equipe" ? duelRepresentante(entry.landerIdx) : entry.landerIdx;
     currentCard.bonusOpponentPlayerIdx =
       CURRENT_FORMAT === "equipe" ? duelRepresentante(entry.opponentIdx) : entry.opponentIdx;
+    currentCard.bonusReaderIdx = Number.isInteger(entry.readerIdx) ? entry.readerIdx : null;
     setupBonusDuelTurn();
+    duelAnunciar();
   } else {
     currentCard.isBonus = false;
   }
@@ -478,16 +489,61 @@ function drawHidden() {
 }
 function beginBonusChoice() {
   cardState = "bonusChoice";
+  // 1.7.10.6 (pedido do JF): a mesa toda fica sabendo do duelo, não só quem caiu na casa (o telão de todo
+  // dispositivo mostra a faixa do duelo pelo retrato; aqui vai o aviso falado/escrito)
+  const e = pendingBonusQueue[0];
+  const quem = e ? entityDisplay(e.landerIdx).name : "";
+  playSfx("agonia");
+  fxFloat("🏟️ Duelo de bônus!", "#fbbf24");
+  showToastMessage(`🏟️ DUELO DE BÔNUS! ${quem} parou numa casa de bônus e vai escolher quem desafia${CURRENT_FORMAT === "equipe" ? "" : " e quem vai ser o Mestre"}. A carta vale em dobro!`, null, true, true);
   render();
   saveGameState();
   tabLobbyTalvez();
 }
+// 1.7.10.6: quem pode ser o Mestre do duelo (fora os dois duelistas)
+function bonusMestreCandidatos(e) {
+  if (!e || CURRENT_FORMAT === "equipe" || e.opponentIdx === null || e.opponentIdx === void 0) return [];
+  return players.map((p, i) => i).filter((i) => i !== e.landerIdx && i !== e.opponentIdx);
+}
+// Fase do duelo: "adversario" (escolhendo quem desafia), "mestre" (escolhendo o Mestre) ou null
+function bonusFase() {
+  if (cardState !== "bonusChoice" || !pendingBonusQueue[0]) return null;
+  const e = pendingBonusQueue[0];
+  return e.opponentIdx === null || e.opponentIdx === void 0 ? "adversario" : "mestre";
+}
 function chooseBonusOpponent(idx) {
-  if (cardState !== "bonusChoice" || pendingBonusQueue.length === 0) return;
+  if (bonusFase() !== "adversario") return;
   if (CURRENT_FORMAT !== "equipe" && !players[idx]) return;
   if (CURRENT_FORMAT === "equipe" && !teams[idx]) return;
-  pendingBonusQueue[0].opponentIdx = idx;
+  const e = pendingBonusQueue[0];
+  e.opponentIdx = idx;
+  const cands = bonusMestreCandidatos(e);
+  // com uma pessoa só de fora, ela é a Mestre (o aviso do duelo diz quem é); com 2+, quem caiu escolhe
+  if (cands.length >= 2) {
+    render();
+    saveGameState();
+    return;
+  }
+  e.readerIdx = cands.length ? cands[0] : null;
   drawHidden();
+}
+function chooseBonusMestre(idx) {
+  if (bonusFase() !== "mestre") return;
+  const e = pendingBonusQueue[0];
+  if (!bonusMestreCandidatos(e).includes(idx)) return;
+  e.readerIdx = idx;
+  drawHidden();
+}
+// O duelo começou: aviso pra mesa toda de quem duela e de quem é o Mestre
+function duelAnunciar() {
+  if (!currentCard || !currentCard.isBonus) return;
+  const n = (i) => (players[i] ? players[i].name : "?");
+  const a = currentCard.bonusLanderPlayerIdx, b = currentCard.bonusOpponentPlayerIdx;
+  const eq = CURRENT_FORMAT === "equipe";
+  const lados = eq
+    ? `Equipe ${entityDisplay(currentCard.bonusLandedByIdx).name} (${n(a)}) × Equipe ${entityDisplay(currentCard.bonusMestreIdx).name} (${n(b)})`
+    : `${n(a)} chamou ${n(b)} pra duelar`;
+  showToastMessage(`⚔️ ${lados}${eq ? "" : ` e ${n(mestreIndex)} pra ser o Mestre`}! Carta em dobro: ${n(a)} começa respondendo, e a vez alterna entre os dois.`, null, true, true);
 }
 function flipCard() {
   if (cardState !== "hidden") return;
@@ -2197,7 +2253,7 @@ function desistirCarta() {
     caosEmoNudge(-0.2, -0.4);
   } catch (e) {}
   if (currentCard.isBonus) {
-    pendingBonusQueue.unshift({ landerIdx: currentCard.bonusLandedByIdx, opponentIdx: currentCard.bonusMestreIdx });
+    pendingBonusQueue.unshift({ landerIdx: currentCard.bonusLandedByIdx, opponentIdx: currentCard.bonusMestreIdx, readerIdx: currentCard.bonusReaderIdx });
     if (deck.length === 0) {
       currentCard = null;
       cardState = "none";
@@ -2421,7 +2477,7 @@ function admDevolverCarta() {
   pausedCardRemaining = null;
   if (currentCard) {
     if (currentCard.isBonus && CURRENT_MODE !== "express")
-      pendingBonusQueue.unshift({ landerIdx: currentCard.bonusLandedByIdx, opponentIdx: currentCard.bonusMestreIdx });
+      pendingBonusQueue.unshift({ landerIdx: currentCard.bonusLandedByIdx, opponentIdx: currentCard.bonusMestreIdx, readerIdx: currentCard.bonusReaderIdx });
     devolverAoBaralho(cardsByAnswer.get(currentCard.answer) || currentCard);
   }
   restoreBonusReader();

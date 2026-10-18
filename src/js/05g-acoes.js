@@ -33,7 +33,8 @@ const ACOES = {
   // jogador e qualquer valor, a qualquer hora)
   moverJogador: { fn: "applySpecialMove", pode: (alvo, n) => acoesMovimentoValido(alvo, n) },
   moverEquipe: { fn: "applyTeamSpecialMove", pode: (eq, n) => acoesMovimentoEquipeValido(eq, n) },
-  bonusAdversario: { fn: "chooseBonusOpponent", pode: () => acoesEmJogo() && cardState === "bonusChoice" },
+  bonusAdversario: { fn: "chooseBonusOpponent", pode: () => acoesEmJogo() && bonusFase() === "adversario" },
+  bonusMestre: { fn: "chooseBonusMestre", pode: () => acoesEmJogo() && bonusFase() === "mestre" },
   // 1.7.9: a mesma regra da tela (até a 5ª dica, no máximo 2 seguidos); o "reembaralhar" saiu de vez
   descartarCarta: { fn: "discardAndDraw", pode: () => podeDescartarCarta() },
   // 1.7.9.10: a ação é a desistência de verdade (antes era só o pedido, e a confirmação da janela mudava
@@ -379,6 +380,7 @@ function retratoPartida(papel) {
     iniciada: starterChosen,
     fim: gameEnded,
     estadoCarta: cardState,
+    duelo: acoesDueloRetrato(), // 1.7.10.6: a faixa do duelo de bônus em todo dispositivo
     jogadores: players.map((p) => ({
       id: p.id,
       nome: p.name,
@@ -423,6 +425,21 @@ function retratoPartida(papel) {
       historico: cartasPartida.slice(-40),
     },
   };
+}
+
+// 1.7.10.6 (pedido do JF): o duelo de bônus pra mesa toda: quem caiu, contra quem, quem é o Mestre e a fase
+function acoesDueloRetrato() {
+  const id = (i) => (CURRENT_FORMAT === "equipe" ? null : jogadorIdDe(i));
+  const nomeEnt = (k) => (k === null || k === void 0 ? null : entityDisplay(k).name);
+  if (cardState === "bonusChoice" && pendingBonusQueue[0]) {
+    const e = pendingBonusQueue[0];
+    return { fase: bonusFase(), quem: nomeEnt(e.landerIdx), quemId: id(e.landerIdx), contra: nomeEnt(e.opponentIdx), equipe: CURRENT_FORMAT === "equipe" };
+  }
+  if (currentCard && currentCard.isBonus && cardState !== "none") {
+    const n = (i) => (players[i] ? players[i].name : null);
+    return { fase: "duelo", quem: n(currentCard.bonusLanderPlayerIdx), contra: n(currentCard.bonusOpponentPlayerIdx), mestre: n(mestreIndex), equipe: CURRENT_FORMAT === "equipe" };
+  }
+  return null;
 }
 
 /* --- Avisos de mudança (pro ensaio em duas abas da Parte 4 e, depois, pra rede) --- */
