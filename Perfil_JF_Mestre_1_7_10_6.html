@@ -11304,13 +11304,13 @@ const MC_PINATA_PALAVRAS = ["EU QUERO", "CAOS", "ME DA", "BOOM", "PINHATA", "AGO
    Balanceamento: na vitória por Tempo um acerto vale ~60–140 pontos, então item barato é aposta e item caro é
    seguro. "peso" = chance relativa de aparecer na vitrine. */
 const CORRIDA_LOJA = {
-  congelar: { ic: "⏸️", nome: "Pausa Dramática", preco: 30, peso: 3, desc: "o relógio geral para 15 s na próxima carta (vale pra mesa toda)" },
+  congelar: { ic: "⏸️", nome: "Pausa Dramática", preco: 30, peso: 3, max: 1, desc: "o relógio geral para 15 s na próxima carta (vale pra mesa toda)" },
   folego: { ic: "🌬️", nome: "Segundo Fôlego", preco: 25, peso: 3, desc: "+15 s em cada vez sua na próxima carta" },
   escudo: { ic: "🧯", nome: "Seguro do Relógio", preco: 40, peso: 2, desc: "se a próxima carta morrer, a mesa não perde 1 min" },
   corte: { ic: "🎟️", nome: "Passe Livre", preco: 15, peso: 3, desc: "guarda: pula a sua vez sem gastar dica e sem os −2 s" },
   desfib: { ic: "⚡", nome: "Choque de Tempo", preco: 30, peso: 2, desc: "guarda: +15 s no relógio da carta, na hora que quiser" },
   cofrinho: { ic: "🐷", nome: "Cofrinho", preco: 25, peso: 2, desc: "a sua próxima carta acertada vale +40 pontos (dura até você acertar)" },
-  ampulheta: { ic: "⏳", nome: "Ampulheta Extra", preco: 35, peso: 2, desc: "+30 s no relógio geral na hora (bom pra quem está atrás)" },
+  ampulheta: { ic: "⏳", nome: "Ampulheta Extra", preco: 35, peso: 1, max: 1, desc: "+30 s no relógio geral na hora (bom pra quem está atrás)" },
   ima: { ic: "🧲", nome: "Ímã de Pontos", preco: 20, peso: 2, desc: "se outro jogador acertar a próxima carta, você leva 20% do valor dela" },
 };
 const CORRIDA_VITRINE = 4;
@@ -29373,7 +29373,8 @@ function corridaLojaLigada() {
   return CURRENT_MODE === "corrida" && corridaVitoria === "tempo" && typeof salaOnlineAberta === "function" && salaOnlineAberta();
 }
 /* 1.7.10.6 (pedido do JF): vitrine sorteada (Corrida e Modo C.A.O.S.): n itens do catálogo (pelo peso), 1 a 3 de
-   cada, preço variando ±20% de 5 em 5 (mínimo 5). Devolve { estoque: { item: unidades }, precos: { item: preço } }. */
+   cada ("max" no catálogo limita: os itens que dão tempo saem 1 só, senão a partida esticava sem fim), preço
+   variando ±20% de 5 em 5 (mínimo 5). Devolve { estoque: { item: unidades }, precos: { item: preço } }. */
 function lojaVitrineSortear(catalogo, n) {
   const bolsa = Object.keys(catalogo).map((k) => ({ k, w: catalogo[k].peso || 1 }));
   const estoque = {},
@@ -29384,7 +29385,7 @@ function lojaVitrineSortear(catalogo, n) {
       j = 0;
     while (j < bolsa.length - 1 && r >= bolsa[j].w) r -= bolsa[j++].w;
     const k = bolsa.splice(j, 1)[0].k;
-    estoque[k] = 1 + Math.floor(sorteioRegra() * 3);
+    estoque[k] = Math.min(catalogo[k].max || 3, 1 + Math.floor(sorteioRegra() * 3)); // max: itens de tempo, 1 por intervalo
     const fator = [0.8, 0.9, 1, 1, 1.1, 1.2][Math.floor(sorteioRegra() * 6)];
     precos[k] = Math.max(5, Math.round((catalogo[k].preco * fator) / 5) * 5);
   }

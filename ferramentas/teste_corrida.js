@@ -386,7 +386,7 @@ const ARQ = acharMestre(process.argv[2]);
       corridaLojaPreparar();
       vitrines.push(JSON.stringify(Object.keys(corridaEstoque).sort()));
       const ks = Object.keys(corridaEstoque);
-      if (ks.length !== CORRIDA_VITRINE || ks.some((k) => !CORRIDA_LOJA[k] || corridaEstoque[k] < 1 || corridaEstoque[k] > 3 || corridaPrecos[k] % 5 || Math.abs(corridaPrecos[k] - CORRIDA_LOJA[k].preco) > CORRIDA_LOJA[k].preco * 0.2 + 2.5)) o.estoque = false;
+      if (ks.length !== CORRIDA_VITRINE || ks.some((k) => !CORRIDA_LOJA[k] || corridaEstoque[k] < 1 || corridaEstoque[k] > (CORRIDA_LOJA[k].max || 3) || corridaPrecos[k] % 5 || Math.abs(corridaPrecos[k] - CORRIDA_LOJA[k].preco) > CORRIDA_LOJA[k].preco * 0.2 + 2.5)) o.estoque = false;
     }
     if (o.estoque !== false) o.estoque = true;
     o.vitrineVaria = new Set(vitrines).size > 5;

@@ -343,7 +343,8 @@ function corridaLojaLigada() {
   return CURRENT_MODE === "corrida" && corridaVitoria === "tempo" && typeof salaOnlineAberta === "function" && salaOnlineAberta();
 }
 /* 1.7.10.6 (pedido do JF): vitrine sorteada (Corrida e Modo C.A.O.S.): n itens do catálogo (pelo peso), 1 a 3 de
-   cada, preço variando ±20% de 5 em 5 (mínimo 5). Devolve { estoque: { item: unidades }, precos: { item: preço } }. */
+   cada ("max" no catálogo limita: os itens que dão tempo saem 1 só, senão a partida esticava sem fim), preço
+   variando ±20% de 5 em 5 (mínimo 5). Devolve { estoque: { item: unidades }, precos: { item: preço } }. */
 function lojaVitrineSortear(catalogo, n) {
   const bolsa = Object.keys(catalogo).map((k) => ({ k, w: catalogo[k].peso || 1 }));
   const estoque = {},
@@ -354,7 +355,7 @@ function lojaVitrineSortear(catalogo, n) {
       j = 0;
     while (j < bolsa.length - 1 && r >= bolsa[j].w) r -= bolsa[j++].w;
     const k = bolsa.splice(j, 1)[0].k;
-    estoque[k] = 1 + Math.floor(sorteioRegra() * 3);
+    estoque[k] = Math.min(catalogo[k].max || 3, 1 + Math.floor(sorteioRegra() * 3)); // max: itens de tempo, 1 por intervalo
     const fator = [0.8, 0.9, 1, 1, 1.1, 1.2][Math.floor(sorteioRegra() * 6)];
     precos[k] = Math.max(5, Math.round((catalogo[k].preco * fator) / 5) * 5);
   }

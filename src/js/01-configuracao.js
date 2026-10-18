@@ -397,13 +397,13 @@ const MC_PINATA_PALAVRAS = ["EU QUERO", "CAOS", "ME DA", "BOOM", "PINHATA", "AGO
    Balanceamento: na vitória por Tempo um acerto vale ~60–140 pontos, então item barato é aposta e item caro é
    seguro. "peso" = chance relativa de aparecer na vitrine. */
 const CORRIDA_LOJA = {
-  congelar: { ic: "⏸️", nome: "Pausa Dramática", preco: 30, peso: 3, desc: "o relógio geral para 15 s na próxima carta (vale pra mesa toda)" },
+  congelar: { ic: "⏸️", nome: "Pausa Dramática", preco: 30, peso: 3, max: 1, desc: "o relógio geral para 15 s na próxima carta (vale pra mesa toda)" },
   folego: { ic: "🌬️", nome: "Segundo Fôlego", preco: 25, peso: 3, desc: "+15 s em cada vez sua na próxima carta" },
   escudo: { ic: "🧯", nome: "Seguro do Relógio", preco: 40, peso: 2, desc: "se a próxima carta morrer, a mesa não perde 1 min" },
   corte: { ic: "🎟️", nome: "Passe Livre", preco: 15, peso: 3, desc: "guarda: pula a sua vez sem gastar dica e sem os −2 s" },
   desfib: { ic: "⚡", nome: "Choque de Tempo", preco: 30, peso: 2, desc: "guarda: +15 s no relógio da carta, na hora que quiser" },
   cofrinho: { ic: "🐷", nome: "Cofrinho", preco: 25, peso: 2, desc: "a sua próxima carta acertada vale +40 pontos (dura até você acertar)" },
-  ampulheta: { ic: "⏳", nome: "Ampulheta Extra", preco: 35, peso: 2, desc: "+30 s no relógio geral na hora (bom pra quem está atrás)" },
+  ampulheta: { ic: "⏳", nome: "Ampulheta Extra", preco: 35, peso: 1, max: 1, desc: "+30 s no relógio geral na hora (bom pra quem está atrás)" },
   ima: { ic: "🧲", nome: "Ímã de Pontos", preco: 20, peso: 2, desc: "se outro jogador acertar a próxima carta, você leva 20% do valor dela" },
 };
 const CORRIDA_VITRINE = 4;
