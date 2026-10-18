@@ -9,7 +9,8 @@
  *
  * avisoMostrar({ ic, titulo, texto, anim, dados, para, seg, botao })
  *   anim: duelo | batata | maoleve | bomba | turbo | imposto | juizo | mestre | ppt | dado | moeda | parimpar | pinata
- *   para: lista de ids de jogador (aviso privado: não congela a mesa) ou nada (a mesa toda) */
+ *   para: lista de ids de jogador (aviso privado: não congela a mesa) ou nada (a mesa toda)
+ *   variantes: { idDoJogador: { ic, titulo, texto } } — o mesmo aviso com outra frase pra alguém ("Henrique te chamou!") */
 const AVISO_SEG = 4.5;
 const AVISO_ANIMS = ["duelo", "batata", "maoleve", "bomba", "turbo", "imposto", "juizo", "mestre", "ppt", "dado", "moeda", "parimpar", "pinata"];
 let avisoMesa = null; // { id, ic, titulo, texto, anim, dados, para, ate, congela, botao }
@@ -17,7 +18,14 @@ let avisoFila = [];
 let avisoSeq = 0;
 let avisoTimer = null;
 let avisoFechadoAqui = null; // id do aviso que este dispositivo já fechou no botão
+let avisoAoFim = {}; // id → o que o host faz quando o aviso sai da tela (ex.: tirar a carta do duelo)
 
+// a fala do C.A.O.S. vira texto da caixa (sem a etiqueta)
+function avisoFalaLimpa(f) {
+  return String(f || "")
+    .replace(/\[C\.A\.O\.S\.\]\s*/g, "")
+    .trim();
+}
 function avisoMesaAtivo() {
   return !!avisoMesa && Date.now() < avisoMesa.ate;
 }
@@ -52,8 +60,17 @@ function avisoMostrar(o) {
     para: Array.isArray(o.para) && o.para.length ? o.para.slice(0, 10) : null,
     seg: Math.max(2, Math.min(9, o.seg || AVISO_SEG)),
     botao: o.botao || "Bora!",
+    variantes: null,
   };
+  if (o.variantes && typeof o.variantes === "object") {
+    a.variantes = {};
+    for (const k of Object.keys(o.variantes).slice(0, 10)) {
+      const v = o.variantes[k] || {};
+      a.variantes[k] = { ic: v.ic ? String(v.ic).slice(0, 8) : null, titulo: v.titulo ? String(v.titulo).slice(0, 80) : null, texto: v.texto != null ? String(v.texto).slice(0, 220) : null };
+    }
+  }
   a.congela = !a.para;
+  if (typeof o.aoFim === "function") avisoAoFim[a.id] = o.aoFim;
   if (avisoMesaAtivo()) {
     if (avisoFila.length < 6) avisoFila.push(a);
     return;
@@ -77,6 +94,14 @@ function avisoAcabar(id) {
   avisoMesa = null;
   avisoCongelaMarcar(false);
   avisoDesenharHost();
+  const fim = avisoAoFim[id];
+  delete avisoAoFim[id];
+  if (fim) {
+    try {
+      fim();
+    } catch (e) {}
+  }
+  if (avisoMesa) return; // o aoFim já abriu outro aviso
   if (avisoFila.length) return avisoComecar(avisoFila.shift());
   if (typeof redeHostPublicar === "function") redeHostPublicar(true);
   try {
@@ -88,14 +113,19 @@ function avisoZerar() {
   avisoMesa = null;
   avisoFila = [];
   avisoCongelas = [];
+  avisoAoFim = {};
   document.getElementById("avisoMesaOv")?.remove();
 }
 // o aviso que vale pra um jogador (vai no painel do dispositivo dele)
 function avisoParaJogador(jid) {
   if (!avisoMesaAtivo()) return null;
   if (avisoMesa.para && !avisoMesa.para.includes(jid)) return null;
-  const { id, ic, titulo, texto, anim, dados, ate, congela, botao } = avisoMesa;
-  return { id, ic, titulo, texto, anim, dados, ate, congela, botao };
+  return avisoComVariante(avisoMesa, jid);
+}
+function avisoComVariante(a, jid) {
+  const { id, ic, titulo, texto, anim, dados, ate, congela, botao } = a;
+  const v = (a.variantes && jid != null && a.variantes[jid]) || {};
+  return { id, ic: v.ic || ic, titulo: v.titulo || titulo, texto: v.texto != null ? v.texto : texto, anim, dados, ate, congela, botao };
 }
 // o convidado só aceita um aviso bem formado (veio da rede)
 function avisoLimpar(a) {
@@ -118,8 +148,11 @@ function avisoLimpar(a) {
 function avisoDesenharHost() {
   const a = avisoMesaAtivo() ? avisoMesa : null;
   const online = typeof rede !== "undefined" && rede && rede.papel === "host";
-  const aqui = a && (!a.para || !online || a.para.some((id) => typeof redeNoHost === "function" && redeNoHost(id)));
-  avisoDesenhar(aqui ? a : null, Date.now());
+  const noHost = (id) => typeof redeNoHost === "function" && redeNoHost(id);
+  const aqui = a && (!a.para || !online || a.para.some(noHost));
+  // no host online, a frase de quem joga aqui (a variante dele); num dispositivo só, a frase da mesa
+  const meu = aqui && online && a.variantes ? Object.keys(a.variantes).find(noHost) : null;
+  avisoDesenhar(aqui ? (meu ? avisoComVariante(a, meu) : a) : null, Date.now());
 }
 // no convidado: o aviso chega no painel; a hora "ate" é a do host
 function avisoDesenharConvidado() {

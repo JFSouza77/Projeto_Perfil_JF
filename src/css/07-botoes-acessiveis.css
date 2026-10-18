@@ -630,3 +630,10 @@ html.acess-calmo .fx-shake {
 }
 /* 1.7.10 (print do JF): sem dica aberta não vira item "1." da lista */
 .telao-sem-dica{opacity:.75;font-size:1.05rem;margin:10px 4px}
+/* 1.7.10.7: Próximo do tutorial esperando os 5 s do passo */
+.tut-btn.tut-espera,
+.tut-btn.tut-espera:hover {
+  opacity: 0.6;
+  cursor: wait;
+  font-variant-numeric: tabular-nums;
+}

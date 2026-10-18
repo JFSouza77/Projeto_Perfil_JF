@@ -51,11 +51,11 @@ function mcLog(txt) {
   if (mc.feed.length > 8) mc.feed.shift();
   caosLog("modocaos", txt);
 }
-// o C.A.O.S. anuncia (fura o mudo: é informação de regra) e a linha vai pro feed de todo mundo
-function mcAnunciar(txt, fala) {
+// 1.7.10.7 (combinado com o JF): nada de balão nem de feed rolando. A linha fica guardada (a última aparece na
+// tela) e o que é importante vira o aviso da mesa: tela escura, caixa grande, tempo congelado
+function mcAnunciar(txt, aviso) {
   mcLog(txt);
-  const f = fala || txt;
-  if (f) setTimeout(() => !gameEnded && showToastMessage(f, null, true), 50);
+  if (aviso && typeof avisoMostrar === "function") avisoMostrar(aviso);
 }
 function mcFoto() {
   if (!mc) return "";
@@ -99,7 +99,7 @@ function mcIniciar() {
     cont: { turbo: 0, imposto: 0, batata: 0, roubo: 0, maoLeve: 0, pinata: 0 },
   };
   players.forEach((p) => (p.score = 0));
-  mcAnunciar("🌀 Modo C.A.O.S. começou. 10 minutos. Que vença o mais rápido.", "🌀 MODO C.A.O.S.! Cada um tem a sua carta secreta. 10 minutos. Agora quem manda aqui sou eu.");
+  mcAnunciar("🌀 Modo C.A.O.S. começou. 10 minutos. Que vença o mais rápido.", { ic: "🌀", titulo: "MODO C.A.O.S.!", texto: "Cada um tem a sua carta secreta. 10 minutos. Agora quem manda aqui sou eu." });
   mcNovaRodada();
   mcTique = mcTique || setInterval(mcTicar, 250);
 }
@@ -167,10 +167,10 @@ function mcAbrirDica() {
   const dur = (mc.turbo === id ? MC_TURBO_SEG : MC_JANELA_SEG) * 1e3;
   mc.janela = { serial: mc.serial, dur, inicio: mcAgora(), relogio: { resta: dur, fimEm: null }, buzz: null, buzzEm: 0, tentaram: [], folego: [], congela: null, mordaca: null, corte: false, imposto: false, bateram: [] };
   mcRelogioCorrer(mc.janela.relogio);
-  if (mc.cont.imposto < 3 && mc.rodada >= 2 && sorteioRegra() < 0.08) {
-    mc.cont.imposto++;
+  // Imposto da Preguiça: sorteado no começo da vez (mcEventoNaVez), vale pra 1ª dica dela
+  if (mc.impostoVez === id) {
     mc.janela.imposto = true;
-    mcAnunciar("💸 IMPOSTO DA PREGUIÇA nesta dica: quem não tentar paga 10 PC.");
+    mc.impostoVez = null;
   }
   if (mc.batata) mc.batata.dicas++;
   mc.fase = "janela";
@@ -290,10 +290,21 @@ function mcFimVez() {
     mcLog(`💀 Ninguém matou a carta de ${mcNome(id)}: era ${c.resp}.`);
   } else if (c && c.estado === "ativa") mcLog(`💤 A carta de ${mcNome(id)} hibernou (${c.aberta} de ${c.dicas.length} dicas).`);
   if (mc.turbo === id) mc.turbo = null;
+  mc.impostoVez = null;
   mc.janela = null;
   mc.desfib = null;
   // Batata Quente: depois da 3ª dica, quem está com ela encara a carta bônus
-  if (mc.batata && mc.batata.dicas >= 3) return mcDesafioComecar(mc.batata.com);
+  if (mc.batata && mc.batata.dicas >= 3) {
+    const com = mc.batata.com;
+    mcAnunciar(`🥔💥 A batata estourou na mão de ${mcNome(com)}! Carta bônus agora.`, {
+      ic: "🥔",
+      titulo: "A BATATA ESTOUROU!",
+      texto: `Na mão de ${mcNome(com)}. Carta bônus agora: até 5 dicas, valendo 1 carta.`,
+      anim: "batata",
+      variantes: { [com]: { titulo: "A batata estourou na sua mão!", texto: "Carta bônus agora: até 5 dicas. Sabe? Bate e responde." } },
+    });
+    return mcDesafioComecar(com);
+  }
   mc.vez = (mc.vez + 1) % mc.ordem.length;
   mcComecarVez();
 }
@@ -311,12 +322,14 @@ function mcFimRodada() {
     mc.maoLeve = { id: sorteioItem(baixo).id };
     mc.cont.maoLeve++;
     caosLog("modocaos", "Mão Leve entregue em segredo");
+    // só quem recebeu fica sabendo (aviso privado: não congela a mesa)
+    avisoMostrar({ ic: "🧤", titulo: "Você ganhou a Mão Leve!", texto: "Segredo. Use quando quiser pra tirar 1 carta de alguém sem ninguém saber que foi você.", anim: "maoleve", para: [mc.maoLeve.id], seg: 5 });
   }
   // Piñata: às vezes, no intervalo
   if (mc.cont.pinata < 3 && sorteioRegra() < 0.45) {
     mc.cont.pinata++;
     mc.pinata = { palavra: sorteioItem(MC_PINATA_PALAVRAS), ganhou: null };
-    mcAnunciar(`🪅 PIÑATA! Quem digitar primeiro "${mc.pinata.palavra}" leva ${MC_PC.pinata} PC!`);
+    mcAnunciar(`🪅 PIÑATA! Quem digitar primeiro "${mc.pinata.palavra}" leva ${MC_PC.pinata} PC!`, { ic: "🪅", titulo: "PIÑATA!", texto: `Quem digitar primeiro "${mc.pinata.palavra}" leva ${MC_PC.pinata} PC!`, anim: "pinata" });
   }
   mcMudou();
 }
@@ -367,7 +380,7 @@ function mcAssalto(id) {
   if (!alvo) return;
   if (mcItem(alvo.id, "kevlar")) {
     mc.inv[alvo.id].kevlar--;
-    return mcAnunciar(`💸 ${mcNome(id)} tentou um Assalto Relâmpago em ${alvo.name}, mas o ${MC_LOJA.kevlar.nome} segurou!`);
+    return mcAnunciar(`💸 ${mcNome(id)} tentou um Assalto Relâmpago em ${alvo.name}, mas o ${MC_LOJA.kevlar.nome} segurou!`, { ic: "🦺", titulo: "Assalto barrado!", texto: `${mcNome(id)} tentou assaltar ${alvo.name}, mas o ${MC_LOJA.kevlar.nome} segurou.` });
   }
   let de = alvo.id,
     para = id;
@@ -379,7 +392,8 @@ function mcAssalto(id) {
   const n = Math.min(MC_ASSALTO_PC, mc.pc[de] || 0);
   mcPcMudar(de, -n);
   mcPcMudar(para, n);
-  mcAnunciar(de === id ? `🪞 O Espelho de ${alvo.name} refletiu o Assalto Relâmpago! ${mcNome(id)} perdeu ${n} PC pra ${alvo.name}.` : `💸 ASSALTO RELÂMPAGO! ${mcNome(id)} levou ${n} PC de ${alvo.name}.`);
+  const txtAssalto = de === id ? `🪞 O Espelho de ${alvo.name} refletiu o Assalto Relâmpago! ${mcNome(id)} perdeu ${n} PC pra ${alvo.name}.` : `💸 ASSALTO RELÂMPAGO! ${mcNome(id)} levou ${n} PC de ${alvo.name}.`;
+  mcAnunciar(txtAssalto, { ic: de === id ? "🪞" : "💸", titulo: de === id ? "O Espelho refletiu!" : "ASSALTO RELÂMPAGO!", texto: txtAssalto.replace(/^\S+ /, ""), anim: "imposto" });
 }
 function mcPodeUsar(item, id, alvo) {
   if (!mcAtivo() || !mcItem(id, item) || !mc.janela) return false;
@@ -428,6 +442,7 @@ function mcUsar(item, id, alvo) {
     } else mcAnunciar(`🤐 ${mcNome(id)} amordaçou ${mcNome(alvo)} nesta dica.`);
     j.mordaca = vitima;
     mc.garganta[vitima] = j.serial + 1; // Garganta Limpa: imune na próxima dica
+    avisoMostrar({ ic: "🤐", titulo: "Você foi amordaçado!", texto: "Nesta dica você não pode palpitar.", para: [vitima], seg: 2.5 });
   }
   playSfx("pick");
   mcMudou();
@@ -441,20 +456,33 @@ function mcEventoNaVez() {
   const r = sorteioRegra();
   // roubo com duelo: até 2 por partida
   if (mc.cont.roubo < 2 && players.length >= 3 && r < 0.07 && mcRouboComecar()) return true;
+  // 1.7.10.7: um evento por vez, todos no mesmo sorteio (o imposto também), sempre entre uma vez e outra
   // Batata Quente: até 2 por partida, uma de cada vez
   if (!mc.batata && !mc.desafio && mc.cont.batata < 2 && r >= 0.07 && r < 0.13) {
     const alvo = sorteioItem(players.filter((p) => p.id !== mcMestreId()));
     if (alvo) {
       mc.cont.batata++;
       mc.batata = { com: alvo.id, dicas: 0 };
-      mcAnunciar(`🥔 BATATA QUENTE na mão de ${alvo.name}! Ela queima por 3 dicas: passe pra frente ou segure (e encare a carta bônus).`);
+      mcAnunciar(`🥔 BATATA QUENTE na mão de ${alvo.name}!`, {
+        ic: "🥔",
+        titulo: "BATATA QUENTE!",
+        texto: `Tá na mão de ${alvo.name}. Ela queima por 3 dicas: passe pra frente ou segure (e encare a carta bônus).`,
+        anim: "batata",
+        variantes: { [alvo.id]: { titulo: "A BATATA TÁ COM VOCÊ!", texto: "Ela queima por 3 dicas. Passe pra frente ou segure e encare a carta bônus." } },
+      });
     }
   }
-  // Modo Turbo: a carta deste Mestre roda com janela de 5 s
-  if (!mc.turbo && mc.cont.turbo < 2 && r >= 0.13 && r < 0.19) {
+  // Modo Turbo: a carta deste Mestre roda com janela curta
+  else if (!mc.turbo && mc.cont.turbo < 2 && r >= 0.13 && r < 0.19) {
     mc.cont.turbo++;
     mc.turbo = mcMestreId();
-    mcAnunciar(`⏩ MODO TURBO na carta de ${mcNome(mc.turbo)}: janela de ${MC_TURBO_SEG} segundos!`);
+    mcAnunciar(`⏩ MODO TURBO na carta de ${mcNome(mc.turbo)}.`, { ic: "⏩", titulo: "MODO TURBO!", texto: `A carta de ${mcNome(mc.turbo)} roda com janela de ${MC_TURBO_SEG} segundos por dica.`, anim: "turbo" });
+  }
+  // Imposto da Preguiça: na 1ª dica desta vez, quem não tentar paga
+  else if (mc.cont.imposto < 3 && mc.rodada >= 2 && r >= 0.19 && r < 0.25) {
+    mc.cont.imposto++;
+    mc.impostoVez = mcMestreId();
+    mcAnunciar(`💸 IMPOSTO DA PREGUIÇA na próxima dica.`, { ic: "💸", titulo: "IMPOSTO DA PREGUIÇA!", texto: `Na próxima dica, quem não tentar palpitar paga ${MC_PC.imposto} PC.`, anim: "imposto" });
   }
   return false;
 }
@@ -467,13 +495,15 @@ function mcBatataPassar(id) {
   const alvo = sorteioItem(outros);
   if (!alvo) return;
   mc.batata.com = alvo.id;
-  mcAnunciar(`🥔 ${mcNome(id)} passou a batata… agora tá com ${alvo.name}!`);
+  mcLog(`🥔 ${mcNome(id)} passou a batata… agora tá com ${alvo.name}!`);
+  // só quem recebeu leva o susto (não para a dica da mesa)
+  avisoMostrar({ ic: "🥔", titulo: "A BATATA TÁ COM VOCÊ!", texto: `${mcNome(id)} passou pra você. Passe pra frente ou segure.`, anim: "batata", para: [alvo.id], seg: 3 });
   mcMudou();
 }
 // pedido do JF: "Segurar a Batata" = fica com ela e encara a carta bônus na hora
 function mcBatataSegurar(id) {
   if (!mcPodeBatata(id)) return;
-  mcAnunciar(`🥔 ${mcNome(id)} SEGUROU a batata! Carta bônus agora.`);
+  mcAnunciar(`🥔 ${mcNome(id)} SEGUROU a batata! Carta bônus agora.`, { ic: "🥔", titulo: `${mcNome(id)} SEGUROU A BATATA!`, texto: "Carta bônus agora: até 5 dicas, valendo 1 carta.", anim: "batata" });
   if (mc.janela) mcRelogioParar(mc.janela.relogio);
   const naAbertura = mc.fase === "abrindo";
   mcDesafioComecar(id);
@@ -507,7 +537,7 @@ function mcDesafioVeredito(ok) {
     if (p) p.score = (p.score || 0) + 1;
     mcPcMudar(d.com, MC_PC.batata);
     cartasPartida.push({ n: cartasPartida.length + 1, cat: d.cat, resp: d.resp, quem: d.com, mestre: null, dicas: d.aberta, dicaNum: null, dicaTxt: null, bonus: true });
-    mcAnunciar(`🥔✅ ${mcNome(d.com)} venceu a carta bônus (${d.resp}): +1 carta e +${MC_PC.batata} PC!`);
+    mcAnunciar(`🥔✅ ${mcNome(d.com)} venceu a carta bônus (${d.resp}): +1 carta e +${MC_PC.batata} PC!`, { ic: "🥔", titulo: `${mcNome(d.com)} venceu a carta bônus!`, texto: `Era ${d.resp}. +1 carta e +${MC_PC.batata} PC.` });
     return mcDesafioFim();
   }
   playSfx("erro");
@@ -531,7 +561,7 @@ function mcDesafioPerdeu() {
       txt += ` Uma carta foi pro lanterna, ${lanterna.name}.`;
     }
   }
-  mcAnunciar(txt);
+  mcAnunciar(txt, { ic: "💥", titulo: "Carta bônus perdida!", texto: txt.replace(/^\S+ /, ""), anim: "bomba" });
   mcDesafioFim();
 }
 function mcDesafioFim() {
@@ -567,7 +597,16 @@ function mcRouboComecar() {
   // dado e moeda não têm escolha: o C.A.O.S. rola na hora (com suspense)
   if (d.tipo === "d6" || d.tipo === "moeda") d.ate = mcAgora() + 3500;
   mc.fase = "duelo";
-  mcAnunciar(`⚔️ ROUBO! ${ladrao.name} quer uma carta de ${vitima.name}. Duelo: ${MC_DUELO_NOME[d.tipo]}!`, `⚔️ É HORA DO DUELO! ${ladrao.name} contra ${vitima.name}, valendo uma carta. ${MC_DUELO_NOME[d.tipo]}!`);
+  mcAnunciar(`⚔️ ROUBO! ${ladrao.name} quer uma carta de ${vitima.name}. Duelo: ${MC_DUELO_NOME[d.tipo]}!`, {
+    ic: "⚔️",
+    titulo: "É HORA DO DUELO!",
+    texto: `${ladrao.name} quer uma carta de ${vitima.name}. Duelo: ${MC_DUELO_NOME[d.tipo]}!`,
+    anim: "duelo",
+    variantes: {
+      [ladrao.id]: { titulo: `Você desafiou ${vitima.name}!`, texto: `Valendo uma carta. Duelo: ${MC_DUELO_NOME[d.tipo]}.` },
+      [vitima.id]: { titulo: `${ladrao.name} quer uma carta sua!`, texto: `Defenda! Duelo: ${MC_DUELO_NOME[d.tipo]}. Bora!` },
+    },
+  });
   mcMudou();
   return true;
 }
@@ -591,6 +630,8 @@ function mcDueloResolver() {
   let venc = null,
     det = "";
   const aleat = (lista) => sorteioItem(lista);
+  let anim = null,
+    dados = null; // 1.7.10.7: o resultado vira aviso animado (mãozinha balançando, dado, moeda)
   if (d.tipo === "d6") {
     let a, b;
     do {
@@ -599,10 +640,14 @@ function mcDueloResolver() {
     } while (a === b);
     venc = a > b ? L : V;
     det = `${mcNome(L)} tirou ${a}, ${mcNome(V)} tirou ${b}`;
+    anim = "dado";
+    dados = { nomeA: mcNome(L), nomeB: mcNome(V), a, b };
   } else if (d.tipo === "moeda") {
     const lado = Math.random() < 0.5 ? "cara" : "coroa";
     venc = d.lados[L] === lado ? L : V;
     det = `deu ${lado}`;
+    anim = "moeda";
+    dados = { lado };
   } else if (d.tipo === "ppt") {
     const ops = ["pedra", "papel", "tesoura"];
     const a = d.esc[L] !== undefined ? d.esc[L] : aleat(ops),
@@ -610,39 +655,44 @@ function mcDueloResolver() {
     if (a === b) {
       d.esc = {};
       d.ate = mcAgora() + 10000;
-      mcLog(`✊ Empate (${a})! De novo.`);
+      mcAnunciar(`✊ Empate (${a})! De novo.`, { ic: "✊", titulo: "Empate! De novo!", texto: `Os dois de ${a}.`, anim: "ppt", dados: { nomeA: mcNome(L), nomeB: mcNome(V), a, b } });
       return mcMudou();
     }
     const ganha = { pedra: "tesoura", papel: "pedra", tesoura: "papel" };
     venc = ganha[a] === b ? L : V;
     det = `${mcNome(L)}: ${a} × ${mcNome(V)}: ${b}`;
+    anim = "ppt";
+    dados = { nomeA: mcNome(L), nomeB: mcNome(V), a, b };
   } else {
     const a = d.esc[L] !== undefined ? d.esc[L] : Math.floor(Math.random() * 6),
       b = d.esc[V] !== undefined ? d.esc[V] : Math.floor(Math.random() * 6);
     const res = (a + b) % 2 === 0 ? "par" : "ímpar";
     venc = d.lados[L] === res ? L : V;
     det = `${a} + ${b} = ${a + b} (${res})`;
+    anim = "parimpar";
+    dados = { nomeA: mcNome(L), nomeB: mcNome(V), a, b };
   }
+  const avisoRes = (titulo) => ({ ic: "⚔️", titulo, texto: det, anim, dados, seg: 5.5 });
   d.resultado = { venc, det };
   const ladraoVenceu = venc === L;
   if (!d.revanche) {
     if (ladraoVenceu) {
       const ok = mcTransferir(V, L, "roubo");
-      mcAnunciar(`⚔️ ${det}. ${ok ? `${mcNome(L)} roubou uma carta de ${mcNome(V)}!` : "Mas a carta não saiu do lugar."}`);
+      mcAnunciar(`⚔️ ${det}. ${ok ? `${mcNome(L)} roubou uma carta de ${mcNome(V)}!` : "Mas a carta não saiu do lugar."}`, avisoRes(ok ? `${mcNome(L)} roubou uma carta de ${mcNome(V)}!` : `${mcNome(L)} venceu, mas a carta não saiu do lugar`));
       if (ok) {
         d.fase = "revanche";
         d.ate = mcAgora() + 10000;
         return mcMudou();
       }
-    } else mcAnunciar(`⚔️ ${det}. ${mcNome(V)} defendeu a carta!`);
+    } else mcAnunciar(`⚔️ ${det}. ${mcNome(V)} defendeu a carta!`, avisoRes(`${mcNome(V)} defendeu a carta!`));
     return mcDueloFim();
   }
   // revanche (dobro ou nada): a vítima ganhou, recupera a carta e ainda leva outra; perdeu, fica como está
   if (venc === V) {
     mcTransferir(L, V, "revanche", true);
     const mais = mcTransferir(L, V, "revanche", true);
-    mcAnunciar(`🔁 ${det}. ${mcNome(V)} venceu a revanche: recuperou a carta${mais ? " e ainda levou outra" : ""}!`);
-  } else mcAnunciar(`🔁 ${det}. ${mcNome(L)} venceu de novo. A perda fica.`);
+    mcAnunciar(`🔁 ${det}. ${mcNome(V)} venceu a revanche: recuperou a carta${mais ? " e ainda levou outra" : ""}!`, avisoRes(`${mcNome(V)} venceu a revanche!`));
+  } else mcAnunciar(`🔁 ${det}. ${mcNome(L)} venceu de novo. A perda fica.`, avisoRes(`${mcNome(L)} venceu de novo!`));
   mcDueloFim();
 }
 // tira 1 carta de "de" e dá pra "para". Escudo segura, Espelho reflete (no roubo, o ladrão perde 1 pro dono)
@@ -680,7 +730,7 @@ function mcRevanche(id, quer) {
   d.fase = "escolha";
   d.esc = {};
   d.ate = mcAgora() + (d.tipo === "d6" || d.tipo === "moeda" ? 3500 : 12000);
-  mcAnunciar(`🔁 ${mcNome(id)} pediu REVANCHE: dobro ou nada!`);
+  mcAnunciar(`🔁 ${mcNome(id)} pediu REVANCHE: dobro ou nada!`, { ic: "🔁", titulo: "REVANCHE!", texto: `${mcNome(id)} pediu dobro ou nada contra ${mcNome(d.ladrao)}.`, anim: "duelo" });
   mcMudou();
 }
 function mcDueloFim() {
@@ -698,7 +748,9 @@ function mcMaoLeve(id, alvo) {
   if (!mcPodeMaoLeve(id, alvo)) return;
   mc.maoLeve = null;
   const ok = mcTransferir(alvo, id, "furto");
-  mcAnunciar(ok ? `🧤 A Mão Leve passou por aqui… ${mcNome(alvo)} ficou com uma carta a menos.` : "🧤 A Mão Leve tentou… e não conseguiu.");
+  // 1.7.10.7 (pedido do JF): é segredo. Só quem foi roubado fica sabendo, com a tela escura e as mãozinhas
+  mcLog(ok ? "🧤 A Mão Leve passou por aqui…" : "🧤 A Mão Leve tentou… e não conseguiu.");
+  if (ok) avisoMostrar({ ic: "🧤", titulo: "VOCÊ FOI ROUBADO!", texto: "Mão Leve passou por aqui. Você ficou com uma carta a menos… e ninguém viu quem foi.", anim: "maoleve", para: [alvo], seg: 5 });
   mcMudou();
 }
 // Piñata: digitar a palavra exata; o host atende um de cada vez, então o primeiro que chega leva
@@ -711,7 +763,7 @@ function mcPinata(id, txt) {
   if (norm(txt) !== norm(mc.pinata.palavra)) return;
   mc.pinata.ganhou = id;
   mcPcMudar(id, MC_PC.pinata);
-  mcAnunciar(`🪅 ${mcNome(id)} arrebentou a Piñata: +${MC_PC.pinata} PC!`);
+  mcAnunciar(`🪅 ${mcNome(id)} arrebentou a Piñata: +${MC_PC.pinata} PC!`, { ic: "🪅", titulo: `${mcNome(id)} arrebentou a Piñata!`, texto: `+${MC_PC.pinata} PC.`, anim: "pinata", seg: 3 });
   mcMudou();
 }
 
@@ -965,8 +1017,19 @@ function mcTelaHtml(r, eu, opcoes, priv) {
   const botoes = Object.keys(grupos)
     .map((g) => `<div class="mc-grupo">${g ? `<div class="mc-grupo-tit">${escapeHtml(g)}</div>` : ""}<div class="rede-acoes">${grupos[g].join("")}</div></div>`)
     .join("");
-  const feed = (M.feed || []).length ? `<ul class="mc-feed">${M.feed.slice().reverse().map((t) => `<li>${escapeHtml(t)}</li>`).join("")}</ul>` : "";
-  return `<div class="mc-tela">${relogios}${centro}${ult}${meu}${botoes ? `<div class="mc-botoes">${botoes}</div>` : ""}<ol class="mc-placar">${placar}</ol>${feed}</div>`;
+  // 1.7.10.7 (combinado com o JF): uma linha fixa no topo diz o que está acontecendo agora; nada de feed rolando,
+  // só a última novidade; e o intervalo é uma tela só dele (lojinha e piñata)
+  let agoraTxt = "";
+  if (M.fase === "intervalo") agoraTxt = `☕ Intervalo · lojinha aberta · ${cont(M.intervalo, false)} s`;
+  else if (M.fase === "duelo" && M.duelo) agoraTxt = `⚔️ Duelo: ${nome(M.duelo.ladrao)} × ${nome(M.duelo.vitima)}`;
+  else if (M.fase === "desafio" && M.desafio) agoraTxt = `🥔 Carta bônus de ${nome(M.desafio.com)}`;
+  else if (M.fase === "fim") agoraTxt = "🏁 Fim do tempo";
+  else if (C) agoraTxt = `🎙️ Agora: vez de ${nome(M.mestre)} · dica ${M.fase === "abrindo" ? C.aberta + 1 : C.aberta} de ${C.total}`;
+  const agoraLinha = agoraTxt ? `<div class="mc-agora-linha" role="status">${agoraTxt}</div>` : "";
+  const novidade = (M.feed || []).length && M.fase !== "intervalo" ? `<div class="mc-novidade">${escapeHtml(M.feed[M.feed.length - 1])}</div>` : "";
+  const bot = botoes ? `<div class="mc-botoes">${botoes}</div>` : "";
+  if (M.fase === "intervalo") return `<div class="mc-tela mc-tela-intervalo">${agoraLinha}${centro}${bot}${meu}<ol class="mc-placar">${placar}</ol></div>`;
+  return `<div class="mc-tela">${agoraLinha}${relogios}${centro}${novidade}${ult}${meu}${bot}<ol class="mc-placar">${placar}</ol></div>`;
 }
 // host: desenha a tela do jogador do próprio dispositivo (hostEu) no lugar da carta de sempre
 function mcDesenharHost() {

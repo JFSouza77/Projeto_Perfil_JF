@@ -384,9 +384,16 @@ function corridaDesempateComecar(empatados) {
   playSfx("flash");
   render();
   saveGameState();
-  showToastMessage(fala, () => {
-    if (!gameEnded && corridaDesempate && cardState === "none") drawHidden();
-  }, true);
+  // 1.7.10.7: a caixa grande avisa a mesa; a carta sai quando o aviso acaba
+  avisoMostrar({
+    ic: "⚡",
+    titulo: "DESEMPATE RELÂMPAGO!",
+    texto: avisoFalaLimpa(fala),
+    anim: "turbo",
+    aoFim: () => {
+      if (!gameEnded && corridaDesempate && cardState === "none") drawHidden();
+    },
+  });
 }
 
 /* Intervalo de 15 s entre as cartas (relógio geral congelado): placar das cartas e a lista da partida. */

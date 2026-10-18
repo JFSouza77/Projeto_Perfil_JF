@@ -28,6 +28,7 @@ const ARQ = acharMestre(process.argv[2]);
     const esp = (ms) => new Promise((ok) => setTimeout(ok, ms));
     const f = () => {
       if (activeToastState) closeActiveToast();
+      if (typeof avisoMesa !== "undefined" && avisoMesa) { for (let i = 0; i < 8 && avisoMesa; i++) avisoAcabar(avisoMesa.id); corridaTicar(); } // 1.7.10.7: o aviso da mesa sai na hora no teste
       document.querySelectorAll(".caos-modal-ov").forEach((x) => x.remove());
     };
     const livre = () => currentCard.clues.map((c, i) => i).filter((i) => currentCard.clues[i].type === "clue" && !revealedOrder.some((x) => x.index === i));
@@ -103,6 +104,8 @@ const ARQ = acharMestre(process.argv[2]);
     corridaDobrar();
     corridaRestaMs = 200;
     await esp(800);
+    f(); // o aviso do Juízo Final congelou o relógio: sai, e o relógio volta a correr
+    await esp(500);
     f();
     o.esperaPendente = corridaAcabou && cardState === "revealed" && pendingIndex !== null && !gameEnded;
     players[respondeu].score = 0;
@@ -143,6 +146,7 @@ const ARQ = acharMestre(process.argv[2]);
     const esp = (ms) => new Promise((ok) => setTimeout(ok, ms));
     const f = () => {
       if (activeToastState) closeActiveToast();
+      if (typeof avisoMesa !== "undefined" && avisoMesa) { for (let i = 0; i < 8 && avisoMesa; i++) avisoAcabar(avisoMesa.id); corridaTicar(); } // 1.7.10.7: o aviso da mesa sai na hora no teste
       document.querySelectorAll(".caos-modal-ov").forEach((x) => x.remove());
     };
     const livre = () => currentCard.clues.map((c, i) => i).filter((i) => currentCard.clues[i].type === "clue" && !revealedOrder.some((x) => x.index === i));
@@ -194,6 +198,7 @@ const ARQ = acharMestre(process.argv[2]);
     const esp = (ms) => new Promise((ok) => setTimeout(ok, ms));
     const f = () => {
       if (activeToastState) closeActiveToast();
+      if (typeof avisoMesa !== "undefined" && avisoMesa) { for (let i = 0; i < 8 && avisoMesa; i++) avisoAcabar(avisoMesa.id); corridaTicar(); } // 1.7.10.7: o aviso da mesa sai na hora no teste
       document.querySelectorAll(".caos-modal-ov").forEach((x) => x.remove());
     };
     const livre = () => currentCard.clues.map((c, i) => i).filter((i) => currentCard.clues[i].type === "clue" && !revealedOrder.some((x) => x.index === i));
@@ -480,6 +485,7 @@ const ARQ = acharMestre(process.argv[2]);
     const esp = (ms) => new Promise((ok) => setTimeout(ok, ms));
     const f = () => {
       if (activeToastState) closeActiveToast();
+      if (typeof avisoMesa !== "undefined" && avisoMesa) { for (let i = 0; i < 8 && avisoMesa; i++) avisoAcabar(avisoMesa.id); corridaTicar(); } // 1.7.10.7: o aviso da mesa sai na hora no teste
       document.querySelectorAll(".caos-modal-ov").forEach((x) => x.remove());
     };
     const livre = () => currentCard.clues.map((c, i) => i).filter((i) => currentCard.clues[i].type === "clue" && !revealedOrder.some((x) => x.index === i));
@@ -542,6 +548,7 @@ const ARQ = acharMestre(process.argv[2]);
     const esp = (ms) => new Promise((ok) => setTimeout(ok, ms));
     const f = () => {
       if (activeToastState) closeActiveToast();
+      if (typeof avisoMesa !== "undefined" && avisoMesa) { for (let i = 0; i < 8 && avisoMesa; i++) avisoAcabar(avisoMesa.id); corridaTicar(); } // 1.7.10.7: o aviso da mesa sai na hora no teste
       document.querySelectorAll(".caos-modal-ov").forEach((x) => x.remove());
     };
     resetGame();

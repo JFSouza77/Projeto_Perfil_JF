@@ -163,7 +163,7 @@ function corridaJuizoComecar() {
   vibrar("tempo");
   const V = REACTIVE_VOICE.corrida;
   const fala = (V && V.juizo && getRandomReaction(V.juizo)) || "⚖️ JUÍZO FINAL! Último minuto: as dicas abrem sozinhas. Sabe? Bate na mesa!";
-  showToastMessage(fala, null, true, true);
+  avisoMostrar({ ic: "⚖️", titulo: "JUÍZO FINAL!", texto: avisoFalaLimpa(fala), anim: "juizo" }); // 1.7.10.7
   // carta esperando a escolha da dica: já abre a próxima sozinha
   corridaRelampagoAgendar();
   corridaClassesCorpo();
@@ -227,7 +227,7 @@ function corridaBombaArmar() {
   const fala =
     (V && V.bomba && getRandomReaction(V.bomba)) ||
     `💣 BOMBA-RELÓGIO! Se essa carta morrer, a mesa perde 1 minuto. Cada erro tira ${CORRIDA_BOMBA_ERRO_MS / 1e3} s. Acertou? +${CORRIDA_BOMBA_BONUS_MS / 1e3} s.`;
-  setTimeout(() => !gameEnded && corridaBomba === cartaSeq && showToastMessage(fala, null, true), 400); // fura o mudo: é regra
+  avisoMostrar({ ic: "💣", titulo: "BOMBA-RELÓGIO!", texto: avisoFalaLimpa(fala), anim: "bomba" }); // 1.7.10.7: é regra, a mesa toda vê
   corridaClassesCorpo();
   return true;
 }
@@ -311,9 +311,21 @@ function corridaDueloComecar() {
   corridaClassesCorpo();
   render();
   saveGameState();
-  showToastMessage(fala, () => {
-    if (!gameEnded && corridaDuelo && cardState === "none") drawHidden();
-  }, true);
+  // 1.7.10.7: a caixa grande avisa a mesa; a carta do duelo sai quando o aviso acaba
+  avisoMostrar({
+    ic: "⚔️",
+    titulo: "É HORA DO DUELO!",
+    texto: avisoFalaLimpa(fala),
+    anim: "duelo",
+    variantes: {
+      [players[a].id]: { titulo: `Duelo! Você × ${players[b].name}` },
+      [players[b].id]: { titulo: `Duelo! Você × ${players[a].name}` },
+      [players[m].id]: { ic: "🎙️", titulo: "Você é o Mestre do duelo!", texto: `Você lê a carta pra ${nomes}.` },
+    },
+    aoFim: () => {
+      if (!gameEnded && corridaDuelo && cardState === "none") drawHidden();
+    },
+  });
 }
 // (chamado no fim da carta do duelo, antes de seguir) quem acertou rouba; ninguém: carta destruída
 function corridaDueloFim() {

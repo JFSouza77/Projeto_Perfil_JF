@@ -518,9 +518,15 @@ const ARQ = acharMestre(process.argv[2]);
       const tela = document.getElementById('welcomeScreen').style.display;
       document.getElementById('startGameBtn').click();
       const barrou = redeSemAparelho().length === 2 && document.getElementById('welcomeScreen').style.display === tela && !!document.querySelector('.caos-aviso-ov');
+      // 1.7.10.7: um clique em "Jogam aqui" põe os dois no dispositivo do host e a partida segue
+      const sb = document.getElementById('startGameBtn');
+      let seguiu = false;
+      sb.click = () => (seguiu = true);
+      const sim = [...document.querySelectorAll('#caosConfirmModal button')].find((b) => /Jogam aqui/.test(b.textContent));
+      if (sim) sim.click();
+      delete sb.click;
       document.querySelectorAll('.caos-aviso-ov, #redePainel').forEach((o) => o.remove());
-      rede.hostEu = 'j_semap1'; rede.hostJunto = ['j_semap2'];
-      const liberou = redeSemAparelho().length === 0;
+      const liberou = !!sim && seguiu && redeSemAparelho().length === 0 && redeNoHost('j_semap1') && redeNoHost('j_semap2');
       // 1.7.10.6.1 (relato do JF): o host recarregou e perdeu quem joga nele: religa sozinho quem estava guardado
       starterChosen = true; rede.hostEu = null; rede.hostJunto = []; rede.hostEuSalvo = ['j_semap1']; rede.assentos.j_semap2 = { sessao: 'x', visto: Date.now(), chave: 'k', nome: 'Caio' };
       redeHostEuReligar();
@@ -630,7 +636,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['Easter egg: piadas internas com limite e intervalo (nunca no Júnior), Dragons só com o JF e a turma, falas da mesa toda e cores escondidas da paleta', r.amigos],
     ['Cadastro: o C.A.O.S. pergunta da voz (não pergunta se já está ligada); Sim liga; Não ganha fala triste e segue sem voz', r.vozPergunta],
     ['1.7.10.3: busca nas regras acha "grupo"; o C.A.O.S. lembra o que vale na 1ª carta de cada categoria (Júnior sem animal em Coisa)', r.regrasEPrimeira],
-    ['1.7.10.1: com a sala aberta, a partida só começa quando todo jogador tem aparelho', r.semAparelho],
+    ['1.7.10.1/1.7.10.7: com a sala aberta, quem não entrou pelo dispositivo joga no do host com um clique', r.semAparelho],
     ['1.7.10.6.1: o host que recarregou religa sozinho quem joga nele (lojinha, dica e rouba a vez de volta)', r.hostReligou],
     ['1.7.10.6.1: no duelo da carta bônus a ficha de palpite vale pros duelistas (e só pra eles)', r.palpiteDuelo],
   ];

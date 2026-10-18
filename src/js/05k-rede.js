@@ -1870,12 +1870,22 @@ function redeSemAparelho() {
   if (!rede || rede.papel !== "host" || starterChosen) return [];
   return players.filter((p) => !redeNoHost(p.id) && !redeOnline(rede.assentos[p.id]));
 }
-function redeAvisarSemAparelho() {
-  const nomes = redeSemAparelho().map((p) => p.name);
-  caosAvisoModal(
-    `Antes de começar, diga onde cada um joga: ${nomes.join(", ")} ${nomes.length === 1 ? "ainda não está" : "ainda não estão"} na sala. Entre pelo dispositivo ou marque em "Quem joga neste aparelho?".`,
-    () => redePainelHost(),
+// 1.7.10.7 (relato do JF: "muito chato" marcar o notebook toda vez): quem não entrou pelo próprio dispositivo
+// só pode estar jogando no do host. Um clique confirma e a partida começa; "Esperar" deixa entrar pela sala.
+function redeAvisarSemAparelho(depois) {
+  const faltam = redeSemAparelho();
+  const nomes = faltam.map((p) => p.name);
+  const um = nomes.length === 1;
+  caosConfirmarModal(
+    `${nomes.join(", ")} ${um ? "não entrou" : "não entraram"} pelo próprio dispositivo. ${um ? "Joga" : "Jogam"} neste dispositivo aqui?`,
+    um ? "✅ Joga aqui" : "✅ Jogam aqui",
+    "⏳ Esperar",
+    () => {
+      redeDefinirNoHost(redeJogadoresNoHost().concat(faltam.map((p) => p.id)));
+      if (typeof depois === "function" && !redeSemAparelho().length) depois();
+    },
   );
+  document.getElementById("caosConfirmModal")?.classList.add("caos-aviso-ov");
 }
 // 1.7.10.6.1 (relato do JF: como host, não comprava na lojinha, não escolhia a própria dica nem via o Rouba a vez):
 // o aparelho do host perdia quem joga nele quando recarregava antes do save voltar. Religa sozinho quem estava guardado.
