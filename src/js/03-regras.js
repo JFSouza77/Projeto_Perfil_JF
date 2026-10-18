@@ -414,7 +414,8 @@ function gemCategoryFor(cardCategory) {
   return CURRENT_MODE !== "junior" && cardCategory === "ANIMAL" ? "COISA" : cardCategory;
 }
 function awardGemIfEarned(scorerIdx, realCluesRevealed) {
-  if (!gemsEnabled() || !currentCard || currentCard.isBonus) return null;
+  // 1.7.10.6 (JF: "vamos ser justos"): carta bônus também dá joia (antes não dava, e no Só Joias o duelo não valia nada)
+  if (!gemsEnabled() || !currentCard) return null;
   const cat = gemCategoryFor(currentCard.category);
   if (!currentGemCategories().includes(cat)) return null;
   const limit = gemClueLimit();
@@ -501,6 +502,14 @@ function palpitarAgora(key) {
   // sem balão: a área de julgamento do Mestre já troca pro palpite (JF: o host não pode virar live de notificação)
   playSfx("pick");
   render();
+  redeAvisarJa();
+}
+// 1.7.10.6 (relato do JF: "demorava muito pra aparecer que alguém pediu a dica"): pedido de dica e Palpitar agora
+// não mexem na revisão da partida, então só chegavam nos outros dispositivos na batida de 4 s. Agora vão na hora.
+function redeAvisarJa() {
+  try {
+    if (typeof rede !== "undefined" && rede && rede.papel === "host" && typeof redeHostPublicar === "function") redeHostPublicar(true);
+  } catch (e) {}
 }
 // 1.7.10.5 (pedido do JF) · Pedir dica de qualquer aparelho: quem está na vez toca no número e o Mestre recebe o
 // pedido em destaque (quem abre continua sendo o Mestre, regra da 1.7.9.6). Agiliza com Mestre distraído.
@@ -518,6 +527,7 @@ function pedirDica(idx) {
   caosLog("dica", `${(players[responderIndex] || {}).name} pediu a dica ${idx + 1}`);
   playSfx("pick");
   render();
+  redeAvisarJa();
 }
 function palpiteHit(key) {
   if (pendingIndex === null || gameEnded || !palpiteEligibleHolders().includes(key)) return;

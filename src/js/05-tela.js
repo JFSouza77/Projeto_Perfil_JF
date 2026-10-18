@@ -606,6 +606,25 @@ function render() {
     const lander = entityDisplay(entry.landerIdx);
     const landerHtml = playerNameHtml(lander.name, lander.color, lander.avatar);
     let optionBtns;
+    const fase = bonusFase();
+    if (fase === "mestre") {
+      // 1.7.10.6 (pedido do JF): depois do adversário, quem caiu escolhe o Mestre do duelo
+      const opp = entityDisplay(entry.opponentIdx);
+      const btns = bonusMestreCandidatos(entry)
+        .map((i) => {
+          const p = players[i], sw = playerSwatchAttrs(p.color);
+          return `<button class="btn-correct${sw.cls}" style="margin:4px; padding:10px 14px; border:none; border-radius:8px; ${sw.style}" data-mestre="${i}">🎙️ ${escapeHtml(p.name)}${i === mestreIndex ? " (Mestre agora)" : ""}</button>`;
+        })
+        .join("");
+      area.innerHTML = `
+      <div class="bonus-banner">⭐ Duelo: ${escapeHtml(lander.name)} × ${escapeHtml(opp.name)}</div>
+      <div style="text-align:center; margin:10px 0;"><strong>${landerHtml}</strong>, quem vai ser o <b>Mestre</b> do duelo (quem lê as dicas)?</div>
+      <div style="display:flex; flex-wrap:wrap; justify-content:center;">${btns}</div>
+    `;
+      drawBtn.style.display = "none";
+      area.querySelectorAll("[data-mestre]").forEach((btn) => btn.addEventListener("click", () => chooseBonusMestre(parseInt(btn.dataset.mestre))));
+      return;
+    }
     if (CURRENT_FORMAT === "equipe") {
       optionBtns = teamOrder
         .filter((id) => id !== entry.landerIdx)
@@ -619,7 +638,7 @@ function render() {
       optionBtns = players
         .map((p, i) => {
           if (i === entry.landerIdx) return "";
-          const tag = i === mestreIndex ? " (Mestre atual)" : "";
+          const tag = i === mestreIndex ? " (Mestre agora)" : "";
           const sw = playerSwatchAttrs(p.color);
           return `<button class="btn-correct${sw.cls}" style="margin:4px; padding:10px 14px; border:none; border-radius:8px; ${sw.style}" data-opp="${i}">${escapeHtml(p.name)}${tag}</button>`;
         })
@@ -917,13 +936,13 @@ function render() {
       for (let i = 0; i < totalEntries; i++) {
         const used = revealedOrder.some((r) => r.index === i);
         const travada = trava && !used && !(ped && ped.idx === i);
-        grid += `<button class="number-btn${used ? " aberta" : ""}${ped && ped.idx === i ? " pedida" : ""}${travada ? " travada" : ""}" data-idx="${i}" ${used ? 'aria-disabled="true" title="Essa dica já foi aberta"' : travada ? 'title="Segure pra abrir sem pedido"' : ""}>${i + 1}</button>`;
+        grid += `<button class="number-btn${used ? " aberta" : ""}${ped && ped.idx === i ? " pedida" : ""}${travada ? " travada" : ""}" data-idx="${i}" ${used ? 'aria-disabled="true" title="Essa dica já foi aberta"' : travada ? 'title="Toque pra abrir sem pedido"' : ""}>${i + 1}</button>`;
       }
       const forcarHtml = dicaForcarIdx !== null ? `<div class="dica-forcar">Abrir a dica <b>${dicaForcarIdx + 1}</b> sem pedido? <button type="button" class="rede-btn rede-ok" id="dicaForcarSim">Abrir</button><button type="button" class="rede-btn" id="dicaForcarNao">Cancelar</button></div>` : "";
       controlsHtml = `
         ${ped ? `<div class="pedido-dica">👉 ${responderName} pediu a dica <b>${ped.idx + 1}</b>. Toque nela pra abrir.</div>` : ""}
         ${forcarHtml}
-        <div class="pick-label">${trava && !ped ? `👉 ${responderName} escolhe a dica no aparelho dele (${remaining} restantes). Travou? Segure um número.` : `${responderName}, escolha uma dica de 1 a ${totalEntries} (${remaining} restantes)`}</div>
+        <div class="pick-label">${trava && !ped ? `👉 ${responderName} escolhe a dica no aparelho dele (${remaining} restantes). Travou? Toque num número pra abrir sem pedido.` : `${responderName}, escolha uma dica de 1 a ${totalEntries} (${remaining} restantes)`}</div>
         <div id="timerDisplay" class="pick-timer">◷ ${secondsLeft()}s</div>
         <div class="number-grid">${grid}</div>`;
     }
@@ -1017,7 +1036,7 @@ function render() {
             caosDicaRepetida(parseInt(btn.dataset.idx));
             return;
           }
-          // 1.7.10.5.3: número travado não abre no toque (o segurar já tratou, se foi o caso)
+          // 1.7.10.5.3: número travado não abre direto: o toque pede a confirmação (dicaSegurarParaForcar)
           if (btn.classList.contains("travada")) {
             delete gridEl.dataset.segurou;
             return;
@@ -1181,7 +1200,7 @@ function roletaDesenhar(jaPousada) {
       <div class="roulette-title">Mestre ${mestreDestaqueHtml()}, diga aos jogadores:</div>
       <div class="roulette-phrase">"Eu sou <span class="roulette-reel" id="rouletteReel">${label(cats[0])}</span>"</div>
       <div class="roulette-hint" id="rouletteHint">🎰 sorteando a categoria...</div>
-      <button type="button" class="flip-btn" id="rouletteDoneBtn" style="display:none;">✓ Falei! Mostrar a carta</button>
+      <button type="button" class="flip-btn cta-pulsa" id="rouletteDoneBtn" style="display:none;">✓ Já falei a categoria! Mostrar a carta</button>
     </div>`;
   if (virar) cartaAnimarClasse(area, "flip-entra");
   const reel = document.getElementById("rouletteReel");
@@ -1310,7 +1329,8 @@ function renderBonusDuelInfo() {
   ) {
     repNote = ` (representantes: ${escapeHtml(players[currentCard.bonusLanderPlayerIdx].name)} vs ${escapeHtml(players[currentCard.bonusOpponentPlayerIdx].name)})`;
   }
-  return `<div class="bonus-duel-info">🏟️ Duelo de casa de bônus: <strong>${landerHtml}</strong> parou exatamente numa casa de bônus e escolheu duelar contra <strong>${opponentHtml}</strong> por esta carta em dobro${repNote}.</div>`;
+  const mestreTxt = CURRENT_FORMAT !== "equipe" && players[mestreIndex] ? ` 🎙️ Mestre do duelo: <strong>${escapeHtml(players[mestreIndex].name)}</strong>.` : "";
+  return `<div class="bonus-duel-info">🏟️ Duelo de casa de bônus: <strong>${landerHtml}</strong> parou exatamente numa casa de bônus e escolheu duelar contra <strong>${opponentHtml}</strong> por esta carta em dobro${repNote}.${mestreTxt}</div>`;
 }
 function renderBoardTrack() {
   const track = document.getElementById("boardTrack");
@@ -2882,7 +2902,7 @@ function buildRulesHtml() {
     );
   if (c.gems)
     li.push(
-      `💎 <b>Joias:</b> acerte com até ${c.gemLimit} dicas reais e ganhe a joia da categoria${c.equipe ? " (é da equipe)" : ""}. ${gemsCountForWin() ? (ultimaRodadaAtiva() ? "4 joias = meta batida (a rodada termina e aí sai o vencedor)." : "4 joias = vitória na hora.") : `Com menos de ${GEMS_MIN_PLAYERS} jogadores (Moda da Casa) a joia é só troféu.`}${c.express ? " Com 1 categoria dá pra ter até 4 dela; com 2, até 2 de cada." : " Carta bônus não dá joia."}`,
+      `💎 <b>Joias:</b> acerte com até ${c.gemLimit} dicas reais e ganhe a joia da categoria${c.equipe ? " (é da equipe)" : ""}. ${gemsCountForWin() ? (ultimaRodadaAtiva() ? "4 joias = meta batida (a rodada termina e aí sai o vencedor)." : "4 joias = vitória na hora.") : `Com menos de ${GEMS_MIN_PLAYERS} jogadores (Moda da Casa) a joia é só troféu.`}${c.express ? " Com 1 categoria dá pra ter até 4 dela; com 2, até 2 de cada." : " Carta bônus também dá joia."}`,
     );
   li.push(
     "✕ <b>Carta difícil ou o Mestre viu sem querer?</b> Descarte e puxe outra até a 5ª dica (no máximo 2 seguidas).",

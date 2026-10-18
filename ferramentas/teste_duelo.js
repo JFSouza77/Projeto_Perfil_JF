@@ -30,7 +30,7 @@ const ARQ = acharMestre(process.argv[2]);
       document.querySelectorAll('.caos-modal-ov, #tutorialOverlay, .casa-sorteio-ov').forEach((o) => o.remove());
     };
     const problemas = [];
-    let duelos = 0, palpites = 0, passos = 0, desfeitos = 0;
+    let duelos = 0, palpites = 0, passos = 0, desfeitos = 0, escolhas = 0;
     for (const nomes of [['Henrique', 'Rafa', 'Vitinho'], ['JF', 'Vitinho', 'Rafa', 'Henrique']]) {
       for (let partida = 0; partida < 6; partida++) {
         document.querySelectorAll('.caos-modal-ov, .jf-modal-bg').forEach((o) => o.remove());
@@ -54,7 +54,14 @@ const ARQ = acharMestre(process.argv[2]);
           fechar();
           const st = cardState;
           if (st === 'none' || st === 'bonusChoice' && pendingBonusQueue.length === 0) { problemas.push(`p${partida} passo ${k}: estado ${st} sem saída`); break; }
-          if (st === 'bonusChoice') {
+          if (st === 'bonusChoice' && bonusFase() === 'mestre') {
+            // 1.7.10.6: quem caiu escolhe o Mestre do duelo; ele tem que ser o Mestre da carta bônus
+            const cands = bonusMestreCandidatos(pendingBonusQueue[0]);
+            const esc = cands[Math.floor(Math.random() * cands.length)];
+            chooseBonusMestre(esc);
+            if (!currentCard || !currentCard.isBonus || mestreIndex !== esc) problemas.push(`p${partida} passo ${k}: o Mestre escolhido (${players[esc].name}) não ficou de Mestre`);
+            escolhas++;
+          } else if (st === 'bonusChoice') {
             const lander = pendingBonusQueue[0].landerIdx;
             const ops = players.map((p, i) => i).filter((i) => i !== lander);
             chooseBonusOpponent(ops[Math.floor(Math.random() * ops.length)]);
@@ -108,11 +115,53 @@ const ARQ = acharMestre(process.argv[2]);
         }
       }
     }
-    return { duelos, palpites, passos, desfeitos, problemas: problemas.slice(0, 15) };
+    // 1.7.10.6 · a "previsão da próxima carta" do C.A.O.S. (4% depois de cada carta): a carta que acabou sai da mesa
+    // na hora (antes ficava revelada com o Mestre novo, parecendo travada) e o balão não saca carta em dobro
+    for (const sacaAntes of [false, true]) {
+      gameEnded = false;
+      caosSilenced = false;
+      caosCardPrediction = null;
+      pendingBonusQueue = []; // sem duelo na fila (senão o saque vai, certo, pra escolha do adversário)
+      if (activeToastState) closeActiveToast();
+      drawHidden();
+      flipCard();
+      const antes = stats.totalDrawn, rnd = Math.random;
+      Math.random = () => 0.01;
+      let anunciou;
+      const bloq = caosToastBloquear, mudo = caosMudoCarta;
+      caosToastBloquear = () => false; // o balão aparece de verdade (sem respiro/orçamento de fala)
+      caosMudoCarta = false;
+      try { anunciou = maybeAnnounceCardPrediction(); } finally { Math.random = rnd; caosToastBloquear = bloq; caosMudoCarta = mudo; }
+      if (!activeToastState) problemas.push('previsão: o balão não apareceu');
+      if (!anunciou) { problemas.push('previsão não anunciou'); continue; }
+      if (currentCard || cardState !== 'none') problemas.push(`previsão: a carta velha ficou na mesa (${cardState})`);
+      if (sacaAntes) drawHidden();
+      closeActiveToast();
+      await espera(5);
+      if (cardState !== 'hidden' || stats.totalDrawn !== antes + 1) problemas.push(`previsão${sacaAntes ? ' (sacou antes)' : ''}: ${cardState}, ${stats.totalDrawn - antes} carta(s) sacada(s)`);
+      caosSilenced = true;
+    }
+    // 1.7.10.6 (JF): carta bônus também dá joia
+    {
+      gameEnded = false;
+      pendingBonusQueue = [];
+      if (activeToastState) closeActiveToast();
+      drawHidden();
+      const cat = currentGemCategories()[0];
+      currentCard.isBonus = true;
+      currentCard.category = cat;
+      players.forEach((p) => (p.gems = {}));
+      joiasRodada = {};
+      const wc = WIN_CONDITION;
+      WIN_CONDITION = 'joias';
+      if (!awardGemIfEarned(0, 1)) problemas.push('carta bônus não deu joia');
+      WIN_CONDITION = wc;
+    }
+    return { duelos, palpites, passos, desfeitos, escolhas, problemas: problemas.slice(0, 15) };
   });
   console.log(JSON.stringify(r, null, 1));
   if (erros.length) console.log('erros de página:', erros.slice(0, 5));
-  const ok = r.problemas.length === 0 && erros.length === 0 && r.duelos > 10;
+  const ok = r.problemas.length === 0 && erros.length === 0 && r.duelos > 10 && r.escolhas > 5;
   console.log(ok ? 'DUELO OK' : 'FALHOU duelo');
   await b.close();
   process.exit(ok ? 0 : 1);

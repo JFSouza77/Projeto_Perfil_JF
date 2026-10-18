@@ -108,7 +108,7 @@ const VITORIA_TUTORIAIS = {
     {
       icon: "🏆",
       title: "Como vence",
-      text: `Juntou as <b>4 joias</b>, uma de cada categoria? Ganhou! Já tem a joia de uma categoria? Acertar outra igual não dá mais uma. Carta bônus não dá joia.`,
+      text: `Juntou as <b>4 joias</b>, uma de cada categoria? Ganhou! Já tem a joia de uma categoria? Acertar outra igual não dá mais uma. Carta bônus (duelo) também dá joia.`,
     },
     {
       icon: "🔒",

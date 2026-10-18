@@ -381,6 +381,7 @@ function saveGameState() {
               bonusMestreIdx: currentCard.bonusMestreIdx,
               bonusLanderPlayerIdx: currentCard.bonusLanderPlayerIdx,
               bonusOpponentPlayerIdx: currentCard.bonusOpponentPlayerIdx,
+              bonusReaderIdx: Number.isInteger(currentCard.bonusReaderIdx) ? currentCard.bonusReaderIdx : null,
             }
           : null,
       cardState,
@@ -633,7 +634,7 @@ function sanitizeLoadedState(s) {
       (e) =>
         e && entityOk(e.landerIdx) && (e.opponentIdx === null || e.opponentIdx === void 0 || entityOk(e.opponentIdx)),
     )
-    .map((e) => ({ landerIdx: e.landerIdx, opponentIdx: e.opponentIdx === void 0 ? null : e.opponentIdx }));
+    .map((e) => ({ landerIdx: e.landerIdx, opponentIdx: e.opponentIdx === void 0 ? null : e.opponentIdx, readerIdx: idxOk(e.readerIdx) ? e.readerIdx : null }));
   if (s.currentCardBonusData && typeof s.currentCardBonusData === "object") {
     const b = s.currentCardBonusData;
     if (
@@ -794,6 +795,7 @@ function loadGameState() {
         currentCard.bonusMestreIdx = state.currentCardBonusData.bonusMestreIdx;
         currentCard.bonusLanderPlayerIdx = state.currentCardBonusData.bonusLanderPlayerIdx;
         currentCard.bonusOpponentPlayerIdx = state.currentCardBonusData.bonusOpponentPlayerIdx;
+        currentCard.bonusReaderIdx = Number.isInteger(state.currentCardBonusData.bonusReaderIdx) && players[state.currentCardBonusData.bonusReaderIdx] ? state.currentCardBonusData.bonusReaderIdx : null;
       } else if (currentCard) {
         currentCard.isBonus = false;
       }
@@ -1704,7 +1706,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.5.7 · C.A.O.S. 4.4.3");
+  L.push("- **Versão:** Beta 1.7.10.5.8 · C.A.O.S. 4.4.4");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2227,7 +2229,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.5.7 · C.A.O.S. 4.4.3",
+        versao: "Beta 1.7.10.5.8 · C.A.O.S. 4.4.4",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
