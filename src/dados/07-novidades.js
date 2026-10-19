@@ -14,6 +14,7 @@ const NOVIDADES = [
       "⏱️ Corrida de 30 minutos: o relógio da partida voltou pro tempo padrão.",
       "🧾 Ganhou e gastou: na lojinha da Corrida aparece quanto você ganhou, quanto gastou e com quanto ficou.",
       "⚡ Item na hora: no Modo C.A.O.S., a Era do Gelo e a Tesoura funcionam no momento em que você usa.",
+      "⏸️ Pausa Dramática sem acumular: comprar de novo não soma mais tempo parado, e no Juízo Final ela sai de cena.",
     ],
     qol: [],
   },

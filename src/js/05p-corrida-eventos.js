@@ -170,6 +170,7 @@ function corridaClassesCorpo() {
 }
 function corridaJuizoComecar() {
   corridaJuizo = true;
+  corridaCongelaMs = 0; // 1.7.10.9.1: no Juízo Final os itens de tempo saem de cena, inclusive a Pausa Dramática que sobrou
   caosLog("corrida", "Juízo Final: último minuto, dicas abrem sozinhas");
   playSfx("erroForte");
   vibrar("tempo");
@@ -440,7 +441,7 @@ function corridaComprar(item, id) {
   const reg = (corridaCompras[id] = corridaCompras[id] || { gasto: 0, itens: {} });
   reg.gasto += preco;
   reg.itens[item] = (reg.itens[item] || 0) + 1;
-  if (item === "congelar") corridaCongelaMs += 15e3;
+  if (item === "congelar") corridaCongelaMs = Math.max(corridaCongelaMs, 15e3); // 1.7.10.9.1: não acumula (somava de intervalo em intervalo e o geral quase não andava)
   else if (item === "folego") corridaFolego[id] = cartaSeq;
   else if (item === "escudo") corridaEscudo = cartaSeq;
   else if (item === "cofrinho") corridaCofrinho[id] = (corridaCofrinho[id] || 0) + 1;
