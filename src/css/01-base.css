@@ -1144,6 +1144,14 @@ body.claro .turn-info .responder-tag {
   font-size: 0.85rem;
   font-weight: 700;
 }
+/* 1.7.10.9: a linha de como se vence, a primeira do placar, ocupando a largura toda */
+.mini-scoreboard li.mini-meta {
+  flex: 1 1 100%;
+  text-align: center;
+  background: #fbbf2422;
+  border: 1px solid #fbbf2466;
+  color: #fde68a;
+}
 .player-name-neon {
   font-weight: 800;
   
@@ -2366,4 +2374,19 @@ html.acess-calmo #scoreboard li.cad-repetido,body.batata-mode #scoreboard li.cad
 @keyframes novosPulsa {
   0%, 100% { box-shadow: 0 0 8px #22d3ee33; }
   50% { box-shadow: 0 0 18px #22d3ee80; }
+}
+
+/* 1.7.10.9: na hora da dica, quem lê e quem responde, escrito */
+.dica-quem {
+  text-align: center;
+  font-size: 0.9rem;
+  margin: 6px 0 2px;
+  opacity: 0.9;
+}
+/* 1.7.10.9: os 4 botões de "Quantas equipes?" cabem na largura do celular (o .main-btn tinha largura própria e vazava) */
+#teamCountChoice .main-btn {
+  width: auto;
+  min-width: 0;
+  padding-left: 0;
+  padding-right: 0;
 }

@@ -296,7 +296,7 @@ function corridaBarraHtml(d) {
     ? `<span class="cr-geral cr-desempate">⚡ Desempate relâmpago</span>`
     : d.acabou
       ? `<span class="cr-geral cr-zerou">⏱️ 0:00 · última resposta</span>`
-      : `<span class="cr-geral${d.geral <= 60e3 ? " cr-pouco" : ""}${d.corre ? "" : " cr-parado"}" title="Relógio geral da partida">⏱️ <b>${corridaRelogioTxt(d.geral)}</b></span>`;
+      : `<span class="cr-geral${d.geral <= 60e3 ? " cr-pouco" : ""}${d.corre ? "" : " cr-parado"}" title="Relógio geral da partida">⏱️ partida <b>${corridaRelogioTxt(d.geral)}</b></span>`;
   const c =
     d.carta === null || d.carta === undefined
       ? ""
@@ -304,7 +304,7 @@ function corridaBarraHtml(d) {
   // Tempo: o valor da carta derretendo na tela (acertou agora, leva isso)
   const v =
     d.tempo && d.carta !== null && d.carta !== undefined
-      ? `<span class="cr-vale${d.carta <= 30e3 ? " cr-pouco" : ""}" title="Quanto a carta vale se acertar agora">💰 vale <b>${Math.max(1, Math.ceil(d.carta / 1e3))}</b></span>`
+      ? `<span class="cr-vale${d.carta <= 30e3 ? " cr-pouco" : ""}" title="Quanto a carta vale se acertar agora">💰 acertou agora, vale <b>${Math.max(1, Math.ceil(d.carta / 1e3))}</b></span>`
       : "";
   const ev =
     (d.bomba ? `<span class="cr-ev cr-ev-bomba">💣 BOMBA</span>` : "") +

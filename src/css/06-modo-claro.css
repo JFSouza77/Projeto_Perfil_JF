@@ -592,3 +592,10 @@ body.claro .splash-novos .eb-sub {
 body.claro .answer-header.cat-neon {
   color: color-mix(in srgb, var(--cat) 60%, #1b1d33);
 }
+
+/* 1.7.10.9: linha de como se vence no modo claro */
+body.claro .mini-scoreboard li.mini-meta {
+  background: #fef3c7;
+  border-color: #f59e0b;
+  color: #92400e;
+}

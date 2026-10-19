@@ -64,6 +64,10 @@ function avisoMesaCongela() {
 let avisoCongelas = [];
 function avisoCongeladoDesde(t) {
   const agora = Date.now();
+  // 1.7.10.9 (achado no teste online: o relógio da Corrida parou pra sempre): trecho que ficou aberto sem aviso
+  // congelando na tela fecha na hora em que o aviso devia ter saído (nunca congela mais que o próprio aviso)
+  const ult = avisoCongelas[avisoCongelas.length - 1];
+  if (ult && !ult[1] && !avisoMesaCongela()) ult[1] = Math.max(ult[0], Math.min(agora, avisoMesa && avisoMesa.ate ? avisoMesa.ate : agora));
   let ms = 0;
   for (const [ini, fim] of avisoCongelas) ms += Math.max(0, Math.min(fim || agora, agora) - Math.max(ini, t));
   return ms;
@@ -107,19 +111,35 @@ function avisoComecar(a) {
   a.ate = Date.now() + a.seg * 1e3;
   avisoMesa = a;
   avisoCongelaMarcar(a.congela);
+  // o fim do aviso fica garantido antes de qualquer coisa que possa dar erro (desenho, rede)
+  clearTimeout(avisoTimer);
+  avisoTimer = setTimeout(() => avisoAcabar(a.id), a.seg * 1e3 + 30);
   try {
     caosLog("aviso", `${a.ic} ${a.titulo}${a.para ? " (privado)" : ""}`);
   } catch (e) {}
-  avisoDesenharHost();
-  if (typeof redeHostPublicar === "function") redeHostPublicar(true);
-  clearTimeout(avisoTimer);
-  avisoTimer = setTimeout(() => avisoAcabar(a.id), a.seg * 1e3 + 30);
+  try {
+    avisoDesenharHost();
+  } catch (e) {
+    avisoErro("desenhar", e);
+  }
+  try {
+    if (typeof redeHostPublicar === "function") redeHostPublicar(true);
+  } catch (e) {
+    avisoErro("publicar", e);
+  }
+}
+function avisoErro(onde, e) {
+  try {
+    caosLog("aviso", `erro ao ${onde} o aviso: ${(e && e.message) || e}`);
+  } catch (x) {}
 }
 function avisoAcabar(id) {
   if (!avisoMesa || avisoMesa.id !== id) return;
   avisoMesa = null;
   avisoCongelaMarcar(false);
-  avisoDesenharHost();
+  try {
+    avisoDesenharHost();
+  } catch (e) {}
   const fim = avisoAoFim[id];
   delete avisoAoFim[id];
   if (fim) {
@@ -129,7 +149,9 @@ function avisoAcabar(id) {
   }
   if (avisoMesa) return; // o aoFim já abriu outro aviso
   if (avisoFila.length) return avisoComecar(avisoFila.shift());
-  if (typeof redeHostPublicar === "function") redeHostPublicar(true);
+  try {
+    if (typeof redeHostPublicar === "function") redeHostPublicar(true);
+  } catch (e) {}
   try {
     render();
   } catch (e) {}
