@@ -7,7 +7,7 @@
 const NOVIDADES = [
   {
     v: "Beta 1.7.10.9.1",
-    data: "19/10/2026 · 10:45",
+    data: "19/10/2026 · 11:10",
     nome: "Multiplayer Update · QoL da Mesa",
     t: "Corrida de volta aos 30 minutos e lojinha mais clara.",
     itens: [
