@@ -1522,9 +1522,10 @@ body.batata-mode .mc-respondendo {
   border-radius: 22px;
   text-align: center;
   color: #fff;
-  background: radial-gradient(circle at 50% 0%, #4c1d95, #1e1b4b 70%);
-  border: 3px solid #facc15;
-  box-shadow: 0 0 0 4px #facc1533, 0 0 40px #facc1566, 0 20px 50px #000a;
+  background: radial-gradient(circle at 50% 0%, var(--av-fundo, #4c1d95), #1e1b4b 70%);
+  border: 3px solid var(--av, #facc15);
+  box-shadow: 0 0 0 4px #ffffff22, 0 0 40px #ffffff33, 0 20px 50px #000a;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--av, #facc15) 20%, transparent), 0 0 40px color-mix(in srgb, var(--av, #facc15) 40%, transparent), 0 20px 50px #000a;
   animation: avisoEntra 0.45s cubic-bezier(0.2, 1.4, 0.4, 1);
 }
 @keyframes avisoEntra {
@@ -1536,7 +1537,7 @@ body.batata-mode .mc-respondendo {
   font-weight: 900;
   line-height: 1.15;
   margin-top: 8px;
-  text-shadow: 0 0 6px #fff, 0 0 18px #fde047;
+  text-shadow: 0 0 6px #fff, 0 0 18px var(--av, #fde047);
 }
 .aviso-txt {
   margin-top: 8px;
@@ -1554,7 +1555,7 @@ body.batata-mode .mc-respondendo {
 .aviso-barra i {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, #facc15, #f97316);
+  background: linear-gradient(90deg, var(--av, #facc15), var(--av2, #f97316));
   animation: avisoBarra var(--aviso-ms, 4500ms) linear forwards;
 }
 @keyframes avisoBarra {
@@ -1566,9 +1567,9 @@ body.batata-mode .mc-respondendo {
   min-width: 160px;
   padding: 10px 22px;
   border-radius: 14px;
-  border: 2px solid #facc15;
-  background: #facc15;
-  color: #1c1917;
+  border: 2px solid var(--av, #facc15);
+  background: var(--av, #facc15);
+  color: var(--av-txt, #1c1917);
   font-weight: 900;
   font-size: 1.1rem;
   cursor: pointer;
@@ -1643,10 +1644,20 @@ body.batata-mode .mc-respondendo {
   from { transform: translateX(-26px) rotate(-15deg); }
   to { transform: translateX(26px) rotate(15deg); }
 }
-.aviso-maoleve {
-  border-color: #a855f7;
-  box-shadow: 0 0 0 4px #a855f733, 0 0 40px #a855f766, 0 20px 50px #000a;
-}
+/* 1.7.10.7.2 (ideia do JF): cada tipo de aviso com a sua cor */
+.aviso-duelo { --av: #facc15; --av2: #f97316; --av-fundo: #7c2d12; }
+.aviso-mestre { --av: #38bdf8; --av2: #6366f1; --av-fundo: #1e3a8a; }
+.aviso-batata { --av: #fb923c; --av2: #ef4444; --av-fundo: #9a3412; }
+.aviso-maoleve { --av: #c084fc; --av2: #7c3aed; --av-fundo: #4c1d95; }
+.aviso-bomba { --av: #f87171; --av2: #b91c1c; --av-fundo: #7f1d1d; }
+.aviso-turbo { --av: #22d3ee; --av2: #0ea5e9; --av-fundo: #164e63; }
+.aviso-imposto { --av: #4ade80; --av2: #16a34a; --av-fundo: #14532d; }
+.aviso-juizo { --av: #fde68a; --av2: #dc2626; --av-fundo: #450a0a; }
+.aviso-ppt,
+.aviso-parimpar { --av: #f472b6; --av2: #db2777; --av-fundo: #831843; }
+.aviso-dado { --av: #a3e635; --av2: #65a30d; --av-fundo: #365314; }
+.aviso-moeda { --av: #fcd34d; --av2: #d97706; --av-fundo: #78350f; }
+.aviso-pinata { --av: #e879f9; --av2: #22d3ee; --av-fundo: #701a75; }
 /* jokenpô, dado, par ou ímpar, moeda: balança 3 vezes e mostra o resultado */
 .aviso-duelo-anim {
   display: flex;
@@ -1720,7 +1731,7 @@ body.aviso-treme {
   80% { transform: translate(3px, -1px); }
 }
 body.claro .aviso-mesa {
-  background: radial-gradient(circle at 50% 0%, #6d28d9, #312e81 70%);
+  background: radial-gradient(circle at 50% 0%, var(--av-fundo, #6d28d9), #312e81 70%);
 }
 html.acess-calmo .aviso-mesa *,
 body.batata-mode .aviso-mesa *,

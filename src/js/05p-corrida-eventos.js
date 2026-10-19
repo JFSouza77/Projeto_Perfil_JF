@@ -320,7 +320,7 @@ function corridaDueloComecar() {
     variantes: {
       [players[a].id]: { titulo: `Duelo! Você × ${players[b].name}` },
       [players[b].id]: { titulo: `Duelo! Você × ${players[a].name}` },
-      [players[m].id]: { ic: "🎙️", titulo: "Você é o Mestre do duelo!", texto: `Você lê a carta pra ${nomes}.` },
+      [players[m].id]: { ic: "🎙️", titulo: "Você é o Mestre do duelo!", texto: `Você lê a carta pra ${nomes}.`, botao: "Tô pronto! 🎙️" },
     },
     aoFim: () => {
       if (!gameEnded && corridaDuelo && cardState === "none") drawHidden();

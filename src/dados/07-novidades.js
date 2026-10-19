@@ -6,6 +6,17 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.7.2",
+    data: "19/10/2026",
+    nome: "Multiplayer Update · Avisos da Mesa",
+    t: "Avisos com cor e botão próprios.",
+    itens: [
+      "🎨 Cada aviso com a sua cor: duelo dourado, batata laranja, Mão Leve roxa, bomba vermelha, turbo azul, imposto verde e por aí vai.",
+      "🔘 Cada aviso com o seu botão: Socorro! na bomba, Tá quente! na batata, Vou me vingar! na Mão Leve. O convite do duelo continua no Bora!",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.7.1",
     data: "18/10/2026",
     nome: "Multiplayer Update · Avisos da Mesa",

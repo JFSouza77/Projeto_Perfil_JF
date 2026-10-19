@@ -12,6 +12,22 @@
  *   para: lista de ids de jogador (aviso privado: não congela a mesa) ou nada (a mesa toda)
  *   variantes: { idDoJogador: { ic, titulo, texto } } — o mesmo aviso com outra frase pra alguém ("Henrique te chamou!") */
 const AVISO_SEG = 4.5;
+// 1.7.10.7.2 (ideia do JF): cada tipo de aviso tem o seu botão (o convite do duelo fica no "Bora!", pedido dele)
+const AVISO_BOTAO = {
+  duelo: "Bora!",
+  mestre: "Tô pronto! 🎙️",
+  batata: "Tá quente! 🔥",
+  maoleve: "Vou me vingar! 😤",
+  bomba: "Socorro! 💣",
+  turbo: "Acelera! ⏩",
+  imposto: "Que injustiça! 💸",
+  juizo: "Que comece! ⚖️",
+  ppt: "Uau! 😮",
+  dado: "Uau! 😮",
+  moeda: "Uau! 😮",
+  parimpar: "Uau! 😮",
+  pinata: "Quebra! 🪅",
+};
 const AVISO_ANIMS = ["duelo", "batata", "maoleve", "bomba", "turbo", "imposto", "juizo", "mestre", "ppt", "dado", "moeda", "parimpar", "pinata"];
 let avisoMesa = null; // { id, ic, titulo, texto, anim, dados, para, ate, congela, botao }
 let avisoFila = [];
@@ -59,14 +75,14 @@ function avisoMostrar(o) {
     dados: o.dados || null,
     para: Array.isArray(o.para) && o.para.length ? o.para.slice(0, 10) : null,
     seg: Math.max(2, Math.min(9, o.seg || AVISO_SEG)),
-    botao: o.botao || "Bora!",
+    botao: String(o.botao || AVISO_BOTAO[o.anim] || "Entendi!").slice(0, 30),
     variantes: null,
   };
   if (o.variantes && typeof o.variantes === "object") {
     a.variantes = {};
     for (const k of Object.keys(o.variantes).slice(0, 10)) {
       const v = o.variantes[k] || {};
-      a.variantes[k] = { ic: v.ic ? String(v.ic).slice(0, 8) : null, titulo: v.titulo ? String(v.titulo).slice(0, 80) : null, texto: v.texto != null ? String(v.texto).slice(0, 220) : null };
+      a.variantes[k] = { ic: v.ic ? String(v.ic).slice(0, 8) : null, titulo: v.titulo ? String(v.titulo).slice(0, 80) : null, texto: v.texto != null ? String(v.texto).slice(0, 220) : null, botao: v.botao ? String(v.botao).slice(0, 30) : null };
     }
   }
   a.congela = !a.para;
@@ -125,7 +141,7 @@ function avisoParaJogador(jid) {
 function avisoComVariante(a, jid) {
   const { id, ic, titulo, texto, anim, dados, ate, congela, botao } = a;
   const v = (a.variantes && jid != null && a.variantes[jid]) || {};
-  return { id, ic: v.ic || ic, titulo: v.titulo || titulo, texto: v.texto != null ? v.texto : texto, anim, dados, ate, congela, botao };
+  return { id, ic: v.ic || ic, titulo: v.titulo || titulo, texto: v.texto != null ? v.texto : texto, anim, dados, ate, congela, botao: v.botao || botao };
 }
 // o convidado só aceita um aviso bem formado (veio da rede)
 function avisoLimpar(a) {

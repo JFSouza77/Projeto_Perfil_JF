@@ -69,6 +69,14 @@ const PRINTS = (process.argv.find((a) => a.startsWith('--prints=')) || '').slice
     const h = document.getElementById('avisoMesaOv')?.innerHTML || '';
     if (/<img|<b>oi/.test(h)) p.push('HTML do aviso não foi escapado: ' + h);
     avisoZerar();
+    // 1.7.10.7.2: cada tipo com o seu botão e a sua cor; a variante (Mestre do duelo) pode trocar o botão
+    avisoMostrar({ titulo: 'b', anim: 'bomba', seg: 2 });
+    if (avisoMesa.botao !== AVISO_BOTAO.bomba) p.push('aviso da bomba sem o botão próprio');
+    if (!document.querySelector('#avisoMesaOv .aviso-bomba')) p.push('aviso da bomba sem a cor própria');
+    avisoZerar();
+    avisoMostrar({ titulo: 'd', anim: 'duelo', seg: 2, para: ['jm', 'jx'], variantes: { jm: { titulo: 'Mestre', botao: 'Tô pronto!' } } });
+    if (avisoParaJogador('jm').botao !== 'Tô pronto!' || avisoParaJogador('jx').botao !== 'Bora!') p.push('botão da variante errado');
+    avisoZerar();
     // 1.7.10.7: Espectar duelo — quem está fora do duelo vê o botão e, depois, a resposta; duelista e Mestre não
     const redeAntes = rede;
     const d = { fase: 'duelo', quem: 'A', contra: 'B', mestre: 'C', equipe: false, ids: ['ja', 'jb', 'jc'] };
