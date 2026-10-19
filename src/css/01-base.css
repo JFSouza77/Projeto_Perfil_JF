@@ -1344,8 +1344,9 @@ body:not(.batata-mode) .onyx-swatch {
     opacity 0.3s ease;
 }
 .clue-history.blurred {
-  filter: blur(3px);
-  opacity: 0.45;
+  /* 1.7.10.8: sem borrão (Mestre e Vez tinham que continuar legíveis); só esmaece pra dica da vez aparecer */
+  filter: none;
+  opacity: 0.6;
   pointer-events: none;
 }
 .spotlight-box {
@@ -1929,6 +1930,8 @@ body.batata-mode .mode-select-wrap.mc-wrap.mode-selected:before {
   pointer-events: none;
   transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   max-width: 90vw;
+  width: min(90vw, 560px);
+  box-sizing: border-box;
 }
 .jf-toast-overlay.show {
   opacity: 1;

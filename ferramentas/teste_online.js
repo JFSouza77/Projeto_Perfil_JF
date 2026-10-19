@@ -715,7 +715,7 @@ async function dueloOnline(b, sv) {
       await partidaInteira(b, sv, { rot: "Express até o fim", formato: "versus", modo: "express", sabor: "classico", nomes: ["Ana", "Beto", "Caio"] });
     }
     if (!SO || SO === "partidas" || SO === "corrida") {
-      await partidaInteira(b, sv, { rot: "Corrida · Tempo até o fim", formato: "versus", modo: "corrida", sabor: "tempo", relogio: 90e3, limite: 300000, nomes: ["Ana", "Beto", "Caio"] });
+      await partidaInteira(b, sv, { rot: "Corrida · Tempo até o fim", formato: "versus", modo: "corrida", sabor: "tempo", relogio: 90e3, limite: 420000, // 1.7.10.8: intervalo de 15 s e avisos congelam o relógio: o fim demora mais em tempo real nomes: ["Ana", "Beto", "Caio"] });
       await partidaInteira(b, sv, { rot: "Corrida · Tempo Hardcore até o fim", formato: "versus", modo: "corrida", sabor: "tempo-hc", relogio: 120e3, nomes: ["Ana", "Beto", "Caio"] });
     }
     if (!SO || SO === "partidas" || SO === "caos") await partidaModoCaos(b, sv);

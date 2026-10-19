@@ -6,6 +6,23 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.8",
+    data: "19/10/2026",
+    nome: "Multiplayer Update · QoL da Mesa",
+    t: "Menos repetição nas cartas e nas zoeiras, avisos e balões mais caprichados.",
+    itens: [
+      "🃏 Cartas mais variadas: o dispositivo lembra as cartas que já saíram e elas vão pro fundo do baralho nas próximas partidas.",
+      "🔘 Botões com reação variada: jokenpô pode dar Beleza!, Droga! ou Na próxima eu ganho!; a bomba pode dar Kabum! ou Vai explodir!",
+      "📏 Avisos e balões do mesmo tamanho, mais arrumados na tela.",
+      "🧤 Mão Leve com um par de luvas só.",
+      "😂 Zoeiras novas com a turma de sempre, bem menos repetidas.",
+      "🕙 Piada de horário só na hora certa: nada de chamar ninguém de criança acordada às três da tarde.",
+      "👀 Dica da vez sem borrar o resto: dá pra ver quem é o Mestre e de quem é a vez.",
+      "🧮 Placar explicado: a tela diz quanto ganha quem acertar agora e quanto ganha o Mestre.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.7.2",
     data: "19/10/2026",
     nome: "Multiplayer Update · Avisos da Mesa",

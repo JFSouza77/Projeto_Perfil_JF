@@ -922,7 +922,7 @@ function render() {
         const pvTela = palpiteVezAtual();
         controlsHtml = `
           <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ${item.text}</div>
-          <div style="text-align:center; opacity:0.75; font-size:0.85rem; margin-bottom:4px;">${CURRENT_MODE === "corrida" ? (corridaVitoria === "tempo" ? `Acertou: leva os segundos que sobram na carta (o 💰 lá em cima) e +${CORRIDA_BONUS_MS / 1e3} s no relógio` : `Acertou: fica com a carta e o relógio ganha +${CORRIDA_BONUS_MS / 1e3} s`) : `Vale ${pointsIfCorrect} pontos se acertar agora (${quemGanhaNm} ganha ${mestreGainDisplay})`}</div>
+          <div style="text-align:center; opacity:0.75; font-size:0.85rem; margin-bottom:4px;">${CURRENT_MODE === "corrida" ? (corridaVitoria === "tempo" ? `Acertou: leva os segundos que sobram na carta (o 💰 lá em cima) e +${CORRIDA_BONUS_MS / 1e3} s no relógio` : `Acertou: fica com a carta e o relógio ganha +${CORRIDA_BONUS_MS / 1e3} s`) : `Quem acertar agora ganha <b>${pointsIfCorrect}</b> pontos · ${cb ? quemGanhaNm : `o Mestre (${quemGanhaNm})`} ganha <b>${mestreGainDisplay}</b>`}</div>
           ${spotlightTimerHtml}
           ${pvTela ? (() => {
             const d = entityDisplay(pvTela.key);

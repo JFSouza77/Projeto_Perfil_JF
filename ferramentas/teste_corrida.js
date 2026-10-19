@@ -564,11 +564,16 @@ const ARQ = acharMestre(process.argv[2]);
     ["splashScreen", "welcomeScreen", "playerPanel"].forEach((id) => (document.getElementById(id).style.display = "none"));
     document.getElementById("gameScreen").style.display = "flex";
     beginGameplay();
-    f();
-    flipCard();
+    // a primeira carta pode sair depois da apresentação (balão/aviso): espera ela estar na mesa antes de virar
+    for (let i = 0; i < 40 && cardState !== "hidden" && cardState !== "revealed"; i++) {
+      f();
+      await esp(100);
+    }
+    if (cardState === "hidden") flipCard();
     f();
     await esp(500);
     f();
+    if (cardState !== "revealed") console.log("[save] carta não virou: " + cardState);
     corridaDobrar();
     corridaRestaMs = 754000;
     corridaCartaRestaMs = 81000;
@@ -581,7 +586,7 @@ const ARQ = acharMestre(process.argv[2]);
   });
   await p.reload();
   await p.waitForFunction(() => typeof saveGameState === "function" && !document.getElementById("goToRulesBtn").disabled);
-  await p.waitForFunction(() => CURRENT_MODE === "corrida" && !!corridaTique, null, { timeout: 8000 }).catch(() => {});
+  await p.waitForFunction(() => CURRENT_MODE === "corrida" && !!corridaTique, null, { timeout: 20000 }).catch(() => {}); // máquina lenta: o save volta depois do boot
   await p.waitForTimeout(300);
   const r3 = await p.evaluate(() => ({
     modo: CURRENT_MODE,

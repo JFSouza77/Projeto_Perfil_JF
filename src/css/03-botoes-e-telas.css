@@ -275,7 +275,8 @@ body.batata-mode .btn-start.btn-neo {
   align-items: center;
   gap: 10px;
   text-align: left;
-  width: max-content;
+  /* 1.7.10.8 (pedido do JF): balões do mesmo tamanho (antes a largura seguia o tamanho da frase) */
+  width: min(90vw, 560px);
   max-width: min(90vw, 560px);
   box-sizing: border-box;
   box-shadow:
