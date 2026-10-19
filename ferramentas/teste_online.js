@@ -290,7 +290,7 @@ async function partidaInteira(b, sv, cen) {
       conf(`[${rot}] Passou pelo Juízo Final`, await host.evaluate(() => corridaJuizo || corridaAcabou));
     } else r = await jogarAteOFim(host, [c1.g, c2.g], cen.limite || 360000);
     if (!r.fim && cen.modo === "corrida")
-      console.log("DIAG " + rot + ": " + (await host.evaluate(() => JSON.stringify({ g: Math.round(corridaGeralMs() / 1000), c: Math.round(corridaCartaMs() / 1000), cs: cardState, pi: pendingIndex, tk: timerKind, tl: secondsLeft(), toast: !!activeToastState, ov: !!timeoutOverlayMessage, jan: caosJanelaImportanteAberta(), pausa: !!pausedAt, int: corridaIntervaloAberto(), cartas: stats.totalDrawn, acabou: corridaAcabou, juizo: corridaJuizo, duelo: !!corridaDuelo, desemp: !!corridaDesempate, mestre: jogadorIdDe(mestreIndex), hostEu: rede.hostEu, rev: partidaRevisao }))));
+      console.log("DIAG " + rot + ": " + (await host.evaluate(() => JSON.stringify({ g: Math.round(corridaGeralMs() / 1000), c: Math.round(corridaCartaMs() / 1000), cs: cardState, pi: pendingIndex, tk: timerKind, tl: secondsLeft(), toast: !!activeToastState, ov: !!timeoutOverlayMessage, jan: caosJanelaImportanteAberta(), pausa: !!pausedAt, int: corridaIntervaloAberto(), cartas: stats.totalDrawn, acabou: corridaAcabou, juizo: corridaJuizo, duelo: !!corridaDuelo, desemp: !!corridaDesempate, mestre: jogadorIdDe(mestreIndex), hostEu: rede.hostEu, rev: partidaRevisao, parado: corridaParado(), desde: !!corridaDesde, congela: corridaCongelaMs, aviso: avisoMesa ? avisoMesa.titulo + " " + Math.round((avisoMesa.ate - Date.now()) / 1000) + "s" : null, fila: avisoFila.length, janelas: [...document.querySelectorAll(".caos-modal-ov")].map((m) => m.innerText.slice(0, 60)), timer: !!timerInterval }))));
     conf(`[${rot}] A partida foi até o fim (${r.passos} passos, ${r.seg} s)`, r.fim);
     conf(`[${rot}] Os celulares viram o fim da partida`, (await esperar(c1.g, () => rede.retrato && rede.retrato.fim, null, 15000)) && (await esperar(c2.g, () => rede.retrato && rede.retrato.fim, null, 15000)));
     const placar = await host.evaluate(() => JSON.stringify(players.map((p) => [p.id, p.score, p.position])));
@@ -715,7 +715,7 @@ async function dueloOnline(b, sv) {
       await partidaInteira(b, sv, { rot: "Express até o fim", formato: "versus", modo: "express", sabor: "classico", nomes: ["Ana", "Beto", "Caio"] });
     }
     if (!SO || SO === "partidas" || SO === "corrida") {
-      await partidaInteira(b, sv, { rot: "Corrida · Tempo até o fim", formato: "versus", modo: "corrida", sabor: "tempo", relogio: 90e3, limite: 420000, // 1.7.10.8: intervalo de 15 s e avisos congelam o relógio: o fim demora mais em tempo real nomes: ["Ana", "Beto", "Caio"] });
+      await partidaInteira(b, sv, { rot: "Corrida · Tempo até o fim", formato: "versus", modo: "corrida", sabor: "tempo", relogio: 90e3, limite: 420000, nomes: ["Ana", "Beto", "Caio"] }); // 1.7.10.8: intervalo de 15 s e avisos congelam o relógio, o fim demora mais em tempo real
       await partidaInteira(b, sv, { rot: "Corrida · Tempo Hardcore até o fim", formato: "versus", modo: "corrida", sabor: "tempo-hc", relogio: 120e3, nomes: ["Ana", "Beto", "Caio"] });
     }
     if (!SO || SO === "partidas" || SO === "caos") await partidaModoCaos(b, sv);

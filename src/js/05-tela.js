@@ -195,21 +195,24 @@ function updateDeckInfo() {
     (ultimaRodada ? `🏁 Última rodada (${ultimaRodadaQuem} bateu a meta) · ` : "") +
     `Cartas restantes no baralho: ${deck.length} de ${Math.min(allCards.length, deckLimiteModo())}`;
 }
+// 1.7.10.9 (pedido do JF: "que uma criança de 12 e um adulto de 40 entendam as mecânicas"): o relógio diz pra que
+// serve (escolher a dica, responder, cumprir a especial, a vez do Express), não só os segundos
+const TIMER_ROTULO = { pick: "pra escolher a dica", response: "pra responder", special: "pra cumprir a especial", turn: "da vez" };
+function timerDisplayHtml() {
+  const left = secondsLeft();
+  const isBig = left <= 10 && left > 0;
+  const isBlinkStep = left <= 5 && left > 0 && left % 2 === 1;
+  const cardPart =
+    CURRENT_MODE === "express" && cardEndAt
+      ? ` · carta <b>${Math.floor(cardSecondsLeft() / 60)}:${String(cardSecondsLeft() % 60).padStart(2, "0")}</b>`
+      : ""; // (na Corrida, a carta e a partida já estão na barra lá em cima)
+  const rotulo = TIMER_ROTULO[timerKind] || "";
+  return `⏱️ ${rotulo ? `<span class="timer-rotulo">Tempo ${rotulo}:</span> ` : ""}<span class="timer-number ${isBig ? "timer-big" : ""} ${isBlinkStep ? "timer-blink-on" : ""}">${left}s</span>${cardPart}`;
+}
 function updateTimerDisplay() {
   const el = document.getElementById("timerDisplay");
   const left = secondsLeft();
-  if (el) {
-    const isBig = left <= 10 && left > 0;
-    const isBlinkStep = left <= 5 && left > 0 && left % 2 === 1;
-    const cardPart =
-      CURRENT_MODE === "express" && cardEndAt
-        ? ` · carta <b>${Math.floor(cardSecondsLeft() / 60)}:${String(cardSecondsLeft() % 60).padStart(2, "0")}</b>`
-        : CURRENT_MODE === "corrida" && starterChosen
-          ? ` · carta <b>${corridaRelogioTxt(corridaCartaMs())}</b> · ⏱️ <b>${corridaAcabou && !corridaDesempate ? "0:00" : corridaRelogioTxt(corridaGeralMs())}</b>`
-          : "";
-    const labelPart = cardPart ? "vez " : "";
-    el.innerHTML = `◷ ${labelPart}<span class="timer-number ${isBig ? "timer-big" : ""} ${isBlinkStep ? "timer-blink-on" : ""}">${left}s</span>${cardPart}`;
-  }
+  if (el) el.innerHTML = timerDisplayHtml();
   if (left <= 5 && left > 0 && left !== lastBeepSecond) {
     lastBeepSecond = left;
     playBeep(440, 0.1);
@@ -728,7 +731,7 @@ function render() {
       const num = pendingIndex + 1;
       const spotlightTimerHtml = expressWhoFreeze
         ? `<div class="spotlight-timer">⏸️ Tempo parado — Mestre, quem acertou?</div>`
-        : `<div id="timerDisplay" class="spotlight-timer">⏱️ ${secondsLeft()}s</div>`;
+        : `<div id="timerDisplay" class="spotlight-timer">${timerDisplayHtml()}</div>`;
       if (item.type === "special") {
         const txt = item.text.toLowerCase();
         if (isWildcardSpecial(item.text)) {
@@ -882,7 +885,7 @@ function render() {
           : `<div class="guess-btns" style="flex-direction:column;"><button class="btn-correct" id="expressCorrectBtn">✓ Acertou</button><button class="btn-wrong" id="expressNextBtn">➡️ ${remainingX > 0 ? "Revelar próxima dica" : "Sem mais dicas — encerrar a carta"}</button></div>`;
         controlsHtml = `
           <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ${item.text}</div>
-          <div style="text-align:center; opacity:0.75; font-size:0.85rem; margin-bottom:4px;">Vale ${pts} ponto${pts === 1 ? "" : "s"} se acertar agora (11 − ${realN} dica${realN === 1 ? "" : "s"} revelada${realN === 1 ? "" : "s"})</div>
+          <div style="text-align:center; opacity:0.75; font-size:0.85rem; margin-bottom:4px;">Quem acertar agora ganha <b>${pts}</b> ponto${pts === 1 ? "" : "s"} (cada dica aberta tira 1)</div>
           ${spotlightTimerHtml}
           ${bodyHtml}`;
       } else {
@@ -922,6 +925,7 @@ function render() {
         const pvTela = palpiteVezAtual();
         controlsHtml = `
           <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ${item.text}</div>
+          <div class="dica-quem">🎙️ <b>${mestreName}</b> lê a dica em voz alta · 👉 <b>${responderName}</b> responde</div>
           <div style="text-align:center; opacity:0.75; font-size:0.85rem; margin-bottom:4px;">${CURRENT_MODE === "corrida" ? (corridaVitoria === "tempo" ? `Acertou: leva os segundos que sobram na carta (o 💰 lá em cima) e +${CORRIDA_BONUS_MS / 1e3} s no relógio` : `Acertou: fica com a carta e o relógio ganha +${CORRIDA_BONUS_MS / 1e3} s`) : `Quem acertar agora ganha <b>${pointsIfCorrect}</b> pontos · ${cb ? quemGanhaNm : `o Mestre (${quemGanhaNm})`} ganha <b>${mestreGainDisplay}</b>`}</div>
           ${spotlightTimerHtml}
           ${pvTela ? (() => {
@@ -955,7 +959,7 @@ function render() {
         ${ped ? `<div class="pedido-dica">👉 ${responderName} pediu a dica <b>${ped.idx + 1}</b>. Toque nela pra abrir.</div>` : ""}
         ${forcarHtml}
         <div class="pick-label">${trava && !ped ? `👉 ${responderName} escolhe a dica no aparelho dele (${remaining} restantes). Travou? Toque num número pra abrir sem pedido.` : `${responderName}, escolha uma dica de 1 a ${totalEntries} (${remaining} restantes)`}</div>
-        <div id="timerDisplay" class="pick-timer">◷ ${secondsLeft()}s</div>
+        <div id="timerDisplay" class="pick-timer">${timerDisplayHtml()}</div>
         <div class="number-grid">${grid}</div>${CURRENT_MODE === "corrida" ? corridaItensHostHtml() : ""}`;
     }
     if (CURRENT_MODE === "express" && pendingIndex !== null && !expressAskWho) controlsHtml += expressRodaHtml();
@@ -1484,16 +1488,31 @@ function corDoJogador(c) {
   const g = typeof c === "string" && GRADIENTS[c] && /#[0-9a-f]{6}/i.exec(GRADIENTS[c]);
   return g ? g[0] : "#a78bfa";
 }
+// 1.7.10.9 (pedido do JF: mecânica que criança de 12 e adulto de 40 entendem): o placar começa dizendo, numa linha,
+// como se vence a partida
+function metaCurtaTxt() {
+  const eq = CURRENT_FORMAT === "equipe";
+  const quem = eq ? "a equipe que" : "quem";
+  const w = winCond();
+  if (w === "express") return "🏁 Vence quem tiver mais pontos quando o baralho acabar";
+  if (w === "corrida") return corridaVitoria === "tempo" ? "🏁 Vence quem somar mais pontos quando o relógio da partida zerar" : "🏁 Vence quem tiver mais cartas quando o relógio da partida zerar";
+  if (w === "pontos") return `🏁 Vence ${quem} chegar a ${metaPontos()} pontos`;
+  if (w === "joias") return `🏁 Vence ${quem} juntar as ${GEMS_TO_WIN} joias`;
+  if (w === "tabuleiro") return `🏁 Vence ${quem} chegar na casa ${WINNING_SCORE}`;
+  if (w === "casa" && !casaSorteado) return "🏁 Moda da Casa: o C.A.O.S. sorteia como se vence";
+  return gemsEnabled() ? `🏁 Vence ${quem} chegar na casa ${WINNING_SCORE} ou juntar as ${GEMS_TO_WIN} joias` : `🏁 Vence ${quem} chegar na casa ${WINNING_SCORE}`;
+}
 function renderMiniScoreboard() {
   const list = document.getElementById("miniScoreboard");
   if (list) {
+    const meta = starterChosen ? `<li class="mini-meta">${metaCurtaTxt()}</li>` : "";
     if (CURRENT_MODE === "corrida") {
-      list.innerHTML = corridaEntidades()
+      list.innerHTML = meta + corridaEntidades()
         .map((e) => `<li style="--pc:${e.cor}">${e.html}: ${e.txt}${palpiteBadge(e.k)}</li>`)
         .join("");
     } else if (CURRENT_MODE === "express") {
       const sorted = [...players].sort((a, b) => b.score - a.score);
-      list.innerHTML = sorted
+      list.innerHTML = meta + sorted
         .map(
           (p) => `
         <li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${p.score} pt${p.score === 1 ? "" : "s"}${gemBadgesHtml(p)}${joiasTravaBadge(CURRENT_FORMAT === "equipe" ? p.team : p.id)}</li>
@@ -1505,14 +1524,14 @@ function renderMiniScoreboard() {
       const sortedTeams = [...teamOrder].sort(
         (a, b) => rankValue(teams[b], b) - rankValue(teams[a], a) || teams[b].position - teams[a].position,
       );
-      list.innerHTML = sortedTeams
+      list.innerHTML = meta + sortedTeams
         .map((id) => {
           const info = TEAM_INFO[id];
           const txt =
             wc === "pontos"
-              ? `${teamScore(id)}/${metaPontos()} pts — casa ${teams[id].position}`
+              ? `${teamScore(id)}/${metaPontos()} pts`
               : wc === "joias"
-                ? `${gemTotal(teams[id])}/${GEMS_TO_WIN} joias — casa ${teams[id].position}`
+                ? `${gemTotal(teams[id])}/${GEMS_TO_WIN} joias`
                 : `casa ${teams[id].position}/${WINNING_SCORE}`;
           return `<li style="--pc:${corDoJogador(info.color)}">${info.emoji} Equipe ${info.label}: ${txt}${palpiteBadge(id)}${gemBadgesHtml(teams[id])}${joiasTravaBadge(id)}</li>`;
         })
@@ -1520,13 +1539,13 @@ function renderMiniScoreboard() {
     } else {
       const wc = winCond();
       const sorted = [...players].sort((a, b) => rankValue(b) - rankValue(a) || b.position - a.position);
-      list.innerHTML = sorted
+      list.innerHTML = meta + sorted
         .map((p) => {
           const txt =
             wc === "pontos"
-              ? `${p.score}/${metaPontos()} pts — casa ${p.position}`
+              ? `${p.score}/${metaPontos()} pts`
               : wc === "joias"
-                ? `${gemTotal(p)}/${GEMS_TO_WIN} joias — casa ${p.position}`
+                ? `${gemTotal(p)}/${GEMS_TO_WIN} joias`
                 : wc === "tabuleiro"
                   ? `casa ${p.position}/${WINNING_SCORE}`
                   : `${p.score} pts — casa ${p.position}/${WINNING_SCORE}`;

@@ -6,6 +6,21 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.9",
+    data: "19/10/2026",
+    nome: "Multiplayer Update · QoL da Mesa",
+    t: "Regras do jogo mais fáceis de entender na própria tela.",
+    itens: [
+      "🏁 Como se vence: o placar começa dizendo o objetivo da partida, tipo Vence quem chegar a 200 pontos.",
+      "⏱️ Relógio explicado: a tela diz se o tempo é pra escolher a dica, pra responder ou da vez.",
+      "🎙️ Quem faz o quê: na hora da dica aparece quem lê em voz alta e quem responde.",
+      "⏳ Corrida mais clara: o relógio geral se chama partida, e o valor da carta mostra quanto vale acertar agora.",
+      "📱 Equipes no celular: os botões de quantas equipes cabem na tela.",
+      "🛠️ Relógio que não para mais: em casos raros, depois de um aviso da mesa, o relógio da Corrida podia ficar parado. Corrigido.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.8",
     data: "19/10/2026",
     nome: "Multiplayer Update · QoL da Mesa",

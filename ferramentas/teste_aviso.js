@@ -77,6 +77,19 @@ const PRINTS = (process.argv.find((a) => a.startsWith('--prints=')) || '').slice
     avisoMostrar({ titulo: 'd', anim: 'duelo', seg: 2, para: ['jm', 'jx'], variantes: { jm: { titulo: 'Mestre', botao: 'Tô pronto!' } } });
     if (avisoParaJogador('jm').botao !== 'Tô pronto!' || avisoParaJogador('jx').botao !== 'Bora!') p.push('botão da variante errado');
     avisoZerar();
+    // 1.7.10.9 (achado no teste online): se desenhar ou mandar o aviso der erro, o aviso ainda acaba e o relógio volta
+    {
+      const pub = window.redeHostPublicar;
+      window.redeHostPublicar = () => { throw new Error('rede caiu'); };
+      try { avisoMostrar({ ic: '💣', titulo: 'erro', anim: 'bomba', seg: 2 }); } catch (e) { p.push('aviso jogou erro pra fora: ' + e.message); }
+      window.redeHostPublicar = pub;
+      await espera(2300);
+      if (avisoMesaAtivo()) p.push('aviso com erro na rede não acabou');
+      const t0 = Date.now();
+      await espera(300);
+      if (avisoCongeladoDesde(t0) > 50) p.push('mesa ficou congelada depois do aviso com erro');
+      avisoZerar();
+    }
     // 1.7.10.7: Espectar duelo — quem está fora do duelo vê o botão e, depois, a resposta; duelista e Mestre não
     const redeAntes = rede;
     const d = { fase: 'duelo', quem: 'A', contra: 'B', mestre: 'C', equipe: false, ids: ['ja', 'jb', 'jc'] };
