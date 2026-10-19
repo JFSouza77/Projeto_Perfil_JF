@@ -347,6 +347,7 @@ function resetDeck() {
     CURRENT_MODE === "express"
       ? shuffle(fonteDeck)
       : embaralharEquilibrado(fonteDeck, CURRENT_MODE === "hardcore" ? CATEGORY_WEIGHTS_HARDCORE : null).reverse();
+  deck = baralhoAfastarRecentes(deck); // 1.7.10.8: o que saiu nas últimas partidas vai pro fundo
   currentCard = null;
   cardState = "none";
   gameEnded = false;
@@ -434,6 +435,7 @@ function drawHidden() {
   restoreBonusReader();
   caosAntiRepeticao();
   const rawCard = deck.pop();
+  cartasRecentesMarcar(rawCard.answer); // 1.7.10.8
   currentCard = { ...rawCard, clues: shuffle(rawCard.clues) };
   caosCatSeq.push(gemCategoryFor(rawCard.category));
   if (caosCatSeq.length > 6) caosCatSeq.shift();

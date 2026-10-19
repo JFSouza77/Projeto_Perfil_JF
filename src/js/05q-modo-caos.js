@@ -120,6 +120,7 @@ function mcNovaRodada() {
     }
     if (!raw) raw = sorteioItem(mcBaralho());
     usadas.add(raw.answer);
+    cartasRecentesMarcar(raw.answer); // 1.7.10.8
     const dicas = shuffle(raw.clues.filter((c) => c.type === "clue")).slice(0, 10).map((c) => String(c.text));
     mc.cartas[p.id] = { resp: raw.answer, cat: gemCategoryFor(raw.category), dicas, aberta: 0, estado: "ativa", por: null };
   });
@@ -130,7 +131,7 @@ function mcNovaRodada() {
 }
 // baralho acabou no meio da partida: embaralha de novo (sem mexer no resto da partida)
 function resetDeckSoBaralho() {
-  deck = shuffle(mcBaralho().slice());
+  deck = baralhoAfastarRecentes(shuffle(mcBaralho().slice())); // 1.7.10.8
 }
 function mcCartaViva(id) {
   const c = mc.cartas[id];
