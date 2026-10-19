@@ -6,6 +6,19 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.7.1",
+    data: "18/10/2026",
+    nome: "Multiplayer Update · Avisos da Mesa",
+    t: "Telas mais claras no Modo C.A.O.S. e a Corrida sem perder tempo depois de um erro.",
+    itens: [
+      "🃏 Carta do Modo C.A.O.S. mais clara: quem é o Mestre, a categoria grande, em que dica estamos e quanto tempo falta pra palpitar, com barra.",
+      "🎙️ Mestre no Modo C.A.O.S.: a resposta da sua carta aparece em destaque, com as dicas já abertas logo abaixo.",
+      "✋ Botão Palpitar logo abaixo da carta, sem precisar rolar a tela.",
+      "⏱️ Corrida sem atraso: depois de um erro, a próxima dica abre na hora, sem comer o tempo da carta.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.7",
     data: "18/10/2026",
     nome: "Multiplayer Update · Avisos da Mesa",

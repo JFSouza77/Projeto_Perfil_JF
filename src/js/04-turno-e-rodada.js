@@ -1234,6 +1234,12 @@ function markWrong(tipo) {
       vibrar("erro");
       fxShake();
     }
+    // 1.7.10.7.1 (relato do JF): na Corrida a próxima dica esperava o comentário do C.A.O.S. sair da tela e isso
+    // comia o tempo da carta. Na Corrida o erro segue na hora, sem comentário (a carta está correndo)
+    if (CURRENT_MODE === "corrida") {
+      proceed();
+      return;
+    }
     {
       const prio =
         caosCerebroAnne(tipo, missedPlayer) || caosCerebroDiagnostico(missedPlayer) || (!tipo && caosAmigoFala(missedPlayer, "erro", 0.35));

@@ -825,6 +825,12 @@ function mcTicar() {
 // textos com contagem regressiva (host e convidado): <b class="mc-cont" data-fim="…">
 function mcContagens() {
   const agora = typeof rede !== "undefined" && rede && rede.papel === "convidado" ? redeAgora() : Date.now();
+  document.querySelectorAll(".mc-barra[data-fim]").forEach((el) => {
+    const f = Math.max(0, Math.min(1, (+el.dataset.fim - agora) / (+el.dataset.dur || 1)));
+    const i = el.querySelector("i");
+    if (i) i.style.width = (f * 100).toFixed(1) + "%";
+    el.classList.toggle("mc-barra-fim", f < 0.3);
+  });
   document.querySelectorAll(".mc-cont[data-fim]").forEach((el) => {
     const s = Math.max(0, Math.ceil((+el.dataset.fim - agora) / 1000));
     const t = el.dataset.mmss ? Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0") : String(s);
@@ -954,7 +960,7 @@ function mcTelaHtml(r, eu, opcoes, priv) {
   };
   const fimDe = (rel) => (rel ? (rel.fimEm ? rel.fimEm : (typeof rede !== "undefined" && rede && rede.papel === "convidado" ? redeAgora() : Date.now()) + (rel.resta || 0)) : 0);
   const cont = (rel, mmss) => (rel ? `<b class="mc-cont"${mmss ? ' data-mmss="1"' : ""} data-fim="${fimDe(rel)}">…</b>` : "—");
-  const relogios = `<div class="mc-relogios"><span>⏱️ ${cont(M.geral, true)}</span><span>🔄 Rodada ${M.rodada} · ${cont(M.rodadaT, true)}</span>${M.turbo ? '<span class="mc-ev">⏩ TURBO</span>' : ""}${M.janela && M.janela.imposto ? '<span class="mc-ev">💸 IMPOSTO</span>' : ""}</div>`;
+  const relogios = `<div class="mc-relogios"><span>⏱️ Partida ${cont(M.geral, true)}</span><span>🔄 Rodada ${M.rodada} · ${cont(M.rodadaT, true)}</span>${M.turbo ? '<span class="mc-ev">⏩ TURBO</span>' : ""}${M.janela && M.janela.imposto ? '<span class="mc-ev">💸 IMPOSTO</span>' : ""}</div>`;
   const placar = (r.jogadores || [])
     .slice()
     .sort((a, b) => (b.pontos || 0) - (a.pontos || 0))
@@ -986,18 +992,44 @@ function mcTelaHtml(r, eu, opcoes, priv) {
     const lado = (id) => (du.lados ? ` (${escapeHtml(du.lados[id])})` : "");
     centro = `<div class="mc-bloco mc-duelo"><h3>⚔️ ${du.revanche ? "REVANCHE" : "DUELO"}: ${escapeHtml(MC_DUELO_NOME[du.tipo] || du.tipo)}</h3><p>${nome(du.ladrao)}${lado(du.ladrao)} × ${nome(du.vitima)}${lado(du.vitima)}</p>${du.resultado ? `<p><b>${escapeHtml(du.resultado.det)}</b></p>` : ""}<p>${du.fase === "revanche" ? `${nome(du.vitima)} decide se pede revanche · <b class="mc-cont" data-fim="${du.ate}">…</b> s` : du.tipo === "ppt" || du.tipo === "parimpar" ? `Escolheram: ${du.escolheu.length}/2 · <b class="mc-cont" data-fim="${du.ate}">…</b> s` : `Rolando… <b class="mc-cont" data-fim="${du.ate}">…</b>`}</p></div>`;
   } else if (C) {
+    // 1.7.10.7.1 (relato do JF: "não sabia quem era o Mestre, a categoria, quanto tempo restava, e o Mestre não via a
+    // própria carta direito"): painel da carta com Mestre, categoria grande, dica X de 10 em bolinhas, o tempo da
+    // dica em número e barra, o que fazer agora; e, pro Mestre, a resposta e o que ele faz
     const j = M.janela;
-    let estado = "";
-    if (M.fase === "abrindo") estado = `🎙️ Vez de ${nome(M.mestre)}: a dica ${C.aberta + 1} abre ${M.abrirEm ? `em <b class="mc-cont" data-fim="${M.abrirEm}">…</b> s` : "já já"}`;
-    else if (M.fase === "julgando" && j && j.buzz) estado = `<span class="mc-respondendo">🗣️ ${nome(j.buzz)} está respondendo!</span><small>${nome(M.mestre)} julga.</small>`;
-    else if (M.fase === "janela" && j) estado = `✋ Quem souber, palpita! <b class="mc-cont mc-janela" data-fim="${fimDe(j.relogio)}">…</b> s${j.congela && Date.now() < j.congela.ate ? ` · 🥶 só ${nome(j.congela.por)} agora` : ""}${j.mordaca ? ` · 🤐 ${nome(j.mordaca)} amordaçado` : ""}`;
-    else if (M.fase === "desfibOferta") estado = `${MC_LOJA.desfib.ic} A carta vai hibernar… alguém tem ${MC_LOJA.desfib.nome}?`;
+    const souMestre = eu && eu === M.mestre;
+    const catTxt = escapeHtml(TELAO_CAT[C.cat] || C.cat);
+    const dicaN = M.fase === "abrindo" ? C.aberta + 1 : C.aberta;
+    const pips = Array.from({ length: C.total }, (_, i) => `<i class="${i < C.aberta ? "on" : ""}${i === C.aberta - 1 && M.fase !== "abrindo" ? " agora" : ""}"></i>`).join("");
+    let tempo = "",
+      estado = "";
+    if (M.fase === "abrindo") {
+      tempo = M.abrirEm ? `<div class="mc-tempo"><small>A dica ${dicaN} abre em</small><b class="mc-cont" data-fim="${M.abrirEm}">…</b><span>s</span></div>` : "";
+      estado = souMestre ? "🎙️ Prepare-se: você vai ler a próxima dica em voz alta." : `🎙️ ${nome(M.mestre)} vai ler a dica ${dicaN}.`;
+    } else if (M.fase === "julgando" && j && j.buzz) {
+      tempo = `<div class="mc-tempo mc-tempo-pausa"><small>Tempo parado</small><b>⏸️</b></div>`;
+      estado = `<span class="mc-respondendo">🗣️ ${nome(j.buzz)} está respondendo!</span><small>${souMestre ? "Você julga: acertou ou errou?" : `${nome(M.mestre)} julga.`}</small>`;
+    } else if (M.fase === "janela" && j) {
+      tempo = `<div class="mc-tempo"><small>Tempo pra palpitar</small><b class="mc-cont mc-janela" data-fim="${fimDe(j.relogio)}">…</b><span>s</span></div><div class="mc-barra" data-fim="${fimDe(j.relogio)}" data-dur="${j.dur || 1}"><i></i></div>`;
+      estado = souMestre
+        ? "🎙️ Leia a dica em voz alta. Quem souber toca em ✋ Palpitar."
+        : `✋ Sabe a resposta? Toque em <b>Palpitar</b> e fale em voz alta.${j.congela && Date.now() < j.congela.ate ? ` · 🥶 só ${nome(j.congela.por)} agora` : ""}${j.mordaca ? ` · 🤐 ${nome(j.mordaca)} amordaçado` : ""}`;
+    } else if (M.fase === "desfibOferta") estado = `${MC_LOJA.desfib.ic} A carta vai hibernar… alguém tem ${MC_LOJA.desfib.nome}?`;
     else if (M.fase === "desfibSolo" && M.desfib) estado = `${MC_LOJA.desfib.ic} ${nome(M.desfib.id)} está numa tentativa solo com a ${MC_LOJA.desfib.nome}!`;
-    centro = `<div class="mc-bloco"><div class="mc-cat">🎙️ Carta de ${nome(M.mestre)} · <span class="tc-selo">${escapeHtml(TELAO_CAT[C.cat] || C.cat)}</span> · ${C.aberta}/${C.total} dicas</div><div class="mc-estado">${estado}</div><ol class="mc-dicas">${C.dicas
-      .map((t, i) => ({ t, i }))
-      .reverse()
-      .map((x) => `<li value="${x.i + 1}"${x.i === C.aberta - 1 ? ' class="mc-agora"' : ""}>${escapeHtml(x.t)}</li>`)
-      .join("")}</ol></div>`;
+    const mestreBox = souMestre && priv && priv.carta
+      ? `<div class="mc-sou-mestre">🎙️ <b>Você é o Mestre desta carta</b><div class="mc-resp">Resposta: <b>${escapeHtml(priv.carta.resp)}</b> <small>(só você vê)</small></div></div>`
+      : "";
+    centro = `<div class="mc-bloco mc-carta-painel">
+      <div class="mc-quem"><span><small>🎙️ Mestre</small><b>${nome(M.mestre)}</b></span><span><small>Categoria</small><b class="tc-selo mc-cat-grande">${catTxt}</b></span></div>
+      ${mestreBox}
+      <div class="mc-dica-n"><b>Dica ${dicaN} de ${C.total}</b><span class="mc-pips" aria-hidden="true">${pips}</span></div>
+      ${tempo}
+      <div class="mc-estado">${estado}</div>
+      ${C.dicas.length ? `<div class="mc-dicas-tit">Dicas já abertas (a mais nova em cima)</div><ol class="mc-dicas">${C.dicas
+        .map((t, i) => ({ t, i }))
+        .reverse()
+        .map((x) => `<li value="${x.i + 1}"${x.i === C.aberta - 1 ? ' class="mc-agora"' : ""}>${escapeHtml(x.t)}</li>`)
+        .join("")}</ol>` : `<p class="mc-sem-dica">Nenhuma dica aberta ainda.</p>`}
+    </div>`;
   }
   const ult = M.ultimo ? `<div class="mc-ultimo">${M.ultimo.tipo === "capturada" ? `✅ ${nome(M.ultimo.quem)} capturou` : "💀 Ninguém matou"} a carta de ${nome(M.ultimo.mestre)}: <b>${escapeHtml(M.ultimo.resp)}</b></div>` : "";
   // privado
@@ -1024,12 +1056,12 @@ function mcTelaHtml(r, eu, opcoes, priv) {
   else if (M.fase === "duelo" && M.duelo) agoraTxt = `⚔️ Duelo: ${nome(M.duelo.ladrao)} × ${nome(M.duelo.vitima)}`;
   else if (M.fase === "desafio" && M.desafio) agoraTxt = `🥔 Carta bônus de ${nome(M.desafio.com)}`;
   else if (M.fase === "fim") agoraTxt = "🏁 Fim do tempo";
-  else if (C) agoraTxt = `🎙️ Agora: vez de ${nome(M.mestre)} · dica ${M.fase === "abrindo" ? C.aberta + 1 : C.aberta} de ${C.total}`;
+  else if (C) agoraTxt = `${eu && eu === M.mestre ? "🎙️ Você é o Mestre" : `🎙️ Mestre: ${nome(M.mestre)}`} · ${escapeHtml(TELAO_CAT[C.cat] || C.cat)} · dica ${M.fase === "abrindo" ? C.aberta + 1 : C.aberta} de ${C.total}`;
   const agoraLinha = agoraTxt ? `<div class="mc-agora-linha" role="status">${agoraTxt}</div>` : "";
   const novidade = (M.feed || []).length && M.fase !== "intervalo" ? `<div class="mc-novidade">${escapeHtml(M.feed[M.feed.length - 1])}</div>` : "";
   const bot = botoes ? `<div class="mc-botoes">${botoes}</div>` : "";
   if (M.fase === "intervalo") return `<div class="mc-tela mc-tela-intervalo">${agoraLinha}${centro}${bot}${meu}<ol class="mc-placar">${placar}</ol></div>`;
-  return `<div class="mc-tela">${agoraLinha}${relogios}${centro}${novidade}${ult}${meu}${bot}<ol class="mc-placar">${placar}</ol></div>`;
+  return `<div class="mc-tela">${agoraLinha}${relogios}${centro}${bot}${novidade}${ult}${meu}<ol class="mc-placar">${placar}</ol></div>`;
 }
 // host: desenha a tela do jogador do próprio dispositivo (hostEu) no lugar da carta de sempre
 function mcDesenharHost() {
