@@ -27,6 +27,7 @@ let corridaPrecos = {}; // { item: preço } da vitrine deste intervalo
 let corridaCofrinho = {}; // id → cofrinhos guardados (cada um: +CORRIDA_COFRINHO_PTS no próximo acerto da pessoa)
 let corridaIma = {}; // id → cartaSeq em que o Ímã de Pontos vale
 let corridaCreditos = {}; // 1.7.10.6.1: id → créditos da lojinha na vitória por Cartas (lá o placar é em cartas)
+let corridaCompras = {}; // 1.7.10.9.1 (JF): id → { gasto, itens: { item: n } }, pra mostrar ganhou × gastou na lojinha
 let corridaTiqueSom = 0;
 
 function corridaEventosZerar() {
@@ -47,6 +48,7 @@ function corridaEventosZerar() {
   corridaCofrinho = {};
   corridaIma = {};
   corridaCreditos = {};
+  corridaCompras = {};
   document.body.classList.remove("cr-juizo", "cr-bomba", "cr-duelo");
 }
 function corridaEventosSalvar() {
@@ -66,6 +68,7 @@ function corridaEventosSalvar() {
     cofrinho: corridaCofrinho,
     ima: Object.keys(corridaIma).filter((k) => corridaIma[k] === cartaSeq),
     creditos: corridaCreditos,
+    compras: corridaCompras,
   };
 }
 function corridaEventosRetomar(e) {
@@ -97,6 +100,15 @@ function corridaEventosRetomar(e) {
   if (e.cofrinho && typeof e.cofrinho === "object") Object.keys(e.cofrinho).slice(0, 10).forEach((id) => (corridaCofrinho[String(id)] = n(e.cofrinho[id], 9)));
   if (Array.isArray(e.ima)) e.ima.slice(0, 10).forEach((id) => (corridaIma[String(id)] = cartaSeq));
   if (e.creditos && typeof e.creditos === "object") Object.keys(e.creditos).slice(0, 10).forEach((id) => (corridaCreditos[String(id)] = n(e.creditos[id], 99999)));
+  if (e.compras && typeof e.compras === "object")
+    Object.keys(e.compras)
+      .slice(0, 10)
+      .forEach((id) => {
+        const c = e.compras[id] || {},
+          itens = {};
+        if (c.itens && typeof c.itens === "object") Object.keys(CORRIDA_LOJA).forEach((k) => c.itens[k] && (itens[k] = n(c.itens[k], 99)));
+        corridaCompras[String(id)] = { gasto: n(c.gasto, 99999), itens };
+      });
   corridaClassesCorpo();
 }
 
@@ -425,6 +437,9 @@ function corridaComprar(item, id) {
     preco = corridaPreco(item);
   corridaSaldoMudar(id, -preco);
   corridaEstoque[item]--;
+  const reg = (corridaCompras[id] = corridaCompras[id] || { gasto: 0, itens: {} });
+  reg.gasto += preco;
+  reg.itens[item] = (reg.itens[item] || 0) + 1;
   if (item === "congelar") corridaCongelaMs += 15e3;
   else if (item === "folego") corridaFolego[id] = cartaSeq;
   else if (item === "escudo") corridaEscudo = cartaSeq;
@@ -525,7 +540,12 @@ function corridaLojaVitrineHtml(estoque, compradores, precos) {
     const t = ["corte", "desfib"].filter((k) => inv[k] > 0).map((k) => `${CORRIDA_LOJA[k].ic}×${inv[k]}`).join(" ");
     return t ? ` · 🎒 ${t}` : "";
   };
-  const saldo = (compradores || []).map((c) => `${escapeHtml(c.nome)}: <b>${c.pts}</b>${guardados(c.id)}`).join(" · ");
+  // 1.7.10.9.1 (JF): quanto a pessoa ganhou, quanto gastou e quanto tem agora
+  const contas = (c) => {
+    const g = (corridaCompras[c.id] || {}).gasto || 0;
+    return g ? ` <small>(ganhou ${c.pts + g} · gastou ${g})</small>` : "";
+  };
+  const saldo = (compradores || []).map((c) => `${escapeHtml(c.nome)}: <b>${c.pts}</b>${contas(c)}${guardados(c.id)}`).join(" · ");
   const como = `<div class="cr-loja-como">🎒 Itens com <b>guarda</b> ficam com você: na carta, aparece o botão <b>Usar</b> na sua tela (o Passe Livre só na sua vez). Os outros valem na hora da compra.</div>`;
   return `<div class="cr-loja"><div class="cr-loja-tit">🛒 Lojinha de Sobrevivência <small>(uma só pra mesa: quem comprar primeiro leva · a vitrine muda a cada intervalo)</small></div>${saldo ? `<div class="cr-loja-saldo">💰 ${saldo}</div>` : ""}<ul>${linhas}</ul>${como}</div>`;
 }

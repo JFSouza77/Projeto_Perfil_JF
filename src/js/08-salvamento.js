@@ -1764,7 +1764,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.9 · C.A.O.S. 4.6.1");
+  L.push("- **Versão:** Beta 1.7.10.9.1 · C.A.O.S. 4.6.2");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -1959,6 +1959,24 @@ function caosPartidaMarkdown() {
     );
   });
   L.push("");
+  /* 1.7.10.9.1 (JF): Corrida com lojinha: o que cada um ganhou, gastou e ficou */
+  try {
+    if (CURRENT_MODE === "corrida" && typeof corridaCompras === "object" && Object.keys(corridaCompras).length) {
+      const moeda = corridaMoeda();
+      L.push("## Lojinha", "");
+      L.push("| Jogador | Ganhou (" + moeda + ") | Gastou na lojinha | Ficou com | Itens comprados |", "|---|---|---|---|---|");
+      players.forEach((p) => {
+        const c = corridaCompras[p.id] || { gasto: 0, itens: {} },
+          tem = corridaSaldo(p.id);
+        const itens = Object.keys(c.itens || {})
+          .map((k) => (CORRIDA_LOJA[k] ? CORRIDA_LOJA[k].ic + " " + CORRIDA_LOJA[k].nome + (c.itens[k] > 1 ? " ×" + c.itens[k] : "") : ""))
+          .filter(Boolean)
+          .join(", ");
+        L.push("| " + esc(p.name) + " | " + (tem + c.gasto) + " | " + c.gasto + " | " + tem + " | " + esc(itens || "—") + " |");
+      });
+      L.push("");
+    }
+  } catch (e) {}
   /* categorias e dicas */
   if (hist.length) {
     L.push("## Acertos por categoria", "");
@@ -2287,7 +2305,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.9 · C.A.O.S. 4.6.1",
+        versao: "Beta 1.7.10.9.1 · C.A.O.S. 4.6.2",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,

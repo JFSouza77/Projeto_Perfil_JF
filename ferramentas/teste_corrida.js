@@ -410,6 +410,10 @@ const ARQ = acharMestre(process.argv[2]);
     dispatchAction({ type: "corridaComprar", data: ["corte", comprador.id] });
     o.comprou = comprador.score === pts0 - CORRIDA_LOJA.desfib.preco - CORRIDA_LOJA.corte.preco && corridaEstoque.desfib === est0 - 1 && corridaItens[comprador.id].desfib === 1;
     o.foraDaVitrineNaoCompra = !corridaPodeComprar("escudo", comprador.id);
+    // 1.7.10.9.1 (JF): a lojinha guarda quanto cada um gastou (tela: ganhou × gastou; export: seção Lojinha)
+    const reg = corridaCompras[comprador.id] || {};
+    o.gastoRegistrado = reg.gasto === CORRIDA_LOJA.desfib.preco + CORRIDA_LOJA.corte.preco && reg.itens.desfib === 1 && reg.itens.corte === 1;
+    o.lojaMostraGanhouGastou = /ganhou \d+ · gastou \d+/.test(corridaLojaVitrineHtml(corridaEstoque, [{ id: comprador.id, nome: comprador.name, pts: corridaSaldo(comprador.id) }], corridaPrecos));
     // Cofrinho (+40 no próximo acerto de quem comprou), Ímã (20% do acerto dos outros) e Ampulheta (+30 s no geral)
     const outro = players.find((q) => q !== comprador);
     outro.score += 100;

@@ -1,7 +1,7 @@
 # Handoff · Modo C.A.O.S. e Corrida contra o Tempo
 
 **Para:** GPT (ou qualquer revisor externo) · **De:** Claude Code, a pedido do JF · **Data:** 19/10/2026
-**Versão do jogo:** Beta 1.7.10.9 · C.A.O.S. 4.6.1 · build 1828
+**Versão do jogo:** Beta 1.7.10.9.1 · C.A.O.S. 4.6.2 · build 1829
 
 **Objetivo:** entregar o retrato completo e atual dos dois modos novos, com:
 - regras;
@@ -71,7 +71,7 @@ Com isso, a análise de fora pode sugerir melhorias sem refazer o que já foi di
 
 | Relógio | Valor | Observação |
 |---|---|---|
-| Partida (geral) | **20 min** | +10 s por carta acertada (uma vez por carta, sem teto). Ver a inconsistência em 6.1. |
+| Partida (geral) | **30 min** | +10 s por carta acertada (uma vez por carta, sem teto). **Regra fixa do JF: não entra no balanceamento.** |
 | Carta | **3:00** | Não reinicia por erro nem por troca de vez. Só corre com a carta aberta. |
 | Vez | **25 s pra escolher + 25 s pra responder** | Era 15+15. O JF achou "ridiculamente rápido" (1.7.10.6.1). |
 | Intervalo | 15 s | Geral congelado. |
@@ -172,6 +172,11 @@ Ideias que não entraram:
 - **"Dica de graça" comprada** (Gemini): não entra, porque a dica é de todo mundo e quem está na frente compraria vantagem.
 - **"Sacrifício"** (Gemini, gastar 30 pontos pra congelar a carta 10 s): virou a ideia da lojinha.
 
+**Itens funcionam na hora (regra do JF, 19/10):**
+- não existe recarga (cooldown);
+- comprou ou usou, vale naquele momento;
+- os itens de "próxima carta" valem já na carta que abre depois do intervalo, que é onde a lojinha fica.
+
 ### 1.8 Online
 
 - O host decide tudo.
@@ -250,15 +255,19 @@ Aqui, o C.A.O.S. **apronta de verdade**: eventos, roubos, duelos e lojinha.
 
 | Item | Preço base | Peso | Efeito |
 |---|---|---|---|
-| ✂️ Tesoura do Caos | 15 | 3 | Corta a janela da dica atual pra 6 s (só com mais de 7 s sobrando). |
+| ✂️ Tesoura do Caos | 15 | 3 | Na hora: a janela da dica cai pra 6 s. |
 | 💖 Vida Extra | 20 | 3 | Errou? Ganha uma 2ª tentativa na mesma dica. |
 | 🤐 Mordaça | 30 | 2 | Trava o botão de palpite de alguém nesta dica (o Mestre não). |
 | 🧟 Ressurreição | 35 | 2 | Quando a carta for hibernar, a próxima dica é só pra você, com tentativa solo. |
-| 🥶 Era do Gelo | 40 | 2 | Os outros ficam travados nos 7 primeiros segundos da dica. |
+| 🥶 Era do Gelo | 40 | 2 | Na hora: os outros ficam travados por 7 s e só você palpita. |
 | 🪞 Espelho Refletor | 45 | 2 | Guarda: devolve a próxima agressão (roubo, mordaça, assalto, punição). |
 | 🦺 Colete Anti-Caos | 60 | 1 | Guarda: anula 1 roubo, assalto ou punição contra você. |
 | 👁️ Olho do C.A.O.S. | 45 | 1 | A 1ª letra da resposta aparece só pra você, naquela dica. |
 | 💸 Assalto Relâmpago | 25 | 2 | Na compra, leva 15 PC de quem tem mais PC (o Colete segura, o Espelho devolve). |
+
+**Itens na hora (1.7.10.9.1):** a Era do Gelo e a Tesoura não têm mais "janelinha certa".
+- A Era do Gelo trava os outros por 7 s a partir de quando é usada (antes, só nos 3 primeiros s da dica).
+- A Tesoura vale com mais de 6 s sobrando.
 
 ### 2.7 Eventos
 
@@ -358,7 +367,7 @@ Espelho e Colete valem no roubo, na Mão Leve e na batata.
 
 ### Dados da partida de Corrida de 18/10 (vitória por Tempo, 4 jogadores, versão 1.7.10.6)
 
-- Durou **26 min**: base de 20 + bônus de acerto − mortes.
+- Durou **26 min**: na época a base era de 20 min (já voltou pros 30), + bônus de acerto − mortes.
 - Saíram **25 cartas**: **21 acertos**, 3 sem dono.
 - Foram **12 pulos** e **4 absurdos**.
 
@@ -369,7 +378,7 @@ Espelho e Colete valem no roubo, na Mão Leve e na batata.
 | JF | 5 | 301* | 122 | 2,6 | 0 |
 | BsLordRafa | 1 | 137 | 137 | 1 | 5 |
 
-\* O placar final ficou abaixo da soma dos acertos (CarroPika 559 e JF 611 em acertos). A diferença provavelmente veio das compras na lojinha (que custam pontos no Tempo) e do roubo de 25 do duelo. O export não detalha isso, e vale incluir no export.
+\* O placar final ficou abaixo da soma dos acertos (CarroPika 559 e JF 611 em acertos). O JF confirmou que foi a lojinha: o Henrique comprou desde o começo e o JF comprou muito depois que conseguiu acessar. Desde a 1.7.10.9.1, a lojinha mostra "ganhou × gastou" e os dados da partida têm uma seção **Lojinha**.
 
 **Leituras do Claude** (pra revisão de fora confirmar ou contestar):
 - A média de ~3,4 dicas por acerto com vez de 15 s ainda deu ~80–145 pontos por carta.
@@ -383,11 +392,6 @@ Espelho e Colete valem no roubo, na Mão Leve e na batata.
 
 ### 6.1 Inconsistências conhecidas (pra corrigir)
 
-- **Corrida, 20 ou 30 min?**
-  - O código usa **20 min** (balanceamento de 18/10: dá ~12 cartas, cada um lê 2 ou 3 vezes).
-  - A Novidade da 1.7.10.6 e um comentário do código ainda dizem "30 minutos".
-  - O JF decidiu 30 no começo (17/10), e o Claude reduziu pra 20 com o "pode balancear".
-  - **Precisa da confirmação do JF.**
 - **Palpite a qualquer hora no Modo C.A.O.S.:** o handoff original dizia "especiais do Express valem", mas a 1ª versão saiu **só com dicas de verdade**. As especiais ficaram pra depois do playtest.
 
 ### 6.2 Ficou pra depois (decidido)
@@ -403,7 +407,7 @@ Espelho e Colete valem no roubo, na Mão Leve e na batata.
 
 1. **Corrida, recuperação:** como dar chance a quem ficou muito atrás sem punir quem joga bem? (Hoje: Ímã e Ampulheta na lojinha.)
 2. **Corrida, cartas de Ano:** na vitória por Tempo elas valem pouco e quase ninguém acerta. Tirar da Corrida? Dar bônus? Relógio próprio?
-3. **Corrida, 20 vs 30 min:** com 25 s de vez e 3:00 de carta, qual duração mantém uma mesa de 30–40 anos focada?
+3. **Corrida, ritmo dos 30 min (fixos, regra do JF):** com 25 s de vez e 3:00 de carta, o que manter dentro da partida pra mesa de 30–40 anos não perder o foco?
 4. **Modo C.A.O.S., densidade de eventos:** ~25% de chance de evento por vez, mais o intervalo. É caos divertido ou ainda é bagunça pra quem joga a 1ª vez?
 5. **Modo C.A.O.S., economia de PC:** 9 itens, vitrine de 5, ~10–25 PC por rodada numa partida de 10 min (umas 3–4 rodadas). Dá pra comprar algo relevante ou a lojinha fica decorativa?
 6. **Modo C.A.O.S., 10 min:** com janela de 25 s e respiro de 4,5 s, quantas cartas cada um consegue ser Mestre? Vale subir pra 12–15 min?

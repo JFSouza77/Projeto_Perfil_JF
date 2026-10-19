@@ -1665,8 +1665,11 @@ function redeOpcoes(jid) {
   if (CURRENT_MODE === "corrida") {
     if (corridaIntervaloAberto() && corridaEstoque)
       Object.keys(CORRIDA_LOJA).forEach((k) => {
-        const it = CORRIDA_LOJA[k];
-        if (corridaPodeComprar(k, jid)) add("corridaComprar", [k, jid], `${it.ic} ${it.nome} · ${corridaPreco(k)} ${corridaMoeda()} (${corridaEstoque[k]} no estoque)`, "", `🛒 Lojinha · você tem ${corridaSaldo(jid)} ${corridaMoeda()}`);
+        const it = CORRIDA_LOJA[k],
+          tem = corridaSaldo(jid),
+          gastou = (corridaCompras[jid] || {}).gasto || 0; // 1.7.10.9.1 (JF): ganhou × gastou
+        if (corridaPodeComprar(k, jid))
+          add("corridaComprar", [k, jid], `${it.ic} ${it.nome} · ${corridaPreco(k)} ${corridaMoeda()} (${corridaEstoque[k]} no estoque)`, "", `🛒 Lojinha · você tem ${tem} ${corridaMoeda()}${gastou ? ` (ganhou ${tem + gastou} · gastou ${gastou})` : ""}`);
       });
     ["desfib", "corte"].forEach((k) => corridaPodeUsar(k, jid) && add("corridaUsar", [k, jid], `${CORRIDA_LOJA[k].ic} Usar ${CORRIDA_LOJA[k].nome}`, "ok", "🎒 Seus itens"));
   }
