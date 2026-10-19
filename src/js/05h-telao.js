@@ -112,7 +112,7 @@ function telaoRoletaHtml(c) {
   const cats = (c.roleta && Array.isArray(c.roleta.cats) && c.roleta.cats.length ? c.roleta.cats : Object.keys(CATEGORY_LABELS)).filter((k) => typeof k === "string").slice(0, 8);
   const pousou = !!c.categoria;
   const cor = pousou ? (GEM_INFO[c.categoria] || {}).color || "#e94560" : "#a78bfa";
-  const dica = pousou ? "🗣️ A categoria da carta" : c.roleta && c.roleta.girando ? "🎰 sorteando a categoria..." : "🃏 O Mestre vai virar a carta";
+  const dica = pousou ? "🗣️ A categoria da carta" : c.roleta && c.roleta.girando ? "🎰 Sorteando a categoria..." : "🃏 O Mestre vai virar a carta";
   return `<div class="roulette telao-roleta" style="--cat:${cor};" data-cats="${escapeHtml(cats.join(","))}" data-pousou="${pousou ? 1 : 0}" data-girando="${c.roleta && c.roleta.girando ? 1 : 0}"><div class="roulette-phrase">"Eu sou <span class="roulette-reel${pousou ? " landed" : ""}" id="telaoReel">${pousou ? label(c.categoria) : c.roleta && c.roleta.girando ? label(cats[0]) : "???"}</span>"</div><div class="roulette-hint">${dica}</div></div>`;
 }
 function telaoRoletaAnimar(raiz) {
@@ -220,7 +220,7 @@ function telaoDesenhar(r, alvo) {
     .map((j, i) => {
       const joias = Object.keys(j.joias || {}).length;
       const val = r.vitoria === "corrida" ? corridaValorRetrato(r, j) : r.vitoria === "pontos" ? j.pontos + " pts" : r.vitoria === "joias" ? joias + "/4 joias" : "casa " + j.casa;
-      const tags = (j.id === r.mestreId ? '<span class="tp-tag">🎙️ Mestre</span>' : "") + (j.id === r.vezId ? '<span class="tp-tag tp-vez">👉 vez</span>' : "");
+      const tags = (j.id === r.mestreId ? '<span class="tp-tag">🎙️ Mestre</span>' : "") + (j.id === r.vezId ? '<span class="tp-tag tp-vez">👉 Vez</span>' : "");
       return `<li style="--pc:${cor(j.id)}"${i === 0 ? ' class="tp-lider"' : ""}><span class="tp-nome"><i class="tp-cor" aria-hidden="true"></i>${nome(j.id)}${tags}</span><b>${escapeHtml(val)}</b></li>`;
     })
     .join("");

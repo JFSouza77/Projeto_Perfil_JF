@@ -1013,7 +1013,7 @@ function mcTelaHtml(r, eu, opcoes, priv) {
       tempo = `<div class="mc-tempo"><small>Tempo pra palpitar</small><b class="mc-cont mc-janela" data-fim="${fimDe(j.relogio)}">…</b><span>s</span></div><div class="mc-barra" data-fim="${fimDe(j.relogio)}" data-dur="${j.dur || 1}"><i></i></div>`;
       estado = souMestre
         ? "🎙️ Leia a dica em voz alta. Quem souber toca em ✋ Palpitar."
-        : `✋ Sabe a resposta? Toque em <b>Palpitar</b> e fale em voz alta.${j.congela && Date.now() < j.congela.ate ? ` · 🥶 só ${nome(j.congela.por)} agora` : ""}${j.mordaca ? ` · 🤐 ${nome(j.mordaca)} amordaçado` : ""}`;
+        : `✋ Sabe a resposta? Toque em <b>Palpitar</b> e fale em voz alta.${j.congela && Date.now() < j.congela.ate ? ` · 🥶 Só ${nome(j.congela.por)} agora` : ""}${j.mordaca ? ` · 🤐 ${nome(j.mordaca)} amordaçado` : ""}`;
     } else if (M.fase === "desfibOferta") estado = `${MC_LOJA.desfib.ic} A carta vai hibernar… alguém tem ${MC_LOJA.desfib.nome}?`;
     else if (M.fase === "desfibSolo" && M.desfib) estado = `${MC_LOJA.desfib.ic} ${nome(M.desfib.id)} está numa tentativa solo com a ${MC_LOJA.desfib.nome}!`;
     const mestreBox = souMestre && priv && priv.carta

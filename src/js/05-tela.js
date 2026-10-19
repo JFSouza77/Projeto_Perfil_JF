@@ -1222,7 +1222,7 @@ function roletaDesenhar(jaPousada) {
     <div class="roulette" style="--cat:${(GEM_INFO[finalCat] || {}).color || "#e94560"};">
       <div class="roulette-title">Mestre ${mestreDestaqueHtml()}, diga aos jogadores:</div>
       <div class="roulette-phrase">"Eu sou <span class="roulette-reel" id="rouletteReel">${label(cats[0])}</span>"</div>
-      <div class="roulette-hint" id="rouletteHint">🎰 sorteando a categoria...</div>
+      <div class="roulette-hint" id="rouletteHint">🎰 Sorteando a categoria...</div>
       <button type="button" class="flip-btn cta-pulsa" id="rouletteDoneBtn" style="display:none;">✓ Já falei a categoria! Mostrar a carta</button>
     </div>`;
   if (virar) cartaAnimarClasse(area, "flip-entra");
@@ -1277,7 +1277,7 @@ function answerLineHtml() {
   // "👁️ Conferir resposta" de baixo, junto do Acertou/Errou; o de cima some até o veredito
   if (!answerLivre() && pendingIndex !== null && currentCard.clues[pendingIndex] && currentCard.clues[pendingIndex].type === "clue") return "";
   const open = answerLivre() || Date.now() < answerRevealUntil;
-  return `<button type="button" id="answerToggle" class="answer-line-name answer-toggle${open ? " open" : ""}${answerLivre() ? " livre" : ""}">${answerTexto(open)}</button>${answerLivre() ? `<div class="ans-hint" id="ansHint">👆 toque pra esconder · some sozinha na ${CURRENT_MODE === "express" ? "2ª" : "1ª"} dica</div>` : ""}`;
+  return `<button type="button" id="answerToggle" class="answer-line-name answer-toggle${open ? " open" : ""}${answerLivre() ? " livre" : ""}">${answerTexto(open)}</button>${answerLivre() ? `<div class="ans-hint" id="ansHint">👆 Toque pra esconder · some sozinha na ${CURRENT_MODE === "express" ? "2ª" : "1ª"} dica</div>` : ""}`;
 }
 function wireAnswerToggle() {
   ["answerToggle", "conferirBtn"].forEach((id) => {
@@ -1398,7 +1398,7 @@ function renderBoardTrack() {
       .join("");
   }
   track.innerHTML = `<div class="board-track-line"></div>${bonusMarks}${tokens}
-    <div class="board-endpoints"><span>Casa 0</span><span class="board-hint">🔍 toque pra ampliar</span><span>Casa ${WINNING_SCORE}${boardCountsForWin() ? "" : " · não vale vitória"}</span></div>`;
+    <div class="board-endpoints"><span>Casa 0</span><span class="board-hint">🔍 Toque pra ampliar</span><span>Casa ${WINNING_SCORE}${boardCountsForWin() ? "" : " · não vale vitória"}</span></div>`;
   const chaves =
     CURRENT_FORMAT === "equipe"
       ? teamOrder.map((id) => ["t" + id, teams[id].position])
@@ -1571,7 +1571,7 @@ function renderScoreboard() {
       const ageBadge =
         (bracket ? ` <span class="age-badge">${escapeHtml(bracket.label)}</span>` : "") +
         (p.iniciante
-          ? ' <span class="age-badge">🐣 iniciante</span>'
+          ? ' <span class="age-badge">🐣 Iniciante</span>'
           : p.formado
             ? ' <span class="age-badge">🎓</span>'
             : "");
@@ -2735,7 +2735,7 @@ function casaAnunciar() {
     '<div class="roulette-phrase"><span class="roulette-reel" id="casaReel">' +
     NOMES[CASA_MODOS[0]] +
     "</span></div>" +
-    '<div class="roulette-hint" id="casaHint">🎰 sorteando o modo...</div>' +
+    '<div class="roulette-hint" id="casaHint">🎰 Sorteando o modo...</div>' +
     "</div></div>" +
     '<div class="casa-sorteio-desc" id="casaDesc"></div>';
   document.body.appendChild(ov);
@@ -3399,7 +3399,7 @@ function admPainel(ov, nivel) {
     if (p.iniciante) {
       sel.disabled = true;
       sel.title = "Iniciante: Suave até o fim da partida";
-      row.firstElementChild.insertAdjacentHTML("beforeend", ' <span class="ci-chip">🐣 iniciante</span>');
+      row.firstElementChild.insertAdjacentHTML("beforeend", ' <span class="ci-chip">🐣 Iniciante</span>');
     }
     sel.addEventListener("change", () => {
       if (p.iniciante) return;
