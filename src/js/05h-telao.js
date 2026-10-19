@@ -257,7 +257,7 @@ function telaoDesenhar(r, alvo) {
       <div class="tv-mestre" style="--pc:${cor(r.mestreId)}"><small>🎙️ Mestre (lê as dicas)</small><b>${nome(r.mestreId)}</b></div>
       <div class="tv-vez" style="--pc:${cor(r.vezId)}"><small>👉 Vez de (escolhe a dica e responde)</small><b>${nome(r.vezId)}</b></div>
       <div class="tv-cat" style="--cat:${catCor}"><small>🃏 Categoria</small><b>${c && c.categoria && r.estadoCarta !== "hidden" ? escapeHtml(TELAO_CAT[c.categoria] || c.categoria) : c ? "sorteando…" : "—"}</b></div>
-      <div class="tv-relogio"><small>⏱️ Tempo</small><b id="telaoRelogio">—</b></div>
+      <div class="tv-relogio"><small>⏱️ Tempo da vez</small><b id="telaoRelogio">—</b></div>
     </section>
     ${r.corrida ? `<div class="corrida-relogios" id="telaoCorrida">${corridaBarraHtml(corridaDoRetrato(r.corrida))}</div>` : ""}
     ${carta}

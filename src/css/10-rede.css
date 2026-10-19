@@ -1755,3 +1755,109 @@ body.batata-mode.aviso-treme {
   border-radius: 10px;
   background: rgba(0, 0, 0, 0.4);
 }
+/* 1.7.10.7.1: painel da carta do Modo C.A.O.S. (Mestre, categoria, dica X de 10, tempo em número e barra) */
+.mc-carta-painel {
+  display: grid;
+  gap: 10px;
+}
+.mc-quem {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.mc-quem > span {
+  flex: 1 1 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  text-align: center;
+}
+.mc-quem small,
+.mc-tempo small,
+.mc-dicas-tit {
+  font-size: 0.78rem;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.mc-quem b {
+  font-size: 1.15rem;
+}
+.mc-cat-grande {
+  font-size: 1.1rem !important;
+  padding: 4px 12px;
+}
+.mc-sou-mestre {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 2px solid #fbbf24;
+  background: rgba(251, 191, 36, 0.14);
+  text-align: center;
+}
+.mc-sou-mestre .mc-resp {
+  margin-top: 4px;
+  font-size: 1.2rem;
+}
+.mc-dica-n {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 1.1rem;
+}
+.mc-pips {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.mc-pips i {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(232, 121, 249, 0.7);
+}
+.mc-pips i.on {
+  background: #e879f9;
+}
+.mc-pips i.agora {
+  background: #fbbf24;
+  border-color: #fbbf24;
+  box-shadow: 0 0 8px #fbbf24;
+}
+.mc-tempo {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  font-variant-numeric: tabular-nums;
+}
+.mc-tempo b {
+  font-size: 2.4rem;
+  line-height: 1;
+}
+.mc-barra {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+.mc-barra i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #22c55e, #84cc16);
+  transition: width 0.25s linear;
+}
+.mc-barra.mc-barra-fim i {
+  background: linear-gradient(90deg, #ef4444, #f97316);
+}
+.mc-sem-dica {
+  text-align: center;
+  opacity: 0.8;
+}
