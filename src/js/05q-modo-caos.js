@@ -99,7 +99,7 @@ function mcIniciar() {
     cont: { turbo: 0, imposto: 0, batata: 0, roubo: 0, maoLeve: 0, pinata: 0 },
   };
   players.forEach((p) => (p.score = 0));
-  mcAnunciar("🌀 Modo C.A.O.S. começou. 10 minutos. Que vença o mais rápido.", { ic: "🌀", titulo: "MODO C.A.O.S.!", texto: "Cada um tem a sua carta secreta. 10 minutos. Agora quem manda aqui sou eu." });
+  mcAnunciar("🌀 Modo C.A.O.S. começou. 10 minutos. Que vença o mais rápido.", { ic: "🌀", titulo: "MODO C.A.O.S.!", texto: "Cada um tem a sua carta secreta. 10 minutos. Agora quem manda aqui sou eu.", botao: "Que venha o caos! 🌀" });
   mcNovaRodada();
   mcTique = mcTique || setInterval(mcTicar, 250);
 }
@@ -323,7 +323,7 @@ function mcFimRodada() {
     mc.cont.maoLeve++;
     caosLog("modocaos", "Mão Leve entregue em segredo");
     // só quem recebeu fica sabendo (aviso privado: não congela a mesa)
-    avisoMostrar({ ic: "🧤", titulo: "Você ganhou a Mão Leve!", texto: "Segredo. Use quando quiser pra tirar 1 carta de alguém sem ninguém saber que foi você.", anim: "maoleve", para: [mc.maoLeve.id], seg: 5 });
+    avisoMostrar({ ic: "🧤", titulo: "Você ganhou a Mão Leve!", texto: "Segredo. Use quando quiser pra tirar 1 carta de alguém sem ninguém saber que foi você.", anim: "maoleve", para: [mc.maoLeve.id], seg: 5, botao: "Hehe 😏" });
   }
   // Piñata: às vezes, no intervalo
   if (mc.cont.pinata < 3 && sorteioRegra() < 0.45) {

@@ -549,7 +549,7 @@ function duelAnunciar() {
   const id = (i) => (players[i] ? players[i].id : null);
   const variantes = {};
   if (id(b)) variantes[id(b)] = { titulo: `${n(a)} te chamou pro duelo!`, texto: `Carta em dobro. ${n(a)} começa respondendo e a vez alterna entre vocês dois.` };
-  if (!eq && id(mestreIndex)) variantes[id(mestreIndex)] = { ic: "🎙️", titulo: "Você é o Mestre do duelo!", texto: `Você lê as dicas pra ${n(a)} e ${n(b)}.` };
+  if (!eq && id(mestreIndex)) variantes[id(mestreIndex)] = { ic: "🎙️", titulo: "Você é o Mestre do duelo!", texto: `Você lê as dicas pra ${n(a)} e ${n(b)}.`, botao: "Tô pronto! 🎙️" };
   if (id(a)) variantes[id(a)] = { titulo: `Você chamou ${n(b)} pro duelo!`, texto: "Carta em dobro. Você começa respondendo." };
   avisoMostrar({
     ic: "⚔️",
