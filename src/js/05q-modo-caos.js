@@ -398,12 +398,12 @@ function mcAssalto(id) {
 }
 function mcPodeUsar(item, id, alvo) {
   if (!mcAtivo() || !mcItem(id, item) || !mc.janela) return false;
-  const j = mc.janela,
-    passou = mcJanelaPassou();
+  const j = mc.janela;
   if (mc.fase !== "janela" || j.buzz) return false;
-  if (item === "corte") return !j.corte && mcRelogioMs(j.relogio) > 7000;
+  // 1.7.10.9.1 (JF: "usou o item, funciona naquele momento"): sem janelinha certa pra usar
+  if (item === "corte") return !j.corte && mcRelogioMs(j.relogio) > 6000;
   if (item === "folego") return j.tentaram.includes(id) && !j.folego.includes(id);
-  if (item === "congelar") return !j.congela && passou <= 3000 && id !== mcMestreId();
+  if (item === "congelar") return !j.congela && id !== mcMestreId();
   if (item === "olho") return id !== mcMestreId() && !(mc.olhos[id] && mc.olhos[id].serial === j.serial);
   if (item === "mordaca") {
     const a = jogadorPorId(alvo);
@@ -424,8 +424,8 @@ function mcUsar(item, id, alvo) {
     j.tentaram = j.tentaram.filter((x) => x !== id);
     mcLog(`💖 ${mcNome(id)} usou uma ${MC_LOJA.folego.nome} e pode tentar de novo.`);
   } else if (item === "congelar") {
-    j.congela = { por: id, ate: j.inicio + 7000 };
-    mcAnunciar(`🥶 ${mcNome(id)} chamou a ${MC_LOJA.congelar.nome}: só ${mcNome(id)} pode palpitar nos primeiros 7 segundos.`);
+    j.congela = { por: id, ate: mcAgora() + 7000 };
+    mcAnunciar(`🥶 ${mcNome(id)} chamou a ${MC_LOJA.congelar.nome}: só ${mcNome(id)} pode palpitar pelos próximos 7 segundos.`);
   } else if (item === "olho") {
     // a 1ª letra da resposta, só no dispositivo de quem usou (mcPrivado), enquanto durar esta dica
     const c = mc.cartas[mcMestreId()];

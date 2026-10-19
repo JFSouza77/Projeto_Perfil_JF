@@ -410,6 +410,20 @@ const ARQ = acharMestre(process.argv[2]);
     dispatchAction({ type: "corridaComprar", data: ["corte", comprador.id] });
     o.comprou = comprador.score === pts0 - CORRIDA_LOJA.desfib.preco - CORRIDA_LOJA.corte.preco && corridaEstoque.desfib === est0 - 1 && corridaItens[comprador.id].desfib === 1;
     o.foraDaVitrineNaoCompra = !corridaPodeComprar("escudo", comprador.id);
+    // 1.7.10.9.1 (JF): a lojinha guarda quanto cada um gastou (tela: ganhou × gastou; export: seção Lojinha)
+    const reg = corridaCompras[comprador.id] || {};
+    // 1.7.10.9.1: a Pausa Dramática não acumula (antes somava 15 s a cada compra e o geral quase não andava)
+    corridaCongelaMs = 0;
+    corridaEstoque.congelar = 2;
+    corridaPrecos.congelar = CORRIDA_LOJA.congelar.preco;
+    corridaComprar("congelar", comprador.id);
+    corridaComprar("congelar", comprador.id);
+    o.pausaNaoAcumula = corridaCongelaMs === 15e3;
+    corridaCongelaMs = 0;
+    delete corridaEstoque.congelar;
+    comprador.score += 2 * CORRIDA_LOJA.congelar.preco;
+    o.gastoRegistrado = reg.gasto === CORRIDA_LOJA.desfib.preco + CORRIDA_LOJA.corte.preco + 2 * CORRIDA_LOJA.congelar.preco && reg.itens.desfib === 1 && reg.itens.corte === 1;
+    o.lojaMostraGanhouGastou = /ganhou \d+ · gastou \d+/.test(corridaLojaVitrineHtml(corridaEstoque, [{ id: comprador.id, nome: comprador.name, pts: corridaSaldo(comprador.id) }], corridaPrecos));
     // Cofrinho (+40 no próximo acerto de quem comprou), Ímã (20% do acerto dos outros) e Ampulheta (+30 s no geral)
     const outro = players.find((q) => q !== comprador);
     outro.score += 100;

@@ -91,6 +91,15 @@ const ARQ = acharMestre(process.argv[2]);
     o.olhoPrivado = !mcPrivado(outro).olhoLetra;
     mc.janela.serial = ++mc.serial;
     o.olhoSoNaquelaDica = !mcPrivado(quem).olhoLetra;
+    // 1.7.10.9.1 (JF): item funciona na hora, sem janelinha certa: Era do Gelo com 10 s de dica já passados
+    mc.janela.inicio = mcAgora() - 10000;
+    mc.janela.congela = null;
+    mc.inv[quem] = { congelar: 1, corte: 1 };
+    o.geloDepoisDos3s = mcPodeUsar('congelar', quem);
+    mcUsar('congelar', quem);
+    o.geloTravaAPartirDeAgora = !!mc.janela.congela && Math.abs(mc.janela.congela.ate - (mcAgora() + 7000)) < 500;
+    mc.janela.relogio = { resta: 6500, fimEm: mcAgora() + 6500 };
+    o.tesouraCom6sEPouco = mcPodeUsar('corte', quem);
     // tela do intervalo desenha sem erro
     mcFimRodada();
     clearInterval(mcTique);

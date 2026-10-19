@@ -6,6 +6,19 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.9.1",
+    data: "19/10/2026 · 11:10",
+    nome: "Multiplayer Update · QoL da Mesa",
+    t: "Corrida de volta aos 30 minutos e lojinha mais clara.",
+    itens: [
+      "⏱️ Corrida de 30 minutos: o relógio da partida voltou pro tempo padrão.",
+      "🧾 Ganhou e gastou: na lojinha da Corrida aparece quanto você ganhou, quanto gastou e com quanto ficou.",
+      "⚡ Item na hora: no Modo C.A.O.S., a Era do Gelo e a Tesoura funcionam no momento em que você usa.",
+      "⏸️ Pausa Dramática sem acumular: comprar de novo não soma mais tempo parado, e no Juízo Final ela sai de cena.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.9",
     data: "19/10/2026 · 04:35",
     nome: "Multiplayer Update · QoL da Mesa",

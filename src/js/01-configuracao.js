@@ -14,7 +14,7 @@
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1828;
+const JOGO_BUILD = 1829;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -344,7 +344,7 @@ const ULTIMA_RODADA = true;
 const PALPITE_MODES_OK = ["classico", "junior", "oldschool", "corrida"];
 // 1.7.10.6 · Corrida contra o Tempo (regras do JF em docs/Modos_1.7.10.6.md): relógio geral de 30 min (+10 s por
 // carta acertada), carta de 3:00, 25 s pra escolher a dica e 25 s pra responder (1.7.10.6.1), intervalo de 15 s congelado.
-const CORRIDA_TEMPO_MS = 20 * 60e3; // 1.7.10.6: 20 min (o JF deixou o balanceamento comigo: dá ~12 cartas, cada um lê 2 ou 3 vezes)
+const CORRIDA_TEMPO_MS = 30 * 60e3; // regra do JF: 30 min é o tempo padrão da Corrida e não entra no balanceamento (1.7.10.9.1 desfez os 20 min)
 const CORRIDA_BONUS_MS = 10e3;
 const CORRIDA_CARTA_MS = 180e3; // 1.7.10.6.1 (JF: "ridiculamente rápido"): 3:00 (era 2:30), pra caber a vez mais longa
 const CORRIDA_VEZ_SEG = 25; // 1.7.10.6.1 (JF): 25 s pra escolher e 25 pra responder (era 15 + 15)
@@ -380,11 +380,11 @@ const MC_PC = { rodada: 10, rapido: 5, pinata: 30, batata: 50, imposto: 10 };
    de cada, preço variando ±20%. Balanceamento: ~10 a 25 PC por rodada, então item de 15–25 é toda rodada, 40+ é
    guardar 2–3 rodadas. "peso" = chance relativa de aparecer. As chaves (corte, folego…) seguem as mesmas no código. */
 const MC_LOJA = {
-  corte: { ic: "✂️", nome: "Tesoura do Caos", preco: 15, peso: 3, desc: "corta a janela da dica atual pra 6 s (todo mundo vê o tempo voar)" },
+  corte: { ic: "✂️", nome: "Tesoura do Caos", preco: 15, peso: 3, desc: "na hora: a janela da dica cai pra 6 s (todo mundo vê o tempo voar)" },
   folego: { ic: "💖", nome: "Vida Extra", preco: 20, peso: 3, desc: "errou? uma 2ª tentativa na mesma dica" },
   mordaca: { ic: "🤐", nome: "Mordaça", preco: 30, peso: 2, desc: "trava o botão de palpite de alguém nesta dica (o Mestre não)" },
   desfib: { ic: "🧟", nome: "Ressurreição", preco: 35, peso: 2, desc: "quando a carta for hibernar: a próxima dica só pra você, tentativa solo" },
-  congelar: { ic: "🥶", nome: "Era do Gelo", preco: 40, peso: 2, desc: "os outros ficam travados nos 7 primeiros segundos da dica" },
+  congelar: { ic: "🥶", nome: "Era do Gelo", preco: 40, peso: 2, desc: "na hora: os outros ficam travados por 7 s e só você pode palpitar" },
   espelho: { ic: "🪞", nome: "Espelho Refletor", preco: 45, peso: 2, desc: "fica guardado: devolve a próxima agressão (roubo, mordaça, assalto, punição)" },
   kevlar: { ic: "🦺", nome: "Colete Anti-Caos", preco: 60, peso: 1, desc: "fica guardado: anula 1 roubo, assalto ou punição contra você" },
   olho: { ic: "👁️", nome: "Olho do C.A.O.S.", preco: 45, peso: 1, desc: "na janela da dica: a 1ª letra da resposta aparece só pra você" },
