@@ -71,7 +71,7 @@ const PRINTS = (process.argv.find((a) => a.startsWith('--prints=')) || '').slice
     avisoZerar();
     // 1.7.10.7.2: cada tipo com o seu botão e a sua cor; a variante (Mestre do duelo) pode trocar o botão
     avisoMostrar({ titulo: 'b', anim: 'bomba', seg: 2 });
-    if (avisoMesa.botao !== AVISO_BOTAO.bomba) p.push('aviso da bomba sem o botão próprio');
+    if (!AVISO_BOTAO.bomba.includes(avisoMesa.botao)) p.push('aviso da bomba sem o botão próprio');
     if (!document.querySelector('#avisoMesaOv .aviso-bomba')) p.push('aviso da bomba sem a cor própria');
     avisoZerar();
     avisoMostrar({ titulo: 'd', anim: 'duelo', seg: 2, para: ['jm', 'jx'], variantes: { jm: { titulo: 'Mestre', botao: 'Tô pronto!' } } });
