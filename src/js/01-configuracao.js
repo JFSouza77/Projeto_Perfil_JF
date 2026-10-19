@@ -688,10 +688,10 @@ const CI_HUMORES = {
   desafiante: ["⚡", "Desafiante", "Voz rápida e incisiva. Bota pressão na mesa.", "tensão ≥ 7 · calor ≥ 6"],
 };
 const CI_ARQUETIPOS = {
-  impulsivo: "⚡ impulsivo",
-  meticuloso: "🔍 meticuloso",
-  sortudo: "🍀 sortudo",
-  resiliente: "🛡️ resiliente",
+  impulsivo: "⚡ Impulsivo",
+  meticuloso: "🔍 Meticuloso",
+  sortudo: "🍀 Sortudo",
+  resiliente: "🛡️ Resiliente",
   padrao: "— sem leitura ainda",
 };
 const CI_HUMOR_COR = {

@@ -1988,7 +1988,7 @@ function redeHostVista() {
   const nome = (p) => escapeHtml((p.avatar ? p.avatar + " " : "") + p.name);
   const daVez = eus.find((p) => jogadorIdDe(responderIndex) === p.id);
   const vez = !!daVez;
-  let h = `<div class="rede-eu">${eus.length ? `Neste aparelho: <b>${eus.map(nome).join("</b> e <b>")}</b>${vez ? ` · 👉 vez de ${nome(daVez)}` : ""}` : "Este aparelho é a mesa"}</div>`;
+  let h = `<div class="rede-eu">${eus.length ? `Neste aparelho: <b>${eus.map(nome).join("</b> e <b>")}</b>${vez ? ` · 👉 Vez de ${nome(daVez)}` : ""}` : "Este aparelho é a mesa"}</div>`;
   // 1.7.10.6.1 (relato do JF): ninguém marcado neste aparelho, mas tem jogador sem dispositivo na sala: um toque resolve
   const semDisp = !eus.length && starterChosen && !gameEnded ? players.filter((p) => !redeOnline(rede.assentos[p.id])) : [];
   if (semDisp.length)
@@ -2552,7 +2552,7 @@ function redeConvidadoDesenhar() {
     const seg = Math.max(0, Math.ceil((rede.ultimoHost + REDE_HOST_SUMIU_MS - Date.now()) / 1000));
     conexao = `<div class="rede-conexao">🔌 Sem notícia do host…${suc ? ` Se ele não voltar, <b>${suc.id === rede.eu ? "este dispositivo" : escapeHtml(suc.nome)}</b> assume a sala em <b id="redeAssumeSeg">${seg}</b> s. Não feche a página!` : ""}</div>`;
   }
-  const selo = rede.estado === "dentro" && rede.via && rede.via !== "local" ? `<span class="rede-selo">${rede.via === "ponte" ? "🌉 pela ponte" : "📶 direta"}${Number.isFinite(rede.ms) ? " · " + Math.round(rede.ms) + " ms" : ""}</span>` : "";
+  const selo = rede.estado === "dentro" && rede.via && rede.via !== "local" ? `<span class="rede-selo">${rede.via === "ponte" ? "🌉 Pela ponte" : "📶 Direta"}${Number.isFinite(rede.ms) ? " · " + Math.round(rede.ms) + " ms" : ""}</span>` : "";
   const sala = `<div class="rede-sala">🌐 Sala <b>${rede.sala}</b>${selo}</div>${conexao}`;
   if (rede.estado === "escolhendo") return redeEscolhaDesenhar(box, sala);
   if (rede.estado === "aguardando") {
@@ -2924,7 +2924,7 @@ function redePapelHtml(papel) {
 function redeBotoesHtml() {
   const r = rede.retrato, eu = r.jogadores.find((j) => j.id === rede.eu);
   const papel = redeMeuPapel();
-  let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 sua vez" : ""}</div>`;
+  let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 Sua vez" : ""}</div>`;
   if (r.fim) return h;
   if (!r.intervalo && r.iniciada) h += redePapelHtml(papel);
   if (r.intervalo) {
@@ -3207,11 +3207,11 @@ function redeQrHtml(link) {
     return "";
   }
 }
-// "📶 direta · 40 ms" ou "🌉 pela ponte · 120 ms" (o convidado conta no ping)
+// "📶 Direta · 40 ms" ou "🌉 Pela ponte · 120 ms" (o convidado conta no ping)
 function redeSeloConexao(a) {
   if (!a || !a.via) return "";
   const ms = Number.isFinite(a.ms) ? ` · ${Math.round(a.ms)} ms` : "";
-  return a.via === "ponte" ? ` · 🌉 pela ponte${ms}` : a.via === "local" ? "" : ` · 📶 direta${ms}`;
+  return a.via === "ponte" ? ` · 🌉 Pela ponte${ms}` : a.via === "local" ? "" : ` · 📶 Direta${ms}`;
 }
 // O host tira um aparelho da sala: o lugar fica livre e a aprovação daquele aparelho é desfeita.
 function redeTirarDaSala(jid) {
@@ -3266,8 +3266,8 @@ function redePainelHost() {
       const lugares = players
         .map((p) => {
           const a = rede.assentos[p.id];
-          const s = redeNoHost(p.id) ? "📱 neste aparelho" : redeOnline(a) ? "🟢 na sala" + redeSeloConexao(a) : a ? "🟠 caiu" : "⚪ fora";
-          const tirar = a && !redeNoHost(p.id) ? ` <button type="button" class="rede-tirar" data-tirar="${escapeHtml(p.id)}" aria-label="Tirar ${escapeHtml(p.name)} da sala">✕ tirar</button>` : "";
+          const s = redeNoHost(p.id) ? "📱 Neste dispositivo" : redeOnline(a) ? "🟢 Na sala" + redeSeloConexao(a) : a ? "🟠 Caiu" : "⚪ Fora";
+          const tirar = a && !redeNoHost(p.id) ? ` <button type="button" class="rede-tirar" data-tirar="${escapeHtml(p.id)}" aria-label="Tirar ${escapeHtml(p.name)} da sala">✕ Tirar</button>` : "";
           return `<li>${escapeHtml((p.avatar ? p.avatar + " " : "") + p.name)} · ${s}${tirar}</li>`;
         })
         .join("");

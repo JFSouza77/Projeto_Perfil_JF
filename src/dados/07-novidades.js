@@ -7,7 +7,7 @@
 const NOVIDADES = [
   {
     v: "Beta 1.7.10.9",
-    data: "19/10/2026",
+    data: "19/10/2026 · 04:35",
     nome: "Multiplayer Update · QoL da Mesa",
     t: "Regras do jogo mais fáceis de entender na própria tela.",
     itens: [
@@ -22,15 +22,15 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.7.10.8",
-    data: "19/10/2026",
+    data: "19/10/2026 · 02:04",
     nome: "Multiplayer Update · QoL da Mesa",
     t: "Menos repetição nas cartas e nas zoeiras, avisos e balões mais caprichados.",
     itens: [
       "🃏 Cartas mais variadas: o dispositivo lembra as cartas que já saíram e elas vão pro fundo do baralho nas próximas partidas.",
       "🔘 Botões com reação variada: jokenpô pode dar Beleza!, Droga! ou Na próxima eu ganho!; a bomba pode dar Kabum! ou Vai explodir!",
-      "📏 Avisos e balões do mesmo tamanho, mais arrumados na tela.",
-      "🧤 Mão Leve com um par de luvas só.",
-      "😂 Zoeiras novas com a turma de sempre, bem menos repetidas.",
+      "📏 Tudo do mesmo tamanho: avisos e balões ficaram iguais, mais arrumados na tela.",
+      "🧤 Mão Leve mais bonita: agora aparece um par de luvas só.",
+      "😂 Zoeiras novas: a turma de sempre ganhou frases novas, bem menos repetidas.",
       "🕙 Piada de horário só na hora certa: nada de chamar ninguém de criança acordada às três da tarde.",
       "👀 Dica da vez sem borrar o resto: dá pra ver quem é o Mestre e de quem é a vez.",
       "🧮 Placar explicado: a tela diz quanto ganha quem acertar agora e quanto ganha o Mestre.",
@@ -39,7 +39,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.7.10.7.2",
-    data: "19/10/2026",
+    data: "18/10/2026 · 21:56",
     nome: "Multiplayer Update · Avisos da Mesa",
     t: "Avisos com cor e botão próprios.",
     itens: [
@@ -50,20 +50,20 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.7.10.7.1",
-    data: "18/10/2026",
+    data: "18/10/2026 · 21:24",
     nome: "Multiplayer Update · Avisos da Mesa",
     t: "Telas mais claras no Modo C.A.O.S. e a Corrida sem perder tempo depois de um erro.",
     itens: [
       "🃏 Carta do Modo C.A.O.S. mais clara: quem é o Mestre, a categoria grande, em que dica estamos e quanto tempo falta pra palpitar, com barra.",
       "🎙️ Mestre no Modo C.A.O.S.: a resposta da sua carta aparece em destaque, com as dicas já abertas logo abaixo.",
-      "✋ Botão Palpitar logo abaixo da carta, sem precisar rolar a tela.",
+      "✋ Palpitar mais perto: o botão fica logo abaixo da carta, sem precisar rolar a tela.",
       "⏱️ Corrida sem atraso: depois de um erro, a próxima dica abre na hora, sem comer o tempo da carta.",
     ],
     qol: [],
   },
   {
     v: "Beta 1.7.10.7",
-    data: "18/10/2026",
+    data: "18/10/2026 · 20:25",
     nome: "Multiplayer Update · Avisos da Mesa",
     t: "Avisos grandes pra mesa toda, o Modo C.A.O.S. organizado e o duelo com espectador.",
     itens: [
@@ -80,21 +80,21 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.7.10.6.2",
-    data: "18/10/2026",
+    data: "18/10/2026 · 18:52",
     nome: "Multiplayer Update · Corrida e Modo C.A.O.S.",
     t: "Ajustes do primeiro Modo C.A.O.S. online e do duelo da carta bônus.",
     itens: [
       "🃏 Palpite no duelo: na carta bônus, a ficha de palpite vale pros dois duelistas. Quem tem a ficha rouba a tentativa do outro.",
       "🌀 Modo C.A.O.S. no host: o dispositivo que abriu a sala mostra a tela do modo, com a dica e a categoria.",
       "⏳ Modo C.A.O.S. com mais calma: janela de 25 s por dica e um respiro antes da próxima carta, com o resultado na tela (ideia do Henrique).",
-      "🗣️ Quem está respondendo aparece grande na tela de todo mundo (ideia do Henrique).",
+      "🗣️ Quem está respondendo: aparece grande na tela de todo mundo (ideia do Henrique).",
       "🎰 Mestre no celular sem travar: com a aba do host em segundo plano, o botão de mostrar a carta às vezes não aparecia. Agora a roleta pousa na hora.",
     ],
     qol: [],
   },
   {
     v: "Beta 1.7.10.6.1",
-    data: "18/10/2026",
+    data: "18/10/2026 · 17:55",
     nome: "Multiplayer Update · Corrida e Modo C.A.O.S.",
     t: "Ajustes da primeira Corrida online: mais tempo pra pensar, o C.A.O.S. quieto durante a carta e a lojinha funcionando pro host.",
     itens: [
@@ -110,7 +110,7 @@ const NOVIDADES = [
   },
   {
     v: "Beta 1.7.10.6",
-    data: "18/10/2026",
+    data: "18/10/2026 · 15:08",
     nome: "Multiplayer Update · Corrida e Modo C.A.O.S.",
     t: "Chegaram os dois modos novos: a Corrida contra o Tempo e o Modo C.A.O.S. E agora todo mundo marca a idade no cadastro.",
     itens: [
@@ -412,7 +412,7 @@ const NOVIDADES = [
     nome: "Rooms and Network Update · Carta do Mestre",
     t: "No online, quem é o Mestre vê a carta de verdade no próprio dispositivo, e a sala aguenta Reiniciar e app fechado.",
     itens: [
-      "🃏 Carta do Mestre no dispositivo dele: no online, o Mestre vê a carta como na tela de sempre. A categoria, a resposta, as dicas, a grade de números e os botões Acertou, Errou, Pulou e Absurdo.",
+      "🃏 Carta do Mestre no celular: no online, o Mestre vê a carta como na tela de sempre. A categoria, a resposta, as dicas, a grade de números e os botões Acertou, Errou, Pulou e Absurdo.",
       "🔄 Reiniciar com a sala aberta: depois de Reiniciar, quem estava na sala volta pra escolha do nome. Se o host cadastrar o mesmo nome de novo, o dispositivo volta pro lugar sozinho.",
       "📱 Host que fechou o app: se outro aparelho assumiu a sala enquanto o host estava fora, ao abrir de novo ele entra como jogador e vê a partida de agora, sem ficar preso na carta antiga.",
     ],

@@ -511,7 +511,7 @@ function tabZoomInstalar(caixa, forma, emPe) {
     let bonus = false;
     for (let pos = BONUS_HOUSE_INTERVAL; pos < meta; pos += BONUS_HOUSE_INTERVAL) if (tabIdx(pos, meta) === melhor) bonus = true;
     const nomeCasa = melhor === 0 ? "Saída" : melhor === TAB_CASAS ? `Chegada (casa ${meta})` : `Casa ${casa}`;
-    let txt = `<b>${nomeCasa}</b>${bonus ? " · ❓ casa de bônus" : ""}`;
+    let txt = `<b>${nomeCasa}</b>${bonus ? " · ❓ Casa de bônus" : ""}`;
     const p = escolhido && pecas.find((q) => q.k === escolhido);
     if (p && melhor > 0) {
       const nome = escapeHtml(p.titulo.replace(/: casa -?\d+$/, ""));
