@@ -14,20 +14,30 @@
 const AVISO_SEG = 4.5;
 // 1.7.10.7.2 (ideia do JF): cada tipo de aviso tem o seu botão (o convite do duelo fica no "Bora!", pedido dele)
 const AVISO_BOTAO = {
-  duelo: "Bora!",
-  mestre: "Tô pronto! 🎙️",
-  batata: "Tá quente! 🔥",
-  maoleve: "Vou me vingar! 😤",
-  bomba: "Socorro! 💣",
-  turbo: "Acelera! ⏩",
-  imposto: "Que injustiça! 💸",
-  juizo: "Que comece! ⚖️",
-  ppt: "Uau! 😮",
-  dado: "Uau! 😮",
-  moeda: "Uau! 😮",
-  parimpar: "Uau! 😮",
-  pinata: "Quebra! 🪅",
+  duelo: ["Bora!"],
+  mestre: ["Tô pronto! 🎙️", "Deixa comigo! 🎙️", "Microfone na mão! 🎤", "Vou ler com emoção! 📖"],
+  batata: ["Tá quente! 🔥", "Ai, queima! 🥵", "Passa logo isso! 🥔", "Socorro, tá pelando! 🔥", "Segura essa! 😬"],
+  maoleve: ["Vou me vingar! 😤", "Quem foi?! 🕵️", "Isso não vai ficar assim! 😠", "Devolve! 🧤", "Ladrões! 🚨"],
+  bomba: ["Socorro! 💣", "Kabum! 💥", "Vai explodir! 😱", "Corre, corre! 🏃", "Desarma isso! ✂️"],
+  turbo: ["Acelera! ⏩", "Pisa fundo! 🏎️", "Sem freio! 💨", "Rapidinho! ⚡"],
+  imposto: ["Que injustiça! 💸", "Lá se vai meu dinheiro… 😩", "Leão faminto! 🦁", "Vou palpitar, juro! ✋"],
+  juizo: ["Que comece! ⚖️", "Chegou a hora! ⏳", "Agora é tudo ou nada! 🔥", "Seja o que Deus quiser! 🙏"],
+  ppt: ["Uau! 😮", "Beleza! 👍", "Droga! 😤", "Na próxima eu ganho! 😠", "Que sorte! 🍀", "Não acredito! 😱"],
+  dado: ["Uau! 😮", "Dado viciado! 🎲", "Na próxima eu ganho! 😠", "Que sorte! 🍀", "Droga! 😤", "Rolou bonito! 🎉"],
+  moeda: ["Uau! 😮", "Cara de sorte! 🍀", "Droga! 😤", "Na próxima eu ganho! 😠", "Moeda roubada! 🪙", "Eu sabia! 😎"],
+  parimpar: ["Uau! 😮", "Beleza! 👍", "Droga! 😤", "Na próxima eu ganho! 😠", "Contei errado! 🤦", "Eu sabia! 😎"],
+  pinata: ["Quebra! 🪅", "Bate forte! 💪", "Doce pra mim! 🍬", "Vou digitar rapidinho! ⌨️"],
 };
+// sorteia o botão do tipo, sem repetir o último que saiu
+const avisoBotaoUltimo = {};
+function avisoBotaoSortear(anim) {
+  const l = AVISO_BOTAO[anim];
+  if (!l || !l.length) return null;
+  const opc = l.length > 1 ? l.filter((b) => b !== avisoBotaoUltimo[anim]) : l;
+  const b = opc[Math.floor(Math.random() * opc.length)];
+  avisoBotaoUltimo[anim] = b;
+  return b;
+}
 const AVISO_ANIMS = ["duelo", "batata", "maoleve", "bomba", "turbo", "imposto", "juizo", "mestre", "ppt", "dado", "moeda", "parimpar", "pinata"];
 let avisoMesa = null; // { id, ic, titulo, texto, anim, dados, para, ate, congela, botao }
 let avisoFila = [];
@@ -75,7 +85,7 @@ function avisoMostrar(o) {
     dados: o.dados || null,
     para: Array.isArray(o.para) && o.para.length ? o.para.slice(0, 10) : null,
     seg: Math.max(2, Math.min(9, o.seg || AVISO_SEG)),
-    botao: String(o.botao || AVISO_BOTAO[o.anim] || "Entendi!").slice(0, 30),
+    botao: String(o.botao || avisoBotaoSortear(o.anim) || "Entendi!").slice(0, 30),
     variantes: null,
   };
   if (o.variantes && typeof o.variantes === "object") {
@@ -196,7 +206,7 @@ function avisoDesenhar(a, agora) {
   ov.innerHTML = `<div class="aviso-mesa${a.anim ? " aviso-" + a.anim : ""}">
     <div class="aviso-anim" aria-hidden="true">${avisoAnimHtml(a)}</div>
     <div class="aviso-tit">${escapeHtml(a.titulo)}</div>
-    ${a.texto ? `<div class="aviso-txt">${escapeHtml(a.texto)}</div>` : ""}
+    <div class="aviso-txt">${escapeHtml(a.texto || "")}</div>
     <div class="aviso-barra" aria-hidden="true"><i></i></div>
     <button type="button" class="aviso-ok">${escapeHtml(a.botao || "Bora!")}</button>
   </div>`;
@@ -232,7 +242,7 @@ function avisoAnimHtml(a) {
   if (a.anim === "parimpar") return `<div class="aviso-duelo-anim">${lado("✊", d.nomeA, "🖐️ " + (d.a ?? ""))}<b class="aviso-x">+</b>${lado("✊", d.nomeB, "🖐️ " + (d.b ?? ""))}</div>`;
   if (a.anim === "dado") return `<div class="aviso-duelo-anim">${lado("🎲", d.nomeA, "🎲 " + (d.a ?? ""))}<b class="aviso-x">×</b>${lado("🎲", d.nomeB, "🎲 " + (d.b ?? ""))}</div>`;
   if (a.anim === "moeda") return `<div class="aviso-moeda"><div class="aviso-mao"><span class="am-ini">🪙</span><span class="am-fim">${d.lado === "cara" ? "🙂 CARA" : "👑 COROA"}</span></div></div>`;
-  if (a.anim === "maoleve") return `<div class="aviso-maos"><span>🧤</span><span>🧤</span></div>`;
+  if (a.anim === "maoleve") return `<div class="aviso-maos"><span>🧤</span></div>`; // 1.7.10.8: um par só (o emoji já é o par)
   if (a.anim === "duelo") return `<div class="aviso-espadas"><span>🗡️</span><span>🗡️</span></div>`;
   return `<div class="aviso-ic">${escapeHtml(a.ic || "📣")}</div>`;
 }

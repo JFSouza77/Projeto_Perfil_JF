@@ -25,7 +25,10 @@ function caosWelcomePlayer(p) {
     if (g) return showToastMessage(g);
     bank = REACTIVE_VOICE.nickReacao.jf;
   } else if (presenteDe(name) && REACTIVE_VOICE.amigos[presenteDe(name).id] && CURRENT_MODE !== "junior" && R() < 0.9) {
-    bank = REACTIVE_VOICE.amigos[presenteDe(name).id].chegou;
+    const A = REACTIVE_VOICE.amigos[presenteDe(name).id];
+    // 1.7.10.8 (pedido do JF): piada de horário ("criança depois das dez") só de noite de verdade
+    const hora = new Date().getHours();
+    bank = A.chegouNoite && (hora >= 22 || hora < 5) && R() < 0.5 ? A.chegouNoite : A.chegou;
   }
   else {
     {

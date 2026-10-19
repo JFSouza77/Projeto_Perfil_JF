@@ -200,6 +200,7 @@ const JFStore = (function () {
           "perfil5_caos_ultimapartida",
           "perfil5_caos_bola",
           "perfil5_caos_cartas_absurdo",
+          "perfil5_cartas_recentes",
           "perfil5_caos_console",
           "perfil5_novidades_visto",
           "perfil5_splash_h",
@@ -1598,6 +1599,44 @@ function caosCardMemRecord(cardAnswer, acertou) {
         : 0;
   caosCardMemSave();
 }
+// 1.7.10.8 (relato do JF: "acharam as cartas um pouco repetitivas"): cada partida embaralhava as 1000 cartas do zero,
+// e numa noite de várias partidas as mesmas voltavam. Este dispositivo guarda as últimas cartas que saíram; ao montar
+// o baralho, elas vão pro fundo (o resto continua na ordem equilibrada por categoria).
+const CARTAS_RECENTES_KEY = "perfil5_cartas_recentes";
+const CARTAS_RECENTES_MAX = 400;
+let cartasRecentes = null;
+function cartasRecentesLer() {
+  if (cartasRecentes) return cartasRecentes;
+  try {
+    const v = JSON.parse(JFStore.getItem(CARTAS_RECENTES_KEY) || "[]");
+    cartasRecentes = Array.isArray(v) ? v.filter((x) => typeof x === "string").slice(-CARTAS_RECENTES_MAX) : [];
+  } catch (e) {
+    cartasRecentes = [];
+  }
+  return cartasRecentes;
+}
+function cartasRecentesMarcar(resp) {
+  if (!resp) return;
+  const l = cartasRecentesLer();
+  const i = l.indexOf(resp);
+  if (i >= 0) l.splice(i, 1);
+  l.push(resp);
+  if (l.length > CARTAS_RECENTES_MAX) l.splice(0, l.length - CARTAS_RECENTES_MAX);
+  try {
+    JFStore.setItem(CARTAS_RECENTES_KEY, JSON.stringify(l));
+  } catch (e) {}
+}
+// recebe o baralho na ordem de compra (o fim sai primeiro, deck.pop()) e põe as recentes no começo (as últimas a sair),
+// as mais recentes mais pro fundo ainda. Só afasta até 60% do baralho, pra sempre sobrar carta "nova" na frente.
+function baralhoAfastarRecentes(cartas) {
+  const l = cartasRecentesLer();
+  if (!l.length || !Array.isArray(cartas) || cartas.length < 10) return cartas;
+  const pos = new Map(l.map((r, i) => [r, i]));
+  const limite = Math.floor(cartas.length * 0.6);
+  const rec = cartas.filter((c) => c && pos.has(c.answer)).sort((a, b) => pos.get(b.answer) - pos.get(a.answer));
+  const afastar = new Set(rec.slice(0, limite));
+  return rec.filter((c) => afastar.has(c)).concat(cartas.filter((c) => !afastar.has(c)));
+}
 function caosCardMemOnDraw(cardAnswer) {
   if (!caosCardMem) caosCardMemLoad();
   if (!cardAnswer) return null;
@@ -1725,7 +1764,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.7.2 · C.A.O.S. 4.5.5");
+  L.push("- **Versão:** Beta 1.7.10.8 · C.A.O.S. 4.6");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2248,7 +2287,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.7.2 · C.A.O.S. 4.5.5",
+        versao: "Beta 1.7.10.8 · C.A.O.S. 4.6",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,

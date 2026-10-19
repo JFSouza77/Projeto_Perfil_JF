@@ -1527,6 +1527,11 @@ body.batata-mode .mc-respondendo {
   box-shadow: 0 0 0 4px #ffffff22, 0 0 40px #ffffff33, 0 20px 50px #000a;
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--av, #facc15) 20%, transparent), 0 0 40px color-mix(in srgb, var(--av, #facc15) 40%, transparent), 0 20px 50px #000a;
   animation: avisoEntra 0.45s cubic-bezier(0.2, 1.4, 0.4, 1);
+  /* 1.7.10.8: todo aviso com o mesmo tamanho (título e texto em área reservada) */
+  min-height: min(400px, 86vh);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 @keyframes avisoEntra {
   from { transform: scale(0.4) rotate(-6deg); opacity: 0; }
@@ -1540,6 +1545,7 @@ body.batata-mode .mc-respondendo {
   text-shadow: 0 0 6px #fff, 0 0 18px var(--av, #fde047);
 }
 .aviso-txt {
+  min-height: 2.7em;
   margin-top: 8px;
   font-size: 1.05rem;
   line-height: 1.35;
@@ -1563,6 +1569,7 @@ body.batata-mode .mc-respondendo {
   to { width: 0; }
 }
 .aviso-ok {
+  align-self: center;
   min-height: 48px;
   min-width: 160px;
   padding: 10px 22px;
@@ -1577,7 +1584,11 @@ body.batata-mode .mc-respondendo {
 .aviso-anim {
   font-size: 4rem;
   line-height: 1.1;
-  min-height: 4.6rem;
+  /* 1.7.10.8 (pedido do JF): caixas do mesmo tamanho; a área da animação tem altura fixa */
+  height: 6.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .aviso-ic {
   display: inline-block;
@@ -1635,10 +1646,6 @@ body.batata-mode .mc-respondendo {
 .aviso-maos span {
   display: inline-block;
   animation: maoLeve 0.8s ease-in-out infinite alternate;
-}
-.aviso-maos span:last-child {
-  animation-delay: 0.4s;
-  transform: scaleX(-1);
 }
 @keyframes maoLeve {
   from { transform: translateX(-26px) rotate(-15deg); }
