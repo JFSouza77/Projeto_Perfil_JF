@@ -100,6 +100,22 @@ const ARQ = acharMestre(process.argv[2]);
     o.geloTravaAPartirDeAgora = !!mc.janela.congela && Math.abs(mc.janela.congela.ate - (mcAgora() + 7000)) < 500;
     mc.janela.relogio = { resta: 6500, fimEm: mcAgora() + 6500 };
     o.tesouraCom6sEPouco = mcPodeUsar('corte', quem);
+    // 1.7.10.9.2 · Presente do C.A.O.S.: lanterna 2+ cartas atrás do líder ganha 1 item, uma vez por partida
+    const placar = (a, b2, c) => players.forEach((p, i) => (p.score = [a, b2, c][i]));
+    cartasPartida.length = 0;
+    for (let i = 0; i < 3; i++) cartasPartida.push({ n: i + 1 });
+    mc.cont.presente = 0;
+    placar(2, 0, 0);
+    o.presenteEmpateNaoDa = mcPresenteTalvez() === false;
+    placar(3, 1, 1);
+    o.presenteLanternaEmpatadoNaoDa = mcPresenteTalvez() === false;
+    placar(1, 1, 0);
+    o.presenteLiderEmpatadoNaoDa = mcPresenteTalvez() === false;
+    placar(3, 1, 0);
+    const invAntes = JSON.stringify(mc.inv.p2 || {});
+    o.presenteDa = mcPresenteTalvez() === true && mc.cont.presente === 1 && MC_PRESENTE_ITENS.some((k) => ((mc.inv.p2 || {})[k] || 0) > (JSON.parse(invAntes)[k] || 0));
+    o.presenteSoUmaVez = mcPresenteTalvez() === false;
+    cartasPartida.length = 0;
     // tela do intervalo desenha sem erro
     mcFimRodada();
     clearInterval(mcTique);

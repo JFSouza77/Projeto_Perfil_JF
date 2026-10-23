@@ -8,7 +8,7 @@
  * congelamento dura o tempo do aviso pra todo mundo.
  *
  * avisoMostrar({ ic, titulo, texto, anim, dados, para, seg, botao })
- *   anim: duelo | batata | maoleve | bomba | turbo | imposto | juizo | mestre | ppt | dado | moeda | parimpar | pinata
+ *   anim: duelo | batata | maoleve | bomba | turbo | imposto | juizo | mestre | ppt | dado | moeda | parimpar | pinata | presente
  *   para: lista de ids de jogador (aviso privado: não congela a mesa) ou nada (a mesa toda)
  *   variantes: { idDoJogador: { ic, titulo, texto } } — o mesmo aviso com outra frase pra alguém ("Henrique te chamou!") */
 const AVISO_SEG = 4.5;
@@ -27,6 +27,7 @@ const AVISO_BOTAO = {
   moeda: ["Uau! 😮", "Cara de sorte! 🍀", "Droga! 😤", "Na próxima eu ganho! 😠", "Moeda roubada! 🪙", "Eu sabia! 😎"],
   parimpar: ["Uau! 😮", "Beleza! 👍", "Droga! 😤", "Na próxima eu ganho! 😠", "Contei errado! 🤦", "Eu sabia! 😎"],
   pinata: ["Quebra! 🪅", "Bate forte! 💪", "Doce pra mim! 🍬", "Vou digitar rapidinho! ⌨️"],
+  presente: ["Que injustiça! 😤", "Ninguém merece! 🙄", "Aproveita, hein! 🎁", "Agora vai! 💪"],
 };
 // sorteia o botão do tipo, sem repetir o último que saiu
 const avisoBotaoUltimo = {};
@@ -38,7 +39,7 @@ function avisoBotaoSortear(anim) {
   avisoBotaoUltimo[anim] = b;
   return b;
 }
-const AVISO_ANIMS = ["duelo", "batata", "maoleve", "bomba", "turbo", "imposto", "juizo", "mestre", "ppt", "dado", "moeda", "parimpar", "pinata"];
+const AVISO_ANIMS = ["duelo", "batata", "maoleve", "bomba", "turbo", "imposto", "juizo", "mestre", "ppt", "dado", "moeda", "parimpar", "pinata", "presente"];
 let avisoMesa = null; // { id, ic, titulo, texto, anim, dados, para, ate, congela, botao }
 let avisoFila = [];
 let avisoSeq = 0;
