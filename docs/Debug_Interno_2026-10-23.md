@@ -60,4 +60,10 @@ Evento interno, sem entrada nas novidades (pedido do JF). A versão continua **1
 
 ## Resultado dos testes
 
-(preenchido no fim da rodada completa)
+Rodada final, depois de todas as correções:
+- Bateria (14 suítes): tudo OK.
+- Geradores de fala, estresse do C.A.O.S. e rede completa: OK.
+- Auditoria de cartas: 0 erros.
+- Macaco: 15 cenários no celular e 5 no computador, OK. A Corrida Hardcore, que falhava 1 em 10, passou 10 de 10 depois da correção.
+- Online: Versus, Equipe, Express, as três Corridas, Modo C.A.O.S., duelo, segundo plano e host que cai: tudo OK.
+- `build --testar`: mestre, debug, compacta e offline OK.
