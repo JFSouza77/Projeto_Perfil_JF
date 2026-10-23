@@ -1,7 +1,7 @@
 # Handoff · Modo C.A.O.S. e Corrida contra o Tempo
 
 **Para:** GPT (ou qualquer revisor externo) · **De:** Claude Code, a pedido do JF · **Data:** 19/10/2026
-**Versão do jogo:** Beta 1.7.10.9.2 · C.A.O.S. 4.6.3 · build 1830
+**Versão do jogo:** Beta 1.7.10.9.3 · C.A.O.S. 4.6.4 · build 1831
 
 **Objetivo:** entregar o retrato completo e atual dos dois modos novos, com:
 - regras;
@@ -67,13 +67,15 @@ Com isso, a análise de fora pode sugerir melhorias sem refazer o que já foi di
    Carta que morre sem acerto sai sem dono.
 5. **Intervalo de 15 s** entre cartas, com o relógio geral **congelado**. Mostra o placar e, no online, a lojinha.
 
+**Categorias (1.7.10.9.3, JF):** Pessoa, Lugar, Coisa e Animal. **Na Corrida não tem Ano.** O Animal é categoria própria, completada com bichos do Júnior.
+
 ### 1.3 Relógios (números atuais)
 
 | Relógio | Valor | Observação |
 |---|---|---|
 | Partida (geral) | **30 min** | +10 s por carta acertada (uma vez por carta, sem teto). **Regra fixa do JF: não entra no balanceamento.** |
 | Carta | **3:00** | Não reinicia por erro nem por troca de vez. Só corre com a carta aberta. |
-| Vez | **25 s pra escolher + 25 s pra responder** | Era 15+15. O JF achou "ridiculamente rápido" (1.7.10.6.1). |
+| Vez | **15 s pra escolher + 25 s pra responder** | 1.7.10.9.3 (JF): não escolheu, uma dica de verdade abre sozinha e a vez continua. A resposta era 15 s até o JF achar "ridiculamente rápido" (1.7.10.6.1). |
 | Intervalo | 15 s | Geral congelado. |
 | Hardcore: carta | 1:30 correndo a 1,5× | |
 | Hardcore: vez | 15 + 15 s | Era 10+10. |
@@ -177,6 +179,8 @@ Ideias que não entraram:
 - comprou ou usou, vale naquele momento;
 - os itens de "próxima carta" valem já na carta que abre depois do intervalo, que é onde a lojinha fica.
 
+**Trava de leitura (1.7.10.9.3, JF):** a vitrine aparece quando o intervalo abre, mas os botões só liberam depois de 3 s. Vale também pra lojinha do Modo C.A.O.S.
+
 ### 1.8 Online
 
 - O host decide tudo.
@@ -223,7 +227,7 @@ Aqui, o C.A.O.S. **apronta de verdade**: eventos, roubos, duelos e lojinha.
 
 | Relógio | Valor |
 |---|---|
-| Partida | **10 min** |
+| Partida | **15 min** (1.7.10.9.3, JF; era 10) |
 | Rodada | até 5 min |
 | Janela da dica | **25 s** (Turbo: 8 s) |
 | Intervalo entre rodadas | 15 s, tudo congelado (lojinha e Piñata) |
