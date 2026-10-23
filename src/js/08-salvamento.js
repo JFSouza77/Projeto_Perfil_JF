@@ -819,6 +819,13 @@ function loadGameState() {
       currentCard = null;
     }
     cardState = state.cardState || "none";
+    // debug 23/10: carta da vez que não voltou (não está mais no baralho) não pode deixar a mesa num estado sem carta:
+    // antes isso dava erro no desenho e o jogo zerava a partida inteira. Agora só a carta é perdida e sai a próxima.
+    if (!currentCard && (cardState === "hidden" || cardState === "revealed")) {
+      cardState = "none";
+      state.revealedOrder = [];
+      state.pendingIndex = null;
+    }
     roletaCarta = cardState === "hidden" && currentCard && (state.roleta === "pousou" || state.roleta === "girando") ? currentCard : null;
     roletaPousou = !!roletaCarta && state.roleta === "pousou";
     roletaRetomar = !!roletaCarta && !roletaPousou;
@@ -1051,7 +1058,9 @@ function loadGameState() {
     }
     updateDrawAvailability();
   } catch (e) {
-    console.error("LOADFAIL " + (e && e.message) + " @ " + String((e && e.stack) || "").split("\n").slice(1, 4).join(" | "));
+    try {
+      caosLog("save", "não deu pra retomar a partida salva: " + ((e && e.message) || e));
+    } catch (x) {}
     resetDeck();
   }
 }
