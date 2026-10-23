@@ -477,7 +477,9 @@ function saveGameState() {
       equipeSubMode,
       ffaCandidateQueue,
       ffaWrongCount,
-      allCardsAnswers: CURRENT_MODE === "express" || CURRENT_MODE === "classico" ? allCards.map((c) => c.answer) : null,
+      // baralhos sorteados (mistura): a lista vai no save, senão recarregar sorteia outro e a carta da vez some
+      // (debug 23/10: a Corrida e o Modo C.A.O.S. também misturam e não guardavam)
+      allCardsAnswers: ["express", "classico", "corrida", "caos"].includes(CURRENT_MODE) ? allCards.map((c) => c.answer) : null,
       allCardsIds: CURRENT_MODE === "express" || CURRENT_MODE === "classico" ? allCards.map((c) => c.id) : null,
       screen: getCurrentScreen(),
     };
@@ -739,7 +741,7 @@ function loadGameState() {
     expressFlavor = state.expressFlavor || "classico";
     expressStealSavedResponder = state.expressStealSavedResponder === void 0 ? null : state.expressStealSavedResponder;
     if (
-      (CURRENT_MODE === "express" || CURRENT_MODE === "classico") &&
+      ["express", "classico", "corrida", "caos"].includes(CURRENT_MODE) &&
       state.allCardsAnswers &&
       state.allCardsAnswers.length
     ) {
@@ -1049,6 +1051,7 @@ function loadGameState() {
     }
     updateDrawAvailability();
   } catch (e) {
+    console.error("LOADFAIL " + (e && e.message) + " @ " + String((e && e.stack) || "").split("\n").slice(1, 4).join(" | "));
     resetDeck();
   }
 }

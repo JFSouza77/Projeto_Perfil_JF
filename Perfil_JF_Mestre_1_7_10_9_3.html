@@ -42696,6 +42696,7 @@ function loadGameState() {
     }
     updateDrawAvailability();
   } catch (e) {
+    console.error("LOADFAIL " + (e && e.message) + " @ " + String((e && e.stack) || "").split("\n").slice(1, 4).join(" | "));
     resetDeck();
   }
 }
@@ -57413,7 +57414,7 @@ const ADULT_CARDS = expandDeck([
       "Sou um lugar fictício criado numa peça de teatro britânica do início do século 20",
       "Em mim, crianças que chegam se recusam a crescer e permanecem eternamente jovens",
       "Sou descrita como localizada além da segunda estrela à direita",
-      "Abrigo um garoto que sabe voar e nunca envelhece, protagonista das histórias onde apareço",
+      "Abrigo um garoto que sabe voar e não envelhece jamais, protagonista das histórias onde apareço",
       "Tenho uma lagoa habitada por sereias desconfiadas de visitantes",
       "Sou lar de uma tribo indígena fictícia que convive com o protagonista",
       "Meu vilão mais famoso tem um gancho no lugar de uma das mãos",
@@ -57423,7 +57424,7 @@ const ADULT_CARDS = expandDeck([
       "Fui eternizada em livros clássicos, peças de teatro e animações de grande sucesso",
       "Abrigo garotos órfãos que vivem escondidos em tocas subterrâneas",
       "Sou acessada apenas através da imaginação e de um pouco de pó mágico",
-      "Represento simbolicamente o desejo humano de nunca crescer ou envelhecer",
+      "Represento simbolicamente o desejo humano de ficar criança pra sempre",
       "Sou cenário de batalhas entre piratas e o protagonista voador",
       "Fui adaptada inúmeras vezes para o cinema ao longo de mais de um século",
       "Sou associada fortemente à infância eterna e à fantasia sem limites",
@@ -59740,7 +59741,7 @@ const ADULT_CARDS = expandDeck([
       "Tenho mais de 100 mil metros quadrados",
       "*Avance 1 casa",
       "Tenho um jardim oriental",
-      "Tenho um mirante na parede de pedra",
+      "Tenho um mirante no paredão de rocha",
       "Do alto vejo o Porto de Tubarão e o Mestre Álvaro",
       "Tenho vegetação de restinga",
       "Minha rocha mais famosa descasca em camadas",
