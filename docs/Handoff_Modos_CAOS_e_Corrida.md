@@ -76,7 +76,7 @@ Com isso, a análise de fora pode sugerir melhorias sem refazer o que já foi di
 | Partida (geral) | **30 min** | +10 s por carta acertada (uma vez por carta, sem teto). **Regra fixa do JF: não entra no balanceamento.** |
 | Carta | **3:00** | Não reinicia por erro nem por troca de vez. Só corre com a carta aberta. |
 | Vez | **15 s pra escolher + 25 s pra responder** | 1.7.10.9.3 (JF): não escolheu, uma dica de verdade abre sozinha e a vez continua. A resposta era 15 s até o JF achar "ridiculamente rápido" (1.7.10.6.1). |
-| Intervalo | 15 s | Geral congelado. |
+| Intervalo | **20 s** | Geral congelado. 1.7.10.9.3 (JF): era 15; 20 é o teto. |
 | Hardcore: carta | 1:30 correndo a 1,5× | |
 | Hardcore: vez | 15 + 15 s | Era 10+10. |
 | Janela relâmpago | 15 s | Usada no Hardcore e no Juízo Final. |
@@ -221,7 +221,8 @@ Aqui, o C.A.O.S. **apronta de verdade**: eventos, roubos, duelos e lojinha.
 4. **Anti-trapaça (regra JF):** quando o Mestre marca, **a resposta aparece pra todo mundo conferir**. O Mestre é dono da carta e também juiz, e isso foi aceito ("é normal, ué").
 5. **Acertou:** captura a carta e a resposta aparece pra todos.
 6. **Ninguém acertou:** a carta **hiberna** e volta na próxima vez daquele Mestre, na dica seguinte. Se as 10 dicas passarem sem acerto, a carta morre e a resposta aparece.
-7. **Respiro de 4,5 s** antes da próxima vez, com o resultado na tela (ideia do Henrique; era 1,5 s).
+7. **Respiro de 6 s** antes da próxima vez, com o resultado na tela (ideia do Henrique; era 1,5 s, depois 4,5 s; 6 s na 1.7.10.9.3, JF).
+8. **Carta dormindo (1.7.10.9.3):** quando ninguém acerta, aparece um aviso fixo: "Ela está dormindo e volta na próxima vez de X, com a dica N". A resposta não aparece. No placar, a carta mostra "💤 dormindo".
 
 ### 2.4 Relógios
 
@@ -230,7 +231,7 @@ Aqui, o C.A.O.S. **apronta de verdade**: eventos, roubos, duelos e lojinha.
 | Partida | **15 min** (1.7.10.9.3, JF; era 10) |
 | Rodada | até 5 min |
 | Janela da dica | **25 s** (Turbo: 8 s) |
-| Intervalo entre rodadas | 15 s, tudo congelado (lojinha e Piñata) |
+| Intervalo entre rodadas | **20 s**, tudo congelado (lojinha e Piñata). 1.7.10.9.3 (JF): era 15 |
 
 - Acertar **não** dá tempo extra (isso é da Corrida).
 - Duelo, carta bônus, intervalo e avisos não comem o relógio.
@@ -291,6 +292,8 @@ Aqui, o C.A.O.S. **apronta de verdade**: eventos, roubos, duelos e lojinha.
 | 🪅 Piñata | No intervalo, 45% de chance | até 3/partida | O primeiro a digitar a palavra ganha 30 PC. |
 
 Espelho e Colete valem no roubo, na Mão Leve e na batata.
+
+**Melhor de 3 (1.7.10.9.3, JF):** o roubo com duelo e a revanche são decididos em melhor de 3 (quem ganhar 2 rodadas leva). No jokenpô, no 3º empate seguido, o C.A.O.S. sorteia quem leva a rodada.
 
 **🎁 Presente do C.A.O.S.** (1.7.10.9.2; é a "Mochila" do JF enxugada, ver `docs/Revisao_Pacote_GPT_2026-10-17.md`):
 - É checado no intervalo, depois de 3 cartas encerradas.
