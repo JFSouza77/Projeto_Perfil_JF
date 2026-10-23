@@ -1880,3 +1880,13 @@ body.batata-mode.aviso-treme {
   text-align: center;
   opacity: 0.8;
 }
+/* 1.7.10.9.3: os 3 s de leitura da lojinha (vitrine visível, botões travados) */
+.loja-trava {
+  margin: 6px 0;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(250, 204, 21, 0.14);
+  border: 1px solid rgba(250, 204, 21, 0.45);
+  font-weight: 700;
+  text-align: center;
+}

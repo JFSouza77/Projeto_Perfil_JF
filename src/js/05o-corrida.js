@@ -17,6 +17,7 @@ let corridaDesempate = null; // { ids: [ids dos empatados], cartas: quantas aind
 let corridaDesempateFeito = false;
 let corridaIntervaloPendente = false;
 let corridaIntervaloFim = 0; // vai pro retrato da sala
+let corridaIntervaloIni = 0; // 1.7.10.9.3: quando o intervalo abriu (a lojinha trava nos primeiros LOJA_TRAVA_MS)
 let corridaIntervaloRelogio = null;
 let corridaAvisos = {};
 let corridaTique = null;
@@ -414,6 +415,7 @@ function corridaPlacarHtml() {
 }
 function corridaIntervaloAbrir() {
   corridaIntervaloFechar();
+  corridaIntervaloIni = Date.now();
   corridaDobrar();
   corridaLojaPreparar(); // a sala pode ter aberto depois do começo da partida
   const m = players[mestreIndex];
@@ -452,10 +454,16 @@ function corridaIntervaloAbrir() {
     if (!ov.isConnected || gameEnded || cardState !== "hidden") return corridaIntervaloFechar();
     if ((document.hidden && !(typeof salaOnlineAberta === "function" && salaOnlineAberta())) || pausaEstaAberta()) {
       fim += passou;
+      if (corridaIntervaloIni) corridaIntervaloIni += passou; // pausado: a trava da lojinha espera junto
       corridaIntervaloFim = fim;
       return;
     }
     const resta = Math.max(0, fim - t);
+    // 1.7.10.9.3: passaram os 3 s de leitura: a lojinha libera os botões (no host e nos dispositivos)
+    if (corridaIntervaloIni && !corridaLojaTravada() && ov.dataset.liberou !== "1") {
+      ov.dataset.liberou = "1";
+      corridaIntervaloRedesenharLoja();
+    }
     const seg = ov.querySelector("#crIntSeg"),
       barra = ov.querySelector("#crIntBarra");
     if (seg) seg.textContent = String(Math.ceil(resta / 1e3));
@@ -480,6 +488,7 @@ function corridaRegrasHtml(resumo) {
     hc = corridaHardcore,
     carta = corridaRelogioTxt(hc ? CORRIDA_CARTA_HC_MS : CORRIDA_CARTA_MS),
     vez = hc ? CORRIDA_VEZ_HC_SEG : CORRIDA_VEZ_SEG,
+    escolha = hc ? CORRIDA_VEZ_HC_SEG : CORRIDA_ESCOLHA_SEG,
     tempo = corridaVitoria === "tempo";
   const li = [
     tempo
@@ -488,9 +497,10 @@ function corridaRegrasHtml(resumo) {
     `⏱️ <b>Relógio geral:</b> ${min} min. Acertou: <b>+${bonus} s</b>. Carta que morre sem acerto: <b>−1 min</b> pra mesa toda. Zerou: a resposta que estava rolando termina e acabou.`,
     hc
       ? `💀 <b>Hardcore:</b> a carta tem ${carta} e o relógio dela corre <b>1,5×</b>. As dicas abrem sozinhas: quem souber, <b>bate na mesa</b> (no online, o botão no dispositivo) e responde. Errou, a próxima abre na hora.`
-      : `💬 <b>A vez:</b> segue a roda. ${vez} s pra escolher o número e ${vez} s pra responder. A carta tem ${carta} e não reinicia quando a vez passa.`,
+      : `💬 <b>A vez:</b> segue a roda. ${escolha} s pra escolher o número (demorou? uma dica abre sozinha) e ${vez} s pra responder. A carta tem ${carta} e não reinicia quando a vez passa.`,
     `❌ <b>Errou:</b> a carta perde ${CORRIDA_ERRO_MS / 1e3} s. <b>Pulou</b> (nem tentou): ${CORRIDA_PULO_MS / 1e3} s. <b>Absurdo</b>: ${CORRIDA_ABSURDO_MS / 1e3} s.`,
     '🎙️ <b>Mestre:</b> roda a cada carta. Fala a categoria e lê a dica. <b>Nunca</b> fala a resposta.',
+    "🃏 <b>Categorias:</b> Pessoa, Lugar, Coisa e Animal. Na Corrida não tem Ano.",
   ];
   if (!resumo) {
     li.push(

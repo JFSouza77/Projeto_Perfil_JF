@@ -742,7 +742,7 @@ function startTimer(kind) {
   clearTimer();
   timerSerial++;
   const durations = {
-    pick: (CURRENT_MODE === "corrida" ? CORRIDA_VEZ_SEG : PICK_TIME_LIMIT) + acessTempoExtra("pick"),
+    pick: (CURRENT_MODE === "corrida" ? CORRIDA_ESCOLHA_SEG : PICK_TIME_LIMIT) + acessTempoExtra("pick"),
     response: RESPONSE_TIME_LIMIT + acessTempoExtra("response") + mestreTempoExtra("response"),
     special: SPECIAL_TIME_LIMIT + acessTempoExtra("special") + mestreTempoExtra("special"),
     turn: expressTimes().turn + acessTempoExtra("turn") + mestreTempoExtra("turn"),
@@ -846,6 +846,8 @@ function onTimerExpired(kind) {
     fxFlash("flash-laranja");
   }
   if (kind === "pick") {
+    // 1.7.10.9.3 (JF): na Corrida, quem não escolheu a tempo não perde a vez: uma dica de verdade abre sozinha
+    if (CURRENT_MODE === "corrida" && cardState === "revealed" && pendingIndex === null && !corridaRelampago() && corridaAbrirPorTempo()) return;
     if (cardState === "revealed" && pendingIndex === null) {
       const skippedName = players[responderIndex] ? escapeHtml(players[responderIndex].name) : "?";
       if (CURRENT_MODE === "express" && expressStealSavedResponder !== null) {
@@ -1943,7 +1945,7 @@ function selectMode(mode, expressCategories, flavor) {
     WINNING_SCORE = 0;
     corridaVitoria = /^cartas/.test(flavor || "") ? "cartas" : "tempo";
     corridaHardcore = /-hc$/.test(flavor || "");
-    allCards = baralhoClassico();
+    allCards = baralhoCorrida(); // 1.7.10.9.3: sem Ano, Animal como categoria própria
   } else if (mode === "oldschool") {
     WINNING_SCORE = 200;
     oldSchoolAcess = flavor === "acess";

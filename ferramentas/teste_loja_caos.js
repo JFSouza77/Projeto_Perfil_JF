@@ -50,6 +50,11 @@ const ARQ = acharMestre(process.argv[2]);
     mc.vitrine = { estoque: { folego: 1, assalto: 2, olho: 1, kevlar: 1, espelho: 1 }, precos: { folego: 20, assalto: 25, olho: 45, kevlar: 60, espelho: 45 } };
     mc.pc = { p0: 200, p1: 50, p2: 30 };
     mc.inv = {};
+    // 1.7.10.9.3 (JF): os 3 primeiros segundos do intervalo são só pra ler a vitrine
+    o.lojaTravaNoComeco = mcLojaTravada() && !mcPodeComprar('folego', 'p0') && mcRetrato().intervalo.travada === true;
+    mc.intervalo.ini = mcAgora() - LOJA_TRAVA_MS - 100;
+    o.lojaLiberaDepois = !mcLojaTravada() && mcPodeComprar('folego', 'p0');
+    o.partida15min = MC_TEMPO_MS === 15 * 60e3;
     o.foraDaVitrineNaoCompra = !mcPodeComprar('corte', 'p0');
     mcComprar('folego', 'p0');
     o.comprou = mc.inv.p0.folego === 1 && mc.pc.p0 === 180 && mc.vitrine.estoque.folego === 0;

@@ -315,7 +315,7 @@ function mcFimRodada() {
   if (mcRelogioMs(mc.geral) <= 0) return mcFim();
   mc.fase = "intervalo";
   mc.janela = null;
-  mc.intervalo = { fimEm: mcAgora() + MC_INTERVALO_SEG * 1e3 };
+  mc.intervalo = { fimEm: mcAgora() + MC_INTERVALO_SEG * 1e3, ini: mcAgora() };
   mc.vitrine = lojaVitrineSortear(MC_LOJA, MC_VITRINE); // 1.7.10.6: vitrine nova a cada intervalo
   // Mão Leve: uma vez por partida, a partir da 2ª rodada, alguém (de preferência da metade de baixo) recebe em segredo
   if (!mc.maoLeve && mc.cont.maoLeve < 1 && mc.rodada >= 1 && players.length >= 3 && sorteioRegra() < 0.6) {
@@ -380,9 +380,13 @@ function mcItem(id, item) {
 function mcPreco(item) {
   return (mc && mc.vitrine && mc.vitrine.precos[item]) || (MC_LOJA[item] || {}).preco || 0;
 }
+// 1.7.10.9.3 (JF): a vitrine aparece no começo do intervalo, mas os botões só liberam depois de LOJA_TRAVA_MS
+function mcLojaTravada() {
+  return !!(mc && mc.fase === "intervalo" && mc.intervalo && mc.intervalo.ini && mcAgora() - mc.intervalo.ini < LOJA_TRAVA_MS);
+}
 function mcPodeComprar(item, id) {
   const it = MC_LOJA[item];
-  if (!mcAtivo() || mc.fase !== "intervalo" || !it || !jogadorPorId(id) || !mc.vitrine) return false;
+  if (!mcAtivo() || mc.fase !== "intervalo" || !it || !jogadorPorId(id) || !mc.vitrine || mcLojaTravada()) return false;
   if ((mc.vitrine.estoque[item] || 0) <= 0 || (mc.pc[id] || 0) < mcPreco(item)) return false;
   if (item === "assalto") return players.some((p) => p.id !== id && (mc.pc[p.id] || 0) > 0);
   return true;
@@ -804,7 +808,10 @@ function mcTicar() {
     const d = avisoCongeladoDesde(tickAntes);
     if (d > 0) {
       if (mc.abrirEm) mc.abrirEm += d;
-      if (mc.intervalo) mc.intervalo.fimEm += d;
+      if (mc.intervalo) {
+        mc.intervalo.fimEm += d;
+        if (mc.intervalo.ini) mc.intervalo.ini += d;
+      }
       if (mc.desafio && mc.desafio.proxEm) mc.desafio.proxEm += d;
       if (mc.duelo && mc.duelo.ate) mc.duelo.ate += d;
       if (mc.desfib && mc.desfib.ate) mc.desfib.ate += d;
@@ -832,6 +839,11 @@ function mcTicar() {
     return mcJanelaFechou();
   }
   if (mc.fase === "desfibOferta" && mc.desfib && agora >= mc.desfib.ate) return mcFimVez();
+  // 1.7.10.9.3: passaram os 3 s de leitura: libera os botões da lojinha em todo dispositivo
+  if (mc.fase === "intervalo" && mc.intervalo && !mc.intervalo.liberou && !mcLojaTravada()) {
+    mc.intervalo.liberou = true;
+    mcMudou();
+  }
   if (mc.fase === "intervalo" && mc.intervalo && agora >= mc.intervalo.fimEm) {
     mc.pinata = null;
     mc.intervalo = null;
@@ -899,7 +911,7 @@ function mcRetrato() {
     duelo: mc.duelo ? { ladrao: mc.duelo.ladrao, vitima: mc.duelo.vitima, tipo: mc.duelo.tipo, fase: mc.duelo.fase, ate: mc.duelo.ate, escolheu: Object.keys(mc.duelo.esc), lados: mc.duelo.lados, resultado: mc.duelo.resultado, revanche: mc.duelo.revanche } : null,
     pinata: mc.pinata ? { palavra: mc.pinata.palavra, ganhou: mc.pinata.ganhou } : null,
     desfib: mc.desfib ? { id: mc.desfib.id || null, oferta: !!mc.desfib.oferta } : null,
-    intervalo: mc.intervalo ? { fimEm: mc.intervalo.fimEm } : null,
+    intervalo: mc.intervalo ? { fimEm: mc.intervalo.fimEm, travada: mcLojaTravada() } : null,
     ultimo: mc.ultimo,
     feed: mc.feed.slice(-6),
   };
@@ -1010,7 +1022,7 @@ function mcTelaHtml(r, eu, opcoes, priv) {
         return `<li class="${n > 0 && priv && saldo >= pr ? "" : "mc-caro"}">${MC_LOJA[k].ic} <b>${MC_LOJA[k].nome}</b> · ${pr} PC <small>${n > 0 ? `(${n} no estoque)` : "(esgotado)"}</small><small>${escapeHtml(MC_LOJA[k].desc)}</small></li>`;
       })
       .join("");
-    centro = `<div class="mc-bloco"><h3>🛒 Lojinha do C.A.O.S.</h3><p>Relógios congelados. Uma lojinha só pra mesa: quem comprar primeiro leva. Compre nos botões abaixo.</p><ul class="mc-vitrine">${vitrine}</ul>${M.pinata ? (M.pinata.ganhou ? `<p>🪅 ${nome(M.pinata.ganhou)} arrebentou a Piñata!</p>` : `<div class="mc-pinata">🪅 <b>PIÑATA!</b> Digite primeiro: <b class="mc-palavra">${escapeHtml(M.pinata.palavra)}</b><form class="mc-pinata-form"><input type="text" class="mc-pinata-txt" maxlength="20" autocomplete="off" aria-label="Palavra da Piñata"><button type="submit">Mandar</button></form></div>`) : ""}</div>`;
+    centro = `<div class="mc-bloco"><h3>🛒 Lojinha do C.A.O.S.</h3><p>Relógios congelados. Uma lojinha só pra mesa: quem comprar primeiro leva. Compre nos botões abaixo.</p>${M.intervalo && M.intervalo.travada ? `<p class="loja-trava">⏳ Dá uma olhada na vitrine: os botões liberam em instantes.</p>` : ""}<ul class="mc-vitrine">${vitrine}</ul>${M.pinata ? (M.pinata.ganhou ? `<p>🪅 ${nome(M.pinata.ganhou)} arrebentou a Piñata!</p>` : `<div class="mc-pinata">🪅 <b>PIÑATA!</b> Digite primeiro: <b class="mc-palavra">${escapeHtml(M.pinata.palavra)}</b><form class="mc-pinata-form"><input type="text" class="mc-pinata-txt" maxlength="20" autocomplete="off" aria-label="Palavra da Piñata"><button type="submit">Mandar</button></form></div>`) : ""}</div>`;
   } else if (M.fase === "desafio" && M.desafio) {
     const d = M.desafio;
     centro = `<div class="mc-bloco mc-batata"><h3>🥔 Carta bônus de ${nome(d.com)} · ${escapeHtml(TELAO_CAT[d.cat] || d.cat)}</h3><ol class="mc-dicas">${d.dicas.map((t) => `<li>${escapeHtml(t)}</li>`).join("")}</ol><p>${d.buzz ? `🗣️ ${nome(d.com)} está respondendo… ${nome(d.juiz)} julga.` : `Próxima dica em ${d.proxEm ? `<b class="mc-cont" data-fim="${d.proxEm}">…</b> s` : "…"} (${d.dicas.length}/${d.total})`}</p></div>`;
@@ -1177,7 +1189,10 @@ function mcRetomar(s) {
   // prazos absolutos (abrir, intervalo, desafio, duelo) recomeçam a contar a partir de agora
   const agora = Date.now();
   mc.abrirEm = agora + 1500;
-  if (mc.intervalo) mc.intervalo.fimEm = agora + MC_INTERVALO_SEG * 1e3;
+  if (mc.intervalo) {
+    mc.intervalo.fimEm = agora + MC_INTERVALO_SEG * 1e3;
+    mc.intervalo.ini = agora - LOJA_TRAVA_MS; // retomou: a vitrine já pode
+  }
   if (mc.desafio) mc.desafio.proxEm = agora + 6000;
   if (mc.duelo) mc.duelo.ate = agora + 10000;
   if (mc.desfib && mc.desfib.oferta) mc.desfib.ate = agora + 5000;

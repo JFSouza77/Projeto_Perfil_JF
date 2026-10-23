@@ -139,7 +139,7 @@ const VITORIA_TUTORIAIS = {
     {
       icon: "👉",
       title: "A vez segue a roda",
-      text: `O Mestre roda a cada carta. Na sua vez: <b>${CORRIDA_VEZ_SEG} s</b> pra escolher o número e <b>${CORRIDA_VEZ_SEG} s</b> pra responder. Errou ou demorou? Passa pro próximo.`,
+      text: `O Mestre roda a cada carta. Na sua vez: <b>${CORRIDA_ESCOLHA_SEG} s</b> pra escolher o número (demorou? uma dica abre sozinha) e <b>${CORRIDA_VEZ_SEG} s</b> pra responder. Errou? Passa pro próximo.`,
     },
     {
       icon: "☕",

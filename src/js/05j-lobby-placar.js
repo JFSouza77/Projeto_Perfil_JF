@@ -198,7 +198,7 @@ function lobbyAbasInstalar(ov) {
 
 // 1.7.9.11: o mesmo placar no celular de cada um (sala online), a partir do retrato público.
 function lobbyContextoDoRetrato(r) {
-  const cats = r.modo === "junior" ? ["ANIMAL", "PESSOA", "LUGAR", "COISA"] : ["ANO", "PESSOA", "LUGAR", "COISA"];
+  const cats = modoComAnimal(r.modo) ? ["ANIMAL", "PESSOA", "LUGAR", "COISA"] : ["ANO", "PESSOA", "LUGAR", "COISA"];
   const gemas = (o) => Object.fromEntries(cats.map((c) => [c, (o && o[c]) || 0]));
   const equipe = r.formato === "equipe" && Array.isArray(r.equipes) && r.equipes.length > 0;
   const ents = equipe
