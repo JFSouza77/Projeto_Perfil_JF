@@ -6,6 +6,10 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  (interno) · 23/10/2026 · REVISÃO SEM LOG · C.A.O.S. 4.6.5. Build 1832. Votação da mesa: decide a maioria da mesa
+          inteira (5 → 3), celular em segundo plano conta, tempo sem maioria deixa a carta. Modo C.A.O.S.: o C.A.O.S. fica
+          calado na janela/duelo/aviso e fala no máximo uma vez por vez (avisos de regra passam). Servidor: nova tentativa
+          em erro passageiro, erro geral vira 503 em vez de derrubar, logs ligados (observability).
   1.7.10.9.3 · 23/10/2026 · DECISÕES DO JF (handoff do GPT de 23/10) · C.A.O.S. 4.6.4. Build 1831. Corrida: sem Ano,
           Animal como categoria própria (completada com animais do Júnior); 15 s pra escolher a dica e, se não escolher,
           uma dica abre sozinha (sem pular a vez; a resposta continua 25 s). Modo C.A.O.S.: partida de 15 min (era 10).
@@ -11236,7 +11240,7 @@ body.batata-mode.aviso-treme {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.9.3 · Multiplayer Update · QoL da Mesa<br>C.A.O.S. 4.6.4 · Atualizada em 23/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.9.3 · Multiplayer Update · QoL da Mesa<br>C.A.O.S. 4.6.5 · Atualizada em 23/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -11518,7 +11522,7 @@ body.batata-mode.aviso-treme {
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1831;
+const JOGO_BUILD = 1832;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -33842,6 +33846,7 @@ function caosVingancaLine(p) {
   caosLog("vinganca", `${p.name} (cortou ${caosCortes.por[p.name] || 1}x)`);
   return getRandomReaction(REACTIVE_VOICE.caosCortado.vinganca, p.name, caosCortes.por[p.name] || 1);
 }
+let caosFalaMcRef = null; // Modo C.A.O.S.: em que vez ele já comentou (um comentário por vez)
 let caosFalaEssencial = false; // fala de regra/aviso em andamento: passa pelo orçamento (C.A.O.S. 4.2)
 let caosFalaDaFila = false; // C.A.O.S. 4.3: fala saindo da fila (já foi contada quando entrou)
 // "Ouvido interno": quanto silêncio ele precisa antes do próximo comentário.
@@ -33869,6 +33874,26 @@ function caosToastBloquear() {
         caosLog("orcamento", "fala cortada (Corrida: já falou nesta carta)");
         return true;
       }
+    }
+    // C.A.O.S. 4.6.5 (JF, 11/2026: "no Modo C.A.O.S. ele falando demais atrapalha, é muita informação"): lá a carta não
+    // passa pelo baralho normal (o limite por carta nunca valia) e a tela já fala muito pelos avisos. Então: com aviso da
+    // mesa na tela ou com alguém pensando (janela de palpite, julgamento, duelo, carta bônus), comentário nenhum; e no
+    // máximo um comentário por vez de Mestre. Aviso de regra (essencial) passa igual.
+    if (CURRENT_MODE === "caos" && starterChosen && !gameEnded && typeof mc !== "undefined" && mc) {
+      if (typeof avisoMesaAtivo === "function" && avisoMesaAtivo()) {
+        caosLog("orcamento", "fala cortada (Modo C.A.O.S.: aviso na tela)");
+        return true;
+      }
+      if (["janela", "julgando", "desfibOferta", "desfibSolo", "duelo", "desafio"].includes(mc.fase)) {
+        caosLog("orcamento", "fala cortada (Modo C.A.O.S.: a mesa está pensando)");
+        return true;
+      }
+      const ref = mc.rodada + ":" + mc.vez + ":" + mc.fase;
+      if (caosFalaMcRef === ref) {
+        caosLog("orcamento", "fala cortada (Modo C.A.O.S.: já falou nesta vez)");
+        return true;
+      }
+      caosFalaMcRef = ref;
     }
     // C.A.O.S. 4.3: a sala inteira calou ele: só aviso de regra passa
     if (caosSalaCalada()) {
@@ -34622,7 +34647,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.9.3 · C.A.O.S. 4.6.4</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.9.3 · C.A.O.S. 4.6.5</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -37974,7 +37999,7 @@ function caosNeuralDesenhar(cv, t) {
     const C = caosConsole || {};
     const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
 tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
-${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.6.4`;
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.6.5`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }
@@ -39779,7 +39804,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.9.3 · C.A.O.S. 4.6.4)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.9.3 · C.A.O.S. 4.6.5)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -43458,7 +43483,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.9.3 · C.A.O.S. 4.6.4");
+  L.push("- **Versão:** Beta 1.7.10.9.3 · C.A.O.S. 4.6.5");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -44000,7 +44025,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.9.3 · C.A.O.S. 4.6.4",
+        versao: "Beta 1.7.10.9.3 · C.A.O.S. 4.6.5",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,

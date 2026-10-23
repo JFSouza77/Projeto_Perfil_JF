@@ -157,6 +157,21 @@ const ARQ = acharMestre(process.argv[2]);
     mcFimVez();
     const telaD = mcTelaHtml(retratoPartida('mesa'), 'p0', mcOpcoes('p0'), mcPrivado('p0'));
     o.cartaDormindo = !!mc.ultimo && mc.ultimo.tipo === 'dormiu' && !('resp' in mc.ultimo) && /está <b>dormindo<\/b>/.test(telaD) && /com a dica 3/.test(telaD) && telaD.indexOf(String(cD.resp)) < 0;
+    // C.A.O.S. 4.6.5 (JF): no Modo C.A.O.S. ele não comenta com a mesa pensando nem com aviso na tela, e só 1x por vez
+    if (typeof avisoZerar === 'function') avisoZerar();
+    caosFalaFimAt = 0;
+    caosUltimaFalaAt = 0;
+    caosFalaMcRef = null;
+    mc.fase = 'janela';
+    o.caosCaladoNaJanela = caosToastBloquear() === true;
+    mc.fase = 'abrindo';
+    const primeira = caosToastBloquear();
+    const segunda = caosToastBloquear();
+    o.caosUmaFalaPorVez = primeira === false && segunda === true;
+    caosFalaEssencial = true;
+    mc.fase = 'janela';
+    o.caosAvisoDeRegraPassa = caosToastBloquear() === false;
+    caosFalaEssencial = false;
     o.tempos = MC_PAUSA_VEZ_MS === 6000 && MC_INTERVALO_SEG === 20 && CORRIDA_INTERVALO_SEG === 20;
     // tela do intervalo desenha sem erro
     mcFimRodada();
