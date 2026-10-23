@@ -477,7 +477,9 @@ function saveGameState() {
       equipeSubMode,
       ffaCandidateQueue,
       ffaWrongCount,
-      allCardsAnswers: CURRENT_MODE === "express" || CURRENT_MODE === "classico" ? allCards.map((c) => c.answer) : null,
+      // baralhos sorteados (mistura): a lista vai no save, senão recarregar sorteia outro e a carta da vez some
+      // (debug 23/10: a Corrida e o Modo C.A.O.S. também misturam e não guardavam)
+      allCardsAnswers: ["express", "classico", "corrida", "caos"].includes(CURRENT_MODE) ? allCards.map((c) => c.answer) : null,
       allCardsIds: CURRENT_MODE === "express" || CURRENT_MODE === "classico" ? allCards.map((c) => c.id) : null,
       screen: getCurrentScreen(),
     };
@@ -739,7 +741,7 @@ function loadGameState() {
     expressFlavor = state.expressFlavor || "classico";
     expressStealSavedResponder = state.expressStealSavedResponder === void 0 ? null : state.expressStealSavedResponder;
     if (
-      (CURRENT_MODE === "express" || CURRENT_MODE === "classico") &&
+      ["express", "classico", "corrida", "caos"].includes(CURRENT_MODE) &&
       state.allCardsAnswers &&
       state.allCardsAnswers.length
     ) {
@@ -751,6 +753,8 @@ function loadGameState() {
       );
     } else if (CURRENT_MODE === "oldschool") {
       allCards = baralhoOldSchool();
+    } else if (CURRENT_MODE === "corrida") {
+      allCards = baralhoCorrida(); // debug 23/10: recarregar a Corrida voltava com o baralho do Clássico (com Ano)
     } else {
       allCards = CURRENT_MODE === "hardcore" ? baralhoHardcore() : baralhoClassico();
     }
@@ -793,7 +797,8 @@ function loadGameState() {
       currentCard = rawCardOnLoad
         ? {
             ...rawCardOnLoad,
-            clues: savedCluesOk ? dicasSalvas : shuffle(rawCardOnLoad.clues),
+            // debug 23/10: na Corrida o palpite a qualquer hora se chama "Rouba a vez" (o save guardava o nome original)
+            clues: savedCluesOk ? (CURRENT_MODE === "corrida" ? dicasSalvas.map((c) => (c.type === "special" && isWildcardSpecial(c.text) ? { ...c, text: "Rouba a vez" } : c)) : dicasSalvas) : shuffle(rawCardOnLoad.clues),
           }
         : null;
       if (currentCard && !savedCluesOk) {
@@ -814,6 +819,13 @@ function loadGameState() {
       currentCard = null;
     }
     cardState = state.cardState || "none";
+    // debug 23/10: carta da vez que não voltou (não está mais no baralho) não pode deixar a mesa num estado sem carta:
+    // antes isso dava erro no desenho e o jogo zerava a partida inteira. Agora só a carta é perdida e sai a próxima.
+    if (!currentCard && (cardState === "hidden" || cardState === "revealed")) {
+      cardState = "none";
+      state.revealedOrder = [];
+      state.pendingIndex = null;
+    }
     roletaCarta = cardState === "hidden" && currentCard && (state.roleta === "pousou" || state.roleta === "girando") ? currentCard : null;
     roletaPousou = !!roletaCarta && state.roleta === "pousou";
     roletaRetomar = !!roletaCarta && !roletaPousou;
@@ -1046,6 +1058,9 @@ function loadGameState() {
     }
     updateDrawAvailability();
   } catch (e) {
+    try {
+      caosLog("save", "não deu pra retomar a partida salva: " + ((e && e.message) || e));
+    } catch (x) {}
     resetDeck();
   }
 }
@@ -1615,6 +1630,7 @@ function cartasRecentesLer() {
   }
   return cartasRecentes;
 }
+let cartasRecentesTimer = null;
 function cartasRecentesMarcar(resp) {
   if (!resp) return;
   const l = cartasRecentesLer();
@@ -1622,9 +1638,29 @@ function cartasRecentesMarcar(resp) {
   if (i >= 0) l.splice(i, 1);
   l.push(resp);
   if (l.length > CARTAS_RECENTES_MAX) l.splice(0, l.length - CARTAS_RECENTES_MAX);
+  // debug 23/10: grava uma vez só depois de uma rajada (o Modo C.A.O.S. dá uma carta pra cada um de uma vez)
+  clearTimeout(cartasRecentesTimer);
+  cartasRecentesTimer = setTimeout(() => {
+    cartasRecentesTimer = null;
+    try {
+      JFStore.setItem(CARTAS_RECENTES_KEY, JSON.stringify(cartasRecentesLer()));
+    } catch (e) {}
+  }, 400);
+}
+// fechou a página com a gravação esperando: grava na hora
+window.addEventListener("pagehide", () => {
+  if (!cartasRecentesTimer) return;
+  clearTimeout(cartasRecentesTimer);
+  cartasRecentesTimer = null;
   try {
-    JFStore.setItem(CARTAS_RECENTES_KEY, JSON.stringify(l));
+    JFStore.setItem(CARTAS_RECENTES_KEY, JSON.stringify(cartasRecentesLer()));
   } catch (e) {}
+});
+// embaralhado → as que não saíram nas últimas partidas vêm antes (a ordem dentro de cada grupo continua sorteada)
+function cartasPreferirNovas(cartas) {
+  const rec = new Set(cartasRecentesLer());
+  if (!rec.size) return cartas;
+  return cartas.filter((c) => !rec.has(c.answer)).concat(cartas.filter((c) => rec.has(c.answer)));
 }
 // recebe o baralho na ordem de compra (o fim sai primeiro, deck.pop()) e põe as recentes no começo (as últimas a sair),
 // as mais recentes mais pro fundo ainda. Só afasta até 60% do baralho, pra sempre sobrar carta "nova" na frente.
@@ -1964,7 +2000,7 @@ function caosPartidaMarkdown() {
     if (CURRENT_MODE === "corrida" && typeof corridaCompras === "object" && Object.keys(corridaCompras).length) {
       const moeda = corridaMoeda();
       L.push("## Lojinha", "");
-      L.push("| Jogador | Ganhou (" + moeda + ") | Gastou na lojinha | Ficou com | Itens comprados |", "|---|---|---|---|---|");
+      L.push("| Jogador | Ganhou (" + moeda + ") | Gastou na lojinha | Duelo | Ficou com | Itens comprados |", "|---|---|---|---|---|---|");
       players.forEach((p) => {
         const c = corridaCompras[p.id] || { gasto: 0, itens: {} },
           tem = corridaSaldo(p.id);
@@ -1972,7 +2008,8 @@ function caosPartidaMarkdown() {
           .map((k) => (CORRIDA_LOJA[k] ? CORRIDA_LOJA[k].ic + " " + CORRIDA_LOJA[k].nome + (c.itens[k] > 1 ? " ×" + c.itens[k] : "") : ""))
           .filter(Boolean)
           .join(", ");
-        L.push("| " + esc(p.name) + " | " + (tem + c.gasto) + " | " + c.gasto + " | " + tem + " | " + esc(itens || "—") + " |");
+        const du = c.duelo || 0;
+        L.push("| " + esc(p.name) + " | " + corridaGanhou(p.id) + " | " + c.gasto + " | " + (du > 0 ? "+" + du : du < 0 ? String(du) : "—") + " | " + tem + " | " + esc(itens || "—") + " |");
       });
       L.push("");
     }

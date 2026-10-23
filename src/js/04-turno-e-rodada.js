@@ -340,7 +340,9 @@ function resetDeck() {
   mercyEventUsed = false;
   pendingStartTime = null;
   timeoutOverlayMessage = null;
-  const fonteDeck = allCards.length > deckLimiteModo() ? shuffle(allCards).slice(0, deckLimiteModo()) : allCards;
+  // debug 23/10: quando o baralho é maior que o limite, as cartas que não saíram nas últimas partidas entram primeiro
+  // (antes o recorte era às cegas e o "afastar recentes" só reordenava o que sobrou)
+  const fonteDeck = allCards.length > deckLimiteModo() ? cartasPreferirNovas(shuffle(allCards)).slice(0, deckLimiteModo()) : allCards;
   // o baralho é comprado do fim (deck.pop()); o embaralhamento equilibrado põe a ordem boa no começo,
   // então ele entra invertido. Antes não invertia, e a categoria com mais cartas dominava a partida.
   deck =
@@ -615,7 +617,7 @@ function caosPrimeiraCategoria() {
   try {
     if (!currentCard || typeof REACTIVE_VOICE === "undefined" || !REACTIVE_VOICE.primeiraCategoria) return;
     const cat = gemCategoryFor(currentCard.category);
-    const banco = REACTIVE_VOICE.primeiraCategoria[cat === "COISA" && CURRENT_MODE === "junior" ? "COISA_JR" : cat];
+    const banco = REACTIVE_VOICE.primeiraCategoria[cat === "COISA" && modoComAnimal() ? "COISA_JR" : cat];
     if (!banco || !caosOncePerMatch("primeira_cat_" + cat)) return;
     caosLog("fala", "primeira carta de " + cat);
     caosFalaAgendar(() => getRandomReaction(banco), 900, "regra");

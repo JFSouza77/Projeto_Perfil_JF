@@ -99,7 +99,7 @@ function mcIniciar() {
     cont: { turbo: 0, imposto: 0, batata: 0, roubo: 0, maoLeve: 0, pinata: 0 },
   };
   players.forEach((p) => (p.score = 0));
-  mcAnunciar("🌀 Modo C.A.O.S. começou. 10 minutos. Que vença o mais rápido.", { ic: "🌀", titulo: "MODO C.A.O.S.!", texto: "Cada um tem a sua carta secreta. 10 minutos. Agora quem manda aqui sou eu.", botao: "Que venha o caos! 🌀" });
+  mcAnunciar(`🌀 Modo C.A.O.S. começou. ${MC_TEMPO_MS / 60e3} minutos. Que vença o mais rápido.`, { ic: "🌀", titulo: "MODO C.A.O.S.!", texto: `Cada um tem a sua carta secreta. ${MC_TEMPO_MS / 60e3} minutos. Agora quem manda aqui sou eu.`, botao: "Que venha o caos! 🌀" });
   mcNovaRodada();
   mcTique = mcTique || setInterval(mcTicar, 250);
 }
@@ -108,6 +108,7 @@ function mcBaralho() {
 }
 function mcNovaRodada() {
   mc.rodada++;
+  if (mc.ultimo && mc.ultimo.tipo === "dormiu") mc.ultimo = null; // debug 23/10: rodada nova, cartas novas: ninguém está dormindo
   mc.rodadaT = { resta: MC_RODADA_MS, fimEm: null };
   mc.cartas = {};
   const usadas = new Set(cartasPartida.map((c) => c.resp));
@@ -835,8 +836,11 @@ function mcTicar() {
   const tickAntes = mc.ultTick || mcAgora();
   mc.ultTick = mcAgora();
   if (typeof avisoCongeladoDesde === "function") {
-    const d = avisoCongeladoDesde(tickAntes);
+    // debug 23/10: com a partida pausada os prazos (abrir dica, intervalo, duelo, Era do Gelo…) também esperam
+    // (antes, despausar fazia tudo vencer de uma vez)
+    const d = avisoCongeladoDesde(tickAntes) + (pausedAt ? Math.max(0, mc.ultTick - tickAntes) : 0);
     if (d > 0) {
+      if (mc.janela && mc.janela.congela && mc.janela.congela.ate) mc.janela.congela.ate += d; // Era do Gelo
       if (mc.abrirEm) mc.abrirEm += d;
       if (mc.intervalo) {
         mc.intervalo.fimEm += d;
@@ -845,7 +849,7 @@ function mcTicar() {
       if (mc.desafio && mc.desafio.proxEm) mc.desafio.proxEm += d;
       if (mc.duelo && mc.duelo.ate) mc.duelo.ate += d;
       if (mc.desfib && mc.desfib.ate) mc.desfib.ate += d;
-      [mc.geral, mc.rodadaT, mc.janela && mc.janela.relogio].forEach((r) => r && r.fimEm && (r.fimEm += d));
+      if (!pausedAt) [mc.geral, mc.rodadaT, mc.janela && mc.janela.relogio].forEach((r) => r && r.fimEm && (r.fimEm += d)); // na pausa os relógios já param sozinhos
     }
     if (avisoMesaCongela()) {
       [mc.geral, mc.rodadaT, mc.janela && mc.janela.relogio].forEach(mcRelogioParar);
@@ -1229,6 +1233,7 @@ function mcRetomar(s) {
   mcZerar();
   if (CURRENT_MODE !== "caos" || !s || typeof s !== "object" || !s.cartas) return;
   mc = s;
+  mc.ultTick = null; // debug 23/10: o tique salvo é velho; contar congelamento a partir dele empurrava os prazos
   mc.olhos = mc.olhos || {};
   if (mc.fase === "intervalo" && !mc.vitrine) mc.vitrine = lojaVitrineSortear(MC_LOJA, MC_VITRINE);
   // prazos absolutos (abrir, intervalo, desafio, duelo) recomeçam a contar a partir de agora

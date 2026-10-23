@@ -538,6 +538,7 @@ function corridaRetrato() {
     duelo: corridaDuelo ? corridaDuelo.ids.slice() : null,
     vel: corridaVelocidade(),
     estoque: corridaEstoque ? { ...corridaEstoque } : null,
+    lojaTravada: typeof corridaLojaTravada === "function" && corridaLojaTravada(), // debug 23/10: os celulares também mostram os 3 s de leitura
     precos: corridaEstoque ? { ...corridaPrecos } : null,
   };
 }

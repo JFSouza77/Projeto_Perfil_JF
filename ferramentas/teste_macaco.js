@@ -6,7 +6,7 @@
 // exige a mesma partida de volta. Dois jogadores têm nome em forma de HTML ("<b id=xss>B"): se isso
 // virar elemento na tela, é falha de segurança. Anota erro de página e de console.
 //   node ferramentas/teste_macaco.js [arquivo.html] [semente] [toques] [pc]
-//   (semente 0..11 = os 12 cenários; sem arquivo, usa o Mestre mais novo)
+//   (semente 0..14 = os 15 cenários, 12..14 são da Corrida; sem arquivo, usa o Mestre mais novo)
 const { acharMestre, abrirNavegador } = require('./_navegador');
 const ARQ = acharMestre(process.argv[2] && process.argv[2].endsWith('.html') ? process.argv[2] : null);
 const ARGS = process.argv.slice(process.argv[2] && process.argv[2].endsWith('.html') ? 3 : 2);
@@ -42,6 +42,9 @@ let x = SEM >>> 0; const rnd = () => ((x = (x * 1664525 + 1013904223) >>> 0) / 4
     { formato: 'versus', modo: 'express', sabor: 'classico', jog: 3 }, { formato: 'versus', modo: 'express', sabor: 'hardcore', jog: 5 },
     { formato: 'equipe', modo: 'classico', cond: 'tabuleiro', jog: 4, equipes: 2 }, { formato: 'equipe', modo: 'classico', cond: 'joias', jog: 6, equipes: 3, sub: 'ffa' },
     { formato: 'equipe', modo: 'hardcore', cond: 'pontos', jog: 6, equipes: 2 }, { formato: 'equipe', modo: 'classico', cond: 'tabuleiro', jog: 6, equipes: 3, sub: 'duelo' },
+    // debug 23/10: a Corrida (local) entra no macaco: Tempo, Cartas Hardcore e em equipe
+    { formato: 'versus', modo: 'corrida', sabor: 'tempo', jog: 3 }, { formato: 'versus', modo: 'corrida', sabor: 'cartas-hc', jog: 4 },
+    { formato: 'equipe', modo: 'corrida', sabor: 'tempo', jog: 4, equipes: 2 },
   ];
   const cen = CENS[SEM % CENS.length];
   await page.evaluate((cen) => {
@@ -112,13 +115,15 @@ let x = SEM >>> 0; const rnd = () => ((x = (x * 1664525 + 1013904223) >>> 0) / 4
     // de vez em quando recarrega a página: a partida tem que voltar igual
     if (i % 200 === 199) {
       const antes = await page.evaluate(() => { if (!starterChosen || gameEnded) return null; saveGameState(); const r = retratoPartida('mestre'); delete r.relogio; return JSON.stringify(r); }).catch(() => null);
+      const geralAntes = await page.evaluate(() => (CURRENT_MODE === 'corrida' && typeof corridaGeralMs === 'function' ? corridaGeralMs() : null)).catch(() => null);
       if (antes) {
         await page.reload(); await page.waitForTimeout(2500);
         const depois = await page.evaluate(() => { if (!starterChosen) return 'NAO RETOMOU'; const r = retratoPartida('mestre'); delete r.relogio; return JSON.stringify(r); }).catch((e) => 'erro ' + e.message);
+        if (geralAntes !== null) { const g2 = await page.evaluate(() => (typeof corridaGeralMs === 'function' ? corridaGeralMs() : null)).catch(() => null); if (g2 === null || Math.abs(g2 - geralAntes) > 8000) erros.push(`recarregar mudou o relógio da Corrida: ${geralAntes} → ${g2}`); }
         // ordem das chaves não importa (as joias voltam do save em ordem canônica)
         // 1.7.10.1: recarregar no meio do giro da roleta pode fazer ela parar na volta (o giro é passageiro)
         const girava = (() => { try { const c = JSON.parse(antes).carta; return !!(c && c.roleta && c.roleta.girando); } catch (e) { return false; } })();
-        const canon = (t) => { try { const x = JSON.parse(t); if (girava && x && x.carta) { delete x.carta.roleta; delete x.carta.categoria; } const o = (v) => Array.isArray(v) ? v.map(o) : v && typeof v === 'object' ? Object.keys(v).sort().reduce((r, k) => ((r[k] = o(v[k])), r), {}) : v; return JSON.stringify(o(x)); } catch (e) { return t; } };
+        const canon = (t) => { try { const x = JSON.parse(t); if (girava && x && x.carta) { delete x.carta.roleta; delete x.carta.categoria; } if (x && x.corrida) ['resta', 'fimEm', 'cartaResta', 'cartaFimEm', 'lojaTravada'].forEach((k) => delete x.corrida[k]); /* debug 23/10: relógios da Corrida são conferidos à parte, com folga */ const o = (v) => Array.isArray(v) ? v.map(o) : v && typeof v === 'object' ? Object.keys(v).sort().reduce((r, k) => ((r[k] = o(v[k])), r), {}) : v; return JSON.stringify(o(x)); } catch (e) { return t; } };
         if (canon(depois) !== canon(antes)) { const A = JSON.parse(antes); let B = {}; try { B = JSON.parse(depois); } catch (e) {} erros.push('recarregar mudou: ' + (typeof depois === 'string' && depois.length < 40 ? depois : (() => { const dif = []; const cmp = (a, b, cam) => { if (JSON.stringify(a) === JSON.stringify(b)) return; if (a && b && typeof a === 'object' && typeof b === 'object') { new Set([...Object.keys(a), ...Object.keys(b)]).forEach((k) => cmp(a[k], b[k], cam + '.' + k)); } else dif.push(cam + ': ' + JSON.stringify(a) + ' → ' + JSON.stringify(b)); }; cmp(A, B, ''); return dif.slice(0, 6).join(' ; '); })())); }
       }
     }
