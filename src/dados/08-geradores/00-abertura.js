@@ -6,7 +6,7 @@
 // entra no máximo uma vez por fala, pra não repetir o assunto.
 // Etiquetas padrão: madrugada, manha, tarde, noite, fimDeSemana, sexta, segunda,
 //   modo_classico/hardcore/junior/oldschool/express/equipe, dupla, mesaCheia, anne, jf,
-//   pedro, isabel, elisa (sobrinhos do JF, pelo nome ou pelo nick), estreia, hoje, semana, sumido, venceuUltima, perdeuUltima, veterano,
+//   pedro, isabel, elisa (sobrinhos do JF, pelo nick que cada um escolheu), estreia, hoje, semana, sumido, venceuUltima, perdeuUltima, veterano,
 //   vencedor, outroModo, familia, humor_suave/acido/zero, temper_normal/sensivel/generoso/
 //   rabugento/eletrico, estado_<estado do C.A.O.S.>.
 // Variáveis: {nome} {anne} {jf} {pedro} {isabel} {elisa} {outro} {hora} {dia} {modo} {modoAntes}

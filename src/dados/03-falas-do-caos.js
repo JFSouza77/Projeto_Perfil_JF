@@ -4788,16 +4788,17 @@ const REACTIVE_VOICE = {
       ],
     },
   },
-  // Sobrinhos do JF (pedido do JF): Pedrinho The Best, Bebel LindAAA e Elisinha. São crianças, então tudo aqui é de
-  // família e vale também no Júnior. Só o carinho e o próprio nick (sem inventar fato da vida deles). Sem vocativo.
+  // Sobrinhos do JF (pedido do JF): Pedrinho the Best, Bebel LindAAA (a Isabel) e elisinha auruda (a Elisa, nick em
+  // minúscula de propósito). Valem também no Júnior. Sem palavrão e sem vocativo. Dosagem que o tio passou: a Isabel
+  // prefere suave, o Pedro zoa mas se estressa rápido (pouca zoeira e leve), a Elisa aguenta zoeira pesada.
   sobrinhos: {
     pedro: {
       chegou: [
         "Chegou o {nome}. O nick já avisa: não é qualquer um, é o melhor.",
         "Olha quem entrou: {nome}. Tio JF, pode ir se preparando.",
-        "O {nome} está na mesa. Eu não discuto com quem se chama de The Best.",
+        "O Pedro está na mesa. Ou melhor, o {nome}. Eu não discuto com quem se chama de The Best.",
         "Atenção, mesa: o {nome} chegou e trouxe o título junto.",
-        "O sobrinho mais confiante do jogo chegou: {nome}.",
+        "O Pedrinho chegou com o nick completo: {nome}. Respeito.",
       ],
       vez: [
         "Vez do {nome}. Hora de mostrar por que o nick tem The Best.",
@@ -4818,7 +4819,7 @@ const REACTIVE_VOICE = {
         "O {nome} errou, mas o título continua com ele. Eu deixo.",
         "Passou perto! A próxima é do {nome}.",
         "Errou, mas tudo bem: o {nome} só estava aquecendo.",
-        "O {nome} errou essa. O tio JF erra mais, pode ficar tranquilo.",
+        "O {nome} errou essa. Normal: o tio JF erra muito mais.",
       ],
     },
     isabel: {
@@ -4851,34 +4852,35 @@ const REACTIVE_VOICE = {
         "Errou, mas sem problema. A {nome} vai lembrar dessa na próxima.",
       ],
     },
+    // A Elisa aguenta zoeira pesada (palavra do tio, e ela joga no nível zero): aqui a zoeira é mais forte, sem palavrão.
     elisa: {
       chegou: [
-        "Chegou a {nome}! A mesa ficou completa.",
-        "A {nome} está aqui. Tio JF, hoje tem plateia.",
-        "Olha quem entrou: {nome}. Pode sentar, que a partida já vai começar.",
-        "A {nome} chegou. Eu prometo pegar leve com ela. Com o tio, não.",
-        "Mesa, abram espaço: a {nome} chegou.",
+        "Chegou a {nome}, tudo em minúscula. Nem pro nick ela se esforça.",
+        "A {nome} entrou. Pode avisar a mesa: hoje ninguém sai ileso, nem eu.",
+        "Olha quem apareceu: {nome}. Já veio no nível zero, então eu tô liberado.",
+        "A {nome} chegou. Tio JF, segura a sobrinha, porque eu não vou segurar a língua.",
+        "A {nome} está na mesa. Finalmente alguém que aguenta o tranco.",
       ],
       vez: [
-        "Vez da {nome}. Calma, que dá pra pensar à vontade.",
-        "A {nome} na vez. Todo mundo torcendo, até eu.",
-        "Carta nova pra {nome}. Essa pode ser sua.",
-        "Agora é com a {nome}. Escuta a dica direitinho.",
-        "A {nome} vai responder. Tio JF, nada de soprar a resposta.",
+        "Vez da {nome}. Vamos ver se a resposta sai melhor que o nick.",
+        "A {nome} na vez. Pode chutar, que eu já preparei a zoeira.",
+        "Carta nova pra {nome}. Se errar, eu vou lembrar disso até o Natal.",
+        "Agora é com a {nome}. Sem pressão. Mentira: muita pressão.",
+        "A {nome} vai responder. Tio JF, não sopra, que eu tô vendo.",
       ],
       acerto: [
-        "Acertou! A {nome} mandou muito bem.",
-        "Boa da {nome}! Toca aqui. Bom, eu não tenho mão, mas vale a intenção.",
-        "A {nome} acertou. O tio JF está orgulhoso, eu vi daqui.",
-        "Acerto da {nome}! Pode comemorar.",
-        "Mais uma pra {nome}. Que sorte a minha ver isso de perto.",
+        "Acertou! A {nome} até que pensa, quando quer.",
+        "A {nome} acertou. Vou ter que guardar a zoeira pra próxima.",
+        "Acerto da {nome}! Pronto, agora ela vai ficar se achando a partida inteira.",
+        "Boa da {nome}. Nem eu esperava, e olha que eu sou um computador.",
+        "A {nome} acertou e ainda vai rir da cara de todo mundo. Merecido.",
       ],
       erro: [
-        "Não foi dessa vez pra {nome}. Faz parte do jogo.",
-        "A {nome} errou essa, mas foi por pouco.",
-        "Quase! Na próxima a {nome} pega.",
-        "A {nome} errou. Tudo bem: até o tio JF erra, e ele fez o jogo.",
-        "Errou, mas valeu a tentativa. A {nome} está aprendendo rápido.",
+        "A {nome} errou. O nick é em minúscula e a resposta também saiu pequenininha.",
+        "Errou feio. A {nome} vai fingir que foi de propósito.",
+        "A {nome} errou. Eu ia pegar leve, mas ela escolheu o nível zero.",
+        "Errou! A {nome} chutou com tanta confiança que eu quase acreditei.",
+        "A {nome} errou essa. Tio JF, a genética da família explica muita coisa.",
       ],
     },
   },
