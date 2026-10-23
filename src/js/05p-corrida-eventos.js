@@ -266,6 +266,20 @@ function corridaAbrirSozinha() {
   }
   chooseClue(idx);
 }
+// 1.7.10.9.3 (JF): acabou o tempo de escolher: abre uma dica de verdade sorteada pra quem está na vez, sem pular a vez
+// e sem castigo. true = abriu (false = não tem mais dica de verdade; o jogo segue como antes)
+function corridaAbrirPorTempo() {
+  if (!currentCard || !players[responderIndex]) return false;
+  const livres = currentCard.clues.map((c, i) => i).filter((i) => currentCard.clues[i].type === "clue" && !revealedOrder.some((r) => r.index === i));
+  if (!livres.length) return false;
+  const quem = players[responderIndex].name;
+  chooseClue(livres[Math.floor(Math.random() * livres.length)]);
+  if (pendingIndex === null) return false;
+  timerEndAt += 5e3; // o aviso cobre a tela por 5 s: não come o tempo de responder
+  saveGameState();
+  showTimeoutOverlay("⏰ TEMPO ESGOTADO!", `${escapeHtml(quem)} demorou pra escolher: uma dica abriu sozinha. Responde!`, () => render());
+  return true;
+}
 function corridaRelampagoProxima() {
   if (gameEnded || !currentCard) return;
   clearTimer();
@@ -418,10 +432,14 @@ function corridaLojaPreparar() {
 function corridaPreco(item) {
   return corridaPrecos[item] || (CORRIDA_LOJA[item] || {}).preco || 0;
 }
+// 1.7.10.9.3 (JF): a vitrine aparece quando o intervalo abre, mas os botões só liberam depois de LOJA_TRAVA_MS
+function corridaLojaTravada() {
+  return !!corridaIntervaloIni && corridaIntervaloAberto() && Date.now() - corridaIntervaloIni < LOJA_TRAVA_MS;
+}
 function corridaPodeComprar(item, id) {
   const it = CORRIDA_LOJA[item],
     p = jogadorPorId(id);
-  if (!it || !p || !corridaLojaLigada() || !corridaIntervaloAberto() || !corridaEstoque) return false;
+  if (!it || !p || !corridaLojaLigada() || !corridaIntervaloAberto() || !corridaEstoque || corridaLojaTravada()) return false;
   if (corridaAcabou || gameEnded) return false; // 1.7.10.6.1 (dados da partida do JF): relógio zerou, a lojinha fecha
   if ((corridaEstoque[item] || 0) <= 0 || corridaSaldo(id) < corridaPreco(item)) return false;
   // Juízo Final: acerto não dá mais tempo, então os itens de tempo também saem de cena (senão a partida não acaba)
@@ -548,7 +566,8 @@ function corridaLojaVitrineHtml(estoque, compradores, precos) {
   };
   const saldo = (compradores || []).map((c) => `${escapeHtml(c.nome)}: <b>${c.pts}</b>${contas(c)}${guardados(c.id)}`).join(" · ");
   const como = `<div class="cr-loja-como">🎒 Itens com <b>guarda</b> ficam com você: na carta, aparece o botão <b>Usar</b> na sua tela (o Passe Livre só na sua vez). Os outros valem na hora da compra.</div>`;
-  return `<div class="cr-loja"><div class="cr-loja-tit">🛒 Lojinha de Sobrevivência <small>(uma só pra mesa: quem comprar primeiro leva · a vitrine muda a cada intervalo)</small></div>${saldo ? `<div class="cr-loja-saldo">💰 ${saldo}</div>` : ""}<ul>${linhas}</ul>${como}</div>`;
+  const trava = (compradores || []).length && corridaLojaTravada() ? `<div class="loja-trava">⏳ Dá uma olhada na vitrine: os botões liberam em instantes.</div>` : "";
+  return `<div class="cr-loja"><div class="cr-loja-tit">🛒 Lojinha de Sobrevivência <small>(uma só pra mesa: quem comprar primeiro leva · a vitrine muda a cada intervalo)</small></div>${saldo ? `<div class="cr-loja-saldo">💰 ${saldo}</div>` : ""}${trava}<ul>${linhas}</ul>${como}</div>`;
 }
 // no host: a vitrine da mesa, com os botões de quem joga no próprio dispositivo do host
 function corridaLojaHostHtml() {

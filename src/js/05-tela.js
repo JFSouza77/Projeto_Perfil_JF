@@ -2653,7 +2653,7 @@ function renderModeCardDescs() {
   );
   set(
     "mcDescCorrida",
-    `Relógio de ${CORRIDA_TEMPO_MS / 60e3} min (+${CORRIDA_BONUS_MS / 1e3} s por acerto), carta de ${corridaRelogioTxt(CORRIDA_CARTA_MS)}, vez de ${CORRIDA_VEZ_SEG}+${CORRIDA_VEZ_SEG} s. Duas vitórias: ⏱️ Tempo (a carta vale os segundos que sobravam) ou 🃏 Cartas.`,
+    `Relógio de ${CORRIDA_TEMPO_MS / 60e3} min (+${CORRIDA_BONUS_MS / 1e3} s por acerto), carta de ${corridaRelogioTxt(CORRIDA_CARTA_MS)}, vez de ${CORRIDA_ESCOLHA_SEG}+${CORRIDA_VEZ_SEG} s. Duas vitórias: ⏱️ Tempo (a carta vale os segundos que sobravam) ou 🃏 Cartas.`,
   );
   set(
     "mcDescOldschool",

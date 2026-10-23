@@ -109,6 +109,21 @@ function baralhoClassico() {
   );
   return proprio.concat(os, jr);
 }
+// 1.7.10.9.3 (JF, 23/10): a Corrida não tem Ano. Animal vira categoria própria (como no Júnior), completada com animais
+// do Júnior até ficar do tamanho da maior das outras (Pessoa, Lugar, Coisa), pra as 4 saírem parecido.
+function baralhoCorrida() {
+  const base = baralhoClassico().filter((c) => c.category !== "ANO");
+  const ja = new Set(base);
+  const conta = (cat) => base.filter((c) => c.category === cat).length;
+  const alvo = Math.max(conta("PESSOA"), conta("LUGAR"), conta("COISA"));
+  const extra = shuffle(ADULT_CARDS.filter((c) => c.category === "ANIMAL" && c.classificacao === "junior" && !ja.has(c))).slice(0, Math.max(0, alvo - conta("ANIMAL")));
+  return base.concat(extra);
+}
+// modos em que Animal é categoria própria (nos outros, carta de animal é anunciada como Coisa)
+function modoComAnimal(modo) {
+  const m = modo || CURRENT_MODE;
+  return m === "junior" || m === "corrida";
+}
 function baralhoHardcore() {
   return ADULT_CARDS;
 }
@@ -316,7 +331,7 @@ function isWildcardSpecial(text) {
   return typeof text === "string" && /palpite|rouba a vez/i.test(text);
 }
 function currentGemCategories() {
-  return CURRENT_MODE === "junior" ? ["ANIMAL", "PESSOA", "LUGAR", "COISA"] : ["ANO", "PESSOA", "LUGAR", "COISA"];
+  return modoComAnimal() ? ["ANIMAL", "PESSOA", "LUGAR", "COISA"] : ["ANO", "PESSOA", "LUGAR", "COISA"];
 }
 function winCond() {
   if (CURRENT_MODE === "express") return "express";
@@ -426,7 +441,7 @@ function gemTotal(holder) {
   return currentGemCategories().reduce((s, c) => s + (g[c] || 0), 0);
 }
 function gemCategoryFor(cardCategory) {
-  return CURRENT_MODE !== "junior" && cardCategory === "ANIMAL" ? "COISA" : cardCategory;
+  return !modoComAnimal() && cardCategory === "ANIMAL" ? "COISA" : cardCategory;
 }
 function awardGemIfEarned(scorerIdx, realCluesRevealed) {
   // 1.7.10.6 (JF: "vamos ser justos"): carta bônus também dá joia (antes não dava, e no Só Joias o duelo não valia nada)

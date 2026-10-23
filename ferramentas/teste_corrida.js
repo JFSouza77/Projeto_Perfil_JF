@@ -52,10 +52,21 @@ const ARQ = acharMestre(process.argv[2]);
     o.semTabuleiro = document.getElementById("boardTrack").innerHTML === "";
     flipCard();
     f();
-    o.vez15 = timerKind === "pick" && secondsLeft() === CORRIDA_VEZ_SEG; // 1.7.10.6.1: 25 s
-    chooseClue(livre()[0]);
+    o.vez15 = timerKind === "pick" && secondsLeft() === CORRIDA_ESCOLHA_SEG; // 1.7.10.9.3 (JF): 15 s pra escolher
+    // 1.7.10.9.3 (JF): acabou o tempo de escolher: uma dica de verdade abre sozinha, a vez continua com a mesma pessoa
+    const quemVez = responderIndex,
+      abertasAntes = revealedOrder.length;
+    onTimerExpired("pick");
+    o.escolhaAbreSozinha = pendingIndex !== null && responderIndex === quemVez && timerKind === "response" && revealedOrder.length === abertasAntes + 1 && currentCard.clues[pendingIndex].type === "clue";
+    clearTimeout(overlayTimeoutRef);
+    overlayTimeoutRef = null;
+    timeoutOverlayMessage = null;
+    pendingOverlayAction = null;
     f();
-    o.resp15 = timerKind === "response" && secondsLeft() === CORRIDA_VEZ_SEG;
+    // a resposta continua com 25 s (+5 s do aviso de tempo esgotado, que não pode comer o tempo de responder)
+    o.resp15 = timerKind === "response" && secondsLeft() >= CORRIDA_VEZ_SEG + 4 && secondsLeft() <= CORRIDA_VEZ_SEG + 5;
+    // 1.7.10.9.3 (JF): a Corrida não tem Ano; Animal é categoria própria
+    o.semAno = !allCards.some((c) => c.category === "ANO") && allCards.some((c) => c.category === "ANIMAL") && gemCategoryFor("ANIMAL") === "ANIMAL";
     const gAntes = corridaGeralMs();
     toqueJogoUltimo = 0;
     markCorrect();
@@ -399,11 +410,17 @@ const ARQ = acharMestre(process.argv[2]);
     if (o.estoque !== false) o.estoque = true;
     o.vitrineVaria = new Set(vitrines).size > 5;
     if (!corridaIntervaloAberto()) corridaIntervaloAbrir();
+    corridaIntervaloIni = Date.now() - LOJA_TRAVA_MS - 100; // passou a trava de leitura (conferida mais abaixo)
     // vitrine fixa pro resto do teste (o sorteio já foi conferido acima)
     corridaEstoque = { desfib: 2, corte: 2, cofrinho: 1, ampulheta: 1, ima: 1 };
     corridaPrecos = Object.fromEntries(Object.keys(corridaEstoque).map((k) => [k, CORRIDA_LOJA[k].preco]));
     const comprador = players.find((q) => q.score >= 60);
     comprador.score += 200;
+    // 1.7.10.9.3 (JF): nos 3 primeiros segundos do intervalo a vitrine aparece, mas não dá pra comprar
+    corridaIntervaloIni = Date.now();
+    o.lojaTravaNoComeco = !corridaPodeComprar("desfib", comprador.id) && /liberam em instantes/.test(corridaLojaVitrineHtml(corridaEstoque, [{ id: comprador.id, nome: comprador.name, pts: comprador.score }], corridaPrecos));
+    corridaIntervaloIni = Date.now() - LOJA_TRAVA_MS - 100;
+    o.lojaLiberaDepois = corridaPodeComprar("desfib", comprador.id);
     const pts0 = comprador.score;
     const est0 = corridaEstoque.desfib;
     dispatchAction({ type: "corridaComprar", data: ["desfib", comprador.id] });
@@ -479,6 +496,7 @@ const ARQ = acharMestre(process.argv[2]);
       corridaEstoque = { cofrinho: 1 };
       corridaPrecos = { cofrinho: 25 };
       if (!corridaIntervaloAberto()) corridaIntervaloAbrir();
+      corridaIntervaloIni = Date.now() - LOJA_TRAVA_MS - 100; // passou a trava de leitura
       corridaEstoque = { cofrinho: 1 };
       corridaPrecos = { cofrinho: 25 };
       const pode = corridaPodeComprar("cofrinho", comprador.id);

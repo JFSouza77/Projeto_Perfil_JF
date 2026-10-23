@@ -50,6 +50,11 @@ const ARQ = acharMestre(process.argv[2]);
     mc.vitrine = { estoque: { folego: 1, assalto: 2, olho: 1, kevlar: 1, espelho: 1 }, precos: { folego: 20, assalto: 25, olho: 45, kevlar: 60, espelho: 45 } };
     mc.pc = { p0: 200, p1: 50, p2: 30 };
     mc.inv = {};
+    // 1.7.10.9.3 (JF): os 3 primeiros segundos do intervalo são só pra ler a vitrine
+    o.lojaTravaNoComeco = mcLojaTravada() && !mcPodeComprar('folego', 'p0') && mcRetrato().intervalo.travada === true;
+    mc.intervalo.ini = mcAgora() - LOJA_TRAVA_MS - 100;
+    o.lojaLiberaDepois = !mcLojaTravada() && mcPodeComprar('folego', 'p0');
+    o.partida15min = MC_TEMPO_MS === 15 * 60e3;
     o.foraDaVitrineNaoCompra = !mcPodeComprar('corte', 'p0');
     mcComprar('folego', 'p0');
     o.comprou = mc.inv.p0.folego === 1 && mc.pc.p0 === 180 && mc.vitrine.estoque.folego === 0;
@@ -116,6 +121,43 @@ const ARQ = acharMestre(process.argv[2]);
     o.presenteDa = mcPresenteTalvez() === true && mc.cont.presente === 1 && MC_PRESENTE_ITENS.some((k) => ((mc.inv.p2 || {})[k] || 0) > (JSON.parse(invAntes)[k] || 0));
     o.presenteSoUmaVez = mcPresenteTalvez() === false;
     cartasPartida.length = 0;
+    // 1.7.10.9.3 (JF): duelo em melhor de 3 (dado: o C.A.O.S. rola, sem escolha)
+    placar(2, 2, 0);
+    mc.inv = {};
+    mc.fase = 'duelo';
+    mc.duelo = { ladrao: 'p1', vitima: 'p0', tipo: 'd6', fase: 'escolha', esc: {}, ate: mcAgora() + 3500, revanche: false, lados: null, resultado: null };
+    mcDueloResolver();
+    const depois1 = mc.duelo && mc.duelo.fase === 'escolha' && mc.duelo.rodada === 2 && players[0].score + players[1].score === 4 && players[1].score === 2;
+    mcDueloResolver();
+    let rodadas = 2;
+    while (mc.duelo && mc.duelo.fase === 'escolha' && !mc.duelo.revanche && rodadas < 3) {
+      mcDueloResolver();
+      rodadas++;
+    }
+    const pl = mc.duelo ? mc.duelo.placar : null;
+    o.dueloMelhorDe3 = depois1 && (!mc.duelo || mc.duelo.fase === 'revanche') && players[0].score + players[1].score === 4 && (pl === null || Math.max(pl.p0 || 0, pl.p1 || 0) === MC_DUELO_VITORIAS);
+    // jokenpô: no 3º empate seguido o C.A.O.S. sorteia a rodada (o duelo não fica preso)
+    mc.duelo = { ladrao: 'p1', vitima: 'p0', tipo: 'ppt', fase: 'escolha', esc: {}, ate: mcAgora() + 12000, revanche: false, lados: null, resultado: null };
+    for (let k = 0; k < 3; k++) {
+      mc.duelo.esc = { p1: 'pedra', p0: 'pedra' };
+      mcDueloResolver();
+    }
+    o.jokenpo3Empates = !!mc.duelo && !!mc.duelo.placar && (mc.duelo.placar.p0 || 0) + (mc.duelo.placar.p1 || 0) === 1 && mc.duelo.empates === 0;
+    mc.inv.p0 = { espelho: 1 };
+    o.itemDizQuando = /protege você sozinho/.test(mcTelaHtml(retratoPartida('mesa'), 'p0', mcOpcoes('p0'), mcPrivado('p0')));
+    mc.inv.p0 = {};
+    mc.duelo = null;
+    // 1.7.10.9.3 (JF): carta que hiberna vira aviso fixo de "dormindo", sem a resposta
+    mc.fase = 'janela';
+    const mestreD = mcMestreId();
+    const cD = mc.cartas[mestreD];
+    cD.estado = 'ativa';
+    cD.aberta = 2;
+    mc.janela = null;
+    mcFimVez();
+    const telaD = mcTelaHtml(retratoPartida('mesa'), 'p0', mcOpcoes('p0'), mcPrivado('p0'));
+    o.cartaDormindo = !!mc.ultimo && mc.ultimo.tipo === 'dormiu' && !('resp' in mc.ultimo) && /está <b>dormindo<\/b>/.test(telaD) && /com a dica 3/.test(telaD) && telaD.indexOf(String(cD.resp)) < 0;
+    o.tempos = MC_PAUSA_VEZ_MS === 6000 && MC_INTERVALO_SEG === 20 && CORRIDA_INTERVALO_SEG === 20;
     // tela do intervalo desenha sem erro
     mcFimRodada();
     clearInterval(mcTique);

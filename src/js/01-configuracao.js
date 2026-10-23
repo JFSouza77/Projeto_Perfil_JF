@@ -14,7 +14,7 @@
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1830;
+const JOGO_BUILD = 1831;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -347,8 +347,9 @@ const PALPITE_MODES_OK = ["classico", "junior", "oldschool", "corrida"];
 const CORRIDA_TEMPO_MS = 30 * 60e3; // regra do JF: 30 min é o tempo padrão da Corrida e não entra no balanceamento (1.7.10.9.1 desfez os 20 min)
 const CORRIDA_BONUS_MS = 10e3;
 const CORRIDA_CARTA_MS = 180e3; // 1.7.10.6.1 (JF: "ridiculamente rápido"): 3:00 (era 2:30), pra caber a vez mais longa
-const CORRIDA_VEZ_SEG = 25; // 1.7.10.6.1 (JF): 25 s pra escolher e 25 pra responder (era 15 + 15)
-const CORRIDA_INTERVALO_SEG = 15;
+const CORRIDA_VEZ_SEG = 25; // 1.7.10.6.1 (JF): 25 s pra responder (a resposta falada não muda)
+const CORRIDA_ESCOLHA_SEG = 15; // 1.7.10.9.3 (JF, 23/10): 15 s pra escolher a dica; não escolheu, uma dica abre sozinha (sem pular a vez)
+const CORRIDA_INTERVALO_SEG = 20; // 1.7.10.9.3 (JF): 20 s entre as cartas (era 15), por causa da trava de 3 s da lojinha; 20 é o teto (30 estraga o ritmo)
 // Eventos da Corrida (spec do JF de 17/10 à noite + balanceamento): penalidades, carta morta, bomba, duelo, Hardcore
 const CORRIDA_CARTA_HC_MS = 90e3; // Hardcore: 1:30 de carta…
 const CORRIDA_VEL_HC = 1.5; // …correndo 1,5× (Extreme 2× fica pra depois do playtest)
@@ -367,12 +368,13 @@ const CORRIDA_DUELO_MAX = 2;
 const CORRIDA_DUELO_VEL = 2; // no duelo a carta corre 2× e o geral congela
 const CORRIDA_DUELO_ROUBO = 25; // quem vence o duelo rouba 25 pontos de quem perdeu (Tempo)
 // 1.7.10.6 · Modo C.A.O.S. (handoff do JF de 17/10, docs/Modos_1.7.10.6.md): online, 16+, um dispositivo por pessoa
-const MC_TEMPO_MS = 10 * 60e3; // partida
+const MC_TEMPO_MS = 15 * 60e3; // partida (1.7.10.9.3, JF: 15 min; era 10)
 const MC_RODADA_MS = 5 * 60e3; // rodada (no máximo)
 const MC_JANELA_SEG = 25; // janela de palpite de cada dica (1.7.10.6.1, galera: "rápido demais": era 15)
 const MC_TURBO_SEG = 8; // Modo Turbo (era 5)
-const MC_PAUSA_VEZ_MS = 4500; // 1.7.10.6.1 (Henrique): respiro antes da próxima carta, com o resultado na tela (era 1,5 s)
-const MC_INTERVALO_SEG = 15; // lobby entre rodadas (tudo congelado)
+const MC_DUELO_VITORIAS = 2; // 1.7.10.9.3 (JF): duelo e revanche em melhor de 3 (quem ganhar 2 rodadas leva)
+const MC_PAUSA_VEZ_MS = 6000; // respiro antes da próxima vez, com o resultado na tela (1.7.10.6.1, Henrique: 1,5 → 4,5 s; 1.7.10.9.3, JF: 6 s)
+const MC_INTERVALO_SEG = 20; // lobby entre rodadas (tudo congelado). 1.7.10.9.3 (JF): 20 s (era 15), por causa da trava de 3 s da lojinha; 20 é o teto
 const MC_RAPIDO_MS = 5e3; // acertou nos 5 primeiros segundos da janela: bônus de PC
 const MC_PC = { rodada: 10, rapido: 5, pinata: 30, batata: 50, imposto: 10 };
 /* Lojinha do C.A.O.S. (Pontos de Caos). 1.7.10.6 (pedido do JF): nomes próprios do modo (diferentes dos da Corrida),
@@ -391,6 +393,7 @@ const MC_LOJA = {
   assalto: { ic: "💸", nome: "Assalto Relâmpago", preco: 25, peso: 2, desc: "na hora da compra: leva 15 PC de quem tem mais PC (fora você)" },
 };
 const MC_VITRINE = 5;
+const LOJA_TRAVA_MS = 3e3; // 1.7.10.9.3 (JF): no intervalo a vitrine aparece na hora, mas os botões só liberam depois de 3 s (pra dar tempo de ler)
 /* 1.7.10.9.2 · Presente do C.A.O.S. (a "Mochila" que o JF levou pro GPT em 17/10, enxugada): pra quem ficou muito pra
    trás. No intervalo, depois de 3 cartas encerradas (capturadas ou mortas), se houver um líder só e um lanterna só com
    MC_PRESENTE_DIF cartas ou mais de diferença, o lanterna ganha 1 item da lojinha. Uma vez por partida (pra mesa toda).
