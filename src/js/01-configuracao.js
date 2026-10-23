@@ -14,7 +14,7 @@
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1829;
+const JOGO_BUILD = 1830;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -391,6 +391,14 @@ const MC_LOJA = {
   assalto: { ic: "💸", nome: "Assalto Relâmpago", preco: 25, peso: 2, desc: "na hora da compra: leva 15 PC de quem tem mais PC (fora você)" },
 };
 const MC_VITRINE = 5;
+/* 1.7.10.9.2 · Presente do C.A.O.S. (a "Mochila" que o JF levou pro GPT em 17/10, enxugada): pra quem ficou muito pra
+   trás. No intervalo, depois de 3 cartas encerradas (capturadas ou mortas), se houver um líder só e um lanterna só com
+   MC_PRESENTE_DIF cartas ou mais de diferença, o lanterna ganha 1 item da lojinha. Uma vez por partida (pra mesa toda).
+   Os itens são os da Mochila que já existem na lojinha: Olho (1ª letra), Vida Extra (2ª chance) e Mordaça (calar alguém
+   numa dica). O "dado viciado" ficou de fora (mexe num duelo que tem que ser justo). */
+const MC_PRESENTE_DIF = 2;
+const MC_PRESENTE_CARTAS = 3;
+const MC_PRESENTE_ITENS = ["olho", "folego", "mordaca"];
 const MC_ASSALTO_PC = 15;
 const MC_PINATA_PALAVRAS = ["EU QUERO", "CAOS", "ME DA", "BOOM", "PINHATA", "AGORA", "SOCORRO", "PERFIL"];
 /* Lojinha de Sobrevivência: só online, só na vitória por Tempo, só no intervalo, uma só pra mesa (quem compra primeiro

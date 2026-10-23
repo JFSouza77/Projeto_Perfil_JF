@@ -1,7 +1,7 @@
 # Handoff · Modo C.A.O.S. e Corrida contra o Tempo
 
 **Para:** GPT (ou qualquer revisor externo) · **De:** Claude Code, a pedido do JF · **Data:** 19/10/2026
-**Versão do jogo:** Beta 1.7.10.9.1 · C.A.O.S. 4.6.2 · build 1829
+**Versão do jogo:** Beta 1.7.10.9.2 · C.A.O.S. 4.6.3 · build 1830
 
 **Objetivo:** entregar o retrato completo e atual dos dois modos novos, com:
 - regras;
@@ -287,6 +287,12 @@ Aqui, o C.A.O.S. **apronta de verdade**: eventos, roubos, duelos e lojinha.
 | 🪅 Piñata | No intervalo, 45% de chance | até 3/partida | O primeiro a digitar a palavra ganha 30 PC. |
 
 Espelho e Colete valem no roubo, na Mão Leve e na batata.
+
+**🎁 Presente do C.A.O.S.** (1.7.10.9.2; é a "Mochila" do JF enxugada, ver `docs/Revisao_Pacote_GPT_2026-10-17.md`):
+- É checado no intervalo, depois de 3 cartas encerradas.
+- Se houver um líder só e um lanterna só com 2+ cartas de diferença, o lanterna ganha 1 item (Olho, Vida Extra ou Mordaça).
+- Sai uma vez por partida.
+- A mesa vê o aviso, mas o item é segredo.
 
 ### 2.8 Telas (como ficou depois do feedback de 18/10)
 

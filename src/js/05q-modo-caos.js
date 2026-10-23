@@ -326,13 +326,39 @@ function mcFimRodada() {
     // só quem recebeu fica sabendo (aviso privado: não congela a mesa)
     avisoMostrar({ ic: "🧤", titulo: "Você ganhou a Mão Leve!", texto: "Segredo. Use quando quiser pra tirar 1 carta de alguém sem ninguém saber que foi você.", anim: "maoleve", para: [mc.maoLeve.id], seg: 5, botao: "Hehe 😏" });
   }
-  // Piñata: às vezes, no intervalo
-  if (mc.cont.pinata < 3 && sorteioRegra() < 0.45) {
+  const presente = mcPresenteTalvez();
+  // Piñata: às vezes, no intervalo (não no mesmo intervalo do presente: um aviso grande por vez)
+  if (!presente && mc.cont.pinata < 3 && sorteioRegra() < 0.45) {
     mc.cont.pinata++;
     mc.pinata = { palavra: sorteioItem(MC_PINATA_PALAVRAS), ganhou: null };
     mcAnunciar(`🪅 PIÑATA! Quem digitar primeiro "${mc.pinata.palavra}" leva ${MC_PC.pinata} PC!`, { ic: "🪅", titulo: "PIÑATA!", texto: `Quem digitar primeiro "${mc.pinata.palavra}" leva ${MC_PC.pinata} PC!`, anim: "pinata" });
   }
   mcMudou();
+}
+// 1.7.10.9.2 · Presente do C.A.O.S.: o lanterna, bem atrás do líder, ganha 1 item (1 vez por partida)
+function mcPresenteTalvez() {
+  if ((mc.cont.presente || 0) >= 1 || players.length < 3 || cartasPartida.length < MC_PRESENTE_CARTAS) return false;
+  const pts = (p) => p.score || 0;
+  const ord = players.slice().sort((a, b) => pts(b) - pts(a));
+  const topo = pts(ord[0]),
+    fundo = pts(ord[ord.length - 1]);
+  // líder e lanterna únicos (empate adia pro próximo intervalo)
+  if (topo - fundo < MC_PRESENTE_DIF || ord.filter((p) => pts(p) === topo).length !== 1 || ord.filter((p) => pts(p) === fundo).length !== 1) return false;
+  const quem = ord[ord.length - 1],
+    item = sorteioItem(MC_PRESENTE_ITENS),
+    it = MC_LOJA[item];
+  mc.cont.presente = 1;
+  mc.inv[quem.id] = mc.inv[quem.id] || {};
+  mc.inv[quem.id][item] = (mc.inv[quem.id][item] || 0) + 1;
+  // a mesa sabe que teve presente; qual item, só quem ganhou (igual à lojinha, que é segredo)
+  mcAnunciar(`🎁 PRESENTE DO C.A.O.S.! ${quem.name} ficou pra trás e ganhou um item.`, {
+    ic: "🎁",
+    titulo: "PRESENTE DO C.A.O.S.!",
+    texto: `${quem.name} ficou ${topo - fundo} cartas atrás do líder e ganhou um item da lojinha. Qual? Segredo.`,
+    anim: "presente",
+    variantes: { [quem.id]: { titulo: "Um presente pra você!", texto: `Você ganhou ${it.ic} ${it.nome}: ${it.desc}. Ele aparece nos seus itens.`, botao: "Valeu, C.A.O.S.! 🎁" } },
+  });
+  return true;
 }
 function mcFim() {
   if (!mc || gameEnded) return;
@@ -1171,7 +1197,7 @@ function mcRegrasHtml() {
     `🛒 <b>Lojinha (no intervalo, uma só pra mesa):</b> a cada intervalo aparecem ${MC_VITRINE} itens sorteados, com preço e estoque variando. Catálogo: ${Object.values(MC_LOJA)
       .map((it) => `${it.ic} ${it.nome} (~${it.preco})`)
       .join(", ")}.`,
-    `🌀 <b>O C.A.O.S. apronta</b> (um evento por vez, sempre entre uma vez e outra, com aviso grande na tela): ⏩ Turbo (janela de ${MC_TURBO_SEG} s), 💸 Imposto da Preguiça (quem não tenta paga PC), 🥔 Batata Quente (passe ou segure; quem ficar com ela encara a carta bônus), 🧤 Mão Leve (furto secreto), 🪅 Piñata (digite primeiro) e ⚔️ roubos com duelo (dado, moeda, jokenpô, par ou ímpar) e revanche dobro ou nada.`,
+    `🌀 <b>O C.A.O.S. apronta</b> (um evento por vez, sempre entre uma vez e outra, com aviso grande na tela): ⏩ Turbo (janela de ${MC_TURBO_SEG} s), 💸 Imposto da Preguiça (quem não tenta paga PC), 🥔 Batata Quente (passe ou segure; quem ficar com ela encara a carta bônus), 🧤 Mão Leve (furto secreto), 🪅 Piñata (digite primeiro), 🎁 Presente (quem ficou ${MC_PRESENTE_DIF}+ cartas atrás do líder ganha 1 item, uma vez por partida) e ⚔️ roubos com duelo (dado, moeda, jokenpô, par ou ímpar) e revanche dobro ou nada.`,
   ];
   return li.map((t) => "<li>" + t + "</li>").join("");
 }

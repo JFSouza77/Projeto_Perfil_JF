@@ -1665,6 +1665,7 @@ body.batata-mode .mc-respondendo {
 .aviso-dado { --av: #a3e635; --av2: #65a30d; --av-fundo: #365314; }
 .aviso-moeda { --av: #fcd34d; --av2: #d97706; --av-fundo: #78350f; }
 .aviso-pinata { --av: #e879f9; --av2: #22d3ee; --av-fundo: #701a75; }
+.aviso-presente { --av: #5eead4; --av2: #0d9488; --av-fundo: #134e4a; }
 /* jokenpô, dado, par ou ímpar, moeda: balança 3 vezes e mostra o resultado */
 .aviso-duelo-anim {
   display: flex;

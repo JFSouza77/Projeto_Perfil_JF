@@ -6,6 +6,16 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.9.2",
+    data: "23/10/2026 · 00:00",
+    nome: "Multiplayer Update · QoL da Mesa",
+    t: "No Modo C.A.O.S., quem fica muito pra trás ganha uma ajudinha.",
+    itens: [
+      "🎁 Presente do C.A.O.S.: no Modo C.A.O.S., quem ficar 2 cartas ou mais atrás do líder ganha um item da lojinha, uma vez por partida. A mesa fica sabendo do presente, mas qual item é segredo.",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.9.1",
     data: "19/10/2026 · 11:10",
     nome: "Multiplayer Update · QoL da Mesa",
