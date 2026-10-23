@@ -145,8 +145,36 @@ async function ponte(env) {
   return { iceServers: limpa, validade: Date.now() + 86400 * 1000 };
 }
 
+// 11/2026 (relato do JF: "o servidor dá umas crashadas"): o Cloudflare às vezes reinicia ou sobrecarrega o Durable
+// Object (no plano grátis isso acontece). Antes o erro estourava cru e virava 500 sem cabeçalho de CORS (o jogo nem
+// conseguia ler). Agora: tenta de novo uma vez quando o próprio Cloudflare diz que dá pra repetir, registra no log
+// (Workers Logs, ligado no wrangler.toml) e responde um erro limpo que o jogo entende.
+async function doFetch(stub, req) {
+  // o corpo de um pedido só pode ser lido uma vez: a cópia é que vai na segunda tentativa
+  const copia = req.method === "GET" || req.method === "HEAD" ? req : req.clone();
+  try {
+    return await stub.fetch(req);
+  } catch (e) {
+    if (e && e.retryable && !e.overloaded) {
+      console.warn("DO: tentando de novo:", e.message);
+      return await stub.fetch(copia);
+    }
+    throw e;
+  }
+}
 export default {
   async fetch(req, env) {
+    try {
+      return await atender(req, env);
+    } catch (e) {
+      console.error("erro no servidor:", new URL(req.url).pathname, e && e.message, e && e.stack);
+      const { h } = cors(req, env, true);
+      return json({ erro: "servidor", tentar: true }, 503, h);
+    }
+  },
+};
+async function atender(req, env) {
+  {
     const url = new URL(req.url);
     const p = url.pathname.replace(/\/+$/, "") || "/";
     const livre = p === `/${CHAVE}/id` || p === "/";
@@ -158,29 +186,29 @@ export default {
     const sinal = () => env.SINAL.get(env.SINAL.idFromName("sinal"));
     if (p === "/peerjs") {
       if (req.headers.get("Upgrade") !== "websocket") return new Response("só WebSocket", { status: 426 });
-      return sinal().fetch(req);
+      return doFetch(sinal(), req);
     }
     const caixa = () => env.SINAL.get(env.SINAL.idFromName("reportes"));
     // 1.7.10: a página dos reportes abre direto no navegador do JF (protegida pela senha)
     if (p === "/reportes" || p === "/reportes/apagar") {
       if (!env.REPORTES_SENHA) return new Response("Senha dos reportes não configurada (segredo REPORTES_SENHA).", { status: 403, headers: { "Content-Type": "text/plain; charset=utf-8" } });
-      return caixa().fetch(req);
+      return doFetch(caixa(), req);
     }
     if (!ok) return json({ erro: "origem" }, 403, h);
     if (p === "/reporte" && req.method === "POST") {
       const corpo = await req.text();
       if (corpo.length > 3000) return json({ erro: "grande" }, 413, h);
-      const r = await caixa().fetch(new Request("https://caixa/reporte", { method: "POST", body: corpo, headers: { "CF-Connecting-IP": req.headers.get("CF-Connecting-IP") || "" } }));
+      const r = await doFetch(caixa(), new Request("https://caixa/reporte", { method: "POST", body: corpo, headers: { "CF-Connecting-IP": req.headers.get("CF-Connecting-IP") || "" } }));
       return json(await r.json(), r.status, h);
     }
     if (p === "/salas" && req.method === "GET") {
-      const r = await sinal().fetch(new Request("https://sinal/salas", { headers: { "CF-Connecting-IP": req.headers.get("CF-Connecting-IP") || "" } }));
+      const r = await doFetch(sinal(), new Request("https://sinal/salas", { headers: { "CF-Connecting-IP": req.headers.get("CF-Connecting-IP") || "" } }));
       return json(await r.json(), 200, h);
     }
     if (p === "/sala" && req.method === "POST") {
       const corpo = await req.text();
       if (corpo.length > 2000) return json({ erro: "grande" }, 413, h);
-      const r = await sinal().fetch(new Request("https://sinal/sala", { method: "POST", body: corpo, headers: { "CF-Connecting-IP": req.headers.get("CF-Connecting-IP") || "" } }));
+      const r = await doFetch(sinal(), new Request("https://sinal/sala", { method: "POST", body: corpo, headers: { "CF-Connecting-IP": req.headers.get("CF-Connecting-IP") || "" } }));
       return json(await r.json(), r.status, h);
     }
     // 1.7.10.2 · voz nova do C.A.O.S. (Azure); instância "voz" do Durable Object guarda as falas e o teto do mês
@@ -190,7 +218,7 @@ export default {
       if (!vozesDoServidor(env).length) return json({ erro: "sem_voz" }, 503, h);
       const corpo = await req.text();
       if (corpo.length > 1500) return json({ erro: "grande" }, 413, h);
-      const r = await voz().fetch(new Request("https://voz/voz", { method: "POST", body: corpo, headers: { "CF-Connecting-IP": req.headers.get("CF-Connecting-IP") || "" } }));
+      const r = await doFetch(voz(), new Request("https://voz/voz", { method: "POST", body: corpo, headers: { "CF-Connecting-IP": req.headers.get("CF-Connecting-IP") || "" } }));
       const cab = new Headers(r.headers);
       Object.entries(h).forEach(([k, v]) => cab.set(k, v));
       return new Response(r.body, { status: r.status, headers: cab });
@@ -203,8 +231,8 @@ export default {
       }
     }
     return new Response("não achei", { status: 404, headers: h });
-  },
-};
+  }
+}
 
 // Um Durable Object só pra todas as salas (escala de família). Os WebSockets hibernam entre mensagens,
 // então o objeto não gasta tempo parado; o estado de cada aparelho fica no "attachment" do socket.

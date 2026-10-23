@@ -912,6 +912,7 @@ function caosVingancaLine(p) {
   caosLog("vinganca", `${p.name} (cortou ${caosCortes.por[p.name] || 1}x)`);
   return getRandomReaction(REACTIVE_VOICE.caosCortado.vinganca, p.name, caosCortes.por[p.name] || 1);
 }
+let caosFalaMcRef = null; // Modo C.A.O.S.: em que vez ele já comentou (um comentário por vez)
 let caosFalaEssencial = false; // fala de regra/aviso em andamento: passa pelo orçamento (C.A.O.S. 4.2)
 let caosFalaDaFila = false; // C.A.O.S. 4.3: fala saindo da fila (já foi contada quando entrou)
 // "Ouvido interno": quanto silêncio ele precisa antes do próximo comentário.
@@ -939,6 +940,26 @@ function caosToastBloquear() {
         caosLog("orcamento", "fala cortada (Corrida: já falou nesta carta)");
         return true;
       }
+    }
+    // C.A.O.S. 4.6.5 (JF, 11/2026: "no Modo C.A.O.S. ele falando demais atrapalha, é muita informação"): lá a carta não
+    // passa pelo baralho normal (o limite por carta nunca valia) e a tela já fala muito pelos avisos. Então: com aviso da
+    // mesa na tela ou com alguém pensando (janela de palpite, julgamento, duelo, carta bônus), comentário nenhum; e no
+    // máximo um comentário por vez de Mestre. Aviso de regra (essencial) passa igual.
+    if (CURRENT_MODE === "caos" && starterChosen && !gameEnded && typeof mc !== "undefined" && mc) {
+      if (typeof avisoMesaAtivo === "function" && avisoMesaAtivo()) {
+        caosLog("orcamento", "fala cortada (Modo C.A.O.S.: aviso na tela)");
+        return true;
+      }
+      if (["janela", "julgando", "desfibOferta", "desfibSolo", "duelo", "desafio"].includes(mc.fase)) {
+        caosLog("orcamento", "fala cortada (Modo C.A.O.S.: a mesa está pensando)");
+        return true;
+      }
+      const ref = mc.rodada + ":" + mc.vez + ":" + mc.fase;
+      if (caosFalaMcRef === ref) {
+        caosLog("orcamento", "fala cortada (Modo C.A.O.S.: já falou nesta vez)");
+        return true;
+      }
+      caosFalaMcRef = ref;
     }
     // C.A.O.S. 4.3: a sala inteira calou ele: só aviso de regra passa
     if (caosSalaCalada()) {

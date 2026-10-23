@@ -15,3 +15,8 @@ class_name = "Sinal"
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["Sinal"]
+
+# 11/2026: logs do servidor guardados no painel do Cloudflare (Workers Logs, grátis). Pra ver: Workers & Pages →
+# perfil-jf-sala → Logs. Os erros aparecem como "erro no servidor" (com o caminho e o motivo).
+[observability]
+enabled = true

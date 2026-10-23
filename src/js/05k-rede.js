@@ -2045,6 +2045,15 @@ function redeVotantes() {
   redeJogadoresNoHost().forEach((id) => !v.includes(id) && v.push(id));
   return v;
 }
+// Votação da mesa (relato do JF, 11/2026: numa sala de 5, 2 votos já decidiam): o total é a MESA INTEIRA (todo jogador
+// da partida), não só quem está conectado naquele instante (celular em segundo plano tirava gente da conta). Decide quem
+// junta a maioria da mesa (5 → 3, 4 → 3, 6 → 4); se o tempo acaba sem maioria do sim, a carta fica.
+function redeVotacaoTotal() {
+  return Math.max(1, redeVotantes().length, players.length);
+}
+function redeVotacaoMaioria() {
+  return Math.floor(redeVotacaoTotal() / 2) + 1;
+}
 // Vale votação quando tem mais alguém na sala além de quem pede.
 function redeVotacaoPrecisa() {
   return !!rede && rede.papel === "host" && redeVotantes().length >= 2;
@@ -2069,27 +2078,29 @@ function redeVotacaoAbrir(tipo, pedidoPor) {
 }
 function redeVotar(jid, id, sim) {
   const v = rede && rede.votacao;
-  if (!v || v.id !== id || !redeVotantes().includes(jid)) return;
+  // quem é da partida e tem lugar na sala (mesmo que tenha piscado a conexão) ou joga no dispositivo do host vota
+  if (!v || v.id !== id || jogadorIdxPorId(jid) < 0 || !(rede.assentos[jid] || redeNoHost(jid))) return;
   v.votos[jid] = !!sim;
   redeVotacaoConferir();
   redeHostPublicar(true);
 }
 function redeVotacaoPublica() {
   const v = rede.votacao, vs = Object.values(v.votos);
-  return { id: v.id, tipo: v.tipo, pedidoPor: v.pedidoPor, ate: v.ate, sim: vs.filter((x) => x).length, nao: vs.filter((x) => !x).length, total: redeVotantes().length, votaram: Object.keys(v.votos) };
+  return { id: v.id, tipo: v.tipo, pedidoPor: v.pedidoPor, ate: v.ate, sim: vs.filter((x) => x).length, nao: vs.filter((x) => !x).length, total: redeVotacaoTotal(), precisa: redeVotacaoMaioria(), votaram: Object.keys(v.votos) };
 }
 // Fecha a votação quando dá maioria, quando todos votaram ou quando o tempo acaba.
 function redeVotacaoConferir() {
   const v = rede && rede.votacao;
   if (!v) return;
-  const total = Math.max(1, redeVotantes().length), vs = Object.values(v.votos);
+  const total = redeVotacaoTotal(), maioria = redeVotacaoMaioria(), vs = Object.values(v.votos);
   const sim = vs.filter((x) => x).length, nao = vs.filter((x) => !x).length;
+  const faltam = Math.max(0, total - sim - nao);
   const mudou = gameEnded || cartaSeq !== v.carta;
   let fim = null;
   if (mudou) fim = "cancelada";
-  else if (sim * 2 > total) fim = "aprovada";
-  else if (nao * 2 >= total || sim + nao >= total) fim = "recusada";
-  else if (Date.now() > v.ate) fim = sim > nao ? "aprovada" : "recusada";
+  else if (sim >= maioria) fim = "aprovada";
+  else if (sim + faltam < maioria) fim = "recusada"; // nem com todos os votos que faltam o sim chega na maioria
+  else if (Date.now() > v.ate) fim = "recusada"; // acabou o tempo sem maioria: a carta fica
   if (!fim) return;
   // debug 23/10: com o aviso da mesa na tela os comandos esperam; a votação também espera (senão "aprovada" virava "recusada")
   if (fim === "aprovada" && typeof avisoMesaCongela === "function" && avisoMesaCongela()) return;
@@ -2961,7 +2972,7 @@ function redeBotoesHtml() {
   if (v) {
     const ja = rede.votei[v.id] !== undefined || (v.votaram || []).includes(rede.eu);
     const quem = (r.jogadores.find((j) => j.id === v.pedidoPor) || { nome: "O Mestre" }).nome;
-    h += `<div class="rede-votacao">🗳️ ${escapeHtml(quem)} quer ${v.tipo === "descartar" ? "descartar" : "desistir de"} esta carta. <b>${v.sim}</b> sim · <b>${v.nao}</b> não · <b id="redeVotoSeg">…</b> s${ja ? "<div><small>Seu voto foi.</small></div>" : `<div class="rede-acoes"><button type="button" class="rede-btn rede-ok" data-voto="1">👍 Sim</button><button type="button" class="rede-btn rede-nao" data-voto="0">👎 Não</button></div>`}</div>`;
+    h += `<div class="rede-votacao">🗳️ ${escapeHtml(quem)} quer ${v.tipo === "descartar" ? "descartar" : "desistir de"} esta carta. <b>${v.sim}</b> sim · <b>${v.nao}</b> não${v.precisa ? ` <small>(precisa de ${v.precisa} sim de ${v.total})</small>` : ""} · <b id="redeVotoSeg">…</b> s${ja ? "<div><small>Seu voto foi.</small></div>" : `<div class="rede-acoes"><button type="button" class="rede-btn rede-ok" data-voto="1">👍 Sim</button><button type="button" class="rede-btn rede-nao" data-voto="0">👎 Não</button></div>`}</div>`;
   }
   if (papel.vez && !papel.mestre && r.estadoCarta === "revealed" && r.carta && (r.carta.pendente === null || r.carta.pendente === undefined))
     h += `<div class="rede-rot">👉 Sua vez: toque no número (ou fale) e o Mestre abre a dica.</div>`;
