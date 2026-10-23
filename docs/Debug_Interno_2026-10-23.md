@@ -42,7 +42,12 @@ Evento interno, sem entrada nas novidades (pedido do JF). A versão continua **1
 - **Frase da primeira Coisa:** o C.A.O.S. dizia que "bicho conta como Coisa", mas na Corrida Animal é categoria própria. Agora usa a frase certa.
 - **"Ganhou × gastou" errado com duelo:** o roubo de 25 do duelo bagunçava o "ganhou". Agora o duelo fica separado. Os dados da partida ganharam a coluna **Duelo**.
 
+### Recarregar a página (achado pelo macaco novo da Corrida)
+- **A partida inteira podia zerar.** O baralho da Corrida (e o do Modo C.A.O.S.) é uma mistura sorteada. Ao recarregar, o jogo sorteava outra mistura, a carta da vez às vezes não estava nela, o desenho dava erro e o jogo zerava tudo. Era raro (1 em cada 10 recargas da Corrida Hardcore no teste). Agora a lista de cartas vai no save, como já era no Clássico.
+- **Proteção extra:** se um dia a carta da vez não voltar, só ela se perde: a mesa segue pra próxima carta, sem zerar a partida.
+
 ### Cartas
+- **Três dicas entregavam a resposta:** "Terra do Nunca" (duas dicas com "nunca") e "Parque Pedra da Cebola" ("parede de pedra"). Reescritas. Os outros avisos da auditoria são de propósito (ex.: "Sou um escudo" como dica final).
 - **Cartas repetidas:** quando o baralho é maior que o limite da partida, o recorte agora pega primeiro as cartas que não saíram nas últimas partidas. Antes era às cegas e só depois empurrava as repetidas pro fundo.
 - **Gravação mais leve:** a memória das cartas recentes gravava a lista inteira a cada carta (seis vezes seguidas por rodada no Modo C.A.O.S.). Agora grava uma vez depois da rajada, e também ao fechar a página.
 
