@@ -54,6 +54,17 @@ const PRINTS = (process.argv.find((a) => a.startsWith('--prints=')) || '').slice
     if (avisoMesaCongela()) p.push('aviso privado congelou a mesa');
     if (avisoParaJogador(999)) p.push('aviso privado vazou pra outro jogador');
     if (!avisoParaJogador(12345)) p.push('aviso privado não chega pro roubado');
+    // debug 23/10: aviso da mesa não espera o privado: entra na hora e o privado volta depois
+    avisoMostrar({ ic: '🎁', titulo: 'Presente!', anim: 'presente', seg: 2 });
+    if (!avisoMesaCongela() || avisoMesa.titulo !== 'Presente!') p.push('o aviso da mesa ficou esperando o privado');
+    if (!avisoFila.length || !avisoFila[0].para) p.push('o aviso privado sumiu em vez de voltar depois');
+    avisoZerar();
+    // debug 23/10: aviso que passou da hora sem o timer disparar não perde o "no fim" quando chega outro
+    let fimRodou = false;
+    avisoMostrar({ titulo: 'velho', anim: 'duelo', seg: 2, aoFim: () => (fimRodou = true) });
+    avisoMesa.ate = Date.now() - 10;
+    avisoMostrar({ titulo: 'novo', anim: 'bomba', seg: 2 });
+    if (!fimRodou) p.push('o aoFim do aviso velho se perdeu quando o novo chegou');
     avisoZerar();
     // Bora! fecha só a caixa
     avisoMostrar({ ic: '⚔️', titulo: 'x', anim: 'ppt', dados: { nomeA: 'A', nomeB: 'B', a: 'pedra', b: 'papel' }, seg: 2 });

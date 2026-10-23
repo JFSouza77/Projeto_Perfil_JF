@@ -107,7 +107,7 @@ function corridaEventosRetomar(e) {
         const c = e.compras[id] || {},
           itens = {};
         if (c.itens && typeof c.itens === "object") Object.keys(CORRIDA_LOJA).forEach((k) => c.itens[k] && (itens[k] = n(c.itens[k], 99)));
-        corridaCompras[String(id)] = { gasto: n(c.gasto, 99999), itens };
+        corridaCompras[String(id)] = { gasto: n(c.gasto, 99999), itens, duelo: Math.max(-99999, Math.min(99999, Math.round(Number(c.duelo) || 0))) };
       });
   corridaClassesCorpo();
 }
@@ -253,7 +253,8 @@ function corridaRelampagoAgendar() {
   const seq = cartaSeq;
   corridaRelampagoTimer = setTimeout(() => {
     if (seq !== cartaSeq || gameEnded || cardState !== "revealed" || pendingIndex !== null || !corridaRelampago()) return;
-    if (activeToastState || timeoutOverlayMessage || pausedAt) return corridaRelampagoAgendar(); // espera a fala/aviso
+    // espera a fala, o aviso de tempo, a pausa e o aviso da mesa (debug 23/10: o Juízo Final abria a dica por baixo do aviso)
+    if (activeToastState || timeoutOverlayMessage || pausedAt || (typeof avisoMesaCongela === "function" && avisoMesaCongela())) return corridaRelampagoAgendar();
     corridaAbrirSozinha();
   }, 900);
 }
@@ -366,6 +367,9 @@ function corridaDueloFim() {
     const roubo = Math.min(CORRIDA_DUELO_ROUBO, perd.score || 0);
     perd.score = (perd.score || 0) - roubo;
     venc.score = (venc.score || 0) + roubo;
+    // debug 23/10: o "ganhou" da lojinha é o que veio dos acertos; o roubo do duelo fica separado na conta
+    corridaContaDuelo(perd.id, -roubo);
+    corridaContaDuelo(venc.id, roubo);
     if (roubo) fxFloat(`⚔️ ${venc.name} roubou ${roubo} de ${perd.name}!`, "#fbbf24");
     fala = (V && V.dueloVenceu && getRandomReaction(V.dueloVenceu, venc.name, perd.name)) || "";
   } else if (venc) {
@@ -481,6 +485,15 @@ function corridaComprar(item, id) {
   renderMiniScoreboard();
   saveGameState();
 }
+function corridaContaDuelo(id, n) {
+  const reg = (corridaCompras[id] = corridaCompras[id] || { gasto: 0, itens: {} });
+  reg.duelo = (reg.duelo || 0) + n;
+}
+// o que a pessoa ganhou com acertos e bônus (fora a lojinha e o roubo do duelo): agora + gasto − duelo
+function corridaGanhou(id) {
+  const reg = corridaCompras[id] || {};
+  return Math.max(0, corridaSaldo(id) + (reg.gasto || 0) - (reg.duelo || 0));
+}
 // no acerto (vitória por Tempo): Cofrinho de quem acertou e Ímã dos outros. Devolve os pontos extras de quem acertou.
 function corridaLojaNoAcerto(scorer, pts) {
   if (!scorer) return 0;
@@ -562,7 +575,7 @@ function corridaLojaVitrineHtml(estoque, compradores, precos) {
   // 1.7.10.9.1 (JF): quanto a pessoa ganhou, quanto gastou e quanto tem agora
   const contas = (c) => {
     const g = (corridaCompras[c.id] || {}).gasto || 0;
-    return g ? ` <small>(ganhou ${c.pts + g} · gastou ${g})</small>` : "";
+    return g ? ` <small>(ganhou ${corridaGanhou(c.id)} · gastou ${g})</small>` : "";
   };
   const saldo = (compradores || []).map((c) => `${escapeHtml(c.nome)}: <b>${c.pts}</b>${contas(c)}${guardados(c.id)}`).join(" · ");
   const como = `<div class="cr-loja-como">🎒 Itens com <b>guarda</b> ficam com você: na carta, aparece o botão <b>Usar</b> na sua tela (o Passe Livre só na sua vez). Os outros valem na hora da compra.</div>`;

@@ -442,7 +442,7 @@ function acoesDueloRetrato() {
     const n = (i) => (players[i] ? players[i].name : null);
     const pid = (i) => (players[i] ? players[i].id : null);
     // 1.7.10.7: os ids vão junto pra quem está fora do duelo poder espectar (ver a resposta)
-    return { fase: "duelo", quem: n(currentCard.bonusLanderPlayerIdx), contra: n(currentCard.bonusOpponentPlayerIdx), mestre: n(mestreIndex), equipe: CURRENT_FORMAT === "equipe", ids: [pid(currentCard.bonusLanderPlayerIdx), pid(currentCard.bonusOpponentPlayerIdx), pid(mestreIndex)] };
+    return { fase: "duelo", quem: n(currentCard.bonusLanderPlayerIdx), contra: n(currentCard.bonusOpponentPlayerIdx), mestre: n(mestreIndex), equipe: CURRENT_FORMAT === "equipe", ids: [pid(currentCard.bonusLanderPlayerIdx), pid(currentCard.bonusOpponentPlayerIdx), pid(mestreIndex)], seq: stats.totalDrawn }; // seq: número da carta na partida (vai no save; o cartaSeq zera ao recarregar)
   }
   return null;
 }

@@ -1669,7 +1669,7 @@ function redeOpcoes(jid) {
           tem = corridaSaldo(jid),
           gastou = (corridaCompras[jid] || {}).gasto || 0; // 1.7.10.9.1 (JF): ganhou × gastou
         if (corridaPodeComprar(k, jid))
-          add("corridaComprar", [k, jid], `${it.ic} ${it.nome} · ${corridaPreco(k)} ${corridaMoeda()} (${corridaEstoque[k]} no estoque)`, "", `🛒 Lojinha · você tem ${tem} ${corridaMoeda()}${gastou ? ` (ganhou ${tem + gastou} · gastou ${gastou})` : ""}`);
+          add("corridaComprar", [k, jid], `${it.ic} ${it.nome} · ${corridaPreco(k)} ${corridaMoeda()} (${corridaEstoque[k]} no estoque)`, "", `🛒 Lojinha · você tem ${tem} ${corridaMoeda()}${gastou ? ` (ganhou ${corridaGanhou(jid)} · gastou ${gastou})` : ""}`);
       });
     ["desfib", "corte"].forEach((k) => corridaPodeUsar(k, jid) && add("corridaUsar", [k, jid], `${CORRIDA_LOJA[k].ic} Usar ${CORRIDA_LOJA[k].nome}`, "ok", "🎒 Seus itens"));
   }
@@ -1873,13 +1873,17 @@ function redeEspiarEu() {
 }
 function redeEspiarPode(d) {
   const eu = redeEspiarEu();
-  return !!d && d.fase === "duelo" && !d.equipe && Array.isArray(d.ids) && !!eu && !d.ids.includes(eu);
+  if (!d || d.fase !== "duelo" || d.equipe || !Array.isArray(d.ids) || !eu || d.ids.includes(eu)) return false;
+  // debug 23/10: no host, quem divide o dispositivo com ele também conta (um duelista ali veria a resposta)
+  if (rede.papel === "host" && (rede.hostJunto || []).some((j) => d.ids.includes(j))) return false;
+  return true;
 }
 function redeEspiaResposta() {
   if (!rede) return null;
   if (rede.papel === "host") return rede.espiaLocal === cartaSeq && currentCard && currentCard.isBonus ? currentCard.answer : null;
   const r = rede.retrato;
-  return rede.espia && r && r.duelo && r.duelo.fase === "duelo" && rede.espia.matchId === r.matchId ? rede.espia.resposta : null;
+  // debug 23/10: a espiada vale só pra carta do duelo em que foi pedida (dois duelos seguidos não herdam a resposta)
+  return rede.espia && r && r.duelo && r.duelo.fase === "duelo" && rede.espia.matchId === r.matchId && (rede.espia.seq ?? null) === (r.duelo.seq ?? null) ? rede.espia.resposta : null;
 }
 function redeEspiarDuelo() {
   if (!rede) return;
@@ -1890,7 +1894,7 @@ function redeEspiarDuelo() {
 function redeHostEspiar(jid, ses) {
   const d = typeof acoesDueloRetrato === "function" ? acoesDueloRetrato() : null;
   if (!d || d.fase !== "duelo" || d.equipe || !Array.isArray(d.ids) || d.ids.includes(jid) || !currentCard || gameEnded) return;
-  redeEnviar("espia", { resposta: currentCard.answer, matchId: matchId || null }, ses);
+  redeEnviar("espia", { resposta: currentCard.answer, matchId: matchId || null, seq: stats.totalDrawn }, ses);
   try {
     caosLog("rede", `${(jogadorPorId(jid) || {}).name || "alguém"} espectou o duelo`);
   } catch (e) {}
@@ -1914,7 +1918,13 @@ function redeSemAparelho() {
 // 1.7.10.7 (relato do JF: "muito chato" marcar o notebook toda vez): quem não entrou pelo próprio dispositivo
 // só pode estar jogando no do host. Um clique confirma e a partida começa; "Esperar" deixa entrar pela sala.
 function redeAvisarSemAparelho(depois) {
-  const faltam = redeSemAparelho();
+  // debug 23/10: quem tem lugar na sala mas caiu (🟠) não é movido pro host: o celular dele vai voltar
+  const caidos = redeSemAparelho().filter((p) => rede.assentos[p.id]);
+  const faltam = redeSemAparelho().filter((p) => !rede.assentos[p.id]);
+  if (!faltam.length) {
+    showToastMessage(`🟠 ${caidos.map((p) => p.name).join(", ")} ${caidos.length === 1 ? "caiu" : "caíram"} da sala. Espere voltar pra começar.`, null, true);
+    return;
+  }
   const nomes = faltam.map((p) => p.name);
   const um = nomes.length === 1;
   caosConfirmarModal(
@@ -2081,6 +2091,8 @@ function redeVotacaoConferir() {
   else if (nao * 2 >= total || sim + nao >= total) fim = "recusada";
   else if (Date.now() > v.ate) fim = sim > nao ? "aprovada" : "recusada";
   if (!fim) return;
+  // debug 23/10: com o aviso da mesa na tela os comandos esperam; a votação também espera (senão "aprovada" virava "recusada")
+  if (fim === "aprovada" && typeof avisoMesaCongela === "function" && avisoMesaCongela()) return;
   rede.votacao = null;
   document.getElementById("redeVotoHost")?.remove();
   if (fim === "aprovada") {
@@ -2306,7 +2318,7 @@ function redeConvidadoReceber(m) {
     return avisar();
   }
   if (m.t === "espia") {
-    rede.espia = typeof m.resposta === "string" ? { resposta: m.resposta.slice(0, 120), matchId: m.matchId || null } : null;
+    rede.espia = typeof m.resposta === "string" ? { resposta: m.resposta.slice(0, 120), matchId: m.matchId || null, seq: Number.isInteger(m.seq) ? m.seq : null } : null;
     return avisar();
   }
   if (m.t === "resp") {

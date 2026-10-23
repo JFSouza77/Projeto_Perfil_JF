@@ -14136,7 +14136,9 @@ function resetDeck() {
   mercyEventUsed = false;
   pendingStartTime = null;
   timeoutOverlayMessage = null;
-  const fonteDeck = allCards.length > deckLimiteModo() ? shuffle(allCards).slice(0, deckLimiteModo()) : allCards;
+  // debug 23/10: quando o baralho é maior que o limite, as cartas que não saíram nas últimas partidas entram primeiro
+  // (antes o recorte era às cegas e o "afastar recentes" só reordenava o que sobrou)
+  const fonteDeck = allCards.length > deckLimiteModo() ? cartasPreferirNovas(shuffle(allCards)).slice(0, deckLimiteModo()) : allCards;
   // o baralho é comprado do fim (deck.pop()); o embaralhamento equilibrado põe a ordem boa no começo,
   // então ele entra invertido. Antes não invertia, e a categoria com mais cartas dominava a partida.
   deck =
@@ -14411,7 +14413,7 @@ function caosPrimeiraCategoria() {
   try {
     if (!currentCard || typeof REACTIVE_VOICE === "undefined" || !REACTIVE_VOICE.primeiraCategoria) return;
     const cat = gemCategoryFor(currentCard.category);
-    const banco = REACTIVE_VOICE.primeiraCategoria[cat === "COISA" && CURRENT_MODE === "junior" ? "COISA_JR" : cat];
+    const banco = REACTIVE_VOICE.primeiraCategoria[cat === "COISA" && modoComAnimal() ? "COISA_JR" : cat];
     if (!banco || !caosOncePerMatch("primeira_cat_" + cat)) return;
     caosLog("fala", "primeira carta de " + cat);
     caosFalaAgendar(() => getRandomReaction(banco), 900, "regra");
@@ -21844,7 +21846,7 @@ function acoesDueloRetrato() {
     const n = (i) => (players[i] ? players[i].name : null);
     const pid = (i) => (players[i] ? players[i].id : null);
     // 1.7.10.7: os ids vão junto pra quem está fora do duelo poder espectar (ver a resposta)
-    return { fase: "duelo", quem: n(currentCard.bonusLanderPlayerIdx), contra: n(currentCard.bonusOpponentPlayerIdx), mestre: n(mestreIndex), equipe: CURRENT_FORMAT === "equipe", ids: [pid(currentCard.bonusLanderPlayerIdx), pid(currentCard.bonusOpponentPlayerIdx), pid(mestreIndex)] };
+    return { fase: "duelo", quem: n(currentCard.bonusLanderPlayerIdx), contra: n(currentCard.bonusOpponentPlayerIdx), mestre: n(mestreIndex), equipe: CURRENT_FORMAT === "equipe", ids: [pid(currentCard.bonusLanderPlayerIdx), pid(currentCard.bonusOpponentPlayerIdx), pid(mestreIndex)], seq: stats.totalDrawn }; // seq: número da carta na partida (vai no save; o cartaSeq zera ao recarregar)
   }
   return null;
 }
@@ -22350,7 +22352,7 @@ function telaoDesenhar(r, alvo) {
     ${carta}
     ${telaoMostraTabuleiro(r) ? tabHtmlTelao(r) : ""}
     <section class="telao-placar"><h2 class="tp-tit">Placar</h2><ol>${placar}</ol></section>
-    ${r.intervalo && r.corrida && r.corrida.estoque ? corridaLojaVitrineHtml(r.corrida.estoque, [], r.corrida.precos) : ""}
+    ${r.intervalo && r.corrida && r.corrida.estoque ? (r.corrida.lojaTravada ? `<div class="loja-trava">⏳ Dá uma olhada na vitrine: os botões liberam em instantes.</div>` : "") + corridaLojaVitrineHtml(r.corrida.estoque, [], r.corrida.precos) : ""}
     ${telaoObjetivoHtml(r)}
     <details class="telao-hist" data-k="hist"><summary>🗂️ Cartas da partida <span class="th-n">${hist.length}</span></summary>${cartasPartidaHtml(hist, nomeTxt, (id) => (jog(id) ? escapeHtml((jog(id).avatar ? jog(id).avatar + " " : "") + jog(id).nome) : "Alguém"))}</details>
     ${TELAO_SAIR}`;
@@ -25076,7 +25078,7 @@ function redeOpcoes(jid) {
           tem = corridaSaldo(jid),
           gastou = (corridaCompras[jid] || {}).gasto || 0; // 1.7.10.9.1 (JF): ganhou × gastou
         if (corridaPodeComprar(k, jid))
-          add("corridaComprar", [k, jid], `${it.ic} ${it.nome} · ${corridaPreco(k)} ${corridaMoeda()} (${corridaEstoque[k]} no estoque)`, "", `🛒 Lojinha · você tem ${tem} ${corridaMoeda()}${gastou ? ` (ganhou ${tem + gastou} · gastou ${gastou})` : ""}`);
+          add("corridaComprar", [k, jid], `${it.ic} ${it.nome} · ${corridaPreco(k)} ${corridaMoeda()} (${corridaEstoque[k]} no estoque)`, "", `🛒 Lojinha · você tem ${tem} ${corridaMoeda()}${gastou ? ` (ganhou ${corridaGanhou(jid)} · gastou ${gastou})` : ""}`);
       });
     ["desfib", "corte"].forEach((k) => corridaPodeUsar(k, jid) && add("corridaUsar", [k, jid], `${CORRIDA_LOJA[k].ic} Usar ${CORRIDA_LOJA[k].nome}`, "ok", "🎒 Seus itens"));
   }
@@ -25280,13 +25282,17 @@ function redeEspiarEu() {
 }
 function redeEspiarPode(d) {
   const eu = redeEspiarEu();
-  return !!d && d.fase === "duelo" && !d.equipe && Array.isArray(d.ids) && !!eu && !d.ids.includes(eu);
+  if (!d || d.fase !== "duelo" || d.equipe || !Array.isArray(d.ids) || !eu || d.ids.includes(eu)) return false;
+  // debug 23/10: no host, quem divide o dispositivo com ele também conta (um duelista ali veria a resposta)
+  if (rede.papel === "host" && (rede.hostJunto || []).some((j) => d.ids.includes(j))) return false;
+  return true;
 }
 function redeEspiaResposta() {
   if (!rede) return null;
   if (rede.papel === "host") return rede.espiaLocal === cartaSeq && currentCard && currentCard.isBonus ? currentCard.answer : null;
   const r = rede.retrato;
-  return rede.espia && r && r.duelo && r.duelo.fase === "duelo" && rede.espia.matchId === r.matchId ? rede.espia.resposta : null;
+  // debug 23/10: a espiada vale só pra carta do duelo em que foi pedida (dois duelos seguidos não herdam a resposta)
+  return rede.espia && r && r.duelo && r.duelo.fase === "duelo" && rede.espia.matchId === r.matchId && (rede.espia.seq ?? null) === (r.duelo.seq ?? null) ? rede.espia.resposta : null;
 }
 function redeEspiarDuelo() {
   if (!rede) return;
@@ -25297,7 +25303,7 @@ function redeEspiarDuelo() {
 function redeHostEspiar(jid, ses) {
   const d = typeof acoesDueloRetrato === "function" ? acoesDueloRetrato() : null;
   if (!d || d.fase !== "duelo" || d.equipe || !Array.isArray(d.ids) || d.ids.includes(jid) || !currentCard || gameEnded) return;
-  redeEnviar("espia", { resposta: currentCard.answer, matchId: matchId || null }, ses);
+  redeEnviar("espia", { resposta: currentCard.answer, matchId: matchId || null, seq: stats.totalDrawn }, ses);
   try {
     caosLog("rede", `${(jogadorPorId(jid) || {}).name || "alguém"} espectou o duelo`);
   } catch (e) {}
@@ -25321,7 +25327,13 @@ function redeSemAparelho() {
 // 1.7.10.7 (relato do JF: "muito chato" marcar o notebook toda vez): quem não entrou pelo próprio dispositivo
 // só pode estar jogando no do host. Um clique confirma e a partida começa; "Esperar" deixa entrar pela sala.
 function redeAvisarSemAparelho(depois) {
-  const faltam = redeSemAparelho();
+  // debug 23/10: quem tem lugar na sala mas caiu (🟠) não é movido pro host: o celular dele vai voltar
+  const caidos = redeSemAparelho().filter((p) => rede.assentos[p.id]);
+  const faltam = redeSemAparelho().filter((p) => !rede.assentos[p.id]);
+  if (!faltam.length) {
+    showToastMessage(`🟠 ${caidos.map((p) => p.name).join(", ")} ${caidos.length === 1 ? "caiu" : "caíram"} da sala. Espere voltar pra começar.`, null, true);
+    return;
+  }
   const nomes = faltam.map((p) => p.name);
   const um = nomes.length === 1;
   caosConfirmarModal(
@@ -25488,6 +25500,8 @@ function redeVotacaoConferir() {
   else if (nao * 2 >= total || sim + nao >= total) fim = "recusada";
   else if (Date.now() > v.ate) fim = sim > nao ? "aprovada" : "recusada";
   if (!fim) return;
+  // debug 23/10: com o aviso da mesa na tela os comandos esperam; a votação também espera (senão "aprovada" virava "recusada")
+  if (fim === "aprovada" && typeof avisoMesaCongela === "function" && avisoMesaCongela()) return;
   rede.votacao = null;
   document.getElementById("redeVotoHost")?.remove();
   if (fim === "aprovada") {
@@ -25713,7 +25727,7 @@ function redeConvidadoReceber(m) {
     return avisar();
   }
   if (m.t === "espia") {
-    rede.espia = typeof m.resposta === "string" ? { resposta: m.resposta.slice(0, 120), matchId: m.matchId || null } : null;
+    rede.espia = typeof m.resposta === "string" ? { resposta: m.resposta.slice(0, 120), matchId: m.matchId || null, seq: Number.isInteger(m.seq) ? m.seq : null } : null;
     return avisar();
   }
   if (m.t === "resp") {
@@ -29847,6 +29861,7 @@ function corridaRetrato() {
     duelo: corridaDuelo ? corridaDuelo.ids.slice() : null,
     vel: corridaVelocidade(),
     estoque: corridaEstoque ? { ...corridaEstoque } : null,
+    lojaTravada: typeof corridaLojaTravada === "function" && corridaLojaTravada(), // debug 23/10: os celulares também mostram os 3 s de leitura
     precos: corridaEstoque ? { ...corridaPrecos } : null,
   };
 }
@@ -29980,7 +29995,7 @@ function corridaEventosRetomar(e) {
         const c = e.compras[id] || {},
           itens = {};
         if (c.itens && typeof c.itens === "object") Object.keys(CORRIDA_LOJA).forEach((k) => c.itens[k] && (itens[k] = n(c.itens[k], 99)));
-        corridaCompras[String(id)] = { gasto: n(c.gasto, 99999), itens };
+        corridaCompras[String(id)] = { gasto: n(c.gasto, 99999), itens, duelo: Math.max(-99999, Math.min(99999, Math.round(Number(c.duelo) || 0))) };
       });
   corridaClassesCorpo();
 }
@@ -30126,7 +30141,8 @@ function corridaRelampagoAgendar() {
   const seq = cartaSeq;
   corridaRelampagoTimer = setTimeout(() => {
     if (seq !== cartaSeq || gameEnded || cardState !== "revealed" || pendingIndex !== null || !corridaRelampago()) return;
-    if (activeToastState || timeoutOverlayMessage || pausedAt) return corridaRelampagoAgendar(); // espera a fala/aviso
+    // espera a fala, o aviso de tempo, a pausa e o aviso da mesa (debug 23/10: o Juízo Final abria a dica por baixo do aviso)
+    if (activeToastState || timeoutOverlayMessage || pausedAt || (typeof avisoMesaCongela === "function" && avisoMesaCongela())) return corridaRelampagoAgendar();
     corridaAbrirSozinha();
   }, 900);
 }
@@ -30239,6 +30255,9 @@ function corridaDueloFim() {
     const roubo = Math.min(CORRIDA_DUELO_ROUBO, perd.score || 0);
     perd.score = (perd.score || 0) - roubo;
     venc.score = (venc.score || 0) + roubo;
+    // debug 23/10: o "ganhou" da lojinha é o que veio dos acertos; o roubo do duelo fica separado na conta
+    corridaContaDuelo(perd.id, -roubo);
+    corridaContaDuelo(venc.id, roubo);
     if (roubo) fxFloat(`⚔️ ${venc.name} roubou ${roubo} de ${perd.name}!`, "#fbbf24");
     fala = (V && V.dueloVenceu && getRandomReaction(V.dueloVenceu, venc.name, perd.name)) || "";
   } else if (venc) {
@@ -30354,6 +30373,15 @@ function corridaComprar(item, id) {
   renderMiniScoreboard();
   saveGameState();
 }
+function corridaContaDuelo(id, n) {
+  const reg = (corridaCompras[id] = corridaCompras[id] || { gasto: 0, itens: {} });
+  reg.duelo = (reg.duelo || 0) + n;
+}
+// o que a pessoa ganhou com acertos e bônus (fora a lojinha e o roubo do duelo): agora + gasto − duelo
+function corridaGanhou(id) {
+  const reg = corridaCompras[id] || {};
+  return Math.max(0, corridaSaldo(id) + (reg.gasto || 0) - (reg.duelo || 0));
+}
 // no acerto (vitória por Tempo): Cofrinho de quem acertou e Ímã dos outros. Devolve os pontos extras de quem acertou.
 function corridaLojaNoAcerto(scorer, pts) {
   if (!scorer) return 0;
@@ -30435,7 +30463,7 @@ function corridaLojaVitrineHtml(estoque, compradores, precos) {
   // 1.7.10.9.1 (JF): quanto a pessoa ganhou, quanto gastou e quanto tem agora
   const contas = (c) => {
     const g = (corridaCompras[c.id] || {}).gasto || 0;
-    return g ? ` <small>(ganhou ${c.pts + g} · gastou ${g})</small>` : "";
+    return g ? ` <small>(ganhou ${corridaGanhou(c.id)} · gastou ${g})</small>` : "";
   };
   const saldo = (compradores || []).map((c) => `${escapeHtml(c.nome)}: <b>${c.pts}</b>${contas(c)}${guardados(c.id)}`).join(" · ");
   const como = `<div class="cr-loja-como">🎒 Itens com <b>guarda</b> ficam com você: na carta, aparece o botão <b>Usar</b> na sua tela (o Passe Livre só na sua vez). Os outros valem na hora da compra.</div>`;
@@ -30594,7 +30622,7 @@ function mcIniciar() {
     cont: { turbo: 0, imposto: 0, batata: 0, roubo: 0, maoLeve: 0, pinata: 0 },
   };
   players.forEach((p) => (p.score = 0));
-  mcAnunciar("🌀 Modo C.A.O.S. começou. 10 minutos. Que vença o mais rápido.", { ic: "🌀", titulo: "MODO C.A.O.S.!", texto: "Cada um tem a sua carta secreta. 10 minutos. Agora quem manda aqui sou eu.", botao: "Que venha o caos! 🌀" });
+  mcAnunciar(`🌀 Modo C.A.O.S. começou. ${MC_TEMPO_MS / 60e3} minutos. Que vença o mais rápido.`, { ic: "🌀", titulo: "MODO C.A.O.S.!", texto: `Cada um tem a sua carta secreta. ${MC_TEMPO_MS / 60e3} minutos. Agora quem manda aqui sou eu.`, botao: "Que venha o caos! 🌀" });
   mcNovaRodada();
   mcTique = mcTique || setInterval(mcTicar, 250);
 }
@@ -30603,6 +30631,7 @@ function mcBaralho() {
 }
 function mcNovaRodada() {
   mc.rodada++;
+  if (mc.ultimo && mc.ultimo.tipo === "dormiu") mc.ultimo = null; // debug 23/10: rodada nova, cartas novas: ninguém está dormindo
   mc.rodadaT = { resta: MC_RODADA_MS, fimEm: null };
   mc.cartas = {};
   const usadas = new Set(cartasPartida.map((c) => c.resp));
@@ -31330,8 +31359,11 @@ function mcTicar() {
   const tickAntes = mc.ultTick || mcAgora();
   mc.ultTick = mcAgora();
   if (typeof avisoCongeladoDesde === "function") {
-    const d = avisoCongeladoDesde(tickAntes);
+    // debug 23/10: com a partida pausada os prazos (abrir dica, intervalo, duelo, Era do Gelo…) também esperam
+    // (antes, despausar fazia tudo vencer de uma vez)
+    const d = avisoCongeladoDesde(tickAntes) + (pausedAt ? Math.max(0, mc.ultTick - tickAntes) : 0);
     if (d > 0) {
+      if (mc.janela && mc.janela.congela && mc.janela.congela.ate) mc.janela.congela.ate += d; // Era do Gelo
       if (mc.abrirEm) mc.abrirEm += d;
       if (mc.intervalo) {
         mc.intervalo.fimEm += d;
@@ -31340,7 +31372,7 @@ function mcTicar() {
       if (mc.desafio && mc.desafio.proxEm) mc.desafio.proxEm += d;
       if (mc.duelo && mc.duelo.ate) mc.duelo.ate += d;
       if (mc.desfib && mc.desfib.ate) mc.desfib.ate += d;
-      [mc.geral, mc.rodadaT, mc.janela && mc.janela.relogio].forEach((r) => r && r.fimEm && (r.fimEm += d));
+      if (!pausedAt) [mc.geral, mc.rodadaT, mc.janela && mc.janela.relogio].forEach((r) => r && r.fimEm && (r.fimEm += d)); // na pausa os relógios já param sozinhos
     }
     if (avisoMesaCongela()) {
       [mc.geral, mc.rodadaT, mc.janela && mc.janela.relogio].forEach(mcRelogioParar);
@@ -31724,6 +31756,7 @@ function mcRetomar(s) {
   mcZerar();
   if (CURRENT_MODE !== "caos" || !s || typeof s !== "object" || !s.cartas) return;
   mc = s;
+  mc.ultTick = null; // debug 23/10: o tique salvo é velho; contar congelamento a partir dele empurrava os prazos
   mc.olhos = mc.olhos || {};
   if (mc.fase === "intervalo" && !mc.vitrine) mc.vitrine = lojaVitrineSortear(MC_LOJA, MC_VITRINE);
   // prazos absolutos (abrir, intervalo, desafio, duelo) recomeçam a contar a partir de agora
@@ -31879,8 +31912,30 @@ function avisoMostrar(o) {
   }
   a.congela = !a.para;
   if (typeof o.aoFim === "function") avisoAoFim[a.id] = o.aoFim;
+  // debug 23/10: o aviso anterior já passou da hora mas o timer dele ainda não disparou (aba lenta): termina ele
+  // agora, com o aoFim dele, antes de começar o novo (senão o clearTimeout do novo engolia o aoFim do velho)
+  if (avisoMesa && !avisoMesaAtivo()) avisoAcabar(avisoMesa.id);
+  // debug 23/10: aviso privado (Mão Leve, Mordaça…) não segura o aviso da mesa: o da mesa entra agora e o privado
+  // volta depois com o tempo que faltava (antes a mesa esperava, e a demora entregava que alguém recebeu um segredo)
+  if (avisoMesaAtivo() && !avisoMesa.congela && a.congela) {
+    const priv = avisoMesa;
+    priv.seg = Math.max(2, (priv.ate - Date.now()) / 1e3);
+    avisoMesa = null;
+    clearTimeout(avisoTimer);
+    avisoFila.unshift(priv);
+    return avisoComecar(a);
+  }
   if (avisoMesaAtivo()) {
-    if (avisoFila.length < 6) avisoFila.push(a);
+    if (avisoFila.length < 12) avisoFila.push(a);
+    else {
+      // fila cheia: o aviso não aparece, mas o que ele ia fazer no fim (ex.: puxar a carta do duelo) acontece
+      const fim = avisoAoFim[a.id];
+      delete avisoAoFim[a.id];
+      if (fim)
+        try {
+          fim();
+        } catch (e) {}
+    }
     return;
   }
   avisoComecar(a);
@@ -42343,6 +42398,8 @@ function loadGameState() {
       );
     } else if (CURRENT_MODE === "oldschool") {
       allCards = baralhoOldSchool();
+    } else if (CURRENT_MODE === "corrida") {
+      allCards = baralhoCorrida(); // debug 23/10: recarregar a Corrida voltava com o baralho do Clássico (com Ano)
     } else {
       allCards = CURRENT_MODE === "hardcore" ? baralhoHardcore() : baralhoClassico();
     }
@@ -42385,7 +42442,8 @@ function loadGameState() {
       currentCard = rawCardOnLoad
         ? {
             ...rawCardOnLoad,
-            clues: savedCluesOk ? dicasSalvas : shuffle(rawCardOnLoad.clues),
+            // debug 23/10: na Corrida o palpite a qualquer hora se chama "Rouba a vez" (o save guardava o nome original)
+            clues: savedCluesOk ? (CURRENT_MODE === "corrida" ? dicasSalvas.map((c) => (c.type === "special" && isWildcardSpecial(c.text) ? { ...c, text: "Rouba a vez" } : c)) : dicasSalvas) : shuffle(rawCardOnLoad.clues),
           }
         : null;
       if (currentCard && !savedCluesOk) {
@@ -43207,6 +43265,7 @@ function cartasRecentesLer() {
   }
   return cartasRecentes;
 }
+let cartasRecentesTimer = null;
 function cartasRecentesMarcar(resp) {
   if (!resp) return;
   const l = cartasRecentesLer();
@@ -43214,9 +43273,29 @@ function cartasRecentesMarcar(resp) {
   if (i >= 0) l.splice(i, 1);
   l.push(resp);
   if (l.length > CARTAS_RECENTES_MAX) l.splice(0, l.length - CARTAS_RECENTES_MAX);
+  // debug 23/10: grava uma vez só depois de uma rajada (o Modo C.A.O.S. dá uma carta pra cada um de uma vez)
+  clearTimeout(cartasRecentesTimer);
+  cartasRecentesTimer = setTimeout(() => {
+    cartasRecentesTimer = null;
+    try {
+      JFStore.setItem(CARTAS_RECENTES_KEY, JSON.stringify(cartasRecentesLer()));
+    } catch (e) {}
+  }, 400);
+}
+// fechou a página com a gravação esperando: grava na hora
+window.addEventListener("pagehide", () => {
+  if (!cartasRecentesTimer) return;
+  clearTimeout(cartasRecentesTimer);
+  cartasRecentesTimer = null;
   try {
-    JFStore.setItem(CARTAS_RECENTES_KEY, JSON.stringify(l));
+    JFStore.setItem(CARTAS_RECENTES_KEY, JSON.stringify(cartasRecentesLer()));
   } catch (e) {}
+});
+// embaralhado → as que não saíram nas últimas partidas vêm antes (a ordem dentro de cada grupo continua sorteada)
+function cartasPreferirNovas(cartas) {
+  const rec = new Set(cartasRecentesLer());
+  if (!rec.size) return cartas;
+  return cartas.filter((c) => !rec.has(c.answer)).concat(cartas.filter((c) => rec.has(c.answer)));
 }
 // recebe o baralho na ordem de compra (o fim sai primeiro, deck.pop()) e põe as recentes no começo (as últimas a sair),
 // as mais recentes mais pro fundo ainda. Só afasta até 60% do baralho, pra sempre sobrar carta "nova" na frente.
@@ -43556,7 +43635,7 @@ function caosPartidaMarkdown() {
     if (CURRENT_MODE === "corrida" && typeof corridaCompras === "object" && Object.keys(corridaCompras).length) {
       const moeda = corridaMoeda();
       L.push("## Lojinha", "");
-      L.push("| Jogador | Ganhou (" + moeda + ") | Gastou na lojinha | Ficou com | Itens comprados |", "|---|---|---|---|---|");
+      L.push("| Jogador | Ganhou (" + moeda + ") | Gastou na lojinha | Duelo | Ficou com | Itens comprados |", "|---|---|---|---|---|---|");
       players.forEach((p) => {
         const c = corridaCompras[p.id] || { gasto: 0, itens: {} },
           tem = corridaSaldo(p.id);
@@ -43564,7 +43643,8 @@ function caosPartidaMarkdown() {
           .map((k) => (CORRIDA_LOJA[k] ? CORRIDA_LOJA[k].ic + " " + CORRIDA_LOJA[k].nome + (c.itens[k] > 1 ? " ×" + c.itens[k] : "") : ""))
           .filter(Boolean)
           .join(", ");
-        L.push("| " + esc(p.name) + " | " + (tem + c.gasto) + " | " + c.gasto + " | " + tem + " | " + esc(itens || "—") + " |");
+        const du = c.duelo || 0;
+        L.push("| " + esc(p.name) + " | " + corridaGanhou(p.id) + " | " + c.gasto + " | " + (du > 0 ? "+" + du : du < 0 ? String(du) : "—") + " | " + tem + " | " + esc(itens || "—") + " |");
       });
       L.push("");
     }

@@ -102,8 +102,30 @@ function avisoMostrar(o) {
   }
   a.congela = !a.para;
   if (typeof o.aoFim === "function") avisoAoFim[a.id] = o.aoFim;
+  // debug 23/10: o aviso anterior já passou da hora mas o timer dele ainda não disparou (aba lenta): termina ele
+  // agora, com o aoFim dele, antes de começar o novo (senão o clearTimeout do novo engolia o aoFim do velho)
+  if (avisoMesa && !avisoMesaAtivo()) avisoAcabar(avisoMesa.id);
+  // debug 23/10: aviso privado (Mão Leve, Mordaça…) não segura o aviso da mesa: o da mesa entra agora e o privado
+  // volta depois com o tempo que faltava (antes a mesa esperava, e a demora entregava que alguém recebeu um segredo)
+  if (avisoMesaAtivo() && !avisoMesa.congela && a.congela) {
+    const priv = avisoMesa;
+    priv.seg = Math.max(2, (priv.ate - Date.now()) / 1e3);
+    avisoMesa = null;
+    clearTimeout(avisoTimer);
+    avisoFila.unshift(priv);
+    return avisoComecar(a);
+  }
   if (avisoMesaAtivo()) {
-    if (avisoFila.length < 6) avisoFila.push(a);
+    if (avisoFila.length < 12) avisoFila.push(a);
+    else {
+      // fila cheia: o aviso não aparece, mas o que ele ia fazer no fim (ex.: puxar a carta do duelo) acontece
+      const fim = avisoAoFim[a.id];
+      delete avisoAoFim[a.id];
+      if (fim)
+        try {
+          fim();
+        } catch (e) {}
+    }
     return;
   }
   avisoComecar(a);
