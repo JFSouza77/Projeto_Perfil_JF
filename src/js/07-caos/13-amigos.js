@@ -7,24 +7,28 @@ const CAOS_DRAGONS_MAX = 3; // falas Dragons por partida
 const CAOS_DRAGONS_INTERVALO = 4;
 const CAOS_DRAGONS_IDS = ["vitinho", "rafa", "typingg"];
 let caosAmigosEstado = { n: {}, ult: -99, drag: 0, dragUlt: -99 };
-// Sobrinhos do JF (pedido do JF): mesmas regras das piadas internas, mas valem no Júnior (são crianças) e as falas
-// são de família. Reconhece o nome puro ou o nick de cada um.
+// Sobrinhos do JF (pedido do JF): mesmas regras das piadas internas, mas valem no Júnior (são crianças). Reconhece só
+// pelo nick que cada um escolheu (a Isabel também pelo nome). "max" é a dose de piadas por partida que o tio passou:
+// a Isabel prefere suave e o Pedro se estressa rápido; a Elisa aguenta.
 const CAOS_SOBRINHOS = [
-  { id: "pedro", re: /^(pedro$|pedrinho)/ },
-  { id: "isabel", re: /^(isabel$|bebel)/ },
-  { id: "elisa", re: /^(elisa$|elisinha)/ },
+  { id: "pedro", re: /^pedrinho\s*the\s*best/, max: 2 },
+  { id: "isabel", re: /^(isabel$|bebel)/, max: 3 },
+  { id: "elisa", re: /^elisinha/, max: CAOS_AMIGOS_MAX },
 ];
-function sobrinhoDe(n) {
+function sobrinhoInfo(n) {
   const k = nameKeyPlain(n);
-  const s = k && CAOS_SOBRINHOS.find((x) => x.re.test(k));
+  return (k && CAOS_SOBRINHOS.find((x) => x.re.test(k))) || null;
+}
+function sobrinhoDe(n) {
+  const s = sobrinhoInfo(n);
   return s ? s.id : null;
 }
 // O banco de piadas de quem tem este nome (amigo com presente ou sobrinho), com o id pra contar o limite.
 function caosAmigoBanco(n) {
   const pr = presenteDe(n);
-  if (pr && REACTIVE_VOICE.amigos[pr.id]) return { id: pr.id, B: REACTIVE_VOICE.amigos[pr.id], familia: false };
-  const sb = sobrinhoDe(n);
-  if (sb && REACTIVE_VOICE.sobrinhos[sb]) return { id: "sobrinho_" + sb, B: REACTIVE_VOICE.sobrinhos[sb], familia: true };
+  if (pr && REACTIVE_VOICE.amigos[pr.id]) return { id: pr.id, B: REACTIVE_VOICE.amigos[pr.id], familia: false, max: CAOS_AMIGOS_MAX };
+  const sb = sobrinhoInfo(n);
+  if (sb && REACTIVE_VOICE.sobrinhos[sb.id]) return { id: "sobrinho_" + sb.id, B: REACTIVE_VOICE.sobrinhos[sb.id], familia: true, max: sb.max };
   return null;
 }
 
@@ -42,7 +46,7 @@ function caosAmigoFala(p, momento, chance) {
     const B = am.B, id = am.id;
     if (!B[momento]) return null;
     const carta = stats ? stats.totalDrawn : 0;
-    if ((caosAmigosEstado.n[id] || 0) >= CAOS_AMIGOS_MAX || carta - caosAmigosEstado.ult < CAOS_AMIGOS_INTERVALO) return null;
+    if ((caosAmigosEstado.n[id] || 0) >= am.max || carta - caosAmigosEstado.ult < CAOS_AMIGOS_INTERVALO) return null;
     const t = getRandomReaction(B[momento], p.name);
     if (!t) return null;
     caosAmigosEstado.n[id] = (caosAmigosEstado.n[id] || 0) + 1;

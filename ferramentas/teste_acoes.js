@@ -475,10 +475,14 @@ const ARQ = acharMestre(process.argv[2]);
       caosAmigosZerar(); CURRENT_MODE = 'junior'; stats.totalDrawn = 9;
       const semJunior = !caosAmigoFala(players[0], 'vez'); CURRENT_MODE = 'classico';
       // sobrinhos do JF: reconhecidos pelo nick, valem no Júnior, e não confundem com nome parecido
-      const sobrReconhece = sobrinhoDe('Pedrinho The Best') === 'pedro' && sobrinhoDe('Bebel LindAAA') === 'isabel' && sobrinhoDe('Elisinha') === 'elisa' && sobrinhoDe('Pedro') === 'pedro' && !sobrinhoDe('Pedro Henrique') && !sobrinhoDe('Isabela');
-      players = ['Pedrinho The Best', 'Ana'].map(mk); caosAmigosZerar(); CURRENT_MODE = 'junior'; stats.totalDrawn = 9;
+      const sobrReconhece = sobrinhoDe('Pedrinho the Best') === 'pedro' && sobrinhoDe('Bebel LindAAA') === 'isabel' && sobrinhoDe('Isabel') === 'isabel' && sobrinhoDe('elisinha auruda') === 'elisa' && !sobrinhoDe('Pedro') && !sobrinhoDe('Pedrinho') && !sobrinhoDe('Elisa') && !sobrinhoDe('Isabela');
+      players = ['Pedrinho the Best', 'Ana'].map(mk); caosAmigosZerar(); CURRENT_MODE = 'junior'; stats.totalDrawn = 9;
       const sobrJunior = !!caosAmigoFala(players[0], 'vez'); CURRENT_MODE = 'classico';
-      const sobrinhos = sobrReconhece && sobrJunior;
+      // dose por sobrinho: o Pedro leva no máximo 2 piadas por partida
+      caosAmigosZerar(); let np = 0;
+      for (let c = 1; c <= 40; c++) { stats.totalDrawn = c; if (caosAmigoFala(players[0], 'vez')) np++; }
+      const sobrDose = np === 2;
+      const sobrinhos = sobrReconhece && sobrJunior && sobrDose;
       Math.random = () => 0.01;
       players = ['Ana', 'Vitinho'].map(mk); caosAmigosZerar(); stats.totalDrawn = 6; ditas.length = 0;
       const semJf = !caosDragonsNaCarta();
@@ -489,7 +493,7 @@ const ARQ = acharMestre(process.argv[2]);
       const nomes = { henrique: 'Carro Pika', rafa: 'BsLordRafa', vitinho: 'Vitinho', typingg: 'Typingg' };
       const todas = [];
       Object.keys(REACTIVE_VOICE.amigos).forEach((id) => Object.values(REACTIVE_VOICE.amigos[id]).forEach((l) => l.forEach((x) => todas.push([typeof x === 'function' ? x(nomes[id]) : x.replace(/\{nome\}/g, nomes[id]), nomes[id]]))));
-      const nomesSobr = { pedro: 'Pedrinho The Best', isabel: 'Bebel LindAAA', elisa: 'Elisinha' };
+      const nomesSobr = { pedro: 'Pedrinho the Best', isabel: 'Bebel LindAAA', elisa: 'elisinha auruda' };
       Object.keys(REACTIVE_VOICE.sobrinhos).forEach((id) => Object.values(REACTIVE_VOICE.sobrinhos[id]).forEach((l) => l.forEach((x) => todas.push([typeof x === 'function' ? x(nomesSobr[id]) : x.replace(/\{nome\}/g, nomesSobr[id]), nomesSobr[id]]))));
       REACTIVE_VOICE.dragons.um.forEach((x) => todas.push([typeof x === 'function' ? x('Vitinho') : x.replace(/\{nome\}/g, 'Vitinho'), 'Vitinho']));
       const vocativas = todas.filter(([t, nm]) => redeFalaComQuem({ texto: t.replace(/^\[C\.A\.O\.S\.\]\s*/, ''), para: [{ id: 'x', nome: nm }] }));
@@ -499,7 +503,7 @@ const ARQ = acharMestre(process.argv[2]);
       players = jogAntes; starterChosen = iniAntes; gameEnded = fimAntes; CURRENT_MODE = modoAntes; caosSilenced = silAntes; stats.totalDrawn = statsAntes;
       caosAmigosZerar();
       out.amigos = limite && intervalo && semJunior && semJf && comJf && daMesa && foraDaPaleta && sobrinhos;
-      out.amigosDiag = JSON.stringify({ sobrReconhece, sobrJunior, limite, n, intervalo, semJunior, semJf, comJf, daMesa, vocativas: vocativas.map((v) => v[0]).slice(0, 3), foraDaPaleta });
+      out.amigosDiag = JSON.stringify({ sobrReconhece, sobrJunior, sobrDose, limite, n, intervalo, semJunior, semJf, comJf, daMesa, vocativas: vocativas.map((v) => v[0]).slice(0, 3), foraDaPaleta });
     }
     // 1.7.10.3: busca nas regras e o lembrete da primeira carta de cada categoria
     {

@@ -6,6 +6,9 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  (interno) · 23/10/2026 · SOBRINHOS · C.A.O.S. 4.6.7. Build 1834. Sobrinhos reconhecidos só pelo nick (Pedrinho the
+          Best, Bebel/Isabel, elisinha auruda). Dose por sobrinho (feedback do tio): Pedro no máximo 2 piadas por partida
+          e leves, Isabel 3 e suaves, Elisa com zoeira mais pesada (sem palavrão). Continua 3000 falas.
   (interno) · 23/10/2026 · FALAS 3000 · C.A.O.S. 4.6.6. Build 1833. Falas prontas 2912 → 3000 e pedaços de gerador
           629 → 650. Banco novo dos sobrinhos do JF (Pedrinho The Best, Bebel LindAAA, Elisinha): de família, vale no
           Júnior, com os limites das piadas internas. Reforço das listas com 2 frases (temas de carta, narrador, malandro,
@@ -11244,7 +11247,7 @@ body.batata-mode.aviso-treme {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.9.3 · Multiplayer Update · QoL da Mesa<br>C.A.O.S. 4.6.6 · Atualizada em 23/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.9.3 · Multiplayer Update · QoL da Mesa<br>C.A.O.S. 4.6.7 · Atualizada em 23/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -11526,7 +11529,7 @@ body.batata-mode.aviso-treme {
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1833;
+const JOGO_BUILD = 1834;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -33879,7 +33882,7 @@ function caosToastBloquear() {
         return true;
       }
     }
-    // C.A.O.S. 4.6.6 (JF, 11/2026: "no Modo C.A.O.S. ele falando demais atrapalha, é muita informação"): lá a carta não
+    // C.A.O.S. 4.6.7 (JF, 11/2026: "no Modo C.A.O.S. ele falando demais atrapalha, é muita informação"): lá a carta não
     // passa pelo baralho normal (o limite por carta nunca valia) e a tela já fala muito pelos avisos. Então: com aviso da
     // mesa na tela ou com alguém pensando (janela de palpite, julgamento, duelo, carta bônus), comentário nenhum; e no
     // máximo um comentário por vez de Mestre. Aviso de regra (essencial) passa igual.
@@ -34651,7 +34654,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.9.3 · C.A.O.S. 4.6.6</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.9.3 · C.A.O.S. 4.6.7</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -38003,7 +38006,7 @@ function caosNeuralDesenhar(cv, t) {
     const C = caosConsole || {};
     const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
 tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
-${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.6.6`;
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.6.7`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }
@@ -39810,7 +39813,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.9.3 · C.A.O.S. 4.6.6)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.9.3 · C.A.O.S. 4.6.7)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -41623,24 +41626,28 @@ const CAOS_DRAGONS_MAX = 3; // falas Dragons por partida
 const CAOS_DRAGONS_INTERVALO = 4;
 const CAOS_DRAGONS_IDS = ["vitinho", "rafa", "typingg"];
 let caosAmigosEstado = { n: {}, ult: -99, drag: 0, dragUlt: -99 };
-// Sobrinhos do JF (pedido do JF): mesmas regras das piadas internas, mas valem no Júnior (são crianças) e as falas
-// são de família. Reconhece o nome puro ou o nick de cada um.
+// Sobrinhos do JF (pedido do JF): mesmas regras das piadas internas, mas valem no Júnior (são crianças). Reconhece só
+// pelo nick que cada um escolheu (a Isabel também pelo nome). "max" é a dose de piadas por partida que o tio passou:
+// a Isabel prefere suave e o Pedro se estressa rápido; a Elisa aguenta.
 const CAOS_SOBRINHOS = [
-  { id: "pedro", re: /^(pedro$|pedrinho)/ },
-  { id: "isabel", re: /^(isabel$|bebel)/ },
-  { id: "elisa", re: /^(elisa$|elisinha)/ },
+  { id: "pedro", re: /^pedrinho\s*the\s*best/, max: 2 },
+  { id: "isabel", re: /^(isabel$|bebel)/, max: 3 },
+  { id: "elisa", re: /^elisinha/, max: CAOS_AMIGOS_MAX },
 ];
-function sobrinhoDe(n) {
+function sobrinhoInfo(n) {
   const k = nameKeyPlain(n);
-  const s = k && CAOS_SOBRINHOS.find((x) => x.re.test(k));
+  return (k && CAOS_SOBRINHOS.find((x) => x.re.test(k))) || null;
+}
+function sobrinhoDe(n) {
+  const s = sobrinhoInfo(n);
   return s ? s.id : null;
 }
 // O banco de piadas de quem tem este nome (amigo com presente ou sobrinho), com o id pra contar o limite.
 function caosAmigoBanco(n) {
   const pr = presenteDe(n);
-  if (pr && REACTIVE_VOICE.amigos[pr.id]) return { id: pr.id, B: REACTIVE_VOICE.amigos[pr.id], familia: false };
-  const sb = sobrinhoDe(n);
-  if (sb && REACTIVE_VOICE.sobrinhos[sb]) return { id: "sobrinho_" + sb, B: REACTIVE_VOICE.sobrinhos[sb], familia: true };
+  if (pr && REACTIVE_VOICE.amigos[pr.id]) return { id: pr.id, B: REACTIVE_VOICE.amigos[pr.id], familia: false, max: CAOS_AMIGOS_MAX };
+  const sb = sobrinhoInfo(n);
+  if (sb && REACTIVE_VOICE.sobrinhos[sb.id]) return { id: "sobrinho_" + sb.id, B: REACTIVE_VOICE.sobrinhos[sb.id], familia: true, max: sb.max };
   return null;
 }
 
@@ -41658,7 +41665,7 @@ function caosAmigoFala(p, momento, chance) {
     const B = am.B, id = am.id;
     if (!B[momento]) return null;
     const carta = stats ? stats.totalDrawn : 0;
-    if ((caosAmigosEstado.n[id] || 0) >= CAOS_AMIGOS_MAX || carta - caosAmigosEstado.ult < CAOS_AMIGOS_INTERVALO) return null;
+    if ((caosAmigosEstado.n[id] || 0) >= am.max || carta - caosAmigosEstado.ult < CAOS_AMIGOS_INTERVALO) return null;
     const t = getRandomReaction(B[momento], p.name);
     if (!t) return null;
     caosAmigosEstado.n[id] = (caosAmigosEstado.n[id] || 0) + 1;
@@ -43515,7 +43522,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.9.3 · C.A.O.S. 4.6.6");
+  L.push("- **Versão:** Beta 1.7.10.9.3 · C.A.O.S. 4.6.7");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -44057,7 +44064,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.9.3 · C.A.O.S. 4.6.6",
+        versao: "Beta 1.7.10.9.3 · C.A.O.S. 4.6.7",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -77701,16 +77708,17 @@ const REACTIVE_VOICE = {
       ],
     },
   },
-  // Sobrinhos do JF (pedido do JF): Pedrinho The Best, Bebel LindAAA e Elisinha. São crianças, então tudo aqui é de
-  // família e vale também no Júnior. Só o carinho e o próprio nick (sem inventar fato da vida deles). Sem vocativo.
+  // Sobrinhos do JF (pedido do JF): Pedrinho the Best, Bebel LindAAA (a Isabel) e elisinha auruda (a Elisa, nick em
+  // minúscula de propósito). Valem também no Júnior. Sem palavrão e sem vocativo. Dosagem que o tio passou: a Isabel
+  // prefere suave, o Pedro zoa mas se estressa rápido (pouca zoeira e leve), a Elisa aguenta zoeira pesada.
   sobrinhos: {
     pedro: {
       chegou: [
         "Chegou o {nome}. O nick já avisa: não é qualquer um, é o melhor.",
         "Olha quem entrou: {nome}. Tio JF, pode ir se preparando.",
-        "O {nome} está na mesa. Eu não discuto com quem se chama de The Best.",
+        "O Pedro está na mesa. Ou melhor, o {nome}. Eu não discuto com quem se chama de The Best.",
         "Atenção, mesa: o {nome} chegou e trouxe o título junto.",
-        "O sobrinho mais confiante do jogo chegou: {nome}.",
+        "O Pedrinho chegou com o nick completo: {nome}. Respeito.",
       ],
       vez: [
         "Vez do {nome}. Hora de mostrar por que o nick tem The Best.",
@@ -77731,7 +77739,7 @@ const REACTIVE_VOICE = {
         "O {nome} errou, mas o título continua com ele. Eu deixo.",
         "Passou perto! A próxima é do {nome}.",
         "Errou, mas tudo bem: o {nome} só estava aquecendo.",
-        "O {nome} errou essa. O tio JF erra mais, pode ficar tranquilo.",
+        "O {nome} errou essa. Normal: o tio JF erra muito mais.",
       ],
     },
     isabel: {
@@ -77764,34 +77772,35 @@ const REACTIVE_VOICE = {
         "Errou, mas sem problema. A {nome} vai lembrar dessa na próxima.",
       ],
     },
+    // A Elisa aguenta zoeira pesada (palavra do tio, e ela joga no nível zero): aqui a zoeira é mais forte, sem palavrão.
     elisa: {
       chegou: [
-        "Chegou a {nome}! A mesa ficou completa.",
-        "A {nome} está aqui. Tio JF, hoje tem plateia.",
-        "Olha quem entrou: {nome}. Pode sentar, que a partida já vai começar.",
-        "A {nome} chegou. Eu prometo pegar leve com ela. Com o tio, não.",
-        "Mesa, abram espaço: a {nome} chegou.",
+        "Chegou a {nome}, tudo em minúscula. Nem pro nick ela se esforça.",
+        "A {nome} entrou. Pode avisar a mesa: hoje ninguém sai ileso, nem eu.",
+        "Olha quem apareceu: {nome}. Já veio no nível zero, então eu tô liberado.",
+        "A {nome} chegou. Tio JF, segura a sobrinha, porque eu não vou segurar a língua.",
+        "A {nome} está na mesa. Finalmente alguém que aguenta o tranco.",
       ],
       vez: [
-        "Vez da {nome}. Calma, que dá pra pensar à vontade.",
-        "A {nome} na vez. Todo mundo torcendo, até eu.",
-        "Carta nova pra {nome}. Essa pode ser sua.",
-        "Agora é com a {nome}. Escuta a dica direitinho.",
-        "A {nome} vai responder. Tio JF, nada de soprar a resposta.",
+        "Vez da {nome}. Vamos ver se a resposta sai melhor que o nick.",
+        "A {nome} na vez. Pode chutar, que eu já preparei a zoeira.",
+        "Carta nova pra {nome}. Se errar, eu vou lembrar disso até o Natal.",
+        "Agora é com a {nome}. Sem pressão. Mentira: muita pressão.",
+        "A {nome} vai responder. Tio JF, não sopra, que eu tô vendo.",
       ],
       acerto: [
-        "Acertou! A {nome} mandou muito bem.",
-        "Boa da {nome}! Toca aqui. Bom, eu não tenho mão, mas vale a intenção.",
-        "A {nome} acertou. O tio JF está orgulhoso, eu vi daqui.",
-        "Acerto da {nome}! Pode comemorar.",
-        "Mais uma pra {nome}. Que sorte a minha ver isso de perto.",
+        "Acertou! A {nome} até que pensa, quando quer.",
+        "A {nome} acertou. Vou ter que guardar a zoeira pra próxima.",
+        "Acerto da {nome}! Pronto, agora ela vai ficar se achando a partida inteira.",
+        "Boa da {nome}. Nem eu esperava, e olha que eu sou um computador.",
+        "A {nome} acertou e ainda vai rir da cara de todo mundo. Merecido.",
       ],
       erro: [
-        "Não foi dessa vez pra {nome}. Faz parte do jogo.",
-        "A {nome} errou essa, mas foi por pouco.",
-        "Quase! Na próxima a {nome} pega.",
-        "A {nome} errou. Tudo bem: até o tio JF erra, e ele fez o jogo.",
-        "Errou, mas valeu a tentativa. A {nome} está aprendendo rápido.",
+        "A {nome} errou. O nick é em minúscula e a resposta também saiu pequenininha.",
+        "Errou feio. A {nome} vai fingir que foi de propósito.",
+        "A {nome} errou. Eu ia pegar leve, mas ela escolheu o nível zero.",
+        "Errou! A {nome} chutou com tanta confiança que eu quase acreditei.",
+        "A {nome} errou essa. Tio JF, a genética da família explica muita coisa.",
       ],
     },
   },
@@ -80805,7 +80814,7 @@ const NOVIDADES = [
 // entra no máximo uma vez por fala, pra não repetir o assunto.
 // Etiquetas padrão: madrugada, manha, tarde, noite, fimDeSemana, sexta, segunda,
 //   modo_classico/hardcore/junior/oldschool/express/equipe, dupla, mesaCheia, anne, jf,
-//   pedro, isabel, elisa (sobrinhos do JF, pelo nome ou pelo nick), estreia, hoje, semana, sumido, venceuUltima, perdeuUltima, veterano,
+//   pedro, isabel, elisa (sobrinhos do JF, pelo nick que cada um escolheu), estreia, hoje, semana, sumido, venceuUltima, perdeuUltima, veterano,
 //   vencedor, outroModo, familia, humor_suave/acido/zero, temper_normal/sensivel/generoso/
 //   rabugento/eletrico, estado_<estado do C.A.O.S.>.
 // Variáveis: {nome} {anne} {jf} {pedro} {isabel} {elisa} {outro} {hora} {dia} {modo} {modoAntes}
