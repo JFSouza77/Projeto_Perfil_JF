@@ -163,6 +163,7 @@ function mcAbrirDica() {
   const id = mcMestreId(),
     c = mc.cartas[id];
   if (!c || !mcCartaViva(id)) return mcFimVez();
+  if (mc.ultimo && mc.ultimo.tipo === "dormiu" && mc.ultimo.mestre === id) mc.ultimo = null; // a carta acordou
   c.aberta++;
   mc.serial++;
   const dur = (mc.turbo === id ? MC_TURBO_SEG : MC_JANELA_SEG) * 1e3;
@@ -289,7 +290,11 @@ function mcFimVez() {
     mc.ultimo = { resp: c.resp, cat: c.cat, quem: null, mestre: id, tipo: "morta", dicas: c.aberta };
     cartasPartida.push({ n: cartasPartida.length + 1, cat: c.cat, resp: c.resp, quem: null, mestre: id, dicas: c.aberta, dicaNum: null, dicaTxt: null, bonus: false });
     mcLog(`💀 Ninguém matou a carta de ${mcNome(id)}: era ${c.resp}.`);
-  } else if (c && c.estado === "ativa") mcLog(`💤 A carta de ${mcNome(id)} hibernou (${c.aberta} de ${c.dicas.length} dicas).`);
+  } else if (c && c.estado === "ativa") {
+    mcLog(`💤 A carta de ${mcNome(id)} hibernou (${c.aberta} de ${c.dicas.length} dicas).`);
+    // 1.7.10.9.3 (JF): aviso fixo de que a carta está dormindo e quando volta (sem a resposta, claro)
+    mc.ultimo = { tipo: "dormiu", mestre: id, cat: c.cat, dicas: c.aberta, total: c.dicas.length };
+  }
   if (mc.turbo === id) mc.turbo = null;
   mc.impostoVez = null;
   mc.janela = null;
@@ -683,15 +688,23 @@ function mcDueloResolver() {
     const ops = ["pedra", "papel", "tesoura"];
     const a = d.esc[L] !== undefined ? d.esc[L] : aleat(ops),
       b = d.esc[V] !== undefined ? d.esc[V] : aleat(ops);
-    if (a === b) {
+    // 1.7.10.9.3: no máximo 3 empates seguidos; no 3º, o C.A.O.S. sorteia quem leva a rodada (senão o duelo não acaba)
+    d.empates = a === b ? (d.empates || 0) + 1 : 0;
+    if (a === b && d.empates < 3) {
       d.esc = {};
       d.ate = mcAgora() + 10000;
       mcAnunciar(`✊ Empate (${a})! De novo.`, { ic: "✊", titulo: "Empate! De novo!", texto: `Os dois de ${a}.`, anim: "ppt", dados: { nomeA: mcNome(L), nomeB: mcNome(V), a, b } });
       return mcMudou();
     }
     const ganha = { pedra: "tesoura", papel: "pedra", tesoura: "papel" };
-    venc = ganha[a] === b ? L : V;
-    det = `${mcNome(L)}: ${a} × ${mcNome(V)}: ${b}`;
+    if (a === b) {
+      d.empates = 0;
+      venc = Math.random() < 0.5 ? L : V;
+      det = `3 empates seguidos (${a}): o C.A.O.S. sorteou ${mcNome(venc)}`;
+    } else {
+      venc = ganha[a] === b ? L : V;
+      det = `${mcNome(L)}: ${a} × ${mcNome(V)}: ${b}`;
+    }
     anim = "ppt";
     dados = { nomeA: mcNome(L), nomeB: mcNome(V), a, b };
   } else {
@@ -704,6 +717,21 @@ function mcDueloResolver() {
     dados = { nomeA: mcNome(L), nomeB: mcNome(V), a, b };
   }
   const avisoRes = (titulo) => ({ ic: "⚔️", titulo, texto: det, anim, dados, seg: 5.5 });
+  // 1.7.10.9.3 (JF): melhor de 3. Quem ganhar MC_DUELO_VITORIAS rodadas leva; antes disso, rodada nova do mesmo duelo
+  d.placar = d.placar || { [L]: 0, [V]: 0 };
+  d.placar[venc] = (d.placar[venc] || 0) + 1;
+  d.rodada = d.rodada || 1;
+  const pl = `${mcNome(L)} ${d.placar[L]} × ${d.placar[V]} ${mcNome(V)}`;
+  if (d.placar[venc] < MC_DUELO_VITORIAS) {
+    d.resultado = { venc, det: `Rodada ${d.rodada}: ${det} · ${pl}` };
+    d.rodada++;
+    d.esc = {};
+    d.fase = "escolha";
+    d.ate = mcAgora() + (d.tipo === "d6" || d.tipo === "moeda" ? 3500 : 12000);
+    mcAnunciar(`⚔️ Rodada ${d.rodada - 1}: ${det}. ${mcNome(venc)} saiu na frente (${pl}).`, { ...avisoRes(`${mcNome(venc)} levou a rodada ${d.rodada - 1}!`), texto: `${det} · ${pl}` });
+    return mcMudou();
+  }
+  det = `${det} · ${pl}`;
   d.resultado = { venc, det };
   const ladraoVenceu = venc === L;
   if (!d.revanche) {
@@ -760,6 +788,8 @@ function mcRevanche(id, quer) {
   d.revanche = true;
   d.fase = "escolha";
   d.esc = {};
+  d.placar = null; // a revanche também é melhor de 3
+  d.rodada = 1;
   d.ate = mcAgora() + (d.tipo === "d6" || d.tipo === "moeda" ? 3500 : 12000);
   mcAnunciar(`🔁 ${mcNome(id)} pediu REVANCHE: dobro ou nada!`, { ic: "🔁", titulo: "REVANCHE!", texto: `${mcNome(id)} pediu dobro ou nada contra ${mcNome(d.ladrao)}.`, anim: "duelo" });
   mcMudou();
@@ -908,7 +938,7 @@ function mcRetrato() {
     vitrine: mc.vitrine ? { estoque: { ...mc.vitrine.estoque }, precos: { ...mc.vitrine.precos } } : null,
     batata: mc.batata ? { ...mc.batata } : null,
     desafio: mc.desafio ? { com: mc.desafio.com, juiz: mc.desafio.juiz, cat: mc.desafio.cat, dicas: mc.desafio.dicas.slice(0, mc.desafio.aberta), total: mc.desafio.dicas.length, buzz: mc.desafio.buzz, proxEm: mc.desafio.buzz ? null : mc.desafio.proxEm } : null,
-    duelo: mc.duelo ? { ladrao: mc.duelo.ladrao, vitima: mc.duelo.vitima, tipo: mc.duelo.tipo, fase: mc.duelo.fase, ate: mc.duelo.ate, escolheu: Object.keys(mc.duelo.esc), lados: mc.duelo.lados, resultado: mc.duelo.resultado, revanche: mc.duelo.revanche } : null,
+    duelo: mc.duelo ? { ladrao: mc.duelo.ladrao, vitima: mc.duelo.vitima, tipo: mc.duelo.tipo, fase: mc.duelo.fase, ate: mc.duelo.ate, escolheu: Object.keys(mc.duelo.esc), lados: mc.duelo.lados, resultado: mc.duelo.resultado, revanche: mc.duelo.revanche, placar: mc.duelo.placar || null, rodada: mc.duelo.rodada || 1 } : null,
     pinata: mc.pinata ? { palavra: mc.pinata.palavra, ganhou: mc.pinata.ganhou } : null,
     desfib: mc.desfib ? { id: mc.desfib.id || null, oferta: !!mc.desfib.oferta } : null,
     intervalo: mc.intervalo ? { fimEm: mc.intervalo.fimEm, travada: mcLojaTravada() } : null,
@@ -1005,7 +1035,7 @@ function mcTelaHtml(r, eu, opcoes, priv) {
     .sort((a, b) => (b.pontos || 0) - (a.pontos || 0))
     .map((j) => {
       const c = M.cartas[j.id];
-      const estado = !c ? "" : c.estado === "capturada" ? "✅" : c.estado === "morta" ? "💀" : `💤 ${c.aberta}/10`;
+      const estado = !c ? "" : c.estado === "capturada" ? "✅" : c.estado === "morta" ? "💀" : c.aberta > 0 && j.id !== M.mestre ? `💤 dormindo · ${c.aberta}/10` : `${c.aberta}/10`;
       return `<li class="${j.id === M.mestre ? "mc-mestre" : ""}"><span>${nome(j.id)}${j.id === eu ? " <small>(você)</small>" : ""}${M.batata && M.batata.com === j.id ? " 🥔" : ""}</span><span class="mc-pl-dir"><small>${estado}</small> <b>🃏 ${j.pontos || 0}</b> <small>· ${M.pc[j.id] || 0} PC</small></span></li>`;
     })
     .join("");
@@ -1029,7 +1059,7 @@ function mcTelaHtml(r, eu, opcoes, priv) {
   } else if (M.fase === "duelo" && M.duelo) {
     const du = M.duelo;
     const lado = (id) => (du.lados ? ` (${escapeHtml(du.lados[id])})` : "");
-    centro = `<div class="mc-bloco mc-duelo"><h3>⚔️ ${du.revanche ? "REVANCHE" : "DUELO"}: ${escapeHtml(MC_DUELO_NOME[du.tipo] || du.tipo)}</h3><p>${nome(du.ladrao)}${lado(du.ladrao)} × ${nome(du.vitima)}${lado(du.vitima)}</p>${du.resultado ? `<p><b>${escapeHtml(du.resultado.det)}</b></p>` : ""}<p>${du.fase === "revanche" ? `${nome(du.vitima)} decide se pede revanche · <b class="mc-cont" data-fim="${du.ate}">…</b> s` : du.tipo === "ppt" || du.tipo === "parimpar" ? `Escolheram: ${du.escolheu.length}/2 · <b class="mc-cont" data-fim="${du.ate}">…</b> s` : `Rolando… <b class="mc-cont" data-fim="${du.ate}">…</b>`}</p></div>`;
+    centro = `<div class="mc-bloco mc-duelo"><h3>⚔️ ${du.revanche ? "REVANCHE" : "DUELO"}: ${escapeHtml(MC_DUELO_NOME[du.tipo] || du.tipo)}</h3><p>${nome(du.ladrao)}${lado(du.ladrao)} × ${nome(du.vitima)}${lado(du.vitima)}</p><p class="mc-duelo-placar">Melhor de 3 · rodada ${du.rodada || 1} · <b>${(du.placar && du.placar[du.ladrao]) || 0} × ${(du.placar && du.placar[du.vitima]) || 0}</b></p>${du.resultado ? `<p><b>${escapeHtml(du.resultado.det)}</b></p>` : ""}<p>${du.fase === "revanche" ? `${nome(du.vitima)} decide se pede revanche · <b class="mc-cont" data-fim="${du.ate}">…</b> s` : du.tipo === "ppt" || du.tipo === "parimpar" ? `Escolheram: ${du.escolheu.length}/2 · <b class="mc-cont" data-fim="${du.ate}">…</b> s` : `Rolando… <b class="mc-cont" data-fim="${du.ate}">…</b>`}</p></div>`;
   } else if (C) {
     // 1.7.10.7.1 (relato do JF: "não sabia quem era o Mestre, a categoria, quanto tempo restava, e o Mestre não via a
     // própria carta direito"): painel da carta com Mestre, categoria grande, dica X de 10 em bolinhas, o tempo da
@@ -1070,15 +1100,30 @@ function mcTelaHtml(r, eu, opcoes, priv) {
         .join("")}</ol>` : `<p class="mc-sem-dica">Nenhuma dica aberta ainda.</p>`}
     </div>`;
   }
-  const ult = M.ultimo ? `<div class="mc-ultimo">${M.ultimo.tipo === "capturada" ? `✅ ${nome(M.ultimo.quem)} capturou` : "💀 Ninguém matou"} a carta de ${nome(M.ultimo.mestre)}: <b>${escapeHtml(M.ultimo.resp)}</b></div>` : "";
+  const U = M.ultimo;
+  const ult = !U
+    ? ""
+    : U.tipo === "dormiu"
+      ? `<div class="mc-ultimo mc-dormiu">💤 Ninguém acertou a carta de ${nome(U.mestre)}. Ela está <b>dormindo</b> e volta na próxima vez de ${nome(U.mestre)}, com a dica ${Math.min((U.dicas || 0) + 1, U.total || 10)}.</div>`
+      : `<div class="mc-ultimo">${U.tipo === "capturada" ? `✅ ${nome(U.quem)} capturou` : "💀 Ninguém matou"} a carta de ${nome(U.mestre)}: <b>${escapeHtml(U.resp)}</b></div>`;
   // privado
   let meu = "";
   if (priv) {
-    const inv = Object.keys(priv.inv || {})
-      .filter((k) => priv.inv[k] > 0 && MC_LOJA[k])
-      .map((k) => `${MC_LOJA[k].ic}${priv.inv[k] > 1 ? "×" + priv.inv[k] : ""}`)
-      .join(" ");
-    meu = `<div class="mc-meu">${priv.carta ? `🔒 Sua carta: <b>${escapeHtml(priv.carta.resp)}</b> <small>(${escapeHtml(TELAO_CAT[priv.carta.cat] || priv.carta.cat)} · ${priv.carta.estado === "ativa" ? priv.carta.aberta + "/10 dicas" : priv.carta.estado})</small>` : ""}<div>💠 ${priv.pc} PC${inv ? ` · 🎒 ${inv}` : ""}${priv.maoLeve ? " · 🧤 Mão Leve" : ""}</div>${priv.juizResp ? `<div class="mc-juiz">⚖️ Você julga. A resposta é <b>${escapeHtml(priv.juizResp)}</b></div>` : ""}${priv.desfibDica ? `<div class="mc-desfib">🧟 Dica secreta: <b>${escapeHtml(priv.desfibDica)}</b></div>` : ""}${priv.olhoLetra ? `<div class="mc-desfib">👁️ A resposta começa com <b>${escapeHtml(priv.olhoLetra)}</b></div>` : ""}</div>`;
+    // 1.7.10.9.3: cada item guardado diz quando e como funciona (antes era só o ícone)
+    const quando = {
+      corte: "use na janela da dica",
+      folego: "use logo depois de errar",
+      mordaca: "use na janela da dica e escolha quem cala",
+      desfib: "aparece sozinho quando uma carta for dormir",
+      congelar: "use na janela da dica",
+      espelho: "guardado: protege você sozinho",
+      kevlar: "guardado: protege você sozinho",
+      olho: "use na janela da dica",
+    };
+    const itensMeus = Object.keys(priv.inv || {}).filter((k) => priv.inv[k] > 0 && MC_LOJA[k]);
+    const inv = itensMeus.map((k) => `${MC_LOJA[k].ic}${priv.inv[k] > 1 ? "×" + priv.inv[k] : ""}`).join(" ");
+    const invLista = itensMeus.length ? `<ul class="mc-inv">${itensMeus.map((k) => `<li>${MC_LOJA[k].ic} <b>${MC_LOJA[k].nome}</b>${priv.inv[k] > 1 ? " ×" + priv.inv[k] : ""} <small>· ${quando[k] || "guardado"}</small></li>`).join("")}</ul>` : "";
+    meu = `<div class="mc-meu">${priv.carta ? `🔒 Sua carta: <b>${escapeHtml(priv.carta.resp)}</b> <small>(${escapeHtml(TELAO_CAT[priv.carta.cat] || priv.carta.cat)} · ${priv.carta.estado === "ativa" ? priv.carta.aberta + "/10 dicas" : priv.carta.estado})</small>` : ""}<div>💠 ${priv.pc} PC${inv ? ` · 🎒 ${inv}` : ""}${priv.maoLeve ? " · 🧤 Mão Leve" : ""}</div>${invLista}${priv.juizResp ? `<div class="mc-juiz">⚖️ Você julga. A resposta é <b>${escapeHtml(priv.juizResp)}</b></div>` : ""}${priv.desfibDica ? `<div class="mc-desfib">🧟 Dica secreta: <b>${escapeHtml(priv.desfibDica)}</b></div>` : ""}${priv.olhoLetra ? `<div class="mc-desfib">👁️ A resposta começa com <b>${escapeHtml(priv.olhoLetra)}</b></div>` : ""}</div>`;
   }
   const grupos = {};
   (opcoes || []).forEach((o, i) => {
@@ -1212,7 +1257,7 @@ function mcRegrasHtml() {
     `🛒 <b>Lojinha (no intervalo, uma só pra mesa):</b> a cada intervalo aparecem ${MC_VITRINE} itens sorteados, com preço e estoque variando. Catálogo: ${Object.values(MC_LOJA)
       .map((it) => `${it.ic} ${it.nome} (~${it.preco})`)
       .join(", ")}.`,
-    `🌀 <b>O C.A.O.S. apronta</b> (um evento por vez, sempre entre uma vez e outra, com aviso grande na tela): ⏩ Turbo (janela de ${MC_TURBO_SEG} s), 💸 Imposto da Preguiça (quem não tenta paga PC), 🥔 Batata Quente (passe ou segure; quem ficar com ela encara a carta bônus), 🧤 Mão Leve (furto secreto), 🪅 Piñata (digite primeiro), 🎁 Presente (quem ficou ${MC_PRESENTE_DIF}+ cartas atrás do líder ganha 1 item, uma vez por partida) e ⚔️ roubos com duelo (dado, moeda, jokenpô, par ou ímpar) e revanche dobro ou nada.`,
+    `🌀 <b>O C.A.O.S. apronta</b> (um evento por vez, sempre entre uma vez e outra, com aviso grande na tela): ⏩ Turbo (janela de ${MC_TURBO_SEG} s), 💸 Imposto da Preguiça (quem não tenta paga PC), 🥔 Batata Quente (passe ou segure; quem ficar com ela encara a carta bônus), 🧤 Mão Leve (furto secreto), 🪅 Piñata (digite primeiro), 🎁 Presente (quem ficou ${MC_PRESENTE_DIF}+ cartas atrás do líder ganha 1 item, uma vez por partida) e ⚔️ roubos com duelo em melhor de 3 (dado, moeda, jokenpô, par ou ímpar) e revanche dobro ou nada.`,
   ];
   return li.map((t) => "<li>" + t + "</li>").join("");
 }

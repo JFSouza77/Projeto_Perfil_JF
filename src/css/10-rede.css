@@ -1890,3 +1890,22 @@ body.batata-mode.aviso-treme {
   font-weight: 700;
   text-align: center;
 }
+/* 1.7.10.9.3: carta dormindo no Modo C.A.O.S. e placar do melhor de 3 */
+.mc-dormiu {
+  border-color: rgba(129, 140, 248, 0.6);
+  background: rgba(99, 102, 241, 0.14);
+}
+.mc-duelo-placar {
+  font-size: 0.95em;
+  opacity: 0.95;
+}
+.mc-inv {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  font-size: 0.9em;
+  text-align: left;
+}
+.mc-inv li {
+  padding: 2px 0;
+}
