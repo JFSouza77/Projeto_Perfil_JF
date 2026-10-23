@@ -24,6 +24,8 @@ function caosWelcomePlayer(p) {
     const g = caosGerarFala("jfChegou", p);
     if (g) return showToastMessage(g);
     bank = REACTIVE_VOICE.nickReacao.jf;
+  } else if (sobrinhoDe(name) && REACTIVE_VOICE.sobrinhos[sobrinhoDe(name)] && R() < 0.9) {
+    bank = REACTIVE_VOICE.sobrinhos[sobrinhoDe(name)].chegou;
   } else if (presenteDe(name) && REACTIVE_VOICE.amigos[presenteDe(name).id] && CURRENT_MODE !== "junior" && R() < 0.9) {
     const A = REACTIVE_VOICE.amigos[presenteDe(name).id];
     // 1.7.10.8 (pedido do JF): piada de horário ("criança depois das dez") só de noite de verdade

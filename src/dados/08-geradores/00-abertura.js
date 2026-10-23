@@ -6,13 +6,13 @@
 // entra no máximo uma vez por fala, pra não repetir o assunto.
 // Etiquetas padrão: madrugada, manha, tarde, noite, fimDeSemana, sexta, segunda,
 //   modo_classico/hardcore/junior/oldschool/express/equipe, dupla, mesaCheia, anne, jf,
-//   pedro, isabel, estreia, hoje, semana, sumido, venceuUltima, perdeuUltima, veterano,
+//   pedro, isabel, elisa (sobrinhos do JF, pelo nome ou pelo nick), estreia, hoje, semana, sumido, venceuUltima, perdeuUltima, veterano,
 //   vencedor, outroModo, familia, humor_suave/acido/zero, temper_normal/sensivel/generoso/
 //   rabugento/eletrico, estado_<estado do C.A.O.S.>.
-// Variáveis: {nome} {anne} {jf} {pedro} {isabel} {outro} {hora} {dia} {modo} {modoAntes}
+// Variáveis: {nome} {anne} {jf} {pedro} {isabel} {elisa} {outro} {hora} {dia} {modo} {modoAntes}
 //   {qtd} {tempo} ("3 dias", "ontem") {quando} ("há 3 dias", "ontem") {partidas} {vitorias}.
 // Etiqueta "temNome": a fala é sobre um jogador (vem {nome}).
-// Etiqueta "outro": tem alguém na mesa além de JF, Anne, Pedro e Isabel (vai em {outro}).
+// Etiqueta "outro": tem alguém na mesa além de JF, Anne e os sobrinhos (vai em {outro}).
 // Jogador comum: nada de palavra com gênero (bem-vindo/bem-vinda, primeiro/primeira, cansado...).
 // Pedaço que pede variável que não existe é pulado.
 // Pedaços são frases completas: qualquer combinação precisa fazer sentido.

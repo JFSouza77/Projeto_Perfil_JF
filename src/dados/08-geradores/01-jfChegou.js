@@ -63,12 +63,19 @@ CAOS_GERADORES.jfChegou = {
       "A {anne} chegou antes. Já começou perdendo, JF.",
     ],
     pedro: [
-      "O {pedro} está na mesa. Cuidado, JF: o herdeiro está de olho no trono.",
+      "O {pedro} está na mesa. Cuidado, JF: o sobrinho está de olho no trono.",
       "Com o {pedro} aqui, quero ver quem ensina quem hoje.",
+      "O {pedro} chegou antes. Tio JF, o melhor da mesa já tem dono.",
     ],
     isabel: [
       "A {isabel} está aqui. Já sei pra quem eu vou torcer.",
       "Com a {isabel} na mesa, eu prometo ser mais gentil. Com ela.",
+      "A {isabel} chegou primeiro. Tio JF, a mesa já escolheu a favorita.",
+    ],
+    elisa: [
+      "A {elisa} já está aqui. Tio JF, hoje tem plateia de respeito.",
+      "Com a {elisa} na mesa, nada de inventar regra, JF.",
+      "A {elisa} chegou antes de você, JF. Isso já diz muito.",
     ],
     venceuUltima: ["Você ganhou a última, JF. Não deixa subir pra cabeça.", "Campeão da última partida. O alvo está nas suas costas."],
     perdeuUltima: ["Você perdeu a última, JF. Eu lembro. Eu sempre lembro.", "Veio buscar revanche? Eu anotei a última derrota."],

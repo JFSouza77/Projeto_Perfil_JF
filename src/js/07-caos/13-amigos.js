@@ -7,26 +7,47 @@ const CAOS_DRAGONS_MAX = 3; // falas Dragons por partida
 const CAOS_DRAGONS_INTERVALO = 4;
 const CAOS_DRAGONS_IDS = ["vitinho", "rafa", "typingg"];
 let caosAmigosEstado = { n: {}, ult: -99, drag: 0, dragUlt: -99 };
+// Sobrinhos do JF (pedido do JF): mesmas regras das piadas internas, mas valem no Júnior (são crianças) e as falas
+// são de família. Reconhece o nome puro ou o nick de cada um.
+const CAOS_SOBRINHOS = [
+  { id: "pedro", re: /^(pedro$|pedrinho)/ },
+  { id: "isabel", re: /^(isabel$|bebel)/ },
+  { id: "elisa", re: /^(elisa$|elisinha)/ },
+];
+function sobrinhoDe(n) {
+  const k = nameKeyPlain(n);
+  const s = k && CAOS_SOBRINHOS.find((x) => x.re.test(k));
+  return s ? s.id : null;
+}
+// O banco de piadas de quem tem este nome (amigo com presente ou sobrinho), com o id pra contar o limite.
+function caosAmigoBanco(n) {
+  const pr = presenteDe(n);
+  if (pr && REACTIVE_VOICE.amigos[pr.id]) return { id: pr.id, B: REACTIVE_VOICE.amigos[pr.id], familia: false };
+  const sb = sobrinhoDe(n);
+  if (sb && REACTIVE_VOICE.sobrinhos[sb]) return { id: "sobrinho_" + sb, B: REACTIVE_VOICE.sobrinhos[sb], familia: true };
+  return null;
+}
 
 function caosAmigosZerar() {
   caosAmigosEstado = { n: {}, ult: -99, drag: 0, dragUlt: -99 };
 }
-function caosAmigosLiberado() {
-  return typeof CURRENT_MODE !== "undefined" && CURRENT_MODE !== "junior" && !caosSilenced && starterChosen && !gameEnded;
+function caosAmigosLiberado(familia) {
+  return typeof CURRENT_MODE !== "undefined" && (familia || CURRENT_MODE !== "junior") && !caosSilenced && starterChosen && !gameEnded;
 }
 // Uma piada interna pro jogador p no momento (vez/erro/acerto), respeitando o limite. Devolve o texto ou null.
 function caosAmigoFala(p, momento, chance) {
   try {
-    if (!p || !caosAmigosLiberado() || Math.random() > (chance === undefined ? 1 : chance)) return null;
-    const pr = presenteDe(p.name), B = pr && REACTIVE_VOICE.amigos[pr.id];
-    if (!B || !B[momento]) return null;
+    const am = p && caosAmigoBanco(p.name);
+    if (!am || !caosAmigosLiberado(am.familia) || Math.random() > (chance === undefined ? 1 : chance)) return null;
+    const B = am.B, id = am.id;
+    if (!B[momento]) return null;
     const carta = stats ? stats.totalDrawn : 0;
-    if ((caosAmigosEstado.n[pr.id] || 0) >= CAOS_AMIGOS_MAX || carta - caosAmigosEstado.ult < CAOS_AMIGOS_INTERVALO) return null;
+    if ((caosAmigosEstado.n[id] || 0) >= CAOS_AMIGOS_MAX || carta - caosAmigosEstado.ult < CAOS_AMIGOS_INTERVALO) return null;
     const t = getRandomReaction(B[momento], p.name);
     if (!t) return null;
-    caosAmigosEstado.n[pr.id] = (caosAmigosEstado.n[pr.id] || 0) + 1;
+    caosAmigosEstado.n[id] = (caosAmigosEstado.n[id] || 0) + 1;
     caosAmigosEstado.ult = carta;
-    caosLog("amigos", `${p.name}: piada interna (${momento}, ${caosAmigosEstado.n[pr.id]}ª)`);
+    caosLog("amigos", `${p.name}: piada interna (${momento}, ${caosAmigosEstado.n[id]}ª)`);
     return t;
   } catch (e) {
     return null;
@@ -34,7 +55,7 @@ function caosAmigoFala(p, momento, chance) {
 }
 // Carta nova: às vezes uma piada com quem está na vez (ou o Mestre); senão, talvez uma Dragons.
 function caosAmigosNaCarta() {
-  if (!caosAmigosLiberado()) return false;
+  if (!caosAmigosLiberado(true)) return false;
   const foco = [players[responderIndex], players[mestreIndex]].filter(Boolean);
   for (const p of foco) {
     const t = caosAmigoFala(p, "vez", 0.3);

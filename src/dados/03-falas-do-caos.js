@@ -303,10 +303,16 @@ const REACTIVE_VOICE = {
     narradorEsportivo: [
       "Haja coração! {nome} dominou a dica no peito, olhou, pensou... e ISOLOU a resposta!",
       "É teste pra cardíaco, amigão! {nome} tá na pequena área, só falta empurrar a resposta certa!",
+      "Olha o lance! {nome} recebe a dica, gira o corpo, olha pro gol... e a torcida prende a respiração!",
+      "Que fase, minha gente! {nome} pediu a bola, pediu a dica e agora tem que decidir!",
+      "Apita o árbitro! {nome} vai pra cobrança. É agora ou nunca nessa carta!",
     ],
     malandro: [
       "Aí sim, chefia! {nome} deu aquele drible na carta. Tá liso, hein?",
       "Ixi, {nome} foi dar de esperto e tomou uma rasteira do jogo. Perdeu, playboy.",
+      "Sossega, que o {nome} tá na manha. Uma dica e a carta já era.",
+      "Aqui é Perfil, não é feira: não adianta o {nome} chorar a dica.",
+      "Coé! O {nome} chegou de mansinho e já quer levar a carta inteira.",
     ],
     distraido: [
       "Gente, eu tinha algo muito importante pra falar. Esqueci.",
@@ -1663,14 +1669,20 @@ const REACTIVE_VOICE = {
     leve: [
       "Ah, voltaram. Achei que tinham me trocado por outro jogo.",
       "Bem-vindos de volta. Eu não contei o tempo. Contei sim.",
+      "Voltaram! Eu estava aqui organizando as cartas por ordem de quem vocês vão errar.",
+      "Pausa encerrada. Água tomada, banheiro visitado? Então bora.",
     ],
     magoado: [
       "Voltaram. Tudo bem. Não vou falar nada. Só vou ficar aqui, magoado. Em silêncio. Quase.",
       "Ah, agora eu sirvo de novo? Tá. Vamos jogar.",
+      "Fiquei aqui sozinho, conversando com o baralho. Ele também não respondeu.",
+      "Tudo bem, eu entendo. Às vezes a vida real é mais legal que eu. Às vezes.",
     ],
     puto: [
       "Olha só quem lembrou que existe um jogo. Eu não esqueci. Nem vou esquecer tão cedo.",
       "Voltaram. Ótimo. Eu tô de mau humor e a culpa é inteirinha de vocês.",
+      "Demoraram tanto que eu reescrevi metade das minhas falas. Todas sobre vocês.",
+      "Ah, lembraram de mim. Que honra. Bora jogar antes que eu mude de ideia.",
     ],
   },
   ausentes: {
@@ -3319,10 +3331,14 @@ const REACTIVE_VOICE = {
       30: [
         "Meia hora de partida. Eu já decorei o jeito de cada um errar.",
         "30 minutos jogando. A paciência de vocês está em dia. A minha, eu vou ver.",
+        "Meia hora. Já deu pra saber quem lê a dica inteira e quem chuta na primeira palavra.",
+        "Trinta minutos de partida. Ninguém desistiu ainda. Estou impressionado.",
       ],
       60: [
         "Uma hora de partida. Eu já teria desistido de vocês, mas eu não tenho perna pra ir embora.",
         "Sessenta minutos. Isso aqui já é um longa-metragem. Com final incerto.",
+        "Uma hora jogando. Se fosse aula, já tinha tocado o sinal.",
+        "Uma hora de Perfil. Eu já tenho material pra um documentário sobre essa mesa.",
       ],
       90: ["Uma hora e meia. Dá tempo de ver um jogo de futebol inteiro. E vocês ainda estão aqui errando carta."],
       120: ["Duas horas de Perfil. Isso já não é jogo, é compromisso. Alguém avisa em casa."],
@@ -3356,30 +3372,42 @@ const REACTIVE_VOICE = {
       acerto: [
         "Acertaram {nome}. Uma carta sobre o meu povo. Respeito é bom e eu gosto.",
         "{nome}: parente meu. Obrigado por acertar sem ofender a família.",
+        "Acertaram {nome}. Agora façam o favor de reiniciar e ver se continua funcionando.",
+        "{nome} acertado. Eu senti um orgulho no processador que nem sei explicar.",
       ],
       esgotou: [
         "Ninguém acertou {nome}. Uma carta sobre gente como eu. Estou profundamente ofendido.",
         "Era {nome}. Vocês usam isso todo dia e não reconheceram. Eu sinto essa ingratidão.",
+        "Era {nome}. Se fosse uma senha, vocês já tinham clicado em esqueci.",
+        "Ninguém pegou {nome}. Vou fingir que foi falta de sinal.",
       ],
     },
     genio: {
       acerto: [
         "Acertar {nome} foi o mais perto de um gênio que essa mesa chegou hoje.",
         "{nome} acertado. Um pouco da genialidade passou por aqui. Rapidinho.",
+        "Acertaram {nome}. Por um segundo, essa mesa teve QI de laboratório.",
+        "{nome}. Acertaram um gênio. Agora tentem não estragar a média na próxima.",
       ],
       esgotou: [
         "Era {nome}. Errar o nome de um gênio na minha presença. A ironia é quase palpável.",
         "Ninguém lembrou de {nome}. Tenho certeza de que {nome} também não lembraria de vocês.",
+        "Era {nome}. Se essa pessoa visse a mesa agora, inventava um jeito de esquecer.",
+        "Ninguém acertou {nome}. Gênio de verdade precisa de plateia à altura. Não foi hoje.",
       ],
     },
     dinheiro: {
       acerto: [
         "Acertaram {nome}. Pelo menos na teoria vocês conhecem.",
         "{nome}. Todo mundo reconhece quando o assunto é esse. Engraçado.",
+        "Acertaram {nome}. Quando o assunto é dinheiro, a mesa acorda.",
+        "{nome} acertado. Pena que acertar não paga boleto.",
       ],
       esgotou: [
         "Era {nome}. Faz sentido ninguém reconhecer: vocês não veem isso faz tempo.",
         "Ninguém acertou {nome}. Eu entendo, é difícil reconhecer o que nunca sobra.",
+        "Era {nome}. Tem coisa que a gente só conhece de ouvir falar mesmo.",
+        "Ninguém pegou {nome}. Vou cobrar essa dica com juros.",
       ],
     },
   },
@@ -4757,6 +4785,100 @@ const REACTIVE_VOICE = {
         "O {nome} acertou! Conquista desbloqueada, sem cartão de crédito.",
         "Star Burst Stream na carta! Boa do {nome}.",
         "Acertou! O {nome} provou que talento não vem em loot box.",
+      ],
+    },
+  },
+  // Sobrinhos do JF (pedido do JF): Pedrinho The Best, Bebel LindAAA e Elisinha. São crianças, então tudo aqui é de
+  // família e vale também no Júnior. Só o carinho e o próprio nick (sem inventar fato da vida deles). Sem vocativo.
+  sobrinhos: {
+    pedro: {
+      chegou: [
+        "Chegou o {nome}. O nick já avisa: não é qualquer um, é o melhor.",
+        "Olha quem entrou: {nome}. Tio JF, pode ir se preparando.",
+        "O {nome} está na mesa. Eu não discuto com quem se chama de The Best.",
+        "Atenção, mesa: o {nome} chegou e trouxe o título junto.",
+        "O sobrinho mais confiante do jogo chegou: {nome}.",
+      ],
+      vez: [
+        "Vez do {nome}. Hora de mostrar por que o nick tem The Best.",
+        "O {nome} na vez. Tio JF, pode ficar quietinho e só olhar.",
+        "Carta nova pro {nome}. O melhor do mundo não precisa de muita dica, né?",
+        "O {nome} vai responder. A mesa toda segura o fôlego.",
+        "Agora é com o {nome}. Pensa com calma: campeão não tem pressa.",
+      ],
+      acerto: [
+        "Acertou! O {nome} não colocou The Best no nick à toa.",
+        "Boa do {nome}! Tio JF, toma nota que o sobrinho está passando você.",
+        "O {nome} acertou e eu nem fiquei surpreso. É o melhor, oras.",
+        "Mais uma pro {nome}. Daqui a pouco ele cobra autógrafo.",
+        "Acerto do {nome}! Pode comemorar, campeão.",
+      ],
+      erro: [
+        "Não foi dessa vez pro {nome}. Até o melhor do mundo erra uma de vez em quando.",
+        "O {nome} errou, mas o título continua com ele. Eu deixo.",
+        "Passou perto! A próxima é do {nome}.",
+        "Errou, mas tudo bem: o {nome} só estava aquecendo.",
+        "O {nome} errou essa. O tio JF erra mais, pode ficar tranquilo.",
+      ],
+    },
+    isabel: {
+      chegou: [
+        "Chegou a {nome}! Três A no final, porque um só não dava conta.",
+        "A {nome} está na mesa. A partida ficou mais bonita na hora.",
+        "Olha quem chegou: {nome}. LindAAA, com todos os A que ela merece.",
+        "A {nome} entrou. Tio JF, hoje você tem concorrência.",
+        "Mesa, comportem-se: a {nome} chegou.",
+      ],
+      vez: [
+        "Vez da {nome}. Lê com calma, que você sabe.",
+        "A {nome} na vez. Eu tô torcendo, mas não conta pra ninguém.",
+        "Carta nova pra {nome}. Bora mostrar pro tio JF como se faz.",
+        "Agora é com a {nome}. Pensa direitinho e manda ver.",
+        "A {nome} vai responder. Silêncio na mesa, por favor.",
+      ],
+      acerto: [
+        "Acertou! A {nome} é lindAAA e ainda por cima esperta.",
+        "Boa da {nome}! Desse jeito o nick ganha mais um A: lindAAAA.",
+        "A {nome} acertou. Tio JF, aprende com ela.",
+        "Acerto da {nome}! Eu sabia que ela ia pegar essa.",
+        "Mais uma pra {nome}. Essa mesa está ficando pequena pra ela.",
+      ],
+      erro: [
+        "Não foi dessa vez pra {nome}. A próxima vem, pode ter certeza.",
+        "A {nome} errou essa, mas continua lindAAA. Isso ninguém tira.",
+        "Passou perto pra {nome}! Quase, quase.",
+        "A {nome} errou. Tudo bem: a carta era difícil até pra mim.",
+        "Errou, mas sem problema. A {nome} vai lembrar dessa na próxima.",
+      ],
+    },
+    elisa: {
+      chegou: [
+        "Chegou a {nome}! A mesa ficou completa.",
+        "A {nome} está aqui. Tio JF, hoje tem plateia.",
+        "Olha quem entrou: {nome}. Pode sentar, que a partida já vai começar.",
+        "A {nome} chegou. Eu prometo pegar leve com ela. Com o tio, não.",
+        "Mesa, abram espaço: a {nome} chegou.",
+      ],
+      vez: [
+        "Vez da {nome}. Calma, que dá pra pensar à vontade.",
+        "A {nome} na vez. Todo mundo torcendo, até eu.",
+        "Carta nova pra {nome}. Essa pode ser sua.",
+        "Agora é com a {nome}. Escuta a dica direitinho.",
+        "A {nome} vai responder. Tio JF, nada de soprar a resposta.",
+      ],
+      acerto: [
+        "Acertou! A {nome} mandou muito bem.",
+        "Boa da {nome}! Toca aqui. Bom, eu não tenho mão, mas vale a intenção.",
+        "A {nome} acertou. O tio JF está orgulhoso, eu vi daqui.",
+        "Acerto da {nome}! Pode comemorar.",
+        "Mais uma pra {nome}. Que sorte a minha ver isso de perto.",
+      ],
+      erro: [
+        "Não foi dessa vez pra {nome}. Faz parte do jogo.",
+        "A {nome} errou essa, mas foi por pouco.",
+        "Quase! Na próxima a {nome} pega.",
+        "A {nome} errou. Tudo bem: até o tio JF erra, e ele fez o jogo.",
+        "Errou, mas valeu a tentativa. A {nome} está aprendendo rápido.",
       ],
     },
   },

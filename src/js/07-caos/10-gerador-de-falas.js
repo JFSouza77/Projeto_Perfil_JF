@@ -70,8 +70,9 @@ function caosGerContexto(p) {
     tags.add("jf");
     vars.jf = jf.name;
   }
-  const pedro = outros.find((x) => nameKeyPlain(x.name) === "pedro"),
-    isabel = outros.find((x) => nameKeyPlain(x.name) === "isabel");
+  const pedro = outros.find((x) => sobrinhoDe(x.name) === "pedro"),
+    isabel = outros.find((x) => sobrinhoDe(x.name) === "isabel"),
+    elisa = outros.find((x) => sobrinhoDe(x.name) === "elisa");
   if (pedro) {
     tags.add("pedro");
     vars.pedro = pedro.name;
@@ -80,7 +81,11 @@ function caosGerContexto(p) {
     tags.add("isabel");
     vars.isabel = isabel.name;
   }
-  const estranhos = outros.filter((x) => x !== anne && x !== jf && x !== pedro && x !== isabel);
+  if (elisa) {
+    tags.add("elisa");
+    vars.elisa = elisa.name;
+  }
+  const estranhos = outros.filter((x) => x !== anne && x !== jf && x !== pedro && x !== isabel && x !== elisa);
   if (estranhos.length) {
     vars.outro = estranhos[Math.floor(Math.random() * estranhos.length)].name;
     tags.add("outro");

@@ -474,6 +474,11 @@ const ARQ = acharMestre(process.argv[2]);
       const intervalo = a1 && a2;
       caosAmigosZerar(); CURRENT_MODE = 'junior'; stats.totalDrawn = 9;
       const semJunior = !caosAmigoFala(players[0], 'vez'); CURRENT_MODE = 'classico';
+      // sobrinhos do JF: reconhecidos pelo nick, valem no Júnior, e não confundem com nome parecido
+      const sobrReconhece = sobrinhoDe('Pedrinho The Best') === 'pedro' && sobrinhoDe('Bebel LindAAA') === 'isabel' && sobrinhoDe('Elisinha') === 'elisa' && sobrinhoDe('Pedro') === 'pedro' && !sobrinhoDe('Pedro Henrique') && !sobrinhoDe('Isabela');
+      players = ['Pedrinho The Best', 'Ana'].map(mk); caosAmigosZerar(); CURRENT_MODE = 'junior'; stats.totalDrawn = 9;
+      const sobrJunior = !!caosAmigoFala(players[0], 'vez'); CURRENT_MODE = 'classico';
+      const sobrinhos = sobrReconhece && sobrJunior;
       Math.random = () => 0.01;
       players = ['Ana', 'Vitinho'].map(mk); caosAmigosZerar(); stats.totalDrawn = 6; ditas.length = 0;
       const semJf = !caosDragonsNaCarta();
@@ -484,6 +489,8 @@ const ARQ = acharMestre(process.argv[2]);
       const nomes = { henrique: 'Carro Pika', rafa: 'BsLordRafa', vitinho: 'Vitinho', typingg: 'Typingg' };
       const todas = [];
       Object.keys(REACTIVE_VOICE.amigos).forEach((id) => Object.values(REACTIVE_VOICE.amigos[id]).forEach((l) => l.forEach((x) => todas.push([typeof x === 'function' ? x(nomes[id]) : x.replace(/\{nome\}/g, nomes[id]), nomes[id]]))));
+      const nomesSobr = { pedro: 'Pedrinho The Best', isabel: 'Bebel LindAAA', elisa: 'Elisinha' };
+      Object.keys(REACTIVE_VOICE.sobrinhos).forEach((id) => Object.values(REACTIVE_VOICE.sobrinhos[id]).forEach((l) => l.forEach((x) => todas.push([typeof x === 'function' ? x(nomesSobr[id]) : x.replace(/\{nome\}/g, nomesSobr[id]), nomesSobr[id]]))));
       REACTIVE_VOICE.dragons.um.forEach((x) => todas.push([typeof x === 'function' ? x('Vitinho') : x.replace(/\{nome\}/g, 'Vitinho'), 'Vitinho']));
       const vocativas = todas.filter(([t, nm]) => redeFalaComQuem({ texto: t.replace(/^\[C\.A\.O\.S\.\]\s*/, ''), para: [{ id: 'x', nome: nm }] }));
       const daMesa = vocativas.length === 0;
@@ -491,8 +498,8 @@ const ARQ = acharMestre(process.argv[2]);
       caosFalaAgendar = agendarOrig; Math.random = randAntes;
       players = jogAntes; starterChosen = iniAntes; gameEnded = fimAntes; CURRENT_MODE = modoAntes; caosSilenced = silAntes; stats.totalDrawn = statsAntes;
       caosAmigosZerar();
-      out.amigos = limite && intervalo && semJunior && semJf && comJf && daMesa && foraDaPaleta;
-      out.amigosDiag = JSON.stringify({ limite, n, intervalo, semJunior, semJf, comJf, daMesa, vocativas: vocativas.map((v) => v[0]).slice(0, 3), foraDaPaleta });
+      out.amigos = limite && intervalo && semJunior && semJf && comJf && daMesa && foraDaPaleta && sobrinhos;
+      out.amigosDiag = JSON.stringify({ sobrReconhece, sobrJunior, limite, n, intervalo, semJunior, semJf, comJf, daMesa, vocativas: vocativas.map((v) => v[0]).slice(0, 3), foraDaPaleta });
     }
     // 1.7.10.3: busca nas regras e o lembrete da primeira carta de cada categoria
     {
@@ -633,7 +640,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['C.A.O.S. 4.3: pular fala marca quem pulou (aparelho do host e celular); todos calaram = quieto (regra passa); parte calou = ciúmes; quem religa traz ele de volta', r.caos43],
     ['1.7.10.5: quem está na vez pede a dica no aparelho (o Mestre recebe o pedido); quem tem a ficha toca em Palpitar agora e o Mestre julga só esse palpite; errou, a ficha volta e a vez segue', r.palpiteAgora],
     ['1.7.10.5.3: trava da dica (o Mestre só abre a pedida, forçar passa); C.A.O.S. 4.4.1: tocar na dica aberta faz ele responder mesmo no respiro', r.dicaRepetida && r.palpiteAgora],
-    ['Easter egg: piadas internas com limite e intervalo (nunca no Júnior), Dragons só com o JF e a turma, falas da mesa toda e cores escondidas da paleta', r.amigos],
+    ['Easter egg: piadas internas com limite e intervalo (nunca no Júnior; os sobrinhos sim), Dragons só com o JF e a turma, falas da mesa toda e cores escondidas da paleta', r.amigos],
     ['Cadastro: o C.A.O.S. pergunta da voz (não pergunta se já está ligada); Sim liga; Não ganha fala triste e segue sem voz', r.vozPergunta],
     ['1.7.10.3: busca nas regras acha "grupo"; o C.A.O.S. lembra o que vale na 1ª carta de cada categoria (Júnior sem animal em Coisa)', r.regrasEPrimeira],
     ['1.7.10.1/1.7.10.7: com a sala aberta, quem não entrou pelo dispositivo joga no do host com um clique', r.semAparelho],
