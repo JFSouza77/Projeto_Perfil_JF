@@ -4,6 +4,9 @@ CAOS_GERADORES.jfAcerto = {
   abre: {
     geral: ["Boa, JF.", "Acertou, criador.", "Olha só, o JF.", "Ponto pro JF.", "Certo, JF."],
     anne: ["A {anne} viu isso?"],
+    pedro: ["O {pedro} viu isso?"],
+    isabel: ["A {isabel} viu isso?"],
+    elisa: ["A {elisa} viu o tio acertar."],
   },
   meio: {
     geral: [
@@ -14,6 +17,7 @@ CAOS_GERADORES.jfAcerto = {
       "Mas eu vou fingir que não vi.",
       "Pelo menos o código sabe a resposta. Você também, pelo visto.",
       "Anotado. Com uma estrelinha. Pequena.",
+      "Eu ia reclamar, mas foi bonito.",
     ],
     temper_generoso: ["Hoje eu estou generoso, então: parabéns de verdade."],
     temper_rabugento: ["Mesmo de mau humor, eu admito: foi boa."],

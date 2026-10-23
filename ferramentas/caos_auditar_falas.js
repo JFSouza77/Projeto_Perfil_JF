@@ -28,7 +28,7 @@ const JR = vm.runInNewContext("(" + fonte("CAOS_JUNIOR_BLOCK_RE") + ")", ctx);
 const ini = js.indexOf("const CAOS_GERADORES = {};");
 const fim = js.indexOf("\nfunction ", ini);
 vm.runInNewContext(js.slice(ini, fim).replace("const CAOS_GERADORES", "var CAOS_GERADORES"), ctx);
-const VARS_GER = new Set("nome anne jf pedro isabel outro hora dia modo modoAntes qtd tempo quando partidas vitorias chute anos dicasTxt cat quemAntes lider min pausa antigo".split(" "));
+const VARS_GER = new Set("nome anne jf pedro isabel elisa outro hora dia modo modoAntes qtd tempo quando partidas vitorias chute anos dicasTxt cat quemAntes lider min pausa antigo".split(" "));
 const itens = [];
 (function w(o, p) {
   if (Array.isArray(o)) return p === "familiasSorteio" ? null : o.forEach((x) => typeof x === "string" && itens.push({ onde: p, t: x, ger: false }));
@@ -54,7 +54,7 @@ for (const it of itens) {
   if (sem && !/[.!?…)"”»:♪♫✨💢👀👏👍♡🙂😎👑🎉🔥]$|[\u{1F300}-\u{1FAFF}]$/u.test(sem)) add("sem pontuação final", it);
   if (sem.length > 170) add("longa (> 170 letras)", it, `${sem.length} letras: "${sem.slice(0, 80)}…"`);
   // listas do Júnior / Family friendly / iniciante / Suave (familias.* são as "famílias" de falas, não o modo família)
-  if (/(^|\.)(familia|iniciante|junior)(\.|$)|suave/i.test(it.onde) && JR.test(t)) add("termo bloqueado no Júnior", it);
+  if (/(^|\.)(familia|iniciante|junior|sobrinhos)(\.|$)|suave/i.test(it.onde) && JR.test(t)) add("termo bloqueado no Júnior", it);
   const k = sem.toLowerCase();
   if (!it.ger && sem.length > 25) {
     if (vistos.has(k) && vistos.get(k) !== it.onde) add("repetida em outra lista", it, `"${sem.slice(0, 70)}" (também em ${vistos.get(k)})`);
