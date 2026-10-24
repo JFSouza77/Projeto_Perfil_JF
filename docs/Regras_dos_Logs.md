@@ -14,3 +14,9 @@ Estas regras valem para as NOVIDADES do jogo e para o HISTÓRICO do Mestre.
 | Carta nova, carta removida, sugestão de carta | Log da Cards and Rules Update |
 | Correção ou revisão de carta existente | QoL do patch atual |
 | Assunto da própria atualização | Itens do log da versão |
+
+## Versão do C.A.O.S. (regra do JF, 24/10/2026)
+
+- O C.A.O.S. sobe de versão sempre que ele for mexido.
+- A 4.10.0 foi a última da série 4. **A próxima mudança no C.A.O.S. vira 5.0.0.**
+- Daqui pra frente, igual à versão do jogo: depois do .9 sobe o número de cima. Então 5.9.x é seguida de 6.0.0, nunca de 5.10.
