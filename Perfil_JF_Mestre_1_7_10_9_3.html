@@ -6,6 +6,10 @@
   (nunca edite o Mestre nem as saídas à mão).
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  (interno) · 24/10/2026 · TATO · C.A.O.S. 4.7.0. Build 1836. O C.A.O.S. aprende com a mesa: se a maioria das falas
+          puladas (ou que fizeram alguém desligar a voz) era longa, ele prefere frases curtas até o fim da partida. Mesa
+          cansada (rajada de falas) e Modo C.A.O.S. também encurtam. Famílias de nicho (anos 80, internet antiga, MPB,
+          narrador esportivo…) saem no máximo 1x por partida. Nenhuma fala foi apagada.
   (interno) · 24/10/2026 · SOBRINHOS 2 · C.A.O.S. 4.6.8. Build 1835. Pedro com zoeira mais forte e até 4 piadas por
           partida; nas falas da Elisa o JF não é chamado de "tio" (só nas do Pedro e da Isabel).
   (interno) · 23/10/2026 · SOBRINHOS · C.A.O.S. 4.6.7. Build 1834. Sobrinhos reconhecidos só pelo nick (Pedrinho the
@@ -11249,7 +11253,7 @@ body.batata-mode.aviso-treme {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.9.3 · Multiplayer Update · QoL da Mesa<br>C.A.O.S. 4.6.8 · Atualizada em 23/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.9.3 · Multiplayer Update · QoL da Mesa<br>C.A.O.S. 4.7.0 · Atualizada em 23/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -11531,7 +11535,7 @@ body.batata-mode.aviso-treme {
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1835;
+const JOGO_BUILD = 1836;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -33335,6 +33339,7 @@ function caosV2Reset() {
   caosMarked = { idx: null, remaining: 0 };
   caosPrevMarkedIdx = null;
   caosFamilyRecent = [];
+  caosTatoZerar();
   caosLastSpeechByPlayer = {};
   caosLastMoodSeen = null;
   caosLastTorcidaCard = -99;
@@ -33465,12 +33470,13 @@ function getRandomReaction(list, ...args) {
     }
     if (caosIsDisliked(list, text, args)) continue;
     if (!caosContextoOk(text, args)) continue;
-    if (typeof text === "string" && text.length > 170 && tries < 4 && list.length > 1) continue;
+    // Tato: prefere a mais curta quando a mesa está cansada ou já mostrou que corta frase longa
+    if (typeof text === "string" && caosTatoTam(text) > caosTatoMax() && tries < (caosTato.curto ? 7 : 4) && list.length > 1) continue;
     if (!caosHasProfanity(text, args)) {
       const out = caosRisada(caosSelfRoastIfSlang(caosDecorate(text, list), args, list), list, args);
       if (out) {
         caosDiagLog(list);
-        caosLastPick = { bank: caosBankId(list), key: caosLineKey(list, text, args), text: out };
+        caosLastPick = { bank: caosBankId(list), key: caosLineKey(list, text, args), text: out, at: Date.now() };
       }
       return out;
     }
@@ -33813,6 +33819,7 @@ function caosPularFala(ev) {
 }
 function caosRegistrarCorte(quemIdx) {
   caosCortes.total++;
+  caosTatoReacao(caosLastPick && caosLastPick.text);
   const agora = Date.now();
   caosFalasRecentes.push(agora, agora);
   caosEmoNudge(0.6, -0.3);
@@ -33884,7 +33891,7 @@ function caosToastBloquear() {
         return true;
       }
     }
-    // C.A.O.S. 4.6.8 (JF, 11/2026: "no Modo C.A.O.S. ele falando demais atrapalha, é muita informação"): lá a carta não
+    // C.A.O.S. 4.7.0 (JF, 11/2026: "no Modo C.A.O.S. ele falando demais atrapalha, é muita informação"): lá a carta não
     // passa pelo baralho normal (o limite por carta nunca valia) e a tela já fala muito pelos avisos. Então: com aviso da
     // mesa na tela ou com alguém pensando (janela de palpite, julgamento, duelo, carta bônus), comentário nenhum; e no
     // máximo um comentário por vez de Mestre. Aviso de regra (essencial) passa igual.
@@ -34173,8 +34180,9 @@ function caosFamilyLine(nome, ctx) {
   if (ruido && caosLineFitsContext(ruido, ctx)) return ruido;
   const temMestre = mestreIndex !== null && mestreIndex !== void 0 && !!players[mestreIndex];
   const candidatos = REACTIVE_VOICE.familiasSorteio.filter(
-    (k) => REACTIVE_VOICE.familias[k] && (temMestre || !CAOS_FAMILIAS_MESTRE.includes(k)),
+    (k) => REACTIVE_VOICE.familias[k] && (temMestre || !CAOS_FAMILIAS_MESTRE.includes(k)) && caosFamiliaLiberada(k),
   );
+  if (!candidatos.length) return "";
   for (let fam = 0; fam < 3; fam++) {
     const pesos = {};
     candidatos.forEach((k) => {
@@ -34184,6 +34192,7 @@ function caosFamilyLine(nome, ctx) {
     for (let t = 0; t < 6; t++) {
       const txt = getRandomReaction(REACTIVE_VOICE.familias[key], nome);
       if (txt && caosLineFitsContext(txt, ctx)) {
+        caosFamiliaUsou(key);
         caosFamilyRecent.unshift(key);
         if (caosFamilyRecent.length > 4) caosFamilyRecent.pop();
         return txt;
@@ -34656,7 +34665,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.9.3 · C.A.O.S. 4.6.8</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.9.3 · C.A.O.S. 4.7.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -36897,7 +36906,7 @@ function caosGerar(tipo, p, x) {
   if (txt.length > CAOS_FALA_JUNTA_MAX) txt = limpa(`${caosLexCap(fato.fr)}. ${juizoBase}`);
   if (caosHasProfanity(txt, [n])) return "";
   txt = "[C.A.O.S.] " + txt;
-  caosLastPick = { bank: "gerador." + tipo + "." + prat, key: "gerador|" + tipo + "|" + prat, text: txt };
+  caosLastPick = { bank: "gerador." + tipo + "." + prat, key: "gerador|" + tipo + "|" + prat, text: txt, at: Date.now() };
   return txt;
 }
 function caosAgora() {
@@ -38008,7 +38017,7 @@ function caosNeuralDesenhar(cv, t) {
     const C = caosConsole || {};
     const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
 tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
-${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.6.8`;
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.7.0`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }
@@ -38264,7 +38273,7 @@ function caosSilencioTalvez(msg) {
   caosSilencio.usado = true;
   const txt = getRandomReaction(REACTIVE_VOICE.silencio);
   caosLog("silencio", "escolheu não comentar (" + caosLastPick.bank + ")");
-  caosLastPick = { bank: "silencio", key: "silencio|" + txt.slice(0, 40), text: txt };
+  caosLastPick = { bank: "silencio", key: "silencio|" + txt.slice(0, 40), text: txt, at: Date.now() };
   return txt;
 }
 function caosSplashFrases() {
@@ -39496,7 +39505,7 @@ function caosComentarGerar(d) {
   if (caosHasProfanity(txt, [d.n || "", d.n2 || ""])) return "";
   caosComentUlt = txt;
   txt = "[C.A.O.S.] " + txt;
-  caosLastPick = { bank: "hall." + tom, key: "hall|" + tom + (quem ? "|" + quem : ""), text: txt };
+  caosLastPick = { bank: "hall." + tom, key: "hall|" + tom + (quem ? "|" + quem : ""), text: txt, at: Date.now() };
   return txt;
 }
 function caosComentarFalavel(i) {
@@ -39815,7 +39824,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.9.3 · C.A.O.S. 4.6.8)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.9.3 · C.A.O.S. 4.7.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -40705,7 +40714,7 @@ function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze, _d
   if (viradaManual) {
     msg = viradaManual.msg;
     caosBancoFala = viradaManual.banco;
-    caosLastPick = { bank: viradaManual.banco, key: "virada|" + viradaManual.idx, text: msg };
+    caosLastPick = { bank: viradaManual.banco, key: "virada|" + viradaManual.idx, text: msg, at: Date.now() };
     caosViradaPend = viradaManual;
   }
   const caosEmoFala =
@@ -41113,7 +41122,8 @@ function caosGerarFala(g, p, extra) {
     if (falhou || !pedacos.length) continue;
     const cand = acabamento(pedacos.join(" "));
     if (/\{\w+\}/.test(cand) || caosHasProfanity(cand, [ctx.vars.nome || ""])) continue;
-    if (cand.length > CAOS_GER_MAX) continue;
+    // Tato: com a mesa cortando frase longa, ele monta curto
+    if (cand.length > (caosTato.curto ? CAOS_TATO_LONGA : CAOS_GER_MAX)) continue;
     // impressão curta da fala (a memória salva fica pequena)
     let h = 0;
     for (const ch of cand) h = (h * 31 + ch.charCodeAt(0)) | 0;
@@ -41124,7 +41134,7 @@ function caosGerarFala(g, p, extra) {
     const nota = caosRatingsLoad()["gerador|" + g + "|" + cand.slice(0, 49)];
     if (nota && nota.down > nota.up) continue;
     const def = caosGerAvaliar(pedacos, nomes);
-    const nota2 = def.length + (repetida ? 0.5 : 0);
+    const nota2 = def.length + (repetida ? 0.5 : 0) + (caosTatoMesaCansada() && cand.length > CAOS_TATO_LONGA ? 0.3 : 0);
     if (!melhor || nota2 < melhor.nota) melhor = { pedacos, def, chave, nota: nota2 };
     if (!nota2) break;
   }
@@ -41143,7 +41153,7 @@ function caosGerarFala(g, p, extra) {
   if (!txt) return "";
   txt = CAOS_PREFIXO + txt;
   caosGerConta[g] = (caosGerConta[g] || 0) + 1;
-  caosLastPick = { bank: "gerador." + g, key: "gerador|" + g + "|" + txt.slice(CAOS_PREFIXO.length, CAOS_PREFIXO.length + 49), text: txt };
+  caosLastPick = { bank: "gerador." + g, key: "gerador|" + g + "|" + txt.slice(CAOS_PREFIXO.length, CAOS_PREFIXO.length + 49), text: txt, at: Date.now() };
   caosLog("gerador", g + " · " + [...ctx.tags].filter((t) => !/^(temper_|estado_)/.test(t)).join(", "));
   return txt;
 }
@@ -41559,6 +41569,7 @@ function caosOuvinteVoz(ids, ligada) {
     if (!id || jogadorIdxPorId(id) < 0) return;
     const o = caosOuvintes[id] || (caosOuvintes[id] = { ligou: false, ligada: false });
     if (ligada) o.ligou = true;
+    else if (o.ligada && caosOuvintesAtivo()) caosTatoCalou();
     o.ligada = !!ligada;
   });
   caosOuvintesReavaliar(ids, ligada);
@@ -41721,6 +41732,79 @@ function caosDragonsNaCarta() {
   } catch (e) {
     return false;
   }
+}
+/* C.A.O.S. 4.7 · Tato (pedido do JF): frase longa de vez em quando é boa, mas com a mesa cansada ou cheia de coisa
+   acontecendo ninguém acompanha. Ele aprende com a própria mesa: quando a maioria das falas que pularam ou que
+   fizeram alguém desligar a voz eram longas, ele passa a preferir frases curtas até o fim da partida.
+   Também encurta sozinho quando a mesa está cansada (rajada de falas) e no Modo C.A.O.S. (muita informação na tela).
+   Não apaga nenhuma fala: só escolhe as mais curtas quando a lista tem opção. */
+const CAOS_TATO_LONGA = 120; // letras (sem o "[C.A.O.S.]"): daqui pra cima a fala conta como longa
+const CAOS_TATO_MESA_CANSADA = 140; // limite com a mesa cansada ou no Modo C.A.O.S.
+const CAOS_TATO_NORMAL = 170; // limite de sempre
+const CAOS_TATO_JANELA_MS = 2e4; // quem desliga a voz até 20 s depois de uma fala conta como reação a ela
+// Famílias de nicho (referência muito específica): no máximo uma fala de cada por partida, pra não cansar.
+const CAOS_FAMILIAS_NICHO = [
+  "referenciaObscura",
+  "internetAntiga",
+  "giriasAntigas",
+  "anime",
+  "mpb",
+  "musicaInternacional",
+  "dilma",
+  "narradorEsportivo",
+  "malandro",
+  "cozinha",
+  "tecnicoTI",
+  "pseudoCiencia",
+];
+let caosTato = { longas: 0, curtas: 0, curto: false };
+let caosFamiliasNichoUsadas = new Set();
+
+function caosTatoZerar() {
+  caosTato = { longas: 0, curtas: 0, curto: false };
+  caosFamiliasNichoUsadas = new Set();
+}
+function caosTatoTam(t) {
+  return String(t || "")
+    .replace(/^\[C\.A\.O\.S\.\]\s*/, "")
+    .trim().length;
+}
+// A mesa reagiu mal a uma fala (pulou ou desligou a voz): anota o tamanho e decide se é hora de encurtar.
+function caosTatoReacao(texto) {
+  const n = caosTatoTam(texto);
+  if (!n) return;
+  if (n >= CAOS_TATO_LONGA) caosTato.longas++;
+  else caosTato.curtas++;
+  const total = caosTato.longas + caosTato.curtas;
+  const curto = caosTato.longas >= 2 && caosTato.longas / total >= 0.6;
+  if (curto !== caosTato.curto) {
+    caosTato.curto = curto;
+    caosLog("tato", curto ? `a mesa corta as falas longas (${caosTato.longas} de ${total}): vou falar curto` : "a mesa corta até as curtas: o problema não é o tamanho");
+  }
+}
+// Quem desligou a voz logo depois de uma fala: conta como reação a ela.
+function caosTatoCalou() {
+  const p = caosLastPick;
+  if (p && p.at && Date.now() - p.at <= CAOS_TATO_JANELA_MS) caosTatoReacao(p.text);
+}
+function caosTatoMesaCansada() {
+  try {
+    return caosFalasUltimos(6e4) >= CAOS_RAJADA_FALAS || (CURRENT_MODE === "caos" && starterChosen && !gameEnded);
+  } catch (e) {
+    return false;
+  }
+}
+// Tamanho máximo preferido agora (a lista sem opção mais curta ainda fala a longa).
+function caosTatoMax() {
+  if (caosTato.curto) return CAOS_TATO_LONGA;
+  return caosTatoMesaCansada() ? CAOS_TATO_MESA_CANSADA : CAOS_TATO_NORMAL;
+}
+// Família de nicho que já saiu nesta partida não volta.
+function caosFamiliaLiberada(k) {
+  return !CAOS_FAMILIAS_NICHO.includes(k) || !caosFamiliasNichoUsadas.has(k);
+}
+function caosFamiliaUsou(k) {
+  if (CAOS_FAMILIAS_NICHO.includes(k)) caosFamiliasNichoUsadas.add(k);
 }
 /* ======================================================================
  * 8. SALVAMENTO E MEMÓRIA (ARMAZENAMENTO, SALVAR/CARREGAR, EXPORTAR/IMPORTAR, FICHAS)
@@ -43524,7 +43608,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.9.3 · C.A.O.S. 4.6.8");
+  L.push("- **Versão:** Beta 1.7.10.9.3 · C.A.O.S. 4.7.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -44066,7 +44150,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.9.3 · C.A.O.S. 4.6.8",
+        versao: "Beta 1.7.10.9.3 · C.A.O.S. 4.7.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,

@@ -250,7 +250,7 @@ function caosSilencioTalvez(msg) {
   caosSilencio.usado = true;
   const txt = getRandomReaction(REACTIVE_VOICE.silencio);
   caosLog("silencio", "escolheu não comentar (" + caosLastPick.bank + ")");
-  caosLastPick = { bank: "silencio", key: "silencio|" + txt.slice(0, 40), text: txt };
+  caosLastPick = { bank: "silencio", key: "silencio|" + txt.slice(0, 40), text: txt, at: Date.now() };
   return txt;
 }
 function caosSplashFrases() {

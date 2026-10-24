@@ -707,7 +707,7 @@ function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze, _d
   if (viradaManual) {
     msg = viradaManual.msg;
     caosBancoFala = viradaManual.banco;
-    caosLastPick = { bank: viradaManual.banco, key: "virada|" + viradaManual.idx, text: msg };
+    caosLastPick = { bank: viradaManual.banco, key: "virada|" + viradaManual.idx, text: msg, at: Date.now() };
     caosViradaPend = viradaManual;
   }
   const caosEmoFala =

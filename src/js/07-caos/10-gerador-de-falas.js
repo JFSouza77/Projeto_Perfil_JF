@@ -293,7 +293,8 @@ function caosGerarFala(g, p, extra) {
     if (falhou || !pedacos.length) continue;
     const cand = acabamento(pedacos.join(" "));
     if (/\{\w+\}/.test(cand) || caosHasProfanity(cand, [ctx.vars.nome || ""])) continue;
-    if (cand.length > CAOS_GER_MAX) continue;
+    // Tato: com a mesa cortando frase longa, ele monta curto
+    if (cand.length > (caosTato.curto ? CAOS_TATO_LONGA : CAOS_GER_MAX)) continue;
     // impressão curta da fala (a memória salva fica pequena)
     let h = 0;
     for (const ch of cand) h = (h * 31 + ch.charCodeAt(0)) | 0;
@@ -304,7 +305,7 @@ function caosGerarFala(g, p, extra) {
     const nota = caosRatingsLoad()["gerador|" + g + "|" + cand.slice(0, 49)];
     if (nota && nota.down > nota.up) continue;
     const def = caosGerAvaliar(pedacos, nomes);
-    const nota2 = def.length + (repetida ? 0.5 : 0);
+    const nota2 = def.length + (repetida ? 0.5 : 0) + (caosTatoMesaCansada() && cand.length > CAOS_TATO_LONGA ? 0.3 : 0);
     if (!melhor || nota2 < melhor.nota) melhor = { pedacos, def, chave, nota: nota2 };
     if (!nota2) break;
   }
@@ -323,7 +324,7 @@ function caosGerarFala(g, p, extra) {
   if (!txt) return "";
   txt = CAOS_PREFIXO + txt;
   caosGerConta[g] = (caosGerConta[g] || 0) + 1;
-  caosLastPick = { bank: "gerador." + g, key: "gerador|" + g + "|" + txt.slice(CAOS_PREFIXO.length, CAOS_PREFIXO.length + 49), text: txt };
+  caosLastPick = { bank: "gerador." + g, key: "gerador|" + g + "|" + txt.slice(CAOS_PREFIXO.length, CAOS_PREFIXO.length + 49), text: txt, at: Date.now() };
   caosLog("gerador", g + " · " + [...ctx.tags].filter((t) => !/^(temper_|estado_)/.test(t)).join(", "));
   return txt;
 }

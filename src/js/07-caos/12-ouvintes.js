@@ -40,6 +40,7 @@ function caosOuvinteVoz(ids, ligada) {
     if (!id || jogadorIdxPorId(id) < 0) return;
     const o = caosOuvintes[id] || (caosOuvintes[id] = { ligou: false, ligada: false });
     if (ligada) o.ligou = true;
+    else if (o.ligada && caosOuvintesAtivo()) caosTatoCalou();
     o.ligada = !!ligada;
   });
   caosOuvintesReavaliar(ids, ligada);
