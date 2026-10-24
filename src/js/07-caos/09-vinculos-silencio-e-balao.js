@@ -732,6 +732,8 @@ function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze, _d
   if (caosEmoFala) caosViradaDesde++;
   const virada = viradaManual || caosViradaDecidir(msg, caosEmoFala, caosBancoFala, priority, tropecou);
   caosLogMatchLine(msg);
+  // Tato: a fala que a mesa está vendo agora (pra saber se ela ouve até o fim ou corta)
+  if (!priority && typeof msg === "string" && msg.indexOf("[C.A.O.S.]") !== -1) caosTatoFalou(msg);
   // C.A.O.S. 4.2: a emoção da fala fica no registro (o botão 🔊 da revisão repete do mesmo jeito)
   try {
     const ult = caosMatchLog[caosMatchLog.length - 1];

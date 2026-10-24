@@ -872,7 +872,7 @@ function caosPularFala(ev) {
 }
 function caosRegistrarCorte(quemIdx) {
   caosCortes.total++;
-  caosTatoReacao(caosLastPick && caosLastPick.text);
+  caosTatoReacao((caosTato.exib && caosTato.exib.text) || (caosLastPick && caosLastPick.text));
   const agora = Date.now();
   caosFalasRecentes.push(agora, agora);
   caosEmoNudge(0.6, -0.3);
@@ -944,7 +944,7 @@ function caosToastBloquear() {
         return true;
       }
     }
-    // C.A.O.S. 4.7.0 (JF, 11/2026: "no Modo C.A.O.S. ele falando demais atrapalha, é muita informação"): lá a carta não
+    // C.A.O.S. 4.8.0 (JF, 11/2026: "no Modo C.A.O.S. ele falando demais atrapalha, é muita informação"): lá a carta não
     // passa pelo baralho normal (o limite por carta nunca valia) e a tela já fala muito pelos avisos. Então: com aviso da
     // mesa na tela ou com alguém pensando (janela de palpite, julgamento, duelo, carta bônus), comentário nenhum; e no
     // máximo um comentário por vez de Mestre. Aviso de regra (essencial) passa igual.

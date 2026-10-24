@@ -510,6 +510,7 @@ const ARQ = acharMestre(process.argv[2]);
     // C.A.O.S. 4.7 · Tato: a mesa pula frase longa -> ele passa a preferir curtas; famílias de nicho 1x por partida
     {
       const modoAntes = CURRENT_MODE, iniAntes = starterChosen, fimAntes = gameEnded, pickAntes = caosLastPick, randAntes = Math.random;
+      const memAntes = JFStore.getItem(CAOS_TATO_KEY); JFStore.removeItem(CAOS_TATO_KEY);
       CURRENT_MODE = 'classico'; starterChosen = true; gameEnded = false; caosTatoZerar();
       const longa = '[C.A.O.S.] ' + 'Essa é uma fala bem comprida, cheia de voltas, que ninguém consegue acompanhar quando a mesa está com mil coisas acontecendo ao mesmo tempo.';
       const curta = '[C.A.O.S.] Então tá, né? Eu esperava mais.';
@@ -532,10 +533,29 @@ const ARQ = acharMestre(process.argv[2]);
       const nichoLivre = caosFamiliaLiberada('narradorEsportivo') && caosFamiliaLiberada('distraido');
       caosFamiliaUsou('narradorEsportivo'); caosFamiliaUsou('distraido');
       const nichoTrava = !caosFamiliaLiberada('narradorEsportivo') && caosFamiliaLiberada('distraido');
-      CURRENT_MODE = 'caos'; const caosModoEncurta = caosTatoMax() === CAOS_TATO_MESA_CANSADA;
+      JFStore.removeItem(CAOS_TATO_KEY); caosTatoZerar();
+      CURRENT_MODE = 'caos'; caosTatoMax(); caosTato.testes = CAOS_TATO_TESTES; const caosModoEncurta = caosTatoMax() === CAOS_TATO_MESA_CANSADA;
+      // C.A.O.S. 4.8 · memória da mesa: mesma mesa começa sabendo; mesa nova testa e depois vai pelo jeito da mesa
+      const jogAntes = players;
+      const mkp = (n) => ({ id: 'x' + n, name: n, score: 0, humor: 'normal' });
+      JFStore.removeItem(CAOS_TATO_KEY); CURRENT_MODE = 'classico';
+      players = ['Ana', 'Beto', 'Caio'].map(mkp); caosTatoZerar();
+      caosTatoReacao(longa); caosTatoReacao(longa);
+      players = ['Caio', 'Ana', 'Beto'].map(mkp); caosTatoZerar();
+      const mesmaMesaLembra = caosTatoMax() === CAOS_TATO_LONGA && caosTato.conhecida;
+      players = ['Duda', 'Eva'].map(mkp); caosTatoZerar();
+      const novaTesta = caosTatoMax() === CAOS_TATO_NORMAL && !caosTato.conhecida;
+      caosTatoFalou(longa); caosTato.pend.at -= 25e3; caosTatoFalou(longa); caosTato.pend.at -= 25e3; caosTatoConferir();
+      const gostaDeLonga = caosTato.gosta && caosTatoMax() === CAOS_TATO_NORMAL;
+      players = ['Duda', 'Eva'].map(mkp); caosTatoZerar();
+      const lembraQueGosta = caosTato.sig === null && caosTatoMax() === CAOS_TATO_NORMAL && caosTato.gosta && caosTato.conhecida;
+      const perfil = (modo) => { CURRENT_MODE = modo; players = ['Fê', 'Gui'].map(mkp); caosTatoZerar(); caosTatoMax(); caosTato.testes = CAOS_TATO_TESTES; return caosTatoMax(); };
+      const jeitoDaMesa = perfil('junior') === CAOS_TATO_LONGA && perfil('hardcore') === CAOS_TATO_MESA_CANSADA && perfil('classico') === CAOS_TATO_NORMAL;
+      players = jogAntes; if (memAntes == null) JFStore.removeItem(CAOS_TATO_KEY); else JFStore.setItem(CAOS_TATO_KEY, memAntes);
+      const memoria = mesmaMesaLembra && novaTesta && gostaDeLonga && lembraQueGosta && jeitoDaMesa;
       CURRENT_MODE = modoAntes; starterChosen = iniAntes; gameEnded = fimAntes; caosLastPick = pickAntes; Math.random = randAntes; caosTatoZerar();
-      out.tato = comecaNormal && umaNaoBasta && aprendeu && prefereCurta && calarEnsina && calarVelhoNao && nichoLivre && nichoTrava && caosModoEncurta;
-      out.tatoDiag = JSON.stringify({ comecaNormal, umaNaoBasta, aprendeu, prefereCurta, curtas, calarEnsina, calarVelhoNao, nichoLivre, nichoTrava, caosModoEncurta });
+      out.tato = comecaNormal && umaNaoBasta && aprendeu && prefereCurta && calarEnsina && calarVelhoNao && nichoLivre && nichoTrava && caosModoEncurta && memoria;
+      out.tatoDiag = JSON.stringify({ mesmaMesaLembra, novaTesta, gostaDeLonga, lembraQueGosta, jeitoDaMesa, comecaNormal, umaNaoBasta, aprendeu, prefereCurta, curtas, calarEnsina, calarVelhoNao, nichoLivre, nichoTrava, caosModoEncurta });
     }
     // 1.7.10.3: busca nas regras e o lembrete da primeira carta de cada categoria
     {
@@ -676,7 +696,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['C.A.O.S. 4.3: pular fala marca quem pulou (aparelho do host e celular); todos calaram = quieto (regra passa); parte calou = ciúmes; quem religa traz ele de volta', r.caos43],
     ['1.7.10.5: quem está na vez pede a dica no aparelho (o Mestre recebe o pedido); quem tem a ficha toca em Palpitar agora e o Mestre julga só esse palpite; errou, a ficha volta e a vez segue', r.palpiteAgora],
     ['1.7.10.5.3: trava da dica (o Mestre só abre a pedida, forçar passa); C.A.O.S. 4.4.1: tocar na dica aberta faz ele responder mesmo no respiro', r.dicaRepetida && r.palpiteAgora],
-    ['C.A.O.S. com tato: a mesa corta frase longa e ele passa a falar curto; família de nicho só 1x por partida', r.tato],
+    ['C.A.O.S. com tato: a mesa corta frase longa e ele passa a falar curto, lembra da mesma mesa, testa mesa nova pelo jeito dela; família de nicho só 1x por partida', r.tato],
     ['Easter egg: piadas internas com limite e intervalo (nunca no Júnior; os sobrinhos sim), Dragons só com o JF e a turma, falas da mesa toda e cores escondidas da paleta', r.amigos],
     ['Cadastro: o C.A.O.S. pergunta da voz (não pergunta se já está ligada); Sim liga; Não ganha fala triste e segue sem voz', r.vozPergunta],
     ['1.7.10.3: busca nas regras acha "grupo"; o C.A.O.S. lembra o que vale na 1ª carta de cada categoria (Júnior sem animal em Coisa)', r.regrasEPrimeira],
