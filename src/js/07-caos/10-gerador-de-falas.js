@@ -104,7 +104,7 @@ function caosGerContexto(p) {
         const ms = Date.now() - f.ultimaVez;
         tags.add(ms < 864e5 ? "hoje" : ms < 14 * 864e5 ? "semana" : "sumido");
         vars.tempo = memTempoDesde(ms);
-        vars.quando = vars.tempo === "ontem" || vars.tempo === "hoje mesmo" ? vars.tempo : "há " + vars.tempo;
+        vars.quando = memQuandoData(f.ultimaVez);
       }
       if (f.partidas > 0) {
         if (f.ultimoResultado === "venceu") tags.add("venceuUltima");

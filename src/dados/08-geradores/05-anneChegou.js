@@ -39,7 +39,7 @@ CAOS_GERADORES.anneChegou = {
     pedro: ["O {pedro} também está aqui. A família está reunida.", "O {pedro} já chegou e está confiante. O nick não deixa mentir."],
     isabel: ["A {isabel} também veio. Vou ser gentil em dobro.", "A {isabel} chegou antes. Agora a mesa tem duas favoritas."],
     elisa: ["A {elisa} também está aqui. A família veio em peso.", "A {elisa} chegou. Vou caprichar no capricho."],
-    venceuUltima: ["Você ganhou a última, {nome}. A coroa é de verdade."],
+    venceuUltima: ["{quando}, você ganhou, {nome}. A coroa é de verdade."],
     perdeuUltima: ["Da última vez não deu, mas hoje é outro dia."],
     vencedor: ["{vitorias} vitórias no histórico. Realeza é isso."],
   },

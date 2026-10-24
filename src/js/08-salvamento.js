@@ -1157,6 +1157,22 @@ function memTempoDesde(ms) {
   const m = Math.round(d / 30);
   return m <= 1 ? "um mês" : m < 12 ? m + " meses" : "mais de um ano";
 }
+// C.A.O.S. 4.9 (pedido do JF): quando foi, com a data de verdade (pelo calendário, não por 24 h):
+// "hoje mais cedo", "ontem", "anteontem", "na terça", "semana passada, no dia 17", "no dia 20 de setembro".
+const MEM_MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+const MEM_DIAS_SEMANA = ["no domingo", "na segunda", "na terça", "na quarta", "na quinta", "na sexta", "no sábado"];
+function memQuandoData(ts, agora) {
+  const a = new Date(agora || Date.now()),
+    d = new Date(ts);
+  const dias = Math.round((new Date(a.getFullYear(), a.getMonth(), a.getDate()) - new Date(d.getFullYear(), d.getMonth(), d.getDate())) / 864e5);
+  const dia = "no dia " + d.getDate() + (d.getMonth() === a.getMonth() && d.getFullYear() === a.getFullYear() ? "" : " de " + MEM_MESES[d.getMonth()]);
+  if (dias <= 0) return "hoje mais cedo";
+  if (dias === 1) return "ontem";
+  if (dias === 2) return "anteontem";
+  if (dias < 7) return MEM_DIAS_SEMANA[d.getDay()];
+  if (dias < 14) return "semana passada, " + dia;
+  return dia + (d.getFullYear() === a.getFullYear() ? "" : " do ano passado");
+}
 function memModoNome(m) {
   return (
     { classico: "Clássico", hardcore: "Hardcore", junior: "Júnior", express: "Express", oldschool: "Old School" }[m] ||
@@ -1801,7 +1817,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.9.3 · C.A.O.S. 4.8.0");
+  L.push("- **Versão:** Beta 1.7.10.9.3 · C.A.O.S. 4.9.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2343,7 +2359,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.9.3 · C.A.O.S. 4.8.0",
+        versao: "Beta 1.7.10.9.3 · C.A.O.S. 4.9.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,

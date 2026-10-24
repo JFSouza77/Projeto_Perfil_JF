@@ -10,7 +10,8 @@
 //   vencedor, outroModo, familia, humor_suave/acido/zero, temper_normal/sensivel/generoso/
 //   rabugento/eletrico, estado_<estado do C.A.O.S.>.
 // Variáveis: {nome} {anne} {jf} {pedro} {isabel} {elisa} {outro} {hora} {dia} {modo} {modoAntes}
-//   {qtd} {tempo} ("3 dias", "ontem") {quando} ("há 3 dias", "ontem") {partidas} {vitorias}.
+//   {qtd} {tempo} ("3 dias", "ontem") {quando} (a data de verdade: "ontem", "anteontem", "na terça",
+//   "semana passada, no dia 17", "no dia 20 de setembro") {partidas} {vitorias}.
 // Etiqueta "temNome": a fala é sobre um jogador (vem {nome}).
 // Etiqueta "outro": tem alguém na mesa além de JF, Anne e os sobrinhos (vai em {outro}).
 // Jogador comum: nada de palavra com gênero (bem-vindo/bem-vinda, primeiro/primeira, cansado...).
