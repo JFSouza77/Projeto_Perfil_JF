@@ -73,7 +73,7 @@ CAOS_GERADORES.jfChegou = {
       "A {isabel} chegou primeiro. Tio JF, a mesa já escolheu a favorita.",
     ],
     elisa: [
-      "A {elisa} já está aqui. Tio JF, hoje tem plateia de respeito.",
+      "A {elisa} já está aqui. Hoje tem plateia de respeito, JF.",
       "Com a {elisa} na mesa, nada de inventar regra, JF.",
       "A {elisa} chegou antes de você, JF. Isso já diz muito.",
     ],

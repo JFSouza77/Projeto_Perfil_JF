@@ -22,7 +22,7 @@ CAOS_GERADORES.jfInicio = {
     anne: ["a {anne} e o JF na mesma mesa. Eu vou fingir neutralidade."],
     pedro: ["o {pedro} contra o JF. Tio e sobrinho. Eu trouxe pipoca.", "o {pedro} quer provar que é o melhor da família. O JF que se cuide."],
     isabel: ["a {isabel} está de olho no JF. Eu também.", "a {isabel} veio torcer contra o tio. Eu apoio."],
-    elisa: ["a {elisa} vai ver o tio JF jogar. Sem pressão, JF.", "a {elisa} está na mesa, então o JF vai ter que dar o exemplo."],
+    elisa: ["a {elisa} vai ver o JF jogar. Sem pressão, JF.", "a {elisa} está na mesa, então o JF vai ter que dar o exemplo."],
     venceuUltima: ["o JF ganhou a última. Bora tirar a coroa dele."],
     perdeuUltima: ["o JF perdeu a última e diz que foi azar. Eu tenho os registros."],
     modo_hardcore: ["o JF escolheu Hardcore. Ninguém pediu, mas aqui estamos."],

@@ -9,9 +9,9 @@ const CAOS_DRAGONS_IDS = ["vitinho", "rafa", "typingg"];
 let caosAmigosEstado = { n: {}, ult: -99, drag: 0, dragUlt: -99 };
 // Sobrinhos do JF (pedido do JF): mesmas regras das piadas internas, mas valem no Júnior (são crianças). Reconhece só
 // pelo nick que cada um escolheu (a Isabel também pelo nome). "max" é a dose de piadas por partida que o tio passou:
-// a Isabel prefere suave e o Pedro se estressa rápido; a Elisa aguenta.
+// a Isabel prefere suave; o Pedro e a Elisa aguentam o limite dos amigos.
 const CAOS_SOBRINHOS = [
-  { id: "pedro", re: /^pedrinho\s*the\s*best/, max: 2 },
+  { id: "pedro", re: /^pedrinho\s*the\s*best/, max: CAOS_AMIGOS_MAX },
   { id: "isabel", re: /^(isabel$|bebel)/, max: 3 },
   { id: "elisa", re: /^elisinha/, max: CAOS_AMIGOS_MAX },
 ];

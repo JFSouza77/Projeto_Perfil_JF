@@ -25,7 +25,7 @@ CAOS_GERADORES.jfFim = {
     anne: ["E a {anne} viu tudo. Isso vai ser lembrado em casa."],
     pedro: ["E o {pedro} viu tudo. O tio vai ouvir sobre essa partida por um bom tempo."],
     isabel: ["E a {isabel} assistiu de perto. Isso vai virar história de família."],
-    elisa: ["E a {elisa} estava aqui pra ver. Agora tem testemunha."],
+    elisa: ["E a {elisa} estava aqui pra ver tudo. Não tem como negar."],
   },
   fecho: {
     geral: ["Agora vai lá corrigir o que eu deixei nas entrelinhas.", "Até a próxima, chefe.", "Revanche quando quiser.", "Boa partida, mesa.", "Eu me diverti, e isso é raro."],
