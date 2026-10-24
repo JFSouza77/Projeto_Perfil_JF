@@ -478,10 +478,12 @@ const ARQ = acharMestre(process.argv[2]);
       const sobrReconhece = sobrinhoDe('Pedrinho the Best') === 'pedro' && sobrinhoDe('Bebel LindAAA') === 'isabel' && sobrinhoDe('Isabel') === 'isabel' && sobrinhoDe('elisinha auruda') === 'elisa' && !sobrinhoDe('Pedro') && !sobrinhoDe('Pedrinho') && !sobrinhoDe('Elisa') && !sobrinhoDe('Isabela');
       players = ['Pedrinho the Best', 'Ana'].map(mk); caosAmigosZerar(); CURRENT_MODE = 'junior'; stats.totalDrawn = 9;
       const sobrJunior = !!caosAmigoFala(players[0], 'vez'); CURRENT_MODE = 'classico';
-      // dose por sobrinho: o Pedro leva no máximo 2 piadas por partida
+      // dose por sobrinho: o Pedro leva até o limite dos amigos, a Isabel (suave) no máximo 3
       caosAmigosZerar(); let np = 0;
       for (let c = 1; c <= 40; c++) { stats.totalDrawn = c; if (caosAmigoFala(players[0], 'vez')) np++; }
-      const sobrDose = np === 2;
+      const bebel = mk('Bebel LindAAA', 2); caosAmigosZerar(); let ni = 0;
+      for (let c = 1; c <= 40; c++) { stats.totalDrawn = c; if (caosAmigoFala(bebel, 'vez')) ni++; }
+      const sobrDose = np === CAOS_AMIGOS_MAX && ni === 3;
       const sobrinhos = sobrReconhece && sobrJunior && sobrDose;
       Math.random = () => 0.01;
       players = ['Ana', 'Vitinho'].map(mk); caosAmigosZerar(); stats.totalDrawn = 6; ditas.length = 0;
@@ -503,7 +505,7 @@ const ARQ = acharMestre(process.argv[2]);
       players = jogAntes; starterChosen = iniAntes; gameEnded = fimAntes; CURRENT_MODE = modoAntes; caosSilenced = silAntes; stats.totalDrawn = statsAntes;
       caosAmigosZerar();
       out.amigos = limite && intervalo && semJunior && semJf && comJf && daMesa && foraDaPaleta && sobrinhos;
-      out.amigosDiag = JSON.stringify({ sobrReconhece, sobrJunior, sobrDose, limite, n, intervalo, semJunior, semJf, comJf, daMesa, vocativas: vocativas.map((v) => v[0]).slice(0, 3), foraDaPaleta });
+      out.amigosDiag = JSON.stringify({ sobrReconhece, sobrJunior, sobrDose, np, ni, limite, n, intervalo, semJunior, semJf, comJf, daMesa, vocativas: vocativas.map((v) => v[0]).slice(0, 3), foraDaPaleta });
     }
     // 1.7.10.3: busca nas regras e o lembrete da primeira carta de cada categoria
     {

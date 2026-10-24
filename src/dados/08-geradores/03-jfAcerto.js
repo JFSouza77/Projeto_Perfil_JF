@@ -6,7 +6,7 @@ CAOS_GERADORES.jfAcerto = {
     anne: ["A {anne} viu isso?"],
     pedro: ["O {pedro} viu isso?"],
     isabel: ["A {isabel} viu isso?"],
-    elisa: ["A {elisa} viu o tio acertar."],
+    elisa: ["A {elisa} viu esse acerto. Agora tem testemunha."],
   },
   meio: {
     geral: [

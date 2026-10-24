@@ -4790,36 +4790,37 @@ const REACTIVE_VOICE = {
   },
   // Sobrinhos do JF (pedido do JF): Pedrinho the Best, Bebel LindAAA (a Isabel) e elisinha auruda (a Elisa, nick em
   // minúscula de propósito). Valem também no Júnior. Sem palavrão e sem vocativo. Dosagem que o tio passou: a Isabel
-  // prefere suave, o Pedro zoa mas se estressa rápido (pouca zoeira e leve), a Elisa aguenta zoeira pesada.
+  // prefere suave, o Pedro aguenta uma zoeira média, a Elisa aguenta pesada. Só nas falas do Pedro e da Isabel o JF
+  // vira "tio JF" (na Elisa, não: pedido do JF).
   sobrinhos: {
     pedro: {
       chegou: [
-        "Chegou o {nome}. O nick já avisa: não é qualquer um, é o melhor.",
+        "Chegou o {nome}. O nick já avisa: não é qualquer um, é o melhor. Segundo ele mesmo.",
         "Olha quem entrou: {nome}. Tio JF, pode ir se preparando.",
         "O Pedro está na mesa. Ou melhor, o {nome}. Eu não discuto com quem se chama de The Best.",
-        "Atenção, mesa: o {nome} chegou e trouxe o título junto.",
-        "O Pedrinho chegou com o nick completo: {nome}. Respeito.",
+        "Atenção, mesa: o {nome} chegou e trouxe o título junto. Quem deu o título? Ele mesmo.",
+        "O Pedrinho chegou com o nick completo: {nome}. Modéstia não veio junto.",
       ],
       vez: [
-        "Vez do {nome}. Hora de mostrar por que o nick tem The Best.",
+        "Vez do {nome}. Hora de provar o The Best, porque até agora é só propaganda.",
         "O {nome} na vez. Tio JF, pode ficar quietinho e só olhar.",
-        "Carta nova pro {nome}. O melhor do mundo não precisa de muita dica, né?",
-        "O {nome} vai responder. A mesa toda segura o fôlego.",
-        "Agora é com o {nome}. Pensa com calma: campeão não tem pressa.",
+        "Carta nova pro {nome}. O melhor do mundo não precisa de muita dica, né? Né, Pedrinho?",
+        "O {nome} vai responder. Se errar, o The Best vira The Quase.",
+        "Agora é com o {nome}. Pensa com calma: campeão não tem pressa. Campeão de verdade, eu digo.",
       ],
       acerto: [
-        "Acertou! O {nome} não colocou The Best no nick à toa.",
+        "Acertou! Tá bom, o {nome} pode ficar com o The Best. Por enquanto.",
         "Boa do {nome}! Tio JF, toma nota que o sobrinho está passando você.",
-        "O {nome} acertou e eu nem fiquei surpreso. É o melhor, oras.",
-        "Mais uma pro {nome}. Daqui a pouco ele cobra autógrafo.",
-        "Acerto do {nome}! Pode comemorar, campeão.",
+        "O {nome} acertou. Agora vai ficar insuportável até o fim da partida.",
+        "Mais uma pro {nome}. Daqui a pouco ele cobra autógrafo. Ninguém vai pagar.",
+        "Acerto do {nome}! Pode comemorar, campeão. Só não exagera.",
       ],
       erro: [
-        "Não foi dessa vez pro {nome}. Até o melhor do mundo erra uma de vez em quando.",
-        "O {nome} errou, mas o título continua com ele. Eu deixo.",
-        "Passou perto! A próxima é do {nome}.",
-        "Errou, mas tudo bem: o {nome} só estava aquecendo.",
-        "O {nome} errou essa. Normal: o tio JF erra muito mais.",
+        "O {nome} errou. The Best hoje está mais pra The Mais ou Menos.",
+        "Errou! O Pedrinho vai dizer que foi a carta que estava errada.",
+        "Passou longe. O {nome} vai precisar trocar o nick por um mais humilde.",
+        "O {nome} errou. Calma, Pedrinho: o título continua, só ficou meio arranhado.",
+        "O {nome} errou essa. Pelo menos herdou alguma coisa do tio JF.",
       ],
     },
     isabel: {
@@ -4858,7 +4859,7 @@ const REACTIVE_VOICE = {
         "Chegou a {nome}, tudo em minúscula. Nem pro nick ela se esforça.",
         "A {nome} entrou. Pode avisar a mesa: hoje ninguém sai ileso, nem eu.",
         "Olha quem apareceu: {nome}. Já veio no nível zero, então eu tô liberado.",
-        "A {nome} chegou. Tio JF, segura a sobrinha, porque eu não vou segurar a língua.",
+        "A {nome} chegou. Alguém segura ela, porque eu não vou segurar a língua.",
         "A {nome} está na mesa. Finalmente alguém que aguenta o tranco.",
       ],
       vez: [
@@ -4866,7 +4867,7 @@ const REACTIVE_VOICE = {
         "A {nome} na vez. Pode chutar, que eu já preparei a zoeira.",
         "Carta nova pra {nome}. Se errar, eu vou lembrar disso até o Natal.",
         "Agora é com a {nome}. Sem pressão. Mentira: muita pressão.",
-        "A {nome} vai responder. Tio JF, não sopra, que eu tô vendo.",
+        "A {nome} vai responder. Ninguém sopra, que eu tô vendo.",
       ],
       acerto: [
         "Acertou! A {nome} até que pensa, quando quer.",
@@ -4880,7 +4881,7 @@ const REACTIVE_VOICE = {
         "Errou feio. A {nome} vai fingir que foi de propósito.",
         "A {nome} errou. Eu ia pegar leve, mas ela escolheu o nível zero.",
         "Errou! A {nome} chutou com tanta confiança que eu quase acreditei.",
-        "A {nome} errou essa. Tio JF, a genética da família explica muita coisa.",
+        "A {nome} errou essa. Tá explicado por que ela escolheu nível zero: é pra apanhar.",
       ],
     },
   },
