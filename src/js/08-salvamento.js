@@ -1213,7 +1213,7 @@ function exportSave() {
 }
 // 1.7.5.4: levar a memória do C.A.O.S. pra outro aparelho ou endereço (o site, um arquivo
 // offline, o futuro dicaos.com.br). É um código com tudo o que ele lembra entre partidas:
-// fichas, recordes, rivais, nomes e nicks, cartas, avaliações e a memória do gerador.
+// fichas, recordes, rivais, nomes e nicks, cartas, avaliações, a memória do gerador e o jeito de cada mesa.
 // Trazer substitui a memória deste aparelho (a partida em andamento não é tocada).
 const CAOS_MEMORIA_PREFIXO = "CAOSMEM1.";
 function caosMemoriaChaves() {
@@ -1231,6 +1231,7 @@ function caosMemoriaChaves() {
     CAOS_CARDMEM_KEY,
     CAOS_RATINGS_KEY,
     CAOS_GERADOR_KEY,
+    CAOS_TATO_KEY,
     CAOS_DIAG_KEY,
     "perfil5_caos_fimsrecentes",
   ];
@@ -1800,7 +1801,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.9.3 · C.A.O.S. 4.7.0");
+  L.push("- **Versão:** Beta 1.7.10.9.3 · C.A.O.S. 4.8.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2342,7 +2343,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.9.3 · C.A.O.S. 4.7.0",
+        versao: "Beta 1.7.10.9.3 · C.A.O.S. 4.8.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
