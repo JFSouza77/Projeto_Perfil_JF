@@ -5,7 +5,8 @@
   O build.js monta este Mestre e gera as versões debug, compacta e offline:  node build.js
   (nunca edite o Mestre nem as saídas à mão).
 
-  HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio.
+  HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio. Quando sobe cada número
+  (5 novidades pro 5º, 10 pro 4º, OK do JF pro 3º, série fechada + 7 coisas grandes pro 2º): docs/Regras_dos_Logs.md.
   (interno) · 24/10/2026 · CADASTRO · C.A.O.S. 4.10.0. Build 1839. Cadastro opcional do jogador (ideia do Henrique):
           nick + PIN de 4 números (no servidor só fica o PIN embaralhado). Com cadastro, a ficha do C.A.O.S. fica na nuvem
           e ele lembra da pessoa em qualquer dispositivo; nick com cadastro sem login joga sem a memória do dono. Pela sala,
@@ -20320,11 +20321,16 @@ function novidadesMarcarChip() {
   try {
     visto = JFStore.getItem(NOVIDADES_KEY) || "";
   } catch (e) {
-    visto = NOVIDADES[0].v;
+    visto = novidadesChave();
   }
-  c.classList.toggle("tem-novo", visto !== NOVIDADES[0].v);
+  c.classList.toggle("tem-novo", visto !== novidadesChave());
 }
 // item que cita a Anne só aparece com o conteúdo dela ligado (Cérebro, aba Falas)
+// A versão mais nova de verdade (uma entrada junta os ajustes de 5 números da versão: "ate" é o último deles)
+function novidadesChave() {
+  const n = NOVIDADES[0];
+  return n.ate ? "Beta " + n.ate : n.v;
+}
 function novItemVale(t) {
   return anneLigada() || !/\bAnne\b/.test(String(t));
 }
@@ -20342,7 +20348,7 @@ function abrirNovidades() {
   bg.innerHTML = `<div class="jf-modal nov-modal" role="dialog" aria-modal="true" aria-labelledby="novTitle">
     <button type="button" class="nov-x" id="novX" aria-label="Fechar novidades">✕</button>
     <div class="nov-ic">🆕</div><h3 id="novTitle">NOVIDADES</h3><div class="nov-sub">O que mudou nas últimas versões</div>
-    ${NOVIDADES.map((n, i) => `<details class="nov-item"${i === 0 ? " open" : ""}><summary><span class="nov-v">${n.v}</span>${n.nome ? `<span class="nov-nome">${n.nome}</span>` : ""}${n.data ? `<span class="nov-data">📅 ${n.data}</span>` : ""}<span class="nov-t">${n.t}</span></summary><ul>${n.itens.filter(novItemVale).map(novItemHtml).join("")}</ul>${n.qol && n.qol.filter(novItemVale).length ? `<div class="nov-qol">🔧 Ajustes e correções (QoL)</div><ul>${n.qol.filter(novItemVale).map(novItemHtml).join("")}</ul>` : ""}</details>`).join("")}
+    ${NOVIDADES.map((n, i) => `<details class="nov-item"${i === 0 ? " open" : ""}><summary><span class="nov-v">${n.v}${n.ate ? ` <small>até a ${n.ate}</small>` : ""}</span>${n.nome ? `<span class="nov-nome">${n.nome}</span>` : ""}${n.data ? `<span class="nov-data">📅 ${n.data}</span>` : ""}<span class="nov-t">${n.t}</span></summary><ul>${n.itens.filter(novItemVale).map(novItemHtml).join("")}</ul>${n.qol && n.qol.filter(novItemVale).length ? `<div class="nov-qol">🔧 Ajustes e correções (QoL)</div><ul>${n.qol.filter(novItemVale).map(novItemHtml).join("")}</ul>` : ""}</details>`).join("")}
     <button type="button" class="btn-start btn-neo neo-solid neo-still" id="novOk" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35); margin-top:14px;">Entendi</button>
   </div>`;
   document.body.appendChild(bg);
@@ -20353,7 +20359,7 @@ function abrirNovidades() {
     if (ev.target === bg) fechar();
   });
   try {
-    JFStore.setItem(NOVIDADES_KEY, NOVIDADES[0].v);
+    JFStore.setItem(NOVIDADES_KEY, novidadesChave());
   } catch (e) {}
   novidadesMarcarChip();
 }
@@ -43409,7 +43415,7 @@ function caosMemoriaExportar() {
     caosAvisoModal("🧠 O C.A.O.S. ainda não lembra de nada neste aparelho. Joguem umas partidas primeiro.");
     return;
   }
-  const pacote = { tipo: "memoria-caos", v: 1, versao: NOVIDADES[0].v, data: Date.now(), k };
+  const pacote = { tipo: "memoria-caos", v: 1, versao: novidadesChave(), data: Date.now(), k };
   const code = CAOS_MEMORIA_PREFIXO + btoa(encodeURIComponent(JSON.stringify(pacote)));
   const msg = `🧠 Memória do C.A.O.S. (${nFichas} jogador${nFichas === 1 ? "" : "es"} com ficha). Cole no outro aparelho em ⋮ → 📥 Trazer.`;
   const manual = () => caosPromptModal(msg + " Copie o código abaixo:", code, () => {}, true);
@@ -80188,13 +80194,16 @@ const PAUSE_TIPS = [
 //    assim ele vira um título que abre ao tocar;
 //  · nada de bastidores (o criador, IA, testes, simulador, código, ids). Versão que só mudou por dentro
 //    fica só com a frase "t" e itens vazios;
-//  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela.
+//  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela;
+//  · ajuste de 5 números (1.7.10.9.x) entra na lista da versão de 4 números, com "ate" = o último ajuste.
+//    Quando sobe cada número: docs/Regras_dos_Logs.md ("Quando a versão do jogo sobe").
 const NOVIDADES = [
   {
-    v: "Beta 1.7.10.9.3",
-    data: "23/10/2026 · 11:54",
+    v: "Beta 1.7.10.9",
+    ate: "1.7.10.9.3", // a lista junta os ajustes até essa versão
+    data: "19/10 a 23/10/2026 · 11:54",
     nome: "Multiplayer Update · QoL da Mesa",
-    t: "Ajustes na Corrida, no Modo C.A.O.S. e nas lojinhas.",
+    t: "Regras mais fáceis de entender na tela, a Corrida de volta aos 30 minutos, o Presente do C.A.O.S. e ajustes na Corrida, no Modo C.A.O.S. e nas lojinhas.",
     itens: [
       "🐾 Animal na Corrida: a Corrida não tem mais Ano. No lugar, Animal virou categoria própria, com bichos do Júnior também.",
       "⏱️ Escolher a dica: são 15 segundos. Se não escolher, uma dica abre sozinha e você responde (não perde a vez).",
@@ -80205,38 +80214,11 @@ const NOVIDADES = [
       "💤 Carta dormindo: quando ninguém acerta, a tela avisa que a carta está dormindo e com qual dica ela volta.",
       "⏳ Respiro maior: no Modo C.A.O.S., o resultado fica 6 segundos na tela antes da próxima vez.",
       "🎒 Itens explicados: no Modo C.A.O.S., cada item guardado diz quando e como funciona.",
-    ],
-    qol: [],
-  },
-  {
-    v: "Beta 1.7.10.9.2",
-    data: "23/10/2026 · 10:44",
-    nome: "Multiplayer Update · QoL da Mesa",
-    t: "No Modo C.A.O.S., quem fica muito pra trás ganha uma ajudinha.",
-    itens: [
       "🎁 Presente do C.A.O.S.: no Modo C.A.O.S., quem ficar 2 cartas ou mais atrás do líder ganha um item da lojinha, uma vez por partida. A mesa fica sabendo do presente, mas qual item é segredo.",
-    ],
-    qol: [],
-  },
-  {
-    v: "Beta 1.7.10.9.1",
-    data: "19/10/2026 · 11:10",
-    nome: "Multiplayer Update · QoL da Mesa",
-    t: "Corrida de volta aos 30 minutos e lojinha mais clara.",
-    itens: [
       "⏱️ Corrida de 30 minutos: o relógio da partida voltou pro tempo padrão.",
       "🧾 Ganhou e gastou: na lojinha da Corrida aparece quanto você ganhou, quanto gastou e com quanto ficou.",
       "⚡ Item na hora: no Modo C.A.O.S., a Era do Gelo e a Tesoura funcionam no momento em que você usa.",
       "⏸️ Pausa Dramática sem acumular: comprar de novo não soma mais tempo parado, e no Juízo Final ela sai de cena.",
-    ],
-    qol: [],
-  },
-  {
-    v: "Beta 1.7.10.9",
-    data: "19/10/2026 · 04:35",
-    nome: "Multiplayer Update · QoL da Mesa",
-    t: "Regras do jogo mais fáceis de entender na própria tela.",
-    itens: [
       "🏁 Como se vence: o placar começa dizendo o objetivo da partida, tipo Vence quem chegar a 200 pontos.",
       "⏱️ Relógio explicado: a tela diz se o tempo é pra escolher a dica, pra responder ou da vez.",
       "🎙️ Quem faz o quê: na hora da dica aparece quem lê em voz alta e quem responde.",
@@ -80264,35 +80246,18 @@ const NOVIDADES = [
     qol: [],
   },
   {
-    v: "Beta 1.7.10.7.2",
+    v: "Beta 1.7.10.7",
+    ate: "1.7.10.7.2", // a lista junta os ajustes até essa versão
     data: "18/10/2026 · 21:56",
     nome: "Multiplayer Update · Avisos da Mesa",
-    t: "Avisos com cor e botão próprios.",
+    t: "Avisos grandes pra mesa toda, cada um com cor e botão próprios, o Modo C.A.O.S. organizado e o duelo com espectador.",
     itens: [
       "🎨 Cada aviso com a sua cor: duelo dourado, batata laranja, Mão Leve roxa, bomba vermelha, turbo azul, imposto verde e por aí vai.",
       "🔘 Cada aviso com o seu botão: Socorro! na bomba, Tá quente! na batata, Vou me vingar! na Mão Leve. O convite do duelo continua no Bora!",
-    ],
-    qol: [],
-  },
-  {
-    v: "Beta 1.7.10.7.1",
-    data: "18/10/2026 · 21:24",
-    nome: "Multiplayer Update · Avisos da Mesa",
-    t: "Telas mais claras no Modo C.A.O.S. e a Corrida sem perder tempo depois de um erro.",
-    itens: [
       "🃏 Carta do Modo C.A.O.S. mais clara: quem é o Mestre, a categoria grande, em que dica estamos e quanto tempo falta pra palpitar, com barra.",
       "🎙️ Mestre no Modo C.A.O.S.: a resposta da sua carta aparece em destaque, com as dicas já abertas logo abaixo.",
       "✋ Palpitar mais perto: o botão fica logo abaixo da carta, sem precisar rolar a tela.",
       "⏱️ Corrida sem atraso: depois de um erro, a próxima dica abre na hora, sem comer o tempo da carta.",
-    ],
-    qol: [],
-  },
-  {
-    v: "Beta 1.7.10.7",
-    data: "18/10/2026 · 20:25",
-    nome: "Multiplayer Update · Avisos da Mesa",
-    t: "Avisos grandes pra mesa toda, o Modo C.A.O.S. organizado e o duelo com espectador.",
-    itens: [
       "📣 Aviso da mesa: duelo, batata, roubo, bomba e companhia escurecem a tela, tremem e vibram. Enquanto o aviso aparece, o tempo para pra todo mundo.",
       "⚔️ Chamado pro duelo: quem foi desafiado vê o aviso e só tem um botão, o Bora! O Mestre do duelo também fica sabendo.",
       "✊ Duelos animados: no Modo C.A.O.S., a mãozinha balança no jokenpô e no par ou ímpar, o dado rola e a moeda gira.",
@@ -80305,25 +80270,17 @@ const NOVIDADES = [
     qol: [],
   },
   {
-    v: "Beta 1.7.10.6.2",
+    v: "Beta 1.7.10.6",
+    ate: "1.7.10.6.2", // a lista junta os ajustes até essa versão
     data: "18/10/2026 · 18:52",
     nome: "Multiplayer Update · Corrida e Modo C.A.O.S.",
-    t: "Ajustes do primeiro Modo C.A.O.S. online e do duelo da carta bônus.",
+    t: "Chegaram a Corrida contra o Tempo e o Modo C.A.O.S., a idade no cadastro e os ajustes das primeiras partidas online desses modos.",
     itens: [
       "🃏 Palpite no duelo: na carta bônus, a ficha de palpite vale pros dois duelistas. Quem tem a ficha rouba a tentativa do outro.",
       "🌀 Modo C.A.O.S. no host: o dispositivo que abriu a sala mostra a tela do modo, com a dica e a categoria.",
       "⏳ Modo C.A.O.S. com mais calma: janela de 25 s por dica e um respiro antes da próxima carta, com o resultado na tela (ideia do Henrique).",
       "🗣️ Quem está respondendo: aparece grande na tela de todo mundo (ideia do Henrique).",
       "🎰 Mestre no celular sem travar: com a aba do host em segundo plano, o botão de mostrar a carta às vezes não aparecia. Agora a roleta pousa na hora.",
-    ],
-    qol: [],
-  },
-  {
-    v: "Beta 1.7.10.6.1",
-    data: "18/10/2026 · 17:55",
-    nome: "Multiplayer Update · Corrida e Modo C.A.O.S.",
-    t: "Ajustes da primeira Corrida online: mais tempo pra pensar, o C.A.O.S. quieto durante a carta e a lojinha funcionando pro host.",
-    itens: [
       "⏳ Mais tempo na Corrida: 25 s pra escolher a dica e 25 s pra responder, e a carta com 3 minutos.",
       "❌ Penalidades: errou, a carta perde 1 s; pulou, 2 s; resposta absurda, 3 s.",
       "🤫 C.A.O.S. concentrado: na Corrida ele não comenta com a carta correndo, e entre as cartas fala no máximo uma vez.",
@@ -80331,15 +80288,6 @@ const NOVIDADES = [
       "🪙 Lojinha nas duas Corridas: na vitória por Cartas, cada acerto dá créditos (os segundos que sobravam na carta) pra gastar na lojinha, sem mexer no placar.",
       "🎒 Itens guardados: a lojinha mostra o que você tem guardado e explica onde aparece o botão Usar.",
       "🎨 Tela dos jogadores mais legível: as legendas de Mestre, Vez e Categoria ficaram mais claras.",
-    ],
-    qol: [],
-  },
-  {
-    v: "Beta 1.7.10.6",
-    data: "18/10/2026 · 15:08",
-    nome: "Multiplayer Update · Corrida e Modo C.A.O.S.",
-    t: "Chegaram os dois modos novos: a Corrida contra o Tempo e o Modo C.A.O.S. E agora todo mundo marca a idade no cadastro.",
-    itens: [
       "⏱️ Corrida contra o Tempo: sem tabuleiro, contra um relógio de 30 minutos. Quem acerta fica com a carta. Dá pra jogar num dispositivo só ou online.",
       "🏁 Duas vitórias na Corrida: por Cartas (vence quem pegou mais) ou por Tempo (cada carta vale os segundos que sobravam nela).",
       "💣 Corrida com emoção: bomba no relógio, Hardcore, Juízo Final, duelo e desempate relâmpago quando empata.",
@@ -80353,10 +80301,11 @@ const NOVIDADES = [
     qol: [],
   },
   {
-    v: "Beta 1.7.10.5.8",
-    data: "18/10/2026 · 10:00",
+    v: "Beta 1.7.10.5",
+    ate: "1.7.10.5.8", // a lista junta os ajustes até essa versão
+    data: "15/10 a 18/10/2026 · 10:00",
     nome: "Multiplayer Update · Online de verdade",
-    t: "Correções da partida online: tudo mais fácil de entender, duelo pra mesa toda e a sala não trava quando o host cai.",
+    t: "O C.A.O.S. 4.3 e 4.4 (fala menos e com mais sentido), o Palpitar agora, a tela dos jogadores nova e as correções da partida online.",
     itens: [
       "👆 Botões que chamam: o próximo passo do Mestre (virar a carta, já falei a categoria, puxar a próxima, abrir a dica pedida) fica grande, amarelo e piscando.",
       "🎙️ Você sabe seu papel: no seu dispositivo aparece em destaque se você é o Mestre ou se é a sua vez.",
@@ -80368,15 +80317,6 @@ const NOVIDADES = [
       "🃏 Carta que travava depois do acerto: corrigido (relato do Henrique). A carta acertada sai da mesa na hora.",
       "🗣️ Voz do C.A.O.S.: nomes com Jh agora soam certo, e a voz nova não cai mais tanto na voz robótica.",
       "🔺 Joia de Animal: voltou a ser um triângulo bonitinho no placar das joias.",
-    ],
-    qol: [],
-  },
-  {
-    v: "Beta 1.7.10.5.7",
-    data: "17/10/2026 · 09:53",
-    nome: "Multiplayer Update · Online de verdade",
-    t: "Quem abre a especial escolhe o alvo no próprio dispositivo, troféus no fim, som, teclado e C.A.O.S. 4.4.3.",
-    itens: [
       "🎯 Você escolhe o alvo: no online, quem abre a dica Escolha um jogador toca no cartão do jogador na tela dos jogadores. Todo mundo vê, e o Mestre não precisa fazer nada.",
       "⌨️ Atalhos de teclado: Espaço vira a carta, os números abrem a dica, A é Acertou, E é Errou e R confere a resposta.",
       "🃏 Som de carta virando: a carta agora faz barulho de carta quando o Mestre vira.",
@@ -80384,90 +80324,29 @@ const NOVIDADES = [
       "🏆 Troféus do C.A.O.S.: no fim da partida, nas estatísticas, saem os troféus Pai Diná, Tartaruga Ninja, Inimigo do Acerto e a nota de cada Mestre.",
       "🎭 Balão com emoção: bravo, o balão do C.A.O.S. chacoalha; orgulhoso, pulsa; na festa, pula; triste, murcha. Com Menos movimento ou Modo Batata, fica parado.",
       "🔜 Vem aí: dois modos novos estão chegando, o Modo C.A.O.S. e a Corrida contra o Tempo. O aviso já está na tela inicial.",
-    ],
-    qol: [],
-  },
-  {
-    v: "Beta 1.7.10.5.6",
-    data: "16/10/2026 · 23:57",
-    nome: "Multiplayer Update · Online de verdade",
-    t: "Tela dos jogadores nova, lobby com cara de lobby e a tela do Mestre mais limpa.",
-    itens: [
       "📺 Tela dos jogadores nova: de quem é a vez fica em destaque, com o relógio do lado e o que está acontecendo na carta numa faixa só. Funciona no modo claro também.",
       "🗂️ Cartas da partida: toque pra ver cada carta que já foi, com a categoria, a resposta, quem acertou, em quantas dicas e qual dica matou.",
       "⏸️ Lobby com cara de lobby: entre as cartas aparecem o tempo de jogo, a rodada, as cartas viradas, os acertos e a aba Cartas.",
       "🎰 Roleta parada até virar: a roleta da categoria só gira quando o Mestre toca em Virar carta.",
       "👁️ Um Conferir resposta só: com a dica aberta, a tela do Mestre mostra a resposta só no botão de baixo, perto do Acertou e do Errou.",
       "☀️ Modo claro mais legível: o número da dica e o relógio da carta ficaram mais escuros.",
-    ],
-    qol: [],
-  },
-  {
-    v: "Beta 1.7.10.5.5",
-    data: "16/10/2026 · 19:19",
-    nome: "Multiplayer Update · Online de verdade",
-    t: "Faxina geral: cartas conferidas, modo claro mais legível e a casa arrumada.",
-    itens: [
       "☀️ Modo claro mais legível: botões com letra clara demais no modo claro ficaram mais escuros e fáceis de ler.",
       "🌐 Pergunta do online maior: o botão Não, todo mundo neste aparelho ficou maior e mais fácil de tocar.",
       "🃏 As 1000 cartas conferidas: dicas, números das cartas e textos passaram por uma revisão completa.",
-    ],
-    qol: [],
-  },
-  {
-    v: "Beta 1.7.10.5.4",
-    data: "16/10/2026 · 15:20",
-    nome: "Multiplayer Update · Online de verdade",
-    t: "C.A.O.S. 4.4.2: fala menos e soa melhor em cada dispositivo.",
-    itens: [
       "🎭 Voz com emoção em todo dispositivo: no online, a voz do C.A.O.S. no seu dispositivo agora acompanha a emoção da fala. Antes ela saía sempre calma, mesmo com o balão bravo.",
       "🫁 Uma fala de cada vez: no seu dispositivo, a próxima fala só começa quando a anterior termina. Nada de voz cortada no meio, e fala que ficou velha na fila não sai atrasada.",
       "🤐 Fala menos: no máximo 6 comentários por carta (eram 10). Avisos de regra continuam passando.",
       "🎯 Fala com você no seu dispositivo: frases como Ei, Fulano, … agora vão direto pro dispositivo da pessoa.",
-    ],
-    qol: [],
-  },
-  {
-    v: "Beta 1.7.10.5.3",
-    data: "15/10/2026 · 23:46",
-    nome: "Multiplayer Update · Online de verdade",
-    t: "Dicas como no Perfil de tabuleiro. C.A.O.S. 4.4.1.",
-    itens: [
       "🔒 Só abre a dica pedida: no online, quem está na vez escolhe a dica no próprio dispositivo e o Mestre só consegue abrir aquela. Ideia do Henrique (Carro Pika).",
       "🆘 Dispositivo caiu: se o aparelho de quem está na vez desconectar, a trava sai sozinha. E o Mestre pode segurar um número e tocar em Abrir sem pedido pra seguir o jogo.",
       "🔴 Ficha vermelha: na tela dos jogadores, a dica que já foi aberta ganha uma fichinha vermelha por cima do número, igual à do tabuleiro.",
       "👆 Tocou na dica aberta, ele responde: tocar de novo numa dica que já saiu volta a fazer o C.A.O.S. comentar, também no navegador.",
-    ],
-    qol: ["📖 Regras e manual em dia: o capítulo Online explica a trava da dica, o Abrir sem pedido, o Palpitar agora e a ficha vermelha."],
-  },
-  {
-    v: "Beta 1.7.10.5.2",
-    data: "15/10/2026 · 21:58",
-    nome: "Multiplayer Update · Online de verdade",
-    t: "C.A.O.S. 4.4: as falas dele fazem mais sentido.",
-    itens: [
       "🧠 Falas com sentido: quando o C.A.O.S. monta uma frase, ele confere se as partes combinam. Acabaram os finais soltos tipo Enfim ou Bora seguir grudados em qualquer coisa, a mesma palavra repetida e as ideias empilhadas sem ligação.",
       "🎭 Cara de quem fala: o rostinho e a cor do balão agora acompanham o que ele diz. Se a frase é triste, o balão fica triste.",
       "🔁 Errou de novo só quando é de novo: ele não diz que você errou de novo no seu primeiro erro.",
       "🔎 Dica do Mestre no dispositivo: quem era Mestre num aparelho que não é o do host via Dica null na dica escolhida. Agora aparece o texto certo. Achado pela Gameez (Júlia) e pelo Henrique (Carro Pika).",
       "👑 Troca de host avisada: quando o host cai e outra pessoa assume a sala, o C.A.O.S. avisa a mesa como devia.",
-    ],
-    qol: [],
-  },
-  {
-    v: "Beta 1.7.10.5.1",
-    data: "15/10/2026 · 21:28",
-    nome: "Multiplayer Update · Online de verdade",
-    t: "Ajustes por dentro: o C.A.O.S. conhece um pouco melhor quem joga com ele.",
-    itens: ["🥚 Tem coisa escondida: algumas mesas vão ouvir o C.A.O.S. falar umas coisas que as outras não ouvem. Joga com a turma pra descobrir."],
-    qol: [],
-  },
-  {
-    v: "Beta 1.7.10.5",
-    data: "15/10/2026 · 17:21",
-    nome: "Multiplayer Update · Online de verdade",
-    t: "C.A.O.S. 4.3: ele volta a conversar, mas respira entre uma fala e outra. E chegou o Palpitar agora!",
-    itens: [
+      "🥚 Tem coisa escondida: algumas mesas vão ouvir o C.A.O.S. falar umas coisas que as outras não ouvem. Joga com a turma pra descobrir.",
       "🫁 C.A.O.S. respira entre as falas: ele pode comentar bastante, mas só começa uma fala depois que a anterior terminou, com uma pausa. Se falar demais em pouco tempo, ele mesmo espera mais. Valeu, Vitinho, Rafa e Henrique, que mostraram que o problema era o atropelo!",
       "🃏 Palpitar agora: no online, quem tem a ficha de palpite ganha um botão no próprio aparelho. Tocou, a tentativa é sua e o Mestre julga o seu palpite. Errou, a ficha volta e a vez segue normal. Nasceu na partida online com Vitinho, Rafa e Henrique.",
       "🟡 Selo da ficha de palpite: quem tem ficha aparece com um selo amarelo, a cor da ficha no Perfil de mesa. Valeu, Vitinho, Rafa e Henrique!",
@@ -80475,6 +80354,7 @@ const NOVIDADES = [
       "👂 Ele sabe quem calou ele: no online, pular a fala marca quem pulou de verdade. Se todo mundo desligar a voz dele, ele fica quieto. Se só alguns desligarem, ele fica com ciúmes e todo carinhoso com quem ainda ouve. Culpa de Vitinho, Rafa e Henrique, que calaram ele.",
     ],
     qol: [
+      "📖 Regras e manual em dia: o capítulo Online explica a trava da dica, o Abrir sem pedido, o Palpitar agora e a ficha vermelha.",
       "😏 Deboche novo: a voz do C.A.O.S. no deboche ficou meio seca, meio alegre.",
     ],
   },
@@ -80497,30 +80377,24 @@ const NOVIDADES = [
     ],
   },
   {
-    v: "Beta 1.7.10.3.1",
+    v: "Beta 1.7.10.3",
+    ate: "1.7.10.3.1", // a lista junta os ajustes até essa versão
     data: "13/10/2026 · 13:04",
     nome: "Multiplayer Update · Online de verdade",
-    t: "Chegou o C.A.O.S. 4.1.4: voz nova, mais emoção e uma fala mais caprichada.",
+    t: "Regras mais fáceis de achar e a voz nova do C.A.O.S., com mais emoção, em todos os dispositivos.",
     itens: [
       "🎙️ C.A.O.S. 4.1 com voz nova: com internet, ele fala com uma voz brasileira natural, igual em todo aparelho, no lugar da voz robótica do dispositivo.",
       "🎭 C.A.O.S. 4.1.1 com mais emoção: com a voz nova, ele fala mais alto quando está bravo ou em festa, mais baixo quando está triste ou espiando, faz pausas de verdade nas reticências e capricha nas palavras em CAIXA ALTA.",
       "🗣️ C.A.O.S. 4.1.4 fala melhor: a risada parou de sair engasgada, palavras esticadas como PASTEEEL saem certinhas, no dia a dia ele fala com a voz normal dele, com vergonha fala mais baixo e devagar e o deboche ficou seco e provocativo.",
-    ],
-    qol: [],
-  },
-  {
-    v: "Beta 1.7.10.3",
-    data: "13/10/2026 · 10:03",
-    nome: "Multiplayer Update · Online de verdade",
-    t: "Regras mais fáceis de achar e a voz do C.A.O.S. em todos os dispositivos.",
-    itens: [
       "🗂️ O que vale em cada categoria: o Manual explica o que entra em Ano, Pessoa, Lugar e Coisa (e Animal, no Júnior). Pessoa também vale grupo, dupla e banda. Quem apontou foram o Vitinho e o Typingg, que testaram o online!",
       "🤖 C.A.O.S. lembra a regra: na primeira carta de cada categoria da partida, ele lembra o que aquela categoria inclui.",
       "🔎 Busca nas regras: no Manual, digite uma palavra (grupo, calar, joia) e vá direto pro passo certo.",
       "🔊 Voz em todos os dispositivos: no online, cada dispositivo fala com a voz do C.A.O.S. quando ela está ligada nele. Quem joga pelo dispositivo tem o próprio botão de voz.",
       "🎙️ Ligar a Voz do C.A.O.S.: no cadastro dos jogadores, se a voz estiver desligada, ele pergunta em cada aparelho (dispositivos do online também). Sim liga a voz ali. Não deixa ele meio tristinho, mas os balões continuam.",
     ],
-    qol: ["🤐 Como calar o C.A.O.S.: um passo novo no Manual mostra todos os jeitos de calar ou silenciar (valeu, Vitinho e Typingg)."],
+    qol: [
+      "🤐 Como calar o C.A.O.S.: um passo novo no Manual mostra todos os jeitos de calar ou silenciar (valeu, Vitinho e Typingg).",
+    ],
   },
   {
     v: "Beta 1.7.10.2",
@@ -80546,7 +80420,9 @@ const NOVIDADES = [
       "⏳ Host com 1 minuto: quem é host pode sair do jogo por até 1 minuto, pra atender uma mensagem ou tirar um print, sem perder a sala.",
       "📱 Cada um no seu aparelho: com a sala aberta, a partida só começa quando todo jogador estiver no próprio dispositivo ou marcado no aparelho do host.",
     ],
-    qol: ["🔤 Botão da sala: com a sala aberta, o botão da pausa mostra o código da sala e quem está dentro."],
+    qol: [
+      "🔤 Botão da sala: com a sala aberta, o botão da pausa mostra o código da sala e quem está dentro.",
+    ],
   },
   {
     v: "Beta 1.7.10",
@@ -80660,7 +80536,6 @@ const NOVIDADES = [
       "📖 Manual do online: o passo a passo segue a ordem nova, sala primeiro e cadastro depois.",
     ],
   },
-  // 1.7.9.3 · Numeração da 1.7 arrumada: as versões pequenas de cada série foram juntadas e renumeradas (tabela no HISTÓRICO, 01-cabeca.html).
   {
     v: "Beta 1.7.9.3",
     data: "09/10/2026 · 21:04",

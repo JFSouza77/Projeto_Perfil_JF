@@ -1267,7 +1267,7 @@ function caosMemoriaExportar() {
     caosAvisoModal("🧠 O C.A.O.S. ainda não lembra de nada neste aparelho. Joguem umas partidas primeiro.");
     return;
   }
-  const pacote = { tipo: "memoria-caos", v: 1, versao: NOVIDADES[0].v, data: Date.now(), k };
+  const pacote = { tipo: "memoria-caos", v: 1, versao: novidadesChave(), data: Date.now(), k };
   const code = CAOS_MEMORIA_PREFIXO + btoa(encodeURIComponent(JSON.stringify(pacote)));
   const msg = `🧠 Memória do C.A.O.S. (${nFichas} jogador${nFichas === 1 ? "" : "es"} com ficha). Cole no outro aparelho em ⋮ → 📥 Trazer.`;
   const manual = () => caosPromptModal(msg + " Copie o código abaixo:", code, () => {}, true);
