@@ -20,6 +20,14 @@
  *   GET  /voz/estado       → { ligada } (1.7.10.2: a voz nova do C.A.O.S. está configurada?)
  *   POST /voz              → { t, r, p } → MP3 da fala (Azure, voz pt-BR). Cada fala gerada fica guardada
  *                            (as falas se repetem muito) e há um teto de letras por mês (VOZ_TETO_MES).
+ *   POST /conta/existe     → { nick } → { existe, semPin } (11/2026 · cadastro opcional do jogador: nick + PIN)
+ *   POST /conta/criar      → { nick, pin } → { token, ficha } (o PIN fica só embaralhado, PBKDF2 com sal)
+ *   POST /conta/entrar     → { nick, pin } → { token, ficha } (5 PINs errados seguidos = 15 min bloqueado)
+ *   POST /conta/ficha      → { nick, token } → { ficha }       · POST /conta/salvar → { nick, token, ficha }
+ *   POST /conta/sair       → { nick, token } (esquece o login daquele aparelho)
+ *   GET  /contas?chave=…   → página do JF com os cadastros (mesma senha dos reportes); &formato=json baixa tudo
+ *   POST /contas/pin · /contas/apagar · /contas/limpar → zera o PIN de um nick · apaga um nick · apaga quem
+ *                            sumiu há mais de N dias (com a senha)
  *
  * Segredos (wrangler secret put): TURN_KEY_ID, TURN_KEY_API_TOKEN, REPORTES_SENHA, AZURE_SPEECH_KEY e
  * AZURE_SPEECH_REGION (e, opcional, AZURE_MAI_KEY + AZURE_MAI_REGION: voz com emoção, com a grátis de reserva). Variáveis: ORIGENS (sites aceitos), AZURE_VOZ (nome da voz), AZURE_ESTILOS (1 = a voz tem estilos de emoção) e VOZ_TETO_MES.
@@ -31,6 +39,23 @@ const MORTO_MS = 20000; // sem batida (o PeerJS bate a cada 5 s) por 20 s = apar
 const MAX_MSG = 64 * 1024;
 const TIPOS = ["OFFER", "ANSWER", "CANDIDATE", "LEAVE", "EXPIRE"];
 
+// Cadastro: a chave do nick é a mesma do jogo (nameKeyPlain): sem acento, minúscula, sem espaço nas pontas
+const contaChave = (n) =>
+  String(n || "")
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .slice(0, 15);
+async function sha256hex(t) {
+  const dig = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t));
+  return [...new Uint8Array(dig)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+async function pinHash(pin, sal) {
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(pin), "PBKDF2", false, ["deriveBits"]);
+  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: new TextEncoder().encode(sal), iterations: 100000 }, base, 256);
+  return [...new Uint8Array(bits)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
 const idValido = (id) => typeof id === "string" && /^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$/.test(id) && id.length <= 64;
 
 function cors(req, env, livre) {
@@ -211,6 +236,18 @@ async function atender(req, env) {
       const r = await doFetch(sinal(), new Request("https://sinal/sala", { method: "POST", body: corpo, headers: { "CF-Connecting-IP": req.headers.get("CF-Connecting-IP") || "" } }));
       return json(await r.json(), r.status, h);
     }
+    // 11/2026 · cadastro dos jogadores (instância "contas"): a página do JF abre direto no navegador, com a senha
+    const contas = () => env.SINAL.get(env.SINAL.idFromName("contas"));
+    if (p === "/contas" || p === "/contas/pin" || p === "/contas/apagar" || p === "/contas/limpar") {
+      if (!env.REPORTES_SENHA) return new Response("Senha não configurada (segredo REPORTES_SENHA).", { status: 403, headers: { "Content-Type": "text/plain; charset=utf-8" } });
+      return doFetch(contas(), req);
+    }
+    if (p.startsWith("/conta/") && req.method === "POST") {
+      const corpo = await req.text();
+      if (corpo.length > 12000) return json({ erro: "grande" }, 413, h);
+      const r = await doFetch(contas(), new Request("https://contas" + p, { method: "POST", body: corpo, headers: { "CF-Connecting-IP": req.headers.get("CF-Connecting-IP") || "" } }));
+      return json(await r.json(), r.status, h);
+    }
     // 1.7.10.2 · voz nova do C.A.O.S. (Azure); instância "voz" do Durable Object guarda as falas e o teto do mês
     const voz = () => env.SINAL.get(env.SINAL.idFromName("voz"));
     if (p === "/voz/estado" && req.method === "GET") return json({ ligada: vozesDoServidor(env).length > 0 }, 200, h);
@@ -261,6 +298,9 @@ export class Sinal {
     if (url.pathname === "/reportes") return this.paginaReportes(url);
     if (url.pathname === "/reportes/apagar") return this.apagarReportes(req);
     if (url.pathname === "/voz") return this.falar(await req.text(), ip);
+    if (url.pathname.startsWith("/conta/")) return this.conta(url.pathname.slice(7), await req.text(), ip);
+    if (url.pathname === "/contas") return this.paginaContas(url);
+    if (url.pathname.startsWith("/contas/")) return this.adminContas(url.pathname.slice(8), req);
     return new Response("?", { status: 404 });
   }
   /* --- 1.7.10.2 · Voz nova do C.A.O.S. (instância "voz") ---
@@ -410,6 +450,150 @@ export class Sinal {
     while ((lista = await st.list({ prefix: "r:", limit: 128 })).size) await st.delete([...lista.keys()]);
     await st.put("n", 0);
     return new Response(null, { status: 303, headers: { Location: "/reportes?chave=" + encodeURIComponent(chave) } });
+  }
+  /* --- 11/2026 · Cadastro dos jogadores (instância "contas"; pedido do JF, ideia do Henrique) ---
+     Opcional. Nick + PIN de 4 números. Guarda só o que o C.A.O.S. lembra do jogador (a ficha: partidas, acertos,
+     última vez, último resultado...), nada pessoal. O PIN nunca fica guardado: só o resultado do PBKDF2 com sal.
+     O login de cada aparelho é um token aleatório (guardado só como SHA-256). Até 6 aparelhos por nick. */
+  async conta(acao, corpo, ip) {
+    let d;
+    try {
+      d = JSON.parse(corpo);
+    } catch (e) {
+      return json({ erro: "json" }, 400);
+    }
+    const agora = Date.now();
+    this.ritmoConta = this.ritmoConta || new Map();
+    const rc = (this.ritmoConta.get(ip) || []).filter((x) => agora - x < 3600e3);
+    if (rc.length >= 300) return json({ erro: "calma" }, 429);
+    rc.push(agora);
+    this.ritmoConta.set(ip, rc);
+    const nick = String((d && d.nick) || "").replace(/[\u0000-\u001f<>&"'`\\]/g, "").trim().slice(0, 15);
+    const k = contaChave(nick);
+    if (k.length < 2) return json({ erro: "nick" }, 400);
+    const st = this.ctx.storage;
+    const rec = await st.get("c:" + k);
+    if (acao === "existe") return json({ existe: !!rec, semPin: !!(rec && !rec.hash) });
+    const pinOk = (pin) => /^\d{4}$/.test(String(pin || ""));
+    const novoLogin = async (c) => {
+      const token = [...crypto.getRandomValues(new Uint8Array(24))].map((b) => b.toString(16).padStart(2, "0")).join("");
+      c.tokens = [await sha256hex(token)].concat(c.tokens || []).slice(0, 6);
+      c.visto = agora;
+      await st.put("c:" + k, c);
+      return json({ ok: true, token, nick: c.nick, ficha: c.ficha || null });
+    };
+    const tokenOk = async (c) => !!(c && d.token && (c.tokens || []).includes(await sha256hex(String(d.token))));
+    if (acao === "criar") {
+      if (!pinOk(d.pin)) return json({ erro: "pin" }, 400);
+      if (rec && rec.hash) return json({ erro: "existe" }, 409);
+      const sal = [...crypto.getRandomValues(new Uint8Array(16))].map((b) => b.toString(16).padStart(2, "0")).join("");
+      const c = rec || { nick, criado: agora, ficha: null };
+      c.nick = nick;
+      c.sal = sal;
+      c.hash = await pinHash(String(d.pin), sal);
+      c.falhas = null;
+      c.tokens = [];
+      return novoLogin(c);
+    }
+    if (acao === "entrar") {
+      if (!rec) return json({ erro: "sem_conta" }, 404);
+      if (!rec.hash) return json({ erro: "sem_pin" }, 409);
+      const f = rec.falhas || { n: 0, ate: 0 };
+      if (f.n >= 5 && agora < f.ate) return json({ erro: "bloqueado", ate: f.ate }, 429);
+      if (!pinOk(d.pin) || (await pinHash(String(d.pin), rec.sal)) !== rec.hash) {
+        f.n = f.ate && agora >= f.ate ? 1 : f.n + 1;
+        f.ate = f.n >= 5 ? agora + 15 * 60e3 : 0;
+        rec.falhas = f;
+        await st.put("c:" + k, rec);
+        return json({ erro: "pin", restam: Math.max(0, 5 - f.n) }, 401);
+      }
+      rec.falhas = null;
+      return novoLogin(rec);
+    }
+    if (!(await tokenOk(rec))) return json({ erro: "login" }, 401);
+    if (acao === "ficha") {
+      rec.visto = agora;
+      await st.put("c:" + k, rec);
+      return json({ ok: true, nick: rec.nick, ficha: rec.ficha || null });
+    }
+    if (acao === "salvar") {
+      const f = d.ficha && typeof d.ficha === "object" ? d.ficha : null;
+      const txt = f ? JSON.stringify(f) : "";
+      if (!f || txt.length > 8000) return json({ erro: "ficha" }, 400);
+      rec.ficha = f;
+      rec.visto = agora;
+      await st.put("c:" + k, rec);
+      return json({ ok: true });
+    }
+    if (acao === "sair") {
+      const hx = await sha256hex(String(d.token));
+      rec.tokens = (rec.tokens || []).filter((x) => x !== hx);
+      await st.put("c:" + k, rec);
+      return json({ ok: true });
+    }
+    return json({ erro: "acao" }, 404);
+  }
+  async todasContas() {
+    const out = [];
+    let ini = "c:";
+    for (let i = 0; i < 50; i++) {
+      const lista = await this.ctx.storage.list({ prefix: "c:", start: ini, limit: 256 });
+      if (!lista.size) break;
+      for (const [chave, v] of lista) if (chave !== ini || i === 0) out.push([chave, v]);
+      const ult = [...lista.keys()].pop();
+      if (lista.size < 256) break;
+      ini = ult;
+    }
+    const vistos = new Set();
+    return out.filter(([c]) => (vistos.has(c) ? false : vistos.add(c)));
+  }
+  async paginaContas(url) {
+    if (!this.senhaOk(url.searchParams.get("chave"))) return new Response("Senha errada.", { status: 401, headers: { "Content-Type": "text/plain; charset=utf-8" } });
+    const lista = (await this.todasContas()).map(([, c]) => c).sort((a, b) => (b.visto || 0) - (a.visto || 0));
+    if (url.searchParams.get("formato") === "json") {
+      const limpa = lista.map((c) => ({ nick: c.nick, criado: c.criado, visto: c.visto, semPin: !c.hash, aparelhos: (c.tokens || []).length, ficha: c.ficha || null }));
+      return new Response(JSON.stringify(limpa, null, 1), { headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "Content-Disposition": "attachment; filename=cadastros-perfil-jf.json" } });
+    }
+    const e = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+    const quando = (ms) => (ms ? new Date(ms).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", dateStyle: "short", timeStyle: "short" }) : "?");
+    const chave = e(url.searchParams.get("chave"));
+    const form = (acao, nick, rotulo, pergunta, cor) =>
+      `<form method="post" action="/contas/${acao}" onsubmit="return confirm('${pergunta}')"><input type="hidden" name="chave" value="${chave}"><input type="hidden" name="nick" value="${e(nick)}"><button style="border-color:${cor}">${rotulo}</button></form>`;
+    const itens = lista
+      .map((c) => {
+        const f = c.ficha || {};
+        return `<li><b>${e(c.nick)}</b>${c.hash ? "" : " <em>· PIN zerado (cria outro na próxima vez)</em>"}<small>Criado ${e(quando(c.criado))} · visto ${e(quando(c.visto))} · ${(c.tokens || []).length} aparelho(s) · ${f.partidas || 0} partida(s), ${f.vitorias || 0} vitória(s)</small><div class="acoes">${form("pin", c.nick, "🔑 Zerar PIN", "Zerar o PIN de " + e(c.nick) + "? A memória continua.", "#fbbf24")}${form("apagar", c.nick, "🗑️ Apagar", "Apagar o cadastro e a memória de " + e(c.nick) + "?", "#e11d48")}</div></li>`;
+      })
+      .join("");
+    const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Cadastros</title><style>body{font-family:system-ui,sans-serif;background:#12121c;color:#eee;margin:0;padding:16px;max-width:760px;margin:auto}h1{font-size:1.3rem}li{list-style:none;background:#1e1e2e;border-radius:12px;padding:12px;margin:10px 0;line-height:1.45}li small{display:block;opacity:.7;margin-top:4px}em{color:#fbbf24;font-style:normal}a{color:#22d3ee}.acoes{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}button{background:none;border:1px solid #22d3ee;color:#eee;border-radius:10px;padding:8px 12px}input[type=number]{width:70px;background:#1e1e2e;color:#eee;border:1px solid #555;border-radius:8px;padding:6px}</style></head><body><h1>👤 Cadastros dos jogadores (${lista.length})</h1><p><a href="?chave=${chave}&formato=json">Baixar tudo (JSON)</a></p><form method="post" action="/contas/limpar" onsubmit="return confirm('Apagar quem não aparece há mais desses dias?')"><input type="hidden" name="chave" value="${chave}">Limpar quem sumiu há mais de <input type="number" name="dias" value="365" min="30"> dias <button>🧹 Limpar</button></form><ul style="padding:0">${itens || "<li>Nenhum cadastro ainda.</li>"}</ul></body></html>`;
+    return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" } });
+  }
+  async adminContas(acao, req) {
+    let fd = null;
+    try {
+      fd = await req.formData();
+    } catch (e) {}
+    const chave = fd && fd.get("chave");
+    if (req.method !== "POST" || !this.senhaOk(chave)) return new Response("Senha errada.", { status: 401, headers: { "Content-Type": "text/plain; charset=utf-8" } });
+    const st = this.ctx.storage;
+    const k = contaChave(fd.get("nick"));
+    if (acao === "pin" && k) {
+      const c = await st.get("c:" + k);
+      if (c) {
+        c.hash = null;
+        c.sal = null;
+        c.tokens = [];
+        c.falhas = null;
+        await st.put("c:" + k, c);
+      }
+    } else if (acao === "apagar" && k) await st.delete("c:" + k);
+    else if (acao === "limpar") {
+      const dias = Math.max(30, Number(fd.get("dias")) || 365);
+      const limite = Date.now() - dias * 864e5;
+      const velhos = (await this.todasContas()).filter(([, c]) => (c.visto || c.criado || 0) < limite).map(([ch]) => ch);
+      for (let i = 0; i < velhos.length; i += 128) await st.delete(velhos.slice(i, i + 128));
+    }
+    return new Response(null, { status: 303, headers: { Location: "/contas?chave=" + encodeURIComponent(chave) } });
   }
   conectar(url, ip) {
     const id = url.searchParams.get("id") || "";

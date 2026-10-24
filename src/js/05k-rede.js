@@ -1448,6 +1448,9 @@ function redeHostAdicionarPerfil(perfil) {
   players.push(p);
   if (p.idade) idadeLembrar(p.name, p.idade); // 1.7.10.6: o host também lembra a idade desse nome
   try {
+    contaAoCadastrar(p, perfil.conta); // 11/2026: o celular manda o login do cadastro (se tiver)
+  } catch (e) {}
+  try {
     caosMemCadastro(p);
   } catch (e) {}
   renderScoreboard();
@@ -2854,6 +2857,7 @@ function redeEscolhaDesenhar(box, sala) {
     form = `<div class="rede-form">
       <div class="rede-form-tit">🙋 Crie o seu jogador</div>
       <input type="text" id="redeNome" maxlength="15" placeholder="Seu nome" aria-label="Seu nome" value="${escapeHtml(r.nome || "")}">
+      <button type="button" class="chip" id="redeConta">${contaLogin(r.nome || "") ? "✅ Cadastro conectado" : "🔐 Cadastro (opcional)"}</button>
       ${cad.cores.length ? `<div class="rede-rot">🎨 Cor</div><div class="color-picker-row rede-paleta">${cores}</div>` : ""}
       <div class="rede-rot">😀 Emoji</div><div class="avatar-picker-row rede-paleta">${emojis}</div>
       <div class="rede-rot">🎭 Zoeira · Como o C.A.O.S. pode zoar você?</div><div class="color-picker-row rede-paleta tem-escolha">${humores}</div>
@@ -2868,6 +2872,8 @@ function redeEscolhaDesenhar(box, sala) {
   box.innerHTML = `${sala}<div class="telao-espera rede-entrada">${cad ? "" : "Quem é você?"}${form}${lista}${vazio}</div>${redeSairHtml()}`;
   box.querySelectorAll(".rede-lugar").forEach((b) => b.addEventListener("click", () => redeEscolherLugar(b.dataset.id)));
   const nome = box.querySelector("#redeNome");
+  const bConta = box.querySelector("#redeConta");
+  if (bConta) bConta.addEventListener("click", () => contaAbrir(r.nome || (nome && nome.value) || "", () => redeConvidadoDesenhar()));
   if (nome) {
     // trocar o nome pode destravar a cor e o emoji de dono: redesenha só quando isso muda
     const dono = (n) => (isJfName(n) ? "jf" : isAnneName(n) ? "anne" : (presenteDe(n) || {}).id || "");
@@ -2933,6 +2939,8 @@ function redePedirEntrada(perfil) {
   if (idadeR) idadeLembrar(nome, idadeR);
   rede.erroCadastro = null;
   const p = { nome, cor: r.cor || null, avatar: r.avatar || null, humor: r.humor || null };
+  const lg = contaLogin(nome); // 11/2026: o login do cadastro deste celular vai junto (o host guarda a memória)
+  if (lg) p.conta = lg;
   if (cad.equipe) p.faixa = r.idade || null;
   else p.idade = r.idade || null;
   redeEnviar("pedido", { perfil: p, chave: rede.chave });
