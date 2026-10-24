@@ -644,7 +644,8 @@ body.claro .nov-nome {
   white-space: nowrap;
 }
 .nov-qol {
-  margin: 10px 0 2px;
+  margin: 12px 0 4px;
+  text-align: center;
   font-size: 0.78rem;
   font-weight: 800;
   opacity: 0.8;
