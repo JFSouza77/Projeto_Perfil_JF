@@ -26,17 +26,19 @@ const CAOS_FAMILIAS_NICHO = [
 // C.A.O.S. 4.8 · Memória da mesa (pedido do JF): ele lembra de uma partida pra outra, com um "reset suave".
 // · Mesma mesa (os mesmos nicks): já começa sabendo se ali frase longa funciona ou não.
 // · Mesa nova: começa pelo jeito da mesa (crianças preferem narrador curto; adultos no Hardcore, Old School ou
-//   Modo C.A.O.S. cansam de frase comprida; mesa mista fica no padrão) e testa: deixa passar umas falas longas.
+//   Modo C.A.O.S. cansam de frase comprida; mesa mista fica no padrão) e testa: arrisca até 5 falas longas,
+//   intercaladas (uma a cada 3 falas).
 //   Se a mesa ouve as longas até o fim, ele mantém; se corta, ele encurta.
 const CAOS_TATO_KEY = "perfil5_caos_tato";
-const CAOS_TATO_TESTES = 2; // falas longas que ele arrisca numa mesa nova, pra testar
+const CAOS_TATO_TESTES = 5; // falas longas que ele arrisca numa mesa nova, pra testar
+const CAOS_TATO_INTERVALO = 3; // e intercala: no máximo uma longa de teste a cada 3 falas
 const CAOS_TATO_OUVIU_MS = 2e4; // fala longa sem corte por 20 s conta como ouvida
 const CAOS_TATO_MESAS = 30; // quantas mesas ele lembra
 let caosTato = caosTatoNovo();
 let caosFamiliasNichoUsadas = new Set();
 
 function caosTatoNovo() {
-  return { longas: 0, curtas: 0, curto: false, ouvidas: 0, gosta: false, pend: null, exib: null, sig: null, perfil: "mista", testes: 0, conhecida: false };
+  return { longas: 0, curtas: 0, curto: false, ouvidas: 0, gosta: false, pend: null, exib: null, sig: null, perfil: "mista", testes: 0, conhecida: false, falas: 0, ultTeste: -99 };
 }
 function caosTatoZerar() {
   caosTato = caosTatoNovo();
@@ -96,9 +98,13 @@ function caosTatoFalou(texto) {
   caosTatoIniciar();
   caosTatoConferir();
   caosTato.exib = { text: texto, at: Date.now() };
+  caosTato.falas++;
   if (caosTatoTam(texto) < CAOS_TATO_LONGA) return;
   caosTato.pend = { at: Date.now() };
-  if (!caosTato.conhecida && !caosTato.curto && !caosTato.gosta) caosTato.testes++;
+  if (!caosTato.conhecida && !caosTato.curto && !caosTato.gosta) {
+    caosTato.testes++;
+    caosTato.ultTeste = caosTato.falas;
+  }
 }
 // Fala longa que passou 20 s sem corte: a mesa ouviu. Duas ouvidas e nenhum corte de longa: essa mesa gosta.
 function caosTatoConferir() {
@@ -150,8 +156,9 @@ function caosTatoMax() {
   caosTatoConferir();
   if (caosTato.curto) return CAOS_TATO_LONGA;
   if (caosTato.gosta) return caosTatoRajada() ? CAOS_TATO_MESA_CANSADA : CAOS_TATO_NORMAL;
-  // mesa nova: as primeiras longas passam, pra testar
-  if (!caosTato.conhecida && caosTato.testes < CAOS_TATO_TESTES && !caosTatoRajada()) return CAOS_TATO_NORMAL;
+  // mesa nova: ele arrisca umas longas pra testar, intercaladas com falas do jeito da mesa
+  if (!caosTato.conhecida && caosTato.testes < CAOS_TATO_TESTES && !caosTatoRajada() && caosTato.falas - caosTato.ultTeste >= CAOS_TATO_INTERVALO - 1)
+    return CAOS_TATO_NORMAL;
   const base = caosTato.perfil === "criancas" ? CAOS_TATO_LONGA : caosTato.perfil === "adultos" ? CAOS_TATO_MESA_CANSADA : CAOS_TATO_NORMAL;
   return caosTatoMesaCansada() ? Math.min(base, CAOS_TATO_MESA_CANSADA) : base;
 }

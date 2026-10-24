@@ -551,11 +551,21 @@ const ARQ = acharMestre(process.argv[2]);
       const lembraQueGosta = caosTato.sig === null && caosTatoMax() === CAOS_TATO_NORMAL && caosTato.gosta && caosTato.conhecida;
       const perfil = (modo) => { CURRENT_MODE = modo; players = ['Fê', 'Gui'].map(mkp); caosTatoZerar(); caosTatoMax(); caosTato.testes = CAOS_TATO_TESTES; return caosTatoMax(); };
       const jeitoDaMesa = perfil('junior') === CAOS_TATO_LONGA && perfil('hardcore') === CAOS_TATO_MESA_CANSADA && perfil('classico') === CAOS_TATO_NORMAL;
+      // mesa nova intercala os testes: depois de uma longa de teste, as próximas 2 vão pelo jeito da mesa
+      CURRENT_MODE = 'junior'; players = ['Hugo', 'Iara'].map(mkp); caosTatoZerar();
+      const t0 = caosTatoMax(); caosTatoFalou(longa); const t1 = caosTatoMax(); caosTatoFalou(curta); const t2 = caosTatoMax(); caosTatoFalou(curta); const t3 = caosTatoMax();
+      const intercala = t0 === CAOS_TATO_NORMAL && t1 === CAOS_TATO_LONGA && t2 === CAOS_TATO_LONGA && t3 === CAOS_TATO_NORMAL;
+      CURRENT_MODE = 'classico';
+      // datas de verdade na memória (C.A.O.S. 4.9)
+      const ag = new Date(2026, 9, 24, 15).getTime(), dd = (y, m, d) => new Date(y, m, d, 20).getTime();
+      const datas = memQuandoData(dd(2026, 9, 24), ag) === 'hoje mais cedo' && memQuandoData(dd(2026, 9, 23), ag) === 'ontem' && memQuandoData(dd(2026, 9, 22), ag) === 'anteontem' &&
+        memQuandoData(dd(2026, 9, 20), ag) === 'na terça' && memQuandoData(dd(2026, 9, 17), ag) === 'semana passada, no dia 17' &&
+        memQuandoData(dd(2026, 8, 20), ag) === 'no dia 20 de setembro' && memQuandoData(dd(2025, 9, 1), ag) === 'no dia 1 de outubro do ano passado';
       players = jogAntes; if (memAntes == null) JFStore.removeItem(CAOS_TATO_KEY); else JFStore.setItem(CAOS_TATO_KEY, memAntes);
-      const memoria = mesmaMesaLembra && novaTesta && gostaDeLonga && lembraQueGosta && jeitoDaMesa;
+      const memoria = mesmaMesaLembra && novaTesta && gostaDeLonga && lembraQueGosta && jeitoDaMesa && intercala && datas;
       CURRENT_MODE = modoAntes; starterChosen = iniAntes; gameEnded = fimAntes; caosLastPick = pickAntes; Math.random = randAntes; caosTatoZerar();
       out.tato = comecaNormal && umaNaoBasta && aprendeu && prefereCurta && calarEnsina && calarVelhoNao && nichoLivre && nichoTrava && caosModoEncurta && memoria;
-      out.tatoDiag = JSON.stringify({ mesmaMesaLembra, novaTesta, gostaDeLonga, lembraQueGosta, jeitoDaMesa, comecaNormal, umaNaoBasta, aprendeu, prefereCurta, curtas, calarEnsina, calarVelhoNao, nichoLivre, nichoTrava, caosModoEncurta });
+      out.tatoDiag = JSON.stringify({ intercala, datas, mesmaMesaLembra, novaTesta, gostaDeLonga, lembraQueGosta, jeitoDaMesa, comecaNormal, umaNaoBasta, aprendeu, prefereCurta, curtas, calarEnsina, calarVelhoNao, nichoLivre, nichoTrava, caosModoEncurta });
     }
     // 1.7.10.3: busca nas regras e o lembrete da primeira carta de cada categoria
     {
