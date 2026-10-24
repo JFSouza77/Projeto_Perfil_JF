@@ -507,6 +507,36 @@ const ARQ = acharMestre(process.argv[2]);
       out.amigos = limite && intervalo && semJunior && semJf && comJf && daMesa && foraDaPaleta && sobrinhos;
       out.amigosDiag = JSON.stringify({ sobrReconhece, sobrJunior, sobrDose, np, ni, limite, n, intervalo, semJunior, semJf, comJf, daMesa, vocativas: vocativas.map((v) => v[0]).slice(0, 3), foraDaPaleta });
     }
+    // C.A.O.S. 4.7 · Tato: a mesa pula frase longa -> ele passa a preferir curtas; famílias de nicho 1x por partida
+    {
+      const modoAntes = CURRENT_MODE, iniAntes = starterChosen, fimAntes = gameEnded, pickAntes = caosLastPick, randAntes = Math.random;
+      CURRENT_MODE = 'classico'; starterChosen = true; gameEnded = false; caosTatoZerar();
+      const longa = '[C.A.O.S.] ' + 'Essa é uma fala bem comprida, cheia de voltas, que ninguém consegue acompanhar quando a mesa está com mil coisas acontecendo ao mesmo tempo.';
+      const curta = '[C.A.O.S.] Então tá, né? Eu esperava mais.';
+      const comecaNormal = !caosTato.curto && caosTatoMax() === CAOS_TATO_NORMAL;
+      caosTatoReacao(longa); const umaNaoBasta = !caosTato.curto;
+      caosTatoReacao(longa); caosTatoReacao(curta);
+      const aprendeu = caosTato.curto && caosTatoMax() === CAOS_TATO_LONGA;
+      // com a lista tendo opção curta, sai a curta (sem apagar a longa da lista)
+      const lista = [longa.replace('[C.A.O.S.] ', ''), curta.replace('[C.A.O.S.] ', '')];
+      let curtas = 0;
+      for (let i = 0; i < 40; i++) { const t = getRandomReaction(lista); if (caosTatoTam(t) < CAOS_TATO_LONGA) curtas++; }
+      const prefereCurta = curtas >= 36;
+      // calar a voz logo depois de uma fala longa também ensina
+      caosTatoZerar(); caosLastPick = { text: longa, at: Date.now() }; caosTatoCalou(); caosLastPick = { text: longa, at: Date.now() }; caosTatoCalou();
+      const calarEnsina = caosTato.curto;
+      caosLastPick = { text: longa, at: Date.now() - 6e4 }; caosTatoZerar(); caosTatoCalou(); caosTatoCalou();
+      const calarVelhoNao = !caosTato.curto;
+      // família de nicho: uma vez por partida
+      caosTatoZerar();
+      const nichoLivre = caosFamiliaLiberada('narradorEsportivo') && caosFamiliaLiberada('distraido');
+      caosFamiliaUsou('narradorEsportivo'); caosFamiliaUsou('distraido');
+      const nichoTrava = !caosFamiliaLiberada('narradorEsportivo') && caosFamiliaLiberada('distraido');
+      CURRENT_MODE = 'caos'; const caosModoEncurta = caosTatoMax() === CAOS_TATO_MESA_CANSADA;
+      CURRENT_MODE = modoAntes; starterChosen = iniAntes; gameEnded = fimAntes; caosLastPick = pickAntes; Math.random = randAntes; caosTatoZerar();
+      out.tato = comecaNormal && umaNaoBasta && aprendeu && prefereCurta && calarEnsina && calarVelhoNao && nichoLivre && nichoTrava && caosModoEncurta;
+      out.tatoDiag = JSON.stringify({ comecaNormal, umaNaoBasta, aprendeu, prefereCurta, curtas, calarEnsina, calarVelhoNao, nichoLivre, nichoTrava, caosModoEncurta });
+    }
     // 1.7.10.3: busca nas regras e o lembrete da primeira carta de cada categoria
     {
       openTutorial('manual');
@@ -646,6 +676,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['C.A.O.S. 4.3: pular fala marca quem pulou (aparelho do host e celular); todos calaram = quieto (regra passa); parte calou = ciúmes; quem religa traz ele de volta', r.caos43],
     ['1.7.10.5: quem está na vez pede a dica no aparelho (o Mestre recebe o pedido); quem tem a ficha toca em Palpitar agora e o Mestre julga só esse palpite; errou, a ficha volta e a vez segue', r.palpiteAgora],
     ['1.7.10.5.3: trava da dica (o Mestre só abre a pedida, forçar passa); C.A.O.S. 4.4.1: tocar na dica aberta faz ele responder mesmo no respiro', r.dicaRepetida && r.palpiteAgora],
+    ['C.A.O.S. com tato: a mesa corta frase longa e ele passa a falar curto; família de nicho só 1x por partida', r.tato],
     ['Easter egg: piadas internas com limite e intervalo (nunca no Júnior; os sobrinhos sim), Dragons só com o JF e a turma, falas da mesa toda e cores escondidas da paleta', r.amigos],
     ['Cadastro: o C.A.O.S. pergunta da voz (não pergunta se já está ligada); Sim liga; Não ganha fala triste e segue sem voz', r.vozPergunta],
     ['1.7.10.3: busca nas regras acha "grupo"; o C.A.O.S. lembra o que vale na 1ª carta de cada categoria (Júnior sem animal em Coisa)', r.regrasEPrimeira],

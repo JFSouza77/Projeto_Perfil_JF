@@ -182,7 +182,7 @@ function caosGerar(tipo, p, x) {
   if (txt.length > CAOS_FALA_JUNTA_MAX) txt = limpa(`${caosLexCap(fato.fr)}. ${juizoBase}`);
   if (caosHasProfanity(txt, [n])) return "";
   txt = "[C.A.O.S.] " + txt;
-  caosLastPick = { bank: "gerador." + tipo + "." + prat, key: "gerador|" + tipo + "|" + prat, text: txt };
+  caosLastPick = { bank: "gerador." + tipo + "." + prat, key: "gerador|" + tipo + "|" + prat, text: txt, at: Date.now() };
   return txt;
 }
 function caosAgora() {

@@ -392,6 +392,7 @@ function caosV2Reset() {
   caosMarked = { idx: null, remaining: 0 };
   caosPrevMarkedIdx = null;
   caosFamilyRecent = [];
+  caosTatoZerar();
   caosLastSpeechByPlayer = {};
   caosLastMoodSeen = null;
   caosLastTorcidaCard = -99;
@@ -522,12 +523,13 @@ function getRandomReaction(list, ...args) {
     }
     if (caosIsDisliked(list, text, args)) continue;
     if (!caosContextoOk(text, args)) continue;
-    if (typeof text === "string" && text.length > 170 && tries < 4 && list.length > 1) continue;
+    // Tato: prefere a mais curta quando a mesa está cansada ou já mostrou que corta frase longa
+    if (typeof text === "string" && caosTatoTam(text) > caosTatoMax() && tries < (caosTato.curto ? 7 : 4) && list.length > 1) continue;
     if (!caosHasProfanity(text, args)) {
       const out = caosRisada(caosSelfRoastIfSlang(caosDecorate(text, list), args, list), list, args);
       if (out) {
         caosDiagLog(list);
-        caosLastPick = { bank: caosBankId(list), key: caosLineKey(list, text, args), text: out };
+        caosLastPick = { bank: caosBankId(list), key: caosLineKey(list, text, args), text: out, at: Date.now() };
       }
       return out;
     }
@@ -870,6 +872,7 @@ function caosPularFala(ev) {
 }
 function caosRegistrarCorte(quemIdx) {
   caosCortes.total++;
+  caosTatoReacao(caosLastPick && caosLastPick.text);
   const agora = Date.now();
   caosFalasRecentes.push(agora, agora);
   caosEmoNudge(0.6, -0.3);
@@ -941,7 +944,7 @@ function caosToastBloquear() {
         return true;
       }
     }
-    // C.A.O.S. 4.6.8 (JF, 11/2026: "no Modo C.A.O.S. ele falando demais atrapalha, é muita informação"): lá a carta não
+    // C.A.O.S. 4.7.0 (JF, 11/2026: "no Modo C.A.O.S. ele falando demais atrapalha, é muita informação"): lá a carta não
     // passa pelo baralho normal (o limite por carta nunca valia) e a tela já fala muito pelos avisos. Então: com aviso da
     // mesa na tela ou com alguém pensando (janela de palpite, julgamento, duelo, carta bônus), comentário nenhum; e no
     // máximo um comentário por vez de Mestre. Aviso de regra (essencial) passa igual.
@@ -1230,8 +1233,9 @@ function caosFamilyLine(nome, ctx) {
   if (ruido && caosLineFitsContext(ruido, ctx)) return ruido;
   const temMestre = mestreIndex !== null && mestreIndex !== void 0 && !!players[mestreIndex];
   const candidatos = REACTIVE_VOICE.familiasSorteio.filter(
-    (k) => REACTIVE_VOICE.familias[k] && (temMestre || !CAOS_FAMILIAS_MESTRE.includes(k)),
+    (k) => REACTIVE_VOICE.familias[k] && (temMestre || !CAOS_FAMILIAS_MESTRE.includes(k)) && caosFamiliaLiberada(k),
   );
+  if (!candidatos.length) return "";
   for (let fam = 0; fam < 3; fam++) {
     const pesos = {};
     candidatos.forEach((k) => {
@@ -1241,6 +1245,7 @@ function caosFamilyLine(nome, ctx) {
     for (let t = 0; t < 6; t++) {
       const txt = getRandomReaction(REACTIVE_VOICE.familias[key], nome);
       if (txt && caosLineFitsContext(txt, ctx)) {
+        caosFamiliaUsou(key);
         caosFamilyRecent.unshift(key);
         if (caosFamilyRecent.length > 4) caosFamilyRecent.pop();
         return txt;
