@@ -1728,6 +1728,7 @@ function addPlayer() {
   hideNickSuggest();
   idadeLimpar();
   nicksRepertorioGuardar(name);
+  contaAoCadastrar(players[players.length - 1]); // 11/2026: cadastro do jogador (antes da memória, que respeita o nick protegido)
   caosMemCadastro(players[players.length - 1]);
   input.value = "";
   caosTomadaN = 0;
@@ -1753,6 +1754,9 @@ function endGame() {
   }
   try {
     caosMemFimDePartida();
+  } catch (e) {}
+  try {
+    contasSalvarFichas(); // 11/2026: a ficha de quem tem cadastro sobe pra nuvem
   } catch (e) {}
   setTimeout(caosIniFormatura, 4500);
   corridaParar();

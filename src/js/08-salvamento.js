@@ -545,6 +545,7 @@ function sanitizeLoadedState(s) {
         gems,
         ...(typeof p.nickMs === "number" ? { nickMs: p.nickMs } : {}),
         ...(p.nickEmprestado === true ? { nickEmprestado: true } : {}),
+        ...(p.conta && typeof p.conta.token === "string" ? { conta: { nick: String(p.conta.nick || "").slice(0, 15), token: p.conta.token.slice(0, 64) } } : {}),
         ...(p.iniciante === true
           ? {
               iniciante: true,
@@ -1817,7 +1818,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.9.3 · C.A.O.S. 4.9.0");
+  L.push("- **Versão:** Beta 1.7.10.9.3 · C.A.O.S. 4.10.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2359,7 +2360,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.9.3 · C.A.O.S. 4.9.0",
+        versao: "Beta 1.7.10.9.3 · C.A.O.S. 4.10.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,

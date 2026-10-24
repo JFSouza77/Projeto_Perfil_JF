@@ -32,6 +32,7 @@ A partir daí, toda mudança nesta pasta que entrar no GitHub publica o servidor
 ### 3b. Senha da página de cartas reportadas
 - Em **Variables and Secrets → Add**, crie um **Secret** com o nome `REPORTES_SENHA`. O valor é uma senha que só você sabe (pode ser uma frase).
 - Pra ver os reportes, abra `https://perfil-jf-sala.SEU-NOME.workers.dev/reportes?chave=SUA-SENHA`. Salve nos favoritos.
+- Pra ver os cadastros dos jogadores (nick + PIN, 11/2026), abra `https://perfil-jf-sala.SEU-NOME.workers.dev/contas?chave=SUA-SENHA` (a mesma senha dos reportes). Lá dá pra zerar o PIN de quem esqueceu (a memória continua), apagar um cadastro, limpar quem sumiu há muito tempo e baixar tudo em JSON.
 
 ### 3c. Voz nova do C.A.O.S. (Microsoft Azure, plano grátis)
 1. Entre em **portal.azure.com** e crie a conta grátis (pede cartão só pra conferir; o plano grátis F0 não cobra).
