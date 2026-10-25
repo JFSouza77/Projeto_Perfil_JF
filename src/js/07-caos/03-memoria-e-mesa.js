@@ -27,9 +27,81 @@ function caosMemCadastro(p) {
   nickEmprestadoAtual = null;
   if (!memContaFicha(p)) return;
   p._fichaAntes = fichaGet(p.name);
+  // o Rafa troca de emoji a cada carta por presente: não conta como troca
+  const gira = presenteDe(p.name) && presenteDe(p.name).gira;
+  const h = caosHumorEscolha(p);
   fichaUpd(p.name, (f) => {
     f.ultimaVez = Date.now();
+    if (p.avatar && !gira) f.ultimoAvatar = p.avatar;
+    if (h) caosHumorAnotar(f, h, p);
   });
+}
+// o humor que a pessoa escolheu (não o que o modo forçou): "caos" quando deixou o C.A.O.S. decidir
+function caosHumorEscolha(p) {
+  if (!p || p.iniciante) return null;
+  if (p.humorCaos) return "caos";
+  return ["familia", "suave", "normal", "acido", "zero"].includes(p.humor) ? p.humor : null;
+}
+// quando deixou com ele, guarda também o que ele sorteou (pra lembrar na próxima: "peguei pesado demais?")
+function caosHumorAnotar(f, h, p) {
+  if (f.ultimoHumor && f.ultimoHumor !== h) f.trocasHumor = Math.min(99, (f.trocasHumor || 0) + 1);
+  f.ultimoHumor = h;
+  if (h === "caos" && p && ["familia", "suave", "normal", "acido", "zero"].includes(p.humor)) f.ultimoSorteado = p.humor;
+}
+// trocou o humor no meio da partida (pediu mais pesado ou mais leve): conta como troca também
+function caosMemHumorMudou(p) {
+  if (!memContaFicha(p) || p.iniciante) return;
+  fichaUpd(p.name, (f) => caosHumorAnotar(f, p.humor));
+}
+// 25/10/2026 (pedido do JF): ele lembra o humor de cada um e zoa quando troca (ou quando troca toda hora)
+function caosTrocouHumor(p) {
+  const f = p && p._fichaAntes,
+    a = f && f.ultimoHumor,
+    b = caosHumorEscolha(p);
+  if (!a || !b || a === b || humorFamilia(p)) return null;
+  const T = REACTIVE_VOICE.memoria.trocouHumor,
+    nome = (h) => (h === "caos" ? "o C.A.O.S." : (HUMOR_NOMES[h] || "").replace(/^\S+\s/, "")),
+    grau = { familia: 0, suave: 1, normal: 2, acido: 3, zero: 4 },
+    k = (f.trocasHumor || 0) + 1;
+  if (k >= 3 && Math.random() < 0.7) return getRandomReaction(T.indeciso, p.name, nome(a), nome(b), k) || null;
+  if (b === "caos") return getRandomReaction(T.paraCaos, p.name, nome(a)) || null;
+  if (a === "caos") {
+    // ele lembra o que sorteou da outra vez e compara com o que a pessoa escolheu agora
+    const s = f.ultimoSorteado;
+    if (s && grau[s] != null && Math.random() < 0.8) {
+      const bank = grau[b] < grau[s] ? T.sorteioPesado : grau[b] > grau[s] ? T.sorteioLeve : T.sorteioIgual;
+      return getRandomReaction(bank, p.name, nome(s), nome(b)) || null;
+    }
+    return getRandomReaction(T.deCaos, p.name, "", nome(b)) || null;
+  }
+  return getRandomReaction(grau[b] > grau[a] ? T.subiu : T.desceu, p.name, nome(a), nome(b)) || null;
+}
+// o que ele lembra que mudou desde a última vez (emoji ou humor); se mudou os dois, sorteia
+function caosTrocouMemoria(p) {
+  const fs = [caosTrocouEmoji, caosTrocouHumor];
+  if (Math.random() < 0.5) fs.reverse();
+  for (const fn of fs) {
+    const t = fn(p);
+    if (t) return t;
+  }
+  return null;
+}
+// 25/10/2026 (pedido do JF): ele lembra o emoji de cada um e comenta quando troca
+function caosTrocouEmoji(p) {
+  const f = p && p._fichaAntes,
+    a = f && f.ultimoAvatar,
+    b = p && p.avatar;
+  if (!a || !b || a === b || (presenteDe(p.name) && presenteDe(p.name).gira)) return null;
+  const T = REACTIVE_VOICE.memoria.trocouEmoji,
+    tipo = (e) => ["fofo", "sombrio", "confiante"].find((k) => CAOS_AVATAR_TIPO[k].has(e)) || null,
+    ta = tipo(a),
+    tb = tipo(b);
+  let bank = T.qualquer;
+  if (ta === "sombrio" && tb === "fofo") bank = T.sombrioParaFofo;
+  else if (ta === "fofo" && tb === "sombrio") bank = T.fofoParaSombrio;
+  else if (tb === "confiante" && ta !== "confiante") bank = T.paraConfiante;
+  else if (ta === "confiante" && tb !== "confiante") bank = T.deConfiante;
+  return getRandomReaction(bank, p.name, a, b) || null;
 }
 function caosMemBoasVindas(p, n) {
   const f = p._fichaAntes,
@@ -57,6 +129,13 @@ function caosMemBoasVindas(p, n) {
       bank: M.categoria.forteCadastro,
       args: [name, caosCategoryLabel(forte.c), memPct(forte.taxa)],
     });
+  // o "log" de cada jogador: melhor pontuação e tempo médio de acerto
+  if (f.partidas >= 2 && f.melhorPts >= 5) opcoes.push({ w: 12, bank: M.recordePessoal, args: [name, f.melhorPts] });
+  if (f.msN >= 6) {
+    const med = f.msSum / f.msN;
+    if (med <= 2e4) opcoes.push({ w: 12, bank: M.tempoMedio.rapido, args: [name, caosTempoFala(med)] });
+    else if (med >= 6e4) opcoes.push({ w: 12, bank: M.tempoMedio.lento, args: [name, caosTempoFala(med)] });
+  }
   if (!opcoes.length) return null;
   const tot = opcoes.reduce((s, o) => s + o.w, 0);
   let r = R() * tot;

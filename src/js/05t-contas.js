@@ -5,6 +5,7 @@
    /contas do servidor e a memória continua. Sem internet, o jogo segue como antes (memória do dispositivo). */
 const CONTAS_KEY = "perfil5_contas"; // logins deste dispositivo: { chave do nick: { nick, token } }
 const CONTAS_CONHECIDAS_KEY = "perfil5_contas_conhecidas"; // nicks que já sabemos que têm cadastro: { chave: 1 }
+const CONTAS_RECUSADAS_KEY = "perfil5_contas_recusadas"; // "não perguntar de novo" pra esse nick neste dispositivo
 
 function contasLer(k) {
   try {
@@ -70,10 +71,64 @@ function contaFichaJuntar(nome, ficha) {
   if (!ficha || typeof ficha !== "object") return;
   const loc = fichaGet(nome);
   if (loc && (loc.partidas || 0) > (ficha.partidas || 0)) return;
-  fichaUpd(nome, (f) => Object.assign(f, fichaLimpa(ficha, nome)));
+  // o emoji e o humor de agora valem mais que os que vieram da nuvem (senão a próxima troca compara com o emoji errado)
+  const p = players.find((q) => nameKeyPlain(q.name) === nameKeyPlain(nome));
+  fichaUpd(nome, (f) => {
+    Object.assign(f, fichaLimpa(ficha, nome));
+    if (p && p.avatar && !(presenteDe(nome) && presenteDe(nome).gira)) f.ultimoAvatar = p.avatar;
+    if (p && caosHumorEscolha(p)) caosHumorAnotar(f, caosHumorEscolha(p), p);
+  });
+}
+function contaRecusada(nome) {
+  const k = nameKeyPlain(nome);
+  return !!(k && contasLer(CONTAS_RECUSADAS_KEY)[k]);
+}
+function contaRecusar(nome) {
+  const o = contasLer(CONTAS_RECUSADAS_KEY);
+  o[nameKeyPlain(nome)] = 1;
+  contasGravar(CONTAS_RECUSADAS_KEY, o);
+}
+// Pedido do JF: em vez do botão pequeno, a pergunta aparece sozinha logo depois de cadastrar o nick.
+// Nick com cadastro: pede o PIN. Nick sem cadastro: oferece criar (com "Agora não" e "Não perguntar de novo").
+// Só pergunta quando o servidor respondeu (sem internet, não incomoda).
+function contaOferecer(nome, existe, semPin, depois, seNao) {
+  if (contaLogin(nome) || (!existe && contaRecusada(nome))) return;
+  const { ov, box } = caosModalBase();
+  const fim = () => ov.remove();
+  const nao = () => {
+    fim();
+    if (typeof seNao === "function") seNao();
+  };
+  const row = caosModalRow();
+  const entrar = existe && !semPin;
+  row.append(
+    caosModalBtn("Agora não", "#444a66", nao),
+    caosModalBtn(entrar ? "Digitar o PIN" : "Cadastrar", "#2563eb", () => {
+      fim();
+      contaAbrir(nome, depois);
+    }),
+  );
+  const msg = entrar
+    ? `🔐 O nick "${nome}" tem cadastro. Digite o PIN pro C.A.O.S. lembrar de você (sem o PIN, ele te trata como se fosse a primeira vez).`
+    : `🔐 Quer cadastrar o nick "${nome}"? Com um PIN de 4 números, o C.A.O.S. lembra de você em qualquer dispositivo, e ninguém mais usa a sua memória.`;
+  box.append(caosModalMsg(msg), row);
+  if (!existe) {
+    const nunca = document.createElement("button");
+    nunca.type = "button";
+    nunca.className = "chip";
+    nunca.textContent = "Não perguntar de novo pra esse nick";
+    nunca.style.cssText = "display:block;margin:12px auto 0;min-height:44px";
+    nunca.addEventListener("click", () => {
+      contaRecusar(nome);
+      nao();
+    });
+    box.append(nunca);
+  }
+  document.body.appendChild(ov);
 }
 // Jogador entrou no cadastro da partida (aqui ou pela sala). contaRede = login que o celular do jogador mandou.
-function contaAoCadastrar(p, contaRede) {
+// perguntar = cadastro feito neste dispositivo: oferece criar ou entrar no cadastro logo depois.
+function contaAoCadastrar(p, contaRede, perguntar) {
   if (!p || !p.name) return;
   const daRede = contaRede && typeof contaRede.token === "string" ? { nick: String(contaRede.nick || p.name).slice(0, 15), token: contaRede.token.slice(0, 64) } : null;
   const l = daRede || contaLogin(p.name);
@@ -96,6 +151,15 @@ function contaAoCadastrar(p, contaRede) {
     if (!r || r.erro) return;
     contaMarcarConhecida(p.name, !!r.existe);
     if (r.existe && !p.conta) p.nickEmprestado = true;
+    if (perguntar && !p.iniciante && players.includes(p))
+      contaOferecer(p.name, !!r.existe, !!r.semPin, () => {
+        // entrou ou criou: esse jogador passa a ter memória
+        const l = contaLogin(p.name);
+        if (!l) return;
+        p.conta = l;
+        delete p.nickEmprestado;
+        saveGameState();
+      });
   });
 }
 // Fim da partida: a ficha de quem tem cadastro sobe pra nuvem.
@@ -204,6 +268,8 @@ function contaBotaoLigar() {
   b.dataset.ligado = "1";
   b.addEventListener("click", () => {
     const inp = document.getElementById("playerNameInput");
+    // o tempo na janela do cadastro não conta como "demorou pra escolher o nick"
+    if (typeof nickWaitStart !== "undefined") nickWaitStart = null;
     contaAbrir(inp ? inp.value : "");
   });
 }

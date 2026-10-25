@@ -100,6 +100,10 @@ const post = async (cam, corpo) => {
       const p = players.find((x) => x.name === nick2);
       for (let i = 0; i < 50 && !p.nickEmprestado; i++) await new Promise((r) => setTimeout(r, 100));
       out.outroDispositivoSemMemoria = !!p.nickEmprestado && !p.conta && !memContaFicha(p);
+      // a pergunta aparece sozinha depois de cadastrar o nick (pedido do JF), pedindo o PIN
+      for (let i = 0; i < 30 && !/tem cadastro/.test(document.body.innerText); i++) await new Promise((r) => setTimeout(r, 100));
+      out.perguntaSozinha = /tem cadastro/.test(document.body.innerText) && /Digitar o PIN/.test(document.body.innerText);
+      document.querySelectorAll(".caos-modal-ov").forEach((o) => o.remove());
       const pins = ["2468"];
       window.contaPinModal = (msg, cb) => setTimeout(() => cb(pins.shift()), 0);
       window.caosAvisoModal = (msg, ok) => ok && ok();

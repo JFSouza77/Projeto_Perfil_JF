@@ -567,6 +567,93 @@ const ARQ = acharMestre(process.argv[2]);
       out.tato = comecaNormal && umaNaoBasta && aprendeu && prefereCurta && calarEnsina && calarVelhoNao && nichoLivre && nichoTrava && caosModoEncurta && memoria;
       out.tatoDiag = JSON.stringify({ intercala, datas, mesmaMesaLembra, novaTesta, gostaDeLonga, lembraQueGosta, jeitoDaMesa, comecaNormal, umaNaoBasta, aprendeu, prefereCurta, curtas, calarEnsina, calarVelhoNao, nichoLivre, nichoTrava, caosModoEncurta });
     }
+    // relato do JF: o tempo de criar o cadastro contou como "demorou pra escolher o nick" e ele cumprimentou o JF
+    // como um estranho. Quem ele conhece é reconhecido antes da piada do nick demorado.
+    {
+      const jogAntes = players, toastAntes = window.showToastMessage, randAntes = Math.random, silAntes = caosSilenced;
+      let dito = '';
+      window.showToastMessage = (t) => (dito = String(t || ''));
+      Math.random = () => 0;
+      caosSilenced = false;
+      const jf = { id: 'jfx', name: 'JF', avatar: '😎', score: 0, humor: 'normal', nickMs: 70e3 };
+      players = [jf];
+      caosWelcomePlayer(jf);
+      const estranho = { id: 'zzx', name: 'Zuleica', avatar: '😀', score: 0, humor: 'normal', nickMs: 70e3 };
+      players = [estranho];
+      let ditoEstranho = '';
+      window.showToastMessage = (t) => (ditoEstranho = String(t || ''));
+      caosWelcomePlayer(estranho);
+      window.showToastMessage = toastAntes; Math.random = randAntes; caosSilenced = silAntes; players = jogAntes;
+      out.reconheceAntes = !!dito && !/1 minuto/.test(dito) && /1 minuto/.test(ditoEstranho);
+      out.reconheceAntesDiag = JSON.stringify({ dito, ditoEstranho });
+    }
+    // 25/10/2026 (pedido do JF): ele lembra o emoji de cada um e comenta quando troca
+    {
+      const jogAntes = players, toastAntes = window.showToastMessage, randAntes = Math.random, silAntes = caosSilenced, fichasAntes = JFStore.getItem(MEM_FICHAS_KEY);
+      const T = REACTIVE_VOICE.memoria.trocouEmoji, n = 'Teodorico';
+      const doBanco = (bank, txt, a, b) => !!txt && bank.some((f) => txt.includes(typeof f === 'function' ? f(n, a, b) : f));
+      const mk = (av) => ({ id: 'tdx', name: n, avatar: av, score: 0, humor: 'normal' });
+      fichaUpd(n, (f) => { f.ultimoAvatar = '💀'; f.partidas = 2; });
+      const p1 = mk('🍦'); players = [p1]; caosMemCadastro(p1);
+      const calmo = caosTrocouEmoji(p1), salvou = fichaGet(n).ultimoAvatar === '🍦';
+      const p2 = mk('💀'); players = [p2]; caosMemCadastro(p2);
+      const bravo = caosTrocouEmoji(p2);
+      const p3 = mk('💀'); players = [p3]; caosMemCadastro(p3);
+      const igual = caosTrocouEmoji(p3);
+      const p4 = mk('👑'); players = [p4]; caosMemCadastro(p4);
+      const coroa = caosTrocouEmoji(p4);
+      let dito = '';
+      window.showToastMessage = (t) => (dito = String(t || ''));
+      Math.random = () => 0; caosSilenced = false;
+      const p5 = mk('🐶'); players = [p5]; caosMemCadastro(p5); caosWelcomePlayer(p5);
+      window.showToastMessage = toastAntes; Math.random = randAntes; caosSilenced = silAntes; players = jogAntes;
+      if (fichasAntes == null) JFStore.removeItem(MEM_FICHAS_KEY); else JFStore.setItem(MEM_FICHAS_KEY, fichasAntes);
+      out.trocouEmoji = !!calmo && salvou && doBanco(T.sombrioParaFofo, calmo, '💀', '🍦') && doBanco(T.fofoParaSombrio, bravo, '🍦', '💀') &&
+        igual === null && doBanco(T.paraConfiante, coroa, '💀', '👑') && doBanco(T.deConfiante, dito, '👑', '🐶');
+      out.trocouEmojiDiag = JSON.stringify({ calmo, salvou, bravo, igual, coroa, dito });
+    }
+    // 25/10/2026 (pedido do JF): ele lembra o humor de cada um e zoa quem troca (ou troca toda hora)
+    {
+      const jogAntes = players, randAntes = Math.random, fichasAntes = JFStore.getItem(MEM_FICHAS_KEY), modoAntes = CURRENT_MODE;
+      CURRENT_MODE = 'classico';
+      const T = REACTIVE_VOICE.memoria.trocouHumor, n = 'Genoveva';
+      // includes: às vezes ele decora a fala com um emoji no fim
+      const doBanco = (bank, txt, ...a) => !!txt && bank.some((f) => txt.includes(typeof f === 'function' ? f(n, ...a) : f));
+      const mk = (h, extra) => ({ id: 'gnx', name: n, avatar: '🦊', score: 0, humor: h, ...(extra || {}) });
+      const cad = (p) => { players = [p]; caosMemCadastro(p); return p; };
+      Math.random = () => 0.9;
+      fichaUpd(n, (f) => { f.ultimoHumor = 'suave'; f.trocasHumor = 0; f.partidas = 1; });
+      const subiu = caosTrocouHumor(cad(mk('acido')));
+      const desceu = caosTrocouHumor(cad(mk('suave')));
+      const contou = fichaGet(n).trocasHumor === 2;
+      const igual = caosTrocouHumor(cad(mk('suave')));
+      const praCaos = caosTrocouHumor(cad(mk('normal', { humorCaos: true })));
+      Math.random = () => 0;
+      const indeciso = caosTrocouHumor(cad(mk('normal')));
+      const q = mk('normal'); players = [q]; q.humor = 'acido'; caosMemHumorMudou(q);
+      const meioDaPartida = fichaGet(n).ultimoHumor === 'acido' && fichaGet(n).trocasHumor === 5;
+      // ele lembra o que sorteou: sorteou Ácido e a pessoa voltou de Suave (pesado demais); sorteou Suave e voltou de Nível 0
+      Math.random = () => 0.9;
+      const sorteou = cad(mk('acido', { humorCaos: true }));
+      const guardou = fichaGet(n).ultimoSorteado === 'acido' && fichaGet(n).ultimoHumor === 'caos';
+      fichaUpd(n, (f) => (f.trocasHumor = 0));
+      Math.random = () => 0.1;
+      const pesado = caosTrocouHumor(cad(mk('suave')));
+      fichaUpd(n, (f) => { f.ultimoHumor = 'caos'; f.ultimoSorteado = 'suave'; f.trocasHumor = 0; });
+      const leve = caosTrocouHumor(cad(mk('zero')));
+      // o "log" do jogador nas boas-vindas: recorde pessoal e tempo médio
+      const M = REACTIVE_VOICE.memoria, pr = mk('normal');
+      pr._fichaAntes = fichaLimpa({ partidas: 3, melhorPts: 42, msSum: 6 * 1e4, msN: 6 }, n);
+      const ops = new Set();
+      for (const r of [0.1, 0.9]) { Math.random = () => r; const o = caosMemBoasVindas(pr, 3); ops.add(o && o.bank); }
+      const logDoJogador = ops.has(M.recordePessoal) && ops.has(M.tempoMedio.rapido);
+      const lembraSorteio = logDoJogador && guardou && doBanco(T.sorteioPesado, pesado, 'Ácido', 'Suave') && doBanco(T.sorteioLeve, leve, 'Suave', 'Nível 0');
+      Math.random = randAntes; players = jogAntes; CURRENT_MODE = modoAntes;
+      if (fichasAntes == null) JFStore.removeItem(MEM_FICHAS_KEY); else JFStore.setItem(MEM_FICHAS_KEY, fichasAntes);
+      out.trocouHumor = doBanco(T.subiu, subiu, 'Suave', 'Ácido') && doBanco(T.desceu, desceu, 'Ácido', 'Suave') && contou && igual === null &&
+        doBanco(T.paraCaos, praCaos, 'Suave') && doBanco(T.indeciso, indeciso, 'o C.A.O.S.', 'Normal', 4) && meioDaPartida && lembraSorteio;
+      out.trocouHumorDiag = JSON.stringify({ logDoJogador: ops.size, lembraSorteio, guardou, pesado, leve, subiu, desceu, contou, igual, praCaos, indeciso, meioDaPartida, f: fichaGet(n) });
+    }
     // 1.7.10.3: busca nas regras e o lembrete da primeira carta de cada categoria
     {
       openTutorial('manual');
@@ -706,6 +793,9 @@ const ARQ = acharMestre(process.argv[2]);
     ['C.A.O.S. 4.3: pular fala marca quem pulou (aparelho do host e celular); todos calaram = quieto (regra passa); parte calou = ciúmes; quem religa traz ele de volta', r.caos43],
     ['1.7.10.5: quem está na vez pede a dica no aparelho (o Mestre recebe o pedido); quem tem a ficha toca em Palpitar agora e o Mestre julga só esse palpite; errou, a ficha volta e a vez segue', r.palpiteAgora],
     ['1.7.10.5.3: trava da dica (o Mestre só abre a pedida, forçar passa); C.A.O.S. 4.4.1: tocar na dica aberta faz ele responder mesmo no respiro', r.dicaRepetida && r.palpiteAgora],
+    ['Quem o C.A.O.S. conhece (JF, amigos, sobrinhos) é reconhecido antes da piada do nick demorado', r.reconheceAntes],
+    ['O C.A.O.S. lembra o emoji de cada um e comenta a troca (💀 → 🍦 mais calmo, 🍦 → 💀 mau humor)', r.trocouEmoji],
+    ['O C.A.O.S. lembra o humor de cada um e zoa a troca (subiu, desceu, deixou com ele, troca toda hora, o que ele sorteou)', r.trocouHumor],
     ['C.A.O.S. com tato: a mesa corta frase longa e ele passa a falar curto, lembra da mesma mesa, testa mesa nova pelo jeito dela; família de nicho só 1x por partida', r.tato],
     ['Easter egg: piadas internas com limite e intervalo (nunca no Júnior; os sobrinhos sim), Dragons só com o JF e a turma, falas da mesa toda e cores escondidas da paleta', r.amigos],
     ['Cadastro: o C.A.O.S. pergunta da voz (não pergunta se já está ligada); Sim liga; Não ganha fala triste e segue sem voz', r.vozPergunta],

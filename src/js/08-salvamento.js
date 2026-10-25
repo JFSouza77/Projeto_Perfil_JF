@@ -1113,6 +1113,10 @@ function fichaLimpa(f, nome) {
     })(),
     ultimoResultado: ["venceu", "lanterna", "meio"].includes(f.ultimoResultado) ? f.ultimoResultado : null,
     ultimoModo: typeof f.ultimoModo === "string" ? f.ultimoModo.slice(0, 12) : null,
+    ultimoAvatar: typeof f.ultimoAvatar === "string" && f.ultimoAvatar.length <= 16 ? f.ultimoAvatar : null,
+    ultimoHumor: ["familia", "suave", "normal", "acido", "zero", "caos"].includes(f.ultimoHumor) ? f.ultimoHumor : null,
+    trocasHumor: Math.min(99, memNum(f.trocasHumor, 0)),
+    ultimoSorteado: ["familia", "suave", "normal", "acido", "zero"].includes(f.ultimoSorteado) ? f.ultimoSorteado : null,
   };
 }
 function fichasTodas() {
@@ -1818,7 +1822,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.9.3 · C.A.O.S. 4.10.0");
+  L.push("- **Versão:** Beta 1.7.10.9.3 · C.A.O.S. 5.0.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2360,7 +2364,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.9.3 · C.A.O.S. 4.10.0",
+        versao: "Beta 1.7.10.9.3 · C.A.O.S. 5.0.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
