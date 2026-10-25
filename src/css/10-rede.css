@@ -1909,3 +1909,19 @@ body.batata-mode.aviso-treme {
 .mc-inv li {
   padding: 2px 0;
 }
+/* 25/10/2026 · janelas de reporte: botões com área de toque de 44 px e legíveis no tema claro */
+#reportarCarta .chip,
+#reportarProblema .chip {
+  min-height: 44px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+#reportarProblema #probAnexo {
+  display: block;
+  width: 100%;
+  margin: 4px 0 2px;
+}
+body.claro #reportarCarta .chip,
+body.claro #reportarProblema .chip {
+  color: var(--claro-txt);
+}

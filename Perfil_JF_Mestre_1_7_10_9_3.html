@@ -7,6 +7,13 @@
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio. Log com no máximo 7 itens
   por versão; o 3º número só sobe com o OK do JF; o 2º, com a série fechada + 7 coisas grandes: docs/Regras_dos_Logs.md.
+  (interno) · 25/10/2026 · MELHORIAS SEM MESA · C.A.O.S. 5.1.1. Build 1843. 🐞 Reportar um problema (Pausa → Mais
+          opções), em qualquer aparelho: tipo, descrição e o retrato da partida (sem nomes e sem a resposta); fila sem
+          internet e seção nova na página dos reportes. Contraste (WCAG AA): auditoria agora mede todo texto, não só
+          botões, contando a opacity; corrigido o tema claro (títulos dos menus, tutorial, cadastro, cor do humor) e os
+          botões das janelas de reporte (44 px, legíveis no claro). Inspetor do cérebro com nomes em português. Testes:
+          teste_online mostra cada conferência na hora e cenário que quebra vira falha com motivo; teste_pwa novo (o app
+          instala e abre sem internet).
   (interno) · 25/10/2026 · CÉREBRO SOMBRA · C.A.O.S. 5.1.0. Build 1842. Passos 1 e 2 do roteiro do cérebro (pedido do JF,
           docs/Roteiro_Cerebro_Sombra_2026-10-25.md). Registro único: toda fala que passa pelo funil é anotada (caosEmit),
           com banco e emoção, e o que foi cortado, com o motivo. Inventário automático dos pontos de fala
@@ -7518,6 +7525,16 @@ body.claro .mini-scoreboard li.mini-meta {
   border-color: #f59e0b;
   color: #92400e;
 }
+/* 25/10/2026 · auditoria de contraste dos textos (WCAG AA, tema claro): letra apagada demais por opacity e
+   cores feitas pro fundo escuro (dourado do tutorial, cor do humor) */
+body.claro .splash-menu-tit,
+body.claro .pick-vazio,
+body.claro #humorHint {
+  opacity: 0.8 !important;
+}
+body.claro .tut-title {
+  color: #8a5a00;
+}
 /* ----------------------------------------------------------------------
  * 7. BOTÕES ACESSÍVEIS (1.7.6 · Parte 2): resultado da auditoria dos botões
  * (ferramentas/auditar_botoes.js). Área de toque de pelo menos 44 px, contraste
@@ -9855,11 +9872,11 @@ body.claro button.splash-embreve .eb-sub {
 .rede-perto-rot{font-size:.85rem;opacity:.8}
 .rede-perto-sala{text-align:left}
 /* 1.7.10 · Reportar carta */
-#reportarCarta .rep-grupo{border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:8px 10px;margin:10px 0;text-align:left}
-#reportarCarta .rep-grupo legend{padding:0 6px;font-size:.85rem;opacity:.85}
-#reportarCarta .rep-op{display:flex;gap:8px;align-items:flex-start;padding:6px 0;min-height:44px;line-height:1.3}
-#reportarCarta .rep-op input{margin-top:3px;min-width:20px;min-height:20px}
-#reportarCarta #repNota{width:100%;box-sizing:border-box;margin:6px 0 12px;padding:10px;border-radius:10px;font-size:1rem}
+#reportarCarta .rep-grupo,#reportarProblema .rep-grupo{border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:8px 10px;margin:10px 0;text-align:left}
+#reportarCarta .rep-grupo legend,#reportarProblema .rep-grupo legend{padding:0 6px;font-size:.85rem;opacity:.85}
+#reportarCarta .rep-op,#reportarProblema .rep-op{display:flex;gap:8px;align-items:flex-start;padding:6px 0;min-height:44px;line-height:1.3;text-align:left}
+#reportarCarta .rep-op input,#reportarProblema .rep-op input{margin-top:3px;min-width:20px;min-height:20px}
+#reportarCarta #repNota,#reportarProblema #probNota{width:100%;box-sizing:border-box;margin:6px 0 12px;padding:10px;border-radius:10px;font-size:1rem;font-family:inherit;resize:vertical}
 #reportarCarta .rep-id,#reportarCarta .rep-total{font-size:.9rem;opacity:.9}
 /* 1.7.10 · balão do C.A.O.S. no celular igual ao do host (rosto + etiqueta do humor + cor) */
 .rede-fala{border:2px solid var(--emo-cor,#a78bfa);box-shadow:0 8px 30px #0008,0 0 22px color-mix(in srgb,var(--emo-cor,#a78bfa) 45%,transparent);background:#1a0f2ef2}
@@ -11256,6 +11273,22 @@ body.batata-mode.aviso-treme {
 .mc-inv li {
   padding: 2px 0;
 }
+/* 25/10/2026 · janelas de reporte: botões com área de toque de 44 px e legíveis no tema claro */
+#reportarCarta .chip,
+#reportarProblema .chip {
+  min-height: 44px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+#reportarProblema #probAnexo {
+  display: block;
+  width: 100%;
+  margin: 4px 0 2px;
+}
+body.claro #reportarCarta .chip,
+body.claro #reportarProblema .chip {
+  color: var(--claro-txt);
+}
 </style>
 </head>
 <body class="noturno">
@@ -11442,6 +11475,8 @@ body.batata-mode.aviso-treme {
       <button class="btn-sec" id="pauseExportBtn">📤 Exportar partida (Save de Bolso)</button>
       <!-- 1.7.10 (parecer do Klaus, aprovado pelo JF): anota a carta com problema neste aparelho (src/js/05n) -->
       <button class="btn-sec" id="pauseReportarBtn" type="button">⚑ Reportar esta carta (fato errado, entrega a resposta…)</button>
+      <!-- 25/10/2026: bug da partida, com o retrato do estado anexado (src/js/05u) -->
+      <button class="btn-sec" id="pauseProblemaBtn" type="button">🐞 Reportar um problema (travou, botão, placar…)</button>
       <details class="pause-rules">
         <summary>📋 Resumo das regras desta partida</summary>
         <ul id="pauseRulesList"></ul>
@@ -11595,7 +11630,7 @@ body.batata-mode.aviso-treme {
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1842;
+const JOGO_BUILD = 1843;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -12493,6 +12528,7 @@ const HUMOR_OPTIONS = [
 ];
 const HUMOR_NOMES = { familia: "🧸 Family friendly", suave: "🌷 Suave", normal: "😏 Normal", acido: "🌶️ Ácido", zero: "💀 Nível 0" };
 const HUMOR_COR = { familia: "#7dd3fc", suave: "#f9a8d4", normal: "#fbbf24", acido: "#ef4444", zero: "#b91c1c", caos: "#a78bfa" };
+const HUMOR_COR_CLARO = { familia: "#0369a1", suave: "#be185d", normal: "#92400e", acido: "#b91c1c", zero: "#7f1d1d", caos: "#6d28d9" };
 const NICKS_GERAL = [
   "Sabe-Tudo",
   "Rei do Palpite",
@@ -18444,7 +18480,9 @@ function renderHumorPicker() {
   const ha = document.getElementById("humorAtual");
   if (ha) {
     ha.textContent = cur ? cur.label : "escolher";
-    ha.style.color = cur ? HUMOR_COR[selectedHumor] || "" : "";
+    // tema claro: as cores do humor são feitas pro fundo escuro; no claro vai a versão escura (contraste)
+    const cores = document.body.classList.contains("claro") ? HUMOR_COR_CLARO : HUMOR_COR;
+    ha.style.color = cur ? cores[selectedHumor] || "" : "";
   }
 
   try {
@@ -29466,6 +29504,133 @@ function cartaReportarAbrir() {
   ov.querySelector("#repFechar").addEventListener("click", () => ov.remove());
   document.body.appendChild(ov);
 }
+/* ----------------------------------------------------------------------
+ * 5u. REPORTAR PROBLEMA (25/10/2026, pedido do JF pras sessões de teste)
+ * Irmão do Reportar carta (5n): quem achar um bug (travou, botão que não responde, placar errado,
+ * C.A.O.S. falando bobagem, celular que não acompanha…) toca em "🐞 Reportar um problema" (Pausa →
+ * Mais opções), em qualquer aparelho. O reporte vai pro servidor da sala (POST /reporte com
+ * tipo "problema") e aparece na mesma página com senha do JF, numa seção própria.
+ *  · Junto vai, se a pessoa deixar, o RETRATO da partida: versão, modo, carta, placar, últimas ações,
+ *    últimas falas e erros da página. Sem nomes (os jogadores viram J1, J2…) e sem a resposta da carta.
+ *  · Sem internet, entra na mesma fila do Reportar carta e vai depois.
+ * ---------------------------------------------------------------------- */
+const PROBLEMA_TIPOS = [
+  ["travou", "🧊 Travou ou parou de responder"],
+  ["botao", "👆 Botão ou toque que não funciona"],
+  ["placar", "🔢 Placar, casas ou joias erradas"],
+  ["caos", "🤖 O C.A.O.S. falou ou fez algo errado"],
+  ["online", "📱 Celular ou sala online"],
+  ["visual", "🎨 Tela feia, cortada ou ilegível"],
+  ["outro", "✏️ Outro"],
+];
+const PROBLEMA_ANEXO_MAX = 2200;
+// os últimos erros da página (pra ir no retrato)
+let problemaErros = [];
+try {
+  window.addEventListener("error", (e) => {
+    problemaErros.push({ t: Date.now(), m: String((e && e.message) || "erro").slice(0, 140) });
+    if (problemaErros.length > 5) problemaErros.shift();
+  });
+  window.addEventListener("unhandledrejection", (e) => {
+    problemaErros.push({ t: Date.now(), m: "promise: " + String((e && e.reason && e.reason.message) || e.reason || "?").slice(0, 130) });
+    if (problemaErros.length > 5) problemaErros.shift();
+  });
+} catch (e) {}
+// retrato da partida pra quem vai consertar (sem nomes, sem resposta)
+function problemaRetrato() {
+  const g = (fn, d) => {
+    try {
+      const v = fn();
+      return v === undefined ? d : v;
+    } catch (e) {
+      return d;
+    }
+  };
+  const a = {
+    v: g(() => JOGO_VERSAO, "?"),
+    b: g(() => JOGO_BUILD, 0),
+    modo: g(() => CURRENT_MODE, null),
+    formato: g(() => CURRENT_FORMAT, null),
+    cond: g(() => WIN_CONDITION, null),
+    jogando: g(() => !!starterChosen && !gameEnded, false),
+    fim: g(() => !!gameEnded, false),
+    carta: g(() => (currentCard ? currentCard.id : null), null),
+    estado: g(() => cardState, null),
+    dicas: g(() => revealedOrder.filter((r) => r && r.item && r.item.type === "clue").length, 0),
+    cartas: g(() => stats.totalDrawn, 0),
+    rev: g(() => partidaRevisao, 0),
+    mestre: g(() => mestreIndex, null),
+    vez: g(() => responderIndex, null),
+    jog: g(() => players.map((p, i) => ["J" + (i + 1), p.score || 0, p.position || 0, p.humor || ""]), []),
+    acoes: g(() => acoesLog.slice(-10).map((x) => x.r + ":" + x.a + (x.d && x.d.length ? "(" + x.d.join(",") + ")" : "")), []),
+    falas: g(() => caosFalaReg.slice(-8).map((f) => f.ev + (f.motivo ? " [" + f.motivo + "]" : "")), []),
+    caos: g(() => ({ calado: !!caosSilenced, espinha: caosEspinha.log.slice(-3) }), null),
+    erros: problemaErros.map((e) => e.m),
+    rede: g(() => (rede ? { papel: rede.papel, sala: !!rede.sala } : null), null),
+    tela: g(() => window.innerWidth + "x" + window.innerHeight + (matchMedia("(pointer: coarse)").matches ? " toque" : ""), ""),
+  };
+  // cabe no limite do servidor: tira primeiro o que é mais longo
+  for (const k of ["acoes", "falas", "caos", "erros"]) {
+    if (JSON.stringify(a).length <= PROBLEMA_ANEXO_MAX) break;
+    a[k] = Array.isArray(a[k]) ? a[k].slice(-3) : null;
+  }
+  return a;
+}
+// entra na fila do Reportar carta (mesmo envio, mesmo servidor)
+function problemaGuardar(p) {
+  try {
+    const f = cartaReporteFila();
+    f.push({ uid: Math.random().toString(36).slice(2, 10), tipo: "problema", ...p });
+    localStorage.setItem(CARTAS_REPORTE_FILA_KEY, JSON.stringify(f.slice(-CARTAS_REPORTADAS_MAX)));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+function problemaReportarAbrir() {
+  document.getElementById("reportarProblema")?.remove();
+  const ov = document.createElement("div");
+  ov.id = "reportarProblema";
+  ov.className = "jf-modal-bg";
+  const opTipo = PROBLEMA_TIPOS.map(([k, t], i) => `<label class="rep-op"><input type="radio" name="probTipo" value="${k}"${i ? "" : " checked"}> ${t}</label>`).join("");
+  ov.innerHTML =
+    `<div class="jf-modal" role="dialog" aria-modal="true" aria-labelledby="probTit"><h3 id="probTit">🐞 Reportar um problema</h3>` +
+    `<p><small>Vai direto pro JF. Sem nomes e sem a resposta da carta.</small></p>` +
+    `<fieldset class="rep-grupo"><legend>O que aconteceu?</legend>${opTipo}</fieldset>` +
+    `<textarea id="probNota" maxlength="300" rows="3" placeholder="Conta rapidinho: o que você fez e o que deu errado (opcional)" aria-label="Descrição do problema (opcional)"></textarea>` +
+    `<button type="button" class="chip" id="probAnexo" aria-pressed="true">📎 Retrato da partida vai junto ✓</button>` +
+    `<p class="rep-total"><small>O retrato tem versão, carta, placar e as últimas jogadas. Toque acima pra não mandar.</small></p>` +
+    `<button type="button" class="btn-start btn-neo neo-solid neo-still" id="probSalvar" style="--mc:#f59e0b; --mc-glow:rgba(245,158,11,0.35);">🐞 Enviar pro JF</button>` +
+    `<button type="button" class="chip" id="probFechar" style="margin-top:10px">Fechar</button></div>`;
+  const anexoBt = ov.querySelector("#probAnexo");
+  anexoBt.addEventListener("click", () => {
+    const vai = anexoBt.getAttribute("aria-pressed") !== "true";
+    anexoBt.setAttribute("aria-pressed", vai ? "true" : "false");
+    anexoBt.textContent = vai ? "📎 Retrato da partida vai junto ✓" : "📎 Retrato da partida não vai";
+  });
+  const salvar = ov.querySelector("#probSalvar");
+  salvar.addEventListener("click", () => {
+    const ok = problemaGuardar({
+      cat: (ov.querySelector('input[name="probTipo"]:checked') || {}).value || "outro",
+      nota: String(ov.querySelector("#probNota").value || "").replace(/[\u0000-\u001f]/g, " ").trim().slice(0, 300),
+      anexo: anexoBt.getAttribute("aria-pressed") === "true" ? problemaRetrato() : null,
+      modo: typeof CURRENT_MODE !== "undefined" ? CURRENT_MODE : null,
+      versao: JOGO_VERSAO,
+      quando: Date.now(),
+    });
+    salvar.disabled = true;
+    if (!ok) {
+      salvar.textContent = "⚠️ Não deu pra guardar neste aparelho";
+      return;
+    }
+    salvar.textContent = "⏳ Enviando…";
+    cartaReporteEnviar().then((faltam) => {
+      salvar.textContent = faltam ? "📥 Guardado: vai pro JF quando tiver internet" : "✅ Enviado pro JF. Obrigado!";
+    });
+  });
+  ov.querySelector("#probFechar").addEventListener("click", () => ov.remove());
+  document.body.appendChild(ov);
+}
 /* 11/2026 · Cadastro do jogador (pedido do JF, ideia do Henrique). Opcional: nick + PIN de 4 números.
    Com cadastro, o C.A.O.S. lembra da pessoa em qualquer dispositivo (a ficha fica no servidor, /conta/*) e
    ninguém herda essa memória só por usar o mesmo nick: quem usa um nick com cadastro sem entrar joga normal,
@@ -35059,7 +35224,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.9.3 · C.A.O.S. 5.1.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.9.3 · C.A.O.S. 5.1.1</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -38493,7 +38658,7 @@ function caosNeuralDesenhar(cv, t) {
     const C = caosConsole || {};
     const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
 tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
-${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 5.1.0`;
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 5.1.1`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }
@@ -40310,7 +40475,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.9.3 · C.A.O.S. 5.1.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.9.3 · C.A.O.S. 5.1.1)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -42425,6 +42590,23 @@ const CAOS_CEREBRO_LIMIAR = 0.5;
 const CAOS_CEREBRO_OBRIGATORIAS = new Set(["absurdo", "retaFinal"]);
 // zoeira: no Júnior e com Family friendly vira incentivo
 const CAOS_CEREBRO_ZOEIRA = new Set(["errosSeguidos", "pulosSeguidos"]);
+// nomes pra mostrar no Inspetor
+const CAOS_CEREBRO_NOMES = {
+  absurdo: "Absurdo",
+  acertoRapido: "acerto rápido",
+  acerto: "acerto",
+  sequencia: "sequência de acertos",
+  estreia: "primeiro acerto",
+  erro: "erro",
+  erroDeNovo: "errou de novo",
+  errosSeguidos: "erros seguidos",
+  pulo: "pulo",
+  pulosSeguidos: "pulos seguidos",
+  viradaLider: "virada na liderança",
+  retaFinal: "reta final",
+  incentivo: "incentivo",
+};
+const caosCerebroNome = (t) => CAOS_CEREBRO_NOMES[t] || t;
 let caosFalaReg = [];
 let caosFalaN = 0;
 const caosCerebro = { on: false, log: [], lider: null, reta: new Set(), escolhas: [], tot: 0, fal: 0, tipos: {}, acertaram: new Set() };
@@ -42541,7 +42723,7 @@ function caosCerebroDecidir(v) {
   else if (top && top.nota >= CAOS_CEREBRO_LIMIAR) {
     escolha = top;
     porque = top.motivo;
-  } else if (top) porque = `nota baixa (${top.tipo} ${top.nota})`;
+  } else if (top) porque = `nota baixa (${caosCerebroNome(top.tipo)} ${top.nota})`;
   return { escolha, porque, cands };
 }
 // entrada (blindada pela espinha): chamada a cada jogada, só com o cérebro ligado
@@ -42637,7 +42819,7 @@ function caosInspectorCerebro(onChange) {
   }
   sec.insertAdjacentHTML(
     "beforeend",
-    `<div class="ci-note">${r.decisoes} jogadas · falaria em ${r.falaria} (${r.pct}%) · tipos: ${escapeHtml(r.tipos.join(", ") || "-")}</div>`,
+    `<div class="ci-note">${r.decisoes} jogadas · falaria em ${r.falaria} (${r.pct}%) · tipos: ${escapeHtml(r.tipos.map(caosCerebroNome).join(", ") || "-")}</div>`,
   );
   const lista = document.createElement("div");
   lista.className = "ci-list";
@@ -42646,7 +42828,7 @@ function caosInspectorCerebro(onChange) {
     .slice(0, 30)
     .map(
       (e) =>
-        `<div class="ci-log" style="border-left-color:${e.escolha ? "#4ade80" : "#64748b"}"><div class="ci-log-top"><span class="ci-mono ci-dim">carta ${e.carta}</span><b>${escapeHtml(e.quem || "")}</b><span class="ci-chip">${e.escolha ? "falaria: " + escapeHtml(e.escolha) + " " + e.nota : "calaria"}</span></div><div class="ci-log-txt">Por quê: ${escapeHtml(e.porque)} · sistema: ${escapeHtml(e.sistema || "não falou")}</div></div>`,
+        `<div class="ci-log" style="border-left-color:${e.escolha ? "#4ade80" : "#64748b"}"><div class="ci-log-top"><span class="ci-mono ci-dim">carta ${e.carta}</span><b>${escapeHtml(e.quem || "")}</b><span class="ci-chip">${e.escolha ? "falaria: " + escapeHtml(caosCerebroNome(e.escolha)) + " (" + e.nota + ")" : "calaria"}</span></div><div class="ci-log-txt">Por quê: ${escapeHtml(e.porque)} · sistema: ${escapeHtml(e.sistema || "não falou")}</div></div>`,
     )
     .join("");
   sec.appendChild(lista);
@@ -44476,7 +44658,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.9.3 · C.A.O.S. 5.1.0");
+  L.push("- **Versão:** Beta 1.7.10.9.3 · C.A.O.S. 5.1.1");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -45018,7 +45200,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.9.3 · C.A.O.S. 5.1.0",
+        versao: "Beta 1.7.10.9.3 · C.A.O.S. 5.1.1",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
@@ -83363,6 +83545,7 @@ function iniciar() {
   document.getElementById("pauseResumeBtn").addEventListener("click", resumeGame);
   document.getElementById("pauseExportBtn").addEventListener("click", () => exportSave());
   document.getElementById("pauseReportarBtn").addEventListener("click", () => cartaReportarAbrir());
+  document.getElementById("pauseProblemaBtn").addEventListener("click", () => problemaReportarAbrir());
   document.getElementById("pauseTemaBtn").addEventListener("click", toggleNoturno);
   document.getElementById("pauseVozBtn").addEventListener("click", pausaVozTrocar);
   document.getElementById("pauseReligarBtn").addEventListener("click", caosReligarCarta);

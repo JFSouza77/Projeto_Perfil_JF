@@ -309,6 +309,13 @@ function medir(tela) {
     await anotar("resposta");
     await c("#pauseBtn, .pause-btn, [id*=pause i]:visible");
     await anotar("pausa");
+    // 25/10/2026: as janelas de reporte (carta e problema)
+    await page.evaluate(() => typeof cartaReportarAbrir === "function" && cartaReportarAbrir());
+    await anotar("reportar carta");
+    await page.evaluate(() => document.getElementById("reportarCarta")?.remove());
+    await page.evaluate(() => typeof problemaReportarAbrir === "function" && problemaReportarAbrir());
+    await anotar("reportar problema");
+    await page.evaluate(() => document.getElementById("reportarProblema")?.remove());
     await page.close();
   }
   await navegador.close();

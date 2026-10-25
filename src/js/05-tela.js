@@ -1928,7 +1928,9 @@ function renderHumorPicker() {
   const ha = document.getElementById("humorAtual");
   if (ha) {
     ha.textContent = cur ? cur.label : "escolher";
-    ha.style.color = cur ? HUMOR_COR[selectedHumor] || "" : "";
+    // tema claro: as cores do humor são feitas pro fundo escuro; no claro vai a versão escura (contraste)
+    const cores = document.body.classList.contains("claro") ? HUMOR_COR_CLARO : HUMOR_COR;
+    ha.style.color = cur ? cores[selectedHumor] || "" : "";
   }
 
   try {

@@ -86,18 +86,18 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 1702 | getRandomReaction | escolhaExclusiva |
 | 1706 | getRandomReaction | escolhaTomada |
 | 1708 | showToastMessage | - |
-| 1985 | getRandomReaction | nickDemora |
-| 1986 | showToastMessage | - |
-| 2298 | showToastMessage | - |
-| 2781 | showToastMessage, getRandomReaction | - |
-| 3298 | showToastMessage | - |
-| 3408 | admFala, getRandomReaction | admHumorMudou |
-| 3430 | admFala | - |
-| 3431 | getRandomReaction | admHumorMudou |
-| 3507 | admFala, getRandomReaction | caosVoltouDaPartida |
-| 3642 | showToastMessage, getRandomReaction | pausaExpirada.continuou |
-| 3653 | showToastMessage, getRandomReaction | pausaExpirada.recomecou |
-| 3808 | getRandomReaction | vozCalada |
+| 1987 | getRandomReaction | nickDemora |
+| 1988 | showToastMessage | - |
+| 2300 | showToastMessage | - |
+| 2783 | showToastMessage, getRandomReaction | - |
+| 3300 | showToastMessage | - |
+| 3410 | admFala, getRandomReaction | admHumorMudou |
+| 3432 | admFala | - |
+| 3433 | getRandomReaction | admHumorMudou |
+| 3509 | admFala, getRandomReaction | caosVoltouDaPartida |
+| 3644 | showToastMessage, getRandomReaction | pausaExpirada.continuou |
+| 3655 | showToastMessage, getRandomReaction | pausaExpirada.recomecou |
+| 3810 | getRandomReaction | vozCalada |
 
 ## js/05d-ajuda-do-mestre.js (2)
 
@@ -553,5 +553,5 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 458 | getRandomReaction | nickRepertorio |
 | 459 | getRandomReaction | nickSugestaoAceita |
 | 503 | getRandomReaction | botaoEncerrar |
-| 762 | showToastMessage | - |
-| 763 | getRandomReaction | inicioInvalido |
+| 763 | showToastMessage | - |
+| 764 | getRandomReaction | inicioInvalido |

@@ -92,15 +92,22 @@ function problemaReportarAbrir() {
     `<p><small>Vai direto pro JF. Sem nomes e sem a resposta da carta.</small></p>` +
     `<fieldset class="rep-grupo"><legend>O que aconteceu?</legend>${opTipo}</fieldset>` +
     `<textarea id="probNota" maxlength="300" rows="3" placeholder="Conta rapidinho: o que você fez e o que deu errado (opcional)" aria-label="Descrição do problema (opcional)"></textarea>` +
-    `<label class="rep-op"><input type="checkbox" id="probAnexo" checked> Mandar junto o retrato da partida (versão, carta, placar, últimas jogadas)</label>` +
+    `<button type="button" class="chip" id="probAnexo" aria-pressed="true">📎 Retrato da partida vai junto ✓</button>` +
+    `<p class="rep-total"><small>O retrato tem versão, carta, placar e as últimas jogadas. Toque acima pra não mandar.</small></p>` +
     `<button type="button" class="btn-start btn-neo neo-solid neo-still" id="probSalvar" style="--mc:#f59e0b; --mc-glow:rgba(245,158,11,0.35);">🐞 Enviar pro JF</button>` +
     `<button type="button" class="chip" id="probFechar" style="margin-top:10px">Fechar</button></div>`;
+  const anexoBt = ov.querySelector("#probAnexo");
+  anexoBt.addEventListener("click", () => {
+    const vai = anexoBt.getAttribute("aria-pressed") !== "true";
+    anexoBt.setAttribute("aria-pressed", vai ? "true" : "false");
+    anexoBt.textContent = vai ? "📎 Retrato da partida vai junto ✓" : "📎 Retrato da partida não vai";
+  });
   const salvar = ov.querySelector("#probSalvar");
   salvar.addEventListener("click", () => {
     const ok = problemaGuardar({
       cat: (ov.querySelector('input[name="probTipo"]:checked') || {}).value || "outro",
       nota: String(ov.querySelector("#probNota").value || "").replace(/[\u0000-\u001f]/g, " ").trim().slice(0, 300),
-      anexo: ov.querySelector("#probAnexo").checked ? problemaRetrato() : null,
+      anexo: anexoBt.getAttribute("aria-pressed") === "true" ? problemaRetrato() : null,
       modo: typeof CURRENT_MODE !== "undefined" ? CURRENT_MODE : null,
       versao: JOGO_VERSAO,
       quando: Date.now(),
