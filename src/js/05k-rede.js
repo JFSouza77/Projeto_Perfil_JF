@@ -2938,6 +2938,16 @@ function redePedirEntrada(perfil) {
   r.idadeOk = false;
   if (idadeR) idadeLembrar(nome, idadeR);
   rede.erroCadastro = null;
+  // pedido do JF: antes de entrar, o celular pergunta se quer cadastrar o nick (ou pede o PIN, se já tem cadastro)
+  if (!perfil && r.contaVista !== nome && !contaLogin(nome)) {
+    r.contaVista = nome;
+    contaPost("existe", { nick: nome }).then((x) => {
+      if (!x || x.erro || (!x.existe && contaRecusada(nome))) return redePedirEntrada();
+      // entrou, criou ou disse "agora não": em todos os casos o pedido pra entrar segue
+      contaOferecer(nome, !!x.existe, !!x.semPin, () => redePedirEntrada(), () => redePedirEntrada());
+    });
+    return false;
+  }
   const p = { nome, cor: r.cor || null, avatar: r.avatar || null, humor: r.humor || null };
   const lg = contaLogin(nome); // 11/2026: o login do cadastro deste celular vai junto (o host guarda a memória)
   if (lg) p.conta = lg;

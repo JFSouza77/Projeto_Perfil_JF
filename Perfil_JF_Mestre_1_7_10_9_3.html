@@ -7,6 +7,10 @@
 
   HISTÓRICO (uma linha por versão). Numeração: 1.7.N.M; depois do .9 sobe o número do meio. Log com no máximo 7 itens
   por versão; o 3º número só sobe com o OK do JF; o 2º, com a série fechada + 7 coisas grandes: docs/Regras_dos_Logs.md.
+  (interno) · 25/10/2026 · CADASTRO 2 · C.A.O.S. 5.0.0. Build 1840. Depois de cadastrar o nick, a pergunta do cadastro
+          aparece sozinha (criar ou digitar o PIN; "Agora não" e "Não perguntar de novo"); no celular da sala, antes de
+          pedir pra entrar. Quem o C.A.O.S. conhece é reconhecido antes da piada do nick demorado (o tempo na janela do
+          cadastro contava como demora e ele cumprimentou o JF como estranho).
   (interno) · 24/10/2026 · CADASTRO · C.A.O.S. 4.10.0. Build 1839. Cadastro opcional do jogador (ideia do Henrique):
           nick + PIN de 4 números (no servidor só fica o PIN embaralhado). Com cadastro, a ficha do C.A.O.S. fica na nuvem
           e ele lembra da pessoa em qualquer dispositivo; nick com cadastro sem login joga sem a memória do dono. Pela sala,
@@ -11293,7 +11297,7 @@ body.batata-mode.aviso-treme {
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.9.3 · Multiplayer Update · QoL da Mesa<br>C.A.O.S. 4.10.0 · Atualizada em 23/10/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.7.10.9.3 · Multiplayer Update · QoL da Mesa<br>C.A.O.S. 5.0.0 · Atualizada em 23/10/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
     <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
@@ -11576,7 +11580,7 @@ body.batata-mode.aviso-treme {
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1839;
+const JOGO_BUILD = 1840;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -15582,7 +15586,7 @@ function addPlayer() {
   hideNickSuggest();
   idadeLimpar();
   nicksRepertorioGuardar(name);
-  contaAoCadastrar(players[players.length - 1]); // 11/2026: cadastro do jogador (antes da memória, que respeita o nick protegido)
+  contaAoCadastrar(players[players.length - 1], null, true); // 11/2026: cadastro do jogador (antes da memória, que respeita o nick protegido); pergunta se quer cadastrar
   caosMemCadastro(players[players.length - 1]);
   input.value = "";
   caosTomadaN = 0;
@@ -26444,6 +26448,16 @@ function redePedirEntrada(perfil) {
   r.idadeOk = false;
   if (idadeR) idadeLembrar(nome, idadeR);
   rede.erroCadastro = null;
+  // pedido do JF: antes de entrar, o celular pergunta se quer cadastrar o nick (ou pede o PIN, se já tem cadastro)
+  if (!perfil && r.contaVista !== nome && !contaLogin(nome)) {
+    r.contaVista = nome;
+    contaPost("existe", { nick: nome }).then((x) => {
+      if (!x || x.erro || (!x.existe && contaRecusada(nome))) return redePedirEntrada();
+      // entrou, criou ou disse "agora não": em todos os casos o pedido pra entrar segue
+      contaOferecer(nome, !!x.existe, !!x.semPin, () => redePedirEntrada(), () => redePedirEntrada());
+    });
+    return false;
+  }
   const p = { nome, cor: r.cor || null, avatar: r.avatar || null, humor: r.humor || null };
   const lg = contaLogin(nome); // 11/2026: o login do cadastro deste celular vai junto (o host guarda a memória)
   if (lg) p.conta = lg;
@@ -29444,6 +29458,7 @@ function cartaReportarAbrir() {
    /contas do servidor e a memória continua. Sem internet, o jogo segue como antes (memória do dispositivo). */
 const CONTAS_KEY = "perfil5_contas"; // logins deste dispositivo: { chave do nick: { nick, token } }
 const CONTAS_CONHECIDAS_KEY = "perfil5_contas_conhecidas"; // nicks que já sabemos que têm cadastro: { chave: 1 }
+const CONTAS_RECUSADAS_KEY = "perfil5_contas_recusadas"; // "não perguntar de novo" pra esse nick neste dispositivo
 
 function contasLer(k) {
   try {
@@ -29511,8 +29526,56 @@ function contaFichaJuntar(nome, ficha) {
   if (loc && (loc.partidas || 0) > (ficha.partidas || 0)) return;
   fichaUpd(nome, (f) => Object.assign(f, fichaLimpa(ficha, nome)));
 }
+function contaRecusada(nome) {
+  const k = nameKeyPlain(nome);
+  return !!(k && contasLer(CONTAS_RECUSADAS_KEY)[k]);
+}
+function contaRecusar(nome) {
+  const o = contasLer(CONTAS_RECUSADAS_KEY);
+  o[nameKeyPlain(nome)] = 1;
+  contasGravar(CONTAS_RECUSADAS_KEY, o);
+}
+// Pedido do JF: em vez do botão pequeno, a pergunta aparece sozinha logo depois de cadastrar o nick.
+// Nick com cadastro: pede o PIN. Nick sem cadastro: oferece criar (com "Agora não" e "Não perguntar de novo").
+// Só pergunta quando o servidor respondeu (sem internet, não incomoda).
+function contaOferecer(nome, existe, semPin, depois, seNao) {
+  if (contaLogin(nome) || (!existe && contaRecusada(nome))) return;
+  const { ov, box } = caosModalBase();
+  const fim = () => ov.remove();
+  const nao = () => {
+    fim();
+    if (typeof seNao === "function") seNao();
+  };
+  const row = caosModalRow();
+  const entrar = existe && !semPin;
+  row.append(
+    caosModalBtn("Agora não", "#444a66", nao),
+    caosModalBtn(entrar ? "Digitar o PIN" : "Cadastrar", "#2563eb", () => {
+      fim();
+      contaAbrir(nome, depois);
+    }),
+  );
+  const msg = entrar
+    ? `🔐 O nick "${nome}" tem cadastro. Digite o PIN pro C.A.O.S. lembrar de você (sem o PIN, ele te trata como se fosse a primeira vez).`
+    : `🔐 Quer cadastrar o nick "${nome}"? Com um PIN de 4 números, o C.A.O.S. lembra de você em qualquer dispositivo, e ninguém mais usa a sua memória.`;
+  box.append(caosModalMsg(msg), row);
+  if (!existe) {
+    const nunca = document.createElement("button");
+    nunca.type = "button";
+    nunca.className = "chip";
+    nunca.textContent = "Não perguntar de novo pra esse nick";
+    nunca.style.cssText = "display:block;margin:12px auto 0;min-height:44px";
+    nunca.addEventListener("click", () => {
+      contaRecusar(nome);
+      nao();
+    });
+    box.append(nunca);
+  }
+  document.body.appendChild(ov);
+}
 // Jogador entrou no cadastro da partida (aqui ou pela sala). contaRede = login que o celular do jogador mandou.
-function contaAoCadastrar(p, contaRede) {
+// perguntar = cadastro feito neste dispositivo: oferece criar ou entrar no cadastro logo depois.
+function contaAoCadastrar(p, contaRede, perguntar) {
   if (!p || !p.name) return;
   const daRede = contaRede && typeof contaRede.token === "string" ? { nick: String(contaRede.nick || p.name).slice(0, 15), token: contaRede.token.slice(0, 64) } : null;
   const l = daRede || contaLogin(p.name);
@@ -29535,6 +29598,15 @@ function contaAoCadastrar(p, contaRede) {
     if (!r || r.erro) return;
     contaMarcarConhecida(p.name, !!r.existe);
     if (r.existe && !p.conta) p.nickEmprestado = true;
+    if (perguntar && !p.iniciante && players.includes(p))
+      contaOferecer(p.name, !!r.existe, !!r.semPin, () => {
+        // entrou ou criou: esse jogador passa a ter memória
+        const l = contaLogin(p.name);
+        if (!l) return;
+        p.conta = l;
+        delete p.nickEmprestado;
+        saveGameState();
+      });
   });
 }
 // Fim da partida: a ficha de quem tem cadastro sobe pra nuvem.
@@ -29643,6 +29715,8 @@ function contaBotaoLigar() {
   b.dataset.ligado = "1";
   b.addEventListener("click", () => {
     const inp = document.getElementById("playerNameInput");
+    // o tempo na janela do cadastro não conta como "demorou pra escolher o nick"
+    if (typeof nickWaitStart !== "undefined") nickWaitStart = null;
     contaAbrir(inp ? inp.value : "");
   });
 }
@@ -34189,7 +34263,7 @@ function caosToastBloquear() {
         return true;
       }
     }
-    // C.A.O.S. 4.10.0 (JF, 11/2026: "no Modo C.A.O.S. ele falando demais atrapalha, é muita informação"): lá a carta não
+    // C.A.O.S. 5.0.0 (JF, 11/2026: "no Modo C.A.O.S. ele falando demais atrapalha, é muita informação"): lá a carta não
     // passa pelo baralho normal (o limite por carta nunca valia) e a tela já fala muito pelos avisos. Então: com aviso da
     // mesa na tela ou com alguém pensando (janela de palpite, julgamento, duelo, carta bônus), comentário nenhum; e no
     // máximo um comentário por vez de Mestre. Aviso de regra (essencial) passa igual.
@@ -34963,7 +35037,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.9.3 · C.A.O.S. 4.10.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.9.3 · C.A.O.S. 5.0.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -38315,7 +38389,7 @@ function caosNeuralDesenhar(cv, t) {
     const C = caosConsole || {};
     const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
 tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
-${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 4.10.0`;
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 5.0.0`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }
@@ -38878,10 +38952,17 @@ function caosWelcomePlayer(p) {
   let bank = null,
     args = [name];
   const prevNickMs = caosNickTempoRemember(p);
-  if (typeof p.nickMs === "number" && p.nickMs >= 6e4 && R() < 0.75) {
+  // quem ele conhece (JF, Anne, amigos, sobrinhos) é reconhecido antes da piada do nick demorado (relato do JF:
+  // o tempo de criar o cadastro contou como demora e ele cumprimentou o JF como um estranho)
+  const conhecido =
+    (isJfName(name) && p.avatar === "😎") ||
+    (isAnneName(name) && p.avatar === "👸") ||
+    !!(presenteDe(name) && REACTIVE_VOICE.amigos[presenteDe(name).id] && CURRENT_MODE !== "junior") ||
+    !!sobrinhoDe(name);
+  if (!conhecido && typeof p.nickMs === "number" && p.nickMs >= 6e4 && R() < 0.75) {
     bank = REACTIVE_VOICE.nickDemora.chegou;
     args = [name, caosTempoFala(p.nickMs)];
-  } else if (prevNickMs >= 9e4 && typeof p.nickMs === "number" && p.nickMs < 3e4 && R() < 0.8)
+  } else if (!conhecido && prevNickMs >= 9e4 && typeof p.nickMs === "number" && p.nickMs < 3e4 && R() < 0.8)
     bank = REACTIVE_VOICE.nickDemora.evoluiu;
   else if (isAnneName(name) && p.avatar === "👸") {
     const g = caosGerarFala("anneChegou", p);
@@ -40122,7 +40203,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.9.3 · C.A.O.S. 4.10.0)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.7.10.9.3 · C.A.O.S. 5.0.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",
@@ -44024,7 +44105,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.9.3 · C.A.O.S. 4.10.0");
+  L.push("- **Versão:** Beta 1.7.10.9.3 · C.A.O.S. 5.0.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -44566,7 +44647,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.9.3 · C.A.O.S. 4.10.0",
+        versao: "Beta 1.7.10.9.3 · C.A.O.S. 5.0.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,

@@ -1728,7 +1728,7 @@ function addPlayer() {
   hideNickSuggest();
   idadeLimpar();
   nicksRepertorioGuardar(name);
-  contaAoCadastrar(players[players.length - 1]); // 11/2026: cadastro do jogador (antes da memória, que respeita o nick protegido)
+  contaAoCadastrar(players[players.length - 1], null, true); // 11/2026: cadastro do jogador (antes da memória, que respeita o nick protegido); pergunta se quer cadastrar
   caosMemCadastro(players[players.length - 1]);
   input.value = "";
   caosTomadaN = 0;

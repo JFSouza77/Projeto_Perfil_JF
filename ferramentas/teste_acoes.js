@@ -567,6 +567,26 @@ const ARQ = acharMestre(process.argv[2]);
       out.tato = comecaNormal && umaNaoBasta && aprendeu && prefereCurta && calarEnsina && calarVelhoNao && nichoLivre && nichoTrava && caosModoEncurta && memoria;
       out.tatoDiag = JSON.stringify({ intercala, datas, mesmaMesaLembra, novaTesta, gostaDeLonga, lembraQueGosta, jeitoDaMesa, comecaNormal, umaNaoBasta, aprendeu, prefereCurta, curtas, calarEnsina, calarVelhoNao, nichoLivre, nichoTrava, caosModoEncurta });
     }
+    // relato do JF: o tempo de criar o cadastro contou como "demorou pra escolher o nick" e ele cumprimentou o JF
+    // como um estranho. Quem ele conhece é reconhecido antes da piada do nick demorado.
+    {
+      const jogAntes = players, toastAntes = window.showToastMessage, randAntes = Math.random, silAntes = caosSilenced;
+      let dito = '';
+      window.showToastMessage = (t) => (dito = String(t || ''));
+      Math.random = () => 0;
+      caosSilenced = false;
+      const jf = { id: 'jfx', name: 'JF', avatar: '😎', score: 0, humor: 'normal', nickMs: 70e3 };
+      players = [jf];
+      caosWelcomePlayer(jf);
+      const estranho = { id: 'zzx', name: 'Zuleica', avatar: '😀', score: 0, humor: 'normal', nickMs: 70e3 };
+      players = [estranho];
+      let ditoEstranho = '';
+      window.showToastMessage = (t) => (ditoEstranho = String(t || ''));
+      caosWelcomePlayer(estranho);
+      window.showToastMessage = toastAntes; Math.random = randAntes; caosSilenced = silAntes; players = jogAntes;
+      out.reconheceAntes = !!dito && !/1 minuto/.test(dito) && /1 minuto/.test(ditoEstranho);
+      out.reconheceAntesDiag = JSON.stringify({ dito, ditoEstranho });
+    }
     // 1.7.10.3: busca nas regras e o lembrete da primeira carta de cada categoria
     {
       openTutorial('manual');
@@ -706,6 +726,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['C.A.O.S. 4.3: pular fala marca quem pulou (aparelho do host e celular); todos calaram = quieto (regra passa); parte calou = ciúmes; quem religa traz ele de volta', r.caos43],
     ['1.7.10.5: quem está na vez pede a dica no aparelho (o Mestre recebe o pedido); quem tem a ficha toca em Palpitar agora e o Mestre julga só esse palpite; errou, a ficha volta e a vez segue', r.palpiteAgora],
     ['1.7.10.5.3: trava da dica (o Mestre só abre a pedida, forçar passa); C.A.O.S. 4.4.1: tocar na dica aberta faz ele responder mesmo no respiro', r.dicaRepetida && r.palpiteAgora],
+    ['Quem o C.A.O.S. conhece (JF, amigos, sobrinhos) é reconhecido antes da piada do nick demorado', r.reconheceAntes],
     ['C.A.O.S. com tato: a mesa corta frase longa e ele passa a falar curto, lembra da mesma mesa, testa mesa nova pelo jeito dela; família de nicho só 1x por partida', r.tato],
     ['Easter egg: piadas internas com limite e intervalo (nunca no Júnior; os sobrinhos sim), Dragons só com o JF e a turma, falas da mesa toda e cores escondidas da paleta', r.amigos],
     ['Cadastro: o C.A.O.S. pergunta da voz (não pergunta se já está ligada); Sim liga; Não ganha fala triste e segue sem voz', r.vozPergunta],

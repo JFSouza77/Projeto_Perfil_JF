@@ -11,10 +11,17 @@ function caosWelcomePlayer(p) {
   let bank = null,
     args = [name];
   const prevNickMs = caosNickTempoRemember(p);
-  if (typeof p.nickMs === "number" && p.nickMs >= 6e4 && R() < 0.75) {
+  // quem ele conhece (JF, Anne, amigos, sobrinhos) é reconhecido antes da piada do nick demorado (relato do JF:
+  // o tempo de criar o cadastro contou como demora e ele cumprimentou o JF como um estranho)
+  const conhecido =
+    (isJfName(name) && p.avatar === "😎") ||
+    (isAnneName(name) && p.avatar === "👸") ||
+    !!(presenteDe(name) && REACTIVE_VOICE.amigos[presenteDe(name).id] && CURRENT_MODE !== "junior") ||
+    !!sobrinhoDe(name);
+  if (!conhecido && typeof p.nickMs === "number" && p.nickMs >= 6e4 && R() < 0.75) {
     bank = REACTIVE_VOICE.nickDemora.chegou;
     args = [name, caosTempoFala(p.nickMs)];
-  } else if (prevNickMs >= 9e4 && typeof p.nickMs === "number" && p.nickMs < 3e4 && R() < 0.8)
+  } else if (!conhecido && prevNickMs >= 9e4 && typeof p.nickMs === "number" && p.nickMs < 3e4 && R() < 0.8)
     bank = REACTIVE_VOICE.nickDemora.evoluiu;
   else if (isAnneName(name) && p.avatar === "👸") {
     const g = caosGerarFala("anneChegou", p);
