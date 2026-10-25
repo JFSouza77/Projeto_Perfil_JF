@@ -9947,7 +9947,6 @@ body.claro button.splash-embreve .eb-sub {
   border: 1px solid #60a5fa;
   text-align: center;
 }
-.number-btn.pedida,
 .telao-numeros .pedida {
   outline: 3px solid #60a5fa;
   outline-offset: 1px;
@@ -9956,8 +9955,31 @@ body.claro button.splash-embreve .eb-sub {
 @keyframes pedidaPulsa {
   50% { transform: scale(1.08); }
 }
+/* 25/10/2026 (pedido do JF): a dica que o jogador pediu tem que SALTAR na tela do mestre — fundo aceso,
+   brilho pulsante e um balanço, pra ele achar o número na hora (ex.: "pediu a dica 17"). */
+.number-btn.pedida {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  font-weight: 800;
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
+  border-color: #93c5fd;
+  outline: 3px solid #bfdbfe;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #2563eb, 0 6px 18px rgba(37, 99, 235, 0.55);
+  transform-origin: center bottom;
+  animation: pedidaChama 1s ease-in-out infinite;
+}
+@keyframes pedidaChama {
+  0%, 100% { transform: scale(1.1) rotate(-4deg); box-shadow: 0 0 0 2px #2563eb, 0 6px 18px rgba(37, 99, 235, 0.55); }
+  25% { transform: scale(1.16) rotate(4deg); }
+  50% { transform: scale(1.1) rotate(-4deg); box-shadow: 0 0 0 3px #60a5fa, 0 10px 26px rgba(59, 130, 246, 0.8); }
+  75% { transform: scale(1.16) rotate(4deg); }
+}
+/* quem pediu "menos movimento" ainda enxerga o número aceso, só sem o balanço */
 @media (prefers-reduced-motion: reduce) {
   .number-btn.pedida, .telao-numeros .pedida { animation: none; }
+  .number-btn.pedida { transform: scale(1.1); }
 }
 
 /* 1.7.10.5.5 (auditoria de botões): "Não, todo mundo neste aparelho" com área de toque de 44 px e legível no Claro */
@@ -12690,7 +12712,7 @@ function jogoSiteAtual() {
   } catch (e) {}
   return JOGO_SITE;
 }
-const ADM_CRIADOR_HASH = "f10d7ed5";
+const ADM_CRIADOR_HASH = "c408159f";
 const CAOS_PAUSA_DEGRAUS = [
   { s: 40, emo: "tedio", d: [0, -0.5, -0.5] },
   { s: 90, emo: "espiando", d: [0.5, -0.5, -1] },

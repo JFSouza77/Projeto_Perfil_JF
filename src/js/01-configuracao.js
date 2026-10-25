@@ -1049,7 +1049,7 @@ function jogoSiteAtual() {
   } catch (e) {}
   return JOGO_SITE;
 }
-const ADM_CRIADOR_HASH = "f10d7ed5";
+const ADM_CRIADOR_HASH = "c408159f";
 const CAOS_PAUSA_DEGRAUS = [
   { s: 40, emo: "tedio", d: [0, -0.5, -0.5] },
   { s: 90, emo: "espiando", d: [0.5, -0.5, -1] },
