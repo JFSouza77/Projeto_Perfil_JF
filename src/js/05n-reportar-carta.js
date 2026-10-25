@@ -30,17 +30,26 @@ function cartasReportadas() {
 function cartaReportarGuardar(r) {
   if (!r.uid) r.uid = Math.random().toString(36).slice(2, 10); // tira da fila pelo uid (revisão 1.7.10)
   const l = cartasReportadas();
-  l.push(r);
+  const { imagens, ...semImg } = r; // a lista deste aparelho guarda só o texto (as imagens vão só na fila)
+  l.push(semImg);
   while (l.length > CARTAS_REPORTADAS_MAX) l.shift();
   try {
     localStorage.setItem(CARTAS_REPORTADAS_KEY, JSON.stringify(l));
-    const f = cartaReporteFila();
-    f.push(r);
-    localStorage.setItem(CARTAS_REPORTE_FILA_KEY, JSON.stringify(f.slice(-CARTAS_REPORTADAS_MAX)));
-    return true;
   } catch (e) {
     return false;
   }
+  return reporteFilaEntrar(r);
+}
+// entra na fila de envio; se as imagens não couberem no aparelho, vai só o texto (25/10/2026)
+function reporteFilaEntrar(r) {
+  const f = cartaReporteFila();
+  for (const item of r.imagens && r.imagens.length ? [r, { ...r, imagens: [], semEspaco: true }] : [r]) {
+    try {
+      localStorage.setItem(CARTAS_REPORTE_FILA_KEY, JSON.stringify(f.concat([item]).slice(-CARTAS_REPORTADAS_MAX)));
+      return item.semEspaco ? "semImagens" : true;
+    } catch (e) {}
+  }
+  return false;
 }
 function cartaReporteFila() {
   try {
@@ -124,6 +133,7 @@ function cartaReportarAbrir() {
         `<fieldset class="rep-grupo"><legend>O que está errado?</legend>${opDica}</fieldset>` +
         `<fieldset class="rep-grupo"><legend>Motivo</legend>${opMotivo}</fieldset>` +
         `<input type="text" id="repNota" maxlength="120" autocomplete="off" placeholder="Quer explicar? (opcional)" aria-label="Explicação (opcional)">` +
+        `<div id="repImgs"></div>` +
         `<button type="button" class="btn-start btn-neo neo-solid neo-still" id="repSalvar" style="--mc:#f59e0b; --mc-glow:rgba(245,158,11,0.35);">⚑ Enviar pro JF</button>`
       : `<p>Não tem carta na mesa agora. Abra esta janela durante uma carta pra reportar.</p>`) +
     `<p class="rep-total" id="repTotal">${total ? `${total} carta${total === 1 ? "" : "s"} reportada${total === 1 ? "" : "s"} neste aparelho.` : "Nenhuma carta reportada neste aparelho ainda."}</p>` +
@@ -139,8 +149,12 @@ function cartaReportarAbrir() {
     ov.querySelector("#repLimpar").disabled = !n;
   };
   const salvar = ov.querySelector("#repSalvar");
+  let imgs = null;
   if (salvar)
-    salvar.addEventListener("click", () => {
+    salvar.addEventListener("click", async () => {
+      salvar.disabled = true;
+      salvar.textContent = "⏳ Preparando…";
+      if (imgs) await imgs.pronto;
       const pos = +(ov.querySelector('input[name="repDica"]:checked') || {}).value;
       const item = pos >= 0 && carta.clues[pos];
       const ok = cartaReportarGuardar({
@@ -153,15 +167,15 @@ function cartaReportarAbrir() {
         modo: typeof CURRENT_MODE !== "undefined" ? CURRENT_MODE : null,
         versao: JOGO_VERSAO,
         quando: Date.now(),
+        imagens: imgs ? imgs.imagens() : [],
       });
-      salvar.disabled = true;
       if (!ok) {
         salvar.textContent = "⚠️ Não deu pra guardar neste aparelho";
         return totalAtual();
       }
       salvar.textContent = "⏳ Enviando…";
       cartaReporteEnviar().then((faltam) => {
-        salvar.textContent = faltam ? "📥 Guardado: vai pro JF quando tiver internet" : "✅ Enviado pro JF. Obrigado!";
+        salvar.textContent = (faltam ? "📥 Guardado: vai pro JF quando tiver internet" : "✅ Enviado pro JF. Obrigado!") + (ok === "semImagens" ? " (sem as imagens: o aparelho está sem espaço)" : "");
         totalAtual();
       });
     });
@@ -193,4 +207,7 @@ function cartaReportarAbrir() {
   );
   ov.querySelector("#repFechar").addEventListener("click", () => ov.remove());
   document.body.appendChild(ov);
+  // 25/10/2026: print da tela (sem esta janela e sem a resposta) + fotos/prints do aparelho
+  const caixaImgs = ov.querySelector("#repImgs");
+  if (caixaImgs) imgs = reporteImagensMontar(caixaImgs);
 }

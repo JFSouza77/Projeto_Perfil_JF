@@ -1925,3 +1925,15 @@ body.claro #reportarCarta .chip,
 body.claro #reportarProblema .chip {
   color: var(--claro-txt);
 }
+/* 25/10/2026 · prints nos reportes e botão de reportar na carta */
+.rep-carta-btn{margin-top:8px;opacity:.85}
+.rep-imgs{border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:8px 10px;margin:10px 0;text-align:left}
+.rep-imgs-tit{font-size:.85rem;opacity:.9;margin-bottom:6px}
+.rep-thumbs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.rep-thumb{position:relative;display:inline-block}
+.rep-thumb img{width:88px;height:auto;max-height:160px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,.25);display:block}
+.rep-thumb-x{position:absolute;top:-10px;right:-10px;width:44px;height:44px;padding:10px;box-sizing:border-box;border-radius:50%;border:none;background:#be123c;background-clip:content-box;color:#fff;font-weight:900;line-height:1;font-size:.8rem;cursor:pointer}
+.rep-thumb-vazio{font-size:.85rem;opacity:.85}
+.rep-add{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;cursor:pointer}
+body.claro .rep-imgs{border-color:var(--claro-borda)}
+body.claro .rep-add{color:var(--claro-txt)}

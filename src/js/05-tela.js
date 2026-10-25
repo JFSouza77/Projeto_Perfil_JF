@@ -986,6 +986,8 @@ function render() {
     }
     if (podeDesistirCarta())
       extraBtnsHtml += `<button class="discard-btn" id="giveUpBtn" style="color:#b45309;border-color:rgba(180,83,9,.5);margin-top:8px">🏳️ Desistir desta carta (ninguém acerta)</button>`;
+    // 25/10/2026 (pedido do JF): reportar direto da carta, com o print da tela (o da pausa continua)
+    extraBtnsHtml += `<button class="discard-btn rep-carta-btn" id="cartaReportarBtn" type="button">⚑ Reportar esta carta (fato errado, entrega a resposta…)</button>`;
     area.style.setProperty("--card-glow", (GEM_INFO[gemCategoryFor(currentCard.category)] || {}).color || "#a78bfa");
     const bonusBannerRevealedHtml = currentCard.isBonus ? renderBonusBanner() : "";
     const bonusDuelHtml = currentCard.isBonus ? renderBonusDuelInfo() : "";
@@ -1006,6 +1008,8 @@ function render() {
     `;
     drawBtn.style.display = "none";
     wireAnswerToggle();
+    const repBt = document.getElementById("cartaReportarBtn");
+    if (repBt) repBt.addEventListener("click", () => cartaReportarAbrir());
     area.querySelectorAll("[data-cr-usar]").forEach((b) => b.addEventListener("click", () => dispatchAction({ type: "corridaUsar", data: [b.dataset.crUsar, b.dataset.crQuem] })));
     if (CURRENT_MODE === "express") updateTimerDisplay();
     if (pendingIndex !== null) {

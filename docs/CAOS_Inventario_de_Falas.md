@@ -79,25 +79,25 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 166 | showToastMessage | - |
 | 467 | showToastMessage, getRandomReaction | memoria.apagada |
 | 517 | showToastMessage, getRandomReaction | especialExpressSemAlvo |
-| 1316 | showToastMessage | - |
-| 1317 | getRandomReaction | conferirResposta |
-| 1688 | getRandomReaction | nomeRepetido |
-| 1689 | showToastMessage | - |
-| 1702 | getRandomReaction | escolhaExclusiva |
-| 1706 | getRandomReaction | escolhaTomada |
-| 1708 | showToastMessage | - |
-| 1987 | getRandomReaction | nickDemora |
-| 1988 | showToastMessage | - |
-| 2300 | showToastMessage | - |
-| 2783 | showToastMessage, getRandomReaction | - |
-| 3300 | showToastMessage | - |
-| 3410 | admFala, getRandomReaction | admHumorMudou |
-| 3432 | admFala | - |
-| 3433 | getRandomReaction | admHumorMudou |
-| 3509 | admFala, getRandomReaction | caosVoltouDaPartida |
-| 3644 | showToastMessage, getRandomReaction | pausaExpirada.continuou |
-| 3655 | showToastMessage, getRandomReaction | pausaExpirada.recomecou |
-| 3810 | getRandomReaction | vozCalada |
+| 1320 | showToastMessage | - |
+| 1321 | getRandomReaction | conferirResposta |
+| 1692 | getRandomReaction | nomeRepetido |
+| 1693 | showToastMessage | - |
+| 1706 | getRandomReaction | escolhaExclusiva |
+| 1710 | getRandomReaction | escolhaTomada |
+| 1712 | showToastMessage | - |
+| 1991 | getRandomReaction | nickDemora |
+| 1992 | showToastMessage | - |
+| 2304 | showToastMessage | - |
+| 2787 | showToastMessage, getRandomReaction | - |
+| 3304 | showToastMessage | - |
+| 3414 | admFala, getRandomReaction | admHumorMudou |
+| 3436 | admFala | - |
+| 3437 | getRandomReaction | admHumorMudou |
+| 3513 | admFala, getRandomReaction | caosVoltouDaPartida |
+| 3648 | showToastMessage, getRandomReaction | pausaExpirada.continuou |
+| 3659 | showToastMessage, getRandomReaction | pausaExpirada.recomecou |
+| 3814 | getRandomReaction | vozCalada |
 
 ## js/05d-ajuda-do-mestre.js (2)
 

@@ -34,6 +34,8 @@ A partir daí, toda mudança nesta pasta que entrar no GitHub publica o servidor
 - Pra ver os reportes, abra `https://perfil-jf-sala.SEU-NOME.workers.dev/reportes?chave=SUA-SENHA`. Salve nos favoritos.
   Na mesma página, embaixo das cartas, ficam os **problemas reportados** (25/10/2026: 🐞 Reportar um problema, na pausa),
   cada um com o retrato da partida (versão, carta, placar, últimas jogadas; sem nomes).
+  Cartas e problemas podem vir com até 3 imagens (o print da tela tirado sozinho e fotos/prints do aparelho):
+  aparecem em miniatura; toque pra abrir grande. As mais antigas saem sozinhas (até 600 pedaços guardados).
 - Pra ver os cadastros dos jogadores (nick + PIN, 11/2026), abra `https://perfil-jf-sala.SEU-NOME.workers.dev/contas?chave=SUA-SENHA` (a mesma senha dos reportes). Lá dá pra zerar o PIN de quem esqueceu (a memória continua), apagar um cadastro, limpar quem sumiu há muito tempo e baixar tudo em JSON.
 
 ### 3c. Voz nova do C.A.O.S. (Microsoft Azure, plano grátis)

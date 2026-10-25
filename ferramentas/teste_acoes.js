@@ -720,9 +720,13 @@ const ARQ = acharMestre(process.argv[2]);
       const ov = document.getElementById('reportarCarta');
       const semResposta = !!ov && temCarta && !ov.textContent.toLowerCase().includes(String(currentCard.answer).toLowerCase());
       if (ov && temCarta) { ov.querySelector('input[name="repMotivo"][value="entrega"]').click(); ov.querySelector('#repSalvar').click(); }
+      await new Promise((ok) => { const t0 = Date.now(); (function w() { if (cartaReporteFila().length || Date.now() - t0 > 15000) ok(); else setTimeout(w, 100); })(); });
       const l = cartasReportadas();
       out.reportar = temCarta && semResposta && l.length === 1 && l[0].id === currentCard.id && l[0].motivo === 'entrega' && cartasReportadasTexto().includes(currentCard.id) && partidaRevisao === rev0;
-      out.reportar = out.reportar && cartaReporteFila().length === 1;
+      // 25/10/2026: o print da tela vai junto (só na fila; a lista do aparelho guarda só o texto)
+      const fi = cartaReporteFila()[0] || {};
+      out.reportar = out.reportar && cartaReporteFila().length === 1 && Array.isArray(fi.imagens) && fi.imagens.length === 1 && /^data:image\/jpeg;base64,/.test(fi.imagens[0]) && !('imagens' in l[0]);
+      out.reportarDiag = JSON.stringify({ n: cartaReporteFila().length, imgs: (fi.imagens || []).length, tam: ((fi.imagens || [])[0] || '').length });
       currentCard = cartaAntes; gameEnded = fimAntes; starterChosen = iniAntes;
       if (ov) ov.remove();
       localStorage.removeItem('perfil5_cartas_reportadas');
@@ -739,11 +743,13 @@ const ARQ = acharMestre(process.argv[2]);
       problemaReportarAbrir();
       const ov = document.getElementById('reportarProblema');
       if (ov) { ov.querySelector('input[name="probTipo"][value="placar"]').click(); ov.querySelector('#probNota').value = 'placar pulou'; ov.querySelector('#probSalvar').click(); }
+      await new Promise((ok) => { const t0 = Date.now(); (function w() { if (cartaReporteFila().length || Date.now() - t0 > 15000) ok(); else setTimeout(w, 100); })(); });
       const f = cartaReporteFila(), it = f[0] || {}, txt = JSON.stringify(it);
       out.problema = !!ov && f.length === 1 && it.tipo === 'problema' && it.cat === 'placar' && it.nota === 'placar pulou' && !!it.anexo &&
         it.anexo.jog.length === 2 && it.anexo.jog[0][0] === 'J1' && it.anexo.carta === currentCard.id &&
-        !/Zuleica|Teodoro/.test(txt) && !txt.toLowerCase().includes(String(currentCard.answer).toLowerCase()) && txt.length < 2900 && partidaRevisao === rev0;
-      out.problemaDiag = JSON.stringify({ n: f.length, cat: it.cat, tam: txt.length });
+        !/Zuleica|Teodoro/.test(JSON.stringify(it.anexo)) && !JSON.stringify(it.anexo).toLowerCase().includes(String(currentCard.answer).toLowerCase()) &&
+        Array.isArray(it.imagens) && it.imagens.length === 1 && it.imagens[0].length <= 280000 && JSON.stringify({ ...it, imagens: [] }).length < 2900 && partidaRevisao === rev0;
+      out.problemaDiag = JSON.stringify({ n: f.length, cat: it.cat, tam: txt.length, imgs: (it.imagens || []).length });
       if (ov) ov.remove();
       currentCard = cartaAntes; players = jogAntes;
       localStorage.removeItem('perfil5_cartas_reporte_fila');

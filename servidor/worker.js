@@ -18,6 +18,7 @@
  *                            ou problema da partida (tipo "problema": categoria, descrição, retrato sem nomes)
  *   GET  /reportes?chave=… → página do JF com os reportes (senha no segredo REPORTES_SENHA); &formato=texto
  *   POST /reportes/apagar  → apaga todos (com a senha)
+ *   GET  /reportes/img?chave=…&id=…&n=… → imagem de um reporte (print da tela ou foto anexada, 25/10/2026)
  *   GET  /voz/estado       → { ligada } (1.7.10.2: a voz nova do C.A.O.S. está configurada?)
  *   POST /voz              → { t, r, p } → MP3 da fala (Azure, voz pt-BR). Cada fala gerada fica guardada
  *                            (as falas se repetem muito) e há um teto de letras por mês (VOZ_TETO_MES).
@@ -216,14 +217,15 @@ async function atender(req, env) {
     }
     const caixa = () => env.SINAL.get(env.SINAL.idFromName("reportes"));
     // 1.7.10: a página dos reportes abre direto no navegador do JF (protegida pela senha)
-    if (p === "/reportes" || p === "/reportes/apagar") {
+    if (p === "/reportes" || p === "/reportes/apagar" || p === "/reportes/img") {
       if (!env.REPORTES_SENHA) return new Response("Senha dos reportes não configurada (segredo REPORTES_SENHA).", { status: 403, headers: { "Content-Type": "text/plain; charset=utf-8" } });
       return doFetch(caixa(), req);
     }
     if (!ok) return json({ erro: "origem" }, 403, h);
     if (p === "/reporte" && req.method === "POST") {
       const corpo = await req.text();
-      if (corpo.length > 3000) return json({ erro: "grande" }, 413, h);
+      // 25/10/2026: com imagens (até 3 prints/fotos reduzidos) o corpo cresce; o texto continua limitado a 3000 no DO
+      if (corpo.length > 900000) return json({ erro: "grande" }, 413, h);
       const r = await doFetch(caixa(), new Request("https://caixa/reporte", { method: "POST", body: corpo, headers: { "CF-Connecting-IP": req.headers.get("CF-Connecting-IP") || "" } }));
       return json(await r.json(), r.status, h);
     }
@@ -298,6 +300,7 @@ export class Sinal {
     if (url.pathname === "/reporte") return this.guardarReporte(await req.text(), ip);
     if (url.pathname === "/reportes") return this.paginaReportes(url);
     if (url.pathname === "/reportes/apagar") return this.apagarReportes(req);
+    if (url.pathname === "/reportes/img") return this.imagemReporte(url);
     if (url.pathname === "/voz") return this.falar(await req.text(), ip);
     if (url.pathname.startsWith("/conta/")) return this.conta(url.pathname.slice(7), await req.text(), ip);
     if (url.pathname === "/contas") return this.paginaContas(url);
@@ -385,6 +388,10 @@ export class Sinal {
       return json({ erro: "json" }, 400);
     }
     const t = (v, n) => String(v == null ? "" : v).replace(/[\u0000-\u001f]/g, " ").trim().slice(0, n);
+    // 25/10/2026: imagens (print da tela / foto anexada) vão à parte; o resto continua no limite de 3000
+    const imgs = d && Array.isArray(d.imagens) ? d.imagens.filter((x) => typeof x === "string" && x.length <= 300000 && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(x)).slice(0, 3) : [];
+    if (d && typeof d === "object") delete d.imagens;
+    if (JSON.stringify(d || {}).length > 3000) return json({ erro: "grande" }, 413);
     const problema = !!d && d.tipo === "problema";
     if (!d || (!problema && !/^[A-Z]{3,8}-\d{4}$/.test(String(d.id || "")))) return json({ erro: "carta" }, 400);
     // no máximo 40 por hora por endereço (em memória; só pra ninguém lotar a caixa)
@@ -394,6 +401,8 @@ export class Sinal {
     if (r.length >= 40) return json({ erro: "calma" }, 429);
     r.push(agora);
     this.ritmo.set(ip, r);
+    const id = String(agora).padStart(15, "0") + ":" + Math.random().toString(36).slice(2, 8);
+    const nImg = await this.guardarImagens(id, imgs, ip, agora);
     // 25/10/2026 · problema da partida (bug): categoria, descrição curta e o retrato da partida (sem nomes)
     if (problema) {
       let anexo = null;
@@ -408,9 +417,11 @@ export class Sinal {
         versao: t(d.versao, 20),
         quando: Number.isFinite(d.quando) ? d.quando : agora,
         chegou: agora,
+        img: nImg ? id : null,
+        imgs: nImg,
       };
       const st = this.ctx.storage;
-      await st.put("p:" + String(agora).padStart(15, "0") + ":" + Math.random().toString(36).slice(2, 8), pr);
+      await st.put("p:" + id, pr);
       const np = ((await st.get("np")) || 0) + 1;
       if (np > 1000) {
         const velhos = await st.list({ prefix: "p:", limit: np - 1000 });
@@ -431,9 +442,11 @@ export class Sinal {
       versao: t(d.versao, 20),
       quando: Number.isFinite(d.quando) ? d.quando : agora,
       chegou: agora,
+      img: nImg ? id : null,
+      imgs: nImg,
     };
     const st = this.ctx.storage;
-    await st.put("r:" + String(agora).padStart(15, "0") + ":" + Math.random().toString(36).slice(2, 8), rep);
+    await st.put("r:" + id, rep);
     const n = ((await st.get("n")) || 0) + 1;
     if (n > 3000) {
       const velhos = await st.list({ prefix: "r:", limit: n - 3000 });
@@ -441,6 +454,47 @@ export class Sinal {
       await st.put("n", 3000);
     } else await st.put("n", n);
     return json({ ok: true });
+  }
+  // 25/10/2026 · imagens dos reportes: cada uma em pedaços de 100 mil letras (limite de valor do storage), no máximo
+  // 30 por hora por endereço e 600 pedaços no total (as mais antigas saem primeiro)
+  async guardarImagens(id, imgs, ip, agora) {
+    if (!imgs.length) return 0;
+    this.ritmoImg = this.ritmoImg || new Map();
+    const ri = (this.ritmoImg.get(ip) || []).filter((x) => agora - x < 3600e3);
+    const cabem = Math.max(0, Math.min(imgs.length, 30 - ri.length));
+    if (!cabem) return 0;
+    const st = this.ctx.storage;
+    let pedacos = 0;
+    for (let n = 0; n < cabem; n++) {
+      const img = imgs[n];
+      for (let c = 0; c * 100000 < img.length; c++) {
+        await st.put(`i:${id}:${n}:${String(c).padStart(2, "0")}`, img.slice(c * 100000, (c + 1) * 100000));
+        pedacos++;
+      }
+      ri.push(agora);
+    }
+    this.ritmoImg.set(ip, ri);
+    let total = ((await st.get("nic")) || 0) + pedacos;
+    while (total > 600) {
+      const velhos = await st.list({ prefix: "i:", limit: Math.min(128, total - 600) });
+      if (!velhos.size) break;
+      await st.delete([...velhos.keys()]);
+      total -= velhos.size;
+    }
+    await st.put("nic", Math.max(0, total));
+    return cabem;
+  }
+  async imagemReporte(url) {
+    if (!this.senhaOk(url.searchParams.get("chave"))) return new Response("Senha errada.", { status: 401, headers: { "Content-Type": "text/plain; charset=utf-8" } });
+    const id = String(url.searchParams.get("id") || ""), n = String(url.searchParams.get("n") || "");
+    if (!/^\d{15}:[a-z0-9]{1,8}$/.test(id) || !/^[0-2]$/.test(n)) return new Response("?", { status: 400 });
+    const partes = [...(await this.ctx.storage.list({ prefix: `i:${id}:${n}:` })).values()];
+    const m = partes.join("").match(/^data:(image\/(?:jpeg|png|webp));base64,(.+)$/);
+    if (!m) return new Response("Imagem não encontrada (pode ter saído por ser antiga).", { status: 404, headers: { "Content-Type": "text/plain; charset=utf-8" } });
+    const bin = atob(m[2]);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new Response(bytes, { headers: { "Content-Type": m[1], "Cache-Control": "private, max-age=86400" } });
   }
   senhaOk(chave) {
     const a = String(chave || ""), b = String(this.env.REPORTES_SENHA || "");
@@ -463,13 +517,17 @@ export class Sinal {
     }
     const e = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
     const chave = e(url.searchParams.get("chave"));
+    const fotos = (r) =>
+      r.img && r.imgs
+        ? `<div class="imgs">${Array.from({ length: r.imgs }, (_, n) => { const u = e(`/reportes/img?chave=${encodeURIComponent(url.searchParams.get("chave") || "")}&id=${encodeURIComponent(r.img)}&n=${n}`); return `<a href="${u}" target="_blank"><img src="${u}" loading="lazy" alt="Imagem ${n + 1} do reporte"></a>`; }).join("")}</div>`
+        : "";
     const itens = lista
-      .map((r) => `<li><b>${e(r.id)}</b> · ${e(r.resposta)} <span>${e(r.categoria)}</span><br>${r.dica ? `Dica ${r.dica.pos + 1}: “${e(r.dica.texto)}”` : "A carta toda"}<br><em>${e(motivo[r.motivo] || r.motivo)}</em>${r.nota ? ` · ${e(r.nota)}` : ""}<small>${e(r.modo)} · ${e(r.versao)} · ${e(quando(r.quando))}</small></li>`)
+      .map((r) => `<li><b>${e(r.id)}</b> · ${e(r.resposta)} <span>${e(r.categoria)}</span><br>${r.dica ? `Dica ${r.dica.pos + 1}: “${e(r.dica.texto)}”` : "A carta toda"}<br><em>${e(motivo[r.motivo] || r.motivo)}</em>${r.nota ? ` · ${e(r.nota)}` : ""}<small>${e(r.modo)} · ${e(r.versao)} · ${e(quando(r.quando))}</small>${fotos(r)}</li>`)
       .join("");
     const itensP = problemas
-      .map((r) => `<li><b>${e(catNome[r.cat] || r.cat)}</b>${r.nota ? `<br>${e(r.nota)}` : ""}<small>${e(r.modo)} · ${e(r.versao)} · ${e(quando(r.quando))}</small>${r.anexo ? `<details><summary>Retrato da partida</summary><pre>${e(r.anexo)}</pre></details>` : ""}</li>`)
+      .map((r) => `<li><b>${e(catNome[r.cat] || r.cat)}</b>${r.nota ? `<br>${e(r.nota)}` : ""}<small>${e(r.modo)} · ${e(r.versao)} · ${e(quando(r.quando))}</small>${fotos(r)}${r.anexo ? `<details><summary>Retrato da partida</summary><pre>${e(r.anexo)}</pre></details>` : ""}</li>`)
       .join("");
-    const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Cartas reportadas</title><style>body{font-family:system-ui,sans-serif;background:#12121c;color:#eee;margin:0;padding:16px;max-width:760px;margin:auto}h1{font-size:1.3rem}li{list-style:none;background:#1e1e2e;border-radius:12px;padding:12px;margin:10px 0;line-height:1.45}li span{opacity:.7;font-size:.85em}li small{display:block;opacity:.6;margin-top:4px}pre{white-space:pre-wrap;word-break:break-all;font-size:.8em;opacity:.85}em{color:#fbbf24;font-style:normal}a,button{color:#22d3ee}button{background:none;border:1px solid #e11d48;color:#fda4af;border-radius:10px;padding:10px 14px;margin-top:16px}</style></head><body><h1>⚑ Cartas reportadas (${lista.length})</h1><p><a href="?chave=${chave}&formato=texto">Ver como texto (pra copiar)</a></p><ul style="padding:0">${itens || "<li>Nenhuma carta reportada ainda.</li>"}</ul><h1>🐞 Problemas reportados (${problemas.length})</h1><ul style="padding:0">${itensP || "<li>Nenhum problema reportado ainda.</li>"}</ul><form method="post" action="/reportes/apagar" onsubmit="return confirm('Apagar todos os reportes?')"><input type="hidden" name="chave" value="${chave}"><button>🗑️ Apagar todos</button></form></body></html>`;
+    const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Cartas reportadas</title><style>body{font-family:system-ui,sans-serif;background:#12121c;color:#eee;margin:0;padding:16px;max-width:760px;margin:auto}h1{font-size:1.3rem}li{list-style:none;background:#1e1e2e;border-radius:12px;padding:12px;margin:10px 0;line-height:1.45}li span{opacity:.7;font-size:.85em}li small{display:block;opacity:.6;margin-top:4px}pre{white-space:pre-wrap;word-break:break-all;font-size:.8em;opacity:.85}.imgs img{width:110px;height:auto;border-radius:8px;margin:8px 8px 0 0;border:1px solid #333}em{color:#fbbf24;font-style:normal}a,button{color:#22d3ee}button{background:none;border:1px solid #e11d48;color:#fda4af;border-radius:10px;padding:10px 14px;margin-top:16px}</style></head><body><h1>⚑ Cartas reportadas (${lista.length})</h1><p><a href="?chave=${chave}&formato=texto">Ver como texto (pra copiar)</a></p><ul style="padding:0">${itens || "<li>Nenhuma carta reportada ainda.</li>"}</ul><h1>🐞 Problemas reportados (${problemas.length})</h1><ul style="padding:0">${itensP || "<li>Nenhum problema reportado ainda.</li>"}</ul><form method="post" action="/reportes/apagar" onsubmit="return confirm('Apagar todos os reportes?')"><input type="hidden" name="chave" value="${chave}"><button>🗑️ Apagar todos</button></form></body></html>`;
     return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" } });
   }
   async apagarReportes(req) {
@@ -482,6 +540,8 @@ export class Sinal {
     let lista;
     while ((lista = await st.list({ prefix: "r:", limit: 128 })).size) await st.delete([...lista.keys()]);
     while ((lista = await st.list({ prefix: "p:", limit: 128 })).size) await st.delete([...lista.keys()]);
+    while ((lista = await st.list({ prefix: "i:", limit: 128 })).size) await st.delete([...lista.keys()]);
+    await st.put("nic", 0);
     await st.put("n", 0);
     await st.put("np", 0);
     return new Response(null, { status: 303, headers: { Location: "/reportes?chave=" + encodeURIComponent(chave) } });
