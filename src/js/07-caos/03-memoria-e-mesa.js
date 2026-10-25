@@ -33,7 +33,7 @@ function caosMemCadastro(p) {
   fichaUpd(p.name, (f) => {
     f.ultimaVez = Date.now();
     if (p.avatar && !gira) f.ultimoAvatar = p.avatar;
-    if (h) caosHumorAnotar(f, h);
+    if (h) caosHumorAnotar(f, h, p);
   });
 }
 // o humor que a pessoa escolheu (não o que o modo forçou): "caos" quando deixou o C.A.O.S. decidir
@@ -42,9 +42,11 @@ function caosHumorEscolha(p) {
   if (p.humorCaos) return "caos";
   return ["familia", "suave", "normal", "acido", "zero"].includes(p.humor) ? p.humor : null;
 }
-function caosHumorAnotar(f, h) {
+// quando deixou com ele, guarda também o que ele sorteou (pra lembrar na próxima: "peguei pesado demais?")
+function caosHumorAnotar(f, h, p) {
   if (f.ultimoHumor && f.ultimoHumor !== h) f.trocasHumor = Math.min(99, (f.trocasHumor || 0) + 1);
   f.ultimoHumor = h;
+  if (h === "caos" && p && ["familia", "suave", "normal", "acido", "zero"].includes(p.humor)) f.ultimoSorteado = p.humor;
 }
 // trocou o humor no meio da partida (pediu mais pesado ou mais leve): conta como troca também
 function caosMemHumorMudou(p) {
@@ -58,12 +60,20 @@ function caosTrocouHumor(p) {
     b = caosHumorEscolha(p);
   if (!a || !b || a === b || humorFamilia(p)) return null;
   const T = REACTIVE_VOICE.memoria.trocouHumor,
-    nome = (h) => (HUMOR_NOMES[h] || "").replace(/^\S+\s/, ""),
+    nome = (h) => (h === "caos" ? "o C.A.O.S." : (HUMOR_NOMES[h] || "").replace(/^\S+\s/, "")),
     grau = { familia: 0, suave: 1, normal: 2, acido: 3, zero: 4 },
     k = (f.trocasHumor || 0) + 1;
-  if (k >= 3 && Math.random() < 0.7) return getRandomReaction(T.indeciso, p.name, nome(a) || "sorteio", nome(b) || "sorteio", k) || null;
+  if (k >= 3 && Math.random() < 0.7) return getRandomReaction(T.indeciso, p.name, nome(a), nome(b), k) || null;
   if (b === "caos") return getRandomReaction(T.paraCaos, p.name, nome(a)) || null;
-  if (a === "caos") return getRandomReaction(T.deCaos, p.name, "", nome(b)) || null;
+  if (a === "caos") {
+    // ele lembra o que sorteou da outra vez e compara com o que a pessoa escolheu agora
+    const s = f.ultimoSorteado;
+    if (s && grau[s] != null && Math.random() < 0.8) {
+      const bank = grau[b] < grau[s] ? T.sorteioPesado : grau[b] > grau[s] ? T.sorteioLeve : T.sorteioIgual;
+      return getRandomReaction(bank, p.name, nome(s), nome(b)) || null;
+    }
+    return getRandomReaction(T.deCaos, p.name, "", nome(b)) || null;
+  }
   return getRandomReaction(grau[b] > grau[a] ? T.subiu : T.desceu, p.name, nome(a), nome(b)) || null;
 }
 // o que ele lembra que mudou desde a última vez (emoji ou humor); se mudou os dois, sorteia
@@ -119,6 +129,13 @@ function caosMemBoasVindas(p, n) {
       bank: M.categoria.forteCadastro,
       args: [name, caosCategoryLabel(forte.c), memPct(forte.taxa)],
     });
+  // o "log" de cada jogador: melhor pontuação e tempo médio de acerto
+  if (f.partidas >= 2 && f.melhorPts >= 5) opcoes.push({ w: 12, bank: M.recordePessoal, args: [name, f.melhorPts] });
+  if (f.msN >= 6) {
+    const med = f.msSum / f.msN;
+    if (med <= 2e4) opcoes.push({ w: 12, bank: M.tempoMedio.rapido, args: [name, caosTempoFala(med)] });
+    else if (med >= 6e4) opcoes.push({ w: 12, bank: M.tempoMedio.lento, args: [name, caosTempoFala(med)] });
+  }
   if (!opcoes.length) return null;
   const tot = opcoes.reduce((s, o) => s + o.w, 0);
   let r = R() * tot;

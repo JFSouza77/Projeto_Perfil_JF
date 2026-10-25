@@ -632,11 +632,27 @@ const ARQ = acharMestre(process.argv[2]);
       const indeciso = caosTrocouHumor(cad(mk('normal')));
       const q = mk('normal'); players = [q]; q.humor = 'acido'; caosMemHumorMudou(q);
       const meioDaPartida = fichaGet(n).ultimoHumor === 'acido' && fichaGet(n).trocasHumor === 5;
+      // ele lembra o que sorteou: sorteou Ácido e a pessoa voltou de Suave (pesado demais); sorteou Suave e voltou de Nível 0
+      Math.random = () => 0.9;
+      const sorteou = cad(mk('acido', { humorCaos: true }));
+      const guardou = fichaGet(n).ultimoSorteado === 'acido' && fichaGet(n).ultimoHumor === 'caos';
+      fichaUpd(n, (f) => (f.trocasHumor = 0));
+      Math.random = () => 0.1;
+      const pesado = caosTrocouHumor(cad(mk('suave')));
+      fichaUpd(n, (f) => { f.ultimoHumor = 'caos'; f.ultimoSorteado = 'suave'; f.trocasHumor = 0; });
+      const leve = caosTrocouHumor(cad(mk('zero')));
+      // o "log" do jogador nas boas-vindas: recorde pessoal e tempo médio
+      const M = REACTIVE_VOICE.memoria, pr = mk('normal');
+      pr._fichaAntes = fichaLimpa({ partidas: 3, melhorPts: 42, msSum: 6 * 1e4, msN: 6 }, n);
+      const ops = new Set();
+      for (const r of [0.1, 0.9]) { Math.random = () => r; const o = caosMemBoasVindas(pr, 3); ops.add(o && o.bank); }
+      const logDoJogador = ops.has(M.recordePessoal) && ops.has(M.tempoMedio.rapido);
+      const lembraSorteio = logDoJogador && guardou && doBanco(T.sorteioPesado, pesado, 'Ácido', 'Suave') && doBanco(T.sorteioLeve, leve, 'Suave', 'Nível 0');
       Math.random = randAntes; players = jogAntes; CURRENT_MODE = modoAntes;
       if (fichasAntes == null) JFStore.removeItem(MEM_FICHAS_KEY); else JFStore.setItem(MEM_FICHAS_KEY, fichasAntes);
       out.trocouHumor = doBanco(T.subiu, subiu, 'Suave', 'Ácido') && doBanco(T.desceu, desceu, 'Ácido', 'Suave') && contou && igual === null &&
-        doBanco(T.paraCaos, praCaos, 'Suave') && doBanco(T.indeciso, indeciso, 'sorteio', 'Normal', 4) && meioDaPartida;
-      out.trocouHumorDiag = JSON.stringify({ subiu, desceu, contou, igual, praCaos, indeciso, meioDaPartida, f: fichaGet(n) });
+        doBanco(T.paraCaos, praCaos, 'Suave') && doBanco(T.indeciso, indeciso, 'o C.A.O.S.', 'Normal', 4) && meioDaPartida && lembraSorteio;
+      out.trocouHumorDiag = JSON.stringify({ logDoJogador: ops.size, lembraSorteio, guardou, pesado, leve, subiu, desceu, contou, igual, praCaos, indeciso, meioDaPartida, f: fichaGet(n) });
     }
     // 1.7.10.3: busca nas regras e o lembrete da primeira carta de cada categoria
     {
@@ -779,7 +795,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.10.5.3: trava da dica (o Mestre só abre a pedida, forçar passa); C.A.O.S. 4.4.1: tocar na dica aberta faz ele responder mesmo no respiro', r.dicaRepetida && r.palpiteAgora],
     ['Quem o C.A.O.S. conhece (JF, amigos, sobrinhos) é reconhecido antes da piada do nick demorado', r.reconheceAntes],
     ['O C.A.O.S. lembra o emoji de cada um e comenta a troca (💀 → 🍦 mais calmo, 🍦 → 💀 mau humor)', r.trocouEmoji],
-    ['O C.A.O.S. lembra o humor de cada um e zoa a troca (subiu, desceu, deixou com ele, troca toda hora)', r.trocouHumor],
+    ['O C.A.O.S. lembra o humor de cada um e zoa a troca (subiu, desceu, deixou com ele, troca toda hora, o que ele sorteou)', r.trocouHumor],
     ['C.A.O.S. com tato: a mesa corta frase longa e ele passa a falar curto, lembra da mesma mesa, testa mesa nova pelo jeito dela; família de nicho só 1x por partida', r.tato],
     ['Easter egg: piadas internas com limite e intervalo (nunca no Júnior; os sobrinhos sim), Dragons só com o JF e a turma, falas da mesa toda e cores escondidas da paleta', r.amigos],
     ['Cadastro: o C.A.O.S. pergunta da voz (não pergunta se já está ligada); Sim liga; Não ganha fala triste e segue sem voz', r.vozPergunta],

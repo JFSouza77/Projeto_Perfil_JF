@@ -1116,6 +1116,7 @@ function fichaLimpa(f, nome) {
     ultimoAvatar: typeof f.ultimoAvatar === "string" && f.ultimoAvatar.length <= 16 ? f.ultimoAvatar : null,
     ultimoHumor: ["familia", "suave", "normal", "acido", "zero", "caos"].includes(f.ultimoHumor) ? f.ultimoHumor : null,
     trocasHumor: Math.min(99, memNum(f.trocasHumor, 0)),
+    ultimoSorteado: ["familia", "suave", "normal", "acido", "zero"].includes(f.ultimoSorteado) ? f.ultimoSorteado : null,
   };
 }
 function fichasTodas() {

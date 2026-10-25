@@ -14,7 +14,10 @@
           (a ficha guarda o último) e comenta quando troca: de 💀 pra 🍦 "está mais calmo hoje?", de 🍦 pra 💀 "acordou de
           mau humor", virou 👑, largou a coroa, ou troca qualquer. E lembra o humor escolhido: subiu ("tomou coragem"), desceu
           ("a última partida doeu"), deixou com ele ou tirou dele, e quem troca toda hora (3+ trocas, contando as do meio
-          da partida) vira "indeciso". 90 falas novas com nome, emoji e humor (a contagem fixa segue 3000).
+          da partida) vira "indeciso". Quando deixaram com ele, lembra o que sorteou: sorteou Ácido e a pessoa voltou de
+          Suave, "peguei pesado demais, pediu arrego"; sorteou Suave e voltou de Nível 0, "peguei leve demais, aguenta o
+          tranco agora?". Nas boas-vindas também lembra o recorde pessoal e o tempo médio de acerto. 129 falas novas com
+          nome, emoji, humor e números (a contagem fixa segue 3000).
   (interno) · 24/10/2026 · CADASTRO · C.A.O.S. 4.10.0. Build 1839. Cadastro opcional do jogador (ideia do Henrique):
           nick + PIN de 4 números (no servidor só fica o PIN embaralhado). Com cadastro, a ficha do C.A.O.S. fica na nuvem
           e ele lembra da pessoa em qualquer dispositivo; nick com cadastro sem login joga sem a memória do dono. Pela sala,
@@ -29533,7 +29536,7 @@ function contaFichaJuntar(nome, ficha) {
   fichaUpd(nome, (f) => {
     Object.assign(f, fichaLimpa(ficha, nome));
     if (p && p.avatar && !(presenteDe(nome) && presenteDe(nome).gira)) f.ultimoAvatar = p.avatar;
-    if (p && caosHumorEscolha(p)) caosHumorAnotar(f, caosHumorEscolha(p));
+    if (p && caosHumorEscolha(p)) caosHumorAnotar(f, caosHumorEscolha(p), p);
   });
 }
 function contaRecusada(nome) {
@@ -36155,7 +36158,7 @@ function caosMemCadastro(p) {
   fichaUpd(p.name, (f) => {
     f.ultimaVez = Date.now();
     if (p.avatar && !gira) f.ultimoAvatar = p.avatar;
-    if (h) caosHumorAnotar(f, h);
+    if (h) caosHumorAnotar(f, h, p);
   });
 }
 // o humor que a pessoa escolheu (não o que o modo forçou): "caos" quando deixou o C.A.O.S. decidir
@@ -36164,9 +36167,11 @@ function caosHumorEscolha(p) {
   if (p.humorCaos) return "caos";
   return ["familia", "suave", "normal", "acido", "zero"].includes(p.humor) ? p.humor : null;
 }
-function caosHumorAnotar(f, h) {
+// quando deixou com ele, guarda também o que ele sorteou (pra lembrar na próxima: "peguei pesado demais?")
+function caosHumorAnotar(f, h, p) {
   if (f.ultimoHumor && f.ultimoHumor !== h) f.trocasHumor = Math.min(99, (f.trocasHumor || 0) + 1);
   f.ultimoHumor = h;
+  if (h === "caos" && p && ["familia", "suave", "normal", "acido", "zero"].includes(p.humor)) f.ultimoSorteado = p.humor;
 }
 // trocou o humor no meio da partida (pediu mais pesado ou mais leve): conta como troca também
 function caosMemHumorMudou(p) {
@@ -36180,12 +36185,20 @@ function caosTrocouHumor(p) {
     b = caosHumorEscolha(p);
   if (!a || !b || a === b || humorFamilia(p)) return null;
   const T = REACTIVE_VOICE.memoria.trocouHumor,
-    nome = (h) => (HUMOR_NOMES[h] || "").replace(/^\S+\s/, ""),
+    nome = (h) => (h === "caos" ? "o C.A.O.S." : (HUMOR_NOMES[h] || "").replace(/^\S+\s/, "")),
     grau = { familia: 0, suave: 1, normal: 2, acido: 3, zero: 4 },
     k = (f.trocasHumor || 0) + 1;
-  if (k >= 3 && Math.random() < 0.7) return getRandomReaction(T.indeciso, p.name, nome(a) || "sorteio", nome(b) || "sorteio", k) || null;
+  if (k >= 3 && Math.random() < 0.7) return getRandomReaction(T.indeciso, p.name, nome(a), nome(b), k) || null;
   if (b === "caos") return getRandomReaction(T.paraCaos, p.name, nome(a)) || null;
-  if (a === "caos") return getRandomReaction(T.deCaos, p.name, "", nome(b)) || null;
+  if (a === "caos") {
+    // ele lembra o que sorteou da outra vez e compara com o que a pessoa escolheu agora
+    const s = f.ultimoSorteado;
+    if (s && grau[s] != null && Math.random() < 0.8) {
+      const bank = grau[b] < grau[s] ? T.sorteioPesado : grau[b] > grau[s] ? T.sorteioLeve : T.sorteioIgual;
+      return getRandomReaction(bank, p.name, nome(s), nome(b)) || null;
+    }
+    return getRandomReaction(T.deCaos, p.name, "", nome(b)) || null;
+  }
   return getRandomReaction(grau[b] > grau[a] ? T.subiu : T.desceu, p.name, nome(a), nome(b)) || null;
 }
 // o que ele lembra que mudou desde a última vez (emoji ou humor); se mudou os dois, sorteia
@@ -36241,6 +36254,13 @@ function caosMemBoasVindas(p, n) {
       bank: M.categoria.forteCadastro,
       args: [name, caosCategoryLabel(forte.c), memPct(forte.taxa)],
     });
+  // o "log" de cada jogador: melhor pontuação e tempo médio de acerto
+  if (f.partidas >= 2 && f.melhorPts >= 5) opcoes.push({ w: 12, bank: M.recordePessoal, args: [name, f.melhorPts] });
+  if (f.msN >= 6) {
+    const med = f.msSum / f.msN;
+    if (med <= 2e4) opcoes.push({ w: 12, bank: M.tempoMedio.rapido, args: [name, caosTempoFala(med)] });
+    else if (med >= 6e4) opcoes.push({ w: 12, bank: M.tempoMedio.lento, args: [name, caosTempoFala(med)] });
+  }
   if (!opcoes.length) return null;
   const tot = opcoes.reduce((s, o) => s + o.w, 0);
   let r = R() * tot;
@@ -43479,6 +43499,7 @@ function fichaLimpa(f, nome) {
     ultimoAvatar: typeof f.ultimoAvatar === "string" && f.ultimoAvatar.length <= 16 ? f.ultimoAvatar : null,
     ultimoHumor: ["familia", "suave", "normal", "acido", "zero", "caos"].includes(f.ultimoHumor) ? f.ultimoHumor : null,
     trocasHumor: Math.min(99, memNum(f.trocasHumor, 0)),
+    ultimoSorteado: ["familia", "suave", "normal", "acido", "zero"].includes(f.ultimoSorteado) ? f.ultimoSorteado : null,
   };
 }
 function fichasTodas() {
@@ -76760,6 +76781,29 @@ const REACTIVE_VOICE = {
         (n, a, b) => `${n} confiou em mim da outra vez. Hoje é ${b}, escolhido a dedo. Magoei, pelo visto.`,
         (n, a, b) => `${n} parou de deixar comigo. Agora é ${b}. Eu prometo que o sorteio foi honesto.`,
         (n, a, b) => `Nada de sorteio pra ${n} hoje: ${b}, por conta própria. Traumatizei alguém.`,
+        (n, a, b) => `Antes eu podia decidir o humor de ${n}. Agora resolveu agir por conta própria? Então tá bom. ${b}.`,
+        (n, a, b) => `${n} não gostou do meu humor da outra vez? Tá bom. ${b}, então. Vamos ver se agora eu consigo agradar.`,
+        (n, a, b) => `Da outra vez quem mandava era eu. Hoje ${n} escolheu ${b}. Golpe de estado na mesa.`,
+      ],
+      // ele lembra o que sorteou da outra vez: (nome, o que ele sorteou, o que a pessoa escolheu agora)
+      sorteioPesado: [
+        (n, s, b) => `Da outra vez eu sorteei ${s} pra ${n}. Hoje veio de ${b}. Peguei pesado demais, né? Não aguentou e pediu arrego. Beleza, você que manda. Vambora.`,
+        (n, s, b) => `Eu dei ${s} pra ${n} da última vez e agora é ${b}. Exagerei? Eu? Tá bom, hoje eu maneiro.`,
+        (n, s, b) => `${n} provou meu ${s} da outra vez e voltou pedindo ${b}. Recado recebido. Vou com calma.`,
+        (n, s, b) => `Sorteei ${s} pra ${n} na outra partida. Hoje: ${b}, escolhido a dedo. Acho que deixei marca.`,
+        (n, s, b) => `${s} da outra vez foi demais pra ${n}. Agora é ${b}. Você que manda, eu só obedeço. Mais ou menos.`,
+      ],
+      sorteioLeve: [
+        (n, s, b) => `Da outra vez eu sorteei ${s} pra ${n}. Hoje pediu ${b}. Parece que peguei leve demais. Vamos ver se aguenta o tranco agora.`,
+        (n, s, b) => `Eu dei ${s} pra ${n} e achou pouco. Agora é ${b}. Pode deixar, hoje vem com tudo.`,
+        (n, s, b) => `${n} achou meu ${s} da outra vez fraquinho. Escolheu ${b}. Desafio aceito.`,
+        (n, s, b) => `Sorteei ${s} pra ${n} na outra partida e foi pouco, pelo visto. ${b} hoje. Depois não vem chorar.`,
+        (n, s, b) => `${s} não deu nem pro cheiro. ${n} veio de ${b}. Eu gosto de gente que pede mais.`,
+      ],
+      sorteioIgual: [
+        (n, s, b) => `Da outra vez eu sorteei ${s} pra ${n}. Hoje escolheu ${b} por conta própria. Gostou do meu gosto, né?`,
+        (n, s) => `${n} pegou ${s} por conta própria, igualzinho ao que eu sorteei da outra vez. Eu acertei em cheio.`,
+        (n, s) => `Eu dei ${s} pra ${n} e agora escolheu ${s} de novo. Aprovação oficial do meu sorteio. Obrigado.`,
       ],
     },
     // 25/10/2026 (pedido do JF): ele lembra o emoji de cada um e comenta quando troca. (nome, antes, agora)
@@ -76823,6 +76867,28 @@ const REACTIVE_VOICE = {
         (n, a, b) => `O ${a} ficou pra trás. ${n} agora é ${b}. Eu vou levar uns minutos pra me acostumar.`,
         (n, a, b) => `${n} trocou de ${a} pra ${b}. Muda o emoji, mas a mania de chutar continua, aposto.`,
         (n, a, b) => `Olha só, ${n} de ${b}. Da outra vez era ${a}. Eu lembro de tudo, gente.`,
+      ],
+    },
+    // o "log" de cada jogador: melhor pontuação (nome, pontos) e tempo médio de acerto (nome, tempo)
+    recordePessoal: [
+      (n, p) => `${n} chegou. Melhor marca até hoje: ${p} pontos. Eu guardo esse número com carinho.`,
+      (n, p) => `Recorde pessoal de ${n}: ${p} pontos. Hoje é dia de bater ou de passar vergonha.`,
+      (n, p) => `${n}, ${p} pontos na melhor partida. Eu lembro. Eu sempre lembro.`,
+      (n, p) => `O recorde de ${n} é ${p} pontos. Ninguém pediu, mas eu vou ficar contando.`,
+      (n, p) => `${n} já fez ${p} pontos numa partida. A mesa que se prepare. Ou não, depende do dia.`,
+    ],
+    tempoMedio: {
+      rapido: [
+        (n, t) => `${n} chegou. Em média, acerta em ${t}. Rápido demais. Eu estou de olho.`,
+        (n, t) => `Média de ${n}: ${t} por acerto. Isso é dedo ligeiro ou cola?`,
+        (n, t) => `${n} costuma matar a carta em ${t}. A mesa vai precisar correr.`,
+        (n, t) => `${t} de média pra acertar. ${n} não pensa, ${n} reage.`,
+      ],
+      lento: [
+        (n, t) => `${n} chegou. Média de ${t} pra acertar. Pode pensar com calma. A mesa espera. Mais ou menos.`,
+        (n, t) => `${t} por acerto, em média. ${n} gosta de ouvir todas as dicas, né?`,
+        (n, t) => `${n} acerta, mas acerta em ${t}. Eu já preparei um cafezinho.`,
+        (n, t) => `Média de ${n}: ${t}. Devagar e sempre. Mais devagar que sempre, na verdade.`,
       ],
     },
     reencontro: {

@@ -76,7 +76,7 @@ function contaFichaJuntar(nome, ficha) {
   fichaUpd(nome, (f) => {
     Object.assign(f, fichaLimpa(ficha, nome));
     if (p && p.avatar && !(presenteDe(nome) && presenteDe(nome).gira)) f.ultimoAvatar = p.avatar;
-    if (p && caosHumorEscolha(p)) caosHumorAnotar(f, caosHumorEscolha(p));
+    if (p && caosHumorEscolha(p)) caosHumorAnotar(f, caosHumorEscolha(p), p);
   });
 }
 function contaRecusada(nome) {
