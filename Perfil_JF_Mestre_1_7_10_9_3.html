@@ -12,7 +12,9 @@
           pedir pra entrar. Quem o C.A.O.S. conhece é reconhecido antes da piada do nick demorado (o tempo na janela do
           cadastro contava como demora e ele cumprimentou o JF como estranho). Ele também lembra o emoji de cada um
           (a ficha guarda o último) e comenta quando troca: de 💀 pra 🍦 "está mais calmo hoje?", de 🍦 pra 💀 "acordou de
-          mau humor", virou 👑, largou a coroa, ou troca qualquer (50 falas com nome e emojis; a contagem fixa segue 3000).
+          mau humor", virou 👑, largou a coroa, ou troca qualquer. E lembra o humor escolhido: subiu ("tomou coragem"), desceu
+          ("a última partida doeu"), deixou com ele ou tirou dele, e quem troca toda hora (3+ trocas, contando as do meio
+          da partida) vira "indeciso". 90 falas novas com nome, emoji e humor (a contagem fixa segue 3000).
   (interno) · 24/10/2026 · CADASTRO · C.A.O.S. 4.10.0. Build 1839. Cadastro opcional do jogador (ideia do Henrique):
           nick + PIN de 4 números (no servidor só fica o PIN embaralhado). Com cadastro, a ficha do C.A.O.S. fica na nuvem
           e ele lembra da pessoa em qualquer dispositivo; nick com cadastro sem login joga sem a memória do dono. Pela sala,
@@ -29526,11 +29528,12 @@ function contaFichaJuntar(nome, ficha) {
   if (!ficha || typeof ficha !== "object") return;
   const loc = fichaGet(nome);
   if (loc && (loc.partidas || 0) > (ficha.partidas || 0)) return;
-  // o emoji de agora vale mais que o que veio da nuvem (senão a próxima troca compara com o emoji errado)
+  // o emoji e o humor de agora valem mais que os que vieram da nuvem (senão a próxima troca compara com o emoji errado)
   const p = players.find((q) => nameKeyPlain(q.name) === nameKeyPlain(nome));
   fichaUpd(nome, (f) => {
     Object.assign(f, fichaLimpa(ficha, nome));
     if (p && p.avatar && !(presenteDe(nome) && presenteDe(nome).gira)) f.ultimoAvatar = p.avatar;
+    if (p && caosHumorEscolha(p)) caosHumorAnotar(f, caosHumorEscolha(p));
   });
 }
 function contaRecusada(nome) {
@@ -36148,10 +36151,52 @@ function caosMemCadastro(p) {
   p._fichaAntes = fichaGet(p.name);
   // o Rafa troca de emoji a cada carta por presente: não conta como troca
   const gira = presenteDe(p.name) && presenteDe(p.name).gira;
+  const h = caosHumorEscolha(p);
   fichaUpd(p.name, (f) => {
     f.ultimaVez = Date.now();
     if (p.avatar && !gira) f.ultimoAvatar = p.avatar;
+    if (h) caosHumorAnotar(f, h);
   });
+}
+// o humor que a pessoa escolheu (não o que o modo forçou): "caos" quando deixou o C.A.O.S. decidir
+function caosHumorEscolha(p) {
+  if (!p || p.iniciante) return null;
+  if (p.humorCaos) return "caos";
+  return ["familia", "suave", "normal", "acido", "zero"].includes(p.humor) ? p.humor : null;
+}
+function caosHumorAnotar(f, h) {
+  if (f.ultimoHumor && f.ultimoHumor !== h) f.trocasHumor = Math.min(99, (f.trocasHumor || 0) + 1);
+  f.ultimoHumor = h;
+}
+// trocou o humor no meio da partida (pediu mais pesado ou mais leve): conta como troca também
+function caosMemHumorMudou(p) {
+  if (!memContaFicha(p) || p.iniciante) return;
+  fichaUpd(p.name, (f) => caosHumorAnotar(f, p.humor));
+}
+// 25/10/2026 (pedido do JF): ele lembra o humor de cada um e zoa quando troca (ou quando troca toda hora)
+function caosTrocouHumor(p) {
+  const f = p && p._fichaAntes,
+    a = f && f.ultimoHumor,
+    b = caosHumorEscolha(p);
+  if (!a || !b || a === b || humorFamilia(p)) return null;
+  const T = REACTIVE_VOICE.memoria.trocouHumor,
+    nome = (h) => (HUMOR_NOMES[h] || "").replace(/^\S+\s/, ""),
+    grau = { familia: 0, suave: 1, normal: 2, acido: 3, zero: 4 },
+    k = (f.trocasHumor || 0) + 1;
+  if (k >= 3 && Math.random() < 0.7) return getRandomReaction(T.indeciso, p.name, nome(a) || "sorteio", nome(b) || "sorteio", k) || null;
+  if (b === "caos") return getRandomReaction(T.paraCaos, p.name, nome(a)) || null;
+  if (a === "caos") return getRandomReaction(T.deCaos, p.name, "", nome(b)) || null;
+  return getRandomReaction(grau[b] > grau[a] ? T.subiu : T.desceu, p.name, nome(a), nome(b)) || null;
+}
+// o que ele lembra que mudou desde a última vez (emoji ou humor); se mudou os dois, sorteia
+function caosTrocouMemoria(p) {
+  const fs = [caosTrocouEmoji, caosTrocouHumor];
+  if (Math.random() < 0.5) fs.reverse();
+  for (const fn of fs) {
+    const t = fn(p);
+    if (t) return t;
+  }
+  return null;
 }
 // 25/10/2026 (pedido do JF): ele lembra o emoji de cada um e comenta quando troca
 function caosTrocouEmoji(p) {
@@ -38992,7 +39037,7 @@ function caosWelcomePlayer(p) {
     args = [name, caosTempoFala(p.nickMs)];
   } else if (!conhecido && prevNickMs >= 9e4 && typeof p.nickMs === "number" && p.nickMs < 3e4 && R() < 0.8)
     bank = REACTIVE_VOICE.nickDemora.evoluiu;
-  else if (!p.nickEmprestado && p._fichaAntes && R() < (conhecido ? 0.6 : 0.85) && (troca = caosTrocouEmoji(p)))
+  else if (!p.nickEmprestado && p._fichaAntes && R() < (conhecido ? 0.6 : 0.85) && (troca = caosTrocouMemoria(p)))
     return showToastMessage(troca);
   else if (isAnneName(name) && p.avatar === "👸") {
     const g = caosGerarFala("anneChegou", p);
@@ -40634,6 +40679,7 @@ function caosSatisfacaoTalvez() {
       if (v === "mais" && i < ordem.length - 1) q.humor = ordem[i + 1];
       if (v === "menos" && i > 0) q.humor = ordem[i - 1];
       caosLog("satisfacao", `${nome}: ${v} → ${q.humor}`);
+      if (v === "mais" || v === "menos") caosMemHumorMudou(q);
       saveGameState();
       renderScoreboard && renderScoreboard();
       caosFalarDepois(
@@ -43431,6 +43477,8 @@ function fichaLimpa(f, nome) {
     ultimoResultado: ["venceu", "lanterna", "meio"].includes(f.ultimoResultado) ? f.ultimoResultado : null,
     ultimoModo: typeof f.ultimoModo === "string" ? f.ultimoModo.slice(0, 12) : null,
     ultimoAvatar: typeof f.ultimoAvatar === "string" && f.ultimoAvatar.length <= 16 ? f.ultimoAvatar : null,
+    ultimoHumor: ["familia", "suave", "normal", "acido", "zero", "caos"].includes(f.ultimoHumor) ? f.ultimoHumor : null,
+    trocasHumor: Math.min(99, memNum(f.trocasHumor, 0)),
   };
 }
 function fichasTodas() {
@@ -76661,6 +76709,59 @@ const REACTIVE_VOICE = {
     "Segunda rodada. Agora eu conheço o estilo de cada um. Cuidado.",
   ],
   memoria: {
+    // 25/10/2026 (pedido do JF): ele lembra o humor que cada um escolhe e zoa quando troca. (nome, antes, agora, trocas)
+    trocouHumor: {
+      subiu: [
+        (n, a, b) => `${n} era ${a} e agora pediu ${b}. Tomou coragem desde a última vez.`,
+        (n, a, b) => `Do ${a} pro ${b}. ${n} voltou querendo apanhar mais. Eu atendo.`,
+        (n, a, b) => `${n} subiu de ${a} pra ${b}. Gostou da zoeira, né? Eu sabia.`,
+        (n, a, b) => `Da última vez ${n} pediu ${a}. Hoje é ${b}. Alguém criou casca.`,
+        (n, a, b) => `${n} trocou o ${a} pelo ${b}. Ficou com saudade de levar bronca?`,
+        (n, a, b) => `${a} ficou pequeno pra ${n}. Agora é ${b}. Depois não vale reclamar.`,
+        (n, a, b) => `${n} pulou do ${a} pro ${b}. Eu vou tratar isso como um convite.`,
+        (n, a, b) => `${n} pediu ${b} dessa vez. Da outra era ${a}. Achou que eu estava pegando leve demais?`,
+        (n, a, b) => `Promoção de zoeira pra ${n}: de ${a} pra ${b}. Parabéns ou meus pêsames, ainda não sei.`,
+        (n, a, b) => `${n} saiu do ${a} e foi pro ${b}. Coragem bonita. Vamos ver quanto dura.`,
+      ],
+      desceu: [
+        (n, a, b) => `${n} era ${a} e agora pediu ${b}. A última partida doeu, pelo visto.`,
+        (n, a, b) => `Do ${a} pro ${b}. ${n} pediu arrego. Tudo bem, eu entendo.`,
+        (n, a, b) => `${n} desceu de ${a} pra ${b}. Eu peguei pesado demais da outra vez? Eu? Imagina.`,
+        (n, a, b) => `Da última vez ${n} aguentou ${a}. Hoje veio de ${b}. Alguém está sensível hoje.`,
+        (n, a, b) => `${n} trocou o ${a} pelo ${b}. Precisava de um descanso de mim. Justo.`,
+        (n, a, b) => `${a} pra ${b}. ${n} chegou pedindo carinho. Vou tentar. Não prometo.`,
+        (n, a, b) => `${n} baixou de ${a} pra ${b}. Alguém aqui aprendeu que eu não brinco em serviço.`,
+        (n, a, b) => `${n} pediu ${b} hoje. Da outra vez era ${a}. Cansou de levar patada, né?`,
+        (n, a, b) => `Rebaixamento voluntário: ${n} saiu do ${a} pro ${b}. Eu respeito a autopreservação.`,
+        (n, a, b) => `${n} largou o ${a} e veio de ${b}. Dia ruim? Eu pego leve. Hoje.`,
+      ],
+      indeciso: [
+        (n, a, b, k) => `${n} trocou de humor de novo. Era ${a}, agora é ${b}. Já são ${k} trocas. Decide, criatura.`,
+        (n, a, b, k) => `${a}, ${b}... ${n} troca de humor mais que de roupa. ${k} trocas e contando.`,
+        (n, a, b, k) => `${n} de ${b} hoje. Semana que vem é o quê? Eu já perdi a conta. Mentira, são ${k}.`,
+        (n, a, b, k) => `Toda vez ${n} escolhe um humor diferente. Agora é ${b}. Eu vou fazer um gráfico disso.`,
+        (n, a, b, k) => `${n} mudou de ${a} pra ${b}. De novo. Isso é personalidade ou cardápio?`,
+        (n, a, b, k) => `${k} trocas de humor. ${n} está testando todos pra ver qual dói menos.`,
+        (n, a, b, k) => `${n} chegou de ${b}. Da outra vez era ${a}. Da outra, outro. Eu já nem me apego.`,
+        (n, a, b, k) => `${n} troca de humor igual troca de canal. Hoje é ${b}. Vou tentar acompanhar.`,
+        (n, a, b, k) => `Lá vem ${n} com humor novo. ${b} dessa vez. Me avisa quando decidir, tá?`,
+        (n, a, b, k) => `${n} não consegue escolher um humor e ficar. ${k} trocas. Eu, pelo menos, sou constante.`,
+      ],
+      paraCaos: [
+        (n, a) => `${n} era ${a} e dessa vez deixou o humor comigo. Confiança ou preguiça de escolher?`,
+        (n, a) => `${n} largou o ${a} e mandou eu decidir. Péssima ideia. Adorei.`,
+        (n, a) => `Da última vez ${n} escolheu ${a}. Hoje deixou na minha mão. Coragem.`,
+        (n, a) => `${n} desistiu de escolher e deixou comigo. O ${a} não estava dando conta?`,
+        (n, a) => `${n} trocou o ${a} por "o C.A.O.S. decide". Eu vou lembrar desse voto de confiança.`,
+      ],
+      deCaos: [
+        (n, a, b) => `Da última vez ${n} deixou o humor comigo. Hoje escolheu ${b}. Não gostou do que eu sorteei?`,
+        (n, a, b) => `${n} tirou o humor da minha mão e pegou ${b}. Eu entendo. Eu sou imprevisível.`,
+        (n, a, b) => `${n} confiou em mim da outra vez. Hoje é ${b}, escolhido a dedo. Magoei, pelo visto.`,
+        (n, a, b) => `${n} parou de deixar comigo. Agora é ${b}. Eu prometo que o sorteio foi honesto.`,
+        (n, a, b) => `Nada de sorteio pra ${n} hoje: ${b}, por conta própria. Traumatizei alguém.`,
+      ],
+    },
     // 25/10/2026 (pedido do JF): ele lembra o emoji de cada um e comenta quando troca. (nome, antes, agora)
     trocouEmoji: {
       sombrioParaFofo: [

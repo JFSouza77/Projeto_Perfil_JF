@@ -591,7 +591,7 @@ const ARQ = acharMestre(process.argv[2]);
     {
       const jogAntes = players, toastAntes = window.showToastMessage, randAntes = Math.random, silAntes = caosSilenced, fichasAntes = JFStore.getItem(MEM_FICHAS_KEY);
       const T = REACTIVE_VOICE.memoria.trocouEmoji, n = 'Teodorico';
-      const doBanco = (bank, txt, a, b) => bank.some((f) => (typeof f === 'function' ? f(n, a, b) : f) === txt);
+      const doBanco = (bank, txt, a, b) => !!txt && bank.some((f) => txt.includes(typeof f === 'function' ? f(n, a, b) : f));
       const mk = (av) => ({ id: 'tdx', name: n, avatar: av, score: 0, humor: 'normal' });
       fichaUpd(n, (f) => { f.ultimoAvatar = '💀'; f.partidas = 2; });
       const p1 = mk('🍦'); players = [p1]; caosMemCadastro(p1);
@@ -617,7 +617,8 @@ const ARQ = acharMestre(process.argv[2]);
       const jogAntes = players, randAntes = Math.random, fichasAntes = JFStore.getItem(MEM_FICHAS_KEY), modoAntes = CURRENT_MODE;
       CURRENT_MODE = 'classico';
       const T = REACTIVE_VOICE.memoria.trocouHumor, n = 'Genoveva';
-      const doBanco = (bank, txt, ...a) => bank.some((f) => (typeof f === 'function' ? f(n, ...a) : f) === txt);
+      // includes: às vezes ele decora a fala com um emoji no fim
+      const doBanco = (bank, txt, ...a) => !!txt && bank.some((f) => txt.includes(typeof f === 'function' ? f(n, ...a) : f));
       const mk = (h, extra) => ({ id: 'gnx', name: n, avatar: '🦊', score: 0, humor: h, ...(extra || {}) });
       const cad = (p) => { players = [p]; caosMemCadastro(p); return p; };
       Math.random = () => 0.9;
@@ -634,7 +635,7 @@ const ARQ = acharMestre(process.argv[2]);
       Math.random = randAntes; players = jogAntes; CURRENT_MODE = modoAntes;
       if (fichasAntes == null) JFStore.removeItem(MEM_FICHAS_KEY); else JFStore.setItem(MEM_FICHAS_KEY, fichasAntes);
       out.trocouHumor = doBanco(T.subiu, subiu, 'Suave', 'Ácido') && doBanco(T.desceu, desceu, 'Ácido', 'Suave') && contou && igual === null &&
-        doBanco(T.paraCaos, praCaos, 'Suave') && doBanco(T.indeciso, indeciso, 'C.A.O.S. decide', 'Normal', 4) && meioDaPartida;
+        doBanco(T.paraCaos, praCaos, 'Suave') && doBanco(T.indeciso, indeciso, 'sorteio', 'Normal', 4) && meioDaPartida;
       out.trocouHumorDiag = JSON.stringify({ subiu, desceu, contou, igual, praCaos, indeciso, meioDaPartida, f: fichaGet(n) });
     }
     // 1.7.10.3: busca nas regras e o lembrete da primeira carta de cada categoria

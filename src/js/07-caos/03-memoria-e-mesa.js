@@ -61,7 +61,7 @@ function caosTrocouHumor(p) {
     nome = (h) => (HUMOR_NOMES[h] || "").replace(/^\S+\s/, ""),
     grau = { familia: 0, suave: 1, normal: 2, acido: 3, zero: 4 },
     k = (f.trocasHumor || 0) + 1;
-  if (k >= 3 && Math.random() < 0.7) return getRandomReaction(T.indeciso, p.name, nome(a) || "C.A.O.S. decide", nome(b) || "C.A.O.S. decide", k) || null;
+  if (k >= 3 && Math.random() < 0.7) return getRandomReaction(T.indeciso, p.name, nome(a) || "sorteio", nome(b) || "sorteio", k) || null;
   if (b === "caos") return getRandomReaction(T.paraCaos, p.name, nome(a)) || null;
   if (a === "caos") return getRandomReaction(T.deCaos, p.name, "", nome(b)) || null;
   return getRandomReaction(grau[b] > grau[a] ? T.subiu : T.desceu, p.name, nome(a), nome(b)) || null;
