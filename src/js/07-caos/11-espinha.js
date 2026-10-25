@@ -16,6 +16,7 @@
  * ---------------------------------------------------------------------- */
 // Rotinas de fala e de emoção protegidas (só C.A.O.S.: nenhuma delas pode mudar o jogo).
 const CAOS_ENTRADAS = [
+  "caosCerebroEvento",
   "maybeShowTimeWarning",
   "maybeShowSpontaneousChatter",
   "maybeShowCardChatter",

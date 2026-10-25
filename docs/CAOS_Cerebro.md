@@ -2,6 +2,16 @@
 
 > A base (camadas, gerador e memória) é da 4.0 (1.7.5.3). O que mudou da 4.1 à 4.4.2 está logo abaixo.
 
+## Cérebro em modo sombra (5.1.0)
+
+| Parte | O que faz | Onde |
+|---|---|---|
+| **Registro único** | Toda fala que passa pelo funil fica anotada: o que apareceu (banco, emoção, prioridade) e o que foi cortado (calado, 🔇 da carta, orçamento/respiro, Express, janela aberta). Últimas 200. | `caosEmit`, `caosCortou` (07/15) · chamados em `showToastMessage` (07/09) |
+| **Inventário** | Lista gerada de todos os pontos de fala (arquivo, linha, banco) e conferência de que todo banco citado existe. | `ferramentas/caos_inventario.js` → `docs/CAOS_Inventario_de_Falas.md` |
+| **Percepção** | Só leitura: quem jogou, líder e diferença, sequências, reta final, dicas da carta, mesa cansada (Tato), falas já decididas na carta. | `caosVisao` (07/15) |
+| **Decisão em sombra** | Nota cada fala possível (acerto rápido, sequência, estreia, erro de novo, erros/pulos seguidos, virada na liderança, reta final, Absurdo) e escolhe uma ou o silêncio. Repetição e mesa cansada baixam a nota; Absurdo e reta final são obrigatórias; no Júnior e no Family friendly a zoeira vira incentivo; respeita o orçamento da carta. **Não fala:** só anota e compara com o que o sistema falou. Desligado por padrão. | `caosCerebroEvento`, `caosCerebroCandidatos`, `caosCerebroDecidir` (07/15) · aba 📜 Decisões |
+| **Testes** | Igualdade (falas iguais com registro e cérebro), invariância (replay com o cérebro ligado chega ao mesmo estado), métrica (40–60%, 5+ tipos), limites, inventário. | `ferramentas/teste_cerebro.js` · `simular_partidas.js --cerebro` |
+
 ## Da 4.1 à 4.4.3 (1.7.10.x, partidas online)
 
 | Parte | O que faz | Onde |

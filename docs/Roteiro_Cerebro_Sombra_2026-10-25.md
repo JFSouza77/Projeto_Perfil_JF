@@ -2,7 +2,8 @@
 
 **Origem:** roteiro de 28/09/2026 (Beta 1.5.0, `perfil_jf_Beta_1_5_0_ROTEIRO_CEREBRO_CAOS_SOMBRA.md`), que o JF mandou de novo
 nesta conversa. **Revisão:** Claude, conferindo cada ponto contra o código atual (Beta 1.7.10.9.3, C.A.O.S. 5.0.1, build 1841).
-**Status:** proposta. Nada aplicado. O passo 1 só começa com o OK do JF.
+**Status:** passos 1 e 2 feitos no C.A.O.S. 5.1.0 (build 1842), com o OK do JF. Passo 3 espera o teste de mesa.
+Decisões do JF (25/10): orçamento do passo 3 fica o de hoje (até 6 por carta, com respiro e Tato); versão 5.1, não 6.0.
 
 A ideia continua a mesma: deixar o C.A.O.S. com mais cara de IA que pensa antes de falar, **sem** dar a ele poder sobre o jogo.
 
@@ -90,17 +91,19 @@ Em vez de reescrever as 170+ chamadas uma por uma (alto risco de quebrar), o reg
   de cada jogador.
 - C.A.O.S. 5.1.0 (ou 6.0.0).
 
-## 4. Testes novos (5)
+## 4. Testes (feito: um arquivo, 5 conferências)
 
-| Teste | O que confere |
+`ferramentas/teste_cerebro.js`:
+
+| Conferência | O que confere |
 |---|---|
-| `teste_cerebro_igual.js` | Passo 1: sequência de falas idêntica antes e depois do registro único |
-| `teste_cerebro_invariancia.js` | Pontos, turnos, cartas e respostas iguais com o cérebro ligado e desligado |
-| `teste_cerebro_sombra.js` | 40% a 60% de falas em 300 cartas, 5 tipos ou mais por partida, log legível no Inspetor |
-| `teste_cerebro_limites.js` | Orçamento respeitado, falas obrigatórias sempre saem, Júnior e Family friendly sem emoção proibida |
-| `teste_cerebro_fatos.js` | Passo 3: toda fala que cita número ou fato bate com o estado real da partida |
+| Inventário | Todo banco citado nos pontos de fala existe e `docs/CAOS_Inventario_de_Falas.md` está em dia |
+| Igualdade | Com o mesmo sorteio, 300 jogadas dão as mesmas falas (texto e emoção) e o mesmo número de sorteios com o registro desligado, ligado e com o cérebro em sombra |
+| Invariância | Partida jogada com o cérebro desligado e repetida (replay) com ele ligado chega ao mesmo estado (`simular_partidas.js --cerebro`) |
+| Sombra | 40% a 60% de "falaria" em 300 cartas, 5 tipos ou mais por partida |
+| Limites | Orçamento por carta, Absurdo sempre, Júnior sem zoeira, nenhum sorteio, jogo intocado |
 
-Todos entram na bateria.
+No passo 3 entra a conferência de fatos (toda fala que cita número bate com a partida).
 
 ## 5. Fora do escopo
 
@@ -117,10 +120,10 @@ Todos entram na bateria.
 
 ## 7. Checklist
 
-- [ ] Inventário automático dos pontos de fala
-- [ ] Passo 1: `caosEmit` no funil + teste de igualdade
-- [ ] Passo 2: percepção e decisão em sombra, chave desligada, aba Decisões comparando
-- [ ] Passo 2: invariância e métrica passando
-- [ ] 5 testes novos na bateria; bateria inteira verde
-- [ ] HISTÓRICO com origem (conversa do JF com Claude) e motivo
+- [x] Inventário automático dos pontos de fala
+- [x] Passo 1: `caosEmit` no funil + teste de igualdade
+- [x] Passo 2: percepção e decisão em sombra, chave desligada, aba Decisões comparando
+- [x] Passo 2: invariância e métrica passando
+- [x] Teste novo na bateria (5 conferências); bateria inteira verde
+- [x] HISTÓRICO com origem (conversa do JF com Claude) e motivo
 - [ ] Passo 3 só depois do teste de mesa e com aprovação do JF

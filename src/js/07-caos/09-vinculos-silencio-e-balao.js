@@ -613,6 +613,7 @@ function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze, _d
       try {
         caosLog("maestro", "fala descartada: janela aberta tempo demais");
       } catch (e) {}
+      caosCortou(msg, "janela aberta tempo demais", priority);
       if (typeof afterClose === "function") afterClose();
       return;
     }
@@ -620,14 +621,17 @@ function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze, _d
     return;
   }
   if (caosSorteioSilencio && !bypassSilence) {
+    caosCortou(msg, "silêncio do sorteio", priority);
     if (typeof afterClose === "function") afterClose();
     return;
   }
   if (caosMudoCarta && !bypassSilence && !priority && typeof msg === "string" && msg.indexOf("[C.A.O.S.]") !== -1) {
+    caosCortou(msg, "🔇 da carta", priority);
     if (typeof afterClose === "function") afterClose();
     return;
   }
   if (caosSilenced && !bypassSilence) {
+    caosCortou(msg, "C.A.O.S. calado", priority);
     if (typeof afterClose === "function") afterClose();
     return;
   }
@@ -642,6 +646,7 @@ function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze, _d
     !bypassSilence &&
     caosToastBloquear()
   ) {
+    caosCortou(msg, "orçamento ou respiro", priority);
     if (typeof afterClose === "function") afterClose();
     return;
   }
@@ -654,6 +659,7 @@ function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze, _d
     String(msg).length > 150
   ) {
     caosLog("express", "fala longa cortada: " + String(msg).slice(0, 60));
+    caosCortou(msg, "fala longa no Express", priority);
     if (typeof afterClose === "function") afterClose();
     return;
   }
@@ -733,6 +739,9 @@ function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze, _d
   if (caosEmoFala) caosViradaDesde++;
   const virada = viradaManual || caosViradaDecidir(msg, caosEmoFala, caosBancoFala, priority, tropecou);
   caosLogMatchLine(msg);
+  // C.A.O.S. 5.1: registro único (o que apareceu, de qual banco e com qual emoção)
+  if (typeof msg === "string" && msg.indexOf("[C.A.O.S.]") !== -1)
+    caosEmit(caosBancoFala || "livre", { texto: msg, banco: caosBancoFala, emo: caosEmoFala, prio: !!priority });
   // Tato: a fala que a mesa está vendo agora (pra saber se ela ouve até o fim ou corta)
   if (!priority && typeof msg === "string" && msg.indexOf("[C.A.O.S.]") !== -1) caosTatoFalou(msg);
   // C.A.O.S. 4.2: a emoção da fala fica no registro (o botão 🔊 da revisão repete do mesmo jeito)

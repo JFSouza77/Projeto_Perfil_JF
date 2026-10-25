@@ -403,6 +403,7 @@ function caosV2Reset() {
   caosVirtualCardSeen = null;
   caosVirtualLastDrawn = -99;
   caosDecisionLog = [];
+  caosCerebroZerar();
   caosArqUltima = {};
   caosFalasRecentes = [];
   caosMesaReset();
