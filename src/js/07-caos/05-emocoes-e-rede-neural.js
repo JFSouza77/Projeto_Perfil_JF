@@ -752,6 +752,8 @@ function caosJogEmoRegistrar(idx, ev) {
   p.emo.h = (p.emo.h + ev).slice(-8);
   caosConsoleEvento(idx, ev);
   caosJogEmoAtualizar();
+  // C.A.O.S. 5.1: o cérebro em modo sombra pensa na jogada (só anota, não fala)
+  if (caosCerebro.on) caosCerebroEvento(idx, ev);
 }
 function caosJogEmoAtualizar() {
   if (!players.length) return;
@@ -939,7 +941,7 @@ function caosNeuralDesenhar(cv, t) {
     const C = caosConsole || {};
     const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
 tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
-${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 5.0.1`;
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 5.1.0`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }

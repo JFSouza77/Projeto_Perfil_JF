@@ -9,6 +9,8 @@
 //   a espinha do C.A.O.S. nunca precisou desfazer nada (ele não encostou no jogo).
 //   node ferramentas/simular_partidas.js [mestre.html] [--semente=N] [--so=nome] [--passos=N] [--replay]
 // Com --replay, cada partida é repetida a partir das ações gravadas e tem que chegar ao mesmo estado.
+// Com --cerebro (C.A.O.S. 5.1), a partida original joga com o cérebro em modo sombra desligado e o replay
+// com ele ligado: o estado final tem que ser o mesmo (o cérebro não pode mudar nada no jogo).
 // As esperas do jogo (balões, animações) são encurtadas pra 5 ms só dentro do simulador.
 // A semente fixa os sorteios de regra e as escolhas do robô, mas a partida exata ainda pode variar
 // um pouco entre execuções: se um balão ainda está aberto ou não quando o robô age depende do tempo.
@@ -23,7 +25,8 @@ const ARQ = acharMestre(argv.find((x) => !x.startsWith("--")));
 const SEMENTE = parseInt(opt("semente", "2026"), 10);
 const SO = opt("so", "");
 const PASSOS = parseInt(opt("passos", "6000"), 10);
-const REPLAY = argv.includes("--replay");
+const REPLAY = argv.includes("--replay") || argv.includes("--cerebro");
+const CEREBRO = argv.includes("--cerebro");
 
 const N = (n) => ["Ana", "Beto", "Caio", "Duda", "Edu", "Fabi"].slice(0, n);
 const CENARIOS = [
@@ -283,6 +286,7 @@ async function replay(b, cen, semente, original) {
   await page.goto("file://" + ARQ);
   await page.waitForFunction(() => typeof sorteioSemear === "function" && !document.getElementById("goToRulesBtn").disabled);
   await page.evaluate(montarMesa, { cen, semente, nomes: N(cen.jog), ids: original.ids });
+  if (CEREBRO) await page.evaluate(() => (caosCerebro.on = true));
   if (process.env.DBG) await page.evaluate(() => (window.__DBG = 1));
   const r = await page.evaluate(async (grav) => {
     const espera = () => new Promise((ok) => window.__esperaReal(ok, 0));
@@ -330,7 +334,8 @@ async function replay(b, cen, semente, original) {
     if (f.partida) delete f.partida.tempoMs; // 1.7.10.5.6: tempo de jogo é relógio de parede
           delete f.matchId; // o replay é outra partida: o matchId é novo
           delete f.tabuleiro; // e a forma do tabuleiro (só desenho) é sorteada de novo
-    return { divergiu, avisoMeio, repetidas, final: JSON.stringify(f) };
+    const cerebro = caosCerebro.on ? caosCerebroResumo() : null;
+    return { divergiu, avisoMeio, repetidas, final: JSON.stringify(f), cerebro, leis: caosEspinha.leis };
   }, original.gravacao);
   await page.close();
   // a revisão conta ações aceitas; ação automática que no replay já veio embutida em outra (sacar,
@@ -365,9 +370,9 @@ async function replay(b, cen, semente, original) {
     if (r.falhasCaos) console.log(`        (C.A.O.S. teve ${r.falhasCaos} erro(s) contido(s) pela 3ª lei)`);
     if (REPLAY && r.terminou) {
       const rp = await replay(b, cen, SEMENTE + i, r);
-      const okR = rp.igual && !rp.erros.length;
+      const okR = rp.igual && !rp.erros.length && (!CEREBRO || (rp.cerebro && rp.cerebro.decisoes > 0 && !rp.leis));
       tudoOk = tudoOk && okR;
-      console.log(`        replay: ${okR ? "ok, mesmo estado final" : "DIVERGIU"} (${rp.repetidas} ações repetidas de ${r.gravacao.length})${rp.divergiu ? " · " + rp.divergiu : ""}${rp.avisoMeio && !rp.igual ? " · 1º estado diferente: " + rp.avisoMeio : ""}${rp.notaRev ? " · " + rp.notaRev : ""}${rp.erros.length ? " · erro: " + rp.erros[0] : ""}`);
+      console.log(`        replay: ${okR ? "ok, mesmo estado final" : "DIVERGIU"} (${rp.repetidas} ações repetidas de ${r.gravacao.length})${rp.divergiu ? " · " + rp.divergiu : ""}${rp.avisoMeio && !rp.igual ? " · 1º estado diferente: " + rp.avisoMeio : ""}${rp.notaRev ? " · " + rp.notaRev : ""}${rp.erros.length ? " · erro: " + rp.erros[0] : ""}${rp.cerebro ? ` · cérebro ligado: ${rp.cerebro.decisoes} decisões, falaria em ${rp.cerebro.pct}%, espinha ${rp.leis}${process.env.V ? " " + JSON.stringify(rp.cerebro.jogadas) + " cartas " + r.cartas : ""}` : ""}`);
     }
   }
   console.log(tudoOk ? "\nSIMULAÇÃO OK" : "\nSIMULAÇÃO COM PROBLEMA");
