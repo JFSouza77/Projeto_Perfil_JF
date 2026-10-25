@@ -218,6 +218,7 @@ function caosSatisfacaoTalvez() {
       if (v === "mais" && i < ordem.length - 1) q.humor = ordem[i + 1];
       if (v === "menos" && i > 0) q.humor = ordem[i - 1];
       caosLog("satisfacao", `${nome}: ${v} → ${q.humor}`);
+      if (v === "mais" || v === "menos") caosMemHumorMudou(q);
       saveGameState();
       renderScoreboard && renderScoreboard();
       caosFalarDepois(

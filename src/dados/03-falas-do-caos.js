@@ -3127,6 +3127,59 @@ const REACTIVE_VOICE = {
     "Segunda rodada. Agora eu conheço o estilo de cada um. Cuidado.",
   ],
   memoria: {
+    // 25/10/2026 (pedido do JF): ele lembra o humor que cada um escolhe e zoa quando troca. (nome, antes, agora, trocas)
+    trocouHumor: {
+      subiu: [
+        (n, a, b) => `${n} era ${a} e agora pediu ${b}. Tomou coragem desde a última vez.`,
+        (n, a, b) => `Do ${a} pro ${b}. ${n} voltou querendo apanhar mais. Eu atendo.`,
+        (n, a, b) => `${n} subiu de ${a} pra ${b}. Gostou da zoeira, né? Eu sabia.`,
+        (n, a, b) => `Da última vez ${n} pediu ${a}. Hoje é ${b}. Alguém criou casca.`,
+        (n, a, b) => `${n} trocou o ${a} pelo ${b}. Ficou com saudade de levar bronca?`,
+        (n, a, b) => `${a} ficou pequeno pra ${n}. Agora é ${b}. Depois não vale reclamar.`,
+        (n, a, b) => `${n} pulou do ${a} pro ${b}. Eu vou tratar isso como um convite.`,
+        (n, a, b) => `${n} pediu ${b} dessa vez. Da outra era ${a}. Achou que eu estava pegando leve demais?`,
+        (n, a, b) => `Promoção de zoeira pra ${n}: de ${a} pra ${b}. Parabéns ou meus pêsames, ainda não sei.`,
+        (n, a, b) => `${n} saiu do ${a} e foi pro ${b}. Coragem bonita. Vamos ver quanto dura.`,
+      ],
+      desceu: [
+        (n, a, b) => `${n} era ${a} e agora pediu ${b}. A última partida doeu, pelo visto.`,
+        (n, a, b) => `Do ${a} pro ${b}. ${n} pediu arrego. Tudo bem, eu entendo.`,
+        (n, a, b) => `${n} desceu de ${a} pra ${b}. Eu peguei pesado demais da outra vez? Eu? Imagina.`,
+        (n, a, b) => `Da última vez ${n} aguentou ${a}. Hoje veio de ${b}. Alguém está sensível hoje.`,
+        (n, a, b) => `${n} trocou o ${a} pelo ${b}. Precisava de um descanso de mim. Justo.`,
+        (n, a, b) => `${a} pra ${b}. ${n} chegou pedindo carinho. Vou tentar. Não prometo.`,
+        (n, a, b) => `${n} baixou de ${a} pra ${b}. Alguém aqui aprendeu que eu não brinco em serviço.`,
+        (n, a, b) => `${n} pediu ${b} hoje. Da outra vez era ${a}. Cansou de levar patada, né?`,
+        (n, a, b) => `Rebaixamento voluntário: ${n} saiu do ${a} pro ${b}. Eu respeito a autopreservação.`,
+        (n, a, b) => `${n} largou o ${a} e veio de ${b}. Dia ruim? Eu pego leve. Hoje.`,
+      ],
+      indeciso: [
+        (n, a, b, k) => `${n} trocou de humor de novo. Era ${a}, agora é ${b}. Já são ${k} trocas. Decide, criatura.`,
+        (n, a, b, k) => `${a}, ${b}... ${n} troca de humor mais que de roupa. ${k} trocas e contando.`,
+        (n, a, b, k) => `${n} de ${b} hoje. Semana que vem é o quê? Eu já perdi a conta. Mentira, são ${k}.`,
+        (n, a, b, k) => `Toda vez ${n} escolhe um humor diferente. Agora é ${b}. Eu vou fazer um gráfico disso.`,
+        (n, a, b, k) => `${n} mudou de ${a} pra ${b}. De novo. Isso é personalidade ou cardápio?`,
+        (n, a, b, k) => `${k} trocas de humor. ${n} está testando todos pra ver qual dói menos.`,
+        (n, a, b, k) => `${n} chegou de ${b}. Da outra vez era ${a}. Da outra, outro. Eu já nem me apego.`,
+        (n, a, b, k) => `${n} troca de humor igual troca de canal. Hoje é ${b}. Vou tentar acompanhar.`,
+        (n, a, b, k) => `Lá vem ${n} com humor novo. ${b} dessa vez. Me avisa quando decidir, tá?`,
+        (n, a, b, k) => `${n} não consegue escolher um humor e ficar. ${k} trocas. Eu, pelo menos, sou constante.`,
+      ],
+      paraCaos: [
+        (n, a) => `${n} era ${a} e dessa vez deixou o humor comigo. Confiança ou preguiça de escolher?`,
+        (n, a) => `${n} largou o ${a} e mandou eu decidir. Péssima ideia. Adorei.`,
+        (n, a) => `Da última vez ${n} escolheu ${a}. Hoje deixou na minha mão. Coragem.`,
+        (n, a) => `${n} desistiu de escolher e deixou comigo. O ${a} não estava dando conta?`,
+        (n, a) => `${n} trocou o ${a} por "o C.A.O.S. decide". Eu vou lembrar desse voto de confiança.`,
+      ],
+      deCaos: [
+        (n, a, b) => `Da última vez ${n} deixou o humor comigo. Hoje escolheu ${b}. Não gostou do que eu sorteei?`,
+        (n, a, b) => `${n} tirou o humor da minha mão e pegou ${b}. Eu entendo. Eu sou imprevisível.`,
+        (n, a, b) => `${n} confiou em mim da outra vez. Hoje é ${b}, escolhido a dedo. Magoei, pelo visto.`,
+        (n, a, b) => `${n} parou de deixar comigo. Agora é ${b}. Eu prometo que o sorteio foi honesto.`,
+        (n, a, b) => `Nada de sorteio pra ${n} hoje: ${b}, por conta própria. Traumatizei alguém.`,
+      ],
+    },
     // 25/10/2026 (pedido do JF): ele lembra o emoji de cada um e comenta quando troca. (nome, antes, agora)
     trocouEmoji: {
       sombrioParaFofo: [

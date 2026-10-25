@@ -29,10 +29,52 @@ function caosMemCadastro(p) {
   p._fichaAntes = fichaGet(p.name);
   // o Rafa troca de emoji a cada carta por presente: não conta como troca
   const gira = presenteDe(p.name) && presenteDe(p.name).gira;
+  const h = caosHumorEscolha(p);
   fichaUpd(p.name, (f) => {
     f.ultimaVez = Date.now();
     if (p.avatar && !gira) f.ultimoAvatar = p.avatar;
+    if (h) caosHumorAnotar(f, h);
   });
+}
+// o humor que a pessoa escolheu (não o que o modo forçou): "caos" quando deixou o C.A.O.S. decidir
+function caosHumorEscolha(p) {
+  if (!p || p.iniciante) return null;
+  if (p.humorCaos) return "caos";
+  return ["familia", "suave", "normal", "acido", "zero"].includes(p.humor) ? p.humor : null;
+}
+function caosHumorAnotar(f, h) {
+  if (f.ultimoHumor && f.ultimoHumor !== h) f.trocasHumor = Math.min(99, (f.trocasHumor || 0) + 1);
+  f.ultimoHumor = h;
+}
+// trocou o humor no meio da partida (pediu mais pesado ou mais leve): conta como troca também
+function caosMemHumorMudou(p) {
+  if (!memContaFicha(p) || p.iniciante) return;
+  fichaUpd(p.name, (f) => caosHumorAnotar(f, p.humor));
+}
+// 25/10/2026 (pedido do JF): ele lembra o humor de cada um e zoa quando troca (ou quando troca toda hora)
+function caosTrocouHumor(p) {
+  const f = p && p._fichaAntes,
+    a = f && f.ultimoHumor,
+    b = caosHumorEscolha(p);
+  if (!a || !b || a === b || humorFamilia(p)) return null;
+  const T = REACTIVE_VOICE.memoria.trocouHumor,
+    nome = (h) => (HUMOR_NOMES[h] || "").replace(/^\S+\s/, ""),
+    grau = { familia: 0, suave: 1, normal: 2, acido: 3, zero: 4 },
+    k = (f.trocasHumor || 0) + 1;
+  if (k >= 3 && Math.random() < 0.7) return getRandomReaction(T.indeciso, p.name, nome(a) || "C.A.O.S. decide", nome(b) || "C.A.O.S. decide", k) || null;
+  if (b === "caos") return getRandomReaction(T.paraCaos, p.name, nome(a)) || null;
+  if (a === "caos") return getRandomReaction(T.deCaos, p.name, "", nome(b)) || null;
+  return getRandomReaction(grau[b] > grau[a] ? T.subiu : T.desceu, p.name, nome(a), nome(b)) || null;
+}
+// o que ele lembra que mudou desde a última vez (emoji ou humor); se mudou os dois, sorteia
+function caosTrocouMemoria(p) {
+  const fs = [caosTrocouEmoji, caosTrocouHumor];
+  if (Math.random() < 0.5) fs.reverse();
+  for (const fn of fs) {
+    const t = fn(p);
+    if (t) return t;
+  }
+  return null;
 }
 // 25/10/2026 (pedido do JF): ele lembra o emoji de cada um e comenta quando troca
 function caosTrocouEmoji(p) {

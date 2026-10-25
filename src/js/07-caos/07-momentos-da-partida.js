@@ -24,7 +24,7 @@ function caosWelcomePlayer(p) {
     args = [name, caosTempoFala(p.nickMs)];
   } else if (!conhecido && prevNickMs >= 9e4 && typeof p.nickMs === "number" && p.nickMs < 3e4 && R() < 0.8)
     bank = REACTIVE_VOICE.nickDemora.evoluiu;
-  else if (!p.nickEmprestado && p._fichaAntes && R() < (conhecido ? 0.6 : 0.85) && (troca = caosTrocouEmoji(p)))
+  else if (!p.nickEmprestado && p._fichaAntes && R() < (conhecido ? 0.6 : 0.85) && (troca = caosTrocouMemoria(p)))
     return showToastMessage(troca);
   else if (isAnneName(name) && p.avatar === "👸") {
     const g = caosGerarFala("anneChegou", p);

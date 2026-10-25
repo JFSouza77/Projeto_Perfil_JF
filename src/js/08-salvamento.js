@@ -1114,6 +1114,8 @@ function fichaLimpa(f, nome) {
     ultimoResultado: ["venceu", "lanterna", "meio"].includes(f.ultimoResultado) ? f.ultimoResultado : null,
     ultimoModo: typeof f.ultimoModo === "string" ? f.ultimoModo.slice(0, 12) : null,
     ultimoAvatar: typeof f.ultimoAvatar === "string" && f.ultimoAvatar.length <= 16 ? f.ultimoAvatar : null,
+    ultimoHumor: ["familia", "suave", "normal", "acido", "zero", "caos"].includes(f.ultimoHumor) ? f.ultimoHumor : null,
+    trocasHumor: Math.min(99, memNum(f.trocasHumor, 0)),
   };
 }
 function fichasTodas() {
