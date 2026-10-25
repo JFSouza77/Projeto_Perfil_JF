@@ -1585,7 +1585,7 @@ function dicaSegurarParaForcar(grid, aoSegurar) {
 // Quem pode mandar o quê (o host confere antes da porta de sempre).
 const REDE_SO_MESTRE = [
   "sacarCarta", "virarCarta", "roletaCategoria", "acertou", "errou", "palpiteAcertou", "palpiteErrou", "especialSeguir",
-  "especialPerdeVez", "moverJogador", "moverEquipe", "descartarCarta", "desistirCarta", "desfazer", "expressPassar",
+  "especialPerdeVez", "acertouNaVez", "moverJogador", "moverEquipe", "descartarCarta", "desistirCarta", "desfazer", "expressPassar",
   "expressPular", "expressInverter", "expressMirar", "expressAlvo", "corridaProxima",
 ];
 const REDE_QUALQUER_UM = ["pausar", "continuar"];
@@ -1708,7 +1708,11 @@ function redeOpcoes(jid) {
           else add("especialPerdeVez", [], "➡️ Passar a vez", "nao");
         } else if (isWildcardSpecial(item.text)) {
           if (specialIsVoid(item)) add("especialSeguir", [], "→ Continuar, escolhe outra dica", "ok");
-          else add("especialPerdeVez", [], "→ Passar a vez", "nao");
+          else {
+            // 25/10/2026 (pedido do JF): é a vez de quem tirou o palpite — ele pode responder a carta agora
+            if (palpitePodeResponderNaVez()) add("acertouNaVez", [], `✓ ${nome(resp)} vai responder agora (é a vez dele)`, "ok");
+            add("especialPerdeVez", [], `→ Passar a vez${palpitePodeResponderNaVez() ? " (a ficha fica guardada)" : ""}`, "nao");
+          }
         } else if (CONTINUE_SAME_PLAYER_SPECIALS.has(item.text)) add("especialSeguir", [], "→ Continuar, escolhe outra dica", "ok");
         else {
           const mv = acoesMovimento();

@@ -29,6 +29,7 @@ const ACOES = {
   pedirDica: { fn: "pedirDica", pode: (idx) => acoesEmJogo() && cardState === "revealed" && pendingIndex === null && acoesDicaLivre(idx) },
   especialSeguir: { fn: "continueAfterSpecial", pode: () => acoesComDica() },
   especialPerdeVez: { fn: "loseTurnAfterSpecial", pode: () => acoesComDica() },
+  acertouNaVez: { fn: "acertarNaVezAposEspecial", pode: () => acoesComDica() && palpitePodeResponderNaVez() },
   // 1.7.9: mover só com a especial de mover aberta, o valor dela e um alvo permitido (antes: qualquer
   // jogador e qualquer valor, a qualquer hora)
   moverJogador: { fn: "applySpecialMove", pode: (alvo, n) => acoesMovimentoValido(alvo, n) },

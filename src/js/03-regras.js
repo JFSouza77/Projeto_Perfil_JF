@@ -624,6 +624,16 @@ function specialIsVoid(item) {
   }
   return false;
 }
+// 25/10/2026 (pedido do JF): quem tirou a especial "palpite a qualquer hora" está na vez — pode responder a
+// carta agora (com as dicas já abertas) em vez de só passar. Vale nos modos de tabuleiro e com pelo menos uma
+// dica aberta pra chutar. (Express/Corrida têm fluxo próprio de especial; aqui fica de fora.)
+function palpitePodeResponderNaVez() {
+  if (pendingIndex === null || cardState !== "revealed" || !currentCard) return false;
+  if (CURRENT_MODE === "express" || CURRENT_MODE === "corrida" || currentCard.isBonus) return false;
+  const item = currentCard.clues[pendingIndex];
+  if (!item || item.type !== "special" || !isWildcardSpecial(item.text) || specialIsVoid(item)) return false;
+  return revealedOrder.some((r) => r.item && r.item.type === "clue");
+}
 function expressTimes() {
   return EXPRESS_TIMES[expressFlavor === "hardcore" ? "hardcore" : "classico"];
 }

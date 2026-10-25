@@ -965,7 +965,9 @@ function cartaPartidaRegistrar(quemIdx, dicas, dicaIdx) {
 function markCorrect(playerIdxOverride) {
   if (pendingIndex === null || gameEnded) return;
   const item = currentCard.clues[pendingIndex];
-  if (item.type !== "clue") return;
+  // normalmente só dica abre acerto; mas quem tirou a especial "palpite a qualquer hora" está na vez e pode
+  // responder a carta (acerta com as dicas já abertas e mantém a ficha, que nunca é consumida aqui)
+  if (item.type !== "clue" && !(respondendoEspecialNaVez && item.type === "special")) return;
   mestreObsVeredito();
   let scorerIdx = responderIndex;
   if (playerIdxOverride !== void 0 && playerIdxOverride !== null) {
@@ -1398,6 +1400,17 @@ function cancelBonusCard() {
   showToastMessage(msg, () => {
     if (!gameEnded && cardState === "none") checkWinnerThenDraw();
   });
+}
+// 25/10/2026 (pedido do JF): é a vez de quem tirou "palpite a qualquer hora" — se ele quiser responder a
+// carta agora (com as dicas já abertas), pode. Acertou = ganha a carta normalmente e NÃO perde a ficha (ela
+// só some quando usada fora da vez). Errou = passa a vez pelo "Passar a vez", que também mantém a ficha.
+function acertarNaVezAposEspecial() {
+  if (pendingIndex === null || gameEnded) return;
+  const item = currentCard.clues[pendingIndex];
+  if (item.type !== "special" || !isWildcardSpecial(item.text) || specialIsVoid(item)) return;
+  respondendoEspecialNaVez = true;
+  markCorrect(); // scorerIdx = responderIndex (sem override) → não consome palpite
+  respondendoEspecialNaVez = false;
 }
 function loseTurnAfterSpecial() {
   if (pendingIndex === null || gameEnded) return;

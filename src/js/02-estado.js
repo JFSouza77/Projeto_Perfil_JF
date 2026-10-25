@@ -43,6 +43,9 @@ let pendingIndex = null;
 let palpiteStock;
 // atribuído em iniciar()
 let palpiteHolders = {};
+// 25/10/2026 (pedido do JF): quando alguém tira a especial "palpite a qualquer hora", é a vez dele — pode
+// responder a carta normalmente em vez de só passar. Marca essa resposta pra o markCorrect valer no especial.
+let respondendoEspecialNaVez = false;
 let timerInterval = null;
 let timerEndAt = null;
 let timerKind = null;

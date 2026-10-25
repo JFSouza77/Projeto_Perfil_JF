@@ -741,7 +741,7 @@ function render() {
               const e = revealedOrder.find((r) => r.index === pendingIndex);
               const res = e ? e.palpiteResult : null;
               if (res === "ganhou")
-                return `${responderName} guardou uma <b>ficha de ${CURRENT_MODE === "corrida" ? "Rouba a vez" : "palpite"}</b> 🃏 — ela vale o jogo inteiro, até ser usada (fichas no estoque agora: ${palpiteStock}). A vez passa normalmente.`;
+                return `${responderName} guardou uma <b>ficha de ${CURRENT_MODE === "corrida" ? "Rouba a vez" : "palpite"}</b> 🃏 — ela vale o jogo inteiro, até ser usada (fichas no estoque agora: ${palpiteStock}).${palpitePodeResponderNaVez() ? ` Mas é a vez de ${responderName}: dá pra <b>responder a carta agora</b> se quiser — a ficha fica guardada do mesmo jeito.` : " A vez passa normalmente."}`;
               if (res === "fominha")
                 return `${responderName} já tem uma ficha de ${CURRENT_MODE === "corrida" ? "Rouba a vez" : "palpite"} 🃏 — cada um guarda no máximo <b>uma</b>. A instrução não vale, ${responderName} perde a vez e a ficha fica no estoque.`;
               if (res === "sem-estoque")
@@ -751,7 +751,7 @@ function render() {
                 : "O palpite a qualquer hora não vale neste modo — a instrução fica sem efeito. Quem tirou não perde a vez: escolha outra dica.";
             })()}</div>
             ${spotlightTimerHtml}
-            ${specialIsVoid(item) ? `<button class="continue-btn" id="continueSpecialBtn">→ Continuar, ${responderName} escolhe outra dica</button>` : `<button class="continue-btn" id="loseTurnBtn">→ Passar a vez</button>`}`;
+            ${specialIsVoid(item) ? `<button class="continue-btn" id="continueSpecialBtn">→ Continuar, ${responderName} escolhe outra dica</button>` : `${palpitePodeResponderNaVez() ? `<button class="btn-correct btn-acao" id="respNaVezBtn">✓ ${responderName} vai responder agora (é a vez dele)</button>` : ""}<button class="continue-btn" id="loseTurnBtn">→ Passar a vez${palpitePodeResponderNaVez() ? " (a ficha fica guardada)" : ""}</button>`}`;
         } else if (CONTINUE_SAME_PLAYER_SPECIALS.has(item.text)) {
           controlsHtml = `
             <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ⭐ ${item.text}</div>
@@ -1022,8 +1022,10 @@ function render() {
       if (item.type === "special") {
         const loseTurnBtn = document.getElementById("loseTurnBtn");
         const continueBtn = document.getElementById("continueSpecialBtn");
+        const respNaVezBtn = document.getElementById("respNaVezBtn");
         if (continueBtn) continueBtn.addEventListener("click", continueAfterSpecial);
         if (loseTurnBtn) loseTurnBtn.addEventListener("click", loseTurnAfterSpecial);
+        if (respNaVezBtn) respNaVezBtn.addEventListener("click", acertarNaVezAposEspecial);
       } else if (CURRENT_MODE !== "express") {
         document.getElementById("correctBtn")?.addEventListener("click", function () {
           markCorrect(parseInt(this.dataset.scorer));

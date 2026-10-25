@@ -12810,6 +12810,9 @@ let pendingIndex = null;
 let palpiteStock;
 // atribuído em iniciar()
 let palpiteHolders = {};
+// 25/10/2026 (pedido do JF): quando alguém tira a especial "palpite a qualquer hora", é a vez dele — pode
+// responder a carta normalmente em vez de só passar. Marca essa resposta pra o markCorrect valer no especial.
+let respondendoEspecialNaVez = false;
 let timerInterval = null;
 let timerEndAt = null;
 let timerKind = null;
@@ -13863,6 +13866,16 @@ function specialIsVoid(item) {
     return !(e && (e.palpiteResult === "ganhou" || e.palpiteResult === "fominha"));
   }
   return false;
+}
+// 25/10/2026 (pedido do JF): quem tirou a especial "palpite a qualquer hora" está na vez — pode responder a
+// carta agora (com as dicas já abertas) em vez de só passar. Vale nos modos de tabuleiro e com pelo menos uma
+// dica aberta pra chutar. (Express/Corrida têm fluxo próprio de especial; aqui fica de fora.)
+function palpitePodeResponderNaVez() {
+  if (pendingIndex === null || cardState !== "revealed" || !currentCard) return false;
+  if (CURRENT_MODE === "express" || CURRENT_MODE === "corrida" || currentCard.isBonus) return false;
+  const item = currentCard.clues[pendingIndex];
+  if (!item || item.type !== "special" || !isWildcardSpecial(item.text) || specialIsVoid(item)) return false;
+  return revealedOrder.some((r) => r.item && r.item.type === "clue");
 }
 function expressTimes() {
   return EXPRESS_TIMES[expressFlavor === "hardcore" ? "hardcore" : "classico"];
@@ -15025,7 +15038,9 @@ function cartaPartidaRegistrar(quemIdx, dicas, dicaIdx) {
 function markCorrect(playerIdxOverride) {
   if (pendingIndex === null || gameEnded) return;
   const item = currentCard.clues[pendingIndex];
-  if (item.type !== "clue") return;
+  // normalmente só dica abre acerto; mas quem tirou a especial "palpite a qualquer hora" está na vez e pode
+  // responder a carta (acerta com as dicas já abertas e mantém a ficha, que nunca é consumida aqui)
+  if (item.type !== "clue" && !(respondendoEspecialNaVez && item.type === "special")) return;
   mestreObsVeredito();
   let scorerIdx = responderIndex;
   if (playerIdxOverride !== void 0 && playerIdxOverride !== null) {
@@ -15458,6 +15473,17 @@ function cancelBonusCard() {
   showToastMessage(msg, () => {
     if (!gameEnded && cardState === "none") checkWinnerThenDraw();
   });
+}
+// 25/10/2026 (pedido do JF): é a vez de quem tirou "palpite a qualquer hora" — se ele quiser responder a
+// carta agora (com as dicas já abertas), pode. Acertou = ganha a carta normalmente e NÃO perde a ficha (ela
+// só some quando usada fora da vez). Errou = passa a vez pelo "Passar a vez", que também mantém a ficha.
+function acertarNaVezAposEspecial() {
+  if (pendingIndex === null || gameEnded) return;
+  const item = currentCard.clues[pendingIndex];
+  if (item.type !== "special" || !isWildcardSpecial(item.text) || specialIsVoid(item)) return;
+  respondendoEspecialNaVez = true;
+  markCorrect(); // scorerIdx = responderIndex (sem override) → não consome palpite
+  respondendoEspecialNaVez = false;
 }
 function loseTurnAfterSpecial() {
   if (pendingIndex === null || gameEnded) return;
@@ -17442,7 +17468,7 @@ function render() {
               const e = revealedOrder.find((r) => r.index === pendingIndex);
               const res = e ? e.palpiteResult : null;
               if (res === "ganhou")
-                return `${responderName} guardou uma <b>ficha de ${CURRENT_MODE === "corrida" ? "Rouba a vez" : "palpite"}</b> 🃏 — ela vale o jogo inteiro, até ser usada (fichas no estoque agora: ${palpiteStock}). A vez passa normalmente.`;
+                return `${responderName} guardou uma <b>ficha de ${CURRENT_MODE === "corrida" ? "Rouba a vez" : "palpite"}</b> 🃏 — ela vale o jogo inteiro, até ser usada (fichas no estoque agora: ${palpiteStock}).${palpitePodeResponderNaVez() ? ` Mas é a vez de ${responderName}: dá pra <b>responder a carta agora</b> se quiser — a ficha fica guardada do mesmo jeito.` : " A vez passa normalmente."}`;
               if (res === "fominha")
                 return `${responderName} já tem uma ficha de ${CURRENT_MODE === "corrida" ? "Rouba a vez" : "palpite"} 🃏 — cada um guarda no máximo <b>uma</b>. A instrução não vale, ${responderName} perde a vez e a ficha fica no estoque.`;
               if (res === "sem-estoque")
@@ -17452,7 +17478,7 @@ function render() {
                 : "O palpite a qualquer hora não vale neste modo — a instrução fica sem efeito. Quem tirou não perde a vez: escolha outra dica.";
             })()}</div>
             ${spotlightTimerHtml}
-            ${specialIsVoid(item) ? `<button class="continue-btn" id="continueSpecialBtn">→ Continuar, ${responderName} escolhe outra dica</button>` : `<button class="continue-btn" id="loseTurnBtn">→ Passar a vez</button>`}`;
+            ${specialIsVoid(item) ? `<button class="continue-btn" id="continueSpecialBtn">→ Continuar, ${responderName} escolhe outra dica</button>` : `${palpitePodeResponderNaVez() ? `<button class="btn-correct btn-acao" id="respNaVezBtn">✓ ${responderName} vai responder agora (é a vez dele)</button>` : ""}<button class="continue-btn" id="loseTurnBtn">→ Passar a vez${palpitePodeResponderNaVez() ? " (a ficha fica guardada)" : ""}</button>`}`;
         } else if (CONTINUE_SAME_PLAYER_SPECIALS.has(item.text)) {
           controlsHtml = `
             <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ⭐ ${item.text}</div>
@@ -17723,8 +17749,10 @@ function render() {
       if (item.type === "special") {
         const loseTurnBtn = document.getElementById("loseTurnBtn");
         const continueBtn = document.getElementById("continueSpecialBtn");
+        const respNaVezBtn = document.getElementById("respNaVezBtn");
         if (continueBtn) continueBtn.addEventListener("click", continueAfterSpecial);
         if (loseTurnBtn) loseTurnBtn.addEventListener("click", loseTurnAfterSpecial);
+        if (respNaVezBtn) respNaVezBtn.addEventListener("click", acertarNaVezAposEspecial);
       } else if (CURRENT_MODE !== "express") {
         document.getElementById("correctBtn")?.addEventListener("click", function () {
           markCorrect(parseInt(this.dataset.scorer));
@@ -21740,6 +21768,7 @@ const ACOES = {
   pedirDica: { fn: "pedirDica", pode: (idx) => acoesEmJogo() && cardState === "revealed" && pendingIndex === null && acoesDicaLivre(idx) },
   especialSeguir: { fn: "continueAfterSpecial", pode: () => acoesComDica() },
   especialPerdeVez: { fn: "loseTurnAfterSpecial", pode: () => acoesComDica() },
+  acertouNaVez: { fn: "acertarNaVezAposEspecial", pode: () => acoesComDica() && palpitePodeResponderNaVez() },
   // 1.7.9: mover só com a especial de mover aberta, o valor dela e um alvo permitido (antes: qualquer
   // jogador e qualquer valor, a qualquer hora)
   moverJogador: { fn: "applySpecialMove", pode: (alvo, n) => acoesMovimentoValido(alvo, n) },
@@ -25301,7 +25330,7 @@ function dicaSegurarParaForcar(grid, aoSegurar) {
 // Quem pode mandar o quê (o host confere antes da porta de sempre).
 const REDE_SO_MESTRE = [
   "sacarCarta", "virarCarta", "roletaCategoria", "acertou", "errou", "palpiteAcertou", "palpiteErrou", "especialSeguir",
-  "especialPerdeVez", "moverJogador", "moverEquipe", "descartarCarta", "desistirCarta", "desfazer", "expressPassar",
+  "especialPerdeVez", "acertouNaVez", "moverJogador", "moverEquipe", "descartarCarta", "desistirCarta", "desfazer", "expressPassar",
   "expressPular", "expressInverter", "expressMirar", "expressAlvo", "corridaProxima",
 ];
 const REDE_QUALQUER_UM = ["pausar", "continuar"];
@@ -25424,7 +25453,11 @@ function redeOpcoes(jid) {
           else add("especialPerdeVez", [], "➡️ Passar a vez", "nao");
         } else if (isWildcardSpecial(item.text)) {
           if (specialIsVoid(item)) add("especialSeguir", [], "→ Continuar, escolhe outra dica", "ok");
-          else add("especialPerdeVez", [], "→ Passar a vez", "nao");
+          else {
+            // 25/10/2026 (pedido do JF): é a vez de quem tirou o palpite — ele pode responder a carta agora
+            if (palpitePodeResponderNaVez()) add("acertouNaVez", [], `✓ ${nome(resp)} vai responder agora (é a vez dele)`, "ok");
+            add("especialPerdeVez", [], `→ Passar a vez${palpitePodeResponderNaVez() ? " (a ficha fica guardada)" : ""}`, "nao");
+          }
         } else if (CONTINUE_SAME_PLAYER_SPECIALS.has(item.text)) add("especialSeguir", [], "→ Continuar, escolhe outra dica", "ok");
         else {
           const mv = acoesMovimento();
