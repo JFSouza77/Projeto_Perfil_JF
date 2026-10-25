@@ -29524,7 +29524,12 @@ function contaFichaJuntar(nome, ficha) {
   if (!ficha || typeof ficha !== "object") return;
   const loc = fichaGet(nome);
   if (loc && (loc.partidas || 0) > (ficha.partidas || 0)) return;
-  fichaUpd(nome, (f) => Object.assign(f, fichaLimpa(ficha, nome)));
+  // o emoji de agora vale mais que o que veio da nuvem (senão a próxima troca compara com o emoji errado)
+  const p = players.find((q) => nameKeyPlain(q.name) === nameKeyPlain(nome));
+  fichaUpd(nome, (f) => {
+    Object.assign(f, fichaLimpa(ficha, nome));
+    if (p && p.avatar && !(presenteDe(nome) && presenteDe(nome).gira)) f.ultimoAvatar = p.avatar;
+  });
 }
 function contaRecusada(nome) {
   const k = nameKeyPlain(nome);
@@ -36139,9 +36144,29 @@ function caosMemCadastro(p) {
   nickEmprestadoAtual = null;
   if (!memContaFicha(p)) return;
   p._fichaAntes = fichaGet(p.name);
+  // o Rafa troca de emoji a cada carta por presente: não conta como troca
+  const gira = presenteDe(p.name) && presenteDe(p.name).gira;
   fichaUpd(p.name, (f) => {
     f.ultimaVez = Date.now();
+    if (p.avatar && !gira) f.ultimoAvatar = p.avatar;
   });
+}
+// 25/10/2026 (pedido do JF): ele lembra o emoji de cada um e comenta quando troca
+function caosTrocouEmoji(p) {
+  const f = p && p._fichaAntes,
+    a = f && f.ultimoAvatar,
+    b = p && p.avatar;
+  if (!a || !b || a === b || (presenteDe(p.name) && presenteDe(p.name).gira)) return null;
+  const T = REACTIVE_VOICE.memoria.trocouEmoji,
+    tipo = (e) => ["fofo", "sombrio", "confiante"].find((k) => CAOS_AVATAR_TIPO[k].has(e)) || null,
+    ta = tipo(a),
+    tb = tipo(b);
+  let bank = T.qualquer;
+  if (ta === "sombrio" && tb === "fofo") bank = T.sombrioParaFofo;
+  else if (ta === "fofo" && tb === "sombrio") bank = T.fofoParaSombrio;
+  else if (tb === "confiante" && ta !== "confiante") bank = T.paraConfiante;
+  else if (ta === "confiante" && tb !== "confiante") bank = T.deConfiante;
+  return getRandomReaction(bank, p.name, a, b) || null;
 }
 function caosMemBoasVindas(p, n) {
   const f = p._fichaAntes,
@@ -38950,7 +38975,8 @@ function caosWelcomePlayer(p) {
     name = p.name;
   const n = p.nickEmprestado ? 0 : caosTimesSeen(name);
   let bank = null,
-    args = [name];
+    args = [name],
+    troca = null;
   const prevNickMs = caosNickTempoRemember(p);
   // quem ele conhece (JF, Anne, amigos, sobrinhos) é reconhecido antes da piada do nick demorado (relato do JF:
   // o tempo de criar o cadastro contou como demora e ele cumprimentou o JF como um estranho)
@@ -38964,6 +38990,8 @@ function caosWelcomePlayer(p) {
     args = [name, caosTempoFala(p.nickMs)];
   } else if (!conhecido && prevNickMs >= 9e4 && typeof p.nickMs === "number" && p.nickMs < 3e4 && R() < 0.8)
     bank = REACTIVE_VOICE.nickDemora.evoluiu;
+  else if (!p.nickEmprestado && p._fichaAntes && R() < (conhecido ? 0.6 : 0.85) && (troca = caosTrocouEmoji(p)))
+    return showToastMessage(troca);
   else if (isAnneName(name) && p.avatar === "👸") {
     const g = caosGerarFala("anneChegou", p);
     if (g) return showToastMessage(g);
@@ -43400,6 +43428,7 @@ function fichaLimpa(f, nome) {
     })(),
     ultimoResultado: ["venceu", "lanterna", "meio"].includes(f.ultimoResultado) ? f.ultimoResultado : null,
     ultimoModo: typeof f.ultimoModo === "string" ? f.ultimoModo.slice(0, 12) : null,
+    ultimoAvatar: typeof f.ultimoAvatar === "string" && f.ultimoAvatar.length <= 16 ? f.ultimoAvatar : null,
   };
 }
 function fichasTodas() {
@@ -76630,6 +76659,69 @@ const REACTIVE_VOICE = {
     "Segunda rodada. Agora eu conheço o estilo de cada um. Cuidado.",
   ],
   memoria: {
+    // 25/10/2026 (pedido do JF): ele lembra o emoji de cada um e comenta quando troca. (nome, antes, agora)
+    trocouEmoji: {
+      sombrioParaFofo: [
+        (n, a, b) => `${n} trocou o ${a} pelo ${b}. Está mais calmo hoje? Menos raivoso?`,
+        (n, a, b) => `Da última vez ${n} veio de ${a}. Hoje veio de ${b}. Fez terapia ou só dormiu bem?`,
+        (n, a, b) => `${n} largou o ${a} e chegou de ${b}. Alguém aqui está tentando parecer inofensivo.`,
+        (n, a, b) => `${a} virou ${b}. ${n} deve ter tomado um chá de camomila antes de vir.`,
+        (n, a, b) => `Saiu o ${a}, entrou o ${b}. ${n} está em fase de paz e amor. Vamos ver até a terceira carta.`,
+        (n, a, b) => `${n} trocou o ${a} pelo ${b}. Eu não caio nessa. O ${a} ainda mora aí dentro.`,
+        (n, a, b) => `Ué, ${n} era ${a} e agora é ${b}? Isso é recomeço ou disfarce?`,
+        (n, a, b) => `${n} chegou de ${b}. Da outra vez era ${a}. A mesa agradece a trégua.`,
+        (n, a, b) => `${n} trocou o ${a} pelo ${b}. Ficou mais doce ou só está escondendo a faca?`,
+        (n, a, b) => `Do ${a} pro ${b}. ${n} acordou de bom humor, pelo jeito. Aproveitem enquanto dura.`,
+      ],
+      fofoParaSombrio: [
+        (n, a, b) => `${n} era ${a} e agora chegou de ${b}. Parece que alguém hoje acordou de mau humor.`,
+        (n, a, b) => `Do ${a} pro ${b}? ${n} veio pra briga hoje. Eu sinto daqui.`,
+        (n, a, b) => `${n} trocou o ${a} pelo ${b}. O que aconteceu? Pisaram no seu pé no caminho?`,
+        (n, a, b) => `Da última vez era ${a}. Hoje é ${b}. ${n} chegou com cara de quem não vai perdoar ninguém.`,
+        (n, a, b) => `${n} largou o ${a} e pegou o ${b}. Alguém aqui está com o dia ruim.`,
+        (n, a, b) => `${a} ficou em casa. ${n} trouxe o ${b}. A mesa que se cuide.`,
+        (n, a, b) => `${n} chegou de ${b}. Cadê o ${a}? Alguém precisa conversar sobre isso.`,
+        (n, a, b) => `O ${a} de ontem virou ${b} hoje. ${n} não está pra brincadeira. Eu estou, mas ${n} não.`,
+        (n, a, b) => `${n} trocou o ${a} pelo ${b}. Acho que alguém perdeu a última e voltou com sede de vingança.`,
+        (n, a, b) => `Do fofinho ${a} pro ${b}. ${n} saiu do modo pelúcia. Respeito.`,
+      ],
+      paraConfiante: [
+        (n, a, b) => `${n} trocou o ${a} pelo ${b}. A autoestima subiu desde a última vez.`,
+        (n, a, b) => `Era ${a}, agora é ${b}. ${n} chegou se achando. Vamos ver se aguenta.`,
+        (n, a, b) => `${n} largou o ${a} e veio de ${b}. Promoção por conta própria. Gostei da coragem.`,
+        (n, a, b) => `${b} no lugar do ${a}? ${n} veio buscar o título hoje.`,
+        (n, a, b) => `${n} saiu do ${a} e foi direto pro ${b}. Ninguém deu o cargo, mas tudo bem.`,
+        (n, a, b) => `Da última vez ${n} era ${a}. Hoje chegou de ${b}. Alguém andou treinando escondido.`,
+        (n, a, b) => `${n} trocou o ${a} pelo ${b}. Postura de campeão. Agora falta o resto.`,
+        (n, a, b) => `${a} pra ${b}. ${n} está confiante hoje. Eu adoro quando a confiança vem antes do placar.`,
+      ],
+      deConfiante: [
+        (n, a, b) => `${n} largou o ${a} e veio de ${b}. Abriu mão da coroa? Que humildade repentina.`,
+        (n, a, b) => `Era ${a}, agora é ${b}. ${n} desceu do pedestal. A mesa agradece.`,
+        (n, a, b) => `${n} trocou o ${a} pelo ${b}. Alguém aprendeu alguma coisa na última partida.`,
+        (n, a, b) => `Cadê o ${a}, ${n}? Ficou pesado demais carregar a pose?`,
+        (n, a, b) => `${n} chegou de ${b}. O ${a} não sobreviveu à última derrota, pelo visto.`,
+        (n, a, b) => `Do ${a} pro ${b}. ${n} está em modo discreto hoje. Eu desconfio de gente discreta.`,
+        (n, a, b) => `${n} aposentou o ${a}. Agora é ${b}. Estratégia nova ou crise de identidade?`,
+        (n, a, b) => `${a} saiu de cena. ${n} chegou de ${b}, mais pé no chão. Vamos ver se dura.`,
+      ],
+      qualquer: [
+        (n, a, b) => `Ué, ${n} resolveu trocar de emoji. Cansou do ${a}?`,
+        (n, a, b) => `${n} trocou o ${a} pelo ${b}. Eu reparei. Eu sempre reparo.`,
+        (n, a, b) => `Da última vez ${n} era ${a}. Hoje é ${b}. Visual novo, mesmo jogador.`,
+        (n, a, b) => `${n} chegou de ${b}. O ${a} foi demitido sem aviso prévio.`,
+        (n, a, b) => `${a} pra ${b}. ${n} mudou o visual. Vamos ver se mudou o jogo também.`,
+        (n, a, b) => `${n} trocou de emoji. Era ${a}, agora é ${b}. Achou que eu não ia notar?`,
+        (n, a, b) => `Novo emoji pra ${n}: saiu o ${a}, entrou o ${b}. Eu anotei no dossiê.`,
+        (n, a, b) => `${n} largou o ${a}. Coitado do ${a}, estava tão acostumado.`,
+        (n, a, b) => `${n} veio de ${b} hoje. Sinto falta do ${a}, confesso. Um pouquinho.`,
+        (n, a, b) => `Troca de emoji detectada. ${n}: ${a} pra ${b}. A mesa precisa saber dessas coisas.`,
+        (n, a, b) => `${n} trocou o ${a} pelo ${b}. Fase nova? Eu gosto de fase nova.`,
+        (n, a, b) => `O ${a} ficou pra trás. ${n} agora é ${b}. Eu vou levar uns minutos pra me acostumar.`,
+        (n, a, b) => `${n} trocou de ${a} pra ${b}. Muda o emoji, mas a mania de chutar continua, aposto.`,
+        (n, a, b) => `Olha só, ${n} de ${b}. Da outra vez era ${a}. Eu lembro de tudo, gente.`,
+      ],
+    },
     reencontro: {
       hoje: [
         "{nome} de novo? A gente se viu hoje mesmo. Pelo visto a última não foi suficiente.",

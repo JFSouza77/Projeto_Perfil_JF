@@ -587,6 +587,31 @@ const ARQ = acharMestre(process.argv[2]);
       out.reconheceAntes = !!dito && !/1 minuto/.test(dito) && /1 minuto/.test(ditoEstranho);
       out.reconheceAntesDiag = JSON.stringify({ dito, ditoEstranho });
     }
+    // 25/10/2026 (pedido do JF): ele lembra o emoji de cada um e comenta quando troca
+    {
+      const jogAntes = players, toastAntes = window.showToastMessage, randAntes = Math.random, silAntes = caosSilenced, fichasAntes = JFStore.getItem(MEM_FICHAS_KEY);
+      const T = REACTIVE_VOICE.memoria.trocouEmoji, n = 'Teodorico';
+      const doBanco = (bank, txt, a, b) => bank.some((f) => (typeof f === 'function' ? f(n, a, b) : f) === txt);
+      const mk = (av) => ({ id: 'tdx', name: n, avatar: av, score: 0, humor: 'normal' });
+      fichaUpd(n, (f) => { f.ultimoAvatar = '💀'; f.partidas = 2; });
+      const p1 = mk('🍦'); players = [p1]; caosMemCadastro(p1);
+      const calmo = caosTrocouEmoji(p1), salvou = fichaGet(n).ultimoAvatar === '🍦';
+      const p2 = mk('💀'); players = [p2]; caosMemCadastro(p2);
+      const bravo = caosTrocouEmoji(p2);
+      const p3 = mk('💀'); players = [p3]; caosMemCadastro(p3);
+      const igual = caosTrocouEmoji(p3);
+      const p4 = mk('👑'); players = [p4]; caosMemCadastro(p4);
+      const coroa = caosTrocouEmoji(p4);
+      let dito = '';
+      window.showToastMessage = (t) => (dito = String(t || ''));
+      Math.random = () => 0; caosSilenced = false;
+      const p5 = mk('🐶'); players = [p5]; caosMemCadastro(p5); caosWelcomePlayer(p5);
+      window.showToastMessage = toastAntes; Math.random = randAntes; caosSilenced = silAntes; players = jogAntes;
+      if (fichasAntes == null) JFStore.removeItem(MEM_FICHAS_KEY); else JFStore.setItem(MEM_FICHAS_KEY, fichasAntes);
+      out.trocouEmoji = !!calmo && salvou && doBanco(T.sombrioParaFofo, calmo, '💀', '🍦') && doBanco(T.fofoParaSombrio, bravo, '🍦', '💀') &&
+        igual === null && doBanco(T.paraConfiante, coroa, '💀', '👑') && doBanco(T.deConfiante, dito, '👑', '🐶');
+      out.trocouEmojiDiag = JSON.stringify({ calmo, salvou, bravo, igual, coroa, dito });
+    }
     // 1.7.10.3: busca nas regras e o lembrete da primeira carta de cada categoria
     {
       openTutorial('manual');
@@ -727,6 +752,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.10.5: quem está na vez pede a dica no aparelho (o Mestre recebe o pedido); quem tem a ficha toca em Palpitar agora e o Mestre julga só esse palpite; errou, a ficha volta e a vez segue', r.palpiteAgora],
     ['1.7.10.5.3: trava da dica (o Mestre só abre a pedida, forçar passa); C.A.O.S. 4.4.1: tocar na dica aberta faz ele responder mesmo no respiro', r.dicaRepetida && r.palpiteAgora],
     ['Quem o C.A.O.S. conhece (JF, amigos, sobrinhos) é reconhecido antes da piada do nick demorado', r.reconheceAntes],
+    ['O C.A.O.S. lembra o emoji de cada um e comenta a troca (💀 → 🍦 mais calmo, 🍦 → 💀 mau humor)', r.trocouEmoji],
     ['C.A.O.S. com tato: a mesa corta frase longa e ele passa a falar curto, lembra da mesma mesa, testa mesa nova pelo jeito dela; família de nicho só 1x por partida', r.tato],
     ['Easter egg: piadas internas com limite e intervalo (nunca no Júnior; os sobrinhos sim), Dragons só com o JF e a turma, falas da mesa toda e cores escondidas da paleta', r.amigos],
     ['Cadastro: o C.A.O.S. pergunta da voz (não pergunta se já está ligada); Sim liga; Não ganha fala triste e segue sem voz', r.vozPergunta],

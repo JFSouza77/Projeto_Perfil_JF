@@ -71,7 +71,12 @@ function contaFichaJuntar(nome, ficha) {
   if (!ficha || typeof ficha !== "object") return;
   const loc = fichaGet(nome);
   if (loc && (loc.partidas || 0) > (ficha.partidas || 0)) return;
-  fichaUpd(nome, (f) => Object.assign(f, fichaLimpa(ficha, nome)));
+  // o emoji de agora vale mais que o que veio da nuvem (senão a próxima troca compara com o emoji errado)
+  const p = players.find((q) => nameKeyPlain(q.name) === nameKeyPlain(nome));
+  fichaUpd(nome, (f) => {
+    Object.assign(f, fichaLimpa(ficha, nome));
+    if (p && p.avatar && !(presenteDe(nome) && presenteDe(nome).gira)) f.ultimoAvatar = p.avatar;
+  });
 }
 function contaRecusada(nome) {
   const k = nameKeyPlain(nome);

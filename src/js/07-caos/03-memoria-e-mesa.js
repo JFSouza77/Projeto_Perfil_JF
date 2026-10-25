@@ -27,9 +27,29 @@ function caosMemCadastro(p) {
   nickEmprestadoAtual = null;
   if (!memContaFicha(p)) return;
   p._fichaAntes = fichaGet(p.name);
+  // o Rafa troca de emoji a cada carta por presente: não conta como troca
+  const gira = presenteDe(p.name) && presenteDe(p.name).gira;
   fichaUpd(p.name, (f) => {
     f.ultimaVez = Date.now();
+    if (p.avatar && !gira) f.ultimoAvatar = p.avatar;
   });
+}
+// 25/10/2026 (pedido do JF): ele lembra o emoji de cada um e comenta quando troca
+function caosTrocouEmoji(p) {
+  const f = p && p._fichaAntes,
+    a = f && f.ultimoAvatar,
+    b = p && p.avatar;
+  if (!a || !b || a === b || (presenteDe(p.name) && presenteDe(p.name).gira)) return null;
+  const T = REACTIVE_VOICE.memoria.trocouEmoji,
+    tipo = (e) => ["fofo", "sombrio", "confiante"].find((k) => CAOS_AVATAR_TIPO[k].has(e)) || null,
+    ta = tipo(a),
+    tb = tipo(b);
+  let bank = T.qualquer;
+  if (ta === "sombrio" && tb === "fofo") bank = T.sombrioParaFofo;
+  else if (ta === "fofo" && tb === "sombrio") bank = T.fofoParaSombrio;
+  else if (tb === "confiante" && ta !== "confiante") bank = T.paraConfiante;
+  else if (ta === "confiante" && tb !== "confiante") bank = T.deConfiante;
+  return getRandomReaction(bank, p.name, a, b) || null;
 }
 function caosMemBoasVindas(p, n) {
   const f = p._fichaAntes,
