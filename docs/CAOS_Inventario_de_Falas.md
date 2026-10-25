@@ -38,39 +38,39 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 708 | showToastMessage | - |
 | 710 | showToastMessage | - |
 | 712 | showToastMessage, getRandomReaction | esgotouComResposta |
-| 923 | caosFalarDepois | - |
-| 924 | getRandomReaction | - |
-| 1131 | caosFalaAgendar | - |
-| 1254 | showToastMessage | - |
-| 1265 | showToastMessage | - |
-| 1276 | getRandomReaction | verbosidade |
-| 1288 | getRandomReaction | iniciante.erroLeve |
-| 1299 | getRandomReaction | surpresaErroFacil |
-| 1332 | getRandomReaction | reacaoCurta |
-| 1372 | showToastMessage | - |
-| 1400 | getRandomReaction | bonusCancelado |
-| 1404 | showToastMessage | - |
-| 1517 | showToastMessage | - |
-| 1794 | caosGerarFala | gerador jfFim |
-| 1797 | showToastMessage, getRandomReaction | jfFim |
-| 1799 | showToastMessage | - |
-| 1800 | getRandomReaction | caosVoltouDaPartida, partidaLonga |
-| 1805 | showToastMessage, getRandomReaction | partidaLonga |
-| 1900 | showToastMessage | - |
-| 1901 | caosGerarFala | gerador revanche |
-| 1902 | getRandomReaction | revanche |
-| 2001 | showToastMessage, getRandomReaction | trocaDeModo |
-| 2154 | showToastMessage, getRandomReaction | sorteioMestreJf |
-| 2189 | showToastMessage | - |
-| 2190 | getRandomReaction | - |
-| 2318 | caosFalaAgendar, getRandomReaction | desistiuBonus |
-| 2331 | caosFalaAgendar, getRandomReaction | desistiu |
-| 2430 | getRandomReaction | caosCofrinhoUso |
-| 2442 | showToastMessage, getRandomReaction | mercyPontos |
-| 2446 | showToastMessage, getRandomReaction | mercyBonus |
-| 2477 | showToastMessage | - |
-| 2612 | admFala, getRandomReaction | admSaida |
-| 2613 | admFala, getRandomReaction | caosCofrinho |
+| 917 | caosFalarDepois | - |
+| 918 | getRandomReaction | - |
+| 1125 | caosFalaAgendar | - |
+| 1248 | showToastMessage | - |
+| 1259 | showToastMessage | - |
+| 1270 | getRandomReaction | verbosidade |
+| 1282 | getRandomReaction | iniciante.erroLeve |
+| 1293 | getRandomReaction | surpresaErroFacil |
+| 1326 | getRandomReaction | reacaoCurta |
+| 1366 | showToastMessage | - |
+| 1394 | getRandomReaction | bonusCancelado |
+| 1398 | showToastMessage | - |
+| 1511 | showToastMessage | - |
+| 1790 | caosGerarFala | gerador jfFim |
+| 1793 | showToastMessage, getRandomReaction | jfFim |
+| 1795 | showToastMessage | - |
+| 1796 | getRandomReaction | caosVoltouDaPartida, partidaLonga |
+| 1801 | showToastMessage, getRandomReaction | partidaLonga |
+| 1896 | showToastMessage | - |
+| 1897 | caosGerarFala | gerador revanche |
+| 1898 | getRandomReaction | revanche |
+| 1997 | showToastMessage, getRandomReaction | trocaDeModo |
+| 2152 | showToastMessage, getRandomReaction | sorteioMestreJf |
+| 2187 | showToastMessage | - |
+| 2188 | getRandomReaction | - |
+| 2316 | caosFalaAgendar, getRandomReaction | desistiuBonus |
+| 2329 | caosFalaAgendar, getRandomReaction | desistiu |
+| 2428 | getRandomReaction | caosCofrinhoUso |
+| 2440 | showToastMessage, getRandomReaction | mercyPontos |
+| 2444 | showToastMessage, getRandomReaction | mercyBonus |
+| 2475 | showToastMessage | - |
+| 2610 | admFala, getRandomReaction | admSaida |
+| 2611 | admFala, getRandomReaction | caosCofrinho |
 
 ## js/05-tela.js (22)
 
@@ -144,11 +144,11 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 209 | getRandomReaction | - |
-| 210 | caosFalaAgendar | - |
-| 223 | getRandomReaction | - |
-| 224 | caosFalaAgendar | - |
-| 384 | getRandomReaction | - |
+| 205 | getRandomReaction | - |
+| 206 | caosFalaAgendar | - |
+| 219 | getRandomReaction | - |
+| 220 | caosFalaAgendar | - |
+| 380 | getRandomReaction | - |
 
 ## js/05p-corrida-eventos.js (11)
 
@@ -170,7 +170,7 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 1276 | showToastMessage | - |
+| 1264 | showToastMessage | - |
 
 ## js/06-voz-som-vibracao.js (3)
 
@@ -511,8 +511,8 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 469 | caosFalaAgendar, getRandomReaction | silenciaramVolta |
 | 513 | caosFalarDepois, getRandomReaction | - |
 | 548 | caosGerarFala | gerador chute |
-| 620 | showToastMessage | - |
-| 692 | showToastMessage | - |
+| 622 | showToastMessage | - |
+| 694 | showToastMessage | - |
 
 ## js/07-caos/11-espinha.js (1)
 

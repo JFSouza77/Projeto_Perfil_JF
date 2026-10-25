@@ -26,7 +26,7 @@ const PRINTS = (process.argv.find((a) => a.startsWith('--prints=')) || '').slice
     gameEnded = false;
     starterChosen = true;
     // tempo da vez: 10 s, o aviso dura 2 s → depois do aviso ainda tem perto de 10 s
-    timerEndAt = Date.now() + 10e3;
+    timerEndAt = relogioJogo() + 10e3; // 25/10/2026: prazos no tempo de jogo (relógio único)
     timerKind = 'turn';
     resumeTimerInterval();
     avisoMostrar({ ic: '⚔️', titulo: 'Henrique te chamou pro duelo!', texto: 'Bora!', anim: 'duelo', seg: 2 });
@@ -46,7 +46,7 @@ const PRINTS = (process.argv.find((a) => a.startsWith('--prints=')) || '').slice
     await espera(2300);
     if (avisoMesaAtivo()) p.push('o aviso não acabou');
     if (document.getElementById('avisoMesaOv')) p.push('a caixa ficou na tela');
-    const resta = timerEndAt - Date.now();
+    const resta = timerEndAt - relogioJogo();
     if (resta < 8.5e3) p.push('o tempo da vez andou durante o aviso: resta ' + resta + ' ms');
     clearTimer();
     // privado: não congela
@@ -96,9 +96,9 @@ const PRINTS = (process.argv.find((a) => a.startsWith('--prints=')) || '').slice
       window.redeHostPublicar = pub;
       await espera(2300);
       if (avisoMesaAtivo()) p.push('aviso com erro na rede não acabou');
-      const t0 = Date.now();
+      const j0 = relogioJogo();
       await espera(300);
-      if (avisoCongeladoDesde(t0) > 50) p.push('mesa ficou congelada depois do aviso com erro');
+      if (relogioParado() || relogioJogo() - j0 < 250) p.push('mesa ficou congelada depois do aviso com erro');
       avisoZerar();
     }
     // 1.7.10.7: Espectar duelo — quem está fora do duelo vê o botão e, depois, a resposta; duelista e Mestre não

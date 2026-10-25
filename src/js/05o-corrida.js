@@ -27,11 +27,11 @@ function corridaAtiva() {
   return CURRENT_MODE === "corrida";
 }
 function corridaGeralMs() {
-  return Math.max(0, corridaRestaMs - (corridaDesde ? Date.now() - corridaDesde : 0));
+  return Math.max(0, corridaRestaMs - (corridaDesde ? relogioJogo() - corridaDesde : 0)); // 25/10/2026: tempo de jogo (02d)
 }
 // o relógio da carta pode correr mais rápido (Hardcore 1,5×, Duelo 2×): o "tempo de carta" é o real × velocidade
 function corridaCartaMs() {
-  return Math.max(0, corridaCartaRestaMs - (corridaCartaDesde ? (Date.now() - corridaCartaDesde) * corridaVelocidade() : 0));
+  return Math.max(0, corridaCartaRestaMs - (corridaCartaDesde ? (relogioJogo() - corridaCartaDesde) * corridaVelocidade() : 0));
 }
 function corridaRelogioTxt(ms) {
   const s = Math.ceil(ms / 1e3);
@@ -110,13 +110,9 @@ function corridaDobrar() {
 let corridaUltTick = 0;
 function corridaTicar() {
   if (!corridaAtiva() || gameEnded) return corridaParar();
-  // 1.7.10.7: o tempo em que o aviso da mesa ficou na tela não conta
-  const congelou = corridaUltTick && typeof avisoCongeladoDesde === "function" ? avisoCongeladoDesde(corridaUltTick) : 0;
+  // 1.7.10.7: o tempo em que o aviso da mesa ficou na tela não conta (25/10/2026: o relógio único já desconta;
+  // antes cada tique empurrava os dois relógios)
   corridaUltTick = Date.now();
-  if (congelou > 0) {
-    if (corridaDesde) corridaDesde += congelou;
-    if (corridaCartaDesde) corridaCartaDesde += congelou;
-  }
   // carta nova: o relógio dela começa cheio
   if (currentCard && cartaSeq !== corridaCartaDaVez) {
     corridaCartaDaVez = cartaSeq;
@@ -128,7 +124,7 @@ function corridaTicar() {
   let geralCorre = !parado && !corridaAcabou && !corridaDesempate && !corridaDuelo && (cardState === "hidden" || cardState === "revealed");
   geralCorre = corridaCongelamento(geralCorre);
   const cartaCorre = !parado && cardState === "revealed";
-  const agora = Date.now();
+  const agora = relogioJogo();
   if (geralCorre && !corridaDesde) corridaDesde = agora;
   if (!geralCorre && corridaDesde) {
     corridaRestaMs = corridaGeralMs();
@@ -525,9 +521,9 @@ function corridaRetrato() {
   if (!corridaAtiva() || !starterChosen) return null;
   return {
     resta: corridaDesde ? null : Math.round(corridaRestaMs),
-    fimEm: corridaDesde ? corridaDesde + corridaRestaMs : null,
+    fimEm: corridaDesde ? relogioParede(corridaDesde + corridaRestaMs) : null,
     cartaResta: corridaCartaDesde ? null : Math.round(corridaCartaRestaMs),
-    cartaFimEm: corridaCartaDesde ? Math.round(corridaCartaDesde + corridaCartaRestaMs / corridaVelocidade()) : null,
+    cartaFimEm: corridaCartaDesde ? Math.round(relogioParede(corridaCartaDesde + corridaCartaRestaMs / corridaVelocidade())) : null,
     acabou: corridaAcabou,
     desempate: !!corridaDesempate,
     vitoria: corridaVitoria,

@@ -13104,6 +13104,73 @@ function sorteioIndice(n) {
 function sorteioItem(lista) {
   return lista[sorteioIndice(lista.length)];
 }
+/* ----------------------------------------------------------------------
+ * 2d. RELÓGIO ÚNICO DA PARTIDA (25/10/2026 · roteiro "o que vem depois da 1.7.10", item 1)
+ * Antes, cada parte do jogo cuidava do próprio tempo: o tempo da vez empurrava o prazo quando um aviso
+ * cobria a tela, a Corrida empurrava os dela, o Modo C.A.O.S. empurrava oito prazos diferentes a cada aviso
+ * ou pausa. Esquecer um desses empurrões era a origem da família de bugs de tempo.
+ * Agora existe um TEMPO DE JOGO só: ele anda com o relógio de verdade e PARA quando a partida está parada
+ * (pausa, aviso da mesa na tela). Os prazos da partida são marcados nesse tempo, então param sozinhos:
+ * ninguém mais empurra nada.
+ *  · relogioJogo(): o tempo de jogo agora (ms). Use no lugar de Date.now() pra marcar e conferir prazos.
+ *  · relogioMarcar(motivo, liga): a partida parou/voltou por "pausa" ou "aviso" (vários juntos contam uma vez).
+ *  · relogioParede(t): converte um prazo do tempo de jogo pro relógio de verdade (pra mandar pros celulares,
+ *    que contam no relógio da rede). Parada, o prazo "anda junto" a cada envio.
+ *  · Save guarda "quanto falta" (relogio de jogo não sobrevive a recarregar a página).
+ * A fala do C.A.O.S. não é parada geral: ela congela só o tempo da vez que estava correndo quando começou
+ * (09-vinculos, closeActiveToast), e mede isso no tempo de jogo pra não descontar duas vezes com o aviso.
+ * ---------------------------------------------------------------------- */
+const RELOGIO_MOTIVOS = ["pausa", "aviso"];
+const relogio = { ativos: new Set(), desde: null, desconto: 0, trechos: [] };
+// conserto sozinho: o estado de verdade é a pausa (pausedAt) e o aviso na tela (avisoMesaCongela). Se uma
+// marca faltou (pausa vinda do save, aviso que saiu sem desmarcar), o relógio se acerta aqui; o aviso que
+// já devia ter saído fecha na hora em que saiu, não na hora em que alguém percebeu
+function relogioConferir() {
+  const pausa = typeof pausedAt !== "undefined" && !!pausedAt;
+  if (pausa !== relogio.ativos.has("pausa")) relogioMarcar("pausa", pausa);
+  const aviso = typeof avisoMesaCongela === "function" && avisoMesaCongela();
+  if (aviso && !relogio.ativos.has("aviso")) relogioMarcar("aviso", true);
+  if (!aviso && relogio.ativos.has("aviso")) {
+    const ate = typeof avisoMesa !== "undefined" && avisoMesa && avisoMesa.ate ? avisoMesa.ate : Date.now();
+    relogioMarcar("aviso", false, Math.min(Date.now(), ate));
+  }
+}
+function relogioMarcar(motivo, liga, quando) {
+  if (!RELOGIO_MOTIVOS.includes(motivo)) return;
+  // nunca antes do fim do último trecho (não desconta duas vezes) nem depois de agora
+  const ult = relogio.trechos[relogio.trechos.length - 1];
+  const agora = Math.min(Date.now(), Math.max(typeof quando === "number" ? quando : Date.now(), ult ? ult[1] : 0));
+  if (liga) {
+    if (relogio.ativos.has(motivo)) return;
+    if (!relogio.ativos.size) relogio.desde = agora;
+    relogio.ativos.add(motivo);
+    return;
+  }
+  if (!relogio.ativos.delete(motivo) || relogio.ativos.size || relogio.desde == null) return;
+  const fim = Math.max(relogio.desde, agora);
+  relogio.desconto += fim - relogio.desde;
+  relogio.trechos.push([relogio.desde, fim]);
+  if (relogio.trechos.length > 16) relogio.trechos.shift();
+  relogio.desde = null;
+}
+function relogioParado() {
+  relogioConferir();
+  return relogio.ativos.size > 0;
+}
+function relogioJogo() {
+  relogioConferir();
+  const agora = Date.now();
+  return agora - relogio.desconto - (relogio.desde != null ? agora - relogio.desde : 0);
+}
+// prazo do tempo de jogo → relógio de verdade (pra quem está fora deste aparelho)
+function relogioParede(t) {
+  return typeof t === "number" && t ? Date.now() + (t - relogioJogo()) : t;
+}
+// o contrário: horário de verdade (ex.: prazo vindo do save) → tempo de jogo
+function relogioDaParede(w) {
+  return typeof w === "number" && w ? relogioJogo() + (w - Date.now()) : w;
+}
+// (o tempo de jogo nunca zera nem volta: prazo marcado nele continua valendo de uma partida pra outra)
 /* ======================================================================
  * 3. REGRAS (VITÓRIA, PONTOS, JOIAS, TABULEIRO, BARALHO, EQUIPES)
  * ====================================================================== */
@@ -14662,11 +14729,11 @@ function clearTimer() {
 }
 function secondsLeft() {
   if (!timerEndAt) return 0;
-  return Math.max(0, Math.ceil((timerEndAt - Date.now()) / 1e3));
+  return Math.max(0, Math.ceil((timerEndAt - relogioJogo()) / 1e3)); // 25/10/2026: prazo no tempo de jogo (02d)
 }
 function startTimer(kind) {
   if (activeToastState && activeToastState.hadActiveTimer && !activeToastState.freezeEndedAt)
-    activeToastState.freezeEndedAt = Date.now();
+    activeToastState.freezeEndedAt = relogioJogo();
   clearTimer();
   timerSerial++;
   const durations = {
@@ -14677,7 +14744,7 @@ function startTimer(kind) {
   };
   if (CURRENT_MODE === "corrida") corridaAjustarVez(durations, kind); // Hardcore 10+10 s, Fôlego +15 s, janela do relâmpago
   timerKind = kind;
-  timerEndAt = Date.now() + durations[kind] * 1e3;
+  timerEndAt = relogioJogo() + durations[kind] * 1e3;
   resumeTimerInterval();
   if (CURRENT_MODE === "corrida" && kind === "pick") corridaRelampagoAgendar(); // Hardcore / Juízo Final: a dica abre sozinha
   if (kind === "pick" || kind === "turn") setTimeout(() => caosIniMostrar(players[responderIndex], "vez"), 60);
@@ -14686,17 +14753,11 @@ function resumeTimerInterval() {
   if (timerInterval) clearInterval(timerInterval);
   lastTimerTick = Date.now();
   timerInterval = setInterval(() => {
-    // 1.7.10.7: aviso da mesa na tela: o tempo da vez e da carta espera
-    if (typeof avisoCongeladoDesde === "function") {
-      const d = avisoCongeladoDesde(lastTimerTick);
-      if (d > 0) {
-        if (timerEndAt) timerEndAt += d;
-        if (cardEndAt) cardEndAt += d;
-      }
-      if (avisoMesaCongela()) {
-        lastTimerTick = Date.now();
-        return;
-      }
+    // 1.7.10.7: aviso da mesa na tela: o tempo da vez e da carta espera (25/10/2026: o relógio único já para
+    // sozinho; aqui só não dispara aviso de tempo nem expira enquanto o aviso cobre a tela)
+    if (typeof avisoMesaCongela === "function" && avisoMesaCongela()) {
+      lastTimerTick = Date.now();
+      return;
     }
     lastTimerTick = Date.now();
     updateTimerDisplay();
@@ -15359,7 +15420,7 @@ function loseTurnAfterSpecial() {
   }
 }
 function cardSecondsLeft() {
-  return cardEndAt ? Math.max(0, Math.ceil((cardEndAt - Date.now()) / 1e3)) : 0;
+  return cardEndAt ? Math.max(0, Math.ceil((cardEndAt - relogioJogo()) / 1e3)) : 0;
 }
 function clearCardTimer() {
   cardEndAt = null;
@@ -15382,7 +15443,7 @@ function expressRevealNext() {
   return true;
 }
 function startExpressCard() {
-  cardEndAt = Date.now() + (expressTimes().card + mestreTempoExtra("card")) * 1e3;
+  cardEndAt = relogioJogo() + (expressTimes().card + mestreTempoExtra("card")) * 1e3;
   cardSerial++;
   expressAskWho = false;
   revealedOrder = [];
@@ -15447,11 +15508,12 @@ function expressCardLost() {
 function expressFreezeForWho() {
   if (expressWhoFreeze) return;
   if (activeToastState) closeActiveToast();
-  const now = Date.now();
+  const now = Date.now(),
+    jogo = relogioJogo();
   expressWhoFreeze = {
-    turnMs: timerEndAt ? Math.max(0, timerEndAt - now) : null,
+    turnMs: timerEndAt ? Math.max(0, timerEndAt - jogo) : null,
     kind: timerKind,
-    cardMs: cardEndAt ? Math.max(0, cardEndAt - now) : null,
+    cardMs: cardEndAt ? Math.max(0, cardEndAt - jogo) : null,
     startAgoMs: typeof pendingStartTime === "number" ? now - pendingStartTime : null,
   };
   clearTimer();
@@ -15461,12 +15523,13 @@ function expressUnfreezeWho() {
   const f = expressWhoFreeze;
   expressWhoFreeze = null;
   if (!f) return;
-  const now = Date.now();
-  if (f.cardMs !== null) cardEndAt = now + f.cardMs;
+  const now = Date.now(),
+    jogo = relogioJogo();
+  if (f.cardMs !== null) cardEndAt = jogo + f.cardMs;
   if (f.startAgoMs !== null) pendingStartTime = now - f.startAgoMs;
   if (f.turnMs !== null && f.kind) {
     timerKind = f.kind;
-    timerEndAt = now + f.turnMs;
+    timerEndAt = jogo + f.turnMs;
   }
   if (timerEndAt || cardEndAt) resumeTimerInterval();
 }
@@ -15957,6 +16020,7 @@ function pauseGame() {
   }
   document.getElementById("gameScreen").style.display = "none";
   pausedAt = Date.now();
+  relogioMarcar("pausa", true); // 25/10/2026: o relógio único para
   showPauseScreen();
   caosPausaHumorIniciar();
   const apb = document.getElementById("autoPauseBanner");
@@ -15975,6 +16039,7 @@ function resumeGame() {
     }
   } catch (e) {}
   pausedAt = null;
+  relogioMarcar("pausa", false);
   pausaExpirada = false;
   const apb = document.getElementById("autoPauseBanner");
   if (apb) apb.style.display = "none";
@@ -15985,12 +16050,12 @@ function resumeGame() {
   document.getElementById("resumeGameBtn").style.display = "none";
   syncGameplayPanels();
   if (pausedCardRemaining !== null) {
-    cardEndAt = Date.now() + pausedCardRemaining * 1e3;
+    cardEndAt = relogioJogo() + pausedCardRemaining * 1e3;
     pausedCardRemaining = null;
   }
   if (pausedRemainingSeconds !== null && pausedKind) {
     timerKind = pausedKind;
-    timerEndAt = Date.now() + pausedRemainingSeconds * 1e3;
+    timerEndAt = relogioJogo() + pausedRemainingSeconds * 1e3;
     pausedRemainingSeconds = null;
     pausedKind = null;
     resumeTimerInterval();
@@ -21994,7 +22059,7 @@ function retratoPartida(papel) {
     estoquePalpite: palpiteStock,
     joiasRodada: { ...joiasRodada },
     vencedorJoias: gemWinner ? { tipo: gemWinner.kind, id: gemWinner.id } : null,
-    relogio: { tipo: timerKind || null, fimEm: timerEndAt || null, cartaFimEm: cardEndAt || null, pausado: !!pausedAt },
+    relogio: { tipo: timerKind || null, fimEm: relogioParede(timerEndAt) || null, cartaFimEm: relogioParede(cardEndAt) || null, pausado: !!pausedAt },
     corrida: typeof corridaRetrato === "function" ? corridaRetrato() : null, // 1.7.10.6: relógios da Corrida
     mc: typeof mcRetrato === "function" ? mcRetrato() : null, // 1.7.10.6: Modo C.A.O.S. (só o público)
     // 1.7.10.5.6 (pedido do JF): resumo da partida pra T2 e pro lobby: tempo de jogo (sem pausa), cartas viradas e as
@@ -22051,7 +22116,7 @@ let desfazerOferta = null;
 let desfazerTimer = null;
 const desfazerCopia = (v) => (v === undefined || v === null ? v : JSON.parse(JSON.stringify(v)));
 function desfazerFotografar() {
-  const agora = Date.now();
+  const agora = relogioJogo(); // 25/10/2026: prazos no tempo de jogo (02d)
   return {
     players: desfazerCopia(players),
     teams: desfazerCopia(teams),
@@ -22176,10 +22241,10 @@ function desfazerAplicar(f) {
   clearTimer();
   if (f.timerKind && f.timerResta) {
     timerKind = f.timerKind;
-    timerEndAt = Date.now() + f.timerResta;
+    timerEndAt = relogioJogo() + f.timerResta;
     resumeTimerInterval();
   }
-  cardEndAt = f.cartaResta ? Date.now() + f.cartaResta : null;
+  cardEndAt = f.cartaResta ? relogioJogo() + f.cartaResta : null;
   pendingStartTime = Date.now();
   // o que o veredito deixou agendado (ex.: seguir depois do balão) não vale mais
   cartaSeq++;
@@ -30176,11 +30241,11 @@ function corridaAtiva() {
   return CURRENT_MODE === "corrida";
 }
 function corridaGeralMs() {
-  return Math.max(0, corridaRestaMs - (corridaDesde ? Date.now() - corridaDesde : 0));
+  return Math.max(0, corridaRestaMs - (corridaDesde ? relogioJogo() - corridaDesde : 0)); // 25/10/2026: tempo de jogo (02d)
 }
 // o relógio da carta pode correr mais rápido (Hardcore 1,5×, Duelo 2×): o "tempo de carta" é o real × velocidade
 function corridaCartaMs() {
-  return Math.max(0, corridaCartaRestaMs - (corridaCartaDesde ? (Date.now() - corridaCartaDesde) * corridaVelocidade() : 0));
+  return Math.max(0, corridaCartaRestaMs - (corridaCartaDesde ? (relogioJogo() - corridaCartaDesde) * corridaVelocidade() : 0));
 }
 function corridaRelogioTxt(ms) {
   const s = Math.ceil(ms / 1e3);
@@ -30259,13 +30324,9 @@ function corridaDobrar() {
 let corridaUltTick = 0;
 function corridaTicar() {
   if (!corridaAtiva() || gameEnded) return corridaParar();
-  // 1.7.10.7: o tempo em que o aviso da mesa ficou na tela não conta
-  const congelou = corridaUltTick && typeof avisoCongeladoDesde === "function" ? avisoCongeladoDesde(corridaUltTick) : 0;
+  // 1.7.10.7: o tempo em que o aviso da mesa ficou na tela não conta (25/10/2026: o relógio único já desconta;
+  // antes cada tique empurrava os dois relógios)
   corridaUltTick = Date.now();
-  if (congelou > 0) {
-    if (corridaDesde) corridaDesde += congelou;
-    if (corridaCartaDesde) corridaCartaDesde += congelou;
-  }
   // carta nova: o relógio dela começa cheio
   if (currentCard && cartaSeq !== corridaCartaDaVez) {
     corridaCartaDaVez = cartaSeq;
@@ -30277,7 +30338,7 @@ function corridaTicar() {
   let geralCorre = !parado && !corridaAcabou && !corridaDesempate && !corridaDuelo && (cardState === "hidden" || cardState === "revealed");
   geralCorre = corridaCongelamento(geralCorre);
   const cartaCorre = !parado && cardState === "revealed";
-  const agora = Date.now();
+  const agora = relogioJogo();
   if (geralCorre && !corridaDesde) corridaDesde = agora;
   if (!geralCorre && corridaDesde) {
     corridaRestaMs = corridaGeralMs();
@@ -30674,9 +30735,9 @@ function corridaRetrato() {
   if (!corridaAtiva() || !starterChosen) return null;
   return {
     resta: corridaDesde ? null : Math.round(corridaRestaMs),
-    fimEm: corridaDesde ? corridaDesde + corridaRestaMs : null,
+    fimEm: corridaDesde ? relogioParede(corridaDesde + corridaRestaMs) : null,
     cartaResta: corridaCartaDesde ? null : Math.round(corridaCartaRestaMs),
-    cartaFimEm: corridaCartaDesde ? Math.round(corridaCartaDesde + corridaCartaRestaMs / corridaVelocidade()) : null,
+    cartaFimEm: corridaCartaDesde ? Math.round(relogioParede(corridaCartaDesde + corridaCartaRestaMs / corridaVelocidade())) : null,
     acabou: corridaAcabou,
     desempate: !!corridaDesempate,
     vitoria: corridaVitoria,
@@ -31364,8 +31425,10 @@ let mcTique = null;
 function mcAtivo() {
   return CURRENT_MODE === "caos" && !!mc && starterChosen && !gameEnded;
 }
+// 25/10/2026: os prazos do Modo C.A.O.S. são marcados no tempo de jogo (relógio único, 02d): pausa e aviso da
+// mesa param tudo sozinhos. Pros celulares, o retrato converte pro horário de verdade (relogioParede).
 function mcAgora() {
-  return Date.now();
+  return relogioJogo();
 }
 // relógio que pode parar: { resta } parado ou { fimEm } correndo
 function mcRelogioMs(r) {
@@ -32181,29 +32244,13 @@ function mcPinata(id, txt) {
 /* --- tique: relógios e prazos --- */
 function mcTicar() {
   if (!mcAtivo()) return;
-  // 1.7.10.7: aviso da mesa na tela: tudo para e os prazos andam junto
-  const tickAntes = mc.ultTick || mcAgora();
+  // 1.7.10.7: aviso da mesa na tela: tudo para. 25/10/2026: os prazos (abrir dica, intervalo, desafio, duelo,
+  // desfibrilador, Era do Gelo) e os relógios estão no tempo de jogo, que para sozinho na pausa e no aviso;
+  // antes este tique empurrava cada um deles (e esquecer um era bug de tempo)
   mc.ultTick = mcAgora();
-  if (typeof avisoCongeladoDesde === "function") {
-    // debug 23/10: com a partida pausada os prazos (abrir dica, intervalo, duelo, Era do Gelo…) também esperam
-    // (antes, despausar fazia tudo vencer de uma vez)
-    const d = avisoCongeladoDesde(tickAntes) + (pausedAt ? Math.max(0, mc.ultTick - tickAntes) : 0);
-    if (d > 0) {
-      if (mc.janela && mc.janela.congela && mc.janela.congela.ate) mc.janela.congela.ate += d; // Era do Gelo
-      if (mc.abrirEm) mc.abrirEm += d;
-      if (mc.intervalo) {
-        mc.intervalo.fimEm += d;
-        if (mc.intervalo.ini) mc.intervalo.ini += d;
-      }
-      if (mc.desafio && mc.desafio.proxEm) mc.desafio.proxEm += d;
-      if (mc.duelo && mc.duelo.ate) mc.duelo.ate += d;
-      if (mc.desfib && mc.desfib.ate) mc.desfib.ate += d;
-      if (!pausedAt) [mc.geral, mc.rodadaT, mc.janela && mc.janela.relogio].forEach((r) => r && r.fimEm && (r.fimEm += d)); // na pausa os relógios já param sozinhos
-    }
-    if (avisoMesaCongela()) {
-      [mc.geral, mc.rodadaT, mc.janela && mc.janela.relogio].forEach(mcRelogioParar);
-      return mcContagens();
-    }
+  if (typeof avisoMesaCongela === "function" && avisoMesaCongela()) {
+    [mc.geral, mc.rodadaT, mc.janela && mc.janela.relogio].forEach(mcRelogioParar);
+    return mcContagens();
   }
   const pausado = !!pausedAt;
   const joga = !pausado && ["abrindo", "janela", "julgando", "desfibOferta", "desfibSolo"].includes(mc.fase);
@@ -32275,7 +32322,9 @@ function mcRetrato() {
   const m = mcMestreId(),
     c = mc.cartas[m],
     j = mc.janela;
-  const relo = (r) => (r ? (r.fimEm ? { fimEm: r.fimEm } : { resta: Math.round(r.resta || 0) }) : null);
+  // prazos do tempo de jogo → horário de verdade (os celulares contam no relógio da rede)
+  const P = relogioParede;
+  const relo = (r) => (r ? (r.fimEm ? { fimEm: P(r.fimEm) } : { resta: Math.round(r.resta || 0) }) : null);
   return {
     rodada: mc.rodada,
     fase: mc.fase,
@@ -32284,17 +32333,17 @@ function mcRetrato() {
     mestre: m,
     carta: c && mc.fase !== "intervalo" ? { cat: c.cat, aberta: c.aberta, total: c.dicas.length, dicas: c.dicas.slice(0, c.aberta), estado: c.estado } : null,
     cartas: Object.fromEntries(Object.keys(mc.cartas).map((k) => [k, { cat: mc.cartas[k].cat, aberta: mc.cartas[k].aberta, estado: mc.cartas[k].estado, por: mc.cartas[k].por }])),
-    janela: j ? { relogio: relo(j.relogio), dur: j.dur, buzz: j.buzz, tentaram: j.tentaram.slice(), congela: j.congela ? { por: j.congela.por, ate: j.congela.ate } : null, mordaca: j.mordaca, imposto: j.imposto, corte: j.corte } : null,
+    janela: j ? { relogio: relo(j.relogio), dur: j.dur, buzz: j.buzz, tentaram: j.tentaram.slice(), congela: j.congela ? { por: j.congela.por, ate: P(j.congela.ate) } : null, mordaca: j.mordaca, imposto: j.imposto, corte: j.corte } : null,
     turbo: mc.turbo,
-    abrirEm: mc.fase === "abrindo" ? mc.abrirEm : null,
+    abrirEm: mc.fase === "abrindo" ? P(mc.abrirEm) : null,
     pc: { ...mc.pc },
     vitrine: mc.vitrine ? { estoque: { ...mc.vitrine.estoque }, precos: { ...mc.vitrine.precos } } : null,
     batata: mc.batata ? { ...mc.batata } : null,
-    desafio: mc.desafio ? { com: mc.desafio.com, juiz: mc.desafio.juiz, cat: mc.desafio.cat, dicas: mc.desafio.dicas.slice(0, mc.desafio.aberta), total: mc.desafio.dicas.length, buzz: mc.desafio.buzz, proxEm: mc.desafio.buzz ? null : mc.desafio.proxEm } : null,
-    duelo: mc.duelo ? { ladrao: mc.duelo.ladrao, vitima: mc.duelo.vitima, tipo: mc.duelo.tipo, fase: mc.duelo.fase, ate: mc.duelo.ate, escolheu: Object.keys(mc.duelo.esc), lados: mc.duelo.lados, resultado: mc.duelo.resultado, revanche: mc.duelo.revanche, placar: mc.duelo.placar || null, rodada: mc.duelo.rodada || 1 } : null,
+    desafio: mc.desafio ? { com: mc.desafio.com, juiz: mc.desafio.juiz, cat: mc.desafio.cat, dicas: mc.desafio.dicas.slice(0, mc.desafio.aberta), total: mc.desafio.dicas.length, buzz: mc.desafio.buzz, proxEm: mc.desafio.buzz ? null : P(mc.desafio.proxEm) } : null,
+    duelo: mc.duelo ? { ladrao: mc.duelo.ladrao, vitima: mc.duelo.vitima, tipo: mc.duelo.tipo, fase: mc.duelo.fase, ate: P(mc.duelo.ate), escolheu: Object.keys(mc.duelo.esc), lados: mc.duelo.lados, resultado: mc.duelo.resultado, revanche: mc.duelo.revanche, placar: mc.duelo.placar || null, rodada: mc.duelo.rodada || 1 } : null,
     pinata: mc.pinata ? { palavra: mc.pinata.palavra, ganhou: mc.pinata.ganhou } : null,
     desfib: mc.desfib ? { id: mc.desfib.id || null, oferta: !!mc.desfib.oferta } : null,
-    intervalo: mc.intervalo ? { fimEm: mc.intervalo.fimEm, travada: mcLojaTravada() } : null,
+    intervalo: mc.intervalo ? { fimEm: P(mc.intervalo.fimEm), travada: mcLojaTravada() } : null,
     ultimo: mc.ultimo,
     feed: mc.feed.slice(-6),
   };
@@ -32569,7 +32618,7 @@ function mcSalvar() {
   // relógios correndo viram "quanto falta"
   const fixa = (r) => {
     if (r && r.fimEm) {
-      r.resta = Math.max(0, r.fimEm - Date.now());
+      r.resta = Math.max(0, r.fimEm - mcAgora());
       r.fimEm = null;
     }
   };
@@ -32585,8 +32634,8 @@ function mcRetomar(s) {
   mc.ultTick = null; // debug 23/10: o tique salvo é velho; contar congelamento a partir dele empurrava os prazos
   mc.olhos = mc.olhos || {};
   if (mc.fase === "intervalo" && !mc.vitrine) mc.vitrine = lojaVitrineSortear(MC_LOJA, MC_VITRINE);
-  // prazos absolutos (abrir, intervalo, desafio, duelo) recomeçam a contar a partir de agora
-  const agora = Date.now();
+  // prazos absolutos (abrir, intervalo, desafio, duelo) recomeçam a contar a partir de agora (no tempo de jogo)
+  const agora = mcAgora();
   mc.abrirEm = agora + 1500;
   if (mc.intervalo) {
     mc.intervalo.fimEm = agora + MC_INTERVALO_SEG * 1e3;
@@ -32696,24 +32745,10 @@ function avisoMesaAtivo() {
 function avisoMesaCongela() {
   return avisoMesaAtivo() && avisoMesa.congela;
 }
-// os trechos em que a mesa ficou congelada ([início, fim]; fim null = ainda congelada), pra quem conta tempo
-// saber quanto descontar desde o último tique
-let avisoCongelas = [];
-function avisoCongeladoDesde(t) {
-  const agora = Date.now();
-  // 1.7.10.9 (achado no teste online: o relógio da Corrida parou pra sempre): trecho que ficou aberto sem aviso
-  // congelando na tela fecha na hora em que o aviso devia ter saído (nunca congela mais que o próprio aviso)
-  const ult = avisoCongelas[avisoCongelas.length - 1];
-  if (ult && !ult[1] && !avisoMesaCongela()) ult[1] = Math.max(ult[0], Math.min(agora, avisoMesa && avisoMesa.ate ? avisoMesa.ate : agora));
-  let ms = 0;
-  for (const [ini, fim] of avisoCongelas) ms += Math.max(0, Math.min(fim || agora, agora) - Math.max(ini, t));
-  return ms;
-}
+// 25/10/2026: o tempo em que a mesa fica congelada vai pro relógio único (02d); antes esta parte guardava os
+// trechos e cada relógio do jogo empurrava os próprios prazos por conta
 function avisoCongelaMarcar(liga) {
-  const ult = avisoCongelas[avisoCongelas.length - 1];
-  if (liga && !(ult && !ult[1])) avisoCongelas.push([Date.now(), null]);
-  if (!liga && ult && !ult[1]) ult[1] = Date.now();
-  if (avisoCongelas.length > 8) avisoCongelas = avisoCongelas.slice(-8);
+  if (typeof relogioMarcar === "function") relogioMarcar("aviso", !!liga);
 }
 function avisoMostrar(o) {
   if (!o || gameEnded) return;
@@ -32819,7 +32854,7 @@ function avisoZerar() {
   clearTimeout(avisoTimer);
   avisoMesa = null;
   avisoFila = [];
-  avisoCongelas = [];
+  avisoCongelaMarcar(false);
   avisoAoFim = {};
   document.getElementById("avisoMesaOv")?.remove();
 }
@@ -41472,7 +41507,9 @@ function closeActiveToast() {
   if (toast) toast.classList.remove("show");
   caosFalaFimAt = Date.now();
   if (hadActiveTimer) {
-    const frozenMs = Math.max(0, (freezeEndedAt || Date.now()) - frozenAt);
+    // 25/10/2026: medido no tempo de jogo (se um aviso ou a pausa pararam a partida no meio da fala, o relógio
+    // único já descontou; aqui só entra o resto)
+    const frozenMs = Math.max(0, (freezeEndedAt || relogioJogo()) - frozenAt);
     if (cardEndAt && cardSerial === frozenCardSerial) cardEndAt += frozenMs;
     if (timerEndAt && timerSerial === frozenTimerSerial) {
       timerEndAt += frozenMs;
@@ -41696,7 +41733,7 @@ function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze, _d
     priority: !!priority,
     deferred: [],
     serial,
-    frozenAt: Date.now(),
+    frozenAt: relogioJogo(),
     freezeEndedAt: null,
     frozenTimerSerial: timerSerial,
     frozenCardSerial: cardSerial,
@@ -43478,7 +43515,7 @@ function saveGameState() {
       cartasPartida,
       palpiteHolders,
       palpiteStock,
-      timerEndAt,
+      timerEndAt: relogioParede(timerEndAt), // 25/10/2026: no save vai o horário de verdade (o tempo de jogo não sobrevive a recarregar)
       timerKind,
       stats,
       pendingStartTime,
@@ -43512,7 +43549,7 @@ function saveGameState() {
       caosAposta,
       caosCortes,
       gemWinner,
-      cardEndAt,
+      cardEndAt: relogioParede(cardEndAt),
       corrida: corridaSalvar(),
       mc: typeof mcSalvar === "function" ? mcSalvar() : null,
       pausedCardRemaining,
@@ -43933,7 +43970,7 @@ function loadGameState() {
     cartasPartida = state.cartasPartida || [];
     palpiteHolders = state.palpiteHolders || {};
     palpiteStock = typeof state.palpiteStock === "number" ? state.palpiteStock : PALPITE_STOCK;
-    timerEndAt = saveNum(state.timerEndAt) || null;
+    timerEndAt = relogioDaParede(saveNum(state.timerEndAt)) || null;
     timerKind = TIMER_KINDS.includes(state.timerKind) ? state.timerKind : null;
     stats = state.stats || { totalDrawn: 0, totalDiscarded: 0, totalExhausted: 0 };
     pendingStartTime = saveNum(state.pendingStartTime) || null;
@@ -44016,17 +44053,17 @@ function loadGameState() {
         if (typeof v === "number" && Number.isFinite(v))
           joiasRodada[String(k).slice(0, 12)] = Math.max(0, Math.min(JOIAS_POR_RODADA, Math.floor(v)));
       });
-    cardEndAt = saveNum(state.cardEndAt) || null;
+    cardEndAt = relogioDaParede(saveNum(state.cardEndAt)) || null;
     corridaZerar();
     if (CURRENT_MODE === "caos") mcRetomar(state.mc);
     if (CURRENT_MODE === "corrida" && state.corrida && typeof state.corrida === "object") corridaRetomar(state.corrida);
     if (state.expressWhoFreeze && typeof state.expressWhoFreeze === "object" && CURRENT_MODE === "express") {
       const f = state.expressWhoFreeze,
         ok = (v) => typeof v === "number" && isFinite(v) && v >= 0;
-      if (ok(f.cardMs)) cardEndAt = Date.now() + Math.min(f.cardMs, 6e5);
+      if (ok(f.cardMs)) cardEndAt = relogioJogo() + Math.min(f.cardMs, 6e5);
       if (ok(f.turnMs) && f.kind === "turn") {
         timerKind = "turn";
-        timerEndAt = Date.now() + Math.min(f.turnMs, 6e5);
+        timerEndAt = relogioJogo() + Math.min(f.turnMs, 6e5);
       }
     }
     expressWhoFreeze = null;

@@ -60,24 +60,10 @@ function avisoMesaAtivo() {
 function avisoMesaCongela() {
   return avisoMesaAtivo() && avisoMesa.congela;
 }
-// os trechos em que a mesa ficou congelada ([início, fim]; fim null = ainda congelada), pra quem conta tempo
-// saber quanto descontar desde o último tique
-let avisoCongelas = [];
-function avisoCongeladoDesde(t) {
-  const agora = Date.now();
-  // 1.7.10.9 (achado no teste online: o relógio da Corrida parou pra sempre): trecho que ficou aberto sem aviso
-  // congelando na tela fecha na hora em que o aviso devia ter saído (nunca congela mais que o próprio aviso)
-  const ult = avisoCongelas[avisoCongelas.length - 1];
-  if (ult && !ult[1] && !avisoMesaCongela()) ult[1] = Math.max(ult[0], Math.min(agora, avisoMesa && avisoMesa.ate ? avisoMesa.ate : agora));
-  let ms = 0;
-  for (const [ini, fim] of avisoCongelas) ms += Math.max(0, Math.min(fim || agora, agora) - Math.max(ini, t));
-  return ms;
-}
+// 25/10/2026: o tempo em que a mesa fica congelada vai pro relógio único (02d); antes esta parte guardava os
+// trechos e cada relógio do jogo empurrava os próprios prazos por conta
 function avisoCongelaMarcar(liga) {
-  const ult = avisoCongelas[avisoCongelas.length - 1];
-  if (liga && !(ult && !ult[1])) avisoCongelas.push([Date.now(), null]);
-  if (!liga && ult && !ult[1]) ult[1] = Date.now();
-  if (avisoCongelas.length > 8) avisoCongelas = avisoCongelas.slice(-8);
+  if (typeof relogioMarcar === "function") relogioMarcar("aviso", !!liga);
 }
 function avisoMostrar(o) {
   if (!o || gameEnded) return;
@@ -183,7 +169,7 @@ function avisoZerar() {
   clearTimeout(avisoTimer);
   avisoMesa = null;
   avisoFila = [];
-  avisoCongelas = [];
+  avisoCongelaMarcar(false);
   avisoAoFim = {};
   document.getElementById("avisoMesaOv")?.remove();
 }

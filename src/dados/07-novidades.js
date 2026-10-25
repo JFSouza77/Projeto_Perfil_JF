@@ -10,6 +10,27 @@
 //  · o que ainda não entrou fica em docs/Novidades_Rascunho.md.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.9.4",
+    data: "23/10 a 25/10/2026",
+    nome: "Multiplayer Update · QoL da Mesa",
+    t: "Cadastro do jogador, um C.A.O.S. que lembra mais de você, reporte com print e um relógio só pra partida.",
+    itens: [
+      "🔐 Cadastro do jogador: opcional, com nick e PIN de 4 números. Depois de escolher o nick, o jogo pergunta se você quer cadastrar. O C.A.O.S. lembra de você em qualquer aparelho, e ninguém herda a sua memória só por usar o mesmo nick. Ideia do Henrique.",
+      "🧠 O C.A.O.S. lembra mais: o emoji e o humor que você escolheu (e comenta quando você troca), o humor que ele sorteou pra você, o seu recorde, o seu tempo médio e quando foi a última vez (ontem, na terça, semana passada).",
+      "🤫 C.A.O.S. com tato: ele percebe quando a mesa corta frase longa e passa a falar mais curto. Com a mesma turma, ele já começa sabendo.",
+      "😂 Mais falas: 3000 falas prontas e mais 150 que lembram de você, inclusive pros sobrinhos do JF (Pedrinho the Best, Bebel e Elisinha).",
+      "🐞 Reportar com print: reporte a carta direto pela própria carta, ou um problema pela pausa. O print da tela vai junto sozinho (sem a resposta), e você pode anexar fotos ou prints do celular.",
+      "🗳️ Votação da mesa justa: decide a maioria da mesa inteira (numa mesa de 5, são 3 votos). Celular em segundo plano continua contando.",
+      "⏱️ Um relógio só: a pausa e os avisos da mesa param todos os tempos da partida do mesmo jeito, em todos os modos. Nenhum prazo vence escondido.",
+    ],
+    qol: [
+      "🌀 Modo C.A.O.S. com menos fala: o C.A.O.S. fica calado enquanto a mesa decide (dica, duelo, aviso) e fala no máximo uma vez por vez.",
+      "🎨 Tema claro mais legível: títulos dos menus, tutorial, cadastro e a cor do humor ficaram com contraste melhor.",
+      "👆 Janelas de reporte com botões maiores e fáceis de tocar.",
+      "📲 App instalável conferido: instalado na tela de início, o jogo abre sem internet.",
+    ],
+  },
+  {
     v: "Beta 1.7.10.9",
     ate: "1.7.10.9.3", // a lista junta os ajustes até essa versão
     data: "19/10 a 23/10/2026 · 11:54",

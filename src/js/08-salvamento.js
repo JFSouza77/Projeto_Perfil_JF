@@ -402,7 +402,7 @@ function saveGameState() {
       cartasPartida,
       palpiteHolders,
       palpiteStock,
-      timerEndAt,
+      timerEndAt: relogioParede(timerEndAt), // 25/10/2026: no save vai o horário de verdade (o tempo de jogo não sobrevive a recarregar)
       timerKind,
       stats,
       pendingStartTime,
@@ -436,7 +436,7 @@ function saveGameState() {
       caosAposta,
       caosCortes,
       gemWinner,
-      cardEndAt,
+      cardEndAt: relogioParede(cardEndAt),
       corrida: corridaSalvar(),
       mc: typeof mcSalvar === "function" ? mcSalvar() : null,
       pausedCardRemaining,
@@ -857,7 +857,7 @@ function loadGameState() {
     cartasPartida = state.cartasPartida || [];
     palpiteHolders = state.palpiteHolders || {};
     palpiteStock = typeof state.palpiteStock === "number" ? state.palpiteStock : PALPITE_STOCK;
-    timerEndAt = saveNum(state.timerEndAt) || null;
+    timerEndAt = relogioDaParede(saveNum(state.timerEndAt)) || null;
     timerKind = TIMER_KINDS.includes(state.timerKind) ? state.timerKind : null;
     stats = state.stats || { totalDrawn: 0, totalDiscarded: 0, totalExhausted: 0 };
     pendingStartTime = saveNum(state.pendingStartTime) || null;
@@ -940,17 +940,17 @@ function loadGameState() {
         if (typeof v === "number" && Number.isFinite(v))
           joiasRodada[String(k).slice(0, 12)] = Math.max(0, Math.min(JOIAS_POR_RODADA, Math.floor(v)));
       });
-    cardEndAt = saveNum(state.cardEndAt) || null;
+    cardEndAt = relogioDaParede(saveNum(state.cardEndAt)) || null;
     corridaZerar();
     if (CURRENT_MODE === "caos") mcRetomar(state.mc);
     if (CURRENT_MODE === "corrida" && state.corrida && typeof state.corrida === "object") corridaRetomar(state.corrida);
     if (state.expressWhoFreeze && typeof state.expressWhoFreeze === "object" && CURRENT_MODE === "express") {
       const f = state.expressWhoFreeze,
         ok = (v) => typeof v === "number" && isFinite(v) && v >= 0;
-      if (ok(f.cardMs)) cardEndAt = Date.now() + Math.min(f.cardMs, 6e5);
+      if (ok(f.cardMs)) cardEndAt = relogioJogo() + Math.min(f.cardMs, 6e5);
       if (ok(f.turnMs) && f.kind === "turn") {
         timerKind = "turn";
-        timerEndAt = Date.now() + Math.min(f.turnMs, 6e5);
+        timerEndAt = relogioJogo() + Math.min(f.turnMs, 6e5);
       }
     }
     expressWhoFreeze = null;
@@ -1822,7 +1822,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.9.3 · C.A.O.S. 5.1.1");
+  L.push("- **Versão:** Beta 1.7.10.9.4 · C.A.O.S. 5.1.2");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2364,7 +2364,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.9.3 · C.A.O.S. 5.1.1",
+        versao: "Beta 1.7.10.9.4 · C.A.O.S. 5.1.2",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,

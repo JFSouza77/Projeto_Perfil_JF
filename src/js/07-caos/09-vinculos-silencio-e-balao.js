@@ -574,7 +574,9 @@ function closeActiveToast() {
   if (toast) toast.classList.remove("show");
   caosFalaFimAt = Date.now();
   if (hadActiveTimer) {
-    const frozenMs = Math.max(0, (freezeEndedAt || Date.now()) - frozenAt);
+    // 25/10/2026: medido no tempo de jogo (se um aviso ou a pausa pararam a partida no meio da fala, o relógio
+    // único já descontou; aqui só entra o resto)
+    const frozenMs = Math.max(0, (freezeEndedAt || relogioJogo()) - frozenAt);
     if (cardEndAt && cardSerial === frozenCardSerial) cardEndAt += frozenMs;
     if (timerEndAt && timerSerial === frozenTimerSerial) {
       timerEndAt += frozenMs;
@@ -798,7 +800,7 @@ function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze, _d
     priority: !!priority,
     deferred: [],
     serial,
-    frozenAt: Date.now(),
+    frozenAt: relogioJogo(),
     freezeEndedAt: null,
     frozenTimerSerial: timerSerial,
     frozenCardSerial: cardSerial,

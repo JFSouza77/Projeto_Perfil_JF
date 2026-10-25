@@ -15,8 +15,10 @@ let mcTique = null;
 function mcAtivo() {
   return CURRENT_MODE === "caos" && !!mc && starterChosen && !gameEnded;
 }
+// 25/10/2026: os prazos do Modo C.A.O.S. são marcados no tempo de jogo (relógio único, 02d): pausa e aviso da
+// mesa param tudo sozinhos. Pros celulares, o retrato converte pro horário de verdade (relogioParede).
 function mcAgora() {
-  return Date.now();
+  return relogioJogo();
 }
 // relógio que pode parar: { resta } parado ou { fimEm } correndo
 function mcRelogioMs(r) {
@@ -832,29 +834,13 @@ function mcPinata(id, txt) {
 /* --- tique: relógios e prazos --- */
 function mcTicar() {
   if (!mcAtivo()) return;
-  // 1.7.10.7: aviso da mesa na tela: tudo para e os prazos andam junto
-  const tickAntes = mc.ultTick || mcAgora();
+  // 1.7.10.7: aviso da mesa na tela: tudo para. 25/10/2026: os prazos (abrir dica, intervalo, desafio, duelo,
+  // desfibrilador, Era do Gelo) e os relógios estão no tempo de jogo, que para sozinho na pausa e no aviso;
+  // antes este tique empurrava cada um deles (e esquecer um era bug de tempo)
   mc.ultTick = mcAgora();
-  if (typeof avisoCongeladoDesde === "function") {
-    // debug 23/10: com a partida pausada os prazos (abrir dica, intervalo, duelo, Era do Gelo…) também esperam
-    // (antes, despausar fazia tudo vencer de uma vez)
-    const d = avisoCongeladoDesde(tickAntes) + (pausedAt ? Math.max(0, mc.ultTick - tickAntes) : 0);
-    if (d > 0) {
-      if (mc.janela && mc.janela.congela && mc.janela.congela.ate) mc.janela.congela.ate += d; // Era do Gelo
-      if (mc.abrirEm) mc.abrirEm += d;
-      if (mc.intervalo) {
-        mc.intervalo.fimEm += d;
-        if (mc.intervalo.ini) mc.intervalo.ini += d;
-      }
-      if (mc.desafio && mc.desafio.proxEm) mc.desafio.proxEm += d;
-      if (mc.duelo && mc.duelo.ate) mc.duelo.ate += d;
-      if (mc.desfib && mc.desfib.ate) mc.desfib.ate += d;
-      if (!pausedAt) [mc.geral, mc.rodadaT, mc.janela && mc.janela.relogio].forEach((r) => r && r.fimEm && (r.fimEm += d)); // na pausa os relógios já param sozinhos
-    }
-    if (avisoMesaCongela()) {
-      [mc.geral, mc.rodadaT, mc.janela && mc.janela.relogio].forEach(mcRelogioParar);
-      return mcContagens();
-    }
+  if (typeof avisoMesaCongela === "function" && avisoMesaCongela()) {
+    [mc.geral, mc.rodadaT, mc.janela && mc.janela.relogio].forEach(mcRelogioParar);
+    return mcContagens();
   }
   const pausado = !!pausedAt;
   const joga = !pausado && ["abrindo", "janela", "julgando", "desfibOferta", "desfibSolo"].includes(mc.fase);
@@ -926,7 +912,9 @@ function mcRetrato() {
   const m = mcMestreId(),
     c = mc.cartas[m],
     j = mc.janela;
-  const relo = (r) => (r ? (r.fimEm ? { fimEm: r.fimEm } : { resta: Math.round(r.resta || 0) }) : null);
+  // prazos do tempo de jogo → horário de verdade (os celulares contam no relógio da rede)
+  const P = relogioParede;
+  const relo = (r) => (r ? (r.fimEm ? { fimEm: P(r.fimEm) } : { resta: Math.round(r.resta || 0) }) : null);
   return {
     rodada: mc.rodada,
     fase: mc.fase,
@@ -935,17 +923,17 @@ function mcRetrato() {
     mestre: m,
     carta: c && mc.fase !== "intervalo" ? { cat: c.cat, aberta: c.aberta, total: c.dicas.length, dicas: c.dicas.slice(0, c.aberta), estado: c.estado } : null,
     cartas: Object.fromEntries(Object.keys(mc.cartas).map((k) => [k, { cat: mc.cartas[k].cat, aberta: mc.cartas[k].aberta, estado: mc.cartas[k].estado, por: mc.cartas[k].por }])),
-    janela: j ? { relogio: relo(j.relogio), dur: j.dur, buzz: j.buzz, tentaram: j.tentaram.slice(), congela: j.congela ? { por: j.congela.por, ate: j.congela.ate } : null, mordaca: j.mordaca, imposto: j.imposto, corte: j.corte } : null,
+    janela: j ? { relogio: relo(j.relogio), dur: j.dur, buzz: j.buzz, tentaram: j.tentaram.slice(), congela: j.congela ? { por: j.congela.por, ate: P(j.congela.ate) } : null, mordaca: j.mordaca, imposto: j.imposto, corte: j.corte } : null,
     turbo: mc.turbo,
-    abrirEm: mc.fase === "abrindo" ? mc.abrirEm : null,
+    abrirEm: mc.fase === "abrindo" ? P(mc.abrirEm) : null,
     pc: { ...mc.pc },
     vitrine: mc.vitrine ? { estoque: { ...mc.vitrine.estoque }, precos: { ...mc.vitrine.precos } } : null,
     batata: mc.batata ? { ...mc.batata } : null,
-    desafio: mc.desafio ? { com: mc.desafio.com, juiz: mc.desafio.juiz, cat: mc.desafio.cat, dicas: mc.desafio.dicas.slice(0, mc.desafio.aberta), total: mc.desafio.dicas.length, buzz: mc.desafio.buzz, proxEm: mc.desafio.buzz ? null : mc.desafio.proxEm } : null,
-    duelo: mc.duelo ? { ladrao: mc.duelo.ladrao, vitima: mc.duelo.vitima, tipo: mc.duelo.tipo, fase: mc.duelo.fase, ate: mc.duelo.ate, escolheu: Object.keys(mc.duelo.esc), lados: mc.duelo.lados, resultado: mc.duelo.resultado, revanche: mc.duelo.revanche, placar: mc.duelo.placar || null, rodada: mc.duelo.rodada || 1 } : null,
+    desafio: mc.desafio ? { com: mc.desafio.com, juiz: mc.desafio.juiz, cat: mc.desafio.cat, dicas: mc.desafio.dicas.slice(0, mc.desafio.aberta), total: mc.desafio.dicas.length, buzz: mc.desafio.buzz, proxEm: mc.desafio.buzz ? null : P(mc.desafio.proxEm) } : null,
+    duelo: mc.duelo ? { ladrao: mc.duelo.ladrao, vitima: mc.duelo.vitima, tipo: mc.duelo.tipo, fase: mc.duelo.fase, ate: P(mc.duelo.ate), escolheu: Object.keys(mc.duelo.esc), lados: mc.duelo.lados, resultado: mc.duelo.resultado, revanche: mc.duelo.revanche, placar: mc.duelo.placar || null, rodada: mc.duelo.rodada || 1 } : null,
     pinata: mc.pinata ? { palavra: mc.pinata.palavra, ganhou: mc.pinata.ganhou } : null,
     desfib: mc.desfib ? { id: mc.desfib.id || null, oferta: !!mc.desfib.oferta } : null,
-    intervalo: mc.intervalo ? { fimEm: mc.intervalo.fimEm, travada: mcLojaTravada() } : null,
+    intervalo: mc.intervalo ? { fimEm: P(mc.intervalo.fimEm), travada: mcLojaTravada() } : null,
     ultimo: mc.ultimo,
     feed: mc.feed.slice(-6),
   };
@@ -1220,7 +1208,7 @@ function mcSalvar() {
   // relógios correndo viram "quanto falta"
   const fixa = (r) => {
     if (r && r.fimEm) {
-      r.resta = Math.max(0, r.fimEm - Date.now());
+      r.resta = Math.max(0, r.fimEm - mcAgora());
       r.fimEm = null;
     }
   };
@@ -1236,8 +1224,8 @@ function mcRetomar(s) {
   mc.ultTick = null; // debug 23/10: o tique salvo é velho; contar congelamento a partir dele empurrava os prazos
   mc.olhos = mc.olhos || {};
   if (mc.fase === "intervalo" && !mc.vitrine) mc.vitrine = lojaVitrineSortear(MC_LOJA, MC_VITRINE);
-  // prazos absolutos (abrir, intervalo, desafio, duelo) recomeçam a contar a partir de agora
-  const agora = Date.now();
+  // prazos absolutos (abrir, intervalo, desafio, duelo) recomeçam a contar a partir de agora (no tempo de jogo)
+  const agora = mcAgora();
   mc.abrirEm = agora + 1500;
   if (mc.intervalo) {
     mc.intervalo.fimEm = agora + MC_INTERVALO_SEG * 1e3;
