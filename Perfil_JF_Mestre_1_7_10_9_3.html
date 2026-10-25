@@ -5989,6 +5989,33 @@ body.claro .nov-nome {
   gap: 6px;
   text-align: left;
 }
+.nov-item .nov-drop > summary.nov-tag:has(.nov-modo) {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.nov-item .nov-drop > summary.nov-tag:has(.nov-modo)::after {
+  order: 2;
+}
+.nov-modo {
+  order: 3;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1px solid #a78bfa80;
+  color: #ddd6fe;
+  white-space: nowrap;
+}
+body.claro .nov-modo {
+  color: #5b3fc4;
+  border-color: #c9b9ef;
+  background: #f4efff;
+}
+.nov-antigas-btn {
+  display: block;
+  margin: 6px auto 10px;
+  min-height: 44px;
+}
 .nov-drop > summary::after {
   font-size: 0.75em;
   content: "▾";
@@ -20335,12 +20362,33 @@ function novidadesChave() {
 function novItemVale(t) {
   return anneLigada() || !/\bAnne\b/.test(String(t));
 }
+// Selo do modo (pedido do JF): o item que é de um modo só ganha um selinho, pra cada um achar o do modo que joga.
+// O primeiro que aparecer no texto vale; se o título já diz o modo, não repete.
+const NOV_MODOS = [
+  [/Modo C\.A\.O\.S\./, "🌀 Modo C.A.O.S."],
+  [/\bCorrida\b/, "⏱️ Corrida"],
+  [/\bExpress\b/, "⚡ Express"],
+  [/\bJúnior\b/, "🧸 Júnior"],
+  [/\bHardcore\b/, "💀 Hardcore"],
+  [/\bOld School\b/, "📻 Old School"],
+];
+function novModoSelo(titulo, texto) {
+  const achou = NOV_MODOS.map(([re, rot]) => ({ rot, i: String(texto).search(re), noTitulo: re.test(titulo) })).filter((m) => m.i >= 0 || m.noTitulo);
+  if (!achou.length || achou.some((m) => m.noTitulo)) return "";
+  achou.sort((a, b) => a.i - b.i);
+  return `<span class="nov-modo">${achou[0].rot}</span>`;
+}
 // Item das novidades no formato "emoji Título: texto": o título vai numa caixinha de destaque.
 function novItemHtml(x) {
   const m = /^(\S+\s+)?([^:<"]{2,34}):\s+([\s\S]+)$/u.exec(x);
   if (!m) return `<li>${x}</li>`;
-  return `<li><details class="nov-drop"><summary class="nov-tag">${m[1] || ""}${m[2]}</summary><div class="nov-drop-txt">${m[3].charAt(0).toUpperCase() + m[3].slice(1)}</div></details></li>`;
+  return `<li><details class="nov-drop"><summary class="nov-tag">${m[1] || ""}${m[2]}${novModoSelo(m[2], m[3])}</summary><div class="nov-drop-txt">${m[3].charAt(0).toUpperCase() + m[3].slice(1)}</div></details></li>`;
 }
+// Uma versão das novidades (as 3 mais novas ficam à mostra; as outras, atrás do botão "Ver versões antigas")
+function novVersaoHtml(n, i) {
+  return `<details class="nov-item"${i === 0 ? " open" : ""}><summary><span class="nov-v">${n.v}${n.ate ? ` <small>até a ${n.ate}</small>` : ""}</span>${n.nome ? `<span class="nov-nome">${n.nome}</span>` : ""}${n.data ? `<span class="nov-data">📅 ${n.data}</span>` : ""}<span class="nov-t">${n.t}</span></summary><ul>${n.itens.filter(novItemVale).map(novItemHtml).join("")}</ul>${n.qol && n.qol.filter(novItemVale).length ? `<div class="nov-qol">🛠️ Ajustes e correções (QoL) 🛠️</div><ul>${n.qol.filter(novItemVale).map(novItemHtml).join("")}</ul>` : ""}</details>`;
+}
+const NOV_A_MOSTRA = 3;
 function abrirNovidades() {
   document.getElementById("novidadesModal")?.remove();
   const bg = document.createElement("div");
@@ -20349,12 +20397,21 @@ function abrirNovidades() {
   bg.innerHTML = `<div class="jf-modal nov-modal" role="dialog" aria-modal="true" aria-labelledby="novTitle">
     <button type="button" class="nov-x" id="novX" aria-label="Fechar novidades">✕</button>
     <div class="nov-ic">🆕</div><h3 id="novTitle">NOVIDADES</h3><div class="nov-sub">O que mudou nas últimas versões</div>
-    ${NOVIDADES.map((n, i) => `<details class="nov-item"${i === 0 ? " open" : ""}><summary><span class="nov-v">${n.v}${n.ate ? ` <small>até a ${n.ate}</small>` : ""}</span>${n.nome ? `<span class="nov-nome">${n.nome}</span>` : ""}${n.data ? `<span class="nov-data">📅 ${n.data}</span>` : ""}<span class="nov-t">${n.t}</span></summary><ul>${n.itens.filter(novItemVale).map(novItemHtml).join("")}</ul>${n.qol && n.qol.filter(novItemVale).length ? `<div class="nov-qol">🛠️ Ajustes e correções (QoL) 🛠️</div><ul>${n.qol.filter(novItemVale).map(novItemHtml).join("")}</ul>` : ""}</details>`).join("")}
+    ${NOVIDADES.slice(0, NOV_A_MOSTRA).map(novVersaoHtml).join("")}
+    ${NOVIDADES.length > NOV_A_MOSTRA ? `<button type="button" class="chip nov-antigas-btn" id="novAntigas" aria-expanded="false">📚 Ver versões antigas (${NOVIDADES.length - NOV_A_MOSTRA})</button><div id="novAntigasLista" hidden>${NOVIDADES.slice(NOV_A_MOSTRA).map((n, i) => novVersaoHtml(n, i + NOV_A_MOSTRA)).join("")}</div>` : ""}
     <button type="button" class="btn-start btn-neo neo-solid neo-still" id="novOk" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35); margin-top:14px;">Entendi</button>
   </div>`;
   document.body.appendChild(bg);
   const fechar = () => bg.remove();
   bg.querySelector("#novOk").addEventListener("click", fechar);
+  const bAnt = bg.querySelector("#novAntigas");
+  if (bAnt)
+    bAnt.addEventListener("click", () => {
+      const l = bg.querySelector("#novAntigasLista"), abrir = l.hidden;
+      l.hidden = !abrir;
+      bAnt.setAttribute("aria-expanded", String(abrir));
+      bAnt.textContent = abrir ? "📚 Esconder versões antigas" : `📚 Ver versões antigas (${NOVIDADES.length - NOV_A_MOSTRA})`;
+    });
   bg.querySelector("#novX").addEventListener("click", fechar);
   bg.addEventListener("click", (ev) => {
     if (ev.target === bg) fechar();
@@ -80198,7 +80255,8 @@ const PAUSE_TIPS = [
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela;
 //  · no máximo 7 itens e 7 ajustes (qol) por entrada. Ajuste pequeno entra na lista da versão aberta
 //    ("ate" = o último ajuste que entrou nela); passou de 7, condensa ou abre a próxima.
-//    Regra completa: docs/Regras_dos_Logs.md ("Tamanho do log e quando a versão sobe").
+//    Regra completa: docs/Regras_dos_Logs.md ("Tamanho do log e quando a versão sobe" e "Como escrever o log").
+//  · o que ainda não entrou fica em docs/Novidades_Rascunho.md.
 const NOVIDADES = [
   {
     v: "Beta 1.7.10.9",
