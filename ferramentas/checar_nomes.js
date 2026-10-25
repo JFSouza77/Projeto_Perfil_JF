@@ -13,7 +13,7 @@ const { spawnSync } = require("child_process");
 
 const RAIZ = path.join(__dirname, "..");
 // nomes que vêm de fora do nosso código (bibliotecas embutidas)
-const DE_FORA = new Set(["Peer", "define"]);
+const DE_FORA = new Set(["Peer", "define", "html2canvas"]); // html2canvas: 05w (25/10/2026)
 
 const ordem = fs.readFileSync(path.join(RAIZ, "src", "ordem.txt"), "utf8").split("\n").map((l) => l.trim()).filter((l) => /\.js$/.test(l));
 const partes = [];
