@@ -15,6 +15,13 @@ Estas regras valem para as NOVIDADES do jogo e para o HISTÓRICO do Mestre.
 | Correção ou revisão de carta existente | QoL do patch atual |
 | Assunto da própria atualização | Itens do log da versão |
 
+## Quantidades sempre terminam em 0 ou 5 (regra do JF, 25/10/2026, obrigatória)
+
+- Tudo o que for quantidade (falas, cartas, pedaços de gerador, itens) termina em **0 ou 5**.
+- Vale pro total e pra cada grupo. Ex.: um banco de falas novo tem 5, 10 ou 15 falas, nunca 8 ou 14.
+- Antes de publicar, contar de verdade (por grupo e no total) e conferir.
+- O motivo: margem maior e mais variedade, pra ele ficar menos repetitivo.
+
 ## Versão do C.A.O.S. (regra do JF, 24/10/2026)
 
 - O C.A.O.S. sobe de versão sempre que ele for mexido.
