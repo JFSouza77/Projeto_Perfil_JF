@@ -47,3 +47,11 @@ Exemplo com a **1.7.10.9.3**:
 - qualquer mudança de comportamento que mereça ser uma atualização grande.
 
 **No log do jogo:** uma entrada pode juntar vários ajustes ("Beta 1.7.10.9 · até a 1.7.10.9.3"). Em 24/10/2026 o log todo foi reorganizado assim: versões pingadas juntas, nenhuma entrada passando de 7 itens nem de 7 ajustes.
+
+## Como escrever o log (combinado com o JF, 25/10/2026)
+
+1. **Rascunho primeiro:** o que muda vai pro `docs/Novidades_Rascunho.md`. A entrada só entra no jogo quando faz sentido como versão (sem versão de 1 item só).
+2. **O mais importante primeiro:** dentro da versão, o que muda o jogo vem antes do que é ajuste visual.
+3. **Subtítulo de uma linha:** a frase da versão (o `t`) com no máximo umas 90 letras, como manchete.
+4. **Selo do modo:** a tela põe sozinha o selo (🌀 Modo C.A.O.S., ⏱️ Corrida, ⚡ Express, 🧸 Júnior, 💀 Hardcore, 📻 Old School) quando o item fala de um modo e o título não diz qual. É só escrever o nome do modo no texto.
+5. **Versões antigas recolhidas:** a tela mostra as 3 versões mais novas; o resto fica no botão "Ver versões antigas".

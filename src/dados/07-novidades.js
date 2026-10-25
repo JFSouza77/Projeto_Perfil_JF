@@ -6,7 +6,8 @@
 //  · ideia de pessoa de verdade que contribuiu (Pedro, Felipe, Bruno Levanti, Klaus…) leva o nome dela;
 //  · no máximo 7 itens e 7 ajustes (qol) por entrada. Ajuste pequeno entra na lista da versão aberta
 //    ("ate" = o último ajuste que entrou nela); passou de 7, condensa ou abre a próxima.
-//    Regra completa: docs/Regras_dos_Logs.md ("Tamanho do log e quando a versão sobe").
+//    Regra completa: docs/Regras_dos_Logs.md ("Tamanho do log e quando a versão sobe" e "Como escrever o log").
+//  · o que ainda não entrou fica em docs/Novidades_Rascunho.md.
 const NOVIDADES = [
   {
     v: "Beta 1.7.10.9",

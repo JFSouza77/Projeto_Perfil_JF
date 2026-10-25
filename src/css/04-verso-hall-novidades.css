@@ -695,6 +695,33 @@ body.claro .nov-nome {
   gap: 6px;
   text-align: left;
 }
+.nov-item .nov-drop > summary.nov-tag:has(.nov-modo) {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.nov-item .nov-drop > summary.nov-tag:has(.nov-modo)::after {
+  order: 2;
+}
+.nov-modo {
+  order: 3;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1px solid #a78bfa80;
+  color: #ddd6fe;
+  white-space: nowrap;
+}
+body.claro .nov-modo {
+  color: #5b3fc4;
+  border-color: #c9b9ef;
+  background: #f4efff;
+}
+.nov-antigas-btn {
+  display: block;
+  margin: 6px auto 10px;
+  min-height: 44px;
+}
 .nov-drop > summary::after {
   font-size: 0.75em;
   content: "▾";
