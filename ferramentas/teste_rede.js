@@ -191,6 +191,13 @@ async function rodarServidorNosso(b, nosso, publico) {
   const pag = await pegar("/reportes?chave=teste-senha"), errada = await pegar("/reportes?chave=chute");
   conf("Reportar carta: o reporte chega no servidor e sai da fila do aparelho", faltam === 0 && pag.st === 200 && /ANO-0042/.test(pag.d) && /Fato errado/.test(pag.d));
   conf("Página dos reportes: senha errada não entra; texto vem escapado", errada.st === 401 && !/<b>dica<\/b>/.test(pag.d));
+  // 25/10/2026: problema da partida (bug) chega na mesma página, numa seção própria, com o retrato
+  const faltamP = await g5.evaluate(async () => {
+    problemaGuardar({ cat: "travou", nota: "<i>travou</i> no duelo", anexo: { v: "teste", jog: [["J1", 3, 2, "normal"]] }, modo: "classico", versao: "1.7.10", quando: Date.now() });
+    return cartaReporteEnviar();
+  });
+  const pagP = await pegar("/reportes?chave=teste-senha"), txtP = await pegar("/reportes?chave=teste-senha&formato=texto");
+  conf("Reportar problema: chega no servidor com o retrato e aparece na seção de problemas", faltamP === 0 && /Problemas reportados \(1\)/.test(pagP.d) && /Travou/.test(pagP.d) && /Retrato da partida/.test(pagP.d) && !/<i>travou<\/i>/.test(pagP.d) && /J1/.test(txtP.d));
   conf(
     "Ponte: sem conta configurada segue sem; com credenciais, elas vão primeiro na lista",
     await g3.evaluate(async () => {

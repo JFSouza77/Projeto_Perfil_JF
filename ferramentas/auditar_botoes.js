@@ -1,5 +1,7 @@
 // Auditoria dos botões (1.7.6): passa pelas telas do jogo no Noturno, no Claro e com letra Enorme e confere
 // cada botão visível: área de toque (mínimo 44 px), nome acessível, contraste e texto vazando.
+// 25/10/2026: também mede o contraste de todo TEXTO visível fora dos botões (parágrafos, títulos, rótulos,
+// avisos), contando a transparência (opacity) dos elementos de cima, que deixa a letra mais apagada.
 // Uso: node ferramentas/auditar_botoes.js [Mestre.html] [--json saida.json]
 "use strict";
 const { acharMestre, abrirNavegador } = require("./_navegador");
@@ -154,6 +156,43 @@ function medir(tela) {
       fundo: bg.indet ? "gradiente/imagem" : `rgb(${Math.round(bg.r)}, ${Math.round(bg.g)}, ${Math.round(bg.b)})`,
     });
   });
+  // textos fora de botão: elemento com texto próprio (não só emoji), visível e não coberto
+  const vistosTxt = new Set();
+  document.querySelectorAll("body *").forEach((el) => {
+    if (vistosTxt.has(el) || /^(SCRIPT|STYLE|NOSCRIPT|OPTION|SVG|PATH|CANVAS|TEXTAREA)$/i.test(el.tagName)) return;
+    if (el.closest('button, [role="button"], a[href], select, input, .number-btn, .color-swatch, .avatar-swatch, [aria-hidden="true"]')) return;
+    const proprio = [...el.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join("");
+    if (!proprio.replace(/[\s\p{Extended_Pictographic}️‍·•|:,.()\-–—!?…"“”'0-9%/+×]/gu, "").length) return;
+    vistosTxt.add(el);
+    if (visivel(el) !== true) return;
+    const cs = getComputedStyle(el);
+    const txt = parse(cs.color);
+    const bg = fundo(el);
+    if (!txt || bg.indet) return;
+    let op = 1;
+    for (let n = el; n && n.nodeType === 1; n = n.parentElement) op *= +getComputedStyle(n).opacity;
+    const cor = { ...txt, a: (txt.a == null ? 1 : txt.a) * op };
+    const t = cor.a < 1 ? misturar(cor, bg) : cor;
+    const [a, b] = [lum(t), lum(bg)].sort((x, y) => y - x);
+    const px = parseFloat(cs.fontSize);
+    const grande = px >= 24 || (px >= 18.66 && +cs.fontWeight >= 700);
+    out.push({
+      tela,
+      texto: true,
+      sel: seletor(el),
+      nome: proprio.replace(/\s+/g, " ").trim().slice(0, 50),
+      w: 99,
+      h: 99,
+      fonte: Math.round(px * 10) / 10,
+      contraste: Math.round(((a + 0.05) / (b + 0.05)) * 100) / 100,
+      minimo: grande ? 3 : 4.5,
+      desativado: false,
+      tipo: "texto",
+      vaza: false,
+      cor: cs.color + (op < 1 ? ` (opacity ${Math.round(op * 100) / 100})` : ""),
+      fundo: `rgb(${Math.round(bg.r)}, ${Math.round(bg.g)}, ${Math.round(bg.b)})`,
+    });
+  });
   return out;
 }
 
@@ -287,7 +326,9 @@ function medir(tela) {
       if (b.contraste != null && (atual.contraste == null || b.contraste < atual.contraste)) atual.contraste = b.contraste;
     }
   }
-  const lista = [...porBotao.values()];
+  const tudo = [...porBotao.values()];
+  const lista = tudo.filter((b) => !b.texto);
+  const textosBaixos = tudo.filter((b) => b.texto && b.contraste < b.minimo);
   const pequenos = lista.filter((b) => !b.tipo.startsWith("input:text") && (b.w < TOQUE_MIN || b.h < TOQUE_MIN));
   const semNome = lista.filter((b) => !b.nome || !/[\p{L}\p{N}]/u.test(b.nome));
   const baixoContraste = lista.filter((b) => !b.desativado && b.contraste != null && b.contraste < b.minimo);
@@ -301,12 +342,14 @@ function medir(tela) {
   semNome.forEach((b) => console.log(linha(b, "")));
   console.log(`\nContraste abaixo do mínimo (${CONTRASTE_MIN}, ou ${CONTRASTE_GRANDE} em texto grande): ${baixoContraste.length}`);
   baixoContraste.forEach((b) => console.log(linha(b, `${b.contraste}:1 (mín ${b.minimo}) ${b.cor} sobre ${b.fundo}`)));
+  console.log(`\nTexto fora de botão com contraste abaixo do mínimo: ${textosBaixos.length} (de ${tudo.length - lista.length} textos)`);
+  textosBaixos.forEach((b) => console.log(linha(b, `${b.contraste}:1 (mín ${b.minimo}) ${b.cor} sobre ${b.fundo}`)));
   console.log(`\nTexto vazando pra fora do botão: ${vazando.length}`);
   vazando.forEach((b) => console.log(linha(b, `${b.w}×${b.h}`)));
   console.log(erros.length ? "\nErros na página:\n  " + erros.join("\n  ") : "\nSem erro na página.");
   if (SAIDA_JSON) require("fs").writeFileSync(SAIDA_JSON, JSON.stringify(lista, null, 1));
   // 1.7.10.5.5: a bateria cobra tudo zerado (toque, nome, contraste e texto vazando)
-  const tudoOk = !pequenos.length && !semNome.length && !baixoContraste.length && !vazando.length && !erros.length;
+  const tudoOk = !pequenos.length && !semNome.length && !baixoContraste.length && !textosBaixos.length && !vazando.length && !erros.length;
   console.log(tudoOk ? "BOTÕES OK" : "BOTÕES COM PROBLEMA");
   process.exitCode = tudoOk ? 0 : 1;
 })();
