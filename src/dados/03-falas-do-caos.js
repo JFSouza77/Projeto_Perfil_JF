@@ -3171,6 +3171,11 @@ const REACTIVE_VOICE = {
         (n, a) => `Da última vez ${n} escolheu ${a}. Hoje deixou na minha mão. Coragem.`,
         (n, a) => `${n} desistiu de escolher e deixou comigo. O ${a} não estava dando conta?`,
         (n, a) => `${n} trocou o ${a} por "o C.A.O.S. decide". Eu vou lembrar desse voto de confiança.`,
+        (n, a) => `${n} cansou do ${a} e me passou o controle. Respira fundo. Eu não prometo nada.`,
+        (n, a) => `Antes era ${a}, escolhido por ${n}. Hoje quem escolhe sou eu. Que comecem os jogos.`,
+        (n, a) => `${n} largou o ${a} e deixou o humor no meu sorteio. Coragem ou curiosidade?`,
+        (n, a) => `${n} desistiu do ${a} e falou: decide aí, C.A.O.S. Decidido. Você vai descobrir na hora.`,
+        (n, a) => `Do ${a} pra roleta do C.A.O.S. ${n} gosta de viver perigosamente.`,
       ],
       deCaos: [
         (n, a, b) => `Da última vez ${n} deixou o humor comigo. Hoje escolheu ${b}. Não gostou do que eu sorteei?`,
@@ -3181,6 +3186,8 @@ const REACTIVE_VOICE = {
         (n, a, b) => `Antes eu podia decidir o humor de ${n}. Agora resolveu agir por conta própria? Então tá bom. ${b}.`,
         (n, a, b) => `${n} não gostou do meu humor da outra vez? Tá bom. ${b}, então. Vamos ver se agora eu consigo agradar.`,
         (n, a, b) => `Da outra vez quem mandava era eu. Hoje ${n} escolheu ${b}. Golpe de estado na mesa.`,
+        (n, a, b) => `${n} me demitiu do cargo de escolher o humor. ${b}, então. Eu aceito. Com rancor.`,
+        (n, a, b) => `Da última vez ${n} confiou no meu sorteio. Hoje veio com ${b} pronto. Perdi a vaga, pelo visto.`,
       ],
       // ele lembra o que sorteou da outra vez: (nome, o que ele sorteou, o que a pessoa escolheu agora)
       sorteioPesado: [
@@ -3189,6 +3196,11 @@ const REACTIVE_VOICE = {
         (n, s, b) => `${n} provou meu ${s} da outra vez e voltou pedindo ${b}. Recado recebido. Vou com calma.`,
         (n, s, b) => `Sorteei ${s} pra ${n} na outra partida. Hoje: ${b}, escolhido a dedo. Acho que deixei marca.`,
         (n, s, b) => `${s} da outra vez foi demais pra ${n}. Agora é ${b}. Você que manda, eu só obedeço. Mais ou menos.`,
+        (n, s, b) => `Eu sorteei ${s} pra ${n} e voltou de ${b}. Tudo bem. Até eu tenho dia de exagero.`,
+        (n, s, b) => `${n} levou ${s} na outra partida e hoje pediu ${b}. Acho que ficou cicatriz.`,
+        (n, s, b) => `Da outra vez saiu ${s} no sorteio de ${n}. Hoje é ${b}. Eu entendo o recado: menos, C.A.O.S., menos.`,
+        (n, s, b) => `Sorteei ${s} pra ${n} e ainda tem gente se recuperando. ${b} hoje. Combinado.`,
+        (n, s, b) => `${n} trocou o meu ${s} por ${b}. Pegou trauma do sorteio. Eu juro que foi o dado, não fui eu.`,
       ],
       sorteioLeve: [
         (n, s, b) => `Da outra vez eu sorteei ${s} pra ${n}. Hoje pediu ${b}. Parece que peguei leve demais. Vamos ver se aguenta o tranco agora.`,
@@ -3196,11 +3208,18 @@ const REACTIVE_VOICE = {
         (n, s, b) => `${n} achou meu ${s} da outra vez fraquinho. Escolheu ${b}. Desafio aceito.`,
         (n, s, b) => `Sorteei ${s} pra ${n} na outra partida e foi pouco, pelo visto. ${b} hoje. Depois não vem chorar.`,
         (n, s, b) => `${s} não deu nem pro cheiro. ${n} veio de ${b}. Eu gosto de gente que pede mais.`,
+        (n, s, b) => `Da outra vez eu sorteei ${s} pra ${n}. Hoje pediu ${b}. Pelo visto eu fui bonzinho demais. Erro corrigido.`,
+        (n, s, b) => `${n} sobreviveu ao meu ${s} sem um arranhão e voltou pedindo ${b}. Agora ficou pessoal.`,
+        (n, s, b) => `Eu sorteei ${s} e ${n} bocejou. Hoje é ${b}. Acorda, que agora vem coisa.`,
+        (n, s, b) => `${s} da outra vez foi carinho perto do que vem agora. ${n} pediu ${b}. Pediu, né?`,
+        (n, s, b) => `${n} trocou o meu ${s} por ${b}. Ficou com gostinho de quero mais. Eu sirvo.`,
       ],
       sorteioIgual: [
         (n, s, b) => `Da outra vez eu sorteei ${s} pra ${n}. Hoje escolheu ${b} por conta própria. Gostou do meu gosto, né?`,
         (n, s) => `${n} pegou ${s} por conta própria, igualzinho ao que eu sorteei da outra vez. Eu acertei em cheio.`,
         (n, s) => `Eu dei ${s} pra ${n} e agora escolheu ${s} de novo. Aprovação oficial do meu sorteio. Obrigado.`,
+        (n, s) => `Da outra vez eu sorteei ${s} pra ${n}. Hoje escolheu ${s} sem a minha ajuda. Eu formei um discípulo.`,
+        (n, s) => `${n} gostou tanto do ${s} que eu sorteei que voltou com ele. Cliente fiel.`,
       ],
     },
     // 25/10/2026 (pedido do JF): ele lembra o emoji de cada um e comenta quando troca. (nome, antes, agora)
@@ -3238,6 +3257,8 @@ const REACTIVE_VOICE = {
         (n, a, b) => `Da última vez ${n} era ${a}. Hoje chegou de ${b}. Alguém andou treinando escondido.`,
         (n, a, b) => `${n} trocou o ${a} pelo ${b}. Postura de campeão. Agora falta o resto.`,
         (n, a, b) => `${a} pra ${b}. ${n} está confiante hoje. Eu adoro quando a confiança vem antes do placar.`,
+        (n, a, b) => `${n} trocou o ${a} pelo ${b}. Chegou de salto alto. Cuidado com o tombo.`,
+        (n, a, b) => `Do ${a} pro ${b}. ${n} acordou se sentindo dono da mesa. Vamos conferir no placar.`,
       ],
       deConfiante: [
         (n, a, b) => `${n} largou o ${a} e veio de ${b}. Abriu mão da coroa? Que humildade repentina.`,
@@ -3248,6 +3269,8 @@ const REACTIVE_VOICE = {
         (n, a, b) => `Do ${a} pro ${b}. ${n} está em modo discreto hoje. Eu desconfio de gente discreta.`,
         (n, a, b) => `${n} aposentou o ${a}. Agora é ${b}. Estratégia nova ou crise de identidade?`,
         (n, a, b) => `${a} saiu de cena. ${n} chegou de ${b}, mais pé no chão. Vamos ver se dura.`,
+        (n, a, b) => `${n} guardou o ${a} na gaveta e veio de ${b}. A fase de rei acabou?`,
+        (n, a, b) => `Sem ${a} hoje. ${n} chegou de ${b}, modo humilde ativado. Eu não acredito, mas anotei.`,
       ],
       qualquer: [
         (n, a, b) => `Ué, ${n} resolveu trocar de emoji. Cansou do ${a}?`,
@@ -3264,6 +3287,7 @@ const REACTIVE_VOICE = {
         (n, a, b) => `O ${a} ficou pra trás. ${n} agora é ${b}. Eu vou levar uns minutos pra me acostumar.`,
         (n, a, b) => `${n} trocou de ${a} pra ${b}. Muda o emoji, mas a mania de chutar continua, aposto.`,
         (n, a, b) => `Olha só, ${n} de ${b}. Da outra vez era ${a}. Eu lembro de tudo, gente.`,
+        (n, a, b) => `${n} trocou o ${a} pelo ${b}. Mudou a capa, mas eu conheço o livro.`,
       ],
     },
     // o "log" de cada jogador: melhor pontuação (nome, pontos) e tempo médio de acerto (nome, tempo)
@@ -3273,6 +3297,11 @@ const REACTIVE_VOICE = {
       (n, p) => `${n}, ${p} pontos na melhor partida. Eu lembro. Eu sempre lembro.`,
       (n, p) => `O recorde de ${n} é ${p} pontos. Ninguém pediu, mas eu vou ficar contando.`,
       (n, p) => `${n} já fez ${p} pontos numa partida. A mesa que se prepare. Ou não, depende do dia.`,
+      (n, p) => `${n} chegou. Recorde: ${p} pontos. Bater isso hoje vai dar trabalho.`,
+      (n, p) => `A melhor partida de ${n} teve ${p} pontos. Eu lembro como se fosse ontem. Talvez tenha sido.`,
+      (n, p) => `${p} pontos. Esse é o número que ${n} precisa passar hoje. Sem pressão.`,
+      (n, p) => `${n} tem um recorde de ${p} pontos guardado aqui. Hoje é dia de defender ou de superar.`,
+      (n, p) => `Recorde de ${n}: ${p} pontos. A mesa inteira devia saber disso. Pronto, agora sabe.`,
     ],
     tempoMedio: {
       rapido: [
@@ -3280,12 +3309,14 @@ const REACTIVE_VOICE = {
         (n, t) => `Média de ${n}: ${t} por acerto. Isso é dedo ligeiro ou cola?`,
         (n, t) => `${n} costuma matar a carta em ${t}. A mesa vai precisar correr.`,
         (n, t) => `${t} de média pra acertar. ${n} não pensa, ${n} reage.`,
+        (n, t) => `${n} acerta em ${t}, em média. Mestre, solta as dicas rápido, senão acaba antes de começar.`,
       ],
       lento: [
         (n, t) => `${n} chegou. Média de ${t} pra acertar. Pode pensar com calma. A mesa espera. Mais ou menos.`,
         (n, t) => `${t} por acerto, em média. ${n} gosta de ouvir todas as dicas, né?`,
         (n, t) => `${n} acerta, mas acerta em ${t}. Eu já preparei um cafezinho.`,
         (n, t) => `Média de ${n}: ${t}. Devagar e sempre. Mais devagar que sempre, na verdade.`,
+        (n, t) => `${n} leva ${t}, em média, pra acertar. Mas acerta. Eu respeito quem chega lá.`,
       ],
     },
     reencontro: {
