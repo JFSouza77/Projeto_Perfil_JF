@@ -1593,8 +1593,34 @@ button {
 .mc-top {
   display: flex;
   align-items: center;
-  
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+}
+/* 25/10/2026 (feedback do JF): idade e "tag" estavam no mesmo selo e confundiam. Agora a idade é um chip
+   🎂 sempre igual (dá pra bater o olho e saber a idade) e Novo/Rápido/online/Surpresa ficam em tags à parte. */
+.mc-chips {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.mc-age {
+  flex: 0 0 auto;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  padding: 3px 9px;
+  border-radius: 999px;
+  color: #ffe4a3;
+  background: rgba(251, 191, 36, 0.16);
+  border: 1px solid rgba(251, 191, 36, 0.6);
+  white-space: nowrap;
+}
+.mc-age-varia {
+  color: #e9d5ff;
+  background: rgba(192, 132, 252, 0.16);
+  border-color: rgba(192, 132, 252, 0.6);
 }
 .mc-title {
   

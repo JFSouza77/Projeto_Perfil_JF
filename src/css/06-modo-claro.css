@@ -330,6 +330,17 @@ body.claro .mc-badge {
   color: color-mix(in srgb, var(--mc) 70%, #1b1d33);
   background: color-mix(in srgb, var(--mc) 40%, var(--claro-sup));
 }
+/* chip de idade no tema claro (feedback do JF): âmbar legível sobre fundo claro */
+body.claro .mc-age {
+  color: #7a4e07;
+  background: #fff1cf;
+  border-color: #d79a2a;
+}
+body.claro .mc-age-varia {
+  color: #6b21a8;
+  background: #f3e8ff;
+  border-color: #c084fc;
+}
 body.claro .mc-icon:after {
   background: color-mix(in srgb, var(--mc) 11%, var(--claro-sup));
 }

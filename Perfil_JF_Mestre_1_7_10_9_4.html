@@ -2626,8 +2626,34 @@ button {
 .mc-top {
   display: flex;
   align-items: center;
-  
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+}
+/* 25/10/2026 (feedback do JF): idade e "tag" estavam no mesmo selo e confundiam. Agora a idade é um chip
+   🎂 sempre igual (dá pra bater o olho e saber a idade) e Novo/Rápido/online/Surpresa ficam em tags à parte. */
+.mc-chips {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.mc-age {
+  flex: 0 0 auto;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  padding: 3px 9px;
+  border-radius: 999px;
+  color: #ffe4a3;
+  background: rgba(251, 191, 36, 0.16);
+  border: 1px solid rgba(251, 191, 36, 0.6);
+  white-space: nowrap;
+}
+.mc-age-varia {
+  color: #e9d5ff;
+  background: rgba(192, 132, 252, 0.16);
+  border-color: rgba(192, 132, 252, 0.6);
 }
 .mc-title {
   
@@ -7269,6 +7295,17 @@ body.claro .mc-badge {
   color: color-mix(in srgb, var(--mc) 70%, #1b1d33);
   background: color-mix(in srgb, var(--mc) 40%, var(--claro-sup));
 }
+/* chip de idade no tema claro (feedback do JF): âmbar legível sobre fundo claro */
+body.claro .mc-age {
+  color: #7a4e07;
+  background: #fff1cf;
+  border-color: #d79a2a;
+}
+body.claro .mc-age-varia {
+  color: #6b21a8;
+  background: #f3e8ff;
+  border-color: #c084fc;
+}
 body.claro .mc-icon:after {
   background: color-mix(in srgb, var(--mc) 11%, var(--claro-sup));
 }
@@ -11420,14 +11457,14 @@ body.claro .rep-add{color:var(--claro-txt)}
     <div class="welcome-subtitle">Cada modo tem seu próprio ritmo e regras</div>
     
     <div class="mc-list">
-      <div class="mode-select-wrap mc-wrap" id="modeWrapJunior" style="--mc:#38bdf8; --mc-glow:rgba(56,189,248,0.45);"><button class="mode-btn mc-card" id="modeBtnJunior"><span class="mc-icon">🧒</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Júnior</span><span class="mc-badge">6+</span></span><span class="mc-desc" id="mcDescJunior"></span></span></button></div>
-      <div class="mode-select-wrap mc-wrap" id="modeWrapClassico" style="--mc:#34d399; --mc-glow:rgba(52,211,153,0.45);"><button class="mode-btn mc-card" id="modeBtnClassico"><span class="mc-icon">🃏</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Clássico</span><span class="mc-badge">12+</span></span><span class="mc-desc" id="mcDescClassico"></span></span></button></div>
-      <div class="mode-select-wrap mc-wrap" id="modeWrapHardcore" style="--mc:#f87171; --mc-glow:rgba(248,113,113,0.45);"><button class="mode-btn mc-card" id="modeBtnHardcore"><span class="mc-icon">💀</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Hardcore</span><span class="mc-badge">15+</span></span><span class="mc-desc" id="mcDescHardcore"></span></span></button></div>
-      <div class="mode-select-wrap mc-wrap" id="modeWrapOldschool" style="--mc:#d6a15e; --mc-glow:rgba(214,161,94,0.45);"><button class="mode-btn mc-card" id="modeBtnOldschool"><span class="mc-icon">📻</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Old School</span><span class="mc-badge">20+</span></span><span class="mc-desc" id="mcDescOldschool"></span></span></button></div>
-      <div class="mode-select-wrap mc-wrap" id="modeWrapExpress" style="--mc:#f97316; --mc-glow:rgba(249,115,22,0.45);"><button class="mode-btn mc-card" id="modeBtnExpress"><span class="mc-icon">🔥</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Express</span><span class="mc-badge">Rápido</span></span><span class="mc-desc" id="mcDescExpress"></span></span></button></div>
-      <div class="mode-select-wrap mc-wrap" id="modeWrapCorrida" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.45);"><button class="mode-btn mc-card" id="modeBtnCorrida"><span class="mc-icon">⏱️</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Corrida contra o Tempo</span><span class="mc-badge">Novo · 12+</span></span><span class="mc-desc" id="mcDescCorrida"></span></span></button></div>
-      <div class="mode-select-wrap mc-wrap" id="modeWrapCaos" style="--mc:#e879f9; --mc-glow:rgba(232,121,249,0.45);"><button class="mode-btn mc-card" id="modeBtnCaos"><span class="mc-icon">🌀</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Modo C.A.O.S.</span><span class="mc-badge">Novo · 16+ · online</span></span><span class="mc-desc" id="mcDescCaos"></span></span></button></div>
-      <div class="mode-select-wrap mc-wrap mc-rainbow" id="modeWrapRandom" style="--mc:#fbbf24; --mc-glow:rgba(251,191,36,0.45);"><button class="mode-btn mc-card" id="modeBtnRandom"><span class="mc-icon">🎰</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Modo Aleatório</span><span class="mc-badge">Surpresa</span></span><span class="mc-desc" id="mcDescRandom"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="modeWrapJunior" style="--mc:#38bdf8; --mc-glow:rgba(56,189,248,0.45);"><button class="mode-btn mc-card" id="modeBtnJunior"><span class="mc-icon">🧒</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Júnior</span><span class="mc-chips"><span class="mc-age">🎂 6+</span></span></span><span class="mc-desc" id="mcDescJunior"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="modeWrapClassico" style="--mc:#34d399; --mc-glow:rgba(52,211,153,0.45);"><button class="mode-btn mc-card" id="modeBtnClassico"><span class="mc-icon">🃏</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Clássico</span><span class="mc-chips"><span class="mc-age">🎂 12+</span></span></span><span class="mc-desc" id="mcDescClassico"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="modeWrapHardcore" style="--mc:#f87171; --mc-glow:rgba(248,113,113,0.45);"><button class="mode-btn mc-card" id="modeBtnHardcore"><span class="mc-icon">💀</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Hardcore</span><span class="mc-chips"><span class="mc-age">🎂 15+</span></span></span><span class="mc-desc" id="mcDescHardcore"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="modeWrapOldschool" style="--mc:#d6a15e; --mc-glow:rgba(214,161,94,0.45);"><button class="mode-btn mc-card" id="modeBtnOldschool"><span class="mc-icon">📻</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Old School</span><span class="mc-chips"><span class="mc-age">🎂 20+</span></span></span><span class="mc-desc" id="mcDescOldschool"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="modeWrapExpress" style="--mc:#f97316; --mc-glow:rgba(249,115,22,0.45);"><button class="mode-btn mc-card" id="modeBtnExpress"><span class="mc-icon">🔥</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Express</span><span class="mc-chips"><span class="mc-age">🎂 12+</span><span class="mc-badge">Rápido</span></span></span><span class="mc-desc" id="mcDescExpress"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="modeWrapCorrida" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.45);"><button class="mode-btn mc-card" id="modeBtnCorrida"><span class="mc-icon">⏱️</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Corrida contra o Tempo</span><span class="mc-chips"><span class="mc-age">🎂 12+</span><span class="mc-badge">Novo</span></span></span><span class="mc-desc" id="mcDescCorrida"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="modeWrapCaos" style="--mc:#e879f9; --mc-glow:rgba(232,121,249,0.45);"><button class="mode-btn mc-card" id="modeBtnCaos"><span class="mc-icon">🌀</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Modo C.A.O.S.</span><span class="mc-chips"><span class="mc-age">🎂 16+</span><span class="mc-badge">Novo</span><span class="mc-badge mc-badge-online">🌐 online</span></span></span><span class="mc-desc" id="mcDescCaos"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap mc-rainbow" id="modeWrapRandom" style="--mc:#fbbf24; --mc-glow:rgba(251,191,36,0.45);"><button class="mode-btn mc-card" id="modeBtnRandom"><span class="mc-icon">🎰</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Modo Aleatório</span><span class="mc-chips"><span class="mc-age mc-age-varia">🎂 varia</span><span class="mc-badge">Surpresa</span></span></span><span class="mc-desc" id="mcDescRandom"></span></span></button></div>
     </div>
     <button class="btn-start mc-confirm btn-neo" id="modeConfirmBtn" style="display:none;">🚀 Iniciar</button>
     <button type="button" class="mc-back" id="modeBackBtn">← Trocar formato (Versus / Equipe)</button>
