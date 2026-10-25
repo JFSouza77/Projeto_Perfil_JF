@@ -681,6 +681,7 @@ function iniciar() {
   document.getElementById("pauseResumeBtn").addEventListener("click", resumeGame);
   document.getElementById("pauseExportBtn").addEventListener("click", () => exportSave());
   document.getElementById("pauseReportarBtn").addEventListener("click", () => cartaReportarAbrir());
+  document.getElementById("pauseProblemaBtn").addEventListener("click", () => problemaReportarAbrir());
   document.getElementById("pauseTemaBtn").addEventListener("click", toggleNoturno);
   document.getElementById("pauseVozBtn").addEventListener("click", pausaVozTrocar);
   document.getElementById("pauseReligarBtn").addEventListener("click", caosReligarCarta);

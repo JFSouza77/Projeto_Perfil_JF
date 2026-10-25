@@ -36,7 +36,19 @@ async function servidorPeer() {
 }
 
 const todos = [], erros = [];
-const conf = (n, v) => todos.push([n, !!v]);
+// 25/10/2026: cada conferência aparece na hora (se o teste cair no meio, o que já passou ou falhou não se perde)
+const conf = (n, v) => {
+  todos.push([n, !!v]);
+  console.log((v ? "ok    " : "FALHOU") + "  " + n);
+};
+// um cenário que quebra (erro de script, página fechada) vira uma falha com o motivo, e os outros seguem
+async function cenario(nome, fn) {
+  try {
+    await fn();
+  } catch (e) {
+    conf(`[${nome}] o cenário rodou até o fim sem quebrar o teste (${String((e && e.message) || e).split("\n")[0].slice(0, 160)})`, false);
+  }
+}
 
 // Uma mesa: o host (aparelho de mesa que também joga) e 2 celulares. Cada aparelho é um contexto próprio
 // (localStorage separado, como aparelhos de verdade).
@@ -294,7 +306,7 @@ async function partidaInteira(b, sv, cen) {
     conf(`[${rot}] A partida foi até o fim (${r.passos} passos, ${r.seg} s)`, r.fim);
     conf(`[${rot}] Os celulares viram o fim da partida`, (await esperar(c1.g, () => rede.retrato && rede.retrato.fim, null, 15000)) && (await esperar(c2.g, () => rede.retrato && rede.retrato.fim, null, 15000)));
     const placar = await host.evaluate(() => JSON.stringify(players.map((p) => [p.id, p.score, p.position])));
-    const iguais = async (g) => g.evaluate((pl) => JSON.stringify((rede.retrato.jogadores || []).map((p) => [p.id, p.pontos, p.casa])) === pl, placar);
+    const iguais = async (g) => g.evaluate((pl) => JSON.stringify(((rede.retrato && rede.retrato.jogadores) || []).map((p) => [p.id, p.pontos, p.casa])) === pl, placar);
     conf(`[${rot}] O placar dos celulares bate com o do host`, (await iguais(c1.g)) && (await iguais(c2.g)));
     // 1.7.10.5.6: as cartas da partida (partida.historico) levam a resposta de carta JÁ encerrada, de propósito;
     // fora delas nenhuma resposta, e a carta da vez só entra no histórico depois de encerrada
@@ -709,25 +721,28 @@ async function dueloOnline(b, sv) {
   const b = await navegador();
   const sv = await servidorPeer();
   try {
+    const partida = (cen) => cenario(cen.rot, () => partidaInteira(b, sv, cen));
     if (!SO || SO === "partidas") {
-      await partidaInteira(b, sv, { rot: "Versus Clássico até o fim", formato: "versus", modo: "classico", cond: "tabuleiro", nomes: ["Ana", "Beto", "Caio"] });
-      await partidaInteira(b, sv, { rot: "Equipe até o fim", formato: "equipe", modo: "classico", cond: "tabuleiro", equipes: 2, nomes: ["Ana", "Beto", "Caio", "Davi"] });
-      await partidaInteira(b, sv, { rot: "Express até o fim", formato: "versus", modo: "express", sabor: "classico", nomes: ["Ana", "Beto", "Caio"] });
+      await partida({ rot: "Versus Clássico até o fim", formato: "versus", modo: "classico", cond: "tabuleiro", nomes: ["Ana", "Beto", "Caio"] });
+      await partida({ rot: "Equipe até o fim", formato: "equipe", modo: "classico", cond: "tabuleiro", equipes: 2, nomes: ["Ana", "Beto", "Caio", "Davi"] });
+      await partida({ rot: "Express até o fim", formato: "versus", modo: "express", sabor: "classico", nomes: ["Ana", "Beto", "Caio"] });
     }
     if (!SO || SO === "partidas" || SO === "corrida") {
-      await partidaInteira(b, sv, { rot: "Corrida · Tempo até o fim", formato: "versus", modo: "corrida", sabor: "tempo", relogio: 90e3, limite: 420000, nomes: ["Ana", "Beto", "Caio"] }); // 1.7.10.8: intervalo de 15 s e avisos congelam o relógio, o fim demora mais em tempo real
-      await partidaInteira(b, sv, { rot: "Corrida · Tempo Hardcore até o fim", formato: "versus", modo: "corrida", sabor: "tempo-hc", relogio: 120e3, nomes: ["Ana", "Beto", "Caio"] });
+      await partida({ rot: "Corrida · Tempo até o fim", formato: "versus", modo: "corrida", sabor: "tempo", relogio: 90e3, limite: 420000, nomes: ["Ana", "Beto", "Caio"] }); // 1.7.10.8: intervalo de 15 s e avisos congelam o relógio, o fim demora mais em tempo real
+      await partida({ rot: "Corrida · Tempo Hardcore até o fim", formato: "versus", modo: "corrida", sabor: "tempo-hc", relogio: 120e3, nomes: ["Ana", "Beto", "Caio"] });
     }
-    if (!SO || SO === "partidas" || SO === "caos") await partidaModoCaos(b, sv);
-    if (!SO || SO === "partidas" || SO === "duelo") await dueloOnline(b, sv);
-    if (!SO || SO === "fundo") await segundoPlano(b, sv);
-    if (!SO || SO === "fundo" || SO === "caiu") await hostMorreu(b, sv);
-    if (!SO || SO === "versao") await atualizacao(b, sv);
+    if (!SO || SO === "partidas" || SO === "caos") await cenario("Modo C.A.O.S.", () => partidaModoCaos(b, sv));
+    if (!SO || SO === "partidas" || SO === "duelo") await cenario("Duelo online", () => dueloOnline(b, sv));
+    if (!SO || SO === "fundo") await cenario("Segundo plano", () => segundoPlano(b, sv));
+    if (!SO || SO === "fundo" || SO === "caiu") await cenario("Host caiu", () => hostMorreu(b, sv));
+    if (!SO || SO === "versao") await cenario("Atualização", () => atualizacao(b, sv));
   } finally {
     sv.fechar();
     await b.close();
   }
-  todos.forEach(([n, v]) => console.log((v ? "ok    " : "FALHOU") + "  " + n));
+  const falhas = todos.filter((x) => !x[1]);
+  console.log(`\n${todos.length - falhas.length} de ${todos.length} conferências ok.`);
+  falhas.forEach(([n]) => console.log("FALHOU  " + n));
   if (erros.length) console.log("Erros na página:", [...new Set(erros)].slice(0, 12).join(" | "));
   else console.log("Sem erro na página.");
   const tudo = todos.every((x) => x[1]) && !erros.length;

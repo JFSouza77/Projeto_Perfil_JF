@@ -728,6 +728,26 @@ const ARQ = acharMestre(process.argv[2]);
       localStorage.removeItem('perfil5_cartas_reportadas');
       localStorage.removeItem('perfil5_cartas_reporte_fila');
     }
+    // 25/10/2026: Reportar problema guarda na fila com o retrato da partida (sem nomes, sem resposta)
+    {
+      window.__REDE_SERVIDOR = false;
+      localStorage.removeItem('perfil5_cartas_reporte_fila');
+      const cartaAntes = currentCard, jogAntes = players;
+      if (!currentCard) currentCard = cartaPorId('ANO-0001');
+      players = [{ id: 'q1', name: 'Zuleica', score: 7, position: 3, humor: 'normal' }, { id: 'q2', name: 'Teodoro', score: 2, position: 1, humor: 'suave' }];
+      const rev0 = partidaRevisao;
+      problemaReportarAbrir();
+      const ov = document.getElementById('reportarProblema');
+      if (ov) { ov.querySelector('input[name="probTipo"][value="placar"]').click(); ov.querySelector('#probNota').value = 'placar pulou'; ov.querySelector('#probSalvar').click(); }
+      const f = cartaReporteFila(), it = f[0] || {}, txt = JSON.stringify(it);
+      out.problema = !!ov && f.length === 1 && it.tipo === 'problema' && it.cat === 'placar' && it.nota === 'placar pulou' && !!it.anexo &&
+        it.anexo.jog.length === 2 && it.anexo.jog[0][0] === 'J1' && it.anexo.carta === currentCard.id &&
+        !/Zuleica|Teodoro/.test(txt) && !txt.toLowerCase().includes(String(currentCard.answer).toLowerCase()) && txt.length < 2900 && partidaRevisao === rev0;
+      out.problemaDiag = JSON.stringify({ n: f.length, cat: it.cat, tam: txt.length });
+      if (ov) ov.remove();
+      currentCard = cartaAntes; players = jogAntes;
+      localStorage.removeItem('perfil5_cartas_reporte_fila');
+    }
     resetDeck();
     out.zerou = partidaRevisao === 0 && acoesLog.length === 0 && tabForma === null;
     out.formaNova = !!tabFormaAtual() && tabForma !== formaSalva;
@@ -787,6 +807,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.9.5: na partida o "toque pra ampliar" mostra só a lista, sem o tabuleiro grande', r.ampliarSemDesenho],
     ['1.7.9.5: Menos movimento (acessibilidade) e Modo Batata são coisas separadas', r.calmoSeparado],
     ['1.7.10: Reportar carta anota no aparelho, sem resposta na janela e sem mexer na partida', r.reportar],
+    ['Reportar problema: vai pra fila com o retrato da partida, sem nomes e sem a resposta', r.problema],
     ['1.7.10: nome repetido: o nome já cadastrado fica em destaque, o campo fica vermelho e o C.A.O.S. comenta', r.nomeRepetido],
     ['Travas ADM: a pergunta abre, Sim trava o nick da Anne, Não desliga, e não pergunta duas vezes na mesma partida', r.travasAdm],
     ['C.A.O.S. 4.3: comentário espera a fala anterior terminar + respiro (até 10 por carta), aviso de regra passa, no online Alt-Tab não pausa e pular fala não marca ninguém, e o que ele já apresentou volta no save', r.caos42],
