@@ -3614,6 +3614,7 @@ function showPauseScreen() {
   const rl = document.getElementById("pauseRulesList");
   if (rl) rl.innerHTML = buildRulesHtml();
   pausaAjustesAtualizar();
+  pauseJogadoresAtualizar();
   tutPausaAtualizar();
   const bv = document.getElementById("pauseVitoriaBtn");
   if (bv) bv.style.display = CURRENT_MODE === "express" ? "none" : "";
@@ -3782,6 +3783,62 @@ function updateNoturnoBtn() {
   pausaAjustesAtualizar();
 }
 // Pausa: trocar o visual e calar/ligar a voz sem sair da partida.
+// 25/10/2026 (pedido do JF): alguém desistiu no meio do jogo. O host tem, na Pausa, duas opções por jogador:
+//  · "Remover da sala": só tira o aparelho do assento (online) — a pessoa continua na partida, jogando no host;
+//  · "Remover da partida": sai de vez (os pontos são divididos entre quem fica). Essa sempre pede confirmação.
+function pauseJogadoresAtualizar() {
+  const box = document.getElementById("pauseJogadoresBox");
+  if (!box) return;
+  const nota = (txt) => (box.innerHTML = `<div class="ci-empty">${txt}</div>`);
+  if (!starterChosen || gameEnded) return nota('Só durante a partida. (Antes de começar, use o "remover" na lista de jogadores.)');
+  if (CURRENT_FORMAT === "equipe") return nota("No Equipe não dá: as equipes precisam ficar do mesmo tamanho.");
+  if (players.length <= 2) return nota("Com 2 jogadores não dá pra tirar ninguém — a partida precisa de pelo menos 2.");
+  box.innerHTML = "";
+  const online = typeof rede !== "undefined" && rede && rede.papel === "host";
+  players.forEach((p, i) => {
+    const row = document.createElement("div");
+    row.className = "pj-row";
+    const naSala = online && !redeNoHost(p.id) && redeOnline(rede.assentos[p.id]);
+    row.innerHTML =
+      `<div class="pj-nome">${playerNameHtml(p.name, p.color, p.avatar)} <span class="ci-mono ci-dim">${p.score} pts</span>${naSala ? ' <span class="pj-tag">📱 na sala</span>' : ""}</div>` +
+      `<div class="pj-btns">` +
+      (naSala ? `<button type="button" class="btn-sec pj-sala" data-i="${i}">📴 Remover da sala</button>` : "") +
+      `<button type="button" class="btn-sec pj-partida" data-i="${i}">🚪 Remover da partida</button></div>`;
+    box.appendChild(row);
+  });
+  box.querySelectorAll(".pj-sala").forEach((b) =>
+    b.addEventListener("click", () => {
+      const p = players[+b.dataset.i];
+      const r = typeof redeRemoverDaSala === "function" ? redeRemoverDaSala(+b.dataset.i) : "sem_sala";
+      if (r === "ok") showToastMessage(`📴 ${escapeHtml(p ? p.name : "")} saiu da sala — segue na partida jogando neste aparelho.`, null, true);
+      else caosAvisoModal("Esse jogador não está com aparelho próprio na sala agora.");
+      pauseJogadoresAtualizar();
+    }),
+  );
+  box.querySelectorAll(".pj-partida").forEach((b) =>
+    b.addEventListener("click", () => {
+      const i = +b.dataset.i,
+        p = players[i];
+      if (!p) return;
+      const resto = players.length - 1,
+        parte = Math.floor(p.score / resto),
+        sobra = p.score - parte * resto;
+      caosConfirmarModal(
+        `Remover ${p.name} da partida?
+
+Os ${p.score} pontos vão ser divididos: +${parte} pra cada um dos ${resto} que ficam${sobra ? `, e ${sobra} vão pro cofrinho do C.A.O.S.` : ""}.${currentCard ? "\nA carta da mesa volta pro baralho e o Mestre puxa outra." : ""}`,
+        "Remover",
+        "Cancelar",
+        () => {
+          const r = admRemoverJogador(i);
+          if (r !== "ok") caosAvisoModal("Não deu pra remover: " + r);
+          else if (typeof redeHostCadastroMudou === "function") redeHostCadastroMudou();
+          pauseJogadoresAtualizar();
+        },
+      );
+    }),
+  );
+}
 function pausaAjustesAtualizar() {
   const t = document.getElementById("pauseTemaBtn"),
     v = document.getElementById("pauseVozBtn");

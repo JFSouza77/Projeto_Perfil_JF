@@ -2049,7 +2049,56 @@ body.batata-mode #floatingWordsContainer {
   margin-top: 16px;
   opacity: 0.8;
   font-size: 0.85rem;
-  
+
+}
+/* 25/10/2026 (pedido do JF): lista de jogadores na Pausa, com remover da sala / da partida */
+.pause-jogadores {
+  width: 100%;
+  max-width: 420px;
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+.pause-jogadores > summary {
+  cursor: pointer;
+  padding: 8px 0;
+}
+.pj-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 10px;
+  padding: 8px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.pj-nome {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.pj-tag {
+  font-size: 0.72rem;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(34, 211, 238, 0.16);
+  border: 1px solid rgba(34, 211, 238, 0.55);
+  color: #a5f3fc;
+}
+.pj-btns {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.pj-btns .btn-sec {
+  margin: 0;
+  padding: 7px 10px;
+  font-size: 0.8rem;
+}
+.pj-btns .pj-partida {
+  --cc: #f87171;
+  color: #fca5a5;
+  border-color: rgba(248, 113, 113, 0.5);
 }
 .pause-rules summary {
   cursor: pointer;

@@ -1117,6 +1117,30 @@ function redeHostCadastroMudou() {
   const p = document.getElementById("redePainel");
   if (p && typeof p._pintar === "function") p._pintar();
 }
+// 25/10/2026 (pedido do JF): "remover da sala" — o host tira só o APARELHO do assento; o jogador continua na
+// partida, jogando no aparelho do host (entra em hostJunto). O lugar fica livre; se a pessoa quiser o próprio
+// aparelho de volta, é só reentrar pela sala. Diferente de "remover da partida" (admRemoverJogador).
+function redeRemoverDaSala(idx) {
+  const p = players[idx];
+  if (!p) return "sem_jogador";
+  if (typeof rede === "undefined" || !rede || rede.papel !== "host") return "sem_sala";
+  const a = rede.assentos[p.id];
+  if (redeNoHost(p.id) || !redeOnline(a)) return "nao_online";
+  // libera o assento e manda o aparelho de volta pra tela de escolher lugar
+  delete rede.assentos[p.id];
+  if (a && a.sessao) {
+    delete rede.esperando[a.sessao];
+    redeMandarEscolha(a.sessao);
+  }
+  // passa a jogar no host (redeNoHost), pra não ficar "sem aparelho" no meio da partida
+  rede.hostJunto = rede.hostJunto || [];
+  if (!rede.hostJunto.includes(p.id)) rede.hostJunto.push(p.id);
+  caosLog("rede", `${p.name}: removido da sala (segue no host)`);
+  redeHostCadastroMudou();
+  render();
+  saveGameState();
+  return "ok";
+}
 function redeHostReceber(m) {
   if (!redeRitmoOk(m.de)) return; // 1.7.9.7: sessão mandando demais
   const a = redeAssentoDaSessao(m.de);
