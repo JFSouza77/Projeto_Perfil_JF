@@ -599,3 +599,13 @@ body.claro .mini-scoreboard li.mini-meta {
   border-color: #f59e0b;
   color: #92400e;
 }
+/* 25/10/2026 · auditoria de contraste dos textos (WCAG AA, tema claro): letra apagada demais por opacity e
+   cores feitas pro fundo escuro (dourado do tutorial, cor do humor) */
+body.claro .splash-menu-tit,
+body.claro .pick-vazio,
+body.claro #humorHint {
+  opacity: 0.8 !important;
+}
+body.claro .tut-title {
+  color: #8a5a00;
+}

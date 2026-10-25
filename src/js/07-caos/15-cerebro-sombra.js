@@ -20,6 +20,23 @@ const CAOS_CEREBRO_LIMIAR = 0.5;
 const CAOS_CEREBRO_OBRIGATORIAS = new Set(["absurdo", "retaFinal"]);
 // zoeira: no Júnior e com Family friendly vira incentivo
 const CAOS_CEREBRO_ZOEIRA = new Set(["errosSeguidos", "pulosSeguidos"]);
+// nomes pra mostrar no Inspetor
+const CAOS_CEREBRO_NOMES = {
+  absurdo: "Absurdo",
+  acertoRapido: "acerto rápido",
+  acerto: "acerto",
+  sequencia: "sequência de acertos",
+  estreia: "primeiro acerto",
+  erro: "erro",
+  erroDeNovo: "errou de novo",
+  errosSeguidos: "erros seguidos",
+  pulo: "pulo",
+  pulosSeguidos: "pulos seguidos",
+  viradaLider: "virada na liderança",
+  retaFinal: "reta final",
+  incentivo: "incentivo",
+};
+const caosCerebroNome = (t) => CAOS_CEREBRO_NOMES[t] || t;
 let caosFalaReg = [];
 let caosFalaN = 0;
 const caosCerebro = { on: false, log: [], lider: null, reta: new Set(), escolhas: [], tot: 0, fal: 0, tipos: {}, acertaram: new Set() };
@@ -136,7 +153,7 @@ function caosCerebroDecidir(v) {
   else if (top && top.nota >= CAOS_CEREBRO_LIMIAR) {
     escolha = top;
     porque = top.motivo;
-  } else if (top) porque = `nota baixa (${top.tipo} ${top.nota})`;
+  } else if (top) porque = `nota baixa (${caosCerebroNome(top.tipo)} ${top.nota})`;
   return { escolha, porque, cands };
 }
 // entrada (blindada pela espinha): chamada a cada jogada, só com o cérebro ligado
@@ -232,7 +249,7 @@ function caosInspectorCerebro(onChange) {
   }
   sec.insertAdjacentHTML(
     "beforeend",
-    `<div class="ci-note">${r.decisoes} jogadas · falaria em ${r.falaria} (${r.pct}%) · tipos: ${escapeHtml(r.tipos.join(", ") || "-")}</div>`,
+    `<div class="ci-note">${r.decisoes} jogadas · falaria em ${r.falaria} (${r.pct}%) · tipos: ${escapeHtml(r.tipos.map(caosCerebroNome).join(", ") || "-")}</div>`,
   );
   const lista = document.createElement("div");
   lista.className = "ci-list";
@@ -241,7 +258,7 @@ function caosInspectorCerebro(onChange) {
     .slice(0, 30)
     .map(
       (e) =>
-        `<div class="ci-log" style="border-left-color:${e.escolha ? "#4ade80" : "#64748b"}"><div class="ci-log-top"><span class="ci-mono ci-dim">carta ${e.carta}</span><b>${escapeHtml(e.quem || "")}</b><span class="ci-chip">${e.escolha ? "falaria: " + escapeHtml(e.escolha) + " " + e.nota : "calaria"}</span></div><div class="ci-log-txt">Por quê: ${escapeHtml(e.porque)} · sistema: ${escapeHtml(e.sistema || "não falou")}</div></div>`,
+        `<div class="ci-log" style="border-left-color:${e.escolha ? "#4ade80" : "#64748b"}"><div class="ci-log-top"><span class="ci-mono ci-dim">carta ${e.carta}</span><b>${escapeHtml(e.quem || "")}</b><span class="ci-chip">${e.escolha ? "falaria: " + escapeHtml(caosCerebroNome(e.escolha)) + " (" + e.nota + ")" : "calaria"}</span></div><div class="ci-log-txt">Por quê: ${escapeHtml(e.porque)} · sistema: ${escapeHtml(e.sistema || "não falou")}</div></div>`,
     )
     .join("");
   sec.appendChild(lista);

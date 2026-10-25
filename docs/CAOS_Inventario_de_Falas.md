@@ -79,25 +79,25 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 166 | showToastMessage | - |
 | 467 | showToastMessage, getRandomReaction | memoria.apagada |
 | 517 | showToastMessage, getRandomReaction | especialExpressSemAlvo |
-| 1316 | showToastMessage | - |
-| 1317 | getRandomReaction | conferirResposta |
-| 1688 | getRandomReaction | nomeRepetido |
-| 1689 | showToastMessage | - |
-| 1702 | getRandomReaction | escolhaExclusiva |
-| 1706 | getRandomReaction | escolhaTomada |
-| 1708 | showToastMessage | - |
-| 1985 | getRandomReaction | nickDemora |
-| 1986 | showToastMessage | - |
-| 2298 | showToastMessage | - |
-| 2781 | showToastMessage, getRandomReaction | - |
-| 3298 | showToastMessage | - |
-| 3408 | admFala, getRandomReaction | admHumorMudou |
-| 3430 | admFala | - |
-| 3431 | getRandomReaction | admHumorMudou |
-| 3507 | admFala, getRandomReaction | caosVoltouDaPartida |
-| 3642 | showToastMessage, getRandomReaction | pausaExpirada.continuou |
-| 3653 | showToastMessage, getRandomReaction | pausaExpirada.recomecou |
-| 3808 | getRandomReaction | vozCalada |
+| 1320 | showToastMessage | - |
+| 1321 | getRandomReaction | conferirResposta |
+| 1692 | getRandomReaction | nomeRepetido |
+| 1693 | showToastMessage | - |
+| 1706 | getRandomReaction | escolhaExclusiva |
+| 1710 | getRandomReaction | escolhaTomada |
+| 1712 | showToastMessage | - |
+| 1991 | getRandomReaction | nickDemora |
+| 1992 | showToastMessage | - |
+| 2304 | showToastMessage | - |
+| 2787 | showToastMessage, getRandomReaction | - |
+| 3304 | showToastMessage | - |
+| 3414 | admFala, getRandomReaction | admHumorMudou |
+| 3436 | admFala | - |
+| 3437 | getRandomReaction | admHumorMudou |
+| 3513 | admFala, getRandomReaction | caosVoltouDaPartida |
+| 3648 | showToastMessage, getRandomReaction | pausaExpirada.continuou |
+| 3659 | showToastMessage, getRandomReaction | pausaExpirada.recomecou |
+| 3814 | getRandomReaction | vozCalada |
 
 ## js/05d-ajuda-do-mestre.js (2)
 
@@ -553,5 +553,5 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 458 | getRandomReaction | nickRepertorio |
 | 459 | getRandomReaction | nickSugestaoAceita |
 | 503 | getRandomReaction | botaoEncerrar |
-| 762 | showToastMessage | - |
-| 763 | getRandomReaction | inicioInvalido |
+| 763 | showToastMessage | - |
+| 764 | getRandomReaction | inicioInvalido |

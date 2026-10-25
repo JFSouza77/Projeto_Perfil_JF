@@ -14,7 +14,7 @@
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1842;
+const JOGO_BUILD = 1844;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -912,6 +912,7 @@ const HUMOR_OPTIONS = [
 ];
 const HUMOR_NOMES = { familia: "🧸 Family friendly", suave: "🌷 Suave", normal: "😏 Normal", acido: "🌶️ Ácido", zero: "💀 Nível 0" };
 const HUMOR_COR = { familia: "#7dd3fc", suave: "#f9a8d4", normal: "#fbbf24", acido: "#ef4444", zero: "#b91c1c", caos: "#a78bfa" };
+const HUMOR_COR_CLARO = { familia: "#0369a1", suave: "#be185d", normal: "#92400e", acido: "#b91c1c", zero: "#7f1d1d", caos: "#6d28d9" };
 const NICKS_GERAL = [
   "Sabe-Tudo",
   "Rei do Palpite",

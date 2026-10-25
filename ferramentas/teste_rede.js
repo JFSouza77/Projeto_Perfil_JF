@@ -181,6 +181,12 @@ async function rodarServidorNosso(b, nosso, publico) {
   await g5.waitForTimeout(2500);
   conf("Sala do Júnior não aparece na lista (só pelo código)", !(await g5.evaluate((c) => !!document.querySelector(`#redeSalasPerto [data-sala="${c}"]`), sala)));
   // 1.7.10 (ideia do JF): carta reportada em qualquer aparelho vai pro servidor; o JF lê numa página com senha
+  // (25/10/2026: o servidor local guarda os reportes entre rodadas; começa da caixa vazia)
+  await new Promise((ok) => {
+    const rq = require("http").request({ host: "127.0.0.1", port: nosso, path: "/reportes/apagar", method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" } }, (r) => { r.resume(); r.on("end", ok); });
+    rq.on("error", ok);
+    rq.end("chave=teste-senha");
+  });
   const faltam = await g5.evaluate(async () => {
     localStorage.removeItem("perfil5_cartas_reporte_fila");
     cartaReportarGuardar({ id: "ANO-0042", resposta: "Teste", categoria: "ANO", dica: { pos: 2, id: "ANO-0042-C03", texto: "<b>dica</b> errada" }, motivo: "fato", nota: "conferir", modo: "classico", versao: "1.7.10", quando: Date.now() });
@@ -191,6 +197,22 @@ async function rodarServidorNosso(b, nosso, publico) {
   const pag = await pegar("/reportes?chave=teste-senha"), errada = await pegar("/reportes?chave=chute");
   conf("Reportar carta: o reporte chega no servidor e sai da fila do aparelho", faltam === 0 && pag.st === 200 && /ANO-0042/.test(pag.d) && /Fato errado/.test(pag.d));
   conf("Página dos reportes: senha errada não entra; texto vem escapado", errada.st === 401 && !/<b>dica<\/b>/.test(pag.d));
+  // 25/10/2026: problema da partida (bug) chega na mesma página, numa seção própria, com o retrato
+  const faltamP = await g5.evaluate(async () => {
+    const cv = document.createElement("canvas");
+    cv.width = 40;
+    cv.height = 30;
+    cv.getContext("2d").fillRect(0, 0, 40, 30);
+    problemaGuardar({ cat: "travou", nota: "<i>travou</i> no duelo", anexo: { v: "teste", jog: [["J1", 3, 2, "normal"]] }, modo: "classico", versao: "1.7.10", quando: Date.now(), imagens: [cv.toDataURL("image/jpeg", 0.6), "data:text/html;base64,PGI+"] });
+    return cartaReporteEnviar();
+  });
+  const pagP = await pegar("/reportes?chave=teste-senha"), txtP = await pegar("/reportes?chave=teste-senha&formato=texto");
+  conf("Reportar problema: chega no servidor com o retrato e aparece na seção de problemas", faltamP === 0 && /Problemas reportados \(1\)/.test(pagP.d) && /Travou/.test(pagP.d) && /Retrato da partida/.test(pagP.d) && !/<i>travou<\/i>/.test(pagP.d) && /J1/.test(txtP.d));
+  // 25/10/2026: a imagem (print) vai junto; o que não é imagem é descartado; sem senha, a imagem não abre
+  const urlImg = ((pagP.d.match(/<img src="([^"]+)"/) || [])[1] || "").replace(/&amp;/g, "&");
+  const pegarTipo = (cam) => new Promise((ok) => http.get("http://127.0.0.1:" + nosso + cam, (r) => { r.resume(); ok({ st: r.statusCode, tipo: r.headers["content-type"] || "" }); }).on("error", () => ok({ st: 0, tipo: "" })));
+  const img = urlImg ? await pegarTipo(urlImg) : { st: 0 }, imgSem = urlImg ? await pegarTipo(urlImg.replace(/chave=[^&]+/, "chave=chute")) : { st: 0 };
+  conf("Reportar problema: o print vai junto (só imagem de verdade) e só abre com a senha", (pagP.d.match(/<img src=/g) || []).length === 1 && img.st === 200 && /image\/jpeg/.test(img.tipo) && imgSem.st === 401);
   conf(
     "Ponte: sem conta configurada segue sem; com credenciais, elas vão primeiro na lista",
     await g3.evaluate(async () => {
