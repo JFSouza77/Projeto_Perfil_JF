@@ -736,11 +736,11 @@ function clearTimer() {
 }
 function secondsLeft() {
   if (!timerEndAt) return 0;
-  return Math.max(0, Math.ceil((timerEndAt - Date.now()) / 1e3));
+  return Math.max(0, Math.ceil((timerEndAt - relogioJogo()) / 1e3)); // 25/10/2026: prazo no tempo de jogo (02d)
 }
 function startTimer(kind) {
   if (activeToastState && activeToastState.hadActiveTimer && !activeToastState.freezeEndedAt)
-    activeToastState.freezeEndedAt = Date.now();
+    activeToastState.freezeEndedAt = relogioJogo();
   clearTimer();
   timerSerial++;
   const durations = {
@@ -751,7 +751,7 @@ function startTimer(kind) {
   };
   if (CURRENT_MODE === "corrida") corridaAjustarVez(durations, kind); // Hardcore 10+10 s, Fôlego +15 s, janela do relâmpago
   timerKind = kind;
-  timerEndAt = Date.now() + durations[kind] * 1e3;
+  timerEndAt = relogioJogo() + durations[kind] * 1e3;
   resumeTimerInterval();
   if (CURRENT_MODE === "corrida" && kind === "pick") corridaRelampagoAgendar(); // Hardcore / Juízo Final: a dica abre sozinha
   if (kind === "pick" || kind === "turn") setTimeout(() => caosIniMostrar(players[responderIndex], "vez"), 60);
@@ -760,17 +760,11 @@ function resumeTimerInterval() {
   if (timerInterval) clearInterval(timerInterval);
   lastTimerTick = Date.now();
   timerInterval = setInterval(() => {
-    // 1.7.10.7: aviso da mesa na tela: o tempo da vez e da carta espera
-    if (typeof avisoCongeladoDesde === "function") {
-      const d = avisoCongeladoDesde(lastTimerTick);
-      if (d > 0) {
-        if (timerEndAt) timerEndAt += d;
-        if (cardEndAt) cardEndAt += d;
-      }
-      if (avisoMesaCongela()) {
-        lastTimerTick = Date.now();
-        return;
-      }
+    // 1.7.10.7: aviso da mesa na tela: o tempo da vez e da carta espera (25/10/2026: o relógio único já para
+    // sozinho; aqui só não dispara aviso de tempo nem expira enquanto o aviso cobre a tela)
+    if (typeof avisoMesaCongela === "function" && avisoMesaCongela()) {
+      lastTimerTick = Date.now();
+      return;
     }
     lastTimerTick = Date.now();
     updateTimerDisplay();
@@ -1433,7 +1427,7 @@ function loseTurnAfterSpecial() {
   }
 }
 function cardSecondsLeft() {
-  return cardEndAt ? Math.max(0, Math.ceil((cardEndAt - Date.now()) / 1e3)) : 0;
+  return cardEndAt ? Math.max(0, Math.ceil((cardEndAt - relogioJogo()) / 1e3)) : 0;
 }
 function clearCardTimer() {
   cardEndAt = null;
@@ -1456,7 +1450,7 @@ function expressRevealNext() {
   return true;
 }
 function startExpressCard() {
-  cardEndAt = Date.now() + (expressTimes().card + mestreTempoExtra("card")) * 1e3;
+  cardEndAt = relogioJogo() + (expressTimes().card + mestreTempoExtra("card")) * 1e3;
   cardSerial++;
   expressAskWho = false;
   revealedOrder = [];
@@ -1521,11 +1515,12 @@ function expressCardLost() {
 function expressFreezeForWho() {
   if (expressWhoFreeze) return;
   if (activeToastState) closeActiveToast();
-  const now = Date.now();
+  const now = Date.now(),
+    jogo = relogioJogo();
   expressWhoFreeze = {
-    turnMs: timerEndAt ? Math.max(0, timerEndAt - now) : null,
+    turnMs: timerEndAt ? Math.max(0, timerEndAt - jogo) : null,
     kind: timerKind,
-    cardMs: cardEndAt ? Math.max(0, cardEndAt - now) : null,
+    cardMs: cardEndAt ? Math.max(0, cardEndAt - jogo) : null,
     startAgoMs: typeof pendingStartTime === "number" ? now - pendingStartTime : null,
   };
   clearTimer();
@@ -1535,12 +1530,13 @@ function expressUnfreezeWho() {
   const f = expressWhoFreeze;
   expressWhoFreeze = null;
   if (!f) return;
-  const now = Date.now();
-  if (f.cardMs !== null) cardEndAt = now + f.cardMs;
+  const now = Date.now(),
+    jogo = relogioJogo();
+  if (f.cardMs !== null) cardEndAt = jogo + f.cardMs;
   if (f.startAgoMs !== null) pendingStartTime = now - f.startAgoMs;
   if (f.turnMs !== null && f.kind) {
     timerKind = f.kind;
-    timerEndAt = now + f.turnMs;
+    timerEndAt = jogo + f.turnMs;
   }
   if (timerEndAt || cardEndAt) resumeTimerInterval();
 }
@@ -2031,6 +2027,7 @@ function pauseGame() {
   }
   document.getElementById("gameScreen").style.display = "none";
   pausedAt = Date.now();
+  relogioMarcar("pausa", true); // 25/10/2026: o relógio único para
   showPauseScreen();
   caosPausaHumorIniciar();
   const apb = document.getElementById("autoPauseBanner");
@@ -2049,6 +2046,7 @@ function resumeGame() {
     }
   } catch (e) {}
   pausedAt = null;
+  relogioMarcar("pausa", false);
   pausaExpirada = false;
   const apb = document.getElementById("autoPauseBanner");
   if (apb) apb.style.display = "none";
@@ -2059,12 +2057,12 @@ function resumeGame() {
   document.getElementById("resumeGameBtn").style.display = "none";
   syncGameplayPanels();
   if (pausedCardRemaining !== null) {
-    cardEndAt = Date.now() + pausedCardRemaining * 1e3;
+    cardEndAt = relogioJogo() + pausedCardRemaining * 1e3;
     pausedCardRemaining = null;
   }
   if (pausedRemainingSeconds !== null && pausedKind) {
     timerKind = pausedKind;
-    timerEndAt = Date.now() + pausedRemainingSeconds * 1e3;
+    timerEndAt = relogioJogo() + pausedRemainingSeconds * 1e3;
     pausedRemainingSeconds = null;
     pausedKind = null;
     resumeTimerInterval();

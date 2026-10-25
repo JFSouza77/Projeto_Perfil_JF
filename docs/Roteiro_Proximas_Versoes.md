@@ -30,7 +30,7 @@ Candidatas, em ordem do que eu acho que rende mais:
 
 | Ideia | Por quê | Tamanho |
 |---|---|---|
-| **Relógio único da partida** | Resolve na raiz a família de bugs de tempo (avisos, pausa, intervalos). Ninguém vê, mas o jogo fica mais firme. | Grande |
+| ~~**Relógio único da partida**~~ (feito na 1.7.10.9.4, `src/js/02d-relogio.js`) | Resolve na raiz a família de bugs de tempo (avisos, pausa, intervalos). Ninguém vê, mas o jogo fica mais firme. | Grande |
 | **Sistema neurológico do C.A.O.S.** (pedido do JF, 25/10/2026) | Voltar no cérebro dele: melhorar a interface (painel neural do ADM) e calibrar melhor reações e emoções. Agora que cada jogador tem uma ficha (emoji, humor, o que ele sorteou, recorde, tempo médio), dá pra usar isso nas emoções. | Médio |
 | ~~**Botão "Reportar problema" na partida**~~ (feito em 25/10/2026, C.A.O.S. 5.1.1) | Já existe o Reportar carta. Um reporte de bug com o estado da partida anexado ajudaria muito nos testes com gente de verdade. | Médio |
 | **Duelistas escolhem o tipo de duelo** (Modo C.A.O.S.) | Pedido do pacote do GPT; encaixa com o melhor de 3. | Pequeno |

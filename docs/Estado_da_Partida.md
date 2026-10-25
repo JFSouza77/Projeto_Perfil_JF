@@ -59,7 +59,7 @@ São 258 variáveis no estado global: 136 do C.A.O.S. (`caos*`) e 122 do jogo. 7
 
 | Variável | No save | Observação |
 |---|---|---|
-| `timerEndAt`, `timerKind`, `cardEndAt`, `pendingStartTime` | sim | o C.A.O.S. pode dar tempo, nunca tirar (espinha) |
+| `timerEndAt`, `timerKind`, `cardEndAt`, `pendingStartTime` | sim | o C.A.O.S. pode dar tempo, nunca tirar (espinha). Desde a 1.7.10.9.4 `timerEndAt` e `cardEndAt` estão no **tempo de jogo** (`relogioJogo()`, `src/js/02d-relogio.js`), que para na pausa e no aviso; no save e pros celulares vão em horário de verdade (`relogioParede`) |
 | `pausedAt`, `pausedKind`, `pausedRemainingSeconds`, `pausedCardRemaining`, `pausaExpirada` | sim | |
 | `tempoJogoMs`, `tempoPausaMs` (05f) | sim | duração só com o tempo jogando |
 

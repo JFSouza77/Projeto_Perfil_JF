@@ -415,7 +415,7 @@ function retratoPartida(papel) {
     estoquePalpite: palpiteStock,
     joiasRodada: { ...joiasRodada },
     vencedorJoias: gemWinner ? { tipo: gemWinner.kind, id: gemWinner.id } : null,
-    relogio: { tipo: timerKind || null, fimEm: timerEndAt || null, cartaFimEm: cardEndAt || null, pausado: !!pausedAt },
+    relogio: { tipo: timerKind || null, fimEm: relogioParede(timerEndAt) || null, cartaFimEm: relogioParede(cardEndAt) || null, pausado: !!pausedAt },
     corrida: typeof corridaRetrato === "function" ? corridaRetrato() : null, // 1.7.10.6: relógios da Corrida
     mc: typeof mcRetrato === "function" ? mcRetrato() : null, // 1.7.10.6: Modo C.A.O.S. (só o público)
     // 1.7.10.5.6 (pedido do JF): resumo da partida pra T2 e pro lobby: tempo de jogo (sem pausa), cartas viradas e as
@@ -472,7 +472,7 @@ let desfazerOferta = null;
 let desfazerTimer = null;
 const desfazerCopia = (v) => (v === undefined || v === null ? v : JSON.parse(JSON.stringify(v)));
 function desfazerFotografar() {
-  const agora = Date.now();
+  const agora = relogioJogo(); // 25/10/2026: prazos no tempo de jogo (02d)
   return {
     players: desfazerCopia(players),
     teams: desfazerCopia(teams),
@@ -597,10 +597,10 @@ function desfazerAplicar(f) {
   clearTimer();
   if (f.timerKind && f.timerResta) {
     timerKind = f.timerKind;
-    timerEndAt = Date.now() + f.timerResta;
+    timerEndAt = relogioJogo() + f.timerResta;
     resumeTimerInterval();
   }
-  cardEndAt = f.cartaResta ? Date.now() + f.cartaResta : null;
+  cardEndAt = f.cartaResta ? relogioJogo() + f.cartaResta : null;
   pendingStartTime = Date.now();
   // o que o veredito deixou agendado (ex.: seguir depois do balão) não vale mais
   cartaSeq++;
