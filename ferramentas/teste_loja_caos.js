@@ -143,6 +143,27 @@ const ARQ = acharMestre(process.argv[2]);
       mcDueloResolver();
     }
     o.jokenpo3Empates = !!mc.duelo && !!mc.duelo.placar && (mc.duelo.placar.p0 || 0) + (mc.duelo.placar.p1 || 0) === 1 && mc.duelo.empates === 0;
+    // 1.8 (JF): o desafiado escolhe o duelo em 10 s; não escolheu, o C.A.O.S. sorteia
+    placar(2, 2, 0);
+    mc.duelo = null;
+    mc.fase = 'janela';
+    const roubou = mcRouboComecar();
+    const du = mc.duelo;
+    const opsV = du ? mcOpcoes(du.vitima).filter((x) => x.a === 'mcDueloTipo') : [];
+    const opsL = du ? mcOpcoes(du.ladrao).filter((x) => x.a === 'mcDueloTipo') : [];
+    o.dueloDesafiadoEscolhe = roubou && du.fase === 'tipo' && du.tipo === null && opsV.length === 4 && opsL.length === 0 && /escolhe o duelo/.test(mcTelaHtml(retratoPartida('mesa'), du.ladrao, mcOpcoes(du.ladrao), mcPrivado(du.ladrao)));
+    o.dueloLadraoNaoEscolhe = !mcPodeEscolherTipo(du.ladrao, 'ppt');
+    mcDueloTipoEscolher(du.vitima, 'parimpar');
+    o.dueloTipoEscolhido = mc.duelo.tipo === 'parimpar' && mc.duelo.fase === 'escolha' && !!mc.duelo.lados && mcOpcoes(du.vitima).some((x) => x.a === 'mcDuelo');
+    mc.duelo = null;
+    mc.fase = 'janela';
+    mcRouboComecar();
+    avisoZerar(); // o aviso grande do duelo congela o tique
+    mc.duelo.ate = mcAgora() - 1;
+    mcTicar();
+    o.dueloTipoSorteado = !!mc.duelo && MC_DUELOS.includes(mc.duelo.tipo) && mc.duelo.fase === 'escolha';
+    mc.duelo = null;
+    mc.fase = 'janela';
     mc.inv.p0 = { espelho: 1 };
     o.itemDizQuando = /protege você sozinho/.test(mcTelaHtml(retratoPartida('mesa'), 'p0', mcOpcoes('p0'), mcPrivado('p0')));
     mc.inv.p0 = {};

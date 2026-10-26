@@ -25,6 +25,9 @@ const rodar = (args) => {
 
 // sorteio fixo e relógio virtual: o mesmo roteiro dá sempre o mesmo resultado
 function preparo() {
+  try {
+    localStorage.setItem("perfil_jf_caos_guia", "0"); // 1.8: o guia da mesa tem relógio próprio (o roteiro aqui adianta o tempo)
+  } catch (e) {}
   let a = 20261025;
   window.__rng = 0;
   Math.random = function () {

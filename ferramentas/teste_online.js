@@ -349,6 +349,7 @@ const PASSO_MC = (ehHost) => {
       pega("continuar", 1) ||
       (tem("mcVeredito").length ? tem("mcVeredito")[sorte < 0.45 ? 0 : 1] : null) ||
       (tem("mcDesafioVeredito").length ? tem("mcDesafioVeredito")[sorte < 0.5 ? 0 : 1] : null) ||
+      pega("mcDueloTipo", 0.7) ||
       pega("mcDuelo", 1) ||
       pega("mcRevanche", 1) ||
       pega("mcDesfib", 0.6) ||

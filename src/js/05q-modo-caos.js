@@ -617,7 +617,8 @@ function mcDesafioFim() {
   mcComecarVez();
 }
 
-// Roubo: um ladrão abaixo do topo desafia alguém com placar igual ou maior; duelo sorteado pelo C.A.O.S.
+// Roubo: um ladrão abaixo do topo desafia alguém com placar igual ou maior.
+// 1.8 (pedido do JF): quem foi desafiado escolhe o duelo em 10 s; não escolheu, o C.A.O.S. sorteia.
 const MC_DUELOS = ["d6", "moeda", "ppt", "parimpar"];
 const MC_DUELO_NOME = { d6: "🎲 Dado (D6)", moeda: "🪙 Cara ou Coroa", ppt: "✊ Pedra, Papel e Tesoura", parimpar: "✌️ Par ou Ímpar" };
 function mcRouboComecar() {
@@ -629,25 +630,43 @@ function mcRouboComecar() {
   const vitima = sorteioItem(vitimas);
   if (!vitima) return false;
   mc.cont.roubo++;
-  mc.duelo = { ladrao: ladrao.id, vitima: vitima.id, tipo: sorteioItem(MC_DUELOS), fase: "escolha", esc: {}, ate: mcAgora() + 12000, revanche: false, lados: null, resultado: null };
-  const d = mc.duelo;
-  if (d.tipo === "moeda") d.lados = Math.random() < 0.5 ? { [d.ladrao]: "cara", [d.vitima]: "coroa" } : { [d.ladrao]: "coroa", [d.vitima]: "cara" };
-  if (d.tipo === "parimpar") d.lados = Math.random() < 0.5 ? { [d.ladrao]: "par", [d.vitima]: "ímpar" } : { [d.ladrao]: "ímpar", [d.vitima]: "par" };
-  // dado e moeda não têm escolha: o C.A.O.S. rola na hora (com suspense)
-  if (d.tipo === "d6" || d.tipo === "moeda") d.ate = mcAgora() + 3500;
+  mc.duelo = { ladrao: ladrao.id, vitima: vitima.id, tipo: null, fase: "tipo", esc: {}, ate: mcAgora() + MC_DUELO_TIPO_MS, revanche: false, lados: null, resultado: null };
   mc.fase = "duelo";
-  mcAnunciar(`⚔️ ROUBO! ${ladrao.name} quer uma carta de ${vitima.name}. Duelo: ${MC_DUELO_NOME[d.tipo]}!`, {
+  mcAnunciar(`⚔️ ROUBO! ${ladrao.name} quer uma carta de ${vitima.name}. ${vitima.name} escolhe o duelo!`, {
     ic: "⚔️",
     titulo: "É HORA DO DUELO!",
-    texto: `${ladrao.name} quer uma carta de ${vitima.name}. Duelo: ${MC_DUELO_NOME[d.tipo]}!`,
+    texto: `${ladrao.name} quer uma carta de ${vitima.name}. ${vitima.name} escolhe o duelo em ${MC_DUELO_TIPO_MS / 1000} s.`,
     anim: "duelo",
     variantes: {
-      [ladrao.id]: { titulo: `Você desafiou ${vitima.name}!`, texto: `Valendo uma carta. Duelo: ${MC_DUELO_NOME[d.tipo]}.` },
-      [vitima.id]: { titulo: `${ladrao.name} quer uma carta sua!`, texto: `Defenda! Duelo: ${MC_DUELO_NOME[d.tipo]}. Bora!` },
+      [ladrao.id]: { titulo: `Você desafiou ${vitima.name}!`, texto: `Valendo uma carta. ${vitima.name} está escolhendo o duelo.` },
+      [vitima.id]: { titulo: `${ladrao.name} quer uma carta sua!`, texto: `Você escolhe o duelo: dado, moeda, jokenpô ou par ou ímpar. ${MC_DUELO_TIPO_MS / 1000} s!` },
     },
   });
   mcMudou();
   return true;
+}
+const MC_DUELO_TIPO_MS = 10000;
+function mcPodeEscolherTipo(id, tipo) {
+  const d = mc && mc.duelo;
+  return mcAtivo() && mc.fase === "duelo" && !!d && d.fase === "tipo" && d.vitima === id && MC_DUELOS.includes(tipo);
+}
+function mcDueloTipoEscolher(id, tipo) {
+  if (!mcPodeEscolherTipo(id, tipo)) return;
+  mcDueloDefinirTipo(tipo, id);
+}
+// O duelo ganhou tipo (escolhido pelo desafiado ou sorteado): lados, prazo e o aviso do tipo
+function mcDueloDefinirTipo(tipo, quem) {
+  const d = mc.duelo;
+  d.tipo = tipo;
+  d.fase = "escolha";
+  d.ate = mcAgora() + 12000;
+  if (d.tipo === "moeda") d.lados = Math.random() < 0.5 ? { [d.ladrao]: "cara", [d.vitima]: "coroa" } : { [d.ladrao]: "coroa", [d.vitima]: "cara" };
+  if (d.tipo === "parimpar") d.lados = Math.random() < 0.5 ? { [d.ladrao]: "par", [d.vitima]: "ímpar" } : { [d.ladrao]: "ímpar", [d.vitima]: "par" };
+  // dado e moeda não têm escolha: o C.A.O.S. rola na hora (com suspense)
+  if (d.tipo === "d6" || d.tipo === "moeda") d.ate = mcAgora() + 3500;
+  const como = quem ? `${mcNome(quem)} escolheu` : "Ninguém escolheu: o C.A.O.S. sorteou";
+  mcAnunciar(`⚔️ ${como}: ${MC_DUELO_NOME[tipo]}!`, { ic: "⚔️", titulo: MC_DUELO_NOME[tipo], texto: `${como}. ${mcNome(d.ladrao)} × ${mcNome(d.vitima)}, melhor de 3.`, anim: "duelo" });
+  mcMudou();
 }
 function mcPodeEscolherDuelo(id, valor) {
   const d = mc && mc.duelo;
@@ -878,6 +897,7 @@ function mcTicar() {
   }
   if (mc.fase === "duelo" && mc.duelo && agora >= mc.duelo.ate) {
     if (mc.duelo.fase === "revanche") return mcDueloFim();
+    if (mc.duelo.fase === "tipo") return mcDueloDefinirTipo(sorteioItem(MC_DUELOS), null);
     return mcDueloResolver();
   }
 }
@@ -986,6 +1006,7 @@ function mcOpcoes(id) {
   }
   const du = mc.duelo;
   if (mc.fase === "duelo" && du) {
+    MC_DUELOS.forEach((t) => mcPodeEscolherTipo(id, t) && add("mcDueloTipo", [id, t], MC_DUELO_NOME[t], "", `⚔️ Te desafiaram! Escolha o duelo (${MC_DUELO_TIPO_MS / 1000} s)`));
     if (du.tipo === "ppt") ["pedra", "papel", "tesoura"].forEach((v) => mcPodeEscolherDuelo(id, v) && add("mcDuelo", [id, v], { pedra: "✊ Pedra", papel: "✋ Papel", tesoura: "✌️ Tesoura" }[v], "", "⚔️ Sua jogada (ninguém vê até os dois escolherem)"));
     if (du.tipo === "parimpar") [0, 1, 2, 3, 4, 5].forEach((v) => mcPodeEscolherDuelo(id, v) && add("mcDuelo", [id, v], String(v), "", `⚔️ Você é ${du.lados[id]}: escolha um número`));
     if (mcPodeRevanche(id)) {
@@ -1051,7 +1072,7 @@ function mcTelaHtml(r, eu, opcoes, priv) {
   } else if (M.fase === "duelo" && M.duelo) {
     const du = M.duelo;
     const lado = (id) => (du.lados ? ` (${escapeHtml(du.lados[id])})` : "");
-    centro = `<div class="mc-bloco mc-duelo"><h3>⚔️ ${du.revanche ? "REVANCHE" : "DUELO"}: ${escapeHtml(MC_DUELO_NOME[du.tipo] || du.tipo)}</h3><p>${nome(du.ladrao)}${lado(du.ladrao)} × ${nome(du.vitima)}${lado(du.vitima)}</p><p class="mc-duelo-placar">Melhor de 3 · rodada ${du.rodada || 1} · <b>${(du.placar && du.placar[du.ladrao]) || 0} × ${(du.placar && du.placar[du.vitima]) || 0}</b></p>${du.resultado ? `<p><b>${escapeHtml(du.resultado.det)}</b></p>` : ""}<p>${du.fase === "revanche" ? `${nome(du.vitima)} decide se pede revanche · <b class="mc-cont" data-fim="${du.ate}">…</b> s` : du.tipo === "ppt" || du.tipo === "parimpar" ? `Escolheram: ${du.escolheu.length}/2 · <b class="mc-cont" data-fim="${du.ate}">…</b> s` : `Rolando… <b class="mc-cont" data-fim="${du.ate}">…</b>`}</p></div>`;
+    centro = du.fase === "tipo" ? `<div class="mc-bloco mc-duelo"><h3>⚔️ DUELO</h3><p>${nome(du.ladrao)} × ${nome(du.vitima)}</p><p>${nome(du.vitima)} escolhe o duelo · <b class="mc-cont" data-fim="${du.ate}">…</b> s</p></div>` : `<div class="mc-bloco mc-duelo"><h3>⚔️ ${du.revanche ? "REVANCHE" : "DUELO"}: ${escapeHtml(MC_DUELO_NOME[du.tipo] || du.tipo)}</h3><p>${nome(du.ladrao)}${lado(du.ladrao)} × ${nome(du.vitima)}${lado(du.vitima)}</p><p class="mc-duelo-placar">Melhor de 3 · rodada ${du.rodada || 1} · <b>${(du.placar && du.placar[du.ladrao]) || 0} × ${(du.placar && du.placar[du.vitima]) || 0}</b></p>${du.resultado ? `<p><b>${escapeHtml(du.resultado.det)}</b></p>` : ""}<p>${du.fase === "revanche" ? `${nome(du.vitima)} decide se pede revanche · <b class="mc-cont" data-fim="${du.ate}">…</b> s` : du.tipo === "ppt" || du.tipo === "parimpar" ? `Escolheram: ${du.escolheu.length}/2 · <b class="mc-cont" data-fim="${du.ate}">…</b> s` : `Rolando… <b class="mc-cont" data-fim="${du.ate}">…</b>`}</p></div>`;
   } else if (C) {
     // 1.7.10.7.1 (relato do JF: "não sabia quem era o Mestre, a categoria, quanto tempo restava, e o Mestre não via a
     // própria carta direito"): painel da carta com Mestre, categoria grande, dica X de 10 em bolinhas, o tempo da

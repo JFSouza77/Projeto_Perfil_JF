@@ -3218,9 +3218,11 @@ function redePedirEntrada(perfil) {
 }
 // 1.7.10.6 (JF: "qualquer um que bata o olho tem que entender"): faixa grande com o papel de quem está neste
 // dispositivo agora: Mestre ou na vez (quem não está em nenhum dos dois não ganha faixa, só acompanha a T2)
-function redePapelHtml(papel) {
-  if (papel.mestre) return `<div class="rede-papel rp-mestre" role="status">🎙️ VOCÊ É O MESTRE<small>Você vê a carta, lê a dica que pedirem e diz se acertou.</small></div>`;
-  if (papel.vez) return `<div class="rede-papel rp-vez" role="status">👉 É A SUA VEZ!<small>Escolha um número de dica, ouça o Mestre e tente adivinhar.</small></div>`;
+// 1.8 · Mesa fácil (pedido do JF, partida com a Elisa e a Jennifer): a faixa chama pelo nome, bem grande
+function redePapelHtml(papel, nome) {
+  const quem = nome ? `<b class="rp-nome">${escapeHtml(String(nome).toUpperCase())}</b>` : "";
+  if (papel.mestre) return `<div class="rede-papel rp-mestre" role="status">🎙️ VOCÊ É O MESTRE${quem}<small>Você vê a carta, lê a dica que pedirem e diz se acertou.</small></div>`;
+  if (papel.vez) return `<div class="rede-papel rp-vez" role="status">👉 SUA VEZ!${quem}<small>Escolha um número de dica, ouça o Mestre e tente adivinhar.</small></div>`;
   return "";
 }
 function redeBotoesHtml() {
@@ -3228,7 +3230,7 @@ function redeBotoesHtml() {
   const papel = redeMeuPapel();
   let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 Sua vez" : ""}</div>`;
   if (r.fim) return h;
-  if (!r.intervalo && r.iniciada) h += redePapelHtml(papel);
+  if (!r.intervalo && r.iniciada) h += redePapelHtml(papel, eu && eu.nome);
   if (r.intervalo) {
     // 1.7.9.11: o placar do intervalo no celular de cada um (Pontos e Joias; o tabuleiro está logo abaixo)
     // 1.7.10.5.6 (pedido do JF): cara de lobby, com o resumo da partida e as cartas que já foram
