@@ -90,6 +90,20 @@ const ARQ = acharMestre(process.argv[2]);
     };
     return (await ver(false)) + '/' + (await ver(true));
   });
+  // 26/10/2026 (relato do JF): a roleta do telão não pousa na categoria; ela só aparece quando o Mestre mostra a carta
+  const segredoCat = await telao.evaluate(() => {
+    const r = JSON.parse(JSON.stringify(telaoUltimo));
+    r.estadoCarta = 'hidden';
+    r.carta.categoria = 'ANIMAL';
+    r.carta.roleta = { cats: ['ANO', 'PESSOA', 'LUGAR', 'ANIMAL'], girando: false };
+    telaoDesenhar(r);
+    const box = document.getElementById('telao');
+    const antes = /ANIMAL/i.test(box.innerText) || /#[0-9a-f]{6}/i.test(getComputedStyle(box.querySelector('.telao-roleta')).getPropertyValue('--cat')) && getComputedStyle(box.querySelector('.telao-roleta')).getPropertyValue('--cat').trim() !== '#a78bfa';
+    r.estadoCarta = 'revealed';
+    telaoDesenhar(r);
+    const depois = /ANIMAL/i.test(box.innerText);
+    return { antes, depois };
+  });
   await telao.evaluate(() => telaoUltimo && telaoDesenhar(telaoUltimo));
   // retrato velho é ignorado
   await jogo.evaluate(() => { const r = retratoPartida('mesa'); r.revisao = 1; r.jogadores[0].nome = 'VELHO'; telaoCanal.postMessage({ tipo: 'retrato', retrato: r }); });
@@ -106,6 +120,7 @@ const ARQ = acharMestre(process.argv[2]);
   const linhas = [
     ['Telão chega na mesma revisão do jogo', t.rev === j.rev && t.revTela === j.rev],
     ['Antes de virar a carta, o rolo da categoria fica parado; gira só com a roleta do Mestre (1.7.10.5.6)', rolo === 'parado/girando'],
+    ['Carta escondida: o telão não mostra a categoria (nem pela cor); mostra depois que o Mestre vira', !segredoCat.antes && segredoCat.depois],
     ['Telão mostra Mestre e vez', t.txt.includes(j.mestre) && t.txt.includes(j.vez)],
     ['Telão mostra as dicas abertas (a que o Mestre está lendo, só depois do veredito)', j.abertas.every((d, i) => (i === j.abertas.length - 1 && j.pendente ? !t.txt.includes(d) && t.txt.includes('Mestre está lendo') : t.txt.includes(d)))],
     ['Telão nunca mostra a resposta nem dica fechada', !t.txt.includes(j.resposta) && j.fechadas.every((d) => !t.txt.includes(d))],

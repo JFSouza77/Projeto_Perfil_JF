@@ -22,3 +22,5 @@
 - **Economia de créditos (26/10 a 29/10/2026):** bug, print ou sugestão que o JF mandar nesta semana só é anotado em
   `docs/Pendencias_da_Semana.md`, sem corrigir. Exceção: quando ele disser que precisa daquilo "pra agora", corrigir só
   aquilo, pontual. Na quinta, 29/10, às 18h (Brasília), os créditos renovam e começam os patches com tudo que acumulou.
+- **Elisa (26/10/2026):** sobrinha do JF, 13 anos, mas com maturidade e raciocínio de uns 16; joga Júnior, Clássico,
+  Old School e Hardcore. Sugestão e relato dela têm peso de jogadora experiente, não de criança.
