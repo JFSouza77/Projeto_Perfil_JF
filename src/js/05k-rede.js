@@ -697,7 +697,8 @@ function redeValidar(bruto) {
   const ok = {
     oi: () =>
       (m.jogadorId === undefined || m.jogadorId === null || jogadorIdValido(m.jogadorId)) &&
-      typeof m.chave === "string" && /^[a-z0-9]{12,32}$/.test(m.chave) && txt(m.versao, 20) && (m.build === undefined || Number.isInteger(m.build)),
+      typeof m.chave === "string" && /^[a-z0-9]{12,32}$/.test(m.chave) && txt(m.versao, 20) && (m.build === undefined || Number.isInteger(m.build)) &&
+      (m.outros === undefined || (Array.isArray(m.outros) && m.outros.length <= 8 && m.outros.every(jogadorIdValido))),
     cmd: () =>
       typeof m.commandId === "string" && /^[A-Za-z0-9_:-]{4,64}$/.test(m.commandId) && typeof m.acao === "string" && !!ACOES[m.acao] &&
       Array.isArray(m.dados) && m.dados.length <= 4 && m.dados.every(redeEhPrimitivo) &&
@@ -1202,7 +1203,16 @@ function redeHostOi(m) {
   if (atual && atual.sessao !== m.de && redeOnline(atual) && atual.chave !== m.chave) return redeEnviar("recusa", { motivo: "lugar_ocupado" }, m.de);
   // 1.7.9.6 (pedido do JF): aparelho novo só entra com o host aprovando; quem volta (mesma chave) entra direto
   if (!rede.aprovados[m.chave] && !(atual && atual.chave === m.chave)) return redePedidoNovo(m.de, { tipo: "lugar", jogadorId: pedido, chave: m.chave });
-  redeAssentar(m.de, pedido, m.chave);
+  // com outros jogadores no mesmo aparelho, nenhum lugar dele é solto (senão um extra perderia o dele)
+  redeAssentar(m.de, pedido, m.chave, Array.isArray(m.outros) && m.outros.length > 0);
+  // 1.8: o celular voltou com mais jogadores (vários no mesmo aparelho): cada um volta pro seu lugar, mas só se o
+  // lugar for mesmo deste aparelho (mesma chave) e ninguém estiver usando
+  (Array.isArray(m.outros) ? m.outros : []).forEach((id) => {
+    if (id === pedido || jogadorIdxPorId(id) < 0 || redeNoHost(id)) return;
+    const a = rede.assentos[id];
+    if (!a || a.chave !== m.chave || (redeOnline(a) && a.sessao !== m.de)) return;
+    redeAssentar(m.de, id, m.chave, true);
+  });
 }
 function redeAssentar(ses, pedido, chave, mais) {
   const m = { de: ses, chave };
@@ -2221,6 +2231,8 @@ function redeEntrarSala(sala, transporteFabrica) {
     ultimoSeq: {},
     recusadas: {},
     eu: jogadorIdValido(eu.id) ? eu.id : null,
+    // 1.8 (pedido do JF): todos os jogadores deste celular, pra voltarem juntos se a conexão cair
+    euLista: (Array.isArray(eu.lista) ? eu.lista.filter(jogadorIdValido) : []).concat(jogadorIdValido(eu.id) ? [eu.id] : []).filter((x, i, a) => a.indexOf(x) === i).slice(0, 8),
     chave: typeof eu.chave === "string" && /^[a-z0-9]{12,32}$/.test(eu.chave) ? eu.chave : redeAleatorio(16),
     estado: "entrando", // entrando | escolhendo | dentro | recusado
     retrato: null,
@@ -2240,7 +2252,10 @@ function redeEntrarSala(sala, transporteFabrica) {
     aoMudar: null,
   };
   redeTelaAcesa(true);
-  const oi = () => redeEnviar("oi", { jogadorId: rede.eu, chave: rede.chave, versao: JOGO_VERSAO, build: REDE_BUILD });
+  const oi = () => {
+    const outros = (rede.euLista || []).filter((id) => id !== rede.eu).slice(0, 7);
+    return redeEnviar("oi", { jogadorId: rede.eu, chave: rede.chave, versao: JOGO_VERSAO, build: REDE_BUILD, ...(outros.length ? { outros } : {}) });
+  };
   rede.oi = oi;
   transporte.aoReceber((bruto) => {
     const m = redeValidar(bruto);
@@ -2354,7 +2369,7 @@ function redeConvidadoReceber(m) {
       if (caosVoiceOn) redeEnviar("sinal", { tipo: "voz", ligada: true });
     } catch (e) {}
     try {
-      const eu = JSON.stringify({ id: rede.eu, chave: rede.chave });
+      const eu = JSON.stringify({ id: rede.eu, chave: rede.chave, lista: rede.euLista || [] });
       sessionStorage.setItem(REDE_EU_KEY + rede.sala, eu);
       localStorage.setItem(REDE_EU_KEY + rede.sala, eu);
     } catch (e) {}
@@ -2651,7 +2666,7 @@ function redeConvDefinirAtivo(jid) {
   rede.painel = rede.painelPorJid[jid] || null;
   rede.segredo = null; // a resposta é do Mestre: só volta pelo "segredo" de quem está ativo
   try {
-    const eu = JSON.stringify({ id: jid, chave: rede.chave });
+    const eu = JSON.stringify({ id: jid, chave: rede.chave, lista: rede.euLista || [] });
     sessionStorage.setItem(REDE_EU_KEY + rede.sala, eu);
     localStorage.setItem(REDE_EU_KEY + rede.sala, eu);
   } catch (e) {}
