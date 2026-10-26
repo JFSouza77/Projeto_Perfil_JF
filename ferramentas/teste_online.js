@@ -472,6 +472,10 @@ async function segundoPlano(b, sv) {
       await cdp.detach().catch(() => {});
     };
     // 1) a Anne troca de app por 8 s; enquanto isso a partida anda no host
+    // (26/10/2026: o Chromium grava o localStorage no disco com uns segundos de atraso; congelar o celular menos de
+    // 1 s depois de entrar segurava essa gravação, e fechar a página logo depois perdia o lugar guardado. Um celular
+    // de verdade não troca de app no mesmo segundo em que entra: espera a gravação antes de congelar.)
+    await anne.g.waitForTimeout(2500);
     const congela = congelar(anne.g, 8000);
     await host.waitForTimeout(600);
     await jogarAteOFim(host, [pedro.g], 5000);
