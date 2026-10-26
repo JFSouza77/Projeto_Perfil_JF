@@ -15,10 +15,11 @@ então faltam pelo menos 500.
 | Lugar (sugestões do JF, 23 e 26/10) | 31 | 8 | **23** |
 | Coisa (informática e internet, 26/10) | 47 | 5 | **42** |
 | Pessoa (informática, 26/10) | 5 | 0 | **5** |
-| Coisa (esporte, música e internet, 26/10) | 25 | 0 | **25** |
-| **Total novo** | | | **262** |
+| Coisa (esporte, música e internet, 26/10) | 36 | 0 | **34** |
+| Pessoa (bandas, 26/10) | 4 | 1 | **3** |
+| **Total novo** | | | **274** |
 
-Ainda faltam cerca de **238** cartas pra meta de 500 novas. Ano não teve nada no pacote, e Animal também não.
+Ainda faltam cerca de **226** cartas pra meta de 500 novas. Ano não teve nada no pacote, e Animal também não.
 
 ## Como as cartas vão entrar
 - **Dicas escritas do zero**, no padrão do jogo (20 dicas, as especiais no lugar de sempre, da mais difícil pra mais
@@ -268,35 +269,51 @@ Ainda faltam cerca de **238** cartas pra meta de 500 novas. Ano não teve nada n
 Obs.: a carta "Memória" que já existe é a memória humana; "Memória RAM" é outra carta. "Notebook" já está na lista das fotos.
 Já existem: Fone de ouvido, Wi-Fi, Disquete, Instagram e WhatsApp. Google já está na lista das fotos.
 
-## Coisa nova (esporte, música e mais internet, sugestões de 26/10) · 25
+## Coisa nova (esporte, música e mais internet, sugestões de 26/10) · 34
 1. Futebol
 2. Futebol americano
-3. Golfe
-4. Basquete
-5. Tênis
-6. Beach tennis
-7. Futsal (futebol de salão)
-8. Triatlo
-9. Tiro esportivo
-10. Caça esportiva (fora do Júnior)
-11. Sertanejo
-12. Jazz
-13. Country
-14. Gospel
-15. TikTok
-16. YouTube
-17. MSN (Old School)
-18. Tumblr
-19. Pokémon GO
-20. Angry Birds
-21. Internet discada (Old School)
-22. 4G
-23. 5G
-24. Chip de celular
-25. Operadora de celular
+3. Vôlei
+4. Natação
+5. Golfe
+6. Basquete
+7. Tênis
+8. Beach tennis
+9. Futsal (futebol de salão)
+10. Triatlo
+11. Tiro esportivo
+12. Caça esportiva (fora do Júnior)
+13. Sertanejo
+14. Jazz
+15. Country
+16. Gospel
+17. Rock
+18. Samba
+19. Funk
+20. Pagode
+21. Forró
+22. MPB
+23. Rap
+24. Blues
+25. TikTok
+26. YouTube
+27. MSN (Old School)
+28. Tumblr
+29. Pokémon GO
+30. Angry Birds
+31. Internet discada (Old School)
+32. Internet móvel (4G e 5G)
+33. Chip de celular
+34. Operadora de celular
 
 Obs.: Pokémon já existe (o Pokémon GO é o jogo de celular, outra carta). GTA: San Andreas virou GTA (a franquia toda).
-Ainda não existem e combinam com essas: Vôlei, Natação; Rock, Samba, Funk, Pagode, Forró, MPB, Rap.
+4G e 5G viraram uma carta só (Internet móvel). Ramones já existe.
+
+## Pessoa nova (bandas, sugestões de 26/10) · 3
+1. Guns N' Roses
+2. Nirvana
+3. Pink Floyd
+
+Ainda não existem e combinam com essas: Queen, AC/DC, Metallica, Legião Urbana, Elvis Presley e Madonna.
 
 ## Pessoa nova (informática, sugestões de 26/10) · 5
 1. Alan Turing
