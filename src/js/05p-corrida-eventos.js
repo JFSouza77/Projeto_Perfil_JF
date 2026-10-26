@@ -114,7 +114,7 @@ function corridaEventosRetomar(e) {
 
 /* --- velocidades e durações --- */
 function corridaVelocidade() {
-  return corridaDuelo ? CORRIDA_DUELO_VEL : corridaHardcore ? CORRIDA_VEL_HC : 1;
+  return corridaDuelo ? CORRIDA_DUELO_VEL : corridaExtreme ? CORRIDA_VEL_EX : corridaHardcore ? CORRIDA_VEL_HC : 1;
 }
 function corridaCartaDuracao() {
   return corridaHardcore ? CORRIDA_CARTA_HC_MS : CORRIDA_CARTA_MS;

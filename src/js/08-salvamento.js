@@ -455,6 +455,7 @@ function saveGameState() {
       oldSchoolAcess,
       corridaVitoria,
       corridaHardcore,
+      corridaExtreme,
       caosRitmoLog,
       caosEmoHist,
       caosExtra: caosExtraSalvar(),
@@ -762,6 +763,7 @@ function loadGameState() {
     oldSchoolAcess = CURRENT_MODE === "oldschool" && !!state.oldSchoolAcess;
     corridaVitoria = state.corridaVitoria === "cartas" ? "cartas" : "tempo";
     corridaHardcore = CURRENT_MODE === "corrida" && state.corridaHardcore === true;
+    corridaExtreme = corridaHardcore && state.corridaExtreme === true;
     aplicarAcessibilidade();
     CURRENT_FORMAT = state.CURRENT_FORMAT || "versus";
     teams = state.teams || {};

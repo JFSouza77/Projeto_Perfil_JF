@@ -66,7 +66,7 @@ function updateModeNotice() {
     hardcore: "Perfil JF — Hardcore (15+)",
     junior: "Perfil JF — Júnior (6+)",
     express: `Perfil JF — Express ${expressFlavor === "hardcore" ? "Hardcore" : "Clássico"}`,
-    corrida: `Perfil JF — Corrida contra o Tempo · ${corridaVitoria === "tempo" ? "Tempo" : "Cartas"}${corridaHardcore ? " · Hardcore" : ""} (12+)`,
+    corrida: `Perfil JF — Corrida contra o Tempo · ${corridaVitoria === "tempo" ? "Tempo" : "Cartas"}${corridaExtreme ? " · Extreme" : corridaHardcore ? " · Hardcore" : ""} (12+)`,
     caos: "Perfil JF — Modo C.A.O.S. (16+ · online)",
   };
   const notices = {
@@ -2685,7 +2685,7 @@ function atualizarRotuloModo() {
     junior: "🧒 Júnior",
     hardcore: "💀 Hardcore",
     express: `🔥 Express ${expressFlavor === "hardcore" ? "Hardcore" : "Clássico"}`,
-    corrida: `⏱️ Corrida · ${corridaVitoria === "tempo" ? "Tempo" : "Cartas"}${corridaHardcore ? " 💀" : ""}`,
+    corrida: `⏱️ Corrida · ${corridaVitoria === "tempo" ? "Tempo" : "Cartas"}${corridaExtreme ? " 🔥" : corridaHardcore ? " 💀" : ""}`,
     caos: "🌀 Modo C.A.O.S.",
   };
   el.textContent = `${nomes[CURRENT_MODE] || CURRENT_MODE} · ${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}`;

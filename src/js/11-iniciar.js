@@ -617,7 +617,10 @@ function iniciar() {
       );
     }),
   );
-  const corridaHc = () => (document.getElementById("corridaHardcoreChk").checked ? "-hc" : "");
+  const corridaHc = () => (document.getElementById("corridaExtremeChk").checked ? "-ex" : document.getElementById("corridaHardcoreChk").checked ? "-hc" : "");
+  // 1.8 · Extreme é um Hardcore mais rápido: marcar um puxa o outro
+  document.getElementById("corridaExtremeChk").addEventListener("change", (e) => e.target.checked && (document.getElementById("corridaHardcoreChk").checked = true));
+  document.getElementById("corridaHardcoreChk").addEventListener("change", (e) => !e.target.checked && (document.getElementById("corridaExtremeChk").checked = false));
   document.getElementById("confirmCorridaTempoBtn").addEventListener("click", () => selectMode("corrida", null, "tempo" + corridaHc()));
   document.getElementById("confirmCorridaCartasBtn").addEventListener("click", () => selectMode("corrida", null, "cartas" + corridaHc()));
   document

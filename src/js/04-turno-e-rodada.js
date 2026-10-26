@@ -1959,7 +1959,8 @@ function selectMode(mode, expressCategories, flavor) {
   } else if (mode === "corrida") {
     WINNING_SCORE = 0;
     corridaVitoria = /^cartas/.test(flavor || "") ? "cartas" : "tempo";
-    corridaHardcore = /-hc$/.test(flavor || "");
+    corridaExtreme = /-ex$/.test(flavor || "");
+    corridaHardcore = corridaExtreme || /-hc$/.test(flavor || "");
     allCards = baralhoCorrida(); // 1.7.10.9.3: sem Ano, Animal como categoria própria
   } else if (mode === "oldschool") {
     WINNING_SCORE = 200;
