@@ -10,7 +10,7 @@
 //  · o que ainda não entrou fica em docs/Novidades_Rascunho.md.
 const NOVIDADES = [
   {
-    v: "Beta 1.8",
+    v: "Beta 1.8.0",
     data: "26/10/2026",
     nome: "C.A.O.S. Expansion Update",
     t: "O C.A.O.S. guia quem se perde e sente cada jogador, Rodada Bônus, duelo à escolha e Corrida Extreme.",
