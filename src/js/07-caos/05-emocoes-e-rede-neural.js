@@ -223,10 +223,15 @@ function caosConsoleEvento(idx, ev) {
       nm = p && p.name,
       fav = nm && caosVinc && caosVinc.fav === nm,
       des = nm && caosVinc && caosVinc.desafeto === nm;
+    // 1.8 · C.A.O.S. 5.2: a ficha do jogador (veterano, craque, zebra, mágoa…) pesa no que ele sente (17-afeto-da-ficha)
+    const af = typeof caosAfeto === "function" ? caosAfeto(p) : null,
+      porque = af && af.tags.length ? ` · ${caosAfetoMotivo(af)}` : "";
     if (ev === "A" || ev === "a") {
       C.seqOk++;
       C.seqErr = 0;
-      caosSentir("alegria", (ev === "a" ? 1 : 0.7) * (des ? 0.6 : 1), "acerto");
+      caosSentir("alegria", (ev === "a" ? 1 : 0.7) * (des ? 0.6 : 1) * (af ? af.alegria : 1), "acerto" + porque);
+      if (af && af.carinho) caosSentir("carinho", af.carinho, "acerto" + porque);
+      if (p && typeof caosAfetoRecorde === "function") caosAfetoRecorde(p);
       if (C.seqOk >= 3 && C.seqOk % 2 === 1) caosSentir("alegria", 1.2, "sequência de acertos");
       if (fav) caosSentir("carinho", 0.5, "favorito acertou");
       if (p && playerHumor(p) === "suave") caosSentir("carinho", humorFamilia(p) ? 1 : 0.6, "acerto de jogador Suave");
@@ -241,9 +246,11 @@ function caosConsoleEvento(idx, ev) {
         (ev === "X" ? 0.5 : 1.25) *
           (fav ? 0.5 : des ? 1.3 : 1) *
           (p && playerHumor(p) === "suave" ? 0.5 : 1) *
+          (af ? af.raiva : 1) *
           (1 / (1 + 0.18 * Math.max(0, (C.g.raiva || 0) - 3))),
-        ev === "X" ? "absurdo" : "erro",
+        (ev === "X" ? "absurdo" : "erro") + porque,
       );
+      if (af && af.nojo) caosSentir("nojo", af.nojo, "erro" + porque);
       if (p && playerHumor(p) === "suave") caosSentir("carinho", 0.3, "erro de jogador Suave");
       if (ev === "X") caosSentir("nojo", 3.5, "absurdo");
       if (C.seqErr === 3) caosSentir("tristeza", 2, "erros seguidos");
@@ -939,9 +946,18 @@ function caosNeuralDesenhar(cv, t) {
     const lbl = wrap.querySelector(".ci-neural-lbl"),
       fr = cv._frames[Math.floor(t / E.fr) % cv._frames.length];
     const C = caosConsole || {};
-    const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}
+    // 1.8: as três emoções mais fortes do console (os núcleos maiores do anel), com o valor
+    const top = C.g
+      ? Object.keys(CAOS_CONSOLE)
+          .filter((kk) => (C.g[kk] || 0) >= 0.5)
+          .sort((a2, b2) => C.g[b2] - C.g[a2])
+          .slice(0, 3)
+          .map((kk) => `${CAOS_CONSOLE[kk].ic} ${kk} ${ciNum(C.g[kk], 1)}`)
+          .join(" · ")
+      : "";
+    const txt = `${fr}  ${E.nome.toUpperCase()}${C.mist ? " · mistura: " + C.mist : ""}${top ? "\n" + top : ""}
 tensão ${ciNum(te, 0)} · calor ${ciNum(ca, 0)} · paciência ${ciNum(pa, 0)}
-${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 5.1.4`;
+${caosEstadoComposto().replace(/_/g, " ")} · ${caosTemper && caosTemper.nome ? caosTemper.nome : "normal"} · C.A.O.S. 5.2.0`;
     if (lbl && lbl.textContent !== txt) lbl.textContent = txt;
   }
 }

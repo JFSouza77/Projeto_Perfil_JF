@@ -143,6 +143,58 @@ const ARQ = acharMestre(process.argv[2]);
       mcDueloResolver();
     }
     o.jokenpo3Empates = !!mc.duelo && !!mc.duelo.placar && (mc.duelo.placar.p0 || 0) + (mc.duelo.placar.p1 || 0) === 1 && mc.duelo.empates === 0;
+    // 1.8 (JF): o desafiado escolhe o duelo em 10 s; não escolheu, o C.A.O.S. sorteia
+    placar(2, 2, 0);
+    mc.duelo = null;
+    mc.fase = 'janela';
+    const roubou = mcRouboComecar();
+    const du = mc.duelo;
+    const opsV = du ? mcOpcoes(du.vitima).filter((x) => x.a === 'mcDueloTipo') : [];
+    const opsL = du ? mcOpcoes(du.ladrao).filter((x) => x.a === 'mcDueloTipo') : [];
+    o.dueloDesafiadoEscolhe = roubou && du.fase === 'tipo' && du.tipo === null && opsV.length === 4 && opsL.length === 0 && /escolhe o duelo/.test(mcTelaHtml(retratoPartida('mesa'), du.ladrao, mcOpcoes(du.ladrao), mcPrivado(du.ladrao)));
+    o.dueloLadraoNaoEscolhe = !mcPodeEscolherTipo(du.ladrao, 'ppt');
+    mcDueloTipoEscolher(du.vitima, 'parimpar');
+    o.dueloTipoEscolhido = mc.duelo.tipo === 'parimpar' && mc.duelo.fase === 'escolha' && !!mc.duelo.lados && mcOpcoes(du.vitima).some((x) => x.a === 'mcDuelo');
+    mc.duelo = null;
+    mc.fase = 'janela';
+    mcRouboComecar();
+    avisoZerar(); // o aviso grande do duelo congela o tique
+    mc.duelo.ate = mcAgora() - 1;
+    mcTicar();
+    o.dueloTipoSorteado = !!mc.duelo && MC_DUELOS.includes(mc.duelo.tipo) && mc.duelo.fase === 'escolha';
+    mc.duelo = null;
+    mc.fase = 'janela';
+    // 1.8 (JF): Rodada Bônus. Carta extra que o Mestre lê; todos menos ele batem; acertou: +20 PC pros dois e um Colete
+    const mB = mcMestreId();
+    const [xB, yB] = ['p0', 'p1', 'p2'].filter((x) => x !== mB);
+    const pcAntes = { ...mc.pc };
+    const coleteAntes = (mc.inv[xB] || {}).kevlar || 0;
+    o.bonusComeca = mcBonusComecar() === true && mc.fase === 'bonus' && mc.bonus.mestre === mB && mc.bonus.dicas.length === 5 && mc.bonus.aberta === 1;
+    avisoZerar();
+    o.bonusMestreNaoBate = !mcPodeBonusBater(mB) && !mcOpcoes(mB).some((x) => x.a === 'mcBonusBater') && mcOpcoes(xB).some((x) => x.a === 'mcBonusBater');
+    o.bonusMestreVeResposta = mcPrivado(mB).juizResp === mc.bonus.resp && mcPrivado(xB).juizResp === null && !JSON.stringify(mcRetrato()).includes(mc.bonus.resp);
+    mc.bonus.proxEm = mcAgora() - 1;
+    mcTicar();
+    o.bonusDicaAbreSozinha = mc.bonus.aberta === 2;
+    mcBonusBater(yB);
+    o.bonusMestreJulga = mcOpcoes(mB).filter((x) => x.a === 'mcBonusVeredito').length === 2 && mcPodeComandar('mcBonusVeredito', mB) && !mcPodeComandar('mcBonusVeredito', yB);
+    mcBonusVeredito(false);
+    o.bonusErrouSai = mc.fase === 'bonus' && mc.bonus.erraram.includes(yB) && !mcPodeBonusBater(yB) && mcPodeBonusBater(xB);
+    mcBonusBater(xB);
+    mcBonusVeredito(true);
+    o.bonusAcertoPremia = mc.fase === 'abrindo' && !mc.bonus && mc.pc[xB] === pcAntes[xB] + MC_PC.bonus && mc.pc[mB] === pcAntes[mB] + MC_PC.bonus && mc.pc[yB] === pcAntes[yB] && mc.inv[xB].kevlar === coleteAntes + 1;
+    avisoZerar();
+    // ninguém acerta: as 5 dicas passam e a vez segue
+    mcBonusComecar();
+    avisoZerar();
+    for (let k = 0; k < 6 && mc.bonus; k++) {
+      mc.bonus.proxEm = mcAgora() - 1;
+      mcTicar();
+      avisoZerar();
+    }
+    o.bonusNinguemSegue = !mc.bonus && mc.fase === 'abrindo';
+    mc.cont.bonus = 0;
+    mc.fase = 'janela';
     mc.inv.p0 = { espelho: 1 };
     o.itemDizQuando = /protege você sozinho/.test(mcTelaHtml(retratoPartida('mesa'), 'p0', mcOpcoes('p0'), mcPrivado('p0')));
     mc.inv.p0 = {};

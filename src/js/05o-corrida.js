@@ -492,7 +492,7 @@ function corridaRegrasHtml(resumo) {
       : `🎯 <b>Objetivo (🃏 Cartas):</b> quem acerta <b>fica com a carta</b> e cada carta vale 1. Vence quem tiver mais cartas quando o relógio geral zerar.`,
     `⏱️ <b>Relógio geral:</b> ${min} min. Acertou: <b>+${bonus} s</b>. Carta que morre sem acerto: <b>−1 min</b> pra mesa toda. Zerou: a resposta que estava rolando termina e acabou.`,
     hc
-      ? `💀 <b>Hardcore:</b> a carta tem ${carta} e o relógio dela corre <b>1,5×</b>. As dicas abrem sozinhas: quem souber, <b>bate na mesa</b> (no online, o botão no dispositivo) e responde. Errou, a próxima abre na hora.`
+      ? `${corridaExtreme ? "🔥 <b>Extreme:</b>" : "💀 <b>Hardcore:</b>"} a carta tem ${carta} e o relógio dela corre <b>${corridaExtreme ? "2×" : "1,5×"}</b>. As dicas abrem sozinhas: quem souber, <b>bate na mesa</b> (no online, o botão no dispositivo) e responde. Errou, a próxima abre na hora.`
       : `💬 <b>A vez:</b> segue a roda. ${escolha} s pra escolher o número (demorou? uma dica abre sozinha) e ${vez} s pra responder. A carta tem ${carta} e não reinicia quando a vez passa.`,
     `❌ <b>Errou:</b> a carta perde ${CORRIDA_ERRO_MS / 1e3} s. <b>Pulou</b> (nem tentou): ${CORRIDA_PULO_MS / 1e3} s. <b>Absurdo</b>: ${CORRIDA_ABSURDO_MS / 1e3} s.`,
     '🎙️ <b>Mestre:</b> roda a cada carta. Fala a categoria e lê a dica. <b>Nunca</b> fala a resposta.',
@@ -529,6 +529,7 @@ function corridaRetrato() {
     vitoria: corridaVitoria,
     cartas: Object.fromEntries(players.map((p) => [p.id, corridaCartasDe(p)])),
     hardcore: corridaHardcore,
+    extreme: corridaExtreme,
     juizo: corridaJuizo,
     bomba: corridaBombaAgora(),
     duelo: corridaDuelo ? corridaDuelo.ids.slice() : null,

@@ -218,7 +218,7 @@ function caosInspectorPainel(ov) {
   const head = document.createElement("div");
   head.className = "ci-head";
   head.innerHTML = `<div class="ci-head-icon">🧠</div>
-    <div class="ci-head-txt"><div class="ci-title">Cérebro do C.A.O.S. <span class="ci-badge">4.0 · rede neural</span></div>
+    <div class="ci-head-txt"><div class="ci-title">Cérebro do C.A.O.S. <span class="ci-badge">5.2 · rede neural</span></div>
     <div class="ci-sub">Central de Avaliação e Observação Sistêmica · acesso do criador</div></div>
     <div class="ci-head-btns"><button type="button" class="ci-btn ci-btn-red" id="ciLockBtn">🔒 Trancar</button><button type="button" class="ci-btn" id="ciCloseBtn">Fechar</button></div>`;
   const tabs = document.createElement("div");
@@ -231,6 +231,7 @@ function caosInspectorPainel(ov) {
   };
   const TABS = [
     ["estado", "🧠 Estado & Emoção"],
+    ["jogadores", "🧬 Jogadores", () => players.length],
     ["ritmo", "📈 Ritmo & Humor", () => caosRitmoLog.length],
     ["memoria", "💾 Memória", nCartas],
     ["decisoes", "📜 Decisões", () => caosDecisionLog.length],
@@ -257,6 +258,7 @@ function caosInspectorPainel(ov) {
     body.innerHTML = "";
     body.scrollTop = 0;
     if (caosInspectorTab === "estado") body.appendChild(caosInspectorEstado());
+    else if (caosInspectorTab === "jogadores") body.appendChild(caosInspectorJogadores());
     else if (caosInspectorTab === "ritmo") body.appendChild(caosInspectorRitmo());
     else if (caosInspectorTab === "memoria") body.appendChild(caosInspectorMemoria());
     else if (caosInspectorTab === "decisoes")
@@ -371,7 +373,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.7.10.9.8 · C.A.O.S. 5.1.4</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.8.0 · C.A.O.S. 5.2.0</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -1117,6 +1119,21 @@ function caosInspectorSandbox(onChange) {
     });
     lt.append(ct, " 🔒 travar o vetor (só eu mexo; nada muda sozinho nesta partida)");
     sec1.appendChild(lt);
+  }
+  {
+    // 1.8 · Guia da mesa (ideia da Elisa): fica guardado neste aparelho
+    const lg = document.createElement("label");
+    lg.className = "ci-note";
+    lg.style.display = "block";
+    const cg = document.createElement("input");
+    cg.type = "checkbox";
+    cg.checked = guiaLigado();
+    cg.addEventListener("change", () => {
+      guiaDefinirLigado(cg.checked);
+      caosLog("sandbox", cg.checked ? "guia da mesa ligado" : "guia da mesa desligado");
+    });
+    lg.append(cg, " 🧭 guia da mesa (avisa quem a mesa está esperando e guia quem se perde)");
+    sec1.appendChild(lg);
   }
   const g = document.createElement("div");
   g.className = "ci-grid2";

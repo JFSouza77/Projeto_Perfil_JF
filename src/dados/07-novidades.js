@@ -10,6 +10,25 @@
 //  · o que ainda não entrou fica em docs/Novidades_Rascunho.md.
 const NOVIDADES = [
   {
+    v: "Beta 1.8.0",
+    data: "26/10/2026",
+    nome: "C.A.O.S. Expansion Update",
+    t: "O C.A.O.S. guia quem se perde e sente cada jogador, Rodada Bônus, duelo à escolha e Corrida Extreme.",
+    itens: [
+      "🧭 C.A.O.S. guia da mesa: a mesa parou porque alguém não sabe o que fazer? Ele chama a pessoa pelo nome e o botão certo brilha. Quem se perder duas vezes ganha um guia: ele avisa cada passo, comemora o acerto e, quando a pessoa pega o ritmo, se despede. Ideia da Elisa.",
+      "📱 Celular fácil: a faixa da vez chama você pelo nome, os números das dicas ficaram grandes e a tela fica no meio, até no tablet.",
+      "🔐 Remover com senha: tirar alguém da partida pede a senha do ADM ou a senha do host, que aparece no painel da sala assim que ela abre.",
+      "⚔️ Duelo à escolha: no Modo C.A.O.S., quem foi desafiado escolhe o duelo (dado, moeda, jokenpô ou par ou ímpar) em 10 segundos. Não escolheu, o C.A.O.S. sorteia.",
+      "🎁 Rodada Bônus: no Modo C.A.O.S., de vez em quando o Mestre lê uma carta extra. Quem bater primeiro e acertar ganha 20 PC e um Colete Anti-Caos, e o Mestre ganha 20 PC também.",
+      "🔥 Corrida Extreme: tudo do Hardcore, com o relógio da carta correndo 2×.",
+      "🧬 O C.A.O.S. sente cada um: ele lembra quem é veterano, quem é craque, quem é zebra e quem já cortou ele, e reage de acordo. Passou o seu recorde? Ele faz festa.",
+    ],
+    qol: [
+      "🔢 Números maiores pro Mestre: os números das dicas também ficaram maiores na tela do Mestre.",
+      "🔁 Vários no celular voltam juntos: a internet do celular onde jogam duas pessoas caiu? Quando ele volta, as duas voltam juntas.",
+    ],
+  },
+  {
     v: "Beta 1.7.10.9.5",
     ate: "1.7.10.9.8", // a lista junta os ajustes até essa versão
     data: "25/10 a 26/10/2026",
@@ -24,8 +43,8 @@ const NOVIDADES = [
       "👥 Alguém desistiu: na pausa, o host pode tirar o jogador só da sala (o aparelho, e ele segue jogando no aparelho do host) ou da partida inteira (os pontos se dividem entre quem fica).",
     ],
     qol: [
-      "👑 O host não precisa mais marcar que joga no próprio aparelho: quem não entrou pelo celular joga no do host sozinho. Se o celular da pessoa entrar depois, ela pega o lugar dela.",
-      "🔧 Quem entra pelo celular com a partida já rolando pega o lugar de volta do host (antes, depois do host automático, o celular voltava pra tela de escolher quem é).",
+      "👑 Host automático: o host não precisa mais marcar que joga no próprio aparelho. Quem não entrou pelo celular joga no do host sozinho. Se o celular da pessoa entrar depois, ela pega o lugar dela.",
+      "🔧 Entrar com a partida rolando: quem entra pelo celular com a partida já começada pega o lugar de volta do host (antes, depois do host automático, o celular voltava pra tela de escolher quem é).",
     ],
   },
   {
@@ -45,7 +64,7 @@ const NOVIDADES = [
     qol: [
       "🌀 Modo C.A.O.S. com menos fala: o C.A.O.S. fica calado enquanto a mesa decide (dica, duelo, aviso) e fala no máximo uma vez por vez.",
       "🎨 Tema claro mais legível: títulos dos menus, tutorial, cadastro e a cor do humor ficaram com contraste melhor.",
-      "👆 Janelas de reporte com botões maiores e fáceis de tocar.",
+      "👆 Reporte mais fácil de tocar: as janelas de reporte ganharam botões maiores.",
       "📲 App instalável conferido: instalado na tela de início, o jogo abre sem internet.",
     ],
   },

@@ -62,7 +62,7 @@ function mcAnunciar(txt, aviso) {
 function mcFoto() {
   if (!mc) return "";
   const j = mc.janela;
-  return JSON.stringify([mc.rodada, mc.fase, mc.vez, Object.keys(mc.cartas).map((k) => [k, mc.cartas[k].aberta, mc.cartas[k].estado]), mc.pc, mc.inv, mc.vitrine, j && [j.buzz, j.tentaram, j.serial, !!j.congela, j.mordaca], mc.batata, mc.desafio && [mc.desafio.aberta, mc.desafio.buzz], mc.duelo && [mc.duelo.fase, mc.duelo.esc], mc.pinata, mc.maoLeve]);
+  return JSON.stringify([mc.rodada, mc.fase, mc.vez, Object.keys(mc.cartas).map((k) => [k, mc.cartas[k].aberta, mc.cartas[k].estado]), mc.pc, mc.inv, mc.vitrine, j && [j.buzz, j.tentaram, j.serial, !!j.congela, j.mordaca], mc.batata, mc.desafio && [mc.desafio.aberta, mc.desafio.buzz], mc.duelo && [mc.duelo.fase, mc.duelo.esc], mc.pinata, mc.maoLeve, mc.bonus && [mc.bonus.aberta, mc.bonus.buzz, mc.bonus.erraram.length]]);
 }
 
 /* --- começo, rodadas, vezes --- */
@@ -98,7 +98,8 @@ function mcIniciar() {
     feed: [],
     intervalo: null,
     abrirEm: 0,
-    cont: { turbo: 0, imposto: 0, batata: 0, roubo: 0, maoLeve: 0, pinata: 0 },
+    bonus: null,
+    cont: { turbo: 0, imposto: 0, batata: 0, roubo: 0, maoLeve: 0, pinata: 0, bonus: 0 },
   };
   players.forEach((p) => (p.score = 0));
   mcAnunciar(`🌀 Modo C.A.O.S. começou. ${MC_TEMPO_MS / 60e3} minutos. Que vença o mais rápido.`, { ic: "🌀", titulo: "MODO C.A.O.S.!", texto: `Cada um tem a sua carta secreta. ${MC_TEMPO_MS / 60e3} minutos. Agora quem manda aqui sou eu.`, botao: "Que venha o caos! 🌀" });
@@ -523,6 +524,8 @@ function mcEventoNaVez() {
     mc.impostoVez = mcMestreId();
     mcAnunciar(`💸 IMPOSTO DA PREGUIÇA na próxima dica.`, { ic: "💸", titulo: "IMPOSTO DA PREGUIÇA!", texto: `Na próxima dica, quem não tentar palpitar paga ${MC_PC.imposto} PC.`, anim: "imposto" });
   }
+  // 1.8 · Rodada Bônus (ideia do JF): até 2 por partida, com 3 ou mais na mesa
+  else if (!mc.bonus && (mc.cont.bonus || 0) < 2 && players.length >= 3 && r >= 0.25 && r < 0.31 && mcBonusComecar()) return true;
   return false;
 }
 function mcPodeBatata(id) {
@@ -617,7 +620,83 @@ function mcDesafioFim() {
   mcComecarVez();
 }
 
-// Roubo: um ladrão abaixo do topo desafia alguém com placar igual ou maior; duelo sorteado pelo C.A.O.S.
+/* --- 1.8 · Rodada Bônus (ideia do JF; regra do rascunho de 23/10) ---
+   Uma carta à parte, lida pelo Mestre da vez. As dicas abrem sozinhas a cada 8 s (até 5). Todo mundo menos o
+   Mestre pode bater; quem bater responde e o Mestre julga. Errou, essa pessoa sai da rodada e as dicas seguem.
+   Acertou: +20 PC pra quem acertou e pro Mestre, e quem acertou ganha um Colete Anti-Caos (escudo contra o próximo
+   roubo, assalto ou punição). Ninguém acertou: a carta vai embora e a vez segue. */
+const MC_BONUS_DICA_MS = 8000;
+function mcBonusComecar() {
+  const mestre = mcMestreId();
+  const emJogo = new Set(Object.values(mc.cartas).map((c) => c.resp));
+  const raw = sorteioItem(baralhoHardcore().filter((c) => !emJogo.has(c.answer)));
+  if (!raw || !mestre) return false;
+  mc.cont.bonus = (mc.cont.bonus || 0) + 1;
+  const dicas = shuffle(raw.clues.filter((c) => c.type === "clue")).slice(0, 5).map((c) => String(c.text));
+  mc.bonus = { mestre, resp: raw.answer, cat: gemCategoryFor(raw.category), dicas, aberta: 1, proxEm: mcAgora() + MC_BONUS_DICA_MS, buzz: null, restaProx: 0, erraram: [] };
+  mc.fase = "bonus";
+  mcAnunciar(`🎁 RODADA BÔNUS! ${mcNome(mestre)} lê uma carta extra: quem bater primeiro e acertar leva +${MC_PC.bonus} PC e um escudo.`, {
+    ic: "🎁",
+    titulo: "RODADA BÔNUS!",
+    texto: `Carta extra, lida por ${mcNome(mestre)}. As dicas abrem sozinhas. Sabe? Bata primeiro! Acertou: +${MC_PC.bonus} PC e um ${MC_LOJA.kevlar.nome}.`,
+    anim: "turbo",
+    variantes: { [mestre]: { titulo: "RODADA BÔNUS: você lê!", texto: `Leia cada dica em voz alta e julgue quem bater. Se alguém acertar, você também ganha +${MC_PC.bonus} PC.` } },
+  });
+  mcMudou();
+  return true;
+}
+function mcPodeBonusBater(id) {
+  const b = mc && mc.bonus;
+  return mcAtivo() && mc.fase === "bonus" && !!b && !b.buzz && id !== b.mestre && !b.erraram.includes(id) && !!jogadorPorId(id);
+}
+function mcBonusBater(id) {
+  if (!mcPodeBonusBater(id)) return;
+  const b = mc.bonus;
+  b.buzz = id;
+  b.restaProx = Math.max(0, b.proxEm - mcAgora());
+  playSfx("pick");
+  mcMudou();
+}
+function mcBonusVeredito(ok) {
+  const b = mc && mc.bonus;
+  if (!mcAtivo() || mc.fase !== "bonus" || !b || !b.buzz) return;
+  const quem = b.buzz;
+  b.buzz = null;
+  if (ok) {
+    mcPcMudar(quem, MC_PC.bonus);
+    mcPcMudar(b.mestre, MC_PC.bonus);
+    mc.inv[quem] = mc.inv[quem] || {};
+    mc.inv[quem].kevlar = (mc.inv[quem].kevlar || 0) + 1;
+    cartasPartida.push({ n: cartasPartida.length + 1, cat: b.cat, resp: b.resp, quem, mestre: b.mestre, dicas: b.aberta, dicaNum: null, dicaTxt: null, bonus: true });
+    mcAnunciar(`🎁✅ ${mcNome(quem)} acertou a Rodada Bônus (${b.resp}): +${MC_PC.bonus} PC pra ${mcNome(quem)} e pra ${mcNome(b.mestre)}, e um escudo!`, {
+      ic: "🎁",
+      titulo: `${mcNome(quem)} levou a Rodada Bônus!`,
+      texto: `Era ${b.resp}. +${MC_PC.bonus} PC e um ${MC_LOJA.kevlar.nome} pra ${mcNome(quem)}; +${MC_PC.bonus} PC pra ${mcNome(b.mestre)}, que leu.`,
+    });
+    return mcBonusFim();
+  }
+  playSfx("erro");
+  b.erraram.push(quem);
+  mcLog(`🎁❌ ${mcNome(quem)} errou na Rodada Bônus e está fora dela.`);
+  const restam = players.filter((p) => p.id !== b.mestre && !b.erraram.includes(p.id));
+  if (!restam.length) return mcBonusNinguem();
+  b.proxEm = mcAgora() + (b.restaProx || 3000);
+  mcMudou();
+}
+function mcBonusNinguem() {
+  const b = mc.bonus;
+  mcAnunciar(`🎁 Ninguém acertou a Rodada Bônus. Era ${b.resp}.`, { ic: "🎁", titulo: "Ninguém levou a Rodada Bônus", texto: `Era ${b.resp}. A vez segue.` });
+  mcBonusFim();
+}
+function mcBonusFim() {
+  mc.bonus = null;
+  mc.fase = "abrindo";
+  mc.abrirEm = mcAgora() + MC_PAUSA_VEZ_MS;
+  mcMudou();
+}
+
+// Roubo: um ladrão abaixo do topo desafia alguém com placar igual ou maior.
+// 1.8 (pedido do JF): quem foi desafiado escolhe o duelo em 10 s; não escolheu, o C.A.O.S. sorteia.
 const MC_DUELOS = ["d6", "moeda", "ppt", "parimpar"];
 const MC_DUELO_NOME = { d6: "🎲 Dado (D6)", moeda: "🪙 Cara ou Coroa", ppt: "✊ Pedra, Papel e Tesoura", parimpar: "✌️ Par ou Ímpar" };
 function mcRouboComecar() {
@@ -629,25 +708,43 @@ function mcRouboComecar() {
   const vitima = sorteioItem(vitimas);
   if (!vitima) return false;
   mc.cont.roubo++;
-  mc.duelo = { ladrao: ladrao.id, vitima: vitima.id, tipo: sorteioItem(MC_DUELOS), fase: "escolha", esc: {}, ate: mcAgora() + 12000, revanche: false, lados: null, resultado: null };
-  const d = mc.duelo;
-  if (d.tipo === "moeda") d.lados = Math.random() < 0.5 ? { [d.ladrao]: "cara", [d.vitima]: "coroa" } : { [d.ladrao]: "coroa", [d.vitima]: "cara" };
-  if (d.tipo === "parimpar") d.lados = Math.random() < 0.5 ? { [d.ladrao]: "par", [d.vitima]: "ímpar" } : { [d.ladrao]: "ímpar", [d.vitima]: "par" };
-  // dado e moeda não têm escolha: o C.A.O.S. rola na hora (com suspense)
-  if (d.tipo === "d6" || d.tipo === "moeda") d.ate = mcAgora() + 3500;
+  mc.duelo = { ladrao: ladrao.id, vitima: vitima.id, tipo: null, fase: "tipo", esc: {}, ate: mcAgora() + MC_DUELO_TIPO_MS, revanche: false, lados: null, resultado: null };
   mc.fase = "duelo";
-  mcAnunciar(`⚔️ ROUBO! ${ladrao.name} quer uma carta de ${vitima.name}. Duelo: ${MC_DUELO_NOME[d.tipo]}!`, {
+  mcAnunciar(`⚔️ ROUBO! ${ladrao.name} quer uma carta de ${vitima.name}. ${vitima.name} escolhe o duelo!`, {
     ic: "⚔️",
     titulo: "É HORA DO DUELO!",
-    texto: `${ladrao.name} quer uma carta de ${vitima.name}. Duelo: ${MC_DUELO_NOME[d.tipo]}!`,
+    texto: `${ladrao.name} quer uma carta de ${vitima.name}. ${vitima.name} escolhe o duelo em ${MC_DUELO_TIPO_MS / 1000} s.`,
     anim: "duelo",
     variantes: {
-      [ladrao.id]: { titulo: `Você desafiou ${vitima.name}!`, texto: `Valendo uma carta. Duelo: ${MC_DUELO_NOME[d.tipo]}.` },
-      [vitima.id]: { titulo: `${ladrao.name} quer uma carta sua!`, texto: `Defenda! Duelo: ${MC_DUELO_NOME[d.tipo]}. Bora!` },
+      [ladrao.id]: { titulo: `Você desafiou ${vitima.name}!`, texto: `Valendo uma carta. ${vitima.name} está escolhendo o duelo.` },
+      [vitima.id]: { titulo: `${ladrao.name} quer uma carta sua!`, texto: `Você escolhe o duelo: dado, moeda, jokenpô ou par ou ímpar. ${MC_DUELO_TIPO_MS / 1000} s!` },
     },
   });
   mcMudou();
   return true;
+}
+const MC_DUELO_TIPO_MS = 10000;
+function mcPodeEscolherTipo(id, tipo) {
+  const d = mc && mc.duelo;
+  return mcAtivo() && mc.fase === "duelo" && !!d && d.fase === "tipo" && d.vitima === id && MC_DUELOS.includes(tipo);
+}
+function mcDueloTipoEscolher(id, tipo) {
+  if (!mcPodeEscolherTipo(id, tipo)) return;
+  mcDueloDefinirTipo(tipo, id);
+}
+// O duelo ganhou tipo (escolhido pelo desafiado ou sorteado): lados, prazo e o aviso do tipo
+function mcDueloDefinirTipo(tipo, quem) {
+  const d = mc.duelo;
+  d.tipo = tipo;
+  d.fase = "escolha";
+  d.ate = mcAgora() + 12000;
+  if (d.tipo === "moeda") d.lados = Math.random() < 0.5 ? { [d.ladrao]: "cara", [d.vitima]: "coroa" } : { [d.ladrao]: "coroa", [d.vitima]: "cara" };
+  if (d.tipo === "parimpar") d.lados = Math.random() < 0.5 ? { [d.ladrao]: "par", [d.vitima]: "ímpar" } : { [d.ladrao]: "ímpar", [d.vitima]: "par" };
+  // dado e moeda não têm escolha: o C.A.O.S. rola na hora (com suspense)
+  if (d.tipo === "d6" || d.tipo === "moeda") d.ate = mcAgora() + 3500;
+  const como = quem ? `${mcNome(quem)} escolheu` : "Ninguém escolheu: o C.A.O.S. sorteou";
+  mcAnunciar(`⚔️ ${como}: ${MC_DUELO_NOME[tipo]}!`, { ic: "⚔️", titulo: MC_DUELO_NOME[tipo], texto: `${como}. ${mcNome(d.ladrao)} × ${mcNome(d.vitima)}, melhor de 3.`, anim: "duelo" });
+  mcMudou();
 }
 function mcPodeEscolherDuelo(id, valor) {
   const d = mc && mc.duelo;
@@ -876,8 +973,16 @@ function mcTicar() {
     d.proxEm = agora + 6000;
     return mcMudou();
   }
+  if (mc.fase === "bonus" && mc.bonus && !mc.bonus.buzz && agora >= mc.bonus.proxEm) {
+    const b = mc.bonus;
+    if (b.aberta >= b.dicas.length) return mcBonusNinguem();
+    b.aberta++;
+    b.proxEm = agora + MC_BONUS_DICA_MS;
+    return mcMudou();
+  }
   if (mc.fase === "duelo" && mc.duelo && agora >= mc.duelo.ate) {
     if (mc.duelo.fase === "revanche") return mcDueloFim();
+    if (mc.duelo.fase === "tipo") return mcDueloDefinirTipo(sorteioItem(MC_DUELOS), null);
     return mcDueloResolver();
   }
 }
@@ -932,6 +1037,7 @@ function mcRetrato() {
     desafio: mc.desafio ? { com: mc.desafio.com, juiz: mc.desafio.juiz, cat: mc.desafio.cat, dicas: mc.desafio.dicas.slice(0, mc.desafio.aberta), total: mc.desafio.dicas.length, buzz: mc.desafio.buzz, proxEm: mc.desafio.buzz ? null : P(mc.desafio.proxEm) } : null,
     duelo: mc.duelo ? { ladrao: mc.duelo.ladrao, vitima: mc.duelo.vitima, tipo: mc.duelo.tipo, fase: mc.duelo.fase, ate: P(mc.duelo.ate), escolheu: Object.keys(mc.duelo.esc), lados: mc.duelo.lados, resultado: mc.duelo.resultado, revanche: mc.duelo.revanche, placar: mc.duelo.placar || null, rodada: mc.duelo.rodada || 1 } : null,
     pinata: mc.pinata ? { palavra: mc.pinata.palavra, ganhou: mc.pinata.ganhou } : null,
+    bonus: mc.bonus ? { mestre: mc.bonus.mestre, cat: mc.bonus.cat, dicas: mc.bonus.dicas.slice(0, mc.bonus.aberta), total: mc.bonus.dicas.length, buzz: mc.bonus.buzz, erraram: mc.bonus.erraram.slice(), proxEm: mc.bonus.buzz ? null : P(mc.bonus.proxEm) } : null,
     desfib: mc.desfib ? { id: mc.desfib.id || null, oferta: !!mc.desfib.oferta } : null,
     intervalo: mc.intervalo ? { fimEm: P(mc.intervalo.fimEm), travada: mcLojaTravada() } : null,
     ultimo: mc.ultimo,
@@ -942,7 +1048,7 @@ function mcRetrato() {
 function mcPrivado(id) {
   if (CURRENT_MODE !== "caos" || !mc || !jogadorPorId(id)) return null;
   const c = mc.cartas[id];
-  const juizResp = mc.fase === "julgando" && mcJuiz() === id ? mc.cartas[mcMestreId()].resp : mc.desafio && mc.desafio.juiz === id ? mc.desafio.resp : null;
+  const juizResp = mc.fase === "julgando" && mcJuiz() === id ? mc.cartas[mcMestreId()].resp : mc.desafio && mc.desafio.juiz === id ? mc.desafio.resp : mc.bonus && mc.bonus.mestre === id ? mc.bonus.resp : null;
   return {
     carta: c ? { resp: c.resp, cat: c.cat, aberta: c.aberta, estado: c.estado } : null,
     pc: mc.pc[id] || 0,
@@ -984,8 +1090,17 @@ function mcOpcoes(id) {
       add("mcDesafioVeredito", [false], `❌ ${nome(d.com)} errou`, "nao", "Você julga a carta bônus");
     }
   }
+  const bo = mc.bonus;
+  if (mc.fase === "bonus" && bo) {
+    if (mcPodeBonusBater(id)) add("mcBonusBater", [id], "🎁 Sei! Vou responder", "ok", "Rodada Bônus");
+    if (bo.mestre === id && bo.buzz) {
+      add("mcBonusVeredito", [true], `✅ ${nome(bo.buzz)} acertou`, "ok", "Você julga a Rodada Bônus");
+      add("mcBonusVeredito", [false], `❌ ${nome(bo.buzz)} errou`, "nao", "Você julga a Rodada Bônus");
+    }
+  }
   const du = mc.duelo;
   if (mc.fase === "duelo" && du) {
+    MC_DUELOS.forEach((t) => mcPodeEscolherTipo(id, t) && add("mcDueloTipo", [id, t], MC_DUELO_NOME[t], "", `⚔️ Te desafiaram! Escolha o duelo (${MC_DUELO_TIPO_MS / 1000} s)`));
     if (du.tipo === "ppt") ["pedra", "papel", "tesoura"].forEach((v) => mcPodeEscolherDuelo(id, v) && add("mcDuelo", [id, v], { pedra: "✊ Pedra", papel: "✋ Papel", tesoura: "✌️ Tesoura" }[v], "", "⚔️ Sua jogada (ninguém vê até os dois escolherem)"));
     if (du.tipo === "parimpar") [0, 1, 2, 3, 4, 5].forEach((v) => mcPodeEscolherDuelo(id, v) && add("mcDuelo", [id, v], String(v), "", `⚔️ Você é ${du.lados[id]}: escolha um número`));
     if (mcPodeRevanche(id)) {
@@ -1007,6 +1122,7 @@ function mcPodeComandar(acao, jid, dados) {
   const host = typeof rede !== "undefined" && rede && rede.hostEu === jid;
   if (acao === "mcVeredito") return mcJuiz() === jid || host;
   if (acao === "mcDesafioVeredito") return !!mc && !!mc.desafio && mc.desafio.juiz === jid;
+  if (acao === "mcBonusVeredito") return !!mc && !!mc.bonus && mc.bonus.mestre === jid;
   return !!dados && dados[acao === "mcComprar" || acao === "mcUsar" ? 1 : 0] === jid;
 }
 
@@ -1048,10 +1164,16 @@ function mcTelaHtml(r, eu, opcoes, priv) {
   } else if (M.fase === "desafio" && M.desafio) {
     const d = M.desafio;
     centro = `<div class="mc-bloco mc-batata"><h3>🥔 Carta bônus de ${nome(d.com)} · ${escapeHtml(TELAO_CAT[d.cat] || d.cat)}</h3><ol class="mc-dicas">${d.dicas.map((t) => `<li>${escapeHtml(t)}</li>`).join("")}</ol><p>${d.buzz ? `🗣️ ${nome(d.com)} está respondendo… ${nome(d.juiz)} julga.` : `Próxima dica em ${d.proxEm ? `<b class="mc-cont" data-fim="${d.proxEm}">…</b> s` : "…"} (${d.dicas.length}/${d.total})`}</p></div>`;
+  } else if (M.fase === "bonus" && M.bonus) {
+    const b = M.bonus;
+    const souMestreB = eu && eu === b.mestre;
+    const fora = b.erraram.length ? `<p><small>Fora desta rodada: ${b.erraram.map(nome).join(", ")}</small></p>` : "";
+    const resp = souMestreB && priv && priv.juizResp ? `<div class="mc-resp">Resposta: <b>${escapeHtml(priv.juizResp)}</b> <small>(só você vê)</small></div>` : "";
+    centro = `<div class="mc-bloco mc-bonus"><h3>🎁 Rodada Bônus · ${escapeHtml(TELAO_CAT[b.cat] || b.cat)}</h3>${resp}<ol class="mc-dicas">${b.dicas.map((t) => `<li>${escapeHtml(t)}</li>`).join("")}</ol><p>${b.buzz ? `🗣️ ${nome(b.buzz)} está respondendo… ${nome(b.mestre)} julga.` : `${souMestreB ? "🎙️ Leia as dicas em voz alta. " : "🎁 Sabe? Bata primeiro! "}Próxima dica em ${b.proxEm ? `<b class="mc-cont" data-fim="${b.proxEm}">…</b> s` : "…"} (${b.dicas.length}/${b.total})`}</p>${fora}</div>`;
   } else if (M.fase === "duelo" && M.duelo) {
     const du = M.duelo;
     const lado = (id) => (du.lados ? ` (${escapeHtml(du.lados[id])})` : "");
-    centro = `<div class="mc-bloco mc-duelo"><h3>⚔️ ${du.revanche ? "REVANCHE" : "DUELO"}: ${escapeHtml(MC_DUELO_NOME[du.tipo] || du.tipo)}</h3><p>${nome(du.ladrao)}${lado(du.ladrao)} × ${nome(du.vitima)}${lado(du.vitima)}</p><p class="mc-duelo-placar">Melhor de 3 · rodada ${du.rodada || 1} · <b>${(du.placar && du.placar[du.ladrao]) || 0} × ${(du.placar && du.placar[du.vitima]) || 0}</b></p>${du.resultado ? `<p><b>${escapeHtml(du.resultado.det)}</b></p>` : ""}<p>${du.fase === "revanche" ? `${nome(du.vitima)} decide se pede revanche · <b class="mc-cont" data-fim="${du.ate}">…</b> s` : du.tipo === "ppt" || du.tipo === "parimpar" ? `Escolheram: ${du.escolheu.length}/2 · <b class="mc-cont" data-fim="${du.ate}">…</b> s` : `Rolando… <b class="mc-cont" data-fim="${du.ate}">…</b>`}</p></div>`;
+    centro = du.fase === "tipo" ? `<div class="mc-bloco mc-duelo"><h3>⚔️ DUELO</h3><p>${nome(du.ladrao)} × ${nome(du.vitima)}</p><p>${nome(du.vitima)} escolhe o duelo · <b class="mc-cont" data-fim="${du.ate}">…</b> s</p></div>` : `<div class="mc-bloco mc-duelo"><h3>⚔️ ${du.revanche ? "REVANCHE" : "DUELO"}: ${escapeHtml(MC_DUELO_NOME[du.tipo] || du.tipo)}</h3><p>${nome(du.ladrao)}${lado(du.ladrao)} × ${nome(du.vitima)}${lado(du.vitima)}</p><p class="mc-duelo-placar">Melhor de 3 · rodada ${du.rodada || 1} · <b>${(du.placar && du.placar[du.ladrao]) || 0} × ${(du.placar && du.placar[du.vitima]) || 0}</b></p>${du.resultado ? `<p><b>${escapeHtml(du.resultado.det)}</b></p>` : ""}<p>${du.fase === "revanche" ? `${nome(du.vitima)} decide se pede revanche · <b class="mc-cont" data-fim="${du.ate}">…</b> s` : du.tipo === "ppt" || du.tipo === "parimpar" ? `Escolheram: ${du.escolheu.length}/2 · <b class="mc-cont" data-fim="${du.ate}">…</b> s` : `Rolando… <b class="mc-cont" data-fim="${du.ate}">…</b>`}</p></div>`;
   } else if (C) {
     // 1.7.10.7.1 (relato do JF: "não sabia quem era o Mestre, a categoria, quanto tempo restava, e o Mestre não via a
     // própria carta direito"): painel da carta com Mestre, categoria grande, dica X de 10 em bolinhas, o tempo da
@@ -1232,6 +1354,10 @@ function mcRetomar(s) {
     mc.intervalo.ini = agora - LOJA_TRAVA_MS; // retomou: a vitrine já pode
   }
   if (mc.desafio) mc.desafio.proxEm = agora + 6000;
+  if (mc.bonus) {
+    mc.bonus.proxEm = agora + MC_BONUS_DICA_MS;
+    mc.bonus.buzz = null; // quem estava respondendo na hora que caiu bate de novo
+  }
   if (mc.duelo) mc.duelo.ate = agora + 10000;
   if (mc.desfib && mc.desfib.oferta) mc.desfib.ate = agora + 5000;
   if (mc.fase === "julgando" && mc.janela) mc.janela.buzz = mc.janela.buzz || null;
@@ -1250,7 +1376,7 @@ function mcRegrasHtml() {
     `🛒 <b>Lojinha (no intervalo, uma só pra mesa):</b> a cada intervalo aparecem ${MC_VITRINE} itens sorteados, com preço e estoque variando. Catálogo: ${Object.values(MC_LOJA)
       .map((it) => `${it.ic} ${it.nome} (~${it.preco})`)
       .join(", ")}.`,
-    `🌀 <b>O C.A.O.S. apronta</b> (um evento por vez, sempre entre uma vez e outra, com aviso grande na tela): ⏩ Turbo (janela de ${MC_TURBO_SEG} s), 💸 Imposto da Preguiça (quem não tenta paga PC), 🥔 Batata Quente (passe ou segure; quem ficar com ela encara a carta bônus), 🧤 Mão Leve (furto secreto), 🪅 Piñata (digite primeiro), 🎁 Presente (quem ficou ${MC_PRESENTE_DIF}+ cartas atrás do líder ganha 1 item, uma vez por partida) e ⚔️ roubos com duelo em melhor de 3 (dado, moeda, jokenpô, par ou ímpar) e revanche dobro ou nada.`,
+    `🌀 <b>O C.A.O.S. apronta</b> (um evento por vez, sempre entre uma vez e outra, com aviso grande na tela): ⏩ Turbo (janela de ${MC_TURBO_SEG} s), 💸 Imposto da Preguiça (quem não tenta paga PC), 🥔 Batata Quente (passe ou segure; quem ficar com ela encara a carta bônus), 🧤 Mão Leve (furto secreto), 🪅 Piñata (digite primeiro), 🎁 Presente (quem ficou ${MC_PRESENTE_DIF}+ cartas atrás do líder ganha 1 item, uma vez por partida), 🎁 Rodada Bônus (carta extra que o Mestre lê: quem bater primeiro e acertar ganha +${MC_PC.bonus} PC e um ${MC_LOJA.kevlar.nome}, e o Mestre também ganha +${MC_PC.bonus} PC) e ⚔️ roubos com duelo em melhor de 3 (quem foi desafiado escolhe: dado, moeda, jokenpô ou par ou ímpar) e revanche dobro ou nada.`,
   ];
   return li.map((t) => "<li>" + t + "</li>").join("");
 }

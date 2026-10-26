@@ -455,6 +455,7 @@ function saveGameState() {
       oldSchoolAcess,
       corridaVitoria,
       corridaHardcore,
+      corridaExtreme,
       caosRitmoLog,
       caosEmoHist,
       caosExtra: caosExtraSalvar(),
@@ -762,6 +763,7 @@ function loadGameState() {
     oldSchoolAcess = CURRENT_MODE === "oldschool" && !!state.oldSchoolAcess;
     corridaVitoria = state.corridaVitoria === "cartas" ? "cartas" : "tempo";
     corridaHardcore = CURRENT_MODE === "corrida" && state.corridaHardcore === true;
+    corridaExtreme = corridaHardcore && state.corridaExtreme === true;
     aplicarAcessibilidade();
     CURRENT_FORMAT = state.CURRENT_FORMAT || "versus";
     teams = state.teams || {};
@@ -1822,7 +1824,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.7.10.9.8 · C.A.O.S. 5.1.4");
+  L.push("- **Versão:** Beta 1.8.0 · C.A.O.S. 5.2.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2364,7 +2366,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.7.10.9.8 · C.A.O.S. 5.1.4",
+        versao: "Beta 1.8.0 · C.A.O.S. 5.2.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,

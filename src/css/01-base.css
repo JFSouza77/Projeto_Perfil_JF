@@ -1032,13 +1032,14 @@ body.claro .turn-info .responder-tag {
   margin: 12px 0;
 }
 .number-btn {
+  min-height: 50px;
   padding: 12px 0;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   background: #2a9d8f;
   color: #fff;
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 800;
+  font-size: 1.25rem; /* 1.8 · Mesa fácil: número da dica maior (era 1rem) */
   cursor: pointer;
 }
 .number-btn:disabled {

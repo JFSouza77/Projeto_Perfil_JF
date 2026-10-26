@@ -2046,3 +2046,95 @@ body.claro .rede-caos-resp {
   border-color: #c26fd6;
   color: #3d1048;
 }
+
+/* 1.8 (pedido do JF): senha do host no painel da sala (confirma "remover da partida") */
+.rede-senha-host {
+  margin: 8px auto;
+  padding: 8px 12px;
+  max-width: 320px;
+  border-radius: 12px;
+  background: rgba(225, 29, 72, 0.12);
+  border: 1px dashed rgba(244, 114, 182, 0.7);
+  text-align: center;
+}
+.rede-senha-host b {
+  font-size: 1.3rem;
+  letter-spacing: 0.25em;
+  margin-left: 4px;
+}
+.rede-senha-host small {
+  display: block;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+body.claro .rede-senha-host {
+  background: #ffe8ef;
+  border-color: #be185d;
+  color: #4a0b25;
+}
+/* 1.8 · Guia da mesa: o botão que a mesa está esperando brilha (sem mudar o tamanho nem a cor do botão) */
+.guia-pulso {
+  position: relative;
+  z-index: 1;
+  outline: 3px solid #facc15;
+  outline-offset: 2px;
+  animation: guiaPulso 1.2s ease-in-out infinite;
+}
+@keyframes guiaPulso {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 #facc15cc;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 12px #facc1500;
+    transform: scale(1.06);
+  }
+}
+html.acess-calmo .guia-pulso,
+body.batata-mode .guia-pulso {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .guia-pulso {
+    animation: none;
+  }
+}
+/* 1.8 · Mesa fácil (pedido do JF, partida em família com a Elisa e a Jennifer): no celular, tudo no meio da tela,
+   botões da jogada maiores, números das dicas grandes e a faixa da vez chamando pelo nome */
+.telao.rede-convidado {
+  width: min(100%, 760px);
+  margin: 0 auto;
+  text-align: center;
+}
+.rede-convidado .rede-btn {
+  min-height: 54px;
+  font-size: 1.1rem;
+}
+.rede-convidado .rede-nums {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 64px));
+  justify-content: center;
+  gap: 10px;
+}
+.rede-convidado .rede-nums .rede-btn {
+  min-width: 0;
+  min-height: 60px;
+  padding: 8px 0;
+  font-size: 1.6rem;
+  border-radius: 16px;
+}
+.rede-convidado .rede-papel {
+  font-size: 1.6rem;
+  padding: 14px 16px;
+}
+.rede-papel .rp-nome {
+  display: block;
+  font-size: 1.15em;
+  letter-spacing: 0.04em;
+  overflow-wrap: anywhere;
+}
+.rede-convidado .rede-rot {
+  font-size: 1rem;
+  opacity: 0.92;
+}

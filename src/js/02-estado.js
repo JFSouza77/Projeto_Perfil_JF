@@ -24,6 +24,7 @@ let oldSchoolAcess = false;
 // 1.7.10.6 · Corrida contra o Tempo: "tempo" (pontos = segundos que sobravam na carta) ou "cartas" (1 carta = 1 ponto)
 let corridaVitoria = "tempo";
 let corridaHardcore = false; // Corrida Hardcore: carta de 1:30 correndo 1,5×, dicas abrem sozinhas, mais bombas
+let corridaExtreme = false; // 1.8 · Corrida Extreme: o Hardcore com a carta correndo 2× (corridaHardcore fica ligado junto)
 let RESPONSE_TIME_LIMIT_BY_MODE = { classico: 90, hardcore: 60, express: 60, junior: 90, oldschool: 90, corrida: CORRIDA_VEZ_SEG };
 let expressSelectedCategories = [];
 let expressFlavor = "classico";

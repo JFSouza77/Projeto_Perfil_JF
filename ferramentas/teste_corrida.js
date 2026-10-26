@@ -356,6 +356,17 @@ const ARQ = acharMestre(process.argv[2]);
     const c0 = corridaCartaRestaMs;
     await esp(1000);
     o.hcCorre15 = c0 - corridaCartaMs() >= 1300 && c0 - corridaCartaMs() <= 1800;
+    // 1.8 · Extreme: o Hardcore com a carta correndo 2×
+    await comecar("tempo-ex");
+    await esp(1300);
+    f();
+    o.exEhHardcore2x = corridaHardcore && corridaExtreme && corridaCartaDuracao() === 90e3 && corridaVelocidade() === 2 && currentCard.clues.every((c) => c.type === "clue");
+    parar();
+    const e0 = corridaCartaRestaMs;
+    await esp(1000);
+    o.exCorre2 = e0 - corridaCartaMs() >= 1750 && e0 - corridaCartaMs() <= 2400;
+    await comecar("tempo-hc");
+    o.hcNaoEhExtreme = corridaHardcore && !corridaExtreme;
     // Duelo: geral congela, carta 2×, só os dois, quem vence rouba 25, o Mestre volta
     await comecar("tempo", ["Ana", "Beto", "Caio", "Duda"]);
     players[1].score = 100;

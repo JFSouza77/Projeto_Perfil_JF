@@ -14,7 +14,7 @@
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1849;
+const JOGO_BUILD = 1850;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -352,7 +352,8 @@ const CORRIDA_ESCOLHA_SEG = 15; // 1.7.10.9.3 (JF, 23/10): 15 s pra escolher a d
 const CORRIDA_INTERVALO_SEG = 20; // 1.7.10.9.3 (JF): 20 s entre as cartas (era 15), por causa da trava de 3 s da lojinha; 20 é o teto (30 estraga o ritmo)
 // Eventos da Corrida (spec do JF de 17/10 à noite + balanceamento): penalidades, carta morta, bomba, duelo, Hardcore
 const CORRIDA_CARTA_HC_MS = 90e3; // Hardcore: 1:30 de carta…
-const CORRIDA_VEL_HC = 1.5; // …correndo 1,5× (Extreme 2× fica pra depois do playtest)
+const CORRIDA_VEL_HC = 1.5; // …correndo 1,5×
+const CORRIDA_VEL_EX = 2; // 1.8 · Extreme: tudo do Hardcore, com a carta correndo 2×
 const CORRIDA_VEZ_HC_SEG = 15; // Hardcore: 15 s pra escolher e 15 pra responder (1.7.10.6.1: era 10)
 const CORRIDA_JANELA_SEG = 15; // relâmpago (Hardcore / Juízo Final): a dica fica aberta 15 s esperando alguém bater (era 10)
 const CORRIDA_ERRO_MS = 1e3; // errou: a carta perde 1 s
@@ -376,7 +377,7 @@ const MC_DUELO_VITORIAS = 2; // 1.7.10.9.3 (JF): duelo e revanche em melhor de 3
 const MC_PAUSA_VEZ_MS = 6000; // respiro antes da próxima vez, com o resultado na tela (1.7.10.6.1, Henrique: 1,5 → 4,5 s; 1.7.10.9.3, JF: 6 s)
 const MC_INTERVALO_SEG = 20; // lobby entre rodadas (tudo congelado). 1.7.10.9.3 (JF): 20 s (era 15), por causa da trava de 3 s da lojinha; 20 é o teto
 const MC_RAPIDO_MS = 5e3; // acertou nos 5 primeiros segundos da janela: bônus de PC
-const MC_PC = { rodada: 10, rapido: 5, pinata: 30, batata: 50, imposto: 10 };
+const MC_PC = { rodada: 10, rapido: 5, pinata: 30, batata: 50, imposto: 10, bonus: 20 };
 /* Lojinha do C.A.O.S. (Pontos de Caos). 1.7.10.6 (pedido do JF): nomes próprios do modo (diferentes dos da Corrida),
    2 itens novos (Olho do C.A.O.S. e Assalto Relâmpago) e vitrine sorteada a cada intervalo: MC_VITRINE itens, 1 a 3
    de cada, preço variando ±20%. Balanceamento: ~10 a 25 PC por rodada, então item de 15–25 é toda rodada, 40+ é

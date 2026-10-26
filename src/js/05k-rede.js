@@ -697,7 +697,8 @@ function redeValidar(bruto) {
   const ok = {
     oi: () =>
       (m.jogadorId === undefined || m.jogadorId === null || jogadorIdValido(m.jogadorId)) &&
-      typeof m.chave === "string" && /^[a-z0-9]{12,32}$/.test(m.chave) && txt(m.versao, 20) && (m.build === undefined || Number.isInteger(m.build)),
+      typeof m.chave === "string" && /^[a-z0-9]{12,32}$/.test(m.chave) && txt(m.versao, 20) && (m.build === undefined || Number.isInteger(m.build)) &&
+      (m.outros === undefined || (Array.isArray(m.outros) && m.outros.length <= 8 && m.outros.every(jogadorIdValido))),
     cmd: () =>
       typeof m.commandId === "string" && /^[A-Za-z0-9_:-]{4,64}$/.test(m.commandId) && typeof m.acao === "string" && !!ACOES[m.acao] &&
       Array.isArray(m.dados) && m.dados.length <= 4 && m.dados.every(redeEhPrimitivo) &&
@@ -734,7 +735,7 @@ function redeValidar(bruto) {
       (m.aprovados === undefined || (Array.isArray(m.aprovados) && m.aprovados.length <= 40 && m.aprovados.every((c) => txt(c, 32)))),
     painel: () =>
       Number.isInteger(m.revisao) && Array.isArray(m.opcoes) && m.opcoes.length <= 40 && (m.jog === undefined || jogadorIdValido(m.jog)) &&
-      m.opcoes.every((o) => o && typeof o.a === "string" && !!ACOES[o.a] && Array.isArray(o.d) && o.d.length <= 4 && o.d.every(redeEhPrimitivo) && txt(o.t, 80) && (o.c === undefined || txt(o.c, 12)) && (o.g === undefined || txt(o.g, 60))),
+      m.opcoes.every((o) => o && typeof o.a === "string" && !!ACOES[o.a] && Array.isArray(o.d) && o.d.length <= 4 && o.d.every(redeEhPrimitivo) && txt(o.t, 80) && (o.c === undefined || txt(o.c, 12)) && (o.g === undefined || txt(o.g, 60)) && (o.gp === undefined || o.gp === 1)),
   }[m.t];
   let certo = false;
   try {
@@ -751,7 +752,7 @@ function redeValidar(bruto) {
 function redeHostGuardar() {
   try {
     if (rede && rede.papel === "host")
-      JFStore.setItem(REDE_HOST_KEY, JSON.stringify({ sala: rede.sala, modo: rede.modo, eu: rede.hostEu || null, junto: rede.hostJunto || [], auto: Object.keys(rede.hostAuto || {}), chave: rede.chaveHost, quando: Date.now(), aprovados: Object.keys(rede.aprovados || {}).slice(-40) }));
+      JFStore.setItem(REDE_HOST_KEY, JSON.stringify({ sala: rede.sala, modo: rede.modo, eu: rede.hostEu || null, junto: rede.hostJunto || [], auto: Object.keys(rede.hostAuto || {}), senha: rede.senhaHost || null, chave: rede.chaveHost, quando: Date.now(), aprovados: Object.keys(rede.aprovados || {}).slice(-40) }));
   } catch (e) {}
 }
 // Abre a sala. modo "internet" (padrão, PeerJS) ou "local" (ensaio em abas). salaFixa: reabrir
@@ -760,6 +761,14 @@ function redeAbrirSala(modo, salaFixa) {
   if (typeof modo === "function") return redeAbrirSalaCom(modo, "local", salaFixa); // (testes antigos)
   const m = modo === "local" || !redeTemInternet() ? "local" : "internet";
   return redeAbrirSalaCom(redeFabrica(m, "host"), m, salaFixa);
+}
+// 4 números sorteados (nunca a senha do ADM, nem número repetido tipo 1111)
+function redeSenhaHostNova() {
+  for (let i = 0; i < 20; i++) {
+    const v = String(Math.floor(Math.random() * 10000)).padStart(4, "0");
+    if (v !== "0077" && !/^(\d)\1{3}$/.test(v)) return v;
+  }
+  return "4821";
 }
 function redeAbrirSalaCom(fab, modo, salaFixa) {
   if (rede) redeFechar();
@@ -780,6 +789,9 @@ function redeAbrirSalaCom(fab, modo, salaFixa) {
     hostEu: null, // o jogador que está no aparelho do host (vota por ele)
     hostJunto: [], // 1.7.9.9: outros jogadores que dividem o aparelho do host (sem aparelho próprio)
     chaveHost: redeAleatorio(16), // 1.7.10: identidade de jogador deste aparelho, se ele deixar de ser host
+    // 1.8 (pedido do JF): senha do host, mostrada no painel da sala, pra confirmar "remover da partida" quando o
+    // JF (senha do ADM) não está jogando
+    senhaHost: redeSenhaHostNova(),
     segredoEnviado: null,
     paineis: {},
     votacao: null,
@@ -862,6 +874,7 @@ function redeHostRetomar() {
     rede.hostJunto = (Array.isArray(s.junto) ? s.junto : []).filter((id) => jogadorIdValido(id) && jogadorIdxPorId(id) >= 0 && id !== rede.hostEu);
     rede.hostAuto = {};
     (Array.isArray(s.auto) ? s.auto : []).forEach((id) => jogadorIdValido(id) && (rede.hostAuto[id] = true));
+    if (typeof s.senha === "string" && /^\d{4}$/.test(s.senha)) rede.senhaHost = s.senha;
     // 1.7.10.6.1 (relato do JF): os jogadores podem ainda não ter voltado do save aqui; guarda pra religar depois
     rede.hostEuSalvo = jogadorIdValido(s.eu) ? [s.eu].concat(Array.isArray(s.junto) ? s.junto.filter(jogadorIdValido) : []) : null;
     (Array.isArray(s.aprovados) ? s.aprovados : []).forEach((c) => typeof c === "string" && (rede.aprovados[c] = true));
@@ -1202,7 +1215,16 @@ function redeHostOi(m) {
   if (atual && atual.sessao !== m.de && redeOnline(atual) && atual.chave !== m.chave) return redeEnviar("recusa", { motivo: "lugar_ocupado" }, m.de);
   // 1.7.9.6 (pedido do JF): aparelho novo só entra com o host aprovando; quem volta (mesma chave) entra direto
   if (!rede.aprovados[m.chave] && !(atual && atual.chave === m.chave)) return redePedidoNovo(m.de, { tipo: "lugar", jogadorId: pedido, chave: m.chave });
-  redeAssentar(m.de, pedido, m.chave);
+  // com outros jogadores no mesmo aparelho, nenhum lugar dele é solto (senão um extra perderia o dele)
+  redeAssentar(m.de, pedido, m.chave, Array.isArray(m.outros) && m.outros.length > 0);
+  // 1.8: o celular voltou com mais jogadores (vários no mesmo aparelho): cada um volta pro seu lugar, mas só se o
+  // lugar for mesmo deste aparelho (mesma chave) e ninguém estiver usando
+  (Array.isArray(m.outros) ? m.outros : []).forEach((id) => {
+    if (id === pedido || jogadorIdxPorId(id) < 0 || (redeNoHost(id) && !redeHostAutoTem(id))) return;
+    const a = rede.assentos[id];
+    if (!a || a.chave !== m.chave || (redeOnline(a) && a.sessao !== m.de)) return;
+    redeAssentar(m.de, id, m.chave, true);
+  });
 }
 function redeAssentar(ses, pedido, chave, mais) {
   const m = { de: ses, chave };
@@ -1452,7 +1474,7 @@ function redeAprovarPedido(ses, sim, pedidoDireto) {
     if (prob) return redeEnviar("recusa", { motivo: prob }, ses), false;
     pid = redeHostAdicionarPerfil(p.perfil);
   } else if (jogadorIdxPorId(pid) < 0 || (redeNoHost(pid) && !redeHostAutoTem(pid)) || redeOnline(rede.assentos[pid])) {
-    // 1.7.10.9.8: quem o host pegou sozinho (sem celular) continua livre pra quem chegar; o redeAssentar tira do host
+    // (quem o host pegou sozinho, por não ter celular, continua livre pra quem chegar: o redeAssentar tira do host)
     return redeMandarEscolha(ses), false;
   }
   if (!pid) return false;
@@ -1806,8 +1828,12 @@ function redeOpcoes(jid) {
     if (desfazerOferta) add("desfazer", [], "↩️ Desfazer: " + desfazerOferta.nome, "", "Mais");
   }
   add("pausar", [], "⏸️ Pausar", "", "Mais");
+  // 1.8 · Guia da mesa: a mesa está esperando este jogador há um tempinho; o botão da jogada dele brilha
+  if (typeof guiaPulsoPara === "function" && guiaPulsoPara(jid))
+    op.forEach((o) => !REDE_GUIA_FORA.includes(o.a) && (o.gp = 1));
   return op;
 }
+const REDE_GUIA_FORA = ["pausar", "descartarCarta", "desistirCarta", "desfazer", "palpitarAgora", "corridaComprar", "corridaUsar"];
 // Sucessor (regra do JF): na ordem dos Mestres da partida (a partir do 2º, contando do primeiro Mestre),
 // o primeiro jogador que está na sala, online, e não é o próprio host.
 function redeSucessor() {
@@ -2066,7 +2092,7 @@ function redeHostVista() {
     h += `<div class="rede-rot">👉 Sua vez: toque no número (ou fale) e o Mestre abre a dica.</div>`; // 1.7.9.6: só o Mestre abre
   const ops = [];
   eus.forEach((p) => redeOpcoes(p.id).forEach((o) => o.a !== "pausar" && ops.push({ ...o, quem: p.id })));
-  if (ops.length) h += `<div class="rede-acoes">${ops.map((o, i) => `<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`).join("")}</div>`;
+  if (ops.length) h += `<div class="rede-acoes">${ops.map((o, i) => `<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}${o.gp ? " guia-pulso" : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`).join("")}</div>`;
   h += `<div class="rede-acoes rede-mais"><button type="button" class="rede-btn" id="redeVistaPausar">⏸️ Pausar</button><button type="button" class="rede-btn" id="redeVistaSala">🌐 Sala ${rede.sala}</button></div>`;
   const barra = document.createElement("section");
   barra.className = "rede-barra";
@@ -2225,6 +2251,8 @@ function redeEntrarSala(sala, transporteFabrica) {
     ultimoSeq: {},
     recusadas: {},
     eu: jogadorIdValido(eu.id) ? eu.id : null,
+    // 1.8 (pedido do JF): todos os jogadores deste celular, pra voltarem juntos se a conexão cair
+    euLista: (Array.isArray(eu.lista) ? eu.lista.filter(jogadorIdValido) : []).concat(jogadorIdValido(eu.id) ? [eu.id] : []).filter((x, i, a) => a.indexOf(x) === i).slice(0, 8),
     chave: typeof eu.chave === "string" && /^[a-z0-9]{12,32}$/.test(eu.chave) ? eu.chave : redeAleatorio(16),
     estado: "entrando", // entrando | escolhendo | dentro | recusado
     retrato: null,
@@ -2244,7 +2272,10 @@ function redeEntrarSala(sala, transporteFabrica) {
     aoMudar: null,
   };
   redeTelaAcesa(true);
-  const oi = () => redeEnviar("oi", { jogadorId: rede.eu, chave: rede.chave, versao: JOGO_VERSAO, build: REDE_BUILD });
+  const oi = () => {
+    const outros = (rede.euLista || []).filter((id) => id !== rede.eu).slice(0, 7);
+    return redeEnviar("oi", { jogadorId: rede.eu, chave: rede.chave, versao: JOGO_VERSAO, build: REDE_BUILD, ...(outros.length ? { outros } : {}) });
+  };
   rede.oi = oi;
   transporte.aoReceber((bruto) => {
     const m = redeValidar(bruto);
@@ -2358,7 +2389,7 @@ function redeConvidadoReceber(m) {
       if (caosVoiceOn) redeEnviar("sinal", { tipo: "voz", ligada: true });
     } catch (e) {}
     try {
-      const eu = JSON.stringify({ id: rede.eu, chave: rede.chave });
+      const eu = JSON.stringify({ id: rede.eu, chave: rede.chave, lista: rede.euLista || [] });
       sessionStorage.setItem(REDE_EU_KEY + rede.sala, eu);
       localStorage.setItem(REDE_EU_KEY + rede.sala, eu);
     } catch (e) {}
@@ -2655,7 +2686,7 @@ function redeConvDefinirAtivo(jid) {
   rede.painel = rede.painelPorJid[jid] || null;
   rede.segredo = null; // a resposta é do Mestre: só volta pelo "segredo" de quem está ativo
   try {
-    const eu = JSON.stringify({ id: jid, chave: rede.chave });
+    const eu = JSON.stringify({ id: jid, chave: rede.chave, lista: rede.euLista || [] });
     sessionStorage.setItem(REDE_EU_KEY + rede.sala, eu);
     localStorage.setItem(REDE_EU_KEY + rede.sala, eu);
   } catch (e) {}
@@ -2950,7 +2981,7 @@ function redeMestreCartaMontar(box) {
         grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}${ped && ped.pos === i ? " pedida" : ""}${travada ? " travada" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : travada ? ' title="Toque pra abrir sem pedido"' : ""}>${i + 1}</button>`;
       }
       const forcar = rede.dicaForcar != null ? `<div class="dica-forcar">Abrir a dica <b>${rede.dicaForcar + 1}</b> sem pedido? <button type="button" class="rede-btn rede-ok" id="redeForcarSim">Abrir</button><button type="button" class="rede-btn" id="redeForcarNao">Cancelar</button></div>` : "";
-      const rotulo = trava && !ped ? `👉 ${nome(r.vezId)} escolhe a dica no aparelho dele (${c.totalDicas - c.abertas.length} restantes). Travou? Toque num número pra abrir sem pedido.` : `${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)`;
+      const rotulo = trava && !ped ? `👉 ${nome(r.vezId)} escolhe a dica no próprio celular (${c.totalDicas - c.abertas.length} restantes). Travou? Toque num número pra abrir sem pedido.` : `${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)`;
       controles = `${ped ? `<div class="pedido-dica">👉 ${nome(ped.por)} pediu a dica <b>${ped.pos + 1}</b>. Toque nela pra abrir.</div>` : ""}${forcar}<div class="pick-label">${rotulo}</div><div class="number-grid">${grade}</div>`;
     }
     h = `<div class="card rede-carta-mestre" style="--card-glow:${cor}">
@@ -3187,17 +3218,19 @@ function redePedirEntrada(perfil) {
 }
 // 1.7.10.6 (JF: "qualquer um que bata o olho tem que entender"): faixa grande com o papel de quem está neste
 // dispositivo agora: Mestre ou na vez (quem não está em nenhum dos dois não ganha faixa, só acompanha a T2)
-function redePapelHtml(papel) {
-  if (papel.mestre) return `<div class="rede-papel rp-mestre" role="status">🎙️ VOCÊ É O MESTRE<small>Você vê a carta, lê a dica que pedirem e diz se acertou.</small></div>`;
-  if (papel.vez) return `<div class="rede-papel rp-vez" role="status">👉 É A SUA VEZ!<small>Escolha um número de dica, ouça o Mestre e tente adivinhar.</small></div>`;
+// 1.8 · Mesa fácil (pedido do JF, partida com a Elisa e a Jennifer): a faixa chama pelo nome, bem grande
+function redePapelHtml(papel, nome) {
+  const quem = nome ? `<b class="rp-nome">${escapeHtml(String(nome).toUpperCase())}</b>` : "";
+  if (papel.mestre) return `<div class="rede-papel rp-mestre" role="status">🎙️ VOCÊ É O MESTRE${quem}<small>Você vê a carta, lê a dica que pedirem e diz se acertou.</small></div>`;
+  if (papel.vez) return `<div class="rede-papel rp-vez" role="status">👉 SUA VEZ!${quem}<small>Escolha um número de dica, ouça o Mestre e tente adivinhar.</small></div>`;
   return "";
 }
 function redeBotoesHtml() {
   const r = rede.retrato, eu = r.jogadores.find((j) => j.id === rede.eu);
   const papel = redeMeuPapel();
-  let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 Sua vez" : ""}</div>`;
+  let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${(papel.mestre || papel.vez) && !r.intervalo && r.iniciada ? "" : papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 Sua vez" : ""}</div>`;
   if (r.fim) return h;
-  if (!r.intervalo && r.iniciada) h += redePapelHtml(papel);
+  if (!r.intervalo && r.iniciada) h += redePapelHtml(papel, eu && eu.nome);
   if (r.intervalo) {
     // 1.7.9.11: o placar do intervalo no celular de cada um (Pontos e Joias; o tabuleiro está logo abaixo)
     // 1.7.10.5.6 (pedido do JF): cara de lobby, com o resumo da partida e as cartas que já foram
@@ -3219,8 +3252,7 @@ function redeBotoesHtml() {
     const quem = (r.jogadores.find((j) => j.id === v.pedidoPor) || { nome: "O Mestre" }).nome;
     h += `<div class="rede-votacao">🗳️ ${escapeHtml(quem)} quer ${v.tipo === "descartar" ? "descartar" : "desistir de"} esta carta. <b>${v.sim}</b> sim · <b>${v.nao}</b> não${v.precisa ? ` <small>(precisa de ${v.precisa} sim de ${v.total})</small>` : ""} · <b id="redeVotoSeg">…</b> s${ja ? "<div><small>Seu voto foi.</small></div>" : `<div class="rede-acoes"><button type="button" class="rede-btn rede-ok" data-voto="1">👍 Sim</button><button type="button" class="rede-btn rede-nao" data-voto="0">👎 Não</button></div>`}</div>`;
   }
-  if (papel.vez && !papel.mestre && r.estadoCarta === "revealed" && r.carta && (r.carta.pendente === null || r.carta.pendente === undefined))
-    h += `<div class="rede-rot">👉 Sua vez: toque no número (ou fale) e o Mestre abre a dica.</div>`;
+  // (1.8: a faixa da vez e o título dos números já dizem o que fazer; a linha repetida saiu)
   if (papel.mestre && rede.segredo && rede.segredo.resposta)
     h += `<div class="rede-segredo">🔒 Só você vê: <b>${escapeHtml(rede.segredo.resposta)}</b></div>`;
   const c = r.carta;
@@ -3238,7 +3270,7 @@ function redeBotoesHtml() {
     let gr = grupos.find((x) => x.g === g);
     if (!gr) grupos.push((gr = { g, itens: [], nums: true }));
     if (o.a !== "pedirDica") gr.nums = false;
-    gr.itens.push(`<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`);
+    gr.itens.push(`<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}${o.gp ? " guia-pulso" : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`);
   });
   grupos.sort((a, b) => (a.g === "Mais") - (b.g === "Mais"));
   grupos.forEach((gr) => {
@@ -3546,11 +3578,11 @@ function redePainelHost() {
       const opcoesEu = players
         .map((p) => {
           const longe = !redeNoHost(p.id) && redeOnline(rede.assentos[p.id]);
-          return `<label class="rede-eu-op${longe ? " longe" : ""}"><input type="checkbox" data-eu="${escapeHtml(p.id)}"${redeNoHost(p.id) ? " checked" : ""}${longe ? " disabled" : ""}> ${escapeHtml((p.avatar ? p.avatar + " " : "") + p.name)}${longe ? " <small>(no aparelho dele)</small>" : ""}</label>`;
+          return `<label class="rede-eu-op${longe ? " longe" : ""}"><input type="checkbox" data-eu="${escapeHtml(p.id)}"${redeNoHost(p.id) ? " checked" : ""}${longe ? " disabled" : ""}> ${escapeHtml((p.avatar ? p.avatar + " " : "") + p.name)}${longe ? " <small>(no próprio celular)</small>" : ""}</label>`;
         })
         .join("");
       const erro = est === "erro" ? `<p class="rede-aviso">${REDE_ESTADO_HOST.erro}${rede.transporte.erro ? " (" + escapeHtml(rede.transporte.erro) + ")" : ""}. Confira a internet e tente de novo, ou use o ensaio em abas.</p>` : "";
-      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Sala ${rede.sala}</h3><div class="rede-estado">${rede.modo === "local" ? "🧪 Ensaio em abas deste navegador" : REDE_ESTADO_HOST[est] || est}</div>${erro}<div class="rede-codigo-rot">Código da sala</div><div class="rede-codigo">${rede.sala}</div>${redeQrHtml(redeLinkDaSala())}<p class="rede-rot">Quem vai jogar abre o jogo, toca em <b>🌐 Jogar online</b> e digita o código. Ou mande o link:</p><code class="rede-link">${escapeHtml(redeLinkDaSala())}</code><button type="button" class="chip" id="redeCopiar">📋 Copiar link</button>${
+      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Sala ${rede.sala}</h3><div class="rede-estado">${rede.modo === "local" ? "🧪 Ensaio em abas deste navegador" : REDE_ESTADO_HOST[est] || est}</div>${erro}<div class="rede-codigo-rot">Código da sala</div><div class="rede-codigo">${rede.sala}</div>${rede.senhaHost ? `<div class="rede-senha-host">🔐 Senha do host: <b>${escapeHtml(rede.senhaHost)}</b><small>Pra confirmar "remover da partida" (Pausa → Jogadores). Guarde só pra você.</small></div>` : ""}${redeQrHtml(redeLinkDaSala())}<p class="rede-rot">Quem vai jogar abre o jogo, toca em <b>🌐 Jogar online</b> e digita o código. Ou mande o link:</p><code class="rede-link">${escapeHtml(redeLinkDaSala())}</code><button type="button" class="chip" id="redeCopiar">📋 Copiar link</button>${
         navigator.share ? '<button type="button" class="chip" id="redeCompartilhar">📤 Compartilhar</button>' : ""
       }<div class="rede-rot-eu">Quem joga neste aparelho? <small>(pode marcar mais de um)</small><div class="rede-eu-lista">${opcoesEu || "<small>Ninguém cadastrado ainda.</small>"}</div><small>${
         players.length ? "Não precisa marcar: quem não entrar pelo próprio celular joga neste aparelho sozinho quando a partida começar (e, se o celular dele entrar depois, ele pega o lugar). Só desmarque se este aparelho for apenas a mesa." : "Mande o código (ou o link): cada um cria o próprio jogador no dispositivo, e você aceita a entrada aqui. Quem joga neste aparelho você cadastra como sempre."

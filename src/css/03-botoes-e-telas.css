@@ -1261,3 +1261,39 @@ body.batata-mode :is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo] {
   background: rgba(167, 139, 250, 0.35);
   font-weight: 700;
 }
+/* 1.8 · C.A.O.S. 5.2: etiquetas da ficha na aba 🧬 Jogadores do cérebro */
+.ci-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 4px 0 6px;
+}
+.ci-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #ffffff14;
+  border: 1px solid #ffffff2a;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+/* 26/10/2026 (pedido do JF): o balão da idade anima igual às outras etiquetas (brilho girando na borda e
+   flutuando), mas fica sempre dourado (🎂 varia: roxo), pra idade continuar fácil de achar */
+.mc-age.mc-badge {
+  --mc: #fbbf24;
+  --mc-glow: rgba(251, 191, 36, 0.4);
+  color: #ffe4a3;
+  border: 0;
+}
+.mc-age-varia.mc-badge {
+  --mc: #c084fc;
+  --mc-glow: rgba(192, 132, 252, 0.4);
+  color: #e9d5ff;
+}
+body.claro .mc-age.mc-badge {
+  border: 0;
+  color: #7a4e07;
+}
+body.claro .mc-age-varia.mc-badge {
+  color: #6b21a8;
+}

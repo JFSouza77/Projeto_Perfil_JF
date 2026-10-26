@@ -196,16 +196,23 @@ body:not(.batata-mode) .splash-dice {
 .nov-item ul {
   text-align: center;
 }
+/* 26/10/2026 (feedback do JF, prints da escolha de modo): as etiquetas no canto (posição absoluta) cobriam a
+   idade e, no Corrida, empurravam o título pra fora do centro. Agora todo card é igual: título em cima e, logo
+   abaixo, uma linha só e centralizada com a idade e as etiquetas juntas (🎂 12+ · Rápido). */
 .mode-btn.mc-card {
   position: relative;
-  padding-top: 26px;
+}
+.mode-btn.mc-card .mc-top {
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.mode-btn.mc-card .mc-chips {
+  justify-content: center;
 }
 .mode-btn.mc-card .mc-badge {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  font-size: 0.8rem;
-  padding: 3px 11px;
+  font-size: 0.72rem;
+  padding: 3px 10px;
 }
 .rules-box.xp-box {
   background: #f973160a;

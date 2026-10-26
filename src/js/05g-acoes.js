@@ -65,6 +65,9 @@ const ACOES = {
   mcDesafioBater: { fn: "mcDesafioBater", pode: (id) => mcAtivo() && mc.fase === "desafio" && !!mc.desafio && mc.desafio.com === id && !mc.desafio.buzz },
   mcDesafioVeredito: { fn: "mcDesafioVeredito", pode: (ok) => mcAtivo() && mc.fase === "desafio" && !!mc.desafio && !!mc.desafio.buzz && typeof ok === "boolean" },
   mcDuelo: { fn: "mcDueloEscolher", pode: (id, v) => mcPodeEscolherDuelo(id, v) },
+  mcBonusBater: { fn: "mcBonusBater", pode: (id) => mcPodeBonusBater(id) }, // 1.8: Rodada Bônus
+  mcBonusVeredito: { fn: "mcBonusVeredito", pode: (ok) => mcAtivo() && mc.fase === "bonus" && !!mc.bonus && !!mc.bonus.buzz && typeof ok === "boolean" },
+  mcDueloTipo: { fn: "mcDueloTipoEscolher", pode: (id, t) => mcPodeEscolherTipo(id, t) }, // 1.8: o desafiado escolhe o duelo
   mcRevanche: { fn: "mcRevanche", pode: (id) => mcPodeRevanche(id) },
   mcUsar: { fn: "mcUsar", pode: (item, id, alvo) => mcPodeUsar(item, id, alvo) },
   mcMaoLeve: { fn: "mcMaoLeve", pode: (id, alvo) => mcPodeMaoLeve(id, alvo) },

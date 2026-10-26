@@ -6,7 +6,8 @@
 //  3. o host manda um painel pra cada jogador e o celular guarda os dois;
 //  4. na partida, o celular mostra sozinho quem é a vez (troca de Pedro pra Elisa quando a vez muda);
 //  5. tela de espera viva: dica, tutorial rápido e "Pergunte ao C.A.O.S." (o C.A.O.S. responde);
-//  6. host automático: quem foi cadastrado no aparelho do host joga nele sem marcar nada.
+//  6. host automático: quem foi cadastrado no aparelho do host joga nele sem marcar nada;
+//  7. o celular cai e volta: todos os jogadores dele voltam juntos (1.8).
 //   node ferramentas/teste_varios_no_celular.js [mestre.html]
 "use strict";
 const { acharMestre, abrirNavegador } = require("./_navegador");
@@ -76,6 +77,10 @@ const ARQ = acharMestre(process.argv[2]);
   conf("No host: os dois assentos com a mesma sessão", await host.evaluate(([p, e]) => !!rede.assentos[p] && !!rede.assentos[e] && rede.assentos[p].sessao === rede.assentos[e].sessao, [pedroId, elisaId]));
   conf("No host: os três jogadores no cadastro", await host.evaluate(() => players.length === 3));
   conf("Lobby do celular mostra 'Neste celular' com os dois", await esperar(g, () => document.querySelectorAll("#telao .rede-eu-chip").length === 2));
+  // 1.8: o celular cai (recarrega a página) e volta com os dois, sem precisar adicionar de novo
+  await g.reload();
+  conf("Celular recarregou: Pedro e Elisa voltam juntos", await esperar(g, ([p, e]) => typeof rede !== "undefined" && rede && rede.estado === "dentro" && (rede.euLista || []).includes(p) && rede.euLista.includes(e), [pedroId, elisaId], 15000));
+  conf("No host: os dois de volta na mesma sessão nova", await esperar(host, ([p, e]) => !!rede.assentos[p] && !!rede.assentos[e] && rede.assentos[p].sessao === rede.assentos[e].sessao && redeOnline(rede.assentos[e]), [pedroId, elisaId]));
   conf("Celular guarda um painel pra cada jogador", await esperar(g, ([p, e]) => !!(rede.painelPorJid || {})[p] && !!(rede.painelPorJid || {})[e], [pedroId, elisaId]));
 
   // partida: vez do Pedro, depois da Elisa
