@@ -13,10 +13,11 @@ então faltam pelo menos 500.
 | Pessoa (sugestões do JF, 23 e 26/10) | 84 | 10 | **74** |
 | Coisa (sugestões do JF) | 25 | 9 | **16** |
 | Lugar (sugestões do JF, 23 e 26/10) | 31 | 8 | **23** |
-| Coisa (informática, 26/10) | 16 | 0 | **16** |
-| **Total novo** | | | **206** |
+| Coisa (informática, 26/10) | 28 | 2 | **26** |
+| Pessoa (informática, 26/10) | 3 | 0 | **3** |
+| **Total novo** | | | **219** |
 
-Ainda faltam cerca de **294** cartas pra meta de 500 novas. Ano não teve nada no pacote, e Animal também não.
+Ainda faltam cerca de **281** cartas pra meta de 500 novas. Ano não teve nada no pacote, e Animal também não.
 
 ## Como as cartas vão entrar
 - **Dicas escritas do zero**, no padrão do jogo (20 dicas, as especiais no lugar de sempre, da mais difícil pra mais
@@ -219,7 +220,7 @@ Ainda faltam cerca de **294** cartas pra meta de 500 novas. Ano não teve nada n
 15. Petrolão (fora do Júnior)
 16. Operação Lava Jato (fora do Júnior)
 
-## Coisa nova (informática, sugestões de 26/10) · 16
+## Coisa nova (informática, sugestões de 26/10) · 26
 1. Memória RAM
 2. Processador (CPU)
 3. Gabinete
@@ -237,8 +238,24 @@ Ainda faltam cerca de **294** cartas pra meta de 500 novas. Ano não teve nada n
 15. Teclado
 16. Mouse
 
+17. Headset
+18. Bluetooth
+19. Roteador
+20. Área de trabalho
+21. Tablet
+22. Código binário (Old School e Hardcore)
+23. Python
+24. JavaScript
+25. CSS
+26. COBOL (Old School e Hardcore)
 Obs.: a carta "Memória" que já existe é a memória humana; "Memória RAM" é outra carta. "Notebook" já está na lista das fotos.
-Se quiser mais da mesma linha, ainda não existem: Intel, Nvidia, Microsoft, Apple, Pen drive, Impressora, Webcam.
+Fone de ouvido e Wi-Fi já existem. Se quiser mais da mesma linha, ainda não existem: Intel, Nvidia, Microsoft, Apple,
+Pen drive, Impressora, Webcam, HTML, Bill Gates e Mark Zuckerberg.
+
+## Pessoa nova (informática, sugestões de 26/10) · 3
+1. Alan Turing
+2. Ada Lovelace
+3. Steve Jobs
 
 ## Lugar novo (sugestões) · 23
 1. Casa Branca
