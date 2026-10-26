@@ -1261,3 +1261,19 @@ body.batata-mode :is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo] {
   background: rgba(167, 139, 250, 0.35);
   font-weight: 700;
 }
+/* 1.8 · C.A.O.S. 5.2: etiquetas da ficha na aba 🧬 Jogadores do cérebro */
+.ci-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 4px 0 6px;
+}
+.ci-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #ffffff14;
+  border: 1px solid #ffffff2a;
+  font-size: 0.72rem;
+  font-weight: 700;
+}

@@ -56,6 +56,7 @@ js/07-caos/13-amigos.js
 js/07-caos/14-tato.js
 js/07-caos/15-cerebro-sombra.js
 js/07-caos/16-guia-da-mesa.js
+js/07-caos/17-afeto-da-ficha.js
 js/08-salvamento.js
 js/09-utilitarios.js
 dados/01-emocoes-do-caos.js

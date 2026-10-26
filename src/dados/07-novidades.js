@@ -12,17 +12,21 @@ const NOVIDADES = [
   {
     v: "Beta 1.8",
     data: "26/10/2026",
-    nome: "Family Update",
-    t: "O C.A.O.S. ensina quem se perde, celular fácil pras crianças, duelo à escolha e a Corrida Extreme.",
+    nome: "C.A.O.S. no Comando",
+    t: "O C.A.O.S. guia quem se perde e sente cada jogador, Rodada Bônus, duelo à escolha e Corrida Extreme.",
     itens: [
       "🧭 C.A.O.S. guia da mesa: a mesa parou porque alguém não sabe o que fazer? Ele chama a pessoa pelo nome e o botão certo brilha. Quem se perder duas vezes ganha um guia: ele avisa cada passo, comemora o acerto e, quando a pessoa pega o ritmo, se despede. Ideia da Elisa.",
       "📱 Celular fácil: a faixa da vez chama você pelo nome, os números das dicas ficaram grandes e a tela fica no meio, até no tablet.",
       "🔐 Remover com senha: tirar alguém da partida pede a senha do ADM ou a senha do host, que aparece no painel da sala assim que ela abre.",
-      "🔁 Vários no celular voltam juntos: a internet do celular onde jogam duas pessoas caiu? Quando ele volta, as duas voltam juntas.",
       "⚔️ Duelo à escolha: no Modo C.A.O.S., quem foi desafiado escolhe o duelo (dado, moeda, jokenpô ou par ou ímpar) em 10 segundos. Não escolheu, o C.A.O.S. sorteia.",
+      "🎁 Rodada Bônus: no Modo C.A.O.S., de vez em quando o Mestre lê uma carta extra. Quem bater primeiro e acertar ganha 20 PC e um Colete Anti-Caos, e o Mestre ganha 20 PC também.",
       "🔥 Corrida Extreme: tudo do Hardcore, com o relógio da carta correndo 2×.",
+      "🧬 O C.A.O.S. sente cada um: ele lembra quem é veterano, quem é craque, quem é zebra e quem já cortou ele, e reage de acordo. Passou o seu recorde? Ele faz festa.",
     ],
-    qol: ["🔢 Os números das dicas também ficaram maiores na tela do Mestre."],
+    qol: [
+      "🔢 Os números das dicas também ficaram maiores na tela do Mestre.",
+      "🔁 A internet do celular onde jogam duas pessoas caiu? Quando ele volta, as duas voltam juntas.",
+    ],
   },
   {
     v: "Beta 1.7.10.9.5",

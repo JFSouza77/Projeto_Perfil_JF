@@ -59,18 +59,18 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 1909 | showToastMessage | - |
 | 1910 | caosGerarFala | gerador revanche |
 | 1911 | getRandomReaction | revanche |
-| 2010 | showToastMessage, getRandomReaction | trocaDeModo |
-| 2165 | showToastMessage, getRandomReaction | sorteioMestreJf |
-| 2200 | showToastMessage | - |
-| 2201 | getRandomReaction | - |
-| 2329 | caosFalaAgendar, getRandomReaction | desistiuBonus |
-| 2342 | caosFalaAgendar, getRandomReaction | desistiu |
-| 2441 | getRandomReaction | caosCofrinhoUso |
-| 2453 | showToastMessage, getRandomReaction | mercyPontos |
-| 2457 | showToastMessage, getRandomReaction | mercyBonus |
-| 2488 | showToastMessage | - |
-| 2623 | admFala, getRandomReaction | admSaida |
-| 2624 | admFala, getRandomReaction | caosCofrinho |
+| 2011 | showToastMessage, getRandomReaction | trocaDeModo |
+| 2166 | showToastMessage, getRandomReaction | sorteioMestreJf |
+| 2201 | showToastMessage | - |
+| 2202 | getRandomReaction | - |
+| 2330 | caosFalaAgendar, getRandomReaction | desistiuBonus |
+| 2343 | caosFalaAgendar, getRandomReaction | desistiu |
+| 2442 | getRandomReaction | caosCofrinhoUso |
+| 2454 | showToastMessage, getRandomReaction | mercyPontos |
+| 2458 | showToastMessage, getRandomReaction | mercyBonus |
+| 2489 | showToastMessage | - |
+| 2624 | admFala, getRandomReaction | admSaida |
+| 2625 | admFala, getRandomReaction | caosCofrinho |
 
 ## js/05-tela.js (23)
 
@@ -111,8 +111,8 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 671 | showToastMessage | - |
-| 681 | getRandomReaction | - |
+| 674 | showToastMessage | - |
+| 684 | getRandomReaction | - |
 
 ## js/05i-tabuleiro.js (8)
 
@@ -139,7 +139,7 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 2195 | showToastMessage | - |
 | 2196 | showToastMessage | - |
 | 2573 | getRandomReaction | vozCalada |
-| 3359 | showToastMessage | - |
+| 3360 | showToastMessage | - |
 
 ## js/05o-corrida.js (5)
 
@@ -171,7 +171,7 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 1264 | showToastMessage | - |
+| 1390 | showToastMessage | - |
 
 ## js/06-voz-som-vibracao.js (3)
 
@@ -359,7 +359,7 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 746 | caosFalarDepois, getRandomReaction | duploPadrao |
+| 753 | caosFalarDepois, getRandomReaction | duploPadrao |
 
 ## js/07-caos/06-humanizacao.js (11)
 
@@ -551,7 +551,7 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 1326 | showToastMessage | - |
+| 1328 | showToastMessage | - |
 
 ## js/11-iniciar.js (6)
 
@@ -561,5 +561,5 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 459 | getRandomReaction | nickRepertorio |
 | 460 | getRandomReaction | nickSugestaoAceita |
 | 504 | getRandomReaction | botaoEncerrar |
-| 764 | showToastMessage | - |
-| 765 | getRandomReaction | inicioInvalido |
+| 767 | showToastMessage | - |
+| 768 | getRandomReaction | inicioInvalido |

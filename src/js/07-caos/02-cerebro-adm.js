@@ -218,7 +218,7 @@ function caosInspectorPainel(ov) {
   const head = document.createElement("div");
   head.className = "ci-head";
   head.innerHTML = `<div class="ci-head-icon">🧠</div>
-    <div class="ci-head-txt"><div class="ci-title">Cérebro do C.A.O.S. <span class="ci-badge">4.0 · rede neural</span></div>
+    <div class="ci-head-txt"><div class="ci-title">Cérebro do C.A.O.S. <span class="ci-badge">5.2 · rede neural</span></div>
     <div class="ci-sub">Central de Avaliação e Observação Sistêmica · acesso do criador</div></div>
     <div class="ci-head-btns"><button type="button" class="ci-btn ci-btn-red" id="ciLockBtn">🔒 Trancar</button><button type="button" class="ci-btn" id="ciCloseBtn">Fechar</button></div>`;
   const tabs = document.createElement("div");
@@ -231,6 +231,7 @@ function caosInspectorPainel(ov) {
   };
   const TABS = [
     ["estado", "🧠 Estado & Emoção"],
+    ["jogadores", "🧬 Jogadores", () => players.length],
     ["ritmo", "📈 Ritmo & Humor", () => caosRitmoLog.length],
     ["memoria", "💾 Memória", nCartas],
     ["decisoes", "📜 Decisões", () => caosDecisionLog.length],
@@ -257,6 +258,7 @@ function caosInspectorPainel(ov) {
     body.innerHTML = "";
     body.scrollTop = 0;
     if (caosInspectorTab === "estado") body.appendChild(caosInspectorEstado());
+    else if (caosInspectorTab === "jogadores") body.appendChild(caosInspectorJogadores());
     else if (caosInspectorTab === "ritmo") body.appendChild(caosInspectorRitmo());
     else if (caosInspectorTab === "memoria") body.appendChild(caosInspectorMemoria());
     else if (caosInspectorTab === "decisoes")
