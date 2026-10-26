@@ -752,7 +752,7 @@ function redeValidar(bruto) {
 function redeHostGuardar() {
   try {
     if (rede && rede.papel === "host")
-      JFStore.setItem(REDE_HOST_KEY, JSON.stringify({ sala: rede.sala, modo: rede.modo, eu: rede.hostEu || null, junto: rede.hostJunto || [], auto: Object.keys(rede.hostAuto || {}), chave: rede.chaveHost, quando: Date.now(), aprovados: Object.keys(rede.aprovados || {}).slice(-40) }));
+      JFStore.setItem(REDE_HOST_KEY, JSON.stringify({ sala: rede.sala, modo: rede.modo, eu: rede.hostEu || null, junto: rede.hostJunto || [], auto: Object.keys(rede.hostAuto || {}), senha: rede.senhaHost || null, chave: rede.chaveHost, quando: Date.now(), aprovados: Object.keys(rede.aprovados || {}).slice(-40) }));
   } catch (e) {}
 }
 // Abre a sala. modo "internet" (padrão, PeerJS) ou "local" (ensaio em abas). salaFixa: reabrir
@@ -761,6 +761,14 @@ function redeAbrirSala(modo, salaFixa) {
   if (typeof modo === "function") return redeAbrirSalaCom(modo, "local", salaFixa); // (testes antigos)
   const m = modo === "local" || !redeTemInternet() ? "local" : "internet";
   return redeAbrirSalaCom(redeFabrica(m, "host"), m, salaFixa);
+}
+// 4 números sorteados (nunca a senha do ADM, nem número repetido tipo 1111)
+function redeSenhaHostNova() {
+  for (let i = 0; i < 20; i++) {
+    const v = String(Math.floor(Math.random() * 10000)).padStart(4, "0");
+    if (v !== "0077" && !/^(\d)\1{3}$/.test(v)) return v;
+  }
+  return "4821";
 }
 function redeAbrirSalaCom(fab, modo, salaFixa) {
   if (rede) redeFechar();
@@ -781,6 +789,9 @@ function redeAbrirSalaCom(fab, modo, salaFixa) {
     hostEu: null, // o jogador que está no aparelho do host (vota por ele)
     hostJunto: [], // 1.7.9.9: outros jogadores que dividem o aparelho do host (sem aparelho próprio)
     chaveHost: redeAleatorio(16), // 1.7.10: identidade de jogador deste aparelho, se ele deixar de ser host
+    // 1.8 (pedido do JF): senha do host, mostrada no painel da sala, pra confirmar "remover da partida" quando o
+    // JF (senha do ADM) não está jogando
+    senhaHost: redeSenhaHostNova(),
     segredoEnviado: null,
     paineis: {},
     votacao: null,
@@ -863,6 +874,7 @@ function redeHostRetomar() {
     rede.hostJunto = (Array.isArray(s.junto) ? s.junto : []).filter((id) => jogadorIdValido(id) && jogadorIdxPorId(id) >= 0 && id !== rede.hostEu);
     rede.hostAuto = {};
     (Array.isArray(s.auto) ? s.auto : []).forEach((id) => jogadorIdValido(id) && (rede.hostAuto[id] = true));
+    if (typeof s.senha === "string" && /^\d{4}$/.test(s.senha)) rede.senhaHost = s.senha;
     // 1.7.10.6.1 (relato do JF): os jogadores podem ainda não ter voltado do save aqui; guarda pra religar depois
     rede.hostEuSalvo = jogadorIdValido(s.eu) ? [s.eu].concat(Array.isArray(s.junto) ? s.junto.filter(jogadorIdValido) : []) : null;
     (Array.isArray(s.aprovados) ? s.aprovados : []).forEach((c) => typeof c === "string" && (rede.aprovados[c] = true));
@@ -3561,7 +3573,7 @@ function redePainelHost() {
         })
         .join("");
       const erro = est === "erro" ? `<p class="rede-aviso">${REDE_ESTADO_HOST.erro}${rede.transporte.erro ? " (" + escapeHtml(rede.transporte.erro) + ")" : ""}. Confira a internet e tente de novo, ou use o ensaio em abas.</p>` : "";
-      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Sala ${rede.sala}</h3><div class="rede-estado">${rede.modo === "local" ? "🧪 Ensaio em abas deste navegador" : REDE_ESTADO_HOST[est] || est}</div>${erro}<div class="rede-codigo-rot">Código da sala</div><div class="rede-codigo">${rede.sala}</div>${redeQrHtml(redeLinkDaSala())}<p class="rede-rot">Quem vai jogar abre o jogo, toca em <b>🌐 Jogar online</b> e digita o código. Ou mande o link:</p><code class="rede-link">${escapeHtml(redeLinkDaSala())}</code><button type="button" class="chip" id="redeCopiar">📋 Copiar link</button>${
+      ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Sala ${rede.sala}</h3><div class="rede-estado">${rede.modo === "local" ? "🧪 Ensaio em abas deste navegador" : REDE_ESTADO_HOST[est] || est}</div>${erro}<div class="rede-codigo-rot">Código da sala</div><div class="rede-codigo">${rede.sala}</div>${rede.senhaHost ? `<div class="rede-senha-host">🔐 Senha do host: <b>${escapeHtml(rede.senhaHost)}</b><small>Pra confirmar "remover da partida" (Pausa → Jogadores). Guarde só pra você.</small></div>` : ""}${redeQrHtml(redeLinkDaSala())}<p class="rede-rot">Quem vai jogar abre o jogo, toca em <b>🌐 Jogar online</b> e digita o código. Ou mande o link:</p><code class="rede-link">${escapeHtml(redeLinkDaSala())}</code><button type="button" class="chip" id="redeCopiar">📋 Copiar link</button>${
         navigator.share ? '<button type="button" class="chip" id="redeCompartilhar">📤 Compartilhar</button>' : ""
       }<div class="rede-rot-eu">Quem joga neste aparelho? <small>(pode marcar mais de um)</small><div class="rede-eu-lista">${opcoesEu || "<small>Ninguém cadastrado ainda.</small>"}</div><small>${
         players.length ? "Não precisa marcar: quem não entrar pelo próprio celular joga neste aparelho sozinho quando a partida começar (e, se o celular dele entrar depois, ele pega o lugar). Só desmarque se este aparelho for apenas a mesa." : "Mande o código (ou o link): cada um cria o próprio jogador no dispositivo, e você aceita a entrada aqui. Quem joga neste aparelho você cadastra como sempre."

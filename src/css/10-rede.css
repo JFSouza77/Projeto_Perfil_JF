@@ -2046,3 +2046,29 @@ body.claro .rede-caos-resp {
   border-color: #c26fd6;
   color: #3d1048;
 }
+
+/* 1.8 (pedido do JF): senha do host no painel da sala (confirma "remover da partida") */
+.rede-senha-host {
+  margin: 8px auto;
+  padding: 8px 12px;
+  max-width: 320px;
+  border-radius: 12px;
+  background: rgba(225, 29, 72, 0.12);
+  border: 1px dashed rgba(244, 114, 182, 0.7);
+  text-align: center;
+}
+.rede-senha-host b {
+  font-size: 1.3rem;
+  letter-spacing: 0.25em;
+  margin-left: 4px;
+}
+.rede-senha-host small {
+  display: block;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+body.claro .rede-senha-host {
+  background: #ffe8ef;
+  border-color: #be185d;
+  color: #4a0b25;
+}

@@ -3820,23 +3820,54 @@ function pauseJogadoresAtualizar() {
       const i = +b.dataset.i,
         p = players[i];
       if (!p) return;
-      const resto = players.length - 1,
-        parte = Math.floor(p.score / resto),
-        sobra = p.score - parte * resto;
-      caosConfirmarModal(
-        `Remover ${p.name} da partida?
+      // 1.8 (pedido do JF): remover da partida pede senha: a do ADM ou a senha do host (painel da sala)
+      if (caosIntrusoBarrado(null)) return caosAvisoModal("Muitas tentativas erradas. Espere um pouquinho.");
+      const comSala = typeof rede !== "undefined" && rede && rede.papel === "host" && !!rede.senhaHost;
+      caosPromptModal(comSala ? `Pra remover ${p.name} da partida, digite a senha do ADM ou a senha do host (ela está no painel da sala 🌐).` : `Pra remover ${p.name} da partida, digite a senha do ADM.`, "", (v) => {
+        if (v === null) return;
+        const ok = removerSenhaOk(v);
+        if (!caosIntrusoTentativa(ok, null, "remover")) return caosAvisoModal("Senha errada. Ninguém foi removido.");
+        removerJogadorConfirmar(i);
+      });
+      removerSenhaCampo();
+    }),
+  );
+}
+// a senha que libera "remover da partida": a do ADM (do JF) ou a senha do host da sala aberta
+function removerSenhaOk(v) {
+  const s = String(v || "").trim();
+  if (!s) return false;
+  if (admHash(s) === ADM_CRIADOR_HASH) return true;
+  return typeof rede !== "undefined" && !!rede && rede.papel === "host" && !!rede.senhaHost && s === rede.senhaHost;
+}
+// o campo do pedido de senha vira campo de senha numérica (o modal genérico é de texto)
+function removerSenhaCampo() {
+  const ovs = document.querySelectorAll(".caos-modal-ov");
+  const inp = ovs.length ? ovs[ovs.length - 1].querySelector("input") : null;
+  if (!inp) return;
+  inp.type = "password";
+  inp.inputMode = "numeric";
+  inp.autocomplete = "off";
+  inp.setAttribute("aria-label", "Senha");
+}
+function removerJogadorConfirmar(i) {
+  const p = players[i];
+  if (!p) return;
+  const resto = players.length - 1,
+    parte = Math.floor(p.score / resto),
+    sobra = p.score - parte * resto;
+  caosConfirmarModal(
+    `Remover ${p.name} da partida?
 
 Os ${p.score} pontos vão ser divididos: +${parte} pra cada um dos ${resto} que ficam${sobra ? `, e ${sobra} vão pro cofrinho do C.A.O.S.` : ""}.${currentCard ? "\nA carta da mesa volta pro baralho e o Mestre puxa outra." : ""}`,
-        "Remover",
-        "Cancelar",
-        () => {
-          const r = admRemoverJogador(i);
-          if (r !== "ok") caosAvisoModal("Não deu pra remover: " + r);
-          else if (typeof redeHostCadastroMudou === "function") redeHostCadastroMudou();
-          pauseJogadoresAtualizar();
-        },
-      );
-    }),
+    "Remover",
+    "Cancelar",
+    () => {
+      const r = admRemoverJogador(i);
+      if (r !== "ok") caosAvisoModal("Não deu pra remover: " + r);
+      else if (typeof redeHostCadastroMudou === "function") redeHostCadastroMudou();
+      pauseJogadoresAtualizar();
+    },
   );
 }
 function pausaAjustesAtualizar() {
