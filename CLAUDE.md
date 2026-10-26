@@ -9,4 +9,6 @@
 - **Próximas versões (26/10/2026):** 1.9 = T2 viva (a tela do celular com dicas, C.A.O.S. mexendo com quem espera);
   Beta 2.0 = Rework Update (reestruturar tudo, tradução, 1.500+ cartas, falas revistas e 50 mil combinações,
   testes lógicos e de desempenho, modo claro e acessibilidade). Detalhes: `docs/Roteiro_1.9_e_2.0.md`.
+- **Cartas com tema pesado (26/10/2026):** entram (Perfil também é conhecimento), só com fatos, sem tomar partido,
+  imparcial e honesto. Nunca no Júnior; podem cair no Clássico, Hardcore e Old School. Lista da 2.0: `docs/Cartas_2.0_Perfil4.md`.
 - **Ajustes pequenos:** o JF liberou ir acumulando e postando quando der (ajuste da versão aberta).

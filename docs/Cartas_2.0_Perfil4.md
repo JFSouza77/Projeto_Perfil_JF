@@ -10,12 +10,12 @@ então faltam pelo menos 500.
 |---|---|---|---|
 | Coisa (fotos) | 72 | 16 | **56** |
 | Lugar (fotos) | 34 | 13 | **21** |
-| Pessoa (sugestões do JF) | 83 | 10 | **70** (+3 pra decidir) |
-| Coisa (sugestões do JF) | 25 | 9 | **13** (+3 pra decidir) |
-| Lugar (sugestões do JF) | 5 | 1 | **4** |
-| **Total novo e sem dúvida** | | | **164** |
+| Pessoa (sugestões do JF, 23 e 26/10) | 84 | 10 | **74** |
+| Coisa (sugestões do JF) | 25 | 9 | **16** |
+| Lugar (sugestões do JF, 23 e 26/10) | 31 | 8 | **23** |
+| **Total novo** | | | **190** |
 
-Ainda faltam cerca de **336** cartas pra meta de 500 novas. Ano não teve nada no pacote, e Animal também não.
+Ainda faltam cerca de **310** cartas pra meta de 500 novas. Ano não teve nada no pacote, e Animal também não.
 
 ## Como as cartas vão entrar
 - **Dicas escritas do zero**, no padrão do jogo (20 dicas, as especiais no lugar de sempre, da mais difícil pra mais
@@ -27,23 +27,21 @@ Ainda faltam cerca de **336** cartas pra meta de 500 novas. Ano não teve nada n
 ## Já existem no jogo (não entram de novo)
 - **Coisa:** Abajur, Chave, Colher, Escorregador, Escova de dente, Fogueira, Guarda-chuva, Janela, Lancheira, Mochila,
   PlayStation, Táxi, Travesseiro. Aranha, Cavalo-marinho e Dragão já são cartas de Animal.
-- **Lugar:** Aeroporto, Avenida Paulista, Berlim, Chapada Diamantina, Coliseu, Escola, Gotham City, Ilha de Páscoa,
+- **Lugar:** Shopping, Supermercado, Lençóis Maranhenses, Marte, Saturno, Lua, Sol (sugestões de 26/10); Aeroporto, Avenida Paulista, Berlim, Chapada Diamantina, Coliseu, Escola, Gotham City, Ilha de Páscoa,
   Istambul, Lagoa Rodrigo de Freitas, Machu Picchu, Morro da Urca, Padaria, Salão Oval.
 - **Pessoa:** Abraham Lincoln, Chaves, Darth Vader, Larissa Manoela, Sonic, Sandy & Junior, Patati Patatá, Yoda,
   Jair Bolsonaro, Hebe Camargo. (Ratinho tem "Programa do Ratinho" em Coisa; a pessoa dá pra entrar, mas fica parecida.)
 - **Coisa (sugestões):** A Praça é Nossa, Jornal Nacional, Mais Você, Mjölnir, Chaves, Mario, Minions, Mamonas
   Assassinas, Turma do Balão Mágico.
 
-## Pro JF decidir
-- **Alexandre Nardoni e Eliza Samudio:** são de um crime real e recente, com família viva. Minha recomendação é não
-  entrar (num jogo de família, vira piada com tragédia de verdade).
-- **Osama Bin Laden:** só em cartas adultas, se entrar.
-- **Mensalão, Petrolão e Operação Lava Jato:** dá pra fazer com dicas só de fato (datas, o que foi investigado), sem
-  opinião. Se entrar, cartas adultas.
-- **Muitos do mesmo universo:** Chaves tem 8 personagens na lista (Chiquinha, Kiko, Seu Madruga, Dona Florinda,
-  Girafales, Seu Barriga, Bruxa do 71, Chapolin), e Todo Mundo Odeia o Chris tem 5. Isso pode cansar numa partida.
-  Sugestão: escolher 3 ou 4 de cada.
-- **Glória Maria (?):** confirmar se era ela.
+## Decisões do JF (26/10/2026)
+- **Temas pesados entram:** o Perfil também é conhecimento, e são assuntos que repercutiram no Brasil e no mundo.
+  Regras: só fatos, sem tomar partido, imparcial e honesto. **Nunca no Júnior**; podem cair no Clássico, no Hardcore
+  e principalmente no Old School. Entram Alexandre Nardoni, Eliza Samudio, Osama Bin Laden, Mensalão, Petrolão e
+  Operação Lava Jato.
+- **Personagens do mesmo universo (Chaves, Todo Mundo Odeia o Chris) entram todos:** sortear o grupo inteiro numa
+  partida é raro.
+- **Glória Maria:** ainda falta confirmar se era ela.
 
 ## Coisa nova (fotos) · 56
 1. Abraço
@@ -126,7 +124,7 @@ Ainda faltam cerca de **336** cartas pra meta de 500 novas. Ano não teve nada n
 20. Roda-gigante
 21. Vancouver
 
-## Pessoa nova (sugestões) · 70
+## Pessoa nova (sugestões) · 74
 1. Arlequina
 2. Blanka (Street Fighter)
 3. Bozo
@@ -197,8 +195,12 @@ Ainda faltam cerca de **336** cartas pra meta de 500 novas. Ano não teve nada n
 68. Yudi Tamashiro
 69. Yoshi
 70. Zezé Di Camargo e Luciano (dupla)
+71. Alexandre Nardoni (fora do Júnior)
+72. Eliza Samudio (fora do Júnior)
+73. Osama Bin Laden (fora do Júnior)
+74. Capitão Jack Sparrow
 
-## Coisa nova (sugestões) · 13
+## Coisa nova (sugestões) · 16
 1. As Branquelas
 2. Bom Dia e Companhia
 3. Caldeirão do Huck
@@ -212,9 +214,31 @@ Ainda faltam cerca de **336** cartas pra meta de 500 novas. Ano não teve nada n
 11. The Big Bang Theory
 12. Todo Mundo Odeia o Chris
 13. Zorra Total
+14. Mensalão (fora do Júnior)
+15. Petrolão (fora do Júnior)
+16. Operação Lava Jato (fora do Júnior)
 
-## Lugar novo (sugestões) · 4
+## Lugar novo (sugestões) · 23
 1. Casa Branca
 2. Casa da Moeda (confirmar qual país/instituição)
 3. Fort Knox
 4. Manhattan
+5. Beach Park (Fortaleza)
+6. Fortaleza
+7. Aquamania (Guarapari)
+8. Guarapari
+9. Hotel
+10. Pousada
+11. Estrela da Morte (Star Wars)
+12. Tatooine (Star Wars)
+13. Floricultura
+14. Cacau Show
+15. Fábrica da Garoto (Vila Velha)
+16. Fossa das Marianas
+17. Radiator Springs (Carros)
+18. Mercúrio
+19. Vênus
+20. Terra
+21. Júpiter
+22. Urano
+23. Netuno
