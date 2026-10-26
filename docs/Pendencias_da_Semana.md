@@ -35,6 +35,36 @@ Prints numerados na ordem em que chegam; o JF responde dúvida pelo número.
   - "Neste aparelho: JF · Vez de JF" repete o que o "SUA VEZ!" já diz.
   - Rumo: centralizar e reorganizar botões e falas (entra no rework da T2).
 
+### Celular (convidado, como Anne) · prints 3 a 18
+
+Pedidos do JF:
+- [ ] **Rework da T2, urgente**: muita informação, poluída e bagunçada.
+- [ ] **C.A.O.S. na sala de espera**: o rosto dele não aparece nas respostas do "Pergunte ao C.A.O.S." (prints 5, 6);
+  e quando o balão com rosto aparece, é uma fala do lobby de criação de jogadores, fora de contexto pra quem espera
+  (print 9: "Tenta juntar um bicho com uma coisa legal. Tipo Tubarão Foguete"). Rever as informações dessa tela.
+- [ ] **Dica escolhida na tela do Mestre**: o balanço ficou exagerado. Deixar sutil: pulsar devagar, flutuar ou
+  piscar de leve, minimalista, mas ainda em destaque.
+
+O que o Code viu (confirmar com o JF antes de mexer no que não for pedido):
+- Print 3: "Entrando na sala…" procurando a sala **PXLG**, mas a sala do teste era **FQRJ** (prints 4+). Parece
+  que o celular tentou voltar pra uma sala antiga guardada. Ligar com o problema do host entrar errado?
+- Prints 4 a 6: sala de espera ok no geral; dica, tutorial, perguntas e voz. Só o rosto do C.A.O.S. falta.
+- Print 7, 10, 16, 17: ao rolar, o conteúdo passa por baixo da barra do iPhone (hora e bateria por cima do texto).
+  Falta respeitar a área segura do topo.
+- Print 8: carta ainda escondida ("Categoria: sorteando…") e a roleta já mostra "Eu sou UMA COISA". **Já corrigido
+  hoje** (v1.9, falta publicar). Também mostra "SUA VEZ! ANNE" antes de a carta ser mostrada; cedo demais?
+- Prints 9, 11, 13: os balões do C.A.O.S. cobrem o topo da T2 (Mestre/vez/categoria).
+- Prints 11 e 12: no intervalo, a Anne (próxima Mestre) já vê "Só você vê: Sherlock Holmes" e o botão grande
+  "Virar a carta"; o intervalo e a próxima carta misturados na mesma tela.
+- Print 13: Mestre com a resposta aberta direto (botão branco com letra dourada, pouco contraste) e muita coisa
+  repetida (Mestre: você, Vez de: JF, que o topo já mostra).
+- Print 15: o botão "Virar a carta" da carta virada para baixo é pequeno e cinza, enquanto no intervalo (print 12) ele
+  é grande e roxo. Padronizar.
+- Print 17: intervalo com "Continuar" e logo abaixo outro quadro "Intervalo: a próxima carta já vem" com a roleta
+  "???": informação repetida.
+- Print 18: no intervalo, o topo diz "Categoria: sorteando…" e "Tempo da vez: pausado", e o painel diz "Sua vez";
+  no intervalo não tem carta nem vez correndo.
+
 ## Sugestões
 
 - [ ] **T2: dica escolhida bem evidente** (pode ficar pra T2 viva, 1.9): ao escolher, as outras apagam e a escolhida
