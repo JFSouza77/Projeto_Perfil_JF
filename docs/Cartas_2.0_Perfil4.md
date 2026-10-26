@@ -237,7 +237,6 @@ Ainda faltam cerca de **281** cartas pra meta de 500 novas. Ano não teve nada n
 14. Monitor
 15. Teclado
 16. Mouse
-
 17. Headset
 18. Bluetooth
 19. Roteador
@@ -248,6 +247,7 @@ Ainda faltam cerca de **281** cartas pra meta de 500 novas. Ano não teve nada n
 24. JavaScript
 25. CSS
 26. COBOL (Old School e Hardcore)
+
 Obs.: a carta "Memória" que já existe é a memória humana; "Memória RAM" é outra carta. "Notebook" já está na lista das fotos.
 Fone de ouvido e Wi-Fi já existem. Se quiser mais da mesma linha, ainda não existem: Intel, Nvidia, Microsoft, Apple,
 Pen drive, Impressora, Webcam, HTML, Bill Gates e Mark Zuckerberg.
