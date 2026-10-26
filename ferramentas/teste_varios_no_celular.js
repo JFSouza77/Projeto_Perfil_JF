@@ -58,7 +58,7 @@ const ARQ = acharMestre(process.argv[2]);
   // tela de espera (o host ainda não aceitou): dica, tutorial e perguntas pro C.A.O.S.
   conf("Esperando o host: dica, tutorial e 5 perguntas na tela", await esperar(g, () => rede.estado === "aguardando" && !!document.getElementById("redeDicaEspera") && !!document.getElementById("redeTutRapido") && document.querySelectorAll("[data-perg]").length === 5));
   await g.evaluate(() => document.querySelector('[data-perg="oQueFaco"]').click());
-  conf("Pergunta ao C.A.O.S.: ele responde na tela", await g.evaluate(() => { const r = document.getElementById("redeCaosResp"); return !!r && !r.hidden && REACTIVE_VOICE.esperaSala.oQueFaco.some((t) => r.textContent.includes(t)); }));
+  conf("Pergunta ao C.A.O.S.: ele responde na tela", await g.evaluate(() => { const r = document.getElementById("redeCaosResp"); return !!r && !r.hidden && !/=>|CAOS_PREFIXO|function/.test(r.textContent) && REACTIVE_VOICE.esperaSala.oQueFaco.some((t) => r.textContent.includes(redeFalaTexto(t))); }));
   await g.evaluate(() => document.getElementById("redeTutRapido").click());
   conf("Tutorial rápido abre no celular", await g.evaluate(() => !!document.getElementById("tutorialOverlay")));
   await g.evaluate(() => document.getElementById("tutorialOverlay")?.remove());
@@ -115,6 +115,15 @@ const ARQ = acharMestre(process.argv[2]);
   // troca manual pelo chip
   await g.evaluate((p) => redeConvDefinirAtivo(p), pedroId);
   conf("Troca manual pelo chip funciona", await g.evaluate((p) => rede.eu === p, pedroId));
+  // 1.9 · T2 viva: o Pedro (ativo no celular) está esperando a vez da Elisa: dica e fala do C.A.O.S. na tela
+  await g.evaluate(() => redeConvidadoDesenhar());
+  conf("T2 viva: esperando a vez, o celular mostra a fala do C.A.O.S. e uma dica", await esperar(g, () => {
+    const c = document.getElementById("redeCaosEspera"), d = document.getElementById("redeDicaEspera");
+    return !!c && !!d && !/=>|CAOS_PREFIXO|function/.test(c.textContent) && Object.values(REACTIVE_VOICE.esperaVez).flat().some((t) => c.textContent.includes(redeFalaTexto(t, "Pedro")));
+  }));
+  conf("T2 viva: a fala chama pelo nome de quem espera", await g.evaluate(() => /Pedro/.test(document.getElementById("redeCaosEspera").textContent) || /você/.test(document.getElementById("redeCaosEspera").textContent)));
+  await g.evaluate((e) => redeConvDefinirAtivo(e), elisaId);
+  conf("T2 viva: na própria vez, a fala de espera some", await g.evaluate(() => !document.getElementById("redeCaosEspera")));
 
   await b.close();
   let tudo = true;

@@ -2138,3 +2138,23 @@ body.batata-mode .guia-pulso {
   font-size: 1rem;
   opacity: 0.92;
 }
+/* 1.9 · T2 viva: esperando a vez, a fala do C.A.O.S. e a dica que passa */
+.rede-espera-vez {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 10px 0;
+}
+.rede-caos-espera {
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #a855f71f;
+  border: 1px solid #c084fc66;
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+body.claro .rede-caos-espera {
+  background: #f3e8ff;
+  border-color: #c084fc;
+  color: #3b0764;
+}

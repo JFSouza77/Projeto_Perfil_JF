@@ -4098,6 +4098,44 @@ const REACTIVE_VOICE = {
       "Sou o C.A.O.S. Fiz curso de apresentador de programa de auditório. Ninguém confirma isso.",
     ],
   },
+  // 1.9 · T2 viva (pedido do JF): o C.A.O.S. mexendo com quem espera a vez no celular. Tom leve (crianças jogam).
+  esperaVez: {
+    geral: [
+      "E aí, {nome}? Ainda esperando a sua vez? Aproveita e presta atenção nas dicas dos outros.",
+      "{nome}, enquanto não é com você, eu fico aqui de olho. Não pisca!",
+      "Dica de graça, {nome}: as dicas que os outros pedem também valem pra você pensar.",
+      "{nome}, finge que tá tranquilo. Eu sei que você já tem um chute guardado.",
+      "Calma, {nome}. A sua vez chega. E quando chegar, eu vou estar assistindo.",
+    ],
+    demora: [
+      "{nome}, tá demorando, né? Vai durar mais um pouquinho. Respira.",
+      "Ô {nome}, essa espera tá parecendo fila de banco. Já já é você.",
+      "{nome}, se a espera fosse prova de paciência, você já tinha ganhado.",
+      "Aguenta firme, {nome}. Mesa boa é mesa que pensa. Mesa lenta também é mesa.",
+      "{nome}, enquanto isso, que tal adivinhar a carta antes de todo mundo? Só de cabeça.",
+    ],
+    atras: [
+      "{nome}, tá lá atrás no placar, mas jogo só acaba quando acaba. Uma carta muda tudo.",
+      "Ninguém tá olhando o placar, {nome}. Fora eu. Eu tô olhando. Mas eu acredito em você.",
+      "{nome}, lanterna também ilumina. Bora virar esse jogo na próxima.",
+      "Fica esperto, {nome}: quem acerta cedo pula na frente rapidinho.",
+      "{nome}, a virada mais bonita é a que ninguém espera. Tô torcendo. Mais ou menos.",
+    ],
+    frente: [
+      "{nome}, você tá na frente. Cuidado, o pessoal tá de olho em você.",
+      "Liderando, {nome}? Aproveita, que a coroa pesa e a mesa não perdoa.",
+      "{nome}, primeiro lugar tem uma vista linda. Agora segura ela.",
+      "Ô {nome}, não se acostuma com a liderança, não. Eu já vi muita virada.",
+      "{nome}, tá na frente. Eu vou fingir que não tô impressionado.",
+    ],
+    acabou: [
+      "Boa jogada, {nome}. Agora relaxa e torce pros outros errarem. Brincadeira. Ou não.",
+      "{nome}, já foi a sua. Agora é assistir e preparar a próxima.",
+      "Passou a vez, {nome}. Enquanto isso, guarda as pistas na cabeça.",
+      "{nome}, missão cumprida por enquanto. Eu te chamo quando for a hora.",
+      "Pode descansar o dedo, {nome}. A próxima é daqui a pouco.",
+    ],
+  },
   // 1.8 · Guia da mesa (ideia da Elisa): a mesa parou porque alguém não sabe o que fazer. Ele diz quem e o quê.
   guia: {
     sacar: [

@@ -2769,8 +2769,9 @@ function redeEsperaLigar(box) {
       const banco = REACTIVE_VOICE.esperaSala && REACTIVE_VOICE.esperaSala[b.dataset.perg];
       if (!banco) return;
       // resposta limpa (sem os enfeites do getRandomReaction): é um "tira-dúvidas", e quem lê é criança
-      const opcoes = banco.filter((t) => t !== rede.esperaResp);
-      const txt = String(opcoes[Math.floor(Math.random() * opcoes.length)] || banco[0]);
+      // (1.8.1: a fala já é função quando chega aqui; antes aparecia o código na tela)
+      const opcoes = banco.map((t) => redeFalaTexto(t)).filter((t) => t !== rede.esperaResp);
+      const txt = opcoes[Math.floor(Math.random() * opcoes.length)] || redeFalaTexto(banco[0]);
       rede.esperaResp = txt;
       const r = box.querySelector("#redeCaosResp");
       if (r) {
@@ -2783,13 +2784,79 @@ function redeEsperaLigar(box) {
     }),
   );
   // a dica troca a cada 7 s (o timer sobrevive aos redesenhos: só atualiza se a tela de espera está aberta)
-  if (!rede.esperaTimer)
-    rede.esperaTimer = setInterval(() => {
-      const el = document.getElementById("redeDicaEspera");
-      if (!rede || !el) return;
+  redeEsperaTimerLigar();
+}
+// As falas do C.A.O.S. viram funções quando o jogo carrega (caosFalasMontar). Pra mostrar como texto simples no
+// celular: chama a função com o nome e tira a etiqueta "[C.A.O.S.]" (quem lê na tela já vê o 🤖).
+function redeFalaTexto(item, nome) {
+  const t = typeof item === "function" ? item(nome || "você") : String(item || "").split("{nome}").join(nome || "você");
+  return String(t || "").replace(/^\[C\.A\.O\.S\.\]\s*/, "");
+}
+/* --- 1.9 · T2 viva (pedido do JF): esperando a vez na partida, o celular não fica parado ---
+   Uma dica de como jogar (troca a cada 7 s, as mesmas da sala de espera) e uma fala do C.A.O.S. pra quem espera
+   (troca a cada 40 s): acabou de jogar, esperando faz tempo, lanterna, na frente ou geral. Só texto, sem voz. */
+const REDE_ESPERA_VEZ_MS = 40e3;
+function redeEsperaVezGrupo(r, eu) {
+  const agora = Date.now();
+  if (rede.esperaAcabouEm && agora - rede.esperaAcabouEm < 20e3) return "acabou";
+  if (rede.esperaVezDesde && agora - rede.esperaVezDesde > 90e3) return "demora";
+  const js = (r.jogadores || []).slice().sort((a, b) => (b.pontos || 0) - (a.pontos || 0));
+  if (eu && js.length >= 3) {
+    const p = eu.pontos || 0;
+    if (js[0].id === eu.id && p > (js[1].pontos || 0)) return "frente";
+    if (js[js.length - 1].id === eu.id && p < (js[0].pontos || 0)) return "atras";
+  }
+  return "geral";
+}
+function redeEsperaVezTexto(r, eu) {
+  const grupo = redeEsperaVezGrupo(r, eu);
+  const banco = (REACTIVE_VOICE.esperaVez && REACTIVE_VOICE.esperaVez[grupo]) || [];
+  if (rede.esperaProvTxt && rede.esperaProvGrupo === grupo && Date.now() - rede.esperaProvEm < REDE_ESPERA_VEZ_MS) return rede.esperaProvTxt;
+  const nome = (eu && eu.nome) || "você";
+  const opcoes = banco.map((t) => redeFalaTexto(t, nome)).filter((t) => t !== rede.esperaProvTxt);
+  rede.esperaProvTxt = opcoes[Math.floor(Math.random() * opcoes.length)] || (banco[0] ? redeFalaTexto(banco[0], nome) : "");
+  rede.esperaProvGrupo = grupo;
+  rede.esperaProvEm = Date.now();
+  return rede.esperaProvTxt;
+}
+function redeEsperaVezHtml(r, eu, papel) {
+  // quando a vez sai de mim, marca a hora (pra "acabou de jogar" e "esperando faz tempo")
+  if (papel.vez || papel.mestre) {
+    if (papel.vez) rede.esperaEraVez = true;
+    rede.esperaVezDesde = 0;
+    return "";
+  }
+  if (r.votacao) return "";
+  if (rede.esperaEraVez) rede.esperaAcabouEm = Date.now();
+  rede.esperaEraVez = false;
+  if (!rede.esperaVezDesde) rede.esperaVezDesde = Date.now();
+  if (!Number.isInteger(rede.esperaDica)) rede.esperaDica = Math.floor(Math.random() * REDE_ESPERA_DICAS.length);
+  redeEsperaTimerLigar();
+  return (
+    `<section class="rede-espera-vez">` +
+    `<div class="rede-caos-espera" id="redeCaosEspera" aria-live="polite">🤖 ${escapeHtml(redeEsperaVezTexto(r, eu))}</div>` +
+    `<div class="rede-dica-espera">💡 <span id="redeDicaEspera">${escapeHtml(REDE_ESPERA_DICAS[rede.esperaDica % REDE_ESPERA_DICAS.length])}</span></div>` +
+    `</section>`
+  );
+}
+// o mesmo relógio da sala de espera: troca a dica a cada 7 s e confere se a fala do C.A.O.S. já venceu
+function redeEsperaTimerLigar() {
+  if (!rede || rede.esperaTimer) return;
+  rede.esperaTimer = setInterval(() => {
+    if (!rede) return;
+    const el = document.getElementById("redeDicaEspera");
+    if (el) {
       rede.esperaDica = (rede.esperaDica + 1) % REDE_ESPERA_DICAS.length;
       el.textContent = REDE_ESPERA_DICAS[rede.esperaDica];
-    }, 7000);
+    }
+    const ce = document.getElementById("redeCaosEspera");
+    const r = rede.retrato,
+      eu = r && (r.jogadores || []).find((j) => j.id === rede.eu);
+    if (ce && r) {
+      const t = "🤖 " + redeEsperaVezTexto(r, eu);
+      if (ce.textContent !== t) ce.textContent = t;
+    }
+  }, 7000);
 }
 // Abre o formulário pra criar mais um jogador neste mesmo aparelho (sem largar os que já estão).
 function redeConvAdicionarJogador() {
@@ -3231,6 +3298,8 @@ function redeBotoesHtml() {
   let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${(papel.mestre || papel.vez) && !r.intervalo && r.iniciada ? "" : papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 Sua vez" : ""}</div>`;
   if (r.fim) return h;
   if (!r.intervalo && r.iniciada) h += redePapelHtml(papel, eu && eu.nome);
+  // 1.9 · T2 viva: esperando a vez, o celular tem dica e o C.A.O.S. mexendo com a pessoa
+  if (!r.intervalo && r.iniciada && !r.mc) h += redeEsperaVezHtml(r, eu, papel);
   if (r.intervalo) {
     // 1.7.9.11: o placar do intervalo no celular de cada um (Pontos e Joias; o tabuleiro está logo abaixo)
     // 1.7.10.5.6 (pedido do JF): cara de lobby, com o resumo da partida e as cartas que já foram
