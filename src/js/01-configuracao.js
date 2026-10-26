@@ -377,7 +377,7 @@ const MC_DUELO_VITORIAS = 2; // 1.7.10.9.3 (JF): duelo e revanche em melhor de 3
 const MC_PAUSA_VEZ_MS = 6000; // respiro antes da próxima vez, com o resultado na tela (1.7.10.6.1, Henrique: 1,5 → 4,5 s; 1.7.10.9.3, JF: 6 s)
 const MC_INTERVALO_SEG = 20; // lobby entre rodadas (tudo congelado). 1.7.10.9.3 (JF): 20 s (era 15), por causa da trava de 3 s da lojinha; 20 é o teto
 const MC_RAPIDO_MS = 5e3; // acertou nos 5 primeiros segundos da janela: bônus de PC
-const MC_PC = { rodada: 10, rapido: 5, pinata: 30, batata: 50, imposto: 10 };
+const MC_PC = { rodada: 10, rapido: 5, pinata: 30, batata: 50, imposto: 10, bonus: 20 };
 /* Lojinha do C.A.O.S. (Pontos de Caos). 1.7.10.6 (pedido do JF): nomes próprios do modo (diferentes dos da Corrida),
    2 itens novos (Olho do C.A.O.S. e Assalto Relâmpago) e vitrine sorteada a cada intervalo: MC_VITRINE itens, 1 a 3
    de cada, preço variando ±20%. Balanceamento: ~10 a 25 PC por rodada, então item de 15–25 é toda rodada, 40+ é
