@@ -21,7 +21,7 @@ pra poupar créditos. Só corrige na hora o que ele pedir "pra agora", e só aqu
 
 ## Teste do JF em 26/10 (PC = host, como JF · celular = convidado, como Anne)
 
-Prints numerados na ordem em que chegam; o JF responde dúvida pelo número.
+Prints numerados na ordem em que chegam (salvos em `docs/prints_teste_2026-10-26/`); o JF responde dúvida pelo número.
 
 - [ ] **Host entrou errado de novo**: pediu pra escolher quem joga no aparelho (o mesmo problema de antes). Sem print
   desta vez; o JF tira se repetir.
