@@ -12,7 +12,7 @@ const NOVIDADES = [
   {
     v: "Beta 1.8",
     data: "26/10/2026",
-    nome: "C.A.O.S. no Comando",
+    nome: "C.A.O.S. Expansion Update",
     t: "O C.A.O.S. guia quem se perde e sente cada jogador, Rodada Bônus, duelo à escolha e Corrida Extreme.",
     itens: [
       "🧭 C.A.O.S. guia da mesa: a mesa parou porque alguém não sabe o que fazer? Ele chama a pessoa pelo nome e o botão certo brilha. Quem se perder duas vezes ganha um guia: ele avisa cada passo, comemora o acerto e, quando a pessoa pega o ritmo, se despede. Ideia da Elisa.",
