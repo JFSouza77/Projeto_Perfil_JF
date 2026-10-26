@@ -19,6 +19,22 @@ pra poupar créditos. Só corrige na hora o que ele pedir "pra agora", e só aqu
   e testar com calma pra descrever melhor.
 - [ ] T2 com "bugzinhos enjoados" no geral: esperar os prints do JF.
 
+## Teste do JF em 26/10 (PC = host, como JF · celular = convidado, como Anne)
+
+Prints numerados na ordem em que chegam; o JF responde dúvida pelo número.
+
+- [ ] **Host entrou errado de novo**: pediu pra escolher quem joga no aparelho (o mesmo problema de antes). Sem print
+  desta vez; o JF tira se repetir.
+- [ ] **Print 1 · intervalo "Antes da próxima carta" (host)**: o botão "Próxima carta" fica espremido no canto, ao
+  lado do título; rever a posição e o tamanho (centralizar, mais destaque, longe do título).
+- [ ] **Print 2 · T2 do host na vez do JF**: tela confusa.
+  - A T2 é uma coluna estreita por cima do jogo e o jogo aparece pelos lados (pedaços cortados como "Me" e "JF").
+  - Duas grades de números: a grande pra escolher e a pequena da carta logo abaixo.
+  - "JF pediu a dica 7" fica longe da grade em que ele tocou.
+  - A categoria aparece duas vezes ("Categoria Pessoa" no topo e o selo "Pessoa" na carta).
+  - "Neste aparelho: JF · Vez de JF" repete o que o "SUA VEZ!" já diz.
+  - Rumo: centralizar e reorganizar botões e falas (entra no rework da T2).
+
 ## Sugestões
 
 - [ ] **T2: dica escolhida bem evidente** (pode ficar pra T2 viva, 1.9): ao escolher, as outras apagam e a escolhida
