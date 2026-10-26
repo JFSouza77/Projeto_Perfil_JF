@@ -11,6 +11,7 @@
 const NOVIDADES = [
   {
     v: "Beta 1.8.0",
+    ate: "1.8.1", // a lista junta os ajustes até essa versão
     data: "26/10/2026",
     nome: "C.A.O.S. Expansion Update",
     t: "O C.A.O.S. guia quem se perde e sente cada jogador, Rodada Bônus, duelo à escolha e Corrida Extreme.",
@@ -26,6 +27,7 @@ const NOVIDADES = [
     qol: [
       "🔢 Números maiores pro Mestre: os números das dicas também ficaram maiores na tela do Mestre.",
       "🔁 Vários no celular voltam juntos: a internet do celular onde jogam duas pessoas caiu? Quando ele volta, as duas voltam juntas.",
+      "🤖 Pergunte ao C.A.O.S. consertado: na sala de espera, a resposta dele aparecia com um pedaço de código. Agora é só a resposta.",
     ],
   },
   {

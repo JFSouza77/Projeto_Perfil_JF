@@ -2769,8 +2769,9 @@ function redeEsperaLigar(box) {
       const banco = REACTIVE_VOICE.esperaSala && REACTIVE_VOICE.esperaSala[b.dataset.perg];
       if (!banco) return;
       // resposta limpa (sem os enfeites do getRandomReaction): é um "tira-dúvidas", e quem lê é criança
-      const opcoes = banco.filter((t) => t !== rede.esperaResp);
-      const txt = String(opcoes[Math.floor(Math.random() * opcoes.length)] || banco[0]);
+      // (1.8.1: a fala já é função quando chega aqui; antes aparecia o código na tela)
+      const opcoes = banco.map((t) => redeFalaTexto(t)).filter((t) => t !== rede.esperaResp);
+      const txt = opcoes[Math.floor(Math.random() * opcoes.length)] || redeFalaTexto(banco[0]);
       rede.esperaResp = txt;
       const r = box.querySelector("#redeCaosResp");
       if (r) {
@@ -2790,6 +2791,12 @@ function redeEsperaLigar(box) {
       rede.esperaDica = (rede.esperaDica + 1) % REDE_ESPERA_DICAS.length;
       el.textContent = REDE_ESPERA_DICAS[rede.esperaDica];
     }, 7000);
+}
+// As falas do C.A.O.S. viram funções quando o jogo carrega (caosFalasMontar). Pra mostrar como texto simples no
+// celular: chama a função com o nome e tira a etiqueta "[C.A.O.S.]" (quem lê na tela já vê o 🤖).
+function redeFalaTexto(item, nome) {
+  const t = typeof item === "function" ? item(nome || "você") : String(item || "").split("{nome}").join(nome || "você");
+  return String(t || "").replace(/^\[C\.A\.O\.S\.\]\s*/, "");
 }
 // Abre o formulário pra criar mais um jogador neste mesmo aparelho (sem largar os que já estão).
 function redeConvAdicionarJogador() {
