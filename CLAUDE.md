@@ -19,3 +19,6 @@
 - **Catálogo de cartas:** `docs/Catalogo_de_Cartas.md` (pro GPT conferir) e `.html` (pro JF), gerados por
   `node ferramentas/catalogo_cartas.js`. Carta planejada nova entra em `ferramentas/cartas_2.0_planejadas.json` e
   o catálogo é gerado de novo. Carta nova no jogo precisa de assunto em `ferramentas/catalogo_assuntos.json`.
+- **Economia de créditos (26/10 a 29/10/2026):** bug, print ou sugestão que o JF mandar nesta semana só é anotado em
+  `docs/Pendencias_da_Semana.md`, sem corrigir. Exceção: quando ele disser que precisa daquilo "pra agora", corrigir só
+  aquilo, pontual. Na quinta, 29/10, às 18h (Brasília), os créditos renovam e começam os patches com tudo que acumulou.
