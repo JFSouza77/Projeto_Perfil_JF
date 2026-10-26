@@ -58,7 +58,7 @@ const ARQ = acharMestre(process.argv[2]);
   // tela de espera (o host ainda não aceitou): dica, tutorial e perguntas pro C.A.O.S.
   conf("Esperando o host: dica, tutorial e 5 perguntas na tela", await esperar(g, () => rede.estado === "aguardando" && !!document.getElementById("redeDicaEspera") && !!document.getElementById("redeTutRapido") && document.querySelectorAll("[data-perg]").length === 5));
   await g.evaluate(() => document.querySelector('[data-perg="oQueFaco"]').click());
-  conf("Pergunta ao C.A.O.S.: ele responde na tela", await g.evaluate(() => { const r = document.getElementById("redeCaosResp"); return !!r && !r.hidden && REACTIVE_VOICE.esperaSala.oQueFaco.some((t) => r.textContent.includes(t)); }));
+  conf("Pergunta ao C.A.O.S.: ele responde na tela", await g.evaluate(() => { const r = document.getElementById("redeCaosResp"); return !!r && !r.hidden && !/=>|CAOS_PREFIXO|function/.test(r.textContent) && REACTIVE_VOICE.esperaSala.oQueFaco.some((t) => r.textContent.includes(redeFalaTexto(t))); }));
   await g.evaluate(() => document.getElementById("redeTutRapido").click());
   conf("Tutorial rápido abre no celular", await g.evaluate(() => !!document.getElementById("tutorialOverlay")));
   await g.evaluate(() => document.getElementById("tutorialOverlay")?.remove());
