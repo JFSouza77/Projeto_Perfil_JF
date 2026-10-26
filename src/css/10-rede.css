@@ -1959,3 +1959,43 @@ body.claro #reportarProblema .chip {
 .rep-add{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;cursor:pointer}
 body.claro .rep-imgs{border-color:var(--claro-borda)}
 body.claro .rep-add{color:var(--claro-txt)}
+
+/* 26/10/2026 (pedido do JF): vários jogadores no mesmo celular convidado — fileira "Neste celular" */
+.rede-eu-troca {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 8px 0;
+}
+.rede-eu-troca-rot {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+.rede-eu-chip {
+  min-height: 44px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 2px solid rgba(34, 211, 238, 0.5);
+  background: rgba(34, 211, 238, 0.1);
+  color: #e0f7fa;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+.rede-eu-chip.on {
+  background: #0891b2;
+  border-color: #67e8f9;
+  color: #fff;
+  box-shadow: 0 0 0 2px rgba(103, 232, 249, 0.35);
+}
+body.claro .rede-eu-chip {
+  color: #0e4f5c;
+  background: #e0f7fa;
+  border-color: #0891b2;
+}
+body.claro .rede-eu-chip.on {
+  color: #fff;
+  background: #0e7490;
+}

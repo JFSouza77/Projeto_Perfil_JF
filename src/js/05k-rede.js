@@ -708,7 +708,8 @@ function redeValidar(bruto) {
     // 1.7.9.6: o convidado cria o próprio jogador (o host aprova e cadastra)
     pedido: () =>
       m.perfil && typeof m.perfil === "object" && txt(m.perfil.nome, 15) && typeof m.chave === "string" && /^[a-z0-9]{12,32}$/.test(m.chave) &&
-      ["cor", "avatar", "humor", "idade", "faixa"].every((k) => m.perfil[k] === undefined || m.perfil[k] === null || txt(m.perfil[k], 20)),
+      ["cor", "avatar", "humor", "idade", "faixa"].every((k) => m.perfil[k] === undefined || m.perfil[k] === null || txt(m.perfil[k], 20)) &&
+      (m.mais === undefined || typeof m.mais === "boolean"),
     aguarde: () => true,
     // C.A.O.S. 4.3: o celular conta pro host que pulou a fala ou ligou/desligou a voz do C.A.O.S.
     sinal: () => ["pulou", "voz"].includes(m.tipo) && (m.ligada === undefined || typeof m.ligada === "boolean"),
@@ -719,7 +720,7 @@ function redeValidar(bruto) {
       (m.face === undefined || txt(m.face, 24)) &&
       (m.rotulo === undefined || txt(m.rotulo, 24)) &&
       (m.ev === undefined || txt(m.ev, 80)),
-    bemvindo: () => jogadorIdValido(m.jogadorId),
+    bemvindo: () => jogadorIdValido(m.jogadorId) && (m.mais === undefined || typeof m.mais === "boolean"),
     escolha: () => Array.isArray(m.lugares) && m.lugares.length <= 12 && m.lugares.every((l) => l && jogadorIdValido(l.id) && typeof l.nome === "string"),
     recusa: () => txt(m.motivo, 40) && (m.versao === undefined || txt(m.versao, 20)) && (m.build === undefined || Number.isInteger(m.build)),
     retrato: () => m.r && typeof m.r === "object" && m.r.protocolo === RETRATO_PROTOCOLO && m.r.papel === "mesa" && Number.isInteger(m.r.revisao) && Array.isArray(m.r.jogadores),
@@ -732,7 +733,7 @@ function redeValidar(bruto) {
       txt(m.estado, REDE_MAX_LETRAS) && Number.isInteger(m.revisao) && (m.matchId === null || txt(m.matchId, 64)) &&
       (m.aprovados === undefined || (Array.isArray(m.aprovados) && m.aprovados.length <= 40 && m.aprovados.every((c) => txt(c, 32)))),
     painel: () =>
-      Number.isInteger(m.revisao) && Array.isArray(m.opcoes) && m.opcoes.length <= 40 &&
+      Number.isInteger(m.revisao) && Array.isArray(m.opcoes) && m.opcoes.length <= 40 && (m.jog === undefined || jogadorIdValido(m.jog)) &&
       m.opcoes.every((o) => o && typeof o.a === "string" && !!ACOES[o.a] && Array.isArray(o.d) && o.d.length <= 4 && o.d.every(redeEhPrimitivo) && txt(o.t, 80) && (o.c === undefined || txt(o.c, 12)) && (o.g === undefined || txt(o.g, 60))),
   }[m.t];
   let certo = false;
@@ -1022,6 +1023,12 @@ function redeAssentoDaSessao(sessao) {
   const id = Object.keys(rede.assentos).find((k) => rede.assentos[k].sessao === sessao);
   return id || null;
 }
+// 26/10/2026 (pedido do JF): um aparelho convidado pode ter mais de um jogador (quem não tem celular). Então
+// uma sessão pode segurar vários assentos — os ids de todos os jogadores daquele aparelho.
+function redeAssentosDaSessao(sessao) {
+  if (!rede || !rede.assentos) return [];
+  return Object.keys(rede.assentos).filter((k) => rede.assentos[k].sessao === sessao);
+}
 function redeOnline(a) {
   return !!a && Date.now() - a.visto < REDE_ONLINE_MS;
 }
@@ -1144,7 +1151,8 @@ function redeRemoverDaSala(idx) {
 function redeHostReceber(m) {
   if (!redeRitmoOk(m.de)) return; // 1.7.9.7: sessão mandando demais
   const a = redeAssentoDaSessao(m.de);
-  if (a) rede.assentos[a].visto = Date.now();
+  // todos os jogadores deste aparelho continuam online (não só o 1º), senão os outros "cairiam" sozinhos
+  redeAssentosDaSessao(m.de).forEach((jid) => (rede.assentos[jid].visto = Date.now()));
   if (m.t === "oi") return redeHostOi(m);
   if (m.t === "ping") {
     if (a) {
@@ -1154,7 +1162,7 @@ function redeHostReceber(m) {
     return redeEnviar("pong", { t0: m.t0, th: Date.now() }, m.de);
   }
   if (m.t === "tchau") {
-    if (a) rede.assentos[a].visto = 0;
+    redeAssentosDaSessao(m.de).forEach((jid) => (rede.assentos[jid].visto = 0));
     delete rede.esperando[m.de];
     if (rede.pedidos[m.de]) delete rede.pedidos[m.de], redePedidosPintar();
     return;
@@ -1194,18 +1202,21 @@ function redeHostOi(m) {
   if (!rede.aprovados[m.chave] && !(atual && atual.chave === m.chave)) return redePedidoNovo(m.de, { tipo: "lugar", jogadorId: pedido, chave: m.chave });
   redeAssentar(m.de, pedido, m.chave);
 }
-function redeAssentar(ses, pedido, chave) {
+function redeAssentar(ses, pedido, chave, mais) {
   const m = { de: ses, chave };
   const atual = rede.assentos[pedido];
-  // a mesma sessão não segura dois lugares
-  const antigo = redeAssentoDaSessao(m.de);
-  if (antigo && antigo !== pedido) delete rede.assentos[antigo];
+  // normalmente uma sessão não segura dois lugares (trocar de lugar solta o anterior). Com "mais" (vários
+  // jogadores no mesmo celular, pedido do JF), o lugar anterior fica: este aparelho passa a ter os dois.
+  if (!mais) {
+    const antigo = redeAssentoDaSessao(m.de);
+    if (antigo && antigo !== pedido) delete rede.assentos[antigo];
+  }
   const volta = !!atual;
   rede.assentos[pedido] = { sessao: m.de, visto: Date.now(), chave: m.chave, nome: (jogadorPorId(pedido) || {}).name || null };
   delete rede.esperando[m.de];
   if (rede.semLugar) delete rede.semLugar[m.de];
   delete rede.paineis[pedido];
-  redeEnviar("bemvindo", { jogadorId: pedido, matchId: matchId || null, volta }, m.de);
+  redeEnviar("bemvindo", { jogadorId: pedido, matchId: matchId || null, volta, mais: !!mais }, m.de);
   try {
     caosLog("rede", `${(jogadorPorId(pedido) || {}).name || "?"} ${volta ? "voltou pra" : "entrou na"} sala`);
   } catch (e) {}
@@ -1390,13 +1401,14 @@ function redePerfilProblema(perfil, ignorarSessao) {
   return "";
 }
 function redeHostPedidoPerfil(m) {
-  if (redeAssentoDaSessao(m.de)) return; // já está na sala
+  // "já está na sala" só barra quando NÃO é um pedido de "mais um jogador neste aparelho" (pedido do JF)
+  if (!m.mais && redeAssentoDaSessao(m.de)) return;
   const ant = rede.pedidos[m.de];
   if (ant && Date.now() - ant.quando < 3000) return; // um pedido a cada 3 s
   if (!ant && Object.keys(rede.pedidos).length >= REDE_PEDIDOS_MAX) return redeEnviar("recusa", { motivo: "muitos_pedidos" }, m.de);
   const prob = redePerfilProblema(m.perfil, m.de);
   if (prob) return redeEnviar("recusa", { motivo: prob }, m.de);
-  const pedido = { tipo: "perfil", perfil: { ...m.perfil, nome: nomeJogadorLimpo(m.perfil.nome) }, chave: m.chave };
+  const pedido = { tipo: "perfil", perfil: { ...m.perfil, nome: nomeJogadorLimpo(m.perfil.nome) }, chave: m.chave, mais: !!m.mais };
   if (rede.aprovados[m.chave]) return redeAprovarPedido(m.de, true, pedido);
   redePedidoNovo(m.de, pedido);
 }
@@ -1434,7 +1446,7 @@ function redeAprovarPedido(ses, sim, pedidoDireto) {
     return redeMandarEscolha(ses), false;
   }
   if (!pid) return false;
-  redeAssentar(ses, pid, p.chave);
+  redeAssentar(ses, pid, p.chave, p.mais);
   return true;
 }
 function redeAprovarTodos() {
@@ -1870,7 +1882,7 @@ function redeHostPublicar(forcar) {
     const chave = JSON.stringify([opcoes, extra, aviso && aviso.id]) + "|" + partidaRevisao;
     if (!forcar && rede.paineis[jid] === chave) return;
     rede.paineis[jid] = chave;
-    redeEnviar("painel", { revisao: partidaRevisao, opcoes, ...(extra ? { extra } : {}), ...(aviso ? { aviso } : {}) }, a.sessao);
+    redeEnviar("painel", { revisao: partidaRevisao, opcoes, jog: jid, ...(extra ? { extra } : {}), ...(aviso ? { aviso } : {}) }, a.sessao);
   });
   const mid = jogadorIdDe(mestreIndex);
   const a = mid && rede.assentos[mid];
@@ -2319,14 +2331,23 @@ function redeConvidadoReceber(m) {
     return avisar();
   }
   if (m.t === "bemvindo") {
-    rede.eu = m.jogadorId;
+    rede.euLista = rede.euLista || [];
     rede.estado = "dentro";
+    rede.adicionando = false;
+    if (m.mais) {
+      // 26/10/2026 (pedido do JF): jogador a mais neste mesmo celular — entra na lista, sem trocar o ativo
+      if (!rede.euLista.includes(m.jogadorId)) rede.euLista.push(m.jogadorId);
+      if (!rede.eu) rede.eu = m.jogadorId;
+    } else {
+      rede.eu = m.jogadorId;
+      if (!rede.euLista.includes(m.jogadorId)) rede.euLista.unshift(m.jogadorId);
+    }
     // C.A.O.S. 4.3: entrou com a voz ligada? O host conta como ouvinte
     try {
       if (caosVoiceOn) redeEnviar("sinal", { tipo: "voz", ligada: true });
     } catch (e) {}
     try {
-      const eu = JSON.stringify({ id: m.jogadorId, chave: rede.chave });
+      const eu = JSON.stringify({ id: rede.eu, chave: rede.chave });
       sessionStorage.setItem(REDE_EU_KEY + rede.sala, eu);
       localStorage.setItem(REDE_EU_KEY + rede.sala, eu);
     } catch (e) {}
@@ -2341,12 +2362,22 @@ function redeConvidadoReceber(m) {
     // o pacote de recuperação só fica com quem é o sucessor agora
     if (rede.recuperacao && !redeSouSucessor(r)) rede.recuperacao = null;
     if (rede.espia && (!r.duelo || r.duelo.fase !== "duelo" || r.fim)) rede.espia = null; // 1.7.10.7: espiada vale só no duelo
+    redeConvAutoAtivo(); // vários jogadores neste aparelho: mostra quem é a vez (ou o Mestre)
     return avisar();
   }
   if (m.t === "painel") {
-    if (rede.painel && m.revisao < rede.painel.revisao) return;
-    rede.painel = { revisao: m.revisao, opcoes: m.opcoes, extra: m.extra && typeof m.extra === "object" ? m.extra : null, aviso: typeof avisoLimpar === "function" ? avisoLimpar(m.aviso) : null };
-    if (typeof avisoDesenharConvidado === "function") avisoDesenharConvidado();
+    // 26/10/2026: o painel vem com "jog" (de qual jogador deste aparelho é). Guarda um por jogador; o que
+    // vale na tela é o do jogador ativo. (1 jogador só: "jog" é ele, e tudo fica igual a antes.)
+    rede.painelPorJid = rede.painelPorJid || {};
+    const para = m.jog && jogadorIdValido(m.jog) ? m.jog : rede.eu;
+    const ant = rede.painelPorJid[para];
+    if (ant && m.revisao < ant.revisao) return;
+    const painel = { revisao: m.revisao, opcoes: m.opcoes, extra: m.extra && typeof m.extra === "object" ? m.extra : null, aviso: typeof avisoLimpar === "function" ? avisoLimpar(m.aviso) : null };
+    rede.painelPorJid[para] = painel;
+    if (para === rede.eu) {
+      rede.painel = painel;
+      if (typeof avisoDesenharConvidado === "function") avisoDesenharConvidado();
+    }
     return avisar();
   }
   if (m.t === "recuperacao") {
@@ -2596,6 +2627,71 @@ function redeConvidadoTiques() {
   if (vs && r.votacao) vs.textContent = s(r.votacao.ate);
   if (r.mc && typeof mcContagens === "function") mcContagens();
 }
+// 26/10/2026 (pedido do JF) · vários jogadores no mesmo celular convidado --------------------------------
+// A lista dos jogadores deste aparelho que ainda estão na partida (o ativo primeiro).
+function redeConvJogadores() {
+  if (!rede || rede.papel !== "convidado") return [];
+  const r = rede.retrato;
+  const vivo = (id) => id && (!r || !Array.isArray(r.jogadores) || r.jogadores.some((j) => j.id === id));
+  return (rede.euLista || (rede.eu ? [rede.eu] : [])).filter(vivo);
+}
+// Troca qual jogador deste aparelho está ativo (é "o eu" pra ações, painel, carta do Mestre e segredo).
+function redeConvDefinirAtivo(jid) {
+  if (!rede || rede.papel !== "convidado" || !jid || jid === rede.eu) return;
+  if (!(rede.euLista || []).includes(jid)) return;
+  rede.eu = jid;
+  rede.painelPorJid = rede.painelPorJid || {};
+  rede.painel = rede.painelPorJid[jid] || null;
+  rede.segredo = null; // a resposta é do Mestre: só volta pelo "segredo" de quem está ativo
+  try {
+    const eu = JSON.stringify({ id: jid, chave: rede.chave });
+    sessionStorage.setItem(REDE_EU_KEY + rede.sala, eu);
+    localStorage.setItem(REDE_EU_KEY + rede.sala, eu);
+  } catch (e) {}
+  redeConvidadoDesenhar();
+}
+// Com mais de um jogador aqui, mostra sozinho quem tem que agir: a vez (responder) ou, se não, o Mestre.
+function redeConvAutoAtivo() {
+  const lista = redeConvJogadores();
+  if (lista.length <= 1) {
+    if (lista.length === 1 && rede.eu !== lista[0]) rede.eu = lista[0];
+    return;
+  }
+  const r = rede.retrato;
+  if (!r) return;
+  const alvo = lista.find((id) => r.vezId === id) || lista.find((id) => r.mestreId === id);
+  if (alvo && alvo !== rede.eu) {
+    rede.eu = alvo;
+    rede.painel = (rede.painelPorJid || {})[alvo] || null;
+    rede.segredo = null;
+  }
+}
+// Fileira de troca "jogando como": só aparece quando há 2+ jogadores neste aparelho.
+function redeConvTrocaHtml() {
+  const lista = redeConvJogadores();
+  if (lista.length <= 1) return "";
+  const nome = (id) => {
+    const j = rede.retrato && rede.retrato.jogadores.find((p) => p.id === id);
+    return j ? escapeHtml((j.avatar ? j.avatar + " " : "") + j.nome) : "—";
+  };
+  const chips = lista
+    .map((id) => `<button type="button" class="rede-eu-chip${id === rede.eu ? " on" : ""}" data-ativo="${escapeHtml(id)}">${nome(id)}${rede.retrato && rede.retrato.vezId === id ? " 👉" : ""}</button>`)
+    .join("");
+  return `<div class="rede-eu-troca"><span class="rede-eu-troca-rot">Neste celular:</span> ${chips}</div>`;
+}
+// Abre o formulário pra criar mais um jogador neste mesmo aparelho (sem largar os que já estão).
+function redeConvAdicionarJogador() {
+  if (!rede || rede.papel !== "convidado") return;
+  if (!rede.cadastro) {
+    rede.erroCadastro = "O host ainda não liberou o cadastro. Espere um pouquinho.";
+    return redeConvidadoDesenhar();
+  }
+  rede.adicionando = true;
+  rede.rascunho = {};
+  rede.erroCadastro = null;
+  rede.estado = "escolhendo";
+  redeConvidadoDesenhar();
+}
 function redeConvidadoDesenhar() {
   const box = document.getElementById("telao");
   if (!box || !rede) return;
@@ -2635,9 +2731,24 @@ function redeConvidadoDesenhar() {
   }
   // 1.7.9.4: sala aberta antes da partida: espera o host terminar o cadastro e começar
   if (!rede.retrato.iniciada) {
-    const r = rede.retrato, eu = r.jogadores.find((j) => j.id === rede.eu);
-    const mesa = r.jogadores.map((j) => `<li>${escapeHtml((j.avatar ? j.avatar + " " : "") + j.nome)}${j.id === rede.eu ? " · você" : ""}</li>`).join("");
-    box.innerHTML = `${sala}<div class="telao-espera">✅ Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b><br><small>Esperando o host terminar o cadastro e começar a partida…</small></div><ul class="rede-lista">${mesa}</ul>${redeSairHtml()}`;
+    const r = rede.retrato;
+    const meus = redeConvJogadores();
+    const nomeDe = (id) => {
+      const j = r.jogadores.find((p) => p.id === id);
+      return j ? escapeHtml((j.avatar ? j.avatar + " " : "") + j.nome) : "?";
+    };
+    const meusTxt = meus.length ? meus.map(nomeDe).join("</b> e <b>") : "?";
+    const mesa = r.jogadores.map((j) => `<li>${escapeHtml((j.avatar ? j.avatar + " " : "") + j.nome)}${meus.includes(j.id) ? " · você" : ""}</li>`).join("");
+    // 26/10/2026 (pedido do JF): dá pra botar mais de um jogador neste mesmo celular (quem não tem o próprio)
+    const podeMais = r.jogadores.length < (typeof MAX_PLAYERS === "number" ? MAX_PLAYERS : 10);
+    box.innerHTML =
+      `${sala}<div class="telao-espera">✅ Você é <b>${meusTxt}</b><br><small>Esperando o host terminar o cadastro e começar a partida…</small></div>` +
+      redeConvTrocaHtml() +
+      (podeMais ? `<button type="button" class="rede-lugar" id="redeMaisJog">➕ Adicionar outro jogador neste celular</button>` : "") +
+      `<ul class="rede-lista">${mesa}</ul>${redeSairHtml()}`;
+    box.querySelectorAll("[data-ativo]").forEach((b) => b.addEventListener("click", () => redeConvDefinirAtivo(b.dataset.ativo)));
+    const mais = box.querySelector("#redeMaisJog");
+    if (mais) mais.addEventListener("click", () => redeConvAdicionarJogador());
     return;
   }
   if (rede.retrato.mc) return mcDesenharConvidado(box); // 1.7.10.6: Modo C.A.O.S. tem tela própria
@@ -2652,7 +2763,7 @@ function redeConvidadoDesenhar() {
   if (redeMestreCartaMontar(box)) return redeConvidadoTiques();
   const barra = document.createElement("section");
   barra.className = "rede-barra";
-  barra.innerHTML = redeBotoesHtml();
+  barra.innerHTML = redeConvTrocaHtml() + redeBotoesHtml();
   if (rede.retrato.intervalo) box.querySelector(".telao-hist")?.remove(); // o lobby já tem a aba Cartas
   // 1.7.10.5.7: o seletor de alvo da especial: só quem abriu a dica toca
   const ae = rede.retrato.alvoEspecial;
@@ -2675,6 +2786,7 @@ function redeConvidadoDesenhar() {
   const topo = box.querySelector(".telao-vez");
   if (topo) topo.after(barra);
   else box.appendChild(barra);
+  barra.querySelectorAll("[data-ativo]").forEach((b) => b.addEventListener("click", () => redeConvDefinirAtivo(b.dataset.ativo)));
   barra.querySelectorAll("[data-op]").forEach((b) =>
     b.addEventListener("click", () => {
       const o = rede.painel && rede.painel.opcoes[+b.dataset.op];
@@ -2770,11 +2882,12 @@ function redeMestreCartaMontar(box) {
   const aviso = ult && (!ult.ok || ult.motivo === "votacao") && REDE_MOTIVOS[ult.motivo] ? `<div class="rede-aviso">${escapeHtml(REDE_MOTIVOS[ult.motivo])}</div>` : "";
   const sec = document.createElement("section");
   sec.className = "rede-mestre";
-  sec.innerHTML = h + aviso + (mais ? `<div class="rede-acoes rede-mais">${grupo((o) => o.g === "Mais" && o.a !== "descartarCarta" && o.a !== "desistirCarta")}</div>` : "");
+  sec.innerHTML = redeConvTrocaHtml() + h + aviso + (mais ? `<div class="rede-acoes rede-mais">${grupo((o) => o.g === "Mais" && o.a !== "descartarCarta" && o.a !== "desistirCarta")}</div>` : "");
   const resumo = box.querySelector(".telao-carta");
   if (resumo) resumo.replaceWith(sec);
   else (box.querySelector(".telao-vez") || box.firstChild).after(sec);
   if (typeof telaoRoletaAnimar === "function") telaoRoletaAnimar(sec);
+  sec.querySelectorAll("[data-ativo]").forEach((b) => b.addEventListener("click", () => redeConvDefinirAtivo(b.dataset.ativo)));
   sec.querySelectorAll("[data-op]").forEach((b) =>
     b.addEventListener("click", () => {
       const o = ops[+b.dataset.op];
@@ -2897,7 +3010,10 @@ function redeEscolhaDesenhar(box, sala) {
   }
   const lista = l ? `<div class="rede-rot">${cad ? "Ou, se o host já cadastrou você:" : "Quem é você?"}</div><div class="rede-lugares">${l}</div>` : "";
   const vazio = !cad && !l ? "<small>O host ainda está montando a partida. Espere um pouquinho.</small>" : "";
-  box.innerHTML = `${sala}<div class="telao-espera rede-entrada">${cad ? "" : "Quem é você?"}${form}${lista}${vazio}</div>${redeSairHtml()}`;
+  const voltar = rede.adicionando ? `<button type="button" class="rede-lugar" id="redeAddVoltar">← Voltar (sem adicionar)</button>` : "";
+  box.innerHTML = `${sala}<div class="telao-espera rede-entrada">${rede.adicionando ? "➕ Mais um jogador neste celular" : cad ? "" : "Quem é você?"}${form}${lista}${voltar}${vazio}</div>${redeSairHtml()}`;
+  const bVoltar = box.querySelector("#redeAddVoltar");
+  if (bVoltar) bVoltar.addEventListener("click", () => { rede.adicionando = false; rede.erroCadastro = null; rede.estado = "dentro"; redeConvidadoDesenhar(); });
   box.querySelectorAll(".rede-lugar").forEach((b) => b.addEventListener("click", () => redeEscolherLugar(b.dataset.id)));
   const nome = box.querySelector("#redeNome");
   const bConta = box.querySelector("#redeConta");
@@ -2981,7 +3097,7 @@ function redePedirEntrada(perfil) {
   if (lg) p.conta = lg;
   if (cad.equipe) p.faixa = r.idade || null;
   else p.idade = r.idade || null;
-  redeEnviar("pedido", { perfil: p, chave: rede.chave });
+  redeEnviar("pedido", { perfil: p, chave: rede.chave, mais: !!rede.adicionando });
   rede.estado = "aguardando";
   redeConvidadoDesenhar();
   return true;

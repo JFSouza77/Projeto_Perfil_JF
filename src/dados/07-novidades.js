@@ -11,10 +11,12 @@
 const NOVIDADES = [
   {
     v: "Beta 1.7.10.9.5",
-    data: "25/10/2026",
+    ate: "1.7.10.9.6", // a lista junta os ajustes até essa versão
+    data: "25/10 a 26/10/2026",
     nome: "Ajustes da Mesa",
-    t: "Responder na sua vez com o palpite guardado, a dica pedida saltando pro Mestre e o host tirando quem desistiu.",
+    t: "Vários jogadores no mesmo celular, responder na sua vez com o palpite guardado, a dica pedida saltando pro Mestre e o host tirando quem desistiu.",
     itens: [
+      "📱 Vários no mesmo celular: quem não tem celular pode jogar no de outra pessoa, não só no do host. No celular, depois de entrar, toque em ➕ Adicionar outro jogador. Na partida, o celular mostra sozinho de quem é a vez. Ideia da Elisa e do Pedro.",
       "🃏 Responder na sua vez: tirou o palpite a qualquer hora? Agora, se quiser, você responde a carta ali mesmo (é a sua vez). Acertou, leva a carta — e a ficha de palpite fica guardada do mesmo jeito, pra você usar fora da vez depois.",
       "👉 Dica pedida em destaque: quando você fala um número, ele salta na tela do Mestre — aceso e balançando — pra ele achar a dica na hora.",
       "🎂 Idade mais clara nos modos: cada modo mostra a idade num selo próprio, separado das etiquetas Novo, Rápido, online ou Surpresa.",
