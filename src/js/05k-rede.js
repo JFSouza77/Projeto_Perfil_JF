@@ -735,7 +735,7 @@ function redeValidar(bruto) {
       (m.aprovados === undefined || (Array.isArray(m.aprovados) && m.aprovados.length <= 40 && m.aprovados.every((c) => txt(c, 32)))),
     painel: () =>
       Number.isInteger(m.revisao) && Array.isArray(m.opcoes) && m.opcoes.length <= 40 && (m.jog === undefined || jogadorIdValido(m.jog)) &&
-      m.opcoes.every((o) => o && typeof o.a === "string" && !!ACOES[o.a] && Array.isArray(o.d) && o.d.length <= 4 && o.d.every(redeEhPrimitivo) && txt(o.t, 80) && (o.c === undefined || txt(o.c, 12)) && (o.g === undefined || txt(o.g, 60))),
+      m.opcoes.every((o) => o && typeof o.a === "string" && !!ACOES[o.a] && Array.isArray(o.d) && o.d.length <= 4 && o.d.every(redeEhPrimitivo) && txt(o.t, 80) && (o.c === undefined || txt(o.c, 12)) && (o.g === undefined || txt(o.g, 60)) && (o.gp === undefined || o.gp === 1)),
   }[m.t];
   let certo = false;
   try {
@@ -1220,7 +1220,7 @@ function redeHostOi(m) {
   // 1.8: o celular voltou com mais jogadores (vários no mesmo aparelho): cada um volta pro seu lugar, mas só se o
   // lugar for mesmo deste aparelho (mesma chave) e ninguém estiver usando
   (Array.isArray(m.outros) ? m.outros : []).forEach((id) => {
-    if (id === pedido || jogadorIdxPorId(id) < 0 || redeNoHost(id)) return;
+    if (id === pedido || jogadorIdxPorId(id) < 0 || (redeNoHost(id) && !redeHostAutoTem(id))) return;
     const a = rede.assentos[id];
     if (!a || a.chave !== m.chave || (redeOnline(a) && a.sessao !== m.de)) return;
     redeAssentar(m.de, id, m.chave, true);
@@ -1473,7 +1473,8 @@ function redeAprovarPedido(ses, sim, pedidoDireto) {
     const prob = redePerfilProblema(p.perfil, ses);
     if (prob) return redeEnviar("recusa", { motivo: prob }, ses), false;
     pid = redeHostAdicionarPerfil(p.perfil);
-  } else if (jogadorIdxPorId(pid) < 0 || redeNoHost(pid) || redeOnline(rede.assentos[pid])) {
+  } else if (jogadorIdxPorId(pid) < 0 || (redeNoHost(pid) && !redeHostAutoTem(pid)) || redeOnline(rede.assentos[pid])) {
+    // (quem o host pegou sozinho, por não ter celular, continua livre pra quem chegar: o redeAssentar tira do host)
     return redeMandarEscolha(ses), false;
   }
   if (!pid) return false;
@@ -1827,8 +1828,12 @@ function redeOpcoes(jid) {
     if (desfazerOferta) add("desfazer", [], "↩️ Desfazer: " + desfazerOferta.nome, "", "Mais");
   }
   add("pausar", [], "⏸️ Pausar", "", "Mais");
+  // 1.8 · Guia da mesa: a mesa está esperando este jogador há um tempinho; o botão da jogada dele brilha
+  if (typeof guiaPulsoPara === "function" && guiaPulsoPara(jid))
+    op.forEach((o) => !REDE_GUIA_FORA.includes(o.a) && (o.gp = 1));
   return op;
 }
+const REDE_GUIA_FORA = ["pausar", "descartarCarta", "desistirCarta", "desfazer", "palpitarAgora", "corridaComprar", "corridaUsar"];
 // Sucessor (regra do JF): na ordem dos Mestres da partida (a partir do 2º, contando do primeiro Mestre),
 // o primeiro jogador que está na sala, online, e não é o próprio host.
 function redeSucessor() {
@@ -1990,6 +1995,9 @@ function redeSemAparelho() {
 // 1.7.10.7 (relato do JF: "muito chato" marcar o notebook toda vez) · 26/10/2026 (pedido do JF: "se eu abri a sala,
 // eu sou o host, por que tenho que marcar?"): quem não entrou pelo próprio celular joga no aparelho do host,
 // sozinho, sem perguntar. Se o celular da pessoa entrar depois, ela pega o lugar dela (hostAuto).
+function redeHostAutoTem(id) {
+  return !!(rede && rede.hostAuto && rede.hostAuto[id]);
+}
 function redeAutoNoHost() {
   if (!rede || rede.papel !== "host") return [];
   const faltam = players.filter((p) => !redeNoHost(p.id) && !rede.assentos[p.id]);
@@ -2084,7 +2092,7 @@ function redeHostVista() {
     h += `<div class="rede-rot">👉 Sua vez: toque no número (ou fale) e o Mestre abre a dica.</div>`; // 1.7.9.6: só o Mestre abre
   const ops = [];
   eus.forEach((p) => redeOpcoes(p.id).forEach((o) => o.a !== "pausar" && ops.push({ ...o, quem: p.id })));
-  if (ops.length) h += `<div class="rede-acoes">${ops.map((o, i) => `<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`).join("")}</div>`;
+  if (ops.length) h += `<div class="rede-acoes">${ops.map((o, i) => `<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}${o.gp ? " guia-pulso" : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`).join("")}</div>`;
   h += `<div class="rede-acoes rede-mais"><button type="button" class="rede-btn" id="redeVistaPausar">⏸️ Pausar</button><button type="button" class="rede-btn" id="redeVistaSala">🌐 Sala ${rede.sala}</button></div>`;
   const barra = document.createElement("section");
   barra.className = "rede-barra";
@@ -3261,7 +3269,7 @@ function redeBotoesHtml() {
     let gr = grupos.find((x) => x.g === g);
     if (!gr) grupos.push((gr = { g, itens: [], nums: true }));
     if (o.a !== "pedirDica") gr.nums = false;
-    gr.itens.push(`<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`);
+    gr.itens.push(`<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}${o.gp ? " guia-pulso" : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`);
   });
   grupos.sort((a, b) => (a.g === "Mais") - (b.g === "Mais"));
   grupos.forEach((gr) => {

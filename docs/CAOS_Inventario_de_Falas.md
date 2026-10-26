@@ -10,9 +10,9 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | `caosFalaAgendar` | 36 |
 | `caosFalarDepois` | 15 |
 | `admFala` | 5 |
-| `getRandomReaction` | 309 |
+| `getRandomReaction` | 311 |
 | `caosGerarFala` | 17 |
-| **Total de linhas com fala** | **418** |
+| **Total de linhas com fala** | **420** |
 
 ## js/03-regras.js (1)
 
@@ -98,7 +98,7 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 3651 | showToastMessage, getRandomReaction | pausaExpirada.continuou |
 | 3662 | showToastMessage, getRandomReaction | pausaExpirada.recomecou |
 | 3813 | showToastMessage | - |
-| 3873 | getRandomReaction | vozCalada |
+| 3904 | getRandomReaction | vozCalada |
 
 ## js/05d-ajuda-do-mestre.js (2)
 
@@ -132,14 +132,14 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
 | 90 | showToastMessage | - |
-| 874 | caosGerarFala | gerador hostCaiu |
-| 875 | showToastMessage | - |
-| 1985 | showToastMessage | - |
-| 2117 | showToastMessage | - |
-| 2165 | showToastMessage | - |
-| 2166 | showToastMessage | - |
-| 2538 | getRandomReaction | vozCalada |
-| 3324 | showToastMessage | - |
+| 887 | caosGerarFala | gerador hostCaiu |
+| 888 | showToastMessage | - |
+| 2015 | showToastMessage | - |
+| 2147 | showToastMessage | - |
+| 2195 | showToastMessage | - |
+| 2196 | showToastMessage | - |
+| 2573 | getRandomReaction | vozCalada |
+| 3359 | showToastMessage | - |
 
 ## js/05o-corrida.js (5)
 
@@ -540,6 +540,13 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 93 | getRandomReaction | - |
 | 98 | caosFalaAgendar | - |
 
+## js/07-caos/16-guia-da-mesa.js (2)
+
+| Linha | Chamada | Banco ou gerador |
+|---|---|---|
+| 106 | getRandomReaction | - |
+| 185 | getRandomReaction | guia |
+
 ## js/08-salvamento.js (1)
 
 | Linha | Chamada | Banco ou gerador |
@@ -550,9 +557,9 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 456 | showToastMessage | - |
-| 458 | getRandomReaction | nickRepertorio |
-| 459 | getRandomReaction | nickSugestaoAceita |
-| 503 | getRandomReaction | botaoEncerrar |
-| 763 | showToastMessage | - |
-| 764 | getRandomReaction | inicioInvalido |
+| 457 | showToastMessage | - |
+| 459 | getRandomReaction | nickRepertorio |
+| 460 | getRandomReaction | nickSugestaoAceita |
+| 504 | getRandomReaction | botaoEncerrar |
+| 764 | showToastMessage | - |
+| 765 | getRandomReaction | inicioInvalido |

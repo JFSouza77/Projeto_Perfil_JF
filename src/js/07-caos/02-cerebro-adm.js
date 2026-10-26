@@ -1118,6 +1118,21 @@ function caosInspectorSandbox(onChange) {
     lt.append(ct, " 🔒 travar o vetor (só eu mexo; nada muda sozinho nesta partida)");
     sec1.appendChild(lt);
   }
+  {
+    // 1.8 · Guia da mesa (ideia da Elisa): fica guardado neste aparelho
+    const lg = document.createElement("label");
+    lg.className = "ci-note";
+    lg.style.display = "block";
+    const cg = document.createElement("input");
+    cg.type = "checkbox";
+    cg.checked = guiaLigado();
+    cg.addEventListener("change", () => {
+      guiaDefinirLigado(cg.checked);
+      caosLog("sandbox", cg.checked ? "guia da mesa ligado" : "guia da mesa desligado");
+    });
+    lg.append(cg, " 🧭 guia da mesa (avisa quem a mesa está esperando e guia quem se perde)");
+    sec1.appendChild(lg);
+  }
   const g = document.createElement("div");
   g.className = "ci-grid2";
   const mkStepper = (label, get, set, step, corPos, corNeg) => {

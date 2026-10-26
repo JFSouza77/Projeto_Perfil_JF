@@ -13,6 +13,7 @@ function iniciar() {
   try {
     caosEspinhaInstalar();
     acoesInstalar(); // 1.7.8: antes de ligar os botões, pra nenhum guardar a função sem a casca
+    guiaInstalar(); // 1.8: guia da mesa (ideia da Elisa)
   } catch (e) {}
   registrarOffline();
   // Lista plana de rostos de cada emoção (derivada de niv).

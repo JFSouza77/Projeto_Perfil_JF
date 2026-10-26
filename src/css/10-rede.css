@@ -2072,3 +2072,31 @@ body.claro .rede-senha-host {
   border-color: #be185d;
   color: #4a0b25;
 }
+/* 1.8 · Guia da mesa: o botão que a mesa está esperando brilha (sem mudar o tamanho nem a cor do botão) */
+.guia-pulso {
+  position: relative;
+  z-index: 1;
+  outline: 3px solid #facc15;
+  outline-offset: 2px;
+  animation: guiaPulso 1.2s ease-in-out infinite;
+}
+@keyframes guiaPulso {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 #facc15cc;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 12px #facc1500;
+    transform: scale(1.06);
+  }
+}
+html.acess-calmo .guia-pulso,
+body.batata-mode .guia-pulso {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .guia-pulso {
+    animation: none;
+  }
+}
