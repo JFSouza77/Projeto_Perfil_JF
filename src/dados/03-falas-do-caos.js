@@ -4059,6 +4059,45 @@ const REACTIVE_VOICE = {
     "Calma. Ainda não dá pra começar: {nome}. Eu conferi.",
     (m) => `[C.A.O.S.] Epa, pulou etapa. ${m.charAt(0).toUpperCase() + m.slice(1)}. Voltei pro cadastro.`,
   ],
+  // 26/10/2026 (pedido do JF): "Pergunte ao C.A.O.S." na tela de espera do celular (esperando o host aceitar
+  // ou começar). Tom de família: quem mais fica nessa tela são as crianças. 5 perguntas × 5 respostas.
+  esperaSala: {
+    oQueFaco: [
+      "Agora é esperar um pouquinho: o host está arrumando a sala. Enquanto isso, que tal o tutorial rápido? Leva dois minutos.",
+      "Respira. O host está terminando de configurar. Dá uma olhada nas dicas aí embaixo e chega afiado.",
+      "Nada ainda, é com o host. Aproveita pra ver o tutorial: quem entende as regras ganha mais.",
+      "Espera o host aceitar e começar. Eu fico aqui de olho. Se quiser, me pergunta mais alguma coisa.",
+      "Paciência, campeão. Assim que o host começar, esta tela vira o seu controle do jogo.",
+    ],
+    comoJoga: [
+      "Cada carta é uma coisa secreta. O Mestre lê as dicas, uma de cada vez, e você tenta adivinhar o que é.",
+      "Na sua vez, você escolhe um número e o Mestre lê aquela dica. Acertou com poucas dicas? Mais pontos.",
+      "É simples: dica lida, chute dado. Errou, a vez passa. Acertou, a carta é sua.",
+      "Quanto menos dicas você usar pra acertar, mais pontos ganha. Chutar cedo é coragem, chutar certo é talento.",
+      "Tem carta de pessoa, lugar, coisa, ano e animal. O Mestre diz a categoria antes, e isso já ajuda muito.",
+    ],
+    mestre: [
+      "O Mestre é quem segura a carta e lê as dicas. Ele sabe a resposta, então nada de espiar o celular dele.",
+      "Cada rodada um jogador vira o Mestre. Quando for você, a carta aparece aqui no seu celular.",
+      "O Mestre lê, diz se acertou ou errou e ainda ganha pontos com as dicas que abriu. Cargo importante.",
+      "Quando você for o Mestre, leia as dicas em voz alta e com calma. Eu ajudo dizendo o que tocar.",
+      "Mestre não chuta, Mestre manda. Ele abre as dicas e marca quem acertou.",
+    ],
+    demora: [
+      "Depende do host. Alguns são rápidos, outros ainda estão escolhendo o emoji.",
+      "Já já. O host precisa aceitar todo mundo e escolher o modo. Eu cronometro de cabeça.",
+      "Se demorar muito, dá um grito educado pro host. Eu não posso, não tenho boca. Ainda.",
+      "Pouquinho. Enquanto isso, as dicas aqui embaixo valem ouro. Ou pelo menos valem pontos.",
+      "O tempo passa mais rápido com o tutorial. Comprovado por mim, agora mesmo.",
+    ],
+    quemEVoce: [
+      "Eu sou o C.A.O.S., o apresentador deste jogo. Comento, zoo um pouquinho e ajudo quem se perder.",
+      "C.A.O.S., prazer. Durante a partida eu falo, explico como jogar e às vezes provoco. Com carinho.",
+      "Sou a voz do jogo. Se você ficar perdido na partida, eu aviso de quem é a vez e o que tocar.",
+      "O C.A.O.S. aqui. Não sou jogador, então pode ficar tranquilo: não roubo seus pontos. Só comento.",
+      "Sou o C.A.O.S. Fiz curso de apresentador de programa de auditório. Ninguém confirma isso.",
+    ],
+  },
   intruso: {
     abrir: [
       () => `Cinco toques no carimbo? Alguém está curioso demais.`,

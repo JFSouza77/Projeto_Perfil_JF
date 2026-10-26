@@ -132,14 +132,14 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
 | 90 | showToastMessage | - |
-| 871 | caosGerarFala | gerador hostCaiu |
-| 872 | showToastMessage | - |
-| 1956 | showToastMessage | - |
-| 2098 | showToastMessage | - |
-| 2146 | showToastMessage | - |
-| 2147 | showToastMessage | - |
-| 2500 | getRandomReaction | vozCalada |
-| 3129 | showToastMessage | - |
+| 874 | caosGerarFala | gerador hostCaiu |
+| 875 | showToastMessage | - |
+| 1985 | showToastMessage | - |
+| 2117 | showToastMessage | - |
+| 2165 | showToastMessage | - |
+| 2166 | showToastMessage | - |
+| 2538 | getRandomReaction | vozCalada |
+| 3324 | showToastMessage | - |
 
 ## js/05o-corrida.js (5)
 
