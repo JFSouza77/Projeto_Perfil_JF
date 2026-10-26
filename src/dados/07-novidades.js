@@ -24,8 +24,8 @@ const NOVIDADES = [
       "🧬 O C.A.O.S. sente cada um: ele lembra quem é veterano, quem é craque, quem é zebra e quem já cortou ele, e reage de acordo. Passou o seu recorde? Ele faz festa.",
     ],
     qol: [
-      "🔢 Os números das dicas também ficaram maiores na tela do Mestre.",
-      "🔁 A internet do celular onde jogam duas pessoas caiu? Quando ele volta, as duas voltam juntas.",
+      "🔢 Números maiores pro Mestre: os números das dicas também ficaram maiores na tela do Mestre.",
+      "🔁 Vários no celular voltam juntos: a internet do celular onde jogam duas pessoas caiu? Quando ele volta, as duas voltam juntas.",
     ],
   },
   {
@@ -43,8 +43,8 @@ const NOVIDADES = [
       "👥 Alguém desistiu: na pausa, o host pode tirar o jogador só da sala (o aparelho, e ele segue jogando no aparelho do host) ou da partida inteira (os pontos se dividem entre quem fica).",
     ],
     qol: [
-      "👑 O host não precisa mais marcar que joga no próprio aparelho: quem não entrou pelo celular joga no do host sozinho. Se o celular da pessoa entrar depois, ela pega o lugar dela.",
-      "🔧 Quem entra pelo celular com a partida já rolando pega o lugar de volta do host (antes, depois do host automático, o celular voltava pra tela de escolher quem é).",
+      "👑 Host automático: o host não precisa mais marcar que joga no próprio aparelho. Quem não entrou pelo celular joga no do host sozinho. Se o celular da pessoa entrar depois, ela pega o lugar dela.",
+      "🔧 Entrar com a partida rolando: quem entra pelo celular com a partida já começada pega o lugar de volta do host (antes, depois do host automático, o celular voltava pra tela de escolher quem é).",
     ],
   },
   {
@@ -64,7 +64,7 @@ const NOVIDADES = [
     qol: [
       "🌀 Modo C.A.O.S. com menos fala: o C.A.O.S. fica calado enquanto a mesa decide (dica, duelo, aviso) e fala no máximo uma vez por vez.",
       "🎨 Tema claro mais legível: títulos dos menus, tutorial, cadastro e a cor do humor ficaram com contraste melhor.",
-      "👆 Janelas de reporte com botões maiores e fáceis de tocar.",
+      "👆 Reporte mais fácil de tocar: as janelas de reporte ganharam botões maiores.",
       "📲 App instalável conferido: instalado na tela de início, o jogo abre sem internet.",
     ],
   },
