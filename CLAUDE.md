@@ -15,3 +15,7 @@
 - **Cartas da 2.0 (26/10/2026):** a meta é chegar perto de 2.000 cartas no total (500 novas era só uma média). Primeiro
   o rascunho (criar), depois a estrutura; o filtro fino (o que cabe no Júnior, no Express etc.) fica pra depois.
   As cartas novas ficam preparadas fora do baralho até a 2.0 sair. Plano: `docs/Cartas_2.0_Perfil4.md`.
+- **Nomes (26/10/2026):** quando o JF fala "Code", é este Claude Code (nuvem de codificação); "Klaus" é o chat do Claude.
+- **Catálogo de cartas:** `docs/Catalogo_de_Cartas.md` (pro GPT conferir) e `.html` (pro JF), gerados por
+  `node ferramentas/catalogo_cartas.js`. Carta planejada nova entra em `ferramentas/cartas_2.0_planejadas.json` e
+  o catálogo é gerado de novo. Carta nova no jogo precisa de assunto em `ferramentas/catalogo_assuntos.json`.

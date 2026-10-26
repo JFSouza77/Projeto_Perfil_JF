@@ -1,0 +1,1733 @@
+{
+ "_sobre": "Cartas planejadas pra Beta 2.0 (ainda sem dicas). Fonte: docs/Cartas_2.0_Perfil4.md. Gera o catálogo com node ferramentas/catalogo_cartas.js.",
+ "cartas": {
+  "PESSOA": [
+   {
+    "a": "Blanka",
+    "assunto": "Videogame",
+    "obs": "Street Fighter"
+   },
+   {
+    "a": "Bowser",
+    "assunto": "Videogame"
+   },
+   {
+    "a": "Carl Johnson",
+    "assunto": "Videogame",
+    "obs": "CJ, GTA: San Andreas"
+   },
+   {
+    "a": "Chun-Li",
+    "assunto": "Videogame"
+   },
+   {
+    "a": "Crash Bandicoot",
+    "assunto": "Videogame"
+   },
+   {
+    "a": "Donkey Kong",
+    "assunto": "Videogame"
+   },
+   {
+    "a": "Dr. Eggman",
+    "assunto": "Videogame",
+    "obs": "também Robotnik"
+   },
+   {
+    "a": "Kratos",
+    "assunto": "Videogame",
+    "obs": "God of War"
+   },
+   {
+    "a": "Kung Lao",
+    "assunto": "Videogame",
+    "obs": "Mortal Kombat"
+   },
+   {
+    "a": "Link",
+    "assunto": "Videogame",
+    "obs": "The Legend of Zelda"
+   },
+   {
+    "a": "Liu Kang",
+    "assunto": "Videogame",
+    "obs": "Mortal Kombat"
+   },
+   {
+    "a": "Luigi",
+    "assunto": "Videogame"
+   },
+   {
+    "a": "Mr. Bison",
+    "assunto": "Videogame",
+    "obs": "Street Fighter"
+   },
+   {
+    "a": "Ryu",
+    "assunto": "Videogame",
+    "obs": "Street Fighter"
+   },
+   {
+    "a": "Scorpion",
+    "assunto": "Videogame",
+    "obs": "Mortal Kombat"
+   },
+   {
+    "a": "Sub-Zero",
+    "assunto": "Videogame",
+    "obs": "Mortal Kombat"
+   },
+   {
+    "a": "Tails",
+    "assunto": "Videogame",
+    "obs": "Sonic"
+   },
+   {
+    "a": "Toad",
+    "assunto": "Videogame",
+    "obs": "Mario"
+   },
+   {
+    "a": "Yoshi",
+    "assunto": "Videogame"
+   },
+   {
+    "a": "Bruxa do 71",
+    "assunto": "TV internacional e cinema",
+    "obs": "Chaves"
+   },
+   {
+    "a": "Chapolin Colorado",
+    "assunto": "TV internacional e cinema"
+   },
+   {
+    "a": "Chiquinha",
+    "assunto": "TV internacional e cinema",
+    "obs": "Chaves"
+   },
+   {
+    "a": "Dona Florinda",
+    "assunto": "TV internacional e cinema",
+    "obs": "Chaves"
+   },
+   {
+    "a": "Kiko",
+    "assunto": "TV internacional e cinema",
+    "obs": "Chaves, também escrito Quico"
+   },
+   {
+    "a": "Professor Girafales",
+    "assunto": "TV internacional e cinema",
+    "obs": "Chaves"
+   },
+   {
+    "a": "Seu Barriga",
+    "assunto": "TV internacional e cinema",
+    "obs": "Chaves"
+   },
+   {
+    "a": "Seu Madruga",
+    "assunto": "TV internacional e cinema",
+    "obs": "Chaves"
+   },
+   {
+    "a": "Chris",
+    "assunto": "TV internacional e cinema",
+    "obs": "Todo Mundo Odeia o Chris"
+   },
+   {
+    "a": "Greg",
+    "assunto": "TV internacional e cinema",
+    "obs": "Todo Mundo Odeia o Chris"
+   },
+   {
+    "a": "Julius",
+    "assunto": "TV internacional e cinema",
+    "obs": "Todo Mundo Odeia o Chris"
+   },
+   {
+    "a": "Rochelle",
+    "assunto": "TV internacional e cinema",
+    "obs": "Todo Mundo Odeia o Chris"
+   },
+   {
+    "a": "Bumblebee",
+    "assunto": "TV internacional e cinema",
+    "obs": "Transformers"
+   },
+   {
+    "a": "Megatron",
+    "assunto": "TV internacional e cinema",
+    "obs": "Transformers"
+   },
+   {
+    "a": "Optimus Prime",
+    "assunto": "TV internacional e cinema",
+    "obs": "Transformers"
+   },
+   {
+    "a": "Onze",
+    "assunto": "TV internacional e cinema",
+    "obs": "Stranger Things"
+   },
+   {
+    "a": "Vecna",
+    "assunto": "TV internacional e cinema",
+    "obs": "Stranger Things"
+   },
+   {
+    "a": "Sheldon Cooper",
+    "assunto": "TV internacional e cinema",
+    "obs": "The Big Bang Theory"
+   },
+   {
+    "a": "Walter White",
+    "assunto": "TV internacional e cinema",
+    "obs": "Breaking Bad"
+   },
+   {
+    "a": "Capitão Jack Sparrow",
+    "assunto": "TV internacional e cinema",
+    "obs": "Piratas do Caribe"
+   },
+   {
+    "a": "Grogu",
+    "assunto": "Star Wars"
+   },
+   {
+    "a": "Luke Skywalker",
+    "assunto": "Star Wars"
+   },
+   {
+    "a": "Arlequina",
+    "assunto": "DC"
+   },
+   {
+    "a": "Coringa",
+    "assunto": "DC"
+   },
+   {
+    "a": "Doutor Manhattan",
+    "assunto": "DC"
+   },
+   {
+    "a": "Duende Verde",
+    "assunto": "Marvel"
+   },
+   {
+    "a": "Vanellope von Schweetz",
+    "assunto": "Disney e Pixar",
+    "obs": "Detona Ralph"
+   },
+   {
+    "a": "Penélope Charmosa",
+    "assunto": "Desenhos clássicos (Hanna-Barbera, Looney Tunes e cia.)"
+   },
+   {
+    "a": "Bozo",
+    "assunto": "TV brasileira e humor"
+   },
+   {
+    "a": "Carlos Alberto de Nóbrega",
+    "assunto": "TV brasileira e humor"
+   },
+   {
+    "a": "Fátima Bernardes",
+    "assunto": "TV brasileira e humor"
+   },
+   {
+    "a": "Faustão",
+    "assunto": "TV brasileira e humor"
+   },
+   {
+    "a": "Pedro Bial",
+    "assunto": "TV brasileira e humor"
+   },
+   {
+    "a": "Raul Gil",
+    "assunto": "TV brasileira e humor"
+   },
+   {
+    "a": "Serginho Groisman",
+    "assunto": "TV brasileira e humor"
+   },
+   {
+    "a": "Tiago Leifert",
+    "assunto": "TV brasileira e humor"
+   },
+   {
+    "a": "William Bonner",
+    "assunto": "TV brasileira e humor"
+   },
+   {
+    "a": "Yudi Tamashiro",
+    "assunto": "TV brasileira e humor"
+   },
+   {
+    "a": "Maisa Silva",
+    "assunto": "TV brasileira e humor"
+   },
+   {
+    "a": "Glória Maria",
+    "assunto": "TV brasileira e humor",
+    "obs": "a confirmar com o JF"
+   },
+   {
+    "a": "Ivete Sangalo",
+    "assunto": "Música brasileira"
+   },
+   {
+    "a": "João Gomes",
+    "assunto": "Música brasileira"
+   },
+   {
+    "a": "Marília Mendonça",
+    "assunto": "Música brasileira"
+   },
+   {
+    "a": "Priscilla Alcantara",
+    "assunto": "Música brasileira"
+   },
+   {
+    "a": "Rio Negro e Solimões",
+    "assunto": "Música brasileira",
+    "obs": "dupla"
+   },
+   {
+    "a": "Victor e Leo",
+    "assunto": "Música brasileira",
+    "obs": "dupla"
+   },
+   {
+    "a": "Zezé Di Camargo e Luciano",
+    "assunto": "Música brasileira",
+    "obs": "dupla"
+   },
+   {
+    "a": "Legião Urbana",
+    "assunto": "Música brasileira"
+   },
+   {
+    "a": "Guns N' Roses",
+    "assunto": "Música internacional"
+   },
+   {
+    "a": "Nirvana",
+    "assunto": "Música internacional"
+   },
+   {
+    "a": "Pink Floyd",
+    "assunto": "Música internacional"
+   },
+   {
+    "a": "AC/DC",
+    "assunto": "Música internacional"
+   },
+   {
+    "a": "Queen",
+    "assunto": "Música internacional"
+   },
+   {
+    "a": "Metallica",
+    "assunto": "Música internacional"
+   },
+   {
+    "a": "Elvis Presley",
+    "assunto": "Música internacional"
+   },
+   {
+    "a": "Madonna",
+    "assunto": "Música internacional"
+   },
+   {
+    "a": "Xoropinho",
+    "assunto": "Internet e YouTubers"
+   },
+   {
+    "a": "Taffarel",
+    "assunto": "Esporte"
+   },
+   {
+    "a": "Falcão (futsal)",
+    "assunto": "Esporte",
+    "obs": "o jogador; o Falcão que já existe é a ave"
+   },
+   {
+    "a": "Romário",
+    "assunto": "Esporte"
+   },
+   {
+    "a": "Zico",
+    "assunto": "Esporte"
+   },
+   {
+    "a": "Marta",
+    "assunto": "Esporte"
+   },
+   {
+    "a": "Enzo Ferrari",
+    "assunto": "Ciência, invenção e tecnologia"
+   },
+   {
+    "a": "Ferruccio Lamborghini",
+    "assunto": "Ciência, invenção e tecnologia"
+   },
+   {
+    "a": "Alan Turing",
+    "assunto": "Ciência, invenção e tecnologia"
+   },
+   {
+    "a": "Ada Lovelace",
+    "assunto": "Ciência, invenção e tecnologia"
+   },
+   {
+    "a": "Steve Jobs",
+    "assunto": "Ciência, invenção e tecnologia"
+   },
+   {
+    "a": "Bill Gates",
+    "assunto": "Ciência, invenção e tecnologia"
+   },
+   {
+    "a": "Mark Zuckerberg",
+    "assunto": "Ciência, invenção e tecnologia"
+   },
+   {
+    "a": "Fernanda Torres",
+    "assunto": "TV internacional e cinema",
+    "obs": "atriz"
+   },
+   {
+    "a": "George Washington",
+    "assunto": "História mundial (líderes e conquistadores)"
+   },
+   {
+    "a": "Alexandre Nardoni",
+    "assunto": "Crime",
+    "obs": "fora do Júnior"
+   },
+   {
+    "a": "Eliza Samudio",
+    "assunto": "Crime",
+    "obs": "fora do Júnior"
+   },
+   {
+    "a": "Osama Bin Laden",
+    "assunto": "Crime",
+    "obs": "fora do Júnior"
+   },
+   {
+    "a": "Zeus",
+    "assunto": "Mitologia e lendas do mundo"
+   },
+   {
+    "a": "Thor",
+    "assunto": "Mitologia e lendas do mundo"
+   },
+   {
+    "a": "Odin",
+    "assunto": "Mitologia e lendas do mundo"
+   },
+   {
+    "a": "Loki",
+    "assunto": "Mitologia e lendas do mundo"
+   },
+   {
+    "a": "Hércules",
+    "assunto": "Mitologia e lendas do mundo"
+   },
+   {
+    "a": "Anúbis",
+    "assunto": "Mitologia e lendas do mundo"
+   },
+   {
+    "a": "Atena",
+    "assunto": "Mitologia e lendas do mundo"
+   },
+   {
+    "a": "Atlas",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "o titã"
+   },
+   {
+    "a": "Cronos",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "o titã do tempo"
+   },
+   {
+    "a": "Ares",
+    "assunto": "Mitologia e lendas do mundo"
+   },
+   {
+    "a": "Afrodite",
+    "assunto": "Mitologia e lendas do mundo"
+   },
+   {
+    "a": "Hades",
+    "assunto": "Mitologia e lendas do mundo"
+   }
+  ],
+  "LUGAR": [
+   {
+    "a": "Aracaju",
+    "assunto": "Cidades e bairros do Brasil"
+   },
+   {
+    "a": "Arraial d'Ajuda",
+    "assunto": "Cidades e bairros do Brasil"
+   },
+   {
+    "a": "Belém",
+    "assunto": "Cidades e bairros do Brasil"
+   },
+   {
+    "a": "Caldas Novas",
+    "assunto": "Cidades e bairros do Brasil"
+   },
+   {
+    "a": "Campos do Jordão",
+    "assunto": "Cidades e bairros do Brasil"
+   },
+   {
+    "a": "Fortaleza",
+    "assunto": "Cidades e bairros do Brasil"
+   },
+   {
+    "a": "Guarapari",
+    "assunto": "Cidades e bairros do Brasil"
+   },
+   {
+    "a": "Buenos Aires",
+    "assunto": "Cidades do mundo"
+   },
+   {
+    "a": "Cairo",
+    "assunto": "Cidades do mundo"
+   },
+   {
+    "a": "Florença",
+    "assunto": "Cidades do mundo"
+   },
+   {
+    "a": "Munique",
+    "assunto": "Cidades do mundo"
+   },
+   {
+    "a": "Vancouver",
+    "assunto": "Cidades do mundo"
+   },
+   {
+    "a": "Manhattan",
+    "assunto": "Cidades do mundo"
+   },
+   {
+    "a": "Indonésia",
+    "assunto": "Países"
+   },
+   {
+    "a": "Calçada da Fama",
+    "assunto": "Monumentos e pontos turísticos do mundo"
+   },
+   {
+    "a": "Palácio de Buckingham",
+    "assunto": "Monumentos e pontos turísticos do mundo"
+   },
+   {
+    "a": "Palácio de Versalhes",
+    "assunto": "Monumentos e pontos turísticos do mundo"
+   },
+   {
+    "a": "Casa Branca",
+    "assunto": "Monumentos e pontos turísticos do mundo"
+   },
+   {
+    "a": "Consultório",
+    "assunto": "Lugares do dia a dia"
+   },
+   {
+    "a": "Feira",
+    "assunto": "Lugares do dia a dia"
+   },
+   {
+    "a": "Igreja",
+    "assunto": "Lugares do dia a dia"
+   },
+   {
+    "a": "Lan house",
+    "assunto": "Lugares do dia a dia"
+   },
+   {
+    "a": "Roda-gigante",
+    "assunto": "Lugares do dia a dia"
+   },
+   {
+    "a": "Hotel",
+    "assunto": "Lugares do dia a dia"
+   },
+   {
+    "a": "Pousada",
+    "assunto": "Lugares do dia a dia"
+   },
+   {
+    "a": "Floricultura",
+    "assunto": "Lugares do dia a dia"
+   },
+   {
+    "a": "Cacau Show",
+    "assunto": "Lugares do dia a dia"
+   },
+   {
+    "a": "Projac",
+    "assunto": "Universidades e estúdios"
+   },
+   {
+    "a": "Plutão",
+    "assunto": "Espaço"
+   },
+   {
+    "a": "Mercúrio",
+    "assunto": "Espaço"
+   },
+   {
+    "a": "Vênus",
+    "assunto": "Espaço"
+   },
+   {
+    "a": "Terra",
+    "assunto": "Espaço"
+   },
+   {
+    "a": "Júpiter",
+    "assunto": "Espaço"
+   },
+   {
+    "a": "Urano",
+    "assunto": "Espaço"
+   },
+   {
+    "a": "Netuno",
+    "assunto": "Espaço"
+   },
+   {
+    "a": "Fort Knox",
+    "assunto": "Lugares famosos por histórias sombrias ou secretas"
+   },
+   {
+    "a": "Casa da Moeda",
+    "assunto": "Lugares famosos por histórias sombrias ou secretas",
+    "obs": "confirmar qual"
+   },
+   {
+    "a": "Beach Park",
+    "assunto": "Parques de diversão",
+    "obs": "Fortaleza"
+   },
+   {
+    "a": "Aquamania",
+    "assunto": "Parques de diversão",
+    "obs": "Guarapari"
+   },
+   {
+    "a": "Fábrica da Garoto",
+    "assunto": "Espírito Santo (Vitória e região)",
+    "obs": "Vila Velha"
+   },
+   {
+    "a": "Estrela da Morte",
+    "assunto": "Lugares de ficção",
+    "obs": "Star Wars"
+   },
+   {
+    "a": "Tatooine",
+    "assunto": "Lugares de ficção",
+    "obs": "Star Wars"
+   },
+   {
+    "a": "Radiator Springs",
+    "assunto": "Lugares de ficção",
+    "obs": "Carros"
+   },
+   {
+    "a": "Fossa das Marianas",
+    "assunto": "Natureza do mundo"
+   },
+   {
+    "a": "Ilha de Creta",
+    "assunto": "Lendas, Bíblia e mitologia"
+   }
+  ],
+  "COISA": [
+   {
+    "a": "Abraço",
+    "assunto": "Sentimentos e mente"
+   },
+   {
+    "a": "Beijo",
+    "assunto": "Sentimentos e mente"
+   },
+   {
+    "a": "Agulha",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Aliança",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Aparelho de jantar",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Armadilha",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Bacia",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Bengala",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Carimbo",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Carpete",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Colchão",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Galocha",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Laço de fita",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Lixeira",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Lustre",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Máquina de costura",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Paletó",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Pasta de dente",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Rolha",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Selo",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Tanque de lavar roupas",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Tijolo",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Velcro",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Colher de pau",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Máscara",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Enxada",
+    "assunto": "Casa e objetos do dia a dia"
+   },
+   {
+    "a": "Bacalhau",
+    "assunto": "Comidas e bebidas"
+   },
+   {
+    "a": "Cerveja",
+    "assunto": "Comidas e bebidas",
+    "obs": "fora do Júnior"
+   },
+   {
+    "a": "Chá-mate",
+    "assunto": "Comidas e bebidas"
+   },
+   {
+    "a": "Esfiha",
+    "assunto": "Comidas e bebidas"
+   },
+   {
+    "a": "Paçoca",
+    "assunto": "Comidas e bebidas"
+   },
+   {
+    "a": "Pamonha",
+    "assunto": "Comidas e bebidas"
+   },
+   {
+    "a": "Tapioca",
+    "assunto": "Comidas e bebidas"
+   },
+   {
+    "a": "Torta",
+    "assunto": "Comidas e bebidas"
+   },
+   {
+    "a": "Tubaína",
+    "assunto": "Comidas e bebidas"
+   },
+   {
+    "a": "Yakissoba",
+    "assunto": "Comidas e bebidas"
+   },
+   {
+    "a": "Blog",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Celular",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Google",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Notebook",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Projetor",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Site",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Pesquisa",
+    "assunto": "Tecnologia e internet",
+    "obs": "na internet"
+   },
+   {
+    "a": "Memória RAM",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Processador",
+    "assunto": "Tecnologia e internet",
+    "obs": "CPU"
+   },
+   {
+    "a": "Gabinete",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Placa-mãe",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "HD",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "SSD",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Placa de vídeo",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Dell",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "AMD",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Windows",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Linux",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Mac",
+    "assunto": "Tecnologia e internet",
+    "obs": "computador da Apple"
+   },
+   {
+    "a": "Android",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Monitor",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Teclado",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Mouse",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Headset",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Bluetooth",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Roteador",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Área de trabalho",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Tablet",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Código binário",
+    "assunto": "Tecnologia e internet",
+    "obs": "Old School e Hardcore"
+   },
+   {
+    "a": "Python",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "JavaScript",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "CSS",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "COBOL",
+    "assunto": "Tecnologia e internet",
+    "obs": "Old School e Hardcore"
+   },
+   {
+    "a": "HTML",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Intel",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Nvidia",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Microsoft",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Apple",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Pen drive",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Impressora",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Impressora 3D",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Webcam",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Armazenamento na nuvem",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Facebook",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Twitter",
+    "assunto": "Tecnologia e internet",
+    "obs": "hoje X"
+   },
+   {
+    "a": "Snapchat",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "TikTok",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "YouTube",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Tumblr",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Internet móvel",
+    "assunto": "Tecnologia e internet",
+    "obs": "4G e 5G"
+   },
+   {
+    "a": "Chip de celular",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "Operadora de celular",
+    "assunto": "Tecnologia e internet"
+   },
+   {
+    "a": "CD",
+    "assunto": "Objetos retrô (nostalgia)"
+   },
+   {
+    "a": "DVD",
+    "assunto": "Objetos retrô (nostalgia)"
+   },
+   {
+    "a": "Orkut",
+    "assunto": "Objetos retrô (nostalgia)",
+    "obs": "Old School"
+   },
+   {
+    "a": "MSN",
+    "assunto": "Objetos retrô (nostalgia)",
+    "obs": "Old School"
+   },
+   {
+    "a": "Internet discada",
+    "assunto": "Objetos retrô (nostalgia)",
+    "obs": "Old School"
+   },
+   {
+    "a": "Célula-tronco",
+    "assunto": "Ciência e instrumentos"
+   },
+   {
+    "a": "Diploma",
+    "assunto": "Dinheiro, documentos e vida adulta"
+   },
+   {
+    "a": "Formatura",
+    "assunto": "Dinheiro, documentos e vida adulta"
+   },
+   {
+    "a": "Fila",
+    "assunto": "Dinheiro, documentos e vida adulta"
+   },
+   {
+    "a": "Festival de Woodstock",
+    "assunto": "Música"
+   },
+   {
+    "a": "Sertanejo",
+    "assunto": "Música"
+   },
+   {
+    "a": "Jazz",
+    "assunto": "Música"
+   },
+   {
+    "a": "Country",
+    "assunto": "Música"
+   },
+   {
+    "a": "Gospel",
+    "assunto": "Música"
+   },
+   {
+    "a": "Rock",
+    "assunto": "Música"
+   },
+   {
+    "a": "Samba",
+    "assunto": "Música"
+   },
+   {
+    "a": "Funk",
+    "assunto": "Música"
+   },
+   {
+    "a": "Pagode",
+    "assunto": "Música"
+   },
+   {
+    "a": "Forró",
+    "assunto": "Música"
+   },
+   {
+    "a": "MPB",
+    "assunto": "Música"
+   },
+   {
+    "a": "Rap",
+    "assunto": "Música"
+   },
+   {
+    "a": "Blues",
+    "assunto": "Música"
+   },
+   {
+    "a": "Fotografia",
+    "assunto": "Cultura de internet e da vida"
+   },
+   {
+    "a": "Freio",
+    "assunto": "Transportes"
+   },
+   {
+    "a": "Jangada",
+    "assunto": "Transportes"
+   },
+   {
+    "a": "Volante",
+    "assunto": "Transportes"
+   },
+   {
+    "a": "Maratona",
+    "assunto": "Esporte"
+   },
+   {
+    "a": "Futebol",
+    "assunto": "Esporte"
+   },
+   {
+    "a": "Futebol americano",
+    "assunto": "Esporte"
+   },
+   {
+    "a": "Vôlei",
+    "assunto": "Esporte"
+   },
+   {
+    "a": "Natação",
+    "assunto": "Esporte"
+   },
+   {
+    "a": "Golfe",
+    "assunto": "Esporte"
+   },
+   {
+    "a": "Basquete",
+    "assunto": "Esporte"
+   },
+   {
+    "a": "Tênis",
+    "assunto": "Esporte"
+   },
+   {
+    "a": "Beach tennis",
+    "assunto": "Esporte"
+   },
+   {
+    "a": "Futsal",
+    "assunto": "Esporte"
+   },
+   {
+    "a": "Triatlo",
+    "assunto": "Esporte"
+   },
+   {
+    "a": "Tiro esportivo",
+    "assunto": "Esporte"
+   },
+   {
+    "a": "Caça esportiva",
+    "assunto": "Esporte",
+    "obs": "fora do Júnior"
+   },
+   {
+    "a": "Telenovela",
+    "assunto": "TV brasileira"
+   },
+   {
+    "a": "Bom Dia e Companhia",
+    "assunto": "TV brasileira"
+   },
+   {
+    "a": "Caldeirão do Huck",
+    "assunto": "TV brasileira"
+   },
+   {
+    "a": "Domingão do Faustão",
+    "assunto": "TV brasileira"
+   },
+   {
+    "a": "Zorra Total",
+    "assunto": "TV brasileira"
+   },
+   {
+    "a": "Estrela",
+    "assunto": "Natureza, fogo e céu"
+   },
+   {
+    "a": "Sobrancelha",
+    "assunto": "Corpo humano e sentidos"
+   },
+   {
+    "a": "As Branquelas",
+    "assunto": "Cinema e streaming"
+   },
+   {
+    "a": "The Big Bang Theory",
+    "assunto": "Cinema e streaming"
+   },
+   {
+    "a": "Todo Mundo Odeia o Chris",
+    "assunto": "Cinema e streaming"
+   },
+   {
+    "a": "Patrulha Canina",
+    "assunto": "Cinema e streaming"
+   },
+   {
+    "a": "Crash Bandicoot",
+    "assunto": "Games e consoles",
+    "obs": "o jogo"
+   },
+   {
+    "a": "God of War",
+    "assunto": "Games e consoles"
+   },
+   {
+    "a": "GTA",
+    "assunto": "Games e consoles",
+    "obs": "a franquia toda"
+   },
+   {
+    "a": "Mortal Kombat",
+    "assunto": "Games e consoles"
+   },
+   {
+    "a": "Street Fighter",
+    "assunto": "Games e consoles"
+   },
+   {
+    "a": "Pokémon GO",
+    "assunto": "Games e consoles"
+   },
+   {
+    "a": "Angry Birds",
+    "assunto": "Games e consoles"
+   },
+   {
+    "a": "Mensalão",
+    "assunto": "Política e justiça",
+    "obs": "fora do Júnior"
+   },
+   {
+    "a": "Petrolão",
+    "assunto": "Política e justiça",
+    "obs": "fora do Júnior"
+   },
+   {
+    "a": "Operação Lava Jato",
+    "assunto": "Política e justiça",
+    "obs": "fora do Júnior"
+   },
+   {
+    "a": "Navio de Teseu",
+    "assunto": "Objetos lendários, armas e ficção"
+   },
+   {
+    "a": "Cavalo de Troia",
+    "assunto": "Objetos lendários, armas e ficção"
+   }
+  ],
+  "ANIMAL": [
+   {
+    "a": "Minotauro",
+    "assunto": "Criaturas míticas"
+   },
+   {
+    "a": "Centauro",
+    "assunto": "Criaturas míticas"
+   },
+   {
+    "a": "Quimera",
+    "assunto": "Criaturas míticas"
+   },
+   {
+    "a": "Pé-Grande",
+    "assunto": "Criaturas míticas"
+   },
+   {
+    "a": "Chupa-cabra",
+    "assunto": "Criaturas míticas"
+   },
+   {
+    "a": "Estegossauro",
+    "assunto": "Pré-históricos e extintos"
+   },
+   {
+    "a": "Braquiossauro",
+    "assunto": "Pré-históricos e extintos"
+   },
+   {
+    "a": "Diplodoco",
+    "assunto": "Pré-históricos e extintos"
+   },
+   {
+    "a": "Anquilossauro",
+    "assunto": "Pré-históricos e extintos"
+   },
+   {
+    "a": "Espinossauro",
+    "assunto": "Pré-históricos e extintos"
+   },
+   {
+    "a": "Megalodonte",
+    "assunto": "Pré-históricos e extintos"
+   },
+   {
+    "a": "Tubarão-martelo",
+    "assunto": "Mar e água"
+   },
+   {
+    "a": "Tubarão-baleia",
+    "assunto": "Mar e água"
+   },
+   {
+    "a": "Jubarte",
+    "assunto": "Mar e água"
+   },
+   {
+    "a": "Moreia",
+    "assunto": "Mar e água"
+   },
+   {
+    "a": "Peixe-leão",
+    "assunto": "Mar e água"
+   },
+   {
+    "a": "Peixe-espada",
+    "assunto": "Mar e água"
+   },
+   {
+    "a": "Enguia",
+    "assunto": "Mar e água"
+   },
+   {
+    "a": "Ouriço-do-mar",
+    "assunto": "Mar e água"
+   },
+   {
+    "a": "Atum",
+    "assunto": "Mar e água"
+   },
+   {
+    "a": "Sardinha",
+    "assunto": "Mar e água"
+   },
+   {
+    "a": "Tilápia",
+    "assunto": "Mar e água"
+   },
+   {
+    "a": "Peixe-beta",
+    "assunto": "Mar e água"
+   },
+   {
+    "a": "Elefante-marinho",
+    "assunto": "Mar e água"
+   },
+   {
+    "a": "Sucuri",
+    "assunto": "Répteis e anfíbios"
+   },
+   {
+    "a": "Jiboia",
+    "assunto": "Répteis e anfíbios"
+   },
+   {
+    "a": "Cascavel",
+    "assunto": "Répteis e anfíbios"
+   },
+   {
+    "a": "Naja",
+    "assunto": "Répteis e anfíbios"
+   },
+   {
+    "a": "Rã",
+    "assunto": "Répteis e anfíbios"
+   },
+   {
+    "a": "Perereca",
+    "assunto": "Répteis e anfíbios"
+   },
+   {
+    "a": "Salamandra",
+    "assunto": "Répteis e anfíbios"
+   },
+   {
+    "a": "Martim-pescador",
+    "assunto": "Aves"
+   },
+   {
+    "a": "Corvo",
+    "assunto": "Aves"
+   },
+   {
+    "a": "Gralha-azul",
+    "assunto": "Aves"
+   },
+   {
+    "a": "Andorinha",
+    "assunto": "Aves"
+   },
+   {
+    "a": "Canário",
+    "assunto": "Aves"
+   },
+   {
+    "a": "Calopsita",
+    "assunto": "Aves"
+   },
+   {
+    "a": "Periquito",
+    "assunto": "Aves"
+   },
+   {
+    "a": "Pardal",
+    "assunto": "Aves"
+   },
+   {
+    "a": "Cacatua",
+    "assunto": "Aves"
+   },
+   {
+    "a": "Tuiuiú",
+    "assunto": "Aves"
+   },
+   {
+    "a": "Garça",
+    "assunto": "Aves"
+   },
+   {
+    "a": "Cegonha",
+    "assunto": "Aves"
+   },
+   {
+    "a": "Ganso",
+    "assunto": "Aves"
+   },
+   {
+    "a": "Puma",
+    "assunto": "Frio, montanhas e florestas do Norte"
+   },
+   {
+    "a": "Iaque",
+    "assunto": "Frio, montanhas e florestas do Norte"
+   },
+   {
+    "a": "Doninha",
+    "assunto": "Frio, montanhas e florestas do Norte"
+   },
+   {
+    "a": "Porquinho-da-índia",
+    "assunto": "Estimação e fazenda"
+   },
+   {
+    "a": "Dromedário",
+    "assunto": "Savanas e selvas da África e da Ásia"
+   },
+   {
+    "a": "Tatuzinho-de-jardim",
+    "assunto": "Insetos e bichinhos"
+   }
+  ],
+  "ANO": [
+   {
+    "a": "776 a.C.",
+    "assunto": "",
+    "obs": "primeiros Jogos Olímpicos registrados"
+   },
+   {
+    "a": "753 a.C.",
+    "assunto": "",
+    "obs": "fundação de Roma (pela lenda)"
+   },
+   {
+    "a": "1088",
+    "assunto": "",
+    "obs": "Universidade de Bolonha, a mais antiga em funcionamento"
+   },
+   {
+    "a": "1095",
+    "assunto": "",
+    "obs": "convocada a Primeira Cruzada"
+   },
+   {
+    "a": "1163",
+    "assunto": "",
+    "obs": "começa a construção de Notre-Dame de Paris"
+   },
+   {
+    "a": "1206",
+    "assunto": "",
+    "obs": "Gengis Khan unifica os mongóis"
+   },
+   {
+    "a": "1271",
+    "assunto": "",
+    "obs": "Marco Polo parte pra Ásia"
+   },
+   {
+    "a": "1337",
+    "assunto": "",
+    "obs": "começa a Guerra dos Cem Anos"
+   },
+   {
+    "a": "1431",
+    "assunto": "",
+    "obs": "Joana d'Arc é executada"
+   },
+   {
+    "a": "1455",
+    "assunto": "",
+    "obs": "Bíblia de Gutenberg (por volta de 1454 e 1455)"
+   },
+   {
+    "a": "1497",
+    "assunto": "",
+    "obs": "Vasco da Gama parte pra Índia"
+   },
+   {
+    "a": "1503",
+    "assunto": "",
+    "obs": "Leonardo começa a Mona Lisa"
+   },
+   {
+    "a": "1506",
+    "assunto": "",
+    "obs": "começa a nova Basílica de São Pedro"
+   },
+   {
+    "a": "1508",
+    "assunto": "",
+    "obs": "Michelangelo começa o teto da Capela Sistina"
+   },
+   {
+    "a": "1513",
+    "assunto": "",
+    "obs": "Balboa avista o Oceano Pacífico"
+   },
+   {
+    "a": "1522",
+    "assunto": "",
+    "obs": "volta a expedição de Fernão de Magalhães, a primeira volta ao mundo"
+   },
+   {
+    "a": "1532",
+    "assunto": "",
+    "obs": "fundação de São Vicente, a primeira vila do Brasil"
+   },
+   {
+    "a": "1549",
+    "assunto": "",
+    "obs": "fundação de Salvador, a primeira capital"
+   },
+   {
+    "a": "1554",
+    "assunto": "",
+    "obs": "fundação de São Paulo"
+   },
+   {
+    "a": "1565",
+    "assunto": "",
+    "obs": "fundação do Rio de Janeiro"
+   },
+   {
+    "a": "1605",
+    "assunto": "",
+    "obs": "sai a primeira parte de Dom Quixote"
+   },
+   {
+    "a": "1609",
+    "assunto": "",
+    "obs": "Galileu aponta o telescópio pro céu"
+   },
+   {
+    "a": "1616",
+    "assunto": "",
+    "obs": "morrem Shakespeare e Cervantes"
+   },
+   {
+    "a": "1620",
+    "assunto": "",
+    "obs": "o Mayflower chega à América"
+   },
+   {
+    "a": "1632",
+    "assunto": "",
+    "obs": "começa o Taj Mahal"
+   },
+   {
+    "a": "1654",
+    "assunto": "",
+    "obs": "os holandeses deixam Pernambuco"
+   },
+   {
+    "a": "1665",
+    "assunto": "",
+    "obs": "a Grande Peste de Londres"
+   },
+   {
+    "a": "1695",
+    "assunto": "",
+    "obs": "morte de Zumbi dos Palmares (tema pesado: só fatos, fora do Júnior)"
+   },
+   {
+    "a": "1703",
+    "assunto": "",
+    "obs": "fundação de São Petersburgo"
+   },
+   {
+    "a": "1748",
+    "assunto": "",
+    "obs": "começam as escavações de Pompeia"
+   },
+   {
+    "a": "1750",
+    "assunto": "",
+    "obs": "Tratado de Madri"
+   },
+   {
+    "a": "1752",
+    "assunto": "",
+    "obs": "a pipa de Benjamin Franklin"
+   },
+   {
+    "a": "1769",
+    "assunto": "",
+    "obs": "patente da máquina a vapor de James Watt"
+   },
+   {
+    "a": "1773",
+    "assunto": "",
+    "obs": "Festa do Chá de Boston"
+   },
+   {
+    "a": "1787",
+    "assunto": "",
+    "obs": "escrita a Constituição dos Estados Unidos"
+   },
+   {
+    "a": "1796",
+    "assunto": "",
+    "obs": "Jenner testa a primeira vacina (varíola)"
+   },
+   {
+    "a": "1803",
+    "assunto": "",
+    "obs": "compra da Louisiana"
+   },
+   {
+    "a": "1805",
+    "assunto": "",
+    "obs": "Batalha de Trafalgar"
+   },
+   {
+    "a": "1807",
+    "assunto": "",
+    "obs": "a corte portuguesa parte pro Brasil"
+   },
+   {
+    "a": "1812",
+    "assunto": "",
+    "obs": "Napoleão invade a Rússia"
+   },
+   {
+    "a": "1816",
+    "assunto": "",
+    "obs": "o \"ano sem verão\""
+   },
+   {
+    "a": "1826",
+    "assunto": "",
+    "obs": "a fotografia mais antiga que sobreviveu (Niépce, por volta de 1826 e 1827)"
+   },
+   {
+    "a": "1830",
+    "assunto": "",
+    "obs": "primeira ferrovia de passageiros entre duas cidades (Liverpool e Manchester)"
+   },
+   {
+    "a": "1844",
+    "assunto": "",
+    "obs": "primeira mensagem de telégrafo de Morse"
+   },
+   {
+    "a": "1851",
+    "assunto": "",
+    "obs": "Grande Exposição de Londres (Palácio de Cristal)"
+   },
+   {
+    "a": "1854",
+    "assunto": "",
+    "obs": "primeira ferrovia do Brasil (Mauá)"
+   },
+   {
+    "a": "1874",
+    "assunto": "",
+    "obs": "primeira exposição dos impressionistas"
+   },
+   {
+    "a": "1877",
+    "assunto": "",
+    "obs": "Edison inventa o fonógrafo"
+   },
+   {
+    "a": "1884",
+    "assunto": "",
+    "obs": "Conferência de Berlim, a partilha da África (tema pesado: só fatos, fora do Júnior)"
+   },
+   {
+    "a": "2026",
+    "assunto": "",
+    "obs": "Copa do Mundo nos Estados Unidos, Canadá e México, a primeira com 48 seleções; e Lula é reeleito (2º turno em 25/10, contra Flávio Bolsonaro), o primeiro presidente eleito quatro vezes pelo voto direto no Brasil (tema político: só fatos, fora do Júnior)"
+   }
+  ]
+ }
+}
