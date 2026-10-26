@@ -2981,7 +2981,7 @@ function redeMestreCartaMontar(box) {
         grade += `<button type="button" class="number-btn${abertas.has(i) ? " aberta" : ""}${ped && ped.pos === i ? " pedida" : ""}${travada ? " travada" : ""}" data-dica="${i}"${abertas.has(i) ? ' aria-disabled="true"' : travada ? ' title="Toque pra abrir sem pedido"' : ""}>${i + 1}</button>`;
       }
       const forcar = rede.dicaForcar != null ? `<div class="dica-forcar">Abrir a dica <b>${rede.dicaForcar + 1}</b> sem pedido? <button type="button" class="rede-btn rede-ok" id="redeForcarSim">Abrir</button><button type="button" class="rede-btn" id="redeForcarNao">Cancelar</button></div>` : "";
-      const rotulo = trava && !ped ? `👉 ${nome(r.vezId)} escolhe a dica no aparelho dele (${c.totalDicas - c.abertas.length} restantes). Travou? Toque num número pra abrir sem pedido.` : `${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)`;
+      const rotulo = trava && !ped ? `👉 ${nome(r.vezId)} escolhe a dica no próprio celular (${c.totalDicas - c.abertas.length} restantes). Travou? Toque num número pra abrir sem pedido.` : `${nome(r.vezId)} fala um número: você abre a dica (${c.totalDicas - c.abertas.length} restantes)`;
       controles = `${ped ? `<div class="pedido-dica">👉 ${nome(ped.por)} pediu a dica <b>${ped.pos + 1}</b>. Toque nela pra abrir.</div>` : ""}${forcar}<div class="pick-label">${rotulo}</div><div class="number-grid">${grade}</div>`;
     }
     h = `<div class="card rede-carta-mestre" style="--card-glow:${cor}">
@@ -3228,7 +3228,7 @@ function redePapelHtml(papel, nome) {
 function redeBotoesHtml() {
   const r = rede.retrato, eu = r.jogadores.find((j) => j.id === rede.eu);
   const papel = redeMeuPapel();
-  let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 Sua vez" : ""}</div>`;
+  let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${(papel.mestre || papel.vez) && !r.intervalo && r.iniciada ? "" : papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 Sua vez" : ""}</div>`;
   if (r.fim) return h;
   if (!r.intervalo && r.iniciada) h += redePapelHtml(papel, eu && eu.nome);
   if (r.intervalo) {
@@ -3252,8 +3252,7 @@ function redeBotoesHtml() {
     const quem = (r.jogadores.find((j) => j.id === v.pedidoPor) || { nome: "O Mestre" }).nome;
     h += `<div class="rede-votacao">🗳️ ${escapeHtml(quem)} quer ${v.tipo === "descartar" ? "descartar" : "desistir de"} esta carta. <b>${v.sim}</b> sim · <b>${v.nao}</b> não${v.precisa ? ` <small>(precisa de ${v.precisa} sim de ${v.total})</small>` : ""} · <b id="redeVotoSeg">…</b> s${ja ? "<div><small>Seu voto foi.</small></div>" : `<div class="rede-acoes"><button type="button" class="rede-btn rede-ok" data-voto="1">👍 Sim</button><button type="button" class="rede-btn rede-nao" data-voto="0">👎 Não</button></div>`}</div>`;
   }
-  if (papel.vez && !papel.mestre && r.estadoCarta === "revealed" && r.carta && (r.carta.pendente === null || r.carta.pendente === undefined))
-    h += `<div class="rede-rot">👉 Sua vez: toque no número (ou fale) e o Mestre abre a dica.</div>`;
+  // (1.8: a faixa da vez e o título dos números já dizem o que fazer; a linha repetida saiu)
   if (papel.mestre && rede.segredo && rede.segredo.resposta)
     h += `<div class="rede-segredo">🔒 Só você vê: <b>${escapeHtml(rede.segredo.resposta)}</b></div>`;
   const c = r.carta;
@@ -3579,7 +3578,7 @@ function redePainelHost() {
       const opcoesEu = players
         .map((p) => {
           const longe = !redeNoHost(p.id) && redeOnline(rede.assentos[p.id]);
-          return `<label class="rede-eu-op${longe ? " longe" : ""}"><input type="checkbox" data-eu="${escapeHtml(p.id)}"${redeNoHost(p.id) ? " checked" : ""}${longe ? " disabled" : ""}> ${escapeHtml((p.avatar ? p.avatar + " " : "") + p.name)}${longe ? " <small>(no aparelho dele)</small>" : ""}</label>`;
+          return `<label class="rede-eu-op${longe ? " longe" : ""}"><input type="checkbox" data-eu="${escapeHtml(p.id)}"${redeNoHost(p.id) ? " checked" : ""}${longe ? " disabled" : ""}> ${escapeHtml((p.avatar ? p.avatar + " " : "") + p.name)}${longe ? " <small>(no próprio celular)</small>" : ""}</label>`;
         })
         .join("");
       const erro = est === "erro" ? `<p class="rede-aviso">${REDE_ESTADO_HOST.erro}${rede.transporte.erro ? " (" + escapeHtml(rede.transporte.erro) + ")" : ""}. Confira a internet e tente de novo, ou use o ensaio em abas.</p>` : "";

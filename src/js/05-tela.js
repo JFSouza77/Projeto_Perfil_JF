@@ -958,7 +958,7 @@ function render() {
       controlsHtml = `
         ${ped ? `<div class="pedido-dica">👉 ${responderName} pediu a dica <b>${ped.idx + 1}</b>. Toque nela pra abrir.</div>` : ""}
         ${forcarHtml}
-        <div class="pick-label">${trava && !ped ? `👉 ${responderName} escolhe a dica no aparelho dele (${remaining} restantes). Travou? Toque num número pra abrir sem pedido.` : `${responderName}, escolha uma dica de 1 a ${totalEntries} (${remaining} restantes)`}</div>
+        <div class="pick-label">${trava && !ped ? `👉 ${responderName} escolhe a dica no próprio celular (${remaining} restantes). Travou? Toque num número pra abrir sem pedido.` : `${responderName}, escolha uma dica de 1 a ${totalEntries} (${remaining} restantes)`}</div>
         <div id="timerDisplay" class="pick-timer">${timerDisplayHtml()}</div>
         <div class="number-grid">${grid}</div>${CURRENT_MODE === "corrida" ? corridaItensHostHtml() : ""}`;
     }
