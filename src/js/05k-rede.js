@@ -2858,12 +2858,6 @@ function redeEsperaTimerLigar() {
     }
   }, 7000);
 }
-// As falas do C.A.O.S. viram funções quando o jogo carrega (caosFalasMontar). Pra mostrar como texto simples no
-// celular: chama a função com o nome e tira a etiqueta "[C.A.O.S.]" (quem lê na tela já vê o 🤖).
-function redeFalaTexto(item, nome) {
-  const t = typeof item === "function" ? item(nome || "você") : String(item || "").split("{nome}").join(nome || "você");
-  return String(t || "").replace(/^\[C\.A\.O\.S\.\]\s*/, "");
-}
 // Abre o formulário pra criar mais um jogador neste mesmo aparelho (sem largar os que já estão).
 function redeConvAdicionarJogador() {
   if (!rede || rede.papel !== "convidado") return;

@@ -139,7 +139,7 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 2195 | showToastMessage | - |
 | 2196 | showToastMessage | - |
 | 2573 | getRandomReaction | vozCalada |
-| 3360 | showToastMessage | - |
+| 3429 | showToastMessage | - |
 
 ## js/05o-corrida.js (5)
 
