@@ -13,9 +13,10 @@ então faltam pelo menos 500.
 | Pessoa (sugestões do JF, 23 e 26/10) | 84 | 10 | **74** |
 | Coisa (sugestões do JF) | 25 | 9 | **16** |
 | Lugar (sugestões do JF, 23 e 26/10) | 31 | 8 | **23** |
-| **Total novo** | | | **190** |
+| Coisa (informática, 26/10) | 16 | 0 | **16** |
+| **Total novo** | | | **206** |
 
-Ainda faltam cerca de **310** cartas pra meta de 500 novas. Ano não teve nada no pacote, e Animal também não.
+Ainda faltam cerca de **294** cartas pra meta de 500 novas. Ano não teve nada no pacote, e Animal também não.
 
 ## Como as cartas vão entrar
 - **Dicas escritas do zero**, no padrão do jogo (20 dicas, as especiais no lugar de sempre, da mais difícil pra mais
@@ -217,6 +218,27 @@ Ainda faltam cerca de **310** cartas pra meta de 500 novas. Ano não teve nada n
 14. Mensalão (fora do Júnior)
 15. Petrolão (fora do Júnior)
 16. Operação Lava Jato (fora do Júnior)
+
+## Coisa nova (informática, sugestões de 26/10) · 16
+1. Memória RAM
+2. Processador (CPU)
+3. Gabinete
+4. Placa-mãe
+5. HD
+6. SSD
+7. Placa de vídeo
+8. Dell
+9. AMD
+10. Windows
+11. Linux
+12. Mac (computador da Apple)
+13. Android
+14. Monitor
+15. Teclado
+16. Mouse
+
+Obs.: a carta "Memória" que já existe é a memória humana; "Memória RAM" é outra carta. "Notebook" já está na lista das fotos.
+Se quiser mais da mesma linha, ainda não existem: Intel, Nvidia, Microsoft, Apple, Pen drive, Impressora, Webcam.
 
 ## Lugar novo (sugestões) · 23
 1. Casa Branca
