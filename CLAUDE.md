@@ -12,3 +12,6 @@
 - **Cartas com tema pesado (26/10/2026):** entram (Perfil também é conhecimento), só com fatos, sem tomar partido,
   imparcial e honesto. Nunca no Júnior; podem cair no Clássico, Hardcore e Old School. Lista da 2.0: `docs/Cartas_2.0_Perfil4.md`.
 - **Ajustes pequenos:** o JF liberou ir acumulando e postando quando der (ajuste da versão aberta).
+- **Cartas da 2.0 (26/10/2026):** a meta é chegar perto de 2.000 cartas no total (500 novas era só uma média). Primeiro
+  o rascunho (criar), depois a estrutura; o filtro fino (o que cabe no Júnior, no Express etc.) fica pra depois.
+  As cartas novas ficam preparadas fora do baralho até a 2.0 sair. Plano: `docs/Cartas_2.0_Perfil4.md`.

@@ -2886,7 +2886,7 @@
       "*Um palpite a qualquer hora",
       "Fui preso em 2018 e solto em 2019; depois, o STF anulou minhas condenações",
       "Voltei a ser eleito presidente em 2022",
-      "Sou o único brasileiro eleito presidente três vezes pelo voto direto",
+      "Em 2026, fui reeleito para o quarto mandato, algo inédito no Brasil",
       "Meu vice no primeiro governo foi o empresário José Alencar",
       "Minha voz rouca é bem conhecida",
       "Meu nome completo é Luiz Inácio",

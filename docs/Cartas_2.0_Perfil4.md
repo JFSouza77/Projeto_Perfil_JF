@@ -26,6 +26,19 @@ então faltam pelo menos 500.
 Por categoria: Pessoa **105**, Coisa **150**, Lugar **45**, Ano **50** e Animal **50**. Ainda faltam **100** pra meta
 de 500 novas (o JF vai olhar o Perfil 8).
 
+## Plano das dicas (combinado com o JF em 26/10/2026)
+
+- A meta subiu: perto de **2.000 cartas** no total. As 500 eram só uma média.
+- **Sexta, 30/10, 9h:** o Claude começa a escrever as dicas das cartas desta lista (agendado). Se o JF mandar cartas
+  novas até lá, entram junto.
+- As cartas prontas ficam numa pasta separada (`src/dados/02-cartas-2.0/`), **fora do baralho** que o `montar.js` junta.
+  Só entram no jogo com a 2.0 (Cards Expansion).
+- Cada carta segue o formato das atuais: 20 pistas, com os especiais (`*Volte 2 casas`, `*Um palpite a qualquer hora`
+  etc.) na mesma proporção, dicas escritas do zero, da mais difícil pra mais fácil, sem entregar o nome.
+- Ordem de trabalho: Ano e Animal (as listas mais fechadas), depois Pessoa, Lugar e Coisa. Cada lote passa no
+  `ferramentas/auditar_cartas.js` antes do commit.
+- Tema pesado: só fatos, sem tomar partido, nunca no Júnior.
+
 ## Como as cartas vão entrar
 - **Dicas escritas do zero**, no padrão do jogo (20 dicas, as especiais no lugar de sempre, da mais difícil pra mais
   fácil). As fotos das cartas físicas servem só pra lembrar o assunto: o texto delas é do jogo de tabuleiro original e
@@ -397,7 +410,7 @@ O jogo já tem quase todos os anos de 1900 a 2025, então a lista vai pra trás 
 47. 1874: primeira exposição dos impressionistas
 48. 1877: Edison inventa o fonógrafo
 49. 1884: Conferência de Berlim, a partilha da África (tema pesado: só fatos, fora do Júnior)
-50. 2026: Copa do Mundo nos Estados Unidos, Canadá e México, a primeira com 48 seleções
+50. 2026: Copa do Mundo nos Estados Unidos, Canadá e México, a primeira com 48 seleções; e Lula é reeleito (2º turno em 25/10, contra Flávio Bolsonaro), o primeiro presidente eleito quatro vezes pelo voto direto no Brasil (tema político: só fatos, fora do Júnior)
 
 ## Animal novo (escolha do Claude, 26/10) · 50
 1. Minotauro
