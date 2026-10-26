@@ -15,9 +15,10 @@ então faltam pelo menos 500.
 | Lugar (sugestões do JF, 23 e 26/10) | 31 | 8 | **23** |
 | Coisa (informática e internet, 26/10) | 47 | 5 | **42** |
 | Pessoa (informática, 26/10) | 5 | 0 | **5** |
-| **Total novo** | | | **237** |
+| Coisa (esporte, música e internet, 26/10) | 25 | 0 | **25** |
+| **Total novo** | | | **262** |
 
-Ainda faltam cerca de **263** cartas pra meta de 500 novas. Ano não teve nada no pacote, e Animal também não.
+Ainda faltam cerca de **238** cartas pra meta de 500 novas. Ano não teve nada no pacote, e Animal também não.
 
 ## Como as cartas vão entrar
 - **Dicas escritas do zero**, no padrão do jogo (20 dicas, as especiais no lugar de sempre, da mais difícil pra mais
@@ -209,7 +210,7 @@ Ainda faltam cerca de **263** cartas pra meta de 500 novas. Ano não teve nada n
 4. Crash Bandicoot (jogo/franquia)
 5. Domingão com Faustão
 6. God of War
-7. GTA: San Andreas
+7. GTA (a franquia toda)
 8. Mortal Kombat
 9. Patrulha Canina (provável correção de “Patrulha das Crianças”)
 10. Street Fighter
@@ -266,7 +267,36 @@ Ainda faltam cerca de **263** cartas pra meta de 500 novas. Ano não teve nada n
 
 Obs.: a carta "Memória" que já existe é a memória humana; "Memória RAM" é outra carta. "Notebook" já está na lista das fotos.
 Já existem: Fone de ouvido, Wi-Fi, Disquete, Instagram e WhatsApp. Google já está na lista das fotos.
-Na mesma linha, ainda não existem: TikTok, YouTube e MSN.
+
+## Coisa nova (esporte, música e mais internet, sugestões de 26/10) · 25
+1. Futebol
+2. Futebol americano
+3. Golfe
+4. Basquete
+5. Tênis
+6. Beach tennis
+7. Futsal (futebol de salão)
+8. Triatlo
+9. Tiro esportivo
+10. Caça esportiva (fora do Júnior)
+11. Sertanejo
+12. Jazz
+13. Country
+14. Gospel
+15. TikTok
+16. YouTube
+17. MSN (Old School)
+18. Tumblr
+19. Pokémon GO
+20. Angry Birds
+21. Internet discada (Old School)
+22. 4G
+23. 5G
+24. Chip de celular
+25. Operadora de celular
+
+Obs.: Pokémon já existe (o Pokémon GO é o jogo de celular, outra carta). GTA: San Andreas virou GTA (a franquia toda).
+Ainda não existem e combinam com essas: Vôlei, Natação; Rock, Samba, Funk, Pagode, Forró, MPB, Rap.
 
 ## Pessoa nova (informática, sugestões de 26/10) · 5
 1. Alan Turing
