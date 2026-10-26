@@ -4,7 +4,9 @@
 //  1. o convidado cria o 1º jogador e depois adiciona um 2º no mesmo aparelho (sem perder o 1º);
 //  2. no host, os dois assentos ficam com a mesma sessão; no celular aparecem os dois ("Neste celular");
 //  3. o host manda um painel pra cada jogador e o celular guarda os dois;
-//  4. na partida, o celular mostra sozinho quem é a vez (troca de Pedro pra Elisa quando a vez muda).
+//  4. na partida, o celular mostra sozinho quem é a vez (troca de Pedro pra Elisa quando a vez muda);
+//  5. tela de espera viva: dica, tutorial rápido e "Pergunte ao C.A.O.S." (o C.A.O.S. responde);
+//  6. host automático: quem foi cadastrado no aparelho do host joga nele sem marcar nada.
 //   node ferramentas/teste_varios_no_celular.js [mestre.html]
 "use strict";
 const { acharMestre, abrirNavegador } = require("./_navegador");
@@ -52,6 +54,13 @@ const ARQ = acharMestre(process.argv[2]);
   conf("Convidado chega no formulário de cadastro", await esperar(g, () => rede && rede.estado === "escolhendo" && !!rede.cadastro, null, 15000));
   await g.evaluate((idade) => redePedirEntrada({ nome: "Pedro", idade, humor: "normal" }), idade);
   await esperar(host, () => Object.keys(rede.pedidos).length === 1);
+  // tela de espera (o host ainda não aceitou): dica, tutorial e perguntas pro C.A.O.S.
+  conf("Esperando o host: dica, tutorial e 5 perguntas na tela", await esperar(g, () => rede.estado === "aguardando" && !!document.getElementById("redeDicaEspera") && !!document.getElementById("redeTutRapido") && document.querySelectorAll("[data-perg]").length === 5));
+  await g.evaluate(() => document.querySelector('[data-perg="oQueFaco"]').click());
+  conf("Pergunta ao C.A.O.S.: ele responde na tela", await g.evaluate(() => { const r = document.getElementById("redeCaosResp"); return !!r && !r.hidden && REACTIVE_VOICE.esperaSala.oQueFaco.some((t) => r.textContent.includes(t)); }));
+  await g.evaluate(() => document.getElementById("redeTutRapido").click());
+  conf("Tutorial rápido abre no celular", await g.evaluate(() => !!document.getElementById("tutorialOverlay")));
+  await g.evaluate(() => document.getElementById("tutorialOverlay")?.remove());
   await host.evaluate(() => redeAprovarTodos());
   conf("1º jogador (Pedro) entra", await esperar(g, () => rede.estado === "dentro" && (rede.euLista || []).length === 1));
   const pedroId = await g.evaluate(() => rede.eu);
@@ -88,6 +97,8 @@ const ARQ = acharMestre(process.argv[2]);
     render();
     redeHostPublicar(true);
   }, [pedroId]);
+  conf("Host automático: a Ana (cadastrada no host) joga nele sem marcar", await esperar(host, () => !!rede.hostEu && players[0] && rede.hostEu === players[0].id));
+  conf("Host não abre o painel perguntando quem joga aqui", await host.evaluate(() => !document.getElementById("redePainel") && !document.querySelector(".caos-aviso-ov")));
   conf("Na vez do Pedro, o celular mostra o Pedro", await esperar(g, (p) => rede.retrato && rede.retrato.iniciada && rede.retrato.vezId === p && rede.eu === p, pedroId, 12000));
   await host.evaluate(([e]) => {
     responderIndex = jogadorIdxPorId(e);

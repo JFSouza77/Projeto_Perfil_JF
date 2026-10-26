@@ -751,7 +751,7 @@ function redeValidar(bruto) {
 function redeHostGuardar() {
   try {
     if (rede && rede.papel === "host")
-      JFStore.setItem(REDE_HOST_KEY, JSON.stringify({ sala: rede.sala, modo: rede.modo, eu: rede.hostEu || null, junto: rede.hostJunto || [], chave: rede.chaveHost, quando: Date.now(), aprovados: Object.keys(rede.aprovados || {}).slice(-40) }));
+      JFStore.setItem(REDE_HOST_KEY, JSON.stringify({ sala: rede.sala, modo: rede.modo, eu: rede.hostEu || null, junto: rede.hostJunto || [], auto: Object.keys(rede.hostAuto || {}), chave: rede.chaveHost, quando: Date.now(), aprovados: Object.keys(rede.aprovados || {}).slice(-40) }));
   } catch (e) {}
 }
 // Abre a sala. modo "internet" (padrão, PeerJS) ou "local" (ensaio em abas). salaFixa: reabrir
@@ -860,6 +860,8 @@ function redeHostRetomar() {
     if (!sala) return;
     if (jogadorIdValido(s.eu) && jogadorIdxPorId(s.eu) >= 0) rede.hostEu = s.eu;
     rede.hostJunto = (Array.isArray(s.junto) ? s.junto : []).filter((id) => jogadorIdValido(id) && jogadorIdxPorId(id) >= 0 && id !== rede.hostEu);
+    rede.hostAuto = {};
+    (Array.isArray(s.auto) ? s.auto : []).forEach((id) => jogadorIdValido(id) && (rede.hostAuto[id] = true));
     // 1.7.10.6.1 (relato do JF): os jogadores podem ainda não ter voltado do save aqui; guarda pra religar depois
     rede.hostEuSalvo = jogadorIdValido(s.eu) ? [s.eu].concat(Array.isArray(s.junto) ? s.junto.filter(jogadorIdValido) : []) : null;
     (Array.isArray(s.aprovados) ? s.aprovados : []).forEach((c) => typeof c === "string" && (rede.aprovados[c] = true));
@@ -1034,7 +1036,7 @@ function redeOnline(a) {
 }
 function redeLugaresLivres() {
   return players
-    .filter((p) => !redeOnline(rede.assentos[p.id]) && !redeNoHost(p.id))
+    .filter((p) => !redeOnline(rede.assentos[p.id]) && (!redeNoHost(p.id) || (rede.hostAuto || {})[p.id]))
     .map((p) => ({ id: p.id, nome: String(p.name).slice(0, 24), avatar: p.avatar || null }));
 }
 // 1.7.9.4 · A sala aberta antes do cadastro: quem está escolhendo recebe a lista de novo quando ela muda
@@ -1194,7 +1196,7 @@ function redeHostOi(m) {
   // "Quem é você?" e o nome aparece lá quando o host cadastrar (redeHostEsperando)
   const pedido = m.jogadorId && jogadorIdxPorId(m.jogadorId) >= 0 ? m.jogadorId : null;
   if (!pedido) return redeMandarEscolha(m.de);
-  if (redeNoHost(pedido)) return redeEnviar("recusa", { motivo: "lugar_ocupado" }, m.de);
+  if (redeNoHost(pedido) && !(rede.hostAuto || {})[pedido]) return redeEnviar("recusa", { motivo: "lugar_ocupado" }, m.de);
   const atual = rede.assentos[pedido];
   // o mesmo aparelho voltando (mesma chave) recupera o lugar na hora; outro só depois que ele cair
   if (atual && atual.sessao !== m.de && redeOnline(atual) && atual.chave !== m.chave) return redeEnviar("recusa", { motivo: "lugar_ocupado" }, m.de);
@@ -1210,6 +1212,13 @@ function redeAssentar(ses, pedido, chave, mais) {
   if (!mais) {
     const antigo = redeAssentoDaSessao(m.de);
     if (antigo && antigo !== pedido) delete rede.assentos[antigo];
+  }
+  // estava no aparelho do host só porque não tinha entrado (automático): o celular dele assume
+  if ((rede.hostAuto || {})[pedido]) {
+    delete rede.hostAuto[pedido];
+    if (rede.hostEu === pedido) rede.hostEu = (rede.hostJunto || []).shift() || null;
+    rede.hostJunto = (rede.hostJunto || []).filter((id) => id !== pedido);
+    redeHostGuardar();
   }
   const volta = !!atual;
   rede.assentos[pedido] = { sessao: m.de, visto: Date.now(), chave: m.chave, nome: (jogadorPorId(pedido) || {}).name || null };
@@ -1856,11 +1865,9 @@ function redeHostPublicar(forcar) {
   if (!starterChosen && !forcar) return;
   if (starterChosen && !gameEnded && redeAlguemLonge()) partidaOnline = true; // 1.7.9.9: marca na hora
   if (starterChosen && !rede.hostEu && players.length) redeHostEuReligar();
-  // 1.7.9.4: a partida começou com a sala aberta e ninguém disse quem joga neste aparelho: pergunta uma vez
-  if (starterChosen && !rede.hostEu && !rede.perguntouEu && players.length) {
-    rede.perguntouEu = true;
-    setTimeout(() => rede && rede.papel === "host" && !rede.hostEu && redePainelHost(), 700);
-  }
+  // 1.7.9.4 · 26/10/2026 (pedido do JF): a partida começou com a sala aberta e ninguém está neste aparelho:
+  // quem não tem celular na sala joga aqui, sozinho (antes abria o painel perguntando)
+  if (starterChosen && !rede.hostEu && players.length) redeAutoNoHost();
   const r = retratoPartida("mesa");
   // extras da sala (não fazem parte do retrato da partida): intervalo e votação
   r.intervalo = typeof tabLobbyFimEm === "function" ? tabLobbyFimEm() : null;
@@ -1958,28 +1965,27 @@ function redeSemAparelho() {
   if (!rede || rede.papel !== "host" || starterChosen) return [];
   return players.filter((p) => !redeNoHost(p.id) && !redeOnline(rede.assentos[p.id]));
 }
-// 1.7.10.7 (relato do JF: "muito chato" marcar o notebook toda vez): quem não entrou pelo próprio dispositivo
-// só pode estar jogando no do host. Um clique confirma e a partida começa; "Esperar" deixa entrar pela sala.
+// 1.7.10.7 (relato do JF: "muito chato" marcar o notebook toda vez) · 26/10/2026 (pedido do JF: "se eu abri a sala,
+// eu sou o host, por que tenho que marcar?"): quem não entrou pelo próprio celular joga no aparelho do host,
+// sozinho, sem perguntar. Se o celular da pessoa entrar depois, ela pega o lugar dela (hostAuto).
+function redeAutoNoHost() {
+  if (!rede || rede.papel !== "host") return [];
+  const faltam = players.filter((p) => !redeNoHost(p.id) && !rede.assentos[p.id]);
+  if (!faltam.length) return [];
+  rede.hostAuto = rede.hostAuto || {};
+  faltam.forEach((p) => (rede.hostAuto[p.id] = true));
+  redeDefinirNoHost(redeJogadoresNoHost().concat(faltam.map((p) => p.id)));
+  return faltam;
+}
 function redeAvisarSemAparelho(depois) {
   // debug 23/10: quem tem lugar na sala mas caiu (🟠) não é movido pro host: o celular dele vai voltar
   const caidos = redeSemAparelho().filter((p) => rede.assentos[p.id]);
-  const faltam = redeSemAparelho().filter((p) => !rede.assentos[p.id]);
-  if (!faltam.length) {
+  redeAutoNoHost();
+  if (caidos.length) {
     showToastMessage(`🟠 ${caidos.map((p) => p.name).join(", ")} ${caidos.length === 1 ? "caiu" : "caíram"} da sala. Espere voltar pra começar.`, null, true);
     return;
   }
-  const nomes = faltam.map((p) => p.name);
-  const um = nomes.length === 1;
-  caosConfirmarModal(
-    `${nomes.join(", ")} ${um ? "não entrou" : "não entraram"} pelo próprio dispositivo. ${um ? "Joga" : "Jogam"} neste dispositivo aqui?`,
-    um ? "✅ Joga aqui" : "✅ Jogam aqui",
-    "⏳ Esperar",
-    () => {
-      redeDefinirNoHost(redeJogadoresNoHost().concat(faltam.map((p) => p.id)));
-      if (typeof depois === "function" && !redeSemAparelho().length) depois();
-    },
-  );
-  document.getElementById("caosConfirmModal")?.classList.add("caos-aviso-ov");
+  if (typeof depois === "function" && !redeSemAparelho().length) depois();
 }
 // 1.7.10.6.1 (relato do JF: como host, não comprava na lojinha, não escolhia a própria dica nem via o Rouba a vez):
 // o aparelho do host perdia quem joga nele quando recarregava antes do save voltar. Religa sozinho quem estava guardado.
@@ -2002,6 +2008,7 @@ function redeDefinirNoHost(ids) {
   const lista = [...new Set(ids)].filter((id) => jogadorIdxPorId(id) >= 0 && !(redeOnline(rede.assentos[id]) && !redeNoHost(id)));
   rede.hostEu = lista[0] || null;
   rede.hostJunto = lista.slice(1);
+  Object.keys(rede.hostAuto || {}).forEach((id) => !lista.includes(id) && delete rede.hostAuto[id]);
   lista.forEach((id) => delete rede.assentos[id]);
   redeHostGuardar();
   redeHostEsperando();
@@ -2679,6 +2686,76 @@ function redeConvTrocaHtml() {
     .join("");
   return `<div class="rede-eu-troca"><span class="rede-eu-troca-rot">Neste celular:</span> ${chips}</div>`;
 }
+// 26/10/2026 (pedido do JF, vendo as crianças esperando o host): a tela de espera do celular não fica parada.
+// Dicas passando, tutorial rápido e "Pergunte ao C.A.O.S." (respostas em REACTIVE_VOICE.esperaSala).
+const REDE_ESPERA_DICAS = [
+  "Cada carta tem várias dicas. Quanto menos dicas você usar pra acertar, mais pontos ganha.",
+  "Na sua vez, toque num número: o Mestre lê aquela dica em voz alta.",
+  "Errou o chute? Sem drama: a vez passa pro próximo e a carta continua.",
+  "O Mestre muda a cada rodada. Quando for você, a carta aparece aqui no celular.",
+  "Antes da primeira dica, o Mestre diz a categoria: pessoa, lugar, coisa, ano ou animal.",
+  "Tirou a dica especial ⭐? Ela pode fazer andar casas, passar a vez ou dar um palpite extra.",
+  "A ficha 🃏 de palpite deixa você chutar fora da sua vez. Guarde pra hora certa!",
+  "O C.A.O.S. comenta a partida. Se ele falar demais, dá pra pular a fala no botão ⏭️.",
+  "Pense em voz baixa: se você falar o chute alto fora da vez, entrega a resposta pros outros.",
+  "Dica boa é dica comparada: junte as pistas antes de chutar.",
+  "Ficou na dúvida do que tocar? Olhe o topo da tela: ele mostra de quem é a vez.",
+  "Quem tem menos de 12 anos ganha tempo extra pra ler quando for o Mestre.",
+  "No tabuleiro, cada ponto vira uma casa. Chegue no fim primeiro e vença.",
+  "Dá pra pausar a partida pelo botão ⏸️. O tempo congela pra todo mundo.",
+  "Viu uma carta com algo errado? Na pausa tem o botão de reportar pro JF consertar.",
+];
+const REDE_ESPERA_PERGUNTAS = [
+  ["oQueFaco", "🤔 O que eu faço agora?"],
+  ["comoJoga", "🃏 Como se joga?"],
+  ["mestre", "👑 O que é o Mestre?"],
+  ["demora", "⏳ Vai demorar?"],
+  ["quemEVoce", "🤖 Quem é você?"],
+];
+function redeEsperaExtrasHtml() {
+  if (!rede) return "";
+  if (!Number.isInteger(rede.esperaDica)) rede.esperaDica = Math.floor(Math.random() * REDE_ESPERA_DICAS.length);
+  const perg = REDE_ESPERA_PERGUNTAS.map(([k, t]) => `<button type="button" class="chip rede-perg" data-perg="${k}">${escapeHtml(t)}</button>`).join("");
+  return (
+    `<section class="rede-espera-extra">` +
+    `<div class="rede-dica-espera" aria-live="polite">💡 <span id="redeDicaEspera">${escapeHtml(REDE_ESPERA_DICAS[rede.esperaDica % REDE_ESPERA_DICAS.length])}</span></div>` +
+    `<button type="button" class="rede-lugar" id="redeTutRapido">🎓 Tutorial rápido (2 min)</button>` +
+    `<div class="rede-caos-perg"><div class="rede-rot">🤖 Pergunte ao C.A.O.S.</div><div class="rede-caos-botoes">${perg}</div>` +
+    `<div class="rede-caos-resp" id="redeCaosResp" aria-live="polite"${rede.esperaResp ? "" : " hidden"}>${rede.esperaResp ? "🤖 " + escapeHtml(rede.esperaResp) : ""}</div></div>` +
+    `</section>`
+  );
+}
+function redeEsperaLigar(box) {
+  if (!rede || !box) return;
+  const tut = box.querySelector("#redeTutRapido");
+  if (tut) tut.addEventListener("click", () => typeof openTutorial === "function" && openTutorial("rapido"));
+  box.querySelectorAll("[data-perg]").forEach((b) =>
+    b.addEventListener("click", () => {
+      const banco = REACTIVE_VOICE.esperaSala && REACTIVE_VOICE.esperaSala[b.dataset.perg];
+      if (!banco) return;
+      // resposta limpa (sem os enfeites do getRandomReaction): é um "tira-dúvidas", e quem lê é criança
+      const opcoes = banco.filter((t) => t !== rede.esperaResp);
+      const txt = String(opcoes[Math.floor(Math.random() * opcoes.length)] || banco[0]);
+      rede.esperaResp = txt;
+      const r = box.querySelector("#redeCaosResp");
+      if (r) {
+        r.hidden = false;
+        r.textContent = "🤖 " + txt;
+      }
+      try {
+        if (caosVoiceOn) caosSpeak(txt);
+      } catch (e) {}
+    }),
+  );
+  // a dica troca a cada 7 s (o timer sobrevive aos redesenhos: só atualiza se a tela de espera está aberta)
+  if (!rede.esperaTimer)
+    rede.esperaTimer = setInterval(() => {
+      const el = document.getElementById("redeDicaEspera");
+      if (!rede || !el) return;
+      rede.esperaDica = (rede.esperaDica + 1) % REDE_ESPERA_DICAS.length;
+      el.textContent = REDE_ESPERA_DICAS[rede.esperaDica];
+    }, 7000);
+}
 // Abre o formulário pra criar mais um jogador neste mesmo aparelho (sem largar os que já estão).
 function redeConvAdicionarJogador() {
   if (!rede || rede.papel !== "convidado") return;
@@ -2709,7 +2786,8 @@ function redeConvidadoDesenhar() {
   const sala = `<div class="rede-sala">🌐 Sala <b>${rede.sala}</b>${selo}</div>${conexao}`;
   if (rede.estado === "escolhendo") return redeEscolhaDesenhar(box, sala);
   if (rede.estado === "aguardando") {
-    box.innerHTML = `${sala}<div class="telao-espera">⏳ Pedido enviado<br><small>Esperando o host aceitar a sua entrada…</small></div>${redeSairHtml()}`;
+    box.innerHTML = `${sala}<div class="telao-espera">⏳ Pedido enviado<br><small>Esperando o host aceitar a sua entrada…</small></div>${redeEsperaExtrasHtml()}${redeSairHtml()}`;
+    redeEsperaLigar(box);
     return;
   }
   if (rede.estado === "recusado") {
@@ -2745,7 +2823,8 @@ function redeConvidadoDesenhar() {
       `${sala}<div class="telao-espera">✅ Você é <b>${meusTxt}</b><br><small>Esperando o host terminar o cadastro e começar a partida…</small></div>` +
       redeConvTrocaHtml() +
       (podeMais ? `<button type="button" class="rede-lugar" id="redeMaisJog">➕ Adicionar outro jogador neste celular</button>` : "") +
-      `<ul class="rede-lista">${mesa}</ul>${redeSairHtml()}`;
+      `<ul class="rede-lista">${mesa}</ul>${redeEsperaExtrasHtml()}${redeSairHtml()}`;
+    redeEsperaLigar(box);
     box.querySelectorAll("[data-ativo]").forEach((b) => b.addEventListener("click", () => redeConvDefinirAtivo(b.dataset.ativo)));
     const mais = box.querySelector("#redeMaisJog");
     if (mais) mais.addEventListener("click", () => redeConvAdicionarJogador());
@@ -3470,7 +3549,7 @@ function redePainelHost() {
       ov.innerHTML = `<div class="jf-modal" role="dialog" aria-modal="true"><h3>🌐 Sala ${rede.sala}</h3><div class="rede-estado">${rede.modo === "local" ? "🧪 Ensaio em abas deste navegador" : REDE_ESTADO_HOST[est] || est}</div>${erro}<div class="rede-codigo-rot">Código da sala</div><div class="rede-codigo">${rede.sala}</div>${redeQrHtml(redeLinkDaSala())}<p class="rede-rot">Quem vai jogar abre o jogo, toca em <b>🌐 Jogar online</b> e digita o código. Ou mande o link:</p><code class="rede-link">${escapeHtml(redeLinkDaSala())}</code><button type="button" class="chip" id="redeCopiar">📋 Copiar link</button>${
         navigator.share ? '<button type="button" class="chip" id="redeCompartilhar">📤 Compartilhar</button>' : ""
       }<div class="rede-rot-eu">Quem joga neste aparelho? <small>(pode marcar mais de um)</small><div class="rede-eu-lista">${opcoesEu || "<small>Ninguém cadastrado ainda.</small>"}</div><small>${
-        players.length ? "Marque quem joga neste aparelho, inclusive quem não tem dispositivo e divide este. Nenhum marcado = o aparelho é só a mesa. A carta só aparece aqui quando o Mestre é alguém daqui (ou não tem aparelho)." : "Mande o código (ou o link): cada um cria o próprio jogador no dispositivo, e você aceita a entrada aqui. Quem joga neste aparelho você cadastra como sempre."
+        players.length ? "Não precisa marcar: quem não entrar pelo próprio celular joga neste aparelho sozinho quando a partida começar (e, se o celular dele entrar depois, ele pega o lugar). Só desmarque se este aparelho for apenas a mesa." : "Mande o código (ou o link): cada um cria o próprio jogador no dispositivo, e você aceita a entrada aqui. Quem joga neste aparelho você cadastra como sempre."
       }</small></div><ul class="rede-lista">${lugares}</ul>${
         rede.modo === "local" ? '<button type="button" class="chip" id="redeAbrirAba">Abrir uma aba de convidado</button>' : ""
       }<button type="button" class="chip" id="redeComoSala">❓ Como funciona</button><button type="button" class="chip" id="redeFecharSala">Fechar a sala</button><button type="button" class="chip" id="redeOk" style="margin-top:10px">Fechar</button></div>`;

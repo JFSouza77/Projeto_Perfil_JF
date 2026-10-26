@@ -11,18 +11,21 @@
 const NOVIDADES = [
   {
     v: "Beta 1.7.10.9.5",
-    ate: "1.7.10.9.6", // a lista junta os ajustes até essa versão
+    ate: "1.7.10.9.7", // a lista junta os ajustes até essa versão
     data: "25/10 a 26/10/2026",
     nome: "Ajustes da Mesa",
     t: "Vários jogadores no mesmo celular, responder na sua vez com o palpite guardado, a dica pedida saltando pro Mestre e o host tirando quem desistiu.",
     itens: [
+      "⏳ Espera com o que fazer: enquanto o host não aceita ou não começa, o celular mostra dicas de como jogar, abre o tutorial rápido e tem a caixinha Pergunte ao C.A.O.S. (o que eu faço agora, como se joga, o que é o Mestre…).",
       "📱 Vários no mesmo celular: quem não tem celular pode jogar no de outra pessoa, não só no do host. No celular, depois de entrar, toque em ➕ Adicionar outro jogador. Na partida, o celular mostra sozinho de quem é a vez. Ideia da Elisa e do Pedro.",
       "🃏 Responder na sua vez: tirou o palpite a qualquer hora? Agora, se quiser, você responde a carta ali mesmo (é a sua vez). Acertou, leva a carta — e a ficha de palpite fica guardada do mesmo jeito, pra você usar fora da vez depois.",
       "👉 Dica pedida em destaque: quando você fala um número, ele salta na tela do Mestre — aceso e balançando — pra ele achar a dica na hora.",
       "🎂 Idade mais clara nos modos: cada modo mostra a idade num selo próprio, separado das etiquetas Novo, Rápido, online ou Surpresa.",
       "👥 Alguém desistiu: na pausa, o host pode tirar o jogador só da sala (o aparelho, e ele segue jogando no aparelho do host) ou da partida inteira (os pontos se dividem entre quem fica).",
     ],
-    qol: [],
+    qol: [
+      "👑 O host não precisa mais marcar que joga no próprio aparelho: quem não entrou pelo celular joga no do host sozinho. Se o celular da pessoa entrar depois, ela pega o lugar dela.",
+    ],
   },
   {
     v: "Beta 1.7.10.9.4",

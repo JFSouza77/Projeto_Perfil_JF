@@ -1999,3 +1999,50 @@ body.claro .rede-eu-chip.on {
   color: #fff;
   background: #0e7490;
 }
+
+/* 26/10/2026 (pedido do JF): tela de espera do celular com dicas, tutorial e "Pergunte ao C.A.O.S." */
+.rede-espera-extra {
+  margin: 12px auto 4px;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: center;
+}
+.rede-dica-espera {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  line-height: 1.4;
+  min-height: 3.2em;
+}
+.rede-caos-botoes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+.rede-perg {
+  min-height: 44px;
+}
+.rede-caos-resp {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(232, 121, 249, 0.14);
+  border: 1px solid rgba(232, 121, 249, 0.5);
+  line-height: 1.4;
+  text-align: left;
+}
+body.claro .rede-dica-espera {
+  background: #fff7e0;
+  border-color: #d79a2a;
+  color: #4a3206;
+}
+body.claro .rede-caos-resp {
+  background: #fbeaff;
+  border-color: #c26fd6;
+  color: #3d1048;
+}
