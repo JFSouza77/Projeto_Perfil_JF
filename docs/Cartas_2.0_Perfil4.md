@@ -13,11 +13,11 @@ então faltam pelo menos 500.
 | Pessoa (sugestões do JF, 23 e 26/10) | 84 | 10 | **74** |
 | Coisa (sugestões do JF) | 25 | 9 | **16** |
 | Lugar (sugestões do JF, 23 e 26/10) | 31 | 8 | **23** |
-| Coisa (informática, 26/10) | 28 | 2 | **26** |
-| Pessoa (informática, 26/10) | 3 | 0 | **3** |
-| **Total novo** | | | **219** |
+| Coisa (informática e internet, 26/10) | 47 | 5 | **42** |
+| Pessoa (informática, 26/10) | 5 | 0 | **5** |
+| **Total novo** | | | **237** |
 
-Ainda faltam cerca de **281** cartas pra meta de 500 novas. Ano não teve nada no pacote, e Animal também não.
+Ainda faltam cerca de **263** cartas pra meta de 500 novas. Ano não teve nada no pacote, e Animal também não.
 
 ## Como as cartas vão entrar
 - **Dicas escritas do zero**, no padrão do jogo (20 dicas, as especiais no lugar de sempre, da mais difícil pra mais
@@ -220,7 +220,7 @@ Ainda faltam cerca de **281** cartas pra meta de 500 novas. Ano não teve nada n
 15. Petrolão (fora do Júnior)
 16. Operação Lava Jato (fora do Júnior)
 
-## Coisa nova (informática, sugestões de 26/10) · 26
+## Coisa nova (informática e internet, sugestões de 26/10) · 42
 1. Memória RAM
 2. Processador (CPU)
 3. Gabinete
@@ -247,15 +247,33 @@ Ainda faltam cerca de **281** cartas pra meta de 500 novas. Ano não teve nada n
 24. JavaScript
 25. CSS
 26. COBOL (Old School e Hardcore)
+27. HTML
+28. Intel
+29. Nvidia
+30. Microsoft
+31. Apple
+32. Pen drive
+33. Impressora
+34. Impressora 3D
+35. Webcam
+36. CD
+37. DVD
+38. Armazenamento na nuvem
+39. Facebook
+40. Twitter (hoje X)
+41. Snapchat
+42. Orkut (Old School)
 
 Obs.: a carta "Memória" que já existe é a memória humana; "Memória RAM" é outra carta. "Notebook" já está na lista das fotos.
-Fone de ouvido e Wi-Fi já existem. Se quiser mais da mesma linha, ainda não existem: Intel, Nvidia, Microsoft, Apple,
-Pen drive, Impressora, Webcam, HTML, Bill Gates e Mark Zuckerberg.
+Já existem: Fone de ouvido, Wi-Fi, Disquete, Instagram e WhatsApp. Google já está na lista das fotos.
+Na mesma linha, ainda não existem: TikTok, YouTube e MSN.
 
-## Pessoa nova (informática, sugestões de 26/10) · 3
+## Pessoa nova (informática, sugestões de 26/10) · 5
 1. Alan Turing
 2. Ada Lovelace
 3. Steve Jobs
+4. Bill Gates
+5. Mark Zuckerberg
 
 ## Lugar novo (sugestões) · 23
 1. Casa Branca
