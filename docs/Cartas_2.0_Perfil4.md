@@ -16,10 +16,15 @@ então faltam pelo menos 500.
 | Coisa (informática e internet, 26/10) | 47 | 5 | **42** |
 | Pessoa (informática, 26/10) | 5 | 0 | **5** |
 | Coisa (esporte, música e internet, 26/10) | 36 | 0 | **34** |
-| Pessoa (bandas, 26/10) | 4 | 1 | **3** |
-| **Total novo** | | | **274** |
+| Pessoa (bandas e artistas, 26/10) | 10 | 1 | **9** |
+| Mitologia (26/10: 12 Pessoa, 1 Lugar, 2 Coisa) | 15 | 0 | **15** |
+| Pessoa (atletas, 26/10) | 5 | 0 | **5** |
+| Ano (escolha do Claude, 26/10) | 50 | 0 | **50** |
+| Animal (escolha do Claude, 26/10) | 50 | 0 | **50** |
+| **Total novo** | | | **400** |
 
-Ainda faltam cerca de **226** cartas pra meta de 500 novas. Ano não teve nada no pacote, e Animal também não.
+Por categoria: Pessoa **105**, Coisa **150**, Lugar **45**, Ano **50** e Animal **50**. Ainda faltam **100** pra meta
+de 500 novas (o JF vai olhar o Perfil 8).
 
 ## Como as cartas vão entrar
 - **Dicas escritas do zero**, no padrão do jogo (20 dicas, as especiais no lugar de sempre, da mais difícil pra mais
@@ -308,12 +313,146 @@ Já existem: Fone de ouvido, Wi-Fi, Disquete, Instagram e WhatsApp. Google já e
 Obs.: Pokémon já existe (o Pokémon GO é o jogo de celular, outra carta). GTA: San Andreas virou GTA (a franquia toda).
 4G e 5G viraram uma carta só (Internet móvel). Ramones já existe.
 
-## Pessoa nova (bandas, sugestões de 26/10) · 3
+## Pessoa nova (bandas e artistas, sugestões de 26/10) · 9
 1. Guns N' Roses
 2. Nirvana
 3. Pink Floyd
+4. AC/DC
+5. Queen
+6. Metallica
+7. Legião Urbana
+8. Elvis Presley
+9. Madonna
 
-Ainda não existem e combinam com essas: Queen, AC/DC, Metallica, Legião Urbana, Elvis Presley e Madonna.
+## Mitologia (sugestões de 26/10) · 15
+Pessoa (12): Zeus, Thor, Odin, Loki, Hércules, Anúbis, Atena, Atlas (o titã), Cronos (o titã do tempo), Ares, Afrodite
+e Hades (as duas últimas são sugestão do Claude pra fechar a conta).
+
+Lugar (1): Ilha de Creta.
+
+Coisa (2): Navio de Teseu e Cavalo de Troia (o cavalo é sugestão do Claude).
+
+Obs.: o Minotauro foi pra Animal, junto com Cérbero, Hidra e Pégaso, que já estão lá. Thor, Loki e Hércules também
+são personagens de filme (Marvel e Disney); as dicas podem usar os dois lados. Monte Olimpo, Medusa, Kraken e o Tridente
+de Poseidon já existem.
+
+## Pessoa nova (atletas, sugestões de 26/10) · 5
+1. Taffarel
+2. Falcão (o do futsal; o Falcão que já existe é a ave)
+3. Romário
+4. Zico
+5. Marta
+
+Romário, Zico e Marta são sugestão do Claude pra fechar em 5.
+
+## Ano novo (escolha do Claude, 26/10) · 50
+O jogo já tem quase todos os anos de 1900 a 2025, então a lista vai pra trás no tempo, com peso no Brasil.
+
+1. 776 a.C.: primeiros Jogos Olímpicos registrados
+2. 753 a.C.: fundação de Roma (pela lenda)
+3. 1088: Universidade de Bolonha, a mais antiga em funcionamento
+4. 1095: convocada a Primeira Cruzada
+5. 1163: começa a construção de Notre-Dame de Paris
+6. 1206: Gengis Khan unifica os mongóis
+7. 1271: Marco Polo parte pra Ásia
+8. 1337: começa a Guerra dos Cem Anos
+9. 1431: Joana d'Arc é executada
+10. 1455: Bíblia de Gutenberg (por volta de 1454 e 1455)
+11. 1497: Vasco da Gama parte pra Índia
+12. 1503: Leonardo começa a Mona Lisa
+13. 1506: começa a nova Basílica de São Pedro
+14. 1508: Michelangelo começa o teto da Capela Sistina
+15. 1513: Balboa avista o Oceano Pacífico
+16. 1522: volta a expedição de Fernão de Magalhães, a primeira volta ao mundo
+17. 1532: fundação de São Vicente, a primeira vila do Brasil
+18. 1549: fundação de Salvador, a primeira capital
+19. 1554: fundação de São Paulo
+20. 1565: fundação do Rio de Janeiro
+21. 1605: sai a primeira parte de Dom Quixote
+22. 1609: Galileu aponta o telescópio pro céu
+23. 1616: morrem Shakespeare e Cervantes
+24. 1620: o Mayflower chega à América
+25. 1632: começa o Taj Mahal
+26. 1654: os holandeses deixam Pernambuco
+27. 1665: a Grande Peste de Londres
+28. 1695: morte de Zumbi dos Palmares (tema pesado: só fatos, fora do Júnior)
+29. 1703: fundação de São Petersburgo
+30. 1748: começam as escavações de Pompeia
+31. 1750: Tratado de Madri
+32. 1752: a pipa de Benjamin Franklin
+33. 1769: patente da máquina a vapor de James Watt
+34. 1773: Festa do Chá de Boston
+35. 1787: escrita a Constituição dos Estados Unidos
+36. 1796: Jenner testa a primeira vacina (varíola)
+37. 1803: compra da Louisiana
+38. 1805: Batalha de Trafalgar
+39. 1807: a corte portuguesa parte pro Brasil
+40. 1812: Napoleão invade a Rússia
+41. 1816: o "ano sem verão"
+42. 1826: a fotografia mais antiga que sobreviveu (Niépce, por volta de 1826 e 1827)
+43. 1830: primeira ferrovia de passageiros entre duas cidades (Liverpool e Manchester)
+44. 1844: primeira mensagem de telégrafo de Morse
+45. 1851: Grande Exposição de Londres (Palácio de Cristal)
+46. 1854: primeira ferrovia do Brasil (Mauá)
+47. 1874: primeira exposição dos impressionistas
+48. 1877: Edison inventa o fonógrafo
+49. 1884: Conferência de Berlim, a partilha da África (tema pesado: só fatos, fora do Júnior)
+50. 2026: Copa do Mundo nos Estados Unidos, Canadá e México, a primeira com 48 seleções
+
+## Animal novo (escolha do Claude, 26/10) · 50
+1. Minotauro
+2. Centauro
+3. Quimera
+4. Pé-Grande
+5. Chupa-cabra
+6. Estegossauro
+7. Braquiossauro
+8. Diplodoco
+9. Anquilossauro
+10. Espinossauro
+11. Megalodonte
+12. Tubarão-martelo
+13. Tubarão-baleia
+14. Jubarte
+15. Moreia
+16. Peixe-leão
+17. Peixe-espada
+18. Enguia
+19. Ouriço-do-mar
+20. Atum
+21. Sardinha
+22. Tilápia
+23. Peixe-beta
+24. Sucuri
+25. Jiboia
+26. Cascavel
+27. Naja
+28. Rã
+29. Perereca
+30. Salamandra
+31. Martim-pescador
+32. Corvo
+33. Gralha-azul
+34. Andorinha
+35. Canário
+36. Calopsita
+37. Periquito
+38. Pardal
+39. Cacatua
+40. Tuiuiú
+41. Garça
+42. Cegonha
+43. Ganso
+44. Puma
+45. Porquinho-da-índia
+46. Iaque
+47. Dromedário
+48. Doninha
+49. Elefante-marinho
+50. Tatuzinho-de-jardim
+
+Já existem e ficaram fora: Sereia, Mula sem cabeça, Lobisomem, Pica-pau e Falcão (ave). "Lula" não entra como animal
+porque já é carta de Pessoa.
 
 ## Pessoa nova (informática, sugestões de 26/10) · 5
 1. Alan Turing
@@ -346,3 +485,5 @@ Ainda não existem e combinam com essas: Queen, AC/DC, Metallica, Legião Urbana
 21. Júpiter
 22. Urano
 23. Netuno
+
+A Ilha de Creta está na seção de mitologia (Lugar).
