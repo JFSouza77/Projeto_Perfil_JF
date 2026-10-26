@@ -1451,7 +1451,8 @@ function redeAprovarPedido(ses, sim, pedidoDireto) {
     const prob = redePerfilProblema(p.perfil, ses);
     if (prob) return redeEnviar("recusa", { motivo: prob }, ses), false;
     pid = redeHostAdicionarPerfil(p.perfil);
-  } else if (jogadorIdxPorId(pid) < 0 || redeNoHost(pid) || redeOnline(rede.assentos[pid])) {
+  } else if (jogadorIdxPorId(pid) < 0 || (redeNoHost(pid) && !redeHostAutoTem(pid)) || redeOnline(rede.assentos[pid])) {
+    // 1.7.10.9.8: quem o host pegou sozinho (sem celular) continua livre pra quem chegar; o redeAssentar tira do host
     return redeMandarEscolha(ses), false;
   }
   if (!pid) return false;
@@ -1968,6 +1969,9 @@ function redeSemAparelho() {
 // 1.7.10.7 (relato do JF: "muito chato" marcar o notebook toda vez) · 26/10/2026 (pedido do JF: "se eu abri a sala,
 // eu sou o host, por que tenho que marcar?"): quem não entrou pelo próprio celular joga no aparelho do host,
 // sozinho, sem perguntar. Se o celular da pessoa entrar depois, ela pega o lugar dela (hostAuto).
+function redeHostAutoTem(id) {
+  return !!(rede && rede.hostAuto && rede.hostAuto[id]);
+}
 function redeAutoNoHost() {
   if (!rede || rede.papel !== "host") return [];
   const faltam = players.filter((p) => !redeNoHost(p.id) && !rede.assentos[p.id]);
