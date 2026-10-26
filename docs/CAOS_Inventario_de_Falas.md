@@ -6,13 +6,13 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Chamada | Linhas |
 |---|---|
-| `showToastMessage` | 123 |
+| `showToastMessage` | 124 |
 | `caosFalaAgendar` | 36 |
 | `caosFalarDepois` | 15 |
 | `admFala` | 5 |
 | `getRandomReaction` | 309 |
 | `caosGerarFala` | 17 |
-| **Total de linhas com fala** | **417** |
+| **Total de linhas com fala** | **418** |
 
 ## js/03-regras.js (1)
 
@@ -40,64 +40,65 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 712 | showToastMessage, getRandomReaction | esgotouComResposta |
 | 917 | caosFalarDepois | - |
 | 918 | getRandomReaction | - |
-| 1125 | caosFalaAgendar | - |
-| 1248 | showToastMessage | - |
-| 1259 | showToastMessage | - |
-| 1270 | getRandomReaction | verbosidade |
-| 1282 | getRandomReaction | iniciante.erroLeve |
-| 1293 | getRandomReaction | surpresaErroFacil |
-| 1326 | getRandomReaction | reacaoCurta |
-| 1366 | showToastMessage | - |
-| 1394 | getRandomReaction | bonusCancelado |
-| 1398 | showToastMessage | - |
-| 1511 | showToastMessage | - |
-| 1790 | caosGerarFala | gerador jfFim |
-| 1793 | showToastMessage, getRandomReaction | jfFim |
-| 1795 | showToastMessage | - |
-| 1796 | getRandomReaction | caosVoltouDaPartida, partidaLonga |
-| 1801 | showToastMessage, getRandomReaction | partidaLonga |
-| 1896 | showToastMessage | - |
-| 1897 | caosGerarFala | gerador revanche |
-| 1898 | getRandomReaction | revanche |
-| 1997 | showToastMessage, getRandomReaction | trocaDeModo |
-| 2152 | showToastMessage, getRandomReaction | sorteioMestreJf |
-| 2187 | showToastMessage | - |
-| 2188 | getRandomReaction | - |
-| 2316 | caosFalaAgendar, getRandomReaction | desistiuBonus |
-| 2329 | caosFalaAgendar, getRandomReaction | desistiu |
-| 2428 | getRandomReaction | caosCofrinhoUso |
-| 2440 | showToastMessage, getRandomReaction | mercyPontos |
-| 2444 | showToastMessage, getRandomReaction | mercyBonus |
-| 2475 | showToastMessage | - |
-| 2610 | admFala, getRandomReaction | admSaida |
-| 2611 | admFala, getRandomReaction | caosCofrinho |
+| 1127 | caosFalaAgendar | - |
+| 1250 | showToastMessage | - |
+| 1261 | showToastMessage | - |
+| 1272 | getRandomReaction | verbosidade |
+| 1284 | getRandomReaction | iniciante.erroLeve |
+| 1295 | getRandomReaction | surpresaErroFacil |
+| 1328 | getRandomReaction | reacaoCurta |
+| 1368 | showToastMessage | - |
+| 1396 | getRandomReaction | bonusCancelado |
+| 1400 | showToastMessage | - |
+| 1524 | showToastMessage | - |
+| 1803 | caosGerarFala | gerador jfFim |
+| 1806 | showToastMessage, getRandomReaction | jfFim |
+| 1808 | showToastMessage | - |
+| 1809 | getRandomReaction | caosVoltouDaPartida, partidaLonga |
+| 1814 | showToastMessage, getRandomReaction | partidaLonga |
+| 1909 | showToastMessage | - |
+| 1910 | caosGerarFala | gerador revanche |
+| 1911 | getRandomReaction | revanche |
+| 2010 | showToastMessage, getRandomReaction | trocaDeModo |
+| 2165 | showToastMessage, getRandomReaction | sorteioMestreJf |
+| 2200 | showToastMessage | - |
+| 2201 | getRandomReaction | - |
+| 2329 | caosFalaAgendar, getRandomReaction | desistiuBonus |
+| 2342 | caosFalaAgendar, getRandomReaction | desistiu |
+| 2441 | getRandomReaction | caosCofrinhoUso |
+| 2453 | showToastMessage, getRandomReaction | mercyPontos |
+| 2457 | showToastMessage, getRandomReaction | mercyBonus |
+| 2488 | showToastMessage | - |
+| 2623 | admFala, getRandomReaction | admSaida |
+| 2624 | admFala, getRandomReaction | caosCofrinho |
 
-## js/05-tela.js (22)
+## js/05-tela.js (23)
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
 | 166 | showToastMessage | - |
 | 467 | showToastMessage, getRandomReaction | memoria.apagada |
 | 517 | showToastMessage, getRandomReaction | especialExpressSemAlvo |
-| 1320 | showToastMessage | - |
-| 1321 | getRandomReaction | conferirResposta |
-| 1692 | getRandomReaction | nomeRepetido |
-| 1693 | showToastMessage | - |
-| 1706 | getRandomReaction | escolhaExclusiva |
-| 1710 | getRandomReaction | escolhaTomada |
-| 1712 | showToastMessage | - |
-| 1991 | getRandomReaction | nickDemora |
-| 1992 | showToastMessage | - |
-| 2304 | showToastMessage | - |
-| 2787 | showToastMessage, getRandomReaction | - |
-| 3304 | showToastMessage | - |
-| 3414 | admFala, getRandomReaction | admHumorMudou |
-| 3436 | admFala | - |
-| 3437 | getRandomReaction | admHumorMudou |
-| 3513 | admFala, getRandomReaction | caosVoltouDaPartida |
-| 3648 | showToastMessage, getRandomReaction | pausaExpirada.continuou |
-| 3659 | showToastMessage, getRandomReaction | pausaExpirada.recomecou |
-| 3814 | getRandomReaction | vozCalada |
+| 1322 | showToastMessage | - |
+| 1323 | getRandomReaction | conferirResposta |
+| 1694 | getRandomReaction | nomeRepetido |
+| 1695 | showToastMessage | - |
+| 1708 | getRandomReaction | escolhaExclusiva |
+| 1712 | getRandomReaction | escolhaTomada |
+| 1714 | showToastMessage | - |
+| 1993 | getRandomReaction | nickDemora |
+| 1994 | showToastMessage | - |
+| 2306 | showToastMessage | - |
+| 2789 | showToastMessage, getRandomReaction | - |
+| 3306 | showToastMessage | - |
+| 3416 | admFala, getRandomReaction | admHumorMudou |
+| 3438 | admFala | - |
+| 3439 | getRandomReaction | admHumorMudou |
+| 3515 | admFala, getRandomReaction | caosVoltouDaPartida |
+| 3651 | showToastMessage, getRandomReaction | pausaExpirada.continuou |
+| 3662 | showToastMessage, getRandomReaction | pausaExpirada.recomecou |
+| 3813 | showToastMessage | - |
+| 3873 | getRandomReaction | vozCalada |
 
 ## js/05d-ajuda-do-mestre.js (2)
 
@@ -110,8 +111,8 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 670 | showToastMessage | - |
-| 680 | getRandomReaction | - |
+| 671 | showToastMessage | - |
+| 681 | getRandomReaction | - |
 
 ## js/05i-tabuleiro.js (8)
 
@@ -133,12 +134,12 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 90 | showToastMessage | - |
 | 871 | caosGerarFala | gerador hostCaiu |
 | 872 | showToastMessage | - |
-| 1928 | showToastMessage | - |
-| 2070 | showToastMessage | - |
-| 2118 | showToastMessage | - |
-| 2119 | showToastMessage | - |
-| 2472 | getRandomReaction | vozCalada |
-| 3101 | showToastMessage | - |
+| 1956 | showToastMessage | - |
+| 2098 | showToastMessage | - |
+| 2146 | showToastMessage | - |
+| 2147 | showToastMessage | - |
+| 2500 | getRandomReaction | vozCalada |
+| 3129 | showToastMessage | - |
 
 ## js/05o-corrida.js (5)
 

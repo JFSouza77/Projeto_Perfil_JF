@@ -10,6 +10,19 @@
 //  · o que ainda não entrou fica em docs/Novidades_Rascunho.md.
 const NOVIDADES = [
   {
+    v: "Beta 1.7.10.9.5",
+    data: "25/10/2026",
+    nome: "Ajustes da Mesa",
+    t: "Responder na sua vez com o palpite guardado, a dica pedida saltando pro Mestre e o host tirando quem desistiu.",
+    itens: [
+      "🃏 Responder na sua vez: tirou o palpite a qualquer hora? Agora, se quiser, você responde a carta ali mesmo (é a sua vez). Acertou, leva a carta — e a ficha de palpite fica guardada do mesmo jeito, pra você usar fora da vez depois.",
+      "👉 Dica pedida em destaque: quando você fala um número, ele salta na tela do Mestre — aceso e balançando — pra ele achar a dica na hora.",
+      "🎂 Idade mais clara nos modos: cada modo mostra a idade num selo próprio, separado das etiquetas Novo, Rápido, online ou Surpresa.",
+      "👥 Alguém desistiu: na pausa, o host pode tirar o jogador só da sala (o aparelho, e ele segue jogando no aparelho do host) ou da partida inteira (os pontos se dividem entre quem fica).",
+    ],
+    qol: [],
+  },
+  {
     v: "Beta 1.7.10.9.4",
     data: "23/10 a 25/10/2026",
     nome: "Multiplayer Update · QoL da Mesa",
