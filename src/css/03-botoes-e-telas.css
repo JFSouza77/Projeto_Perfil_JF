@@ -1277,3 +1277,23 @@ body.batata-mode :is(.jf-toast-overlay.caos-emo.show, .rede-fala)[data-emo] {
   font-size: 0.72rem;
   font-weight: 700;
 }
+/* 26/10/2026 (pedido do JF): o balão da idade anima igual às outras etiquetas (brilho girando na borda e
+   flutuando), mas fica sempre dourado (🎂 varia: roxo), pra idade continuar fácil de achar */
+.mc-age.mc-badge {
+  --mc: #fbbf24;
+  --mc-glow: rgba(251, 191, 36, 0.4);
+  color: #ffe4a3;
+  border: 0;
+}
+.mc-age-varia.mc-badge {
+  --mc: #c084fc;
+  --mc-glow: rgba(192, 132, 252, 0.4);
+  color: #e9d5ff;
+}
+body.claro .mc-age.mc-badge {
+  border: 0;
+  color: #7a4e07;
+}
+body.claro .mc-age-varia.mc-badge {
+  color: #6b21a8;
+}
