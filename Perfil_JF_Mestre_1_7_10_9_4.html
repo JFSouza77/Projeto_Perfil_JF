@@ -2626,8 +2626,34 @@ button {
 .mc-top {
   display: flex;
   align-items: center;
-  
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+}
+/* 25/10/2026 (feedback do JF): idade e "tag" estavam no mesmo selo e confundiam. Agora a idade é um chip
+   🎂 sempre igual (dá pra bater o olho e saber a idade) e Novo/Rápido/online/Surpresa ficam em tags à parte. */
+.mc-chips {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.mc-age {
+  flex: 0 0 auto;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  padding: 3px 9px;
+  border-radius: 999px;
+  color: #ffe4a3;
+  background: rgba(251, 191, 36, 0.16);
+  border: 1px solid rgba(251, 191, 36, 0.6);
+  white-space: nowrap;
+}
+.mc-age-varia {
+  color: #e9d5ff;
+  background: rgba(192, 132, 252, 0.16);
+  border-color: rgba(192, 132, 252, 0.6);
 }
 .mc-title {
   
@@ -3056,7 +3082,56 @@ body.batata-mode #floatingWordsContainer {
   margin-top: 16px;
   opacity: 0.8;
   font-size: 0.85rem;
-  
+
+}
+/* 25/10/2026 (pedido do JF): lista de jogadores na Pausa, com remover da sala / da partida */
+.pause-jogadores {
+  width: 100%;
+  max-width: 420px;
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+.pause-jogadores > summary {
+  cursor: pointer;
+  padding: 8px 0;
+}
+.pj-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 10px;
+  padding: 8px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.pj-nome {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.pj-tag {
+  font-size: 0.72rem;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(34, 211, 238, 0.16);
+  border: 1px solid rgba(34, 211, 238, 0.55);
+  color: #a5f3fc;
+}
+.pj-btns {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.pj-btns .btn-sec {
+  margin: 0;
+  padding: 7px 10px;
+  font-size: 0.8rem;
+}
+.pj-btns .pj-partida {
+  --cc: #f87171;
+  color: #fca5a5;
+  border-color: rgba(248, 113, 113, 0.5);
 }
 .pause-rules summary {
   cursor: pointer;
@@ -7269,6 +7344,17 @@ body.claro .mc-badge {
   color: color-mix(in srgb, var(--mc) 70%, #1b1d33);
   background: color-mix(in srgb, var(--mc) 40%, var(--claro-sup));
 }
+/* chip de idade no tema claro (feedback do JF): âmbar legível sobre fundo claro */
+body.claro .mc-age {
+  color: #7a4e07;
+  background: #fff1cf;
+  border-color: #d79a2a;
+}
+body.claro .mc-age-varia {
+  color: #6b21a8;
+  background: #f3e8ff;
+  border-color: #c084fc;
+}
 body.claro .mc-icon:after {
   background: color-mix(in srgb, var(--mc) 11%, var(--claro-sup));
 }
@@ -9947,7 +10033,6 @@ body.claro button.splash-embreve .eb-sub {
   border: 1px solid #60a5fa;
   text-align: center;
 }
-.number-btn.pedida,
 .telao-numeros .pedida {
   outline: 3px solid #60a5fa;
   outline-offset: 1px;
@@ -9956,8 +10041,31 @@ body.claro button.splash-embreve .eb-sub {
 @keyframes pedidaPulsa {
   50% { transform: scale(1.08); }
 }
+/* 25/10/2026 (pedido do JF): a dica que o jogador pediu tem que SALTAR na tela do mestre — fundo aceso,
+   brilho pulsante e um balanço, pra ele achar o número na hora (ex.: "pediu a dica 17"). */
+.number-btn.pedida {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  font-weight: 800;
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
+  border-color: #93c5fd;
+  outline: 3px solid #bfdbfe;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #2563eb, 0 6px 18px rgba(37, 99, 235, 0.55);
+  transform-origin: center bottom;
+  animation: pedidaChama 1s ease-in-out infinite;
+}
+@keyframes pedidaChama {
+  0%, 100% { transform: scale(1.1) rotate(-4deg); box-shadow: 0 0 0 2px #2563eb, 0 6px 18px rgba(37, 99, 235, 0.55); }
+  25% { transform: scale(1.16) rotate(4deg); }
+  50% { transform: scale(1.1) rotate(-4deg); box-shadow: 0 0 0 3px #60a5fa, 0 10px 26px rgba(59, 130, 246, 0.8); }
+  75% { transform: scale(1.16) rotate(4deg); }
+}
+/* quem pediu "menos movimento" ainda enxerga o número aceso, só sem o balanço */
 @media (prefers-reduced-motion: reduce) {
   .number-btn.pedida, .telao-numeros .pedida { animation: none; }
+  .number-btn.pedida { transform: scale(1.1); }
 }
 
 /* 1.7.10.5.5 (auditoria de botões): "Não, todo mundo neste aparelho" com área de toque de 44 px e legível no Claro */
@@ -11398,14 +11506,14 @@ body.claro .rep-add{color:var(--claro-txt)}
     <div class="welcome-subtitle">Cada modo tem seu próprio ritmo e regras</div>
     
     <div class="mc-list">
-      <div class="mode-select-wrap mc-wrap" id="modeWrapJunior" style="--mc:#38bdf8; --mc-glow:rgba(56,189,248,0.45);"><button class="mode-btn mc-card" id="modeBtnJunior"><span class="mc-icon">🧒</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Júnior</span><span class="mc-badge">6+</span></span><span class="mc-desc" id="mcDescJunior"></span></span></button></div>
-      <div class="mode-select-wrap mc-wrap" id="modeWrapClassico" style="--mc:#34d399; --mc-glow:rgba(52,211,153,0.45);"><button class="mode-btn mc-card" id="modeBtnClassico"><span class="mc-icon">🃏</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Clássico</span><span class="mc-badge">12+</span></span><span class="mc-desc" id="mcDescClassico"></span></span></button></div>
-      <div class="mode-select-wrap mc-wrap" id="modeWrapHardcore" style="--mc:#f87171; --mc-glow:rgba(248,113,113,0.45);"><button class="mode-btn mc-card" id="modeBtnHardcore"><span class="mc-icon">💀</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Hardcore</span><span class="mc-badge">15+</span></span><span class="mc-desc" id="mcDescHardcore"></span></span></button></div>
-      <div class="mode-select-wrap mc-wrap" id="modeWrapOldschool" style="--mc:#d6a15e; --mc-glow:rgba(214,161,94,0.45);"><button class="mode-btn mc-card" id="modeBtnOldschool"><span class="mc-icon">📻</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Old School</span><span class="mc-badge">20+</span></span><span class="mc-desc" id="mcDescOldschool"></span></span></button></div>
-      <div class="mode-select-wrap mc-wrap" id="modeWrapExpress" style="--mc:#f97316; --mc-glow:rgba(249,115,22,0.45);"><button class="mode-btn mc-card" id="modeBtnExpress"><span class="mc-icon">🔥</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Express</span><span class="mc-badge">Rápido</span></span><span class="mc-desc" id="mcDescExpress"></span></span></button></div>
-      <div class="mode-select-wrap mc-wrap" id="modeWrapCorrida" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.45);"><button class="mode-btn mc-card" id="modeBtnCorrida"><span class="mc-icon">⏱️</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Corrida contra o Tempo</span><span class="mc-badge">Novo · 12+</span></span><span class="mc-desc" id="mcDescCorrida"></span></span></button></div>
-      <div class="mode-select-wrap mc-wrap" id="modeWrapCaos" style="--mc:#e879f9; --mc-glow:rgba(232,121,249,0.45);"><button class="mode-btn mc-card" id="modeBtnCaos"><span class="mc-icon">🌀</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Modo C.A.O.S.</span><span class="mc-badge">Novo · 16+ · online</span></span><span class="mc-desc" id="mcDescCaos"></span></span></button></div>
-      <div class="mode-select-wrap mc-wrap mc-rainbow" id="modeWrapRandom" style="--mc:#fbbf24; --mc-glow:rgba(251,191,36,0.45);"><button class="mode-btn mc-card" id="modeBtnRandom"><span class="mc-icon">🎰</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Modo Aleatório</span><span class="mc-badge">Surpresa</span></span><span class="mc-desc" id="mcDescRandom"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="modeWrapJunior" style="--mc:#38bdf8; --mc-glow:rgba(56,189,248,0.45);"><button class="mode-btn mc-card" id="modeBtnJunior"><span class="mc-icon">🧒</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Júnior</span><span class="mc-chips"><span class="mc-age">🎂 6+</span></span></span><span class="mc-desc" id="mcDescJunior"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="modeWrapClassico" style="--mc:#34d399; --mc-glow:rgba(52,211,153,0.45);"><button class="mode-btn mc-card" id="modeBtnClassico"><span class="mc-icon">🃏</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Clássico</span><span class="mc-chips"><span class="mc-age">🎂 12+</span></span></span><span class="mc-desc" id="mcDescClassico"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="modeWrapHardcore" style="--mc:#f87171; --mc-glow:rgba(248,113,113,0.45);"><button class="mode-btn mc-card" id="modeBtnHardcore"><span class="mc-icon">💀</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Hardcore</span><span class="mc-chips"><span class="mc-age">🎂 15+</span></span></span><span class="mc-desc" id="mcDescHardcore"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="modeWrapOldschool" style="--mc:#d6a15e; --mc-glow:rgba(214,161,94,0.45);"><button class="mode-btn mc-card" id="modeBtnOldschool"><span class="mc-icon">📻</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Old School</span><span class="mc-chips"><span class="mc-age">🎂 20+</span></span></span><span class="mc-desc" id="mcDescOldschool"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="modeWrapExpress" style="--mc:#f97316; --mc-glow:rgba(249,115,22,0.45);"><button class="mode-btn mc-card" id="modeBtnExpress"><span class="mc-icon">🔥</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Perfil Express</span><span class="mc-chips"><span class="mc-age">🎂 12+</span><span class="mc-badge">Rápido</span></span></span><span class="mc-desc" id="mcDescExpress"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="modeWrapCorrida" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.45);"><button class="mode-btn mc-card" id="modeBtnCorrida"><span class="mc-icon">⏱️</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Corrida contra o Tempo</span><span class="mc-chips"><span class="mc-age">🎂 12+</span><span class="mc-badge">Novo</span></span></span><span class="mc-desc" id="mcDescCorrida"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap" id="modeWrapCaos" style="--mc:#e879f9; --mc-glow:rgba(232,121,249,0.45);"><button class="mode-btn mc-card" id="modeBtnCaos"><span class="mc-icon">🌀</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Modo C.A.O.S.</span><span class="mc-chips"><span class="mc-age">🎂 16+</span><span class="mc-badge">Novo</span><span class="mc-badge mc-badge-online">🌐 online</span></span></span><span class="mc-desc" id="mcDescCaos"></span></span></button></div>
+      <div class="mode-select-wrap mc-wrap mc-rainbow" id="modeWrapRandom" style="--mc:#fbbf24; --mc-glow:rgba(251,191,36,0.45);"><button class="mode-btn mc-card" id="modeBtnRandom"><span class="mc-icon">🎰</span><span class="mc-body"><span class="mc-top"><span class="mc-title">Modo Aleatório</span><span class="mc-chips"><span class="mc-age mc-age-varia">🎂 varia</span><span class="mc-badge">Surpresa</span></span></span><span class="mc-desc" id="mcDescRandom"></span></span></button></div>
     </div>
     <button class="btn-start mc-confirm btn-neo" id="modeConfirmBtn" style="display:none;">🚀 Iniciar</button>
     <button type="button" class="mc-back" id="modeBackBtn">← Trocar formato (Versus / Equipe)</button>
@@ -11502,6 +11610,11 @@ body.claro .rep-add{color:var(--claro-txt)}
       <button class="btn-sec" id="pauseReportarBtn" type="button">⚑ Reportar esta carta (fato errado, entrega a resposta…)</button>
       <!-- 25/10/2026: bug da partida, com o retrato do estado anexado (src/js/05u) -->
       <button class="btn-sec" id="pauseProblemaBtn" type="button">🐞 Reportar um problema (travou, botão, placar…)</button>
+      <!-- 25/10/2026 (pedido do JF): quem desistiu? remover da sala (só o aparelho) ou da partida (sai de vez) -->
+      <details class="pause-jogadores">
+        <summary>👥 Jogadores (alguém desistiu?)</summary>
+        <div id="pauseJogadoresBox"></div>
+      </details>
       <details class="pause-rules">
         <summary>📋 Resumo das regras desta partida</summary>
         <ul id="pauseRulesList"></ul>
@@ -12690,7 +12803,7 @@ function jogoSiteAtual() {
   } catch (e) {}
   return JOGO_SITE;
 }
-const ADM_CRIADOR_HASH = "f10d7ed5";
+const ADM_CRIADOR_HASH = "c408159f";
 const CAOS_PAUSA_DEGRAUS = [
   { s: 40, emo: "tedio", d: [0, -0.5, -0.5] },
   { s: 90, emo: "espiando", d: [0.5, -0.5, -1] },
@@ -12751,6 +12864,9 @@ let pendingIndex = null;
 let palpiteStock;
 // atribuído em iniciar()
 let palpiteHolders = {};
+// 25/10/2026 (pedido do JF): quando alguém tira a especial "palpite a qualquer hora", é a vez dele — pode
+// responder a carta normalmente em vez de só passar. Marca essa resposta pra o markCorrect valer no especial.
+let respondendoEspecialNaVez = false;
 let timerInterval = null;
 let timerEndAt = null;
 let timerKind = null;
@@ -13804,6 +13920,16 @@ function specialIsVoid(item) {
     return !(e && (e.palpiteResult === "ganhou" || e.palpiteResult === "fominha"));
   }
   return false;
+}
+// 25/10/2026 (pedido do JF): quem tirou a especial "palpite a qualquer hora" está na vez — pode responder a
+// carta agora (com as dicas já abertas) em vez de só passar. Vale nos modos de tabuleiro e com pelo menos uma
+// dica aberta pra chutar. (Express/Corrida têm fluxo próprio de especial; aqui fica de fora.)
+function palpitePodeResponderNaVez() {
+  if (pendingIndex === null || cardState !== "revealed" || !currentCard) return false;
+  if (CURRENT_MODE === "express" || CURRENT_MODE === "corrida" || currentCard.isBonus) return false;
+  const item = currentCard.clues[pendingIndex];
+  if (!item || item.type !== "special" || !isWildcardSpecial(item.text) || specialIsVoid(item)) return false;
+  return revealedOrder.some((r) => r.item && r.item.type === "clue");
 }
 function expressTimes() {
   return EXPRESS_TIMES[expressFlavor === "hardcore" ? "hardcore" : "classico"];
@@ -14966,7 +15092,9 @@ function cartaPartidaRegistrar(quemIdx, dicas, dicaIdx) {
 function markCorrect(playerIdxOverride) {
   if (pendingIndex === null || gameEnded) return;
   const item = currentCard.clues[pendingIndex];
-  if (item.type !== "clue") return;
+  // normalmente só dica abre acerto; mas quem tirou a especial "palpite a qualquer hora" está na vez e pode
+  // responder a carta (acerta com as dicas já abertas e mantém a ficha, que nunca é consumida aqui)
+  if (item.type !== "clue" && !(respondendoEspecialNaVez && item.type === "special")) return;
   mestreObsVeredito();
   let scorerIdx = responderIndex;
   if (playerIdxOverride !== void 0 && playerIdxOverride !== null) {
@@ -15399,6 +15527,17 @@ function cancelBonusCard() {
   showToastMessage(msg, () => {
     if (!gameEnded && cardState === "none") checkWinnerThenDraw();
   });
+}
+// 25/10/2026 (pedido do JF): é a vez de quem tirou "palpite a qualquer hora" — se ele quiser responder a
+// carta agora (com as dicas já abertas), pode. Acertou = ganha a carta normalmente e NÃO perde a ficha (ela
+// só some quando usada fora da vez). Errou = passa a vez pelo "Passar a vez", que também mantém a ficha.
+function acertarNaVezAposEspecial() {
+  if (pendingIndex === null || gameEnded) return;
+  const item = currentCard.clues[pendingIndex];
+  if (item.type !== "special" || !isWildcardSpecial(item.text) || specialIsVoid(item)) return;
+  respondendoEspecialNaVez = true;
+  markCorrect(); // scorerIdx = responderIndex (sem override) → não consome palpite
+  respondendoEspecialNaVez = false;
 }
 function loseTurnAfterSpecial() {
   if (pendingIndex === null || gameEnded) return;
@@ -17383,7 +17522,7 @@ function render() {
               const e = revealedOrder.find((r) => r.index === pendingIndex);
               const res = e ? e.palpiteResult : null;
               if (res === "ganhou")
-                return `${responderName} guardou uma <b>ficha de ${CURRENT_MODE === "corrida" ? "Rouba a vez" : "palpite"}</b> 🃏 — ela vale o jogo inteiro, até ser usada (fichas no estoque agora: ${palpiteStock}). A vez passa normalmente.`;
+                return `${responderName} guardou uma <b>ficha de ${CURRENT_MODE === "corrida" ? "Rouba a vez" : "palpite"}</b> 🃏 — ela vale o jogo inteiro, até ser usada (fichas no estoque agora: ${palpiteStock}).${palpitePodeResponderNaVez() ? ` Mas é a vez de ${responderName}: dá pra <b>responder a carta agora</b> se quiser — a ficha fica guardada do mesmo jeito.` : " A vez passa normalmente."}`;
               if (res === "fominha")
                 return `${responderName} já tem uma ficha de ${CURRENT_MODE === "corrida" ? "Rouba a vez" : "palpite"} 🃏 — cada um guarda no máximo <b>uma</b>. A instrução não vale, ${responderName} perde a vez e a ficha fica no estoque.`;
               if (res === "sem-estoque")
@@ -17393,7 +17532,7 @@ function render() {
                 : "O palpite a qualquer hora não vale neste modo — a instrução fica sem efeito. Quem tirou não perde a vez: escolha outra dica.";
             })()}</div>
             ${spotlightTimerHtml}
-            ${specialIsVoid(item) ? `<button class="continue-btn" id="continueSpecialBtn">→ Continuar, ${responderName} escolhe outra dica</button>` : `<button class="continue-btn" id="loseTurnBtn">→ Passar a vez</button>`}`;
+            ${specialIsVoid(item) ? `<button class="continue-btn" id="continueSpecialBtn">→ Continuar, ${responderName} escolhe outra dica</button>` : `${palpitePodeResponderNaVez() ? `<button class="btn-correct btn-acao" id="respNaVezBtn">✓ ${responderName} vai responder agora (é a vez dele)</button>` : ""}<button class="continue-btn" id="loseTurnBtn">→ Passar a vez${palpitePodeResponderNaVez() ? " (a ficha fica guardada)" : ""}</button>`}`;
         } else if (CONTINUE_SAME_PLAYER_SPECIALS.has(item.text)) {
           controlsHtml = `
             <div class="pending-box spotlight-box"><span class="pending-num">Dica ${num}:</span> ⭐ ${item.text}</div>
@@ -17664,8 +17803,10 @@ function render() {
       if (item.type === "special") {
         const loseTurnBtn = document.getElementById("loseTurnBtn");
         const continueBtn = document.getElementById("continueSpecialBtn");
+        const respNaVezBtn = document.getElementById("respNaVezBtn");
         if (continueBtn) continueBtn.addEventListener("click", continueAfterSpecial);
         if (loseTurnBtn) loseTurnBtn.addEventListener("click", loseTurnAfterSpecial);
+        if (respNaVezBtn) respNaVezBtn.addEventListener("click", acertarNaVezAposEspecial);
       } else if (CURRENT_MODE !== "express") {
         document.getElementById("correctBtn")?.addEventListener("click", function () {
           markCorrect(parseInt(this.dataset.scorer));
@@ -20254,6 +20395,7 @@ function showPauseScreen() {
   const rl = document.getElementById("pauseRulesList");
   if (rl) rl.innerHTML = buildRulesHtml();
   pausaAjustesAtualizar();
+  pauseJogadoresAtualizar();
   tutPausaAtualizar();
   const bv = document.getElementById("pauseVitoriaBtn");
   if (bv) bv.style.display = CURRENT_MODE === "express" ? "none" : "";
@@ -20422,6 +20564,62 @@ function updateNoturnoBtn() {
   pausaAjustesAtualizar();
 }
 // Pausa: trocar o visual e calar/ligar a voz sem sair da partida.
+// 25/10/2026 (pedido do JF): alguém desistiu no meio do jogo. O host tem, na Pausa, duas opções por jogador:
+//  · "Remover da sala": só tira o aparelho do assento (online) — a pessoa continua na partida, jogando no host;
+//  · "Remover da partida": sai de vez (os pontos são divididos entre quem fica). Essa sempre pede confirmação.
+function pauseJogadoresAtualizar() {
+  const box = document.getElementById("pauseJogadoresBox");
+  if (!box) return;
+  const nota = (txt) => (box.innerHTML = `<div class="ci-empty">${txt}</div>`);
+  if (!starterChosen || gameEnded) return nota('Só durante a partida. (Antes de começar, use o "remover" na lista de jogadores.)');
+  if (CURRENT_FORMAT === "equipe") return nota("No Equipe não dá: as equipes precisam ficar do mesmo tamanho.");
+  if (players.length <= 2) return nota("Com 2 jogadores não dá pra tirar ninguém — a partida precisa de pelo menos 2.");
+  box.innerHTML = "";
+  const online = typeof rede !== "undefined" && rede && rede.papel === "host";
+  players.forEach((p, i) => {
+    const row = document.createElement("div");
+    row.className = "pj-row";
+    const naSala = online && !redeNoHost(p.id) && redeOnline(rede.assentos[p.id]);
+    row.innerHTML =
+      `<div class="pj-nome">${playerNameHtml(p.name, p.color, p.avatar)} <span class="ci-mono ci-dim">${p.score} pts</span>${naSala ? ' <span class="pj-tag">📱 na sala</span>' : ""}</div>` +
+      `<div class="pj-btns">` +
+      (naSala ? `<button type="button" class="btn-sec pj-sala" data-i="${i}">📴 Remover da sala</button>` : "") +
+      `<button type="button" class="btn-sec pj-partida" data-i="${i}">🚪 Remover da partida</button></div>`;
+    box.appendChild(row);
+  });
+  box.querySelectorAll(".pj-sala").forEach((b) =>
+    b.addEventListener("click", () => {
+      const p = players[+b.dataset.i];
+      const r = typeof redeRemoverDaSala === "function" ? redeRemoverDaSala(+b.dataset.i) : "sem_sala";
+      if (r === "ok") showToastMessage(`📴 ${escapeHtml(p ? p.name : "")} saiu da sala — segue na partida jogando neste aparelho.`, null, true);
+      else caosAvisoModal("Esse jogador não está com aparelho próprio na sala agora.");
+      pauseJogadoresAtualizar();
+    }),
+  );
+  box.querySelectorAll(".pj-partida").forEach((b) =>
+    b.addEventListener("click", () => {
+      const i = +b.dataset.i,
+        p = players[i];
+      if (!p) return;
+      const resto = players.length - 1,
+        parte = Math.floor(p.score / resto),
+        sobra = p.score - parte * resto;
+      caosConfirmarModal(
+        `Remover ${p.name} da partida?
+
+Os ${p.score} pontos vão ser divididos: +${parte} pra cada um dos ${resto} que ficam${sobra ? `, e ${sobra} vão pro cofrinho do C.A.O.S.` : ""}.${currentCard ? "\nA carta da mesa volta pro baralho e o Mestre puxa outra." : ""}`,
+        "Remover",
+        "Cancelar",
+        () => {
+          const r = admRemoverJogador(i);
+          if (r !== "ok") caosAvisoModal("Não deu pra remover: " + r);
+          else if (typeof redeHostCadastroMudou === "function") redeHostCadastroMudou();
+          pauseJogadoresAtualizar();
+        },
+      );
+    }),
+  );
+}
 function pausaAjustesAtualizar() {
   const t = document.getElementById("pauseTemaBtn"),
     v = document.getElementById("pauseVozBtn");
@@ -21681,6 +21879,7 @@ const ACOES = {
   pedirDica: { fn: "pedirDica", pode: (idx) => acoesEmJogo() && cardState === "revealed" && pendingIndex === null && acoesDicaLivre(idx) },
   especialSeguir: { fn: "continueAfterSpecial", pode: () => acoesComDica() },
   especialPerdeVez: { fn: "loseTurnAfterSpecial", pode: () => acoesComDica() },
+  acertouNaVez: { fn: "acertarNaVezAposEspecial", pode: () => acoesComDica() && palpitePodeResponderNaVez() },
   // 1.7.9: mover só com a especial de mover aberta, o valor dela e um alvo permitido (antes: qualquer
   // jogador e qualquer valor, a qualquer hora)
   moverJogador: { fn: "applySpecialMove", pode: (alvo, n) => acoesMovimentoValido(alvo, n) },
@@ -24774,6 +24973,30 @@ function redeHostCadastroMudou() {
   const p = document.getElementById("redePainel");
   if (p && typeof p._pintar === "function") p._pintar();
 }
+// 25/10/2026 (pedido do JF): "remover da sala" — o host tira só o APARELHO do assento; o jogador continua na
+// partida, jogando no aparelho do host (entra em hostJunto). O lugar fica livre; se a pessoa quiser o próprio
+// aparelho de volta, é só reentrar pela sala. Diferente de "remover da partida" (admRemoverJogador).
+function redeRemoverDaSala(idx) {
+  const p = players[idx];
+  if (!p) return "sem_jogador";
+  if (typeof rede === "undefined" || !rede || rede.papel !== "host") return "sem_sala";
+  const a = rede.assentos[p.id];
+  if (redeNoHost(p.id) || !redeOnline(a)) return "nao_online";
+  // libera o assento e manda o aparelho de volta pra tela de escolher lugar
+  delete rede.assentos[p.id];
+  if (a && a.sessao) {
+    delete rede.esperando[a.sessao];
+    redeMandarEscolha(a.sessao);
+  }
+  // passa a jogar no host (redeNoHost), pra não ficar "sem aparelho" no meio da partida
+  rede.hostJunto = rede.hostJunto || [];
+  if (!rede.hostJunto.includes(p.id)) rede.hostJunto.push(p.id);
+  caosLog("rede", `${p.name}: removido da sala (segue no host)`);
+  redeHostCadastroMudou();
+  render();
+  saveGameState();
+  return "ok";
+}
 function redeHostReceber(m) {
   if (!redeRitmoOk(m.de)) return; // 1.7.9.7: sessão mandando demais
   const a = redeAssentoDaSessao(m.de);
@@ -25242,7 +25465,7 @@ function dicaSegurarParaForcar(grid, aoSegurar) {
 // Quem pode mandar o quê (o host confere antes da porta de sempre).
 const REDE_SO_MESTRE = [
   "sacarCarta", "virarCarta", "roletaCategoria", "acertou", "errou", "palpiteAcertou", "palpiteErrou", "especialSeguir",
-  "especialPerdeVez", "moverJogador", "moverEquipe", "descartarCarta", "desistirCarta", "desfazer", "expressPassar",
+  "especialPerdeVez", "acertouNaVez", "moverJogador", "moverEquipe", "descartarCarta", "desistirCarta", "desfazer", "expressPassar",
   "expressPular", "expressInverter", "expressMirar", "expressAlvo", "corridaProxima",
 ];
 const REDE_QUALQUER_UM = ["pausar", "continuar"];
@@ -25365,7 +25588,11 @@ function redeOpcoes(jid) {
           else add("especialPerdeVez", [], "➡️ Passar a vez", "nao");
         } else if (isWildcardSpecial(item.text)) {
           if (specialIsVoid(item)) add("especialSeguir", [], "→ Continuar, escolhe outra dica", "ok");
-          else add("especialPerdeVez", [], "→ Passar a vez", "nao");
+          else {
+            // 25/10/2026 (pedido do JF): é a vez de quem tirou o palpite — ele pode responder a carta agora
+            if (palpitePodeResponderNaVez()) add("acertouNaVez", [], `✓ ${nome(resp)} vai responder agora (é a vez dele)`, "ok");
+            add("especialPerdeVez", [], `→ Passar a vez${palpitePodeResponderNaVez() ? " (a ficha fica guardada)" : ""}`, "nao");
+          }
         } else if (CONTINUE_SAME_PLAYER_SPECIALS.has(item.text)) add("especialSeguir", [], "→ Continuar, escolhe outra dica", "ok");
         else {
           const mv = acoesMovimento();

@@ -14,7 +14,7 @@
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1845;
+const JOGO_BUILD = 1846;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -1049,7 +1049,7 @@ function jogoSiteAtual() {
   } catch (e) {}
   return JOGO_SITE;
 }
-const ADM_CRIADOR_HASH = "f10d7ed5";
+const ADM_CRIADOR_HASH = "c408159f";
 const CAOS_PAUSA_DEGRAUS = [
   { s: 40, emo: "tedio", d: [0, -0.5, -0.5] },
   { s: 90, emo: "espiando", d: [0.5, -0.5, -1] },
