@@ -2203,3 +2203,20 @@ body::before {
   color: #1b1b2f;
   text-shadow: none;
 }
+/* 29/10/2026 (print 3 do JF): a sala do link não existe mais */
+.rede-sala-velha {
+  margin: 10px auto;
+  max-width: 520px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(250, 204, 21, 0.12);
+  border: 1px solid #facc15;
+  text-align: center;
+  line-height: 1.4;
+}
+.rede-sala-velha .rede-lugar {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+}
+

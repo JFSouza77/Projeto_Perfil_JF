@@ -2942,7 +2942,23 @@ function redeConvidadoDesenhar() {
     return;
   }
   if (rede.estado !== "dentro" || !rede.retrato) {
-    box.innerHTML = `${sala}<div class="telao-espera">Entrando na sala…</div>${redeSairHtml()}`;
+    // 29/10/2026 (print 3 do JF): o celular reabriu um link velho (sala PXLG) e ficou procurando pra sempre. Quando a
+    // sala não aparece, a tela explica e oferece digitar o código novo.
+    const sumiu = (rede.transporte || {}).estado === "sem_sala";
+    box.innerHTML =
+      `${sala}<div class="telao-espera">Entrando na sala…</div>` +
+      (sumiu
+        ? `<div class="rede-sala-velha">🤔 Não achei a sala <b>${escapeHtml(rede.sala)}</b>. Se o host abriu uma sala nova, o código mudou.<button type="button" class="rede-lugar" id="redeOutroCodigo">🔢 Entrar com outro código</button></div>`
+        : "") +
+      redeSairHtml();
+    const outro = box.querySelector("#redeOutroCodigo");
+    if (outro)
+      outro.addEventListener("click", () => {
+        try {
+          sessionStorage.setItem("perfil_jf_abrir_codigo", "1");
+        } catch (e) {}
+        redeSairDaSala();
+      });
     return;
   }
   // 1.7.9.4: sala aberta antes da partida: espera o host terminar o cadastro e começar
@@ -3774,3 +3790,11 @@ function redePainelHost() {
   ov._montado = true;
   document.body.appendChild(ov);
 }
+// 29/10/2026: "Entrar com outro código" recarrega a página sem a sala velha e já abre a caixa do código
+window.addEventListener("load", () => {
+  try {
+    if (sessionStorage.getItem("perfil_jf_abrir_codigo") !== "1") return;
+    sessionStorage.removeItem("perfil_jf_abrir_codigo");
+    if (!redeSalaDoEndereco()) setTimeout(() => typeof redeEntrarPorCodigo === "function" && redeEntrarPorCodigo(), 600);
+  } catch (e) {}
+});

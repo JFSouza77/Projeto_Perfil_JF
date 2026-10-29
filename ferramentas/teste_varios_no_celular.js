@@ -159,6 +159,18 @@ const ARQ = acharMestre(process.argv[2]);
   await g.evaluate((e) => redeConvDefinirAtivo(e), elisaId);
   conf("T2 viva: na própria vez, a fala de espera some", await g.evaluate(() => !document.getElementById("redeCaosEspera")));
 
+  // 29/10/2026 (print 3 do JF): link de sala velha: a tela explica e oferece digitar outro código
+  conf("Sala do link não existe: a tela oferece 'Entrar com outro código'", await g.evaluate(() => {
+    const est = rede.estado, te = rede.transporte.estado;
+    rede.estado = "entrando";
+    rede.transporte.estado = "sem_sala";
+    redeConvidadoDesenhar();
+    const ok = !!document.getElementById("redeOutroCodigo") && /Não achei a sala/.test(document.getElementById("telao").textContent);
+    rede.estado = est;
+    rede.transporte.estado = te;
+    redeConvidadoDesenhar();
+    return ok;
+  }));
   await b.close();
   let tudo = true;
   ok.forEach(([n, v]) => {
