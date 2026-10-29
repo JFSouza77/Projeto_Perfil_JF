@@ -11,6 +11,33 @@ pra poupar créditos. Só corrige na hora o que ele pedir "pra agora", e só aqu
   dizer a categoria" até ele mostrar. O Mestre continua vendo a categoria. Teste novo em `teste_telao.js` (falha na
   versão antiga). Commitado no v1.9, **ainda não publicado**.
 
+## Patches de quinta, 29/10 (v1.9, ainda não publicados)
+
+Feito, com teste:
+- [x] Dica escolhida na tela do Mestre: sem balanço; respira e flutua devagar.
+- [x] T2 no iPhone: faixa da cor do fundo na área da hora/bateria (o conteúdo não passa mais por baixo).
+- [x] Balão do C.A.O.S. no celular foi pra baixo da tela (não cobre mais Mestre/vez/categoria).
+- [x] "Pergunte ao C.A.O.S.": a resposta vem com o rosto dele.
+- [x] Falas do cadastro de nomes (nickDemora e cia.) ficam só no host; não vão pra quem espera a sala.
+- [x] Intervalo na T2: sem "sorteando…", sem "pausado", sem "Sua vez"; sem o quadro repetido com a roleta "???".
+- [x] Intervalo do host: "Próxima carta" centralizado e grande, embaixo do relógio.
+- [x] T2 com uma grade só de números; a dica pedida fica acesa e as outras apagam.
+- [x] Categoria uma vez só na T2; "Neste aparelho: JF · Vez de JF" sem repetir a vez.
+- [x] Resposta legível no celular do Mestre; "Virar a carta" grande e pulsando também na carta virada.
+- [x] **Dica errada aberta**: causa provável achada. Se a T2 se redesenha no meio do toque, o "clique" do celular
+  caía no botão novo embaixo do dedo (os números mudam de lugar quando uma dica abre); e o botão usava a lista de
+  ações do momento do toque, não a desenhada. Agora só vale o toque que começou no próprio botão, e a ação é a
+  desenhada.
+- [x] Sala velha no link (print 3): a tela diz que não achou a sala e oferece "Entrar com outro código".
+
+Ficou pra perguntar ao JF:
+- [ ] **Host entrou errado**: não reproduzi. Sala nova começa sem lugares guardados e, quando a partida começa, quem
+  não tem celular vai pro host sozinho. Preciso de print da tela que pediu a escolha (era no PC ou no celular?).
+- [ ] Print 8: "SUA VEZ! ANNE" aparece antes de o Mestre mostrar a carta. Esconder até a carta ser mostrada?
+- [ ] Prints 11 e 12: no intervalo, a próxima Mestre já vê a resposta e o "Virar a carta". Separar (só depois do
+  intervalo) ou manter (dá pra começar antes)?
+- [ ] Vez da Elisa pulada (tablet do João Carlos): esperando prints.
+
 ## Bugs (do teste de mesa de domingo, 25/10, com as crianças)
 
 - [ ] **Dica errada aberta** (T2): pediram a dica X e abriu a Y, sem o Mestre forçar. O JF não tem 100% de certeza.
