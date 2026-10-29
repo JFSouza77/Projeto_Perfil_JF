@@ -78,6 +78,19 @@ const ARQ = acharMestre(process.argv[2]);
     box.remove();
     return some && apagada && acesa && redeOpPedida({ a: "pedirDica", t: "👉 2" }) && !redeOpPedida({ a: "pedirDica", t: "3" });
   }));
+  conf("Toque que começou antes de a tela se redesenhar não aciona o botão novo (dica errada, 29/10/2026)", await host.evaluate(() => {
+    let n = 0;
+    const b = document.createElement("button");
+    document.body.appendChild(b);
+    redeToqueSeguro(b, () => n++);
+    b.dispatchEvent(new MouseEvent("click", { bubbles: true, detail: 1 })); // dedo desceu em outro botão (o velho)
+    const fantasma = n;
+    b.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
+    b.dispatchEvent(new MouseEvent("click", { bubbles: true, detail: 1 })); // toque de verdade
+    b.click(); // teclado / leitor de tela
+    b.remove();
+    return fantasma === 0 && n === 2;
+  }));
   conf("Pergunta ao C.A.O.S.: a resposta vem com o rosto dele (29/10/2026)", await g.evaluate(() => { const f = document.querySelector("#redeCaosResp .rede-fala-rosto"); return !!f && f.textContent.trim().length > 0 && f.textContent.trim() !== "🤖"; }));
   conf("Pergunta ao C.A.O.S.: ele responde na tela", await g.evaluate(() => { const r = document.getElementById("redeCaosResp"); return !!r && !r.hidden && !/=>|CAOS_PREFIXO|function/.test(r.textContent) && REACTIVE_VOICE.esperaSala.oQueFaco.some((t) => r.textContent.includes(redeFalaTexto(t))); }));
   await g.evaluate(() => document.getElementById("redeTutRapido").click());

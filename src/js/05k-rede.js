@@ -2125,7 +2125,7 @@ function redeHostVista() {
     dispatchAction({ type: acao, data: dados, commandId: "h_" + redeAleatorio(12), expectedRevision: partidaRevisao, actorId: quem });
   };
   barra.querySelectorAll("[data-op]").forEach((b) =>
-    b.addEventListener("click", () => {
+    redeToqueSeguro(b, () => {
       const o = ops[+b.dataset.op];
       if (o) agir(o.quem, o.a, o.d);
     }),
@@ -3005,9 +3005,11 @@ function redeConvidadoDesenhar() {
   if (topo) topo.after(barra);
   else box.appendChild(barra);
   barra.querySelectorAll("[data-ativo]").forEach((b) => b.addEventListener("click", () => redeConvDefinirAtivo(b.dataset.ativo)));
+  // a lista de ações é a que foi desenhada (antes era a do momento do toque: se o painel mudou, ia outra ação)
+  const opsDesenhadas = (rede.painel && rede.painel.opcoes) || [];
   barra.querySelectorAll("[data-op]").forEach((b) =>
-    b.addEventListener("click", () => {
-      const o = rede.painel && rede.painel.opcoes[+b.dataset.op];
+    redeToqueSeguro(b, () => {
+      const o = opsDesenhadas[+b.dataset.op];
       if (o) redeMandar(o.a, ...o.d);
     }),
   );
@@ -3018,7 +3020,7 @@ function redeConvidadoDesenhar() {
     }),
   );
   barra.querySelectorAll(".lp-barra[data-ate]").forEach((x) => (x.style.width = x.dataset.ate + "%"));
-  barra.querySelectorAll("[data-dica]").forEach((b) => b.addEventListener("click", () => redeMandar("escolherDica", +b.dataset.dica)));
+  barra.querySelectorAll("[data-dica]").forEach((b) => redeToqueSeguro(b, () => redeMandar("escolherDica", +b.dataset.dica)));
   barra.querySelectorAll("[data-voto]").forEach((b) => b.addEventListener("click", () => redeVotarConvidado(b.dataset.voto === "1") && redeConvidadoDesenhar()));
   redeConvidadoTiques();
 }
@@ -3109,12 +3111,12 @@ function redeMestreCartaMontar(box) {
   if (typeof telaoRoletaAnimar === "function") telaoRoletaAnimar(sec);
   sec.querySelectorAll("[data-ativo]").forEach((b) => b.addEventListener("click", () => redeConvDefinirAtivo(b.dataset.ativo)));
   sec.querySelectorAll("[data-op]").forEach((b) =>
-    b.addEventListener("click", () => {
+    redeToqueSeguro(b, () => {
       const o = ops[+b.dataset.op];
       if (o) redeMandar(o.a, ...o.d);
     }),
   );
-  sec.querySelectorAll(".number-btn[data-dica]:not(.aberta):not(.travada)").forEach((b) => b.addEventListener("click", () => redeMandar("escolherDica", +b.dataset.dica)));
+  sec.querySelectorAll(".number-btn[data-dica]:not(.aberta):not(.travada)").forEach((b) => redeToqueSeguro(b, () => redeMandar("escolherDica", +b.dataset.dica)));
   const gradeEl = sec.querySelector(".number-grid");
   if (gradeEl)
     dicaSegurarParaForcar(gradeEl, (idx) => {
@@ -3335,6 +3337,19 @@ function redePapelHtml(papel, nome) {
 function redeEuPapelTxt(r, papel) {
   if (r.intervalo) return papel.mestre ? " · 🎙️ Mestre da próxima carta" : papel.vez ? " · 👉 Você começa a próxima carta" : "";
   return papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 Sua vez" : "";
+}
+// 29/10/2026 (relato do JF: "pediram a dica X e abriu a Y"): se a tela se redesenha no meio do toque, o "click" do
+// celular cai no botão NOVO que ficou embaixo do dedo (os números mudam de lugar quando uma dica abre). Só vale o
+// toque que começou no próprio botão; teclado (sem ponteiro) continua valendo.
+function redeToqueSeguro(el, fn) {
+  if (!el) return;
+  el.addEventListener("pointerdown", () => (el._redeToque = true));
+  el.addEventListener("click", (ev) => {
+    const teclado = ev && ev.detail === 0;
+    if (!teclado && !el._redeToque) return;
+    el._redeToque = false;
+    fn(ev);
+  });
 }
 // O número de dica que a pessoa já pediu (o host manda com "👉 " na frente): fica em destaque e os outros apagam
 function redeOpPedida(o) {
