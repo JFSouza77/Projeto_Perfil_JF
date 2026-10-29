@@ -30,6 +30,10 @@ Feito, com teste:
   desenhada.
 - [x] Sala velha no link (print 3): a tela diz que não achou a sala e oferece "Entrar com outro código".
 
+Bateria de quinta (29/10): todos os testes OK, inclusive voz, contas e online com o servidor local. Exceção: no
+online completo, a "Corrida · Tempo Hardcore até o fim" travou uma vez (carta virada, intervalo da Corrida aberto,
+relógio parado, 360 s). Repetida sozinha, passou 14/14. Intermitente; fica de olho no próximo debug.
+
 Ficou pra perguntar ao JF:
 - [ ] **Host entrou errado**: não reproduzi. Sala nova começa sem lugares guardados e, quando a partida começa, quem
   não tem celular vai pro host sozinho. Preciso de print da tela que pediu a escolha (era no PC ou no celular?).
