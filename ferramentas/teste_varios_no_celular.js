@@ -58,6 +58,16 @@ const ARQ = acharMestre(process.argv[2]);
   // tela de espera (o host ainda não aceitou): dica, tutorial e perguntas pro C.A.O.S.
   conf("Esperando o host: dica, tutorial e 5 perguntas na tela", await esperar(g, () => rede.estado === "aguardando" && !!document.getElementById("redeDicaEspera") && !!document.getElementById("redeTutRapido") && document.querySelectorAll("[data-perg]").length === 5));
   await g.evaluate(() => document.querySelector('[data-perg="oQueFaco"]').click());
+  conf("Falas do cadastro de nomes (nick*) ficam só no host; as da partida vão pros celulares (29/10/2026)", await host.evaluate(() => {
+    const t = REACTIVE_VOICE.nickDemora.media.map((x) => redeFalaTexto(x)).find((x) => /Tubarão Foguete/.test(x));
+    caosLastPick = { bank: "nickDemora.media", text: "[C.A.O.S.] " + t, at: Date.now() };
+    const soHost = redeFalaSoDoHost({ texto: "[C.A.O.S.] " + t });
+    caosLastPick = { bank: "acerto.rapido", text: "[C.A.O.S.] Acertou rápido!", at: Date.now() };
+    const vai = !redeFalaSoDoHost({ texto: "[C.A.O.S.] Acertou rápido!" });
+    caosLastPick = null;
+    return soHost && vai;
+  }));
+  conf("Pergunta ao C.A.O.S.: a resposta vem com o rosto dele (29/10/2026)", await g.evaluate(() => { const f = document.querySelector("#redeCaosResp .rede-fala-rosto"); return !!f && f.textContent.trim().length > 0 && f.textContent.trim() !== "🤖"; }));
   conf("Pergunta ao C.A.O.S.: ele responde na tela", await g.evaluate(() => { const r = document.getElementById("redeCaosResp"); return !!r && !r.hidden && !/=>|CAOS_PREFIXO|function/.test(r.textContent) && REACTIVE_VOICE.esperaSala.oQueFaco.some((t) => r.textContent.includes(redeFalaTexto(t))); }));
   await g.evaluate(() => document.getElementById("redeTutRapido").click());
   conf("Tutorial rápido abre no celular", await g.evaluate(() => !!document.getElementById("tutorialOverlay")));

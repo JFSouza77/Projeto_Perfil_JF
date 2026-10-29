@@ -257,11 +257,12 @@ body.claro .rede-host-vista {
   margin: 0 auto;
   box-sizing: border-box;
 }
-/* 1.7.9.6 · Fala do C.A.O.S. no celular do convidado */
+/* 1.7.9.6 · Fala do C.A.O.S. no celular do convidado.
+   29/10/2026 (prints 9, 11 e 13 do JF): o balão cobria o topo da T2 (Mestre, vez e categoria); agora fica embaixo. */
 .rede-fala {
   position: fixed;
   left: 50%;
-  top: calc(10px + env(safe-area-inset-top, 0px));
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
   transform: translateX(-50%);
   z-index: 10001;
   width: min(92vw, 560px);
@@ -573,13 +574,13 @@ body.claro button.splash-embreve .eb-sub {
 .telao-numeros .pedida {
   outline: 3px solid #60a5fa;
   outline-offset: 1px;
-  animation: pedidaPulsa 1.1s ease-in-out infinite;
+  animation: pedidaPulsa 2.4s ease-in-out infinite;
 }
 @keyframes pedidaPulsa {
-  50% { transform: scale(1.08); }
+  50% { transform: scale(1.05); }
 }
-/* 25/10/2026 (pedido do JF): a dica que o jogador pediu tem que SALTAR na tela do mestre — fundo aceso,
-   brilho pulsante e um balanço, pra ele achar o número na hora (ex.: "pediu a dica 17"). */
+/* 25/10/2026 (pedido do JF): a dica que o jogador pediu fica acesa na tela do mestre, pra ele achar o número na hora.
+   29/10/2026 (pedido do JF): sem balanço; ela flutua e respira devagar, discreta, mas ainda em destaque. */
 .number-btn.pedida {
   position: relative;
   z-index: 1;
@@ -589,15 +590,13 @@ body.claro button.splash-embreve .eb-sub {
   border-color: #93c5fd;
   outline: 3px solid #bfdbfe;
   outline-offset: 2px;
-  box-shadow: 0 0 0 2px #2563eb, 0 6px 18px rgba(37, 99, 235, 0.55);
-  transform-origin: center bottom;
-  animation: pedidaChama 1s ease-in-out infinite;
+  box-shadow: 0 0 0 2px #2563eb, 0 6px 18px rgba(37, 99, 235, 0.5);
+  transform: scale(1.08);
+  animation: pedidaRespira 2.4s ease-in-out infinite;
 }
-@keyframes pedidaChama {
-  0%, 100% { transform: scale(1.1) rotate(-4deg); box-shadow: 0 0 0 2px #2563eb, 0 6px 18px rgba(37, 99, 235, 0.55); }
-  25% { transform: scale(1.16) rotate(4deg); }
-  50% { transform: scale(1.1) rotate(-4deg); box-shadow: 0 0 0 3px #60a5fa, 0 10px 26px rgba(59, 130, 246, 0.8); }
-  75% { transform: scale(1.16) rotate(4deg); }
+@keyframes pedidaRespira {
+  0%, 100% { transform: scale(1.08) translateY(0); box-shadow: 0 0 0 2px #2563eb, 0 6px 16px rgba(37, 99, 235, 0.45); }
+  50% { transform: scale(1.1) translateY(-2px); box-shadow: 0 0 0 3px #60a5fa, 0 10px 24px rgba(59, 130, 246, 0.7); }
 }
 /* quem pediu "menos movimento" ainda enxerga o número aceso, só sem o balanço */
 @media (prefers-reduced-motion: reduce) {
@@ -1086,7 +1085,7 @@ body.claro .pt-resumo li {
 }
 .ta-minha .ta-tit {
   outline: 2px solid #60a5fa;
-  animation: pedidaPulsa 1.1s ease-in-out infinite;
+  animation: pedidaPulsa 2.4s ease-in-out infinite;
 }
 @media (prefers-reduced-motion: reduce) {
   .ta-minha .ta-tit {
@@ -2041,6 +2040,10 @@ body.claro .rede-dica-espera {
   border-color: #d79a2a;
   color: #4a3206;
 }
+.rede-caos-resp .rede-fala-rosto {
+  margin: 0 6px 4px 0;
+  vertical-align: middle;
+}
 body.claro .rede-caos-resp {
   background: #fbeaff;
   border-color: #c26fd6;
@@ -2157,4 +2160,18 @@ body.claro .rede-caos-espera {
   background: #f3e8ff;
   border-color: #c084fc;
   color: #3b0764;
+}
+
+/* 29/10/2026 (prints 7, 10, 16 e 17 do JF): com viewport-fit=cover, o conteúdo rolava por baixo da hora e da bateria
+   do iPhone. Uma faixa fixa da cor do fundo cobre a área segura do topo (some sozinha onde ela é 0). */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--bg, #1a1a2e);
+  z-index: 9990;
+  pointer-events: none;
 }

@@ -1263,6 +1263,7 @@ function redeAssentar(ses, pedido, chave, mais) {
    de tempo extra do Mestre) vai só pro aparelho da pessoa e não aparece no host se ela está em outro aparelho. */
 function redeHostFala(f) {
   if (!rede || rede.papel !== "host" || !f || !f.texto) return;
+  if (redeFalaSoDoHost(f)) return;
   const ids = (f.para || []).map((d) => d.id).filter((id) => jogadorIdValido(id));
   // 1.7.10: o rosto e a etiqueta do humor vão junto (o celular desenha o balão igual ao do host)
   const visual = {};
@@ -1282,6 +1283,18 @@ function redeHostFala(f) {
   }
   // só marca "é com você" (voz no celular dela) quando a fala fala COM a pessoa; citação é da mesa
   redeEnviar("fala", ids.length && redeFalaComQuem(f) ? { texto: f.texto, quem: ids.slice(0, 8), ...visual } : { texto: f.texto, ...visual });
+}
+// 29/10/2026 (print 9 do JF): as falas do cadastro de nomes (nickDemora, nickReacao…) são sobre quem está digitando
+// no host. No celular de quem espera a sala elas ficam sem sentido ("Tenta juntar um bicho com uma coisa legal"),
+// então ficam só no host.
+function redeFalaSoDoHost(f) {
+  try {
+    const t = String(f.texto).replace(/^\[C\.A\.O\.S\.\]\s*/, "");
+    const pick = typeof caosLastPick !== "undefined" ? caosLastPick : null;
+    return !!(pick && /^nick/.test(String(pick.bank || "")) && String(pick.text || "").indexOf(t.slice(0, 40)) !== -1);
+  } catch (e) {
+    return false;
+  }
 }
 // A fala particular é só de quem está em outro aparelho? Então não aparece aqui no host.
 // 1.7.10 (relato do JF: "falou com a Anne no MEU celular"): vale também pra fala NÃO particular que cita só
@@ -2756,9 +2769,23 @@ function redeEsperaExtrasHtml() {
     `<div class="rede-dica-espera" aria-live="polite">💡 <span id="redeDicaEspera">${escapeHtml(REDE_ESPERA_DICAS[rede.esperaDica % REDE_ESPERA_DICAS.length])}</span></div>` +
     `<button type="button" class="rede-lugar" id="redeTutRapido">🎓 Tutorial rápido (2 min)</button>` +
     `<div class="rede-caos-perg"><div class="rede-rot">🤖 Pergunte ao C.A.O.S.</div><div class="rede-caos-botoes">${perg}</div>` +
-    `<div class="rede-caos-resp" id="redeCaosResp" aria-live="polite"${rede.esperaResp ? "" : " hidden"}>${rede.esperaResp ? "🤖 " + escapeHtml(rede.esperaResp) : ""}</div></div>` +
+    `<div class="rede-caos-resp" id="redeCaosResp" aria-live="polite"${rede.esperaResp ? "" : " hidden"}>${rede.esperaResp ? redeEsperaRespHtml(rede.esperaResp, rede.esperaEmo) : ""}</div></div>` +
     `</section>`
   );
+}
+// 29/10/2026 (prints 5 e 6 do JF): a resposta do "Pergunte ao C.A.O.S." vem com o rosto dele, como nos balões
+const REDE_ESPERA_EMO = { oQueFaco: "carinho", comoJoga: "orgulho", mestre: "orgulho", demora: "tedio", quemEVoce: "orgulho" };
+function redeEsperaRosto(emo) {
+  try {
+    return (caosFaceEscolher(emo) || [])[0] || "🤖";
+  } catch (e) {
+    return "🤖";
+  }
+}
+function redeEsperaRespHtml(txt, emo) {
+  const E = typeof CAOS_EMOS !== "undefined" && CAOS_EMOS[emo];
+  const cor = E && E.cor ? ` style="--emo-cor:${E.cor}"` : "";
+  return `<span class="rede-fala-rosto"${cor}>${escapeHtml(rede.esperaRosto || redeEsperaRosto(emo))}</span> <span class="rede-caos-resp-txt">${escapeHtml(txt)}</span>`;
 }
 function redeEsperaLigar(box) {
   if (!rede || !box) return;
@@ -2773,10 +2800,12 @@ function redeEsperaLigar(box) {
       const opcoes = banco.map((t) => redeFalaTexto(t)).filter((t) => t !== rede.esperaResp);
       const txt = opcoes[Math.floor(Math.random() * opcoes.length)] || redeFalaTexto(banco[0]);
       rede.esperaResp = txt;
+      rede.esperaEmo = REDE_ESPERA_EMO[b.dataset.perg] || "calmo";
+      rede.esperaRosto = redeEsperaRosto(rede.esperaEmo);
       const r = box.querySelector("#redeCaosResp");
       if (r) {
         r.hidden = false;
-        r.textContent = "🤖 " + txt;
+        r.innerHTML = redeEsperaRespHtml(txt, rede.esperaEmo);
       }
       try {
         if (caosVoiceOn) caosSpeak(txt);

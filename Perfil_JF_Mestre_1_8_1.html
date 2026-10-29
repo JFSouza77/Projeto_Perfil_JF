@@ -9773,11 +9773,12 @@ body.claro .rede-host-vista {
   margin: 0 auto;
   box-sizing: border-box;
 }
-/* 1.7.9.6 · Fala do C.A.O.S. no celular do convidado */
+/* 1.7.9.6 · Fala do C.A.O.S. no celular do convidado.
+   29/10/2026 (prints 9, 11 e 13 do JF): o balão cobria o topo da T2 (Mestre, vez e categoria); agora fica embaixo. */
 .rede-fala {
   position: fixed;
   left: 50%;
-  top: calc(10px + env(safe-area-inset-top, 0px));
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
   transform: translateX(-50%);
   z-index: 10001;
   width: min(92vw, 560px);
@@ -10089,13 +10090,13 @@ body.claro button.splash-embreve .eb-sub {
 .telao-numeros .pedida {
   outline: 3px solid #60a5fa;
   outline-offset: 1px;
-  animation: pedidaPulsa 1.1s ease-in-out infinite;
+  animation: pedidaPulsa 2.4s ease-in-out infinite;
 }
 @keyframes pedidaPulsa {
-  50% { transform: scale(1.08); }
+  50% { transform: scale(1.05); }
 }
-/* 25/10/2026 (pedido do JF): a dica que o jogador pediu tem que SALTAR na tela do mestre — fundo aceso,
-   brilho pulsante e um balanço, pra ele achar o número na hora (ex.: "pediu a dica 17"). */
+/* 25/10/2026 (pedido do JF): a dica que o jogador pediu fica acesa na tela do mestre, pra ele achar o número na hora.
+   29/10/2026 (pedido do JF): sem balanço; ela flutua e respira devagar, discreta, mas ainda em destaque. */
 .number-btn.pedida {
   position: relative;
   z-index: 1;
@@ -10105,15 +10106,13 @@ body.claro button.splash-embreve .eb-sub {
   border-color: #93c5fd;
   outline: 3px solid #bfdbfe;
   outline-offset: 2px;
-  box-shadow: 0 0 0 2px #2563eb, 0 6px 18px rgba(37, 99, 235, 0.55);
-  transform-origin: center bottom;
-  animation: pedidaChama 1s ease-in-out infinite;
+  box-shadow: 0 0 0 2px #2563eb, 0 6px 18px rgba(37, 99, 235, 0.5);
+  transform: scale(1.08);
+  animation: pedidaRespira 2.4s ease-in-out infinite;
 }
-@keyframes pedidaChama {
-  0%, 100% { transform: scale(1.1) rotate(-4deg); box-shadow: 0 0 0 2px #2563eb, 0 6px 18px rgba(37, 99, 235, 0.55); }
-  25% { transform: scale(1.16) rotate(4deg); }
-  50% { transform: scale(1.1) rotate(-4deg); box-shadow: 0 0 0 3px #60a5fa, 0 10px 26px rgba(59, 130, 246, 0.8); }
-  75% { transform: scale(1.16) rotate(4deg); }
+@keyframes pedidaRespira {
+  0%, 100% { transform: scale(1.08) translateY(0); box-shadow: 0 0 0 2px #2563eb, 0 6px 16px rgba(37, 99, 235, 0.45); }
+  50% { transform: scale(1.1) translateY(-2px); box-shadow: 0 0 0 3px #60a5fa, 0 10px 24px rgba(59, 130, 246, 0.7); }
 }
 /* quem pediu "menos movimento" ainda enxerga o número aceso, só sem o balanço */
 @media (prefers-reduced-motion: reduce) {
@@ -10602,7 +10601,7 @@ body.claro .pt-resumo li {
 }
 .ta-minha .ta-tit {
   outline: 2px solid #60a5fa;
-  animation: pedidaPulsa 1.1s ease-in-out infinite;
+  animation: pedidaPulsa 2.4s ease-in-out infinite;
 }
 @media (prefers-reduced-motion: reduce) {
   .ta-minha .ta-tit {
@@ -11557,6 +11556,10 @@ body.claro .rede-dica-espera {
   border-color: #d79a2a;
   color: #4a3206;
 }
+.rede-caos-resp .rede-fala-rosto {
+  margin: 0 6px 4px 0;
+  vertical-align: middle;
+}
 body.claro .rede-caos-resp {
   background: #fbeaff;
   border-color: #c26fd6;
@@ -11673,6 +11676,20 @@ body.claro .rede-caos-espera {
   background: #f3e8ff;
   border-color: #c084fc;
   color: #3b0764;
+}
+
+/* 29/10/2026 (prints 7, 10, 16 e 17 do JF): com viewport-fit=cover, o conteúdo rolava por baixo da hora e da bateria
+   do iPhone. Uma faixa fixa da cor do fundo cobre a área segura do topo (some sozinha onde ela é 0). */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--bg, #1a1a2e);
+  z-index: 9990;
+  pointer-events: none;
 }
 </style>
 </head>
@@ -25412,6 +25429,7 @@ function redeAssentar(ses, pedido, chave, mais) {
    de tempo extra do Mestre) vai só pro aparelho da pessoa e não aparece no host se ela está em outro aparelho. */
 function redeHostFala(f) {
   if (!rede || rede.papel !== "host" || !f || !f.texto) return;
+  if (redeFalaSoDoHost(f)) return;
   const ids = (f.para || []).map((d) => d.id).filter((id) => jogadorIdValido(id));
   // 1.7.10: o rosto e a etiqueta do humor vão junto (o celular desenha o balão igual ao do host)
   const visual = {};
@@ -25431,6 +25449,18 @@ function redeHostFala(f) {
   }
   // só marca "é com você" (voz no celular dela) quando a fala fala COM a pessoa; citação é da mesa
   redeEnviar("fala", ids.length && redeFalaComQuem(f) ? { texto: f.texto, quem: ids.slice(0, 8), ...visual } : { texto: f.texto, ...visual });
+}
+// 29/10/2026 (print 9 do JF): as falas do cadastro de nomes (nickDemora, nickReacao…) são sobre quem está digitando
+// no host. No celular de quem espera a sala elas ficam sem sentido ("Tenta juntar um bicho com uma coisa legal"),
+// então ficam só no host.
+function redeFalaSoDoHost(f) {
+  try {
+    const t = String(f.texto).replace(/^\[C\.A\.O\.S\.\]\s*/, "");
+    const pick = typeof caosLastPick !== "undefined" ? caosLastPick : null;
+    return !!(pick && /^nick/.test(String(pick.bank || "")) && String(pick.text || "").indexOf(t.slice(0, 40)) !== -1);
+  } catch (e) {
+    return false;
+  }
 }
 // A fala particular é só de quem está em outro aparelho? Então não aparece aqui no host.
 // 1.7.10 (relato do JF: "falou com a Anne no MEU celular"): vale também pra fala NÃO particular que cita só
@@ -26905,9 +26935,23 @@ function redeEsperaExtrasHtml() {
     `<div class="rede-dica-espera" aria-live="polite">💡 <span id="redeDicaEspera">${escapeHtml(REDE_ESPERA_DICAS[rede.esperaDica % REDE_ESPERA_DICAS.length])}</span></div>` +
     `<button type="button" class="rede-lugar" id="redeTutRapido">🎓 Tutorial rápido (2 min)</button>` +
     `<div class="rede-caos-perg"><div class="rede-rot">🤖 Pergunte ao C.A.O.S.</div><div class="rede-caos-botoes">${perg}</div>` +
-    `<div class="rede-caos-resp" id="redeCaosResp" aria-live="polite"${rede.esperaResp ? "" : " hidden"}>${rede.esperaResp ? "🤖 " + escapeHtml(rede.esperaResp) : ""}</div></div>` +
+    `<div class="rede-caos-resp" id="redeCaosResp" aria-live="polite"${rede.esperaResp ? "" : " hidden"}>${rede.esperaResp ? redeEsperaRespHtml(rede.esperaResp, rede.esperaEmo) : ""}</div></div>` +
     `</section>`
   );
+}
+// 29/10/2026 (prints 5 e 6 do JF): a resposta do "Pergunte ao C.A.O.S." vem com o rosto dele, como nos balões
+const REDE_ESPERA_EMO = { oQueFaco: "carinho", comoJoga: "orgulho", mestre: "orgulho", demora: "tedio", quemEVoce: "orgulho" };
+function redeEsperaRosto(emo) {
+  try {
+    return (caosFaceEscolher(emo) || [])[0] || "🤖";
+  } catch (e) {
+    return "🤖";
+  }
+}
+function redeEsperaRespHtml(txt, emo) {
+  const E = typeof CAOS_EMOS !== "undefined" && CAOS_EMOS[emo];
+  const cor = E && E.cor ? ` style="--emo-cor:${E.cor}"` : "";
+  return `<span class="rede-fala-rosto"${cor}>${escapeHtml(rede.esperaRosto || redeEsperaRosto(emo))}</span> <span class="rede-caos-resp-txt">${escapeHtml(txt)}</span>`;
 }
 function redeEsperaLigar(box) {
   if (!rede || !box) return;
@@ -26922,10 +26966,12 @@ function redeEsperaLigar(box) {
       const opcoes = banco.map((t) => redeFalaTexto(t)).filter((t) => t !== rede.esperaResp);
       const txt = opcoes[Math.floor(Math.random() * opcoes.length)] || redeFalaTexto(banco[0]);
       rede.esperaResp = txt;
+      rede.esperaEmo = REDE_ESPERA_EMO[b.dataset.perg] || "calmo";
+      rede.esperaRosto = redeEsperaRosto(rede.esperaEmo);
       const r = box.querySelector("#redeCaosResp");
       if (r) {
         r.hidden = false;
-        r.textContent = "🤖 " + txt;
+        r.innerHTML = redeEsperaRespHtml(txt, rede.esperaEmo);
       }
       try {
         if (caosVoiceOn) caosSpeak(txt);
