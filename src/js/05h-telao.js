@@ -254,7 +254,7 @@ function telaoDesenhar(r, alvo) {
     : c && r.estadoCarta === "hidden"
       ? `<section class="telao-carta" style="--cat:${catCor}">${telaoEstadoHtml(r, nomeTxt)}${telaoRoletaHtml(c, true)}</section>`
       : c && c.categoria
-        ? `<section class="telao-carta" style="--cat:${catCor}">${r.alvoEspecial ? telaoAlvoHtml(r, nomeTxt) : telaoEstadoHtml(r, nomeTxt)}<div class="telao-cat"><span class="tc-selo">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)}</span><span class="tc-conta"><b>${c.abertas.length}</b> de ${c.totalDicas} dicas</span></div>${numeros}${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>`
+        ? `<section class="telao-carta" style="--cat:${catCor}">${r.alvoEspecial ? telaoAlvoHtml(r, nomeTxt) : telaoEstadoHtml(r, nomeTxt)}<div class="telao-cat"><span class="tc-conta"><b>${c.abertas.length}</b> de ${c.totalDicas} dicas</span></div>${numeros}${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>`
         : "";
   const hist = Array.isArray(p.historico) ? p.historico : [];
   box.dataset.rev = String(r.revisao);

@@ -67,6 +67,17 @@ const ARQ = acharMestre(process.argv[2]);
     caosLastPick = null;
     return soHost && vai;
   }));
+  conf("T2: uma grade só (a pequena some com a grande) e a dica pedida em destaque, as outras apagadas (29/10/2026)", await host.evaluate(() => {
+    const box = document.createElement("div");
+    box.className = "telao rede-convidado rede-tem-grade";
+    box.innerHTML = '<div class="telao-numeros"><span>1</span></div><div class="rede-nums"><button class="rede-btn">1</button><button class="rede-btn pedida">👉 2</button></div>';
+    document.body.appendChild(box);
+    const some = getComputedStyle(box.querySelector(".telao-numeros")).display === "none";
+    const apagada = +getComputedStyle(box.querySelector(".rede-nums .rede-btn:not(.pedida)")).opacity < 0.6;
+    const acesa = +getComputedStyle(box.querySelector(".rede-nums .pedida")).opacity === 1;
+    box.remove();
+    return some && apagada && acesa && redeOpPedida({ a: "pedirDica", t: "👉 2" }) && !redeOpPedida({ a: "pedirDica", t: "3" });
+  }));
   conf("Pergunta ao C.A.O.S.: a resposta vem com o rosto dele (29/10/2026)", await g.evaluate(() => { const f = document.querySelector("#redeCaosResp .rede-fala-rosto"); return !!f && f.textContent.trim().length > 0 && f.textContent.trim() !== "🤖"; }));
   conf("Pergunta ao C.A.O.S.: ele responde na tela", await g.evaluate(() => { const r = document.getElementById("redeCaosResp"); return !!r && !r.hidden && !/=>|CAOS_PREFIXO|function/.test(r.textContent) && REACTIVE_VOICE.esperaSala.oQueFaco.some((t) => r.textContent.includes(redeFalaTexto(t))); }));
   await g.evaluate(() => document.getElementById("redeTutRapido").click());

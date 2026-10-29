@@ -2175,3 +2175,31 @@ body::before {
   z-index: 9990;
   pointer-events: none;
 }
+
+/* 29/10/2026 (print 2 do JF): quem tem a grade grande de escolher a dica não vê a grade pequena da carta (eram duas) */
+.rede-tem-grade .telao-numeros {
+  display: none;
+}
+/* Pedido do JF (teste de mesa de 25/10): na T2, a dica escolhida fica evidente; as outras apagam */
+.rede-nums .rede-btn.pedida {
+  color: #fff;
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
+  border-color: #93c5fd;
+  outline: 3px solid #bfdbfe;
+  outline-offset: 2px;
+  animation: pedidaRespira 2.4s ease-in-out infinite;
+}
+.rede-nums:has(.pedida) .rede-btn:not(.pedida) {
+  opacity: 0.4;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rede-nums .rede-btn.pedida {
+    animation: none;
+  }
+}
+
+/* 29/10/2026 (print 13 do JF): a resposta aberta no celular do Mestre tinha letra clara em fundo branco */
+.rede-carta-mestre .answer-toggle.open {
+  color: #1b1b2f;
+  text-shadow: none;
+}

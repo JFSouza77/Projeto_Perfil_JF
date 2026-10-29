@@ -2094,7 +2094,8 @@ function redeHostVista() {
   const nome = (p) => escapeHtml((p.avatar ? p.avatar + " " : "") + p.name);
   const daVez = eus.find((p) => jogadorIdDe(responderIndex) === p.id);
   const vez = !!daVez;
-  let h = `<div class="rede-eu">${eus.length ? `Neste aparelho: <b>${eus.map(nome).join("</b> e <b>")}</b>${vez ? ` · 👉 Vez de ${nome(daVez)}` : ""}` : "Este aparelho é a mesa"}</div>`;
+  // 29/10/2026 (print 2 do JF): "· Vez de JF" saiu daqui; a faixa SUA VEZ logo abaixo já diz
+  let h = `<div class="rede-eu">${eus.length ? `Neste aparelho: <b>${eus.map(nome).join("</b> e <b>")}</b>${vez && !(starterChosen && !gameEnded) ? ` · 👉 Vez de ${nome(daVez)}` : ""}` : "Este aparelho é a mesa"}</div>`;
   // 1.7.10.6.1 (relato do JF): ninguém marcado neste aparelho, mas tem jogador sem dispositivo na sala: um toque resolve
   const semDisp = !eus.length && starterChosen && !gameEnded ? players.filter((p) => !redeOnline(rede.assentos[p.id])) : [];
   if (semDisp.length)
@@ -2105,7 +2106,12 @@ function redeHostVista() {
     h += `<div class="rede-rot">👉 Sua vez: toque no número (ou fale) e o Mestre abre a dica.</div>`; // 1.7.9.6: só o Mestre abre
   const ops = [];
   eus.forEach((p) => redeOpcoes(p.id).forEach((o) => o.a !== "pausar" && ops.push({ ...o, quem: p.id })));
-  if (ops.length) h += `<div class="rede-acoes">${ops.map((o, i) => `<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}${o.gp ? " guia-pulso" : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`).join("")}</div>`;
+  // 29/10/2026 (print 2 do JF): os números de dica viram a mesma grade do celular (com a pedida em destaque)
+  const btn = (o, i) => `<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}${o.gp ? " guia-pulso" : ""}${redeOpPedida(o) ? " pedida" : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`;
+  const nums = ops.map((o, i) => (o.a === "pedirDica" ? btn(o, i) : "")).join("");
+  const outros = ops.map((o, i) => (o.a !== "pedirDica" ? btn(o, i) : "")).join("");
+  if (nums) h += `<div class="rede-nums">${nums}</div>`;
+  if (outros) h += `<div class="rede-acoes">${outros}</div>`;
   h += `<div class="rede-acoes rede-mais"><button type="button" class="rede-btn" id="redeVistaPausar">⏸️ Pausar</button><button type="button" class="rede-btn" id="redeVistaSala">🌐 Sala ${rede.sala}</button></div>`;
   const barra = document.createElement("section");
   barra.className = "rede-barra";
@@ -2113,6 +2119,7 @@ function redeHostVista() {
   const topo = box.querySelector(".telao-vez");
   if (topo) topo.after(barra);
   else box.prepend(barra);
+  box.classList.toggle("rede-tem-grade", !!nums);
   const agir = (quem, acao, dados) => {
     if (!quem || !redePodeComandar(acao, quem, dados)) return;
     dispatchAction({ type: acao, data: dados, commandId: "h_" + redeAleatorio(12), expectedRevision: partidaRevisao, actorId: quem });
@@ -2974,6 +2981,7 @@ function redeConvidadoDesenhar() {
   const barra = document.createElement("section");
   barra.className = "rede-barra";
   barra.innerHTML = redeConvTrocaHtml() + redeBotoesHtml();
+  box.classList.toggle("rede-tem-grade", !!barra.querySelector(".rede-nums"));
   if (rede.retrato.intervalo) box.querySelector(".telao-hist")?.remove(); // o lobby já tem a aba Cartas
   // 1.7.10.5.7: o seletor de alvo da especial: só quem abriu a dica toca
   const ae = rede.retrato.alvoEspecial;
@@ -3022,7 +3030,9 @@ const REDE_CLASSE_BOTAO = (o) =>
   o.a === "acertou" || o.a === "palpiteAcertou" ? "btn-correct" :
   o.a === "errou" ? (o.d[0] === "pular" ? "btn-pular" : o.d[0] === "absurdo" ? "btn-absurdo" : "btn-wrong") :
   o.a === "palpiteErrou" ? "btn-wrong" :
-  o.a === "virarCarta" ? "flip-btn" :
+  // 29/10/2026 (prints 12 e 15 do JF): o "Virar a carta" da carta do Mestre era cinza e pequeno; agora é o mesmo
+  // botão grande e pulsando do intervalo
+  o.a === "virarCarta" || o.a === "roletaCategoria" ? "flip-btn" + (o.c === "cta" ? " cta-pulsa" : "") :
   o.a === "sacarCarta" ? "main-btn btn-draw" :
   o.a === "descartarCarta" || o.a === "desistirCarta" ? "discard-btn" :
   o.g === "Mais" ? "rede-btn" : "continue-btn";
@@ -3326,6 +3336,10 @@ function redeEuPapelTxt(r, papel) {
   if (r.intervalo) return papel.mestre ? " · 🎙️ Mestre da próxima carta" : papel.vez ? " · 👉 Você começa a próxima carta" : "";
   return papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 Sua vez" : "";
 }
+// O número de dica que a pessoa já pediu (o host manda com "👉 " na frente): fica em destaque e os outros apagam
+function redeOpPedida(o) {
+  return !!o && o.a === "pedirDica" && /^👉/.test(String(o.t || ""));
+}
 function redeBotoesHtml() {
   const r = rede.retrato, eu = r.jogadores.find((j) => j.id === rede.eu);
   const papel = redeMeuPapel();
@@ -3373,7 +3387,7 @@ function redeBotoesHtml() {
     let gr = grupos.find((x) => x.g === g);
     if (!gr) grupos.push((gr = { g, itens: [], nums: true }));
     if (o.a !== "pedirDica") gr.nums = false;
-    gr.itens.push(`<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}${o.gp ? " guia-pulso" : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`);
+    gr.itens.push(`<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}${o.gp ? " guia-pulso" : ""}${redeOpPedida(o) ? " pedida" : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`);
   });
   grupos.sort((a, b) => (a.g === "Mais") - (b.g === "Mais"));
   grupos.forEach((gr) => {
