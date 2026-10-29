@@ -244,8 +244,14 @@ function telaoDesenhar(r, alvo) {
     : "";
   const catCor = c && c.categoria && r.estadoCarta !== "hidden" ? (GEM_INFO[c.categoria] || {}).color || "#a78bfa" : "#a78bfa";
   const p = r.partida || {};
-  const carta =
-    c && r.estadoCarta === "hidden"
+  // 29/10/2026 (print 17 do JF): no celular, o painel de cima já mostra o intervalo; o quadro da carta com a roleta
+  // "???" repetia a mesma coisa. No telão (TV), fica só uma linha.
+  const noCelular = typeof rede !== "undefined" && rede && rede.papel === "convidado";
+  const carta = r.intervalo && !r.fim
+    ? noCelular
+      ? ""
+      : `<section class="telao-carta"><div class="tc-estado">⏸️ Intervalo: a próxima carta já vem</div></section>`
+    : c && r.estadoCarta === "hidden"
       ? `<section class="telao-carta" style="--cat:${catCor}">${telaoEstadoHtml(r, nomeTxt)}${telaoRoletaHtml(c, true)}</section>`
       : c && c.categoria
         ? `<section class="telao-carta" style="--cat:${catCor}">${r.alvoEspecial ? telaoAlvoHtml(r, nomeTxt) : telaoEstadoHtml(r, nomeTxt)}<div class="telao-cat"><span class="tc-selo">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)}</span><span class="tc-conta"><b>${c.abertas.length}</b> de ${c.totalDicas} dicas</span></div>${numeros}${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>`
@@ -259,7 +265,7 @@ function telaoDesenhar(r, alvo) {
     <section class="telao-vez">
       <div class="tv-mestre" style="--pc:${cor(r.mestreId)}"><small>🎙️ Mestre (lê as dicas)</small><b>${nome(r.mestreId)}</b></div>
       <div class="tv-vez" style="--pc:${cor(r.vezId)}"><small>👉 Vez de (escolhe a dica e responde)</small><b>${nome(r.vezId)}</b></div>
-      <div class="tv-cat" style="--cat:${catCor}"><small>🃏 Categoria</small><b>${c && c.categoria && r.estadoCarta !== "hidden" ? escapeHtml(TELAO_CAT[c.categoria] || c.categoria) : c ? "sorteando…" : "—"}</b></div>
+      <div class="tv-cat" style="--cat:${catCor}"><small>🃏 Categoria</small><b>${r.intervalo && !r.fim ? "próxima carta" : c && c.categoria && r.estadoCarta !== "hidden" ? escapeHtml(TELAO_CAT[c.categoria] || c.categoria) : c ? "sorteando…" : "—"}</b></div>
       <div class="tv-relogio"><small>⏱️ Tempo da vez</small><b id="telaoRelogio">—</b></div>
     </section>
     ${r.corrida ? `<div class="corrida-relogios" id="telaoCorrida">${corridaBarraHtml(corridaDoRetrato(r.corrida))}</div>` : ""}
@@ -286,6 +292,12 @@ function telaoRelogio() {
   if (tc && r.corrida) {
     const html = corridaBarraHtml(corridaDoRetrato(r.corrida));
     if (tc.innerHTML !== html) tc.innerHTML = html;
+  }
+  // 29/10/2026 (print 18 do JF): no intervalo não tem vez correndo; antes aparecia "pausado"
+  if (r.intervalo && !r.fim) {
+    el.textContent = "intervalo";
+    el.classList.remove("tv-pouco");
+    return;
   }
   if (rel.pausado) {
     el.textContent = "pausado";

@@ -8733,26 +8733,33 @@ body.claro .tb-tema-oldschool {
   margin: auto 0;
   padding: 14px 14px 16px;
 }
+/* 29/10/2026 (print 1 do JF): o "Próxima carta" ficava espremido no canto, ao lado do título. Agora o título fica
+   sozinho no topo e o botão vem centralizado, maior, logo abaixo do relógio do intervalo. */
 .tb-lobby-topo {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  justify-content: center;
 }
 .tb-lobby-topo h3 {
   margin: 0;
-  font-size: 1.05rem;
-  text-align: left;
+  font-size: 1.1rem;
+  text-align: center;
+}
+.tb-lobby-acao {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0 4px;
 }
 .tb-lobby-pular {
-  flex: none;
   position: relative;
   overflow: hidden; /* o brilho neon do botão não pode vazar e criar rolagem pro lado */
   isolation: isolate;
-  padding: 9px 14px;
-  font-size: 0.9rem;
+  width: min(320px, 100%);
+  min-height: 48px;
+  padding: 12px 18px;
+  font-size: 1.05rem;
   font-weight: 800;
-  border-radius: 12px;
+  border-radius: 14px;
 }
 .tb-lobby-tempo {
   height: 5px;
@@ -23087,8 +23094,14 @@ function telaoDesenhar(r, alvo) {
     : "";
   const catCor = c && c.categoria && r.estadoCarta !== "hidden" ? (GEM_INFO[c.categoria] || {}).color || "#a78bfa" : "#a78bfa";
   const p = r.partida || {};
-  const carta =
-    c && r.estadoCarta === "hidden"
+  // 29/10/2026 (print 17 do JF): no celular, o painel de cima já mostra o intervalo; o quadro da carta com a roleta
+  // "???" repetia a mesma coisa. No telão (TV), fica só uma linha.
+  const noCelular = typeof rede !== "undefined" && rede && rede.papel === "convidado";
+  const carta = r.intervalo && !r.fim
+    ? noCelular
+      ? ""
+      : `<section class="telao-carta"><div class="tc-estado">⏸️ Intervalo: a próxima carta já vem</div></section>`
+    : c && r.estadoCarta === "hidden"
       ? `<section class="telao-carta" style="--cat:${catCor}">${telaoEstadoHtml(r, nomeTxt)}${telaoRoletaHtml(c, true)}</section>`
       : c && c.categoria
         ? `<section class="telao-carta" style="--cat:${catCor}">${r.alvoEspecial ? telaoAlvoHtml(r, nomeTxt) : telaoEstadoHtml(r, nomeTxt)}<div class="telao-cat"><span class="tc-selo">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)}</span><span class="tc-conta"><b>${c.abertas.length}</b> de ${c.totalDicas} dicas</span></div>${numeros}${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>`
@@ -23102,7 +23115,7 @@ function telaoDesenhar(r, alvo) {
     <section class="telao-vez">
       <div class="tv-mestre" style="--pc:${cor(r.mestreId)}"><small>🎙️ Mestre (lê as dicas)</small><b>${nome(r.mestreId)}</b></div>
       <div class="tv-vez" style="--pc:${cor(r.vezId)}"><small>👉 Vez de (escolhe a dica e responde)</small><b>${nome(r.vezId)}</b></div>
-      <div class="tv-cat" style="--cat:${catCor}"><small>🃏 Categoria</small><b>${c && c.categoria && r.estadoCarta !== "hidden" ? escapeHtml(TELAO_CAT[c.categoria] || c.categoria) : c ? "sorteando…" : "—"}</b></div>
+      <div class="tv-cat" style="--cat:${catCor}"><small>🃏 Categoria</small><b>${r.intervalo && !r.fim ? "próxima carta" : c && c.categoria && r.estadoCarta !== "hidden" ? escapeHtml(TELAO_CAT[c.categoria] || c.categoria) : c ? "sorteando…" : "—"}</b></div>
       <div class="tv-relogio"><small>⏱️ Tempo da vez</small><b id="telaoRelogio">—</b></div>
     </section>
     ${r.corrida ? `<div class="corrida-relogios" id="telaoCorrida">${corridaBarraHtml(corridaDoRetrato(r.corrida))}</div>` : ""}
@@ -23129,6 +23142,12 @@ function telaoRelogio() {
   if (tc && r.corrida) {
     const html = corridaBarraHtml(corridaDoRetrato(r.corrida));
     if (tc.innerHTML !== html) tc.innerHTML = html;
+  }
+  // 29/10/2026 (print 18 do JF): no intervalo não tem vez correndo; antes aparecia "pausado"
+  if (r.intervalo && !r.fim) {
+    el.textContent = "intervalo";
+    el.classList.remove("tv-pouco");
+    return;
   }
   if (rel.pausado) {
     el.textContent = "pausado";
@@ -23741,9 +23760,10 @@ function tabLobbyAbrir() {
   ov.id = "tabLobby";
   ov.className = "jf-modal-bg tb-lobby-bg";
   ov.innerHTML = `<div class="jf-modal tb-modal tb-lobby" role="dialog" aria-modal="true" aria-labelledby="tbLobbyTit">
-    <div class="tb-lobby-topo"><h3 id="tbLobbyTit">⏸️ Antes da próxima carta</h3><button type="button" class="btn-neo neo-solid neo-still tb-lobby-pular" id="tbLobbyPular" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35);">Próxima carta ▶</button></div>
+    <div class="tb-lobby-topo"><h3 id="tbLobbyTit">⏸️ Antes da próxima carta</h3></div>
     <div class="tb-lobby-tempo" aria-hidden="true"><div class="tb-lobby-barra" id="tbLobbyBarra"></div></div>
     <div class="tb-lobby-sub"><b id="tbLobbySeg">${TAB_LOBBY_SEG}</b> s pra ver o placar e combinar a estratégia</div>
+    <div class="tb-lobby-acao"><button type="button" class="btn-neo neo-solid neo-still tb-lobby-pular" id="tbLobbyPular" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35);">Próxima carta ▶</button></div>
     <div class="tb-lobby-prox">${prox}</div>
     ${partidaResumoHtml(partidaResumoDados())}
     ${lobbyAbasHtml(aba)}
@@ -27487,10 +27507,15 @@ function redePapelHtml(papel, nome) {
   if (papel.vez) return `<div class="rede-papel rp-vez" role="status">👉 SUA VEZ!${quem}<small>Escolha um número de dica, ouça o Mestre e tente adivinhar.</small></div>`;
   return "";
 }
+// 29/10/2026 (print 18 do JF): no intervalo não tem "Sua vez" correndo: diz o que a pessoa faz na próxima carta
+function redeEuPapelTxt(r, papel) {
+  if (r.intervalo) return papel.mestre ? " · 🎙️ Mestre da próxima carta" : papel.vez ? " · 👉 Você começa a próxima carta" : "";
+  return papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 Sua vez" : "";
+}
 function redeBotoesHtml() {
   const r = rede.retrato, eu = r.jogadores.find((j) => j.id === rede.eu);
   const papel = redeMeuPapel();
-  let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${(papel.mestre || papel.vez) && !r.intervalo && r.iniciada ? "" : papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 Sua vez" : ""}</div>`;
+  let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${(papel.mestre || papel.vez) && !r.intervalo && r.iniciada ? "" : redeEuPapelTxt(r, papel)}</div>`;
   if (r.fim) return h;
   if (!r.intervalo && r.iniciada) h += redePapelHtml(papel, eu && eu.nome);
   // 1.9 · T2 viva: esperando a vez, o celular tem dica e o C.A.O.S. mexendo com a pessoa

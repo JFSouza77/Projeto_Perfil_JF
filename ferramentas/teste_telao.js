@@ -104,6 +104,18 @@ const ARQ = acharMestre(process.argv[2]);
     const depois = /ANIMAL/i.test(box.innerText);
     return { antes, depois };
   });
+  // 29/10/2026 (prints 17 e 18 do JF): no intervalo o telão não diz "sorteando…" nem "pausado" e não repete a roleta
+  const intervaloTxt = await telao.evaluate(() => {
+    const r = JSON.parse(JSON.stringify(telaoUltimo));
+    r.intervalo = true;
+    r.estadoCarta = 'hidden';
+    r.relogio = Object.assign({}, r.relogio, { pausado: true });
+    telaoDesenhar(r);
+    telaoUltimo = r;
+    telaoRelogio();
+    const box = document.getElementById('telao');
+    return { txt: box.innerText, roleta: !!box.querySelector('.telao-roleta'), rel: document.getElementById('telaoRelogio').textContent };
+  });
   await telao.evaluate(() => telaoUltimo && telaoDesenhar(telaoUltimo));
   // retrato velho é ignorado
   await jogo.evaluate(() => { const r = retratoPartida('mesa'); r.revisao = 1; r.jogadores[0].nome = 'VELHO'; telaoCanal.postMessage({ tipo: 'retrato', retrato: r }); });
@@ -121,6 +133,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['Telão chega na mesma revisão do jogo', t.rev === j.rev && t.revTela === j.rev],
     ['Antes de virar a carta, o rolo da categoria fica parado; gira só com a roleta do Mestre (1.7.10.5.6)', rolo === 'parado/girando'],
     ['Carta escondida: o telão não mostra a categoria (nem pela cor); mostra depois que o Mestre vira', !segredoCat.antes && segredoCat.depois],
+    ['Intervalo: sem "sorteando…" nem "pausado", sem a roleta repetida (29/10/2026)', !/sorteando/i.test(intervaloTxt.txt) && intervaloTxt.rel === 'intervalo' && !intervaloTxt.roleta && /próxima carta/i.test(intervaloTxt.txt)],
     ['Telão mostra Mestre e vez', t.txt.includes(j.mestre) && t.txt.includes(j.vez)],
     ['Telão mostra as dicas abertas (a que o Mestre está lendo, só depois do veredito)', j.abertas.every((d, i) => (i === j.abertas.length - 1 && j.pendente ? !t.txt.includes(d) && t.txt.includes('Mestre está lendo') : t.txt.includes(d)))],
     ['Telão nunca mostra a resposta nem dica fechada', !t.txt.includes(j.resposta) && j.fechadas.every((d) => !t.txt.includes(d))],

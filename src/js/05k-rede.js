@@ -3321,10 +3321,15 @@ function redePapelHtml(papel, nome) {
   if (papel.vez) return `<div class="rede-papel rp-vez" role="status">👉 SUA VEZ!${quem}<small>Escolha um número de dica, ouça o Mestre e tente adivinhar.</small></div>`;
   return "";
 }
+// 29/10/2026 (print 18 do JF): no intervalo não tem "Sua vez" correndo: diz o que a pessoa faz na próxima carta
+function redeEuPapelTxt(r, papel) {
+  if (r.intervalo) return papel.mestre ? " · 🎙️ Mestre da próxima carta" : papel.vez ? " · 👉 Você começa a próxima carta" : "";
+  return papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 Sua vez" : "";
+}
 function redeBotoesHtml() {
   const r = rede.retrato, eu = r.jogadores.find((j) => j.id === rede.eu);
   const papel = redeMeuPapel();
-  let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${(papel.mestre || papel.vez) && !r.intervalo && r.iniciada ? "" : papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 Sua vez" : ""}</div>`;
+  let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${(papel.mestre || papel.vez) && !r.intervalo && r.iniciada ? "" : redeEuPapelTxt(r, papel)}</div>`;
   if (r.fim) return h;
   if (!r.intervalo && r.iniciada) h += redePapelHtml(papel, eu && eu.nome);
   // 1.9 · T2 viva: esperando a vez, o celular tem dica e o C.A.O.S. mexendo com a pessoa
