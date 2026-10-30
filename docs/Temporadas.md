@@ -72,6 +72,11 @@ e autorizar.** Quando tudo estiver pronto, o Code avisa e mostra o que fez.
     segundos).
   - **Às vezes, nada:** o C.A.O.S. diz "Aguarde… em breve você verá alguma coisa", deixa o jogador na tensão e, no
     fim, solta: "É pegadinha! Feliz Halloween!"
+- **Gafe de data (o TDAH do C.A.O.S.):** de vez em quando ele solta uma fala de outra temporada fora de época (uma
+  piada de Festa Junina em dezembro) e logo se corrige: "Ih, rapaz… perdão, errei a data" ou "Me atrasei, desculpa".
+  - É rara: no máximo 1 vez por partida, com chance baixa. Fica mais engraçada justamente por ser rara.
+  - É só fala: nunca muda o visual nem a pontuação.
+  - Usa as falas que as outras temporadas já têm, mais 15 correções ("errei a data", "me atrasei"…).
 - **Tom:** o C.A.O.S. pode implicar e zoar, mas com respeito. Datas de homenagem (Dia das Mães, Dia dos Pais, Dia da
   Mulher) têm falas carinhosas, sem piada pesada.
 
@@ -83,7 +88,7 @@ temporadas, na ordem do calendário.
 
 1. [ ] Motor de temporadas: data → temporada, datas móveis, prioridade, opção nas configurações, modo de teste e teste automático.
 2. [ ] Natal · visual (neve leve, luzinhas) e selo "🎄 Edição de Natal" na splash.
-3. [ ] Natal · falas do C.A.O.S.: 15 falas, com as piadas de avançar e voltar casas (lista dos bonzinhos e dos malvados) e gorro no rosto.
+3. [ ] Natal · falas do C.A.O.S.: 15 falas, com as piadas de avançar e voltar casas (lista dos bonzinhos e dos malvados), gorro no rosto e a gafe de data (15 correções).
 4. [ ] Natal · C.A.O.S. bonzinho: mais presentes (até 3 por partida, inclusive pros favoritos), pontinho extra e joia rara (nunca a 4ª).
 5. [ ] Natal · lojinha: 5 itens de Natal na Corrida e 5 no Modo C.A.O.S.
 6. [ ] Natal · 5 cores e 5 emojis, troca com pergunta pro cadastrado e salvamento da temporada (volta ao normal no fim).
