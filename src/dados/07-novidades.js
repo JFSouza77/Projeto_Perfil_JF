@@ -10,6 +10,28 @@
 //  · o que ainda não entrou fica em docs/Novidades_Rascunho.md.
 const NOVIDADES = [
   {
+    v: "Beta 1.9.0",
+    data: "30/10/2026",
+    nome: "T2 Viva Update",
+    t: "Celular vivo na espera, dica escolhida em destaque e uma tela muito mais limpa.",
+    itens: [
+      "📱 Celular vivo na espera: enquanto não é a sua vez, o celular mostra dicas de como jogar e o C.A.O.S. mexe com você, de um jeito pra quem acabou de jogar, pra quem espera faz tempo, pra quem está na frente e pra quem está lá atrás.",
+      "🎯 Dica escolhida em destaque: no celular, o número que você pediu fica aceso e os outros apagam. Na tela do Mestre, ele flutua de leve, sem balançar.",
+      "🙈 Categoria na hora certa: o celular de quem joga só mostra a categoria depois que o Mestre fala e mostra a carta.",
+      "🧹 Celular mais limpo: uma grade de números só, a categoria aparece uma vez, sem frase repetida, e o intervalo não mostra mais coisa de carta.",
+      "👆 Toque no número certo: se a tela atualizar bem na hora do toque, o celular não aperta mais outro número sem querer.",
+      "🔎 Sala que sumiu: o link levou pra uma sala que não existe mais? O celular avisa e deixa você digitar o código novo.",
+      "🤖 C.A.O.S. no lugar certo: no celular, o balão dele aparece embaixo e não cobre mais o Mestre e a vez. Na sala de espera, ele responde com o rosto dele.",
+    ],
+    qol: [
+      "📲 iPhone sem sobreposição: a tela não passa mais por baixo da hora e da bateria do iPhone.",
+      "▶️ Próxima carta no meio: no intervalo, o botão Próxima carta ficou grande e centralizado, embaixo do relógio.",
+      "🔒 Resposta fácil de ler: a resposta da carta no celular do Mestre ficou bem legível.",
+      "🎰 Virar a carta igual: o botão Virar a carta é o mesmo, grande e pulsando, no intervalo e na carta virada.",
+      "🗣️ Falas no aparelho certo: o que o C.A.O.S. fala enquanto o host cria os nomes fica só no aparelho do host.",
+    ],
+  },
+  {
     v: "Beta 1.8.0",
     ate: "1.8.1", // a lista junta os ajustes até essa versão
     data: "26/10/2026",
