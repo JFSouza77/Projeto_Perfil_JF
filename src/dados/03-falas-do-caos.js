@@ -4159,6 +4159,28 @@ const REACTIVE_VOICE = {
       "Anuncia a categoria, {nome}. Depois toca no botão que pisca.",
       "{nome}, falta só você dizer a categoria e tocar em Já falei a categoria. Bora!",
     ],
+    // 1.9.1 (pedido do JF): o "Já falei a categoria" com insistência. Primeiro um cochicho; depois, conforme o humor.
+    mostrarSussurro: [
+      "Psiu… {nome}… uma dica: se você tocar em Já falei a categoria, a mesa sabe que a carta começou, tá?",
+      "Ei, Mestre {nome}… baixinho aqui: falou a categoria? Então toca no botão pra mostrar a carta.",
+      "{nome}… cochichando pra ninguém ouvir: é só tocar em Já falei a categoria. A mesa está esperando.",
+      "Ô {nome}, entre nós dois: o botão de Já falei a categoria está ali piscando. Um toque e a carta aparece.",
+      "Olá… tem alguém aí? {nome}, a categoria já foi dita? Toca no botão e a gente segue.",
+    ],
+    mostrarTedio: [
+      "{nome}… eu tô quase dormindo aqui. Toca em Já falei a categoria, por favor.",
+      "Ai, {nome}, que preguiça desse silêncio. Falou a categoria? Toca no botão e acorda a mesa.",
+      "{nome}, eu contei os pixels da tela três vezes. Mostra a carta, vai: Já falei a categoria.",
+      "Bocejo nível máximo, {nome}. Mas tô aqui: o botão de mostrar a carta está esperando você.",
+      "{nome}, até eu cansei de esperar. Um toquinho em Já falei a categoria e a gente continua.",
+    ],
+    mostrarImpaciente: [
+      "{nome}! A mesa inteira está olhando pra você. Já falei a categoria. Toca. Agora.",
+      "Mestre {nome}, eu vou ser sincero: tô ficando nervoso. Toca em Já falei a categoria, por favor!",
+      "{nome}, respira e toca no botão. Já falei a categoria. A mesa agradece, eu também.",
+      "Ô {nome}, é sério agora: falou a categoria? Toca no botão que pisca! Eu ajudo, mas tô contando os segundos.",
+      "{nome}, último aviso amigável: toca em Já falei a categoria e mostra essa carta!",
+    ],
     escolher: [
       "{nome}, é a sua vez! Escolhe um número de dica. Qualquer um, o número não diz se é fácil.",
       "Sua vez, {nome}! Toca num número (ou fala pro Mestre qual você quer).",

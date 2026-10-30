@@ -1397,7 +1397,7 @@ body.batata-mode .rede-papel.rp-vez {
   background: linear-gradient(135deg, #3b0f7a, #6d28d9);
   border-color: #facc15;
   color: #fff;
-  text-shadow: 0 0 4px #fff, 0 0 12px #fde047, 0 0 22px #f59e0b;
+  text-shadow: 0 1px 2px #0009; /* 1.9.1 (JF): sem o brilho amarelo em volta da letra, que borrava no roxo */
 }
 .card .flip-btn.cta-pulsa {
   max-width: 560px;
@@ -1405,7 +1405,7 @@ body.batata-mode .rede-papel.rp-vez {
   background: linear-gradient(135deg, #3b0f7a, #6d28d9) !important;
   border-color: #facc15 !important;
   color: #fff !important;
-  text-shadow: 0 0 4px #fff, 0 0 12px #fde047, 0 0 22px #f59e0b;
+  text-shadow: 0 1px 2px #0009; /* 1.9.1 (JF): sem o brilho amarelo em volta da letra, que borrava no roxo */
 }
 .card .flip-btn.cta-pulsa:after {
   background: linear-gradient(135deg, #3b0f7a, #6d28d9);
@@ -1414,7 +1414,43 @@ body.batata-mode .rede-papel.rp-vez {
 body.claro .rede-btn.rede-cta,
 body.claro .cta-pulsa,
 body.claro .card .flip-btn.cta-pulsa {
-  text-shadow: 0 0 6px #fde04799;
+  text-shadow: 0 1px 2px #0009;
+}
+/* 1.9.1 (pedido do JF): demorou pra tocar, o guia chama e o botão dá uma cutucadinha (balança de leve e brilha),
+   3 vezes, e volta ao normal */
+.cta-pulsa.guia-pulso,
+.card .flip-btn.cta-pulsa.guia-pulso {
+  animation: ctaCutuca 2.8s ease-in-out 3;
+}
+@keyframes ctaCutuca {
+  0%,
+  30%,
+  100% {
+    transform: translateX(0) rotate(0);
+    box-shadow: 0 0 0 0 #facc1500, 0 8px 20px #0007;
+  }
+  6% {
+    transform: translateX(-3px) rotate(-1deg);
+  }
+  12% {
+    transform: translateX(3px) rotate(1deg);
+  }
+  18% {
+    transform: translateX(-2px) rotate(-0.5deg);
+  }
+  24% {
+    transform: translateX(0) rotate(0);
+    box-shadow: 0 0 16px 3px #facc1566, 0 8px 20px #0007;
+  }
+}
+html.acess-calmo .cta-pulsa.guia-pulso,
+body.batata-mode .cta-pulsa.guia-pulso {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cta-pulsa.guia-pulso {
+    animation: none;
+  }
 }
 
 /* 1.7.10.6 (JF): a resposta aberta pro Mestre brilha mais e pulsa, pra não passar batido */

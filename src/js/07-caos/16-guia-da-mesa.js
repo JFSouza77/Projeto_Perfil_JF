@@ -17,11 +17,15 @@ const GUIA_ESPERA_JULGAR_MS = 25e3;
 const GUIA_GUIADO_MS = 1500; // quem está sendo guiado ouve a instrução logo
 const GUIA_INTERVALO_MS = 2e4; // entre duas cutucadas de quem não está sendo guiado
 const GUIA_RITMO_TCHAU = 3;
+// 1.9.1 (pedido do JF): no "Já falei a categoria", ele insiste (até 3 cutucadas, a cada 15 s): a primeira é um
+// cochicho, as outras seguem o humor dele (entediado, impaciente ou normal). Nunca deixa de ajudar.
+const GUIA_MOSTRAR_MAX = 3;
+const GUIA_MOSTRAR_INTERVALO_MS = 15e3;
 let guia = guiaNovo();
 let guiaInstalado = false;
 
 function guiaNovo() {
-  return { match: null, chave: null, alvo: null, desde: 0, tick: 0, cutucou: false, ult: -1e9, lento: {}, guiando: {}, resp: null, pulso: null };
+  return { match: null, chave: null, alvo: null, desde: 0, tick: 0, cutucou: false, nCut: 0, ultCut: 0, ult: -1e9, lento: {}, guiando: {}, resp: null, pulso: null };
 }
 function guiaLigado() {
   try {
@@ -109,14 +113,23 @@ function guiaFalar(jid, banco) {
   caosFalarPara(jid, msg, true);
   return true;
 }
-function guiaCutucar(q) {
+function guiaBancoMostrar(n) {
+  if (n <= 1) return "mostrarSussurro";
+  const e = (typeof caosConsole !== "undefined" && caosConsole && caosConsole.atual) || "calmo";
+  if (e === "tedio" || e === "tristeza") return "mostrarTedio";
+  if (e === "raiva" || e === "ansiedade") return "mostrarImpaciente";
+  return "mostrar";
+}
+function guiaCutucar(q, agora) {
   const guiado = !!guia.guiando[q.jid];
   guia.cutucou = true;
+  guia.nCut++;
+  guia.ultCut = agora || 0;
   guia.ult = Date.now();
   guia.pulso = q.jid;
   guiaAplicarPulso(q);
-  guiaFalar(q.jid, q.acao);
-  if (!guiado) {
+  guiaFalar(q.jid, q.acao === "mostrar" ? guiaBancoMostrar(guia.nCut) : q.acao);
+  if (!guiado && guia.nCut === 1) {
     guia.lento[q.jid] = (guia.lento[q.jid] || 0) + 1;
     if (guia.lento[q.jid] >= 2) {
       guia.guiando[q.jid] = { ritmo: 0 };
@@ -154,18 +167,22 @@ function guiaTick() {
   if (chave !== guia.chave) {
     if (guia.chave) guiaJogou(agora);
     if (guia.pulso) guiaLimparPulso();
-    Object.assign(guia, { chave, alvo: q.jid, acao: q.acao, desde: agora, cutucou: false });
+    Object.assign(guia, { chave, alvo: q.jid, acao: q.acao, desde: agora, cutucou: false, nCut: 0, ultCut: 0 });
     return;
   }
   // fala dele na tela: a mesa está ouvindo, não travada
   if (activeToastState) guia.desde += dt;
   if (guia.pulso) guiaAplicarPulso(q); // a tela redesenha: o brilho volta no botão novo
-  if (guia.cutucou) return;
+  if (guia.cutucou) {
+    if (q.acao === "mostrar" && guia.nCut < GUIA_MOSTRAR_MAX && !activeToastState && agora - guia.ultCut >= GUIA_MOSTRAR_INTERVALO_MS)
+      guiaCutucar(q, agora);
+    return;
+  }
   const guiado = !!guia.guiando[q.jid];
   const espera = guiado ? GUIA_GUIADO_MS : q.acao === "julgar" ? GUIA_ESPERA_JULGAR_MS : GUIA_ESPERA_MS;
   if (agora - guia.desde < espera) return;
   if (!guiado && Date.now() - guia.ult < GUIA_INTERVALO_MS) return;
-  guiaCutucar(q);
+  guiaCutucar(q, agora);
 }
 // Acerto, erro e absurdo de quem está sendo guiado ganham um comentário de professor
 function guiaVeredito(ent) {

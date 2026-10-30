@@ -546,8 +546,8 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 106 | getRandomReaction | - |
-| 185 | getRandomReaction | guia |
+| 110 | getRandomReaction | - |
+| 202 | getRandomReaction | guia |
 
 ## js/08-salvamento.js (1)
 

@@ -24,3 +24,6 @@
   aquilo, pontual. Na quinta, 29/10, às 18h (Brasília), os créditos renovam e começam os patches com tudo que acumulou.
 - **Elisa (26/10/2026):** sobrinha do JF, 13 anos, mas com maturidade e raciocínio de uns 16; joga Júnior, Clássico,
   Old School e Hardcore. Sugestão e relato dela têm peso de jogadora experiente, não de criança.
+- **Puxar a orelha do JF (30/10/2026):** ele tem TDAH e esquece pergunta aberta. Sempre que ele mandar mensagem e
+  tiver pergunta minha sem resposta, lembrar no fim da resposta, de um jeito leve ("aproveitando que você veio:
+  ficou isso aberto comigo…"), pra gente poder continuar.

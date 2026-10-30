@@ -19,8 +19,12 @@ const NOVIDADES = [
       "🧭 Ajuda no cadastro: tocou em Adicionar e faltou alguma coisa? O C.A.O.S. chama você pelo nome, diz o que falta e a tela desce até lá.",
       "🗣️ Guia com voz: quando a mesa fica esperando o Mestre, o C.A.O.S. avisa em voz alta, e não só no balão.",
       "✨ Botão que convida: o brilho que mostra onde tocar ficou suave e lento, sem crescer nem piscar forte.",
+      "🎴 Mostrar a carta sem travar: se o Mestre demora no Já falei a categoria, o C.A.O.S. cochicha uma dica, insiste conforme o humor dele e o botão dá uma cutucadinha.",
     ],
-    qol: ["🔤 Aviso maior: o texto que diz o que falta no cadastro ficou maior e mais fácil de ler."],
+    qol: [
+      "🔤 Aviso maior: o texto que diz o que falta no cadastro ficou maior e mais fácil de ler.",
+      "🟣 Letra limpa no botão roxo: sai o brilho amarelo em volta da letra, que borrava; fica a letra branca nítida.",
+    ],
   },
   {
     v: "Beta 1.9.0",

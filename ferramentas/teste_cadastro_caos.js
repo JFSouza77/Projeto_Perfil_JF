@@ -96,6 +96,15 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     } catch (e) {}
     out.guiaComVoz = caosVoiceSilenced === antes;
     caosVoiceCancel && caosVoiceCancel();
+    // 6) "Já falei a categoria": cochicho na 1ª cutucada, depois pelo humor
+    out.mostrarCochicho = guiaBancoMostrar(1) === "mostrarSussurro";
+    caosConsole.atual = "tedio";
+    out.mostrarTedio = guiaBancoMostrar(2) === "mostrarTedio";
+    caosConsole.atual = "raiva";
+    out.mostrarImpaciente = guiaBancoMostrar(3) === "mostrarImpaciente";
+    caosConsole.atual = "calmo";
+    out.mostrarNormal = guiaBancoMostrar(2) === "mostrar";
+    out.bancosMostrar = ["mostrarSussurro", "mostrarTedio", "mostrarImpaciente"].every((k) => (REACTIVE_VOICE.guia[k] || []).length === 5);
     caosVoiceOn = vozOn;
     return out;
   });
