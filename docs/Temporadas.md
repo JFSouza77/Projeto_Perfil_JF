@@ -59,6 +59,19 @@ e autorizar.** Quando tudo estiver pronto, o Code avisa e mostra o que fez.
 - **Piadas do C.A.O.S. no tema:** no Natal, quando alguém volta casas: "Parece que alguém se comportou mal esse ano e
   tá na lista dos malvados do Papai Noel. Fulano voltou N casas." Quando avança: "Olha, o Papai Noel te deu um
   presentinho, hein? Alguém tá na lista dos bonzinhos. Ho, ho, ho!"
+- **C.A.O.S. bonzinho no Natal e no Ano Novo:** ele fica feliz e ajuda mais.
+  - Hoje o 🎁 Presente do Modo C.A.O.S. sai no máximo 1 vez por partida, só pra quem está bem atrás do líder. No Natal,
+    pode sair 2 ou 3 vezes, e também pros favoritos dele, mesmo quem não precisa ("Aproveita o Natal, toma um pontinho
+    extra").
+  - Joia de presente só com chance bem baixa e só onde joias valem (modo Joias e Express). Ele dá uma joia que falta
+    (Ano, Pessoa, Lugar ou Coisa) e respeita o limite de 2 joias por rodada.
+  - **Nunca a 4ª joia:** com 3 joias, o jogador não ganha joia do C.A.O.S. Ele pode ajudar, mas nunca entregar a vitória.
+- **Doces ou travessuras no Halloween (Modo C.A.O.S.):** o C.A.O.S. pergunta a um jogador.
+  - **Doces:** um presente sorteado (um item da lojinha, mais tempo na próxima carta…).
+  - **Travessuras:** uma sabotagem pequena, pra zoar sem estragar o jogo (pula a próxima vez, perde uns pontos ou uns
+    segundos).
+  - **Às vezes, nada:** o C.A.O.S. diz "Aguarde… em breve você verá alguma coisa", deixa o jogador na tensão e, no
+    fim, solta: "É pegadinha! Feliz Halloween!"
 - **Tom:** o C.A.O.S. pode implicar e zoar, mas com respeito. Datas de homenagem (Dia das Mães, Dia dos Pais, Dia da
   Mulher) têm falas carinhosas, sem piada pesada.
 
@@ -71,14 +84,15 @@ temporadas, na ordem do calendário.
 1. [ ] Motor de temporadas: data → temporada, datas móveis, prioridade, opção nas configurações, modo de teste e teste automático.
 2. [ ] Natal · visual (neve leve, luzinhas) e selo "🎄 Edição de Natal" na splash.
 3. [ ] Natal · falas do C.A.O.S.: 15 falas, com as piadas de avançar e voltar casas (lista dos bonzinhos e dos malvados) e gorro no rosto.
-4. [ ] Natal · lojinha: 5 itens de Natal na Corrida e 5 no Modo C.A.O.S.
-5. [ ] Natal · 5 cores e 5 emojis, troca com pergunta pro cadastrado e salvamento da temporada (volta ao normal no fim).
-6. [ ] Natal · 5 títulos nas estatísticas (Papai Noel e outros).
-7. [ ] Natal · 10 cartas de Natal, auditadas, valendo o dobro na janela.
-8. [ ] Natal · bateria de testes, prints e relatório pro JF (ele decide se publica).
-9. [ ] Ano Novo e aniversário do criador (2/1), no mesmo formato do Natal.
-10. [ ] As outras 12 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween).
-11. [ ] Bateria final, prints de todas as temporadas e relatório pro JF.
+4. [ ] Natal · C.A.O.S. bonzinho: mais presentes (até 3 por partida, inclusive pros favoritos), pontinho extra e joia rara (nunca a 4ª).
+5. [ ] Natal · lojinha: 5 itens de Natal na Corrida e 5 no Modo C.A.O.S.
+6. [ ] Natal · 5 cores e 5 emojis, troca com pergunta pro cadastrado e salvamento da temporada (volta ao normal no fim).
+7. [ ] Natal · 5 títulos nas estatísticas (Papai Noel e outros).
+8. [ ] Natal · 10 cartas de Natal, auditadas, valendo o dobro na janela.
+9. [ ] Natal · bateria de testes, prints e relatório pro JF (ele decide se publica).
+10. [ ] Ano Novo e aniversário do criador (2/1), no mesmo formato do Natal.
+11. [ ] As outras 12 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween, com o Doces ou travessuras).
+12. [ ] Bateria final, prints de todas as temporadas e relatório pro JF.
 
 ## Progresso
 
