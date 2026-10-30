@@ -35,8 +35,8 @@ e autorizar.** Quando tudo estiver pronto, o Code avisa e mostra o que fez.
 - **Liga e desliga:** uma opção "Temporadas" nas configurações, ligada por padrão.
 - **Só aparência e falas,** com uma exceção pedida pelo JF: **carta da temporada vale o dobro de pontos** durante a
   janela, com um selo na carta (🎃, 🎄, 🎉…). Fora da janela, ela é uma carta comum ou nem aparece.
-- **Quantidades terminam em 0 ou 5:** 15 temporadas, 15 falas do C.A.O.S. por temporada (225 no total), 10 cartas por
-  temporada (150 no total).
+- **Quantidades terminam em 0 ou 5:** 15 temporadas e, em cada uma, 15 falas do C.A.O.S., 10 cartas, 5 itens por
+  lojinha, 5 cores, 5 emojis e 5 títulos.
 - **Júnior:** só falas e cartas leves. As datas de homenagem usam fatos, sem tomar partido (mesma regra das cartas de
   tema pesado).
 - **Movimento leve:** os enfeites respeitam o "reduzir movimento" do aparelho e não cobrem texto nem botões.
@@ -44,17 +44,42 @@ e autorizar.** Quando tudo estiver pronto, o Code avisa e mostra o que fez.
   contam igual).
 - **Pra testar fora da época:** um modo de teste força a temporada (ex.: `?temporada=natal`), só pra desenvolvimento.
 
+## O que cada temporada traz (ideias do JF, 30/10/2026)
+
+- **Lojinha da temporada:** na Corrida contra o Tempo e no Modo C.A.O.S., os itens de sempre continuam e entram
+  5 itens da temporada em cada loja.
+- **Cores e emojis da temporada:** 5 cores e 5 emojis novos pros jogadores escolherem.
+  - Se um jogador cadastrado escolher uma cor ou emoji diferente do cadastro, o jogo pergunta: "Você escolheu um estilo
+    que não é o do seu cadastro. Quer usar durante a temporada?" Se ele aceitar, o C.A.O.S. "autoriza" a troca.
+  - O estilo novo fica salvo só durante a temporada (salvamento da temporada). Quando ela acaba, o jogador volta ao
+    estilo que tinha antes, sozinho.
+- **Títulos da temporada nas estatísticas:** 5 títulos por temporada. Exemplos:
+  - Halloween: **Caçador de Bruxas**, quem eliminou as cartas mais rápido.
+  - Natal: **Papai Noel**, quem mais distribuiu presentes (o Mestre que mais deu pontos, casas e bônus pros outros).
+- **Piadas do C.A.O.S. no tema:** no Natal, quando alguém volta casas: "Parece que alguém se comportou mal esse ano e
+  tá na lista dos malvados do Papai Noel. Fulano voltou N casas." Quando avança: "Olha, o Papai Noel te deu um
+  presentinho, hein? Alguém tá na lista dos bonzinhos. Ho, ho, ho!"
+- **Tom:** o C.A.O.S. pode implicar e zoar, mas com respeito. Datas de homenagem (Dia das Mães, Dia dos Pais, Dia da
+  Mulher) têm falas carinhosas, sem piada pesada.
+
 ## Ordem de trabalho (um pedaço por dia)
 
+**Prioridade: o Natal** (pedido do JF, 30/10/2026). O Natal fica completo primeiro, pra estar pronto antes de 1/12.
+Quando ele estiver pronto, o Code mostra pro JF, que decide se publica antes de dezembro. Depois vêm as outras
+temporadas, na ordem do calendário.
+
 1. [ ] Motor de temporadas: data → temporada, datas móveis, prioridade, opção nas configurações, modo de teste e teste automático.
-2. [ ] Visual de cada temporada: cores e enfeites leves, sem atrapalhar a leitura.
-3. [ ] Selo na splash ("🎃 Edição Halloween", "🎄 Edição de Natal"…).
-4. [ ] Falas do C.A.O.S.: 15 por temporada, com acessório no rosto (chapéu de bruxa, gorro, confete…).
-5. [ ] Aniversário do criador (2/1): o C.A.O.S. parabeniza o JF e pega leve com ele nesse dia.
-6. [ ] Dia das Crianças: falas extras do C.A.O.S. no Júnior.
-7. [ ] Cartas da temporada: 10 por temporada, auditadas, valendo o dobro na janela.
-8. [ ] Bateria de testes, build, prints de cada temporada e relatório pro JF.
+2. [ ] Natal · visual (neve leve, luzinhas) e selo "🎄 Edição de Natal" na splash.
+3. [ ] Natal · falas do C.A.O.S.: 15 falas, com as piadas de avançar e voltar casas (lista dos bonzinhos e dos malvados) e gorro no rosto.
+4. [ ] Natal · lojinha: 5 itens de Natal na Corrida e 5 no Modo C.A.O.S.
+5. [ ] Natal · 5 cores e 5 emojis, troca com pergunta pro cadastrado e salvamento da temporada (volta ao normal no fim).
+6. [ ] Natal · 5 títulos nas estatísticas (Papai Noel e outros).
+7. [ ] Natal · 10 cartas de Natal, auditadas, valendo o dobro na janela.
+8. [ ] Natal · bateria de testes, prints e relatório pro JF (ele decide se publica).
+9. [ ] Ano Novo e aniversário do criador (2/1), no mesmo formato do Natal.
+10. [ ] As outras 12 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween).
+11. [ ] Bateria final, prints de todas as temporadas e relatório pro JF.
 
 ## Progresso
 
-- 30/10/2026: plano criado; tarefa diária agendada (por volta de 8h45, horário de Brasília) pra ir fazendo um pedaço por vez.
+- 30/10/2026: plano criado; o JF somou lojinha, cores, emojis, títulos e piadas da temporada e deu prioridade pro Natal; tarefa diária agendada (por volta de 8h45, horário de Brasília) pra ir fazendo um pedaço por vez.
