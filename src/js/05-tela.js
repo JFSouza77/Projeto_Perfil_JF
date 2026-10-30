@@ -4058,13 +4058,56 @@ function cadAtualizarBotao() {
     if (!b) return;
     if (typeof iniFluxo !== "undefined" && iniFluxo) return;
     const ok = cadPodeAdicionar();
-    b.disabled = !ok;
+    // 1.9.1: o botão fica tocável mesmo incompleto (parece apagado): o toque chama o C.A.O.S. pra mostrar o que falta
+    b.disabled = false;
+    b.setAttribute("aria-disabled", ok ? "false" : "true");
+    b.classList.toggle("bloqueado", !ok);
     b.classList.toggle("pronto", ok);
     const f = document.getElementById("addPlayerFalta");
     if (f) f.textContent = ok ? "" : cadFaltaTexto();
   } catch (e) {}
 }
 
+
+// 1.9.1 (pedido do JF): tocou em Adicionar com o cadastro incompleto. O C.A.O.S. lê o nick, diz o que falta e a
+// tela desce até o campo (abre a caixa, se for de abrir) com um brilho leve. A fala sai no máximo a cada 6 s.
+let cadGuiaFalaAt = 0;
+function cadPrimeiraFalta() {
+  const inp = document.getElementById("playerNameInput");
+  const nome = inp ? inp.value.trim() : "";
+  const eq = CURRENT_FORMAT === "equipe";
+  if (nome.length < 2) return { k: "nome", el: inp };
+  if (isJfName(nome)) return null;
+  const idade = () => (eq ? { k: "faixa", el: document.getElementById("ageBracketWrap") } : { k: "idade", el: document.getElementById("idadeWrap") });
+  if (isAnneName(nome) || presenteDe(nome)) return (eq ? cadFaixa : selectedIdade) ? null : idade();
+  if (!eq && !selectedIdade) return idade();
+  if (!eq && !cadCor) return { k: "cor", el: document.getElementById("colorBox") };
+  if (!cadEmoji) return { k: "emoji", el: document.getElementById("avatarBox") };
+  if (!humorPreMarcado() && !cadHumor) return { k: "zoeira", el: document.getElementById("humorBox") };
+  if (eq && !cadFaixa) return idade();
+  return null;
+}
+function cadGuiarFalta() {
+  const f = cadPrimeiraFalta();
+  if (!f || !f.el) return;
+  const inp = document.getElementById("playerNameInput");
+  const nome = inp ? inp.value.trim() : "";
+  try {
+    if (f.el.tagName === "DETAILS") f.el.open = true;
+    const calmo = document.documentElement.classList.contains("acess-calmo") || matchMedia("(prefers-reduced-motion: reduce)").matches;
+    f.el.scrollIntoView({ behavior: calmo ? "auto" : "smooth", block: "center" });
+    f.el.classList.remove("cad-falta-foco");
+    void f.el.offsetWidth;
+    f.el.classList.add("cad-falta-foco");
+    setTimeout(() => f.el.classList.remove("cad-falta-foco"), 4000);
+    if (f.k === "nome") setTimeout(() => inp && inp.focus({ preventScroll: true }), 350);
+  } catch (e) {}
+  const lista = REACTIVE_VOICE.cadFalta && REACTIVE_VOICE.cadFalta[f.k];
+  if (!lista || caosSilenced || Date.now() - cadGuiaFalaAt < 6e3) return;
+  cadGuiaFalaAt = Date.now();
+  const msg = getRandomReaction(lista, nome);
+  if (msg) showToastMessage(msg, null, false, true);
+}
 
 // 1.7.10.5.7: "Escolher por aqui" (o Mestre assume o seletor de alvo da especial nesta dica)
 let alvoAquiChave = null;

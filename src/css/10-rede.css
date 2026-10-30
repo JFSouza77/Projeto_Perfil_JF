@@ -2075,23 +2075,23 @@ body.claro .rede-senha-host {
   border-color: #be185d;
   color: #4a0b25;
 }
-/* 1.8 · Guia da mesa: o botão que a mesa está esperando brilha (sem mudar o tamanho nem a cor do botão) */
+/* 1.8 · Guia da mesa: o botão que a mesa está esperando brilha (sem mudar o tamanho nem a cor do botão).
+   1.9.1 (JF: "parece que está me obrigando a clicar, e não sugerindo"): convite em vez de alarme. Brilho suave e
+   lento, sem crescer, que respira 3 vezes e depois fica só um contorno leve. */
 .guia-pulso {
   position: relative;
   z-index: 1;
-  outline: 3px solid #facc15;
+  outline: 2px solid #facc1599;
   outline-offset: 2px;
-  animation: guiaPulso 1.2s ease-in-out infinite;
+  animation: guiaPulso 2.8s ease-in-out 3;
 }
 @keyframes guiaPulso {
   0%,
   100% {
-    box-shadow: 0 0 0 0 #facc15cc;
-    transform: scale(1);
+    box-shadow: 0 0 0 0 #facc1500;
   }
   50% {
-    box-shadow: 0 0 0 12px #facc1500;
-    transform: scale(1.06);
+    box-shadow: 0 0 14px 2px #facc1559;
   }
 }
 html.acess-calmo .guia-pulso,
