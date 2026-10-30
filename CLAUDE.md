@@ -27,3 +27,5 @@
 - **Puxar a orelha do JF (30/10/2026):** ele tem TDAH e esquece pergunta aberta. Sempre que ele mandar mensagem e
   tiver pergunta minha sem resposta, lembrar no fim da resposta, de um jeito leve ("aproveitando que você veio:
   ficou isso aberto comigo…"), pra gente poder continuar.
+- **Diário do Code (30/10/2026):** `docs/Diario_do_Code.md`. Antes de caçar bug, procurar o sintoma no Mapa; depois de
+  cada correção, escrever no Registro (o que o JF viu, causa, o que mudou, teste que segura).
