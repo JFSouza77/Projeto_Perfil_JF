@@ -38,6 +38,8 @@ de 500 novas (o JF vai olhar o Perfil 8).
 - Ordem de trabalho: Ano e Animal (as listas mais fechadas), depois Pessoa, Lugar e Coisa. Cada lote passa no
   `ferramentas/auditar_cartas.js` antes do commit.
 - Tema pesado: só fatos, sem tomar partido, nunca no Júnior.
+- **Progresso (30/10/2026):** Ano 50/50 e Animal 50/50 prontas em `cartas_2.0/` (auditadas, sem erro). Faltam
+  Pessoa (105), Lugar (45) e Coisa (150), esperando o JF aprovar o estilo das primeiras.
 
 ## Como as cartas vão entrar
 - **Dicas escritas do zero**, no padrão do jogo (20 dicas, as especiais no lugar de sempre, da mais difícil pra mais
