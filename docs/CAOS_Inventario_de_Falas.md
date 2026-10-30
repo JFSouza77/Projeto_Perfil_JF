@@ -118,14 +118,14 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 619 | getRandomReaction | tabuleiro.pular |
-| 620 | caosFalaAgendar | - |
-| 680 | getRandomReaction | - |
-| 681 | caosFalaAgendar | - |
-| 689 | getRandomReaction | - |
-| 690 | caosFalaAgendar | - |
-| 692 | getRandomReaction | - |
-| 693 | caosFalaAgendar | - |
+| 620 | getRandomReaction | tabuleiro.pular |
+| 621 | caosFalaAgendar | - |
+| 681 | getRandomReaction | - |
+| 682 | caosFalaAgendar | - |
+| 690 | getRandomReaction | - |
+| 691 | caosFalaAgendar | - |
+| 693 | getRandomReaction | - |
+| 694 | caosFalaAgendar | - |
 
 ## js/05k-rede.js (9)
 
@@ -134,12 +134,12 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 90 | showToastMessage | - |
 | 887 | caosGerarFala | gerador hostCaiu |
 | 888 | showToastMessage | - |
-| 2015 | showToastMessage | - |
-| 2147 | showToastMessage | - |
-| 2195 | showToastMessage | - |
-| 2196 | showToastMessage | - |
-| 2573 | getRandomReaction | vozCalada |
-| 3360 | showToastMessage | - |
+| 2028 | showToastMessage | - |
+| 2167 | showToastMessage | - |
+| 2215 | showToastMessage | - |
+| 2216 | showToastMessage | - |
+| 2593 | getRandomReaction | vozCalada |
+| 3508 | showToastMessage | - |
 
 ## js/05o-corrida.js (5)
 

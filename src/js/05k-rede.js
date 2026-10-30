@@ -1263,6 +1263,7 @@ function redeAssentar(ses, pedido, chave, mais) {
    de tempo extra do Mestre) vai só pro aparelho da pessoa e não aparece no host se ela está em outro aparelho. */
 function redeHostFala(f) {
   if (!rede || rede.papel !== "host" || !f || !f.texto) return;
+  if (redeFalaSoDoHost(f)) return;
   const ids = (f.para || []).map((d) => d.id).filter((id) => jogadorIdValido(id));
   // 1.7.10: o rosto e a etiqueta do humor vão junto (o celular desenha o balão igual ao do host)
   const visual = {};
@@ -1282,6 +1283,18 @@ function redeHostFala(f) {
   }
   // só marca "é com você" (voz no celular dela) quando a fala fala COM a pessoa; citação é da mesa
   redeEnviar("fala", ids.length && redeFalaComQuem(f) ? { texto: f.texto, quem: ids.slice(0, 8), ...visual } : { texto: f.texto, ...visual });
+}
+// 29/10/2026 (print 9 do JF): as falas do cadastro de nomes (nickDemora, nickReacao…) são sobre quem está digitando
+// no host. No celular de quem espera a sala elas ficam sem sentido ("Tenta juntar um bicho com uma coisa legal"),
+// então ficam só no host.
+function redeFalaSoDoHost(f) {
+  try {
+    const t = String(f.texto).replace(/^\[C\.A\.O\.S\.\]\s*/, "");
+    const pick = typeof caosLastPick !== "undefined" ? caosLastPick : null;
+    return !!(pick && /^nick/.test(String(pick.bank || "")) && String(pick.text || "").indexOf(t.slice(0, 40)) !== -1);
+  } catch (e) {
+    return false;
+  }
 }
 // A fala particular é só de quem está em outro aparelho? Então não aparece aqui no host.
 // 1.7.10 (relato do JF: "falou com a Anne no MEU celular"): vale também pra fala NÃO particular que cita só
@@ -2081,7 +2094,8 @@ function redeHostVista() {
   const nome = (p) => escapeHtml((p.avatar ? p.avatar + " " : "") + p.name);
   const daVez = eus.find((p) => jogadorIdDe(responderIndex) === p.id);
   const vez = !!daVez;
-  let h = `<div class="rede-eu">${eus.length ? `Neste aparelho: <b>${eus.map(nome).join("</b> e <b>")}</b>${vez ? ` · 👉 Vez de ${nome(daVez)}` : ""}` : "Este aparelho é a mesa"}</div>`;
+  // 29/10/2026 (print 2 do JF): "· Vez de JF" saiu daqui; a faixa SUA VEZ logo abaixo já diz
+  let h = `<div class="rede-eu">${eus.length ? `Neste aparelho: <b>${eus.map(nome).join("</b> e <b>")}</b>${vez && !(starterChosen && !gameEnded) ? ` · 👉 Vez de ${nome(daVez)}` : ""}` : "Este aparelho é a mesa"}</div>`;
   // 1.7.10.6.1 (relato do JF): ninguém marcado neste aparelho, mas tem jogador sem dispositivo na sala: um toque resolve
   const semDisp = !eus.length && starterChosen && !gameEnded ? players.filter((p) => !redeOnline(rede.assentos[p.id])) : [];
   if (semDisp.length)
@@ -2092,7 +2106,12 @@ function redeHostVista() {
     h += `<div class="rede-rot">👉 Sua vez: toque no número (ou fale) e o Mestre abre a dica.</div>`; // 1.7.9.6: só o Mestre abre
   const ops = [];
   eus.forEach((p) => redeOpcoes(p.id).forEach((o) => o.a !== "pausar" && ops.push({ ...o, quem: p.id })));
-  if (ops.length) h += `<div class="rede-acoes">${ops.map((o, i) => `<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}${o.gp ? " guia-pulso" : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`).join("")}</div>`;
+  // 29/10/2026 (print 2 do JF): os números de dica viram a mesma grade do celular (com a pedida em destaque)
+  const btn = (o, i) => `<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}${o.gp ? " guia-pulso" : ""}${redeOpPedida(o) ? " pedida" : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`;
+  const nums = ops.map((o, i) => (o.a === "pedirDica" ? btn(o, i) : "")).join("");
+  const outros = ops.map((o, i) => (o.a !== "pedirDica" ? btn(o, i) : "")).join("");
+  if (nums) h += `<div class="rede-nums">${nums}</div>`;
+  if (outros) h += `<div class="rede-acoes">${outros}</div>`;
   h += `<div class="rede-acoes rede-mais"><button type="button" class="rede-btn" id="redeVistaPausar">⏸️ Pausar</button><button type="button" class="rede-btn" id="redeVistaSala">🌐 Sala ${rede.sala}</button></div>`;
   const barra = document.createElement("section");
   barra.className = "rede-barra";
@@ -2100,12 +2119,13 @@ function redeHostVista() {
   const topo = box.querySelector(".telao-vez");
   if (topo) topo.after(barra);
   else box.prepend(barra);
+  box.classList.toggle("rede-tem-grade", !!nums);
   const agir = (quem, acao, dados) => {
     if (!quem || !redePodeComandar(acao, quem, dados)) return;
     dispatchAction({ type: acao, data: dados, commandId: "h_" + redeAleatorio(12), expectedRevision: partidaRevisao, actorId: quem });
   };
   barra.querySelectorAll("[data-op]").forEach((b) =>
-    b.addEventListener("click", () => {
+    redeToqueSeguro(b, () => {
       const o = ops[+b.dataset.op];
       if (o) agir(o.quem, o.a, o.d);
     }),
@@ -2756,9 +2776,23 @@ function redeEsperaExtrasHtml() {
     `<div class="rede-dica-espera" aria-live="polite">💡 <span id="redeDicaEspera">${escapeHtml(REDE_ESPERA_DICAS[rede.esperaDica % REDE_ESPERA_DICAS.length])}</span></div>` +
     `<button type="button" class="rede-lugar" id="redeTutRapido">🎓 Tutorial rápido (2 min)</button>` +
     `<div class="rede-caos-perg"><div class="rede-rot">🤖 Pergunte ao C.A.O.S.</div><div class="rede-caos-botoes">${perg}</div>` +
-    `<div class="rede-caos-resp" id="redeCaosResp" aria-live="polite"${rede.esperaResp ? "" : " hidden"}>${rede.esperaResp ? "🤖 " + escapeHtml(rede.esperaResp) : ""}</div></div>` +
+    `<div class="rede-caos-resp" id="redeCaosResp" aria-live="polite"${rede.esperaResp ? "" : " hidden"}>${rede.esperaResp ? redeEsperaRespHtml(rede.esperaResp, rede.esperaEmo) : ""}</div></div>` +
     `</section>`
   );
+}
+// 29/10/2026 (prints 5 e 6 do JF): a resposta do "Pergunte ao C.A.O.S." vem com o rosto dele, como nos balões
+const REDE_ESPERA_EMO = { oQueFaco: "carinho", comoJoga: "orgulho", mestre: "orgulho", demora: "tedio", quemEVoce: "orgulho" };
+function redeEsperaRosto(emo) {
+  try {
+    return (caosFaceEscolher(emo) || [])[0] || "🤖";
+  } catch (e) {
+    return "🤖";
+  }
+}
+function redeEsperaRespHtml(txt, emo) {
+  const E = typeof CAOS_EMOS !== "undefined" && CAOS_EMOS[emo];
+  const cor = E && E.cor ? ` style="--emo-cor:${E.cor}"` : "";
+  return `<span class="rede-fala-rosto"${cor}>${escapeHtml(rede.esperaRosto || redeEsperaRosto(emo))}</span> <span class="rede-caos-resp-txt">${escapeHtml(txt)}</span>`;
 }
 function redeEsperaLigar(box) {
   if (!rede || !box) return;
@@ -2773,10 +2807,12 @@ function redeEsperaLigar(box) {
       const opcoes = banco.map((t) => redeFalaTexto(t)).filter((t) => t !== rede.esperaResp);
       const txt = opcoes[Math.floor(Math.random() * opcoes.length)] || redeFalaTexto(banco[0]);
       rede.esperaResp = txt;
+      rede.esperaEmo = REDE_ESPERA_EMO[b.dataset.perg] || "calmo";
+      rede.esperaRosto = redeEsperaRosto(rede.esperaEmo);
       const r = box.querySelector("#redeCaosResp");
       if (r) {
         r.hidden = false;
-        r.textContent = "🤖 " + txt;
+        r.innerHTML = redeEsperaRespHtml(txt, rede.esperaEmo);
       }
       try {
         if (caosVoiceOn) caosSpeak(txt);
@@ -2784,19 +2820,79 @@ function redeEsperaLigar(box) {
     }),
   );
   // a dica troca a cada 7 s (o timer sobrevive aos redesenhos: só atualiza se a tela de espera está aberta)
-  if (!rede.esperaTimer)
-    rede.esperaTimer = setInterval(() => {
-      const el = document.getElementById("redeDicaEspera");
-      if (!rede || !el) return;
-      rede.esperaDica = (rede.esperaDica + 1) % REDE_ESPERA_DICAS.length;
-      el.textContent = REDE_ESPERA_DICAS[rede.esperaDica];
-    }, 7000);
+  redeEsperaTimerLigar();
 }
 // As falas do C.A.O.S. viram funções quando o jogo carrega (caosFalasMontar). Pra mostrar como texto simples no
 // celular: chama a função com o nome e tira a etiqueta "[C.A.O.S.]" (quem lê na tela já vê o 🤖).
 function redeFalaTexto(item, nome) {
   const t = typeof item === "function" ? item(nome || "você") : String(item || "").split("{nome}").join(nome || "você");
   return String(t || "").replace(/^\[C\.A\.O\.S\.\]\s*/, "");
+}
+/* --- 1.9 · T2 viva (pedido do JF): esperando a vez na partida, o celular não fica parado ---
+   Uma dica de como jogar (troca a cada 7 s, as mesmas da sala de espera) e uma fala do C.A.O.S. pra quem espera
+   (troca a cada 40 s): acabou de jogar, esperando faz tempo, lanterna, na frente ou geral. Só texto, sem voz. */
+const REDE_ESPERA_VEZ_MS = 40e3;
+function redeEsperaVezGrupo(r, eu) {
+  const agora = Date.now();
+  if (rede.esperaAcabouEm && agora - rede.esperaAcabouEm < 20e3) return "acabou";
+  if (rede.esperaVezDesde && agora - rede.esperaVezDesde > 90e3) return "demora";
+  const js = (r.jogadores || []).slice().sort((a, b) => (b.pontos || 0) - (a.pontos || 0));
+  if (eu && js.length >= 3) {
+    const p = eu.pontos || 0;
+    if (js[0].id === eu.id && p > (js[1].pontos || 0)) return "frente";
+    if (js[js.length - 1].id === eu.id && p < (js[0].pontos || 0)) return "atras";
+  }
+  return "geral";
+}
+function redeEsperaVezTexto(r, eu) {
+  const grupo = redeEsperaVezGrupo(r, eu);
+  const banco = (REACTIVE_VOICE.esperaVez && REACTIVE_VOICE.esperaVez[grupo]) || [];
+  if (rede.esperaProvTxt && rede.esperaProvGrupo === grupo && Date.now() - rede.esperaProvEm < REDE_ESPERA_VEZ_MS) return rede.esperaProvTxt;
+  const nome = (eu && eu.nome) || "você";
+  const opcoes = banco.map((t) => redeFalaTexto(t, nome)).filter((t) => t !== rede.esperaProvTxt);
+  rede.esperaProvTxt = opcoes[Math.floor(Math.random() * opcoes.length)] || (banco[0] ? redeFalaTexto(banco[0], nome) : "");
+  rede.esperaProvGrupo = grupo;
+  rede.esperaProvEm = Date.now();
+  return rede.esperaProvTxt;
+}
+function redeEsperaVezHtml(r, eu, papel) {
+  // quando a vez sai de mim, marca a hora (pra "acabou de jogar" e "esperando faz tempo")
+  if (papel.vez || papel.mestre) {
+    if (papel.vez) rede.esperaEraVez = true;
+    rede.esperaVezDesde = 0;
+    return "";
+  }
+  if (r.votacao) return "";
+  if (rede.esperaEraVez) rede.esperaAcabouEm = Date.now();
+  rede.esperaEraVez = false;
+  if (!rede.esperaVezDesde) rede.esperaVezDesde = Date.now();
+  if (!Number.isInteger(rede.esperaDica)) rede.esperaDica = Math.floor(Math.random() * REDE_ESPERA_DICAS.length);
+  redeEsperaTimerLigar();
+  return (
+    `<section class="rede-espera-vez">` +
+    `<div class="rede-caos-espera" id="redeCaosEspera" aria-live="polite">🤖 ${escapeHtml(redeEsperaVezTexto(r, eu))}</div>` +
+    `<div class="rede-dica-espera">💡 <span id="redeDicaEspera">${escapeHtml(REDE_ESPERA_DICAS[rede.esperaDica % REDE_ESPERA_DICAS.length])}</span></div>` +
+    `</section>`
+  );
+}
+// o mesmo relógio da sala de espera: troca a dica a cada 7 s e confere se a fala do C.A.O.S. já venceu
+function redeEsperaTimerLigar() {
+  if (!rede || rede.esperaTimer) return;
+  rede.esperaTimer = setInterval(() => {
+    if (!rede) return;
+    const el = document.getElementById("redeDicaEspera");
+    if (el) {
+      rede.esperaDica = (rede.esperaDica + 1) % REDE_ESPERA_DICAS.length;
+      el.textContent = REDE_ESPERA_DICAS[rede.esperaDica];
+    }
+    const ce = document.getElementById("redeCaosEspera");
+    const r = rede.retrato,
+      eu = r && (r.jogadores || []).find((j) => j.id === rede.eu);
+    if (ce && r) {
+      const t = "🤖 " + redeEsperaVezTexto(r, eu);
+      if (ce.textContent !== t) ce.textContent = t;
+    }
+  }, 7000);
 }
 // Abre o formulário pra criar mais um jogador neste mesmo aparelho (sem largar os que já estão).
 function redeConvAdicionarJogador() {
@@ -2846,7 +2942,23 @@ function redeConvidadoDesenhar() {
     return;
   }
   if (rede.estado !== "dentro" || !rede.retrato) {
-    box.innerHTML = `${sala}<div class="telao-espera">Entrando na sala…</div>${redeSairHtml()}`;
+    // 29/10/2026 (print 3 do JF): o celular reabriu um link velho (sala PXLG) e ficou procurando pra sempre. Quando a
+    // sala não aparece, a tela explica e oferece digitar o código novo.
+    const sumiu = (rede.transporte || {}).estado === "sem_sala";
+    box.innerHTML =
+      `${sala}<div class="telao-espera">Entrando na sala…</div>` +
+      (sumiu
+        ? `<div class="rede-sala-velha">🤔 Não achei a sala <b>${escapeHtml(rede.sala)}</b>. Se o host abriu uma sala nova, o código mudou.<button type="button" class="rede-lugar" id="redeOutroCodigo">🔢 Entrar com outro código</button></div>`
+        : "") +
+      redeSairHtml();
+    const outro = box.querySelector("#redeOutroCodigo");
+    if (outro)
+      outro.addEventListener("click", () => {
+        try {
+          sessionStorage.setItem("perfil_jf_abrir_codigo", "1");
+        } catch (e) {}
+        redeSairDaSala();
+      });
     return;
   }
   // 1.7.9.4: sala aberta antes da partida: espera o host terminar o cadastro e começar
@@ -2885,6 +2997,7 @@ function redeConvidadoDesenhar() {
   const barra = document.createElement("section");
   barra.className = "rede-barra";
   barra.innerHTML = redeConvTrocaHtml() + redeBotoesHtml();
+  box.classList.toggle("rede-tem-grade", !!barra.querySelector(".rede-nums"));
   if (rede.retrato.intervalo) box.querySelector(".telao-hist")?.remove(); // o lobby já tem a aba Cartas
   // 1.7.10.5.7: o seletor de alvo da especial: só quem abriu a dica toca
   const ae = rede.retrato.alvoEspecial;
@@ -2908,9 +3021,11 @@ function redeConvidadoDesenhar() {
   if (topo) topo.after(barra);
   else box.appendChild(barra);
   barra.querySelectorAll("[data-ativo]").forEach((b) => b.addEventListener("click", () => redeConvDefinirAtivo(b.dataset.ativo)));
+  // a lista de ações é a que foi desenhada (antes era a do momento do toque: se o painel mudou, ia outra ação)
+  const opsDesenhadas = (rede.painel && rede.painel.opcoes) || [];
   barra.querySelectorAll("[data-op]").forEach((b) =>
-    b.addEventListener("click", () => {
-      const o = rede.painel && rede.painel.opcoes[+b.dataset.op];
+    redeToqueSeguro(b, () => {
+      const o = opsDesenhadas[+b.dataset.op];
       if (o) redeMandar(o.a, ...o.d);
     }),
   );
@@ -2921,7 +3036,7 @@ function redeConvidadoDesenhar() {
     }),
   );
   barra.querySelectorAll(".lp-barra[data-ate]").forEach((x) => (x.style.width = x.dataset.ate + "%"));
-  barra.querySelectorAll("[data-dica]").forEach((b) => b.addEventListener("click", () => redeMandar("escolherDica", +b.dataset.dica)));
+  barra.querySelectorAll("[data-dica]").forEach((b) => redeToqueSeguro(b, () => redeMandar("escolherDica", +b.dataset.dica)));
   barra.querySelectorAll("[data-voto]").forEach((b) => b.addEventListener("click", () => redeVotarConvidado(b.dataset.voto === "1") && redeConvidadoDesenhar()));
   redeConvidadoTiques();
 }
@@ -2933,7 +3048,9 @@ const REDE_CLASSE_BOTAO = (o) =>
   o.a === "acertou" || o.a === "palpiteAcertou" ? "btn-correct" :
   o.a === "errou" ? (o.d[0] === "pular" ? "btn-pular" : o.d[0] === "absurdo" ? "btn-absurdo" : "btn-wrong") :
   o.a === "palpiteErrou" ? "btn-wrong" :
-  o.a === "virarCarta" ? "flip-btn" :
+  // 29/10/2026 (prints 12 e 15 do JF): o "Virar a carta" da carta do Mestre era cinza e pequeno; agora é o mesmo
+  // botão grande e pulsando do intervalo
+  o.a === "virarCarta" || o.a === "roletaCategoria" ? "flip-btn" + (o.c === "cta" ? " cta-pulsa" : "") :
   o.a === "sacarCarta" ? "main-btn btn-draw" :
   o.a === "descartarCarta" || o.a === "desistirCarta" ? "discard-btn" :
   o.g === "Mais" ? "rede-btn" : "continue-btn";
@@ -3010,12 +3127,12 @@ function redeMestreCartaMontar(box) {
   if (typeof telaoRoletaAnimar === "function") telaoRoletaAnimar(sec);
   sec.querySelectorAll("[data-ativo]").forEach((b) => b.addEventListener("click", () => redeConvDefinirAtivo(b.dataset.ativo)));
   sec.querySelectorAll("[data-op]").forEach((b) =>
-    b.addEventListener("click", () => {
+    redeToqueSeguro(b, () => {
       const o = ops[+b.dataset.op];
       if (o) redeMandar(o.a, ...o.d);
     }),
   );
-  sec.querySelectorAll(".number-btn[data-dica]:not(.aberta):not(.travada)").forEach((b) => b.addEventListener("click", () => redeMandar("escolherDica", +b.dataset.dica)));
+  sec.querySelectorAll(".number-btn[data-dica]:not(.aberta):not(.travada)").forEach((b) => redeToqueSeguro(b, () => redeMandar("escolherDica", +b.dataset.dica)));
   const gradeEl = sec.querySelector(".number-grid");
   if (gradeEl)
     dicaSegurarParaForcar(gradeEl, (idx) => {
@@ -3232,12 +3349,36 @@ function redePapelHtml(papel, nome) {
   if (papel.vez) return `<div class="rede-papel rp-vez" role="status">👉 SUA VEZ!${quem}<small>Escolha um número de dica, ouça o Mestre e tente adivinhar.</small></div>`;
   return "";
 }
+// 29/10/2026 (print 18 do JF): no intervalo não tem "Sua vez" correndo: diz o que a pessoa faz na próxima carta
+function redeEuPapelTxt(r, papel) {
+  if (r.intervalo) return papel.mestre ? " · 🎙️ Mestre da próxima carta" : papel.vez ? " · 👉 Você começa a próxima carta" : "";
+  return papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 Sua vez" : "";
+}
+// 29/10/2026 (relato do JF: "pediram a dica X e abriu a Y"): se a tela se redesenha no meio do toque, o "click" do
+// celular cai no botão NOVO que ficou embaixo do dedo (os números mudam de lugar quando uma dica abre). Só vale o
+// toque que começou no próprio botão; teclado (sem ponteiro) continua valendo.
+function redeToqueSeguro(el, fn) {
+  if (!el) return;
+  el.addEventListener("pointerdown", () => (el._redeToque = true));
+  el.addEventListener("click", (ev) => {
+    const teclado = ev && ev.detail === 0;
+    if (!teclado && !el._redeToque) return;
+    el._redeToque = false;
+    fn(ev);
+  });
+}
+// O número de dica que a pessoa já pediu (o host manda com "👉 " na frente): fica em destaque e os outros apagam
+function redeOpPedida(o) {
+  return !!o && o.a === "pedirDica" && /^👉/.test(String(o.t || ""));
+}
 function redeBotoesHtml() {
   const r = rede.retrato, eu = r.jogadores.find((j) => j.id === rede.eu);
   const papel = redeMeuPapel();
-  let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${(papel.mestre || papel.vez) && !r.intervalo && r.iniciada ? "" : papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 Sua vez" : ""}</div>`;
+  let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${(papel.mestre || papel.vez) && !r.intervalo && r.iniciada ? "" : redeEuPapelTxt(r, papel)}</div>`;
   if (r.fim) return h;
   if (!r.intervalo && r.iniciada) h += redePapelHtml(papel, eu && eu.nome);
+  // 1.9 · T2 viva: esperando a vez, o celular tem dica e o C.A.O.S. mexendo com a pessoa
+  if (!r.intervalo && r.iniciada && !r.mc) h += redeEsperaVezHtml(r, eu, papel);
   if (r.intervalo) {
     // 1.7.9.11: o placar do intervalo no celular de cada um (Pontos e Joias; o tabuleiro está logo abaixo)
     // 1.7.10.5.6 (pedido do JF): cara de lobby, com o resumo da partida e as cartas que já foram
@@ -3277,7 +3418,7 @@ function redeBotoesHtml() {
     let gr = grupos.find((x) => x.g === g);
     if (!gr) grupos.push((gr = { g, itens: [], nums: true }));
     if (o.a !== "pedirDica") gr.nums = false;
-    gr.itens.push(`<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}${o.gp ? " guia-pulso" : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`);
+    gr.itens.push(`<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}${o.gp ? " guia-pulso" : ""}${redeOpPedida(o) ? " pedida" : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`);
   });
   grupos.sort((a, b) => (a.g === "Mais") - (b.g === "Mais"));
   grupos.forEach((gr) => {
@@ -3649,3 +3790,11 @@ function redePainelHost() {
   ov._montado = true;
   document.body.appendChild(ov);
 }
+// 29/10/2026: "Entrar com outro código" recarrega a página sem a sala velha e já abre a caixa do código
+window.addEventListener("load", () => {
+  try {
+    if (sessionStorage.getItem("perfil_jf_abrir_codigo") !== "1") return;
+    sessionStorage.removeItem("perfil_jf_abrir_codigo");
+    if (!redeSalaDoEndereco()) setTimeout(() => typeof redeEntrarPorCodigo === "function" && redeEntrarPorCodigo(), 600);
+  } catch (e) {}
+});

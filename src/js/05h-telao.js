@@ -107,13 +107,16 @@ const TELAO_CAT = { ANO: "📅 Ano", PESSOA: "🧑 Pessoa", LUGAR: "📍 Lugar",
 /* 1.7.10.1 (relato do JF) · A roleta da categoria também nos celulares: enquanto o host não manda a categoria,
    o rolo gira entre as categorias da partida; quando ela chega, para nela ("Eu sou UMA COISA"). */
 let telaoRoletaTimer = null;
-function telaoRoletaHtml(c) {
+// 26/10/2026 (relato do JF): no telão a roleta não pousa na categoria; ela só aparece depois que o Mestre fala e
+// mostra a carta. O Mestre vê a categoria na roleta dele (esconder = false).
+function telaoRoletaHtml(c, esconder) {
   const label = (k) => escapeHtml((CATEGORY_LABELS[k] || k || "?").toUpperCase());
   const cats = (c.roleta && Array.isArray(c.roleta.cats) && c.roleta.cats.length ? c.roleta.cats : Object.keys(CATEGORY_LABELS)).filter((k) => typeof k === "string").slice(0, 8);
-  const pousou = !!c.categoria;
+  const pousou = !!c.categoria && !esconder;
   const cor = pousou ? (GEM_INFO[c.categoria] || {}).color || "#e94560" : "#a78bfa";
-  const dica = pousou ? "🗣️ A categoria da carta" : c.roleta && c.roleta.girando ? "🎰 Sorteando a categoria..." : "🃏 O Mestre vai virar a carta";
-  return `<div class="roulette telao-roleta" style="--cat:${cor};" data-cats="${escapeHtml(cats.join(","))}" data-pousou="${pousou ? 1 : 0}" data-girando="${c.roleta && c.roleta.girando ? 1 : 0}"><div class="roulette-phrase">"Eu sou <span class="roulette-reel${pousou ? " landed" : ""}" id="telaoReel">${pousou ? label(c.categoria) : c.roleta && c.roleta.girando ? label(cats[0]) : "???"}</span>"</div><div class="roulette-hint">${dica}</div></div>`;
+  const dica = pousou ? "🗣️ A categoria da carta" : c.categoria ? "🗣️ Escute: o Mestre vai dizer a categoria" : c.roleta && c.roleta.girando ? "🎰 Sorteando a categoria..." : "🃏 O Mestre vai virar a carta";
+  const girando = c.roleta && c.roleta.girando && !c.categoria;
+  return `<div class="roulette telao-roleta" style="--cat:${cor};" data-cats="${escapeHtml(cats.join(","))}" data-pousou="${pousou ? 1 : 0}" data-girando="${girando ? 1 : 0}"><div class="roulette-phrase">"Eu sou <span class="roulette-reel${pousou ? " landed" : ""}" id="telaoReel">${pousou ? label(c.categoria) : girando ? label(cats[0]) : "???"}</span>"</div><div class="roulette-hint">${dica}</div></div>`;
 }
 function telaoRoletaAnimar(raiz) {
   clearInterval(telaoRoletaTimer);
@@ -239,13 +242,19 @@ function telaoDesenhar(r, alvo) {
   const numeros = c && c.totalDicas && r.estadoCarta !== "hidden"
     ? `<div class="telao-numeros" aria-label="Números de dica">${Array.from({ length: c.totalDicas }, (_, i) => `<span class="${i === c.pendente ? "agora" : usadas.has(i) ? "usada" : r.pedidoDica && r.pedidoDica.pos === i ? "pedida" : "livre"}">${usadas.has(i) && i !== c.pendente ? '<i class="ficha" aria-hidden="true"></i>' : ""}${i + 1}</span>`).join("")}</div>`
     : "";
-  const catCor = c && c.categoria ? (GEM_INFO[c.categoria] || {}).color || "#a78bfa" : "#a78bfa";
+  const catCor = c && c.categoria && r.estadoCarta !== "hidden" ? (GEM_INFO[c.categoria] || {}).color || "#a78bfa" : "#a78bfa";
   const p = r.partida || {};
-  const carta =
-    c && r.estadoCarta === "hidden"
-      ? `<section class="telao-carta" style="--cat:${catCor}">${telaoEstadoHtml(r, nomeTxt)}${telaoRoletaHtml(c)}</section>`
+  // 29/10/2026 (print 17 do JF): no celular, o painel de cima já mostra o intervalo; o quadro da carta com a roleta
+  // "???" repetia a mesma coisa. No telão (TV), fica só uma linha.
+  const noCelular = typeof rede !== "undefined" && rede && rede.papel === "convidado";
+  const carta = r.intervalo && !r.fim
+    ? noCelular
+      ? ""
+      : `<section class="telao-carta"><div class="tc-estado">⏸️ Intervalo: a próxima carta já vem</div></section>`
+    : c && r.estadoCarta === "hidden"
+      ? `<section class="telao-carta" style="--cat:${catCor}">${telaoEstadoHtml(r, nomeTxt)}${telaoRoletaHtml(c, true)}</section>`
       : c && c.categoria
-        ? `<section class="telao-carta" style="--cat:${catCor}">${r.alvoEspecial ? telaoAlvoHtml(r, nomeTxt) : telaoEstadoHtml(r, nomeTxt)}<div class="telao-cat"><span class="tc-selo">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)}</span><span class="tc-conta"><b>${c.abertas.length}</b> de ${c.totalDicas} dicas</span></div>${numeros}${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>`
+        ? `<section class="telao-carta" style="--cat:${catCor}">${r.alvoEspecial ? telaoAlvoHtml(r, nomeTxt) : telaoEstadoHtml(r, nomeTxt)}<div class="telao-cat"><span class="tc-conta"><b>${c.abertas.length}</b> de ${c.totalDicas} dicas</span></div>${numeros}${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>`
         : "";
   const hist = Array.isArray(p.historico) ? p.historico : [];
   box.dataset.rev = String(r.revisao);
@@ -256,7 +265,7 @@ function telaoDesenhar(r, alvo) {
     <section class="telao-vez">
       <div class="tv-mestre" style="--pc:${cor(r.mestreId)}"><small>🎙️ Mestre (lê as dicas)</small><b>${nome(r.mestreId)}</b></div>
       <div class="tv-vez" style="--pc:${cor(r.vezId)}"><small>👉 Vez de (escolhe a dica e responde)</small><b>${nome(r.vezId)}</b></div>
-      <div class="tv-cat" style="--cat:${catCor}"><small>🃏 Categoria</small><b>${c && c.categoria && r.estadoCarta !== "hidden" ? escapeHtml(TELAO_CAT[c.categoria] || c.categoria) : c ? "sorteando…" : "—"}</b></div>
+      <div class="tv-cat" style="--cat:${catCor}"><small>🃏 Categoria</small><b>${r.intervalo && !r.fim ? "próxima carta" : c && c.categoria && r.estadoCarta !== "hidden" ? escapeHtml(TELAO_CAT[c.categoria] || c.categoria) : c ? "sorteando…" : "—"}</b></div>
       <div class="tv-relogio"><small>⏱️ Tempo da vez</small><b id="telaoRelogio">—</b></div>
     </section>
     ${r.corrida ? `<div class="corrida-relogios" id="telaoCorrida">${corridaBarraHtml(corridaDoRetrato(r.corrida))}</div>` : ""}
@@ -283,6 +292,12 @@ function telaoRelogio() {
   if (tc && r.corrida) {
     const html = corridaBarraHtml(corridaDoRetrato(r.corrida));
     if (tc.innerHTML !== html) tc.innerHTML = html;
+  }
+  // 29/10/2026 (print 18 do JF): no intervalo não tem vez correndo; antes aparecia "pausado"
+  if (r.intervalo && !r.fim) {
+    el.textContent = "intervalo";
+    el.classList.remove("tv-pouco");
+    return;
   }
   if (rel.pausado) {
     el.textContent = "pausado";

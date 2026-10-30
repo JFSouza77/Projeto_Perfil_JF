@@ -599,9 +599,10 @@ function tabLobbyAbrir() {
   ov.id = "tabLobby";
   ov.className = "jf-modal-bg tb-lobby-bg";
   ov.innerHTML = `<div class="jf-modal tb-modal tb-lobby" role="dialog" aria-modal="true" aria-labelledby="tbLobbyTit">
-    <div class="tb-lobby-topo"><h3 id="tbLobbyTit">⏸️ Antes da próxima carta</h3><button type="button" class="btn-neo neo-solid neo-still tb-lobby-pular" id="tbLobbyPular" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35);">Próxima carta ▶</button></div>
+    <div class="tb-lobby-topo"><h3 id="tbLobbyTit">⏸️ Antes da próxima carta</h3></div>
     <div class="tb-lobby-tempo" aria-hidden="true"><div class="tb-lobby-barra" id="tbLobbyBarra"></div></div>
     <div class="tb-lobby-sub"><b id="tbLobbySeg">${TAB_LOBBY_SEG}</b> s pra ver o placar e combinar a estratégia</div>
+    <div class="tb-lobby-acao"><button type="button" class="btn-neo neo-solid neo-still tb-lobby-pular" id="tbLobbyPular" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35);">Próxima carta ▶</button></div>
     <div class="tb-lobby-prox">${prox}</div>
     ${partidaResumoHtml(partidaResumoDados())}
     ${lobbyAbasHtml(aba)}

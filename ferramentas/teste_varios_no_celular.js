@@ -58,6 +58,40 @@ const ARQ = acharMestre(process.argv[2]);
   // tela de espera (o host ainda não aceitou): dica, tutorial e perguntas pro C.A.O.S.
   conf("Esperando o host: dica, tutorial e 5 perguntas na tela", await esperar(g, () => rede.estado === "aguardando" && !!document.getElementById("redeDicaEspera") && !!document.getElementById("redeTutRapido") && document.querySelectorAll("[data-perg]").length === 5));
   await g.evaluate(() => document.querySelector('[data-perg="oQueFaco"]').click());
+  conf("Falas do cadastro de nomes (nick*) ficam só no host; as da partida vão pros celulares (29/10/2026)", await host.evaluate(() => {
+    const t = REACTIVE_VOICE.nickDemora.media.map((x) => redeFalaTexto(x)).find((x) => /Tubarão Foguete/.test(x));
+    caosLastPick = { bank: "nickDemora.media", text: "[C.A.O.S.] " + t, at: Date.now() };
+    const soHost = redeFalaSoDoHost({ texto: "[C.A.O.S.] " + t });
+    caosLastPick = { bank: "acerto.rapido", text: "[C.A.O.S.] Acertou rápido!", at: Date.now() };
+    const vai = !redeFalaSoDoHost({ texto: "[C.A.O.S.] Acertou rápido!" });
+    caosLastPick = null;
+    return soHost && vai;
+  }));
+  conf("T2: uma grade só (a pequena some com a grande) e a dica pedida em destaque, as outras apagadas (29/10/2026)", await host.evaluate(() => {
+    const box = document.createElement("div");
+    box.className = "telao rede-convidado rede-tem-grade";
+    box.innerHTML = '<div class="telao-numeros"><span>1</span></div><div class="rede-nums"><button class="rede-btn">1</button><button class="rede-btn pedida">👉 2</button></div>';
+    document.body.appendChild(box);
+    const some = getComputedStyle(box.querySelector(".telao-numeros")).display === "none";
+    const apagada = +getComputedStyle(box.querySelector(".rede-nums .rede-btn:not(.pedida)")).opacity < 0.6;
+    const acesa = +getComputedStyle(box.querySelector(".rede-nums .pedida")).opacity === 1;
+    box.remove();
+    return some && apagada && acesa && redeOpPedida({ a: "pedirDica", t: "👉 2" }) && !redeOpPedida({ a: "pedirDica", t: "3" });
+  }));
+  conf("Toque que começou antes de a tela se redesenhar não aciona o botão novo (dica errada, 29/10/2026)", await host.evaluate(() => {
+    let n = 0;
+    const b = document.createElement("button");
+    document.body.appendChild(b);
+    redeToqueSeguro(b, () => n++);
+    b.dispatchEvent(new MouseEvent("click", { bubbles: true, detail: 1 })); // dedo desceu em outro botão (o velho)
+    const fantasma = n;
+    b.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
+    b.dispatchEvent(new MouseEvent("click", { bubbles: true, detail: 1 })); // toque de verdade
+    b.click(); // teclado / leitor de tela
+    b.remove();
+    return fantasma === 0 && n === 2;
+  }));
+  conf("Pergunta ao C.A.O.S.: a resposta vem com o rosto dele (29/10/2026)", await g.evaluate(() => { const f = document.querySelector("#redeCaosResp .rede-fala-rosto"); return !!f && f.textContent.trim().length > 0 && f.textContent.trim() !== "🤖"; }));
   conf("Pergunta ao C.A.O.S.: ele responde na tela", await g.evaluate(() => { const r = document.getElementById("redeCaosResp"); return !!r && !r.hidden && !/=>|CAOS_PREFIXO|function/.test(r.textContent) && REACTIVE_VOICE.esperaSala.oQueFaco.some((t) => r.textContent.includes(redeFalaTexto(t))); }));
   await g.evaluate(() => document.getElementById("redeTutRapido").click());
   conf("Tutorial rápido abre no celular", await g.evaluate(() => !!document.getElementById("tutorialOverlay")));
@@ -115,7 +149,28 @@ const ARQ = acharMestre(process.argv[2]);
   // troca manual pelo chip
   await g.evaluate((p) => redeConvDefinirAtivo(p), pedroId);
   conf("Troca manual pelo chip funciona", await g.evaluate((p) => rede.eu === p, pedroId));
+  // 1.9 · T2 viva: o Pedro (ativo no celular) está esperando a vez da Elisa: dica e fala do C.A.O.S. na tela
+  await g.evaluate(() => redeConvidadoDesenhar());
+  conf("T2 viva: esperando a vez, o celular mostra a fala do C.A.O.S. e uma dica", await esperar(g, () => {
+    const c = document.getElementById("redeCaosEspera"), d = document.getElementById("redeDicaEspera");
+    return !!c && !!d && !/=>|CAOS_PREFIXO|function/.test(c.textContent) && Object.values(REACTIVE_VOICE.esperaVez).flat().some((t) => c.textContent.includes(redeFalaTexto(t, "Pedro")));
+  }));
+  conf("T2 viva: a fala chama pelo nome de quem espera", await g.evaluate(() => /Pedro/.test(document.getElementById("redeCaosEspera").textContent) || /você/.test(document.getElementById("redeCaosEspera").textContent)));
+  await g.evaluate((e) => redeConvDefinirAtivo(e), elisaId);
+  conf("T2 viva: na própria vez, a fala de espera some", await g.evaluate(() => !document.getElementById("redeCaosEspera")));
 
+  // 29/10/2026 (print 3 do JF): link de sala velha: a tela explica e oferece digitar outro código
+  conf("Sala do link não existe: a tela oferece 'Entrar com outro código'", await g.evaluate(() => {
+    const est = rede.estado, te = rede.transporte.estado;
+    rede.estado = "entrando";
+    rede.transporte.estado = "sem_sala";
+    redeConvidadoDesenhar();
+    const ok = !!document.getElementById("redeOutroCodigo") && /Não achei a sala/.test(document.getElementById("telao").textContent);
+    rede.estado = est;
+    rede.transporte.estado = te;
+    redeConvidadoDesenhar();
+    return ok;
+  }));
   await b.close();
   let tudo = true;
   ok.forEach(([n, v]) => {

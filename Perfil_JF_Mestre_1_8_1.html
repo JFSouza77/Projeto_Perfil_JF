@@ -8733,26 +8733,33 @@ body.claro .tb-tema-oldschool {
   margin: auto 0;
   padding: 14px 14px 16px;
 }
+/* 29/10/2026 (print 1 do JF): o "Próxima carta" ficava espremido no canto, ao lado do título. Agora o título fica
+   sozinho no topo e o botão vem centralizado, maior, logo abaixo do relógio do intervalo. */
 .tb-lobby-topo {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  justify-content: center;
 }
 .tb-lobby-topo h3 {
   margin: 0;
-  font-size: 1.05rem;
-  text-align: left;
+  font-size: 1.1rem;
+  text-align: center;
+}
+.tb-lobby-acao {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0 4px;
 }
 .tb-lobby-pular {
-  flex: none;
   position: relative;
   overflow: hidden; /* o brilho neon do botão não pode vazar e criar rolagem pro lado */
   isolation: isolate;
-  padding: 9px 14px;
-  font-size: 0.9rem;
+  width: min(320px, 100%);
+  min-height: 48px;
+  padding: 12px 18px;
+  font-size: 1.05rem;
   font-weight: 800;
-  border-radius: 12px;
+  border-radius: 14px;
 }
 .tb-lobby-tempo {
   height: 5px;
@@ -9773,11 +9780,12 @@ body.claro .rede-host-vista {
   margin: 0 auto;
   box-sizing: border-box;
 }
-/* 1.7.9.6 · Fala do C.A.O.S. no celular do convidado */
+/* 1.7.9.6 · Fala do C.A.O.S. no celular do convidado.
+   29/10/2026 (prints 9, 11 e 13 do JF): o balão cobria o topo da T2 (Mestre, vez e categoria); agora fica embaixo. */
 .rede-fala {
   position: fixed;
   left: 50%;
-  top: calc(10px + env(safe-area-inset-top, 0px));
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
   transform: translateX(-50%);
   z-index: 10001;
   width: min(92vw, 560px);
@@ -10089,13 +10097,13 @@ body.claro button.splash-embreve .eb-sub {
 .telao-numeros .pedida {
   outline: 3px solid #60a5fa;
   outline-offset: 1px;
-  animation: pedidaPulsa 1.1s ease-in-out infinite;
+  animation: pedidaPulsa 2.4s ease-in-out infinite;
 }
 @keyframes pedidaPulsa {
-  50% { transform: scale(1.08); }
+  50% { transform: scale(1.05); }
 }
-/* 25/10/2026 (pedido do JF): a dica que o jogador pediu tem que SALTAR na tela do mestre — fundo aceso,
-   brilho pulsante e um balanço, pra ele achar o número na hora (ex.: "pediu a dica 17"). */
+/* 25/10/2026 (pedido do JF): a dica que o jogador pediu fica acesa na tela do mestre, pra ele achar o número na hora.
+   29/10/2026 (pedido do JF): sem balanço; ela flutua e respira devagar, discreta, mas ainda em destaque. */
 .number-btn.pedida {
   position: relative;
   z-index: 1;
@@ -10105,15 +10113,13 @@ body.claro button.splash-embreve .eb-sub {
   border-color: #93c5fd;
   outline: 3px solid #bfdbfe;
   outline-offset: 2px;
-  box-shadow: 0 0 0 2px #2563eb, 0 6px 18px rgba(37, 99, 235, 0.55);
-  transform-origin: center bottom;
-  animation: pedidaChama 1s ease-in-out infinite;
+  box-shadow: 0 0 0 2px #2563eb, 0 6px 18px rgba(37, 99, 235, 0.5);
+  transform: scale(1.08);
+  animation: pedidaRespira 2.4s ease-in-out infinite;
 }
-@keyframes pedidaChama {
-  0%, 100% { transform: scale(1.1) rotate(-4deg); box-shadow: 0 0 0 2px #2563eb, 0 6px 18px rgba(37, 99, 235, 0.55); }
-  25% { transform: scale(1.16) rotate(4deg); }
-  50% { transform: scale(1.1) rotate(-4deg); box-shadow: 0 0 0 3px #60a5fa, 0 10px 26px rgba(59, 130, 246, 0.8); }
-  75% { transform: scale(1.16) rotate(4deg); }
+@keyframes pedidaRespira {
+  0%, 100% { transform: scale(1.08) translateY(0); box-shadow: 0 0 0 2px #2563eb, 0 6px 16px rgba(37, 99, 235, 0.45); }
+  50% { transform: scale(1.1) translateY(-2px); box-shadow: 0 0 0 3px #60a5fa, 0 10px 24px rgba(59, 130, 246, 0.7); }
 }
 /* quem pediu "menos movimento" ainda enxerga o número aceso, só sem o balanço */
 @media (prefers-reduced-motion: reduce) {
@@ -10602,7 +10608,7 @@ body.claro .pt-resumo li {
 }
 .ta-minha .ta-tit {
   outline: 2px solid #60a5fa;
-  animation: pedidaPulsa 1.1s ease-in-out infinite;
+  animation: pedidaPulsa 2.4s ease-in-out infinite;
 }
 @media (prefers-reduced-motion: reduce) {
   .ta-minha .ta-tit {
@@ -11557,6 +11563,10 @@ body.claro .rede-dica-espera {
   border-color: #d79a2a;
   color: #4a3206;
 }
+.rede-caos-resp .rede-fala-rosto {
+  margin: 0 6px 4px 0;
+  vertical-align: middle;
+}
 body.claro .rede-caos-resp {
   background: #fbeaff;
   border-color: #c26fd6;
@@ -11654,6 +11664,85 @@ body.batata-mode .guia-pulso {
   font-size: 1rem;
   opacity: 0.92;
 }
+/* 1.9 · T2 viva: esperando a vez, a fala do C.A.O.S. e a dica que passa */
+.rede-espera-vez {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 10px 0;
+}
+.rede-caos-espera {
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #a855f71f;
+  border: 1px solid #c084fc66;
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+body.claro .rede-caos-espera {
+  background: #f3e8ff;
+  border-color: #c084fc;
+  color: #3b0764;
+}
+
+/* 29/10/2026 (prints 7, 10, 16 e 17 do JF): com viewport-fit=cover, o conteúdo rolava por baixo da hora e da bateria
+   do iPhone. Uma faixa fixa da cor do fundo cobre a área segura do topo (some sozinha onde ela é 0). */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--bg, #1a1a2e);
+  z-index: 9990;
+  pointer-events: none;
+}
+
+/* 29/10/2026 (print 2 do JF): quem tem a grade grande de escolher a dica não vê a grade pequena da carta (eram duas) */
+.rede-tem-grade .telao-numeros {
+  display: none;
+}
+/* Pedido do JF (teste de mesa de 25/10): na T2, a dica escolhida fica evidente; as outras apagam */
+.rede-nums .rede-btn.pedida {
+  color: #fff;
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
+  border-color: #93c5fd;
+  outline: 3px solid #bfdbfe;
+  outline-offset: 2px;
+  animation: pedidaRespira 2.4s ease-in-out infinite;
+}
+.rede-nums:has(.pedida) .rede-btn:not(.pedida) {
+  opacity: 0.4;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rede-nums .rede-btn.pedida {
+    animation: none;
+  }
+}
+
+/* 29/10/2026 (print 13 do JF): a resposta aberta no celular do Mestre tinha letra clara em fundo branco */
+.rede-carta-mestre .answer-toggle.open {
+  color: #1b1b2f;
+  text-shadow: none;
+}
+/* 29/10/2026 (print 3 do JF): a sala do link não existe mais */
+.rede-sala-velha {
+  margin: 10px auto;
+  max-width: 520px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(250, 204, 21, 0.12);
+  border: 1px solid #facc15;
+  text-align: center;
+  line-height: 1.4;
+}
+.rede-sala-velha .rede-lugar {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+}
+
 </style>
 </head>
 <body class="noturno">
@@ -22913,13 +23002,16 @@ const TELAO_CAT = { ANO: "📅 Ano", PESSOA: "🧑 Pessoa", LUGAR: "📍 Lugar",
 /* 1.7.10.1 (relato do JF) · A roleta da categoria também nos celulares: enquanto o host não manda a categoria,
    o rolo gira entre as categorias da partida; quando ela chega, para nela ("Eu sou UMA COISA"). */
 let telaoRoletaTimer = null;
-function telaoRoletaHtml(c) {
+// 26/10/2026 (relato do JF): no telão a roleta não pousa na categoria; ela só aparece depois que o Mestre fala e
+// mostra a carta. O Mestre vê a categoria na roleta dele (esconder = false).
+function telaoRoletaHtml(c, esconder) {
   const label = (k) => escapeHtml((CATEGORY_LABELS[k] || k || "?").toUpperCase());
   const cats = (c.roleta && Array.isArray(c.roleta.cats) && c.roleta.cats.length ? c.roleta.cats : Object.keys(CATEGORY_LABELS)).filter((k) => typeof k === "string").slice(0, 8);
-  const pousou = !!c.categoria;
+  const pousou = !!c.categoria && !esconder;
   const cor = pousou ? (GEM_INFO[c.categoria] || {}).color || "#e94560" : "#a78bfa";
-  const dica = pousou ? "🗣️ A categoria da carta" : c.roleta && c.roleta.girando ? "🎰 Sorteando a categoria..." : "🃏 O Mestre vai virar a carta";
-  return `<div class="roulette telao-roleta" style="--cat:${cor};" data-cats="${escapeHtml(cats.join(","))}" data-pousou="${pousou ? 1 : 0}" data-girando="${c.roleta && c.roleta.girando ? 1 : 0}"><div class="roulette-phrase">"Eu sou <span class="roulette-reel${pousou ? " landed" : ""}" id="telaoReel">${pousou ? label(c.categoria) : c.roleta && c.roleta.girando ? label(cats[0]) : "???"}</span>"</div><div class="roulette-hint">${dica}</div></div>`;
+  const dica = pousou ? "🗣️ A categoria da carta" : c.categoria ? "🗣️ Escute: o Mestre vai dizer a categoria" : c.roleta && c.roleta.girando ? "🎰 Sorteando a categoria..." : "🃏 O Mestre vai virar a carta";
+  const girando = c.roleta && c.roleta.girando && !c.categoria;
+  return `<div class="roulette telao-roleta" style="--cat:${cor};" data-cats="${escapeHtml(cats.join(","))}" data-pousou="${pousou ? 1 : 0}" data-girando="${girando ? 1 : 0}"><div class="roulette-phrase">"Eu sou <span class="roulette-reel${pousou ? " landed" : ""}" id="telaoReel">${pousou ? label(c.categoria) : girando ? label(cats[0]) : "???"}</span>"</div><div class="roulette-hint">${dica}</div></div>`;
 }
 function telaoRoletaAnimar(raiz) {
   clearInterval(telaoRoletaTimer);
@@ -23045,13 +23137,19 @@ function telaoDesenhar(r, alvo) {
   const numeros = c && c.totalDicas && r.estadoCarta !== "hidden"
     ? `<div class="telao-numeros" aria-label="Números de dica">${Array.from({ length: c.totalDicas }, (_, i) => `<span class="${i === c.pendente ? "agora" : usadas.has(i) ? "usada" : r.pedidoDica && r.pedidoDica.pos === i ? "pedida" : "livre"}">${usadas.has(i) && i !== c.pendente ? '<i class="ficha" aria-hidden="true"></i>' : ""}${i + 1}</span>`).join("")}</div>`
     : "";
-  const catCor = c && c.categoria ? (GEM_INFO[c.categoria] || {}).color || "#a78bfa" : "#a78bfa";
+  const catCor = c && c.categoria && r.estadoCarta !== "hidden" ? (GEM_INFO[c.categoria] || {}).color || "#a78bfa" : "#a78bfa";
   const p = r.partida || {};
-  const carta =
-    c && r.estadoCarta === "hidden"
-      ? `<section class="telao-carta" style="--cat:${catCor}">${telaoEstadoHtml(r, nomeTxt)}${telaoRoletaHtml(c)}</section>`
+  // 29/10/2026 (print 17 do JF): no celular, o painel de cima já mostra o intervalo; o quadro da carta com a roleta
+  // "???" repetia a mesma coisa. No telão (TV), fica só uma linha.
+  const noCelular = typeof rede !== "undefined" && rede && rede.papel === "convidado";
+  const carta = r.intervalo && !r.fim
+    ? noCelular
+      ? ""
+      : `<section class="telao-carta"><div class="tc-estado">⏸️ Intervalo: a próxima carta já vem</div></section>`
+    : c && r.estadoCarta === "hidden"
+      ? `<section class="telao-carta" style="--cat:${catCor}">${telaoEstadoHtml(r, nomeTxt)}${telaoRoletaHtml(c, true)}</section>`
       : c && c.categoria
-        ? `<section class="telao-carta" style="--cat:${catCor}">${r.alvoEspecial ? telaoAlvoHtml(r, nomeTxt) : telaoEstadoHtml(r, nomeTxt)}<div class="telao-cat"><span class="tc-selo">${escapeHtml(TELAO_CAT[c.categoria] || c.categoria)}</span><span class="tc-conta"><b>${c.abertas.length}</b> de ${c.totalDicas} dicas</span></div>${numeros}${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>`
+        ? `<section class="telao-carta" style="--cat:${catCor}">${r.alvoEspecial ? telaoAlvoHtml(r, nomeTxt) : telaoEstadoHtml(r, nomeTxt)}<div class="telao-cat"><span class="tc-conta"><b>${c.abertas.length}</b> de ${c.totalDicas} dicas</span></div>${numeros}${dicas ? `<ol class="telao-dicas">${dicas}</ol>` : `<p class="telao-sem-dica">Nenhuma dica aberta ainda</p>`}</section>`
         : "";
   const hist = Array.isArray(p.historico) ? p.historico : [];
   box.dataset.rev = String(r.revisao);
@@ -23062,7 +23160,7 @@ function telaoDesenhar(r, alvo) {
     <section class="telao-vez">
       <div class="tv-mestre" style="--pc:${cor(r.mestreId)}"><small>🎙️ Mestre (lê as dicas)</small><b>${nome(r.mestreId)}</b></div>
       <div class="tv-vez" style="--pc:${cor(r.vezId)}"><small>👉 Vez de (escolhe a dica e responde)</small><b>${nome(r.vezId)}</b></div>
-      <div class="tv-cat" style="--cat:${catCor}"><small>🃏 Categoria</small><b>${c && c.categoria && r.estadoCarta !== "hidden" ? escapeHtml(TELAO_CAT[c.categoria] || c.categoria) : c ? "sorteando…" : "—"}</b></div>
+      <div class="tv-cat" style="--cat:${catCor}"><small>🃏 Categoria</small><b>${r.intervalo && !r.fim ? "próxima carta" : c && c.categoria && r.estadoCarta !== "hidden" ? escapeHtml(TELAO_CAT[c.categoria] || c.categoria) : c ? "sorteando…" : "—"}</b></div>
       <div class="tv-relogio"><small>⏱️ Tempo da vez</small><b id="telaoRelogio">—</b></div>
     </section>
     ${r.corrida ? `<div class="corrida-relogios" id="telaoCorrida">${corridaBarraHtml(corridaDoRetrato(r.corrida))}</div>` : ""}
@@ -23089,6 +23187,12 @@ function telaoRelogio() {
   if (tc && r.corrida) {
     const html = corridaBarraHtml(corridaDoRetrato(r.corrida));
     if (tc.innerHTML !== html) tc.innerHTML = html;
+  }
+  // 29/10/2026 (print 18 do JF): no intervalo não tem vez correndo; antes aparecia "pausado"
+  if (r.intervalo && !r.fim) {
+    el.textContent = "intervalo";
+    el.classList.remove("tv-pouco");
+    return;
   }
   if (rel.pausado) {
     el.textContent = "pausado";
@@ -23701,9 +23805,10 @@ function tabLobbyAbrir() {
   ov.id = "tabLobby";
   ov.className = "jf-modal-bg tb-lobby-bg";
   ov.innerHTML = `<div class="jf-modal tb-modal tb-lobby" role="dialog" aria-modal="true" aria-labelledby="tbLobbyTit">
-    <div class="tb-lobby-topo"><h3 id="tbLobbyTit">⏸️ Antes da próxima carta</h3><button type="button" class="btn-neo neo-solid neo-still tb-lobby-pular" id="tbLobbyPular" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35);">Próxima carta ▶</button></div>
+    <div class="tb-lobby-topo"><h3 id="tbLobbyTit">⏸️ Antes da próxima carta</h3></div>
     <div class="tb-lobby-tempo" aria-hidden="true"><div class="tb-lobby-barra" id="tbLobbyBarra"></div></div>
     <div class="tb-lobby-sub"><b id="tbLobbySeg">${TAB_LOBBY_SEG}</b> s pra ver o placar e combinar a estratégia</div>
+    <div class="tb-lobby-acao"><button type="button" class="btn-neo neo-solid neo-still tb-lobby-pular" id="tbLobbyPular" style="--mc:#a78bfa; --mc-glow:rgba(167,139,250,0.35);">Próxima carta ▶</button></div>
     <div class="tb-lobby-prox">${prox}</div>
     ${partidaResumoHtml(partidaResumoDados())}
     ${lobbyAbasHtml(aba)}
@@ -25389,6 +25494,7 @@ function redeAssentar(ses, pedido, chave, mais) {
    de tempo extra do Mestre) vai só pro aparelho da pessoa e não aparece no host se ela está em outro aparelho. */
 function redeHostFala(f) {
   if (!rede || rede.papel !== "host" || !f || !f.texto) return;
+  if (redeFalaSoDoHost(f)) return;
   const ids = (f.para || []).map((d) => d.id).filter((id) => jogadorIdValido(id));
   // 1.7.10: o rosto e a etiqueta do humor vão junto (o celular desenha o balão igual ao do host)
   const visual = {};
@@ -25408,6 +25514,18 @@ function redeHostFala(f) {
   }
   // só marca "é com você" (voz no celular dela) quando a fala fala COM a pessoa; citação é da mesa
   redeEnviar("fala", ids.length && redeFalaComQuem(f) ? { texto: f.texto, quem: ids.slice(0, 8), ...visual } : { texto: f.texto, ...visual });
+}
+// 29/10/2026 (print 9 do JF): as falas do cadastro de nomes (nickDemora, nickReacao…) são sobre quem está digitando
+// no host. No celular de quem espera a sala elas ficam sem sentido ("Tenta juntar um bicho com uma coisa legal"),
+// então ficam só no host.
+function redeFalaSoDoHost(f) {
+  try {
+    const t = String(f.texto).replace(/^\[C\.A\.O\.S\.\]\s*/, "");
+    const pick = typeof caosLastPick !== "undefined" ? caosLastPick : null;
+    return !!(pick && /^nick/.test(String(pick.bank || "")) && String(pick.text || "").indexOf(t.slice(0, 40)) !== -1);
+  } catch (e) {
+    return false;
+  }
 }
 // A fala particular é só de quem está em outro aparelho? Então não aparece aqui no host.
 // 1.7.10 (relato do JF: "falou com a Anne no MEU celular"): vale também pra fala NÃO particular que cita só
@@ -26207,7 +26325,8 @@ function redeHostVista() {
   const nome = (p) => escapeHtml((p.avatar ? p.avatar + " " : "") + p.name);
   const daVez = eus.find((p) => jogadorIdDe(responderIndex) === p.id);
   const vez = !!daVez;
-  let h = `<div class="rede-eu">${eus.length ? `Neste aparelho: <b>${eus.map(nome).join("</b> e <b>")}</b>${vez ? ` · 👉 Vez de ${nome(daVez)}` : ""}` : "Este aparelho é a mesa"}</div>`;
+  // 29/10/2026 (print 2 do JF): "· Vez de JF" saiu daqui; a faixa SUA VEZ logo abaixo já diz
+  let h = `<div class="rede-eu">${eus.length ? `Neste aparelho: <b>${eus.map(nome).join("</b> e <b>")}</b>${vez && !(starterChosen && !gameEnded) ? ` · 👉 Vez de ${nome(daVez)}` : ""}` : "Este aparelho é a mesa"}</div>`;
   // 1.7.10.6.1 (relato do JF): ninguém marcado neste aparelho, mas tem jogador sem dispositivo na sala: um toque resolve
   const semDisp = !eus.length && starterChosen && !gameEnded ? players.filter((p) => !redeOnline(rede.assentos[p.id])) : [];
   if (semDisp.length)
@@ -26218,7 +26337,12 @@ function redeHostVista() {
     h += `<div class="rede-rot">👉 Sua vez: toque no número (ou fale) e o Mestre abre a dica.</div>`; // 1.7.9.6: só o Mestre abre
   const ops = [];
   eus.forEach((p) => redeOpcoes(p.id).forEach((o) => o.a !== "pausar" && ops.push({ ...o, quem: p.id })));
-  if (ops.length) h += `<div class="rede-acoes">${ops.map((o, i) => `<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}${o.gp ? " guia-pulso" : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`).join("")}</div>`;
+  // 29/10/2026 (print 2 do JF): os números de dica viram a mesma grade do celular (com a pedida em destaque)
+  const btn = (o, i) => `<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}${o.gp ? " guia-pulso" : ""}${redeOpPedida(o) ? " pedida" : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`;
+  const nums = ops.map((o, i) => (o.a === "pedirDica" ? btn(o, i) : "")).join("");
+  const outros = ops.map((o, i) => (o.a !== "pedirDica" ? btn(o, i) : "")).join("");
+  if (nums) h += `<div class="rede-nums">${nums}</div>`;
+  if (outros) h += `<div class="rede-acoes">${outros}</div>`;
   h += `<div class="rede-acoes rede-mais"><button type="button" class="rede-btn" id="redeVistaPausar">⏸️ Pausar</button><button type="button" class="rede-btn" id="redeVistaSala">🌐 Sala ${rede.sala}</button></div>`;
   const barra = document.createElement("section");
   barra.className = "rede-barra";
@@ -26226,12 +26350,13 @@ function redeHostVista() {
   const topo = box.querySelector(".telao-vez");
   if (topo) topo.after(barra);
   else box.prepend(barra);
+  box.classList.toggle("rede-tem-grade", !!nums);
   const agir = (quem, acao, dados) => {
     if (!quem || !redePodeComandar(acao, quem, dados)) return;
     dispatchAction({ type: acao, data: dados, commandId: "h_" + redeAleatorio(12), expectedRevision: partidaRevisao, actorId: quem });
   };
   barra.querySelectorAll("[data-op]").forEach((b) =>
-    b.addEventListener("click", () => {
+    redeToqueSeguro(b, () => {
       const o = ops[+b.dataset.op];
       if (o) agir(o.quem, o.a, o.d);
     }),
@@ -26882,9 +27007,23 @@ function redeEsperaExtrasHtml() {
     `<div class="rede-dica-espera" aria-live="polite">💡 <span id="redeDicaEspera">${escapeHtml(REDE_ESPERA_DICAS[rede.esperaDica % REDE_ESPERA_DICAS.length])}</span></div>` +
     `<button type="button" class="rede-lugar" id="redeTutRapido">🎓 Tutorial rápido (2 min)</button>` +
     `<div class="rede-caos-perg"><div class="rede-rot">🤖 Pergunte ao C.A.O.S.</div><div class="rede-caos-botoes">${perg}</div>` +
-    `<div class="rede-caos-resp" id="redeCaosResp" aria-live="polite"${rede.esperaResp ? "" : " hidden"}>${rede.esperaResp ? "🤖 " + escapeHtml(rede.esperaResp) : ""}</div></div>` +
+    `<div class="rede-caos-resp" id="redeCaosResp" aria-live="polite"${rede.esperaResp ? "" : " hidden"}>${rede.esperaResp ? redeEsperaRespHtml(rede.esperaResp, rede.esperaEmo) : ""}</div></div>` +
     `</section>`
   );
+}
+// 29/10/2026 (prints 5 e 6 do JF): a resposta do "Pergunte ao C.A.O.S." vem com o rosto dele, como nos balões
+const REDE_ESPERA_EMO = { oQueFaco: "carinho", comoJoga: "orgulho", mestre: "orgulho", demora: "tedio", quemEVoce: "orgulho" };
+function redeEsperaRosto(emo) {
+  try {
+    return (caosFaceEscolher(emo) || [])[0] || "🤖";
+  } catch (e) {
+    return "🤖";
+  }
+}
+function redeEsperaRespHtml(txt, emo) {
+  const E = typeof CAOS_EMOS !== "undefined" && CAOS_EMOS[emo];
+  const cor = E && E.cor ? ` style="--emo-cor:${E.cor}"` : "";
+  return `<span class="rede-fala-rosto"${cor}>${escapeHtml(rede.esperaRosto || redeEsperaRosto(emo))}</span> <span class="rede-caos-resp-txt">${escapeHtml(txt)}</span>`;
 }
 function redeEsperaLigar(box) {
   if (!rede || !box) return;
@@ -26899,10 +27038,12 @@ function redeEsperaLigar(box) {
       const opcoes = banco.map((t) => redeFalaTexto(t)).filter((t) => t !== rede.esperaResp);
       const txt = opcoes[Math.floor(Math.random() * opcoes.length)] || redeFalaTexto(banco[0]);
       rede.esperaResp = txt;
+      rede.esperaEmo = REDE_ESPERA_EMO[b.dataset.perg] || "calmo";
+      rede.esperaRosto = redeEsperaRosto(rede.esperaEmo);
       const r = box.querySelector("#redeCaosResp");
       if (r) {
         r.hidden = false;
-        r.textContent = "🤖 " + txt;
+        r.innerHTML = redeEsperaRespHtml(txt, rede.esperaEmo);
       }
       try {
         if (caosVoiceOn) caosSpeak(txt);
@@ -26910,19 +27051,79 @@ function redeEsperaLigar(box) {
     }),
   );
   // a dica troca a cada 7 s (o timer sobrevive aos redesenhos: só atualiza se a tela de espera está aberta)
-  if (!rede.esperaTimer)
-    rede.esperaTimer = setInterval(() => {
-      const el = document.getElementById("redeDicaEspera");
-      if (!rede || !el) return;
-      rede.esperaDica = (rede.esperaDica + 1) % REDE_ESPERA_DICAS.length;
-      el.textContent = REDE_ESPERA_DICAS[rede.esperaDica];
-    }, 7000);
+  redeEsperaTimerLigar();
 }
 // As falas do C.A.O.S. viram funções quando o jogo carrega (caosFalasMontar). Pra mostrar como texto simples no
 // celular: chama a função com o nome e tira a etiqueta "[C.A.O.S.]" (quem lê na tela já vê o 🤖).
 function redeFalaTexto(item, nome) {
   const t = typeof item === "function" ? item(nome || "você") : String(item || "").split("{nome}").join(nome || "você");
   return String(t || "").replace(/^\[C\.A\.O\.S\.\]\s*/, "");
+}
+/* --- 1.9 · T2 viva (pedido do JF): esperando a vez na partida, o celular não fica parado ---
+   Uma dica de como jogar (troca a cada 7 s, as mesmas da sala de espera) e uma fala do C.A.O.S. pra quem espera
+   (troca a cada 40 s): acabou de jogar, esperando faz tempo, lanterna, na frente ou geral. Só texto, sem voz. */
+const REDE_ESPERA_VEZ_MS = 40e3;
+function redeEsperaVezGrupo(r, eu) {
+  const agora = Date.now();
+  if (rede.esperaAcabouEm && agora - rede.esperaAcabouEm < 20e3) return "acabou";
+  if (rede.esperaVezDesde && agora - rede.esperaVezDesde > 90e3) return "demora";
+  const js = (r.jogadores || []).slice().sort((a, b) => (b.pontos || 0) - (a.pontos || 0));
+  if (eu && js.length >= 3) {
+    const p = eu.pontos || 0;
+    if (js[0].id === eu.id && p > (js[1].pontos || 0)) return "frente";
+    if (js[js.length - 1].id === eu.id && p < (js[0].pontos || 0)) return "atras";
+  }
+  return "geral";
+}
+function redeEsperaVezTexto(r, eu) {
+  const grupo = redeEsperaVezGrupo(r, eu);
+  const banco = (REACTIVE_VOICE.esperaVez && REACTIVE_VOICE.esperaVez[grupo]) || [];
+  if (rede.esperaProvTxt && rede.esperaProvGrupo === grupo && Date.now() - rede.esperaProvEm < REDE_ESPERA_VEZ_MS) return rede.esperaProvTxt;
+  const nome = (eu && eu.nome) || "você";
+  const opcoes = banco.map((t) => redeFalaTexto(t, nome)).filter((t) => t !== rede.esperaProvTxt);
+  rede.esperaProvTxt = opcoes[Math.floor(Math.random() * opcoes.length)] || (banco[0] ? redeFalaTexto(banco[0], nome) : "");
+  rede.esperaProvGrupo = grupo;
+  rede.esperaProvEm = Date.now();
+  return rede.esperaProvTxt;
+}
+function redeEsperaVezHtml(r, eu, papel) {
+  // quando a vez sai de mim, marca a hora (pra "acabou de jogar" e "esperando faz tempo")
+  if (papel.vez || papel.mestre) {
+    if (papel.vez) rede.esperaEraVez = true;
+    rede.esperaVezDesde = 0;
+    return "";
+  }
+  if (r.votacao) return "";
+  if (rede.esperaEraVez) rede.esperaAcabouEm = Date.now();
+  rede.esperaEraVez = false;
+  if (!rede.esperaVezDesde) rede.esperaVezDesde = Date.now();
+  if (!Number.isInteger(rede.esperaDica)) rede.esperaDica = Math.floor(Math.random() * REDE_ESPERA_DICAS.length);
+  redeEsperaTimerLigar();
+  return (
+    `<section class="rede-espera-vez">` +
+    `<div class="rede-caos-espera" id="redeCaosEspera" aria-live="polite">🤖 ${escapeHtml(redeEsperaVezTexto(r, eu))}</div>` +
+    `<div class="rede-dica-espera">💡 <span id="redeDicaEspera">${escapeHtml(REDE_ESPERA_DICAS[rede.esperaDica % REDE_ESPERA_DICAS.length])}</span></div>` +
+    `</section>`
+  );
+}
+// o mesmo relógio da sala de espera: troca a dica a cada 7 s e confere se a fala do C.A.O.S. já venceu
+function redeEsperaTimerLigar() {
+  if (!rede || rede.esperaTimer) return;
+  rede.esperaTimer = setInterval(() => {
+    if (!rede) return;
+    const el = document.getElementById("redeDicaEspera");
+    if (el) {
+      rede.esperaDica = (rede.esperaDica + 1) % REDE_ESPERA_DICAS.length;
+      el.textContent = REDE_ESPERA_DICAS[rede.esperaDica];
+    }
+    const ce = document.getElementById("redeCaosEspera");
+    const r = rede.retrato,
+      eu = r && (r.jogadores || []).find((j) => j.id === rede.eu);
+    if (ce && r) {
+      const t = "🤖 " + redeEsperaVezTexto(r, eu);
+      if (ce.textContent !== t) ce.textContent = t;
+    }
+  }, 7000);
 }
 // Abre o formulário pra criar mais um jogador neste mesmo aparelho (sem largar os que já estão).
 function redeConvAdicionarJogador() {
@@ -26972,7 +27173,23 @@ function redeConvidadoDesenhar() {
     return;
   }
   if (rede.estado !== "dentro" || !rede.retrato) {
-    box.innerHTML = `${sala}<div class="telao-espera">Entrando na sala…</div>${redeSairHtml()}`;
+    // 29/10/2026 (print 3 do JF): o celular reabriu um link velho (sala PXLG) e ficou procurando pra sempre. Quando a
+    // sala não aparece, a tela explica e oferece digitar o código novo.
+    const sumiu = (rede.transporte || {}).estado === "sem_sala";
+    box.innerHTML =
+      `${sala}<div class="telao-espera">Entrando na sala…</div>` +
+      (sumiu
+        ? `<div class="rede-sala-velha">🤔 Não achei a sala <b>${escapeHtml(rede.sala)}</b>. Se o host abriu uma sala nova, o código mudou.<button type="button" class="rede-lugar" id="redeOutroCodigo">🔢 Entrar com outro código</button></div>`
+        : "") +
+      redeSairHtml();
+    const outro = box.querySelector("#redeOutroCodigo");
+    if (outro)
+      outro.addEventListener("click", () => {
+        try {
+          sessionStorage.setItem("perfil_jf_abrir_codigo", "1");
+        } catch (e) {}
+        redeSairDaSala();
+      });
     return;
   }
   // 1.7.9.4: sala aberta antes da partida: espera o host terminar o cadastro e começar
@@ -27011,6 +27228,7 @@ function redeConvidadoDesenhar() {
   const barra = document.createElement("section");
   barra.className = "rede-barra";
   barra.innerHTML = redeConvTrocaHtml() + redeBotoesHtml();
+  box.classList.toggle("rede-tem-grade", !!barra.querySelector(".rede-nums"));
   if (rede.retrato.intervalo) box.querySelector(".telao-hist")?.remove(); // o lobby já tem a aba Cartas
   // 1.7.10.5.7: o seletor de alvo da especial: só quem abriu a dica toca
   const ae = rede.retrato.alvoEspecial;
@@ -27034,9 +27252,11 @@ function redeConvidadoDesenhar() {
   if (topo) topo.after(barra);
   else box.appendChild(barra);
   barra.querySelectorAll("[data-ativo]").forEach((b) => b.addEventListener("click", () => redeConvDefinirAtivo(b.dataset.ativo)));
+  // a lista de ações é a que foi desenhada (antes era a do momento do toque: se o painel mudou, ia outra ação)
+  const opsDesenhadas = (rede.painel && rede.painel.opcoes) || [];
   barra.querySelectorAll("[data-op]").forEach((b) =>
-    b.addEventListener("click", () => {
-      const o = rede.painel && rede.painel.opcoes[+b.dataset.op];
+    redeToqueSeguro(b, () => {
+      const o = opsDesenhadas[+b.dataset.op];
       if (o) redeMandar(o.a, ...o.d);
     }),
   );
@@ -27047,7 +27267,7 @@ function redeConvidadoDesenhar() {
     }),
   );
   barra.querySelectorAll(".lp-barra[data-ate]").forEach((x) => (x.style.width = x.dataset.ate + "%"));
-  barra.querySelectorAll("[data-dica]").forEach((b) => b.addEventListener("click", () => redeMandar("escolherDica", +b.dataset.dica)));
+  barra.querySelectorAll("[data-dica]").forEach((b) => redeToqueSeguro(b, () => redeMandar("escolherDica", +b.dataset.dica)));
   barra.querySelectorAll("[data-voto]").forEach((b) => b.addEventListener("click", () => redeVotarConvidado(b.dataset.voto === "1") && redeConvidadoDesenhar()));
   redeConvidadoTiques();
 }
@@ -27059,7 +27279,9 @@ const REDE_CLASSE_BOTAO = (o) =>
   o.a === "acertou" || o.a === "palpiteAcertou" ? "btn-correct" :
   o.a === "errou" ? (o.d[0] === "pular" ? "btn-pular" : o.d[0] === "absurdo" ? "btn-absurdo" : "btn-wrong") :
   o.a === "palpiteErrou" ? "btn-wrong" :
-  o.a === "virarCarta" ? "flip-btn" :
+  // 29/10/2026 (prints 12 e 15 do JF): o "Virar a carta" da carta do Mestre era cinza e pequeno; agora é o mesmo
+  // botão grande e pulsando do intervalo
+  o.a === "virarCarta" || o.a === "roletaCategoria" ? "flip-btn" + (o.c === "cta" ? " cta-pulsa" : "") :
   o.a === "sacarCarta" ? "main-btn btn-draw" :
   o.a === "descartarCarta" || o.a === "desistirCarta" ? "discard-btn" :
   o.g === "Mais" ? "rede-btn" : "continue-btn";
@@ -27136,12 +27358,12 @@ function redeMestreCartaMontar(box) {
   if (typeof telaoRoletaAnimar === "function") telaoRoletaAnimar(sec);
   sec.querySelectorAll("[data-ativo]").forEach((b) => b.addEventListener("click", () => redeConvDefinirAtivo(b.dataset.ativo)));
   sec.querySelectorAll("[data-op]").forEach((b) =>
-    b.addEventListener("click", () => {
+    redeToqueSeguro(b, () => {
       const o = ops[+b.dataset.op];
       if (o) redeMandar(o.a, ...o.d);
     }),
   );
-  sec.querySelectorAll(".number-btn[data-dica]:not(.aberta):not(.travada)").forEach((b) => b.addEventListener("click", () => redeMandar("escolherDica", +b.dataset.dica)));
+  sec.querySelectorAll(".number-btn[data-dica]:not(.aberta):not(.travada)").forEach((b) => redeToqueSeguro(b, () => redeMandar("escolherDica", +b.dataset.dica)));
   const gradeEl = sec.querySelector(".number-grid");
   if (gradeEl)
     dicaSegurarParaForcar(gradeEl, (idx) => {
@@ -27358,12 +27580,36 @@ function redePapelHtml(papel, nome) {
   if (papel.vez) return `<div class="rede-papel rp-vez" role="status">👉 SUA VEZ!${quem}<small>Escolha um número de dica, ouça o Mestre e tente adivinhar.</small></div>`;
   return "";
 }
+// 29/10/2026 (print 18 do JF): no intervalo não tem "Sua vez" correndo: diz o que a pessoa faz na próxima carta
+function redeEuPapelTxt(r, papel) {
+  if (r.intervalo) return papel.mestre ? " · 🎙️ Mestre da próxima carta" : papel.vez ? " · 👉 Você começa a próxima carta" : "";
+  return papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 Sua vez" : "";
+}
+// 29/10/2026 (relato do JF: "pediram a dica X e abriu a Y"): se a tela se redesenha no meio do toque, o "click" do
+// celular cai no botão NOVO que ficou embaixo do dedo (os números mudam de lugar quando uma dica abre). Só vale o
+// toque que começou no próprio botão; teclado (sem ponteiro) continua valendo.
+function redeToqueSeguro(el, fn) {
+  if (!el) return;
+  el.addEventListener("pointerdown", () => (el._redeToque = true));
+  el.addEventListener("click", (ev) => {
+    const teclado = ev && ev.detail === 0;
+    if (!teclado && !el._redeToque) return;
+    el._redeToque = false;
+    fn(ev);
+  });
+}
+// O número de dica que a pessoa já pediu (o host manda com "👉 " na frente): fica em destaque e os outros apagam
+function redeOpPedida(o) {
+  return !!o && o.a === "pedirDica" && /^👉/.test(String(o.t || ""));
+}
 function redeBotoesHtml() {
   const r = rede.retrato, eu = r.jogadores.find((j) => j.id === rede.eu);
   const papel = redeMeuPapel();
-  let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${(papel.mestre || papel.vez) && !r.intervalo && r.iniciada ? "" : papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 Sua vez" : ""}</div>`;
+  let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${(papel.mestre || papel.vez) && !r.intervalo && r.iniciada ? "" : redeEuPapelTxt(r, papel)}</div>`;
   if (r.fim) return h;
   if (!r.intervalo && r.iniciada) h += redePapelHtml(papel, eu && eu.nome);
+  // 1.9 · T2 viva: esperando a vez, o celular tem dica e o C.A.O.S. mexendo com a pessoa
+  if (!r.intervalo && r.iniciada && !r.mc) h += redeEsperaVezHtml(r, eu, papel);
   if (r.intervalo) {
     // 1.7.9.11: o placar do intervalo no celular de cada um (Pontos e Joias; o tabuleiro está logo abaixo)
     // 1.7.10.5.6 (pedido do JF): cara de lobby, com o resumo da partida e as cartas que já foram
@@ -27403,7 +27649,7 @@ function redeBotoesHtml() {
     let gr = grupos.find((x) => x.g === g);
     if (!gr) grupos.push((gr = { g, itens: [], nums: true }));
     if (o.a !== "pedirDica") gr.nums = false;
-    gr.itens.push(`<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}${o.gp ? " guia-pulso" : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`);
+    gr.itens.push(`<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}${o.gp ? " guia-pulso" : ""}${redeOpPedida(o) ? " pedida" : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`);
   });
   grupos.sort((a, b) => (a.g === "Mais") - (b.g === "Mais"));
   grupos.forEach((gr) => {
@@ -27775,6 +28021,14 @@ function redePainelHost() {
   ov._montado = true;
   document.body.appendChild(ov);
 }
+// 29/10/2026: "Entrar com outro código" recarrega a página sem a sala velha e já abre a caixa do código
+window.addEventListener("load", () => {
+  try {
+    if (sessionStorage.getItem("perfil_jf_abrir_codigo") !== "1") return;
+    sessionStorage.removeItem("perfil_jf_abrir_codigo");
+    if (!redeSalaDoEndereco()) setTimeout(() => typeof redeEntrarPorCodigo === "function" && redeEntrarPorCodigo(), 600);
+  } catch (e) {}
+});
 /* ----------------------------------------------------------------------
  * 5l. PEERJS 1.5.5 (biblioteca de terceiros · https://peerjs.com)
  * Embutido no jogo (1.7.9.10) pra sala pela internet funcionar sem baixar nada de fora.
@@ -56105,7 +56359,7 @@ const ADULT_CARDS = expandDeck([
       "*Um palpite a qualquer hora",
       "Fui preso em 2018 e solto em 2019; depois, o STF anulou minhas condenações",
       "Voltei a ser eleito presidente em 2022",
-      "Sou o único brasileiro eleito presidente três vezes pelo voto direto",
+      "Em 2026, fui reeleito para o quarto mandato, algo inédito no Brasil",
       "Meu vice no primeiro governo foi o empresário José Alencar",
       "Minha voz rouca é bem conhecida",
       "Meu nome completo é Luiz Inácio",
@@ -79648,6 +79902,44 @@ const REACTIVE_VOICE = {
       "Sou a voz do jogo. Se você ficar perdido na partida, eu aviso de quem é a vez e o que tocar.",
       "O C.A.O.S. aqui. Não sou jogador, então pode ficar tranquilo: não roubo seus pontos. Só comento.",
       "Sou o C.A.O.S. Fiz curso de apresentador de programa de auditório. Ninguém confirma isso.",
+    ],
+  },
+  // 1.9 · T2 viva (pedido do JF): o C.A.O.S. mexendo com quem espera a vez no celular. Tom leve (crianças jogam).
+  esperaVez: {
+    geral: [
+      "E aí, {nome}? Ainda esperando a sua vez? Aproveita e presta atenção nas dicas dos outros.",
+      "{nome}, enquanto não é com você, eu fico aqui de olho. Não pisca!",
+      "Dica de graça, {nome}: as dicas que os outros pedem também valem pra você pensar.",
+      "{nome}, finge que tá tranquilo. Eu sei que você já tem um chute guardado.",
+      "Calma, {nome}. A sua vez chega. E quando chegar, eu vou estar assistindo.",
+    ],
+    demora: [
+      "{nome}, tá demorando, né? Vai durar mais um pouquinho. Respira.",
+      "Ô {nome}, essa espera tá parecendo fila de banco. Já já é você.",
+      "{nome}, se a espera fosse prova de paciência, você já tinha ganhado.",
+      "Aguenta firme, {nome}. Mesa boa é mesa que pensa. Mesa lenta também é mesa.",
+      "{nome}, enquanto isso, que tal adivinhar a carta antes de todo mundo? Só de cabeça.",
+    ],
+    atras: [
+      "{nome}, tá lá atrás no placar, mas jogo só acaba quando acaba. Uma carta muda tudo.",
+      "Ninguém tá olhando o placar, {nome}. Fora eu. Eu tô olhando. Mas eu acredito em você.",
+      "{nome}, lanterna também ilumina. Bora virar esse jogo na próxima.",
+      "Fica esperto, {nome}: quem acerta cedo pula na frente rapidinho.",
+      "{nome}, a virada mais bonita é a que ninguém espera. Tô torcendo. Mais ou menos.",
+    ],
+    frente: [
+      "{nome}, você tá na frente. Cuidado, o pessoal tá de olho em você.",
+      "Liderando, {nome}? Aproveita, que a coroa pesa e a mesa não perdoa.",
+      "{nome}, primeiro lugar tem uma vista linda. Agora segura ela.",
+      "Ô {nome}, não se acostuma com a liderança, não. Eu já vi muita virada.",
+      "{nome}, tá na frente. Eu vou fingir que não tô impressionado.",
+    ],
+    acabou: [
+      "Boa jogada, {nome}. Agora relaxa e torce pros outros errarem. Brincadeira. Ou não.",
+      "{nome}, já foi a sua. Agora é assistir e preparar a próxima.",
+      "Passou a vez, {nome}. Enquanto isso, guarda as pistas na cabeça.",
+      "{nome}, missão cumprida por enquanto. Eu te chamo quando for a hora.",
+      "Pode descansar o dedo, {nome}. A próxima é daqui a pouco.",
     ],
   },
   // 1.8 · Guia da mesa (ideia da Elisa): a mesa parou porque alguém não sabe o que fazer. Ele diz quem e o quê.
