@@ -5,4 +5,5 @@ Estas cartas **não entram no baralho atual**: o `montar.js` só junta o que est
 
 - Mesmo formato das cartas do jogo: 20 entradas, 3 especiais espalhadas, ids continuando a numeração (ANO-0201…).
 - Lista do que entra: `docs/Cartas_2.0_Perfil4.md` e `ferramentas/cartas_2.0_planejadas.json`.
+- Fontes (as dicas em JSON e o gerador): `cartas_2.0/fonte/` (`python3 cartas_2.0/fonte/gerar.py ANO 201 fonte/ano1.json 01-ano.js`).
 - Conferência: `node ferramentas/auditar_cartas.js --com-2.0` (audita junto com o baralho atual: repetidas, ids, regras).
