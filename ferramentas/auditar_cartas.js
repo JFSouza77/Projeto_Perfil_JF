@@ -4,6 +4,8 @@
 //   node ferramentas/auditar_cartas.js            resumo por tipo de apontamento
 //   node ferramentas/auditar_cartas.js --tudo     lista cada apontamento
 //   node ferramentas/auditar_cartas.js --json X   grava os apontamentos em X
+//   node ferramentas/auditar_cartas.js --com-2.0  junta as cartas preparadas pra 2.0 (cartas_2.0/, fora do jogo):
+//                                                 confere repetidas, ids e regras contra o baralho atual também
 //
 // Regras conferidas (ver docs/Publico_dos_Modos.md e as regras de criação de cartas):
 //   ERRO   20 entradas; no máximo 4 especiais; nunca 3 especiais seguidas; especial conhecida;
@@ -24,12 +26,16 @@ const vm = require("vm");
 const PASTA_CARTAS = path.join(__dirname, "..", "src", "dados", "02-cartas");
 const ARGS = process.argv.slice(2);
 
+const PASTA_2_0 = path.join(__dirname, "..", "cartas_2.0");
 function lerCartas() {
-  const arqs = fs.readdirSync(PASTA_CARTAS).filter((f) => /^\d+-[a-z]+\.js$/.test(f) && !/^(00|99)-/.test(f)).sort();
+  const pastas = [PASTA_CARTAS].concat(ARGS.includes("--com-2.0") && fs.existsSync(PASTA_2_0) ? [PASTA_2_0] : []);
   const cartas = [];
-  for (const f of arqs) {
-    const lista = vm.runInNewContext("[" + fs.readFileSync(path.join(PASTA_CARTAS, f), "utf8") + "]");
-    lista.forEach((c) => cartas.push(Object.assign(c, { _arq: f })));
+  for (const pasta of pastas) {
+    const arqs = fs.readdirSync(pasta).filter((f) => /^\d+-[a-z]+\.js$/.test(f) && !/^(00|99)-/.test(f)).sort();
+    for (const f of arqs) {
+      const lista = vm.runInNewContext("[" + fs.readFileSync(path.join(pasta, f), "utf8") + "]");
+      lista.forEach((c) => cartas.push(Object.assign(c, { _arq: f })));
+    }
   }
   return cartas;
 }

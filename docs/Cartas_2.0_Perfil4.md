@@ -31,7 +31,7 @@ de 500 novas (o JF vai olhar o Perfil 8).
 - A meta subiu: perto de **2.000 cartas** no total. As 500 eram só uma média.
 - **Sexta, 30/10, 9h:** o Claude começa a escrever as dicas das cartas desta lista (agendado). Se o JF mandar cartas
   novas até lá, entram junto.
-- As cartas prontas ficam numa pasta separada (`src/dados/02-cartas-2.0/`), **fora do baralho** que o `montar.js` junta.
+- As cartas prontas ficam numa pasta separada (`cartas_2.0/`, na raiz), **fora do baralho** que o `montar.js` junta (em `src/` não dá: o montar exige que todo arquivo de `src/` esteja na ordem de montagem).
   Só entram no jogo com a 2.0 (Cards Expansion).
 - Cada carta segue o formato das atuais: 20 pistas, com os especiais (`*Volte 2 casas`, `*Um palpite a qualquer hora`
   etc.) na mesma proporção, dicas escritas do zero, da mais difícil pra mais fácil, sem entregar o nome.
