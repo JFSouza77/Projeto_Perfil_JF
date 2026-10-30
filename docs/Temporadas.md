@@ -96,4 +96,4 @@ temporadas, na ordem do calendário.
 
 ## Progresso
 
-- 30/10/2026: plano criado; o JF somou lojinha, cores, emojis, títulos e piadas da temporada e deu prioridade pro Natal; tarefa diária agendada (por volta de 8h45, horário de Brasília) pra ir fazendo um pedaço por vez.
+- 30/10/2026: plano criado; o JF somou lojinha, cores, emojis, títulos e piadas da temporada e deu prioridade pro Natal; tarefa agendada 2 vezes por dia (8h47 e 23h47, horário de Brasília) pra ir fazendo um pedaço por vez.
