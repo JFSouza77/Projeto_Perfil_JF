@@ -158,7 +158,7 @@ const ARQ = acharMestre(process.argv[2]);
     ["Pausa: ninguém é esperado", r.pausaNinguem],
     ["Express: o guia não entra", r.expressNinguem],
     ["Fala dele na tela não conta como demora", r.falaNaoConta],
-    ["Falas: 13 bancos de 5 (65)", r.bancos === 13 && r.falasTotal === 65 && r.cadaBanco5],
+    ["Falas: 16 bancos de 5 (80; 1.9.1 somou o cochicho e a insistência do Já falei a categoria)", r.bancos === 16 && r.falasTotal === 80 && r.cadaBanco5],
   ];
   let ok = true;
   checks.forEach(([n,v]) => { console.log(`${v?"ok    ":"FALHOU"}  ${n}`); if(!v) ok=false; });
