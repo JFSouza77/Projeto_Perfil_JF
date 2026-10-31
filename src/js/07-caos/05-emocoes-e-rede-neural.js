@@ -338,12 +338,12 @@ function caosConsoleMistura() {
   const m = CAOS_CONSOLE_MISTURAS.find(([x, y]) => (x === a && y === b) || (x === b && y === a));
   return m ? m[2] : null;
 }
-function caosConsoleAvancar(bank) {
+function caosConsoleAvancar(bank, forcar) {
   try {
     const C = caosConsole,
       F = CAOS_CONSOLE_CFG,
       b = String(bank || ""),
-      livre = CAOS_ESCADA_LIVRE.test(b) || (typeof gameEnded !== "undefined" && gameEnded);
+      livre = !!forcar || CAOS_ESCADA_LIVRE.test(b) || (typeof gameEnded !== "undefined" && gameEnded);
     const leg = caosEmocaoGlobalLegado();
     if (leg !== C.legMostra && (C.legN >= F.dwell || livre)) {
       C.legMostra = leg;

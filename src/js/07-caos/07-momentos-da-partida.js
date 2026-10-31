@@ -1,3 +1,17 @@
+// 1.9.1 (relato do JF): o "oi" pra quem acabou de entrar não pode cair no respiro entre falas. Espera a fala
+// anterior terminar e o respiro passar (até uns 20 s) e só então cumprimenta.
+function caosBoasVindasQuandoPuder(p, _t) {
+  if (!p || !players.includes(p)) return;
+  const t = _t || Date.now();
+  let falta = 0;
+  try {
+    const agora = Date.now();
+    if (activeToastState) falta = 500;
+    else falta = Math.max((caosFalaFimAt || 0) + caosRespiroAgora() - agora, (caosUltimaFalaAt || 0) + CAOS_FALA_INICIO_MIN_MS - agora, 0);
+  } catch (e) {}
+  if (falta > 0 && Date.now() - t < 2e4) return setTimeout(() => caosBoasVindasQuandoPuder(p, t), Math.min(falta + 80, 1500));
+  caosWelcomePlayer(p);
+}
 function caosWelcomePlayer(p) {
   if (!p || caosSilenced) return;
   if (p.iniciante) {

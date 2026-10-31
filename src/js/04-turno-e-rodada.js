@@ -1737,7 +1737,8 @@ function addPlayer() {
   hideNickSuggest();
   idadeLimpar();
   nicksRepertorioGuardar(name);
-  contaAoCadastrar(players[players.length - 1], null, true); // 11/2026: cadastro do jogador (antes da memória, que respeita o nick protegido); pergunta se quer cadastrar
+  const novo = players[players.length - 1];
+  contaAoCadastrar(novo, null, true, () => caosBoasVindasQuandoPuder(novo)); // 1.9.1: o "oi" vem depois da pergunta do cadastro. 11/2026: cadastro do jogador (antes da memória, que respeita o nick protegido); pergunta se quer cadastrar
   caosMemCadastro(players[players.length - 1]);
   input.value = "";
   caosTomadaN = 0;
@@ -1751,7 +1752,6 @@ function addPlayer() {
   caosCadastroReset();
   selectedHumor = CURRENT_MODE === "junior" ? "familia" : "normal";
   renderHumorPicker();
-  caosWelcomePlayer(players[players.length - 1]);
 }
 function endGame() {
   tempoTick();

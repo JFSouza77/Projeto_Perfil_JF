@@ -514,6 +514,7 @@ function iniciar() {
   document.getElementById("addPlayerBtn").addEventListener("click", () => {
     if (!iniFluxo && !cadPodeAdicionar()) {
       cadAtualizarBotao();
+      cadGuiarFalta(); // 1.9.1: o C.A.O.S. mostra o que falta
       return;
     }
     addPlayer();

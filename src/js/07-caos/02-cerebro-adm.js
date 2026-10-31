@@ -373,7 +373,7 @@ function caosInspectorEstado() {
       <div class="ci-kv"><span>🎬 Ações da partida</span><b class="ci-mono">${(() => { const a = acoesResumo(); return "revisão " + a.revisao + " · " + a.total + " no registro" + (a.ultimas.length ? "<br>" + a.ultimas.map(escapeHtml).join("<br>") : ""); })()}</b></div>
       <div class="ci-kv"><span>🧯 Erros da página (só neste aparelho)</span><b class="ci-mono">${caosErrosPaginaResumo()}</b></div>
       <div class="ci-kv"><span>🔇 Silenciado nesta carta</span><b class="ci-mono">${caosMudoCarta ? "SIM (por " + escapeHtml(caosMudoPor || "?") + ") · dá pra religar na Pausa" : "não"}</b></div>
-      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.9.0 · C.A.O.S. 5.3.0</b></div>
+      <div class="ci-kv"><span>Versão</span><b class="ci-mono">Beta 1.9.1 · C.A.O.S. 5.3.1</b></div>
       <div class="ci-kv"><span>⚠️ Avisos dos dados</span><b class="ci-mono">${avisosDados.length ? avisosDados.map(escapeHtml).join("<br>") : "nenhum"}</b></div></div>`;
   wrap.appendChild(grid);
   const sEst = ciSecao("⚡ Estados dinâmicos do cérebro");
@@ -1088,9 +1088,59 @@ function caosCutucado(gancho) {
   if (JSON.stringify(caosEmo) !== antes) DEBUG && console.warn("cosquinha mexeu no humor!");
   return caosCosq.ult;
 }
+// 1.9.1 (relato do JF: "mexia na paciência e no estresse e as cores do cérebro não mudavam"): a cor do cérebro é a
+// emoção que manda, e ela só mudava quando o C.A.O.S. falava. No Sandbox, mexer no vetor também mexe nas emoções
+// ligadas a ele e o cérebro troca de cor na hora (sem esperar as 3 falas do estabilizador).
+const CAOS_SANDBOX_EMO = {
+  "Tensão+": [["raiva", 1.5], ["ansiedade", 1]],
+  "Tensão-": [["raiva", -1.5], ["ansiedade", -1], ["medo", -1]],
+  "Calor+": [["alegria", 2], ["carinho", 1]],
+  "Calor-": [["alegria", -2], ["carinho", -1], ["tedio", 1]],
+  "Paciência+": [["raiva", -1], ["ansiedade", -1]],
+  "Paciência-": [["raiva", 1], ["ansiedade", 1]],
+};
+function caosSandboxSentir(label, delta) {
+  try {
+    const C = caosConsole;
+    if (!C) return;
+    (CAOS_SANDBOX_EMO[label + (delta > 0 ? "+" : "-")] || []).forEach(([emo, v]) => {
+      if (!CAOS_CONSOLE[emo]) return;
+      C.g[emo] = Math.max(0, Math.min(CAOS_CONSOLE[emo].teto, (C.g[emo] || 0) + v));
+    });
+    caosConsoleLog(`🎛️ Sandbox: ${label} ${delta > 0 ? "+" : "−"}`);
+    caosConsoleAvancar("sandbox", true);
+  } catch (e) {}
+}
+// 1.9.1 (pedido do JF): volta o cérebro ao padrão de fábrica (vetor 5/5/7, temperamento normal, emoções zeradas,
+// nada forçado, vetor solto). Não mexe na memória dos jogadores nem nas opções (guia da mesa, conteúdo da Anne).
+function caosCerebroFabrica() {
+  caosVetorTravado = false;
+  caosTemper = CAOS_TEMPERAMENTOS.normal;
+  caosEmo = { tensao: 5, calor: 5, paciencia: 7 };
+  caosConsoleReset();
+  caosEmoFalaAtual = null;
+  caosEmoFalaN = 0;
+  caosMoodOverride = null;
+  caosHumorOverride = null;
+  caosCosq = { n: 0, mexidas: 0, at: 0, ult: "", voz: false, falouAlto: false };
+  caosLog("sandbox", "♻️ cérebro restaurado de fábrica");
+  caosEmoHistSample("sandbox");
+}
 function caosInspectorSandbox(onChange) {
   const wrap = document.createElement("div");
   const sec1 = ciSecao("🎛️ Ajustar vetor emocional", "só vale pra partida atual");
+  {
+    const fab = document.createElement("button");
+    fab.type = "button";
+    fab.className = "ci-btn ci-btn-gold ci-wide";
+    fab.textContent = "♻️ Restaurar de fábrica";
+    fab.title = "Volta o humor do C.A.O.S. ao padrão (não apaga a memória dos jogadores)";
+    fab.addEventListener("click", () => {
+      caosCerebroFabrica();
+      onChange();
+    });
+    sec1.appendChild(fab);
+  }
   if (caosCosq.ult)
     sec1.insertAdjacentHTML("beforeend", `<div class="ci-note ci-cosq">🪶 ${escapeHtml(caosCosq.ult)}</div>`);
   {
@@ -1155,6 +1205,7 @@ function caosInspectorSandbox(onChange) {
       b.addEventListener("click", () => {
         set(caosEmoClamp(get() + delta));
         caosLog("sandbox", `${label} ${delta > 0 ? "+" : ""}${delta}`);
+        caosSandboxSentir(label, delta);
         caosEmoHistSample("sandbox");
         caosCutucado(
           ({ Tensão: "tensao", Calor: "calor", Paciência: "paciencia" }[label] || "geral") + (delta > 0 ? "+" : "-"),

@@ -141,7 +141,13 @@ function caosSpeak(msg, humorForcado, onEnd, onPedaco, vir) {
   const txtP = caosSpeechText(msg, true),
     txt = caosSemPausa(txtP);
   if (!txt) return false;
-  if (caosSpeechIsForMaster(txt) && !humorForcado) {
+  // 1.9.1 (relato do JF): o guia da mesa cutuca o Mestre ("abre a dica e lê pra mesa") e precisa ser ouvido
+  const doGuia =
+    typeof caosLastPick !== "undefined" &&
+    caosLastPick &&
+    /^guia\./.test(String(caosLastPick.bank || "")) &&
+    msg.indexOf(String(caosLastPick.text || "").replace(/^\[C\.A\.O\.S\.\]\s*/, "").slice(0, 30)) !== -1;
+  if (caosSpeechIsForMaster(txt) && !humorForcado && !doGuia) {
     caosVoiceSilenced++;
     return false;
   }
