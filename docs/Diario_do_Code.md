@@ -20,6 +20,7 @@ segura**. Sem rodeio: é pra achar rápido.
 | Mesa travada, ninguém sabe o que fazer | guia da mesa (16-guia-da-mesa.js): `guiaQuemAge`, `guiaTick`, `guiaCutucar` |
 | T2 (celular) mostrando coisa errada | `telaoDesenhar` (05h-telao), `redeBotoesHtml`, `redeMestreCartaMontar`, `.rede-host-vista` (05k-rede) |
 | Toque abriu a dica errada no celular | toque fantasma após redesenho: `redeToqueSeguro` e o retrato `opsDesenhadas` (05k-rede) |
+| SUA VEZ / resposta aparecendo cedo no celular | `redeBotoesHtml` e `redeEuPapelTxt` (05k-rede): faixa só com a carta mostrada, nada da próxima carta no intervalo |
 | Link de sala que não existe mais | `.rede-sala-velha` / `#redeOutroCodigo` (05k-rede) |
 | Categoria aparecendo antes da hora no T2 | `telaoRoletaHtml(c, esconder)` (05h-telao) |
 | Botão Adicionar "não faz nada" | `cadPodeAdicionar` / `cadFaltaTexto` / `cadGuiarFalta` (05-tela) e o clique em 11-iniciar |
@@ -29,6 +30,15 @@ segura**. Sem rodeio: é pra achar rápido.
 | Teste falhou logo depois de mudar fala | inventário desatualizado: `node ferramentas/caos_inventario.js`; contagens fixas em `teste_guia` e afins |
 
 ## Registro (mais novo primeiro)
+
+### 31/10/2026 · 1.9.2 · respostas do JF aos prints 8, 11 e 12
+
+- **"SUA VEZ" aparecendo antes de a carta ser mostrada (print 8).** O JF quis esconder. Mudou: `redeBotoesHtml` só põe a
+  faixa da vez com `estadoCarta === "revealed"` (antes, a linha "Você começa assim que o Mestre mostrar a carta", em
+  `redeEuPapelTxt`); a vista do host faz o mesmo. Teste: `teste_t2_vez`.
+- **No intervalo, o próximo Mestre já via a resposta e o Virar a carta (prints 11 e 12).** O JF: "quebra a experiência".
+  Mudou: sem `rede-segredo` e sem os botões virarCarta/sacarCarta/roletaCategoria quando `r.intervalo` (convidado) ou
+  `tabLobbyFimEm()` (vista do host). Os índices dos botões (`data-op`) continuam os mesmos (vira `null`, não some da lista).
 
 ### 30/10/2026 · 1.9.1 · demonstração do JF pra uma pessoa de fora
 

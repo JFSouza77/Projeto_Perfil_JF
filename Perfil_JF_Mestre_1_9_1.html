@@ -26452,12 +26452,14 @@ function redeHostVista() {
   const semDisp = !eus.length && starterChosen && !gameEnded ? players.filter((p) => !redeOnline(rede.assentos[p.id])) : [];
   if (semDisp.length)
     h += `<div class="rede-eu-pergunta">🙋 Você joga neste aparelho? <span class="rede-acoes">${semDisp.map((p) => `<button type="button" class="rede-btn rede-cta" data-sou="${escapeHtml(p.id)}">Sou ${nome(p)}</button>`).join("")}</span></div>`;
-  if (starterChosen && !gameEnded) h += redePapelHtml({ mestre: false, vez });
+  if (starterChosen && !gameEnded) h += redePapelHtml({ mestre: false, vez: vez && cardState === "revealed" }); // 1.9.2: SUA VEZ só com a carta mostrada
   h += `<div class="rede-segredo">🔒 A carta e a resposta estão no aparelho de <b>${mestre ? nome(mestre) : "quem é o Mestre"}</b> (Mestre da vez).</div>`;
   if (vez && cardState === "revealed" && pendingIndex === null && !pausedAt)
     h += `<div class="rede-rot">👉 Sua vez: toque no número (ou fale) e o Mestre abre a dica.</div>`; // 1.7.9.6: só o Mestre abre
   const ops = [];
-  eus.forEach((p) => redeOpcoes(p.id).forEach((o) => o.a !== "pausar" && ops.push({ ...o, quem: p.id })));
+  // 1.9.2 (prints 11 e 12): no intervalo, nada de virar/sortear a próxima carta por aqui
+  const noIntervalo = typeof tabLobbyFimEm === "function" && !!tabLobbyFimEm();
+  eus.forEach((p) => redeOpcoes(p.id).forEach((o) => o.a !== "pausar" && !(noIntervalo && ["virarCarta", "sacarCarta", "roletaCategoria"].includes(o.a)) && ops.push({ ...o, quem: p.id })));
   // 29/10/2026 (print 2 do JF): os números de dica viram a mesma grade do celular (com a pedida em destaque)
   const btn = (o, i) => `<button type="button" class="rede-btn${o.c ? " rede-" + escapeHtml(o.c) : ""}${o.gp ? " guia-pulso" : ""}${redeOpPedida(o) ? " pedida" : ""}" data-op="${i}">${escapeHtml(o.t)}</button>`;
   const nums = ops.map((o, i) => (o.a === "pedirDica" ? btn(o, i) : "")).join("");
@@ -27703,6 +27705,7 @@ function redePapelHtml(papel, nome) {
 }
 // 29/10/2026 (print 18 do JF): no intervalo não tem "Sua vez" correndo: diz o que a pessoa faz na próxima carta
 function redeEuPapelTxt(r, papel) {
+  if (!r.intervalo && r.iniciada && papel.vez && !papel.mestre && r.estadoCarta !== "revealed") return " · 👉 Você começa assim que o Mestre mostrar a carta";
   if (r.intervalo) return papel.mestre ? " · 🎙️ Mestre da próxima carta" : papel.vez ? " · 👉 Você começa a próxima carta" : "";
   return papel.mestre ? " · 🎙️ Mestre" : papel.vez ? " · 👉 Sua vez" : "";
 }
@@ -27726,9 +27729,12 @@ function redeOpPedida(o) {
 function redeBotoesHtml() {
   const r = rede.retrato, eu = r.jogadores.find((j) => j.id === rede.eu);
   const papel = redeMeuPapel();
-  let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${(papel.mestre || papel.vez) && !r.intervalo && r.iniciada ? "" : redeEuPapelTxt(r, papel)}</div>`;
+  // 1.9.2 (print 8 do JF): a faixa SUA VEZ só aparece depois que o Mestre mostra a carta; antes, uma linha avisa
+  const vezAgora = papel.vez && r.estadoCarta === "revealed";
+  const faixa = !r.intervalo && r.iniciada && (papel.mestre || vezAgora);
+  let h = `<div class="rede-eu">Você é <b>${escapeHtml(eu ? (eu.avatar ? eu.avatar + " " : "") + eu.nome : "?")}</b>${faixa ? "" : redeEuPapelTxt(r, papel)}</div>`;
   if (r.fim) return h;
-  if (!r.intervalo && r.iniciada) h += redePapelHtml(papel, eu && eu.nome);
+  if (faixa) h += redePapelHtml({ mestre: papel.mestre, vez: vezAgora }, eu && eu.nome);
   // 1.9 · T2 viva: esperando a vez, o celular tem dica e o C.A.O.S. mexendo com a pessoa
   if (!r.intervalo && r.iniciada && !r.mc) h += redeEsperaVezHtml(r, eu, papel);
   if (r.intervalo) {
@@ -27753,7 +27759,8 @@ function redeBotoesHtml() {
     h += `<div class="rede-votacao">🗳️ ${escapeHtml(quem)} quer ${v.tipo === "descartar" ? "descartar" : "desistir de"} esta carta. <b>${v.sim}</b> sim · <b>${v.nao}</b> não${v.precisa ? ` <small>(precisa de ${v.precisa} sim de ${v.total})</small>` : ""} · <b id="redeVotoSeg">…</b> s${ja ? "<div><small>Seu voto foi.</small></div>" : `<div class="rede-acoes"><button type="button" class="rede-btn rede-ok" data-voto="1">👍 Sim</button><button type="button" class="rede-btn rede-nao" data-voto="0">👎 Não</button></div>`}</div>`;
   }
   // (1.8: a faixa da vez e o título dos números já dizem o que fazer; a linha repetida saiu)
-  if (papel.mestre && rede.segredo && rede.segredo.resposta)
+  // 1.9.2 (prints 11 e 12 do JF): no intervalo, o próximo Mestre não vê a resposta nem o "Virar a carta" ainda
+  if (papel.mestre && rede.segredo && rede.segredo.resposta && !r.intervalo)
     h += `<div class="rede-segredo">🔒 Só você vê: <b>${escapeHtml(rede.segredo.resposta)}</b></div>`;
   const c = r.carta;
   if (papel.mestre && r.estadoCarta === "revealed" && c && (c.pendente === null || c.pendente === undefined) && !(r.relogio && r.relogio.pausado)) {
@@ -27762,10 +27769,11 @@ function redeBotoesHtml() {
     for (let i = 0; i < c.totalDicas; i++) if (!abertas.has(i)) nums.push(`<button type="button" class="rede-btn" data-dica="${i}">${i + 1}</button>`);
     if (nums.length) h += `<div class="rede-rot">Escolha uma dica:</div><div class="rede-nums">${nums.join("")}</div>`;
   }
-  // os botões que o host mandou pra mim, em grupos
-  const ops = (rede.painel && rede.painel.opcoes) || [];
+  // os botões que o host mandou pra mim, em grupos (no intervalo, nada de virar/sortear a próxima carta)
+  const ops = ((rede.painel && rede.painel.opcoes) || []).map((o) => (r.intervalo && ["virarCarta", "sacarCarta", "roletaCategoria"].includes(o.a) ? null : o));
   const grupos = [];
   ops.forEach((o, i) => {
+    if (!o) return;
     const g = o.g || "";
     let gr = grupos.find((x) => x.g === g);
     if (!gr) grupos.push((gr = { g, itens: [], nums: true }));

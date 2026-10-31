@@ -11,7 +11,8 @@
 const NOVIDADES = [
   {
     v: "Beta 1.9.1",
-    data: "30/10/2026",
+    ate: "1.9.2", // a lista junta os ajustes até essa versão
+    data: "31/10/2026",
     nome: "T2 Viva Update",
     t: "O C.A.O.S. cumprimenta todo mundo, ajuda no cadastro e fala alto quando a mesa trava.",
     itens: [
@@ -19,6 +20,7 @@ const NOVIDADES = [
       "🧭 Ajuda no cadastro: tocou em Adicionar e faltou alguma coisa? O C.A.O.S. chama você pelo nome, diz o que falta e a tela desce até lá.",
       "🗣️ Guia com voz: quando a mesa fica esperando o Mestre, o C.A.O.S. avisa em voz alta, e não só no balão.",
       "✨ Botão que convida: o brilho que mostra onde tocar ficou suave e lento, sem crescer nem piscar forte.",
+      "🙈 Sua vez na hora certa: no celular, o SUA VEZ só aparece depois que o Mestre mostra a carta, e no intervalo o próximo Mestre não vê a resposta nem o botão de virar antes da hora.",
       "🎴 Mostrar a carta sem travar: se o Mestre demora no Já falei a categoria, o C.A.O.S. cochicha uma dica, insiste conforme o humor dele e o botão dá uma cutucadinha.",
     ],
     qol: [
