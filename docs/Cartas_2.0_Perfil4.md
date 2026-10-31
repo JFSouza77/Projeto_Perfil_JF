@@ -522,3 +522,10 @@ A Ilha de Creta está na seção de mitologia (Lugar).
 - Memória: o jogo já guarda as últimas 400 cartas que saíram (`CARTAS_RECENTES_MAX`) e joga essas pro fundo. No lote novo, as 100 de cada categoria saem primeiro das que ainda não apareceram.
 - Com isso, não precisa igualar as categorias na régua. Animal e Ano só precisam de cartas suficientes pra não repetir rápido.
 - Status: proposta, esperando o JF dar o ok. Entra junto com as cartas da 2.0.
+
+### Sugestões do JF esperando o Perfil 8 (31/10/2026)
+
+- **Maternidade** (Lugar) e **Reino de Oz** (Lugar, do Mágico de Oz). Nenhuma das duas está no jogo nem no plano.
+- Entram no plano quando o JF trouxer as cartas de Ano (e o que mais achar no Perfil 8), pra fechar as contas em 0 ou 5.
+- Animal não tem no Perfil 8 (só no Júnior). Pra Animal, o Code sugere dinossauros, bichos brasileiros, bichos do mar e
+  poucas raças, só as muito conhecidas.
