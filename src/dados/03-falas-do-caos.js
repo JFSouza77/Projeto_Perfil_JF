@@ -4159,6 +4159,28 @@ const REACTIVE_VOICE = {
       "Anuncia a categoria, {nome}. Depois toca no botão que pisca.",
       "{nome}, falta só você dizer a categoria e tocar em Já falei a categoria. Bora!",
     ],
+    // 1.9.1 (pedido do JF): o "Já falei a categoria" com insistência. Primeiro um cochicho; depois, conforme o humor.
+    mostrarSussurro: [
+      "Psiu… {nome}… uma dica: se você tocar em Já falei a categoria, a mesa sabe que a carta começou, tá?",
+      "Ei, Mestre {nome}… baixinho aqui: falou a categoria? Então toca no botão pra mostrar a carta.",
+      "{nome}… cochichando pra ninguém ouvir: é só tocar em Já falei a categoria. A mesa está esperando.",
+      "Ô {nome}, entre nós dois: o botão de Já falei a categoria está ali piscando. Um toque e a carta aparece.",
+      "Olá… tem alguém aí? {nome}, a categoria já foi dita? Toca no botão e a gente segue.",
+    ],
+    mostrarTedio: [
+      "{nome}… eu tô quase dormindo aqui. Toca em Já falei a categoria, por favor.",
+      "Ai, {nome}, que preguiça desse silêncio. Falou a categoria? Toca no botão e acorda a mesa.",
+      "{nome}, eu contei os pixels da tela três vezes. Mostra a carta, vai: Já falei a categoria.",
+      "Bocejo nível máximo, {nome}. Mas tô aqui: o botão de mostrar a carta está esperando você.",
+      "{nome}, até eu cansei de esperar. Um toquinho em Já falei a categoria e a gente continua.",
+    ],
+    mostrarImpaciente: [
+      "{nome}! A mesa inteira está olhando pra você. Já falei a categoria. Toca. Agora.",
+      "Mestre {nome}, eu vou ser sincero: tô ficando nervoso. Toca em Já falei a categoria, por favor!",
+      "{nome}, respira e toca no botão. Já falei a categoria. A mesa agradece, eu também.",
+      "Ô {nome}, é sério agora: falou a categoria? Toca no botão que pisca! Eu ajudo, mas tô contando os segundos.",
+      "{nome}, último aviso amigável: toca em Já falei a categoria e mostra essa carta!",
+    ],
     escolher: [
       "{nome}, é a sua vez! Escolhe um número de dica. Qualquer um, o número não diz se é fácil.",
       "Sua vez, {nome}! Toca num número (ou fala pro Mestre qual você quer).",
@@ -4228,6 +4250,51 @@ const REACTIVE_VOICE = {
       "{nome} já está jogando sozinho! Missão cumprida. Volto a ser só o comentarista.",
       "{nome}, formado no curso do C.A.O.S.! Agora é com você.",
       "Já deu pra ver que você aprendeu, {nome}. Vou ficar quietinho... por enquanto.",
+    ],
+  },
+  // 1.9.1 (pedido do JF): tocou em Adicionar com o cadastro incompleto. Ele lê o nick, diz o que falta e leva até lá.
+  cadFalta: {
+    nome: [
+      "Primeiro o nome! Escreve aqui em cima, de 2 a 15 letras.",
+      "Calma, sem nome eu não sei quem você é. Escreve o nome ali em cima.",
+      "Faltou o principal: o nome. Escreve aqui, ó.",
+      "Oi, pessoa misteriosa! Como você se chama? Escreve o nome aqui em cima.",
+      "Antes de tudo, o nome. Pode ser apelido, eu não julgo. Muito.",
+    ],
+    idade: [
+      "Oi, {nome}! Só falta dizer a sua idade. É aqui, ó.",
+      "{nome}, me conta a sua faixa de idade? Assim eu sei como pegar no seu pé.",
+      "Quase lá, {nome}! Falta a idade. Toca numa das opções aqui.",
+      "{nome}, idade, por favor. Prometo não contar pra ninguém.",
+      "Ei, {nome}, falta escolher a idade. Dá um toque aqui.",
+    ],
+    cor: [
+      "Oi, {nome}! Tá faltando a sua cor. Escolhe uma aqui.",
+      "{nome}, qual vai ser a sua cor no tabuleiro? É aqui, ó.",
+      "Falta pouco, {nome}! Escolhe uma cor pra eu te achar no tabuleiro.",
+      "{nome}, sem cor você vira um fantasma no tabuleiro. Escolhe uma aqui.",
+      "Ei, {nome}, dá um toque aqui e escolhe a sua cor.",
+    ],
+    emoji: [
+      "Oi, {nome}! Falta o seu emoji. Escolhe um aqui.",
+      "{nome}, qual emoji tem a sua cara? Escolhe aqui, ó.",
+      "Quase pronto, {nome}! Só falta o emoji.",
+      "{nome}, escolhe um emoji pra te representar. Capricha.",
+      "Ei, {nome}, falta o emoji. Dá um toque aqui.",
+    ],
+    zoeira: [
+      "Oi, {nome}! Falta dizer quanta zoeira você aguenta. É aqui.",
+      "{nome}, escolhe o nível da zoeira. Eu me comporto conforme o combinado.",
+      "Quase lá, {nome}! Me diz se é pra pegar leve ou pesado. Aqui, ó.",
+      "{nome}, falta a zoeira. Escolhe com carinho, eu levo a sério.",
+      "Ei, {nome}, escolhe aqui como eu posso zoar você.",
+    ],
+    faixa: [
+      "Oi, {nome}! Falta a faixa de idade da equipe. É aqui.",
+      "{nome}, me conta a faixa de idade da turma? Toca aqui.",
+      "Quase lá, {nome}! Só falta a faixa de idade.",
+      "{nome}, escolhe a faixa de idade pra eu calibrar a zoeira.",
+      "Ei, {nome}, falta a faixa de idade. Dá um toque aqui.",
     ],
   },
   intruso: {

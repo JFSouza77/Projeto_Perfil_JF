@@ -128,8 +128,24 @@ function contaOferecer(nome, existe, semPin, depois, seNao) {
 }
 // Jogador entrou no cadastro da partida (aqui ou pela sala). contaRede = login que o celular do jogador mandou.
 // perguntar = cadastro feito neste dispositivo: oferece criar ou entrar no cadastro logo depois.
-function contaAoCadastrar(p, contaRede, perguntar) {
+function contaAoCadastrar(p, contaRede, perguntar, pronto) {
   if (!p || !p.name) return;
+  // 1.9.1 (relato do JF): a janela do cadastro apagava o "oi" do C.A.O.S. na hora. Quem chama passa "pronto", que
+  // roda uma vez só, depois da pergunta (respondida, ou sem pergunta nenhuma) e com a tela livre de janelas.
+  let chamou = false;
+  const fim = () => {
+    if (chamou || typeof pronto !== "function") return;
+    chamou = true;
+    let livre = 0,
+      voltas = 0;
+    const ver = () => {
+      if (!players.includes(p)) return;
+      livre = caosJanelaImportanteAberta() ? 0 : livre + 1;
+      if (livre >= 2 || ++voltas > 300) return pronto();
+      setTimeout(ver, 400);
+    };
+    setTimeout(ver, 200);
+  };
   const daRede = contaRede && typeof contaRede.token === "string" ? { nick: String(contaRede.nick || p.name).slice(0, 15), token: contaRede.token.slice(0, 64) } : null;
   const l = daRede || contaLogin(p.name);
   if (l && nameKeyPlain(l.nick) === nameKeyPlain(p.name)) {
@@ -143,12 +159,13 @@ function contaAoCadastrar(p, contaRede, perguntar) {
         if (!daRede) contaEsquecerLogin(p.name);
       }
     });
+    fim();
     return;
   }
   // nick com cadastro sem login: joga normal, mas sem a memória de quem é dono do nick
   if (contaConhecida(p.name)) p.nickEmprestado = true;
   contaPost("existe", { nick: p.name }).then((r) => {
-    if (!r || r.erro) return;
+    if (!r || r.erro) return fim();
     contaMarcarConhecida(p.name, !!r.existe);
     if (r.existe && !p.conta) p.nickEmprestado = true;
     if (perguntar && !p.iniciante && players.includes(p))
@@ -160,6 +177,7 @@ function contaAoCadastrar(p, contaRede, perguntar) {
         delete p.nickEmprestado;
         saveGameState();
       });
+    fim();
   });
 }
 // Fim da partida: a ficha de quem tem cadastro sobe pra nuvem.

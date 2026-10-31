@@ -22,5 +22,13 @@
 - **Economia de créditos (26/10 a 29/10/2026):** bug, print ou sugestão que o JF mandar nesta semana só é anotado em
   `docs/Pendencias_da_Semana.md`, sem corrigir. Exceção: quando ele disser que precisa daquilo "pra agora", corrigir só
   aquilo, pontual. Na quinta, 29/10, às 18h (Brasília), os créditos renovam e começam os patches com tudo que acumulou.
+- **Temporadas (30/10/2026):** o jogo entra no clima das datas (Halloween, Natal, Carnaval, Festa Junina, aniversário do JF
+  em 2/1 etc.), com falas, lojinha, cores, emojis e títulos da temporada e cartas valendo o dobro. Prioridade: Natal. Feito aos poucos, 2 vezes por dia (8h47 e 23h47), quando
+  não houver pedido do JF; pedido dele sempre vem antes. Nada vai pro ar sem o JF ver e autorizar. Plano: `docs/Temporadas.md`.
 - **Elisa (26/10/2026):** sobrinha do JF, 13 anos, mas com maturidade e raciocínio de uns 16; joga Júnior, Clássico,
   Old School e Hardcore. Sugestão e relato dela têm peso de jogadora experiente, não de criança.
+- **Puxar a orelha do JF (30/10/2026):** ele tem TDAH e esquece pergunta aberta. Sempre que ele mandar mensagem e
+  tiver pergunta minha sem resposta, lembrar no fim da resposta, de um jeito leve ("aproveitando que você veio:
+  ficou isso aberto comigo…"), pra gente poder continuar.
+- **Diário do Code (30/10/2026):** `docs/Diario_do_Code.md`. Antes de caçar bug, procurar o sintoma no Mapa; depois de
+  cada correção, escrever no Registro (o que o JF viu, causa, o que mudou, teste que segura).

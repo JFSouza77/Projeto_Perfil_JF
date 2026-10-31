@@ -275,7 +275,7 @@ function medir(tela) {
     for (const n of ["Ana", "Beto"]) {
       await page.fill("#playerNameInput", n);
       await page.locator("#playerNameInput").dispatchEvent("input");
-      for (let t = 0; t < 4 && (await page.locator("#addPlayerBtn:disabled").count()); t++) {
+      for (let t = 0; t < 4 && (await page.locator("#addPlayerBtn:disabled, #addPlayerBtn.bloqueado").count()); t++) {
         await fecharJanelas();
         for (const s of ["#colorPickerRow .color-swatch:not(.tomada)", "#avatarPickerRow .avatar-swatch:not(.tomada)", "#humorPickerRow button"]) {
           const x = page.locator(s).nth(t);
