@@ -41,6 +41,10 @@ de 500 novas (o JF vai olhar o Perfil 8).
 - **Progresso (30/10/2026):** Ano 50/50 e Animal 50/50 prontas em `cartas_2.0/` (auditadas, sem erro). Faltam
   Pessoa (105), Lugar (45) e Coisa (150), esperando o JF aprovar o estilo das primeiras.
 
+- **Handoff JF + GPT (31/10/2026):** curadoria dos lotes de 26, 29 e 30/10 em `docs/Curadoria_Handoff_Perfil4_2026-10-31.md`.
+  495 aprovadas entraram nas planejadas (Pessoa 210, Lugar 170, Coisa 100, Animal 15); total planejado: 895 (Pessoa 315,
+  Lugar 215, Coisa 250, Animal 65, Ano 50). Com as 1.000 do jogo, a 2.0 fica com 1.895 cartas.
+
 ## Como as cartas vão entrar
 - **Dicas escritas do zero**, no padrão do jogo (20 dicas, as especiais no lugar de sempre, da mais difícil pra mais
   fácil). As fotos das cartas físicas servem só pra lembrar o assunto: o texto delas é do jogo de tabuleiro original e
