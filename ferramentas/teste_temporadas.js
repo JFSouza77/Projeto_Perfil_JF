@@ -103,6 +103,23 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     aplicarAcessibilidade();
     return ok && document.documentElement.dataset.temporada === "natal";
   });
+  // item 2: enfeite do Natal (atrás do conteúdo, sem toque) e selo na splash
+  o.natalEnfeite = await page.evaluate(() => {
+    const e = document.getElementById("temporadaEnfeite");
+    const cs = e && getComputedStyle(e);
+    return !!cs && cs.display === "block" && cs.pointerEvents === "none" && cs.zIndex === "-1" && cs.position === "fixed";
+  });
+  o.natalSelo = await page.evaluate(() => {
+    const s = document.getElementById("splashTemporada");
+    return !!s && !s.hidden && /Edição de Natal/.test(s.textContent);
+  });
+  await page.goto(url + "?temporada=nenhuma");
+  await page.waitForFunction(() => typeof temporadaAplicar === "function");
+  o.semTemporadaSemEnfeite = await page.evaluate(() => {
+    const e = document.getElementById("temporadaEnfeite");
+    const s = document.getElementById("splashTemporada");
+    return (!e || getComputedStyle(e).display === "none") && (!s || s.hidden);
+  });
   o.botaoNaAcessibilidade = await page.evaluate(() => {
     document.querySelectorAll(".caos-modal-ov").forEach((x) => x.remove());
     acessPainelAbrir();

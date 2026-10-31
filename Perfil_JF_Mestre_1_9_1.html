@@ -11821,6 +11821,115 @@ body::before {
   margin-top: 10px;
 }
 
+/* Temporadas (docs/Temporadas.md). A camada #temporadaEnfeite fica atrás do conteúdo (z-index -1, sem toque), então
+   os enfeites aparecem no fundo e nunca cobrem texto nem botão. Cada temporada pendura em html[data-temporada]. */
+.tmp-enfeite {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  display: none;
+}
+.splash-temporada {
+  display: inline-block;
+  margin: 0 auto 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: #ffffff1f;
+  border: 1px solid #ffffff40;
+}
+.splash-temporada[hidden] {
+  display: none;
+}
+
+/* ---------- Natal: neve leve caindo e um varal de luzinhas no topo ---------- */
+html[data-temporada="natal"] .tmp-enfeite {
+  display: block;
+}
+html[data-temporada="natal"] .tmp-neve,
+html[data-temporada="natal"] .tmp-neve::after {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, #ffffffd9 50%, transparent 51%),
+    radial-gradient(3px 3px at 90px 120px, #ffffffb3 50%, transparent 51%),
+    radial-gradient(2px 2px at 160px 60px, #ffffffcc 50%, transparent 51%),
+    radial-gradient(2px 2px at 210px 190px, #ffffffa6 50%, transparent 51%),
+    radial-gradient(3px 3px at 60px 210px, #ffffff99 50%, transparent 51%),
+    radial-gradient(2px 2px at 130px 170px, #ffffffbf 50%, transparent 51%);
+  background-size: 240px 240px;
+  opacity: 0.55;
+  animation: tmpNeve 24s linear infinite;
+}
+html[data-temporada="natal"] .tmp-neve::after {
+  content: "";
+  background-size: 170px 170px;
+  opacity: 0.4;
+  animation-duration: 34s;
+}
+@keyframes tmpNeve {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 30px 240px;
+  }
+}
+html[data-temporada="natal"] .tmp-luzes {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: env(safe-area-inset-top, 0px);
+  height: 16px;
+  background-image:
+    radial-gradient(circle at 10px 9px, #ef4444 0 3.5px, transparent 4.5px),
+    radial-gradient(circle at 30px 11px, #22c55e 0 3.5px, transparent 4.5px),
+    radial-gradient(circle at 50px 9px, #facc15 0 3.5px, transparent 4.5px),
+    radial-gradient(circle at 70px 11px, #60a5fa 0 3.5px, transparent 4.5px),
+    linear-gradient(transparent 6px, #ffffff33 6px 7px, transparent 7px);
+  background-size: 80px 16px;
+  filter: drop-shadow(0 0 3px #fff8);
+  animation: tmpLuzes 3.2s ease-in-out infinite;
+}
+@keyframes tmpLuzes {
+  0%,
+  100% {
+    opacity: 0.95;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+html[data-temporada="natal"] .splash-temporada {
+  background: linear-gradient(135deg, #b91c1c, #15803d);
+  border-color: #fde68a99;
+}
+/* modo claro: neve azulada pra aparecer no fundo claro */
+body.claro .tmp-neve,
+body.claro .tmp-neve::after {
+  filter: invert(0.55) sepia(0.4) hue-rotate(180deg);
+}
+/* menos movimento: enfeite parado; Modo Batata: sem neve (economia) */
+html.acess-calmo .tmp-neve,
+html.acess-calmo .tmp-neve::after,
+html.acess-calmo .tmp-luzes {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tmp-neve,
+  .tmp-neve::after,
+  .tmp-luzes {
+    animation: none !important;
+  }
+}
+body.batata-mode .tmp-neve {
+  display: none;
+}
 </style>
 </head>
 <body class="noturno">
@@ -21626,21 +21735,21 @@ document.addEventListener("keydown", (e) => {
 const TEMPORADA_TESTE_KEY = "perfil_jf_temporada_teste";
 // prio: 2 = um dia só, 1 = janela curta (até uma semana), 0 = janela longa
 const TEMPORADAS = [
-  { id: "anoNovo", nome: "Ano Novo", emoji: "🎆", prio: 2, vale: (d, m, a) => (m === 12 && d === 31) || (m === 1 && d === 1) },
-  { id: "aniversario", nome: "Aniversário do criador", emoji: "🎂", prio: 2, vale: (d, m) => m === 1 && d === 2 },
-  { id: "carnaval", nome: "Carnaval", emoji: "🎭", prio: 1, vale: (d, m, a, t) => temporadaEntre(t, temporadaPascoa(a), -50, -46) },
-  { id: "mulher", nome: "Dia da Mulher", emoji: "💐", prio: 2, vale: (d, m) => m === 3 && d === 8 },
-  { id: "pascoa", nome: "Páscoa", emoji: "🐣", prio: 1, vale: (d, m, a, t) => temporadaEntre(t, temporadaPascoa(a), -2, 0) },
-  { id: "maes", nome: "Dia das Mães", emoji: "💐", prio: 2, vale: (d, m, a, t) => temporadaMesmoDia(t, temporadaDomingo(a, 4, 2)) },
-  { id: "namorados", nome: "Dia dos Namorados", emoji: "💘", prio: 2, vale: (d, m) => m === 6 && d === 12 },
-  { id: "junina", nome: "Festa Junina", emoji: "🌽", prio: 0, vale: (d, m) => m === 6 },
-  { id: "pais", nome: "Dia dos Pais", emoji: "👔", prio: 2, vale: (d, m, a, t) => temporadaMesmoDia(t, temporadaDomingo(a, 7, 2)) },
-  { id: "folclore", nome: "Folclore", emoji: "🌳", prio: 2, vale: (d, m) => m === 8 && d === 22 },
-  { id: "independencia", nome: "Independência", emoji: "🇧🇷", prio: 2, vale: (d, m) => m === 9 && d === 7 },
-  { id: "criancas", nome: "Dia das Crianças", emoji: "🧸", prio: 1, vale: (d, m) => m === 10 && d >= 6 && d <= 12 },
-  { id: "halloween", nome: "Halloween", emoji: "🎃", prio: 1, vale: (d, m) => m === 10 && d >= 20 },
-  { id: "blackfriday", nome: "Black Friday", emoji: "🏷️", prio: 1, vale: (d, m, a, t) => temporadaEntre(t, temporadaBlackFriday(a), 0, 2) },
-  { id: "natal", nome: "Natal", emoji: "🎄", prio: 0, vale: (d, m) => m === 12 && d <= 30 },
+  { id: "anoNovo", nome: "Ano Novo", selo: "Edição de Ano Novo", emoji: "🎆", prio: 2, vale: (d, m, a) => (m === 12 && d === 31) || (m === 1 && d === 1) },
+  { id: "aniversario", nome: "Aniversário do criador", selo: "Edição de aniversário do criador", emoji: "🎂", prio: 2, vale: (d, m) => m === 1 && d === 2 },
+  { id: "carnaval", nome: "Carnaval", selo: "Edição de Carnaval", emoji: "🎭", prio: 1, vale: (d, m, a, t) => temporadaEntre(t, temporadaPascoa(a), -50, -46) },
+  { id: "mulher", nome: "Dia da Mulher", selo: "Edição Dia da Mulher", emoji: "💐", prio: 2, vale: (d, m) => m === 3 && d === 8 },
+  { id: "pascoa", nome: "Páscoa", selo: "Edição de Páscoa", emoji: "🐣", prio: 1, vale: (d, m, a, t) => temporadaEntre(t, temporadaPascoa(a), -2, 0) },
+  { id: "maes", nome: "Dia das Mães", selo: "Edição Dia das Mães", emoji: "💐", prio: 2, vale: (d, m, a, t) => temporadaMesmoDia(t, temporadaDomingo(a, 4, 2)) },
+  { id: "namorados", nome: "Dia dos Namorados", selo: "Edição Dia dos Namorados", emoji: "💘", prio: 2, vale: (d, m) => m === 6 && d === 12 },
+  { id: "junina", nome: "Festa Junina", selo: "Edição Junina", emoji: "🌽", prio: 0, vale: (d, m) => m === 6 },
+  { id: "pais", nome: "Dia dos Pais", selo: "Edição Dia dos Pais", emoji: "👔", prio: 2, vale: (d, m, a, t) => temporadaMesmoDia(t, temporadaDomingo(a, 7, 2)) },
+  { id: "folclore", nome: "Folclore", selo: "Edição do Folclore", emoji: "🌳", prio: 2, vale: (d, m) => m === 8 && d === 22 },
+  { id: "independencia", nome: "Independência", selo: "Edição da Independência", emoji: "🇧🇷", prio: 2, vale: (d, m) => m === 9 && d === 7 },
+  { id: "criancas", nome: "Dia das Crianças", selo: "Edição Dia das Crianças", emoji: "🧸", prio: 1, vale: (d, m) => m === 10 && d >= 6 && d <= 12 },
+  { id: "halloween", nome: "Halloween", selo: "Edição Halloween", emoji: "🎃", prio: 1, vale: (d, m) => m === 10 && d >= 20 },
+  { id: "blackfriday", nome: "Black Friday", selo: "Edição Black Friday", emoji: "🏷️", prio: 1, vale: (d, m, a, t) => temporadaEntre(t, temporadaBlackFriday(a), 0, 2) },
+  { id: "natal", nome: "Natal", selo: "Edição de Natal", emoji: "🎄", prio: 0, vale: (d, m) => m === 12 && d <= 30 },
 ];
 // Domingo de Páscoa (calendário gregoriano, algoritmo de Meeus/Jones/Butcher), como Date local ao meio-dia
 function temporadaPascoa(a) {
@@ -21717,13 +21826,35 @@ function temporadaAtual(data) {
   if (f !== undefined) return f;
   return temporadaDe(data || new Date());
 }
-// Marca a temporada no <html> (data-temporada="natal"); o visual de cada temporada pendura nisso
+// Marca a temporada no <html> (data-temporada="natal"); o visual de cada temporada pendura nisso (11-temporadas.css):
+// uma camada de enfeites atrás do conteúdo (não pega toque nem cobre texto) e o selo na splash.
 function temporadaAplicar() {
   try {
     const t = temporadaAtual();
     const h = document.documentElement;
     if (t) h.dataset.temporada = t.id;
     else delete h.dataset.temporada;
+    if (!document.body) return;
+    if (!document.getElementById("temporadaEnfeite")) {
+      const e = document.createElement("div");
+      e.id = "temporadaEnfeite";
+      e.className = "tmp-enfeite";
+      e.setAttribute("aria-hidden", "true");
+      e.innerHTML = '<div class="tmp-neve"></div><div class="tmp-luzes"></div>';
+      document.body.prepend(e);
+    }
+    const log = document.getElementById("splashBuildLog");
+    let selo = document.getElementById("splashTemporada");
+    if (!selo && log) {
+      selo = document.createElement("div");
+      selo.id = "splashTemporada";
+      selo.className = "splash-temporada";
+      log.parentNode.insertBefore(selo, log);
+    }
+    if (selo) {
+      selo.textContent = t ? t.emoji + " " + t.selo : "";
+      selo.hidden = !t;
+    }
   } catch (e) {}
 }
 /* ----------------------------------------------------------------------

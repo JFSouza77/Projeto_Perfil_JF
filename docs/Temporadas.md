@@ -87,7 +87,7 @@ Quando ele estiver pronto, o Code mostra pro JF, que decide se publica antes de 
 temporadas, na ordem do calendário.
 
 1. [x] Motor de temporadas: data → temporada, datas móveis, prioridade, opção nas configurações, modo de teste e teste automático.
-2. [ ] Natal · visual (neve leve, luzinhas) e selo "🎄 Edição de Natal" na splash.
+2. [x] Natal · visual (neve leve, luzinhas) e selo "🎄 Edição de Natal" na splash.
 3. [ ] Natal · falas do C.A.O.S.: 15 falas, com as piadas de avançar e voltar casas (lista dos bonzinhos e dos malvados), gorro no rosto e a gafe de data (15 correções).
 4. [ ] Natal · C.A.O.S. bonzinho: mais presentes (até 3 por partida, inclusive pros favoritos), pontinho extra e joia rara (nunca a 4ª).
 5. [ ] Natal · lojinha: 5 itens de Natal na Corrida e 5 no Modo C.A.O.S.
@@ -106,3 +106,7 @@ temporadas, na ordem do calendário.
   `temporadaAplicar` marca `data-temporada` no `<html>`), opção 🎄 Temporadas na Acessibilidade (ligada por padrão),
   modo de teste `?temporada=natal` (ou `nenhuma`) e teste fixo `ferramentas/teste_temporadas.js` (datas de 2026 a
   2040, Páscoa, prioridade, liga e desliga). O branch já tem a 1.9.1 junto (merge de `v1.9.1`).
+- 31/10/2026 (manhã): item 2 feito. Natal com neve leve e varal de luzinhas numa camada atrás do conteúdo
+  (`#temporadaEnfeite`, z-index -1, sem toque; `src/css/11-temporadas.css`), parado no "menos movimento", sem neve no
+  Modo Batata, neve azulada no modo claro; selo "🎄 Edição de Natal" na splash (`#splashTemporada`). Cada temporada
+  ganhou o texto do selo (`selo` em TEMPORADAS). Teste: `teste_temporadas` (natalEnfeite, natalSelo, semTemporadaSemEnfeite).

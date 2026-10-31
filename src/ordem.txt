@@ -9,6 +9,7 @@ css/07-botoes-acessiveis.css
 css/08-computador.css
 css/09-tabuleiro.css
 css/10-rede.css
+css/11-temporadas.css
 html/02-corpo.html
 js/01-configuracao.js
 js/02-estado.js
