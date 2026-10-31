@@ -342,7 +342,9 @@ function resetDeck() {
   timeoutOverlayMessage = null;
   // debug 23/10: quando o baralho é maior que o limite, as cartas que não saíram nas últimas partidas entram primeiro
   // (antes o recorte era às cegas e o "afastar recentes" só reordenava o que sobrou)
-  const fonteDeck = allCards.length > deckLimiteModo() ? cartasPreferirNovas(shuffle(allCards)).slice(0, deckLimiteModo()) : allCards;
+  // 31/10/2026 (JF): o lote é montado por categoria (no Clássico, 100 de cada), pra as categorias grandes da 2.0
+  // não encherem o baralho da partida sozinhas
+  const fonteDeck = loteBalanceado(allCards, deckLimiteModo(), CURRENT_MODE === "hardcore" ? CATEGORY_WEIGHTS_HARDCORE : null);
   // o baralho é comprado do fim (deck.pop()); o embaralhamento equilibrado põe a ordem boa no começo,
   // então ele entra invertido. Antes não invertia, e a categoria com mais cartas dominava a partida.
   deck =
