@@ -514,3 +514,11 @@ A Ilha de Creta está na seção de mitologia (Lugar).
 - Auditoria `--com-2.0 --tudo`: 0 erros; 1.405 cartas somando o jogo e a 2.0 até agora.
 - Tema pesado (fora do Júnior): Alexandre Nardoni, Eliza Samudio, Osama Bin Laden, Cerveja, Caça esportiva, Mensalão, Petrolão, Operação Lava Jato. A marcação fina fica pro filtro depois.
 - Crash Bandicoot aparece duas vezes no plano: em Pessoa, o personagem; em Coisa, **"Crash Bandicoot (o jogo)"**.
+
+### Ideia do JF pra balancear (31/10/2026): lote por partida
+
+- Problema: hoje a carta sai de um baralho único embaralhado (a roleta só mostra a categoria da carta que já saiu). Então a categoria com mais cartas sai mais. Na 2.0, Pessoa (520) sairia o dobro de Ano (255).
+- Ideia: a cada partida, o jogo monta um **lote de 400 cartas, 100 de cada categoria do modo** (Clássico: Pessoa, Lugar, Coisa+Animal, Ano; Júnior: Pessoa, Lugar, Coisa, Animal). As categorias passam a sair na mesma proporção, seja qual for o tamanho de cada uma.
+- Memória: o jogo já guarda as últimas 400 cartas que saíram (`CARTAS_RECENTES_MAX`) e joga essas pro fundo. No lote novo, as 100 de cada categoria saem primeiro das que ainda não apareceram.
+- Com isso, não precisa igualar as categorias na régua. Animal e Ano só precisam de cartas suficientes pra não repetir rápido.
+- Status: proposta, esperando o JF dar o ok. Entra junto com as cartas da 2.0.
