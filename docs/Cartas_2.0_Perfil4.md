@@ -506,3 +506,11 @@ porque já é carta de Pessoa.
 23. Netuno
 
 A Ilha de Creta está na seção de mitologia (Lugar).
+
+### Progresso (31/10/2026, noite)
+
+- **As 380 aprovadas estão escritas** (com os ajustes do JF): Pessoa 105, Lugar 50 (45 + Hotel Transilvânia e mais 4 pra fechar a conta), Coisa 150.
+- Arquivos: `cartas_2.0/02-pessoa.js` (PESSOA-0201..0305), `03-lugar.js` (LUGAR-0201..0250), `04-coisa.js` (COISA-0201..0350). Fonte em `cartas_2.0/fonte/`.
+- Auditoria `--com-2.0 --tudo`: 0 erros; 1.405 cartas somando o jogo e a 2.0 até agora.
+- Tema pesado (fora do Júnior): Alexandre Nardoni, Eliza Samudio, Osama Bin Laden, Cerveja, Caça esportiva, Mensalão, Petrolão, Operação Lava Jato. A marcação fina fica pro filtro depois.
+- Crash Bandicoot aparece duas vezes no plano: em Pessoa, o personagem; em Coisa, **"Crash Bandicoot (o jogo)"**.
