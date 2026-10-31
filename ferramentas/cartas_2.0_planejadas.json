@@ -340,8 +340,9 @@
     "assunto": "Música internacional"
    },
    {
-    "a": "Xoropinho",
-    "assunto": "Internet e YouTubers"
+    "a": "Xaropinho",
+    "assunto": "Internet e YouTubers",
+    "obs": "o rato do Programa do Ratinho (JF 31/10)"
    },
    {
     "a": "Taffarel",
@@ -2604,6 +2605,31 @@
     "a": "Capela",
     "assunto": "Lugares do dia a dia",
     "obs": "voltou pra fechar Lugar em 220; respostas do JF 31/10"
+   },
+   {
+    "a": "Hotel Transilvânia",
+    "assunto": "Cinema e animação",
+    "obs": "pedido do JF 31/10"
+   },
+   {
+    "a": "Pompeia",
+    "assunto": "História",
+    "obs": "fecha a conta de Lugar em 225"
+   },
+   {
+    "a": "Triângulo das Bermudas",
+    "assunto": "Mistérios",
+    "obs": "fecha a conta de Lugar em 225"
+   },
+   {
+    "a": "Ilha Nublar",
+    "assunto": "Cinema",
+    "obs": "Jurassic Park; fecha a conta de Lugar em 225"
+   },
+   {
+    "a": "Vale do Silício",
+    "assunto": "Tecnologia",
+    "obs": "fecha a conta de Lugar em 225"
    }
   ],
   "COISA": [

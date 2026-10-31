@@ -248,3 +248,10 @@ Ajustes de nome ou categoria aparecem entre parênteses.
 - Pra fechar as contas: Capela voltou (Lugar 220) e Estrada saiu (Coisa 250).
 
 **Total planejado: 910** (Pessoa 320, Lugar 220, Coisa 250, Animal 65, Ano 55). Com o jogo: **1.910 cartas**.
+
+### Ajuste do JF (31/10/2026, mais tarde)
+
+- Xoropinho é o **Xaropinho**, o rato do Programa do Ratinho (Pessoa). Glória Maria confirmada.
+- Veneza **já está no jogo** (Lugar), então não entra de novo.
+- Entrou **Hotel Transilvânia** (Lugar). Pra Lugar fechar em múltiplo de 5, o Code completou com Pompeia, Triângulo das Bermudas, Ilha Nublar e Vale do Silício: **Lugar 225**.
+- **Total planejado: 915** (Pessoa 320, Lugar 225, Coisa 250, Animal 65, Ano 55). Com o jogo: **1.915 cartas**.

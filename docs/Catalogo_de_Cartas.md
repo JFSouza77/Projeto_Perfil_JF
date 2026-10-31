@@ -2,16 +2,16 @@
 
 Gerado pelo Code (Claude Code) em 2026-10-31 com `node ferramentas/catalogo_cartas.js`. Só os nomes, sem dicas.
 
-**1910 cartas: 1000 já estão no jogo e 910 estão planejadas pra Beta 2.0 (marcadas com 🆕).**
+**1915 cartas: 1000 já estão no jogo e 915 estão planejadas pra Beta 2.0 (marcadas com 🆕).**
 
 | Categoria | No jogo | Planejadas 🆕 | Total |
 |---|---|---|---|
 | 🐾 Animal | 200 | 65 | 265 |
 | 📅 Ano | 200 | 55 | 255 |
 | 📦 Coisa | 200 | 250 | 450 |
-| 📍 Lugar | 200 | 220 | 420 |
+| 📍 Lugar | 200 | 225 | 425 |
 | 🧑 Pessoa | 200 | 320 | 520 |
-| **Total** | **1000** | **910** | **1910** |
+| **Total** | **1000** | **915** | **1915** |
 
 ## Como conferir uma ideia de carta (instruções pro GPT)
 
@@ -332,13 +332,19 @@ Avião · Balão 🆕 (handoff JF+GPT 29/10) · Balão de ar quente · Bicicleta
 **TV brasileira** (13)
 A Praça é Nossa 📼 · Big Brother Brasil 📼 · Bom Dia & Cia 📼 · Bom Dia e Companhia 🆕 · Caldeirão do Huck 🆕 · Domingão do Faustão 🆕 · Encontro com Fátima Bernardes 📼 · Jornal Nacional 📼 · Mais Você 📼 · Programa do Ratinho 📼 · Sessão da Tarde 📼 · Telenovela 🆕 · Zorra Total 🆕
 
-## 📍 Lugar · 420 (200 no jogo, 220 🆕)
+## 📍 Lugar · 425 (200 no jogo, 225 🆕)
 
 **Cidades do mundo** (37)
 Amsterdã · Barcelona · Berlim · Brooklyn 🆕 (handoff JF+GPT 29/10) · Buenos Aires 🆕 · Cairo 🆕 · Ciudad del Este 📼 · Dubai · Florença 🆕 · Flórida 🆕 (handoff JF+GPT 29/10) · Hollywood · Istambul · Jerusalém · Kyoto · Las Vegas 📼 · Londres · Los Angeles 🆕 (handoff JF+GPT 29/10) · Manhattan 🆕 · Meca · Miami · Moscou · Munique 🆕 · Nova Orleans 🆕 (handoff JF+GPT 29/10) · Nova York · Orlando 🆕 (handoff JF+GPT 29/10) · Paris · Pier de Santa Mônica 🆕 (handoff JF+GPT 29/10) · Punta del Este 🆕 (handoff JF+GPT 30/10) · Roma 📼 · Santiago do Chile 🆕 (handoff JF+GPT 29/10) · Shibuya · Singapura · Sydney · Tóquio · Transilvânia 🆕 (handoff JF+GPT 30/10) · Vancouver 🆕 · Veneza 📼
 
 **Cidades e bairros do Brasil** (35)
 Aracaju 🆕 · Arraial d'Ajuda 🆕 · Avenida Brasil 🆕 (handoff JF+GPT 29/10) · Bahia 🆕 (handoff JF+GPT 29/10) · Bairro da Liberdade 🆕 (handoff JF+GPT 29/10) · Balneário Camboriú 🆕 (handoff JF+GPT 29/10) · Barra da Tijuca 🆕 (handoff JF+GPT 29/10) · Belém 🆕 · Brasília 📼 · Caldas Novas 🆕 · Campinas · Campos do Jordão 🆕 · Copacabana 📼 · Coroa Vermelha 🆕 (handoff JF+GPT 29/10) · Espírito Santo 🆕 (handoff JF+GPT 30/10) · Florianópolis · Fortaleza 🆕 · Gramado 📼 · Guarapari 🆕 · Leblon 🆕 (handoff JF+GPT 29/10) · Minas Gerais 🆕 (handoff JF+GPT 29/10) · Ouro Preto 📼 · Paraíba 🆕 (handoff JF+GPT 30/10) · Pelourinho 📼 · Porto de Galinhas 🆕 (handoff JF+GPT 29/10) · Porto Seguro 🧸 · Praia da Pipa 🆕 (handoff JF+GPT 29/10) · Praia de Ipanema 🆕 (handoff JF+GPT 29/10) · Recife · Rio de Janeiro · Rua 25 de Março 🆕 (handoff JF+GPT 29/10) · Salvador 📼 · São Paulo 🧸 · Sergipe 🆕 (handoff JF+GPT 30/10) · Serra Pelada 📼
+
+**Cinema** (1)
+Ilha Nublar 🆕 (Jurassic Park; fecha a conta de Lugar em 225)
+
+**Cinema e animação** (1)
+Hotel Transilvânia 🆕 (pedido do JF 31/10)
 
 **Civilizações antigas** (12)
 Biblioteca de Alexandria 📼 · Chichen Itzá 📼 · Esparta 🆕 (handoff JF+GPT 30/10) · Ilha de Páscoa 📼 · Jardins Suspensos da Babilônia 📼 · Machu Picchu 📼 · Pangeia 🆕 (handoff JF+GPT 29/10) · Petra 📼 · Pirâmides de Gizé 📼 · Pompeia 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Stonehenge 📼 · Troia 🆕 (handoff JF+GPT 30/10)
@@ -348,6 +354,9 @@ Cabo Canaveral 🆕 (handoff JF+GPT 29/10) · CERN 🆕 (nome: CERN; handoff JF+
 
 **Espírito Santo (Vitória e região)** (14)
 Convento da Penha 📼 · Fábrica da Garoto 🆕 (Vila Velha) · Frade e a Freira 🆕 (handoff JF+GPT 29/10) · Fucape 📼 · Gruta da Onça 📼 · Morro do Moreno 🆕 (handoff JF+GPT 29/10) · Palácio Anchieta 📼 · Parque Moscoso 📼 · Parque Pedra da Cebola 📼 · Pedra Azul 🆕 (handoff JF+GPT 29/10) · Rota do Lagarto 🆕 (trilha do ES; respostas do JF 31/10) · Rua da Lama 📼 · Terceira Ponte 📼 · UFES 📼
+
+**História** (1)
+Pompeia 🆕 (fecha a conta de Lugar em 225)
 
 **Lendas, Bíblia e mitologia** (15)
 Asgard 🆕 (handoff JF+GPT 29/10) · Atlântida · Camelot 🆕 (handoff JF+GPT 29/10) · Centro da Terra 🆕 (handoff JF+GPT 29/10) · El Dorado 🆕 (handoff JF+GPT 29/10) · Ilha de Creta 🆕 · Jardim do Éden 🆕 (handoff JF+GPT 29/10) · Monte Olimpo · Monte Sinai 🆕 (handoff JF+GPT 29/10) · Muralhas de Jericó 📼 · Santuário de Atena 🆕 (nome: Santuário de Atena; handoff JF+GPT 29/10) · Sodoma e Gomorra 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Tártaro 🆕 (mitologia grega; respostas do JF 31/10) · Terra Oca 🆕 (handoff JF+GPT 29/10) · Torre de Babel 📼
@@ -360,6 +369,9 @@ Açougue 🆕 (handoff JF+GPT 30/10) · Aeroporto 🧸 · Aquário 🧸 · Barbe
 
 **Lugares famosos por histórias sombrias ou secretas** (9)
 Alcatraz 📼 · Área 51 📼 · Casa da Moeda 🆕 (confirmar qual) · Cemitério 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Chernobyl 📼 · Fort Knox 🆕 · Mausoléu 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10) · Necrotério 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10) · Prisão 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10)
+
+**Mistérios** (1)
+Triângulo das Bermudas 🆕 (fecha a conta de Lugar em 225)
 
 **Monumentos e pontos turísticos do mundo** (28)
 Acrópole · Angkor Wat · Arco do Triunfo 🆕 (handoff JF+GPT 29/10) · Big Ben · Calçada da Fama 🆕 · Casa Branca 🆕 · Catedral de Notre-Dame 📼 · Central Park · Coliseu 📼 · Empire State Building 🆕 (handoff JF+GPT 29/10) · Estátua da Liberdade 📼 · Kremlin · Louvre · Monte Rushmore · Muralha da China 📼 · Palácio de Buckingham 🆕 · Palácio de Versalhes 🆕 · Partenon 🆕 (nome: Partenon; handoff JF+GPT 29/10) · Pearl Harbor 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Ponte Golden Gate · Sagrada Família · Salão Oval · Taj Mahal 📼 · Times Square · Torre de Pisa 📼 · Torre Eiffel 📼 · Torre inclinada de Pisa 🆕 (handoff JF+GPT 29/10) · Tower Bridge
@@ -381,6 +393,9 @@ Aquamania 🆕 (Guarapari) · Beach Park 🆕 (Fortaleza) · Beto Carrero World 
 
 **Pontos turísticos e construções do Brasil** (40)
 Arena Castelão · Autódromo de Interlagos 🆕 (handoff JF+GPT 29/10) · Avenida Paulista 📼 · Cristo Redentor 📼 · Edifício Copan 📼 · Elevador Lacerda 📼 · Engenhão 🆕 (handoff JF+GPT 29/10) · Escadaria Selarón 🆕 (handoff JF+GPT 29/10) · Estádio do Pacaembu 📼 · Garganta do Diabo 🆕 (handoff JF+GPT 30/10) · Igreja da Penha 🆕 (a do Rio de Janeiro, no alto da pedra (bairro da Penha); respostas do JF 31/10) · Ilha de Trindade 🆕 (handoff JF+GPT 30/10) · Ilha Fiscal 📼 · Jardim Botânico de Curitiba 🆕 (handoff JF+GPT 29/10) · Jardim Botânico do Rio de Janeiro 📼 · Mappin 📼 · Maracanã 🧸 · Marco das Três Fronteiras · Mercado Municipal de São Paulo 📼 · Mercado Ver-o-Peso 📼 · Metrô de São Paulo 🆕 (handoff JF+GPT 29/10) · Mineirão 📼 · Morumbi 📼 · Museu de Arte de São Paulo 🆕 (handoff JF+GPT 29/10) · Museu do Ipiranga 📼 · Ópera de Arame 🆕 (handoff JF+GPT 29/10) · Palácio da Alvorada 🆕 (handoff JF+GPT 30/10) · Parque Ibirapuera · Pico da Bandeira 🆕 (handoff JF+GPT 29/10) · Ponte Rio-Niterói 📼 · Praça dos Três Poderes 🆕 (handoff JF+GPT 30/10) · Rio Tietê 🆕 (handoff JF+GPT 30/10) · Sambódromo da Marquês de Sapucaí 📼 · Santuário de Aparecida 📼 · Teatro Amazonas 📼 · Theatro Municipal do Rio de Janeiro 📼 · Torre de TV de Brasília 📼 · Usina Hidrelétrica de Itaipu 🆕 (handoff JF+GPT 29/10) · USP 🆕 (handoff JF+GPT 29/10) · Viaduto do Chá 📼
+
+**Tecnologia** (1)
+Vale do Silício 🆕 (fecha a conta de Lugar em 225)
 
 **Universidades e estúdios** (3)
 Herbert Richers 📼 · Projac 🆕 · UFRJ 📼
@@ -439,7 +454,7 @@ Abraham Lincoln 📼 · Adolf Hitler 📼 · Alexandre, o Grande 🆕 (handoff J
 Aécio Neves 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 26/10) · Chico Xavier 📼 · Dom Pedro I 🆕 (nome: Dom Pedro I; handoff JF+GPT 29/10) · Dom Pedro II 📼 · Enéas Carneiro 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 26/10) · Fernando Collor de Mello 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Fernando Henrique Cardoso 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Getúlio Vargas 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Jair Bolsonaro 📼 · Lula 📼 · Maria Leopoldina 🆕 (nome: Maria Leopoldina; handoff JF+GPT 26/10) · Michel Temer 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 26/10) · Paulo Freire 🆕 (handoff JF+GPT 29/10) · Pedro Álvares Cabral 🆕 (handoff JF+GPT 29/10) · Pedro Vaz de Caminha 🆕 (handoff JF+GPT 29/10) · Princesa Isabel 🆕 (handoff JF+GPT 26/10) · Tiradentes 📼 · Zumbi dos Palmares 📼
 
 **Internet e YouTubers** (7)
-Casimiro · Enaldinho 🧸 · Júlia MineGirl 🧸 · Luccas Neto 🧸 · MrBeast 🧸 · Whindersson Nunes · Xoropinho 🆕
+Casimiro · Enaldinho 🧸 · Júlia MineGirl 🧸 · Luccas Neto 🧸 · MrBeast 🧸 · Whindersson Nunes · Xaropinho 🆕 (o rato do Programa do Ratinho (JF 31/10))
 
 **Marvel** (15)
 Ciclope · Deadpool · Duende Verde 🆕 · Homem-Aranha · Jean Grey · Magneto · Professor Xavier · Quarteto Fantástico 🆕 (handoff JF+GPT 29/10) · Thanos 🆕 (handoff JF+GPT 29/10) · Tony Stark · Ultron 🆕 (handoff JF+GPT 29/10) · Venom 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Vingadores 🆕 (handoff JF+GPT 29/10) · Wolverine · X-Men 🆕 (handoff JF+GPT 29/10)
