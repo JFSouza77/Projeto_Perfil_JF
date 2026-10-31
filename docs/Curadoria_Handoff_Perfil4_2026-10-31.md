@@ -236,3 +236,15 @@ Ajustes de nome ou categoria aparecem entre parênteses.
 - **Jorge Ben Jor:** você disse que já existe, e o GPT não achou. No jogo atual ele também não está com esse nome; se quiser, entra numa próxima.
 - **Megazord, Faraó e Tártaro** (dúvidas do GPT) não foram contados: me diga a categoria e eu incluo.
 - Os políticos e líderes atuais (Putin, Kim Jong-un, Xi Jinping, Zelensky, Chávez, Che) e os brasileiros (Temer, Collor, FHC, Aécio, Getúlio, Enéas) seguem a regra do tema pesado: só fatos verificáveis, sem adjetivo, sem lado, nunca no Júnior.
+
+## Respostas do JF (31/10/2026)
+
+- Sansão: o da Bíblia (Pessoa). Samarco: a empresa (Coisa, tema pesado: só fatos sobre Mariana, nunca no Júnior).
+- Morro da Penha: é no Rio; entra como **Igreja da Penha** (Lugar). Casa de banho: vira **Termas** (Lugar).
+- Daniele dos Santos era **Daiane dos Santos** (Pessoa). Blitz: entram as duas, a de trânsito (Coisa) e a banda (Pessoa).
+- Hydra: a da mitologia, com referência à Marvel nas dicas. **A Hidra já está no jogo** (Animal), então não entra de novo.
+- Século XV e Século XXI entram em **Ano**; Anos 80 e Anos 90 voltaram pra Ano também, e entrou **Anos 2000** pra fechar Ano em 55.
+- Mestre André (Júnior) e Rota do Lagarto (ES) aprovados. Megazord: Coisa. Faraó: Pessoa. Tártaro: Lugar.
+- Pra fechar as contas: Capela voltou (Lugar 220) e Estrada saiu (Coisa 250).
+
+**Total planejado: 910** (Pessoa 320, Lugar 220, Coisa 250, Animal 65, Ano 55). Com o jogo: **1.910 cartas**.

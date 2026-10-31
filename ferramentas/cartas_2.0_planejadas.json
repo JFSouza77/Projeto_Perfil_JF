@@ -1515,6 +1515,31 @@
     "a": "Jiraiya",
     "assunto": "TV internacional e cinema",
     "obs": "Old School; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Sansão",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "o da Bíblia; respostas do JF 31/10"
+   },
+   {
+    "a": "Daiane dos Santos",
+    "assunto": "Esporte",
+    "obs": "o GPT tinha escrito Daniele; respostas do JF 31/10"
+   },
+   {
+    "a": "Blitz (banda)",
+    "assunto": "Música brasileira",
+    "obs": "a banda dos anos 80; Old School; respostas do JF 31/10"
+   },
+   {
+    "a": "Mestre André",
+    "assunto": "Personagens de livros e contos",
+    "obs": "cantiga \"A Loja do Mestre André\"; combina com o Júnior; respostas do JF 31/10"
+   },
+   {
+    "a": "Faraó",
+    "assunto": "História mundial (líderes e conquistadores)",
+    "obs": "o título dos reis do Egito antigo; respostas do JF 31/10"
    }
   ],
   "LUGAR": [
@@ -2554,6 +2579,31 @@
     "a": "Canal da Mancha",
     "assunto": "Natureza do mundo",
     "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Igreja da Penha",
+    "assunto": "Pontos turísticos e construções do Brasil",
+    "obs": "a do Rio de Janeiro, no alto da pedra (bairro da Penha); respostas do JF 31/10"
+   },
+   {
+    "a": "Termas",
+    "assunto": "Lugares do dia a dia",
+    "obs": "era \"casa de banho\"; o JF preferiu termas; respostas do JF 31/10"
+   },
+   {
+    "a": "Rota do Lagarto",
+    "assunto": "Espírito Santo (Vitória e região)",
+    "obs": "trilha do ES; respostas do JF 31/10"
+   },
+   {
+    "a": "Tártaro",
+    "assunto": "Lendas, Bíblia e mitologia",
+    "obs": "mitologia grega; respostas do JF 31/10"
+   },
+   {
+    "a": "Capela",
+    "assunto": "Lugares do dia a dia",
+    "obs": "voltou pra fechar Lugar em 220; respostas do JF 31/10"
    }
   ],
   "COISA": [
@@ -3545,16 +3595,6 @@
     "obs": "de Lugar pra Coisa; handoff JF+GPT 29/10"
    },
    {
-    "a": "Anos 80",
-    "assunto": "Objetos retrô (nostalgia)",
-    "obs": "de Ano pra Coisa; Old School; handoff JF+GPT 29/10"
-   },
-   {
-    "a": "Anos 90",
-    "assunto": "Objetos retrô (nostalgia)",
-    "obs": "de Ano pra Coisa; Old School; handoff JF+GPT 29/10"
-   },
-   {
     "a": "Caravana",
     "assunto": "Transportes",
     "obs": "handoff JF+GPT 29/10"
@@ -3607,11 +3647,6 @@
    {
     "a": "Bíblia",
     "assunto": "Cinema e streaming",
-    "obs": "handoff JF+GPT 30/10"
-   },
-   {
-    "a": "Estrada",
-    "assunto": "Transportes",
     "obs": "handoff JF+GPT 30/10"
    },
    {
@@ -3673,6 +3708,21 @@
     "a": "Nyan Cat",
     "assunto": "Cultura de internet e da vida",
     "obs": "Old School; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Samarco",
+    "assunto": "Política e justiça",
+    "obs": "a empresa; tema pesado (rompimento da barragem de Mariana, 2015): só fatos, nunca no Júnior; respostas do JF 31/10"
+   },
+   {
+    "a": "Blitz",
+    "assunto": "Política e justiça",
+    "obs": "a de trânsito; respostas do JF 31/10"
+   },
+   {
+    "a": "Megazord",
+    "assunto": "Objetos lendários, armas e ficção",
+    "obs": "Power Rangers; Old School; respostas do JF 31/10"
    }
   ],
   "ANIMAL": [
@@ -3949,7 +3999,7 @@
    {
     "a": "Marreco",
     "assunto": "Estimação e fazenda",
-    "obs": "handoff JF+GPT 29/10"
+    "obs": "handoff JF+GPT 29/10; voltou porque a Hidra já está no jogo"
    }
   ],
   "ANO": [
@@ -4202,6 +4252,31 @@
     "a": "2026",
     "assunto": "",
     "obs": "Copa do Mundo nos Estados Unidos, Canadá e México, a primeira com 48 seleções; e Lula é reeleito (2º turno em 25/10, contra Flávio Bolsonaro), o primeiro presidente eleito quatro vezes pelo voto direto no Brasil (tema político: só fatos, fora do Júnior)"
+   },
+   {
+    "a": "Século XV",
+    "assunto": "",
+    "obs": "período; o JF quis variar a categoria Ano; respostas do JF 31/10"
+   },
+   {
+    "a": "Século XXI",
+    "assunto": "",
+    "obs": "período; o JF quis variar a categoria Ano; respostas do JF 31/10"
+   },
+   {
+    "a": "Anos 80",
+    "assunto": "",
+    "obs": "período (voltou pra Ano a pedido do JF); respostas do JF 31/10"
+   },
+   {
+    "a": "Anos 90",
+    "assunto": "",
+    "obs": "período (voltou pra Ano a pedido do JF); respostas do JF 31/10"
+   },
+   {
+    "a": "Anos 2000",
+    "assunto": "",
+    "obs": "período; entrou pra fechar Ano em 55, junto com os outros períodos; respostas do JF 31/10"
    }
   ]
  }
