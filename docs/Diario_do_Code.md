@@ -25,6 +25,7 @@ segura**. Sem rodeio: é pra achar rápido.
 | Botão Adicionar "não faz nada" | `cadPodeAdicionar` / `cadFaltaTexto` / `cadGuiarFalta` (05-tela) e o clique em 11-iniciar |
 | Teste online da Corrida Hardcore travou | intermitente conhecido (intervalo aberto com `jan:true`); rodar de novo com `--so=corrida` antes de caçar |
 | Teste online "Modo C.A.O.S. até o fim" estourou 300 s | visto 1 vez na bateria inteira da 1.9.1 (máquina carregada); `--so=caos` passou 8/8 na 1.9.1 e na 1.9.0. Se repetir sozinho, aí caçar |
+| Build (`--testar`) parou em "adicionar Ana" | o roteiro do build.js e o auditar_botoes esperam o Adicionar incompleto; desde a 1.9.1 ele fica `.bloqueado` (nunca `:disabled`) |
 | Teste falhou logo depois de mudar fala | inventário desatualizado: `node ferramentas/caos_inventario.js`; contagens fixas em `teste_guia` e afins |
 
 ## Registro (mais novo primeiro)
