@@ -632,13 +632,16 @@ body.fx-urgente:after {
   margin: 10px 0 12px;
 }
 .add-falta {
-  font-size: 0.78rem;
-  opacity: 0.85;
+  font-size: 0.92rem;
+  font-weight: 700;
+  opacity: 0.95;
   margin-top: 6px;
   text-align: center;
   min-height: 1.1em;
   color: #fcd34d;
 }
+/* 1.9.1: incompleto continua com cara de apagado, mas o toque chama o C.A.O.S. pra mostrar o que falta */
+#addPlayerBtn.bloqueado,
 #addPlayerBtn:disabled {
   opacity: 0.38;
   filter: grayscale(0.7);
@@ -755,4 +758,30 @@ body.noturno .ans-nome {
 /* 1.7.10.5.7 (auditoria axe): "Diga aos jogadores…" na cor da categoria, um tom mais claro pra passar de 4,5:1 */
 body:not(.claro) .answer-header.cat-neon {
   color: color-mix(in srgb, var(--cat) 72%, #fff);
+}
+
+/* 1.9.1 (pedido do JF): o campo que falta no cadastro ganha um brilho leve quando o C.A.O.S. leva a pessoa até ele */
+.cad-falta-foco {
+  border-radius: 12px;
+  outline: 2px solid #facc15aa;
+  outline-offset: 3px;
+  animation: cadFaltaFoco 1.6s ease-in-out 2;
+}
+@keyframes cadFaltaFoco {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 #facc1500;
+  }
+  50% {
+    box-shadow: 0 0 16px 3px #facc1566;
+  }
+}
+html.acess-calmo .cad-falta-foco,
+body.batata-mode .cad-falta-foco {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cad-falta-foco {
+    animation: none;
+  }
 }
