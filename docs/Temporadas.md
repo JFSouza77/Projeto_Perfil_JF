@@ -86,7 +86,7 @@ e autorizar.** Quando tudo estiver pronto, o Code avisa e mostra o que fez.
 Quando ele estiver pronto, o Code mostra pro JF, que decide se publica antes de dezembro. Depois vêm as outras
 temporadas, na ordem do calendário.
 
-1. [ ] Motor de temporadas: data → temporada, datas móveis, prioridade, opção nas configurações, modo de teste e teste automático.
+1. [x] Motor de temporadas: data → temporada, datas móveis, prioridade, opção nas configurações, modo de teste e teste automático.
 2. [ ] Natal · visual (neve leve, luzinhas) e selo "🎄 Edição de Natal" na splash.
 3. [ ] Natal · falas do C.A.O.S.: 15 falas, com as piadas de avançar e voltar casas (lista dos bonzinhos e dos malvados), gorro no rosto e a gafe de data (15 correções).
 4. [ ] Natal · C.A.O.S. bonzinho: mais presentes (até 3 por partida, inclusive pros favoritos), pontinho extra e joia rara (nunca a 4ª).
@@ -102,3 +102,7 @@ temporadas, na ordem do calendário.
 ## Progresso
 
 - 30/10/2026: plano criado; o JF somou lojinha, cores, emojis, títulos e piadas da temporada e deu prioridade pro Natal; tarefa agendada 2 vezes por dia (8h47 e 23h47, horário de Brasília) pra ir fazendo um pedaço por vez.
+- 31/10/2026 (madrugada): item 1 feito. Motor em `src/js/05y-temporadas.js` (`temporadaDe`, `temporadaAtual`,
+  `temporadaAplicar` marca `data-temporada` no `<html>`), opção 🎄 Temporadas na Acessibilidade (ligada por padrão),
+  modo de teste `?temporada=natal` (ou `nenhuma`) e teste fixo `ferramentas/teste_temporadas.js` (datas de 2026 a
+  2040, Páscoa, prioridade, liga e desliga). O branch já tem a 1.9.1 junto (merge de `v1.9.1`).
