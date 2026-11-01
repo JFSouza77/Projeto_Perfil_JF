@@ -4252,6 +4252,52 @@ const REACTIVE_VOICE = {
       "Já deu pra ver que você aprendeu, {nome}. Vou ficar quietinho... por enquanto.",
     ],
   },
+  // Temporadas (docs/Temporadas.md, pedido do JF em 30/10/2026). 15 falas por temporada: 5 no começo da partida,
+  // 5 quando alguém avança casas (lista dos bonzinhos) e 5 quando volta (lista dos malvados).
+  temporada: {
+    natal: {
+      inicio: [
+        "Ho, ho, ho! Coloquei o gorro e tudo. Hoje eu sou o C.A.O.S. de Natal. Comportem-se!",
+        "Feliz Natal, minha gente! O Papai Noel tá de olho na mesa. E eu também.",
+        "Clima de Natal na mesa! Eu tô quase bonzinho hoje. Quase.",
+        "Pisca-pisca ligado, gorro na cabeça. Bora jogar que o Natal não espera!",
+        "Esse ano eu entrei na lista dos bonzinhos. Por um triz, mas entrei. Vamos jogar!",
+      ],
+      avancou: [
+        (name, n) => `[C.A.O.S.] Olha, o Papai Noel te deu um presentinho, hein? ${name} tá na lista dos bonzinhos e avançou ${n} casa${n === 1 ? "" : "s"}. Ho, ho, ho!`,
+        (name, n) => `[C.A.O.S.] Presente antecipado! ${name} andou ${n} casa${n === 1 ? "" : "s"}. Alguém se comportou esse ano.`,
+        (name, n) => `[C.A.O.S.] As renas puxaram o trenó de ${name}: ${n} casa${n === 1 ? "" : "s"} pra frente!`,
+        (name, n) => `[C.A.O.S.] Ho, ho, ho! ${name} avançou ${n} casa${n === 1 ? "" : "s"}. O bom velhinho tá generoso.`,
+        (name, n) => `[C.A.O.S.] Abriu o presente e era ${n} casa${n === 1 ? "" : "s"} a mais! Boa, ${name}.`,
+      ],
+      voltou: [
+        (name, n) => `[C.A.O.S.] Parece que alguém se comportou mal esse ano e tá na lista dos malvados do Papai Noel. ${name} voltou ${n} casa${n === 1 ? "" : "s"}.`,
+        (name, n) => `[C.A.O.S.] Carvão na meia! ${name} voltou ${n} casa${n === 1 ? "" : "s"}.`,
+        (name, n) => `[C.A.O.S.] O Papai Noel conferiu a lista duas vezes... ${name}, ${n} casa${n === 1 ? "" : "s"} pra trás.`,
+        (name, n) => `[C.A.O.S.] A rena tropeçou na neve e ${name} deslizou ${n} casa${n === 1 ? "" : "s"} pra trás.`,
+        (name, n) => `[C.A.O.S.] Esse presente veio com defeito: ${name} voltou ${n} casa${n === 1 ? "" : "s"}. Ho, ho... ops.`,
+      ],
+    },
+    // Gafe de data (o TDAH do C.A.O.S.): rara, no máximo 1 vez por partida. Ele solta a fala de começo de outra
+    // temporada fora de época e logo se corrige com uma destas. Só fala: não muda visual nem pontuação.
+    gafe: [
+      "Ih, rapaz... perdão, errei a data.",
+      "Ops. Me atrasei, desculpa.",
+      "Espera... que dia é hoje mesmo? Esquece o que eu disse.",
+      "Errei o calendário. Acontece nas melhores famílias de robôs.",
+      "Calma, calma. Meu relógio interno deu pau. Finge que não ouviu.",
+      "Opa, adiantei a festa. Ou atrasei? Enfim, ignorem.",
+      "Fala errada, data errada. Recomeçando...",
+      "Isso foi um teste. Vocês passaram. Era só pra ver se estavam atentos.",
+      "Desculpa, li o calendário de cabeça pra baixo.",
+      "Hum... acho que essa fala era pra outro mês. Foi mal.",
+      "Pulei umas folhinhas do calendário. Voltando ao normal.",
+      "Me confundi com as datas. Meu cérebro tem muita aba aberta.",
+      "Esquece, esquece. Data errada. Ninguém viu nada.",
+      "Ih, me empolguei e errei a época. Seguimos!",
+      "Perdão, essa era do ano que vem. Ou do passado. Sei lá.",
+    ],
+  },
   // 1.9.1 (pedido do JF): tocou em Adicionar com o cadastro incompleto. Ele lê o nick, diz o que falta e leva até lá.
   cadFalta: {
     nome: [

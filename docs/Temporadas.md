@@ -88,7 +88,7 @@ temporadas, na ordem do calendário.
 
 1. [x] Motor de temporadas: data → temporada, datas móveis, prioridade, opção nas configurações, modo de teste e teste automático.
 2. [x] Natal · visual (neve leve, luzinhas) e selo "🎄 Edição de Natal" na splash.
-3. [ ] Natal · falas do C.A.O.S.: 15 falas, com as piadas de avançar e voltar casas (lista dos bonzinhos e dos malvados), gorro no rosto e a gafe de data (15 correções).
+3. [x] Natal · falas do C.A.O.S.: 15 falas, com as piadas de avançar e voltar casas (lista dos bonzinhos e dos malvados), gorro no rosto e a gafe de data (15 correções).
 4. [ ] Natal · C.A.O.S. bonzinho: mais presentes (até 3 por partida, inclusive pros favoritos), pontinho extra e joia rara (nunca a 4ª).
 5. [ ] Natal · lojinha: 5 itens de Natal na Corrida e 5 no Modo C.A.O.S.
 6. [ ] Natal · 5 cores e 5 emojis, troca com pergunta pro cadastrado e salvamento da temporada (volta ao normal no fim).
@@ -110,3 +110,10 @@ temporadas, na ordem do calendário.
   (`#temporadaEnfeite`, z-index -1, sem toque; `src/css/11-temporadas.css`), parado no "menos movimento", sem neve no
   Modo Batata, neve azulada no modo claro; selo "🎄 Edição de Natal" na splash (`#splashTemporada`). Cada temporada
   ganhou o texto do selo (`selo` em TEMPORADAS). Teste: `teste_temporadas` (natalEnfeite, natalSelo, semTemporadaSemEnfeite).
+- 01/11/2026 (madrugada): branch atualizado com a `main` (1.9.1 e 1.9.2). Item 3 feito. 15 falas de Natal em
+  `REACTIVE_VOICE.temporada.natal`: 5 no começo da partida, 5 quando alguém avança casas (lista dos bonzinhos, "Ho, ho,
+  ho!") e 5 quando volta (lista dos malvados, carvão na meia). As piadas saem em 60% dos Avance/Volte. Gorro no rosto
+  do C.A.O.S. (faixa vermelha, barra branca e pompom; no balão do host e no do celular). Gafe de data: 15 correções em
+  `REACTIVE_VOICE.temporada.gafe`. Ela é rara (6% das partidas, no máximo 1 vez), nunca no Júnior e some com a opção
+  de temporadas desligada. Usa a fala de começo de outra temporada que já tenha falas (por enquanto, só o Natal). Teste:
+  `teste_temporadas` (12 checagens novas).

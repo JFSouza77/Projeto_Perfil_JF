@@ -107,3 +107,14 @@ html.acess-calmo .tmp-luzes {
 body.batata-mode .tmp-neve {
   display: none;
 }
+
+/* Natal · gorro no rosto do C.A.O.S.: faixa vermelha com barra branca e pompom no alto da caixinha do rosto
+   (balão do host e balão do celular). Só enfeite: o rosto e as emoções continuam iguais. */
+html[data-temporada="natal"] .jf-toast-overlay.caos-emo:before,
+html[data-temporada="natal"] .rede-fala-rosto {
+  background-image:
+    radial-gradient(circle at calc(100% - 7px) 4px, #fff 0 3.5px, transparent 4px),
+    linear-gradient(#dc2626 0 5px, #f8fafc 5px 8px, transparent 8px);
+  background-repeat: no-repeat;
+  padding-top: 11px;
+}

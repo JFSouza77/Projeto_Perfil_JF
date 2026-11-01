@@ -113,6 +113,39 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     const s = document.getElementById("splashTemporada");
     return !!s && !s.hidden && /Edição de Natal/.test(s.textContent);
   });
+  // item 3: falas do Natal (15), piadas de avançar/voltar, gorro e a gafe de data (15 correções)
+  Object.assign(o, await page.evaluate(() => {
+    const r = {};
+    const N = REACTIVE_VOICE.temporada && REACTIVE_VOICE.temporada.natal;
+    r.natal15Falas = !!N && N.inicio.length === 5 && N.avancou.length === 5 && N.voltou.length === 5;
+    r.gafe15Correcoes = (REACTIVE_VOICE.temporada.gafe || []).length === 15;
+    r.natalFalasAtivas = caosTemporadaFalas() === N;
+    const ditas = [];
+    const orig = showToastMessage;
+    const rnd = Math.random;
+    showToastMessage = (m) => ditas.push(String(m));
+    Math.random = () => 0.1;
+    try {
+      maybeShowMoveSpecialFlavor("Ana", 2, false);
+      maybeShowMoveSpecialFlavor("Beto", -3, false);
+    } finally {
+      showToastMessage = orig;
+      Math.random = rnd;
+    }
+    r.natalAvancouBonzinho = /Ana/.test(ditas[0] || "") && /2 casas/.test(ditas[0] || "") && N.avancou.some((f) => f("Ana", 2) === ditas[0].replace(/^.*?\[C\.A\.O\.S\.\]/, "[C.A.O.S.]").trim() || ditas[0].includes(f("Ana", 2).replace("[C.A.O.S.] ", "")));
+    r.natalVoltouMalvado = /Beto/.test(ditas[1] || "") && /3 casas/.test(ditas[1] || "");
+    r.natalSemGafe = caosTemporadaGafeOutras().length === 0; // no Natal não tem gafe com a própria fala de Natal
+    const cs = getComputedStyle(document.createElement("div"));
+    // gorro: a regra existe no CSS montado
+    r.natalGorroCss = [...document.styleSheets].some((sh) => {
+      try {
+        return [...sh.cssRules].some((ru) => /data-temporada="natal"\].*rede-fala-rosto/.test(ru.cssText) || /data-temporada="natal"\] \.jf-toast-overlay\.caos-emo/.test(ru.cssText));
+      } catch (e) {
+        return false;
+      }
+    });
+    return r;
+  }));
   await page.goto(url + "?temporada=nenhuma");
   await page.waitForFunction(() => typeof temporadaAplicar === "function");
   o.semTemporadaSemEnfeite = await page.evaluate(() => {
@@ -120,6 +153,26 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     const s = document.getElementById("splashTemporada");
     return (!e || getComputedStyle(e).display === "none") && (!s || s.hidden);
   });
+  Object.assign(o, await page.evaluate(() => {
+    const r = {};
+    r.foraSemFalasTemporada = caosTemporadaFalas() === null;
+    const t = caosTemporadaGafeTexto();
+    r.gafeFalaErradaEConserta = /\.\.\./.test(t) && REACTIVE_VOICE.temporada.gafe.some((g) => t.includes(String(typeof g === "function" ? g() : g).replace(/^\[C\.A\.O\.S\.\]\s*/, ""))) && /Natal|Ho, ho|gorro|Pisca|bonzinhos/i.test(t);
+    const modo = CURRENT_MODE;
+    CURRENT_MODE = "junior";
+    let jr = false;
+    for (let i = 0; i < 200; i++) jr = jr || caosTemporadaGafePode();
+    CURRENT_MODE = "classico";
+    let n = 0;
+    for (let i = 0; i < 4000; i++) if (caosTemporadaGafePode()) n++;
+    CURRENT_MODE = modo;
+    r.gafeNuncaNoJunior = !jr;
+    r.gafeRara = n > 100 && n < 400; // ~6%
+    acessCfg.temporadas = false;
+    r.gafeDesligada = caosTemporadaGafeOutras().length === 0;
+    acessCfg.temporadas = true;
+    return r;
+  }));
   o.botaoNaAcessibilidade = await page.evaluate(() => {
     document.querySelectorAll(".caos-modal-ov").forEach((x) => x.remove());
     acessPainelAbrir();
