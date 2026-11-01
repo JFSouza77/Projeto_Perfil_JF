@@ -330,7 +330,7 @@ async function testarNavegador(arquivo) {
       await page.fill("#playerNameInput", nome);
       await page.locator("#playerNameInput").dispatchEvent("input");
       // escolhe cor, emoji e zoeira até o botão Adicionar liberar
-      for (let t = 0; t < 4 && (await page.locator("#addPlayerBtn:disabled").count()); t++) {
+      for (let t = 0; t < 4 && (await page.locator("#addPlayerBtn:disabled, #addPlayerBtn.bloqueado").count()); t++) {
         await fechaModais();
         // 1.7.10.6: a idade também é obrigatória
         for (const sel of ["#colorPickerRow .color-swatch:not(.tomada)", "#avatarPickerRow .avatar-swatch:not(.tomada)", "#humorPickerRow button", "button.idade-btn[data-idade=\"doze\"]"]) {
