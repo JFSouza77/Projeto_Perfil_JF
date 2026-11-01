@@ -10,7 +10,12 @@ function acharMestre(dado) {
   return m;
 }
 async function abrirNavegador() {
-  const { chromium } = require("playwright-core");
+  let chromium;
+  try {
+    ({ chromium } = require("playwright-core"));
+  } catch (e) {
+    ({ chromium } = require("playwright")); // container novo: só o playwright global está instalado
+  }
   const exe = ["/opt/pw-browsers/chromium-1194/chrome-linux/chrome", "/opt/pw-browsers/chromium", process.env.CHROMIUM].find(
     (f) => f && fs.existsSync(f),
   );

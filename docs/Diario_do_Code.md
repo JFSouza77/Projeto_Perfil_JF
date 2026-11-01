@@ -76,3 +76,14 @@ segura**. Sem rodeio: é pra achar rápido.
 - Falas do lobby aparecendo no celular → `redeFalaSoDoHost` (bancos `nick*` ficam no host).
 - Sala velha no link → aviso `.rede-sala-velha`.
 - Não reproduzido: "host entrou errado" (esperando print do JF).
+
+### 31/10/2026 · lote da partida por categoria (pedido do JF, entra na próxima versão)
+
+- **"Tá desnivelado: Pessoa vai ter 520 e Ano 255. Sorteia 400 por partida, 100 de cada categoria."**
+  - Antes: com o banco maior que o limite do modo, o recorte do lote era um só, às cegas (`cartasPreferirNovas(shuffle(allCards)).slice`).
+    A categoria grande enchia o lote. O `embaralharEquilibrado` depois equilibrava a ordem, mas sobre um lote torto.
+  - Mudou: `loteBalanceado(cards, limite, alvo)` (09-utilitarios.js), chamado no `resetDeck`. Cada categoria entra com a
+    mesma cota (Clássico 100 de cada; Hardcore pelos pesos 30/30/20/20), com as cartas que não saíram recentemente na
+    frente. Categoria curta: o que falta é completado com as outras. Express (já monta o próprio lote) e Modo C.A.O.S. não mudam.
+  - Teste: `ferramentas/teste_lote.js` (9/9), com um banco simulado da 2.0. `teste_baralho` e `teste_corrida` continuam OK.
+  - Container novo sem `playwright-core`: `_navegador.js` cai pro `playwright` global.
