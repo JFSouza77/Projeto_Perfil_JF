@@ -1,5 +1,17 @@
 # Handoff — Cartas de Coisa (Perfil 4)
 
+## Novas sugestões — 30/10/2026
+
+Neste lote há **20 candidatas novas de Coisa**, incluindo esportes, ideias e itens do Perfil Júnior. A lista e as correspondências estão em `09_NOVAS_SUGESTOES_JF_2026-10-30.md`. A categoria já havia sido encerrada quanto às cartas físicas; estas são sugestões para curadoria.
+
+## Novas sugestões — 29/10/2026
+
+O JF ditou **86 candidatos novos** de Coisa nesta rodada. As continuações de 29/10 incluem o Teorema de Pitágoras, matérias escolares, Mona Lisa, Jumanji e objetos de referências infantis e “Old School”. A conferência de repetição, as ideias já existentes e a lista completa estão em `08_NOVAS_SUGESTOES_JF_2026-10-29.md`. A sugestão anterior de FNAF permanece no bloco datado de 26/10/2026.
+
+## Novas sugestões — a partir de 26/10/2026
+
+O JF já enviou ao Claude o material dos blocos anteriores até 23/10/2026. A nova sugestão deste bloco é **FNAF (Five Nights at Freddy’s)**; veja `06_NOVAS_SUGESTOES_JF_2026-10-26.md`. Esta é uma sugestão de franquia/jogo, não uma carta aprovada.
+
 **Estado:** categoria encerrada pelo JF em 23/10/2026; lista consolidada e títulos confirmados.  
 **Fotos:** 8 originais no pacote, incluindo uma foto de confirmação dos cabeçalhos.  
 **Transcrição:** títulos identificados; dicas completas estão nas imagens originais. As fotos mostram texto de cartas do jogo físico, então instruções de tabuleiro devem ser revistas antes de qualquer adaptação digital.
@@ -92,5 +104,9 @@ A foto adicional recebida em 23/10/2026 mostra os cabeçalhos que estavam cortad
 **Lote 1:** `1-Foto-1.jpg`, `2-Foto-2.jpg`, `3-Foto-3.jpg`  
 **Lote 2:** `Lote-02-Foto-1.jpg`, `Lote-02-Foto-2.jpg`, `Lote-02-Foto-3.jpg`, `Lote-02-Foto-4.jpg`
 **Confirmação:** `Lote-03-Confirmacao-Cabecalhos.jpg`
+
+
+
+
 
 

@@ -1,0 +1,222 @@
+[
+ {
+  "a": "Intel",
+  "q": [
+   "Sou uma das maiores fabricantes de processadores do mundo",
+   "Faço os processadores Core i3, i5, i7 e i9",
+   "Fui fundada em 1968 na Califórnia",
+   "Meu jingle de quatro notas é famoso nos comerciais",
+   "Tinha um adesivo nos computadores dizendo que eu estava dentro",
+   "Gordon Moore, um dos meus fundadores, criou a Lei de Moore",
+   "Minha grande rival é a AMD",
+   "Fiz o primeiro microprocessador comercial, em 1971",
+   "Meu logotipo é azul",
+   "Faço o Pentium, famoso nos anos 1990",
+   "Também faço placas de vídeo, as Arc",
+   "Meus chips estavam nos Macs antes da Apple fazer os próprios",
+   "Tenho fábricas em vários países",
+   "Meu nome vem de eletrônica integrada",
+   "Fico no Vale do Silício",
+   "Faço o Celeron, uma linha mais barata",
+   "Sou uma das empresas mais importantes da história da computação"
+  ]
+ },
+ {
+  "a": "Nvidia",
+  "q": [
+   "Sou uma fabricante americana de placas de vídeo",
+   "Faço as placas GeForce",
+   "Meus chips são essenciais pra inteligência artificial",
+   "Virei uma das empresas mais valiosas do mundo",
+   "Meu fundador, Jensen Huang, usa jaqueta de couro preta",
+   "Fui fundada em 1993",
+   "Meu logotipo é um olho verde",
+   "Faço as placas RTX, com ray tracing",
+   "Faço o chip do Nintendo Switch",
+   "Tenho a tecnologia DLSS, que melhora os jogos com IA",
+   "Minha grande rival nas placas é a AMD",
+   "Fico na Califórnia",
+   "Os gamers vivem esperando os meus lançamentos",
+   "Meus chips custam milhares de dólares pras empresas de IA",
+   "Faço o serviço de jogos na nuvem GeForce Now",
+   "Minha cor é verde",
+   "Meu nome lembra a palavra inveja em latim"
+  ]
+ },
+ {
+  "a": "Microsoft",
+  "q": [
+   "Sou uma das maiores empresas de tecnologia do mundo",
+   "Fui fundada por Bill Gates e Paul Allen em 1975",
+   "Faço o Windows",
+   "Faço o Word, o Excel e o PowerPoint",
+   "Faço o videogame Xbox",
+   "Meu logotipo tem quatro quadrados coloridos",
+   "Fico perto de Seattle, em Redmond",
+   "Comprei o Skype e o LinkedIn",
+   "Comprei o Minecraft",
+   "Comprei a Activision Blizzard, de Call of Duty",
+   "Tenho o navegador Edge",
+   "Tenho a nuvem Azure",
+   "Investi bilhões na OpenAI, do ChatGPT",
+   "Tive o Internet Explorer, muito criticado",
+   "Meu assistente de IA se chama Copilot",
+   "Meu nome junta microcomputador e software",
+   "Tinha um clipe falante que ajudava no Word"
+  ]
+ },
+ {
+  "a": "Apple",
+  "q": [
+   "Sou uma empresa de tecnologia americana",
+   "Meu logotipo é uma maçã mordida",
+   "Faço o iPhone",
+   "Faço o Mac e o iPad",
+   "Fui fundada por Steve Jobs, Steve Wozniak e Ronald Wayne",
+   "Nasci em 1976, numa garagem",
+   "Fico em Cupertino, na Califórnia",
+   "Minha sede é um prédio redondo, como uma nave",
+   "Faço um relógio inteligente e os AirPods",
+   "Tenho a loja de aplicativos App Store",
+   "Tenho a assistente Siri",
+   "Meus produtos são caros",
+   "Fui a primeira empresa a valer 1 trilhão de dólares",
+   "Meu nome quer dizer maçã em inglês",
+   "Meu atual presidente é Tim Cook",
+   "Faço o iTunes, que mudou o jeito de comprar música",
+   "Tenho uma loja com mesas de madeira e produtos pra testar"
+  ]
+ },
+ {
+  "a": "Pen drive",
+  "q": [
+   "Sou um dispositivo pequeno que guarda arquivos",
+   "Encaixo na entrada USB",
+   "Cabe no chaveiro",
+   "Substituí o disquete e o CD",
+   "Guardo fotos, documentos e músicas",
+   "Posso ter de 4 GB a 1 TB",
+   "Uso memória flash",
+   "Muita gente me perde com trabalho importante dentro",
+   "Tenho uma tampinha que vive sumindo",
+   "Pego vírus de computador em computador",
+   "Era o jeito de levar trabalho pra escola imprimir",
+   "Nas lan houses, eu era muito usado",
+   "Tenho versões com formato de bichinhos",
+   "Também me chamam de memória USB",
+   "Basta me plugar pra ver os arquivos",
+   "Os vendedores da 25 de Março vendiam versões falsas minhas",
+   "Hoje, a nuvem me substitui muitas vezes"
+  ]
+ },
+ {
+  "a": "Impressora",
+  "q": [
+   "Coloco no papel o que está no computador",
+   "Uso cartucho de tinta ou toner",
+   "Posso ser jato de tinta ou laser",
+   "Vivo com o papel atolado",
+   "O cartucho de tinta é mais caro que eu às vezes",
+   "Posso ser multifuncional, com scanner e copiadora",
+   "Faço um barulho de ranger enquanto trabalho",
+   "Me conecto por cabo ou Wi-Fi",
+   "Os escritórios têm versões gigantes de mim",
+   "Imprimo trabalho de escola na véspera",
+   "Tenho uma bandeja de papel",
+   "Pisco luzes quando a tinta está acabando",
+   "Imprimo em preto e branco ou colorido",
+   "Gutenberg inventou uma antepassada minha, a prensa",
+   "Minha fila de impressão às vezes trava",
+   "Imprimo fotos em papel especial",
+   "Sou odiada por muita gente por dar problema"
+  ]
+ },
+ {
+  "a": "Impressora 3D",
+  "q": [
+   "Crio objetos de verdade a partir de um desenho no computador",
+   "Vou construindo o objeto camada por camada",
+   "Uso filamento de plástico derretido",
+   "Também posso usar resina líquida endurecida com luz",
+   "Faço brinquedos, peças e miniaturas",
+   "Os médicos usam versões minhas pra fazer próteses",
+   "Já fizeram casas inteiras com versões gigantes minhas",
+   "Levo horas pra terminar uma peça",
+   "Tenho um bico quente que se move",
+   "Os makers e engenheiros me adoram",
+   "Faço protótipos de produtos",
+   "Uso arquivos em formato STL",
+   "Fiquei popular nos anos 2010",
+   "Faço peças de reposição em casa",
+   "Já imprimi comida, como chocolate",
+   "Os astronautas me testaram no espaço",
+   "Faço barulho de motorzinho por horas"
+  ]
+ },
+ {
+  "a": "Webcam",
+  "q": [
+   "Sou uma câmera ligada ao computador",
+   "Fico em cima do monitor ou dentro do notebook",
+   "Fiquei essencial nas aulas e reuniões online",
+   "Tenho uma luzinha que acende quando estou ligada",
+   "Muita gente me cobre com fita, por medo de ser espionada",
+   "Os streamers usam versões minhas melhores",
+   "A primeira foi usada pra vigiar uma cafeteira em Cambridge",
+   "Faço chamadas de vídeo no Zoom e no Teams",
+   "Tenho microfone embutido",
+   "Posso ser HD ou 4K",
+   "No MSN, era comum me ligar pra conversar com os amigos",
+   "Tenho um clipe pra prender no monitor",
+   "Algumas têm uma tampinha deslizante",
+   "Os celulares têm uma versão minha na frente, a câmera de selfie",
+   "Fico ruim quando o ambiente está escuro",
+   "Mostro você meio de baixo pra cima quando o notebook está baixo",
+   "Meu nome junta internet e câmera em inglês"
+  ]
+ },
+ {
+  "a": "Armazenamento na nuvem",
+  "q": [
+   "Guardo seus arquivos na internet, e não no aparelho",
+   "O Google Drive é uma das minhas versões",
+   "O iCloud é a versão da Apple",
+   "O Dropbox é uma das minhas empresas pioneiras",
+   "Dá pra acessar os arquivos de qualquer lugar",
+   "Faço backup automático das fotos do celular",
+   "Tenho planos gratuitos e pagos",
+   "Meus dados ficam em grandes centros de servidores",
+   "Muita gente não sabe onde eu fico de verdade",
+   "Quando acabo, o celular avisa que não tem mais espaço",
+   "Dá pra compartilhar arquivos por um link",
+   "Substituí o pen drive em muitos casos",
+   "O OneDrive é a versão da Microsoft",
+   "Meu nome lembra algo que fica no céu",
+   "Preciso de internet pra funcionar bem",
+   "Sincronizo os arquivos entre o computador e o celular",
+   "Fico protegido com senha e verificação em duas etapas"
+  ]
+ },
+ {
+  "a": "Facebook",
+  "q": [
+   "Sou uma rede social criada em 2004",
+   "Fui criado por Mark Zuckerberg",
+   "Comecei como uma rede só pra alunos de Harvard",
+   "Tenho o botão de curtir, um joinha azul",
+   "Minha cor é azul",
+   "Pertenço à empresa Meta",
+   "Substituí o Orkut no Brasil",
+   "Tenho grupos, páginas e eventos",
+   "Mostro uma linha do tempo com publicações",
+   "Tenho o Marketplace pra comprar e vender",
+   "Fui acusado de espalhar notícias falsas",
+   "O filme A Rede Social contou a minha criação",
+   "Tenho mais de 3 bilhões de usuários",
+   "Hoje, sou mais usado por adultos e idosos",
+   "Meu app de mensagens se chama Messenger",
+   "Mostro lembranças de anos atrás",
+   "Muita gente me usa pra saber o aniversário dos amigos"
+  ]
+ }
+]
