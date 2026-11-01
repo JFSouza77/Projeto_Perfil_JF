@@ -1,0 +1,120 @@
+/* Temporadas (docs/Temporadas.md). A camada #temporadaEnfeite fica atrás do conteúdo (z-index -1, sem toque), então
+   os enfeites aparecem no fundo e nunca cobrem texto nem botão. Cada temporada pendura em html[data-temporada]. */
+.tmp-enfeite {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  display: none;
+}
+.splash-temporada {
+  display: inline-block;
+  margin: 0 auto 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: #ffffff1f;
+  border: 1px solid #ffffff40;
+}
+.splash-temporada[hidden] {
+  display: none;
+}
+
+/* ---------- Natal: neve leve caindo e um varal de luzinhas no topo ---------- */
+html[data-temporada="natal"] .tmp-enfeite {
+  display: block;
+}
+html[data-temporada="natal"] .tmp-neve,
+html[data-temporada="natal"] .tmp-neve::after {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, #ffffffd9 50%, transparent 51%),
+    radial-gradient(3px 3px at 90px 120px, #ffffffb3 50%, transparent 51%),
+    radial-gradient(2px 2px at 160px 60px, #ffffffcc 50%, transparent 51%),
+    radial-gradient(2px 2px at 210px 190px, #ffffffa6 50%, transparent 51%),
+    radial-gradient(3px 3px at 60px 210px, #ffffff99 50%, transparent 51%),
+    radial-gradient(2px 2px at 130px 170px, #ffffffbf 50%, transparent 51%);
+  background-size: 240px 240px;
+  opacity: 0.55;
+  animation: tmpNeve 24s linear infinite;
+}
+html[data-temporada="natal"] .tmp-neve::after {
+  content: "";
+  background-size: 170px 170px;
+  opacity: 0.4;
+  animation-duration: 34s;
+}
+@keyframes tmpNeve {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 30px 240px;
+  }
+}
+html[data-temporada="natal"] .tmp-luzes {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: env(safe-area-inset-top, 0px);
+  height: 16px;
+  background-image:
+    radial-gradient(circle at 10px 9px, #ef4444 0 3.5px, transparent 4.5px),
+    radial-gradient(circle at 30px 11px, #22c55e 0 3.5px, transparent 4.5px),
+    radial-gradient(circle at 50px 9px, #facc15 0 3.5px, transparent 4.5px),
+    radial-gradient(circle at 70px 11px, #60a5fa 0 3.5px, transparent 4.5px),
+    linear-gradient(transparent 6px, #ffffff33 6px 7px, transparent 7px);
+  background-size: 80px 16px;
+  filter: drop-shadow(0 0 3px #fff8);
+  animation: tmpLuzes 3.2s ease-in-out infinite;
+}
+@keyframes tmpLuzes {
+  0%,
+  100% {
+    opacity: 0.95;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+html[data-temporada="natal"] .splash-temporada {
+  background: linear-gradient(135deg, #b91c1c, #15803d);
+  border-color: #fde68a99;
+}
+/* modo claro: neve azulada pra aparecer no fundo claro */
+body.claro .tmp-neve,
+body.claro .tmp-neve::after {
+  filter: invert(0.55) sepia(0.4) hue-rotate(180deg);
+}
+/* menos movimento: enfeite parado; Modo Batata: sem neve (economia) */
+html.acess-calmo .tmp-neve,
+html.acess-calmo .tmp-neve::after,
+html.acess-calmo .tmp-luzes {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tmp-neve,
+  .tmp-neve::after,
+  .tmp-luzes {
+    animation: none !important;
+  }
+}
+body.batata-mode .tmp-neve {
+  display: none;
+}
+
+/* Natal · gorro no rosto do C.A.O.S.: faixa vermelha com barra branca e pompom no alto da caixinha do rosto
+   (balão do host e balão do celular). Só enfeite: o rosto e as emoções continuam iguais. */
+html[data-temporada="natal"] .jf-toast-overlay.caos-emo:before,
+html[data-temporada="natal"] .rede-fala-rosto {
+  background-image:
+    radial-gradient(circle at calc(100% - 7px) 4px, #fff 0 3.5px, transparent 4px),
+    linear-gradient(#dc2626 0 5px, #f8fafc 5px 8px, transparent 8px);
+  background-repeat: no-repeat;
+  padding-top: 11px;
+}

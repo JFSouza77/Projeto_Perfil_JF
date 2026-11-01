@@ -9,6 +9,7 @@ css/07-botoes-acessiveis.css
 css/08-computador.css
 css/09-tabuleiro.css
 css/10-rede.css
+css/11-temporadas.css
 html/02-corpo.html
 js/01-configuracao.js
 js/02-estado.js
@@ -19,6 +20,7 @@ js/03-regras.js
 js/04-turno-e-rodada.js
 js/05-tela.js
 js/05b-acessibilidade.js
+js/05y-temporadas.js
 js/05c-sugestao-tutorial.js
 js/05d-ajuda-do-mestre.js
 js/05e-tutorial-vitoria.js
