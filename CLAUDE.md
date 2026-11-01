@@ -29,3 +29,7 @@
   ficou isso aberto comigo…"), pra gente poder continuar.
 - **Diário do Code (30/10/2026):** `docs/Diario_do_Code.md`. Antes de caçar bug, procurar o sintoma no Mapa; depois de
   cada correção, escrever no Registro (o que o JF viu, causa, o que mudou, teste que segura).
+- **Decisões práticas (01/11/2026):** em coisas de organização (juntar PR que não muda o jogo, quando soltar um ajuste já
+  testado, por onde começar), o Code decide sozinho pelo que for mais fácil, prático e seguro, e só avisa. Publicar
+  versão nova continua precisando do ok do JF.
+
