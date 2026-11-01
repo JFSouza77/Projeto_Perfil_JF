@@ -1,0 +1,222 @@
+[
+ {
+  "a": "Projetor",
+  "q": [
+   "Jogo imagens grandes numa parede ou tela",
+   "Sou usado em salas de aula e reuniões",
+   "Os cinemas usam versões gigantes de mim",
+   "Fico pendurado no teto ou em cima da mesa",
+   "Preciso de um lugar escuro pra imagem ficar boa",
+   "Ligo no computador por um cabo",
+   "Tenho uma lâmpada forte ou um laser dentro",
+   "Esquento e tenho uma ventoinha barulhenta",
+   "Muita gente monta um cinema em casa comigo",
+   "As escolas antigas usavam uma versão minha com transparências",
+   "Tenho foco e zoom ajustáveis",
+   "Faço apresentações de slides ficarem enormes",
+   "Quando alguém passa na frente, aparece a sombra",
+   "Existem versões pequenas, que cabem no bolso",
+   "Já fui de filme de rolo, nos cinemas antigos",
+   "Faço festa de aniversário com filme no quintal",
+   "Tenho controle remoto"
+  ]
+ },
+ {
+  "a": "Site",
+  "q": [
+   "Sou uma página ou um conjunto de páginas na internet",
+   "Tenho um endereço que começa com www, muitas vezes",
+   "Sou acessado pelo navegador",
+   "Posso terminar em .com ou .com.br",
+   "Sou feito com HTML, CSS e JavaScript",
+   "Empresas, lojas e governos têm um de mim",
+   "Fico hospedado num servidor",
+   "Tenho menus, links e botões",
+   "Posso ser uma loja virtual",
+   "Às vezes, saio do ar quando muita gente acessa",
+   "Tenho versão pra computador e pra celular",
+   "Peço pra você aceitar os cookies",
+   "Posso cair por falta de pagamento do domínio",
+   "Meu nome em inglês quer dizer local",
+   "Os buscadores me encontram e me mostram",
+   "Tenho um ícone na aba do navegador",
+   "O Perfil JF também tem um de mim"
+  ]
+ },
+ {
+  "a": "Pesquisa",
+  "q": [
+   "Faço quando quero encontrar algo na internet",
+   "Digito palavras numa caixinha",
+   "O Google é o lugar mais comum pra me fazer",
+   "Mostro uma lista de resultados",
+   "Também sou o trabalho de escola sobre um assunto",
+   "Os cientistas me fazem pra descobrir coisas novas",
+   "Também posso ser de opinião, antes das eleições",
+   "Faço com aspas pra achar a frase exata",
+   "Muita gente me faz por voz no celular",
+   "Hoje, também me fazem perguntando pra uma inteligência artificial",
+   "Os institutos fazem uma minha com entrevistas",
+   "No histórico do navegador, fico guardada",
+   "A primeira página de resultados é a que mais importa",
+   "Sou o primeiro passo pra comprar algo online",
+   "Nas bibliotecas, eu era feita nos livros e enciclopédias",
+   "Às vezes, apareço com sugestões enquanto você digita",
+   "Tenho uma versão de imagens"
+  ]
+ },
+ {
+  "a": "Memória RAM",
+  "q": [
+   "Sou uma peça do computador que guarda dados temporários",
+   "Perco tudo quando o computador desliga",
+   "Quanto mais eu tenho, mais programas abrem ao mesmo tempo",
+   "Sou medida em gigabytes",
+   "Venho em pentes encaixados na placa-mãe",
+   "Tenho versões DDR4 e DDR5",
+   "Sou muito mais rápida que o HD",
+   "O navegador Chrome é famoso por me gastar muito",
+   "Meu nome em inglês quer dizer acesso aleatório",
+   "Celulares também têm uma versão minha",
+   "Quando falto, o computador fica lento",
+   "Dá pra me aumentar comprando mais pentes",
+   "Os gamers querem pelo menos 16 GB de mim",
+   "Tenho chips pretos numa plaquinha verde",
+   "Funciono junto com o processador",
+   "Algumas versões minhas têm luzes coloridas",
+   "Sou volátil, porque esqueço tudo sem energia"
+  ]
+ },
+ {
+  "a": "Processador",
+  "q": [
+   "Sou o cérebro do computador",
+   "Faço os cálculos e executo os programas",
+   "Intel e AMD são as maiores fabricantes de mim",
+   "Minha velocidade é medida em gigahertz",
+   "Tenho vários núcleos",
+   "Fico debaixo de um cooler pra não esquentar",
+   "Sou encaixado na placa-mãe",
+   "Também sou chamado de CPU",
+   "Uso pasta térmica entre mim e o dissipador",
+   "Os celulares também têm um de mim, menor",
+   "A Apple faz os seus, os chips M",
+   "Tenho bilhões de transistores",
+   "Sou um quadradinho pequeno",
+   "Sou uma das peças mais caras do computador",
+   "O Core i7 e o Ryzen são modelos meus",
+   "Esquento muito quando jogam pesado",
+   "Faço a máquina pensar rápido"
+  ]
+ },
+ {
+  "a": "Gabinete",
+  "q": [
+   "Sou a caixa do computador de mesa",
+   "Guardo as peças, como placa-mãe e fonte",
+   "Tenho ventoinhas pra refrigerar",
+   "Posso ter uma lateral de vidro",
+   "Os gamers me enfeitam com luzes coloridas",
+   "Tenho o botão de ligar na frente",
+   "Tenho entradas USB e de fone",
+   "Muita gente me chama de CPU, mas isso está errado",
+   "Fico no chão ou em cima da mesa",
+   "Venho em tamanhos torre, média e mini",
+   "Também sou o nome de uma sala de escritório de autoridade",
+   "O ministro tem um, no sentido de equipe e escritório",
+   "Também sou um móvel de banheiro, embaixo da pia",
+   "Acumulo poeira por dentro",
+   "Nos modelos antigos, eu tinha espaço pro drive de CD",
+   "Sou feito de metal e plástico",
+   "Posso ser branco ou preto"
+  ]
+ },
+ {
+  "a": "Placa-mãe",
+  "q": [
+   "Sou a peça principal onde as outras se encaixam no computador",
+   "O processador fica encaixado em mim",
+   "A memória RAM entra nos meus encaixes",
+   "Tenho circuitos impressos e chips",
+   "Sou uma plaquinha verde ou preta, cheia de componentes",
+   "Tenho uma bateria redonda que guarda a hora",
+   "Ligo a fonte com cabos",
+   "Tenho um encaixe longo pra GPU",
+   "ASUS, Gigabyte e MSI fazem versões minhas",
+   "Meu nome em inglês é motherboard",
+   "Tenho o BIOS, que liga o computador",
+   "Tenho chipset",
+   "Defino quais peças são compatíveis",
+   "Fico presa no gabinete com parafusos",
+   "Tenho conectores USB e de rede atrás",
+   "Se eu queimo, o computador inteiro para",
+   "Sou o centro de tudo dentro do computador"
+  ]
+ },
+ {
+  "a": "HD",
+  "q": [
+   "Guardo os arquivos do computador",
+   "Tenho um disco que gira lá dentro",
+   "Sou mais lento que o SSD",
+   "Sou mais barato por gigabyte",
+   "Faço um barulhinho quando trabalho",
+   "Minha sigla quer dizer disco rígido em inglês",
+   "Posso ser externo, ligado por USB",
+   "Tenho uma agulha que lê o disco",
+   "Não gosto de quedas",
+   "Venho com capacidade em terabytes",
+   "Guardo fotos, vídeos e jogos",
+   "Os antigos tinham poucos megabytes",
+   "Também é a sigla de alta definição na TV",
+   "Quando falho, a pessoa perde tudo se não fez backup",
+   "Fico guardado dentro do gabinete",
+   "Uso o mesmo princípio de ímã dos disquetes",
+   "Sou substituído aos poucos pelo SSD"
+  ]
+ },
+ {
+  "a": "SSD",
+  "q": [
+   "Guardo os arquivos do computador sem partes que se movem",
+   "Sou muito mais rápido que o HD",
+   "Faço o computador ligar em segundos",
+   "Uso memória flash, como a do pen drive",
+   "Não faço barulho",
+   "Sou mais caro por gigabyte que o HD",
+   "Tenho versões em formato de chiclete, as M.2",
+   "Gasto menos energia",
+   "Aguento melhor as quedas",
+   "Os videogames novos usam versões minhas",
+   "Minha sigla em inglês fala de estado sólido",
+   "Tenho um número limite de gravações",
+   "Os notebooks modernos quase sempre têm um de mim",
+   "Venho em capacidades de 256 GB, 512 GB, 1 TB",
+   "Os jogos carregam muito mais rápido comigo",
+   "Posso ser NVMe, ainda mais rápido",
+   "Substituí o HD em muitos computadores"
+  ]
+ },
+ {
+  "a": "Placa de vídeo",
+  "q": [
+   "Sou a peça que gera as imagens do computador",
+   "Os gamers investem muito em mim",
+   "A Nvidia faz as GeForce",
+   "A AMD faz as Radeon",
+   "Tenho ventoinhas grandes pra esfriar",
+   "Sou cara, às vezes mais que o resto do PC",
+   "Também me chamam de GPU",
+   "Sou usada pra treinar inteligência artificial",
+   "Já fui muito usada pra minerar criptomoedas",
+   "Tenho memória própria",
+   "Encaixo num slot PCI Express",
+   "Gasto muita energia",
+   "Ligo o monitor direto em mim",
+   "Faço os jogos rodarem com mais quadros por segundo",
+   "Faço o ray tracing, que deixa as luzes realistas",
+   "Meus preços explodiram na pandemia",
+   "A RTX é uma linha famosa minha"
+  ]
+ }
+]

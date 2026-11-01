@@ -1,5 +1,17 @@
 # Handoff — Cartas de Lugar (Perfil 4)
 
+## Novas sugestões — 30/10/2026
+
+Este lote acrescenta **60 candidatas novas de Lugar**, depois de conferir títulos existentes e consolidar repetições. Lan House já consta nas fotos físicas; dúvidas de áudio e a lista completa estão em `09_NOVAS_SUGESTOES_JF_2026-10-30.md`.
+
+## Novas sugestões — 29/10/2026
+
+Após retirar títulos existentes, equivalências, repetições antigas e cartas físicas já fotografadas, restam **145 candidatos de Lugar** nesta rodada. As continuações de 29/10 acrescentaram lugares fictícios, bairros, atrações e referências históricas. A lista completa e a conferência estão em `08_NOVAS_SUGESTOES_JF_2026-10-29.md`.
+
+## Novas sugestões — a partir de 26/10/2026
+
+O JF já enviou ao Claude o material dos blocos anteriores até 23/10/2026. Neste bloco, não houve novas sugestões de lugar. Ideias futuras devem ser registradas sob um novo cabeçalho de data.
+
 **Estado:** fotos recebidas em dois lotes; 34 títulos únicos registrados. As cartas desta categoria estão cobertas pelas fotos enviadas.
 **Fotos:** 5 originais preservadas no pacote.
 **Transcrição:** dicas completas permanecem nas fotos originais. Instruções de tabuleiro devem ser revistas antes de qualquer adaptação digital.
@@ -51,5 +63,11 @@
 
 **Lote 1:** `Foto-1.jpg`, `Foto-2.jpg`  
 **Lote 2:** `Lote-02-Foto-1.jpg`, `Lote-02-Foto-2.jpg`, `Lote-02-Foto-3.jpg`
+
+
+
+
+
+
 
 
