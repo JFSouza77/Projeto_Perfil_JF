@@ -89,7 +89,7 @@ temporadas, na ordem do calendário.
 1. [x] Motor de temporadas: data → temporada, datas móveis, prioridade, opção nas configurações, modo de teste e teste automático.
 2. [x] Natal · visual (neve leve, luzinhas) e selo "🎄 Edição de Natal" na splash.
 3. [x] Natal · falas do C.A.O.S.: 15 falas, com as piadas de avançar e voltar casas (lista dos bonzinhos e dos malvados), gorro no rosto e a gafe de data (15 correções).
-4. [ ] Natal · C.A.O.S. bonzinho: mais presentes (até 3 por partida, inclusive pros favoritos), pontinho extra e joia rara (nunca a 4ª).
+4. [x] Natal · C.A.O.S. bonzinho: mais presentes (até 3 por partida, inclusive pros favoritos), pontinho extra e joia rara (nunca a 4ª).
 5. [ ] Natal · lojinha: 5 itens de Natal na Corrida e 5 no Modo C.A.O.S.
 6. [ ] Natal · 5 cores e 5 emojis, troca com pergunta pro cadastrado e salvamento da temporada (volta ao normal no fim).
 7. [ ] Natal · 5 títulos nas estatísticas (Papai Noel e outros).
@@ -117,3 +117,12 @@ temporadas, na ordem do calendário.
   `REACTIVE_VOICE.temporada.gafe`. Ela é rara (6% das partidas, no máximo 1 vez), nunca no Júnior e some com a opção
   de temporadas desligada. Usa a fala de começo de outra temporada que já tenha falas (por enquanto, só o Natal). Teste:
   `teste_temporadas` (12 checagens novas).
+- 01/11/2026 (manhã): item 4 feito, em `src/js/05y-temporadas.js` (vale no Natal e no Ano Novo).
+  - Modo C.A.O.S.: o 🎁 Presente sai até 3 vezes por partida (fora da temporada, 1). Num intervalo sem lanterna pra
+    ajudar, às vezes (40%) ele dá +5 PC pra um favorito dele ("pontinho extra").
+  - Joia de presente: chance de 3% por carta, no máximo 1 por partida, só onde joias contam pra vencer. Vai pro
+    favorito do C.A.O.S. se ele puder ganhar; senão, pra alguém sorteado. Respeita a trava de 2 por rodada e **nunca dá
+    a 4ª joia** (quem tem 3 não ganha).
+  - 10 falas novas: 5 da joia de presente e 5 do pontinho extra.
+  - Teste: `teste_temporadas` (36 checagens: joia pra quem não tem 3, uma por partida, nunca a 4ª, trava, só onde joia
+    vale, até 3 presentes no Natal, 1 fora). `teste_loja_caos` e `caos_teste_espinha` continuam OK.

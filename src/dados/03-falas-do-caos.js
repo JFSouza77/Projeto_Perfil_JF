@@ -4277,6 +4277,21 @@ const REACTIVE_VOICE = {
         (name, n) => `[C.A.O.S.] A rena tropeçou na neve e ${name} deslizou ${n} casa${n === 1 ? "" : "s"} pra trás.`,
         (name, n) => `[C.A.O.S.] Esse presente veio com defeito: ${name} voltou ${n} casa${n === 1 ? "" : "s"}. Ho, ho... ops.`,
       ],
+      // C.A.O.S. bonzinho (item 4): joia rara de presente e o pontinho extra do Modo C.A.O.S.
+      presenteJoia: [
+        (name, cat) => `[C.A.O.S.] Ho, ho, ho! Presente de Natal pra ${name}: uma joia de ${cat}. Não se acostuma, hein?`,
+        (name, cat) => `[C.A.O.S.] Achei uma joia de ${cat} embaixo da árvore. Tinha o nome de ${name}. Fazer o quê?`,
+        (name, cat) => `[C.A.O.S.] Espírito natalino bateu forte: ${name} ganhou a joia de ${cat} de presente.`,
+        (name, cat) => `[C.A.O.S.] ${name}, você tá na lista dos bonzinhos. Toma uma joia de ${cat}. A última eu não dou, viu?`,
+        (name, cat) => `[C.A.O.S.] O Papai Noel deixou comigo uma joia de ${cat} pra ${name}. Entregue!`,
+      ],
+      presentePonto: [
+        (name, n) => `[C.A.O.S.] Aproveita o Natal, ${name}: toma ${n} PC extra. Não conta pra ninguém.`,
+        (name, n) => `[C.A.O.S.] Ho, ho, ho! ${name} ganhou ${n} PC de presente. Eu tô bonzinho hoje.`,
+        (name, n) => `[C.A.O.S.] Presentinho de Natal: ${n} PC pra ${name}. Só porque eu quis.`,
+        (name, n) => `[C.A.O.S.] ${name}, achei ${n} PC dentro da meia. Eram seus.`,
+        (name, n) => `[C.A.O.S.] Natal é tempo de dar. ${name}, toma ${n} PC. Mas é só hoje.`,
+      ],
     },
     // Gafe de data (o TDAH do C.A.O.S.): rara, no máximo 1 vez por partida. Ele solta a fala de começo de outra
     // temporada fora de época e logo se corrige com uma destas. Só fala: não muda visual nem pontuação.

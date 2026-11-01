@@ -146,6 +146,61 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     });
     return r;
   }));
+  // item 4: C.A.O.S. bonzinho (joia rara, nunca a 4ª; trava da rodada; até 3 presentes no Modo C.A.O.S.)
+  Object.assign(o, await page.evaluate(() => {
+    const r = {};
+    const salva = { players, CURRENT_MODE, WIN_CONDITION, currentCard, gameEnded, joiasRodada, render, saveGameState, showToastMessage, mcAnunciar: typeof mcAnunciar === "function" ? mcAnunciar : null, mc: typeof mc !== "undefined" ? mc : null, cartasPartida };
+    render = () => {};
+    saveGameState = () => {};
+    const ditas = [];
+    showToastMessage = (m) => ditas.push(String(m));
+    CURRENT_MODE = "classico";
+    WIN_CONDITION = "joias";
+    currentCard = { category: "ANO", clues: [] };
+    gameEnded = false;
+    caosSilenced = false;
+    const nova = () => {
+      caosEasterEggsUsed.delete("temporada_joia");
+      joiasRodada = {};
+    };
+    players = [
+      { id: "a", name: "Ana", gems: { ANO: 1, PESSOA: 1, LUGAR: 1 }, score: 0 },
+      { id: "b", name: "Beto", gems: { ANO: 1 }, score: 0 },
+    ];
+    nova();
+    const g1 = temporadaJoiaPresenteTalvez(true);
+    r.joiaVaiPraQuemNaoTem3 = !!g1 && g1.id === "b" && players[0].gems.COISA === undefined && gemTotal(players[1]) === 2;
+    r.joiaFalaDeNatal = ditas.some((d) => /joia/i.test(d));
+    r.joiaUmaPorPartida = temporadaJoiaPresenteTalvez(true) === null;
+    players = [
+      { id: "a", name: "Ana", gems: { ANO: 1, PESSOA: 1, LUGAR: 1 }, score: 0 },
+      { id: "b", name: "Beto", gems: { ANO: 1, PESSOA: 1, COISA: 1 }, score: 0 },
+    ];
+    nova();
+    r.nuncaA4aJoia = temporadaJoiaPresenteTalvez(true) === null && players.every((p) => gemTotal(p) === 3);
+    players = [{ id: "b", name: "Beto", gems: {}, score: 0 }, { id: "c", name: "Cris", gems: { ANO: 1, PESSOA: 1, LUGAR: 1 }, score: 0 }];
+    nova();
+    joiasRodada = { b: 2 };
+    r.respeitaTrava = temporadaJoiaPresenteTalvez(true) === null;
+    nova();
+    WIN_CONDITION = "pontos";
+    r.soOndeJoiaVale = temporadaJoiaPresenteTalvez(true) === null;
+    WIN_CONDITION = "joias";
+    // Modo C.A.O.S.: até 3 presentes no Natal
+    CURRENT_MODE = "caos";
+    mcAnunciar = () => {};
+    players = [{ id: "a", name: "Ana", score: 5 }, { id: "b", name: "Beto", score: 3 }, { id: "c", name: "Cris", score: 0 }];
+    cartasPartida = [1, 2, 3, 4];
+    mc = { cont: { presente: 1 }, inv: {}, pc: {} };
+    const p2 = mcPresenteTalvez();
+    r.natalSegundoPresente = p2 === true && mc.cont.presente === 2;
+    mc.cont.presente = 3;
+    r.natalMax3Presentes = mcPresenteTalvez() === false;
+    Object.assign(window, {});
+    players = salva.players; CURRENT_MODE = salva.CURRENT_MODE; WIN_CONDITION = salva.WIN_CONDITION; currentCard = salva.currentCard; gameEnded = salva.gameEnded; joiasRodada = salva.joiasRodada;
+    render = salva.render; saveGameState = salva.saveGameState; showToastMessage = salva.showToastMessage; if (salva.mcAnunciar) mcAnunciar = salva.mcAnunciar; mc = salva.mc; cartasPartida = salva.cartasPartida;
+    return r;
+  }));
   await page.goto(url + "?temporada=nenhuma");
   await page.waitForFunction(() => typeof temporadaAplicar === "function");
   o.semTemporadaSemEnfeite = await page.evaluate(() => {
@@ -156,6 +211,17 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
   Object.assign(o, await page.evaluate(() => {
     const r = {};
     r.foraSemFalasTemporada = caosTemporadaFalas() === null;
+    r.foraNaoEhBonzinho = !temporadaBonzinha();
+    {
+      const s = { players, CURRENT_MODE, mc: typeof mc !== "undefined" ? mc : null, cartasPartida, mcAnunciar };
+      mcAnunciar = () => {};
+      CURRENT_MODE = "caos";
+      players = [{ id: "a", name: "Ana", score: 5 }, { id: "b", name: "Beto", score: 3 }, { id: "c", name: "Cris", score: 0 }];
+      cartasPartida = [1, 2, 3, 4];
+      mc = { cont: { presente: 1 }, inv: {}, pc: {} };
+      r.foraSo1Presente = mcPresenteTalvez() === false;
+      players = s.players; CURRENT_MODE = s.CURRENT_MODE; mc = s.mc; cartasPartida = s.cartasPartida; mcAnunciar = s.mcAnunciar;
+    }
     const t = caosTemporadaGafeTexto();
     r.gafeFalaErradaEConserta = /\.\.\./.test(t) && REACTIVE_VOICE.temporada.gafe.some((g) => t.includes(String(typeof g === "function" ? g() : g).replace(/^\[C\.A\.O\.S\.\]\s*/, ""))) && /Natal|Ho, ho|gorro|Pisca|bonzinhos/i.test(t);
     const modo = CURRENT_MODE;

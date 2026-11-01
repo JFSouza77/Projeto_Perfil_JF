@@ -575,6 +575,7 @@ function flipCard() {
   else startTimer("pick");
   maybeAnnounceCrystalBall();
   maybeShowAiCardEgg();
+  if (typeof temporadaJoiaPresenteTalvez === "function") temporadaJoiaPresenteTalvez(); // Natal: joia rara de presente (nunca a 4ª)
   caosImplicFlip();
   caosPausaMagoaCarta();
   caosRetaFinalTalvez();

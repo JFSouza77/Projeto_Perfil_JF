@@ -346,17 +346,21 @@ function mcFimRodada() {
 }
 // 1.7.10.9.2 · Presente do C.A.O.S.: o lanterna, bem atrás do líder, ganha 1 item (1 vez por partida)
 function mcPresenteTalvez() {
-  if ((mc.cont.presente || 0) >= 1 || players.length < 3 || cartasPartida.length < MC_PRESENTE_CARTAS) return false;
+  // Temporadas (Natal e Ano Novo): até 3 presentes por partida, e também pros favoritos (pontinho extra)
+  const bonzinho = typeof temporadaBonzinha === "function" && temporadaBonzinha();
+  const max = bonzinho ? TEMPORADA_PRESENTES_MAX : 1;
+  if ((mc.cont.presente || 0) >= max || players.length < 3 || cartasPartida.length < MC_PRESENTE_CARTAS) return false;
   const pts = (p) => p.score || 0;
   const ord = players.slice().sort((a, b) => pts(b) - pts(a));
   const topo = pts(ord[0]),
     fundo = pts(ord[ord.length - 1]);
   // líder e lanterna únicos (empate adia pro próximo intervalo)
-  if (topo - fundo < MC_PRESENTE_DIF || ord.filter((p) => pts(p) === topo).length !== 1 || ord.filter((p) => pts(p) === fundo).length !== 1) return false;
+  if (topo - fundo < MC_PRESENTE_DIF || ord.filter((p) => pts(p) === topo).length !== 1 || ord.filter((p) => pts(p) === fundo).length !== 1)
+    return bonzinho ? mcPresentePontinho() : false;
   const quem = ord[ord.length - 1],
     item = sorteioItem(MC_PRESENTE_ITENS),
     it = MC_LOJA[item];
-  mc.cont.presente = 1;
+  mc.cont.presente = (mc.cont.presente || 0) + 1;
   mc.inv[quem.id] = mc.inv[quem.id] || {};
   mc.inv[quem.id][item] = (mc.inv[quem.id][item] || 0) + 1;
   // a mesa sabe que teve presente; qual item, só quem ganhou (igual à lojinha, que é segredo)
@@ -366,6 +370,24 @@ function mcPresenteTalvez() {
     texto: `${quem.name} ficou ${topo - fundo} cartas atrás do líder e ganhou um item da lojinha. Qual? Segredo.`,
     anim: "presente",
     variantes: { [quem.id]: { titulo: "Um presente pra você!", texto: `Você ganhou ${it.ic} ${it.nome}: ${it.desc}. Ele aparece nos seus itens.`, botao: "Valeu, C.A.O.S.! 🎁" } },
+  });
+  return true;
+}
+// Natal: sem lanterna pra ajudar, o C.A.O.S. dá um pontinho extra pra um favorito dele (às vezes, não em todo intervalo)
+function mcPresentePontinho() {
+  if (sorteioRegra() >= 0.4) return false;
+  const fav = typeof caosVinc !== "undefined" && caosVinc && caosVinc.fav;
+  const quem = players.find((p) => p.name === fav) || sorteioItem(players);
+  if (!quem) return false;
+  mc.cont.presente = (mc.cont.presente || 0) + 1;
+  mcPcMudar(quem.id, TEMPORADA_PONTINHO_PC);
+  const fala = getRandomReaction(temporadaFalasDe("presentePonto"), quem.name, TEMPORADA_PONTINHO_PC);
+  const texto = String(fala || "").replace(/^\[C\.A\.O\.S\.\]\s*/, "");
+  mcAnunciar(`🎁 PRESENTE DE NATAL! ${quem.name} ganhou +${TEMPORADA_PONTINHO_PC} PC do C.A.O.S.`, {
+    ic: "🎁",
+    titulo: "PRESENTE DE NATAL!",
+    texto: texto || `${quem.name} ganhou +${TEMPORADA_PONTINHO_PC} PC.`,
+    anim: "presente",
   });
   return true;
 }

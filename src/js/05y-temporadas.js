@@ -136,3 +136,58 @@ function temporadaAplicar() {
     }
   } catch (e) {}
 }
+
+/* Temporadas · item 4: o C.A.O.S. bonzinho do Natal (e do Ano Novo). Pedido do JF em 30/10/2026:
+   - Modo C.A.O.S.: o 🎁 Presente pode sair até 3 vezes por partida (fora da temporada, 1) e também pros favoritos
+     dele, mesmo quem não precisa ("toma um pontinho extra").
+   - Joia de presente: chance bem baixa, 1 por partida, só onde joias contam pra vencer (Joias, Express, Moda da Casa
+     com joias). Dá uma joia que falta e respeita a trava de 2 por rodada. NUNCA a 4ª joia: quem já tem 3 não ganha.
+     Ele pode ajudar, mas nunca entregar a vitória. */
+const TEMPORADA_BONZINHA = ["natal", "anoNovo"];
+const TEMPORADA_PRESENTES_MAX = 3;
+const TEMPORADA_JOIA_CHANCE = 0.03; // por carta virada, até sair uma na partida
+const TEMPORADA_PONTINHO_PC = 5; // o "pontinho extra" do Modo C.A.O.S.
+function temporadaBonzinha() {
+  const t = typeof temporadaAtual === "function" ? temporadaAtual() : null;
+  return !!t && TEMPORADA_BONZINHA.includes(t.id);
+}
+function temporadaFalasDe(chave) {
+  const t = typeof temporadaAtual === "function" ? temporadaAtual() : null;
+  const b = t && REACTIVE_VOICE.temporada && REACTIVE_VOICE.temporada[t.id];
+  return (b && b[chave]) || (REACTIVE_VOICE.temporada && REACTIVE_VOICE.temporada.natal && REACTIVE_VOICE.temporada.natal[chave]) || [];
+}
+// quem pode ganhar a joia de presente agora (nunca quem já tem 3; nunca quem bateu a trava da rodada)
+function temporadaJoiaCandidatos() {
+  if (CURRENT_FORMAT === "equipe" || !gemsEnabled() || !gemsCountForWin() || gemWinner) return [];
+  const cats = CURRENT_MODE === "express" && expressSelectedCategories && expressSelectedCategories.length ? expressSelectedCategories : currentGemCategories();
+  const out = [];
+  players.forEach((p) => {
+    const g = p.gems || {};
+    if (gemTotal(p) >= GEMS_TO_WIN - 1) return; // nunca a 4ª joia
+    if (joiasComTrava() && (joiasRodada[String(p.id)] || 0) >= JOIAS_POR_RODADA) return;
+    const faltam = cats.filter((c) => (g[c] || 0) < gemCapFor());
+    if (faltam.length) out.push({ p, faltam });
+  });
+  return out;
+}
+function temporadaJoiaPresenteTalvez(forcar) {
+  if (!temporadaBonzinha() || caosSilenced || gameEnded || !currentCard) return null;
+  if (!forcar && sorteioRegra() >= TEMPORADA_JOIA_CHANCE) return null;
+  const cands = temporadaJoiaCandidatos();
+  if (!cands.length || !caosOncePerMatch("temporada_joia")) return null;
+  const fav = typeof caosVinc !== "undefined" && caosVinc && caosVinc.fav;
+  const escolha = cands.find((c) => c.p.name === fav) || cands[Math.floor(sorteioRegra() * cands.length)];
+  const cat = escolha.faltam[Math.floor(sorteioRegra() * escolha.faltam.length)];
+  const p = escolha.p;
+  p.gems = p.gems || {};
+  p.gems[cat] = (p.gems[cat] || 0) + 1;
+  if (joiasComTrava()) joiasRodada[String(p.id)] = (joiasRodada[String(p.id)] || 0) + 1;
+  caosLog("temporada", `🎁 joia de presente de Natal: ${p.name} ganhou ${cat}`);
+  const msg = getRandomReaction(temporadaFalasDe("presenteJoia"), p.name, (CATEGORY_LABELS[cat] || cat).toLowerCase());
+  if (msg) showToastMessage(msg);
+  try {
+    render();
+    saveGameState();
+  } catch (e) {}
+  return { id: p.id, cat };
+}
