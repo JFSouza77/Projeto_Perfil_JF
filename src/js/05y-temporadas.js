@@ -191,3 +191,110 @@ function temporadaJoiaPresenteTalvez(forcar) {
   } catch (e) {}
   return { id: p.id, cat };
 }
+
+/* Temporadas · item 6: cores e emojis da temporada (TEMPORADA_ESTILOS em 01-configuracao.js). Na época, entram na
+   paleta e na lista de emojis. Quem tem cadastro e escolhe um deles recebe a pergunta (pedido do JF): "Você escolheu
+   um estilo que não é o do seu cadastro. Quer usar durante a temporada?". Sim: o C.A.O.S. autoriza e o "salvamento da
+   temporada" guarda a escolha (não pergunta de novo nesta temporada). Não: volta o estilo de sempre. A ficha nunca
+   guarda emoji de temporada, então, quando a época acaba, o jogador volta sozinho ao estilo que tinha. */
+function temporadaEstilo() {
+  const t = typeof temporadaAtual === "function" ? temporadaAtual() : null;
+  return (t && TEMPORADA_ESTILOS[t.id]) || { cores: [], emojis: [], nomesCores: [] };
+}
+function temporadaEmojiEh(a) {
+  return !!a && Object.values(TEMPORADA_ESTILOS).some((e) => e.emojis.includes(a));
+}
+function temporadaCorEh(c) {
+  return !!c && Object.values(TEMPORADA_ESTILOS).some((e) => e.cores.includes(c));
+}
+function temporadaCorNome(c) {
+  for (const e of Object.values(TEMPORADA_ESTILOS)) {
+    const i = e.cores.indexOf(c);
+    if (i >= 0) return "Cor de temporada: " + (e.nomesCores[i] || "especial");
+  }
+  return "";
+}
+function temporadaChave() {
+  const t = typeof temporadaAtual === "function" ? temporadaAtual() : null;
+  return t ? t.id + ":" + new Date().getFullYear() : null;
+}
+// salvamento da temporada: { nick: { chave: "natal:2026", cor, avatar } }; o que é de outra temporada some na leitura
+function temporadaEstiloLer() {
+  let o = {};
+  try {
+    o = JSON.parse(JFStore.getItem(TEMPORADA_ESTILO_KEY) || "{}") || {};
+  } catch (e) {}
+  const ch = temporadaChave();
+  Object.keys(o).forEach((k) => {
+    if (!o[k] || o[k].chave !== ch) delete o[k];
+  });
+  return o;
+}
+function temporadaEstiloGravar(o) {
+  try {
+    JFStore.setItem(TEMPORADA_ESTILO_KEY, JSON.stringify(o));
+  } catch (e) {}
+}
+function temporadaEstiloTemCadastro(p) {
+  if (!p) return false;
+  if (typeof contaLogin === "function" && contaLogin(p.name)) return true;
+  const f = typeof fichaGet === "function" ? fichaGet(p.name) : null;
+  return !!(f && f.ultimoAvatar);
+}
+// volta o estilo de sempre (o emoji da ficha, se estiver livre; a cor, a primeira livre que não é de temporada)
+function temporadaEstiloDesfazer(p) {
+  const outros = players.filter((q) => q !== p);
+  if (temporadaEmojiEh(p.avatar)) {
+    const f = typeof fichaGet === "function" ? fichaGet(p.name) : null;
+    const usados = new Set(outros.map((q) => q.avatar));
+    const antigo = f && f.ultimoAvatar && !usados.has(f.ultimoAvatar) ? f.ultimoAvatar : null;
+    p.avatar = antigo || avatarsForMode().find((a) => !usados.has(a) && !temporadaEmojiEh(a)) || p.avatar;
+  }
+  if (temporadaCorEh(p.color)) {
+    const usadas = new Set(outros.map((q) => q.color));
+    p.color = coresDaPaleta().find((c) => !usadas.has(c) && !temporadaCorEh(c) && !(typeof corReservada === "function" && corReservada(c))) || PLAYER_COLORS[0];
+  }
+}
+function temporadaEstiloPerguntar(p, depois) {
+  const seguir = () => {
+    if (typeof depois === "function") depois();
+  };
+  const ch = temporadaChave();
+  if (!p || !ch || !(temporadaCorEh(p.color) || temporadaEmojiEh(p.avatar)) || !temporadaEstiloTemCadastro(p)) return seguir();
+  const salvo = temporadaEstiloLer();
+  const k = nameKeyPlain(p.name);
+  if (salvo[k]) return seguir(); // já autorizado nesta temporada
+  const { ov, box } = caosModalBase();
+  box.style.borderColor = "#22c55e";
+  const t = document.createElement("div");
+  t.innerHTML = `<div style="font-size:2rem">🎄</div><h3 style="margin:6px 0">Estilo de temporada</h3><p style="margin:8px 0 16px">${escapeHtml(p.name)}, você escolheu um estilo que não é o do seu cadastro. Quer usar durante a temporada?</p>`;
+  box.appendChild(t);
+  const atualizar = () => {
+    try {
+      renderScoreboard();
+      renderColorPicker();
+      renderAvatarPicker();
+      saveGameState();
+      if (typeof redeHostCadastroMudou === "function") redeHostCadastroMudou();
+    } catch (e) {}
+  };
+  box.appendChild(
+    caosModalBtn("Sim, quero! 🎄", "#16a34a", () => {
+      ov.remove();
+      salvo[k] = { chave: ch, cor: p.color, avatar: p.avatar };
+      temporadaEstiloGravar(salvo);
+      const fala = getRandomReaction(temporadaFalasDe("estiloAutorizado"), p.name);
+      if (fala) showToastMessage(fala);
+      seguir();
+    }),
+  );
+  box.appendChild(
+    caosModalBtn("Não, volta o meu de sempre", "#475569", () => {
+      ov.remove();
+      temporadaEstiloDesfazer(p);
+      atualizar();
+      seguir();
+    }),
+  );
+  document.body.appendChild(ov);
+}

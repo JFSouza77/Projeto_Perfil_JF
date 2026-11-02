@@ -91,7 +91,7 @@ temporadas, na ordem do calendário.
 3. [x] Natal · falas do C.A.O.S.: 15 falas, com as piadas de avançar e voltar casas (lista dos bonzinhos e dos malvados), gorro no rosto e a gafe de data (15 correções).
 4. [x] Natal · C.A.O.S. bonzinho: mais presentes (até 3 por partida, inclusive pros favoritos), pontinho extra e joia rara (nunca a 4ª).
 5. [x] Natal · lojinha: 5 itens de Natal na Corrida e 5 no Modo C.A.O.S.
-6. [ ] Natal · 5 cores e 5 emojis, troca com pergunta pro cadastrado e salvamento da temporada (volta ao normal no fim).
+6. [x] Natal · 5 cores e 5 emojis, troca com pergunta pro cadastrado e salvamento da temporada (volta ao normal no fim).
 7. [ ] Natal · 5 títulos nas estatísticas (Papai Noel e outros).
 8. [ ] Natal · 10 cartas de Natal, auditadas, valendo o dobro na janela.
 9. [ ] Natal · bateria de testes, prints e relatório pro JF (ele decide se publica).
@@ -135,3 +135,14 @@ temporadas, na ordem do calendário.
   - Na época, a vitrine continua com os itens de sempre e ganha mais 2 de Natal. Fora dela, nunca aparecem, nem nas
     regras. Na compra, cada um vira um item de sempre (`lojaEfeito`), então nenhuma regra nova de jogo foi criada.
   - Teste: `teste_temporadas` (43 checagens). `teste_loja_caos` e `teste_corrida` continuam OK.
+- 02/11/2026 (manhã): item 6 feito.
+  - 5 cores de Natal (Gorro do Noel, Pinheiro, Estrela dourada, Neve, Bengala doce) e 5 emojis (🎅 🤶 🦌 ⛄ 🎄) em
+    `TEMPORADA_ESTILOS`. Na época, entram na paleta e na lista de emojis (local e celular); fora dela, somem.
+  - Quem tem cadastro e escolhe um deles recebe a pergunta "Você escolheu um estilo que não é o do seu cadastro. Quer
+    usar durante a temporada?".
+    - Sim: o C.A.O.S. autoriza (5 falas novas) e o salvamento da temporada (`perfil_jf_estilo_temporada`) guarda a
+      escolha. Não pergunta de novo nesta temporada; o que é de outra temporada some sozinho.
+    - Não: volta o emoji da ficha e uma cor de sempre.
+  - A ficha nunca guarda emoji de temporada, então, quando a época acaba, o jogador volta sozinho ao estilo de antes.
+  - Quem não tem cadastro não recebe a pergunta.
+  - Teste: `teste_temporadas` (54 checagens). `teste_cadastro_caos`, `teste_idade` e `caos_teste_espinha` continuam OK.

@@ -32,7 +32,7 @@ function caosMemCadastro(p) {
   const h = caosHumorEscolha(p);
   fichaUpd(p.name, (f) => {
     f.ultimaVez = Date.now();
-    if (p.avatar && !gira) f.ultimoAvatar = p.avatar;
+    if (p.avatar && !gira && !temporadaEmojiEh(p.avatar)) f.ultimoAvatar = p.avatar; // estilo de temporada não vira o de sempre
     if (h) caosHumorAnotar(f, h, p);
   });
 }

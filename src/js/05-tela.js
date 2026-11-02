@@ -1717,7 +1717,7 @@ function caosEscolhaTomada(tipo, valor, btn) {
 function coresDaPaleta() {
   const isBatata = document.body.classList.contains("batata-mode");
   return PLAYER_COLORS.slice(0, -1)
-    .concat(["GRAD_PRINCESA", "RGB"])
+    .concat(["GRAD_PRINCESA", "RGB"], typeof temporadaEstilo === "function" ? temporadaEstilo().cores : [])
     .filter((c) => !(isBatata && (c === "RGB" || GRADIENTS[c])));
 }
 function renderColorPicker() {
@@ -1736,7 +1736,7 @@ function renderColorPicker() {
     .map((c, i) => {
       const bg = c === "RGB" ? "" : "background:" + playerColorCss(c);
       const rotulo =
-        (c === "GRAD_ONYX" ? "Ônix neon" : COR_EXCLUSIVA[c] ? "Cor exclusiva " + COR_EXCLUSIVA[c].de : "Cor " + (i + 1)) +
+        (c === "GRAD_ONYX" ? "Ônix neon" : COR_EXCLUSIVA[c] ? "Cor exclusiva " + COR_EXCLUSIVA[c].de : temporadaCorNome(c) || "Cor " + (i + 1)) +
         (usedColors.has(c) ? " (já escolhida)" : "");
       return `<button type="button" class="color-swatch ${c === selectedColor && cadMostraSel(cadCor || CURRENT_FORMAT === "equipe") ? "selected" : ""} ${c === "RGB" ? "rgb-swatch" : ""} ${c === "GRAD_ONYX" ? "onyx-swatch" : ""}${usedColors.has(c) ? " tomada" : ""}${COR_EXCLUSIVA[c] && usedColors.has(c) && !players.some((p) => p.color === c) ? " reservada" : ""}" data-color="${c}" style="${bg}" aria-label="${rotulo}" ${usedColors.has(c) ? 'aria-disabled="true"' : ""} title="${c === "GRAD_ONYX" ? "Ônix neon" : COR_EXCLUSIVA[c] ? "Cor exclusiva " + COR_EXCLUSIVA[c].de : ""}"></button>`;
     })

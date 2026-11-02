@@ -146,6 +146,43 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     });
     return r;
   }));
+  // item 6: cores e emojis do Natal, pergunta pro cadastrado e salvamento da temporada
+  Object.assign(o, await page.evaluate(async () => {
+    const r = {};
+    const E = TEMPORADA_ESTILOS.natal;
+    r.estilo5Cores5Emojis = E.cores.length === 5 && E.emojis.length === 5 && E.cores.every((c) => GRADIENTS[c]);
+    r.paletaTemCoresNatal = E.cores.every((c) => coresDaPaleta().includes(c));
+    r.emojisNatalNaLista = E.emojis.every((a) => avatarsForMode().includes(a));
+    const salva = { players, render: typeof render === "function" ? render : null };
+    JFStore.setItem(TEMPORADA_ESTILO_KEY, "{}");
+    fichaUpd("Duda", (f) => (f.ultimoAvatar = "🦊"));
+    const p = { id: "d1", name: "Duda", color: "GRAD_NATAL_GORRO", avatar: "🎅", score: 0, position: 0 };
+    players = [p];
+    let seguiu = 0;
+    document.querySelectorAll(".caos-modal-ov").forEach((x) => x.remove());
+    temporadaEstiloPerguntar(p, () => seguiu++);
+    const ov = document.querySelector(".caos-modal-ov");
+    r.perguntaApareceProCadastrado = !!ov && /estilo que não é o do seu cadastro/.test(ov.textContent) && /durante a temporada/.test(ov.textContent);
+    const btns = ov ? [...ov.querySelectorAll("button")] : [];
+    btns.find((b) => /Não/.test(b.textContent)).click();
+    r.naoVoltaOEstiloDeSempre = p.avatar === "🦊" && !temporadaCorEh(p.color) && seguiu === 1;
+    p.avatar = "🎄";
+    p.color = "GRAD_NATAL_NEVE";
+    temporadaEstiloPerguntar(p, () => seguiu++);
+    [...document.querySelectorAll(".caos-modal-ov button")].find((b) => /Sim/.test(b.textContent)).click();
+    const salvo = JSON.parse(JFStore.getItem(TEMPORADA_ESTILO_KEY) || "{}");
+    r.simGuardaNaTemporada = p.avatar === "🎄" && salvo[nameKeyPlain("Duda")] && /^natal:/.test(salvo[nameKeyPlain("Duda")].chave) && seguiu === 2;
+    temporadaEstiloPerguntar(p, () => seguiu++);
+    r.naoPerguntaDeNovo = !document.querySelector(".caos-modal-ov") && seguiu === 3;
+    const semCad = { id: "x", name: "Zeca Novo", color: "GRAD_NATAL_GORRO", avatar: "🎅" };
+    temporadaEstiloPerguntar(semCad, () => seguiu++);
+    r.semCadastroNaoPergunta = !document.querySelector(".caos-modal-ov") && seguiu === 4;
+    // a ficha não guarda emoji de temporada (no fim da época, volta o de sempre sozinho)
+    caosMemCadastro(p);
+    r.fichaNaoGuardaEmojiDeTemporada = fichaGet("Duda").ultimoAvatar === "🦊";
+    players = salva.players;
+    return r;
+  }));
   // item 5: lojinha de Natal (5 itens em cada loja, só na época, viram itens de sempre na compra)
   Object.assign(o, await page.evaluate(() => {
     const r = {};
@@ -241,6 +278,9 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
         if (Object.keys(lojaVitrineSortear(CORRIDA_LOJA, CORRIDA_VITRINE).estoque).some((k) => CORRIDA_LOJA[k].temporada)) ok = false;
       }
       r.foraVitrineSemNatal = ok;
+      r.foraSemCoresEEmojisDeNatal = !coresDaPaleta().some(temporadaCorEh) && !avatarsForMode().some(temporadaEmojiEh);
+      JFStore.setItem(TEMPORADA_ESTILO_KEY, JSON.stringify({ duda: { chave: "natal:2025", cor: "GRAD_NATAL_GORRO", avatar: "🎅" } }));
+      r.salvamentoVenceNoFimDaTemporada = Object.keys(temporadaEstiloLer()).length === 0;
     }
     {
       const s = { players, CURRENT_MODE, mc: typeof mc !== "undefined" ? mc : null, cartasPartida, mcAnunciar };

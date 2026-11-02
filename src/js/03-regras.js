@@ -89,7 +89,8 @@ function avatarsForMode() {
     CURRENT_MODE === "junior"
       ? AVATARS.filter((a) => !["🍺", "🧛", "🧟", "🥷"].includes(a) && !a.startsWith("🕵")).concat(AVATARS_KIDS)
       : AVATARS.concat(AVATARS_EXTRA);
-  return base.filter((a) => !AVATAR_EXCLUSIVE.includes(a));
+  const temporada = typeof temporadaEstilo === "function" ? temporadaEstilo().emojis : [];
+  return base.filter((a) => !AVATAR_EXCLUSIVE.includes(a)).concat(temporada.filter((a) => !base.includes(a)));
 }
 function baralhoClassicoProprio() {
   return ADULT_CARDS.filter((c) => c.classificacao === "adulto" || c.classificacao === "livre");

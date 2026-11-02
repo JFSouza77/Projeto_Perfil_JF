@@ -96,7 +96,24 @@ const GRADIENTS = {
   GRAD_SANGUE: "linear-gradient(135deg, #b10000 0%, #4a0000 55%, #000000 100%)",
   GRAD_SHINOBI: "linear-gradient(135deg, #1d4ed8 0%, #374151 55%, #0b0b0f 100%)",
   GRAD_KIRITO: "linear-gradient(135deg, #000000 0%, #1f2937 50%, #94a3b8 100%)",
+  // Temporadas (item 6): as 5 cores do Natal (só aparecem na paleta durante o Natal)
+  GRAD_NATAL_GORRO: "linear-gradient(135deg, #dc2626 0%, #dc2626 55%, #f8fafc 56%, #f8fafc 100%)",
+  GRAD_NATAL_PINHEIRO: "linear-gradient(135deg, #14532d 0%, #16a34a 60%, #facc15 100%)",
+  GRAD_NATAL_DOURADO: "linear-gradient(135deg, #b45309 0%, #fde68a 50%, #b45309 100%)",
+  GRAD_NATAL_NEVE: "linear-gradient(135deg, #e0f2fe 0%, #ffffff 50%, #93c5fd 100%)",
+  GRAD_NATAL_BENGALA: "repeating-linear-gradient(135deg, #dc2626 0 8px, #f8fafc 8px 16px)",
 };
+// Temporadas (docs/Temporadas.md, item 6): 5 cores e 5 emojis por temporada, só na paleta durante a época.
+// Jogador cadastrado que escolhe um deles recebe a pergunta "Quer usar durante a temporada?"; o estilo fica salvo só
+// na temporada (TEMPORADA_ESTILO_KEY) e a ficha continua com o estilo de sempre, então ele volta sozinho no fim.
+const TEMPORADA_ESTILOS = {
+  natal: {
+    cores: ["GRAD_NATAL_GORRO", "GRAD_NATAL_PINHEIRO", "GRAD_NATAL_DOURADO", "GRAD_NATAL_NEVE", "GRAD_NATAL_BENGALA"],
+    nomesCores: ["Gorro do Noel", "Pinheiro", "Estrela dourada", "Neve", "Bengala doce"],
+    emojis: ["🎅", "🤶", "🦌", "⛄", "🎄"],
+  },
+};
+const TEMPORADA_ESTILO_KEY = "perfil_jf_estilo_temporada";
 const AVATARS = [
   "😎",
   "🤠",

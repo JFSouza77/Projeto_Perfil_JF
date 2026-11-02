@@ -1741,7 +1741,7 @@ function addPlayer() {
   idadeLimpar();
   nicksRepertorioGuardar(name);
   const novo = players[players.length - 1];
-  contaAoCadastrar(novo, null, true, () => caosBoasVindasQuandoPuder(novo)); // 1.9.1: o "oi" vem depois da pergunta do cadastro. 11/2026: cadastro do jogador (antes da memória, que respeita o nick protegido); pergunta se quer cadastrar
+  contaAoCadastrar(novo, null, true, () => temporadaEstiloPerguntar(novo, () => caosBoasVindasQuandoPuder(novo))); // 1.9.1: o "oi" vem depois da pergunta do cadastro. 11/2026: cadastro do jogador (antes da memória, que respeita o nick protegido); pergunta se quer cadastrar
   caosMemCadastro(players[players.length - 1]);
   input.value = "";
   caosTomadaN = 0;

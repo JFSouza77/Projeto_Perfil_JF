@@ -75,7 +75,7 @@ function contaFichaJuntar(nome, ficha) {
   const p = players.find((q) => nameKeyPlain(q.name) === nameKeyPlain(nome));
   fichaUpd(nome, (f) => {
     Object.assign(f, fichaLimpa(ficha, nome));
-    if (p && p.avatar && !(presenteDe(nome) && presenteDe(nome).gira)) f.ultimoAvatar = p.avatar;
+    if (p && p.avatar && !(presenteDe(nome) && presenteDe(nome).gira) && !temporadaEmojiEh(p.avatar)) f.ultimoAvatar = p.avatar;
     if (p && caosHumorEscolha(p)) caosHumorAnotar(f, caosHumorEscolha(p), p);
   });
 }

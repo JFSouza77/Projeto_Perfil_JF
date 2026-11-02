@@ -1,4 +1,4 @@
-const JF_ALL_AVATARS = new Set([...AVATARS, ...AVATARS_EXTRA, ...AVATARS_KIDS, ...AVATAR_EXCLUSIVE]);
+const JF_ALL_AVATARS = new Set([...AVATARS, ...AVATARS_EXTRA, ...AVATARS_KIDS, ...AVATAR_EXCLUSIVE, ...[].concat(...Object.values(TEMPORADA_ESTILOS).map((t) => t.emojis))]);
 const CAOS_PALAVROES_RE = new RegExp("(^|[^a-z0-9])(" + CAOS_PALAVROES.join("|") + ")(?![a-z0-9])");
 const CAOS_GIRIAS_RE = new RegExp(
   "(^|[^\\p{L}])(" +
@@ -4284,6 +4284,14 @@ const REACTIVE_VOICE = {
         (name, cat) => `[C.A.O.S.] Espírito natalino bateu forte: ${name} ganhou a joia de ${cat} de presente.`,
         (name, cat) => `[C.A.O.S.] ${name}, você tá na lista dos bonzinhos. Toma uma joia de ${cat}. A última eu não dou, viu?`,
         (name, cat) => `[C.A.O.S.] O Papai Noel deixou comigo uma joia de ${cat} pra ${name}. Entregue!`,
+      ],
+      // item 6: o C.A.O.S. autoriza o estilo de Natal de quem tem cadastro
+      estiloAutorizado: [
+        (name) => `[C.A.O.S.] Autorizado, ${name}! Visual de Natal liberado até o fim da temporada. Depois volta tudo ao normal.`,
+        (name) => `[C.A.O.S.] ${name} entrou no clima! Pode usar o estilo de Natal. Em janeiro eu devolvo o de sempre.`,
+        (name) => `[C.A.O.S.] Carimbo do Papai Noel: aprovado. ${name}, curte o visual natalino.`,
+        (name) => `[C.A.O.S.] Ho, ho, ho! ${name} tá de roupa nova. Só durante o Natal, combinado?`,
+        (name) => `[C.A.O.S.] Liberado, ${name}. Guardei o seu estilo de sempre aqui comigo pra depois do Natal.`,
       ],
       presentePonto: [
         (name, n) => `[C.A.O.S.] Aproveita o Natal, ${name}: toma ${n} PC extra. Não conta pra ninguém.`,
