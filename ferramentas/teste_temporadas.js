@@ -146,6 +146,28 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     });
     return r;
   }));
+  // item 5: lojinha de Natal (5 itens em cada loja, só na época, viram itens de sempre na compra)
+  Object.assign(o, await page.evaluate(() => {
+    const r = {};
+    const nat = (cat) => Object.keys(cat).filter((k) => cat[k].temporada === "natal");
+    r.loja5ItensNatalCadaLoja = nat(MC_LOJA).length === 5 && nat(CORRIDA_LOJA).length === 5;
+    const basesOk = (cat) => nat(cat).every((k) => { const it = cat[k]; return it.surpresa ? it.surpresa.every((b) => cat[b] && !cat[b].temporada) : cat[it.base] && !cat[it.base].temporada; });
+    r.lojaNatalViraItemDeSempre = basesOk(MC_LOJA) && basesOk(CORRIDA_LOJA);
+    let okMc = true, okCo = true;
+    for (let i = 0; i < 60; i++) {
+      const v = Object.keys(lojaVitrineSortear(MC_LOJA, MC_VITRINE).estoque);
+      if (v.filter((k) => MC_LOJA[k].temporada).length !== 2 || v.filter((k) => !MC_LOJA[k].temporada).length !== MC_VITRINE) okMc = false;
+      const c = Object.keys(lojaVitrineSortear(CORRIDA_LOJA, CORRIDA_VITRINE).estoque);
+      if (c.filter((k) => CORRIDA_LOJA[k].temporada).length !== 2 || c.filter((k) => !CORRIDA_LOJA[k].temporada).length !== CORRIDA_VITRINE) okCo = false;
+    }
+    r.vitrineNatalTem2DaTemporada = okMc && okCo;
+    const meia = lojaEfeito(MC_LOJA, "natalMeia");
+    const surp = lojaEfeito(MC_LOJA, "natalSurpresa");
+    r.compraMeiaDa2Vidas = meia.base === "folego" && meia.qtd === 2;
+    r.compraSurpresaSorteia = MC_LOJA.natalSurpresa.surpresa.includes(surp.base) && surp.qtd === 1;
+    r.itemDeSempreNaoMuda = lojaEfeito(MC_LOJA, "corte").base === "corte" && lojaEfeito(MC_LOJA, "corte").qtd === 1;
+    return r;
+  }));
   // item 4: C.A.O.S. bonzinho (joia rara, nunca a 4ª; trava da rodada; até 3 presentes no Modo C.A.O.S.)
   Object.assign(o, await page.evaluate(() => {
     const r = {};
@@ -212,6 +234,14 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     const r = {};
     r.foraSemFalasTemporada = caosTemporadaFalas() === null;
     r.foraNaoEhBonzinho = !temporadaBonzinha();
+    {
+      let ok = true;
+      for (let i = 0; i < 60; i++) {
+        if (Object.keys(lojaVitrineSortear(MC_LOJA, MC_VITRINE).estoque).some((k) => MC_LOJA[k].temporada)) ok = false;
+        if (Object.keys(lojaVitrineSortear(CORRIDA_LOJA, CORRIDA_VITRINE).estoque).some((k) => CORRIDA_LOJA[k].temporada)) ok = false;
+      }
+      r.foraVitrineSemNatal = ok;
+    }
     {
       const s = { players, CURRENT_MODE, mc: typeof mc !== "undefined" ? mc : null, cartasPartida, mcAnunciar };
       mcAnunciar = () => {};

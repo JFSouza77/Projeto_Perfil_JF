@@ -432,7 +432,8 @@ function mcComprar(item, id) {
     return mcMudou();
   }
   mc.inv[id] = mc.inv[id] || {};
-  mc.inv[id][item] = (mc.inv[id][item] || 0) + 1;
+  const { base, qtd } = lojaEfeito(MC_LOJA, item); // Temporadas: o item de Natal vira um item de sempre
+  mc.inv[id][base] = (mc.inv[id][base] || 0) + qtd;
   mcLog(`🛒 ${mcNome(id)} comprou alguma coisa na lojinha…`); // o que foi é segredo dele
   mcMudou();
 }
@@ -1396,6 +1397,7 @@ function mcRegrasHtml() {
     `⏱️ <b>Tempo:</b> partida de ${MC_TEMPO_MS / 60e3} min, rodada de até ${MC_RODADA_MS / 60e3} min, intervalo de ${MC_INTERVALO_SEG} s com tudo congelado.`,
     `💠 <b>Pontos de Caos (PC):</b> não contam no placar; servem pra lojinha. Ganha ${MC_PC.rodada} por rodada, +${MC_PC.rapido} acertando nos ${MC_RAPIDO_MS / 1e3} primeiros segundos, e nos eventos.`,
     `🛒 <b>Lojinha (no intervalo, uma só pra mesa):</b> a cada intervalo aparecem ${MC_VITRINE} itens sorteados, com preço e estoque variando. Catálogo: ${Object.values(MC_LOJA)
+      .filter((it) => !it.temporada)
       .map((it) => `${it.ic} ${it.nome} (~${it.preco})`)
       .join(", ")}.`,
     `🌀 <b>O C.A.O.S. apronta</b> (um evento por vez, sempre entre uma vez e outra, com aviso grande na tela): ⏩ Turbo (janela de ${MC_TURBO_SEG} s), 💸 Imposto da Preguiça (quem não tenta paga PC), 🥔 Batata Quente (passe ou segure; quem ficar com ela encara a carta bônus), 🧤 Mão Leve (furto secreto), 🪅 Piñata (digite primeiro), 🎁 Presente (quem ficou ${MC_PRESENTE_DIF}+ cartas atrás do líder ganha 1 item, uma vez por partida), 🎁 Rodada Bônus (carta extra que o Mestre lê: quem bater primeiro e acertar ganha +${MC_PC.bonus} PC e um ${MC_LOJA.kevlar.nome}, e o Mestre também ganha +${MC_PC.bonus} PC) e ⚔️ roubos com duelo em melhor de 3 (quem foi desafiado escolhe: dado, moeda, jokenpô ou par ou ímpar) e revanche dobro ou nada.`,

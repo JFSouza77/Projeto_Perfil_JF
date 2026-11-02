@@ -90,7 +90,7 @@ temporadas, na ordem do calendário.
 2. [x] Natal · visual (neve leve, luzinhas) e selo "🎄 Edição de Natal" na splash.
 3. [x] Natal · falas do C.A.O.S.: 15 falas, com as piadas de avançar e voltar casas (lista dos bonzinhos e dos malvados), gorro no rosto e a gafe de data (15 correções).
 4. [x] Natal · C.A.O.S. bonzinho: mais presentes (até 3 por partida, inclusive pros favoritos), pontinho extra e joia rara (nunca a 4ª).
-5. [ ] Natal · lojinha: 5 itens de Natal na Corrida e 5 no Modo C.A.O.S.
+5. [x] Natal · lojinha: 5 itens de Natal na Corrida e 5 no Modo C.A.O.S.
 6. [ ] Natal · 5 cores e 5 emojis, troca com pergunta pro cadastrado e salvamento da temporada (volta ao normal no fim).
 7. [ ] Natal · 5 títulos nas estatísticas (Papai Noel e outros).
 8. [ ] Natal · 10 cartas de Natal, auditadas, valendo o dobro na janela.
@@ -126,3 +126,12 @@ temporadas, na ordem do calendário.
   - 10 falas novas: 5 da joia de presente e 5 do pontinho extra.
   - Teste: `teste_temporadas` (36 checagens: joia pra quem não tem 3, uma por partida, nunca a 4ª, trava, só onde joia
     vale, até 3 presentes no Natal, 1 fora). `teste_loja_caos` e `caos_teste_espinha` continuam OK.
+- 02/11/2026 (madrugada): branch atualizado com a `main` (cartas da 2.0 e lote por categoria). Item 5 feito.
+  - 5 itens de Natal em cada lojinha (`temporada: "natal"` em `MC_LOJA` e `CORRIDA_LOJA`):
+    - Modo C.A.O.S.: 🎁 Presente Surpresa, 🧦 Meia Recheada (2 Vidas Extras), ⛄ Boneco de Neve (Era do Gelo mais
+      barata), 🌟 Estrela Guia (Olho) e 🎅 Gorro Protetor (Colete).
+    - Corrida: 🎁 Presente Surpresa, 🧦 Meia Recheada (2 Passes Livres), ⛄ Boneco de Neve (Pausa Dramática), 🌟
+      Estrela Guia (Cofrinho) e 🦌 Trenó do Noel (Choque de Tempo).
+  - Na época, a vitrine continua com os itens de sempre e ganha mais 2 de Natal. Fora dela, nunca aparecem, nem nas
+    regras. Na compra, cada um vira um item de sempre (`lojaEfeito`), então nenhuma regra nova de jogo foi criada.
+  - Teste: `teste_temporadas` (43 checagens). `teste_loja_caos` e `teste_corrida` continuam OK.

@@ -392,6 +392,13 @@ const MC_LOJA = {
   kevlar: { ic: "🦺", nome: "Colete Anti-Caos", preco: 60, peso: 1, desc: "fica guardado: anula 1 roubo, assalto ou punição contra você" },
   olho: { ic: "👁️", nome: "Olho do C.A.O.S.", preco: 45, peso: 1, desc: "na janela da dica: a 1ª letra da resposta aparece só pra você" },
   assalto: { ic: "💸", nome: "Assalto Relâmpago", preco: 25, peso: 2, desc: "na hora da compra: leva 15 PC de quem tem mais PC (fora você)" },
+  // Temporadas (docs/Temporadas.md, item 5): 5 itens de Natal. Só aparecem na vitrine durante o Natal, e cada um vira
+  // um item de sempre na hora da compra ("base", "qtd" unidades) ou um item sorteado ("surpresa").
+  natalSurpresa: { ic: "🎁", nome: "Presente Surpresa", preco: 25, peso: 2, temporada: "natal", surpresa: ["corte", "folego", "mordaca", "olho", "espelho"], desc: "um item sorteado da lojinha, embrulhado pelo C.A.O.S." },
+  natalMeia: { ic: "🧦", nome: "Meia Recheada", preco: 30, peso: 2, temporada: "natal", base: "folego", qtd: 2, desc: "2 Vidas Extras de uma vez (errou? 2ª tentativa na mesma dica)" },
+  natalBoneco: { ic: "⛄", nome: "Boneco de Neve", preco: 35, peso: 2, temporada: "natal", base: "congelar", desc: "uma Era do Gelo mais barata: os outros ficam travados por 7 s" },
+  natalEstrela: { ic: "🌟", nome: "Estrela Guia", preco: 40, peso: 1, temporada: "natal", base: "olho", desc: "um Olho do C.A.O.S.: a 1ª letra da resposta só pra você" },
+  natalGorro: { ic: "🎅", nome: "Gorro Protetor", preco: 50, peso: 1, temporada: "natal", base: "kevlar", desc: "um Colete Anti-Caos: anula 1 roubo, assalto ou punição contra você" },
 };
 const MC_VITRINE = 5;
 const LOJA_TRAVA_MS = 3e3; // 1.7.10.9.3 (JF): no intervalo a vitrine aparece na hora, mas os botões só liberam depois de 3 s (pra dar tempo de ler)
@@ -419,7 +426,14 @@ const CORRIDA_LOJA = {
   cofrinho: { ic: "🐷", nome: "Cofrinho", preco: 25, peso: 2, desc: "a sua próxima carta acertada vale +40 pontos (dura até você acertar)" },
   ampulheta: { ic: "⏳", nome: "Ampulheta Extra", preco: 35, peso: 1, max: 1, desc: "+30 s no relógio geral na hora (bom pra quem está atrás; no Juízo Final não sai)" },
   ima: { ic: "🧲", nome: "Ímã de Pontos", preco: 20, peso: 2, desc: "se outro jogador acertar a próxima carta, você leva 20% do valor dela" },
+  // Temporadas (item 5): 5 itens de Natal, só na vitrine durante o Natal (viram um item de sempre na compra)
+  natalSurpresa: { ic: "🎁", nome: "Presente Surpresa", preco: 20, peso: 2, temporada: "natal", surpresa: ["corte", "desfib", "cofrinho"], desc: "um item sorteado (Passe Livre, Choque de Tempo ou Cofrinho)" },
+  natalMeia: { ic: "🧦", nome: "Meia Recheada", preco: 25, peso: 2, temporada: "natal", base: "corte", qtd: 2, desc: "2 Passes Livres de uma vez (pula a sua vez sem gastar dica)" },
+  natalBoneco: { ic: "⛄", nome: "Boneco de Neve", preco: 25, peso: 2, temporada: "natal", base: "congelar", max: 1, desc: "uma Pausa Dramática mais barata: o relógio geral para 15 s na próxima carta" },
+  natalEstrela: { ic: "🌟", nome: "Estrela Guia", preco: 20, peso: 1, temporada: "natal", base: "cofrinho", desc: "um Cofrinho: a sua próxima carta acertada vale +40 pontos" },
+  natalTreno: { ic: "🦌", nome: "Trenó do Noel", preco: 25, peso: 1, temporada: "natal", base: "desfib", desc: "um Choque de Tempo: +15 s no relógio da carta, na hora que quiser" },
 };
+const LOJA_TEMPORADA_VITRINE = 2; // itens da temporada que entram na vitrine, além dos de sempre
 const CORRIDA_VITRINE = 4;
 const CORRIDA_COFRINHO_PTS = 40;
 const CORRIDA_IMA_FRACAO = 0.2;
