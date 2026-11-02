@@ -1,5 +1,7 @@
 # Sugestões ditadas pelo JF — revisão de cartas
 
+> Este é um bloco anterior, já encaminhado ao Claude. As sugestões novas de 29/10/2026 e sua conferência ficam em `08_NOVAS_SUGESTOES_JF_2026-10-29.md`; o lote posterior de 30/10 está em `09_NOVAS_SUGESTOES_JF_2026-10-30.md`.
+
 Rascunho organizado a partir de áudio em 23/10/2026. São sugestões para curadoria de Klaus, não cartas aprovadas nem confirmação de que estejam ausentes do jogo. Algumas duplicatas foram verificadas na versão offline atual; veja a seção de conferência antes de avaliar inclusões.
 
 ## Conferência com a versão atual do jogo
@@ -165,6 +167,7 @@ O JF não sugeriu anos nesta gravação; a categoria continua pendente para quan
 - Hebe Camargo, lembrada depois, já consta na categoria Pessoa do jogo atual.
 - “Grogu de Meu Malvado Favorito” foi separado em Grogu (Star Wars) e Minions (Meu Malvado Favorito), pois parecem ser duas referências diferentes misturadas no áudio.
 - Os nomes listados são matéria-prima para revisão; não foram adicionados ao código do jogo.
+
 
 
 

@@ -340,8 +340,9 @@
     "assunto": "Música internacional"
    },
    {
-    "a": "Xoropinho",
-    "assunto": "Internet e YouTubers"
+    "a": "Xaropinho",
+    "assunto": "Internet e YouTubers",
+    "obs": "o rato do Programa do Ratinho (JF 31/10)"
    },
    {
     "a": "Taffarel",
@@ -465,6 +466,1081 @@
    {
     "a": "Hades",
     "assunto": "Mitologia e lendas do mundo"
+   },
+   {
+    "a": "Black Sabbath",
+    "assunto": "Música internacional",
+    "obs": "handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Iron Maiden",
+    "assunto": "Música internacional",
+    "obs": "handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Luan Santana",
+    "assunto": "Música brasileira",
+    "obs": "handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Michel Teló",
+    "assunto": "Música brasileira",
+    "obs": "handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Skillet",
+    "assunto": "Música internacional",
+    "obs": "handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Adriano Imperador",
+    "assunto": "Esporte",
+    "obs": "handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Anderson Silva",
+    "assunto": "Esporte",
+    "obs": "handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Kaká",
+    "assunto": "Esporte",
+    "obs": "handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Léo Batista",
+    "assunto": "TV brasileira e humor",
+    "obs": "handoff JF+GPT 26/10"
+   },
+   {
+    "a": "LeBron James",
+    "assunto": "Esporte",
+    "obs": "handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Max Verstappen",
+    "assunto": "Esporte",
+    "obs": "handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Ronaldo Fenômeno",
+    "assunto": "Esporte",
+    "obs": "handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Rubens Barrichello",
+    "assunto": "Esporte",
+    "obs": "handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Stephen Curry",
+    "assunto": "Esporte",
+    "obs": "handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Tiger Woods",
+    "assunto": "Esporte",
+    "obs": "handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Aécio Neves",
+    "assunto": "História, política e religião no Brasil",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Dedé Santana",
+    "assunto": "TV brasileira e humor",
+    "obs": "handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Enéas Carneiro",
+    "assunto": "História, política e religião no Brasil",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Maria Leopoldina",
+    "assunto": "História, política e religião no Brasil",
+    "obs": "nome: Maria Leopoldina; handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Michel Temer",
+    "assunto": "História, política e religião no Brasil",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Princesa Isabel",
+    "assunto": "História, política e religião no Brasil",
+    "obs": "handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Godzilla",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Lula Molusco",
+    "assunto": "Desenhos de TV (Cartoon, Nickelodeon e cia.)",
+    "obs": "combina com o Júnior; handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Patrick Estrela",
+    "assunto": "Desenhos de TV (Cartoon, Nickelodeon e cia.)",
+    "obs": "combina com o Júnior; handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Seu Sirigueijo",
+    "assunto": "Desenhos de TV (Cartoon, Nickelodeon e cia.)",
+    "obs": "combina com o Júnior; handoff JF+GPT 26/10"
+   },
+   {
+    "a": "William Afton",
+    "assunto": "Videogame",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 26/10"
+   },
+   {
+    "a": "Thundercats",
+    "assunto": "Desenhos clássicos (Hanna-Barbera, Looney Tunes e cia.)",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Power Rangers",
+    "assunto": "TV internacional e cinema",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Kira (Light Yagami)",
+    "assunto": "Anime, mangá e Pokémon",
+    "obs": "nome: Kira (Light Yagami); tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "WALL-E",
+    "assunto": "Disney e Pixar",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Emília",
+    "assunto": "Personagens de livros e contos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Narizinho",
+    "assunto": "Personagens de livros e contos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Pedrinho",
+    "assunto": "Personagens de livros e contos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Visconde de Sabugosa",
+    "assunto": "Personagens de livros e contos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Dona Benta",
+    "assunto": "Personagens de livros e contos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Tia Anastácia",
+    "assunto": "Personagens de livros e contos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Menino Maluquinho",
+    "assunto": "Personagens de livros e contos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Capitão Planeta",
+    "assunto": "Desenhos de TV (Cartoon, Nickelodeon e cia.)",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Capitão Caverna",
+    "assunto": "Desenhos clássicos (Hanna-Barbera, Looney Tunes e cia.)",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Dom Quixote",
+    "assunto": "Personagens de livros e contos",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Capitu",
+    "assunto": "Personagens de livros e contos",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Rei Arthur",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Merlin",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Adão",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Eva",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Rei Davi",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Rei Salomão",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Chico Anysio",
+    "assunto": "TV brasileira e humor",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Jô Soares",
+    "assunto": "TV brasileira e humor",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Ziraldo",
+    "assunto": "Escritores",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Margot Robbie",
+    "assunto": "TV internacional e cinema",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Henry Cavill",
+    "assunto": "TV internacional e cinema",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Hugh Jackman",
+    "assunto": "TV internacional e cinema",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Ryan Reynolds",
+    "assunto": "TV internacional e cinema",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Tom Holland",
+    "assunto": "TV internacional e cinema",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Tobey Maguire",
+    "assunto": "TV internacional e cinema",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Zendaya",
+    "assunto": "TV internacional e cinema",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Scarlett Johansson",
+    "assunto": "TV internacional e cinema",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Chris Hemsworth",
+    "assunto": "TV internacional e cinema",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Pablo Picasso",
+    "assunto": "Arte (pintura e música clássica)",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Tarsila do Amaral",
+    "assunto": "Arte (pintura e música clássica)",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Roberto Carlos",
+    "assunto": "Música brasileira",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Dante Alighieri",
+    "assunto": "Escritores",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Barão Vermelho",
+    "assunto": "Música brasileira",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Leonardo DiCaprio",
+    "assunto": "TV internacional e cinema",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Zé Colmeia",
+    "assunto": "Desenhos clássicos (Hanna-Barbera, Looney Tunes e cia.)",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Tom e Jerry",
+    "assunto": "Desenhos clássicos (Hanna-Barbera, Looney Tunes e cia.)",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Michael Phelps",
+    "assunto": "Esporte",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "César Cielo",
+    "assunto": "Esporte",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Guga Kuerten",
+    "assunto": "Esporte",
+    "obs": "nome: Guga Kuerten; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Rogério Ceni",
+    "assunto": "Esporte",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "São Jorge",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "São Pedro",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Arcanjo Miguel",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Arcanjo Gabriel",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Miguel de Cervantes",
+    "assunto": "Escritores",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Oscar Niemeyer",
+    "assunto": "Ciência, invenção e tecnologia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Dom Pedro I",
+    "assunto": "História, política e religião no Brasil",
+    "obs": "nome: Dom Pedro I; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Sigmund Freud",
+    "assunto": "Ciência, invenção e tecnologia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Thomas Edison",
+    "assunto": "Ciência, invenção e tecnologia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Benjamin Franklin",
+    "assunto": "História mundial (líderes e conquistadores)",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Getúlio Vargas",
+    "assunto": "História, política e religião no Brasil",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Fernando Henrique Cardoso",
+    "assunto": "História, política e religião no Brasil",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Fernando Collor de Mello",
+    "assunto": "História, política e religião no Brasil",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Romero Britto",
+    "assunto": "Arte (pintura e música clássica)",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Galileu Galilei",
+    "assunto": "Ciência, invenção e tecnologia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Aristóteles",
+    "assunto": "Ciência, invenção e tecnologia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Pitágoras",
+    "assunto": "Ciência, invenção e tecnologia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Garibaldo",
+    "assunto": "Desenhos para os pequenos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Anjinho",
+    "assunto": "Turma da Mônica",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "R2-D2",
+    "assunto": "Star Wars",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "C-3PO",
+    "assunto": "Star Wars",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "BB-8",
+    "assunto": "Star Wars",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Backyardigans",
+    "assunto": "Desenhos de TV (Cartoon, Nickelodeon e cia.)",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Barney",
+    "assunto": "Desenhos para os pequenos",
+    "obs": "combina com o Júnior; Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Bananas de Pijamas",
+    "assunto": "Desenhos para os pequenos",
+    "obs": "combina com o Júnior; Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Liga da Justiça",
+    "assunto": "DC",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Vingadores",
+    "assunto": "Marvel",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Quarteto Fantástico",
+    "assunto": "Marvel",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "X-Men",
+    "assunto": "Marvel",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Chiquititas",
+    "assunto": "TV brasileira e humor",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Rebeldes",
+    "assunto": "Música brasileira",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Bela e a Fera",
+    "assunto": "Disney e Pixar",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Cinderela",
+    "assunto": "Disney e Pixar",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Bela Adormecida",
+    "assunto": "Disney e Pixar",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Sete Anões",
+    "assunto": "Disney e Pixar",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Branca de Neve",
+    "assunto": "Disney e Pixar",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Gaston",
+    "assunto": "Disney e Pixar",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Bambi",
+    "assunto": "Disney e Pixar",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Tiana",
+    "assunto": "Disney e Pixar",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Paulo Freire",
+    "assunto": "História, política e religião no Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Nicolas Cage",
+    "assunto": "TV internacional e cinema",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Datena",
+    "assunto": "TV brasileira e humor",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Linkin Park",
+    "assunto": "Música internacional",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Anne Frank",
+    "assunto": "História mundial (líderes e conquistadores)",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Thanos",
+    "assunto": "Marvel",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Ultron",
+    "assunto": "Marvel",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Lex Luthor",
+    "assunto": "DC",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Capitão Pátria",
+    "assunto": "TV internacional e cinema",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Shenlong",
+    "assunto": "Anime, mangá e Pokémon",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Kakashi Hatake",
+    "assunto": "Anime, mangá e Pokémon",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Itachi Uchiha",
+    "assunto": "Anime, mangá e Pokémon",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Slenderman",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Chapeleiro Louco",
+    "assunto": "Personagens de livros e contos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Alice",
+    "assunto": "Personagens de livros e contos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Johnny Depp",
+    "assunto": "TV internacional e cinema",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Sócrates",
+    "assunto": "Ciência, invenção e tecnologia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Platão",
+    "assunto": "Ciência, invenção e tecnologia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Diógenes",
+    "assunto": "Ciência, invenção e tecnologia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Alexandre, o Grande",
+    "assunto": "História mundial (líderes e conquistadores)",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Tony Hawk",
+    "assunto": "Esporte",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Princesa Fiona",
+    "assunto": "DreamWorks e Illumination",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Venom",
+    "assunto": "Marvel",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Robin Hood",
+    "assunto": "Personagens de livros e contos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Alvo Dumbledore",
+    "assunto": "Disney e Pixar",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Mussum",
+    "assunto": "TV brasileira e humor",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Zacarias",
+    "assunto": "TV brasileira e humor",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "É o Tchan",
+    "assunto": "Música brasileira",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Cartola",
+    "assunto": "Música brasileira",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Tom Cruise",
+    "assunto": "TV internacional e cinema",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Vinicius de Moraes",
+    "assunto": "Música brasileira",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Red Hot Chili Peppers",
+    "assunto": "Música internacional",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Freddie Mercury",
+    "assunto": "Música internacional",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Freddy Krueger",
+    "assunto": "TV internacional e cinema",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Chucky",
+    "assunto": "TV internacional e cinema",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "James Bond",
+    "assunto": "Personagens de livros e contos",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Fantasma da Ópera",
+    "assunto": "Personagens de livros e contos",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Pedro Álvares Cabral",
+    "assunto": "História, política e religião no Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Cristóvão Colombo",
+    "assunto": "História mundial (líderes e conquistadores)",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Lilo",
+    "assunto": "Disney e Pixar",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Pedro Vaz de Caminha",
+    "assunto": "História, política e religião no Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Neil Armstrong",
+    "assunto": "Ciência, invenção e tecnologia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Huguinho, Zezinho e Luisinho",
+    "assunto": "Disney e Pixar",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Ursinho Pooh",
+    "assunto": "Disney e Pixar",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Leitão",
+    "assunto": "Disney e Pixar",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Ió",
+    "assunto": "Disney e Pixar",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Vasco da Gama",
+    "assunto": "História mundial (líderes e conquistadores)",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Supla",
+    "assunto": "Música brasileira",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Banguela",
+    "assunto": "DreamWorks e Illumination",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Soluço",
+    "assunto": "DreamWorks e Illumination",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Smaug",
+    "assunto": "Personagens de livros e contos",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Gollum",
+    "assunto": "Personagens de livros e contos",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Bilbo Bolseiro",
+    "assunto": "Personagens de livros e contos",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Legolas",
+    "assunto": "Personagens de livros e contos",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "John Wick",
+    "assunto": "TV internacional e cinema",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Bob, o Construtor",
+    "assunto": "Desenhos para os pequenos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Botas",
+    "assunto": "Desenhos para os pequenos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Capitão Gancho",
+    "assunto": "Disney e Pixar",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Sininho",
+    "assunto": "Disney e Pixar",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Max Steel",
+    "assunto": "Desenhos de TV (Cartoon, Nickelodeon e cia.)",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Barbie",
+    "assunto": "Desenhos para os pequenos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Aquaman",
+    "assunto": "DC",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Vovô Max",
+    "assunto": "Desenhos de TV (Cartoon, Nickelodeon e cia.)",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Gwen Tennyson",
+    "assunto": "Desenhos de TV (Cartoon, Nickelodeon e cia.)",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "João e Maria",
+    "assunto": "Personagens de livros e contos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Chapeuzinho Vermelho",
+    "assunto": "Personagens de livros e contos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Patinho Feio",
+    "assunto": "Personagens de livros e contos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Pequeno Polegar",
+    "assunto": "Personagens de livros e contos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Fada Madrinha",
+    "assunto": "Personagens de livros e contos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Gugu Liberato",
+    "assunto": "TV brasileira e humor",
+    "obs": "Old School; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Gretchen",
+    "assunto": "Música brasileira",
+    "obs": "Old School; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Hugo Chávez",
+    "assunto": "História mundial (líderes e conquistadores)",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Che Guevara",
+    "assunto": "História mundial (líderes e conquistadores)",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Tata Werneck",
+    "assunto": "TV brasileira e humor",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Will Smith",
+    "assunto": "TV internacional e cinema",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Jason David Frank",
+    "assunto": "TV internacional e cinema",
+    "obs": "Old School; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Matusalém",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Maomé",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Romeu e Julieta",
+    "assunto": "Personagens de livros e contos",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Rainha de Copas",
+    "assunto": "Personagens de livros e contos",
+    "obs": "combina com o Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Pequena Sereia",
+    "assunto": "Disney e Pixar",
+    "obs": "combina com o Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "King Kong",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Stephen King",
+    "assunto": "Escritores",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "H. P. Lovecraft",
+    "assunto": "Escritores",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Herobrine",
+    "assunto": "Videogame",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Ender Dragon",
+    "assunto": "Videogame",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Michael Jordan",
+    "assunto": "Esporte",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Cthulhu",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Diego Hypólito",
+    "assunto": "Esporte",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Rainha Hipólita",
+    "assunto": "História mundial (líderes e conquistadores)",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Helena de Troia",
+    "assunto": "História mundial (líderes e conquistadores)",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Papa Bento XVI",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Papa Pio XII",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Papa Leão XIV",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Vladimir Putin",
+    "assunto": "História mundial (líderes e conquistadores)",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Kim Jong-un",
+    "assunto": "História mundial (líderes e conquistadores)",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Xi Jinping",
+    "assunto": "História mundial (líderes e conquistadores)",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Volodymyr Zelensky",
+    "assunto": "História mundial (líderes e conquistadores)",
+    "obs": "nome: Volodymyr Zelensky; tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Jaspion",
+    "assunto": "TV internacional e cinema",
+    "obs": "Old School; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Jiraiya",
+    "assunto": "TV internacional e cinema",
+    "obs": "Old School; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Sansão",
+    "assunto": "Mitologia e lendas do mundo",
+    "obs": "o da Bíblia; respostas do JF 31/10"
+   },
+   {
+    "a": "Daiane dos Santos",
+    "assunto": "Esporte",
+    "obs": "o GPT tinha escrito Daniele; respostas do JF 31/10"
+   },
+   {
+    "a": "Blitz (banda)",
+    "assunto": "Música brasileira",
+    "obs": "a banda dos anos 80; Old School; respostas do JF 31/10"
+   },
+   {
+    "a": "Mestre André",
+    "assunto": "Personagens de livros e contos",
+    "obs": "cantiga \"A Loja do Mestre André\"; combina com o Júnior; respostas do JF 31/10"
+   },
+   {
+    "a": "Faraó",
+    "assunto": "História mundial (líderes e conquistadores)",
+    "obs": "o título dos reis do Egito antigo; respostas do JF 31/10"
    }
   ],
   "LUGAR": [
@@ -654,6 +1730,906 @@
    {
     "a": "Ilha de Creta",
     "assunto": "Lendas, Bíblia e mitologia"
+   },
+   {
+    "a": "Galáxia de Andrômeda",
+    "assunto": "Espaço",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Via Láctea",
+    "assunto": "Espaço",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Marrocos",
+    "assunto": "Países",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Rússia",
+    "assunto": "Países",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Ucrânia",
+    "assunto": "Países",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Paraguai",
+    "assunto": "Países",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Coreia do Sul",
+    "assunto": "Países",
+    "obs": "nome: Coreia do Sul; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Inglaterra",
+    "assunto": "Países",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Capadócia",
+    "assunto": "Natureza do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Orlando",
+    "assunto": "Cidades do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Flórida",
+    "assunto": "Cidades do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Uruguai",
+    "assunto": "Países",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Alemanha",
+    "assunto": "Países",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Santiago do Chile",
+    "assunto": "Cidades do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Alpes Suíços",
+    "assunto": "Natureza do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Suíça",
+    "assunto": "Países",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Cordilheira dos Andes",
+    "assunto": "Natureza do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Falésias",
+    "assunto": "Paisagens (genéricas)",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Brasil",
+    "assunto": "Países",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Praia de Ipanema",
+    "assunto": "Cidades e bairros do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Museu de Arte de São Paulo",
+    "assunto": "Pontos turísticos e construções do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Engenhão",
+    "assunto": "Pontos turísticos e construções do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Rua 25 de Março",
+    "assunto": "Cidades e bairros do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Avenida Brasil",
+    "assunto": "Cidades e bairros do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Bairro da Liberdade",
+    "assunto": "Cidades e bairros do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Ópera de Arame",
+    "assunto": "Pontos turísticos e construções do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Pier de Santa Mônica",
+    "assunto": "Cidades do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Arco do Triunfo",
+    "assunto": "Monumentos e pontos turísticos do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Torre inclinada de Pisa",
+    "assunto": "Monumentos e pontos turísticos do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Praia da Pipa",
+    "assunto": "Cidades e bairros do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Porto de Galinhas",
+    "assunto": "Cidades e bairros do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Coroa Vermelha",
+    "assunto": "Cidades e bairros do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Balneário Camboriú",
+    "assunto": "Cidades e bairros do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Recife de coral",
+    "assunto": "Natureza do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Metrô de São Paulo",
+    "assunto": "Pontos turísticos e construções do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Empire State Building",
+    "assunto": "Monumentos e pontos turísticos do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Vila Sésamo",
+    "assunto": "Lugares de ficção",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Torre dos Vingadores",
+    "assunto": "Lugares de ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Mansão Foster para Amigos Imaginários",
+    "assunto": "Lugares de ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "LazyTown",
+    "assunto": "Lugares de ficção",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Terra de Ooo",
+    "assunto": "Lugares de ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Beach City",
+    "assunto": "Lugares de ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Mansão Xavier",
+    "assunto": "Lugares de ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Espaço sideral",
+    "assunto": "Espaço",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Gravity Falls",
+    "assunto": "Lugares de ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Jurassic Park",
+    "assunto": "Lugares de ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Esgoto",
+    "assunto": "Lugares do dia a dia",
+    "obs": "nome: Esgoto; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Autódromo de Interlagos",
+    "assunto": "Pontos turísticos e construções do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "El Dorado",
+    "assunto": "Lendas, Bíblia e mitologia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Camelot",
+    "assunto": "Lendas, Bíblia e mitologia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Morro do Moreno",
+    "assunto": "Espírito Santo (Vitória e região)",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Pico da Bandeira",
+    "assunto": "Pontos turísticos e construções do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Usina Hidrelétrica de Itaipu",
+    "assunto": "Pontos turísticos e construções do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "CERN",
+    "assunto": "Espaço",
+    "obs": "nome: CERN; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Escolinha do Professor Raimundo",
+    "assunto": "Lugares de ficção",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Brooklyn",
+    "assunto": "Cidades do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Pearl Harbor",
+    "assunto": "Monumentos e pontos turísticos do mundo",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Câmara Secreta",
+    "assunto": "Lugares de ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Cemitério",
+    "assunto": "Lugares famosos por histórias sombrias ou secretas",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Escadaria Selarón",
+    "assunto": "Pontos turísticos e construções do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Escola Mundial",
+    "assunto": "Lugares de ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Saramandaia",
+    "assunto": "Lugares de ficção",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Orfanato Raio de Sol",
+    "assunto": "Lugares de ficção",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Vila do Chaves",
+    "assunto": "Lugares de ficção",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Nova Orleans",
+    "assunto": "Cidades do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Metrópolis",
+    "assunto": "Lugares de ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Clarim Diário",
+    "assunto": "Lugares de ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Konoha",
+    "assunto": "Lugares de ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Corporação Cápsula",
+    "assunto": "Lugares de ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Monte Sinai",
+    "assunto": "Lendas, Bíblia e mitologia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Jardim do Éden",
+    "assunto": "Lendas, Bíblia e mitologia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Reino dos Cogumelos",
+    "assunto": "Lugares de ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Nether",
+    "assunto": "Lugares de ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "The End",
+    "assunto": "Lugares de ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Centro Pokémon",
+    "assunto": "Lugares de ficção",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Cidade de Pallet",
+    "assunto": "Lugares de ficção",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Partenon",
+    "assunto": "Monumentos e pontos turísticos do mundo",
+    "obs": "nome: Partenon; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Rio Nilo",
+    "assunto": "Natureza do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Rio Jordão",
+    "assunto": "Natureza do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Mar Morto",
+    "assunto": "Natureza do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Asgard",
+    "assunto": "Lendas, Bíblia e mitologia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Santuário de Atena",
+    "assunto": "Lendas, Bíblia e mitologia",
+    "obs": "nome: Santuário de Atena; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Pompeia",
+    "assunto": "Civilizações antigas",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Vesúvio",
+    "assunto": "Natureza do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Planeta Namek",
+    "assunto": "Lugares de ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Sodoma e Gomorra",
+    "assunto": "Lendas, Bíblia e mitologia",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "País das Maravilhas",
+    "assunto": "Lugares de ficção",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Sala de aula",
+    "assunto": "Lugares do dia a dia",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Quadra poliesportiva",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Playground",
+    "assunto": "Lugares do dia a dia",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Salão de beleza",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Quintal",
+    "assunto": "Lugares do dia a dia",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Laboratório de informática",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Cidade de Townsville",
+    "assunto": "Lugares de ficção",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Cabo Canaveral",
+    "assunto": "Espaço",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Bolsa de Valores",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Frade e a Freira",
+    "assunto": "Espírito Santo (Vitória e região)",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Pedra Azul",
+    "assunto": "Espírito Santo (Vitória e região)",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Los Angeles",
+    "assunto": "Cidades do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Pangeia",
+    "assunto": "Civilizações antigas",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Serra Leoa",
+    "assunto": "Países",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Barra da Tijuca",
+    "assunto": "Cidades e bairros do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Leblon",
+    "assunto": "Cidades e bairros do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Jardim Botânico de Curitiba",
+    "assunto": "Pontos turísticos e construções do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Deserto do Atacama",
+    "assunto": "Natureza do mundo",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Restaurante",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Estacionamento",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "USP",
+    "assunto": "Pontos turísticos e construções do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Oásis",
+    "assunto": "Paisagens (genéricas)",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Arquipélago",
+    "assunto": "Paisagens (genéricas)",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Estratosfera",
+    "assunto": "Espaço",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Bosque dos Cem Acres",
+    "assunto": "Lugares de ficção",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Terra Oca",
+    "assunto": "Lendas, Bíblia e mitologia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Centro da Terra",
+    "assunto": "Lendas, Bíblia e mitologia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Farol",
+    "assunto": "Paisagens (genéricas)",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Bahia",
+    "assunto": "Cidades e bairros do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Minas Gerais",
+    "assunto": "Cidades e bairros do Brasil",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Basílica",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Catedral",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Necrotério",
+    "assunto": "Lugares famosos por histórias sombrias ou secretas",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Locadora",
+    "assunto": "Lugares do dia a dia",
+    "obs": "Old School; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Papelaria",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Cartório",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Spa",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Oceano Pacífico",
+    "assunto": "Natureza do mundo",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Oceano Índico",
+    "assunto": "Natureza do mundo",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Oceano Atlântico",
+    "assunto": "Natureza do mundo",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Prisão",
+    "assunto": "Lugares famosos por histórias sombrias ou secretas",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Correios",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Lavanderia",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Fantástica Fábrica de Chocolate",
+    "assunto": "Lugares de ficção",
+    "obs": "combina com o Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Posto de gasolina",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Concessionária",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Churrascaria",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Oficina",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Canteiro de obras",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Burger King",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Delegacia",
+    "assunto": "Lugares do dia a dia",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Praça dos Três Poderes",
+    "assunto": "Pontos turísticos e construções do Brasil",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Octógono",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Ringue",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Açougue",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Mausoléu",
+    "assunto": "Lugares famosos por histórias sombrias ou secretas",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Los Santos",
+    "assunto": "Lugares de ficção",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Garganta do Diabo",
+    "assunto": "Pontos turísticos e construções do Brasil",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Punta del Este",
+    "assunto": "Cidades do mundo",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Rio Sena",
+    "assunto": "Natureza do mundo",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Rio Tietê",
+    "assunto": "Pontos turísticos e construções do Brasil",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Sergipe",
+    "assunto": "Cidades e bairros do Brasil",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Paraíba",
+    "assunto": "Cidades e bairros do Brasil",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Espírito Santo",
+    "assunto": "Cidades e bairros do Brasil",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Pet shop",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Barbearia",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Transilvânia",
+    "assunto": "Cidades do mundo",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Teatro",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Ópera",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Pista de patinação no gelo",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Troia",
+    "assunto": "Civilizações antigas",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Esparta",
+    "assunto": "Civilizações antigas",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Palácio da Alvorada",
+    "assunto": "Pontos turísticos e construções do Brasil",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Rodoviária",
+    "assunto": "Lugares do dia a dia",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Himalaia",
+    "assunto": "Natureza do mundo",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Tibete",
+    "assunto": "Países",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Ilha de Trindade",
+    "assunto": "Pontos turísticos e construções do Brasil",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "País de Gales",
+    "assunto": "Países",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Países Baixos",
+    "assunto": "Países",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Equador",
+    "assunto": "Países",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Mar Cáspio",
+    "assunto": "Natureza do mundo",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Mar Egeu",
+    "assunto": "Natureza do mundo",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Canal da Mancha",
+    "assunto": "Natureza do mundo",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Igreja da Penha",
+    "assunto": "Pontos turísticos e construções do Brasil",
+    "obs": "a do Rio de Janeiro, no alto da pedra (bairro da Penha); respostas do JF 31/10"
+   },
+   {
+    "a": "Termas",
+    "assunto": "Lugares do dia a dia",
+    "obs": "era \"casa de banho\"; o JF preferiu termas; respostas do JF 31/10"
+   },
+   {
+    "a": "Rota do Lagarto",
+    "assunto": "Espírito Santo (Vitória e região)",
+    "obs": "trilha do ES; respostas do JF 31/10"
+   },
+   {
+    "a": "Tártaro",
+    "assunto": "Lendas, Bíblia e mitologia",
+    "obs": "mitologia grega; respostas do JF 31/10"
+   },
+   {
+    "a": "Capela",
+    "assunto": "Lugares do dia a dia",
+    "obs": "voltou pra fechar Lugar em 220; respostas do JF 31/10"
+   },
+   {
+    "a": "Hotel Transilvânia",
+    "assunto": "Cinema e animação",
+    "obs": "pedido do JF 31/10"
+   },
+   {
+    "a": "Pompeia",
+    "assunto": "História",
+    "obs": "fecha a conta de Lugar em 225"
+   },
+   {
+    "a": "Triângulo das Bermudas",
+    "assunto": "Mistérios",
+    "obs": "fecha a conta de Lugar em 225"
+   },
+   {
+    "a": "Ilha Nublar",
+    "assunto": "Cinema",
+    "obs": "Jurassic Park; fecha a conta de Lugar em 225"
+   },
+   {
+    "a": "Vale do Silício",
+    "assunto": "Tecnologia",
+    "obs": "fecha a conta de Lugar em 225"
    }
   ],
   "COISA": [
@@ -1222,7 +3198,7 @@
     "assunto": "Cinema e streaming"
    },
    {
-    "a": "Crash Bandicoot",
+    "a": "Crash Bandicoot (o jogo)",
     "assunto": "Games e consoles",
     "obs": "o jogo"
    },
@@ -1273,6 +3249,506 @@
    {
     "a": "Cavalo de Troia",
     "assunto": "Objetos lendários, armas e ficção"
+   },
+   {
+    "a": "Five Nights at Freddy’s",
+    "assunto": "Games e consoles",
+    "obs": "nome: Five Nights at Freddy’s; tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 26/10"
+   },
+   {
+    "a": "CIA",
+    "assunto": "Política e justiça",
+    "obs": "de Pessoa pra Coisa; tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "FBI",
+    "assunto": "Política e justiça",
+    "obs": "de Pessoa pra Coisa; tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "ABIN",
+    "assunto": "Política e justiça",
+    "obs": "de Pessoa pra Coisa; tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Anvisa",
+    "assunto": "Política e justiça",
+    "obs": "de Pessoa pra Coisa; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Polícia Militar",
+    "assunto": "Política e justiça",
+    "obs": "de Pessoa pra Coisa; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Polícia Federal",
+    "assunto": "Política e justiça",
+    "obs": "de Pessoa pra Coisa; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Death Note",
+    "assunto": "Objetos lendários, armas e ficção",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Diamante",
+    "assunto": "Natureza, fogo e céu",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Esmeralda",
+    "assunto": "Natureza, fogo e céu",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Rubi",
+    "assunto": "Natureza, fogo e céu",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Safira",
+    "assunto": "Natureza, fogo e céu",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Redstone",
+    "assunto": "Games e consoles",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Dirigível",
+    "assunto": "Transportes",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Balão",
+    "assunto": "Transportes",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Xerox",
+    "assunto": "Objetos retrô (nostalgia)",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Carrinho de rolimã",
+    "assunto": "Jogos e brinquedos",
+    "obs": "combina com o Júnior; Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Pokédex",
+    "assunto": "Games e consoles",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Pokébola",
+    "assunto": "Games e consoles",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "DeLorean",
+    "assunto": "Objetos lendários, armas e ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Abaporu",
+    "assunto": "Cinema e streaming",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Cobre",
+    "assunto": "Natureza, fogo e céu",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Ferro",
+    "assunto": "Natureza, fogo e céu",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Ouro",
+    "assunto": "Natureza, fogo e céu",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Açúcar",
+    "assunto": "Comidas e bebidas",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Sal",
+    "assunto": "Comidas e bebidas",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Pimenta",
+    "assunto": "Comidas e bebidas",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Açaí",
+    "assunto": "Comidas e bebidas",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Uísque",
+    "assunto": "Comidas e bebidas",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Cacau",
+    "assunto": "Comidas e bebidas",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Maçã",
+    "assunto": "Comidas e bebidas",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Limão",
+    "assunto": "Comidas e bebidas",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Morango",
+    "assunto": "Comidas e bebidas",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Uva",
+    "assunto": "Comidas e bebidas",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Melancia",
+    "assunto": "Comidas e bebidas",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Abacate",
+    "assunto": "Comidas e bebidas",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Abacaxi",
+    "assunto": "Comidas e bebidas",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Cachorro-quente",
+    "assunto": "Comidas e bebidas",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Churrasco",
+    "assunto": "Comidas e bebidas",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Cachaça",
+    "assunto": "Comidas e bebidas",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Frevo",
+    "assunto": "Música",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Lei Áurea",
+    "assunto": "Política e justiça",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Tratado de Tordesilhas",
+    "assunto": "Política e justiça",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Tratado de Versalhes",
+    "assunto": "Política e justiça",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Pique-esconde",
+    "assunto": "Jogos e brinquedos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Pique-bandeira",
+    "assunto": "Jogos e brinquedos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Pega-pega",
+    "assunto": "Jogos e brinquedos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Pula-corda",
+    "assunto": "Jogos e brinquedos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Bola de gude",
+    "assunto": "Jogos e brinquedos",
+    "obs": "combina com o Júnior; Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Maquiagem",
+    "assunto": "Cultura de internet e da vida",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Teorema de Pitágoras",
+    "assunto": "Ciência e instrumentos",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Física",
+    "assunto": "Ciência e instrumentos",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Literatura",
+    "assunto": "Ciência e instrumentos",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Química",
+    "assunto": "Ciência e instrumentos",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Biologia",
+    "assunto": "Ciência e instrumentos",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Artes",
+    "assunto": "Ciência e instrumentos",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Educação Física",
+    "assunto": "Ciência e instrumentos",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Jogos Vorazes",
+    "assunto": "Objetos lendários, armas e ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Mona Lisa",
+    "assunto": "Cinema e streaming",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Jumanji",
+    "assunto": "Objetos lendários, armas e ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Diário de Anne Frank",
+    "assunto": "Cinema e streaming",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Gangorra",
+    "assunto": "Jogos e brinquedos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Balanço",
+    "assunto": "Jogos e brinquedos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Caderno",
+    "assunto": "Ciência e instrumentos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Férias",
+    "assunto": "Ciência e instrumentos",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Máquina de Mistérios",
+    "assunto": "Objetos lendários, armas e ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Batmóvel",
+    "assunto": "Objetos lendários, armas e ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Kryptonita",
+    "assunto": "Objetos lendários, armas e ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Mapa do Maroto",
+    "assunto": "Objetos lendários, armas e ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Nintendo 64",
+    "assunto": "Games e consoles",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Vitrola",
+    "assunto": "Objetos retrô (nostalgia)",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Gramofone",
+    "assunto": "Objetos retrô (nostalgia)",
+    "obs": "Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "MP3 player",
+    "assunto": "Objetos retrô (nostalgia)",
+    "obs": "nome: MP3 player; Old School; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Arca de Noé",
+    "assunto": "Objetos lendários, armas e ficção",
+    "obs": "de Lugar pra Coisa; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Caravana",
+    "assunto": "Transportes",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Mel",
+    "assunto": "Comidas e bebidas",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Viagem ao Centro da Terra",
+    "assunto": "Cinema e streaming",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "A Volta ao Mundo em Oitenta Dias",
+    "assunto": "Cinema e streaming",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Oscar",
+    "assunto": "Objetos lendários, armas e ficção",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Átomo",
+    "assunto": "Natureza, fogo e céu",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Anéis de Saturno",
+    "assunto": "Natureza, fogo e céu",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Illuminati",
+    "assunto": "Política e justiça",
+    "obs": "tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Missa",
+    "assunto": "Cultura de internet e da vida",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Piada",
+    "assunto": "Cultura de internet e da vida",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Bíblia",
+    "assunto": "Cinema e streaming",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Fórmula 1",
+    "assunto": "Esporte",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Stock Car",
+    "assunto": "Esporte",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Patins",
+    "assunto": "Jogos e brinquedos",
+    "obs": "combina com o Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Álbum de figurinhas",
+    "assunto": "Jogos e brinquedos",
+    "obs": "combina com o Júnior; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Álbum de fotos",
+    "assunto": "Objetos retrô (nostalgia)",
+    "obs": "Old School; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Olimpíadas",
+    "assunto": "Esporte",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Copa do Mundo",
+    "assunto": "Esporte",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Lasanha",
+    "assunto": "Comidas e bebidas",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Fibra óptica",
+    "assunto": "Tecnologia e internet",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Hino Nacional",
+    "assunto": "Música",
+    "obs": "handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Jetman",
+    "assunto": "Objetos lendários, armas e ficção",
+    "obs": "Old School; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Nyan Cat",
+    "assunto": "Cultura de internet e da vida",
+    "obs": "Old School; handoff JF+GPT 30/10"
+   },
+   {
+    "a": "Samarco",
+    "assunto": "Política e justiça",
+    "obs": "a empresa; tema pesado (rompimento da barragem de Mariana, 2015): só fatos, nunca no Júnior; respostas do JF 31/10"
+   },
+   {
+    "a": "Blitz",
+    "assunto": "Política e justiça",
+    "obs": "a de trânsito; respostas do JF 31/10"
+   },
+   {
+    "a": "Megazord",
+    "assunto": "Objetos lendários, armas e ficção",
+    "obs": "Power Rangers; Old School; respostas do JF 31/10"
    }
   ],
   "ANIMAL": [
@@ -1475,6 +3951,81 @@
    {
     "a": "Tatuzinho-de-jardim",
     "assunto": "Insetos e bichinhos"
+   },
+   {
+    "a": "Tatu-bola",
+    "assunto": "Fauna brasileira",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Cobra-coral",
+    "assunto": "Fauna brasileira",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Lebre",
+    "assunto": "Frio, montanhas e florestas do Norte",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Baleia-azul",
+    "assunto": "Mar e água",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Viúva-negra",
+    "assunto": "Insetos e bichinhos",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Aranha-caranguejeira",
+    "assunto": "Fauna brasileira",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Camundongo",
+    "assunto": "Estimação e fazenda",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Mula",
+    "assunto": "Fauna brasileira",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Urso",
+    "assunto": "Frio, montanhas e florestas do Norte",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Marmota",
+    "assunto": "Frio, montanhas e florestas do Norte",
+    "obs": "combina com o Júnior; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Ligre",
+    "assunto": "Savanas e selvas da África e da Ásia",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Ovelha Dolly",
+    "assunto": "Estimação e fazenda",
+    "obs": "de Pessoa pra Animal; handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Víbora",
+    "assunto": "Fauna brasileira",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Leopardo-das-neves",
+    "assunto": "Frio, montanhas e florestas do Norte",
+    "obs": "handoff JF+GPT 29/10"
+   },
+   {
+    "a": "Marreco",
+    "assunto": "Estimação e fazenda",
+    "obs": "handoff JF+GPT 29/10; voltou porque a Hidra já está no jogo"
    }
   ],
   "ANO": [
@@ -1727,6 +4278,31 @@
     "a": "2026",
     "assunto": "",
     "obs": "Copa do Mundo nos Estados Unidos, Canadá e México, a primeira com 48 seleções; e Lula é reeleito (2º turno em 25/10, contra Flávio Bolsonaro), o primeiro presidente eleito quatro vezes pelo voto direto no Brasil (tema político: só fatos, fora do Júnior)"
+   },
+   {
+    "a": "Século XV",
+    "assunto": "",
+    "obs": "período; o JF quis variar a categoria Ano; respostas do JF 31/10"
+   },
+   {
+    "a": "Século XXI",
+    "assunto": "",
+    "obs": "período; o JF quis variar a categoria Ano; respostas do JF 31/10"
+   },
+   {
+    "a": "Anos 80",
+    "assunto": "",
+    "obs": "período (voltou pra Ano a pedido do JF); respostas do JF 31/10"
+   },
+   {
+    "a": "Anos 90",
+    "assunto": "",
+    "obs": "período (voltou pra Ano a pedido do JF); respostas do JF 31/10"
+   },
+   {
+    "a": "Anos 2000",
+    "assunto": "",
+    "obs": "período; entrou pra fechar Ano em 55, junto com os outros períodos; respostas do JF 31/10"
    }
   ]
  }

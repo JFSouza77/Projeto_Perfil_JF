@@ -41,6 +41,10 @@ de 500 novas (o JF vai olhar o Perfil 8).
 - **Progresso (30/10/2026):** Ano 50/50 e Animal 50/50 prontas em `cartas_2.0/` (auditadas, sem erro). Faltam
   Pessoa (105), Lugar (45) e Coisa (150), esperando o JF aprovar o estilo das primeiras.
 
+- **Handoff JF + GPT (31/10/2026):** curadoria dos lotes de 26, 29 e 30/10 em `docs/Curadoria_Handoff_Perfil4_2026-10-31.md`.
+  495 aprovadas entraram nas planejadas (Pessoa 210, Lugar 170, Coisa 100, Animal 15); total planejado: 895 (Pessoa 315,
+  Lugar 215, Coisa 250, Animal 65, Ano 50). Com as 1.000 do jogo, a 2.0 fica com 1.895 cartas.
+
 ## Como as cartas vão entrar
 - **Dicas escritas do zero**, no padrão do jogo (20 dicas, as especiais no lugar de sempre, da mais difícil pra mais
   fácil). As fotos das cartas físicas servem só pra lembrar o assunto: o texto delas é do jogo de tabuleiro original e
@@ -502,3 +506,26 @@ porque já é carta de Pessoa.
 23. Netuno
 
 A Ilha de Creta está na seção de mitologia (Lugar).
+
+### Progresso (31/10/2026, noite)
+
+- **As 380 aprovadas estão escritas** (com os ajustes do JF): Pessoa 105, Lugar 50 (45 + Hotel Transilvânia e mais 4 pra fechar a conta), Coisa 150.
+- Arquivos: `cartas_2.0/02-pessoa.js` (PESSOA-0201..0305), `03-lugar.js` (LUGAR-0201..0250), `04-coisa.js` (COISA-0201..0350). Fonte em `cartas_2.0/fonte/`.
+- Auditoria `--com-2.0 --tudo`: 0 erros; 1.405 cartas somando o jogo e a 2.0 até agora.
+- Tema pesado (fora do Júnior): Alexandre Nardoni, Eliza Samudio, Osama Bin Laden, Cerveja, Caça esportiva, Mensalão, Petrolão, Operação Lava Jato. A marcação fina fica pro filtro depois.
+- Crash Bandicoot aparece duas vezes no plano: em Pessoa, o personagem; em Coisa, **"Crash Bandicoot (o jogo)"**.
+
+### Ideia do JF pra balancear (31/10/2026): lote por partida
+
+- Problema: hoje a carta sai de um baralho único embaralhado (a roleta só mostra a categoria da carta que já saiu). Então a categoria com mais cartas sai mais. Na 2.0, Pessoa (520) sairia o dobro de Ano (255).
+- Ideia: a cada partida, o jogo monta um **lote de 400 cartas, 100 de cada categoria do modo** (Clássico: Pessoa, Lugar, Coisa+Animal, Ano; Júnior: Pessoa, Lugar, Coisa, Animal). As categorias passam a sair na mesma proporção, seja qual for o tamanho de cada uma.
+- Memória: o jogo já guarda as últimas 400 cartas que saíram (`CARTAS_RECENTES_MAX`) e joga essas pro fundo. No lote novo, as 100 de cada categoria saem primeiro das que ainda não apareceram.
+- Com isso, não precisa igualar as categorias na régua. Animal e Ano só precisam de cartas suficientes pra não repetir rápido.
+- Status: proposta, esperando o JF dar o ok. Entra junto com as cartas da 2.0.
+
+### Sugestões do JF esperando o Perfil 8 (31/10/2026)
+
+- **Maternidade** (Lugar) e **Reino de Oz** (Lugar, do Mágico de Oz). Nenhuma das duas está no jogo nem no plano.
+- Entram no plano quando o JF trouxer as cartas de Ano (e o que mais achar no Perfil 8), pra fechar as contas em 0 ou 5.
+- Animal não tem no Perfil 8 (só no Júnior). Pra Animal, o Code sugere dinossauros, bichos brasileiros, bichos do mar e
+  poucas raças, só as muito conhecidas.

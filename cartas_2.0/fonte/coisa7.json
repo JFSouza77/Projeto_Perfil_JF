@@ -1,0 +1,222 @@
+[
+ {
+  "a": "Bluetooth",
+  "q": [
+   "Sou uma tecnologia de conexão sem fio de curta distância",
+   "Conecto fones de ouvido ao celular",
+   "Meu símbolo parece um B pontudo",
+   "Meu nome homenageia um rei viking da Dinamarca",
+   "O rei que me deu o nome tinha um dente escuro",
+   "Funciono a uns 10 metros de distância",
+   "Conecto caixinhas de som, teclados e mouses",
+   "Fui criado pela Ericsson nos anos 1990",
+   "Ligo o celular ao som do carro",
+   "Preciso parear os aparelhos na primeira vez",
+   "Gasto pouca bateria nas versões mais novas",
+   "Meu símbolo junta duas runas antigas",
+   "Os relógios inteligentes usam a minha conexão",
+   "Já mandei arquivos de um celular pro outro nos anos 2000",
+   "Às vezes, desconecto sozinho na pior hora",
+   "Fico num botão nas configurações rápidas do celular",
+   "Minha cor no símbolo é azul"
+  ]
+ },
+ {
+  "a": "Roteador",
+  "q": [
+   "Espalho o sinal de internet sem fio pela casa",
+   "Tenho antenas e luzinhas piscando",
+   "Fico ligado no modem da operadora",
+   "Quando a internet cai, a primeira dica é me desligar e ligar de novo",
+   "Tenho uma senha de Wi-Fi colada embaixo",
+   "Funciono em 2,4 GHz e 5 GHz",
+   "Paredes grossas enfraquecem o meu sinal",
+   "Posso ter cabos de rede atrás",
+   "Os repetidores ajudam a levar o meu sinal mais longe",
+   "Fico em cima da estante ou atrás da TV",
+   "Tenho versões em malha, a mesh, pra casas grandes",
+   "Distribuo endereços IP pros aparelhos",
+   "Também sou o nome de uma ferramenta de marcenaria",
+   "Fico piscando a noite inteira",
+   "Quando eu travo, a família toda reclama",
+   "Os técnicos da operadora vêm me instalar",
+   "Mostro o nome da rede pra todo mundo da rua"
+  ]
+ },
+ {
+  "a": "Área de trabalho",
+  "q": [
+   "Sou a tela inicial do computador",
+   "Tenho ícones de programas e arquivos",
+   "Fico com um papel de parede no fundo",
+   "Tenho a lixeira num canto",
+   "Muita gente me deixa lotada de arquivos",
+   "A barra de tarefas fica embaixo de mim no Windows",
+   "Também me chamam de desktop",
+   "Dá pra criar pastas em mim",
+   "Uso atalhos pra abrir os programas rápido",
+   "No Mac, também tenho uma versão minha",
+   "Mostro um relógio no canto",
+   "Sou o primeiro lugar que aparece quando o computador liga",
+   "Posso ter vários de mim virtuais ao mesmo tempo",
+   "Arrastar arquivos pra mim é jeito rápido de salvar",
+   "Também sou o espaço de uma mesa de escritório",
+   "A colina verde do Windows XP foi um fundo famoso meu",
+   "Quando estou organizada, dá até orgulho"
+  ]
+ },
+ {
+  "a": "Tablet",
+  "q": [
+   "Sou um aparelho com tela grande sensível ao toque",
+   "Sou maior que um celular e menor que um notebook",
+   "O iPad é a minha versão mais famosa",
+   "Uso Android ou iPadOS",
+   "Muitas crianças assistem vídeo e jogam em mim",
+   "Uso uma caneta especial pra desenhar",
+   "Posso ter um teclado acoplado",
+   "Não tenho teclado físico normalmente",
+   "Fico em pé numa capinha com suporte",
+   "Sou bom pra ler livros digitais",
+   "Nos restaurantes, sirvo de cardápio",
+   "Fui lançado pela Apple em 2010, na minha versão mais popular",
+   "Uso chip de celular em alguns modelos",
+   "Os médicos e garçons me usam pra anotar",
+   "Também sou o nome de uma pastilha de remédio, em inglês",
+   "Na Antiguidade, meu nome era de uma placa de pedra ou argila",
+   "Tenho bateria pra um dia inteiro"
+  ]
+ },
+ {
+  "a": "Código binário",
+  "q": [
+   "Sou a linguagem básica dos computadores",
+   "Só uso dois números: zero e um",
+   "Cada um dos meus algarismos se chama bit",
+   "Oito bits formam um byte",
+   "Represento ligado e desligado",
+   "Os filmes de hacker mostram telas cheias de mim",
+   "Em Matrix, apareço escorrendo na tela, mas verde",
+   "Leibniz estudou a minha numeração no século 17",
+   "Qualquer texto, foto ou música vira eu dentro do computador",
+   "O número 2, comigo, se escreve 10",
+   "Sou a base de toda a computação digital",
+   "Tenho uma piada: existem 10 tipos de pessoas, as que me entendem e as que não",
+   "Sou difícil de ler pra humanos",
+   "O Morse também usa só dois sinais, o curto e o longo",
+   "Na eletrônica, sou feito de pulsos de energia",
+   "Os programadores não escrevem em mim diretamente hoje",
+   "Meu nome vem do latim e quer dizer dois"
+  ]
+ },
+ {
+  "a": "Python",
+  "q": [
+   "Sou uma linguagem de programação",
+   "Meu nome vem de um grupo de humor britânico dos anos 1970",
+   "Meu símbolo tem duas cobras azul e amarela",
+   "Sou uma das linguagens mais fáceis de aprender",
+   "Sou muito usada em inteligência artificial",
+   "Fui criada por Guido van Rossum",
+   "Meu criador é holandês",
+   "Fui lançada em 1991",
+   "Uso espaços no começo da linha pra organizar o código",
+   "Sou muito usada em ciência de dados",
+   "O Instagram e o YouTube usam partes feitas em mim",
+   "Tenho bibliotecas famosas como NumPy e Pandas",
+   "Sou gratuita e de código aberto",
+   "Sou ensinada em escolas e faculdades",
+   "Meu nome também é o de uma cobra",
+   "Tenho a versão 3, que substituiu a 2",
+   "Escrevo print pra mostrar texto na tela"
+  ]
+ },
+ {
+  "a": "JavaScript",
+  "q": [
+   "Sou a linguagem de programação dos navegadores",
+   "Faço os sites ficarem interativos",
+   "Fui criada em 10 dias, em 1995",
+   "Meu criador é Brendan Eich",
+   "Nasci na Netscape",
+   "Uso a sigla JS",
+   "Meu símbolo é um quadrado amarelo com a minha sigla",
+   "Tenho frameworks como React, Vue e Angular",
+   "Rodo em servidores com o Node.js",
+   "Meu nome foi uma jogada de marketing pra aproveitar outra linguagem famosa",
+   "Sou uma das linguagens mais usadas do mundo",
+   "Uso console.log pra mostrar mensagens",
+   "Tenho fama de ter comportamentos estranhos",
+   "Junto com HTML e CSS, formo a base da web",
+   "O Perfil JF é feito comigo",
+   "Meu nome oficial é ECMAScript",
+   "Sou executada direto no navegador, sem instalar nada"
+  ]
+ },
+ {
+  "a": "CSS",
+  "q": [
+   "Sou a linguagem que deixa os sites bonitos",
+   "Defino cores, fontes e tamanhos",
+   "Trabalho junto com o HTML",
+   "Minha sigla quer dizer folhas de estilo em cascata",
+   "Uso seletores, chaves e ponto e vírgula",
+   "Faço animações e transições",
+   "Uso flexbox e grid pra organizar o layout",
+   "Deixo os sites responsivos pro celular",
+   "Tenho frameworks como Bootstrap e Tailwind",
+   "Fui criada em 1996",
+   "Centralizar uma div comigo virou meme",
+   "Uso cores em hexadecimal, como #FF0000",
+   "Tenho media queries",
+   "Dá pra fazer modo escuro comigo",
+   "Defino margens e espaçamentos",
+   "Uso a palavra !important quando nada mais funciona",
+   "Sou muito usada no Perfil JF pra cores e temas"
+  ]
+ },
+ {
+  "a": "COBOL",
+  "q": [
+   "Sou uma linguagem de programação antiga, dos anos 1950",
+   "Fui criada pensando em empresas e negócios",
+   "Grace Hopper ajudou a me criar",
+   "Ainda rodo em bancos e sistemas do governo",
+   "Pouca gente jovem sabe me programar hoje",
+   "Uso palavras em inglês parecidas com frases",
+   "Na pandemia, faltaram programadores meus nos Estados Unidos",
+   "Fui feita pra rodar em computadores grandões, os mainframes",
+   "Lido com muito cálculo de dinheiro",
+   "Sou uma das linguagens mais antigas ainda em uso",
+   "Minha sigla fala de linguagem comum orientada a negócios",
+   "Meus programadores costumam ser mais velhos",
+   "Sistemas da Previdência usam versões minhas",
+   "Meu código é escrito em letras maiúsculas, muitas vezes",
+   "Fui padronizada em 1960",
+   "Muitos bilhões de linhas minhas ainda estão rodando",
+   "Tenho divisões chamadas DIVISION no código"
+  ]
+ },
+ {
+  "a": "HTML",
+  "q": [
+   "Sou a linguagem que estrutura as páginas da internet",
+   "Uso tags entre os sinais de menor e maior",
+   "Fui criado por Tim Berners-Lee",
+   "Minha sigla fala de linguagem de marcação de hipertexto",
+   "Tenho tags como h1, p e div",
+   "Trabalho com CSS e JavaScript",
+   "Minha versão atual é a 5",
+   "Não sou exatamente uma linguagem de programação",
+   "Faço links com a tag a",
+   "Coloco imagens com a tag img",
+   "Toda página da internet tem um pouco de mim",
+   "Abro e fecho as tags com uma barra",
+   "Fui criado no começo dos anos 1990",
+   "Dá pra ver o meu código com o botão direito, exibir código-fonte",
+   "Tenho head e body",
+   "O Perfil JF é um arquivo meu gigante",
+   "Sou a primeira coisa que se aprende em desenvolvimento web"
+  ]
+ }
+]

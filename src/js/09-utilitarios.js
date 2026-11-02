@@ -42,6 +42,39 @@ function embaralharEquilibrado(cards, alvo) {
     .sort((a, b) => a.key - b.key)
     .map((x) => x.c);
 }
+// Lote da partida (JF, 31/10/2026): com o banco maior que o limite do modo, cada categoria entra com a mesma cota
+// (no Clássico, 400 = 100 de cada), ou na proporção do alvo (Hardcore). Dentro de cada categoria, as cartas que não
+// saíram nas últimas partidas vêm primeiro. Se uma categoria não tem cartas pra cota, o que falta é completado com as
+// outras, uma de cada vez. Antes o recorte era um só, às cegas: a categoria com mais cartas no banco enchia o lote.
+function loteBalanceado(cards, limite, alvo) {
+  if (!Array.isArray(cards) || cards.length <= limite) return cards;
+  const grupos = {};
+  cards.forEach((c) => {
+    const g = gemCategoryFor(c.category);
+    (grupos[g] = grupos[g] || []).push(c);
+  });
+  const cats = Object.keys(grupos);
+  const preferir = typeof cartasPreferirNovas === "function" ? cartasPreferirNovas : (l) => l;
+  cats.forEach((g) => (grupos[g] = preferir(shuffle(grupos[g]))));
+  const pesoDe = (g) => (alvo ? alvo[g] || 0 : 1);
+  const somaPeso = cats.reduce((s, g) => s + pesoDe(g), 0) || 1;
+  const lote = [];
+  cats.forEach((g) => {
+    const k = Math.min(Math.floor((limite * pesoDe(g)) / somaPeso), grupos[g].length);
+    lote.push(...grupos[g].splice(0, k));
+  });
+  for (let pegou = true; lote.length < limite && pegou; ) {
+    pegou = false;
+    for (const g of cats) {
+      if (lote.length >= limite) break;
+      if (grupos[g].length) {
+        lote.push(grupos[g].shift());
+        pegou = true;
+      }
+    }
+  }
+  return lote;
+}
 function escapeHtml(text) {
   const div = document.createElement("div");
   div.textContent = String(text);
