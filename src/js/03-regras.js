@@ -644,6 +644,7 @@ function expressPoints(realRevealed) {
 function applySpecialMove(targetIdx, amount) {
   if (gameEnded) return;
   if (players[targetIdx] && targetIdx !== responderIndex) caosMesaAlvo(responderIndex, targetIdx, amount);
+  if (players[targetIdx] && targetIdx !== responderIndex && players[responderIndex] && amount) players[responderIndex].apoiosPartida = (players[responderIndex].apoiosPartida || 0) + 1; // Duende Ajudante
   if (players[targetIdx] && amount) {
     vibrar(amount > 0 ? "avanca" : "volta");
     fxFloat(

@@ -109,7 +109,7 @@ function caosComentFato(d) {
     case "natalNoel":
       return { fr: `${n} entregou ${v} ${pl(d.v, "carta acertada", "cartas acertadas")} de presente como Mestre`, np: `entregar ${v} cartas de presente` };
     case "natalDuende":
-      return { fr: `${n} acertou ${v} ${pl(d.v, "carta", "cartas")} no Natal`, np: `acertar ${v} cartas` };
+      return { fr: `${n} mexeu ${v} ${pl(d.v, "vez", "vezes")} nos outros jogadores`, np: `mexer ${v} vezes nos outros` };
     case "natalRena":
       return { fr: `${n} levou só ${v} segundos em média pra acertar`, np: `acertar em ${v} segundos` };
     case "natalEstrela":

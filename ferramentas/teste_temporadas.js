@@ -151,9 +151,9 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     const r = {};
     const salva = { players, history, cartasPartida };
     players = [
-      { id: "a", name: "Ana", color: "#e94560", avatar: "🦊", errosPartida: 3 },
-      { id: "b", name: "Beto", color: "#4ecdc4", avatar: "🐼", errosPartida: 0 },
-      { id: "c", name: "Cris", color: "#ffd166", avatar: "🐸", errosPartida: 1 },
+      { id: "a", name: "Ana", color: "#e94560", avatar: "🦊", errosPartida: 3, apoiosPartida: 1 },
+      { id: "b", name: "Beto", color: "#4ecdc4", avatar: "🐼", errosPartida: 0, apoiosPartida: 0 },
+      { id: "c", name: "Cris", color: "#ffd166", avatar: "🐸", errosPartida: 1, apoiosPartida: 3 },
     ];
     history = [
       { playerName: "Beto", cluesUsed: 2, timeTakenMs: 5000 },
@@ -168,8 +168,25 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     const m = Object.fromEntries(got);
     r.natal5Titulos = got.length === 5;
     r.papaiNoelProMestreQueMaisDeu = m["Papai Noel"] === "Ana";
-    r.titulosCertos = m["Duende Ajudante"] === "Beto" && m["Rena Veloz"] === "Beto" && m["Estrela Guia"] === "Beto" && m["Boneco de Neve"] === "Ana";
+    r.titulosCertos = m["Duende Ajudante"] === "Cris" && m["Rena Veloz"] === "Beto" && m["Estrela Guia"] === "Beto" && m["Boneco de Neve"] === "Ana";
     r.tituloComentavel = !!caosComentFato({ t: "natalNoel", n: "Ana", v: 3 });
+    // o contador do Duende: mexer em outro jogador conta pra quem está na vez; mexer em si mesmo não
+    const salvaR = responderIndex;
+    const fakeMove = () => {};
+    players.forEach((p) => (p.apoiosPartida = 0, p.position = 0));
+    responderIndex = 0;
+    const ren = { renderMiniScoreboard, renderScoreboard, afterMoveSpecial, maybeShowMoveSpecialFlavor, fxFloat };
+    renderMiniScoreboard = renderScoreboard = afterMoveSpecial = maybeShowMoveSpecialFlavor = fxFloat = fakeMove;
+    try {
+      applySpecialMove(1, 2);
+      applySpecialMove(2, -2);
+      applySpecialMove(0, 2);
+    } finally {
+      Object.assign(window, {});
+      renderMiniScoreboard = ren.renderMiniScoreboard; renderScoreboard = ren.renderScoreboard; afterMoveSpecial = ren.afterMoveSpecial; maybeShowMoveSpecialFlavor = ren.maybeShowMoveSpecialFlavor; fxFloat = ren.fxFloat;
+      responderIndex = salvaR;
+    }
+    r.duendeContaQuemMexeNosOutros = players[0].apoiosPartida === 2;
     players = salva.players; history = salva.history; cartasPartida = salva.cartasPartida;
     return r;
   }));

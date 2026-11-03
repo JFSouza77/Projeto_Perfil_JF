@@ -304,7 +304,10 @@ function resetDeck() {
   caosSaidasTensao = 0;
   caosCortes = { total: 0, por: {}, rancor: {} };
   caosOuvintesZerar();
-  players.forEach((p) => (p.errosPartida = 0));
+  players.forEach((p) => {
+    p.errosPartida = 0;
+    p.apoiosPartida = 0; // Temporadas (título Duende Ajudante): quantas vezes mexeu outro jogador no tabuleiro
+  });
   caosAmigosZerar();
   caosAviaoLast = -99;
   caosAcidLastCard = -99;

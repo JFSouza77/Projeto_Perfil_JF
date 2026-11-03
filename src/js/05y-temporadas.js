@@ -326,9 +326,9 @@ function temporadaTitulosHtml(larga) {
     .filter((x) => x.p && x.n >= 2)
     .sort((a, b) => b.n - a.n)[0];
   if (noel) h += larga("🎅", "Papai Noel", nomeH(noel.p), `como Mestre, entregou ${noel.n} cartas acertadas de presente`, "#ef4444", { t: "natalNoel", n: noel.p.name, v: noel.n });
-  // 🎁 Duende Ajudante: quem mais acertou
-  const duende = Object.entries(por).filter(([, o]) => o.n >= 2).sort((a, b) => b[1].n - a[1].n)[0];
-  if (duende) h += larga("🎁", "Duende Ajudante", nomeH(pj(duende[0])), `acertou ${duende[1].n} cartas`, "#22c55e", { t: "natalDuende", n: duende[0], v: duende[1].n });
+  // 🎁 Duende Ajudante (JF, 03/11): quem mais mexeu nos outros jogadores no tabuleiro, avançando ou recuando
+  const duende = players.filter((p) => (p.apoiosPartida || 0) >= 2).sort((a, b) => b.apoiosPartida - a.apoiosPartida)[0];
+  if (duende) h += larga("🎁", "Duende Ajudante", nomeH(duende), `mexeu ${duende.apoiosPartida} vezes nos outros jogadores (avançando ou recuando)`, "#22c55e", { t: "natalDuende", n: duende.name, v: duende.apoiosPartida });
   // 🦌 Rena Veloz: quem acertou mais rápido, em média
   const rena = Object.entries(por)
     .filter(([, o]) => o.nt >= 2)

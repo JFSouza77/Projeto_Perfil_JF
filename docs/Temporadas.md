@@ -149,7 +149,7 @@ temporadas, na ordem do calendário.
 - 03/11/2026 (madrugada): item 7 feito. No Natal, o resumo do fim da partida ganha a caixa "🎄 Títulos de Natal"
   (`temporadaTitulosHtml`), com 5 títulos:
   - 🎅 Papai Noel: o Mestre que mais entregou cartas acertadas de presente;
-  - 🎁 Duende Ajudante: quem mais acertou;
+  - 🎁 Duende Ajudante: quem mais deu suporte aos outros, avançando ou recuando jogadores (ajuste do JF em 03/11);
   - 🦌 Rena Veloz: quem acertou mais rápido, em média;
   - 🌟 Estrela Guia: o acerto com menos dicas;
   - ⛄ Boneco de Neve: quem mais congelou nos palpites furados.
