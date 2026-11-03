@@ -1,17 +1,17 @@
 # Catálogo de cartas do Perfil JF
 
-Gerado pelo Code (Claude Code) em 2026-10-31 com `node ferramentas/catalogo_cartas.js`. Só os nomes, sem dicas.
+Gerado pelo Code (Claude Code) em 2026-11-03 com `node ferramentas/catalogo_cartas.js`. Só os nomes, sem dicas.
 
-**1915 cartas: 1000 já estão no jogo e 915 estão planejadas pra Beta 2.0 (marcadas com 🆕).**
+**1950 cartas: 1000 já estão no jogo e 950 estão planejadas pra Beta 2.0 (marcadas com 🆕).**
 
 | Categoria | No jogo | Planejadas 🆕 | Total |
 |---|---|---|---|
 | 🐾 Animal | 200 | 65 | 265 |
 | 📅 Ano | 200 | 55 | 255 |
-| 📦 Coisa | 200 | 250 | 450 |
-| 📍 Lugar | 200 | 225 | 425 |
-| 🧑 Pessoa | 200 | 320 | 520 |
-| **Total** | **1000** | **915** | **1915** |
+| 📦 Coisa | 200 | 255 | 455 |
+| 📍 Lugar | 200 | 235 | 435 |
+| 🧑 Pessoa | 200 | 340 | 540 |
+| **Total** | **1000** | **950** | **1950** |
 
 ## Como conferir uma ideia de carta (instruções pro GPT)
 
@@ -264,13 +264,16 @@ Avestruz 🧸 · Camelo 🧸 · Chimpanzé 🧸 · Dragão-de-komodo · Dromedá
 - 2025
 - 2026 🆕 (Copa do Mundo nos Estados Unidos, Canadá e México, a primeira com 48 seleções; e Lula é reeleito (2º turno em 25/10, contra Flávio Bolsonaro), o primeiro presidente eleito quatro vezes pelo voto direto no Brasil (tema político: só fatos, fora do Júnior))
 
-## 📦 Coisa · 450 (200 no jogo, 250 🆕)
+## 📦 Coisa · 455 (200 no jogo, 255 🆕)
 
 **Casa e objetos do dia a dia** (47)
 Abajur 🧸 · Agulha 🆕 · Aliança 🆕 · Aparelho de jantar 🆕 · Armadilha 🆕 · Aspirador de pó 🧸 · Bacia 🆕 · Bengala 🆕 · Carimbo 🆕 · Carpete 🆕 · Chave · Chinelo 🧸 · Colchão 🆕 · Colher 🧸 · Colher de pau 🆕 · Dicionário · Enxada 🆕 · Escova de dente 🧸 · Espelho 📼 · Extintor de incêndio 📼 · Galocha 🆕 · Geladeira 🧸 · Guarda-chuva · Janela 🧸 · Laço de fita 🆕 · Lâmpada · Lancheira 🧸 · Lápis 🧸 · Livro · Lixeira 🆕 · Lustre 🆕 · Máquina de costura 🆕 · Máscara 🆕 · Mochila 🧸 · Óculos · Paletó 🆕 · Pasta de dente 🆕 · Relógio 📼 · Rolha 🆕 · Sabonete 🧸 · Selo 🆕 · Tanque de lavar roupas 🆕 · Tesoura 🧸 · Tijolo 🆕 · Travesseiro 🧸 · Vassoura 🧸 · Velcro 🆕
 
 **Ciência e instrumentos** (15)
 Artes 🆕 (handoff JF+GPT 29/10) · Biologia 🆕 (handoff JF+GPT 29/10) · Bússola · Caderno 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Câmera fotográfica · Célula-tronco 🆕 · Educação Física 🆕 (handoff JF+GPT 29/10) · Férias 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Física 🆕 (handoff JF+GPT 29/10) · Ímã · Literatura 🆕 (handoff JF+GPT 29/10) · Microscópio · Química 🆕 (handoff JF+GPT 29/10) · Telescópio · Teorema de Pitágoras 🆕 (handoff JF+GPT 29/10)
+
+**Cinema e livros** (2)
+O Mágico de Oz 🆕 (ideia do JF 03/11) · Sapatinhos de Rubi 🆕 (o Code completou pra fechar em 5; do Mágico de Oz)
 
 **Cinema e streaming** (17)
 A Volta ao Mundo em Oitenta Dias 🆕 (handoff JF+GPT 29/10) · Abaporu 🆕 (handoff JF+GPT 29/10) · As Branquelas 🆕 · Bíblia 🆕 (handoff JF+GPT 30/10) · Casablanca 📼 · Diário de Anne Frank 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Free Willy 📼 · Hanna-Barbera 📼 · Lagoa Azul 📼 · Mona Lisa 🆕 (handoff JF+GPT 29/10) · Netflix · O Rei Leão · Patrulha Canina 🆕 · Planeta dos Macacos 📼 · The Big Bang Theory 🆕 · Todo Mundo Odeia o Chris 🆕 · Viagem ao Centro da Terra 🆕 (handoff JF+GPT 29/10)
@@ -305,6 +308,9 @@ Angry Birds 🆕 · Atari 📼 · Controle de videogame · Crash Bandicoot (o jo
 **Jogos e brinquedos** (31)
 Álbum de figurinhas 🆕 (combina com o Júnior; handoff JF+GPT 30/10) · Balanço 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Bambolê 📼 · Banco Imobiliário 📼 · Bexiga 🧸 · Bola de futebol · Bola de gude 🆕 (combina com o Júnior; Old School; handoff JF+GPT 29/10) · Bolha de sabão 🧸 · Cama elástica 🧸 · Carrinho de rolimã 🆕 (combina com o Júnior; Old School; handoff JF+GPT 29/10) · Castelo de areia 🧸 · Cubo mágico · Dominó · Escorregador 🧸 · Gangorra 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Giz de cera 🧸 · Ioiô 📼 · Lego 🧸 · Massinha de modelar 🧸 · Patinete 🧸 · Patins 🆕 (combina com o Júnior; handoff JF+GPT 30/10) · Pega-pega 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Pião 🧸 · Pipa 🧸 · Pique-bandeira 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Pique-esconde 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Pula-corda 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Skate · Truco 📼 · Ursinho de pelúcia 🧸 · Xadrez 📼
 
+**Livros e cinema** (1)
+Vira-Tempo 🆕 (o Code completou pra fechar em 5; Harry Potter)
+
 **Música** (20)
 Blues 🆕 · Country 🆕 · Festival de Woodstock 🆕 · Forró 🆕 · Frevo 🆕 (handoff JF+GPT 29/10) · Funk 🆕 · Gospel 🆕 · Guitarra · Hino Nacional 🆕 (handoff JF+GPT 30/10) · Jazz 🆕 · Microfone · MPB 🆕 · Orquestra · Pagode 🆕 · Piano 📼 · Rap 🆕 · Rock 🆕 · Samba 🆕 · Sertanejo 🆕 · Violão
 
@@ -323,6 +329,9 @@ ABIN 🆕 (de Pessoa pra Coisa; tema pesado: só fatos, nunca no Júnior; handof
 **Sentimentos e mente** (12)
 Abraço 🆕 · Ansiedade · Beijo 🆕 · Ciúme 📼 · Felicidade · Inveja · Medo 📼 · Memória 📼 · Nostalgia · Saudade 📼 · Sonho 📼 · Sorte 📼
 
+**Séries** (1)
+iCarly 🆕 (ideia do JF 03/11)
+
 **Tecnologia e internet** (66)
 AMD 🆕 · Android 🆕 · Apple 🆕 · Área de trabalho 🆕 · Armazenamento na nuvem 🆕 · Bitcoin 📼 · Blog 🆕 · Bluetooth 🆕 · Celular 🆕 · Chip de celular 🆕 · COBOL 🆕 (Old School e Hardcore) · Código binário 🆕 (Old School e Hardcore) · Computador · CSS 🆕 · Dell 🆕 · Facebook 🆕 · Fibra óptica 🆕 (handoff JF+GPT 30/10) · Fone de ouvido · Gabinete 🆕 · Google 🆕 · HD 🆕 · Headset 🆕 · HTML 🆕 · Impressora 🆕 · Impressora 3D 🆕 · Instagram · Intel 🆕 · Inteligência artificial · Internet 📼 · Internet móvel 🆕 (4G e 5G) · iPhone · JavaScript 🆕 · Linux 🆕 · Mac 🆕 (computador da Apple) · Memória RAM 🆕 · Microsoft 🆕 · Monitor 🆕 · Mouse 🆕 · Notebook 🆕 · Nvidia 🆕 · Operadora de celular 🆕 · Pen drive 🆕 · Pesquisa 🆕 (na internet) · Placa de vídeo 🆕 · Placa-mãe 🆕 · Processador 🆕 (CPU) · Projetor 🆕 · Python 🆕 · Robô · Roteador 🆕 · Senha · Site 🆕 · Smartphone · Snapchat 🆕 · SSD 🆕 · Tablet 🆕 · Teclado 🆕 · Televisão 📼 · TikTok 🆕 · Tumblr 🆕 · Twitter 🆕 (hoje X) · Webcam 🆕 · WhatsApp 📼 · Wi-Fi · Windows 🆕 · YouTube 🆕
 
@@ -332,7 +341,13 @@ Avião · Balão 🆕 (handoff JF+GPT 29/10) · Balão de ar quente · Bicicleta
 **TV brasileira** (13)
 A Praça é Nossa 📼 · Big Brother Brasil 📼 · Bom Dia & Cia 📼 · Bom Dia e Companhia 🆕 · Caldeirão do Huck 🆕 · Domingão do Faustão 🆕 · Encontro com Fátima Bernardes 📼 · Jornal Nacional 📼 · Mais Você 📼 · Programa do Ratinho 📼 · Sessão da Tarde 📼 · Telenovela 🆕 · Zorra Total 🆕
 
-## 📍 Lugar · 425 (200 no jogo, 225 🆕)
+**Videogames** (1)
+Pac-Man 🆕 (ideia do JF 03/11; o jogo)
+
+## 📍 Lugar · 435 (200 no jogo, 235 🆕)
+
+**Animação** (2)
+Arendelle 🆕 (ideia do JF 03/11) · Casa Madrigal 🆕 (o Code completou pra fechar em 5; Encanto)
 
 **Cidades do mundo** (37)
 Amsterdã · Barcelona · Berlim · Brooklyn 🆕 (handoff JF+GPT 29/10) · Buenos Aires 🆕 · Cairo 🆕 · Ciudad del Este 📼 · Dubai · Florença 🆕 · Flórida 🆕 (handoff JF+GPT 29/10) · Hollywood · Istambul · Jerusalém · Kyoto · Las Vegas 📼 · Londres · Los Angeles 🆕 (handoff JF+GPT 29/10) · Manhattan 🆕 · Meca · Miami · Moscou · Munique 🆕 · Nova Orleans 🆕 (handoff JF+GPT 29/10) · Nova York · Orlando 🆕 (handoff JF+GPT 29/10) · Paris · Pier de Santa Mônica 🆕 (handoff JF+GPT 29/10) · Punta del Este 🆕 (handoff JF+GPT 30/10) · Roma 📼 · Santiago do Chile 🆕 (handoff JF+GPT 29/10) · Shibuya · Singapura · Sydney · Tóquio · Transilvânia 🆕 (handoff JF+GPT 30/10) · Vancouver 🆕 · Veneza 📼
@@ -346,8 +361,14 @@ Ilha Nublar 🆕 (Jurassic Park; fecha a conta de Lugar em 225)
 **Cinema e animação** (1)
 Hotel Transilvânia 🆕 (pedido do JF 31/10)
 
+**Cinema e livros** (1)
+Reino de Oz 🆕 (ideia do JF 03/11)
+
 **Civilizações antigas** (12)
 Biblioteca de Alexandria 📼 · Chichen Itzá 📼 · Esparta 🆕 (handoff JF+GPT 30/10) · Ilha de Páscoa 📼 · Jardins Suspensos da Babilônia 📼 · Machu Picchu 📼 · Pangeia 🆕 (handoff JF+GPT 29/10) · Petra 📼 · Pirâmides de Gizé 📼 · Pompeia 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Stonehenge 📼 · Troia 🆕 (handoff JF+GPT 30/10)
+
+**Educação** (3)
+MIT 🆕 (ideia do JF 03/11) · Universidade de Harvard 🆕 (o Code completou pra fechar em 5) · Universidade de Oxford 🆕 (ideia do JF 03/11)
 
 **Espaço** (17)
 Cabo Canaveral 🆕 (handoff JF+GPT 29/10) · CERN 🆕 (nome: CERN; handoff JF+GPT 29/10) · Espaço sideral 🆕 (handoff JF+GPT 29/10) · Estratosfera 🆕 (handoff JF+GPT 29/10) · Galáxia de Andrômeda 🆕 (handoff JF+GPT 29/10) · Júpiter 🆕 · Lua 🧸 · Marte 🧸 · Mercúrio 🆕 · Netuno 🆕 · Plutão 🆕 · Saturno · Sol 🧸 · Terra 🆕 · Urano 🆕 · Vênus 🆕 · Via Láctea 🆕 (handoff JF+GPT 29/10)
@@ -361,11 +382,14 @@ Pompeia 🆕 (fecha a conta de Lugar em 225)
 **Lendas, Bíblia e mitologia** (15)
 Asgard 🆕 (handoff JF+GPT 29/10) · Atlântida · Camelot 🆕 (handoff JF+GPT 29/10) · Centro da Terra 🆕 (handoff JF+GPT 29/10) · El Dorado 🆕 (handoff JF+GPT 29/10) · Ilha de Creta 🆕 · Jardim do Éden 🆕 (handoff JF+GPT 29/10) · Monte Olimpo · Monte Sinai 🆕 (handoff JF+GPT 29/10) · Muralhas de Jericó 📼 · Santuário de Atena 🆕 (nome: Santuário de Atena; handoff JF+GPT 29/10) · Sodoma e Gomorra 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Tártaro 🆕 (mitologia grega; respostas do JF 31/10) · Terra Oca 🆕 (handoff JF+GPT 29/10) · Torre de Babel 📼
 
+**Livros e cinema** (1)
+Acampamento Meio-Sangue 🆕 (o Code completou pra fechar em 5; Percy Jackson)
+
 **Lugares de ficção** (47)
 Batcaverna 🧸 · Beach City 🆕 (handoff JF+GPT 29/10) · Bosque dos Cem Acres 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Câmara Secreta 🆕 (handoff JF+GPT 29/10) · Centro Pokémon 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Cidade de Pallet 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Cidade de Townsville 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Clarim Diário 🆕 (handoff JF+GPT 29/10) · Corporação Cápsula 🆕 (handoff JF+GPT 29/10) · Escola Mundial 🆕 (handoff JF+GPT 29/10) · Escolinha do Professor Raimundo 🆕 (Old School; handoff JF+GPT 29/10) · Estrela da Morte 🆕 (Star Wars) · Fantástica Fábrica de Chocolate 🆕 (combina com o Júnior; handoff JF+GPT 30/10) · Fenda do Biquíni · Gotham City · Gravity Falls 🆕 (handoff JF+GPT 29/10) · Hogwarts · Jurassic Park 🆕 (handoff JF+GPT 29/10) · Konoha 🆕 (handoff JF+GPT 29/10) · Krypton · LazyTown 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Los Santos 🆕 (handoff JF+GPT 30/10) · Mansão Foster para Amigos Imaginários 🆕 (handoff JF+GPT 29/10) · Mansão Xavier 🆕 (handoff JF+GPT 29/10) · Metrópolis 🆕 (handoff JF+GPT 29/10) · Mordor · Nárnia · Nether 🆕 (handoff JF+GPT 29/10) · Oa 💀 · Orfanato Raio de Sol 🆕 (Old School; handoff JF+GPT 29/10) · País das Maravilhas 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Planeta Namek 🆕 (handoff JF+GPT 29/10) · Radiator Springs 🆕 (Carros) · Reino dos Cogumelos 🆕 (handoff JF+GPT 29/10) · Reino Tão Tão Distante · Saramandaia 🆕 (Old School; handoff JF+GPT 29/10) · Sítio do Picapau Amarelo 🧸 · Springfield · Tatooine 🆕 (Star Wars) · Tempest 💀 · Terra de Ooo 🆕 (handoff JF+GPT 29/10) · Terra do Nunca · The End 🆕 (handoff JF+GPT 29/10) · Torre dos Vingadores 🆕 (handoff JF+GPT 29/10) · Vila do Chaves 🆕 (Old School; handoff JF+GPT 29/10) · Vila Sésamo 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Wakanda
 
-**Lugares do dia a dia** (66)
-Açougue 🆕 (handoff JF+GPT 30/10) · Aeroporto 🧸 · Aquário 🧸 · Barbearia 🆕 (handoff JF+GPT 30/10) · Basílica 🆕 (handoff JF+GPT 30/10) · Biblioteca 🧸 · Bolsa de Valores 🆕 (handoff JF+GPT 29/10) · Burger King 🆕 (handoff JF+GPT 30/10) · Cacau Show 🆕 · Canteiro de obras 🆕 (handoff JF+GPT 30/10) · Capela 🆕 (voltou pra fechar Lugar em 220; respostas do JF 31/10) · Cartório 🆕 (handoff JF+GPT 30/10) · Castelo 🧸 · Catedral 🆕 (handoff JF+GPT 30/10) · Churrascaria 🆕 (handoff JF+GPT 30/10) · Cinema 🧸 · Circo 🧸 · Concessionária 🆕 (handoff JF+GPT 30/10) · Consultório 🆕 · Correios 🆕 (handoff JF+GPT 30/10) · Delegacia 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10) · Escola 🧸 · Esgoto 🆕 (nome: Esgoto; handoff JF+GPT 29/10) · Estacionamento 🆕 (handoff JF+GPT 29/10) · Farmácia 🧸 · Fazenda 🧸 · Feira 🆕 · Floricultura 🆕 · Hospital 🧸 · Hotel 🆕 · Igreja 🆕 · Laboratório de informática 🆕 (handoff JF+GPT 29/10) · Lan house 🆕 · Lavanderia 🆕 (handoff JF+GPT 30/10) · Locadora 🆕 (Old School; handoff JF+GPT 30/10) · McDonald's 🧸 · Museu 🧸 · Octógono 🆕 (handoff JF+GPT 30/10) · Oficina 🆕 (handoff JF+GPT 30/10) · Ópera 🆕 (handoff JF+GPT 30/10) · Padaria 🧸 · Papelaria 🆕 (handoff JF+GPT 30/10) · Parque de diversões 🧸 · Pet shop 🆕 (handoff JF+GPT 30/10) · Piscina 🧸 · Pista de patinação no gelo 🆕 (handoff JF+GPT 30/10) · Pizzaria 🧸 · Playground 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Posto de gasolina 🆕 (handoff JF+GPT 30/10) · Pousada 🆕 · Quadra poliesportiva 🆕 (handoff JF+GPT 29/10) · Quartel de bombeiros 🧸 · Quintal 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Restaurante 🆕 (handoff JF+GPT 29/10) · Ringue 🆕 (handoff JF+GPT 30/10) · Roda-gigante 🆕 · Rodoviária 🆕 (handoff JF+GPT 30/10) · Sala de aula 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Salão de beleza 🆕 (handoff JF+GPT 29/10) · Shopping 🧸 · Sorveteria 🧸 · Spa 🆕 (handoff JF+GPT 30/10) · Supermercado 🧸 · Teatro 🆕 (handoff JF+GPT 30/10) · Termas 🆕 (era "casa de banho"; o JF preferiu termas; respostas do JF 31/10) · Zoológico 🧸
+**Lugares do dia a dia** (67)
+Açougue 🆕 (handoff JF+GPT 30/10) · Aeroporto 🧸 · Aquário 🧸 · Barbearia 🆕 (handoff JF+GPT 30/10) · Basílica 🆕 (handoff JF+GPT 30/10) · Biblioteca 🧸 · Bolsa de Valores 🆕 (handoff JF+GPT 29/10) · Burger King 🆕 (handoff JF+GPT 30/10) · Cacau Show 🆕 · Canteiro de obras 🆕 (handoff JF+GPT 30/10) · Capela 🆕 (voltou pra fechar Lugar em 220; respostas do JF 31/10) · Cartório 🆕 (handoff JF+GPT 30/10) · Castelo 🧸 · Catedral 🆕 (handoff JF+GPT 30/10) · Churrascaria 🆕 (handoff JF+GPT 30/10) · Cinema 🧸 · Circo 🧸 · Concessionária 🆕 (handoff JF+GPT 30/10) · Consultório 🆕 · Correios 🆕 (handoff JF+GPT 30/10) · Delegacia 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10) · Escola 🧸 · Esgoto 🆕 (nome: Esgoto; handoff JF+GPT 29/10) · Estacionamento 🆕 (handoff JF+GPT 29/10) · Farmácia 🧸 · Fazenda 🧸 · Feira 🆕 · Floricultura 🆕 · Hospital 🧸 · Hotel 🆕 · Igreja 🆕 · Laboratório de informática 🆕 (handoff JF+GPT 29/10) · Lan house 🆕 · Lavanderia 🆕 (handoff JF+GPT 30/10) · Locadora 🆕 (Old School; handoff JF+GPT 30/10) · Maternidade 🆕 (ideia do JF 03/11) · McDonald's 🧸 · Museu 🧸 · Octógono 🆕 (handoff JF+GPT 30/10) · Oficina 🆕 (handoff JF+GPT 30/10) · Ópera 🆕 (handoff JF+GPT 30/10) · Padaria 🧸 · Papelaria 🆕 (handoff JF+GPT 30/10) · Parque de diversões 🧸 · Pet shop 🆕 (handoff JF+GPT 30/10) · Piscina 🧸 · Pista de patinação no gelo 🆕 (handoff JF+GPT 30/10) · Pizzaria 🧸 · Playground 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Posto de gasolina 🆕 (handoff JF+GPT 30/10) · Pousada 🆕 · Quadra poliesportiva 🆕 (handoff JF+GPT 29/10) · Quartel de bombeiros 🧸 · Quintal 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Restaurante 🆕 (handoff JF+GPT 29/10) · Ringue 🆕 (handoff JF+GPT 30/10) · Roda-gigante 🆕 · Rodoviária 🆕 (handoff JF+GPT 30/10) · Sala de aula 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Salão de beleza 🆕 (handoff JF+GPT 29/10) · Shopping 🧸 · Sorveteria 🧸 · Spa 🆕 (handoff JF+GPT 30/10) · Supermercado 🧸 · Teatro 🆕 (handoff JF+GPT 30/10) · Termas 🆕 (era "casa de banho"; o JF preferiu termas; respostas do JF 31/10) · Zoológico 🧸
 
 **Lugares famosos por histórias sombrias ou secretas** (9)
 Alcatraz 📼 · Área 51 📼 · Casa da Moeda 🆕 (confirmar qual) · Cemitério 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Chernobyl 📼 · Fort Knox 🆕 · Mausoléu 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10) · Necrotério 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10) · Prisão 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10)
@@ -375,6 +399,9 @@ Triângulo das Bermudas 🆕 (fecha a conta de Lugar em 225)
 
 **Monumentos e pontos turísticos do mundo** (28)
 Acrópole · Angkor Wat · Arco do Triunfo 🆕 (handoff JF+GPT 29/10) · Big Ben · Calçada da Fama 🆕 · Casa Branca 🆕 · Catedral de Notre-Dame 📼 · Central Park · Coliseu 📼 · Empire State Building 🆕 (handoff JF+GPT 29/10) · Estátua da Liberdade 📼 · Kremlin · Louvre · Monte Rushmore · Muralha da China 📼 · Palácio de Buckingham 🆕 · Palácio de Versalhes 🆕 · Partenon 🆕 (nome: Partenon; handoff JF+GPT 29/10) · Pearl Harbor 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Ponte Golden Gate · Sagrada Família · Salão Oval · Taj Mahal 📼 · Times Square · Torre de Pisa 📼 · Torre Eiffel 📼 · Torre inclinada de Pisa 🆕 (handoff JF+GPT 29/10) · Tower Bridge
+
+**Natal** (1)
+Oficina do Papai Noel 🆕 (ideia do JF 03/11; fábrica de brinquedos)
 
 **Natureza do Brasil** (12)
 Baía de Guanabara 📼 · Bonito 📼 · Cataratas do Iguaçu 📼 · Chapada Diamantina 📼 · Fernando de Noronha 🧸 · Floresta Amazônica · Ilha do Mel 📼 · Lagoa Rodrigo de Freitas 📼 · Lençóis Maranhenses 📼 · Morro da Urca 📼 · Pantanal 📼 · Pão de Açúcar
@@ -394,13 +421,19 @@ Aquamania 🆕 (Guarapari) · Beach Park 🆕 (Fortaleza) · Beto Carrero World 
 **Pontos turísticos e construções do Brasil** (40)
 Arena Castelão · Autódromo de Interlagos 🆕 (handoff JF+GPT 29/10) · Avenida Paulista 📼 · Cristo Redentor 📼 · Edifício Copan 📼 · Elevador Lacerda 📼 · Engenhão 🆕 (handoff JF+GPT 29/10) · Escadaria Selarón 🆕 (handoff JF+GPT 29/10) · Estádio do Pacaembu 📼 · Garganta do Diabo 🆕 (handoff JF+GPT 30/10) · Igreja da Penha 🆕 (a do Rio de Janeiro, no alto da pedra (bairro da Penha); respostas do JF 31/10) · Ilha de Trindade 🆕 (handoff JF+GPT 30/10) · Ilha Fiscal 📼 · Jardim Botânico de Curitiba 🆕 (handoff JF+GPT 29/10) · Jardim Botânico do Rio de Janeiro 📼 · Mappin 📼 · Maracanã 🧸 · Marco das Três Fronteiras · Mercado Municipal de São Paulo 📼 · Mercado Ver-o-Peso 📼 · Metrô de São Paulo 🆕 (handoff JF+GPT 29/10) · Mineirão 📼 · Morumbi 📼 · Museu de Arte de São Paulo 🆕 (handoff JF+GPT 29/10) · Museu do Ipiranga 📼 · Ópera de Arame 🆕 (handoff JF+GPT 29/10) · Palácio da Alvorada 🆕 (handoff JF+GPT 30/10) · Parque Ibirapuera · Pico da Bandeira 🆕 (handoff JF+GPT 29/10) · Ponte Rio-Niterói 📼 · Praça dos Três Poderes 🆕 (handoff JF+GPT 30/10) · Rio Tietê 🆕 (handoff JF+GPT 30/10) · Sambódromo da Marquês de Sapucaí 📼 · Santuário de Aparecida 📼 · Teatro Amazonas 📼 · Theatro Municipal do Rio de Janeiro 📼 · Torre de TV de Brasília 📼 · Usina Hidrelétrica de Itaipu 🆕 (handoff JF+GPT 29/10) · USP 🆕 (handoff JF+GPT 29/10) · Viaduto do Chá 📼
 
+**Séries** (1)
+Westeros 🆕 (o Code completou pra fechar em 5; fora do Júnior)
+
 **Tecnologia** (1)
 Vale do Silício 🆕 (fecha a conta de Lugar em 225)
 
 **Universidades e estúdios** (3)
 Herbert Richers 📼 · Projac 🆕 · UFRJ 📼
 
-## 🧑 Pessoa · 520 (200 no jogo, 320 🆕)
+## 🧑 Pessoa · 540 (200 no jogo, 340 🆕)
+
+**Animação** (2)
+Bruno Madrigal 🆕 (ideia do JF 03/11) · Mirabel Madrigal 🆕 (ideia do JF 03/11)
 
 **Anime, mangá e Pokémon** (10)
 Ash Ketchum · Goku · Itachi Uchiha 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Kakashi Hatake 🆕 (handoff JF+GPT 29/10) · Kira (Light Yagami) 🆕 (nome: Kira (Light Yagami); tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Luffy · Naruto Uzumaki · Pikachu 🧸 · Rimuru Tempest · Shenlong 🆕 (handoff JF+GPT 29/10)
@@ -411,11 +444,17 @@ Frida Kahlo · Leonardo da Vinci 📼 · Ludwig van Beethoven 📼 · Pablo Pica
 **Ciência, invenção e tecnologia** (24)
 Ada Lovelace 🆕 · Alan Turing 🆕 · Albert Einstein 📼 · Aristóteles 🆕 (handoff JF+GPT 29/10) · Bill Gates 🆕 · Charles Darwin 📼 · Diógenes 🆕 (handoff JF+GPT 29/10) · Elon Musk · Enzo Ferrari 🆕 · Ferruccio Lamborghini 🆕 · Galileu Galilei 🆕 (handoff JF+GPT 29/10) · Isaac Newton 📼 · Marie Curie 📼 · Mark Zuckerberg 🆕 · Neil Armstrong 🆕 (handoff JF+GPT 29/10) · Nikola Tesla · Oscar Niemeyer 🆕 (handoff JF+GPT 29/10) · Pitágoras 🆕 (handoff JF+GPT 29/10) · Platão 🆕 (handoff JF+GPT 29/10) · Santos Dumont 📼 · Sigmund Freud 🆕 (handoff JF+GPT 29/10) · Sócrates 🆕 (handoff JF+GPT 29/10) · Steve Jobs 🆕 · Thomas Edison 🆕 (handoff JF+GPT 29/10)
 
+**Cinema e livros** (5)
+Bruxa Má do Oeste 🆕 (o Code completou pra fechar em 5; do Mágico de Oz) · Dorothy 🆕 (ideia do JF 03/11) · Espantalho 🆕 (o Code completou pra fechar em 5; do Mágico de Oz) · Homem de Lata 🆕 (o Code completou pra fechar em 5; do Mágico de Oz) · Leão Covarde 🆕 (o Code completou pra fechar em 5; do Mágico de Oz)
+
 **Crime** (5)
 Alexandre Nardoni 🆕 (fora do Júnior) · Eliza Samudio 🆕 (fora do Júnior) · Fernandinho Beira-Mar 📼 · Jack, o Estripador 📼 · Osama Bin Laden 🆕 (fora do Júnior)
 
 **DC** (10)
 Aquaman 🆕 (handoff JF+GPT 29/10) · Arlequina 🆕 · Batman · Coringa 🆕 · Doutor Manhattan 🆕 · Jovens Titãs · Lex Luthor 🆕 (handoff JF+GPT 29/10) · Liga da Justiça 🆕 (handoff JF+GPT 29/10) · Robin · Super Choque
+
+**Desenhos** (3)
+Astro Boy 🆕 (ideia do JF 03/11) · Pinky e Cérebro 🆕 (ideia do JF 03/11) · Rei Gelado 🆕 (ideia do JF 03/11; Hora de Aventura)
 
 **Desenhos clássicos (Hanna-Barbera, Looney Tunes e cia.)** (16)
 Capitão Caverna 🆕 (Old School; handoff JF+GPT 29/10) · Gaguinho 📼 · Gasparzinho 📼 · Leôncio 📼 · Looney Tunes 📼 · Mistério S.A. 📼 · Os Flintstones 📼 · Os Jetsons 📼 · Pantera Cor-de-Rosa 📼 · Penélope Charmosa 🆕 · Pica-Pau 📼 · Scooby-Doo 📼 · Thundercats 🆕 (Old School; handoff JF+GPT 29/10) · Tom e Jerry 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Zé Colmeia 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Zeca Urubu 📼
@@ -444,6 +483,9 @@ Adriano Imperador 🆕 (handoff JF+GPT 26/10) · Anderson Silva 🆕 (handoff JF
 **Folclore brasileiro** (5)
 Cuca 📼 · Curupira · Iara · Mula sem cabeça 📼 · Saci-Pererê
 
+**Futebol** (1)
+Canarinho Pistola 🆕 (ideia do JF 03/11; mascote da seleção)
+
 **Harry Potter** (3)
 Harry Potter · Hermione Granger · Severus Snape
 
@@ -456,11 +498,20 @@ Aécio Neves 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 26/1
 **Internet e YouTubers** (7)
 Casimiro · Enaldinho 🧸 · Júlia MineGirl 🧸 · Luccas Neto 🧸 · MrBeast 🧸 · Whindersson Nunes · Xaropinho 🆕 (o rato do Programa do Ratinho (JF 31/10))
 
+**Livros e cinema** (3)
+Draco Malfoy 🆕 (ideia do JF 03/11) · Percy Jackson 🆕 (ideia do JF 03/11) · Rony Weasley 🆕 (ideia do JF 03/11)
+
 **Marvel** (15)
 Ciclope · Deadpool · Duende Verde 🆕 · Homem-Aranha · Jean Grey · Magneto · Professor Xavier · Quarteto Fantástico 🆕 (handoff JF+GPT 29/10) · Thanos 🆕 (handoff JF+GPT 29/10) · Tony Stark · Ultron 🆕 (handoff JF+GPT 29/10) · Venom 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Vingadores 🆕 (handoff JF+GPT 29/10) · Wolverine · X-Men 🆕 (handoff JF+GPT 29/10)
 
+**Mitologia** (1)
+Hermes 🆕 (ideia do JF 03/11)
+
 **Mitologia e lendas do mundo** (36)
 Adão 🆕 (handoff JF+GPT 29/10) · Afrodite 🆕 · Anúbis 🆕 · Arcanjo Gabriel 🆕 (handoff JF+GPT 29/10) · Arcanjo Miguel 🆕 (handoff JF+GPT 29/10) · Ares 🆕 · Atena 🆕 · Atlas 🆕 (o titã) · Cronos 🆕 (o titã do tempo) · Cthulhu 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10) · Eva 🆕 (handoff JF+GPT 29/10) · Godzilla 🆕 (handoff JF+GPT 26/10) · Hades 🆕 · Hércules 🆕 · Jörmungandr · King Kong 🆕 (handoff JF+GPT 30/10) · Loki 🆕 · Maomé 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10) · Matusalém 🆕 (handoff JF+GPT 30/10) · Medusa · Merlin 🆕 (handoff JF+GPT 29/10) · Odin 🆕 · Papa Bento XVI 🆕 (handoff JF+GPT 30/10) · Papa Leão XIV 🆕 (handoff JF+GPT 30/10) · Papa Pio XII 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 30/10) · Princesa Kaguya · Rei Arthur 🆕 (handoff JF+GPT 29/10) · Rei Davi 🆕 (handoff JF+GPT 29/10) · Rei Salomão 🆕 (handoff JF+GPT 29/10) · Sansão 🆕 (o da Bíblia; respostas do JF 31/10) · São Jorge 🆕 (handoff JF+GPT 29/10) · São Pedro 🆕 (handoff JF+GPT 29/10) · Slenderman 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Thor 🆕 · Yamata no Orochi 💀 · Zeus 🆕
+
+**Música** (2)
+Beethoven 🆕 (ideia do JF 03/11; o compositor) · Jonas Brothers 🆕 (ideia do JF 03/11)
 
 **Música brasileira** (31)
 Anitta · Barão Vermelho 🆕 (Old School; handoff JF+GPT 29/10) · Blitz (banda) 🆕 (a banda dos anos 80; Old School; respostas do JF 31/10) · Carmen Miranda 📼 · Cartola 🆕 (handoff JF+GPT 29/10) · Cazuza 📼 · Chico Buarque 📼 · É o Tchan 🆕 (Old School; handoff JF+GPT 29/10) · Elis Regina 📼 · Gretchen 🆕 (Old School; handoff JF+GPT 30/10) · Ivete Sangalo 🆕 · João Gomes 🆕 · Legião Urbana 🆕 · Luan Santana 🆕 (handoff JF+GPT 26/10) · Mamonas Assassinas 📼 · Marília Mendonça 🆕 · Michel Teló 🆕 (handoff JF+GPT 26/10) · Priscilla Alcantara 🆕 · Raul Seixas 📼 · Rebeldes 🆕 (Old School; handoff JF+GPT 29/10) · Rio Negro e Solimões 🆕 (dupla) · Rita Lee 📼 · Roberto Carlos 🆕 (handoff JF+GPT 29/10) · Sandy & Junior 📼 · Supla 🆕 (Old School; handoff JF+GPT 29/10) · Tom Jobim 📼 · Turma do Balão Mágico 📼 · Victor e Leo 🆕 (dupla) · Vinicius de Moraes 🆕 (handoff JF+GPT 29/10) · Zé Ramalho 📼 · Zezé Di Camargo e Luciano 🆕 (dupla)
@@ -477,8 +528,14 @@ Alice 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Bilbo Bolseiro 🆕 
 **Quadrinhos e tirinhas (outros)** (7)
 Brutus 📼 · Charlie Brown · Garfield · O Máscara 📼 · Olívia Palito 📼 · Popeye · Tartarugas Ninja
 
+**Séries** (2)
+Daenerys Targaryen 🆕 (ideia do JF 03/11; fora do Júnior) · Hannah Montana 🆕 (ideia do JF 03/11)
+
 **Star Wars** (7)
 BB-8 🆕 (handoff JF+GPT 29/10) · C-3PO 🆕 (handoff JF+GPT 29/10) · Darth Vader 📼 · Grogu 🆕 · Luke Skywalker 🆕 · R2-D2 🆕 (handoff JF+GPT 29/10) · Yoda
+
+**Super-heróis** (1)
+Motoqueiro Fantasma 🆕 (ideia do JF 03/11)
 
 **Turma da Mônica** (7)
 Anjinho 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Cascão 🧸 · Cebolinha 🧸 · Chico Bento 🧸 · Magali 🧸 · Mônica 🧸 · Penadinho
