@@ -298,3 +298,48 @@ function temporadaEstiloPerguntar(p, depois) {
   );
   document.body.appendChild(ov);
 }
+
+/* Temporadas · item 7: 5 títulos da temporada no resumo do fim da partida (como os Troféus do C.A.O.S.). Pedido do JF:
+   no Natal, o "Papai Noel" vai pro Mestre que mais distribuiu presentes. Cada título só aparece com dado de verdade. */
+function temporadaTitulosHtml(larga) {
+  const t = typeof temporadaAtual === "function" ? temporadaAtual() : null;
+  if (!t || t.id !== "natal" || typeof larga !== "function") return "";
+  const pj = (nome) => players.find((p) => p.name === nome);
+  const nomeH = (p) => (p ? playerNameHtml(p.name, p.color, p.avatar) : "?");
+  const por = {};
+  (history || [])
+    .filter((h) => typeof h.cluesUsed === "number" && h.playerName)
+    .forEach((h) => {
+      const o = (por[h.playerName] = por[h.playerName] || { n: 0, nt: 0, t: 0, min: 99 });
+      o.n++;
+      o.min = Math.min(o.min, h.cluesUsed);
+      if (typeof h.timeTakenMs === "number" && h.timeTakenMs >= 1500) (o.nt++, (o.t += h.timeTakenMs));
+    });
+  let h = "";
+  // 🎅 Papai Noel: o Mestre que mais entregou cartas acertadas pros outros (os "presentes")
+  const dados = {};
+  (cartasPartida || []).forEach((c) => {
+    if (c.mestre && c.quem) dados[c.mestre] = (dados[c.mestre] || 0) + 1;
+  });
+  const noel = Object.entries(dados)
+    .map(([id, n]) => ({ p: jogadorPorId(id), n }))
+    .filter((x) => x.p && x.n >= 2)
+    .sort((a, b) => b.n - a.n)[0];
+  if (noel) h += larga("🎅", "Papai Noel", nomeH(noel.p), `como Mestre, entregou ${noel.n} cartas acertadas de presente`, "#ef4444", { t: "natalNoel", n: noel.p.name, v: noel.n });
+  // 🎁 Duende Ajudante: quem mais acertou
+  const duende = Object.entries(por).filter(([, o]) => o.n >= 2).sort((a, b) => b[1].n - a[1].n)[0];
+  if (duende) h += larga("🎁", "Duende Ajudante", nomeH(pj(duende[0])), `acertou ${duende[1].n} cartas`, "#22c55e", { t: "natalDuende", n: duende[0], v: duende[1].n });
+  // 🦌 Rena Veloz: quem acertou mais rápido, em média
+  const rena = Object.entries(por)
+    .filter(([, o]) => o.nt >= 2)
+    .map(([nome, o]) => ({ nome, seg: Math.round(o.t / o.nt / 1000) }))
+    .sort((a, b) => a.seg - b.seg)[0];
+  if (rena) h += larga("🦌", "Rena Veloz", nomeH(pj(rena.nome)), `${rena.seg} s em média pra acertar`, "#f59e0b", { t: "natalRena", n: rena.nome, v: rena.seg });
+  // 🌟 Estrela Guia: o acerto com menos dicas
+  const estrela = Object.entries(por).sort((a, b) => a[1].min - b[1].min)[0];
+  if (estrela && estrela[1].min < 99) h += larga("🌟", "Estrela Guia", nomeH(pj(estrela[0])), `acertou uma carta com só ${estrela[1].min} dica${estrela[1].min === 1 ? "" : "s"}`, "#facc15", { t: "natalEstrela", n: estrela[0], v: estrela[1].min });
+  // ⛄ Boneco de Neve: quem mais ficou congelado nos palpites furados (zoeira de leve)
+  const boneco = players.filter((p) => (p.errosPartida || 0) >= 2).sort((a, b) => b.errosPartida - a.errosPartida)[0];
+  if (boneco) h += larga("⛄", "Boneco de Neve", nomeH(boneco), `congelou em ${boneco.errosPartida} palpites furados`, "#93c5fd", { t: "natalBoneco", n: boneco.name, v: boneco.errosPartida });
+  return h;
+}

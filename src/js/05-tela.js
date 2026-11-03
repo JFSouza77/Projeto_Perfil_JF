@@ -2248,6 +2248,7 @@ function buildStatsHtml() {
   }
   if (CURRENT_MODE !== "express") destaques += caosAuditoriaHtml();
   const trofeus = trofeusHtml(larga);
+  const titulosTemporada = typeof temporadaTitulosHtml === "function" ? temporadaTitulosHtml(larga) : ""; // Temporadas, item 7
   return `
     <div class="stats-box hall-box resumo-box">
       <h3>📊 Resumo da partida</h3><div class="hall-sub">toque num número e o C.A.O.S. comenta</div>
@@ -2258,6 +2259,14 @@ function buildStatsHtml() {
     <div class="stats-box hall-box trofeus-box">
       <h3>🏆 Troféus do C.A.O.S.</h3><div class="hall-sub">toque num troféu e o C.A.O.S. comenta</div>
       <ul class="stats-list hall-grid">${trofeus}</ul>
+    </div>`
+        : ""
+    }${
+      titulosTemporada
+        ? `
+    <div class="stats-box hall-box trofeus-box titulos-temporada">
+      <h3>🎄 Títulos de Natal</h3><div class="hall-sub">toque num título e o C.A.O.S. comenta</div>
+      <ul class="stats-list hall-grid">${titulosTemporada}</ul>
     </div>`
         : ""
     }

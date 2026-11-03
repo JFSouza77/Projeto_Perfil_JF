@@ -105,6 +105,17 @@ function caosComentFato(d) {
       return { fr: `${n} levou ${v} segundos em média pra acertar`, np: `levar ${v} segundos pra acertar` };
     case "inimigo":
       return { fr: `${n} errou ${v} ${pl(d.v, "palpite", "palpites")} nessa partida`, np: `errar ${v} palpites` };
+    // Temporadas (item 7) · Títulos de Natal
+    case "natalNoel":
+      return { fr: `${n} entregou ${v} ${pl(d.v, "carta acertada", "cartas acertadas")} de presente como Mestre`, np: `entregar ${v} cartas de presente` };
+    case "natalDuende":
+      return { fr: `${n} acertou ${v} ${pl(d.v, "carta", "cartas")} no Natal`, np: `acertar ${v} cartas` };
+    case "natalRena":
+      return { fr: `${n} levou só ${v} segundos em média pra acertar`, np: `acertar em ${v} segundos` };
+    case "natalEstrela":
+      return { fr: `${n} acertou uma carta com ${v} ${pl(d.v, "dica", "dicas")}`, np: `acertar com ${v} dicas` };
+    case "natalBoneco":
+      return { fr: `${n} congelou em ${v} ${pl(d.v, "palpite furado", "palpites furados")}`, np: `errar ${v} palpites` };
     case "notamestre":
       return { fr: `${n} tirou nota ${v} como Mestre`, np: `tirar nota ${v} como Mestre` };
     case "precoce":

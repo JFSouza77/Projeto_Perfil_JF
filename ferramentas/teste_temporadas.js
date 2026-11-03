@@ -146,6 +146,33 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     });
     return r;
   }));
+  // item 7: 5 títulos de Natal no resumo da partida
+  Object.assign(o, await page.evaluate(() => {
+    const r = {};
+    const salva = { players, history, cartasPartida };
+    players = [
+      { id: "a", name: "Ana", color: "#e94560", avatar: "🦊", errosPartida: 3 },
+      { id: "b", name: "Beto", color: "#4ecdc4", avatar: "🐼", errosPartida: 0 },
+      { id: "c", name: "Cris", color: "#ffd166", avatar: "🐸", errosPartida: 1 },
+    ];
+    history = [
+      { playerName: "Beto", cluesUsed: 2, timeTakenMs: 5000 },
+      { playerName: "Beto", cluesUsed: 6, timeTakenMs: 7000 },
+      { playerName: "Beto", cluesUsed: 4, timeTakenMs: 9000 },
+      { playerName: "Cris", cluesUsed: 5, timeTakenMs: 20000 },
+      { playerName: "Cris", cluesUsed: 7, timeTakenMs: 30000 },
+    ];
+    cartasPartida = [{ mestre: "a", quem: "b" }, { mestre: "a", quem: "c" }, { mestre: "a", quem: "b" }, { mestre: "b", quem: "c" }];
+    const got = [];
+    temporadaTitulosHtml((ic, tit, nome, desc, cor, meta) => (got.push([tit, meta.n]), ""));
+    const m = Object.fromEntries(got);
+    r.natal5Titulos = got.length === 5;
+    r.papaiNoelProMestreQueMaisDeu = m["Papai Noel"] === "Ana";
+    r.titulosCertos = m["Duende Ajudante"] === "Beto" && m["Rena Veloz"] === "Beto" && m["Estrela Guia"] === "Beto" && m["Boneco de Neve"] === "Ana";
+    r.tituloComentavel = !!caosComentFato({ t: "natalNoel", n: "Ana", v: 3 });
+    players = salva.players; history = salva.history; cartasPartida = salva.cartasPartida;
+    return r;
+  }));
   // item 6: cores e emojis do Natal, pergunta pro cadastrado e salvamento da temporada
   Object.assign(o, await page.evaluate(async () => {
     const r = {};
@@ -278,6 +305,7 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
         if (Object.keys(lojaVitrineSortear(CORRIDA_LOJA, CORRIDA_VITRINE).estoque).some((k) => CORRIDA_LOJA[k].temporada)) ok = false;
       }
       r.foraVitrineSemNatal = ok;
+      r.foraSemTitulosDeNatal = temporadaTitulosHtml(() => "x") === "";
       r.foraSemCoresEEmojisDeNatal = !coresDaPaleta().some(temporadaCorEh) && !avatarsForMode().some(temporadaEmojiEh);
       JFStore.setItem(TEMPORADA_ESTILO_KEY, JSON.stringify({ duda: { chave: "natal:2025", cor: "GRAD_NATAL_GORRO", avatar: "🎅" } }));
       r.salvamentoVenceNoFimDaTemporada = Object.keys(temporadaEstiloLer()).length === 0;

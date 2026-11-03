@@ -92,7 +92,7 @@ temporadas, na ordem do calendário.
 4. [x] Natal · C.A.O.S. bonzinho: mais presentes (até 3 por partida, inclusive pros favoritos), pontinho extra e joia rara (nunca a 4ª).
 5. [x] Natal · lojinha: 5 itens de Natal na Corrida e 5 no Modo C.A.O.S.
 6. [x] Natal · 5 cores e 5 emojis, troca com pergunta pro cadastrado e salvamento da temporada (volta ao normal no fim).
-7. [ ] Natal · 5 títulos nas estatísticas (Papai Noel e outros).
+7. [x] Natal · 5 títulos nas estatísticas (Papai Noel e outros).
 8. [ ] Natal · 10 cartas de Natal, auditadas, valendo o dobro na janela.
 9. [ ] Natal · bateria de testes, prints e relatório pro JF (ele decide se publica).
 10. [ ] Ano Novo e aniversário do criador (2/1), no mesmo formato do Natal.
@@ -146,3 +146,13 @@ temporadas, na ordem do calendário.
   - A ficha nunca guarda emoji de temporada, então, quando a época acaba, o jogador volta sozinho ao estilo de antes.
   - Quem não tem cadastro não recebe a pergunta.
   - Teste: `teste_temporadas` (54 checagens). `teste_cadastro_caos`, `teste_idade` e `caos_teste_espinha` continuam OK.
+- 03/11/2026 (madrugada): item 7 feito. No Natal, o resumo do fim da partida ganha a caixa "🎄 Títulos de Natal"
+  (`temporadaTitulosHtml`), com 5 títulos:
+  - 🎅 Papai Noel: o Mestre que mais entregou cartas acertadas de presente;
+  - 🎁 Duende Ajudante: quem mais acertou;
+  - 🦌 Rena Veloz: quem acertou mais rápido, em média;
+  - 🌟 Estrela Guia: o acerto com menos dicas;
+  - ⛄ Boneco de Neve: quem mais congelou nos palpites furados.
+
+  Cada título só aparece com dado de verdade (mínimo de 2), e tocar nele faz o C.A.O.S. comentar, como nos troféus.
+  Teste: `teste_temporadas` (59 checagens), e o resumo foi montado no navegador sem erro.
