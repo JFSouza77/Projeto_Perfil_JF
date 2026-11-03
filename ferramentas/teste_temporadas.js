@@ -146,6 +146,26 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     });
     return r;
   }));
+  // item 8: 10 cartas de Natal (entram só na época, espalhadas no começo, valendo o dobro, com selo)
+  Object.assign(o, await page.evaluate(() => {
+    const r = {};
+    r.natal10Cartas = TEMPORADA_CARTAS.length === 10 && TEMPORADA_CARTAS.every((c) => c.temporada === "natal" && c.clues.length === 20);
+    r.cartasNatalForaDoBaralhoFixo = !TEMPORADA_CARTAS.some((c) => ADULT_CARDS.includes(c));
+    const modo = CURRENT_MODE, sp = players;
+    players = [{ id: "a", name: "Ana", color: "#e94560", avatar: "🦊", score: 0, position: 0 }, { id: "b", name: "Beto", color: "#4ecdc4", avatar: "🐼", score: 0, position: 0 }];
+    CURRENT_MODE = "classico";
+    allCards = baralhoClassico();
+    resetDeck();
+    const ini = deck.slice(-50);
+    r.cartasNatalEntramNoComeco = TEMPORADA_CARTAS.every((c) => ini.includes(c));
+    r.cartaNatalValeODobro = temporadaMultCarta(TEMPORADA_CARTAS[0]) === 2 && temporadaMultCarta(ADULT_CARDS[0]) === 1;
+    r.seloNaCartaDeNatal = /vale o dobro/.test(temporadaSeloCartaHtml(TEMPORADA_CARTAS[0])) && temporadaSeloCartaHtml(ADULT_CARDS[0]) === "";
+    r.cartaNatalAchadaPeloId = cartaPorId("PESSOA-0901") === TEMPORADA_CARTAS[0];
+    CURRENT_MODE = "express";
+    r.expressSemCartasNatal = temporadaCartasDoModo().length === 0;
+    CURRENT_MODE = modo; players = sp;
+    return r;
+  }));
   // item 7: 5 títulos de Natal no resumo da partida
   Object.assign(o, await page.evaluate(() => {
     const r = {};
@@ -322,6 +342,15 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
         if (Object.keys(lojaVitrineSortear(CORRIDA_LOJA, CORRIDA_VITRINE).estoque).some((k) => CORRIDA_LOJA[k].temporada)) ok = false;
       }
       r.foraVitrineSemNatal = ok;
+      {
+        const modo = CURRENT_MODE, sp = players;
+        players = [{ id: "a", name: "Ana", color: "#e94560", avatar: "🦊", score: 0, position: 0 }, { id: "b", name: "Beto", color: "#4ecdc4", avatar: "🐼", score: 0, position: 0 }];
+        CURRENT_MODE = "classico";
+        allCards = baralhoClassico();
+        resetDeck();
+        r.foraSemCartasDeNatal = !deck.some((c) => c.temporada) && temporadaMultCarta(TEMPORADA_CARTAS[0]) === 1;
+        CURRENT_MODE = modo; players = sp;
+      }
       r.foraSemTitulosDeNatal = temporadaTitulosHtml(() => "x") === "";
       r.foraSemCoresEEmojisDeNatal = !coresDaPaleta().some(temporadaCorEh) && !avatarsForMode().some(temporadaEmojiEh);
       JFStore.setItem(TEMPORADA_ESTILO_KEY, JSON.stringify({ duda: { chave: "natal:2025", cor: "GRAD_NATAL_GORRO", avatar: "🎅" } }));

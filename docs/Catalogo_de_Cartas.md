@@ -2,16 +2,16 @@
 
 Gerado pelo Code (Claude Code) em 2026-11-03 com `node ferramentas/catalogo_cartas.js`. Só os nomes, sem dicas.
 
-**1950 cartas: 1000 já estão no jogo e 950 estão planejadas pra Beta 2.0 (marcadas com 🆕).**
+**1960 cartas: 1010 já estão no jogo e 950 estão planejadas pra Beta 2.0 (marcadas com 🆕).**
 
 | Categoria | No jogo | Planejadas 🆕 | Total |
 |---|---|---|---|
 | 🐾 Animal | 200 | 65 | 265 |
 | 📅 Ano | 200 | 55 | 255 |
-| 📦 Coisa | 200 | 255 | 455 |
+| 📦 Coisa | 205 | 255 | 460 |
 | 📍 Lugar | 200 | 235 | 435 |
-| 🧑 Pessoa | 200 | 340 | 540 |
-| **Total** | **1000** | **950** | **1950** |
+| 🧑 Pessoa | 205 | 340 | 545 |
+| **Total** | **1010** | **950** | **1960** |
 
 ## Como conferir uma ideia de carta (instruções pro GPT)
 
@@ -264,7 +264,7 @@ Avestruz 🧸 · Camelo 🧸 · Chimpanzé 🧸 · Dragão-de-komodo · Dromedá
 - 2025
 - 2026 🆕 (Copa do Mundo nos Estados Unidos, Canadá e México, a primeira com 48 seleções; e Lula é reeleito (2º turno em 25/10, contra Flávio Bolsonaro), o primeiro presidente eleito quatro vezes pelo voto direto no Brasil (tema político: só fatos, fora do Júnior))
 
-## 📦 Coisa · 455 (200 no jogo, 255 🆕)
+## 📦 Coisa · 460 (205 no jogo, 255 🆕)
 
 **Casa e objetos do dia a dia** (47)
 Abajur 🧸 · Agulha 🆕 · Aliança 🆕 · Aparelho de jantar 🆕 · Armadilha 🆕 · Aspirador de pó 🧸 · Bacia 🆕 · Bengala 🆕 · Carimbo 🆕 · Carpete 🆕 · Chave · Chinelo 🧸 · Colchão 🆕 · Colher 🧸 · Colher de pau 🆕 · Dicionário · Enxada 🆕 · Escova de dente 🧸 · Espelho 📼 · Extintor de incêndio 📼 · Galocha 🆕 · Geladeira 🧸 · Guarda-chuva · Janela 🧸 · Laço de fita 🆕 · Lâmpada · Lancheira 🧸 · Lápis 🧸 · Livro · Lixeira 🆕 · Lustre 🆕 · Máquina de costura 🆕 · Máscara 🆕 · Mochila 🧸 · Óculos · Paletó 🆕 · Pasta de dente 🆕 · Relógio 📼 · Rolha 🆕 · Sabonete 🧸 · Selo 🆕 · Tanque de lavar roupas 🆕 · Tesoura 🧸 · Tijolo 🆕 · Travesseiro 🧸 · Vassoura 🧸 · Velcro 🆕
@@ -313,6 +313,9 @@ Vira-Tempo 🆕 (o Code completou pra fechar em 5; Harry Potter)
 
 **Música** (20)
 Blues 🆕 · Country 🆕 · Festival de Woodstock 🆕 · Forró 🆕 · Frevo 🆕 (handoff JF+GPT 29/10) · Funk 🆕 · Gospel 🆕 · Guitarra · Hino Nacional 🆕 (handoff JF+GPT 30/10) · Jazz 🆕 · Microfone · MPB 🆕 · Orquestra · Pagode 🆕 · Piano 📼 · Rap 🆕 · Rock 🆕 · Samba 🆕 · Sertanejo 🆕 · Violão
+
+**Natal** (5)
+Amigo Secreto · Árvore de Natal · Panetone · Pisca-pisca · Presépio
 
 **Natureza, fogo e céu** (21)
 Anéis de Saturno 🆕 (handoff JF+GPT 29/10) · Arco-íris 🧸 · Árvore 🧸 · Átomo 🆕 (handoff JF+GPT 29/10) · Buraco negro · Chuva · Cobre 🆕 (handoff JF+GPT 29/10) · Cometa · Constelações 📼 · Diamante 🆕 (handoff JF+GPT 29/10) · Eclipse · Esmeralda 🆕 (handoff JF+GPT 29/10) · Estrela 🆕 · Ferro 🆕 (handoff JF+GPT 29/10) · Fogo 🧸 · Fogueira 🧸 · Gelo 🧸 · Gravidade · Ouro 🆕 (handoff JF+GPT 29/10) · Rubi 🆕 (handoff JF+GPT 29/10) · Safira 🆕 (handoff JF+GPT 29/10)
@@ -430,7 +433,7 @@ Vale do Silício 🆕 (fecha a conta de Lugar em 225)
 **Universidades e estúdios** (3)
 Herbert Richers 📼 · Projac 🆕 · UFRJ 📼
 
-## 🧑 Pessoa · 540 (200 no jogo, 340 🆕)
+## 🧑 Pessoa · 545 (205 no jogo, 340 🆕)
 
 **Animação** (2)
 Bruno Madrigal 🆕 (ideia do JF 03/11) · Mirabel Madrigal 🆕 (ideia do JF 03/11)
@@ -518,6 +521,9 @@ Anitta · Barão Vermelho 🆕 (Old School; handoff JF+GPT 29/10) · Blitz (band
 
 **Música internacional** (23)
 AC/DC 🆕 · Ariana Grande · Beatles 📼 · Beyoncé · Billie Eilish · Black Sabbath 🆕 (handoff JF+GPT 26/10) · Elvis Presley 🆕 · Freddie Mercury 🆕 (handoff JF+GPT 29/10) · Guns N' Roses 🆕 · Iron Maiden 🆕 (handoff JF+GPT 26/10) · Justin Bieber · Linkin Park 🆕 (handoff JF+GPT 29/10) · Madonna 🆕 · Metallica 🆕 · Michael Jackson 📼 · Nirvana 🆕 · Pink Floyd 🆕 · Queen 🆕 · Ramones 📼 · Red Hot Chili Peppers 🆕 (handoff JF+GPT 29/10) · Rolling Stones 📼 · Skillet 🆕 (handoff JF+GPT 26/10) · Taylor Swift
+
+**Natal** (5)
+Grinch · Kevin McCallister · Mamãe Noel · Papai Noel · Rudolph
 
 **Paz, direitos e ativismo** (5)
 Barack Obama 📼 · Mahatma Gandhi 📼 · Malala Yousafzai · Martin Luther King Jr. 📼 · Nelson Mandela 📼

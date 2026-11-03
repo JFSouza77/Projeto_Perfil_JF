@@ -118,3 +118,18 @@ html[data-temporada="natal"] .rede-fala-rosto {
   background-repeat: no-repeat;
   padding-top: 11px;
 }
+
+/* Natal · selo da carta de temporada (vale o dobro) */
+.tmp-selo-carta {
+  display: block;
+  margin: 0 auto 8px;
+  width: fit-content;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: #fff;
+  background: linear-gradient(135deg, #b91c1c, #15803d);
+  border: 1px solid #fde68a99;
+  box-shadow: 0 0 10px #fde68a55;
+}

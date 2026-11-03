@@ -157,7 +157,7 @@ function rebuildCardsIndex() {
 // Cartas pelo id fixo (1.7.7.2). Vale pro baralho inteiro, não só o do modo atual.
 let cartasPorIdMapa = null;
 function cartaPorId(id) {
-  if (!cartasPorIdMapa) cartasPorIdMapa = new Map(ADULT_CARDS.map((c) => [c.id, c]));
+  if (!cartasPorIdMapa) cartasPorIdMapa = new Map(ADULT_CARDS.concat(typeof TEMPORADA_CARTAS !== "undefined" ? TEMPORADA_CARTAS : []).map((c) => [c.id, c]));
   return cartasPorIdMapa.get(id) || null;
 }
 // Resposta (de agora ou antiga, de save velho) → carta.
@@ -165,7 +165,7 @@ function cartaPorResposta(resp) {
   if (typeof resp !== "string") return null;
   const id = CARTAS_RESPOSTA_ANTIGA[resp];
   if (id) return cartaPorId(id);
-  if (!cartasPorRespostaMapa) cartasPorRespostaMapa = new Map(ADULT_CARDS.map((c) => [c.answer, c]));
+  if (!cartasPorRespostaMapa) cartasPorRespostaMapa = new Map(ADULT_CARDS.concat(typeof TEMPORADA_CARTAS !== "undefined" ? TEMPORADA_CARTAS : []).map((c) => [c.answer, c]));
   return cartasPorRespostaMapa.get(resp) || null;
 }
 let cartasPorRespostaMapa = null;

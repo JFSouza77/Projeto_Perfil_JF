@@ -343,3 +343,44 @@ function temporadaTitulosHtml(larga) {
   if (boneco) h += larga("⛄", "Boneco de Neve", nomeH(boneco), `congelou em ${boneco.errosPartida} palpites furados`, "#93c5fd", { t: "natalBoneco", n: boneco.name, v: boneco.errosPartida });
   return h;
 }
+
+/* Temporadas · item 8: as 10 cartas de Natal (src/dados/02-cartas/98-temporada.js). Ficam fora do baralho o ano todo.
+   Durante o Natal, entram na partida (Clássico, Hardcore, Júnior e Corrida; Old School, Express e Modo C.A.O.S. têm
+   baralho próprio e ficam como estão), espalhadas entre as primeiras cartas, e valem o dobro de pontos, com o selo
+   🎄 na carta. */
+const TEMPORADA_CARTAS_MODOS = ["classico", "hardcore", "junior", "corrida"];
+const TEMPORADA_CARTAS_JANELA = 40; // as cartas da temporada entram espalhadas entre as primeiras 40 que vão sair
+function temporadaCartaAtiva(card) {
+  const t = typeof temporadaAtual === "function" ? temporadaAtual() : null;
+  return !!(card && card.temporada && t && card.temporada === t.id);
+}
+function temporadaMultCarta(card) {
+  return temporadaCartaAtiva(card) ? 2 : 1;
+}
+function temporadaCartasDoModo() {
+  if (typeof TEMPORADA_CARTAS === "undefined" || !TEMPORADA_CARTAS_MODOS.includes(CURRENT_MODE)) return [];
+  return TEMPORADA_CARTAS.filter((c) => {
+    if (!temporadaCartaAtiva(c)) return false;
+    if (CURRENT_MODE === "junior") return c.category !== "ANO" && (c.classificacao === "junior" || c.classificacao === "livre");
+    if (CURRENT_MODE === "corrida") return c.category !== "ANO";
+    return true;
+  });
+}
+// recebe o baralho na ordem de compra (o fim sai primeiro) e espalha as cartas da temporada entre as primeiras a sair
+function temporadaCartasNoBaralho(deck) {
+  const novas = temporadaCartasDoModo().filter((c) => !deck.includes(c));
+  if (!novas.length) return deck;
+  const d = deck.slice();
+  novas.forEach((c) => {
+    const janela = Math.min(TEMPORADA_CARTAS_JANELA, d.length);
+    d.splice(d.length - Math.floor(sorteioRegra() * (janela + 1)), 0, c);
+  });
+  novas.forEach((c) => {
+    if (!allCards.includes(c)) allCards.push(c);
+  });
+  rebuildCardsIndex();
+  return d;
+}
+function temporadaSeloCartaHtml(card) {
+  return temporadaCartaAtiva(card) ? `<div class="tmp-selo-carta" title="Carta de Natal: vale o dobro de pontos">🎄 Carta de Natal · vale o dobro</div>` : "";
+}

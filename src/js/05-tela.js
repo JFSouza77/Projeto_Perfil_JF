@@ -891,7 +891,7 @@ function render() {
       } else {
         const totalCardPointsNow = currentCard.clues.length;
         const entriesNow = revealedOrder.length;
-        const bonusMult = (currentCard && currentCard.isBonus ? 2 : 1) * (CURRENT_MODE === "hardcore" ? 2 : 1);
+        const bonusMult = (currentCard && currentCard.isBonus ? 2 : 1) * (CURRENT_MODE === "hardcore" ? 2 : 1) * temporadaMultCarta(currentCard);
         const pointsIfCorrect = (totalCardPointsNow - entriesNow) * bonusMult;
         const mestreGainDisplay = entriesNow * bonusMult;
         const cb = currentCard && currentCard.isBonus ? currentCard : null;
@@ -992,7 +992,7 @@ function render() {
     const bonusBannerRevealedHtml = currentCard.isBonus ? renderBonusBanner() : "";
     const bonusDuelHtml = currentCard.isBonus ? renderBonusDuelInfo() : "";
     area.innerHTML = `
-      ${bonusBannerRevealedHtml}
+      ${bonusBannerRevealedHtml}${temporadaSeloCartaHtml(currentCard)}
       <div class="answer-header cat-neon" style="--cat:${(GEM_INFO[gemCategoryFor(currentCard.category)] || {}).color || "#e94560"};"><span class="cat-selo">${CAT_SELO_ICONE[gemCategoryFor(currentCard.category)] || "🃏"} ${escapeHtml((GEM_INFO[gemCategoryFor(currentCard.category)] || {}).name || gemCategoryFor(currentCard.category))}</span>Diga aos jogadores: "Eu sou ${formatLabelUppercase(CATEGORY_LABELS[gemCategoryFor(currentCard.category)])}."</div>
       ${bonusDuelHtml}
       ${answerLineHtml()}

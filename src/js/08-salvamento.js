@@ -665,7 +665,7 @@ function sanitizeLoadedState(s) {
     if (k2 && n > 0) s.palpiteHolders[k2] = 1;
   });
   s.palpiteStock = Math.max(0, PALPITE_STOCK - Object.keys(s.palpiteHolders).length);
-  const answers = new Set(ADULT_CARDS.map((c) => c.answer));
+  const answers = new Set(ADULT_CARDS.concat(typeof TEMPORADA_CARTAS !== "undefined" ? TEMPORADA_CARTAS : []).map((c) => c.answer));
   s.history = (Array.isArray(s.history) ? s.history : [])
     .map((h) => (h && !answers.has(h.answer) && cartaPorResposta(h.answer) ? { ...h, answer: cartaPorResposta(h.answer).answer } : h))
     .filter((h) => h && answers.has(h.answer) && Object.prototype.hasOwnProperty.call(CATEGORY_LABELS, h.category))
@@ -747,7 +747,7 @@ function loadGameState() {
       state.allCardsAnswers &&
       state.allCardsAnswers.length
     ) {
-      const fullIndex = new Map(ADULT_CARDS.map((c) => [c.answer, c]));
+      const fullIndex = new Map(ADULT_CARDS.concat(typeof TEMPORADA_CARTAS !== "undefined" ? TEMPORADA_CARTAS : []).map((c) => [c.answer, c]));
       allCards = state.allCardsAnswers.map((a) => fullIndex.get(a)).filter(Boolean);
     } else if (CURRENT_MODE === "junior") {
       allCards = ADULT_CARDS.filter(

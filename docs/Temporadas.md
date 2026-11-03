@@ -93,7 +93,7 @@ temporadas, na ordem do calendário.
 5. [x] Natal · lojinha: 5 itens de Natal na Corrida e 5 no Modo C.A.O.S.
 6. [x] Natal · 5 cores e 5 emojis, troca com pergunta pro cadastrado e salvamento da temporada (volta ao normal no fim).
 7. [x] Natal · 5 títulos nas estatísticas (Papai Noel e outros).
-8. [ ] Natal · 10 cartas de Natal, auditadas, valendo o dobro na janela.
+8. [x] Natal · 10 cartas de Natal, auditadas, valendo o dobro na janela.
 9. [ ] Natal · bateria de testes, prints e relatório pro JF (ele decide se publica).
 10. [ ] Ano Novo e aniversário do criador (2/1), no mesmo formato do Natal.
 11. [ ] As outras 12 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween, com o Doces ou travessuras).
@@ -156,3 +156,13 @@ temporadas, na ordem do calendário.
 
   Cada título só aparece com dado de verdade (mínimo de 2), e tocar nele faz o C.A.O.S. comentar, como nos troféus.
   Teste: `teste_temporadas` (59 checagens), e o resumo foi montado no navegador sem erro.
+- 03/11/2026 (manhã): item 8 feito. 10 cartas de Natal em `src/dados/02-cartas/98-temporada.js`, com ids 0901 a 0905,
+  fora da sequência das cartas de sempre:
+  - Pessoa: Papai Noel, Mamãe Noel, Grinch, Rudolph e Kevin McCallister (Esqueceram de Mim);
+  - Coisa: Árvore de Natal, Panetone, Presépio, Pisca-pisca e Amigo Secreto.
+
+  Elas ficam fora do baralho o ano todo (`TEMPORADA_CARTAS`). No Natal, entram no Clássico, Hardcore, Júnior e Corrida,
+  espalhadas entre as primeiras 40 cartas, **valem o dobro de pontos** (também no Express, se cair) e mostram o selo
+  "🎄 Carta de Natal · vale o dobro". Auditoria: 0 erros (1.010 cartas no jogo, total em múltiplo de 5); assuntos
+  no catálogo. Teste: `teste_temporadas` (68 checagens). `teste_baralho`, `teste_lote`, `teste_corrida` e
+  `caos_teste_espinha` continuam OK.

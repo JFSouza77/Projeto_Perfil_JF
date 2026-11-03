@@ -355,6 +355,7 @@ function resetDeck() {
       ? shuffle(fonteDeck)
       : embaralharEquilibrado(fonteDeck, CURRENT_MODE === "hardcore" ? CATEGORY_WEIGHTS_HARDCORE : null).reverse();
   deck = baralhoAfastarRecentes(deck); // 1.7.10.8: o que saiu nas últimas partidas vai pro fundo
+  if (typeof temporadaCartasNoBaralho === "function") deck = temporadaCartasNoBaralho(deck); // Temporadas: cartas de Natal (valem o dobro)
   currentCard = null;
   cardState = "none";
   gameEnded = false;
@@ -720,7 +721,7 @@ function resolveExhaustionIfNeeded() {
     expressStealSavedResponder = null;
     if (CURRENT_MODE !== "express" && CURRENT_MODE !== "corrida") {
       const totalCardPoints = currentCard.clues.length;
-      const bonusMultiplier = currentCard && currentCard.isBonus ? 2 : 1;
+      const bonusMultiplier = (currentCard && currentCard.isBonus ? 2 : 1) * temporadaMultCarta(currentCard); // Temporadas: carta de Natal vale o dobro
       const hardcoreMultiplier = CURRENT_MODE === "hardcore" ? 2 : 1;
       const gained = totalCardPoints * bonusMultiplier * hardcoreMultiplier;
       creditPoints(mestreIndex, gained, true);
@@ -1033,7 +1034,7 @@ function markCorrect(playerIdxOverride) {
       : currentCard.bonusLanderPlayerIdx
     : mestreIndex;
   if (CURRENT_MODE === "express") {
-    const expressPts = expressPoints(realCluesRevealed);
+    const expressPts = expressPoints(realCluesRevealed) * temporadaMultCarta(currentCard);
     players[scorerIdx].score += expressPts;
     fxFloat("+" + expressPts, "#4ade80");
     const gemResultX = awardGemIfEarned(scorerIdx, realCluesRevealed);
@@ -1109,7 +1110,7 @@ function markCorrect(playerIdxOverride) {
   const entriesRevealed = revealedOrder.length;
   const pointsForResponder = totalCardPoints - entriesRevealed;
   const pointsForMestre = entriesRevealed;
-  const bonusMultiplier = currentCard.isBonus ? 2 : 1;
+  const bonusMultiplier = (currentCard.isBonus ? 2 : 1) * temporadaMultCarta(currentCard); // Temporadas: carta de Natal vale o dobro
   const hardcoreMultiplier = CURRENT_MODE === "hardcore" ? 2 : 1;
   const finalPointsResponder = pointsForResponder * bonusMultiplier * hardcoreMultiplier;
   const finalPointsMestre = pointsForMestre * bonusMultiplier * hardcoreMultiplier;
