@@ -1541,6 +1541,106 @@
     "a": "Faraó",
     "assunto": "História mundial (líderes e conquistadores)",
     "obs": "o título dos reis do Egito antigo; respostas do JF 31/10"
+   },
+   {
+    "a": "Dorothy",
+    "assunto": "Cinema e livros",
+    "obs": "ideia do JF 03/11"
+   },
+   {
+    "a": "Motoqueiro Fantasma",
+    "assunto": "Super-heróis",
+    "obs": "ideia do JF 03/11"
+   },
+   {
+    "a": "Hermes",
+    "assunto": "Mitologia",
+    "obs": "ideia do JF 03/11"
+   },
+   {
+    "a": "Percy Jackson",
+    "assunto": "Livros e cinema",
+    "obs": "ideia do JF 03/11"
+   },
+   {
+    "a": "Mirabel Madrigal",
+    "assunto": "Animação",
+    "obs": "ideia do JF 03/11"
+   },
+   {
+    "a": "Bruno Madrigal",
+    "assunto": "Animação",
+    "obs": "ideia do JF 03/11"
+   },
+   {
+    "a": "Pinky e Cérebro",
+    "assunto": "Desenhos",
+    "obs": "ideia do JF 03/11"
+   },
+   {
+    "a": "Hannah Montana",
+    "assunto": "Séries",
+    "obs": "ideia do JF 03/11"
+   },
+   {
+    "a": "Jonas Brothers",
+    "assunto": "Música",
+    "obs": "ideia do JF 03/11"
+   },
+   {
+    "a": "Astro Boy",
+    "assunto": "Desenhos",
+    "obs": "ideia do JF 03/11"
+   },
+   {
+    "a": "Rei Gelado",
+    "assunto": "Desenhos",
+    "obs": "ideia do JF 03/11; Hora de Aventura"
+   },
+   {
+    "a": "Draco Malfoy",
+    "assunto": "Livros e cinema",
+    "obs": "ideia do JF 03/11"
+   },
+   {
+    "a": "Rony Weasley",
+    "assunto": "Livros e cinema",
+    "obs": "ideia do JF 03/11"
+   },
+   {
+    "a": "Daenerys Targaryen",
+    "assunto": "Séries",
+    "obs": "ideia do JF 03/11; fora do Júnior"
+   },
+   {
+    "a": "Canarinho Pistola",
+    "assunto": "Futebol",
+    "obs": "ideia do JF 03/11; mascote da seleção"
+   },
+   {
+    "a": "Beethoven",
+    "assunto": "Música",
+    "obs": "ideia do JF 03/11; o compositor"
+   },
+   {
+    "a": "Espantalho",
+    "assunto": "Cinema e livros",
+    "obs": "o Code completou pra fechar em 5; do Mágico de Oz"
+   },
+   {
+    "a": "Homem de Lata",
+    "assunto": "Cinema e livros",
+    "obs": "o Code completou pra fechar em 5; do Mágico de Oz"
+   },
+   {
+    "a": "Leão Covarde",
+    "assunto": "Cinema e livros",
+    "obs": "o Code completou pra fechar em 5; do Mágico de Oz"
+   },
+   {
+    "a": "Bruxa Má do Oeste",
+    "assunto": "Cinema e livros",
+    "obs": "o Code completou pra fechar em 5; do Mágico de Oz"
    }
   ],
   "LUGAR": [
@@ -2630,6 +2730,56 @@
     "a": "Vale do Silício",
     "assunto": "Tecnologia",
     "obs": "fecha a conta de Lugar em 225"
+   },
+   {
+    "a": "Reino de Oz",
+    "assunto": "Cinema e livros",
+    "obs": "ideia do JF 03/11"
+   },
+   {
+    "a": "Maternidade",
+    "assunto": "Lugares do dia a dia",
+    "obs": "ideia do JF 03/11"
+   },
+   {
+    "a": "Oficina do Papai Noel",
+    "assunto": "Natal",
+    "obs": "ideia do JF 03/11; fábrica de brinquedos"
+   },
+   {
+    "a": "Arendelle",
+    "assunto": "Animação",
+    "obs": "ideia do JF 03/11"
+   },
+   {
+    "a": "Universidade de Oxford",
+    "assunto": "Educação",
+    "obs": "ideia do JF 03/11"
+   },
+   {
+    "a": "MIT",
+    "assunto": "Educação",
+    "obs": "ideia do JF 03/11"
+   },
+   {
+    "a": "Acampamento Meio-Sangue",
+    "assunto": "Livros e cinema",
+    "obs": "o Code completou pra fechar em 5; Percy Jackson"
+   },
+   {
+    "a": "Casa Madrigal",
+    "assunto": "Animação",
+    "obs": "o Code completou pra fechar em 5; Encanto"
+   },
+   {
+    "a": "Westeros",
+    "assunto": "Séries",
+    "obs": "o Code completou pra fechar em 5; fora do Júnior"
+   },
+   {
+    "a": "Universidade de Harvard",
+    "assunto": "Educação",
+    "obs": "o Code completou pra fechar em 5"
    }
   ],
   "COISA": [
@@ -3749,6 +3899,31 @@
     "a": "Megazord",
     "assunto": "Objetos lendários, armas e ficção",
     "obs": "Power Rangers; Old School; respostas do JF 31/10"
+   },
+   {
+    "a": "O Mágico de Oz",
+    "assunto": "Cinema e livros",
+    "obs": "ideia do JF 03/11"
+   },
+   {
+    "a": "iCarly",
+    "assunto": "Séries",
+    "obs": "ideia do JF 03/11"
+   },
+   {
+    "a": "Pac-Man",
+    "assunto": "Videogames",
+    "obs": "ideia do JF 03/11; o jogo"
+   },
+   {
+    "a": "Sapatinhos de Rubi",
+    "assunto": "Cinema e livros",
+    "obs": "o Code completou pra fechar em 5; do Mágico de Oz"
+   },
+   {
+    "a": "Vira-Tempo",
+    "assunto": "Livros e cinema",
+    "obs": "o Code completou pra fechar em 5; Harry Potter"
    }
   ],
   "ANIMAL": [

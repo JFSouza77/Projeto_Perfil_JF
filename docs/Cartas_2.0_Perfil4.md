@@ -529,3 +529,18 @@ A Ilha de Creta está na seção de mitologia (Lugar).
 - Entram no plano quando o JF trouxer as cartas de Ano (e o que mais achar no Perfil 8), pra fechar as contas em 0 ou 5.
 - Animal não tem no Perfil 8 (só no Júnior). Pra Animal, o Code sugere dinossauros, bichos brasileiros, bichos do mar e
   poucas raças, só as muito conhecidas.
+
+### Ideias do JF (03/11/2026): 35 cartas novas no plano (total planejado: 950; com o jogo, 1.950)
+
+- **Da lista do JF (25):**
+  - Pessoa: Dorothy, Motoqueiro Fantasma, Hermes, Percy Jackson, Mirabel e Bruno Madrigal, Pinky e Cérebro, Hannah
+    Montana, Jonas Brothers, Astro Boy, Rei Gelado, Draco Malfoy, Rony Weasley, Daenerys Targaryen (fora do Júnior),
+    Canarinho Pistola e Beethoven.
+  - Lugar: Reino de Oz, Maternidade, Oficina do Papai Noel, Arendelle, Universidade de Oxford e MIT.
+  - Coisa: O Mágico de Oz, iCarly e Pac-Man (o jogo).
+- **Já existiam (ficaram de fora):** Elsa, Moana, Hermione Granger, Monte Rushmore (no jogo); Quarteto Fantástico,
+  Pokédex, Pokébola e Angry Birds (já no plano da 2.0).
+- **O Code completou pra fechar cada grupo em 0 ou 5 (10):** Espantalho, Homem de Lata, Leão Covarde e Bruxa Má do
+  Oeste (o elenco do Mágico de Oz), Acampamento Meio-Sangue, Casa Madrigal, Westeros (fora do Júnior), Universidade de
+  Harvard, Sapatinhos de Rubi e Vira-Tempo.
+- Ainda esperando: as cartas de **Ano** do Perfil 8.
