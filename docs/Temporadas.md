@@ -80,6 +80,14 @@ e autorizar.** Quando tudo estiver pronto, o Code avisa e mostra o que fez.
 - **Tom:** o C.A.O.S. pode implicar e zoar, mas com respeito. Datas de homenagem (Dia das Mães, Dia dos Pais, Dia da
   Mulher) têm falas carinhosas, sem piada pesada.
 
+- **Medalhas da temporada (ideia do JF, 04/11/2026):** durante a temporada, quem vencer os desafios dela ganha uma
+  medalha especial, salva no perfil (cadastro) do jogador. O jogador escolhe se exibe ou não.
+  - Desafios da 1ª versão: vencer uma partida no **Júnior**, uma no **Clássico** e uma no **Old School**, as três com a
+    condição **Vitória por joias**. Fez as três dentro da janela da temporada: medalha.
+  - Uma medalha por temporada (e por ano: Natal 2026, Natal 2027…), com desenho próprio (o Code faz em SVG; o JF pode
+    mandar a arte dele depois).
+  - Mais desafios: o JF vai pensar.
+
 ## Ordem de trabalho (um pedaço por dia)
 
 **Prioridade: o Natal** (pedido do JF, 30/10/2026). O Natal fica completo primeiro, pra estar pronto antes de 1/12.
@@ -95,6 +103,8 @@ temporadas, na ordem do calendário.
 7. [x] Natal · 5 títulos nas estatísticas (Papai Noel e outros).
 8. [x] Natal · 10 cartas de Natal, auditadas, valendo o dobro na janela.
 9. [x] Natal · bateria de testes, prints e relatório pro JF (ele decide se publica).
+9.1. [x] **Publicado:** Beta 1.9.3 · Edição de Natal (04/11/2026, PR #191). O trabalho segue no branch `temporadas-2`.
+9.2. [ ] Medalhas da temporada (ideia do JF, 04/11): desafios, medalha no perfil, exibir ou não, desenho da medalha de Natal. Att grande: quinta/sexta.
 10. [ ] Ano Novo e aniversário do criador (2/1), no mesmo formato do Natal. Em pedaços:
     - [x] Ano Novo · enfeite (confete e fogos), selo, 15 falas (+ 10 de presente), 5 cores, 5 emojis e 5+5 itens de lojinha.
     - [ ] Ano Novo · 5 títulos e 10 cartas valendo o dobro.

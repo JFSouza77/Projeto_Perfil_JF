@@ -7,6 +7,8 @@
 - [ ] **Emoções mais refinadas:** respostas às emoções mais finas e calibradas (revisar o console, as misturas e o que
   cada emoção muda na fala).
 - [ ] **Pente fino na interface:** botões, UI/UX do jogo todo, contrastes, acessibilidade (com cuidado, tela por tela).
+- [ ] **Medalhas da temporada:** vencer Júnior, Clássico e Old School com Vitória por joias durante a temporada dá
+  uma medalha no perfil (o jogador escolhe exibir ou não). Plano em `docs/Temporadas.md`.
 - [ ] **Aba de sugestões:** os jogadores mandam ideias e feedback pra gente sempre que quiserem.
 
 Feito em 04/11 (era pequeno): presente do C.A.O.S. com fala de data (adiantado, no dia, atrasado), falas novas e um
