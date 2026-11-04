@@ -375,6 +375,16 @@ function temporadaCartasNoBaralho(deck) {
     const janela = Math.min(TEMPORADA_CARTAS_JANELA, d.length);
     d.splice(d.length - Math.floor(sorteioRegra() * (janela + 1)), 0, c);
   });
+  // baralho já no limite do modo: as de Natal tomam o lugar das últimas a sair (o contador não passa de "400 de 400")
+  if (typeof deckLimiteModo === "function" && deck.length >= deckLimiteModo()) {
+    for (let tirar = novas.length, i = 0; tirar > 0 && i < d.length; ) {
+      if (temporadaCartaAtiva(d[i])) i++;
+      else {
+        d.splice(i, 1);
+        tirar--;
+      }
+    }
+  }
   novas.forEach((c) => {
     if (!allCards.includes(c)) allCards.push(c);
   });

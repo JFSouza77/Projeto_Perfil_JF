@@ -94,7 +94,7 @@ temporadas, na ordem do calendário.
 6. [x] Natal · 5 cores e 5 emojis, troca com pergunta pro cadastrado e salvamento da temporada (volta ao normal no fim).
 7. [x] Natal · 5 títulos nas estatísticas (Papai Noel e outros).
 8. [x] Natal · 10 cartas de Natal, auditadas, valendo o dobro na janela.
-9. [ ] Natal · bateria de testes, prints e relatório pro JF (ele decide se publica).
+9. [x] Natal · bateria de testes, prints e relatório pro JF (ele decide se publica).
 10. [ ] Ano Novo e aniversário do criador (2/1), no mesmo formato do Natal.
 11. [ ] As outras 12 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween, com o Doces ou travessuras).
 12. [ ] Bateria final, prints de todas as temporadas e relatório pro JF.
@@ -166,3 +166,10 @@ temporadas, na ordem do calendário.
   "🎄 Carta de Natal · vale o dobro". Auditoria: 0 erros (1.010 cartas no jogo, total em múltiplo de 5); assuntos
   no catálogo. Teste: `teste_temporadas` (68 checagens). `teste_baralho`, `teste_lote`, `teste_corrida` e
   `caos_teste_espinha` continuam OK.
+- 04/11/2026: item 9 feito. Bateria inteira no build do Natal: tudo OK (`build.js --testar` nas 3 saídas, temporadas
+  com 69 checagens, baralho, lote, corrida, espinha, cérebro e o resto). Dois achados no caminho:
+  - o `teste_cerebro` falhava às vezes, até no main (o teste dependia do temperamento sorteado na carga). Corrigido
+    só no teste;
+  - o print mostrou "409 de 400" no contador: as 10 de Natal entravam por cima do limite. Agora tomam o lugar das
+    últimas 10 a sair (`baralhoNaoPassaDoLimite` no teste).
+  Prints e relatório mandados pro JF. **Esperando ele dizer se publica antes de 1/12.**

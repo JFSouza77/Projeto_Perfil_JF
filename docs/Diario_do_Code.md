@@ -97,3 +97,11 @@ segura**. Sem rodeio: é pra achar rápido.
   - Mudou (só no teste): o roteiro começa com `caosCerebroFabrica()` e recomeça o sorteio do zero (`window.__semear`).
     O jogo não mudou.
   - Teste: `teste_cerebro` passou 5/5 em 3 rodadas no build do Natal e em 2 no main (antes oscilava).
+
+### 04/11/2026 · Natal: contador "409 de 400" (achado no print do item 9 das temporadas)
+
+- **Na tela da partida, com o Natal ligado: "Cartas restantes no baralho: 409 de 400".**
+  - Causa: `temporadaCartasNoBaralho` somava as 10 cartas de Natal num baralho que já estava no limite do modo.
+  - Mudou: com o baralho no limite, as de Natal tomam o lugar das últimas 10 cartas a sair (nunca de outra de Natal).
+  - Teste: `teste_temporadas` › `baralhoNaoPassaDoLimite` (falha sem a correção, passa com ela).
+

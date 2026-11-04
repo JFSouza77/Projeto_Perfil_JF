@@ -158,6 +158,7 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     resetDeck();
     const ini = deck.slice(-50);
     r.cartasNatalEntramNoComeco = TEMPORADA_CARTAS.every((c) => ini.includes(c));
+    r.baralhoNaoPassaDoLimite = deck.length <= deckLimiteModo(); // print do Natal (04/11): "409 de 400"
     r.cartaNatalValeODobro = temporadaMultCarta(TEMPORADA_CARTAS[0]) === 2 && temporadaMultCarta(ADULT_CARDS[0]) === 1;
     r.seloNaCartaDeNatal = /vale o dobro/.test(temporadaSeloCartaHtml(TEMPORADA_CARTAS[0])) && temporadaSeloCartaHtml(ADULT_CARDS[0]) === "";
     r.cartaNatalAchadaPeloId = cartaPorId("PESSOA-0901") === TEMPORADA_CARTAS[0];
