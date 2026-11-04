@@ -43,7 +43,7 @@ online com vários aparelhos, auditoria de cartas, de botões e de falas.
 - Chaves e senhas (TURN, Azure, reportes) ficam **só** nos segredos do Cloudflare. Nunca no código nem no chat.
 
 ## Versões antigas e backup
-- Ficam no repositório só as **3 versões mais novas** (normal + offline), como reserva.
+- Ficam no repositório só as **3 versões mais novas** (normal, offline e Mestre), como reserva.
 - As antigas estão no histórico do Git e no **acervo do Drive** do JF ("Projeto Perfil JF > Perfil JF - Acervo GitHub").
 - `node ferramentas/limpar_versoes.js` mostra o que sairia; `--apagar` limpa; `--acervo PASTA` monta o pacote
   pro Drive (zip com todas as versões, histórico completo do Git e impressões digitais SHA-256).
