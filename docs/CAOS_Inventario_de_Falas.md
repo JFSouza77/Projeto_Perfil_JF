@@ -189,7 +189,7 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 474 | getRandomReaction | - |
 | 480 | getRandomReaction | - |
 | 494 | getRandomReaction | - |
-| 562 | getRandomReaction | - |
+| 566 | getRandomReaction | - |
 
 ## js/06-voz-som-vibracao.js (3)
 

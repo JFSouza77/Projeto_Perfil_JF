@@ -10,6 +10,24 @@
 //  · o que ainda não entrou fica em docs/Novidades_Rascunho.md.
 const NOVIDADES = [
   {
+    v: "Beta 1.9.3",
+    data: "04/11/2026",
+    nome: "Edição de Natal",
+    t: "O jogo agora entra no clima das datas. A primeira é o Natal, de 1º a 30 de dezembro.",
+    itens: [
+      "🎄 Clima de Natal: em dezembro, neve leve e luzinhas na tela, selo de Natal na abertura e o C.A.O.S. de gorro. Não curtiu? Desliga em Acessibilidade, na opção Temporadas.",
+      "🎅 C.A.O.S. natalino: no Natal ele fica mais calmo e paciente. Se alguém abusar, ele liga pro Papai Noel e promete carvão. Mas esfria rápido e perdoa, porque é Natal.",
+      "🎁 Presentes de Natal: no Modo C.A.O.S., até 3 presentes por partida, e às vezes uma joia de presente, que nunca é a última pra vitória.",
+      "🃏 Cartas de Natal: 10 cartas da época, como Papai Noel, Grinch e Panetone, entram no baralho em dezembro e valem o dobro de pontos.",
+      "🛒 Lojinha, cores e emojis: itens de Natal nas lojinhas, cores e emojis da época na paleta, e títulos de Natal no resumo da partida, como o Papai Noel e o Duende Ajudante.",
+      "📅 Presente com data: quando o C.A.O.S. dá um presente perto de uma data especial, ele lembra dela, adiantado, no dia ou atrasado. Ex.: Feliz Dia das Crianças adiantado!",
+      "🎆 Ano Novo chegando: confete, fogos, falas, cores e itens de Ano Novo nos dias 31/12 e 1/1.",
+    ],
+    qol: [
+      "🔢 Escolha a dica: o C.A.O.S. ganhou muitas falas novas pra quando alguém demora a escolher a dica, de acordo com o humor dele.",
+    ],
+  },
+  {
     v: "Beta 1.9.1",
     ate: "1.9.2", // a lista junta os ajustes até essa versão
     data: "31/10/2026",
