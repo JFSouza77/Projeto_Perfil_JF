@@ -186,10 +186,10 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 287 | showToastMessage | - |
 | 452 | caosFalarDepois | - |
 | 453 | showToastMessage | - |
-| 470 | getRandomReaction | - |
-| 476 | getRandomReaction | - |
-| 490 | getRandomReaction | - |
-| 499 | getRandomReaction | - |
+| 474 | getRandomReaction | - |
+| 480 | getRandomReaction | - |
+| 494 | getRandomReaction | - |
+| 503 | getRandomReaction | - |
 
 ## js/06-voz-som-vibracao.js (3)
 

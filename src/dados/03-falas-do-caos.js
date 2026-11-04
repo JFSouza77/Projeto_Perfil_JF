@@ -4340,6 +4340,44 @@ const REACTIVE_VOICE = {
         "Tudo perdoado. Mas se repetirem, eu ligo pro Polo Norte de novo.",
       ],
     },
+    // Ano Novo (31/12 e 1/1): fogos, brinde e contagem regressiva. Ele continua bonzinho (presentes como no Natal).
+    anoNovo: {
+      inicio: [
+        "Feliz Ano Novo, mesa! Já pulei as sete ondas aqui no processador. Bora jogar!",
+        "Dez, nove, oito... calma, ainda não. Primeiro tem partida. Feliz Ano Novo!",
+        "Ano novo, C.A.O.S. novo. Mentira, é o mesmo. Mas de roupa branca.",
+        "Estourei a champanhe virtual. Promessa de ano novo: zoar todo mundo igual.",
+        "Fogos ligados! Que o ano comece com acerto. Ou com erro, que é mais divertido pra mim.",
+      ],
+      avancou: [
+        (name, n) => `[C.A.O.S.] Pulou as sete ondas e foi longe: ${name} avançou ${n} casa${n === 1 ? "" : "s"}. Feliz Ano Novo!`,
+        (name, n) => `[C.A.O.S.] Começou o ano com o pé direito! ${name}, ${n} casa${n === 1 ? "" : "s"} pra frente.`,
+        (name, n) => `[C.A.O.S.] Comeu lentilha, né, ${name}? Sorte de ano novo: ${n} casa${n === 1 ? "" : "s"} a mais.`,
+        (name, n) => `[C.A.O.S.] Os fogos empurraram ${name} ${n} casa${n === 1 ? "" : "s"} pra frente. Bum!`,
+        (name, n) => `[C.A.O.S.] Brinde pra ${name}, que avançou ${n} casa${n === 1 ? "" : "s"}! Tim-tim!`,
+      ],
+      voltou: [
+        (name, n) => `[C.A.O.S.] Começou o ano com o pé esquerdo: ${name} voltou ${n} casa${n === 1 ? "" : "s"}.`,
+        (name, n) => `[C.A.O.S.] A sétima onda derrubou ${name}: ${n} casa${n === 1 ? "" : "s"} pra trás.`,
+        (name, n) => `[C.A.O.S.] Esqueceu da roupa branca, ${name}? Voltou ${n} casa${n === 1 ? "" : "s"}.`,
+        (name, n) => `[C.A.O.S.] A rolha da champanhe acertou ${name} e ${name} voltou ${n} casa${n === 1 ? "" : "s"}.`,
+        (name, n) => `[C.A.O.S.] Promessa de ano novo de ${name}: avançar. Realidade: ${n} casa${n === 1 ? "" : "s"} pra trás.`,
+      ],
+      presenteJoia: [
+        (name, cat) => `[C.A.O.S.] Feliz Ano Novo, ${name}! Toma uma joia de ${cat} pra começar o ano bem.`,
+        (name, cat) => `[C.A.O.S.] Achei uma joia de ${cat} junto com as uvas da meia-noite. É de ${name}.`,
+        (name, cat) => `[C.A.O.S.] Simpatia de ano novo pra ${name}: uma joia de ${cat}. A última não, hein?`,
+        (name, cat) => `[C.A.O.S.] Os fogos trouxeram uma joia de ${cat}. Caiu bem no colo de ${name}.`,
+        (name, cat) => `[C.A.O.S.] Presente de réveillon: ${name} ganhou a joia de ${cat}. Ano começando bem!`,
+      ],
+      presentePonto: [
+        (name, n) => `[C.A.O.S.] Tim-tim, ${name}! Toma ${n} PC de ano novo.`,
+        (name, n) => `[C.A.O.S.] Guardei ${n} PC na carteira de ${name}, junto com a lentilha. Dá sorte.`,
+        (name, n) => `[C.A.O.S.] Ano novo, saldo novo: ${n} PC pra ${name}.`,
+        (name, n) => `[C.A.O.S.] ${name} pulou as sete ondas e achou ${n} PC na areia.`,
+        (name, n) => `[C.A.O.S.] Feliz Ano Novo! ${n} PC pra ${name}. Promessa cumprida.`,
+      ],
+    },
     // Fora do Natal (JF, 04/11): quando o C.A.O.S. dá um presente, às vezes faz piada com a data
     presenteForaDeEpoca: {
       aniversario: [

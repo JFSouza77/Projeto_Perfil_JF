@@ -453,8 +453,12 @@ function temporadaEspiritoFalar(msg) {
   else showToastMessage(msg);
 }
 // chamado a cada acerto, erro ou pulo (caosConsoleEvento), depois que a emoção já mudou
+function temporadaEspiritoFalasAqui() {
+  const t = typeof temporadaAtual === "function" ? temporadaAtual() : null;
+  return !!t && t.id === "natal"; // no Ano Novo ele segue calmo, mas sem Papai Noel e carvão na fala
+}
 function temporadaEspiritoEvento(idx, ev) {
-  if (!temporadaEspirito() || caosSilenced || gameEnded || !caosConsole) return;
+  if (!temporadaEspirito() || !temporadaEspiritoFalasAqui() || caosSilenced || gameEnded || !caosConsole) return;
   const st = temporadaEspiritoEstado(),
     E = TEMPORADA_ESPIRITO,
     raiva = caosConsole.g.raiva || 0,
@@ -482,7 +486,7 @@ function temporadaEspiritoEvento(idx, ev) {
 }
 // esfriou (num acerto ou na virada de carta): perdoa a mesa, no máximo 2 vezes por partida
 function temporadaEspiritoPerdoar() {
-  if (!temporadaEspirito() || caosSilenced || gameEnded || !caosConsole) return;
+  if (!temporadaEspirito() || !temporadaEspiritoFalasAqui() || caosSilenced || gameEnded || !caosConsole) return;
   const st = temporadaEspiritoEstado();
   if (!st.bravo || st.perdoes >= 2 || (caosConsole.g.raiva || 0) >= TEMPORADA_ESPIRITO.raivaPerdao) return;
   st.bravo = false;

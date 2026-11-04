@@ -86,9 +86,61 @@ html[data-temporada="natal"] .splash-temporada {
   background: linear-gradient(135deg, #b91c1c, #15803d);
   border-color: #fde68a99;
 }
+/* ---------- Ano Novo: confete colorido caindo devagar e fogos piscando no alto ---------- */
+html[data-temporada="anoNovo"] .tmp-enfeite {
+  display: block;
+}
+html[data-temporada="anoNovo"] .tmp-neve,
+html[data-temporada="anoNovo"] .tmp-neve::after {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(3px 2px at 20px 30px, #facc15d9 50%, transparent 51%),
+    radial-gradient(2px 3px at 90px 120px, #f472b6c0 50%, transparent 51%),
+    radial-gradient(3px 2px at 160px 60px, #38bdf8c0 50%, transparent 51%),
+    radial-gradient(2px 3px at 210px 190px, #a3e635b0 50%, transparent 51%),
+    radial-gradient(3px 2px at 60px 210px, #fde68ad0 50%, transparent 51%),
+    radial-gradient(2px 2px at 130px 170px, #ffffffc0 50%, transparent 51%);
+  background-size: 240px 240px;
+  opacity: 0.5;
+  animation: tmpNeve 28s linear infinite;
+}
+html[data-temporada="anoNovo"] .tmp-neve::after {
+  content: "";
+  background-size: 180px 180px;
+  opacity: 0.35;
+  animation-duration: 38s;
+}
+html[data-temporada="anoNovo"] .tmp-luzes {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: env(safe-area-inset-top, 0px);
+  height: 120px;
+  background-image:
+    radial-gradient(circle at 15% 45px, transparent 0 10px, #facc15aa 11px 12px, transparent 13px 18px, #facc1566 19px 20px, transparent 21px),
+    radial-gradient(circle at 50% 30px, transparent 0 8px, #f472b6aa 9px 10px, transparent 11px 15px, #f472b666 16px 17px, transparent 18px),
+    radial-gradient(circle at 85% 55px, transparent 0 10px, #38bdf8aa 11px 12px, transparent 13px 18px, #38bdf866 19px 20px, transparent 21px);
+  background-repeat: no-repeat;
+  filter: drop-shadow(0 0 4px #fff6);
+  animation: tmpFogos 4.5s ease-in-out infinite;
+}
+@keyframes tmpFogos {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  40% {
+    opacity: 0.9;
+  }
+}
+html[data-temporada="anoNovo"] .splash-temporada {
+  background: linear-gradient(135deg, #1e1b4b, #a16207);
+  border-color: #fde68a99;
+}
 /* modo claro: neve azulada pra aparecer no fundo claro */
-body.claro .tmp-neve,
-body.claro .tmp-neve::after {
+html[data-temporada="natal"] body.claro .tmp-neve,
+html[data-temporada="natal"] body.claro .tmp-neve::after {
   filter: invert(0.55) sepia(0.4) hue-rotate(180deg);
 }
 /* menos movimento: enfeite parado; Modo Batata: sem neve (economia) */

@@ -134,7 +134,7 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     }
     r.natalAvancouBonzinho = /Ana/.test(ditas[0] || "") && /2 casas/.test(ditas[0] || "") && N.avancou.some((f) => f("Ana", 2) === ditas[0].replace(/^.*?\[C\.A\.O\.S\.\]/, "[C.A.O.S.]").trim() || ditas[0].includes(f("Ana", 2).replace("[C.A.O.S.] ", "")));
     r.natalVoltouMalvado = /Beto/.test(ditas[1] || "") && /3 casas/.test(ditas[1] || "");
-    r.natalSemGafe = caosTemporadaGafeOutras().length === 0; // no Natal não tem gafe com a própria fala de Natal
+    r.natalSemGafe = !caosTemporadaGafeOutras().includes("natal"); // no Natal a gafe nunca é com a própria fala de Natal
     const cs = getComputedStyle(document.createElement("div"));
     // gorro: a regra existe no CSS montado
     r.natalGorroCss = [...document.styleSheets].some((sh) => {
@@ -385,6 +385,48 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     players = sv.players; caosFalarDepois = sv.caosFalarDepois; caosSilenced = sv.caosSilenced; gameEnded = sv.gameEnded; stats.totalDrawn = sv.stats; caosPartidaSerial = sv.caosPartidaSerial;
     return r;
   }));
+  // item 10: Ano Novo (enfeite, selo, 15 falas + presentes, 5 cores, 5 emojis, 5 itens em cada lojinha)
+  await page.goto(url + "?temporada=anoNovo");
+  await page.waitForFunction(() => typeof temporadaAplicar === "function");
+  Object.assign(o, await page.evaluate(() => {
+    const r = {};
+    const e = document.getElementById("temporadaEnfeite");
+    r.anoNovoMarcaEEnfeite = document.documentElement.dataset.temporada === "anoNovo" && !!e && getComputedStyle(e).display === "block" && getComputedStyle(e).pointerEvents === "none";
+    const selo = document.getElementById("splashTemporada");
+    r.anoNovoSelo = !!selo && !selo.hidden && /Ano Novo/.test(selo.textContent);
+    const A = REACTIVE_VOICE.temporada.anoNovo;
+    r.anoNovo15Falas = !!A && A.inicio.length === 5 && A.avancou.length === 5 && A.voltou.length === 5 && caosTemporadaFalas() === A;
+    r.anoNovoPresentesComFalaPropria = A.presenteJoia.length === 5 && A.presentePonto.length === 5 && temporadaFalasDe("presenteJoia") === A.presenteJoia && temporadaFalasDe("presentePonto") === A.presentePonto;
+    r.anoNovoAvancouFala = /Ana/.test(A.avancou[0]("Ana", 2)) && /2 casas/.test(A.avancou[0]("Ana", 2)) && /1 casa\b/.test(A.voltou[0]("Ana", 1));
+    const E = TEMPORADA_ESTILOS.anoNovo;
+    r.anoNovo5Cores5Emojis = E.cores.length === 5 && E.emojis.length === 5 && E.nomesCores.length === 5 && E.cores.every((c) => GRADIENTS[c] && coresDaPaleta().includes(c)) && E.emojis.every((x) => avatarsForMode().includes(x));
+    r.anoNovoSemCoresDoNatal = !TEMPORADA_ESTILOS.natal.cores.some((c) => coresDaPaleta().includes(c));
+    const an = (cat) => Object.keys(cat).filter((k) => cat[k].temporada === "anoNovo");
+    const basesOk = (cat) => an(cat).every((k) => { const it = cat[k]; return it.surpresa ? it.surpresa.every((b) => cat[b] && !cat[b].temporada) : cat[it.base] && !cat[it.base].temporada; });
+    r.anoNovoLoja5Cada = an(MC_LOJA).length === 5 && an(CORRIDA_LOJA).length === 5 && basesOk(MC_LOJA) && basesOk(CORRIDA_LOJA);
+    let ok = true;
+    for (let i = 0; i < 60; i++) {
+      const v = Object.keys(lojaVitrineSortear(MC_LOJA, MC_VITRINE).estoque).filter((k) => MC_LOJA[k].temporada);
+      const c = Object.keys(lojaVitrineSortear(CORRIDA_LOJA, CORRIDA_VITRINE).estoque).filter((k) => CORRIDA_LOJA[k].temporada);
+      if (v.length !== 2 || c.length !== 2 || v.concat(c).some((k) => !/^anoNovo/.test(k))) ok = false;
+    }
+    r.anoNovoVitrineSoDoAnoNovo = ok;
+    r.anoNovoBonzinho = temporadaBonzinha() && temporadaSentirFator("raiva") < 1;
+    {
+      // calmo como no Natal, mas sem Papai Noel e carvão na fala
+      const sf = caosFalarDepois, ditas = [], sp = players;
+      caosFalarDepois = (m) => ditas.push(String(m));
+      players = [{ id: "a", name: "Ana", score: 0, position: 0, errosPartida: 5 }];
+      caosConsoleReset();
+      for (let i = 0; i < 20; i++) { caosConsole.g.raiva = 8; temporadaEspiritoEvento(0, "E"); }
+      caosConsole.g.raiva = 0;
+      temporadaEspiritoEvento(0, "A");
+      caosFalarDepois = sf; players = sp;
+      caosConsoleReset();
+      r.anoNovoSemCarvaoDoNatal = ditas.length === 0;
+    }
+    return r;
+  }));
   await page.goto(url + "?temporada=nenhuma");
   await page.waitForFunction(() => typeof temporadaAplicar === "function");
   o.semTemporadaSemEnfeite = await page.evaluate(() => {
@@ -442,7 +484,7 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
       players = s.players; CURRENT_MODE = s.CURRENT_MODE; mc = s.mc; cartasPartida = s.cartasPartida; mcAnunciar = s.mcAnunciar;
     }
     const t = caosTemporadaGafeTexto();
-    r.gafeFalaErradaEConserta = /\.\.\./.test(t) && REACTIVE_VOICE.temporada.gafe.some((g) => t.includes(String(typeof g === "function" ? g() : g).replace(/^\[C\.A\.O\.S\.\]\s*/, ""))) && /Natal|Ho, ho|gorro|Pisca|bonzinhos/i.test(t);
+    r.gafeFalaErradaEConserta = /\.\.\./.test(t) && REACTIVE_VOICE.temporada.gafe.some((g) => t.includes(String(typeof g === "function" ? g() : g).replace(/^\[C\.A\.O\.S\.\]\s*/, ""))) && /Natal|Ho, ho|gorro|Pisca|bonzinhos|Ano Novo|ondas|champanhe|Fogos|Dez, nove/i.test(t);
     const modo = CURRENT_MODE;
     CURRENT_MODE = "junior";
     let jr = false;

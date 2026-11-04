@@ -95,7 +95,10 @@ temporadas, na ordem do calendário.
 7. [x] Natal · 5 títulos nas estatísticas (Papai Noel e outros).
 8. [x] Natal · 10 cartas de Natal, auditadas, valendo o dobro na janela.
 9. [x] Natal · bateria de testes, prints e relatório pro JF (ele decide se publica).
-10. [ ] Ano Novo e aniversário do criador (2/1), no mesmo formato do Natal.
+10. [ ] Ano Novo e aniversário do criador (2/1), no mesmo formato do Natal. Em pedaços:
+    - [x] Ano Novo · enfeite (confete e fogos), selo, 15 falas (+ 10 de presente), 5 cores, 5 emojis e 5+5 itens de lojinha.
+    - [ ] Ano Novo · 5 títulos e 10 cartas valendo o dobro.
+    - [ ] Aniversário do criador (2/1) · tudo (enfeite, falas, o C.A.O.S. pegando leve com o JF, cores, emojis, lojinha, títulos e cartas).
 11. [ ] As outras 12 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween, com o Doces ou travessuras).
 12. [ ] Bateria final, prints de todas as temporadas e relatório pro JF.
 
@@ -183,4 +186,11 @@ temporadas, na ordem do calendário.
     mas..." e 5 de "Feliz Natal adiantado" (só em outubro e novembro).
   Teste: `teste_temporadas` (+13 checagens). Cérebro, espinha, afeto, estresse, loja, corrida, baralho e
   `build.js --testar` OK. **Esperando o ok do JF pra publicar.**
+- 04/11/2026 (tarefa da manhã): item 10, 1º pedaço (Ano Novo). Enfeite com confete colorido e fogos piscando no
+  alto, selo "🎆 Edição de Ano Novo", 15 falas (começo, avançar, voltar) e 10 de presente (joia e PC, pra não
+  sair "Papai Noel" no dia 31), 5 cores (Champanhe, Fogos, Roupa branca, Meia-noite, Confete), 5 emojis
+  (🎆 🥂 🍾 🎇 🕛) e 5 itens em cada lojinha (Champanhe Surpresa, Lentilha da Sorte, Queima de Fogos, 12 Uvas, Roupa
+  Branca; na Corrida, Sete Ondas e Contagem Regressiva). No Ano Novo o C.A.O.S. continua calmo como no Natal, mas
+  as falas de carvão e perdão são só do Natal. A gafe de data agora também pode usar as falas do Ano Novo.
+  Teste: `teste_temporadas` (+11 checagens); cérebro, espinha, loja, corrida, afeto e `build.js --testar` OK.
 
