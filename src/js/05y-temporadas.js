@@ -394,3 +394,107 @@ function temporadaCartasNoBaralho(deck) {
 function temporadaSeloCartaHtml(card) {
   return temporadaCartaAtiva(card) ? `<div class="tmp-selo-carta" title="Carta de Natal: vale o dobro de pontos">🎄 Carta de Natal · vale o dobro</div>` : "";
 }
+
+/* Espírito natalino do C.A.O.S. (pedido do JF em 04/11/2026, antes de publicar o Natal). No Natal e no Ano Novo:
+   - fica feliz por mais tempo e se estressa menos: as emoções ruins entram mais fracas e caem mais rápido de uma carta
+     pra outra; alegria e carinho entram um pouco mais fortes e duram mais;
+   - mais paciência: perde menos paciência a cada erro, recupera mais rápido e demora mais pra achar a mesa lenta;
+   - fala disso: "vocês têm sorte que é Natal" quando começa a se irritar; com quem errou demais, "liga pro Papai Noel"
+     e promete carvão; quando esfria, perdoa ("é Natal, não abusem da sorte").
+   Fora do Natal: quando ele dá um presente, às vezes brinca com a data ("não sei se é seu aniversário, mas...").
+   Só fala e emoção: nada aqui mexe em ponto, casa ou sorteio do jogo (as chances usam o Math.random das falas). */
+const TEMPORADA_ESPIRITO = {
+  ruimEntra: 0.75, // raiva, tristeza, ansiedade, medo, nojo e tédio entram com 75% da força
+  bomEntra: 1.15, // alegria e carinho, com 115%
+  ruimCai: 1.6, // por carta, a emoção ruim cai como se fossem 1,6 cartas
+  bomSegura: 0.7, // alegria e carinho caem 30% mais devagar
+  paciencia: 0.6, // perde 60% da paciência que perderia
+  recupera: 0.22, // volta pro normal mais rápido (fora do Natal, 0,12)
+  demora: 1.35, // espera 35% a mais antes de achar a mesa lenta
+  raivaAviso: 3, // a partir daqui ele avisa que é Natal
+  raivaCarvao: 5.5, // daqui pra cima, quem errou 3 vezes ou mais pode ganhar carvão
+  raivaPerdao: 2, // abaixo disso, perdoa
+};
+const TEMPORADA_EMO_RUINS = ["raiva", "tristeza", "ansiedade", "medo", "nojo", "tedio"];
+let temporadaEspiritoMesa = { serial: -1 };
+function temporadaEspirito() {
+  return typeof temporadaBonzinha === "function" && temporadaBonzinha();
+}
+function temporadaSentirFator(emo) {
+  if (!temporadaEspirito()) return 1;
+  if (TEMPORADA_EMO_RUINS.includes(emo)) return TEMPORADA_ESPIRITO.ruimEntra;
+  if (emo === "alegria" || emo === "carinho") return TEMPORADA_ESPIRITO.bomEntra;
+  return 1;
+}
+function temporadaDecaimento(emo, dec) {
+  if (!temporadaEspirito()) return dec;
+  if (TEMPORADA_EMO_RUINS.includes(emo)) return Math.pow(dec, TEMPORADA_ESPIRITO.ruimCai);
+  if (emo === "alegria" || emo === "carinho") return 1 - (1 - dec) * TEMPORADA_ESPIRITO.bomSegura;
+  return dec;
+}
+function temporadaPacienciaFator() {
+  return temporadaEspirito() ? TEMPORADA_ESPIRITO.paciencia : 1;
+}
+function temporadaPacienciaRecupera() {
+  return temporadaEspirito() ? TEMPORADA_ESPIRITO.recupera : 0.12;
+}
+function temporadaDemoraFator() {
+  return temporadaEspirito() ? TEMPORADA_ESPIRITO.demora : 1;
+}
+function temporadaEspiritoEstado() {
+  const ser = typeof caosPartidaSerial !== "undefined" ? caosPartidaSerial : 0;
+  if (temporadaEspiritoMesa.serial !== ser)
+    temporadaEspiritoMesa = { serial: ser, avisos: 0, ultAviso: -99, carvao: {}, nCarvao: 0, perdoes: 0, bravo: false };
+  return temporadaEspiritoMesa;
+}
+function temporadaEspiritoFalar(msg) {
+  if (!msg) return;
+  if (typeof caosFalarDepois === "function") caosFalarDepois(msg);
+  else showToastMessage(msg);
+}
+// chamado a cada acerto, erro ou pulo (caosConsoleEvento), depois que a emoção já mudou
+function temporadaEspiritoEvento(idx, ev) {
+  if (!temporadaEspirito() || caosSilenced || gameEnded || !caosConsole) return;
+  const st = temporadaEspiritoEstado(),
+    E = TEMPORADA_ESPIRITO,
+    raiva = caosConsole.g.raiva || 0,
+    carta = (stats && stats.totalDrawn) || 0;
+  if (ev === "E" || ev === "X") {
+    const p = players[idx],
+      k = p && (p.id || p.name);
+    if (p && !p.iniciante && raiva >= E.raivaCarvao && (p.errosPartida || 0) >= 3 && !st.carvao[k] && st.nCarvao < 2 && Math.random() < 0.6) {
+      st.carvao[k] = true;
+      st.nCarvao++;
+      st.bravo = true;
+      caosLog("temporada", `🎄 carvão pra ${p.name} (raiva ${raiva.toFixed(1)})`);
+      return temporadaEspiritoFalar(getRandomReaction(temporadaFalasDe("carvao"), p.name));
+    }
+    if (raiva >= E.raivaAviso && st.avisos < 3 && carta - st.ultAviso >= 4 && Math.random() < 0.5) {
+      st.avisos++;
+      st.ultAviso = carta;
+      st.bravo = true;
+      return temporadaEspiritoFalar(getRandomReaction(temporadaFalasDe("espirito")));
+    }
+    if (raiva >= E.raivaAviso) st.bravo = true;
+    return;
+  }
+  temporadaEspiritoPerdoar();
+}
+// esfriou (num acerto ou na virada de carta): perdoa a mesa, no máximo 2 vezes por partida
+function temporadaEspiritoPerdoar() {
+  if (!temporadaEspirito() || caosSilenced || gameEnded || !caosConsole) return;
+  const st = temporadaEspiritoEstado();
+  if (!st.bravo || st.perdoes >= 2 || (caosConsole.g.raiva || 0) >= TEMPORADA_ESPIRITO.raivaPerdao) return;
+  st.bravo = false;
+  st.perdoes++;
+  temporadaEspiritoFalar(getRandomReaction(temporadaFalasDe("perdao")));
+}
+// Fora do Natal: o presente do C.A.O.S. às vezes vem com piada de data. Em outubro e novembro, "Feliz Natal adiantado".
+function temporadaPresenteForaDeEpoca(nome) {
+  if (temporadaEspirito() || caosSilenced || !nome || Math.random() >= 0.5) return;
+  const B = REACTIVE_VOICE.temporada && REACTIVE_VOICE.temporada.presenteForaDeEpoca;
+  if (!B) return;
+  const mes = new Date().getMonth() + 1;
+  const banco = (mes === 10 || mes === 11) && Math.random() < 0.5 ? B.natalAdiantado : B.aniversario;
+  temporadaEspiritoFalar(getRandomReaction(banco, nome));
+}

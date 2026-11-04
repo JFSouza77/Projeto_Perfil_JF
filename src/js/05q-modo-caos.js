@@ -371,6 +371,7 @@ function mcPresenteTalvez() {
     anim: "presente",
     variantes: { [quem.id]: { titulo: "Um presente pra você!", texto: `Você ganhou ${it.ic} ${it.nome}: ${it.desc}. Ele aparece nos seus itens.`, botao: "Valeu, C.A.O.S.! 🎁" } },
   });
+  if (!bonzinho && typeof temporadaPresenteForaDeEpoca === "function") temporadaPresenteForaDeEpoca(quem.name); // "não sei se é seu aniversário, mas..."
   return true;
 }
 // Natal: sem lanterna pra ajudar, o C.A.O.S. dá um pontinho extra pra um favorito dele (às vezes, não em todo intervalo)

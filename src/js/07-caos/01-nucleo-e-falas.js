@@ -81,7 +81,7 @@ function caosEmoNudge(dTensao, dCalor) {
 }
 function caosPacienciaNudge(delta) {
   if (caosVetorTravado) return;
-  if (delta < 0) delta *= caosTemper.pac || 1;
+  if (delta < 0) delta *= (caosTemper.pac || 1) * (typeof temporadaPacienciaFator === "function" ? temporadaPacienciaFator() : 1);
   const atual = caosEmo.paciencia ?? 7;
   caosEmo.paciencia = caosEmoClamp(Math.max(delta < 0 ? Math.min(1, atual) : 0, atual + delta));
 }
@@ -113,7 +113,8 @@ function caosPacienciaTick() {
   else if (mood === "cansado") caosPacienciaNudge(-0.1);
   else if (mood === "animado") caosPacienciaNudge(0.3);
   if (caosFamilyRecent.length >= 2 && caosFamilyRecent[0] === caosFamilyRecent[1]) caosPacienciaNudge(-0.5);
-  caosEmo.paciencia = caosEmoClamp((caosEmo.paciencia ?? 7) + (7 - (caosEmo.paciencia ?? 7)) * 0.12);
+  const rec = typeof temporadaPacienciaRecupera === "function" ? temporadaPacienciaRecupera() : 0.12; // Natal: recupera mais rápido
+  caosEmo.paciencia = caosEmoClamp((caosEmo.paciencia ?? 7) + (7 - (caosEmo.paciencia ?? 7)) * rec);
 }
 function caosEmoMaybeDecay() {
   if (caosVetorTravado) {
@@ -419,7 +420,9 @@ function caosNoteCardDrawn() {
 function caosMood() {
   if (caosMoodOverride) return caosMoodOverride;
   if (typeof caosFatigueLevel !== "undefined" && caosFatigueLevel !== "normal") return "cansado";
-  const k = typeof CURRENT_MODE !== "undefined" && CURRENT_MODE === "express" ? 0.5 : 1;
+  const k =
+    (typeof CURRENT_MODE !== "undefined" && CURRENT_MODE === "express" ? 0.5 : 1) *
+    (typeof temporadaDemoraFator === "function" ? temporadaDemoraFator() : 1); // Natal: demora mais pra achar a mesa lenta
   const gaps = [];
   for (let i = 1; i < caosCardTimes.length; i++) {
     const g = caosCardTimes[i] - caosCardTimes[i - 1];

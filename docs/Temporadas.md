@@ -173,3 +173,14 @@ temporadas, na ordem do calendário.
   - o print mostrou "409 de 400" no contador: as 10 de Natal entravam por cima do limite. Agora tomam o lugar das
     últimas 10 a sair (`baralhoNaoPassaDoLimite` no teste).
   Prints e relatório mandados pro JF. **Esperando ele dizer se publica antes de 1/12.**
+- 04/11/2026: **espírito natalino do C.A.O.S.** (pedido do JF antes de publicar). No Natal e no Ano Novo:
+  - emoções ruins entram com 75% da força e caem mais rápido; alegria e carinho entram com 115% e duram mais;
+  - perde 40% menos paciência, recupera mais rápido e demora 35% a mais pra achar a mesa lenta;
+  - falas novas: "vocês têm sorte que é Natal" (até 3 por partida, quando a raiva sobe), carvão pra quem errou 3 vezes
+    ou mais com ele bravo ("já liguei pro Papai Noel", 1 por jogador, até 2 por partida, nunca com iniciante) e o
+    perdão quando esfria ("é Natal, não abusem da sorte", até 2 por partida). 10 falas de cada.
+  - fora do Natal, o 🎁 Presente do Modo C.A.O.S. vem às vezes com piada de data: 10 de "não sei se é seu aniversário,
+    mas..." e 5 de "Feliz Natal adiantado" (só em outubro e novembro).
+  Teste: `teste_temporadas` (+13 checagens). Cérebro, espinha, afeto, estresse, loja, corrida, baralho e
+  `build.js --testar` OK. **Esperando o ok do JF pra publicar.**
+

@@ -325,6 +325,66 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     render = salva.render; saveGameState = salva.saveGameState; showToastMessage = salva.showToastMessage; if (salva.mcAnunciar) mcAnunciar = salva.mcAnunciar; mc = salva.mc; cartasPartida = salva.cartasPartida;
     return r;
   }));
+  // Espírito natalino (JF, 04/11): mais feliz, menos estressado, mais paciência; aviso, carvão e perdão
+  Object.assign(o, await page.evaluate(() => {
+    const r = {};
+    const sv = { players, caosFalarDepois, caosSilenced, gameEnded, stats: stats.totalDrawn, caosPartidaSerial };
+    const ditas = [];
+    caosFalarDepois = (m) => ditas.push(String(m));
+    caosSilenced = false;
+    gameEnded = false;
+    caosPartidaSerial = 9001;
+    r.espiritoRaivaEntraFraca = temporadaSentirFator("raiva") < 1 && temporadaSentirFator("tristeza") < 1;
+    r.espiritoAlegriaEntraForte = temporadaSentirFator("alegria") > 1 && temporadaSentirFator("curiosidade") === 1;
+    r.espiritoRaivaEsfriaRapido = temporadaDecaimento("raiva", 0.8) < 0.8 && temporadaDecaimento("alegria", 0.78) > 0.78;
+    r.espiritoMaisPaciencia = temporadaPacienciaFator() < 1 && temporadaPacienciaRecupera() > 0.12 && temporadaDemoraFator() > 1;
+    {
+      // o mesmo erro deixa menos raiva no Natal
+      caosConsoleReset();
+      caosSentir("raiva", 2, "teste");
+      r.espiritoErroDaMenosRaiva = caosConsole.g.raiva > 0 && caosConsole.g.raiva < 2 * 0.8;
+    }
+    players = [{ id: "a", name: "Ana", score: 0, position: 0, errosPartida: 4 }, { id: "b", name: "Beto", score: 0, position: 0, errosPartida: 0 }];
+    stats.totalDrawn = 10;
+    // carvão: raiva alta e Ana errou 4 vezes
+    let carvao = false;
+    for (let i = 0; i < 30 && !carvao; i++) {
+      caosConsole.g.raiva = 7;
+      temporadaEspiritoEvento(0, "E");
+      carvao = ditas.some((d) => /Ana/.test(d) && /Papai Noel|carvão|lista|Polo Norte|presente|renas|duende|meia/i.test(d));
+    }
+    r.espiritoCarvaoComNome = carvao;
+    const nCarvao = ditas.length;
+    for (let i = 0; i < 30; i++) {
+      caosConsole.g.raiva = 7;
+      temporadaEspiritoEvento(0, "E");
+    }
+    r.espiritoCarvaoUmaVezPorJogador = ditas.filter((d) => /Ana/.test(d)).length === 1;
+    // quem errou pouco não ganha carvão (pode ganhar o aviso de Natal)
+    caosConsole.g.raiva = 7;
+    for (let i = 0; i < 30; i++) temporadaEspiritoEvento(1, "E");
+    r.espiritoSemCarvaoPraQuemErrouPouco = !ditas.some((d) => /Beto/.test(d));
+    // esfriou: perdoa (no máximo 2 vezes por partida)
+    const antes = ditas.length;
+    caosConsole.g.raiva = 1;
+    temporadaEspiritoEvento(0, "A");
+    const perdoou = ditas.slice(antes);
+    r.espiritoPerdoaQuandoEsfria = perdoou.length === 1 && REACTIVE_VOICE.temporada.natal.perdao.some((f) => perdoou[0].includes(String(typeof f === "function" ? f() : f).replace(/^\[C\.A\.O\.S\.\]\s*/, "").slice(0, 20)));
+    // aviso "sorte que é Natal" quando a raiva sobe (nova partida, sem ninguém pra carvão)
+    caosPartidaSerial = 9002;
+    players.forEach((p) => (p.errosPartida = 0));
+    const a0 = ditas.length;
+    for (let i = 0; i < 40; i++) {
+      stats.totalDrawn = 20 + i * 5;
+      caosConsole.g.raiva = 4;
+      temporadaEspiritoEvento(1, "E");
+    }
+    r.espiritoAvisoNoMaximo3 = ditas.length - a0 >= 1 && ditas.length - a0 <= 3;
+    r.espiritoFalasEmMultiploDe5 = ["espirito", "carvao", "perdao"].every((k) => REACTIVE_VOICE.temporada.natal[k].length % 5 === 0);
+    caosConsoleReset();
+    players = sv.players; caosFalarDepois = sv.caosFalarDepois; caosSilenced = sv.caosSilenced; gameEnded = sv.gameEnded; stats.totalDrawn = sv.stats; caosPartidaSerial = sv.caosPartidaSerial;
+    return r;
+  }));
   await page.goto(url + "?temporada=nenhuma");
   await page.waitForFunction(() => typeof temporadaAplicar === "function");
   o.semTemporadaSemEnfeite = await page.evaluate(() => {
@@ -365,6 +425,20 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
       cartasPartida = [1, 2, 3, 4];
       mc = { cont: { presente: 1 }, inv: {}, pc: {} };
       r.foraSo1Presente = mcPresenteTalvez() === false;
+      // fora do Natal, o presente às vezes vem com piada de data
+      const sf = caosFalarDepois, ditas = [];
+      caosFalarDepois = (m) => ditas.push(String(m));
+      const ss = caosSilenced;
+      caosSilenced = false;
+      let deu = 0;
+      for (let i = 0; i < 40; i++) {
+        mc = { cont: {}, inv: {}, pc: {} };
+        if (mcPresenteTalvez()) deu++;
+      }
+      caosFalarDepois = sf;
+      caosSilenced = ss;
+      r.foraPresenteComPiadaDeData = deu === 40 && ditas.length > 5 && ditas.length < 35 && ditas.every((d) => /Cris/.test(d) && /aniversário|desaniversário|Natal adiantado|presente|generoso|dia nacional/i.test(d));
+      r.foraSemEspiritoNatalino = temporadaSentirFator("raiva") === 1 && temporadaPacienciaFator() === 1 && temporadaDemoraFator() === 1;
       players = s.players; CURRENT_MODE = s.CURRENT_MODE; mc = s.mc; cartasPartida = s.cartasPartida; mcAnunciar = s.mcAnunciar;
     }
     const t = caosTemporadaGafeTexto();

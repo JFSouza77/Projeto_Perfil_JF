@@ -4300,6 +4300,67 @@ const REACTIVE_VOICE = {
         (name, n) => `[C.A.O.S.] ${name}, achei ${n} PC dentro da meia. Eram seus.`,
         (name, n) => `[C.A.O.S.] Natal é tempo de dar. ${name}, toma ${n} PC. Mas é só hoje.`,
       ],
+      // Espírito natalino (JF, 04/11): ele se irrita menos e avisa que é por causa do Natal. Não abusem!
+      espirito: [
+        "Vocês têm sorte que é Natal, hein? Em outro mês eu já tinha surtado.",
+        "Respira, C.A.O.S.... é Natal, é Natal. Tô em espírito natalino. Não abusem.",
+        "Olha, eu tô de boa porque é Natal. Mas o gorro não é de ferro, viu?",
+        "Isso me irritaria muito... se não fosse Natal. Sorte de vocês.",
+        "Espírito natalino segurando a minha paciência. Por enquanto.",
+        "Vou fingir que não vi. É Natal. Mas eu vi, tá?",
+        "Meu lado bonzinho tá ligado no máximo. Não testem o limite dele.",
+        "Em dezembro eu perdoo mais. Só não transformem isso em hábito.",
+        "Calma, coração de silício. É Natal. Ho, ho... hum.",
+        "Tô tão natalino que nem vou reclamar. Muito. Não abusem da sorte.",
+      ],
+      // passou do limite: o C.A.O.S. "liga pro Papai Noel" e põe quem errou demais na lista dos malvados
+      carvao: [
+        (name) => `[C.A.O.S.] ${name}, já liguei pro Papai Noel. Você me estressou demais. Pedi pra tirar você da lista dos bonzinhos.`,
+        (name) => `[C.A.O.S.] ${name}, não tô gostando nada. Esse ano você vai ganhar carvão.`,
+        (name) => `[C.A.O.S.] Alô, Papai Noel? É o C.A.O.S. Pode riscar ${name} da lista. Sim, de caneta.`,
+        (name) => `[C.A.O.S.] ${name}, a sua meia vai ficar vazia esse ano. Ou com carvão. Escolhe.`,
+        (name) => `[C.A.O.S.] Anotado, ${name}: lista dos malvados. O Papai Noel já tá sabendo.`,
+        (name) => `[C.A.O.S.] ${name}, as renas votaram e você não ganha presente. Foi unânime.`,
+        (name) => `[C.A.O.S.] Mandei um e-mail pro Polo Norte sobre ${name}. Assunto: carvão urgente.`,
+        (name) => `[C.A.O.S.] ${name}, o duende chefe tá revendo a sua ficha. Não tá bonita, não.`,
+        (name) => `[C.A.O.S.] ${name}, nem o espírito natalino aguenta. Carvão pra você, e dos grandes.`,
+        (name) => `[C.A.O.S.] Papai Noel, cancela o presente de ${name}. Motivo: me tirou do sério em pleno Natal.`,
+      ],
+      // e ele esfria rápido: "tá bom, vou perdoar vocês dessa vez"
+      perdao: [
+        "Tá bom, tá bom. Vou perdoar vocês dessa vez. É Natal.",
+        "O espírito natalino tá tomando conta de mim... perdoados. Não abusem da sorte.",
+        "Já passou. Natal é tempo de perdoar. Mas eu anotei, hein?",
+        "Liguei de novo pro Papai Noel e pedi pra ele esquecer o que eu disse. Só dessa vez.",
+        "Ok, ok. Respirei, comi um panetone imaginário e já tô de boa de novo.",
+        "Não consigo ficar bravo em dezembro. É mais forte que eu. Perdoados.",
+        "Pronto, o gorro voltou pro lugar. Paz na mesa, que é Natal.",
+        "Esquece o carvão. Por enquanto. O Papai Noel ainda tá de olho.",
+        "Fiquei bravo, mas passou rápido. Coisas do Natal. Bora jogar.",
+        "Tudo perdoado. Mas se repetirem, eu ligo pro Polo Norte de novo.",
+      ],
+    },
+    // Fora do Natal (JF, 04/11): quando o C.A.O.S. dá um presente, às vezes faz piada com a data
+    presenteForaDeEpoca: {
+      aniversario: [
+        (name) => `[C.A.O.S.] ${name}, não sei se hoje é seu aniversário, mas... bom, tá aí um presentinho pra você.`,
+        (name) => `[C.A.O.S.] ${name}, não é Natal, não é aniversário (eu acho)... mas presente é presente.`,
+        (name) => `[C.A.O.S.] Feliz desaniversário, ${name}! Presente sem motivo é o melhor presente.`,
+        (name) => `[C.A.O.S.] ${name}, se hoje for seu aniversário, parabéns. Se não for, finge que é.`,
+        (name) => `[C.A.O.S.] Não precisa ter data, ${name}. Eu dou presente quando eu quero.`,
+        (name) => `[C.A.O.S.] ${name}, guardei esse presente pro seu aniversário, mas esqueci a data. Toma agora.`,
+        (name) => `[C.A.O.S.] Presente fora de época pra ${name}. Eu sou imprevisível assim.`,
+        (name) => `[C.A.O.S.] ${name}, considera isso um adiantamento de aniversário. Sem devolução.`,
+        (name) => `[C.A.O.S.] Hoje é o dia nacional de ${name}. Inventei agora. Toma o presente.`,
+        (name) => `[C.A.O.S.] ${name}, não me pergunta o motivo. Acordei generoso. Vai durar pouco.`,
+      ],
+      natalAdiantado: [
+        (name) => `[C.A.O.S.] Feliz Natal adiantado, ${name}! Olha aqui o presente.`,
+        (name) => `[C.A.O.S.] ${name}, o Papai Noel me mandou entregar antes. Feliz Natal adiantado!`,
+        (name) => `[C.A.O.S.] Ainda não é dezembro, mas ${name} já ganhou presente. Feliz Natal adiantado!`,
+        (name) => `[C.A.O.S.] ${name}, adiantei o seu presente de Natal. Não abre antes da hora. Brincadeira, já abriu.`,
+        (name) => `[C.A.O.S.] Ho, ho, ho fora de época! ${name}, Feliz Natal adiantado.`,
+      ],
     },
     // Gafe de data (o TDAH do C.A.O.S.): rara, no máximo 1 vez por partida. Ele solta a fala de começo de outra
     // temporada fora de época e logo se corrige com uma destas. Só fala: não muda visual nem pontuação.
