@@ -36,4 +36,8 @@
 - **Decisões práticas (01/11/2026):** em coisas de organização (juntar PR que não muda o jogo, quando soltar um ajuste já
   testado, por onde começar), o Code decide sozinho pelo que for mais fácil, prático e seguro, e só avisa. Publicar
   versão nova continua precisando do ok do JF.
+- **Agenda de trabalho (04/11/2026, horário de Brasília):** coisa pequena e fácil, ao longo da semana, na hora que o
+  Code preferir. Att grande ou muita task junta: **quinta a partir das 18h** (os créditos renovam às 15h) e **sexta das
+  9h às 18h**. Sexta depois das 18h, sábado e domingo: nada grande, só se for muito necessário. Pedido urgente do JF:
+  na hora. Lista do que espera pra quinta: `docs/Pendencias_da_Semana.md`.
 

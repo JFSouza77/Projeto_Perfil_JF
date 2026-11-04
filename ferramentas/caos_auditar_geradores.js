@@ -42,6 +42,9 @@ const MOSTRA = +((args.find((a) => a.startsWith('--mostra=')) || '--mostra=4').s
       ['inicioJogadores', null, ['Ana', 'Beto', 'Caio'], null, { tags: ['q3'] }],
       ['abertura', null, ['Ana', 'Beto']], ['hostCaiu', null, ['Ana', 'Beto'], null, { vars: { antigo: 'Ana', nome: 'Beto' } }],
       ['pausaVolta', null, ['Ana', 'Beto'], null, { tags: ['leve'], vars: { pausa: '2 minutos' } }],
+      ['escolherDica', 0, ['Ana', 'Beto'], null, { tags: ['emo_tedio', 'repete'] }],
+      ['escolherDica', 1, ['Ana', 'Beto'], null, { tags: ['emo_raiva', 'temporada_natal'] }],
+      ['escolherDica', 0, ['Ana', 'Beto'], 'junior', { tags: ['emo_alegria', 'temporada_anoNovo'] }],
     ];
     const FECHOS = /^(bora|bora seguir|enfim|mas sigo firme|voltando ao jogo|vamos nessa|que comece|boa sorte|eu tô de olho|eu estou de olho|sem pressão\. muita pressão|agora é sério\. mais ou menos)[.!]?$/i;
     const ACAO = /\b(bora|vamos jogar|vamos nessa|que comece|bora jogar|vamos continuar)\b/gi;

@@ -94,6 +94,14 @@ function caosGerContexto(p) {
     tags.add("estado_" + caosEstadoComposto());
   } catch (e) {}
   tags.add("temper_" + caosGerTemperamento());
+  // Temporadas (JF, 04/11): todo gerador pode ter pedaço da temporada (temporada_natal…) e da data do calendário de
+  // presente (data_criancas_adiantado, data_natal_nodia…)
+  try {
+    const t = typeof temporadaAtual === "function" ? temporadaAtual() : null;
+    if (t) tags.add("temporada_" + t.id);
+    const dm = typeof temporadaPresenteMomentoAgora === "function" && temporadasLigadas() ? temporadaPresenteMomentoAgora() : null;
+    if (dm) tags.add("data_" + dm.id + "_" + dm.momento);
+  } catch (e) {}
   if (p) {
     vars.nome = p.name;
     tags.add("temNome");

@@ -340,7 +340,7 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     r.espiritoMaisPaciencia = temporadaPacienciaFator() < 1 && temporadaPacienciaRecupera() > 0.12 && temporadaDemoraFator() > 1;
     {
       // o mesmo erro deixa menos raiva no Natal
-      caosConsoleReset();
+      caosCerebroFabrica(); // temperamento normal: o teste não depende do sorteado na carga
       caosSentir("raiva", 2, "teste");
       r.espiritoErroDaMenosRaiva = caosConsole.g.raiva > 0 && caosConsole.g.raiva < 2 * 0.8;
     }
@@ -380,6 +380,14 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
       temporadaEspiritoEvento(1, "E");
     }
     r.espiritoAvisoNoMaximo3 = ditas.length - a0 >= 1 && ditas.length - a0 <= 3;
+    {
+      const tg = caosGerContexto(null).tags;
+      r.geradorTemEtiquetaDaTemporada = tg.has("temporada_natal") && [...tg].some((t) => /^data_natal_/.test(t));
+      players = [{ id: "a", name: "Ana", score: 0, position: 0 }];
+      const g = caosGerarFala("escolherDica", players[0], { tags: ["emo_tedio"] });
+      r.geradorEscolherDicaFala = /Ana/.test(g) && !/morde/.test(g);
+      r.escolherSemNaoMorde = !REACTIVE_VOICE.avisoEscolha.some((f) => /morde/.test(String(f))) && REACTIVE_VOICE.avisoEscolha.length % 5 === 0;
+    }
     r.espiritoFalasEmMultiploDe5 = ["espirito", "carvao", "perdao"].every((k) => REACTIVE_VOICE.temporada.natal[k].length % 5 === 0);
     caosConsoleReset();
     players = sv.players; caosFalarDepois = sv.caosFalarDepois; caosSilenced = sv.caosSilenced; gameEnded = sv.gameEnded; stats.totalDrawn = sv.stats; caosPartidaSerial = sv.caosPartidaSerial;
@@ -480,6 +488,30 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
       caosFalarDepois = sf;
       caosSilenced = ss;
       r.foraPresenteComPiadaDeData = deu === 40 && ditas.length > 5 && ditas.length < 35 && ditas.every((d) => /Cris/.test(d) && /aniversário|desaniversário|Natal adiantado|presente|generoso|dia nacional/i.test(d));
+      {
+        // calendário do presente (JF, 04/11): adiantado, no dia, atrasado
+        const m = (a, mes, d) => { const x = temporadaPresenteMomento(new Date(a, mes - 1, d, 15)); return x ? x.id + ":" + x.momento : "-"; };
+        const casos = [
+          [2026, 10, 1, "criancas:adiantado"], [2026, 10, 11, "criancas:adiantado"], [2026, 10, 12, "criancas:nodia"],
+          [2026, 10, 13, "criancas:atrasado"], [2026, 10, 20, "criancas:atrasado"], [2026, 10, 21, "halloween:nodia"],
+          [2026, 10, 31, "halloween:nodia"], [2026, 11, 5, "blackfriday:adiantado"], [2026, 11, 27, "blackfriday:nodia"],
+          [2026, 11, 30, "blackfriday:nodia"], [2026, 12, 2, "natal:adiantado"], [2026, 12, 24, "natal:nodia"],
+          [2026, 12, 25, "natal:nodia"], [2026, 12, 27, "natal:atrasado"], [2026, 12, 30, "anoNovo:adiantado"],
+          [2026, 12, 31, "anoNovo:nodia"], [2027, 1, 1, "anoNovo:nodia"], [2027, 1, 2, "aniversario:nodia"],
+          [2027, 1, 5, "anoNovo:atrasado"], [2027, 2, 1, "carnaval:adiantado"], [2027, 2, 9, "carnaval:nodia"],
+          [2027, 2, 12, "carnaval:atrasado"], [2027, 3, 8, "mulher:nodia"], [2027, 3, 28, "pascoa:nodia"],
+          [2027, 3, 22, "pascoa:adiantado"], [2027, 4, 1, "pascoa:atrasado"], [2027, 5, 9, "maes:nodia"],
+          [2027, 6, 10, "namorados:adiantado"], [2027, 6, 12, "namorados:nodia"], [2027, 6, 14, "namorados:atrasado"],
+          [2027, 6, 20, "junina:nodia"], [2027, 8, 8, "pais:nodia"], [2027, 8, 22, "folclore:nodia"],
+          [2027, 9, 7, "independencia:nodia"], [2027, 7, 15, "-"], [2027, 4, 20, "-"],
+        ];
+        r.presenteCalendarioErradas = casos.filter(([a, mes, d, e]) => m(a, mes, d) !== e).map(([a, mes, d, e]) => `${d}/${mes}/${a}: ${m(a, mes, d)} (esperado ${e})`);
+        const D = REACTIVE_VOICE.temporada.presenteData;
+        r.presenteDataTodaDataTemFala = TEMPORADA_PRESENTE_DATAS.every((e) => D[e.id] && D[e.id].nodia && D[e.id].nodia.length >= 5 && (!e.antes || (D[e.id].adiantado || []).length >= 5) && (!e.depois || (D[e.id].atrasado || []).length >= 5));
+        r.presenteDataEmMultiploDe5 = Object.values(D).every((b) => Object.values(b).every((l) => l.length % 5 === 0));
+        r.presenteDataComNome = Object.values(D).every((b) => Object.values(b).every((l) => l.every((f) => f("Zé").includes("Zé"))));
+        r.presenteDataAdiantadoAtrasado = D.criancas.adiantado.some((f) => /adiantado/.test(f("Zé"))) && D.criancas.atrasado.some((f) => /atrasado/.test(f("Zé"))) && !D.criancas.nodia.some((f) => /adiantado|atrasado/.test(f("Zé")));
+      }
       r.foraSemEspiritoNatalino = temporadaSentirFator("raiva") === 1 && temporadaPacienciaFator() === 1 && temporadaDemoraFator() === 1;
       players = s.players; CURRENT_MODE = s.CURRENT_MODE; mc = s.mc; cartasPartida = s.cartasPartida; mcAnunciar = s.mcAnunciar;
     }

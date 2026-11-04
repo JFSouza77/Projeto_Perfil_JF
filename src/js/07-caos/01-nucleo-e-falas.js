@@ -454,8 +454,14 @@ function maybeShowTimeWarning() {
     if (leftP <= 15 && leftP >= 12 && timeWarnedSerial !== timerSerial) {
       timeWarnedSerial = timerSerial;
       const pp = players[responderIndex];
-      if (pp && Math.random() < (caosOS() ? 0.12 : 0.4) && caosCountUnder("avisoescolha", caosOS() ? 2 : 4))
-        showToastMessage(getRandomReaction(REACTIVE_VOICE.avisoEscolha, pp.name), null, false, false, true);
+      if (pp && Math.random() < (caosOS() ? 0.12 : 0.4) && caosCountUnder("avisoescolha", caosOS() ? 2 : 4)) {
+        // JF (04/11): mais variedade. Metade das vezes a fala é montada pelo gerador (humor, temporada, quem repete)
+        const C = typeof caosConsole !== "undefined" && caosConsole;
+        const tags = ["emo_" + ((C && (C.mostraMed || C.atual)) || "calmo")];
+        if ((pp._demorasEscolha = (pp._demorasEscolha || 0) + 1) >= 2) tags.push("repete");
+        const g = Math.random() < 0.5 && typeof caosGerarFala === "function" ? caosGerarFala("escolherDica", pp, { tags }) : "";
+        showToastMessage(g || getRandomReaction(REACTIVE_VOICE.avisoEscolha, pp.name), null, false, false, true);
+      }
     }
   } else if (timerKind === "response" && CURRENT_MODE !== "express") {
     const left = secondsLeft();

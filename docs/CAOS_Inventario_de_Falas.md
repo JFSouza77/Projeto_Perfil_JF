@@ -11,8 +11,8 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | `caosFalarDepois` | 16 |
 | `admFala` | 5 |
 | `getRandomReaction` | 323 |
-| `caosGerarFala` | 17 |
-| **Total de linhas com fala** | **438** |
+| `caosGerarFala` | 18 |
+| **Total de linhas com fala** | **439** |
 
 ## js/03-regras.js (1)
 
@@ -26,51 +26,51 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 |---|---|---|
 | 163 | showToastMessage, getRandomReaction | ultimaRodada |
 | 173 | showToastMessage, getRandomReaction | joiasTrava |
-| 433 | showToastMessage | - |
-| 480 | showToastMessage, getRandomReaction | previsaoCartaCategoriaErrada |
-| 509 | showToastMessage | - |
-| 620 | caosFalaAgendar, getRandomReaction | - |
-| 630 | caosFalaAgendar, getRandomReaction | - |
-| 695 | showToastMessage, getRandomReaction | bolaCristalErro |
-| 698 | showToastMessage, getRandomReaction | previsaoCartaPassouPerto |
-| 704 | showToastMessage, getRandomReaction | mesaDormindo |
-| 713 | showToastMessage, getRandomReaction | mesa.geracao |
-| 715 | showToastMessage | - |
-| 717 | showToastMessage | - |
-| 719 | showToastMessage, getRandomReaction | esgotouComResposta |
-| 924 | caosFalarDepois | - |
-| 925 | getRandomReaction | - |
-| 1134 | caosFalaAgendar | - |
-| 1257 | showToastMessage | - |
-| 1268 | showToastMessage | - |
-| 1279 | getRandomReaction | verbosidade |
-| 1291 | getRandomReaction | iniciante.erroLeve |
-| 1302 | getRandomReaction | surpresaErroFacil |
-| 1335 | getRandomReaction | reacaoCurta |
-| 1375 | showToastMessage | - |
-| 1403 | getRandomReaction | bonusCancelado |
-| 1407 | showToastMessage | - |
-| 1531 | showToastMessage | - |
-| 1810 | caosGerarFala | gerador jfFim |
-| 1813 | showToastMessage, getRandomReaction | jfFim |
-| 1815 | showToastMessage | - |
-| 1816 | getRandomReaction | caosVoltouDaPartida, partidaLonga |
-| 1821 | showToastMessage, getRandomReaction | partidaLonga |
-| 1916 | showToastMessage | - |
-| 1917 | caosGerarFala | gerador revanche |
-| 1918 | getRandomReaction | revanche |
-| 2018 | showToastMessage, getRandomReaction | trocaDeModo |
-| 2173 | showToastMessage, getRandomReaction | sorteioMestreJf |
-| 2208 | showToastMessage | - |
-| 2209 | getRandomReaction | - |
-| 2337 | caosFalaAgendar, getRandomReaction | desistiuBonus |
-| 2350 | caosFalaAgendar, getRandomReaction | desistiu |
-| 2449 | getRandomReaction | caosCofrinhoUso |
-| 2461 | showToastMessage, getRandomReaction | mercyPontos |
-| 2465 | showToastMessage, getRandomReaction | mercyBonus |
-| 2496 | showToastMessage | - |
-| 2631 | admFala, getRandomReaction | admSaida |
-| 2632 | admFala, getRandomReaction | caosCofrinho |
+| 434 | showToastMessage | - |
+| 481 | showToastMessage, getRandomReaction | previsaoCartaCategoriaErrada |
+| 510 | showToastMessage | - |
+| 621 | caosFalaAgendar, getRandomReaction | - |
+| 631 | caosFalaAgendar, getRandomReaction | - |
+| 696 | showToastMessage, getRandomReaction | bolaCristalErro |
+| 699 | showToastMessage, getRandomReaction | previsaoCartaPassouPerto |
+| 705 | showToastMessage, getRandomReaction | mesaDormindo |
+| 714 | showToastMessage, getRandomReaction | mesa.geracao |
+| 716 | showToastMessage | - |
+| 718 | showToastMessage | - |
+| 720 | showToastMessage, getRandomReaction | esgotouComResposta |
+| 925 | caosFalarDepois | - |
+| 926 | getRandomReaction | - |
+| 1135 | caosFalaAgendar | - |
+| 1258 | showToastMessage | - |
+| 1269 | showToastMessage | - |
+| 1280 | getRandomReaction | verbosidade |
+| 1292 | getRandomReaction | iniciante.erroLeve |
+| 1303 | getRandomReaction | surpresaErroFacil |
+| 1336 | getRandomReaction | reacaoCurta |
+| 1376 | showToastMessage | - |
+| 1404 | getRandomReaction | bonusCancelado |
+| 1408 | showToastMessage | - |
+| 1532 | showToastMessage | - |
+| 1811 | caosGerarFala | gerador jfFim |
+| 1814 | showToastMessage, getRandomReaction | jfFim |
+| 1816 | showToastMessage | - |
+| 1817 | getRandomReaction | caosVoltouDaPartida, partidaLonga |
+| 1822 | showToastMessage, getRandomReaction | partidaLonga |
+| 1917 | showToastMessage | - |
+| 1918 | caosGerarFala | gerador revanche |
+| 1919 | getRandomReaction | revanche |
+| 2019 | showToastMessage, getRandomReaction | trocaDeModo |
+| 2174 | showToastMessage, getRandomReaction | sorteioMestreJf |
+| 2209 | showToastMessage | - |
+| 2210 | getRandomReaction | - |
+| 2338 | caosFalaAgendar, getRandomReaction | desistiuBonus |
+| 2351 | caosFalaAgendar, getRandomReaction | desistiu |
+| 2450 | getRandomReaction | caosCofrinhoUso |
+| 2462 | showToastMessage, getRandomReaction | mercyPontos |
+| 2466 | showToastMessage, getRandomReaction | mercyBonus |
+| 2497 | showToastMessage | - |
+| 2632 | admFala, getRandomReaction | admSaida |
+| 2633 | admFala, getRandomReaction | caosCofrinho |
 
 ## js/05-tela.js (25)
 
@@ -189,7 +189,7 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 474 | getRandomReaction | - |
 | 480 | getRandomReaction | - |
 | 494 | getRandomReaction | - |
-| 503 | getRandomReaction | - |
+| 562 | getRandomReaction | - |
 
 ## js/06-voz-som-vibracao.js (3)
 
@@ -199,7 +199,7 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 576 | getRandomReaction | vozRecusada |
 | 578 | showToastMessage | - |
 
-## js/07-caos/01-nucleo-e-falas.js (61)
+## js/07-caos/01-nucleo-e-falas.js (62)
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
@@ -215,55 +215,56 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 338 | getRandomReaction | continuidadeMesmoJogador |
 | 374 | getRandomReaction | transicaoPiorando |
 | 378 | getRandomReaction | transicaoMelhorando |
-| 458 | showToastMessage, getRandomReaction | avisoEscolha |
-| 466 | showToastMessage | - |
-| 467 | getRandomReaction | - |
-| 485 | showToastMessage, getRandomReaction | avisoCarta |
-| 573 | getRandomReaction | familia.zoeiraLeve |
-| 575 | getRandomReaction | familia.apoio |
-| 769 | showToastMessage | - |
-| 894 | showToastMessage, getRandomReaction | iniciante.cortado |
-| 907 | getRandomReaction | - |
-| 908 | getRandomReaction | - |
-| 909 | getRandomReaction | - |
-| 910 | getRandomReaction | - |
-| 912 | showToastMessage | - |
-| 920 | getRandomReaction | caosCortado.vinganca |
-| 1016 | getRandomReaction | estadoDoJogo.jogoArrastado |
-| 1018 | getRandomReaction | estadoDoJogo.liderIsolado |
-| 1020 | getRandomReaction | estadoDoJogo.lanternaReagindo |
-| 1028 | getRandomReaction | estadoDoJogo.torcidaLanterna |
-| 1031 | getRandomReaction | estadoDoJogo.jogoAcirrado |
-| 1035 | getRandomReaction | metadeDaCarta.geral |
-| 1041 | getRandomReaction | metadeDaCarta.ataqueLider |
-| 1044 | getRandomReaction | metadeDaCarta.ataqueLanterna |
-| 1046 | getRandomReaction | metadeDaCarta.geral |
-| 1063 | showToastMessage, getRandomReaction | agonia15Dicas |
-| 1070 | showToastMessage | - |
-| 1084 | getRandomReaction | - |
-| 1091 | showToastMessage | - |
-| 1110 | showToastMessage, getRandomReaction | caosCansado |
-| 1113 | showToastMessage, getRandomReaction | caosExausto |
-| 1121 | showToastMessage, getRandomReaction | caosSaiuDaPartida |
-| 1138 | showToastMessage, getRandomReaction | caosSaiuTemporario |
-| 1153 | showToastMessage, getRandomReaction | - |
-| 1250 | getRandomReaction | familias |
-| 1269 | getRandomReaction | - |
-| 1274 | getRandomReaction | - |
+| 462 | caosGerarFala | gerador escolherDica |
+| 463 | showToastMessage, getRandomReaction | avisoEscolha |
+| 472 | showToastMessage | - |
+| 473 | getRandomReaction | - |
+| 491 | showToastMessage, getRandomReaction | avisoCarta |
+| 579 | getRandomReaction | familia.zoeiraLeve |
+| 581 | getRandomReaction | familia.apoio |
+| 775 | showToastMessage | - |
+| 900 | showToastMessage, getRandomReaction | iniciante.cortado |
+| 913 | getRandomReaction | - |
+| 914 | getRandomReaction | - |
+| 915 | getRandomReaction | - |
+| 916 | getRandomReaction | - |
+| 918 | showToastMessage | - |
+| 926 | getRandomReaction | caosCortado.vinganca |
+| 1022 | getRandomReaction | estadoDoJogo.jogoArrastado |
+| 1024 | getRandomReaction | estadoDoJogo.liderIsolado |
+| 1026 | getRandomReaction | estadoDoJogo.lanternaReagindo |
+| 1034 | getRandomReaction | estadoDoJogo.torcidaLanterna |
+| 1037 | getRandomReaction | estadoDoJogo.jogoAcirrado |
+| 1041 | getRandomReaction | metadeDaCarta.geral |
+| 1047 | getRandomReaction | metadeDaCarta.ataqueLider |
+| 1050 | getRandomReaction | metadeDaCarta.ataqueLanterna |
+| 1052 | getRandomReaction | metadeDaCarta.geral |
+| 1069 | showToastMessage, getRandomReaction | agonia15Dicas |
+| 1076 | showToastMessage | - |
+| 1090 | getRandomReaction | - |
+| 1097 | showToastMessage | - |
+| 1116 | showToastMessage, getRandomReaction | caosCansado |
+| 1119 | showToastMessage, getRandomReaction | caosExausto |
+| 1127 | showToastMessage, getRandomReaction | caosSaiuDaPartida |
+| 1144 | showToastMessage, getRandomReaction | caosSaiuTemporario |
+| 1159 | showToastMessage, getRandomReaction | - |
+| 1256 | getRandomReaction | familias |
+| 1275 | getRandomReaction | - |
 | 1280 | getRandomReaction | - |
-| 1282 | getRandomReaction | - |
-| 1284 | getRandomReaction | - |
-| 1285 | getRandomReaction | - |
-| 1287 | getRandomReaction | - |
-| 1289 | getRandomReaction | - |
+| 1286 | getRandomReaction | - |
+| 1288 | getRandomReaction | - |
+| 1290 | getRandomReaction | - |
+| 1291 | getRandomReaction | - |
 | 1293 | getRandomReaction | - |
-| 1294 | getRandomReaction | - |
 | 1295 | getRandomReaction | - |
-| 1312 | getRandomReaction | erroEscalada |
-| 1314 | getRandomReaction | - |
-| 1315 | getRandomReaction | erroSarcasmo |
-| 1337 | getRandomReaction | - |
-| 1340 | showToastMessage | - |
+| 1299 | getRandomReaction | - |
+| 1300 | getRandomReaction | - |
+| 1301 | getRandomReaction | - |
+| 1318 | getRandomReaction | erroEscalada |
+| 1320 | getRandomReaction | - |
+| 1321 | getRandomReaction | erroSarcasmo |
+| 1343 | getRandomReaction | - |
+| 1346 | showToastMessage | - |
 
 ## js/07-caos/02-cerebro-adm.js (5)
 

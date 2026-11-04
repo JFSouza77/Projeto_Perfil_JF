@@ -193,4 +193,15 @@ temporadas, na ordem do calendário.
   Branca; na Corrida, Sete Ondas e Contagem Regressiva). No Ano Novo o C.A.O.S. continua calmo como no Natal, mas
   as falas de carvão e perdão são só do Natal. A gafe de data agora também pode usar as falas do Ano Novo.
   Teste: `teste_temporadas` (+11 checagens); cérebro, espinha, loja, corrida, afeto e `build.js --testar` OK.
+- 04/11/2026 (pedido do JF): **presente com fala de data.** Quando o C.A.O.S. dá o 🎁 Presente (Modo C.A.O.S.),
+  metade das vezes a fala segue o calendário: Dia das Crianças de 1 a 11/10 "adiantado", 12/10 "no dia", de 13 a
+  20/10 "atrasado"; de 21 a 31/10, Halloween; em novembro, Black Friday; em dezembro, Natal adiantado/no dia/atrasado,
+  depois Ano Novo e o aniversário do JF (2/1). O mesmo vale pra Carnaval, Dia da Mulher, Páscoa, Mães, Namorados,
+  Festa Junina, Pais, Folclore e Independência. Longe de qualquer data, a piada do "não sei se é seu aniversário".
+  150 falas (`REACTIVE_VOICE.temporada.presenteData`), calendário em `TEMPORADA_PRESENTE_DATAS` (05y).
+  **Geradores:** todo gerador de fala agora recebe as etiquetas `temporada_<id>` e `data_<id>_<momento>`, então dá pra
+  pôr pedaço de temporada em qualquer gerador. O primeiro a usar é o `escolherDica` (novo, 70 pedaços): a cobrança
+  pra escolher a dica, com humor, temporada e "de novo você?". A lista `avisoEscolha` foi pra 25 falas, sem o "eles
+  não mordem". Teste: `teste_temporadas` (calendário com 36 datas e mais 8 checagens) e `caos_auditar_geradores`
+  (escolherDica sem defeito em 450 falas).
 

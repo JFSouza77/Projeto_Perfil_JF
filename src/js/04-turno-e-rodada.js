@@ -307,6 +307,7 @@ function resetDeck() {
   players.forEach((p) => {
     p.errosPartida = 0;
     p.apoiosPartida = 0; // Temporadas (título Duende Ajudante): quantas vezes mexeu outro jogador no tabuleiro
+    p._demorasEscolha = 0; // quantas vezes o C.A.O.S. já cobrou a escolha da dica (gerador escolherDica: "repete")
   });
   caosAmigosZerar();
   caosAviaoLast = -99;

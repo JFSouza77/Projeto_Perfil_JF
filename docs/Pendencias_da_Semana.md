@@ -1,3 +1,18 @@
+# Pendências da semana
+
+## Para a quinta, 05/11, a partir das 18h (pedido do JF em 04/11/2026)
+
+- [ ] **Voz do C.A.O.S.:** sugestões de melhoria na qualidade da voz, variação de tom e de velocidade conforme a fala
+  e a emoção (relatório pro JF decidir; o que for simples já entra).
+- [ ] **Emoções mais refinadas:** respostas às emoções mais finas e calibradas (revisar o console, as misturas e o que
+  cada emoção muda na fala).
+- [ ] **Pente fino na interface:** botões, UI/UX do jogo todo, contrastes, acessibilidade (com cuidado, tela por tela).
+- [ ] **Aba de sugestões:** os jogadores mandam ideias e feedback pra gente sempre que quiserem.
+
+Feito em 04/11 (era pequeno): presente do C.A.O.S. com fala de data (adiantado, no dia, atrasado), falas novas e um
+gerador pra demora de escolher a dica (adeus ao "eles não mordem"), e etiquetas de temporada e de data em todos os
+geradores de fala. Tudo no branch `temporadas`, junto do Natal.
+
 # Pendências da semana (26/10 a 29/10/2026)
 
 Regra do JF (26/10/2026): nesta semana, bug, print ou sugestão que ele mandar fica só anotado aqui, sem corrigir,

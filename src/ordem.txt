@@ -95,5 +95,6 @@ dados/08-geradores/14-religado.js
 dados/08-geradores/15-chute.js
 dados/08-geradores/16-pensamento.js
 dados/08-geradores/17-hostCaiu.js
+dados/08-geradores/18-escolherDica.js
 js/11-iniciar.js
 html/03-fim.html

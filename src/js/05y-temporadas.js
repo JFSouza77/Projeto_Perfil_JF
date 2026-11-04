@@ -493,12 +493,75 @@ function temporadaEspiritoPerdoar() {
   st.perdoes++;
   temporadaEspiritoFalar(getRandomReaction(temporadaFalasDe("perdao")));
 }
-// Fora do Natal: o presente do C.A.O.S. às vezes vem com piada de data. Em outubro e novembro, "Feliz Natal adiantado".
+/* Presente com data (JF, 04/11/2026): quando o C.A.O.S. dá um presente, a fala segue o calendário.
+   Ex.: Dia das Crianças: de 1 a 11/10 "adiantado", 12/10 "no dia", de 13 a 20/10 "atrasado"; de 21 a 31/10 é Halloween.
+   ini/fim = os dias da data (no dia); antes/depois = quantos dias antes e depois ainda falam "adiantado"/"atrasado".
+   Duas datas valendo: "no dia" ganha (e, entre duas no dia, a janela mais curta); senão, a data mais perto. Janela
+   longa (mais de 14 dias, a Festa Junina) fica por último. */
+const TEMPORADA_PRESENTE_DATAS = [
+  { id: "criancas", ini: (a) => new Date(a, 9, 12, 12), dias: 1, antes: 11, depois: 8 },
+  { id: "halloween", ini: (a) => new Date(a, 9, 21, 12), dias: 11, antes: 0, depois: 0 },
+  { id: "blackfriday", ini: (a) => temporadaBlackFriday(a), dias: 4, antes: 27, depois: 1 },
+  { id: "natal", ini: (a) => new Date(a, 11, 24, 12), dias: 2, antes: 23, depois: 3 },
+  { id: "anoNovo", ini: (a) => new Date(a, 11, 31, 12), dias: 2, antes: 2, depois: 9 },
+  { id: "aniversario", ini: (a) => new Date(a, 0, 2, 12), dias: 1, antes: 0, depois: 0 },
+  { id: "carnaval", ini: (a) => temporadaMais(temporadaPascoa(a), -50), dias: 5, antes: 10, depois: 4 },
+  { id: "mulher", ini: (a) => new Date(a, 2, 8, 12), dias: 1, antes: 0, depois: 0 },
+  { id: "pascoa", ini: (a) => temporadaMais(temporadaPascoa(a), -2), dias: 3, antes: 7, depois: 5 },
+  { id: "maes", ini: (a) => temporadaDomingo(a, 4, 2), dias: 1, antes: 0, depois: 0 },
+  { id: "namorados", ini: (a) => new Date(a, 5, 12, 12), dias: 1, antes: 6, depois: 3 },
+  { id: "junina", ini: (a) => new Date(a, 5, 1, 12), dias: 30, antes: 0, depois: 0 },
+  { id: "pais", ini: (a) => temporadaDomingo(a, 7, 2), dias: 1, antes: 0, depois: 0 },
+  { id: "folclore", ini: (a) => new Date(a, 7, 22, 12), dias: 1, antes: 0, depois: 0 },
+  { id: "independencia", ini: (a) => new Date(a, 8, 7, 12), dias: 1, antes: 0, depois: 0 },
+];
+function temporadaMais(d, n) {
+  const x = new Date(d.getTime());
+  x.setDate(x.getDate() + n);
+  return x;
+}
+// { id, momento: "adiantado" | "nodia" | "atrasado" } da data (ou null, longe de qualquer data)
+function temporadaPresenteMomento(data) {
+  const t = data instanceof Date ? data : new Date();
+  const hoje = temporadaDiaN(t),
+    a = t.getFullYear();
+  let melhor = null;
+  TEMPORADA_PRESENTE_DATAS.forEach((e) => {
+    [a - 1, a, a + 1].forEach((ano) => {
+      let ini;
+      try {
+        ini = temporadaDiaN(e.ini(ano));
+      } catch (er) {
+        return;
+      }
+      const fim = ini + e.dias - 1;
+      let c = null;
+      // janela longa (Festa Junina, o mês todo) perde pro adiantado/atrasado de uma data curta (Dia dos Namorados)
+      if (hoje >= ini && hoje <= fim) c = { momento: "nodia", ordem: e.dias > 14 ? 2 : 0, dist: e.dias };
+      else if (hoje < ini && ini - hoje <= e.antes) c = { momento: "adiantado", ordem: 1, dist: ini - hoje };
+      else if (hoje > fim && hoje - fim <= e.depois) c = { momento: "atrasado", ordem: 1, dist: hoje - fim };
+      if (c && (!melhor || c.ordem < melhor.ordem || (c.ordem === melhor.ordem && c.dist < melhor.dist))) melhor = { id: e.id, ...c };
+    });
+  });
+  return melhor && { id: melhor.id, momento: melhor.momento };
+}
+// O momento de agora. No modo de teste (?temporada=natal), vale o "no dia" da temporada forçada.
+function temporadaPresenteMomentoAgora(data) {
+  const f = typeof temporadaForcada === "function" ? temporadaForcada() : undefined;
+  return f ? { id: f.id, momento: "nodia" } : f === null ? null : temporadaPresenteMomento(data);
+}
+// A fala do presente pra hoje
+function temporadaPresenteFalaBanco(data) {
+  const B = REACTIVE_VOICE.temporada || {};
+  const D = B.presenteData || {};
+  const m = temporadaPresenteMomentoAgora(data);
+  const b = m && D[m.id] && D[m.id][m.momento];
+  return b && b.length ? b : (B.presenteForaDeEpoca && B.presenteForaDeEpoca.aniversario) || [];
+}
+// O presente do C.A.O.S. às vezes (metade das vezes) vem com a fala da data: dentro e fora das temporadas.
 function temporadaPresenteForaDeEpoca(nome) {
-  if (temporadaEspirito() || caosSilenced || !nome || Math.random() >= 0.5) return;
-  const B = REACTIVE_VOICE.temporada && REACTIVE_VOICE.temporada.presenteForaDeEpoca;
-  if (!B) return;
-  const mes = new Date().getMonth() + 1;
-  const banco = (mes === 10 || mes === 11) && Math.random() < 0.5 ? B.natalAdiantado : B.aniversario;
-  temporadaEspiritoFalar(getRandomReaction(banco, nome));
+  if (caosSilenced || !nome || Math.random() >= 0.5) return;
+  if (typeof temporadasLigadas === "function" && !temporadasLigadas()) return;
+  const banco = temporadaPresenteFalaBanco();
+  if (banco.length) temporadaEspiritoFalar(getRandomReaction(banco, nome));
 }

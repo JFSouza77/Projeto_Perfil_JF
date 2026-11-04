@@ -237,8 +237,24 @@ const REACTIVE_VOICE = {
     "Uma dica pode resolver isso. Talvez. Eu não quero prometer milagres.",
     "Se eu fosse você, pegava uma dica. Mas ainda bem que eu não sou você.",
     "Essa dica provavelmente vai ajudar. Ou não. Eu não vejo o futuro. Ainda.",
-    "Escolhe logo, {nome}! São só números, eles não mordem.",
     "{nome}, o tempo de escolher está acabando. Qualquer número serve. Menos o que eu não estiver pensando.",
+    // JF (04/11): mais variedade (e adeus ao "eles não mordem"). Metade das vezes quem fala é o gerador escolherDica.
+    "{nome}, vinte números e você travou em todos. Escolhe um.",
+    "Escolhe uma dica, {nome}. O relógio não tem dó.",
+    "{nome}, é só tocar num número. Eu juro que é só isso.",
+    "A carta já tá com saudade de você, {nome}. Escolhe uma dica.",
+    "{nome}, se ficar pensando muito, a dica foge.",
+    "Indeciso, {nome}? Vai no número do seu aniversário.",
+    "{nome}, escolher a dica é a parte fácil. A difícil vem depois.",
+    "Tô vendo você namorar os números, {nome}. Escolhe logo um.",
+    "{nome}, não existe dica errada. Existe dica demorada.",
+    "Escolhe, {nome}! Eu preciso de material novo pra comentar.",
+    "{nome}, a mesa tá prendendo a respiração. Libera ela: escolhe uma dica.",
+    "Uma dica, {nome}. Qualquer uma. Pode até ser a pior.",
+    "{nome}, se você não escolher, eu começo a cantar.",
+    "Tempo correndo, {nome}. Um número, por favor.",
+    "{nome}, até eu, que sou máquina, já tinha escolhido.",
+    "Pode escolher sem medo, {nome}. Errar a dica não existe.",
   ],
   erroEscalada: [
     (name, n) => `[C.A.O.S.] Segundo erro nessa carta. A carta já está com vergonha por vocês.`,
@@ -4378,6 +4394,249 @@ const REACTIVE_VOICE = {
         (name, n) => `[C.A.O.S.] Feliz Ano Novo! ${n} PC pra ${name}. Promessa cumprida.`,
       ],
     },
+    // Presente com data (JF, 04/11): quando o C.A.O.S. dá um presente perto de uma data comemorativa, a fala segue o
+    // calendário (adiantado, no dia, atrasado). Fora de qualquer data, vale o presenteForaDeEpoca.aniversario.
+    // Gerador: não (são frases inteiras com o nome; o gerador de presente pode usar as etiquetas data_<id>_<momento>).
+    presenteData: {
+      criancas: {
+          adiantado: [
+          (name) => `[C.A.O.S.] Feliz Dia das Crianças adiantado, ${name}! Toma aqui um presentinho.`,
+          (name) => `[C.A.O.S.] ${name}, ainda não é dia 12, mas a criança interior já merece presente. Feliz Dia das Crianças adiantado!`,
+          (name) => `[C.A.O.S.] Adiantei o Dia das Crianças pra ${name}. Brinquedo novo na mochila!`,
+          (name) => `[C.A.O.S.] ${name}, presente de Dia das Crianças antes da hora. Não conta pros outros adultos.`,
+          (name) => `[C.A.O.S.] Semana das crianças chegando e ${name} já ganhou o dela. Feliz Dia das Crianças adiantado!`,
+        ],
+          nodia: [
+          (name) => `[C.A.O.S.] Feliz Dia das Crianças, ${name}! Hoje todo mundo é criança, e criança ganha presente.`,
+          (name) => `[C.A.O.S.] Hoje é 12 de outubro, ${name}. Presente de Dia das Crianças entregue!`,
+          (name) => `[C.A.O.S.] ${name}, é Dia das Crianças! Toma, e vai brincar.`,
+          (name) => `[C.A.O.S.] Dia das Crianças e eu não ia deixar ${name} sem presente. Que tipo de máquina você acha que eu sou?`,
+          (name) => `[C.A.O.S.] Parabéns pela criança que mora aí dentro, ${name}. Feliz Dia das Crianças!`,
+        ],
+          atrasado: [
+          (name) => `[C.A.O.S.] Feliz Dia das Crianças atrasado, ${name}! Toma aqui um presentinho.`,
+          (name) => `[C.A.O.S.] ${name}, o presente de Dia das Crianças atrasou na entrega. Mas chegou!`,
+          (name) => `[C.A.O.S.] Eu sei, o dia 12 já passou. Feliz Dia das Crianças atrasado, ${name}.`,
+          (name) => `[C.A.O.S.] Presente de Dia das Crianças atrasado pra ${name}. Culpa dos correios do C.A.O.S.`,
+          (name) => `[C.A.O.S.] ${name}, o Dia das Crianças já foi, mas a criança aí dentro continua. Toma o presente.`,
+        ],
+      },
+      halloween: {
+          nodia: [
+          (name) => `[C.A.O.S.] Doce ou travessura, ${name}? Hoje foi doce. Toma o presente.`,
+          (name) => `[C.A.O.S.] ${name}, achei isso no meu caldeirão. É seu. Feliz Halloween!`,
+          (name) => `[C.A.O.S.] Uma bruxa deixou esse presente pra ${name}. Não me pergunte qual bruxa.`,
+          (name) => `[C.A.O.S.] Toma, ${name}. É doce. Eu acho. Pode ter uma travessura escondida.`,
+          (name) => `[C.A.O.S.] Presente assombrado pra ${name}! Buuu. Feliz Halloween.`,
+          (name) => `[C.A.O.S.] ${name}, a abóbora mandou lembranças. E esse presente.`,
+          (name) => `[C.A.O.S.] Era pra ser travessura, mas eu tô bonzinho. Doce pra ${name}!`,
+          (name) => `[C.A.O.S.] O fantasma da mesa deixou um presente pra ${name}. Eu só entrego.`,
+          (name) => `[C.A.O.S.] Mês do Halloween: ${name} ganhou um doce do C.A.O.S. Cuidado com as cáries.`,
+          (name) => `[C.A.O.S.] ${name}, você bateu na porta certa. Doce garantido!`,
+        ],
+      },
+      blackfriday: {
+          adiantado: [
+          (name) => `[C.A.O.S.] Esquenta da Black Friday, ${name}: presente com 100% de desconto!`,
+          (name) => `[C.A.O.S.] ${name}, nem chegou a Black Friday e você já levou um presente de graça. Promoção antecipada!`,
+          (name) => `[C.A.O.S.] Oferta relâmpago pra ${name}: presente por zero reais. Só hoje. Mentira, é sempre.`,
+          (name) => `[C.A.O.S.] Pré-Black Friday do C.A.O.S.: ${name} levou um presente sem pagar frete.`,
+          (name) => `[C.A.O.S.] ${name}, presente com desconto de Black Friday adiantada. Não aceito devolução.`,
+        ],
+          nodia: [
+          (name) => `[C.A.O.S.] É Black Friday, ${name}! Presente com 100% de desconto. De verdade, não é pela metade do dobro.`,
+          (name) => `[C.A.O.S.] ${name}, Black Friday do C.A.O.S.: leve um presente e pague nada.`,
+          (name) => `[C.A.O.S.] Promoção imperdível pra ${name}! O presente saiu de graça, e o frete também.`,
+          (name) => `[C.A.O.S.] Black Friday! ${name} levou o presente antes de esgotar o estoque.`,
+          (name) => `[C.A.O.S.] ${name}, presente de Black Friday. Preço: um sorriso. Parcelado em 10 vezes.`,
+        ],
+          atrasado: [
+          (name) => `[C.A.O.S.] A Black Friday já acabou, mas o presente de ${name} ficou em promoção.`,
+          (name) => `[C.A.O.S.] ${name}, presente da Black Friday atrasada. Achei no fundo do estoque.`,
+          (name) => `[C.A.O.S.] Saldão pós-Black Friday: presente grátis pra ${name}.`,
+          (name) => `[C.A.O.S.] ${name}, a promoção acabou, mas pra você eu estiquei o prazo.`,
+          (name) => `[C.A.O.S.] Última peça da Black Friday, ${name}. Separei pra você.`,
+        ],
+      },
+      natal: {
+          adiantado: [
+          (name) => `[C.A.O.S.] Feliz Natal adiantado, ${name}! Olha aqui o presente.`,
+          (name) => `[C.A.O.S.] ${name}, o Papai Noel me mandou entregar antes. Feliz Natal adiantado!`,
+          (name) => `[C.A.O.S.] Ainda falta um pouquinho pro Natal, mas ${name} já ganhou presente. Feliz Natal adiantado!`,
+          (name) => `[C.A.O.S.] ${name}, adiantei o seu presente de Natal. Não abre antes da hora. Brincadeira, já abriu.`,
+          (name) => `[C.A.O.S.] Contagem regressiva pro Natal, e ${name} já levou o seu. Ho, ho, ho adiantado!`,
+        ],
+          nodia: [
+          (name) => `[C.A.O.S.] Feliz Natal, ${name}! O Papai Noel deixou isso comigo pra te entregar.`,
+          (name) => `[C.A.O.S.] ${name}, hoje é Natal e presente é obrigatório. Toma!`,
+          (name) => `[C.A.O.S.] Ho, ho, ho! Presente de Natal pra ${name}, direto da árvore.`,
+          (name) => `[C.A.O.S.] É Natal, ${name}. Até eu fico bonzinho. Toma o presente.`,
+          (name) => `[C.A.O.S.] ${name}, olha embaixo da árvore: tem presente com o seu nome. Feliz Natal!`,
+        ],
+          atrasado: [
+          (name) => `[C.A.O.S.] Feliz Natal atrasado, ${name}! O trenó pegou trânsito.`,
+          (name) => `[C.A.O.S.] ${name}, o seu presente de Natal atrasou. As renas pararam pra comer panetone.`,
+          (name) => `[C.A.O.S.] O Natal já passou, mas sobrou um presente na árvore. É de ${name}.`,
+          (name) => `[C.A.O.S.] Presente de Natal atrasado pra ${name}. Antes tarde do que nunca, né?`,
+          (name) => `[C.A.O.S.] ${name}, o Papai Noel esqueceu esse aqui. Eu entrego por ele. Feliz Natal atrasado!`,
+        ],
+      },
+      anoNovo: {
+          adiantado: [
+          (name) => `[C.A.O.S.] Feliz Ano Novo adiantado, ${name}! Presente pra começar o ano bem.`,
+          (name) => `[C.A.O.S.] ${name}, o ano nem virou e você já ganhou presente. Feliz Ano Novo adiantado!`,
+          (name) => `[C.A.O.S.] Esquenta do réveillon: presente pra ${name}. Já separa a roupa branca.`,
+          (name) => `[C.A.O.S.] ${name}, presente de Ano Novo antes da contagem regressiva. Dez, nove... pronto, toma.`,
+          (name) => `[C.A.O.S.] Adiantei o brinde, ${name}. Feliz Ano Novo adiantado!`,
+        ],
+          nodia: [
+          (name) => `[C.A.O.S.] Feliz Ano Novo, ${name}! Presente de réveillon entregue.`,
+          (name) => `[C.A.O.S.] ${name}, ano novo, presente novo. Tim-tim!`,
+          (name) => `[C.A.O.S.] Pulei as sete ondas e trouxe um presente pra ${name}. Feliz Ano Novo!`,
+          (name) => `[C.A.O.S.] ${name}, que o ano comece com presente. O resto é com você.`,
+          (name) => `[C.A.O.S.] Os fogos estouraram e caiu um presente no colo de ${name}. Feliz Ano Novo!`,
+        ],
+          atrasado: [
+          (name) => `[C.A.O.S.] Feliz Ano Novo atrasado, ${name}! Ainda vale, o ano tá novinho.`,
+          (name) => `[C.A.O.S.] ${name}, o presente de réveillon atrasou. Ficou preso na sétima onda.`,
+          (name) => `[C.A.O.S.] O ano já virou, mas o presente de ${name} chegou agora. Feliz Ano Novo atrasado!`,
+          (name) => `[C.A.O.S.] ${name}, sobrou uma uva da meia-noite e um presente. Os dois são seus.`,
+          (name) => `[C.A.O.S.] Promessa de ano novo cumprida: dar presente pra ${name}. Atrasado, mas cumprida.`,
+        ],
+      },
+      aniversario: {
+          nodia: [
+          (name) => `[C.A.O.S.] Hoje é aniversário do meu criador, o JF! Pra comemorar, presente pra ${name}.`,
+          (name) => `[C.A.O.S.] ${name}, o JF tá fazendo aniversário e quem ganha presente é você. Faz sentido? Não. Mas toma.`,
+          (name) => `[C.A.O.S.] Dia 2 de janeiro: aniversário do JF. Eu tô feliz e ${name} ganhou presente.`,
+          (name) => `[C.A.O.S.] Parabéns pro JF, e presente pra ${name}! Hoje é dia de festa no código.`,
+          (name) => `[C.A.O.S.] ${name}, meu criador faz aniversário hoje. Eu comemoro dando presente. Toma!`,
+        ],
+      },
+      carnaval: {
+          adiantado: [
+          (name) => `[C.A.O.S.] Esquenta de Carnaval, ${name}! Toma um presente e já vai treinando o samba.`,
+          (name) => `[C.A.O.S.] ${name}, o Carnaval nem começou e você já ganhou confete. E um presente.`,
+          (name) => `[C.A.O.S.] Presente de Carnaval adiantado pra ${name}. A fantasia é por sua conta.`,
+          (name) => `[C.A.O.S.] ${name}, o bloco ainda não saiu, mas o presente já chegou.`,
+          (name) => `[C.A.O.S.] Pré-Carnaval do C.A.O.S.: ${name} levou um presente. Ô abre alas!`,
+        ],
+          nodia: [
+          (name) => `[C.A.O.S.] É Carnaval, ${name}! Presente com confete e serpentina.`,
+          (name) => `[C.A.O.S.] ${name}, o bloco do C.A.O.S. passou e deixou um presente pra você.`,
+          (name) => `[C.A.O.S.] Alalaô! Presente de Carnaval pra ${name}.`,
+          (name) => `[C.A.O.S.] ${name}, toma o presente e volta pro samba.`,
+          (name) => `[C.A.O.S.] Carnaval é festa, e festa tem presente. ${name} ganhou o dela!`,
+        ],
+          atrasado: [
+          (name) => `[C.A.O.S.] O Carnaval acabou, mas sobrou um presente na avenida. É de ${name}.`,
+          (name) => `[C.A.O.S.] ${name}, presente de Carnaval atrasado. Achei embaixo do confete.`,
+          (name) => `[C.A.O.S.] Quarta-feira de cinzas passou, e o presente de ${name} chegou agora.`,
+          (name) => `[C.A.O.S.] ${name}, a ressaca do Carnaval atrasou o presente. Mas tá aqui.`,
+          (name) => `[C.A.O.S.] Último bloco do ano: presente pra ${name}. Atrasado, mas animado.`,
+        ],
+      },
+      mulher: {
+          nodia: [
+          (name) => `[C.A.O.S.] Hoje é Dia Internacional da Mulher. Presente pra ${name}, com carinho.`,
+          (name) => `[C.A.O.S.] ${name}, presente no Dia da Mulher. Um viva pra todas as mulheres da mesa e de fora dela!`,
+          (name) => `[C.A.O.S.] 8 de março, ${name}. Presente entregue, e homenagem a todas as mulheres que fazem história.`,
+          (name) => `[C.A.O.S.] Dia da Mulher: ${name} ganhou um presente. Manda um abraço pras mulheres da sua vida.`,
+          (name) => `[C.A.O.S.] ${name}, presente de 8 de março. Hoje é dia de lembrar quem faz tudo acontecer.`,
+        ],
+      },
+      pascoa: {
+          adiantado: [
+          (name) => `[C.A.O.S.] Feliz Páscoa adiantada, ${name}! O coelho passou mais cedo.`,
+          (name) => `[C.A.O.S.] ${name}, o coelho da Páscoa veio antes e deixou isso. Ovo surpresa!`,
+          (name) => `[C.A.O.S.] Presente de Páscoa adiantado pra ${name}. Não é chocolate, mas também é bom.`,
+          (name) => `[C.A.O.S.] ${name}, a Páscoa tá chegando e o seu ovo já chegou.`,
+          (name) => `[C.A.O.S.] Achei um ovo escondido com o nome de ${name}. Feliz Páscoa adiantada!`,
+        ],
+          nodia: [
+          (name) => `[C.A.O.S.] Feliz Páscoa, ${name}! O coelho deixou esse presente comigo.`,
+          (name) => `[C.A.O.S.] ${name}, caça aos ovos: você achou um presente!`,
+          (name) => `[C.A.O.S.] Páscoa é tempo de chocolate e de presente. ${name} ganhou o dela.`,
+          (name) => `[C.A.O.S.] ${name}, o coelho da Páscoa mandou lembranças. E isso aqui.`,
+          (name) => `[C.A.O.S.] Ovo de Páscoa surpresa pra ${name}! Dentro tem um presente.`,
+        ],
+          atrasado: [
+          (name) => `[C.A.O.S.] Feliz Páscoa atrasada, ${name}! O coelho se perdeu no caminho.`,
+          (name) => `[C.A.O.S.] ${name}, sobrou um ovo de Páscoa. Era o seu.`,
+          (name) => `[C.A.O.S.] A Páscoa já foi, mas o presente de ${name} tava escondido muito bem.`,
+          (name) => `[C.A.O.S.] ${name}, o coelho atrasou. Mas trouxe presente.`,
+          (name) => `[C.A.O.S.] Presente de Páscoa atrasado pra ${name}. O chocolate eu comi, foi mal.`,
+        ],
+      },
+      maes: {
+          nodia: [
+          (name) => `[C.A.O.S.] Hoje é Dia das Mães! Presente pra ${name}, e um abraço pra sua mãe por mim.`,
+          (name) => `[C.A.O.S.] ${name}, presente de Dia das Mães. Liga pra ela depois da partida, combinado?`,
+          (name) => `[C.A.O.S.] Dia das Mães e eu tô sentimental. Presente pra ${name}.`,
+          (name) => `[C.A.O.S.] ${name}, em homenagem a todas as mães: um presente. Se você for mãe, parabéns em dobro!`,
+          (name) => `[C.A.O.S.] Feliz Dia das Mães! ${name} ganhou presente, e a mãe de ${name} ganhou um beijo virtual.`,
+        ],
+      },
+      namorados: {
+          adiantado: [
+          (name) => `[C.A.O.S.] Presente de Dia dos Namorados adiantado pra ${name}. Não se apaixona por mim, hein?`,
+          (name) => `[C.A.O.S.] ${name}, o Dia dos Namorados tá chegando. Já ganhou o primeiro presente.`,
+          (name) => `[C.A.O.S.] Cupido adiantado: presente pra ${name}.`,
+          (name) => `[C.A.O.S.] ${name}, presente de Dia dos Namorados antes da hora. Romântico, eu sei.`,
+          (name) => `[C.A.O.S.] Semana dos namorados: ${name} ganhou presente do C.A.O.S. Amor de máquina.`,
+        ],
+          nodia: [
+          (name) => `[C.A.O.S.] Feliz Dia dos Namorados, ${name}! Presente do seu admirador digital.`,
+          (name) => `[C.A.O.S.] ${name}, hoje é 12 de junho. Toma esse presente. É só amizade, tá?`,
+          (name) => `[C.A.O.S.] Dia dos Namorados: presente pra ${name}. Com ou sem par, presente é presente.`,
+          (name) => `[C.A.O.S.] ${name}, o cupido errou a flecha e acertou um presente em você.`,
+          (name) => `[C.A.O.S.] Presente de Dia dos Namorados pra ${name}. Coração de silício também ama.`,
+        ],
+          atrasado: [
+          (name) => `[C.A.O.S.] Presente de Dia dos Namorados atrasado pra ${name}. O cupido dormiu.`,
+          (name) => `[C.A.O.S.] ${name}, o Dia dos Namorados passou, mas o carinho continua. Toma.`,
+          (name) => `[C.A.O.S.] Atrasei o presente de namorados de ${name}. Relacionamento à distância é assim.`,
+          (name) => `[C.A.O.S.] ${name}, sobrou um bombom do dia 12. É seu.`,
+          (name) => `[C.A.O.S.] Feliz Dia dos Namorados atrasado, ${name}! Antes tarde do que solteiro.`,
+        ],
+      },
+      junina: {
+          nodia: [
+          (name) => `[C.A.O.S.] Presente do arraiá pra ${name}! Olha a cobra! É mentira.`,
+          (name) => `[C.A.O.S.] ${name}, ganhou na pescaria da festa junina. Toma o presente.`,
+          (name) => `[C.A.O.S.] Anarriê! Presente junino pra ${name}.`,
+          (name) => `[C.A.O.S.] ${name}, presente quentinho que nem quentão. Viva São João!`,
+          (name) => `[C.A.O.S.] Correio elegante pra ${name}: um presente do C.A.O.S. Arraiá bom é assim.`,
+        ],
+      },
+      pais: {
+          nodia: [
+          (name) => `[C.A.O.S.] Hoje é Dia dos Pais! Presente pra ${name}, e um abraço pro seu pai por mim.`,
+          (name) => `[C.A.O.S.] ${name}, presente de Dia dos Pais. Liga pro seu velho depois, hein?`,
+          (name) => `[C.A.O.S.] Dia dos Pais: ${name} ganhou presente. Se você for pai, parabéns em dobro!`,
+          (name) => `[C.A.O.S.] ${name}, em homenagem a todos os pais: toma esse presente. A gravata ficou pra outro ano.`,
+          (name) => `[C.A.O.S.] Feliz Dia dos Pais! ${name} ganhou presente, e piada de tiozão eu deixo pra depois.`,
+        ],
+      },
+      folclore: {
+          nodia: [
+          (name) => `[C.A.O.S.] O Saci passou aqui e deixou um presente pra ${name}. Só não sei onde ele foi parar.`,
+          (name) => `[C.A.O.S.] ${name}, presente do Dia do Folclore. O Curupira trouxe, de pé virado.`,
+          (name) => `[C.A.O.S.] Dia do Folclore: a Iara cantou e saiu um presente pra ${name}.`,
+          (name) => `[C.A.O.S.] ${name}, a Mula sem Cabeça deixou isso. Melhor não perguntar como.`,
+          (name) => `[C.A.O.S.] Presente folclórico pra ${name}! O Boitatá iluminou o caminho.`,
+        ],
+      },
+      independencia: {
+          nodia: [
+          (name) => `[C.A.O.S.] 7 de setembro, ${name}! Presente da independência: livre pra usar quando quiser.`,
+          (name) => `[C.A.O.S.] ${name}, independência ou presente? Os dois. Toma!`,
+          (name) => `[C.A.O.S.] Viva o Brasil! Presente verde e amarelo pra ${name}.`,
+          (name) => `[C.A.O.S.] ${name}, presente no Dia da Independência. Grito do Ipiranga: toma!`,
+          (name) => `[C.A.O.S.] Feriado nacional e presente pra ${name}. Dia bom.`,
+        ],
+      },
+    },
     // Fora do Natal (JF, 04/11): quando o C.A.O.S. dá um presente, às vezes faz piada com a data
     presenteForaDeEpoca: {
       aniversario: [
@@ -4391,13 +4650,6 @@ const REACTIVE_VOICE = {
         (name) => `[C.A.O.S.] ${name}, considera isso um adiantamento de aniversário. Sem devolução.`,
         (name) => `[C.A.O.S.] Hoje é o dia nacional de ${name}. Inventei agora. Toma o presente.`,
         (name) => `[C.A.O.S.] ${name}, não me pergunta o motivo. Acordei generoso. Vai durar pouco.`,
-      ],
-      natalAdiantado: [
-        (name) => `[C.A.O.S.] Feliz Natal adiantado, ${name}! Olha aqui o presente.`,
-        (name) => `[C.A.O.S.] ${name}, o Papai Noel me mandou entregar antes. Feliz Natal adiantado!`,
-        (name) => `[C.A.O.S.] Ainda não é dezembro, mas ${name} já ganhou presente. Feliz Natal adiantado!`,
-        (name) => `[C.A.O.S.] ${name}, adiantei o seu presente de Natal. Não abre antes da hora. Brincadeira, já abriu.`,
-        (name) => `[C.A.O.S.] Ho, ho, ho fora de época! ${name}, Feliz Natal adiantado.`,
       ],
     },
     // Gafe de data (o TDAH do C.A.O.S.): rara, no máximo 1 vez por partida. Ele solta a fala de começo de outra
