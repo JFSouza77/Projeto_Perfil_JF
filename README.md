@@ -1,11 +1,25 @@
 # Perfil JF
 
-Jogo de adivinhação por dicas (estilo Perfil) com o apresentador **C.A.O.S.**, feito pra jogar no celular, no
-computador ou numa TV. **Versão atual: Beta 1.7.10.5.5 · C.A.O.S. 4.4.2** (16/10/2026).
+**Jogo de adivinhação multiplayer com o apresentador C.A.O.S.** Uma pessoa é o Mestre, os outros pedem dicas e tentam
+descobrir a carta. O C.A.O.S. narra a partida, zoa, torce, se irrita e se emociona com a mesa.
 
-- **Um aparelho só:** o jogo inteiro roda num HTML, sem precisar de internet (tem a versão `_offline`).
-- **Online:** cada jogador entra pelo próprio aparelho, de qualquer lugar. Quem abre a sala é o host.
-- O GitHub Pages publica o `index.html` (sempre a versão mais nova).
+### ▶️ [Jogar agora](https://jfsouza77.github.io/Projeto_Perfil_JF/)
+
+Roda no navegador do celular, do computador ou da TV, sem instalar nada. **Versão atual: Beta 1.9.3 · Edição de Natal
+· C.A.O.S. 5.4.0** (04/11/2026).
+
+- **1.000 cartas** em Pessoa, Lugar, Coisa, Ano e Animal, com 20 dicas cada.
+- **7 modos:** Clássico, Hardcore, Express, Júnior (pra criança), Old School, Modo C.A.O.S. e Corrida contra o Tempo.
+- **Um aparelho só ou online:** a mesa inteira num celular, ou cada jogador no próprio aparelho, de qualquer lugar.
+  Quem abre a sala é o host; dá pra usar a TV como telão.
+- **C.A.O.S.:** um apresentador com emoções, memória dos jogadores, voz e milhares de falas montadas por contexto.
+- **Temporadas:** o jogo entra no clima das datas (Natal, Ano Novo e outras), com falas, enfeites e cartas da época.
+- **Funciona offline** (versão `_offline`) e pode ser instalado como app (PWA).
+- **Acessibilidade:** tamanho de letra, mais tempo pra ler, leitura das dicas em voz alta, alto contraste e menos movimento.
+
+**Por dentro:** HTML, CSS e JavaScript puros, sem framework, montados num arquivo só a partir de `src/`. O online usa um
+servidor próprio no Cloudflare Workers. Testes automáticos no navegador (Playwright): partidas inteiras simuladas,
+online com vários aparelhos, auditoria de cartas, de botões e de falas.
 
 ## Como trabalhar
 - **A fonte é a pasta `src/`.** O que tem em cada parte está em `src/LEIA-ME.md`; a ordem, em `src/ordem.txt`.
