@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Limpeza das versões antigas (pedido do JF, 15/10/2026): deixa no depósito só as 3 versões mais novas do jogo
-// (normal + offline) como reserva de segurança; as outras saem da pasta. Nada se perde: continuam no histórico
+// (normal + offline + Mestre) como reserva de segurança; as outras saem da pasta. Nada se perde: continuam no histórico
 // do Git e no acervo do Drive (rode antes "node ferramentas/limpar_versoes.js --acervo" e suba o pacote no Drive).
 //   node ferramentas/limpar_versoes.js            → mostra o que sairia (não apaga nada)
 //   node ferramentas/limpar_versoes.js --apagar   → tira do Git (git rm) as versões além das 3 mais novas
@@ -15,7 +15,8 @@ const RAIZ = path.resolve(__dirname, "..");
 const args = process.argv.slice(2);
 const MANTER = +((args.find((a) => a.startsWith("--manter=")) || "").slice(9)) || 3;
 const sh = (c, o) => execSync(c, { cwd: RAIZ, encoding: "utf8", maxBuffer: 1 << 28, ...(o || {}) });
-const RE = /^Perfil_JF_(\d+(?:_\d+)*)(_offline|_debug)?\.html$/;
+// 04/11/2026: os Mestres (Perfil_JF_Mestre_X_Y_Z.html) também: ficam os das 3 versões mais novas
+const RE = /^Perfil_JF_(?:Mestre_)?(\d+(?:_\d+)*)(_offline|_debug)?\.html$/;
 const chave = (v) => v.split("_").map(Number);
 const cmp = (a, b) => {
   const x = chave(a), y = chave(b);
