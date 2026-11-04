@@ -891,7 +891,7 @@ function render() {
       } else {
         const totalCardPointsNow = currentCard.clues.length;
         const entriesNow = revealedOrder.length;
-        const bonusMult = (currentCard && currentCard.isBonus ? 2 : 1) * (CURRENT_MODE === "hardcore" ? 2 : 1);
+        const bonusMult = (currentCard && currentCard.isBonus ? 2 : 1) * (CURRENT_MODE === "hardcore" ? 2 : 1) * temporadaMultCarta(currentCard);
         const pointsIfCorrect = (totalCardPointsNow - entriesNow) * bonusMult;
         const mestreGainDisplay = entriesNow * bonusMult;
         const cb = currentCard && currentCard.isBonus ? currentCard : null;
@@ -992,7 +992,7 @@ function render() {
     const bonusBannerRevealedHtml = currentCard.isBonus ? renderBonusBanner() : "";
     const bonusDuelHtml = currentCard.isBonus ? renderBonusDuelInfo() : "";
     area.innerHTML = `
-      ${bonusBannerRevealedHtml}
+      ${bonusBannerRevealedHtml}${temporadaSeloCartaHtml(currentCard)}
       <div class="answer-header cat-neon" style="--cat:${(GEM_INFO[gemCategoryFor(currentCard.category)] || {}).color || "#e94560"};"><span class="cat-selo">${CAT_SELO_ICONE[gemCategoryFor(currentCard.category)] || "🃏"} ${escapeHtml((GEM_INFO[gemCategoryFor(currentCard.category)] || {}).name || gemCategoryFor(currentCard.category))}</span>Diga aos jogadores: "Eu sou ${formatLabelUppercase(CATEGORY_LABELS[gemCategoryFor(currentCard.category)])}."</div>
       ${bonusDuelHtml}
       ${answerLineHtml()}
@@ -1717,7 +1717,7 @@ function caosEscolhaTomada(tipo, valor, btn) {
 function coresDaPaleta() {
   const isBatata = document.body.classList.contains("batata-mode");
   return PLAYER_COLORS.slice(0, -1)
-    .concat(["GRAD_PRINCESA", "RGB"])
+    .concat(["GRAD_PRINCESA", "RGB"], typeof temporadaEstilo === "function" ? temporadaEstilo().cores : [])
     .filter((c) => !(isBatata && (c === "RGB" || GRADIENTS[c])));
 }
 function renderColorPicker() {
@@ -1736,7 +1736,7 @@ function renderColorPicker() {
     .map((c, i) => {
       const bg = c === "RGB" ? "" : "background:" + playerColorCss(c);
       const rotulo =
-        (c === "GRAD_ONYX" ? "Ônix neon" : COR_EXCLUSIVA[c] ? "Cor exclusiva " + COR_EXCLUSIVA[c].de : "Cor " + (i + 1)) +
+        (c === "GRAD_ONYX" ? "Ônix neon" : COR_EXCLUSIVA[c] ? "Cor exclusiva " + COR_EXCLUSIVA[c].de : temporadaCorNome(c) || "Cor " + (i + 1)) +
         (usedColors.has(c) ? " (já escolhida)" : "");
       return `<button type="button" class="color-swatch ${c === selectedColor && cadMostraSel(cadCor || CURRENT_FORMAT === "equipe") ? "selected" : ""} ${c === "RGB" ? "rgb-swatch" : ""} ${c === "GRAD_ONYX" ? "onyx-swatch" : ""}${usedColors.has(c) ? " tomada" : ""}${COR_EXCLUSIVA[c] && usedColors.has(c) && !players.some((p) => p.color === c) ? " reservada" : ""}" data-color="${c}" style="${bg}" aria-label="${rotulo}" ${usedColors.has(c) ? 'aria-disabled="true"' : ""} title="${c === "GRAD_ONYX" ? "Ônix neon" : COR_EXCLUSIVA[c] ? "Cor exclusiva " + COR_EXCLUSIVA[c].de : ""}"></button>`;
     })
@@ -2248,6 +2248,7 @@ function buildStatsHtml() {
   }
   if (CURRENT_MODE !== "express") destaques += caosAuditoriaHtml();
   const trofeus = trofeusHtml(larga);
+  const titulosTemporada = typeof temporadaTitulosHtml === "function" ? temporadaTitulosHtml(larga) : ""; // Temporadas, item 7
   return `
     <div class="stats-box hall-box resumo-box">
       <h3>📊 Resumo da partida</h3><div class="hall-sub">toque num número e o C.A.O.S. comenta</div>
@@ -2258,6 +2259,14 @@ function buildStatsHtml() {
     <div class="stats-box hall-box trofeus-box">
       <h3>🏆 Troféus do C.A.O.S.</h3><div class="hall-sub">toque num troféu e o C.A.O.S. comenta</div>
       <ul class="stats-list hall-grid">${trofeus}</ul>
+    </div>`
+        : ""
+    }${
+      titulosTemporada
+        ? `
+    <div class="stats-box hall-box trofeus-box titulos-temporada">
+      <h3>🎄 Títulos de Natal</h3><div class="hall-sub">toque num título e o C.A.O.S. comenta</div>
+      <ul class="stats-list hall-grid">${titulosTemporada}</ul>
     </div>`
         : ""
     }

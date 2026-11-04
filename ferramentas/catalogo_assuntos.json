@@ -199,7 +199,12 @@
 "Medusa": "Mitologia e lendas do mundo",
 "Jörmungandr": "Mitologia e lendas do mundo",
 "Yamata no Orochi": "Mitologia e lendas do mundo",
-"Princesa Kaguya": "Mitologia e lendas do mundo"
+"Princesa Kaguya": "Mitologia e lendas do mundo",
+"Papai Noel": "Natal",
+"Mamãe Noel": "Natal",
+"Grinch": "Natal",
+"Rudolph": "Natal",
+"Kevin McCallister": "Natal"
 },
 "LUGAR": {
 "Torre Eiffel": "Monumentos e pontos turísticos do mundo",
@@ -603,7 +608,12 @@
 "Doença da vaca louca": "Doenças e pandemias",
 "Ebola": "Doenças e pandemias",
 "Natal": "Datas e festas",
-"Carnaval": "Datas e festas"
+"Carnaval": "Datas e festas",
+"Árvore de Natal": "Natal",
+"Panetone": "Natal",
+"Presépio": "Natal",
+"Pisca-pisca": "Natal",
+"Amigo Secreto": "Natal"
 },
 "ANIMAL": {
 "Cachorro": "Estimação e fazenda",

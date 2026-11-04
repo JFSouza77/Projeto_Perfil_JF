@@ -149,6 +149,7 @@ function caosSentir(emo, v, motivo) {
     else if (emo === "carinho") k = 1 + (c - 5) * 0.06;
     else if (emo === "tedio") k = Math.max(0.4, Math.min(1.3, (9 - c) / 4));
     if (/demora/.test(String(motivo || "")) && T.pac && (emo === "raiva" || emo === "ansiedade")) k *= T.pac;
+    if (typeof temporadaSentirFator === "function") k *= temporadaSentirFator(emo); // Natal: ruim entra mais fraco, bom mais forte
     k = emo === "tedio" ? k : Math.max(0.2, k);
     const antes = C.g[emo],
       sat = Math.max(0, 1 - antes / M.teto);
@@ -184,7 +185,8 @@ function caosConsoleCarta(novo) {
     if (!C) return;
     Object.keys(C.g).forEach((k) => {
       // a emoção que manda cai mais devagar (estabiliza nela e se acalma aos poucos)
-      const dec = k === C.atual ? 1 - (1 - CAOS_CONSOLE[k].dec) * CAOS_CONSOLE_CFG.segura : CAOS_CONSOLE[k].dec;
+      let dec = k === C.atual ? 1 - (1 - CAOS_CONSOLE[k].dec) * CAOS_CONSOLE_CFG.segura : CAOS_CONSOLE[k].dec;
+      if (typeof temporadaDecaimento === "function") dec = temporadaDecaimento(k, dec); // Natal: esfria rápido, alegria dura
       C.g[k] = Math.max(0, C.g[k] * dec);
       if (C.g[k] < 0.05) C.g[k] = 0;
     });
@@ -212,6 +214,7 @@ function caosConsoleCarta(novo) {
           caosSentir("medo", 1.5, "alguém a 3 casas");
       } catch (e) {}
     }
+    if (typeof temporadaEspiritoPerdoar === "function") temporadaEspiritoPerdoar(); // Natal: esfriou, perdoa
   } catch (e) {}
 }
 function caosConsoleEvento(idx, ev) {
@@ -263,6 +266,7 @@ function caosConsoleEvento(idx, ev) {
       if (p && p.emo && /PP$/.test(p.emo.h || "")) caosSentir("nojo", 1.5, "pulos seguidos");
     }
     C.ultEv = ev === "a" ? "A" : ev;
+    if (typeof temporadaEspiritoEvento === "function") temporadaEspiritoEvento(idx, ev); // Natal: "sorte que é Natal", carvão, perdão
   } catch (e) {}
 }
 function caosConsoleDaFala(bank) {

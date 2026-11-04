@@ -87,3 +87,21 @@ segura**. Sem rodeio: é pra achar rápido.
     frente. Categoria curta: o que falta é completado com as outras. Express (já monta o próprio lote) e Modo C.A.O.S. não mudam.
   - Teste: `ferramentas/teste_lote.js` (9/9), com um banco simulado da 2.0. `teste_baralho` e `teste_corrida` continuam OK.
   - Container novo sem `playwright-core`: `_navegador.js` cai pro `playwright` global.
+
+### 04/11/2026 · teste do cérebro falhando "às vezes" (achado na bateria do Natal, não foi o JF)
+
+- **"Igualdade" do `teste_cerebro` falhava em ~1 de 3 rodadas, inclusive no main.**
+  - Causa: o teste mocka `Math.random` e `Date.now`, mas o estado do C.A.O.S. no começo do roteiro dependia da carga
+    da página (temperamento sorteado e vetor emocional). Às vezes uma rodada começava com o temperamento "normal" e
+    as outras não. Aí o peso da alegria e do carinho mudava, a mistura de rostos saía diferente e o sorteio desalinhava.
+  - Mudou (só no teste): o roteiro começa com `caosCerebroFabrica()` e recomeça o sorteio do zero (`window.__semear`).
+    O jogo não mudou.
+  - Teste: `teste_cerebro` passou 5/5 em 3 rodadas no build do Natal e em 2 no main (antes oscilava).
+
+### 04/11/2026 · Natal: contador "409 de 400" (achado no print do item 9 das temporadas)
+
+- **Na tela da partida, com o Natal ligado: "Cartas restantes no baralho: 409 de 400".**
+  - Causa: `temporadaCartasNoBaralho` somava as 10 cartas de Natal num baralho que já estava no limite do modo.
+  - Mudou: com o baralho no limite, as de Natal tomam o lugar das últimas 10 cartas a sair (nunca de outra de Natal).
+  - Teste: `teste_temporadas` › `baralhoNaoPassaDoLimite` (falha sem a correção, passa com ela).
+

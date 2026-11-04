@@ -304,7 +304,11 @@ function resetDeck() {
   caosSaidasTensao = 0;
   caosCortes = { total: 0, por: {}, rancor: {} };
   caosOuvintesZerar();
-  players.forEach((p) => (p.errosPartida = 0));
+  players.forEach((p) => {
+    p.errosPartida = 0;
+    p.apoiosPartida = 0; // Temporadas (título Duende Ajudante): quantas vezes mexeu outro jogador no tabuleiro
+    p._demorasEscolha = 0; // quantas vezes o C.A.O.S. já cobrou a escolha da dica (gerador escolherDica: "repete")
+  });
   caosAmigosZerar();
   caosAviaoLast = -99;
   caosAcidLastCard = -99;
@@ -352,6 +356,7 @@ function resetDeck() {
       ? shuffle(fonteDeck)
       : embaralharEquilibrado(fonteDeck, CURRENT_MODE === "hardcore" ? CATEGORY_WEIGHTS_HARDCORE : null).reverse();
   deck = baralhoAfastarRecentes(deck); // 1.7.10.8: o que saiu nas últimas partidas vai pro fundo
+  if (typeof temporadaCartasNoBaralho === "function") deck = temporadaCartasNoBaralho(deck); // Temporadas: cartas de Natal (valem o dobro)
   currentCard = null;
   cardState = "none";
   gameEnded = false;
@@ -577,6 +582,7 @@ function flipCard() {
   else startTimer("pick");
   maybeAnnounceCrystalBall();
   maybeShowAiCardEgg();
+  if (typeof temporadaJoiaPresenteTalvez === "function") temporadaJoiaPresenteTalvez(); // Natal: joia rara de presente (nunca a 4ª)
   caosImplicFlip();
   caosPausaMagoaCarta();
   caosRetaFinalTalvez();
@@ -716,7 +722,7 @@ function resolveExhaustionIfNeeded() {
     expressStealSavedResponder = null;
     if (CURRENT_MODE !== "express" && CURRENT_MODE !== "corrida") {
       const totalCardPoints = currentCard.clues.length;
-      const bonusMultiplier = currentCard && currentCard.isBonus ? 2 : 1;
+      const bonusMultiplier = (currentCard && currentCard.isBonus ? 2 : 1) * temporadaMultCarta(currentCard); // Temporadas: carta de Natal vale o dobro
       const hardcoreMultiplier = CURRENT_MODE === "hardcore" ? 2 : 1;
       const gained = totalCardPoints * bonusMultiplier * hardcoreMultiplier;
       creditPoints(mestreIndex, gained, true);
@@ -1029,7 +1035,7 @@ function markCorrect(playerIdxOverride) {
       : currentCard.bonusLanderPlayerIdx
     : mestreIndex;
   if (CURRENT_MODE === "express") {
-    const expressPts = expressPoints(realCluesRevealed);
+    const expressPts = expressPoints(realCluesRevealed) * temporadaMultCarta(currentCard);
     players[scorerIdx].score += expressPts;
     fxFloat("+" + expressPts, "#4ade80");
     const gemResultX = awardGemIfEarned(scorerIdx, realCluesRevealed);
@@ -1105,7 +1111,7 @@ function markCorrect(playerIdxOverride) {
   const entriesRevealed = revealedOrder.length;
   const pointsForResponder = totalCardPoints - entriesRevealed;
   const pointsForMestre = entriesRevealed;
-  const bonusMultiplier = currentCard.isBonus ? 2 : 1;
+  const bonusMultiplier = (currentCard.isBonus ? 2 : 1) * temporadaMultCarta(currentCard); // Temporadas: carta de Natal vale o dobro
   const hardcoreMultiplier = CURRENT_MODE === "hardcore" ? 2 : 1;
   const finalPointsResponder = pointsForResponder * bonusMultiplier * hardcoreMultiplier;
   const finalPointsMestre = pointsForMestre * bonusMultiplier * hardcoreMultiplier;
@@ -1740,7 +1746,7 @@ function addPlayer() {
   idadeLimpar();
   nicksRepertorioGuardar(name);
   const novo = players[players.length - 1];
-  contaAoCadastrar(novo, null, true, () => caosBoasVindasQuandoPuder(novo)); // 1.9.1: o "oi" vem depois da pergunta do cadastro. 11/2026: cadastro do jogador (antes da memória, que respeita o nick protegido); pergunta se quer cadastrar
+  contaAoCadastrar(novo, null, true, () => temporadaEstiloPerguntar(novo, () => caosBoasVindasQuandoPuder(novo))); // 1.9.1: o "oi" vem depois da pergunta do cadastro. 11/2026: cadastro do jogador (antes da memória, que respeita o nick protegido); pergunta se quer cadastrar
   caosMemCadastro(players[players.length - 1]);
   input.value = "";
   caosTomadaN = 0;

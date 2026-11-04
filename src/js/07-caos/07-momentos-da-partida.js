@@ -157,6 +157,12 @@ function caosStartBeatText(type) {
       return caosCasal() && caosOncePerMatch("casal_inicio")
         ? getRandomReaction(REACTIVE_VOICE.perfilJogador.casal.inicio)
         : "";
+    case "temporada": {
+      const t = caosTemporadaFalas();
+      return t && caosOncePerMatch("temporada_inicio") ? getRandomReaction(t.inicio) : "";
+    }
+    case "gafe":
+      return caosOncePerMatch("temporada_gafe") ? caosTemporadaGafeTexto() : "";
     case "modo": {
       const k = CURRENT_FORMAT === "equipe" ? "equipe" : CURRENT_MODE;
       return (
@@ -166,6 +172,37 @@ function caosStartBeatText(type) {
     }
   }
   return "";
+}
+// Temporadas (docs/Temporadas.md): as falas da temporada de agora (null fora de temporada ou com a opção desligada)
+function caosTemporadaFalas() {
+  try {
+    const t = typeof temporadaAtual === "function" ? temporadaAtual() : null;
+    const banco = REACTIVE_VOICE.temporada;
+    return (t && banco && banco[t.id] && banco[t.id].inicio && banco[t.id]) || null;
+  } catch (e) {
+    return null;
+  }
+}
+// Gafe de data: as temporadas que têm falas e não são a de agora (com a opção de temporadas ligada)
+function caosTemporadaGafeOutras() {
+  const banco = REACTIVE_VOICE.temporada;
+  if (!banco || typeof temporadasLigadas !== "function" || !temporadasLigadas()) return [];
+  const agora = typeof temporadaAtual === "function" ? temporadaAtual() : null;
+  return Object.keys(banco).filter((k) => k !== "gafe" && banco[k] && banco[k].inicio && (!agora || agora.id !== k));
+}
+const CAOS_GAFE_CHANCE = 0.06; // rara: uma partida em cada ~16, no máximo 1 vez por partida
+function caosTemporadaGafePode() {
+  return CURRENT_MODE !== "junior" && caosTemporadaGafeOutras().length > 0 && Math.random() < CAOS_GAFE_CHANCE;
+}
+function caosTemporadaGafeTexto() {
+  const outras = caosTemporadaGafeOutras();
+  const banco = REACTIVE_VOICE.temporada;
+  if (!outras.length || !banco.gafe) return "";
+  const k = outras[Math.floor(Math.random() * outras.length)];
+  const errada = getRandomReaction(banco[k].inicio);
+  const conserto = getRandomReaction(banco.gafe);
+  if (!errada || !conserto) return "";
+  return errada.replace(/^\[C\.A\.O\.S\.\]\s*/, "[C.A.O.S.] ") + " ... " + conserto.replace(/^\[C\.A\.O\.S\.\]\s*/, "");
 }
 function maybeShowStartComment() {
   if (caosSilenced || players.length === 0) return;
@@ -181,6 +218,8 @@ function maybeShowStartComment() {
     memoria: caosMemTemInicio() ? 70 : 0,
     casal: caosCasal() ? 90 : 0,
     relogio: caosDataEspecial(caosAgora()) ? 150 : 45,
+    temporada: caosTemporadaFalas() ? 140 : 0,
+    gafe: caosTemporadaGafePode() ? 400 : 0,
   };
   Object.keys(w).forEach((k) => {
     if (!w[k]) delete w[k];
@@ -631,6 +670,15 @@ function maybeShowMoveSpecialFlavor(entityName, amount, wasChosenByAnother) {
     const msg2 = getRandomReaction(REACTIVE_VOICE.especialEscolhaJogador, entityName, amount > 0);
     if (msg2) {
       showToastMessage(msg2);
+      return;
+    }
+  }
+  // Temporadas: no Natal, na maioria das vezes vem a piada da lista dos bonzinhos e dos malvados
+  const tf = caosTemporadaFalas();
+  if (tf && tf.avancou && tf.voltou && Math.random() < 0.6) {
+    const m = amount > 0 ? getRandomReaction(tf.avancou, entityName, amount) : getRandomReaction(tf.voltou, entityName, Math.abs(amount));
+    if (m) {
+      showToastMessage(m);
       return;
     }
   }

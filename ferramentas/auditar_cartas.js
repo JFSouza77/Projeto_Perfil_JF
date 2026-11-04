@@ -222,7 +222,8 @@ function auditar(cartas) {
   }
   // números das cartas: sem buraco (carta removida tem que ser registrada, não pulada sem querer)
   const porCatN = {};
-  cartas.forEach((c) => /^[A-Z]+-\d{4}$/.test(c.id || "") && (porCatN[c.cat] = porCatN[c.cat] || []).push(+c.id.slice(-4)));
+  // os números 0900+ são das cartas de temporada (src/dados/02-cartas/98-temporada.js), fora da sequência
+  cartas.forEach((c) => /^[A-Z]+-\d{4}$/.test(c.id || "") && +c.id.slice(-4) < 900 && (porCatN[c.cat] = porCatN[c.cat] || []).push(+c.id.slice(-4)));
   Object.entries(porCatN).forEach(([cat, ns]) => {
     const tem = new Set(ns), max = Math.max(...ns), faltam = [];
     for (let n = 1; n <= max; n++) if (!tem.has(n)) faltam.push(n);

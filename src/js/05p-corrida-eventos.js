@@ -410,20 +410,33 @@ function corridaMoeda() {
    cada ("max" no catálogo limita: os itens que dão tempo saem 1 só, senão a partida esticava sem fim), preço
    variando ±20% de 5 em 5 (mínimo 5). Devolve { estoque: { item: unidades }, precos: { item: preço } }. */
 function lojaVitrineSortear(catalogo, n) {
-  const bolsa = Object.keys(catalogo).map((k) => ({ k, w: catalogo[k].peso || 1 }));
   const estoque = {},
     precos = {};
-  for (let i = 0; i < n && bolsa.length; i++) {
-    const tot = bolsa.reduce((s, x) => s + x.w, 0);
-    let r = sorteioRegra() * tot,
-      j = 0;
-    while (j < bolsa.length - 1 && r >= bolsa[j].w) r -= bolsa[j++].w;
-    const k = bolsa.splice(j, 1)[0].k;
-    estoque[k] = Math.min(catalogo[k].max || 3, 1 + Math.floor(sorteioRegra() * 3)); // max: itens de tempo, 1 por intervalo
-    const fator = [0.8, 0.9, 1, 1, 1.1, 1.2][Math.floor(sorteioRegra() * 6)];
-    precos[k] = Math.max(5, Math.round((catalogo[k].preco * fator) / 5) * 5);
-  }
+  const sortearDe = (chaves, qtd) => {
+    const bolsa = chaves.map((k) => ({ k, w: catalogo[k].peso || 1 }));
+    for (let i = 0; i < qtd && bolsa.length; i++) {
+      const tot = bolsa.reduce((s, x) => s + x.w, 0);
+      let r = sorteioRegra() * tot,
+        j = 0;
+      while (j < bolsa.length - 1 && r >= bolsa[j].w) r -= bolsa[j++].w;
+      const k = bolsa.splice(j, 1)[0].k;
+      estoque[k] = Math.min(catalogo[k].max || 3, 1 + Math.floor(sorteioRegra() * 3)); // max: itens de tempo, 1 por intervalo
+      const fator = [0.8, 0.9, 1, 1, 1.1, 1.2][Math.floor(sorteioRegra() * 6)];
+      precos[k] = Math.max(5, Math.round((catalogo[k].preco * fator) / 5) * 5);
+    }
+  };
+  const chaves = Object.keys(catalogo);
+  sortearDe(chaves.filter((k) => !catalogo[k].temporada), n);
+  // Temporadas (item 5): na época, entram também LOJA_TEMPORADA_VITRINE itens da temporada (fora dela, nunca)
+  const t = typeof temporadaAtual === "function" ? temporadaAtual() : null;
+  if (t) sortearDe(chaves.filter((k) => catalogo[k].temporada === t.id), LOJA_TEMPORADA_VITRINE);
   return { estoque, precos };
+}
+// Item da temporada vira um item de sempre na hora da compra: { base, qtd } (o "surpresa" sorteia qual)
+function lojaEfeito(catalogo, item) {
+  const it = catalogo[item] || {};
+  if (Array.isArray(it.surpresa) && it.surpresa.length) return { base: it.surpresa[Math.floor(sorteioRegra() * it.surpresa.length)], qtd: 1 };
+  return { base: it.base || item, qtd: it.qtd || 1 };
 }
 // a cada intervalo a vitrine é outra (o que sobrou da anterior some)
 function corridaLojaPreparar() {
@@ -447,10 +460,11 @@ function corridaPodeComprar(item, id) {
   if (corridaAcabou || gameEnded) return false; // 1.7.10.6.1 (dados da partida do JF): relógio zerou, a lojinha fecha
   if ((corridaEstoque[item] || 0) <= 0 || corridaSaldo(id) < corridaPreco(item)) return false;
   // Juízo Final: acerto não dá mais tempo, então os itens de tempo também saem de cena (senão a partida não acaba)
-  if ((item === "ampulheta" || item === "congelar") && (corridaJuizo || corridaAcabou)) return false;
-  if (item === "ima" && corridaIma[id] === cartaSeq) return false;
-  if (item === "escudo" && corridaEscudo === cartaSeq) return false; // um escudo por carta basta
-  if (item === "folego" && corridaFolego[id] === cartaSeq) return false;
+  const ef = it.base || item; // item da temporada: vale a regra do item de sempre que ele vira
+  if ((ef === "ampulheta" || ef === "congelar") && (corridaJuizo || corridaAcabou)) return false;
+  if (ef === "ima" && corridaIma[id] === cartaSeq) return false;
+  if (ef === "escudo" && corridaEscudo === cartaSeq) return false; // um escudo por carta basta
+  if (ef === "folego" && corridaFolego[id] === cartaSeq) return false;
   return true;
 }
 function corridaComprar(item, id) {
@@ -463,15 +477,18 @@ function corridaComprar(item, id) {
   const reg = (corridaCompras[id] = corridaCompras[id] || { gasto: 0, itens: {} });
   reg.gasto += preco;
   reg.itens[item] = (reg.itens[item] || 0) + 1;
-  if (item === "congelar") corridaCongelaMs = Math.max(corridaCongelaMs, 15e3); // 1.7.10.9.1: não acumula (somava de intervalo em intervalo e o geral quase não andava)
-  else if (item === "folego") corridaFolego[id] = cartaSeq;
-  else if (item === "escudo") corridaEscudo = cartaSeq;
-  else if (item === "cofrinho") corridaCofrinho[id] = (corridaCofrinho[id] || 0) + 1;
-  else if (item === "ampulheta") corridaGeralMudar(30e3);
-  else if (item === "ima") corridaIma[id] = cartaSeq;
-  else {
-    corridaItens[id] = corridaItens[id] || { corte: 0, desfib: 0 };
-    corridaItens[id][item]++;
+  const { base, qtd } = lojaEfeito(CORRIDA_LOJA, item); // Temporadas: o item de Natal vira um item de sempre
+  for (let u = 0; u < qtd; u++) {
+    if (base === "congelar") corridaCongelaMs = Math.max(corridaCongelaMs, 15e3); // 1.7.10.9.1: não acumula (somava de intervalo em intervalo e o geral quase não andava)
+    else if (base === "folego") corridaFolego[id] = cartaSeq;
+    else if (base === "escudo") corridaEscudo = cartaSeq;
+    else if (base === "cofrinho") corridaCofrinho[id] = (corridaCofrinho[id] || 0) + 1;
+    else if (base === "ampulheta") corridaGeralMudar(30e3);
+    else if (base === "ima") corridaIma[id] = cartaSeq;
+    else {
+      corridaItens[id] = corridaItens[id] || { corte: 0, desfib: 0 };
+      corridaItens[id][base] = (corridaItens[id][base] || 0) + 1;
+    }
   }
   playSfx("joia");
   fxFloat(`${it.ic} ${p.name} comprou ${it.nome} (−${preco})`, "#fbbf24");

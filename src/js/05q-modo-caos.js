@@ -346,17 +346,21 @@ function mcFimRodada() {
 }
 // 1.7.10.9.2 · Presente do C.A.O.S.: o lanterna, bem atrás do líder, ganha 1 item (1 vez por partida)
 function mcPresenteTalvez() {
-  if ((mc.cont.presente || 0) >= 1 || players.length < 3 || cartasPartida.length < MC_PRESENTE_CARTAS) return false;
+  // Temporadas (Natal e Ano Novo): até 3 presentes por partida, e também pros favoritos (pontinho extra)
+  const bonzinho = typeof temporadaBonzinha === "function" && temporadaBonzinha();
+  const max = bonzinho ? TEMPORADA_PRESENTES_MAX : 1;
+  if ((mc.cont.presente || 0) >= max || players.length < 3 || cartasPartida.length < MC_PRESENTE_CARTAS) return false;
   const pts = (p) => p.score || 0;
   const ord = players.slice().sort((a, b) => pts(b) - pts(a));
   const topo = pts(ord[0]),
     fundo = pts(ord[ord.length - 1]);
   // líder e lanterna únicos (empate adia pro próximo intervalo)
-  if (topo - fundo < MC_PRESENTE_DIF || ord.filter((p) => pts(p) === topo).length !== 1 || ord.filter((p) => pts(p) === fundo).length !== 1) return false;
+  if (topo - fundo < MC_PRESENTE_DIF || ord.filter((p) => pts(p) === topo).length !== 1 || ord.filter((p) => pts(p) === fundo).length !== 1)
+    return bonzinho ? mcPresentePontinho() : false;
   const quem = ord[ord.length - 1],
     item = sorteioItem(MC_PRESENTE_ITENS),
     it = MC_LOJA[item];
-  mc.cont.presente = 1;
+  mc.cont.presente = (mc.cont.presente || 0) + 1;
   mc.inv[quem.id] = mc.inv[quem.id] || {};
   mc.inv[quem.id][item] = (mc.inv[quem.id][item] || 0) + 1;
   // a mesa sabe que teve presente; qual item, só quem ganhou (igual à lojinha, que é segredo)
@@ -366,6 +370,25 @@ function mcPresenteTalvez() {
     texto: `${quem.name} ficou ${topo - fundo} cartas atrás do líder e ganhou um item da lojinha. Qual? Segredo.`,
     anim: "presente",
     variantes: { [quem.id]: { titulo: "Um presente pra você!", texto: `Você ganhou ${it.ic} ${it.nome}: ${it.desc}. Ele aparece nos seus itens.`, botao: "Valeu, C.A.O.S.! 🎁" } },
+  });
+  if (typeof temporadaPresenteForaDeEpoca === "function") temporadaPresenteForaDeEpoca(quem.name); // fala da data: "Feliz Dia das Crianças adiantado"…
+  return true;
+}
+// Natal: sem lanterna pra ajudar, o C.A.O.S. dá um pontinho extra pra um favorito dele (às vezes, não em todo intervalo)
+function mcPresentePontinho() {
+  if (sorteioRegra() >= 0.4) return false;
+  const fav = typeof caosVinc !== "undefined" && caosVinc && caosVinc.fav;
+  const quem = players.find((p) => p.name === fav) || sorteioItem(players);
+  if (!quem) return false;
+  mc.cont.presente = (mc.cont.presente || 0) + 1;
+  mcPcMudar(quem.id, TEMPORADA_PONTINHO_PC);
+  const fala = getRandomReaction(temporadaFalasDe("presentePonto"), quem.name, TEMPORADA_PONTINHO_PC);
+  const texto = String(fala || "").replace(/^\[C\.A\.O\.S\.\]\s*/, "");
+  mcAnunciar(`🎁 PRESENTE DE NATAL! ${quem.name} ganhou +${TEMPORADA_PONTINHO_PC} PC do C.A.O.S.`, {
+    ic: "🎁",
+    titulo: "PRESENTE DE NATAL!",
+    texto: texto || `${quem.name} ganhou +${TEMPORADA_PONTINHO_PC} PC.`,
+    anim: "presente",
   });
   return true;
 }
@@ -410,7 +433,8 @@ function mcComprar(item, id) {
     return mcMudou();
   }
   mc.inv[id] = mc.inv[id] || {};
-  mc.inv[id][item] = (mc.inv[id][item] || 0) + 1;
+  const { base, qtd } = lojaEfeito(MC_LOJA, item); // Temporadas: o item de Natal vira um item de sempre
+  mc.inv[id][base] = (mc.inv[id][base] || 0) + qtd;
   mcLog(`🛒 ${mcNome(id)} comprou alguma coisa na lojinha…`); // o que foi é segredo dele
   mcMudou();
 }
@@ -1374,6 +1398,7 @@ function mcRegrasHtml() {
     `⏱️ <b>Tempo:</b> partida de ${MC_TEMPO_MS / 60e3} min, rodada de até ${MC_RODADA_MS / 60e3} min, intervalo de ${MC_INTERVALO_SEG} s com tudo congelado.`,
     `💠 <b>Pontos de Caos (PC):</b> não contam no placar; servem pra lojinha. Ganha ${MC_PC.rodada} por rodada, +${MC_PC.rapido} acertando nos ${MC_RAPIDO_MS / 1e3} primeiros segundos, e nos eventos.`,
     `🛒 <b>Lojinha (no intervalo, uma só pra mesa):</b> a cada intervalo aparecem ${MC_VITRINE} itens sorteados, com preço e estoque variando. Catálogo: ${Object.values(MC_LOJA)
+      .filter((it) => !it.temporada)
       .map((it) => `${it.ic} ${it.nome} (~${it.preco})`)
       .join(", ")}.`,
     `🌀 <b>O C.A.O.S. apronta</b> (um evento por vez, sempre entre uma vez e outra, com aviso grande na tela): ⏩ Turbo (janela de ${MC_TURBO_SEG} s), 💸 Imposto da Preguiça (quem não tenta paga PC), 🥔 Batata Quente (passe ou segure; quem ficar com ela encara a carta bônus), 🧤 Mão Leve (furto secreto), 🪅 Piñata (digite primeiro), 🎁 Presente (quem ficou ${MC_PRESENTE_DIF}+ cartas atrás do líder ganha 1 item, uma vez por partida), 🎁 Rodada Bônus (carta extra que o Mestre lê: quem bater primeiro e acertar ganha +${MC_PC.bonus} PC e um ${MC_LOJA.kevlar.nome}, e o Mestre também ganha +${MC_PC.bonus} PC) e ⚔️ roubos com duelo em melhor de 3 (quem foi desafiado escolhe: dado, moeda, jokenpô ou par ou ímpar) e revanche dobro ou nada.`,

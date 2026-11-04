@@ -105,6 +105,17 @@ function caosComentFato(d) {
       return { fr: `${n} levou ${v} segundos em média pra acertar`, np: `levar ${v} segundos pra acertar` };
     case "inimigo":
       return { fr: `${n} errou ${v} ${pl(d.v, "palpite", "palpites")} nessa partida`, np: `errar ${v} palpites` };
+    // Temporadas (item 7) · Títulos de Natal
+    case "natalNoel":
+      return { fr: `${n} entregou ${v} ${pl(d.v, "carta acertada", "cartas acertadas")} de presente como Mestre`, np: `entregar ${v} cartas de presente` };
+    case "natalDuende":
+      return { fr: `${n} mexeu ${v} ${pl(d.v, "vez", "vezes")} nos outros jogadores`, np: `mexer ${v} vezes nos outros` };
+    case "natalRena":
+      return { fr: `${n} levou só ${v} segundos em média pra acertar`, np: `acertar em ${v} segundos` };
+    case "natalEstrela":
+      return { fr: `${n} acertou uma carta com ${v} ${pl(d.v, "dica", "dicas")}`, np: `acertar com ${v} dicas` };
+    case "natalBoneco":
+      return { fr: `${n} congelou em ${v} ${pl(d.v, "palpite furado", "palpites furados")}`, np: `errar ${v} palpites` };
     case "notamestre":
       return { fr: `${n} tirou nota ${v} como Mestre`, np: `tirar nota ${v} como Mestre` };
     case "precoce":
@@ -480,7 +491,7 @@ function caosReviewReport() {
     if (e.rated && e.r === -1) b.down++;
   });
   const linhas = [
-    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.9.2 · C.A.O.S. 5.3.1)",
+    "PERFIL JF — RELATÓRIO DO C.A.O.S. (Beta 1.9.3 · C.A.O.S. 5.4.0)",
     `Data: ${new Date().toLocaleString("pt-BR")} · Modo: ${modo} (${CURRENT_FORMAT === "equipe" ? "Equipe" : "Versus"}) · Jogadores: ${players.length} · Cartas: ${stats.totalDrawn} · Falas: ${caosMatchLog.length}`,
     `Notas: 👍 ${up} · 😐 ${meh} · 👎 ${down} · sem nota ${sem}`,
     "",

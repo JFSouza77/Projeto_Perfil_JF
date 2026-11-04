@@ -89,7 +89,8 @@ function avatarsForMode() {
     CURRENT_MODE === "junior"
       ? AVATARS.filter((a) => !["🍺", "🧛", "🧟", "🥷"].includes(a) && !a.startsWith("🕵")).concat(AVATARS_KIDS)
       : AVATARS.concat(AVATARS_EXTRA);
-  return base.filter((a) => !AVATAR_EXCLUSIVE.includes(a));
+  const temporada = typeof temporadaEstilo === "function" ? temporadaEstilo().emojis : [];
+  return base.filter((a) => !AVATAR_EXCLUSIVE.includes(a)).concat(temporada.filter((a) => !base.includes(a)));
 }
 function baralhoClassicoProprio() {
   return ADULT_CARDS.filter((c) => c.classificacao === "adulto" || c.classificacao === "livre");
@@ -156,7 +157,7 @@ function rebuildCardsIndex() {
 // Cartas pelo id fixo (1.7.7.2). Vale pro baralho inteiro, não só o do modo atual.
 let cartasPorIdMapa = null;
 function cartaPorId(id) {
-  if (!cartasPorIdMapa) cartasPorIdMapa = new Map(ADULT_CARDS.map((c) => [c.id, c]));
+  if (!cartasPorIdMapa) cartasPorIdMapa = new Map(ADULT_CARDS.concat(typeof TEMPORADA_CARTAS !== "undefined" ? TEMPORADA_CARTAS : []).map((c) => [c.id, c]));
   return cartasPorIdMapa.get(id) || null;
 }
 // Resposta (de agora ou antiga, de save velho) → carta.
@@ -164,7 +165,7 @@ function cartaPorResposta(resp) {
   if (typeof resp !== "string") return null;
   const id = CARTAS_RESPOSTA_ANTIGA[resp];
   if (id) return cartaPorId(id);
-  if (!cartasPorRespostaMapa) cartasPorRespostaMapa = new Map(ADULT_CARDS.map((c) => [c.answer, c]));
+  if (!cartasPorRespostaMapa) cartasPorRespostaMapa = new Map(ADULT_CARDS.concat(typeof TEMPORADA_CARTAS !== "undefined" ? TEMPORADA_CARTAS : []).map((c) => [c.answer, c]));
   return cartasPorRespostaMapa.get(resp) || null;
 }
 let cartasPorRespostaMapa = null;
@@ -643,6 +644,7 @@ function expressPoints(realRevealed) {
 function applySpecialMove(targetIdx, amount) {
   if (gameEnded) return;
   if (players[targetIdx] && targetIdx !== responderIndex) caosMesaAlvo(responderIndex, targetIdx, amount);
+  if (players[targetIdx] && targetIdx !== responderIndex && players[responderIndex] && amount) players[responderIndex].apoiosPartida = (players[responderIndex].apoiosPartida || 0) + 1; // Duende Ajudante
   if (players[targetIdx] && amount) {
     vibrar(amount > 0 ? "avanca" : "volta");
     fxFloat(

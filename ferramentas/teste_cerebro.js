@@ -30,6 +30,8 @@ function preparo() {
   } catch (e) {}
   let a = 20261025;
   window.__rng = 0;
+  // o roteiro recomeça o sorteio do zero (timers da carga da página podem gastar alguns números antes)
+  window.__semear = () => (a = 20261025);
   Math.random = function () {
     window.__rng++;
     a |= 0;
@@ -69,6 +71,11 @@ function roteiro(modo) {
   const usar = bancos.slice(0, 40);
   const EV = "AaEPAEXAaE";
   const out = [];
+  // ponto de partida fixo: cérebro de fábrica (temperamento normal, vetor 5/5/7, emoções zeradas) e sorteio do zero.
+  // Sem isso, o que a carga da página fez antes (temperamento sorteado, timers) às vezes mudava o roteiro e a
+  // igualdade falhava à toa, até no main (04/11/2026).
+  if (typeof caosCerebroFabrica === "function") caosCerebroFabrica();
+  if (window.__semear) window.__semear();
   window.__rng = 0;
   for (let i = 0; i < 300; i++) {
     if (i % 5 === 0) stats.totalDrawn++;

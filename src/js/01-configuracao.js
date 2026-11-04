@@ -14,7 +14,7 @@
 // 1.7.10 (pedido do Klaus pra Release 1.0) · BUILD: inteiro que só cresce a cada versão publicada (nunca volta).
 // É ele que diz qual versão é mais nova (rede e ferramentas, versao.js). O nome que aparece pra quem joga
 // ("Beta 1.7.10", "Release 1.0", no <title>) é só texto: pode até "voltar" de 1.7.x pra 1.0 sem confundir nada.
-const JOGO_BUILD = 1920;
+const JOGO_BUILD = 1930;
 
 /* ======================================================================
  * 1. CONFIGURAÇÃO (CONSTANTES DE REGRA, LIMITES, TEMPOS E CHAVES DE SALVAMENTO)
@@ -96,7 +96,34 @@ const GRADIENTS = {
   GRAD_SANGUE: "linear-gradient(135deg, #b10000 0%, #4a0000 55%, #000000 100%)",
   GRAD_SHINOBI: "linear-gradient(135deg, #1d4ed8 0%, #374151 55%, #0b0b0f 100%)",
   GRAD_KIRITO: "linear-gradient(135deg, #000000 0%, #1f2937 50%, #94a3b8 100%)",
+  // Temporadas (item 6): as 5 cores do Natal (só aparecem na paleta durante o Natal)
+  GRAD_NATAL_GORRO: "linear-gradient(135deg, #dc2626 0%, #dc2626 55%, #f8fafc 56%, #f8fafc 100%)",
+  GRAD_NATAL_PINHEIRO: "linear-gradient(135deg, #14532d 0%, #16a34a 60%, #facc15 100%)",
+  GRAD_NATAL_DOURADO: "linear-gradient(135deg, #b45309 0%, #fde68a 50%, #b45309 100%)",
+  GRAD_NATAL_NEVE: "linear-gradient(135deg, #e0f2fe 0%, #ffffff 50%, #93c5fd 100%)",
+  GRAD_NATAL_BENGALA: "repeating-linear-gradient(135deg, #dc2626 0 8px, #f8fafc 8px 16px)",
+  GRAD_ANONOVO_CHAMPANHE: "linear-gradient(135deg, #a16207 0%, #fef08a 50%, #ca8a04 100%)",
+  GRAD_ANONOVO_FOGOS: "radial-gradient(circle at 50% 45%, #f472b6 0 18%, #facc15 19% 34%, #38bdf8 35% 52%, #1e1b4b 53% 100%)",
+  GRAD_ANONOVO_BRANCO: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #fde68a 100%)",
+  GRAD_ANONOVO_MEIANOITE: "linear-gradient(135deg, #0f172a 0%, #312e81 60%, #eab308 100%)",
+  GRAD_ANONOVO_CONFETE: "linear-gradient(135deg, #ef4444 0 20%, #f59e0b 20% 40%, #22c55e 40% 60%, #3b82f6 60% 80%, #a855f7 80% 100%)",
 };
+// Temporadas (docs/Temporadas.md, item 6): 5 cores e 5 emojis por temporada, só na paleta durante a época.
+// Jogador cadastrado que escolhe um deles recebe a pergunta "Quer usar durante a temporada?"; o estilo fica salvo só
+// na temporada (TEMPORADA_ESTILO_KEY) e a ficha continua com o estilo de sempre, então ele volta sozinho no fim.
+const TEMPORADA_ESTILOS = {
+  natal: {
+    cores: ["GRAD_NATAL_GORRO", "GRAD_NATAL_PINHEIRO", "GRAD_NATAL_DOURADO", "GRAD_NATAL_NEVE", "GRAD_NATAL_BENGALA"],
+    nomesCores: ["Gorro do Noel", "Pinheiro", "Estrela dourada", "Neve", "Bengala doce"],
+    emojis: ["🎅", "🤶", "🦌", "⛄", "🎄"],
+  },
+  anoNovo: {
+    cores: ["GRAD_ANONOVO_CHAMPANHE", "GRAD_ANONOVO_FOGOS", "GRAD_ANONOVO_BRANCO", "GRAD_ANONOVO_MEIANOITE", "GRAD_ANONOVO_CONFETE"],
+    nomesCores: ["Champanhe", "Fogos", "Roupa branca", "Meia-noite", "Confete"],
+    emojis: ["🎆", "🥂", "🍾", "🎇", "🕛"],
+  },
+};
+const TEMPORADA_ESTILO_KEY = "perfil_jf_estilo_temporada";
 const AVATARS = [
   "😎",
   "🤠",
@@ -392,6 +419,19 @@ const MC_LOJA = {
   kevlar: { ic: "🦺", nome: "Colete Anti-Caos", preco: 60, peso: 1, desc: "fica guardado: anula 1 roubo, assalto ou punição contra você" },
   olho: { ic: "👁️", nome: "Olho do C.A.O.S.", preco: 45, peso: 1, desc: "na janela da dica: a 1ª letra da resposta aparece só pra você" },
   assalto: { ic: "💸", nome: "Assalto Relâmpago", preco: 25, peso: 2, desc: "na hora da compra: leva 15 PC de quem tem mais PC (fora você)" },
+  // Temporadas (docs/Temporadas.md, item 5): 5 itens de Natal. Só aparecem na vitrine durante o Natal, e cada um vira
+  // um item de sempre na hora da compra ("base", "qtd" unidades) ou um item sorteado ("surpresa").
+  natalSurpresa: { ic: "🎁", nome: "Presente Surpresa", preco: 25, peso: 2, temporada: "natal", surpresa: ["corte", "folego", "mordaca", "olho", "espelho"], desc: "um item sorteado da lojinha, embrulhado pelo C.A.O.S." },
+  natalMeia: { ic: "🧦", nome: "Meia Recheada", preco: 30, peso: 2, temporada: "natal", base: "folego", qtd: 2, desc: "2 Vidas Extras de uma vez (errou? 2ª tentativa na mesma dica)" },
+  natalBoneco: { ic: "⛄", nome: "Boneco de Neve", preco: 35, peso: 2, temporada: "natal", base: "congelar", desc: "uma Era do Gelo mais barata: os outros ficam travados por 7 s" },
+  natalEstrela: { ic: "🌟", nome: "Estrela Guia", preco: 40, peso: 1, temporada: "natal", base: "olho", desc: "um Olho do C.A.O.S.: a 1ª letra da resposta só pra você" },
+  natalGorro: { ic: "🎅", nome: "Gorro Protetor", preco: 50, peso: 1, temporada: "natal", base: "kevlar", desc: "um Colete Anti-Caos: anula 1 roubo, assalto ou punição contra você" },
+  // Ano Novo (31/12 e 1/1): mais 5, do mesmo jeito
+  anoNovoChampanhe: { ic: "🍾", nome: "Champanhe Surpresa", preco: 25, peso: 2, temporada: "anoNovo", surpresa: ["corte", "folego", "mordaca", "olho", "espelho"], desc: "estoura a rolha e sai um item sorteado da lojinha" },
+  anoNovoLentilha: { ic: "🥣", nome: "Lentilha da Sorte", preco: 30, peso: 2, temporada: "anoNovo", base: "folego", qtd: 2, desc: "2 Vidas Extras de uma vez (errou? 2ª tentativa na mesma dica)" },
+  anoNovoFogos: { ic: "🎆", nome: "Queima de Fogos", preco: 35, peso: 2, temporada: "anoNovo", base: "congelar", desc: "uma Era do Gelo mais barata: os outros ficam olhando os fogos, travados por 7 s" },
+  anoNovoUvas: { ic: "🍇", nome: "12 Uvas", preco: 40, peso: 1, temporada: "anoNovo", base: "olho", desc: "um Olho do C.A.O.S.: a 1ª letra da resposta só pra você" },
+  anoNovoBranco: { ic: "🤍", nome: "Roupa Branca", preco: 50, peso: 1, temporada: "anoNovo", base: "kevlar", desc: "um Colete Anti-Caos: paz no ano novo, anula 1 roubo, assalto ou punição contra você" },
 };
 const MC_VITRINE = 5;
 const LOJA_TRAVA_MS = 3e3; // 1.7.10.9.3 (JF): no intervalo a vitrine aparece na hora, mas os botões só liberam depois de 3 s (pra dar tempo de ler)
@@ -419,7 +459,19 @@ const CORRIDA_LOJA = {
   cofrinho: { ic: "🐷", nome: "Cofrinho", preco: 25, peso: 2, desc: "a sua próxima carta acertada vale +40 pontos (dura até você acertar)" },
   ampulheta: { ic: "⏳", nome: "Ampulheta Extra", preco: 35, peso: 1, max: 1, desc: "+30 s no relógio geral na hora (bom pra quem está atrás; no Juízo Final não sai)" },
   ima: { ic: "🧲", nome: "Ímã de Pontos", preco: 20, peso: 2, desc: "se outro jogador acertar a próxima carta, você leva 20% do valor dela" },
+  // Temporadas (item 5): 5 itens de Natal, só na vitrine durante o Natal (viram um item de sempre na compra)
+  natalSurpresa: { ic: "🎁", nome: "Presente Surpresa", preco: 20, peso: 2, temporada: "natal", surpresa: ["corte", "desfib", "cofrinho"], desc: "um item sorteado (Passe Livre, Choque de Tempo ou Cofrinho)" },
+  natalMeia: { ic: "🧦", nome: "Meia Recheada", preco: 25, peso: 2, temporada: "natal", base: "corte", qtd: 2, desc: "2 Passes Livres de uma vez (pula a sua vez sem gastar dica)" },
+  natalBoneco: { ic: "⛄", nome: "Boneco de Neve", preco: 25, peso: 2, temporada: "natal", base: "congelar", max: 1, desc: "uma Pausa Dramática mais barata: o relógio geral para 15 s na próxima carta" },
+  natalEstrela: { ic: "🌟", nome: "Estrela Guia", preco: 20, peso: 1, temporada: "natal", base: "cofrinho", desc: "um Cofrinho: a sua próxima carta acertada vale +40 pontos" },
+  natalTreno: { ic: "🦌", nome: "Trenó do Noel", preco: 25, peso: 1, temporada: "natal", base: "desfib", desc: "um Choque de Tempo: +15 s no relógio da carta, na hora que quiser" },
+  anoNovoChampanhe: { ic: "🍾", nome: "Champanhe Surpresa", preco: 20, peso: 2, temporada: "anoNovo", surpresa: ["corte", "desfib", "cofrinho"], desc: "um item sorteado (Passe Livre, Choque de Tempo ou Cofrinho)" },
+  anoNovoOndas: { ic: "🌊", nome: "Sete Ondas", preco: 25, peso: 2, temporada: "anoNovo", base: "corte", qtd: 2, desc: "2 Passes Livres de uma vez (pula a sua vez sem gastar dica)" },
+  anoNovoFogos: { ic: "🎆", nome: "Queima de Fogos", preco: 25, peso: 2, temporada: "anoNovo", base: "congelar", max: 1, desc: "uma Pausa Dramática mais barata: o relógio geral para 15 s na próxima carta" },
+  anoNovoLentilha: { ic: "🥣", nome: "Lentilha da Sorte", preco: 20, peso: 1, temporada: "anoNovo", base: "cofrinho", desc: "um Cofrinho: a sua próxima carta acertada vale +40 pontos" },
+  anoNovoContagem: { ic: "🕛", nome: "Contagem Regressiva", preco: 25, peso: 1, temporada: "anoNovo", base: "desfib", desc: "um Choque de Tempo: +15 s no relógio da carta, na hora que quiser" },
 };
+const LOJA_TEMPORADA_VITRINE = 2; // itens da temporada que entram na vitrine, além dos de sempre
 const CORRIDA_VITRINE = 4;
 const CORRIDA_COFRINHO_PTS = 40;
 const CORRIDA_IMA_FRACAO = 0.2;
@@ -978,6 +1030,11 @@ const CAOS_COMENT_TOM = {
   mvp: "elogio",
   muralha: "elogio",
   paidina: "elogio",
+  natalNoel: "elogio",
+  natalDuende: "elogio",
+  natalRena: "elogio",
+  natalEstrela: "elogio",
+  natalBoneco: "zoeira",
   tartaruga: "zoeira",
   inimigo: "zoeira",
   notamestre: "elogio",
