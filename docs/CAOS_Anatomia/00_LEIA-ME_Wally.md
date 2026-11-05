@@ -27,6 +27,7 @@ Este kit desmonta o C.A.O.S. parte por parte, pra cada parte ser remontada em ou
 | `07_Previsto.md` | O que o C.A.O.S. ainda vai ganhar (pra não fechar portas) | Ao desenhar |
 | `08_Amostras_de_Falas.md` | Uma fala de cada banco e uma montagem de cada gerador (gerado) | Pra pegar o tom |
 | `09_Versao_e_Mudancas.md` | Versão atual e o que mudou em cada versão do C.A.O.S. | Pra sincronizar |
+| `10_Skills_pro_Wally.md` | As skills do Code do Perfil pro Wally instalar na Carteira (e a skill `caos-kit`) | No primeiro dia |
 | `caos_manifesto.json` | Órgãos → arquivos → funções (linha e comentário), bancos e geradores com contagens, constantes (gerado) | Pra ler direto, sem interpretar texto |
 | `familia_exemplo.json` | O molde do "arquivo de família" (quem o C.A.O.S. conhece em cada projeto) | Ao montar o reconhecimento de pessoas |
 
