@@ -9,6 +9,11 @@
 - [ ] **Pente fino na interface:** botões, UI/UX do jogo todo, contrastes, acessibilidade (com cuidado, tela por tela).
 - [ ] **Medalhas da temporada:** vencer Júnior, Clássico e Old School com Vitória por joias durante a temporada dá
   uma medalha no perfil (o jogador escolhe exibir ou não). Plano em `docs/Temporadas.md`.
+- [ ] **IA online no Perfil (ideia do JF, 05/11, inspirada na Carteira):** numa quinta/sexta a escolher. Ordem sugerida:
+  teste único do 0 ou 5 e ajudante das cartas 2.0 (fora do jogo); resumo da partida pelo C.A.O.S.; juiz de chute com lista
+  de apelidos por carta e a IA só sugerindo ao Mestre; "Você sabia?" gerado em lote e revisado; lembretes por push
+  (reaproveitar o da Carteira). Sempre tempero, nunca dependência: chave própria do Perfil no Cloudflare, limite por dia,
+  teto, botão de desligar, sem nome real indo pra IA, Júnior com filtro.
 - [ ] **Aba de sugestões:** os jogadores mandam ideias e feedback pra gente sempre que quiserem.
 
 Feito em 04/11 (era pequeno): presente do C.A.O.S. com fala de data (adiantado, no dia, atrasado), falas novas e um

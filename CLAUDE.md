@@ -1,5 +1,8 @@
 # Perfil JF: regras fixas do JF
 
+Todas as regras combinadas (conversa, agenda, quem decide, versões, segurança) explicadas num lugar só:
+`docs/Regras_JF_e_Code.md`.
+
 - **Quantidades sempre terminam em 0 ou 5** (falas, cartas, pedaços de gerador, itens). Vale pro total e pra cada grupo.
   Contar de verdade antes de publicar. Detalhes em `docs/Regras_dos_Logs.md`.
 - A fonte é `src/`. Montar com `node montar.js`, gerar as saídas com `node build.js` (nunca editar o Mestre à mão).
@@ -36,8 +39,10 @@
 - **Decisões práticas (01/11/2026):** em coisas de organização (juntar PR que não muda o jogo, quando soltar um ajuste já
   testado, por onde começar), o Code decide sozinho pelo que for mais fácil, prático e seguro, e só avisa. Publicar
   versão nova continua precisando do ok do JF.
-- **Agenda de trabalho (04/11/2026, horário de Brasília):** coisa pequena e fácil, ao longo da semana, na hora que o
-  Code preferir. Att grande ou muita task junta: **quinta a partir das 18h** (os créditos renovam às 15h) e **sexta das
-  9h às 18h**. Sexta depois das 18h, sábado e domingo: nada grande, só se for muito necessário. Pedido urgente do JF:
-  na hora. Lista do que espera pra quinta: `docs/Pendencias_da_Semana.md`.
+- **Agenda de trabalho (05/11/2026, horário de Brasília):**
+  - **Segunda até quinta de manhã: orçamento baixo.** Conferir o jogo e fazer só coisa leve e rápida, inclusive
+    correções automáticas pequenas, sem gastar muito crédito.
+  - **Quinta (a partir das 18h; os créditos renovam às 15h) e sexta (das 9h às 18h): trabalho pesado.**
+  - **Sábado e domingo:** ajustes pontuais e continuação do que ficou pendente da quinta e da sexta.
+  - Pedido urgente do JF: na hora. Lista do que espera pra quinta: `docs/Pendencias_da_Semana.md`.
 
