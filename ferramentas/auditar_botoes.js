@@ -2,13 +2,16 @@
 // cada botão visível: área de toque (mínimo 44 px), nome acessível, contraste e texto vazando.
 // 25/10/2026: também mede o contraste de todo TEXTO visível fora dos botões (parágrafos, títulos, rótulos,
 // avisos), contando a transparência (opacity) dos elementos de cima, que deixa a letra mais apagada.
-// Uso: node ferramentas/auditar_botoes.js [Mestre.html] [--json saida.json]
+// Uso: node ferramentas/auditar_botoes.js [Mestre.html] [--json saida.json] [--axe=caminho/axe.min.js]
+// 05/11/2026 (pente fino do JF): com --axe, roda também o axe-core (WCAG 2.2 A e AA) em cada tela e lista as
+// regras quebradas (rótulo, ARIA, foco, títulos…). Só informa: a bateria continua cobrando só o que está acima.
 "use strict";
 const { acharMestre, abrirNavegador } = require("./_navegador");
 
 const MESTRE = acharMestre(process.argv.slice(2).find((a) => a.endsWith(".html")));
 const iJson = process.argv.indexOf("--json");
 const SAIDA_JSON = iJson > 0 ? process.argv[iJson + 1] : null;
+const AXE = ((process.argv.find((a) => a.startsWith("--axe=")) || "").split("=")[1] || "") || null;
 const TOQUE_MIN = 44;
 const CONTRASTE_MIN = 4.5; // texto normal (WCAG AA); texto grande/negrito ≥ 18.66 px usa 3
 const CONTRASTE_GRANDE = 3;
@@ -134,7 +137,12 @@ function medir(tela) {
     let contraste = null;
     const temTexto = (el.textContent || "").replace(/[\s\p{Extended_Pictographic}️‍]/gu, "").length > 0;
     if (temTexto && txt && !bg.indet) {
-      const t = txt.a < 1 ? misturar(txt, bg) : txt;
+      // 05/11/2026 (o axe achou): a transparência do botão (e de quem está em volta) também apaga a letra, como no
+      // texto solto. Ex.: botão desligado do menu ⋮ com opacity 0.85 no tema Claro.
+      let op = 1;
+      for (let n = el; n && n.nodeType === 1; n = n.parentElement) op *= +getComputedStyle(n).opacity;
+      const tx = { ...txt, a: (txt.a == null ? 1 : txt.a) * op };
+      const t = tx.a < 1 ? misturar(tx, bg) : tx;
       const [a, b] = [lum(t), lum(bg)].sort((x, y) => y - x);
       contraste = Math.round(((a + 0.05) / (b + 0.05)) * 100) / 100;
     }
@@ -149,7 +157,8 @@ function medir(tela) {
       fonte: Math.round(px * 10) / 10,
       contraste,
       minimo: grande ? 3 : 4.5,
-      desativado: !!el.disabled,
+      // inativo de propósito também é isento (WCAG 1.4.3): apagado até completar (.bloqueado) e humor travado no passo
+      desativado: !!el.disabled || el.getAttribute("aria-disabled") === "true" || el.classList.contains("bloqueado") || !!el.closest(".ini-trava"),
       tipo: el.tagName.toLowerCase() + (el.type ? ":" + el.type : ""),
       vaza: textoVaza(el, r),
       cor: cs.color,
@@ -199,6 +208,7 @@ function medir(tela) {
 (async () => {
   const navegador = await abrirNavegador();
   const todos = [];
+  const axeAchados = [];
   const erros = [];
   for (const tema of ["noturno", "claro", "enorme"]) {
     // "enorme": letra Enorme na área útil do Safari num iPhone (a barra do navegador come a altura)
@@ -225,6 +235,15 @@ function medir(tela) {
     const anotar = async (tela) => {
       await espera(250);
       todos.push(...(await page.evaluate(medir, tema + " · " + tela)));
+      if (AXE && tema !== "enorme") {
+        if (!(await page.evaluate(() => typeof axe !== "undefined"))) await page.addScriptTag({ path: AXE });
+        const r = await page.evaluate(async () => {
+          // o fundo de palavras da tela inicial é enfeite (aria-hidden; WCAG 1.4.3 isenta decoração)
+          const res = await axe.run({ exclude: [["#floatingWordsContainer"]] }, { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"] }, resultTypes: ["violations"] });
+          return res.violations.map((v) => ({ id: v.id, impacto: v.impact, ajuda: v.help, alvos: v.nodes.slice(0, 6).map((n) => n.target.join(" ")) , n: v.nodes.length }));
+        });
+        r.forEach((v) => axeAchados.push({ ...v, tela: tema + " · " + tela }));
+      }
     };
     const c = async (s) => {
       await page.locator(s).first().click({ timeout: 4000 }).catch(() => {});
@@ -354,6 +373,17 @@ function medir(tela) {
   console.log(`\nTexto vazando pra fora do botão: ${vazando.length}`);
   vazando.forEach((b) => console.log(linha(b, `${b.w}×${b.h}`)));
   console.log(erros.length ? "\nErros na página:\n  " + erros.join("\n  ") : "\nSem erro na página.");
+  if (AXE) {
+    const por = new Map();
+    axeAchados.forEach((v) => {
+      const a = por.get(v.id) || { ...v, telas: new Set(), alvosT: new Set() };
+      a.telas.add(v.tela);
+      v.alvos.forEach((x) => a.alvosT.add(x));
+      por.set(v.id, a);
+    });
+    console.log(`\naxe-core (WCAG 2.2 A/AA, só informa): ${por.size} regras quebradas`);
+    [...por.values()].forEach((a) => console.log(`  [${a.impacto}] ${a.id}: ${a.ajuda}\n      telas: ${[...a.telas].join(" | ")}\n      onde: ${[...a.alvosT].slice(0, 8).join(" | ")}`));
+  }
   if (SAIDA_JSON) require("fs").writeFileSync(SAIDA_JSON, JSON.stringify(lista, null, 1));
   // 1.7.10.5.5: a bateria cobra tudo zerado (toque, nome, contraste e texto vazando)
   const tudoOk = !pequenos.length && !semNome.length && !baixoContraste.length && !textosBaixos.length && !vazando.length && !erros.length;

@@ -514,9 +514,12 @@ body:not(.batata-mode) .splash-dice {
 .age-btn {
   transition: opacity 0.2s;
 }
+/* 05/11/2026 (pente fino): as opções não escolhidas continuam clicáveis (dá pra trocar), então precisam ser
+   legíveis. Antes: opacity 0.35 (contraste 1,7 a 2,5:1). Agora: menos cor, letra legível; a escolhida tem o brilho. */
 .tem-escolha > .humor-btn:not(.on),
 .tem-escolha > .age-btn:not(.on) {
-  opacity: 0.35;
+  opacity: 0.9;
+  filter: saturate(0.4);
   box-shadow: none;
 }
 body:not(.batata-mode) .humor-btn.on,

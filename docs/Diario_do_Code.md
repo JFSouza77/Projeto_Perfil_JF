@@ -132,3 +132,14 @@ segura**. Sem rodeio: é pra achar rápido.
   placar. Desenho em SVG nas cores de cada temporada, com o emoji dela.
   - Arquivos: `src/js/05y2-medalhas.js`, `fichaLimpa` (08-salvamento), `caosMemFimDePartida`, placar (05-tela), CSS.
   - Teste: `teste_medalhas` (16 conferências, inclusive "o jogo não muda").
+- **Pente fino de acessibilidade (lista de quinta do JF):** o `auditar_botoes.js` ganhou `--axe=` (axe-core, WCAG 2.2
+  A/AA, em todas as telas do roteiro, Noturno e Claro) e passou a contar a transparência dos botões (antes só no texto
+  solto). Achados e correções:
+  - Humores não escolhidos ficavam com 35% de opacidade (1,7 a 3:1), mas continuam clicáveis: agora menos cor e letra
+    legível (o escolhido segue com o brilho). 💀 Nível 0 no Noturno com vermelho mais claro.
+  - 🥔 Batata e 🗣️ Voz desligados no Claro: 4,0 e 4,45:1 → sem transparência (a borda tracejada mostra o desligado).
+  - Título do resumo das regras e rostinho do recado no Claro: tinta mais escura.
+  - Nome do botão diferente do texto na tela (WCAG 2.5.3, quem usa comando de voz): recado do C.A.O.S., Jogar online
+    e 💡 Sugestões. O rostinho do recado agora é desenhado pelo CSS.
+  - Apagado de propósito (➕ Adicionar incompleto, humor travado no passo) é isento e o auditor sabe disso.
+  - Resultado: auditor zerado nos 3 temas e axe com 0 regras quebradas.
