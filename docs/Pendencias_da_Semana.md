@@ -2,6 +2,20 @@
 
 ## Para a quinta, 05/11, a partir das 18h (pedido do JF em 04/11/2026)
 
+- [ ] **PRIMEIRO: Kit de dissecação do C.A.O.S. (pedido do JF, 05/11, pra hoje).** O Code da Carteira vai remontar o C.A.O.S.
+  lá (e em projetos futuros, como automação de casa: o C.A.O.S. é a marca do JF). Pasta `docs/CAOS_Anatomia/`:
+  leia-me pro outro Code, mapa do corpo (ouvidos, cérebro, memória, espinha, coluna/fala, voz, rosto, cérebro sombra),
+  ficha de cada órgão (arquivos, funções, dados, testes; genérico x só do Perfil), personalidade e travas de segurança,
+  contrato de encaixe, roteiro de remontagem na Carteira, o que está previsto, amostras de falas, versão/registro de
+  mudanças e um arquivo técnico (módulos, funções, eventos). Etapa 2 (separar o núcleo no código) fica pra depois.
+  - **Quem ele conhece:** o JF pode ser citado (João Fernando; nicks JF, TGP, JF77, TGP77). Crianças da família **não**
+    entram no kit: no lugar, um "arquivo de família" que cada projeto preenche.
+  - **Na Carteira o C.A.O.S. é "Central de Análise e Observações Sistêmicas":** mais agente e assistente que
+    apresentador. Tom profissional, pode brincar e implicar, mas não ofende de graça. Emoções filtradas pra apoio
+    ("entendi, perder dinheiro é complicado"), não pra reação. Dá dica, sugere e analisa quando o jogador deixa.
+  - **Perfil de tratamento por pessoa:** nome, nicks, como quer ser tratado, humor e permissões (pode zoar? pode dar
+    dica? pode sugerir? pode analisar?).
+
 - [ ] **Voz do C.A.O.S.:** sugestões de melhoria na qualidade da voz, variação de tom e de velocidade conforme a fala
   e a emoção (relatório pro JF decidir; o que for simples já entra).
 - [ ] **Emoções mais refinadas:** respostas às emoções mais finas e calibradas (revisar o console, as misturas e o que
