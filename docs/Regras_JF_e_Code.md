@@ -123,7 +123,12 @@ do Code e manter o mesmo jeito de trabalhar. As regras curtas também estão no 
 
 - **Carteira JF** (`JFSouza77/Projeto-Carteira-JF`, começou em 05/11/2026): app de finanças com o C.A.O.S. de consultor,
   feito com o Code em outra nuvem. Usa IA online (Claude, pela API da Anthropic) com chave só no segredo do Cloudflare,
-  limite por dia e lembretes por push. O que for bom lá, o JF traz pro Perfil pro Code validar.
+  limite por dia e lembretes por push. O que for bom lá, o JF traz pro Perfil pro Code validar. O Code de lá se chama
+  **Wally**.
+- **Kit do C.A.O.S.** (`docs/CAOS_Anatomia/`, 05/11/2026): a dissecação do C.A.O.S. pra remontar na Carteira e em
+  projetos futuros. Comece pelo `00_LEIA-ME_Wally.md`. **Mudou o C.A.O.S. no Perfil?** Rode
+  `node ferramentas/caos_anatomia.js` e acrescente a linha no `09_Versao_e_Mudancas.md`. Nome de criança nunca vai no
+  kit (usa o arquivo de família).
 
 ## 11. Pra levar pra um chat novo do Code
 
