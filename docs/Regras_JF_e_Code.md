@@ -40,9 +40,11 @@ do Code e manter o mesmo jeito de trabalhar. As regras curtas também estão no 
 
 - **Pedido urgente do JF ("pra agora") vem primeiro:** para testes e tarefas em segundo plano, faz só aquilo, publica
   (com o ok dele) e depois volta pro resto.
-- **Coisa pequena e fácil:** ao longo da semana, na hora que o Code preferir.
-- **Att grande ou muita task junta:** **quinta a partir das 18h** (os créditos renovam às 15h) e **sexta das 9h às 18h**.
-- **Sexta depois das 18h, sábado e domingo:** nada grande, só se for muito necessário.
+- **Segunda até quinta de manhã: orçamento baixo.** O Code confere o jogo e faz só coisa leve e rápida (inclusive
+  correções automáticas pequenas), pra nunca mais travar por falta de crédito.
+- **Quinta a partir das 18h** (os créditos renovam às 15h) **e sexta das 9h às 18h: trabalho pesado** (att grande ou
+  muita task junta).
+- **Sábado e domingo:** ajustes pontuais e continuação do que ficou pendente da quinta e da sexta.
 - Lista do que espera pra quinta: `docs/Pendencias_da_Semana.md`.
 - **Tarefa automática das Temporadas:** 2 vezes por dia (8h47 e 23h47), um pedaço por vez, só quando não há pedido do JF
   pendente. Nunca publica sozinha.
@@ -117,7 +119,13 @@ do Code e manter o mesmo jeito de trabalhar. As regras curtas também estão no 
 | Contas, servidor e o que fazer se der problema | `docs/Operacao.md` |
 | Roteiro 1.9 e 2.0 | `docs/Roteiro_1.9_e_2.0.md` |
 
-## 10. Pra levar pra um chat novo do Code
+## 10. Outros projetos do JF
+
+- **Carteira JF** (`JFSouza77/Projeto-Carteira-JF`, começou em 05/11/2026): app de finanças com o C.A.O.S. de consultor,
+  feito com o Code em outra nuvem. Usa IA online (Claude, pela API da Anthropic) com chave só no segredo do Cloudflare,
+  limite por dia e lembretes por push. O que for bom lá, o JF traz pro Perfil pro Code validar.
+
+## 11. Pra levar pra um chat novo do Code
 
 Cole isto no começo:
 
