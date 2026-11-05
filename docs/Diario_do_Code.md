@@ -105,3 +105,18 @@ segura**. Sem rodeio: é pra achar rápido.
   - Mudou: com o baralho no limite, as de Natal tomam o lugar das últimas 10 cartas a sair (nunca de outra de Natal).
   - Teste: `teste_temporadas` › `baralhoNaoPassaDoLimite` (falha sem a correção, passa com ela).
 
+
+### 05/11/2026 · emoções calibradas e voz contínua (lista de quinta do JF, entra na próxima versão)
+
+- **Tédio que não passava:** depois da mesa parada, o C.A.O.S. seguia entediado por ~20 cartas, mesmo com a mesa
+  jogando de novo.
+  - Causa: só o tempo derretia o tédio; acerto e erro não mexiam nele.
+  - Mudou: acerto tira 0,8 de tédio e erro tira 0,4 (com 6 erros seguidos ou mais, não tira: a mesa empacou).
+  - Teste: `teste_emocoes` › "Tédio vai embora" (era 20 a 24 cartas; agora 4 a 8).
+- **Temperamento do dia quase não aparecia:** rabugento e generoso reagiam igual a erro em série (os dois magoados).
+  - Mudou: raiva pesa mais com tensão do dia (0,15 → 0,25) e a tristeza pesa menos (rabugento e elétrico se irritam;
+    normal e generoso se magoam).
+  - Teste: `teste_emocoes` › "Erro em série" (falha sem a mudança).
+- **Voz picada:** na voz da nuvem cada frase era um áudio, com respiro e entonação recomeçando.
+  - Mudou: fala com uma emoção só e até 300 letras vai num pedido só (`vozNuvemJuntar`).
+  - Teste: `teste_voz` › "Duas frases, uma emoção: um pedido só".

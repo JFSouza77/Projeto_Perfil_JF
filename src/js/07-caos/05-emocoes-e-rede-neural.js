@@ -142,7 +142,10 @@ function caosSentir(emo, v, motivo) {
       p = caosEmo.paciencia ?? 7,
       T = caosTemper || {};
     let k = 1;
-    if (emo === "raiva") k = (1 + Math.max(0, 7 - p) * 0.12) * (1 + (T.t || 0) * 0.15);
+    // 1.9.4 (calibragem, docs/Emocoes_Calibragem_2026-11-05.md): o temperamento do dia pesa mais. Rabugento se
+    // irrita mais rápido (0,15 → 0,25) e se magoa menos; o generoso (tensão baixa) se magoa em vez de se irritar.
+    if (emo === "raiva") k = (1 + Math.max(0, 7 - p) * 0.12) * (1 + (T.t || 0) * 0.25);
+    else if (emo === "tristeza") k = Math.max(0.7, 1 - (T.t || 0) * 0.2);
     else if (emo === "ansiedade") k = (1 + Math.max(0, 7 - p) * 0.08) * (1 + (t - 5) * 0.08);
     else if (emo === "medo") k = 1 + (t - 5) * 0.1;
     else if (emo === "alegria") k = 1 + (c - 5) * 0.08 + (T.c || 0) * 0.1;
@@ -239,6 +242,8 @@ function caosConsoleEvento(idx, ev) {
       if (fav) caosSentir("carinho", 0.5, "favorito acertou");
       if (p && playerHumor(p) === "suave") caosSentir("carinho", humorFamilia(p) ? 1 : 0.6, "acerto de jogador Suave");
       C.g.raiva = Math.max(0, (C.g.raiva || 0) - 1.2);
+      // 1.9.4: a mesa voltou a jogar, o tédio vai embora (antes ficava ~20 cartas depois da mesa parada)
+      C.g.tedio = Math.max(0, (C.g.tedio || 0) - 0.8);
       if (des) caosSentir("nojo", 0.4, "elogio contrariado");
     } else if (ev === "E" || ev === "X") {
       C.seqErr++;
@@ -256,6 +261,7 @@ function caosConsoleEvento(idx, ev) {
       if (af && af.nojo) caosSentir("nojo", af.nojo, "erro" + porque);
       if (p && playerHumor(p) === "suave") caosSentir("carinho", 0.3, "erro de jogador Suave");
       if (ev === "X") caosSentir("nojo", 3.5, "absurdo");
+      if (C.seqErr < 6) C.g.tedio = Math.max(0, (C.g.tedio || 0) - 0.4); // errar também é jogar (6+ seguidos cansa)
       if (C.seqErr === 3) caosSentir("tristeza", 2, "erros seguidos");
       else if (C.seqErr > 3) caosSentir("tristeza", 1.2, "erros seguidos");
       if (des && ev === "E") caosSentir("nojo", 0.6, "desafeto errou");
