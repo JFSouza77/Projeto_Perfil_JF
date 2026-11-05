@@ -46,6 +46,8 @@ function wav() {
     const frase = `[C.A.O.S.] Teste da voz nova número ${Date.now() % 100000}. Segunda frase aqui!`; // (o servidor guarda as falas)
     const r1 = await falar(frase);
     conf("Ligada, fala pela voz nova (sem a voz do aparelho; o que é novo vai pro Azure)", !r1.timeout && r1.aparelho === 0 && pedidos - p0 >= 1);
+    // 1.9.4: fala de duas frases com a mesma emoção vai num pedido só (entonação contínua, sem respiro entre MP3s)
+    conf("Duas frases, uma emoção: um pedido só, com as duas frases", pedidos - p0 === 1 && /número \d+\. Segunda frase aqui!/.test(ssmls[ssmls.length - 1]));
     const p1 = pedidos;
     const r2 = await falar(frase);
     conf("A mesma fala de novo não pede outra vez", !r2.timeout && r2.aparelho === 0 && pedidos === p1);

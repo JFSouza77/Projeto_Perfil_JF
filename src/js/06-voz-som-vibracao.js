@@ -295,11 +295,28 @@ function vozNuvemPedaco(texto, vel, tom, emo) {
       return audio;
     });
 }
+// Até 300 letras (o servidor corta em 400) e só quando a fala inteira tem a mesma emoção.
+function vozNuvemJuntar(partes, jeitos, corteV) {
+  if (corteV >= 0 || partes.length < 2) return null;
+  const texto = partes.join(" ");
+  if (texto.length > 300 || jeitos.some((j) => j[2] !== jeitos[0][2] || j[0] !== jeitos[0][0])) return null;
+  const fim = String(partes[0]).slice(-1);
+  const tom = jeitos[0][1] - (fim === "?" ? 0.08 : fim === "!" ? 0.05 : 0);
+  return { partes: [texto], jeitos: [[jeitos[0][0], tom, jeitos[0][2]]] };
+}
 function caosFalarNuvem(partes, jeitos, onEnd, onPedaco, corteV) {
   vozNuvemParar();
   try {
     window.speechSynthesis.cancel();
   } catch (e) {}
+  // 1.9.4 (pedido do JF: voz mais natural): sem troca de emoção no meio, a fala vai inteira num pedido só. A voz
+  // do Azure entoa as frases juntas (sem o "respiro" de MP3 entre os pedaços) e gasta menos pedidos. O tom extra
+  // de pergunta e exclamação sai: a própria voz já entoa pela pontuação.
+  const juntar = vozNuvemJuntar(partes, jeitos, corteV);
+  if (juntar) {
+    partes = juntar.partes;
+    jeitos = juntar.jeitos;
+  }
   const token = vozNuvem.token, ctx = audioContexto();
   const pedidos = partes.map((ch, i) => vozNuvemPedaco(ch, jeitos[i][0], jeitos[i][1], jeitos[i][2]));
   let comecou = false;
