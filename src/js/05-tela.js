@@ -1521,7 +1521,7 @@ function renderMiniScoreboard() {
       list.innerHTML = meta + sorted
         .map(
           (p) => `
-        <li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${p.score} pt${p.score === 1 ? "" : "s"}${gemBadgesHtml(p)}${joiasTravaBadge(CURRENT_FORMAT === "equipe" ? p.team : p.id)}</li>
+        <li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}${medalhaHtml(p)}: ${p.score} pt${p.score === 1 ? "" : "s"}${gemBadgesHtml(p)}${joiasTravaBadge(CURRENT_FORMAT === "equipe" ? p.team : p.id)}</li>
       `,
         )
         .join("");
@@ -1555,7 +1555,7 @@ function renderMiniScoreboard() {
                 : wc === "tabuleiro"
                   ? `casa ${p.position}/${WINNING_SCORE}`
                   : `${p.score} pts — casa ${p.position}/${WINNING_SCORE}`;
-          return `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${txt}${palpiteBadge(p.id)}${gemBadgesHtml(p)}${joiasTravaBadge(p.id)}</li>`;
+          return `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}${medalhaHtml(p)}: ${txt}${palpiteBadge(p.id)}${gemBadgesHtml(p)}${joiasTravaBadge(p.id)}</li>`;
         })
         .join("");
     }

@@ -126,3 +126,9 @@ segura**. Sem rodeio: é pra achar rápido.
   formato texto). O servidor recusa sugestão vazia e guarda no máximo 1.000.
   - Arquivos: `src/js/05u2-sugestoes.js`, `servidor/worker.js` (tipo "sugestao", prefixo `s:`), CSS das janelas.
   - Teste: `teste_sugestoes` (9 conferências, com o servidor local).
+- **🏅 Medalhas da temporada (ideia do JF, 04/11):** vitória por joias no Júnior, no Clássico e no Old School durante
+  a temporada dá a medalha dela ("natal-2026"). Fica na ficha (sobe com o cadastro); nick emprestado não conta. O
+  C.A.O.S. comenta o progresso (10 falas) e a conquista (10 falas); quem ganha escolhe se mostra ao lado do nome no
+  placar. Desenho em SVG nas cores de cada temporada, com o emoji dela.
+  - Arquivos: `src/js/05y2-medalhas.js`, `fichaLimpa` (08-salvamento), `caosMemFimDePartida`, placar (05-tela), CSS.
+  - Teste: `teste_medalhas` (16 conferências, inclusive "o jogo não muda").

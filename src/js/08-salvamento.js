@@ -1119,6 +1119,8 @@ function fichaLimpa(f, nome) {
     ultimoHumor: ["familia", "suave", "normal", "acido", "zero", "caos"].includes(f.ultimoHumor) ? f.ultimoHumor : null,
     trocasHumor: Math.min(99, memNum(f.trocasHumor, 0)),
     ultimoSorteado: ["familia", "suave", "normal", "acido", "zero"].includes(f.ultimoSorteado) ? f.ultimoSorteado : null,
+    // 05/11/2026 · medalhas da temporada (05y2-medalhas.js)
+    ...(typeof medalhasLimpar === "function" ? medalhasLimpar(f) : { medalhas: {}, medalhaMostrar: null }),
   };
 }
 function fichasTodas() {
