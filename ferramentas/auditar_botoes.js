@@ -335,6 +335,18 @@ function medir(tela) {
     await page.evaluate(() => typeof problemaReportarAbrir === "function" && problemaReportarAbrir());
     await anotar("reportar problema");
     await page.evaluate(() => document.getElementById("reportarProblema")?.remove());
+    // 05/11/2026: as janelas novas (💡 sugestão e 🏅 medalha) e a tela final da partida
+    await page.evaluate(() => typeof sugestaoAbrir === "function" && sugestaoAbrir());
+    await anotar("sugestão");
+    await page.evaluate(() => document.getElementById("sugestaoJanela")?.remove());
+    await page.evaluate(() => typeof medalhaPerguntarMostrar === "function" && medalhaPerguntarMostrar("Ana", "natal-2026"));
+    await anotar("medalha");
+    await page.evaluate(() => document.getElementById("medalhaJanela")?.remove());
+    await c("#resumeBtn, #pauseResume, [id*=resume i]:visible");
+    await page.evaluate(() => typeof endGame === "function" && endGame());
+    await espera(1500);
+    await fecharJanelas("fim");
+    await anotar("tela final");
     await page.close();
   }
   await navegador.close();

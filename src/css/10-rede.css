@@ -1968,7 +1968,9 @@ body.batata-mode.aviso-treme {
 }
 /* 25/10/2026 · janelas de reporte: botões com área de toque de 44 px e legíveis no tema claro */
 #reportarCarta .chip,
-#reportarProblema .chip {
+#reportarProblema .chip,
+#sugestaoJanela .chip,
+#medalhaJanela .chip {
   min-height: 44px;
   padding-left: 16px;
   padding-right: 16px;
@@ -1979,7 +1981,9 @@ body.batata-mode.aviso-treme {
   margin: 4px 0 2px;
 }
 body.claro #reportarCarta .chip,
-body.claro #reportarProblema .chip {
+body.claro #reportarProblema .chip,
+body.claro #sugestaoJanela .chip,
+body.claro #medalhaJanela .chip {
   color: var(--claro-txt);
 }
 /* 25/10/2026 · prints nos reportes e botão de reportar na carta */

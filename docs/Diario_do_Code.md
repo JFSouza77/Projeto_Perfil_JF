@@ -142,4 +142,6 @@ segura**. Sem rodeio: é pra achar rápido.
   - Nome do botão diferente do texto na tela (WCAG 2.5.3, quem usa comando de voz): recado do C.A.O.S., Jogar online
     e 💡 Sugestões. O rostinho do recado agora é desenhado pelo CSS.
   - Apagado de propósito (➕ Adicionar incompleto, humor travado no passo) é isento e o auditor sabe disso.
+  - Roteiro do auditor ganhou a tela final, a 💡 sugestão e a 🏅 medalha (69 telas); os botões Fechar e Guardar das
+    janelas novas ganharam 44 px e cor legível no Claro.
   - Resultado: auditor zerado nos 3 temas e axe com 0 regras quebradas.
