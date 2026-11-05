@@ -120,3 +120,9 @@ segura**. Sem rodeio: é pra achar rápido.
 - **Voz picada:** na voz da nuvem cada frase era um áudio, com respiro e entonação recomeçando.
   - Mudou: fala com uma emoção só e até 300 letras vai num pedido só (`vozNuvemJuntar`).
   - Teste: `teste_voz` › "Duas frases, uma emoção: um pedido só".
+- **💡 Sugestões (pedido do JF: "aba de sugestões e feedback pros jogadores"):** botão no menu ⋮ da tela inicial e na
+  Pausa. Categoria e texto (até 500 letras), sem nome e sem retrato da partida. Vai pela fila do Reportar problema
+  (sem internet, guarda e manda depois) e aparece na página dos reportes do JF, seção 💡 Sugestões (também no
+  formato texto). O servidor recusa sugestão vazia e guarda no máximo 1.000.
+  - Arquivos: `src/js/05u2-sugestoes.js`, `servidor/worker.js` (tipo "sugestao", prefixo `s:`), CSS das janelas.
+  - Teste: `teste_sugestoes` (9 conferências, com o servidor local).

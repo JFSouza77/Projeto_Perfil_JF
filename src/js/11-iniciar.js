@@ -687,6 +687,7 @@ function iniciar() {
   document.getElementById("pauseExportBtn").addEventListener("click", () => exportSave());
   document.getElementById("pauseReportarBtn").addEventListener("click", () => cartaReportarAbrir());
   document.getElementById("pauseProblemaBtn").addEventListener("click", () => problemaReportarAbrir());
+  document.getElementById("pauseSugestaoBtn").addEventListener("click", () => sugestaoAbrir());
   document.getElementById("pauseTemaBtn").addEventListener("click", toggleNoturno);
   document.getElementById("pauseVozBtn").addEventListener("click", pausaVozTrocar);
   document.getElementById("pauseReligarBtn").addEventListener("click", caosReligarCarta);
@@ -854,6 +855,7 @@ function iniciar() {
   document.getElementById("btnNoturno").addEventListener("click", toggleNoturno);
   document.getElementById("btnMemExportar").addEventListener("click", caosMemoriaExportar);
   document.getElementById("btnAcessibilidade").addEventListener("click", acessPainelAbrir);
+  document.getElementById("btnSugestao").addEventListener("click", () => sugestaoAbrir());
   document.getElementById("pauseAcessBtn").addEventListener("click", acessPainelAbrir);
   {
     // 1.7.9.12: o aviso do online na tela inicial abre o passo a passo

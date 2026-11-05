@@ -36,6 +36,7 @@ js/05w-html2canvas.js
 js/05v-prints.js
 js/05n-reportar-carta.js
 js/05u-reportar-problema.js
+js/05u2-sugestoes.js
 js/05t-contas.js
 js/05o-corrida.js
 js/05p-corrida-eventos.js
