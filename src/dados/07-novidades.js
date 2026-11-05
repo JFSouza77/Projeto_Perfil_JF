@@ -10,6 +10,22 @@
 //  · o que ainda não entrou fica em docs/Novidades_Rascunho.md.
 const NOVIDADES = [
   {
+    v: "Beta 1.9.4",
+    data: "05/11/2026",
+    nome: "Medalhas e Sugestões",
+    t: "Medalhas da temporada, um canal pra mandar ideias e um C.A.O.S. com mais personalidade.",
+    itens: [
+      "🏅 Medalhas da temporada: vença por joias no Júnior, no Clássico e no Old School durante uma temporada, como o Natal, e ganhe a medalha dela. Você escolhe se mostra ao lado do seu nome.",
+      "💡 Mande sua ideia: no menu ⋮ e na Pausa tem o botão Sugestões. Escreva o que você gostou, o que não gostou ou o que quer ver no jogo. Sem internet, ela vai depois.",
+      "🎭 Humor do dia: o C.A.O.S. tem dias. Num dia rabugento, erro em série irrita; num dia generoso, magoa. E o tédio passa assim que a mesa volta a jogar.",
+      "🗣️ Voz mais natural: com internet, a fala do C.A.O.S. sai inteira de uma vez, com a entonação seguida, sem pausa estranha entre as frases.",
+      "♿ Mais fácil de ler: as opções de humor que você não escolheu continuam legíveis, os botões desligados ficaram mais nítidos no tema claro e o leitor de tela lê os nomes certos.",
+    ],
+    qol: [
+      "⌨️ Tecla Esc: fecha as janelas de reportar e de sugestão.",
+    ],
+  },
+  {
     v: "Beta 1.9.3",
     data: "04/11/2026",
     nome: "Edição de Natal",

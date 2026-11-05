@@ -1,4 +1,4 @@
-# Amostras de falas do C.A.O.S. (Beta 1.9.3 · C.A.O.S. 5.4.0)
+# Amostras de falas do C.A.O.S. (Beta 1.9.4 · C.A.O.S. 5.5.0)
 
 Gerado por `node ferramentas/caos_anatomia.js`. Uma fala de cada banco e uma montagem de cada gerador, pra sentir o
 tom. "Fulano", 3 e "Lugar" são valores de exemplo no lugar do nome, do número e da categoria.

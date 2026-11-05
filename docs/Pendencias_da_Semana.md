@@ -16,19 +16,19 @@
   - **Perfil de tratamento por pessoa:** nome, nicks, como quer ser tratado, humor e permissões (pode zoar? pode dar
     dica? pode sugerir? pode analisar?).
 
-- [x] (05/11, branch `quinta-att`; sugestões em `docs/Voz_Sugestoes_2026-11-05.md`) **Voz do C.A.O.S.:** sugestões de melhoria na qualidade da voz, variação de tom e de velocidade conforme a fala
+- [x] (05/11, publicado na 1.9.4; sugestões em `docs/Voz_Sugestoes_2026-11-05.md`) **Voz do C.A.O.S.:** sugestões de melhoria na qualidade da voz, variação de tom e de velocidade conforme a fala
   e a emoção (relatório pro JF decidir; o que for simples já entra).
-- [x] (05/11, `quinta-att`; `docs/Emocoes_Calibragem_2026-11-05.md`) **Emoções mais refinadas:** respostas às emoções mais finas e calibradas (revisar o console, as misturas e o que
+- [x] (05/11, publicado na 1.9.4; `docs/Emocoes_Calibragem_2026-11-05.md`) **Emoções mais refinadas:** respostas às emoções mais finas e calibradas (revisar o console, as misturas e o que
   cada emoção muda na fala).
-- [x] (05/11, `quinta-att`; axe e auditor zerados em 69 telas) **Pente fino na interface:** botões, UI/UX do jogo todo, contrastes, acessibilidade (com cuidado, tela por tela).
-- [x] (05/11, `quinta-att`) **Medalhas da temporada:** vencer Júnior, Clássico e Old School com Vitória por joias durante a temporada dá
+- [x] (05/11, publicado na 1.9.4; axe e auditor zerados em 69 telas) **Pente fino na interface:** botões, UI/UX do jogo todo, contrastes, acessibilidade (com cuidado, tela por tela).
+- [x] (05/11, publicado na 1.9.4) **Medalhas da temporada:** vencer Júnior, Clássico e Old School com Vitória por joias durante a temporada dá
   uma medalha no perfil (o jogador escolhe exibir ou não). Plano em `docs/Temporadas.md`.
 - [ ] **IA online no Perfil (ideia do JF, 05/11, inspirada na Carteira):** numa quinta/sexta a escolher. Ordem sugerida:
   teste único do 0 ou 5 e ajudante das cartas 2.0 (fora do jogo); resumo da partida pelo C.A.O.S.; juiz de chute com lista
   de apelidos por carta e a IA só sugerindo ao Mestre; "Você sabia?" gerado em lote e revisado; lembretes por push
   (reaproveitar o da Carteira). Sempre tempero, nunca dependência: chave própria do Perfil no Cloudflare, limite por dia,
   teto, botão de desligar, sem nome real indo pra IA, Júnior com filtro.
-- [x] (05/11, `quinta-att`) **Aba de sugestões:** os jogadores mandam ideias e feedback pra gente sempre que quiserem.
+- [x] (05/11, publicado na 1.9.4) **Aba de sugestões:** os jogadores mandam ideias e feedback pra gente sempre que quiserem.
 
 Feito em 04/11 (era pequeno): presente do C.A.O.S. com fala de data (adiantado, no dia, atrasado), falas novas e um
 gerador pra demora de escolher a dica (adeus ao "eles não mordem"), e etiquetas de temporada e de data em todos os
