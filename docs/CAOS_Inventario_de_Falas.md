@@ -6,13 +6,13 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Chamada | Linhas |
 |---|---|
-| `showToastMessage` | 129 |
+| `showToastMessage` | 130 |
 | `caosFalaAgendar` | 36 |
 | `caosFalarDepois` | 16 |
 | `admFala` | 5 |
-| `getRandomReaction` | 323 |
+| `getRandomReaction` | 324 |
 | `caosGerarFala` | 18 |
-| **Total de linhas com fala** | **439** |
+| **Total de linhas com fala** | **441** |
 
 ## js/03-regras.js (1)
 
@@ -191,6 +191,13 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 529 | getRandomReaction | - |
 | 601 | getRandomReaction | - |
 
+## js/05y2-medalhas.js (2)
+
+| Linha | Chamada | Banco ou gerador |
+|---|---|---|
+| 94 | getRandomReaction | - |
+| 95 | showToastMessage | - |
+
 ## js/06-voz-som-vibracao.js (3)
 
 | Linha | Chamada | Banco ou gerador |
@@ -305,60 +312,60 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 383 | getRandomReaction | - |
 | 388 | getRandomReaction | - |
 | 401 | getRandomReaction | - |
-| 464 | getRandomReaction | - |
-| 486 | showToastMessage | - |
-| 583 | caosFalaAgendar | - |
-| 584 | getRandomReaction | absurdoTresMestre |
-| 616 | getRandomReaction | juizMestre.ditador |
-| 619 | getRandomReaction | - |
-| 620 | getRandomReaction | - |
-| 621 | getRandomReaction | - |
-| 622 | getRandomReaction | - |
+| 468 | getRandomReaction | - |
+| 490 | showToastMessage | - |
+| 588 | caosFalaAgendar | - |
+| 589 | getRandomReaction | absurdoTresMestre |
+| 621 | getRandomReaction | juizMestre.ditador |
+| 624 | getRandomReaction | - |
+| 625 | getRandomReaction | - |
 | 626 | getRandomReaction | - |
-| 629 | getRandomReaction | - |
-| 653 | getRandomReaction | juizMestre.mae |
-| 658 | getRandomReaction | - |
-| 667 | getRandomReaction | - |
-| 674 | getRandomReaction | - |
-| 677 | getRandomReaction | - |
-| 684 | caosFalarDepois, getRandomReaction | mesa.mimica |
-| 689 | getRandomReaction | mesa.culpaMestre |
-| 700 | caosFalarDepois | - |
-| 705 | caosFalarDepois, getRandomReaction | mesa.rivalEspecial |
-| 725 | showToastMessage, getRandomReaction | - |
-| 739 | showToastMessage, getRandomReaction | - |
-| 752 | getRandomReaction | mesa.apostaAcertou |
-| 753 | getRandomReaction | mesa.apostaErrou |
-| 755 | showToastMessage | - |
-| 823 | getRandomReaction | - |
-| 824 | getRandomReaction | - |
-| 831 | getRandomReaction | cerebro.premonicao |
-| 852 | getRandomReaction | - |
-| 855 | getRandomReaction | - |
+| 627 | getRandomReaction | - |
+| 631 | getRandomReaction | - |
+| 634 | getRandomReaction | - |
+| 658 | getRandomReaction | juizMestre.mae |
+| 663 | getRandomReaction | - |
+| 672 | getRandomReaction | - |
+| 679 | getRandomReaction | - |
+| 682 | getRandomReaction | - |
+| 689 | caosFalarDepois, getRandomReaction | mesa.mimica |
+| 694 | getRandomReaction | mesa.culpaMestre |
+| 705 | caosFalarDepois | - |
+| 710 | caosFalarDepois, getRandomReaction | mesa.rivalEspecial |
+| 730 | showToastMessage, getRandomReaction | - |
+| 744 | showToastMessage, getRandomReaction | - |
+| 757 | getRandomReaction | mesa.apostaAcertou |
+| 758 | getRandomReaction | mesa.apostaErrou |
+| 760 | showToastMessage | - |
+| 828 | getRandomReaction | - |
+| 829 | getRandomReaction | - |
+| 836 | getRandomReaction | cerebro.premonicao |
+| 857 | getRandomReaction | - |
 | 860 | getRandomReaction | - |
-| 862 | getRandomReaction | - |
-| 870 | getRandomReaction | - |
-| 872 | getRandomReaction | - |
-| 888 | getRandomReaction | - |
-| 899 | getRandomReaction | - |
-| 900 | getRandomReaction | - |
+| 865 | getRandomReaction | - |
+| 867 | getRandomReaction | - |
+| 875 | getRandomReaction | - |
+| 877 | getRandomReaction | - |
+| 893 | getRandomReaction | - |
 | 904 | getRandomReaction | - |
-| 907 | getRandomReaction | - |
-| 911 | getRandomReaction | - |
-| 979 | getRandomReaction | - |
-| 981 | getRandomReaction | - |
-| 983 | getRandomReaction | - |
+| 905 | getRandomReaction | - |
+| 909 | getRandomReaction | - |
+| 912 | getRandomReaction | - |
+| 916 | getRandomReaction | - |
 | 984 | getRandomReaction | - |
-| 985 | getRandomReaction | - |
-| 1012 | getRandomReaction | - |
-| 1015 | getRandomReaction | - |
-| 1021 | getRandomReaction | - |
-| 1024 | getRandomReaction | - |
-| 1038 | getRandomReaction | - |
-| 1039 | getRandomReaction | - |
-| 1049 | getRandomReaction | perfilJogador.casal.especial |
-| 1057 | getRandomReaction | - |
-| 1061 | showToastMessage | - |
+| 986 | getRandomReaction | - |
+| 988 | getRandomReaction | - |
+| 989 | getRandomReaction | - |
+| 990 | getRandomReaction | - |
+| 1017 | getRandomReaction | - |
+| 1020 | getRandomReaction | - |
+| 1026 | getRandomReaction | - |
+| 1029 | getRandomReaction | - |
+| 1043 | getRandomReaction | - |
+| 1044 | getRandomReaction | - |
+| 1054 | getRandomReaction | perfilJogador.casal.especial |
+| 1062 | getRandomReaction | - |
+| 1066 | showToastMessage | - |
 
 ## js/07-caos/04-lexico-e-relogio.js (9)
 
@@ -391,10 +398,10 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 222 | caosFalarDepois, getRandomReaction | implicancia.avisei |
 | 230 | caosFalarDepois, getRandomReaction | implicancia.larguei |
 | 251 | getRandomReaction | silencio |
-| 326 | showToastMessage, getRandomReaction | - |
-| 472 | caosFalarDepois, getRandomReaction | - |
-| 491 | getRandomReaction | iniciante.bilheteMestre |
-| 493 | getRandomReaction | iniciante.ajuda |
+| 328 | showToastMessage, getRandomReaction | - |
+| 474 | caosFalarDepois, getRandomReaction | - |
+| 493 | getRandomReaction | iniciante.bilheteMestre |
+| 495 | getRandomReaction | iniciante.ajuda |
 
 ## js/07-caos/07-momentos-da-partida.js (95)
 
@@ -575,7 +582,7 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 1328 | showToastMessage | - |
+| 1330 | showToastMessage | - |
 
 ## js/11-iniciar.js (6)
 
@@ -585,5 +592,5 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 459 | getRandomReaction | nickRepertorio |
 | 460 | getRandomReaction | nickSugestaoAceita |
 | 504 | getRandomReaction | botaoEncerrar |
-| 768 | showToastMessage | - |
-| 769 | getRandomReaction | inicioInvalido |
+| 769 | showToastMessage | - |
+| 770 | getRandomReaction | inicioInvalido |

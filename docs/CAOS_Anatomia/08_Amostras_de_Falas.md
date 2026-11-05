@@ -3,7 +3,7 @@
 Gerado por `node ferramentas/caos_anatomia.js`. Uma fala de cada banco e uma montagem de cada gerador, pra sentir o
 tom. "Fulano", 3 e "Lugar" são valores de exemplo no lugar do nome, do número e da categoria.
 
-**Totais:** 4367 falas prontas em 660 bancos · 18 geradores com 720 pedaços.
+**Totais:** 4387 falas prontas em 662 bancos · 18 geradores com 720 pedaços.
 
 ## Geradores (falas montadas por pedaços)
 
@@ -488,6 +488,8 @@ tom. "Fulano", 3 e "Lugar" são valores de exemplo no lugar do nome, do número 
 | `temporada.presenteData.folclore.nodia` | 5 | O Saci passou aqui e deixou um presente pra Fulano. Só não sei onde ele foi parar. |
 | `temporada.presenteData.independencia.nodia` | 5 | 7 de setembro, Fulano! Presente da independência: livre pra usar quando quiser. |
 | `temporada.presenteForaDeEpoca.aniversario` | 10 | Fulano, não sei se hoje é seu aniversário, mas... bom, tá aí um presentinho pra você. |
+| `temporada.medalha.progresso` | 10 | Fulano, vitória por joias no 3: Lugar de 3 pra medalha. Falta undefined. |
+| `temporada.medalha.ganhou` | 10 | 🏅 Fulano fechou os três modos e ganhou a medalha de 3! Essa vai pro perfil. |
 | `temporada.gafe` | 15 | Ih, rapaz... perdão, errei a data. |
 | `cadFalta.nome` | 5 | Primeiro o nome! Escreve aqui em cima, de 2 a 15 letras. |
 | `cadFalta.idade` | 5 | Oi, {nome}! Só falta dizer a sua idade. É aqui, ó. |

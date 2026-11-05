@@ -12,6 +12,10 @@ Como ler a coluna **Porte**:
 
 | Versão | Data | O que mudou | Porte |
 |---|---|---|---|
+| (próxima) | 05/11 | Emoções calibradas: tédio passa quando a mesa volta a jogar; temperamento do dia pesa (rabugento irrita, generoso magoa) | ✅ Tédio = "dias sem registrar" que passa quando a pessoa volta |
+| (próxima) | 05/11 | Voz da nuvem: fala com uma emoção só vai inteira num pedido (entonação contínua) | ✅ Direto no `05_Voz.md` |
+| (próxima) | 05/11 | Medalhas da temporada (comentário do progresso e da conquista) | 🔶 Medalha do mês na Carteira |
+| (próxima) | 05/11 | 💡 Sugestões dos jogadores pro JF | ✅ Mesmo molde pra Carteira |
 | 5.4.0 | 04/11 | Temporadas: motor de datas e Natal (falas, rostos, presentes) | 🔶 Temporada vira aviso útil (Black Friday, 13º) |
 | 5.4.0 | 04/11 | Espírito natalino: emoções mais calmas, paciência maior, esfria rápido e perdoa | ✅ Bom pro tom de assistente no fim de ano |
 | 5.4.0 | 04/11 | Presente com fala de data o ano todo (adiantado, no dia, atrasado) | ✅ Conquista do mês com data |
