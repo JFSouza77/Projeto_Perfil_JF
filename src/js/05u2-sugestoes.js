@@ -62,3 +62,22 @@ function sugestaoAbrir() {
   document.body.appendChild(ov);
   setTimeout(() => nota.focus(), 50);
 }
+// 05/11/2026 (pente fino, teclado): Esc fecha as janelas de recado (reportes, sugestão e medalha). Só essas: as
+// janelas de decisão da partida não podem sumir com uma tecla. Na medalha, Esc vale "Guardar sem mostrar".
+try {
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    const med = document.getElementById("medalhaJanela");
+    if (med) {
+      med.querySelector("#medGuardar")?.click();
+      return;
+    }
+    for (const id of ["sugestaoJanela", "reportarProblema", "reportarCarta"]) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.remove();
+        return;
+      }
+    }
+  });
+} catch (e) {}

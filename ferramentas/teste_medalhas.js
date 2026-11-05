@@ -77,6 +77,11 @@ const file = acharMestre(process.argv[2]);
     await partida(fora, "junior", "joias", ["Fora", "Outro"]);
     const ff = await ficha(fora, "Fora");
     conf("Fora de temporada não conta", ff && !Object.keys(ff.medalhas).length);
+    await fora.evaluate(() => { fichaUpd("Fora", (f) => (f.medalhas = { "natal-2026": { d: ["junior", "classico", "oldschool"], em: 1 } })); medalhaPerguntarMostrar("Fora", "natal-2026"); });
+    await fora.waitForTimeout(150);
+    conf("Janela da medalha começa com o foco no botão", await fora.evaluate(() => document.activeElement && document.activeElement.id === "medMostrar"));
+    await fora.keyboard.press("Escape");
+    conf("Esc na medalha = guardar sem mostrar", await fora.evaluate(() => !document.getElementById("medalhaJanela") && fichaGet("Fora").medalhaMostrar === null));
     conf("Sem erro na página", !erros1.length && !fora.__erros.length);
     if (erros1.length || fora.__erros.length) console.log("Erros:", erros1.concat(fora.__erros).join(" | "));
   } finally {

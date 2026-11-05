@@ -144,4 +144,6 @@ segura**. Sem rodeio: é pra achar rápido.
   - Apagado de propósito (➕ Adicionar incompleto, humor travado no passo) é isento e o auditor sabe disso.
   - Roteiro do auditor ganhou a tela final, a 💡 sugestão e a 🏅 medalha (69 telas); os botões Fechar e Guardar das
     janelas novas ganharam 44 px e cor legível no Claro.
+  - Teclado: Esc fecha as janelas de recado (reportes, sugestão; na medalha vale "Guardar sem mostrar"); a janela da
+    medalha abre com o foco no botão. As janelas de decisão da partida não fecham com Esc (de propósito).
   - Resultado: auditor zerado nos 3 temas e axe com 0 regras quebradas.

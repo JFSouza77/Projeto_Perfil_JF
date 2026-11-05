@@ -49,6 +49,9 @@ const file = acharMestre(args.find((a) => a.endsWith(".html")));
     await pg.click("#sugEnviar");
     await pg.waitForFunction(() => /Enviada|Guardada|Não deu/.test(document.getElementById("sugEnviar").textContent), null, { timeout: 15000 });
     conf("Sem servidor, fica guardada pra ir depois", /Guardada/.test(await pg.$eval("#sugEnviar", (e) => e.textContent)));
+    await pg.evaluate(() => sugestaoAbrir());
+    await pg.keyboard.press("Escape");
+    conf("Esc fecha a janela de sugestão", await pg.evaluate(() => !document.getElementById("sugestaoJanela")));
     conf("Sem erro na página", !erros.length);
     if (erros.length) console.log("Erros:", erros.join(" | "));
   } finally {

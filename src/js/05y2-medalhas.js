@@ -124,6 +124,7 @@ function medalhaPerguntarMostrar(nome, chave) {
   ov.querySelector("#medMostrar").addEventListener("click", () => fechar(true));
   ov.querySelector("#medGuardar").addEventListener("click", () => fechar(false));
   document.body.appendChild(ov);
+  setTimeout(() => ov.querySelector("#medMostrar")?.focus(), 50); // teclado e leitor de tela começam na janela
 }
 // Mostrar (chave) ou esconder (null) a medalha do jogador
 function medalhaEscolher(nome, chave) {
