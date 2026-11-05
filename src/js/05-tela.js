@@ -2265,7 +2265,7 @@ function buildStatsHtml() {
       titulosTemporada
         ? `
     <div class="stats-box hall-box trofeus-box titulos-temporada">
-      <h3>🎄 Títulos de Natal</h3><div class="hall-sub">toque num título e o C.A.O.S. comenta</div>
+      <h3>${typeof temporadaTitulosCabecalho === "function" ? temporadaTitulosCabecalho() : "🎄 Títulos de Natal"}</h3><div class="hall-sub">toque num título e o C.A.O.S. comenta</div>
       <ul class="stats-list hall-grid">${titulosTemporada}</ul>
     </div>`
         : ""

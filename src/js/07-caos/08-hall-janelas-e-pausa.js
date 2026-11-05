@@ -116,6 +116,17 @@ function caosComentFato(d) {
       return { fr: `${n} acertou uma carta com ${v} ${pl(d.v, "dica", "dicas")}`, np: `acertar com ${v} dicas` };
     case "natalBoneco":
       return { fr: `${n} congelou em ${v} ${pl(d.v, "palpite furado", "palpites furados")}`, np: `errar ${v} palpites` };
+    // Temporadas (item 10) · Títulos de Ano Novo
+    case "anoNovoFogos":
+      return { fr: `${n} acertou ${v} ${pl(d.v, "carta", "cartas")} e fez o show de fogos da partida`, np: `acertar ${v} cartas` };
+    case "anoNovoChampanhe":
+      return { fr: `${n} fez ${v} pontos numa carta só`, np: `fazer ${v} pontos numa carta` };
+    case "anoNovoPeDireito":
+      return { fr: `${n} acertou a primeira carta da partida`, np: `acertar a primeira carta` };
+    case "anoNovoMeiaNoite":
+      return { fr: `${n} acertou uma carta em ${v} segundos`, np: `acertar em ${v} segundos` };
+    case "anoNovoPromessa":
+      return { fr: `${n} errou ${v} ${pl(d.v, "palpite", "palpites")} e prometeu melhorar no ano que vem`, np: `errar ${v} palpites` };
     case "notamestre":
       return { fr: `${n} tirou nota ${v} como Mestre`, np: `tirar nota ${v} como Mestre` };
     case "precoce":

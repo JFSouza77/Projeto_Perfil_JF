@@ -421,6 +421,23 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     r.anoNovoVitrineSoDoAnoNovo = ok;
     r.anoNovoBonzinho = temporadaBonzinha() && temporadaSentirFator("raiva") < 1;
     {
+      // item 10: 5 títulos de Ano Novo, cada um com dado de verdade e comentário do C.A.O.S.
+      const sh = history, sp = players;
+      players = [{ id: "a", name: "Ana", color: "#e94560", avatar: "🦊", errosPartida: 3 }, { id: "b", name: "Beto", color: "#4ecdc4", avatar: "🐼", errosPartida: 0 }];
+      history = [
+        { playerName: "Beto", cluesUsed: 4, timeTakenMs: 20000, points: 16 },
+        { playerName: "Ana", cluesUsed: 2, timeTakenMs: 6000, points: 18 },
+        { playerName: "Ana", cluesUsed: 7, timeTakenMs: 30000, points: 13 },
+      ];
+      const got = [];
+      temporadaTitulosHtml((ic, tit, nome, desc, cor, meta) => (got.push([tit, meta.n, meta.t]), ""));
+      history = sh; players = sp;
+      const tem = (tit, n) => got.some((g) => g[0] === tit && g[1] === n);
+      r.anoNovo5Titulos = got.length === 5 && tem("Show de Fogos", "Ana") && tem("Champanhe Estourada", "Ana") && tem("Pé Direito", "Beto") && tem("Meia-Noite em Ponto", "Ana") && tem("Promessa de Ano Novo", "Ana");
+      r.anoNovoTitulosComentaveis = got.every((g) => !!caosComentFato({ t: g[2], n: g[1], v: 3 })) && got.every((g) => CAOS_COMENT_TOM[g[2]]);
+      r.anoNovoCabecalho = /Ano Novo/.test(temporadaTitulosCabecalho());
+    }
+    {
       // calmo como no Natal, mas sem Papai Noel e carvão na fala
       const sf = caosFalarDepois, ditas = [], sp = players;
       caosFalarDepois = (m) => ditas.push(String(m));

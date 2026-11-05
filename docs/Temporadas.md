@@ -107,7 +107,8 @@ temporadas, na ordem do calendário.
 9.2. [ ] Medalhas da temporada (ideia do JF, 04/11): desafios, medalha no perfil, exibir ou não, desenho da medalha de Natal. Att grande: quinta/sexta.
 10. [ ] Ano Novo e aniversário do criador (2/1), no mesmo formato do Natal. Em pedaços:
     - [x] Ano Novo · enfeite (confete e fogos), selo, 15 falas (+ 10 de presente), 5 cores, 5 emojis e 5+5 itens de lojinha.
-    - [ ] Ano Novo · 5 títulos e 10 cartas valendo o dobro.
+    - [x] Ano Novo · 5 títulos (Show de Fogos, Champanhe Estourada, Pé Direito, Meia-Noite em Ponto, Promessa de Ano Novo).
+    - [ ] Ano Novo · 10 cartas valendo o dobro.
     - [ ] Aniversário do criador (2/1) · tudo (enfeite, falas, o C.A.O.S. pegando leve com o JF, cores, emojis, lojinha, títulos e cartas).
 11. [ ] As outras 12 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween, com o Doces ou travessuras).
 12. [ ] Bateria final, prints de todas as temporadas e relatório pro JF.
@@ -214,4 +215,7 @@ temporadas, na ordem do calendário.
   pra escolher a dica, com humor, temporada e "de novo você?". A lista `avisoEscolha` foi pra 25 falas, sem o "eles
   não mordem". Teste: `teste_temporadas` (calendário com 36 datas e mais 8 checagens) e `caos_auditar_geradores`
   (escolherDica sem defeito em 450 falas).
+- 05/11/2026 (tarefa da madrugada, orçamento baixo): conferência leve da `main` (build e teste nas 4 saídas: ok) e
+  os 5 títulos de Ano Novo no resumo da partida, com comentário do C.A.O.S. em cada um e o cabeçalho "🎆 Títulos de
+  Ano Novo". Teste: `teste_temporadas` (+3 checagens). As 10 cartas de Ano Novo ficam pra outro pedaço.
 
