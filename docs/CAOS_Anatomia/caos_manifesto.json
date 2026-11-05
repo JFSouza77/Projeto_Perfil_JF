@@ -1,14 +1,14 @@
 {
  "sobre": "Manifesto do C.A.O.S. (Perfil JF). Gerado por ferramentas/caos_anatomia.js. Leia junto com docs/CAOS_Anatomia/00_LEIA-ME_Wally.md.",
  "versao": {
-  "caos": "5.4.0",
-  "jogo": "Beta 1.9.3"
+  "caos": "5.5.0",
+  "jogo": "Beta 1.9.4"
  },
  "gerado_em": "2026-11-05",
  "totais": {
-  "funcoes": 566,
-  "bancos": 660,
-  "falas_prontas": 4367,
+  "funcoes": 569,
+  "bancos": 662,
+  "falas_prontas": 4387,
   "geradores": 18,
   "pedacos_de_gerador": 720
  },
@@ -799,189 +799,189 @@
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosComentarGerar",
      "args": "d",
-     "linha": 130,
+     "linha": 141,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosComentarFalavel",
      "args": "i",
-     "linha": 178,
+     "linha": 189,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosLigarFalaveis",
      "args": "raiz",
-     "linha": 193,
+     "linha": 204,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosMomentoCritico",
      "args": "",
-     "linha": 204,
+     "linha": 215,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosFalaFechaSozinha",
      "args": "corpo",
-     "linha": 214,
+     "linha": 225,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosTropeco",
      "args": "msg, bank",
-     "linha": 219,
+     "linha": 230,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosAuditoriaHtml",
      "args": "",
-     "linha": 296,
+     "linha": 307,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosLimparFalaParaJanela",
      "args": "",
-     "linha": 340,
+     "linha": 351,
      "nota": "Abrir uma janela tira o balão do C.A.O.S. da frente (e cala a voz dele): a mesa lê a janela em paz."
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosModalBase",
      "args": "",
-     "linha": 347,
+     "linha": 358,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosModalBtn",
      "args": "t, bg, fn",
-     "linha": 361,
+     "linha": 372,
      "nota": "1.7.8.7 (feedback do JF: \"bem feinhos\"): botão das janelas com cara de botão do jogo. A cor de cada um continua vindo de quem chama; o visual (relevo, brilho, toque) mora no CSS (.caos-mbtn)."
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosModalMsg",
      "args": "t",
-     "linha": 370,
+     "linha": 381,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosModalRow",
      "args": "",
-     "linha": 376,
+     "linha": 387,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosConfirmarModal",
      "args": "msg, txtSim, txtNao, onSim",
-     "linha": 381,
+     "linha": 392,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosAvisoModal",
      "args": "msg, onOk",
-     "linha": 403,
+     "linha": 414,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosPromptModal",
      "args": "msg, valor, cb, leitura",
-     "linha": 416,
+     "linha": 427,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosRate",
      "args": "entry, val",
-     "linha": 455,
+     "linha": 466,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosReviewReport",
      "args": "",
-     "linha": 476,
+     "linha": 487,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosPausaHumorIniciar",
      "args": "",
-     "linha": 511,
+     "linha": 522,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosPausaParar",
      "args": "",
-     "linha": 522,
+     "linha": 533,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosPausaHumorTick",
      "args": "",
-     "linha": 528,
+     "linha": 539,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosPausaTexto",
      "args": "seg",
-     "linha": 558,
+     "linha": 569,
      "nota": "\"1 minuto\", \"3 minutos\" (pausas são de 40 s pra cima)"
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosPausaHumorVoltar",
      "args": "vinhaExpirada",
-     "linha": 562,
+     "linha": 573,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosRetaFinalTalvez",
      "args": "",
-     "linha": 586,
+     "linha": 597,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "caosPedidoCala",
      "args": "p",
-     "linha": 615,
+     "linha": 626,
      "nota": "--- 1.7.10.6 · Peça ao C.A.O.S. (pedido do JF) --- Cada jogador pede pra ele falar mais ou menos com ele e usar humor mais leve ou mais ácido. É preferência pessoal de quem pediu: nunca fura o mudo, não muda regra nem pl"
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "pedirCaos",
      "args": "id, campo, valor",
-     "linha": 618,
+     "linha": 629,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "pedirCaosAbrir",
      "args": "",
-     "linha": 631,
+     "linha": 642,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/08-hall-janelas-e-pausa.js",
      "nome": "pedirCaosConvidado",
      "args": "",
-     "linha": 655,
+     "linha": 666,
      "nota": "convidado (online): o mesmo pedido, pelo próprio dispositivo (o host aplica)"
     }
    ]
@@ -1077,175 +1077,175 @@
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosTedioTick",
      "args": "",
-     "linha": 160,
+     "linha": 163,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosConsoleCarta",
      "args": "novo",
-     "linha": 181,
+     "linha": 184,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosConsoleEvento",
      "args": "idx, ev",
-     "linha": 220,
+     "linha": 223,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosConsoleDaFala",
      "args": "bank",
-     "linha": 272,
+     "linha": 278,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosConsoleRosto",
      "args": "med",
-     "linha": 318,
+     "linha": 324,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosConsoleMistura",
      "args": "",
-     "linha": 335,
+     "linha": 341,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosConsoleAvancar",
      "args": "bank, forcar",
-     "linha": 345,
+     "linha": 351,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosConsoleTingir",
      "args": "e, bank",
-     "linha": 396,
+     "linha": 402,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosEmocaoGlobal",
      "args": "",
-     "linha": 410,
+     "linha": 416,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosSuaveAlvo",
      "args": "bank",
-     "linha": 425,
+     "linha": 431,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosConsoleSuavizar",
      "args": "e, bank",
-     "linha": 428,
+     "linha": 434,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosEscada",
      "args": "emo, bank, forte",
-     "linha": 442,
+     "linha": 448,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosEmocaoDoTexto",
      "args": "t",
-     "linha": 494,
+     "linha": 500,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosEmocaoDaFala",
      "args": "bank",
-     "linha": 499,
+     "linha": 505,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosToastEmo",
      "args": "toast, emo, bank",
-     "linha": 552,
+     "linha": 558,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosViradaLimpar",
      "args": "",
-     "linha": 591,
+     "linha": 597,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosViradaDecidir",
      "args": "msg, emo, bank, priority, tropecou",
-     "linha": 595,
+     "linha": 601,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosViradaManual",
      "args": "msg, bank, priority",
-     "linha": 643,
+     "linha": 649,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosViradaTrocar",
      "args": "serial, v, origem",
-     "linha": 690,
+     "linha": 696,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosViradaTempo",
      "args": "serial, v, ms",
-     "linha": 722,
+     "linha": 728,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosDuploPadrao",
      "args": "idx",
-     "linha": 729,
+     "linha": 735,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosJogEmoRegistrar",
      "args": "idx, ev",
-     "linha": 759,
+     "linha": 765,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosJogEmoAtualizar",
      "args": "",
-     "linha": 769,
+     "linha": 775,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosNeuralCriar",
      "args": "",
-     "linha": 795,
+     "linha": 801,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/05-emocoes-e-rede-neural.js",
      "nome": "caosNeuralDesenhar",
      "args": "cv, t",
-     "linha": 802,
+     "linha": 808,
      "nota": ""
     }
    ]
@@ -1762,231 +1762,231 @@
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosMemResetPartida",
      "args": "",
-     "linha": 489,
+     "linha": 494,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosMesaReset",
      "args": "",
-     "linha": 497,
+     "linha": 502,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosMesaLimpa",
      "args": "m",
-     "linha": 521,
+     "linha": 526,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosMesaRegistrar",
      "args": "tipo, p",
-     "linha": 561,
+     "linha": 566,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosMesaFala",
      "args": "tipo, p",
-     "linha": 602,
+     "linha": 607,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosMesaMista",
      "args": "",
-     "linha": 634,
+     "linha": 639,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosMesaErroNormal",
      "args": "p, ms",
-     "linha": 639,
+     "linha": 644,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosMesaMimica",
      "args": "restoMs, scorer, mestre",
-     "linha": 680,
+     "linha": 685,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosMesaCulpaMestre",
      "args": "",
-     "linha": 686,
+     "linha": 691,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosMesaAlvo",
      "args": "quemIdx, alvoIdx, amount",
-     "linha": 691,
+     "linha": 696,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosMesaNaCarta",
      "args": "",
-     "linha": 707,
+     "linha": 712,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosMesaRevelaAposta",
      "args": "",
-     "linha": 745,
+     "linha": 750,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosPerfilAvatar",
      "args": "p",
-     "linha": 758,
+     "linha": 763,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosCerebroOrdem",
      "args": "",
-     "linha": 767,
+     "linha": 772,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosDmInc",
      "args": "nome, cat, k, v",
-     "linha": 770,
+     "linha": 775,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosDm",
      "args": "nome, cat, k",
-     "linha": 774,
+     "linha": 779,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosDificilFicha",
      "args": "p, cat",
-     "linha": 777,
+     "linha": 782,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosCerebroRegistrar",
      "args": "tipo, p",
-     "linha": 782,
+     "linha": 787,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosCerebroDiagnostico",
      "args": "p",
-     "linha": 795,
+     "linha": 800,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosCerebroPremonicao",
      "args": "p",
-     "linha": 826,
+     "linha": 831,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosCerebroAcerto",
      "args": "p, ordem, missBefore, ms",
-     "linha": 833,
+     "linha": 838,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosCerebroErro",
      "args": "p, ms, surpresa",
-     "linha": 879,
+     "linha": 884,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosCerebroAnne",
      "args": "tipo, p",
-     "linha": 915,
+     "linha": 920,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosFalsoCarregamento",
      "args": "",
-     "linha": 918,
+     "linha": 923,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosNickAnalise",
      "args": "nome",
-     "linha": 932,
+     "linha": 937,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosPerfilCadastro",
      "args": "p",
-     "linha": 974,
+     "linha": 979,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosCasal",
      "args": "",
-     "linha": 989,
+     "linha": 994,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosCasalPode",
      "args": "",
-     "linha": 995,
+     "linha": 1000,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosCasalMarca",
      "args": "",
-     "linha": 998,
+     "linha": 1003,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosCasalErro",
      "args": "tipo, p",
-     "linha": 1001,
+     "linha": 1006,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosCasalAcerto",
      "args": "p, scorerIdx",
-     "linha": 1029,
+     "linha": 1034,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosCasalEspecial",
      "args": "quemIdx, alvoIdx",
-     "linha": 1043,
+     "linha": 1048,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/03-memoria-e-mesa.js",
      "nome": "caosCasalFim",
      "args": "",
-     "linha": 1051,
+     "linha": 1056,
      "nota": ""
     },
     {
@@ -2493,98 +2493,98 @@
      "arquivo": "src/js/07-caos/06-humanizacao.js",
      "nome": "caosSplashTick",
      "args": "el, t",
-     "linha": 289,
+     "linha": 291,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/06-humanizacao.js",
      "nome": "caosDicaRepetida",
      "args": "idx",
-     "linha": 304,
+     "linha": 306,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/06-humanizacao.js",
      "nome": "caosBezier",
      "args": "c, x",
-     "linha": 331,
+     "linha": 333,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/06-humanizacao.js",
      "nome": "caosMistura",
      "args": "a, b, k",
-     "linha": 356,
+     "linha": 358,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/06-humanizacao.js",
      "nome": "caosQuadro",
      "args": "spec, p",
-     "linha": 371,
+     "linha": 373,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/06-humanizacao.js",
      "nome": "caosAnimPintar",
      "args": "el, q",
-     "linha": 400,
+     "linha": 402,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/06-humanizacao.js",
      "nome": "caosAnimParar",
      "args": "el, completou",
-     "linha": 407,
+     "linha": 409,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/06-humanizacao.js",
      "nome": "caosAnimTick",
      "args": "t",
-     "linha": 422,
+     "linha": 424,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/06-humanizacao.js",
      "nome": "caosAnimar",
      "args": "el, spec, fim, sel",
-     "linha": 438,
+     "linha": 440,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/06-humanizacao.js",
      "nome": "caosIniExplica",
      "args": "p, tipo, ...args",
-     "linha": 463,
+     "linha": 465,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/06-humanizacao.js",
      "nome": "caosIniExplicaEspecial",
      "args": "p, texto",
-     "linha": 475,
+     "linha": 477,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/06-humanizacao.js",
      "nome": "caosIniAjuda",
      "args": "p",
-     "linha": 484,
+     "linha": 486,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/06-humanizacao.js",
      "nome": "caosBilheteMestre",
      "args": "txt",
-     "linha": 495,
+     "linha": 497,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/06-humanizacao.js",
      "nome": "caosAntiRepeticao",
      "args": "",
-     "linha": 515,
+     "linha": 517,
      "nota": ""
     }
    ]
@@ -2813,121 +2813,128 @@
     },
     {
      "arquivo": "src/js/06-voz-som-vibracao.js",
+     "nome": "vozNuvemJuntar",
+     "args": "partes, jeitos, corteV",
+     "linha": 299,
+     "nota": "Até 300 letras (o servidor corta em 400) e só quando a fala inteira tem a mesma emoção."
+    },
+    {
+     "arquivo": "src/js/06-voz-som-vibracao.js",
      "nome": "caosFalarNuvem",
      "args": "partes, jeitos, onEnd, onPedaco, corteV",
-     "linha": 298,
+     "linha": 307,
      "nota": ""
     },
     {
      "arquivo": "src/js/06-voz-som-vibracao.js",
      "nome": "caosBip",
      "args": "emo",
-     "linha": 345,
+     "linha": 362,
      "nota": ""
     },
     {
      "arquivo": "src/js/06-voz-som-vibracao.js",
      "nome": "caosRoletaSom",
      "args": "tipo, passo, total",
-     "linha": 374,
+     "linha": 391,
      "nota": ""
     },
     {
      "arquivo": "src/js/06-voz-som-vibracao.js",
      "nome": "caosVozCalada",
      "args": "",
-     "linha": 392,
+     "linha": 409,
      "nota": ""
     },
     {
      "arquivo": "src/js/06-voz-som-vibracao.js",
      "nome": "caosFalarNormal",
      "args": "txt",
-     "linha": 401,
+     "linha": 418,
      "nota": ""
     },
     {
      "arquivo": "src/js/06-voz-som-vibracao.js",
      "nome": "audioContexto",
      "args": "",
-     "linha": 412,
+     "linha": 429,
      "nota": "iPhone: o Safari deixa o som \"suspended\" ou \"interrupted\" (troca de app, tela bloqueada, ligação) e só religa num toque. Retoma em qualquer estado que não seja \"running\"; contexto fechado é recriado."
     },
     {
      "arquivo": "src/js/06-voz-som-vibracao.js",
      "nome": "audioRetomar",
      "args": "c",
-     "linha": 417,
+     "linha": 434,
      "nota": ""
     },
     {
      "arquivo": "src/js/06-voz-som-vibracao.js",
      "nome": "audioDestravarNoToque",
      "args": "",
-     "linha": 426,
+     "linha": 443,
      "nota": "Qualquer toque na tela religa o som se ele estiver parado. Se 3 toques seguidos não adiantarem (contexto travado), troca por um novo."
     },
     {
      "arquivo": "src/js/06-voz-som-vibracao.js",
      "nome": "unlockAudio",
      "args": "",
-     "linha": 442,
+     "linha": 459,
      "nota": ""
     },
     {
      "arquivo": "src/js/06-voz-som-vibracao.js",
      "nome": "updateVoiceBtn",
      "args": "",
-     "linha": 473,
+     "linha": 490,
      "nota": ""
     },
     {
      "arquivo": "src/js/06-voz-som-vibracao.js",
      "nome": "stepVoice",
      "args": "kind, dir",
-     "linha": 520,
+     "linha": 537,
      "nota": ""
     },
     {
      "arquivo": "src/js/06-voz-som-vibracao.js",
      "nome": "cycleVoiceName",
      "args": "",
-     "linha": 534,
+     "linha": 551,
      "nota": ""
     },
     {
      "arquivo": "src/js/06-voz-som-vibracao.js",
      "nome": "toggleVoice",
      "args": "",
-     "linha": 544,
+     "linha": 561,
      "nota": ""
     },
     {
      "arquivo": "src/js/06-voz-som-vibracao.js",
      "nome": "vozPerguntar",
      "args": "seguir, triste",
-     "linha": 563,
+     "linha": 580,
      "nota": ""
     },
     {
      "arquivo": "servidor/worker.js",
      "nome": "vozSsml",
      "args": "nome, t, rateN, pitch, e, estilos",
-     "linha": 120,
+     "linha": 121,
      "nota": "palavra esticada (\"PASTEEEL\", \"NÃÃÃO\") vira a palavra normal, mais lenta e forte (lida letra a letra, saía \"pastil\"), interjeição no começo ganha um respiro, e a emoção muda o volume (e o estilo, se a voz tiver). Voz com"
     },
     {
      "arquivo": "servidor/worker.js",
      "nome": "vozesDoServidor",
      "args": "env",
-     "linha": 137,
+     "linha": 138,
      "nota": "1.7.10.3.1 · Vozes do servidor, na ordem de tentativa. \"mai\" (opcional): voz com emoção de verdade (MAI-Voice, paga; AZURE_MAI_KEY + AZURE_MAI_REGION, voz em AZURE_MAI_VOZ). \"padrao\": a voz grátis (AZURE_SPEECH_KEY + AZU"
     },
     {
      "arquivo": "servidor/worker.js",
      "nome": "falar",
      "args": "corpo, ip",
-     "linha": 314,
+     "linha": 315,
      "nota": ""
     }
    ]
@@ -3772,156 +3779,170 @@
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
+     "nome": "temporadaTitulosCabecalho",
+     "args": "",
+     "linha": 304,
+     "nota": ""
+    },
+    {
+     "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaTitulosHtml",
      "args": "larga",
-     "linha": 304,
+     "linha": 308,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaCartaAtiva",
      "args": "card",
-     "linha": 353,
+     "linha": 358,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaMultCarta",
      "args": "card",
-     "linha": 357,
+     "linha": 362,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaCartasDoModo",
      "args": "",
-     "linha": 360,
+     "linha": 365,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaCartasNoBaralho",
      "args": "deck",
-     "linha": 370,
+     "linha": 375,
      "nota": "recebe o baralho na ordem de compra (o fim sai primeiro) e espalha as cartas da temporada entre as primeiras a sair"
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaSeloCartaHtml",
      "args": "card",
-     "linha": 394,
+     "linha": 399,
+     "nota": ""
+    },
+    {
+     "arquivo": "src/js/05y-temporadas.js",
+     "nome": "temporadaTitulosAnoNovo",
+     "args": "larga",
+     "linha": 405,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaEspirito",
      "args": "",
-     "linha": 420,
+     "linha": 455,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaSentirFator",
      "args": "emo",
-     "linha": 423,
+     "linha": 458,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaDecaimento",
      "args": "emo, dec",
-     "linha": 429,
+     "linha": 464,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaPacienciaFator",
      "args": "",
-     "linha": 435,
+     "linha": 470,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaPacienciaRecupera",
      "args": "",
-     "linha": 438,
+     "linha": 473,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaDemoraFator",
      "args": "",
-     "linha": 441,
+     "linha": 476,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaEspiritoEstado",
      "args": "",
-     "linha": 444,
+     "linha": 479,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaEspiritoFalar",
      "args": "msg",
-     "linha": 450,
+     "linha": 485,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaEspiritoFalasAqui",
      "args": "",
-     "linha": 456,
+     "linha": 491,
      "nota": "chamado a cada acerto, erro ou pulo (caosConsoleEvento), depois que a emoção já mudou"
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaEspiritoEvento",
      "args": "idx, ev",
-     "linha": 460,
+     "linha": 495,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaEspiritoPerdoar",
      "args": "",
-     "linha": 488,
+     "linha": 523,
      "nota": "esfriou (num acerto ou na virada de carta): perdoa a mesa, no máximo 2 vezes por partida"
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaMais",
      "args": "d, n",
-     "linha": 518,
+     "linha": 553,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaPresenteMomento",
      "args": "data",
-     "linha": 524,
+     "linha": 559,
      "nota": "{ id, momento: \"adiantado\" | \"nodia\" | \"atrasado\" } da data (ou null, longe de qualquer data)"
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaPresenteMomentoAgora",
      "args": "data",
-     "linha": 549,
+     "linha": 584,
      "nota": "O momento de agora. No modo de teste (?temporada=natal), vale o \"no dia\" da temporada forçada."
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaPresenteFalaBanco",
      "args": "data",
-     "linha": 554,
+     "linha": 589,
      "nota": "A fala do presente pra hoje"
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaPresenteForaDeEpoca",
      "args": "nome",
-     "linha": 562,
+     "linha": 597,
      "nota": "O presente do C.A.O.S. às vezes (metade das vezes) vem com a fala da data: dentro e fora das temporadas."
     }
    ]
@@ -4544,22 +4565,22 @@
   },
   {
    "nome": "CAOS_TROPECO",
-   "linha": 1054,
+   "linha": 1059,
    "arquivo": "src/js/01-configuracao.js"
   },
   {
    "nome": "CAOS_PAUSA_DEGRAUS",
-   "linha": 1111,
+   "linha": 1116,
    "arquivo": "src/js/01-configuracao.js"
   },
   {
    "nome": "CAOS_DESCANSO_KEY",
-   "linha": 1121,
+   "linha": 1126,
    "arquivo": "src/js/01-configuracao.js"
   },
   {
    "nome": "CAOS_DESCANSO_MIN",
-   "linha": 1122,
+   "linha": 1127,
    "arquivo": "src/js/01-configuracao.js"
   }
  ],
@@ -6843,6 +6864,16 @@
    "banco": "temporada.presenteForaDeEpoca.aniversario",
    "qtd": 10,
    "amostra": "Fulano, não sei se hoje é seu aniversário, mas... bom, tá aí um presentinho pra você."
+  },
+  {
+   "banco": "temporada.medalha.progresso",
+   "qtd": 10,
+   "amostra": "Fulano, vitória por joias no 3: Lugar de 3 pra medalha. Falta undefined."
+  },
+  {
+   "banco": "temporada.medalha.ganhou",
+   "qtd": 10,
+   "amostra": "🏅 Fulano fechou os três modos e ganhou a medalha de 3! Essa vai pro perfil."
   },
   {
    "banco": "temporada.gafe",

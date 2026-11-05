@@ -1521,7 +1521,7 @@ function renderMiniScoreboard() {
       list.innerHTML = meta + sorted
         .map(
           (p) => `
-        <li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${p.score} pt${p.score === 1 ? "" : "s"}${gemBadgesHtml(p)}${joiasTravaBadge(CURRENT_FORMAT === "equipe" ? p.team : p.id)}</li>
+        <li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}${medalhaHtml(p)}: ${p.score} pt${p.score === 1 ? "" : "s"}${gemBadgesHtml(p)}${joiasTravaBadge(CURRENT_FORMAT === "equipe" ? p.team : p.id)}</li>
       `,
         )
         .join("");
@@ -1555,7 +1555,7 @@ function renderMiniScoreboard() {
                 : wc === "tabuleiro"
                   ? `casa ${p.position}/${WINNING_SCORE}`
                   : `${p.score} pts — casa ${p.position}/${WINNING_SCORE}`;
-          return `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}: ${txt}${palpiteBadge(p.id)}${gemBadgesHtml(p)}${joiasTravaBadge(p.id)}</li>`;
+          return `<li style="--pc:${corDoJogador(p.color)}">${playerNameHtml(p.name, p.color, p.avatar)}${jogEmoHtml(p)}${medalhaHtml(p)}: ${txt}${palpiteBadge(p.id)}${gemBadgesHtml(p)}${joiasTravaBadge(p.id)}</li>`;
         })
         .join("");
     }
@@ -2265,7 +2265,7 @@ function buildStatsHtml() {
       titulosTemporada
         ? `
     <div class="stats-box hall-box trofeus-box titulos-temporada">
-      <h3>🎄 Títulos de Natal</h3><div class="hall-sub">toque num título e o C.A.O.S. comenta</div>
+      <h3>${typeof temporadaTitulosCabecalho === "function" ? temporadaTitulosCabecalho() : "🎄 Títulos de Natal"}</h3><div class="hall-sub">toque num título e o C.A.O.S. comenta</div>
       <ul class="stats-list hall-grid">${titulosTemporada}</ul>
     </div>`
         : ""

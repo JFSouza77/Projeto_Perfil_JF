@@ -242,7 +242,7 @@ body.claro .humor-btn:not(.on) {
   opacity: 1;
 }
 body.claro .tem-escolha > .humor-btn:not(.on) {
-  opacity: 0.55;
+  opacity: 1; /* 05/11/2026: 0.55 deixava 2,2:1; a cor mais fraca (saturate) já mostra que não é a escolhida */
 }
 body.claro .answer-toggle:not(.open):not(.livre) {
   color: #7a5600;
@@ -259,7 +259,7 @@ body.claro .splash-caos {
 }
 body.claro .splash-caos .sc-face {
   background: transparent;
-  color: color-mix(in srgb, var(--emo-cor, #60a5fa) 60%, #1b1d33);
+  color: color-mix(in srgb, var(--emo-cor, #60a5fa) 42%, #1b1d33); /* 05/11/2026: 60% deixava 3,9:1 */
   text-shadow: none;
 }
 body.claro .splash-caos .sc-txt {
@@ -297,6 +297,11 @@ body.claro .resumo-box h3,
 body.claro .hall-box h3,
 body.claro .stats-box h3 {
   filter: brightness(0.68) saturate(1.4);
+}
+/* 05/11/2026 (pente fino, axe): o título amarelo do resumo ficava fraco mesmo escurecido; tinta âmbar fixa */
+body.claro .rules-box.resumo-neon > h3 {
+  color: #7a5600;
+  filter: none;
 }
 body.claro .splash-tagline,
 body.claro .add-falta,
@@ -484,6 +489,9 @@ body.claro .splash-settings .chip {
 body.claro .splash-menu .chip.off,
 body.claro .splash-settings .chip.off {
   background: color-mix(in srgb, var(--cc) 5%, var(--claro-sup));
+  /* 05/11/2026 (pente fino): no Claro, a transparência deixava 🥔 e 🗣️ desligados abaixo de 4,5:1; a borda
+     tracejada já mostra que está desligado */
+  opacity: 1;
 }
 body.claro .wincond-btn:not(.on) {
   color: color-mix(in srgb, var(--wc, #6d4ad8) 64%, #1b1d33);

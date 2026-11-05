@@ -4652,6 +4652,34 @@ const REACTIVE_VOICE = {
         (name) => `[C.A.O.S.] ${name}, não me pergunta o motivo. Acordei generoso. Vai durar pouco.`,
       ],
     },
+    // 05/11/2026 · Medalha da temporada (src/js/05y2-medalhas.js): vencer por joias no Júnior, no Clássico e no Old
+    // School durante a temporada. (nome, temporada, quantos de 3, o que falta) e (nome, temporada).
+    medalha: {
+      progresso: [
+        (n, t, q, f) => `[C.A.O.S.] ${n}, vitória por joias no ${t}: ${q} de 3 pra medalha. Falta ${f}.`,
+        (n, t, q, f) => `[C.A.O.S.] Anotei, ${n}: ${q} de 3 da medalha de ${t}. Agora é ${f}.`,
+        (n, t, q, f) => `[C.A.O.S.] ${n} está colecionando. Medalha de ${t}: ${q} de 3. O próximo alvo é ${f}.`,
+        (n, t, q, f) => `[C.A.O.S.] Mais uma pra conta, ${n}. ${q} de 3 pra medalha de ${t}. Falta ${f}, e eu tô de olho.`,
+        (n, t, q, f) => `[C.A.O.S.] ${n}, a medalha de ${t} está chegando: ${q} de 3. Só falta ${f}.`,
+        (n, t, q, f) => `[C.A.O.S.] Vitória por joias guardada, ${n}. ${q} de 3. Me traz ${f} que a medalha é sua.`,
+        (n, t, q, f) => `[C.A.O.S.] ${n}, ${q} de 3 pra medalha de ${t}. Faltando ${f}. Não vai parar agora, né?`,
+        (n, t, q, f) => `[C.A.O.S.] Meus registros dizem: ${n}, ${q} de 3 da medalha de ${t}. Falta ${f}.`,
+        (n, t, q, f) => `[C.A.O.S.] ${n} quer a medalha de ${t}. ${q} de 3 até agora. ${f} é o que falta.`,
+        (n, t, q, f) => `[C.A.O.S.] Progresso da medalha de ${t}: ${n} com ${q} de 3. Próxima parada: ${f}.`,
+      ],
+      ganhou: [
+        (n, t) => `[C.A.O.S.] 🏅 ${n} fechou os três modos e ganhou a medalha de ${t}! Essa vai pro perfil.`,
+        (n, t) => `[C.A.O.S.] 🏅 Medalha de ${t} pra ${n}! Júnior, Clássico e Old School por joias. Respeito.`,
+        (n, t) => `[C.A.O.S.] 🏅 ${n}, você completou a medalha de ${t}. Eu mesmo vou polir ela.`,
+        (n, t) => `[C.A.O.S.] 🏅 Três modos, três vitórias por joias. ${n} leva a medalha de ${t}.`,
+        (n, t) => `[C.A.O.S.] 🏅 Temos medalhista! ${n} ganhou a medalha de ${t}.`,
+        (n, t) => `[C.A.O.S.] 🏅 ${n}, a medalha de ${t} é sua. Guarda bem, que ano que vem tem outra.`,
+        (n, t) => `[C.A.O.S.] 🏅 Medalha de ${t} conquistada por ${n}. Vou registrar nos meus circuitos com letra bonita.`,
+        (n, t) => `[C.A.O.S.] 🏅 ${n} fez o que poucos fazem: a medalha de ${t}. Palmas pra essa pessoa.`,
+        (n, t) => `[C.A.O.S.] 🏅 Pronto, ${n}: medalha de ${t} no peito. Pode se exibir, eu deixo.`,
+        (n, t) => `[C.A.O.S.] 🏅 ${n} completou o desafio de ${t}. A medalha é sua, e foi merecida.`,
+      ],
+    },
     // Gafe de data (o TDAH do C.A.O.S.): rara, no máximo 1 vez por partida. Ele solta a fala de começo de outra
     // temporada fora de época e logo se corrige com uma destas. Só fala: não muda visual nem pontuação.
     gafe: [

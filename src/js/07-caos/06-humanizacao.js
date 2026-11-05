@@ -283,8 +283,10 @@ function caosSplashMostrar(el, i) {
   const f = el.querySelector(".sc-face"),
     t = el.querySelector(".sc-txt");
   el._frames = caosFaceEscolher(emo);
-  if (f) f.textContent = el._frames[0];
+  if (f) f.dataset.f = el._frames[0]; // 05/11/2026: o rosto é desenhado pelo CSS (::before), fora do nome do botão
   if (t) t.textContent = txt;
+  // 05/11/2026 (pente fino, WCAG 2.5.3): o nome do botão traz a frase que está na tela (quem usa voz fala o que vê)
+  el.setAttribute("aria-label", `Recado do C.A.O.S.: ${String(txt || "").replace(/\s+/g, " ").trim()} (toque pra outra frase)`);
 }
 function caosSplashTick(el, t) {
   if (!caosSplashAt) caosSplashAt = t;
@@ -297,7 +299,7 @@ function caosSplashTick(el, t) {
   const fs = el._frames || [E.faces[0]];
   if (f) {
     const fr = fs[Math.floor(t / (E.fr * 1.8)) % fs.length];
-    if (f.textContent !== fr) f.textContent = fr;
+    if (f.dataset.f !== fr) f.dataset.f = fr;
   }
   el.style.setProperty("--emo-k", ((E.amp * (1 - Math.cos((t / E.per) * 2 * Math.PI))) / 2).toFixed(3));
 }

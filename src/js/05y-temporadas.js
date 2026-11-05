@@ -301,8 +301,13 @@ function temporadaEstiloPerguntar(p, depois) {
 
 /* Temporadas · item 7: 5 títulos da temporada no resumo do fim da partida (como os Troféus do C.A.O.S.). Pedido do JF:
    no Natal, o "Papai Noel" vai pro Mestre que mais distribuiu presentes. Cada título só aparece com dado de verdade. */
+function temporadaTitulosCabecalho() {
+  const t = typeof temporadaAtual === "function" ? temporadaAtual() : null;
+  return t && t.id === "anoNovo" ? "🎆 Títulos de Ano Novo" : "🎄 Títulos de Natal";
+}
 function temporadaTitulosHtml(larga) {
   const t = typeof temporadaAtual === "function" ? temporadaAtual() : null;
+  if (t && t.id === "anoNovo" && typeof larga === "function") return temporadaTitulosAnoNovo(larga);
   if (!t || t.id !== "natal" || typeof larga !== "function") return "";
   const pj = (nome) => players.find((p) => p.name === nome);
   const nomeH = (p) => (p ? playerNameHtml(p.name, p.color, p.avatar) : "?");
@@ -393,6 +398,36 @@ function temporadaCartasNoBaralho(deck) {
 }
 function temporadaSeloCartaHtml(card) {
   return temporadaCartaAtiva(card) ? `<div class="tmp-selo-carta" title="Carta de Natal: vale o dobro de pontos">🎄 Carta de Natal · vale o dobro</div>` : "";
+}
+
+/* Temporadas · item 10: 5 títulos de Ano Novo no resumo da partida (mesmo formato dos de Natal). Cada um só aparece com
+   dado de verdade da partida. */
+function temporadaTitulosAnoNovo(larga) {
+  const pj = (nome) => players.find((p) => p.name === nome);
+  const nomeH = (p) => (p ? playerNameHtml(p.name, p.color, p.avatar) : "?");
+  const ac = (history || []).filter((h) => typeof h.cluesUsed === "number" && h.playerName);
+  let h = "";
+  // 🎆 Show de Fogos: quem mais acertou
+  const conta = {};
+  ac.forEach((x) => (conta[x.playerName] = (conta[x.playerName] || 0) + 1));
+  const fogos = Object.entries(conta).filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1])[0];
+  if (fogos) h += larga("🎆", "Show de Fogos", nomeH(pj(fogos[0])), `acertou ${fogos[1]} cartas, o maior espetáculo da noite`, "#f472b6", { t: "anoNovoFogos", n: fogos[0], v: fogos[1] });
+  // 🍾 Champanhe Estourada: mais pontos numa carta só
+  const champ = ac.filter((x) => typeof x.points === "number" && x.points > 0).sort((a, b) => b.points - a.points)[0];
+  if (champ) h += larga("🍾", "Champanhe Estourada", nomeH(pj(champ.playerName)), `${champ.points} pontos numa carta só`, "#facc15", { t: "anoNovoChampanhe", n: champ.playerName, v: champ.points });
+  // 🦶 Pé Direito: o primeiro acerto da partida
+  const pe = ac[0];
+  if (pe) h += larga("🦶", "Pé Direito", nomeH(pj(pe.playerName)), "acertou a primeira carta e começou o ano bem", "#22c55e", { t: "anoNovoPeDireito", n: pe.playerName, v: pe.cluesUsed });
+  // 🕛 Meia-Noite em Ponto: o acerto mais rápido
+  const rapido = ac.filter((x) => typeof x.timeTakenMs === "number" && x.timeTakenMs >= 1500).sort((a, b) => a.timeTakenMs - b.timeTakenMs)[0];
+  if (rapido) {
+    const seg = Math.max(1, Math.round(rapido.timeTakenMs / 1000));
+    h += larga("🕛", "Meia-Noite em Ponto", nomeH(pj(rapido.playerName)), `acertou uma carta em ${seg} s, mais rápido que a contagem regressiva`, "#60a5fa", { t: "anoNovoMeiaNoite", n: rapido.playerName, v: seg });
+  }
+  // 📝 Promessa de Ano Novo: quem mais errou (zoeira de leve)
+  const prom = players.filter((p) => (p.errosPartida || 0) >= 2).sort((a, b) => b.errosPartida - a.errosPartida)[0];
+  if (prom) h += larga("📝", "Promessa de Ano Novo", nomeH(prom), `errou ${prom.errosPartida} palpites e prometeu acertar mais no ano que vem`, "#a78bfa", { t: "anoNovoPromessa", n: prom.name, v: prom.errosPartida });
+  return h;
 }
 
 /* Espírito natalino do C.A.O.S. (pedido do JF em 04/11/2026, antes de publicar o Natal). No Natal e no Ano Novo:
