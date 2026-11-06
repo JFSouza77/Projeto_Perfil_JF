@@ -59,6 +59,15 @@
   @keyframes lupa { 0%,100% { translate:0 0; } 50% { translate:-4px 3px; } }
   #joinha { transform-box:fill-box; transform-origin:center bottom; animation:joinha 1.8s ease-in-out infinite; }
   @keyframes joinha { 0%,70%,100% { rotate:0deg; } 80% { rotate:-10deg; } 90% { rotate:6deg; } }
+  #microfone { transform-box:fill-box; transform-origin:right bottom; animation:mic 1.2s ease-in-out infinite; }
+  @keyframes mic { 0%,100% { rotate:0deg; } 50% { rotate:8deg; } }
+  #nariz { transform-box:fill-box; transform-origin:center; animation:pulsa 1.4s ease-in-out infinite; }
+  #ponteiro { transform-box:view-box; transform-origin:342px 198px; animation:ponteiro .9s ease-in-out infinite; }
+  @keyframes ponteiro { 0%,100% { rotate:0deg; } 50% { rotate:-7deg; } }
+  #seta { stroke-dasharray:140; animation:sobe 2.4s ease-out infinite; }
+  @keyframes sobe { 0% { stroke-dashoffset:140; } 60%,100% { stroke-dashoffset:0; } }
+  #forma.ri { animation:ri .5s ease-in-out infinite; }
+  @keyframes ri { 0%,100% { translate:0 0; } 50% { translate:0 -5px; } }
   .fala { margin:4px 0 14px; max-width:340px; background:#151a28; border:1px solid #262d42; border-radius:14px;
     padding:12px 14px; font-size:15px; line-height:1.4; min-height:48px; text-align:center; }
   .botoes { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:420px; }
@@ -199,6 +208,30 @@
         <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" d="M92 246 h8 M92 256 h8"/>
       </g></g>
 
+      <!-- ESTILOS · HUMORISTA: microfone -->
+      <g class="acc" data-acc="microfone"><g id="microfone">
+        <path class="neon" fill="none" stroke-width="7" stroke-linecap="round" d="M80 228 L 100 266"/>
+        <circle class="neon" cx="72" cy="212" r="16" fill="#0f1320" stroke-width="4"/>
+        <path class="neon" fill="none" stroke-width="2" d="M60 206 h24 M58 214 h28 M62 222 h20"/>
+      </g></g>
+      <!-- ESTILOS · GERENTE: maleta -->
+      <g class="acc" data-acc="maleta">
+        <path class="neon" fill="none" stroke-width="4" stroke-linejoin="round" d="M330 238 v-10 h24 v10"/>
+        <rect class="neon" x="314" y="238" width="56" height="40" rx="7" fill="#0f1320" stroke-width="4"/>
+        <path class="neon" fill="none" stroke-width="3" d="M314 254 h56 M338 250 h8 v8 h-8 z"/>
+      </g>
+      <!-- ESTILOS · INVESTIDOR: boné virado e seta subindo -->
+      <g class="acc" data-acc="seta">
+        <path id="seta" class="neon" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M304 262 L 326 230 L 342 242 L 370 196 M356 194 h16 v16"/>
+      </g>
+      <!-- PREOCUPADO: medidor do limite quase cheio -->
+      <g class="acc" data-acc="medidor">
+        <path class="neon" fill="#0f1320" stroke-width="4" d="M302 200 A 40 40 0 0 1 382 200 Z"/>
+        <path fill="none" stroke="#ff3b5c" stroke-width="6" stroke-linecap="round" filter="url(#brilho)" d="M370 174 A 40 40 0 0 1 378 192"/>
+        <path id="ponteiro" class="neon" fill="none" stroke-width="4" stroke-linecap="round" d="M342 198 L 372 180"/>
+        <text x="342" y="222" text-anchor="middle" font-size="14" font-weight="800" fill="var(--cor)">94%</text>
+      </g>
+
       <!-- a telinha -->
       <rect class="neon" x="100" y="135" width="200" height="150" rx="34" fill="#0f1320" stroke-width="5"/>
       <rect x="114" y="149" width="172" height="122" rx="24" fill="none" stroke="#ffffff" stroke-opacity=".06" stroke-width="2"/>
@@ -232,6 +265,16 @@
       <!-- NOJINHO: linguinha -->
       <g class="acc" data-acc="lingua"><path fill="#ff8fb3" stroke="#ff8fb3" stroke-width="2" d="M208 250 q 2 18 14 12 q 5 -6 -2 -14 z"/></g>
 
+      <!-- INVESTIDOR: boné virado (na frente da telinha) -->
+      <g class="acc" data-acc="bone">
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M140 142 Q 142 102, 200 102 Q 258 102, 260 142 Z"/>
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M142 138 L 100 128 Q 94 140, 104 146 L 142 146 Z"/>
+        <circle class="neon" cx="200" cy="104" r="4" fill="var(--cor)" stroke-width="1"/>
+      </g>
+      <!-- GERENTE: óculos meia-lua -->
+      <g class="acc" data-acc="meialua">
+        <path class="neon" fill="none" stroke-width="3" stroke-linejoin="round" d="M142 208 h38 v4 q 0 14 -19 14 q -19 0 -19 -14 z M220 208 h38 v4 q 0 14 -19 14 q -19 0 -19 -14 z M180 210 h40"/>
+      </g>
       <!-- acessórios do rosto -->
       <g class="acc" data-acc="oculos">
         <circle class="neon" cx="161" cy="198" r="21" fill="none" stroke-width="3"/>
@@ -269,6 +312,8 @@
         <path class="neon" fill="none" stroke-width="7" stroke-linecap="round" d="M258 220 L 284 250"/>
         <path fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="3" stroke-linecap="round" d="M228 192 q 6 -8 14 -8"/>
       </g></g>
+      <!-- HUMORISTA: nariz de palhaço -->
+      <g class="acc" data-acc="nariz"><circle id="nariz" cx="200" cy="226" r="10" fill="#ff3b5c" stroke="#ff3b5c" filter="url(#brilho)"/></g>
     </g></g>
   </svg>
 
@@ -379,6 +424,26 @@ const formas = {
     olhoE:{ d:'M148 206 Q 161 192, 174 206', cheio:false }, olhoD:{ d:'M228 190 h22 v24 h-22 z', cheio:true },
     sob:'M224 176 Q 239 168, 254 176', boca:'M172 242 Q 202 266, 230 238', extra:'',
     fala:'Amigão, um toque: cortando delivery e corrida de app, sobram R$ 210. Bota na meta da viagem e você chega 2 meses antes.' },
+  humorista: { nome:'🎤 Humorista', quando:'hora da piada', cor:'#ff9f1c', modo:'festa', grupo:'estilos',
+    acc:['microfone','nariz'], corpo:'rotate(-5deg)', anim:'ri',
+    olhoE:{ d:'M148 196 L 172 204 L 148 212', cheio:false }, olhoD:{ d:'M252 196 L 228 204 L 252 212', cheio:false },
+    sob:'', boca:'M168 240 Q 200 280, 232 240 Z', extra:'HA!',
+    fala:'Sabe por que o boleto não vai à festa? Porque ele sempre chega atrasado. Tá, essa foi ruim. Rindo de nervoso aqui.' },
+  gerente:   { nome:'💼 Gerente', quando:'jeito formal, explica a fundo', cor:'#cbd5e1', modo:'anel', grupo:'estilos',
+    acc:['terno','maleta','meialua'], corpo:'scale(1.02)',
+    olhoE:{ d:'M152 190 h18 v16 h-18 z', cheio:true }, olhoD:{ d:'M230 190 h18 v16 h-18 z', cheio:true },
+    sob:'M146 178 h28 M226 178 h28', boca:'M182 250 Q 200 254, 218 250', extra:'',
+    fala:'Vamos aos fundamentos. Funciona assim: quanto mais tempo o dinheiro fica aplicado, mais os juros rendem sobre os juros. Sugiro um plano em três etapas.' },
+  investidor:{ nome:'💡 Investidor', quando:'sugestão leve, sem pressão', cor:'#60a5fa', modo:'calmo', grupo:'estilos',
+    acc:['bone','seta'], corpo:'rotate(-6deg) translateY(-4px)',
+    olhoE:{ d:'M156 196 h18 v18 h-18 z', cheio:true }, olhoD:{ d:'M234 196 h18 v18 h-18 z', cheio:true },
+    sob:'M152 182 Q 165 176, 178 182 M230 180 L 256 174', boca:'M176 246 Q 204 260, 228 242', extra:'',
+    fala:'Ideia solta: e aquele dinheiro parado na conta? Acho que valia olhar uma reserva que rende. Pensa com carinho.' },
+  preocupado:{ nome:'😟 Preocupado', quando:'conta chegando no limite', cor:'#fdba74', modo:'calmo', grupo:'reacoes',
+    acc:['medidor','suor'], corpo:'translateY(4px) rotate(3deg)',
+    olhoE:{ d:'M151 196 h20 v20 h-20 z', cheio:true }, olhoD:{ d:'M229 196 h20 v20 h-20 z', cheio:true },
+    sob:'M146 184 L 172 176 M228 176 L 254 184', boca:'M180 254 q 7 -6 14 0 t 14 0 t 14 0', extra:'',
+    fala:'Amigo, segura! Já foram R$ 750 dos R$ 800 do limite. Cuidado com o que vem aí.' },
 };
 
 const $ = id => document.getElementById(id);
@@ -404,6 +469,7 @@ function mostrar(nome, imediato) {
   $('forma').style.transform = f.corpo;
   $('forma').classList.toggle('treme', !!f.treme);
   $('forma').classList.toggle('nega', f.anim === 'nega');
+  $('forma').classList.toggle('ri', f.anim === 'ri');
   if (imediato) desenharRosto(f);
   else { $('rosto').classList.add('troca'); setTimeout(() => { desenharRosto(f); $('rosto').classList.remove('troca'); }, 150); }
   $('formaNome').textContent = `${f.nome} · ${f.quando}`;
@@ -411,7 +477,7 @@ function mostrar(nome, imediato) {
   document.querySelectorAll('#botoes button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.forma === nome)));
 }
 
-const titulos = { humor:'Humores', carteira:'Momentos da Carteira', reacoes:'Reações da Carteira' };
+const titulos = { humor:'Humores', carteira:'Momentos da Carteira', reacoes:'Reações da Carteira', estilos:'Jeitos de falar (a pessoa escolhe)' };
 let grupoAtual = null;
 for (const [k, f] of Object.entries(formas)) {
   const g = f.grupo || 'humor';

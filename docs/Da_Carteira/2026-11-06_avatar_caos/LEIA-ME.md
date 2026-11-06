@@ -46,6 +46,15 @@ em nenhum app** (nem na Carteira). Use, mude ou ignore: quem decide no Perfil é
 | 😱 Medo | gastando mais do que devia | olhão com pupila tremendo, boca em zigue-zague, encolhido e tremendo |
 | 🤨 Desconfiado | finge que economiza (só remaneja) | rosa, olho apertado e lupa no outro olho; "finjo que acredito" (`caos-mais2.png`) |
 | 🤝 Amigão | toque pra chegar na meta | piscadinha, joinha e alvo com flecha (`caos-mais2.png`) |
+| 😟 Preocupado | conta chegando no limite (ex.: R$ 750 de R$ 800) | medidor a 94% com ponteiro tremendo, suor (`caos-mais4.png`) |
+
+**Jeitos de falar** (`caos-mais4.png`): ideia do JF de a **pessoa escolher** como o C.A.O.S. fala com ela.
+
+| Forma | Jeito |
+| --- | --- |
+| 🎤 Humorista | conta piada, faz rir; microfone, nariz de palhaço, pulando de rir |
+| 💼 Gerente | formal e aprofundado ("funciona assim"); terno, óculos meia-lua, maleta |
+| 💡 Investidor | sugestão leve, sem pressão ("acho que valia…"); boné virado, seta subindo |
 
 ## Como funciona (pra copiar fácil)
 - Um objeto `formas` no `<script>`: cada forma tem `cor`, `acc` (lista de acessórios), `corpo` (transform CSS),
