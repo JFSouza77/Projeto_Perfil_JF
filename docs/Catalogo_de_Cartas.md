@@ -1,17 +1,17 @@
 # Catálogo de cartas do Perfil JF
 
-Gerado pelo Code (Claude Code) em 2026-11-03 com `node ferramentas/catalogo_cartas.js`. Só os nomes, sem dicas.
+Gerado pelo Code (Claude Code) em 2026-11-06 com `node ferramentas/catalogo_cartas.js`. Só os nomes, sem dicas.
 
-**1960 cartas: 1010 já estão no jogo e 950 estão planejadas pra Beta 2.0 (marcadas com 🆕).**
+**1970 cartas: 1020 já estão no jogo e 950 estão planejadas pra Beta 2.0 (marcadas com 🆕).**
 
 | Categoria | No jogo | Planejadas 🆕 | Total |
 |---|---|---|---|
 | 🐾 Animal | 200 | 65 | 265 |
 | 📅 Ano | 200 | 55 | 255 |
-| 📦 Coisa | 205 | 255 | 460 |
-| 📍 Lugar | 200 | 235 | 435 |
+| 📦 Coisa | 210 | 255 | 465 |
+| 📍 Lugar | 205 | 235 | 440 |
 | 🧑 Pessoa | 205 | 340 | 545 |
-| **Total** | **1010** | **950** | **1960** |
+| **Total** | **1020** | **950** | **1970** |
 
 ## Como conferir uma ideia de carta (instruções pro GPT)
 
@@ -264,7 +264,10 @@ Avestruz 🧸 · Camelo 🧸 · Chimpanzé 🧸 · Dragão-de-komodo · Dromedá
 - 2025
 - 2026 🆕 (Copa do Mundo nos Estados Unidos, Canadá e México, a primeira com 48 seleções; e Lula é reeleito (2º turno em 25/10, contra Flávio Bolsonaro), o primeiro presidente eleito quatro vezes pelo voto direto no Brasil (tema político: só fatos, fora do Júnior))
 
-## 📦 Coisa · 460 (205 no jogo, 255 🆕)
+## 📦 Coisa · 465 (210 no jogo, 255 🆕)
+
+**Ano Novo** (5)
+Calendário · Espumante · Fogos de artifício · Lentilha · Roupa branca
 
 **Casa e objetos do dia a dia** (47)
 Abajur 🧸 · Agulha 🆕 · Aliança 🆕 · Aparelho de jantar 🆕 · Armadilha 🆕 · Aspirador de pó 🧸 · Bacia 🆕 · Bengala 🆕 · Carimbo 🆕 · Carpete 🆕 · Chave · Chinelo 🧸 · Colchão 🆕 · Colher 🧸 · Colher de pau 🆕 · Dicionário · Enxada 🆕 · Escova de dente 🧸 · Espelho 📼 · Extintor de incêndio 📼 · Galocha 🆕 · Geladeira 🧸 · Guarda-chuva · Janela 🧸 · Laço de fita 🆕 · Lâmpada · Lancheira 🧸 · Lápis 🧸 · Livro · Lixeira 🆕 · Lustre 🆕 · Máquina de costura 🆕 · Máscara 🆕 · Mochila 🧸 · Óculos · Paletó 🆕 · Pasta de dente 🆕 · Relógio 📼 · Rolha 🆕 · Sabonete 🧸 · Selo 🆕 · Tanque de lavar roupas 🆕 · Tesoura 🧸 · Tijolo 🆕 · Travesseiro 🧸 · Vassoura 🧸 · Velcro 🆕
@@ -347,10 +350,13 @@ A Praça é Nossa 📼 · Big Brother Brasil 📼 · Bom Dia & Cia 📼 · Bom D
 **Videogames** (1)
 Pac-Man 🆕 (ideia do JF 03/11; o jogo)
 
-## 📍 Lugar · 435 (200 no jogo, 235 🆕)
+## 📍 Lugar · 440 (205 no jogo, 235 🆕)
 
 **Animação** (2)
 Arendelle 🆕 (ideia do JF 03/11) · Casa Madrigal 🆕 (o Code completou pra fechar em 5; Encanto)
+
+**Ano Novo** (5)
+Burj Khalifa · London Eye · Ópera de Sydney · Portão de Brandemburgo · Praça Vermelha
 
 **Cidades do mundo** (37)
 Amsterdã · Barcelona · Berlim · Brooklyn 🆕 (handoff JF+GPT 29/10) · Buenos Aires 🆕 · Cairo 🆕 · Ciudad del Este 📼 · Dubai · Florença 🆕 · Flórida 🆕 (handoff JF+GPT 29/10) · Hollywood · Istambul · Jerusalém · Kyoto · Las Vegas 📼 · Londres · Los Angeles 🆕 (handoff JF+GPT 29/10) · Manhattan 🆕 · Meca · Miami · Moscou · Munique 🆕 · Nova Orleans 🆕 (handoff JF+GPT 29/10) · Nova York · Orlando 🆕 (handoff JF+GPT 29/10) · Paris · Pier de Santa Mônica 🆕 (handoff JF+GPT 29/10) · Punta del Este 🆕 (handoff JF+GPT 30/10) · Roma 📼 · Santiago do Chile 🆕 (handoff JF+GPT 29/10) · Shibuya · Singapura · Sydney · Tóquio · Transilvânia 🆕 (handoff JF+GPT 30/10) · Vancouver 🆕 · Veneza 📼

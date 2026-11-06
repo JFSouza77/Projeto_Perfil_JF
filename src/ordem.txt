@@ -71,6 +71,9 @@ dados/02-cartas/03-lugar.js
 dados/02-cartas/04-coisa.js
 dados/02-cartas/05-animal.js
 dados/02-cartas/99-fechamento.js
+dados/02-cartas/95-anonovo-abre.js
+dados/02-cartas/96-anonovo.js
+dados/02-cartas/96-anonovo-fecha.js
 dados/02-cartas/97-temporada-abre.js
 dados/02-cartas/98-temporada.js
 dados/02-cartas/98-temporada-fecha.js
