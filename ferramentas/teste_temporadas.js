@@ -51,6 +51,9 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
       [2027, 8, 8, "pais"],
       [2027, 8, 22, "folclore"],
       [2027, 9, 7, "independencia"],
+      [2027, 9, 6, "aniversarioJogo"], // 06/11/2026: aniversário do jogo e do C.A.O.S. (pedido do JF)
+      [2027, 9, 20, "aniversarioCaos"],
+      [2027, 9, 21, null],
       [2027, 11, 26, "blackfriday"],
       [2026, 2, 17, "carnaval"], // Páscoa 2026 = 5/4
       [2026, 4, 3, "pascoa"],
@@ -59,7 +62,8 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     ];
     out.erradas = casos.filter(([a, m, d, e]) => id(a, m, d) !== e).map(([a, m, d, e]) => `${d}/${m}/${a}: ${id(a, m, d)} (esperado ${e})`);
     out.datasCertas = out.erradas.length === 0;
-    out.quinze = TEMPORADAS.length === 15 && new Set(TEMPORADAS.map((t) => t.id)).size === 15;
+    // 06/11/2026: 17 com os aniversários do jogo e do C.A.O.S.; pela regra do 0 ou 5, faltam 3 datas pra fechar 20 (o JF escolhe)
+    out.temporadasSemRepetir = TEMPORADAS.length === 17 && new Set(TEMPORADAS.map((t) => t.id)).size === 17;
     // todas aparecem em todo ano de 2026 a 2040
     const faltou = [];
     for (let a = 2026; a <= 2040; a++) {

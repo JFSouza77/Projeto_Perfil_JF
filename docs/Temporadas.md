@@ -112,7 +112,10 @@ temporadas, na ordem do calendário.
     - [x] Aniversário do criador (2/1) · enfeite (balões), selo, 30 falas (5 só pro JF na mesa) e o C.A.O.S. pegando leve com o JF.
     - [ ] Aniversário do criador · 5 cores, 5 emojis e 5+5 itens de lojinha.
     - [ ] Aniversário do criador · 5 títulos e 10 cartas valendo o dobro.
-11. [ ] As outras 12 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween, com o Doces ou travessuras).
+11. [ ] As outras 14 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween, com o Doces ou travessuras).
+    Inclui as 2 datas novas do JF (06/11/2026), já reconhecidas pelo motor: **6/9 · Aniversário do Perfil JF** (o C.A.O.S.
+    lembra quantos anos o jogo faz e conta a história: `docs/Historia_do_Perfil.md`) e **20/9 · Aniversário do C.A.O.S.**
+    (ele é o aniversariante: fica todo bobo, comemora com a mesa e relembra de quando era "só um texto na tela").
 12. [ ] Bateria final, prints de todas as temporadas e relatório pro JF.
 
 ## Progresso

@@ -25,6 +25,9 @@ const TEMPORADAS = [
   { id: "pais", nome: "Dia dos Pais", selo: "Edição Dia dos Pais", emoji: "👔", prio: 2, vale: (d, m, a, t) => temporadaMesmoDia(t, temporadaDomingo(a, 7, 2)) },
   { id: "folclore", nome: "Folclore", selo: "Edição do Folclore", emoji: "🌳", prio: 2, vale: (d, m) => m === 8 && d === 22 },
   { id: "independencia", nome: "Independência", selo: "Edição da Independência", emoji: "🇧🇷", prio: 2, vale: (d, m) => m === 9 && d === 7 },
+  // 06/11/2026 (JF): o jogo ganhou a cara de hoje em 6/9/2026 e o C.A.O.S. nasceu em 20/9/2026 (docs/Historia_do_Perfil.md)
+  { id: "aniversarioJogo", nome: "Aniversário do Perfil JF", selo: "Edição de aniversário do jogo", emoji: "🎉", prio: 2, vale: (d, m) => m === 9 && d === 6 },
+  { id: "aniversarioCaos", nome: "Aniversário do C.A.O.S.", selo: "Edição de aniversário do C.A.O.S.", emoji: "🤖", prio: 2, vale: (d, m) => m === 9 && d === 20 },
   { id: "criancas", nome: "Dia das Crianças", selo: "Edição Dia das Crianças", emoji: "🧸", prio: 1, vale: (d, m) => m === 10 && d >= 6 && d <= 12 },
   { id: "halloween", nome: "Halloween", selo: "Edição Halloween", emoji: "🎃", prio: 1, vale: (d, m) => m === 10 && d >= 20 },
   { id: "blackfriday", nome: "Black Friday", selo: "Edição Black Friday", emoji: "🏷️", prio: 1, vale: (d, m, a, t) => temporadaEntre(t, temporadaBlackFriday(a), 0, 2) },
