@@ -183,6 +183,8 @@ let caosRivalPartida = {};
 let caosMemCatFalou = {};
 let caosRecordesNovos = [];
 let nickEmprestadoAtual = null;
+let contaPortaoLiberado = null; // 06/11/2026: nick que acabou de passar pelo portão do PIN (05t-contas)
+let contaPortaoRes = null;
 let caosMemPartidaInicio;
 // atribuído em iniciar()
 let caosMemFimFeito = false;

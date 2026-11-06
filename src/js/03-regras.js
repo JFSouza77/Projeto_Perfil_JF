@@ -30,17 +30,33 @@ function anneLigar(sim) {
     if (typeof rede !== "undefined" && rede && rede.papel === "host") redeHostPublicar(true);
   } catch (e) {}
 }
-function isAnneName(n) {
+// 06/11/2026 (pedido do JF): quem o jogo conhece (JF, Anne, amigos com presente, família) é reconhecido pelo
+// CADASTRO, não só pelo nome digitado. As versões "NomeBruto" olham só o nome (formulário do cadastro, sugestões);
+// isJfName / isAnneName / presenteDe / sobrinhoInfo só dizem sim quando o dono confirmou (contaNomeComDono, 05t).
+function isAnneNomeBruto(n) {
   if (!anneLigada()) return false;
   return OWNER_ANNE_RE.test(nameKeyPlain(n));
 }
-function isJfName(n) {
+function isJfNomeBruto(n) {
   return OWNER_JF_RE.test(nameKeyPlain(n));
+}
+function presenteDoNomeBruto(n) {
+  const k = nameKeyPlain(n);
+  return (k && PRESENTES.find((p) => p.re.test(k))) || null;
+}
+function nomeComDono(n) {
+  return typeof contaNomeComDono !== "function" || contaNomeComDono(n);
+}
+function isAnneName(n) {
+  return isAnneNomeBruto(n) && nomeComDono(n);
+}
+function isJfName(n) {
+  return isJfNomeBruto(n) && nomeComDono(n);
 }
 // 1.7.10.6: o presente (cor/emoji exclusivos) de quem tem este nick, ou null
 function presenteDe(n) {
-  const k = nameKeyPlain(n);
-  return (k && PRESENTES.find((p) => p.re.test(k))) || null;
+  const pr = presenteDoNomeBruto(n);
+  return pr && nomeComDono(n) ? pr : null;
 }
 function presenteEmojis(pr) {
   if (!pr) return [];
@@ -690,7 +706,7 @@ function sanitizePlayerColor(name, color) {
     const pool = free.length ? free : solids;
     return pool[Math.floor(Math.random() * pool.length)];
   };
-  let final = color;
+  let final = color || pick(); // 06/11/2026: nome conhecido sem dono confirmado não ganha a cor exclusiva
   if (isJfName(name) && !used.has("RGB")) final = "RGB";
   else if (isAnneName(name) && !used.has("GRAD_PRINCESA")) final = "GRAD_PRINCESA";
   else if (isEnigmaName(name) && !used.has("GRAD_ONYX")) final = "GRAD_ONYX";
@@ -710,8 +726,8 @@ function sanitizePlayerAvatar(name, avatar) {
     const livre = meu.find((e) => !used.has(e));
     if (livre) return livre;
   }
-  if (AVATAR_EXCLUSIVE.includes(avatar)) {
-    const free = avatarsForMode().find((a) => !used.has(a));
+  if (AVATAR_EXCLUSIVE.includes(avatar) || !avatar) {
+    const free = avatarsForMode().find((a) => !used.has(a) && !AVATAR_EXCLUSIVE.includes(a));
     return free || avatar;
   }
   return avatar;

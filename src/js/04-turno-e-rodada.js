@@ -1719,6 +1719,21 @@ function addPlayer() {
     return;
   }
   idadeAddConfirmada = null;
+  // 06/11/2026 (pedido do JF): nick que este aparelho sabe que tem cadastro só entra depois do PIN (ou como convidado,
+  // liberado pelo ADM). Quem só o servidor sabe entra e resolve logo depois (contaAoCadastrar).
+  const nomeK = nameKeyPlain(name);
+  if (contaPortaoLiberado !== nomeK && typeof contaPortaoAntes === "function") {
+    const abriu = contaPortaoAntes(name, (res) => {
+      if (res && res.livre) return addPlayer();
+      contaPortaoLiberado = nomeK;
+      contaPortaoRes = res || null;
+      addPlayer();
+    });
+    if (abriu) return;
+  }
+  const portao = contaPortaoLiberado === nomeK ? contaPortaoRes : null;
+  contaPortaoLiberado = null;
+  contaPortaoRes = null;
   undoTeamFormation();
   players.push({
     id: jogadorIdNovo(),
@@ -1746,6 +1761,11 @@ function addPlayer() {
   idadeLimpar();
   nicksRepertorioGuardar(name);
   const novo = players[players.length - 1];
+  if (portao && portao.conta) novo.conta = { nick: portao.conta.nick, token: portao.conta.token };
+  else if (portao && portao.convidado) {
+    novo.nickEmprestado = true;
+    novo.convidadoAdm = true;
+  }
   contaAoCadastrar(novo, null, true, () => temporadaEstiloPerguntar(novo, () => caosBoasVindasQuandoPuder(novo))); // 1.9.1: o "oi" vem depois da pergunta do cadastro. 11/2026: cadastro do jogador (antes da memória, que respeita o nick protegido); pergunta se quer cadastrar
   caosMemCadastro(players[players.length - 1]);
   input.value = "";
@@ -2527,8 +2547,8 @@ function pickNickSuggestion() {
     (n) =>
       !used.has(nameKeyPlain(n)) &&
       n !== nickSuggestCurrent &&
-      !isJfName(n) &&
-      !isAnneName(n) &&
+      !isJfNomeBruto(n) &&
+      !isAnneNomeBruto(n) &&
       n.length >= 2 &&
       n.length <= 15,
   );
@@ -2538,7 +2558,7 @@ function pickNickSuggestion() {
   }
   const base = nickKidsContext() ? NICKS_KIDS : NICKS_GERAL.concat(NICKS_KIDS);
   const pool = base.filter(
-    (n) => !used.has(nameKeyPlain(n)) && n !== nickSuggestCurrent && !isJfName(n) && !isAnneName(n) && n.length <= 15,
+    (n) => !used.has(nameKeyPlain(n)) && n !== nickSuggestCurrent && !isJfNomeBruto(n) && !isAnneNomeBruto(n) && n.length <= 15,
   );
   return pool.length ? pool[Math.floor(Math.random() * pool.length)] : null;
 }

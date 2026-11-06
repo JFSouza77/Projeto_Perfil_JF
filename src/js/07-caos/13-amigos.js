@@ -15,9 +15,15 @@ const CAOS_SOBRINHOS = [
   { id: "isabel", re: /^(isabel$|bebel)/, max: 3 },
   { id: "elisa", re: /^elisinha/, max: CAOS_AMIGOS_MAX },
 ];
-function sobrinhoInfo(n) {
+// só o nome (as regras de apelido); o tratamento usa sobrinhoInfo, que pede o dono confirmado
+function sobrinhoInfoBruto(n) {
   const k = nameKeyPlain(n);
   return (k && CAOS_SOBRINHOS.find((x) => x.re.test(k))) || null;
+}
+function sobrinhoInfo(n) {
+  const k = nameKeyPlain(n);
+  // 06/11/2026: as piadas da família só valem pro dono do nick (com cadastro confirmado)
+  return (k && (typeof nomeComDono !== "function" || nomeComDono(n)) && CAOS_SOBRINHOS.find((x) => x.re.test(k))) || null;
 }
 function sobrinhoDe(n) {
   const s = sobrinhoInfo(n);

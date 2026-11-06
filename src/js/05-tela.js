@@ -1631,11 +1631,11 @@ function renderAvatarPicker() {
 }
 // Cores com dono fixo: aparecem na paleta com cadeado e só liberam pra quem tem o nome do dono.
 const COR_EXCLUSIVA = {
-  RGB: { de: "do JF", dono: (n) => isJfName(n) },
-  GRAD_PRINCESA: { de: "da Anne", dono: (n) => isAnneName(n) },
+  RGB: { de: "do JF", dono: (n) => isJfNomeBruto(n) },
+  GRAD_PRINCESA: { de: "da Anne", dono: (n) => isAnneNomeBruto(n) },
 };
 // easter egg: essas cores não aparecem na paleta; quem tem o nick ganha sozinho
-PRESENTES.forEach((pr) => (COR_EXCLUSIVA[pr.cor] = { de: "do " + pr.nome, dono: (n) => presenteDe(n) === pr }));
+PRESENTES.forEach((pr) => (COR_EXCLUSIVA[pr.cor] = { de: "do " + pr.nome, dono: (n) => presenteDoNomeBruto(n) === pr }));
 function corReservada(c) {
   const inp = document.getElementById("playerNameInput"),
     nome = inp ? inp.value.trim() : "";
@@ -4036,10 +4036,10 @@ function cadPodeAdicionar() {
   const inp = document.getElementById("playerNameInput");
   const nome = inp ? inp.value.trim() : "";
   if (nome.length < 2) return false;
-  if (isJfName(nome)) return true;
+  if (isJfNomeBruto(nome)) return true;
   const eq = CURRENT_FORMAT === "equipe";
   if (!eq && !selectedIdade) return false; // 1.7.10.6: idade obrigatória (no Equipe, a faixa etária)
-  if (isAnneName(nome) || presenteDe(nome)) return eq ? !!cadFaixa : true;
+  if (isAnneNomeBruto(nome) || presenteDoNomeBruto(nome)) return eq ? !!cadFaixa : true;
   if (!eq && !cadCor) return false;
   if (!cadEmoji) return false;
   if (!humorPreMarcado() && !cadHumor) return false;
@@ -4050,10 +4050,10 @@ function cadFaltaTexto() {
   const inp = document.getElementById("playerNameInput");
   const nome = inp ? inp.value.trim() : "";
   if (nome.length < 2) return "Escreva o nome (2 a 15 letras).";
-  if (isJfName(nome)) return "";
+  if (isJfNomeBruto(nome)) return "";
   const f = [],
     eq = CURRENT_FORMAT === "equipe";
-  if (isAnneName(nome) || presenteDe(nome)) return (eq ? cadFaixa : selectedIdade) ? "" : "Falta escolher: " + (eq ? "faixa de idade." : "idade.");
+  if (isAnneNomeBruto(nome) || presenteDoNomeBruto(nome)) return (eq ? cadFaixa : selectedIdade) ? "" : "Falta escolher: " + (eq ? "faixa de idade." : "idade.");
   if (!eq && !selectedIdade) f.push("idade");
   if (!eq && !cadCor) f.push("cor");
   if (!cadEmoji) f.push("emoji");
@@ -4086,9 +4086,9 @@ function cadPrimeiraFalta() {
   const nome = inp ? inp.value.trim() : "";
   const eq = CURRENT_FORMAT === "equipe";
   if (nome.length < 2) return { k: "nome", el: inp };
-  if (isJfName(nome)) return null;
+  if (isJfNomeBruto(nome)) return null;
   const idade = () => (eq ? { k: "faixa", el: document.getElementById("ageBracketWrap") } : { k: "idade", el: document.getElementById("idadeWrap") });
-  if (isAnneName(nome) || presenteDe(nome)) return (eq ? cadFaixa : selectedIdade) ? null : idade();
+  if (isAnneNomeBruto(nome) || presenteDoNomeBruto(nome)) return (eq ? cadFaixa : selectedIdade) ? null : idade();
   if (!eq && !selectedIdade) return idade();
   if (!eq && !cadCor) return { k: "cor", el: document.getElementById("colorBox") };
   if (!cadEmoji) return { k: "emoji", el: document.getElementById("avatarBox") };

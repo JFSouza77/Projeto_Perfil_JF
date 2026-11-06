@@ -546,6 +546,7 @@ function sanitizeLoadedState(s) {
         gems,
         ...(typeof p.nickMs === "number" ? { nickMs: p.nickMs } : {}),
         ...(p.nickEmprestado === true ? { nickEmprestado: true } : {}),
+        ...(p.convidadoAdm === true ? { convidadoAdm: true } : {}),
         ...(p.conta && typeof p.conta.token === "string" ? { conta: { nick: String(p.conta.nick || "").slice(0, 15), token: p.conta.token.slice(0, 64) } } : {}),
         ...(p.iniciante === true
           ? {
@@ -1200,7 +1201,7 @@ function nicksRepertorio() {
 function nicksRepertorioGuardar(nome) {
   try {
     const k = nameKeyPlain(nome);
-    if (!k || isJfName(nome) || isAnneName(nome)) return;
+    if (!k || isJfNomeBruto(nome) || isAnneNomeBruto(nome)) return;
     const a = nicksRepertorio().filter((x) => nameKeyPlain(x) !== k);
     a.push(String(nome).slice(0, 15));
     JFStore.setItem(NICKS_REPERTORIO_KEY, JSON.stringify(a.slice(-120)));
