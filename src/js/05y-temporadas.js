@@ -397,7 +397,9 @@ function temporadaCartasNoBaralho(deck) {
   return d;
 }
 function temporadaSeloCartaHtml(card) {
-  return temporadaCartaAtiva(card) ? `<div class="tmp-selo-carta" title="Carta de Natal: vale o dobro de pontos">🎄 Carta de Natal · vale o dobro</div>` : "";
+  if (!temporadaCartaAtiva(card)) return "";
+  const t = temporadaPorId(card.temporada) || { nome: "temporada", emoji: "🎉" }; // 06/11: Natal 🎄, Ano Novo 🎆…
+  return `<div class="tmp-selo-carta" title="Carta de ${t.nome}: vale o dobro de pontos">${t.emoji} Carta de ${t.nome} · vale o dobro</div>`;
 }
 
 /* Temporadas · item 10: 5 títulos de Ano Novo no resumo da partida (mesmo formato dos de Natal). Cada um só aparece com

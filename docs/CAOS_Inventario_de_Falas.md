@@ -184,12 +184,12 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 187 | showToastMessage | - |
 | 286 | getRandomReaction | - |
 | 287 | showToastMessage | - |
-| 487 | caosFalarDepois | - |
-| 488 | showToastMessage | - |
-| 509 | getRandomReaction | - |
-| 515 | getRandomReaction | - |
-| 529 | getRandomReaction | - |
-| 601 | getRandomReaction | - |
+| 489 | caosFalarDepois | - |
+| 490 | showToastMessage | - |
+| 511 | getRandomReaction | - |
+| 517 | getRandomReaction | - |
+| 531 | getRandomReaction | - |
+| 603 | getRandomReaction | - |
 
 ## js/05y2-medalhas.js (2)
 
