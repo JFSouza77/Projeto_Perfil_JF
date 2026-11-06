@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C.A.O.S. formas</title>
+<style>
+  :root { --bg:#0b0d14; --cor:#3ef0ff; --texto:#e8ecf5; --suave:#8a93a8; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:radial-gradient(circle at 50% 35%, #161a2a 0, var(--bg) 70%); color:var(--texto);
+    font-family:system-ui, -apple-system, "Segoe UI", sans-serif; min-height:100vh; display:flex; flex-direction:column;
+    align-items:center; padding:24px 16px; }
+  h1 { font-size:20px; letter-spacing:.2em; margin:0 0 2px; color:var(--cor); text-shadow:0 0 12px var(--cor); transition:color .5s, text-shadow .5s; }
+  .sub { color:var(--suave); font-size:13px; margin:0 0 4px; }
+  .forma-nome { font-size:15px; font-weight:700; color:var(--cor); margin:0; min-height:20px; transition:color .5s; }
+  svg { width:min(360px, 90vw); height:auto; overflow:visible; }
+  #flutua { animation:boia 3.2s ease-in-out infinite; }
+  @keyframes boia { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
+  #forma, .acc, #rosto { transform-box:fill-box; transform-origin:center; }
+  #forma { transition:transform .7s cubic-bezier(.3,1.4,.5,1); }
+  #forma.treme { animation:treme .18s linear infinite; }
+  @keyframes treme { 0%{translate:0 0} 25%{translate:2px -1px} 50%{translate:-2px 1px} 75%{translate:1px 2px} 100%{translate:0 0} }
+  .acc { opacity:0; transform:scale(.4); transition:opacity .45s, transform .6s cubic-bezier(.3,1.5,.5,1); }
+  .acc.on { opacity:1; transform:scale(1); }
+  #rosto { transition:opacity .15s; }
+  #rosto.troca { opacity:0; }
+  .neon { stroke:var(--cor); filter:url(#brilho); transition:stroke .5s, fill .5s; }
+  #olhos { transform-box:fill-box; transform-origin:center; transition:transform .08s; }
+  #olhos.pisca { transform:scaleY(.1); }
+  #aureola { animation:aureola 2.4s ease-in-out infinite; transform-box:fill-box; transform-origin:center; }
+  @keyframes aureola { 0%,100% { translate:0 0; } 50% { translate:0 -5px; } }
+  .asa { transform-box:fill-box; animation:bate 1.4s ease-in-out infinite; }
+  #asaE { transform-origin:right center; } #asaD { transform-origin:left center; }
+  @keyframes bate { 0%,100% { rotate:0deg; } 50% { rotate:-12deg; } }
+  #asaD { animation-name:bateD; } @keyframes bateD { 0%,100% { rotate:0deg; } 50% { rotate:12deg; } }
+  .gota { animation:gota 1.1s linear infinite; }
+  @keyframes gota { from { translate:0 0; opacity:1; } to { translate:0 34px; opacity:0; } }
+  #lagrima { animation:lagrima 2.2s ease-in infinite; }
+  @keyframes lagrima { 0% { translate:0 0; opacity:0; } 20% { opacity:1; } 100% { translate:0 26px; opacity:0; } }
+  #raios { animation:pisca-sirene .5s steps(2) infinite; }
+  @keyframes pisca-sirene { 50% { opacity:.1; } }
+  #lampada-luz { animation:ideia 1.6s ease-in-out infinite; }
+  @keyframes ideia { 50% { opacity:.35; } }
+  #coracao { transform-box:fill-box; transform-origin:center; animation:pulsa 1.1s ease-in-out infinite; fill:color-mix(in srgb, var(--cor) 35%, transparent); }
+  @keyframes pulsa { 0%,100% { scale:1; } 15% { scale:1.18; } 30% { scale:1; } 45% { scale:1.12; } }
+  #despertador { transform-box:fill-box; transform-origin:center bottom; animation:toca 1.6s ease-in-out infinite; }
+  @keyframes toca { 0%,40%,100% { rotate:0deg; } 5%,15%,25%,35% { rotate:-12deg; } 10%,20%,30% { rotate:12deg; } }
+  .grupo { width:100%; text-align:center; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--suave); margin:8px 0 0; }
+  #moeda { animation:moeda 1.8s ease-in infinite; }
+  @keyframes moeda { 0% { translate:0 -10px; opacity:0; } 20% { opacity:1; } 70% { translate:0 30px; opacity:1; } 100% { translate:0 32px; opacity:0; } }
+  .fedor { animation:fedor 2s ease-in-out infinite; }
+  @keyframes fedor { 0% { translate:0 6px; opacity:0; } 40% { opacity:1; } 100% { translate:0 -10px; opacity:0; } }
+  #suor { animation:suor 2.4s ease-in infinite; }
+  @keyframes suor { 0% { translate:0 0; opacity:0; } 20% { opacity:1; } 100% { translate:0 22px; opacity:0; } }
+  #pupilas { animation:treme .12s linear infinite; }
+  #forma.nega { animation:nega 1.6s ease-in-out infinite; }
+  @keyframes nega { 0%,60%,100% { translate:0 0; } 10%,30%,50% { translate:-6px 0; } 20%,40% { translate:6px 0; } }
+  #lupa { transform-box:fill-box; transform-origin:center; animation:lupa 3s ease-in-out infinite; }
+  @keyframes lupa { 0%,100% { translate:0 0; } 50% { translate:-4px 3px; } }
+  #joinha { transform-box:fill-box; transform-origin:center bottom; animation:joinha 1.8s ease-in-out infinite; }
+  @keyframes joinha { 0%,70%,100% { rotate:0deg; } 80% { rotate:-10deg; } 90% { rotate:6deg; } }
+  #microfone { transform-box:fill-box; transform-origin:right bottom; animation:mic 1.2s ease-in-out infinite; }
+  @keyframes mic { 0%,100% { rotate:0deg; } 50% { rotate:8deg; } }
+  #nariz { transform-box:fill-box; transform-origin:center; animation:pulsa 1.4s ease-in-out infinite; }
+  #ponteiro { transform-box:view-box; transform-origin:342px 198px; animation:ponteiro .9s ease-in-out infinite; }
+  @keyframes ponteiro { 0%,100% { rotate:0deg; } 50% { rotate:-7deg; } }
+  #seta { stroke-dasharray:140; animation:sobe 2.4s ease-out infinite; }
+  @keyframes sobe { 0% { stroke-dashoffset:140; } 60%,100% { stroke-dashoffset:0; } }
+  #forma.ri { animation:ri .5s ease-in-out infinite; }
+  @keyframes ri { 0%,100% { translate:0 0; } 50% { translate:0 -5px; } }
+  .fala { margin:4px 0 14px; max-width:340px; background:#151a28; border:1px solid #262d42; border-radius:14px;
+    padding:12px 14px; font-size:15px; line-height:1.4; min-height:48px; text-align:center; }
+  .botoes { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:420px; }
+  button { background:#151a28; color:var(--texto); border:1px solid #2a3148; border-radius:999px; padding:10px 14px;
+    font-size:15px; min-height:44px; cursor:pointer; }
+  button[aria-pressed="true"] { border-color:var(--cor); box-shadow:0 0 10px var(--cor); }
+  #passear { margin-top:10px; }
+  @media (prefers-reduced-motion: reduce) { *, *::before { animation:none !important; } #forma { transition:none; } }
+</style>
+</head>
+<body>
+  <h1>C.A.O.S.</h1>
+  <p class="sub">rascunho do Wally · a forma muda com o humor, o momento e a reação</p>
+  <p class="forma-nome" id="formaNome"></p>
+
+  <svg viewBox="0 0 400 400" role="img" aria-labelledby="formaNome">
+    <defs>
+      <filter id="brilho" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="3" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+
+    <g id="particulas"></g>
+
+    <g id="flutua"><g id="forma">
+      <!-- ANJINHO: asas e auréola -->
+      <g class="acc" data-acc="asas">
+        <path id="asaE" class="asa neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round"
+              d="M104 196 C 72 160, 34 168, 40 198 C 44 222, 72 232, 104 226 C 86 218, 74 210, 104 210 Z"/>
+        <path id="asaD" class="asa neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round"
+              d="M296 196 C 328 160, 366 168, 360 198 C 356 222, 328 232, 296 226 C 314 218, 326 210, 296 210 Z"/>
+      </g>
+      <g class="acc" data-acc="aureola"><ellipse id="aureola" class="neon" cx="200" cy="108" rx="48" ry="10" fill="none" stroke-width="5"/></g>
+
+      <!-- CAPETINHA: chifres e rabo -->
+      <g class="acc" data-acc="chifres">
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M132 140 L122 96 L158 134 Z"/>
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M242 134 L262 104 L276 112 L268 140 Z"/>
+        <circle id="faisca" class="neon" cx="279" cy="100" r="4" stroke-width="2" fill="none"/>
+      </g>
+      <g class="acc" data-acc="rabo">
+        <path class="neon" fill="none" stroke-width="5" stroke-linecap="round" d="M262 282 C 300 320, 250 345, 292 362"/>
+        <path class="neon" fill="#0f1320" stroke-width="3" stroke-linejoin="round" d="M284 352 L306 366 L282 374 Z"/>
+      </g>
+
+      <!-- ORGULHOSO: coroa, monóculo e gravata-borboleta -->
+      <g class="acc" data-acc="coroa">
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" transform="rotate(-9 200 120)"
+              d="M162 140 L166 100 L184 120 L200 92 L216 120 L234 100 L238 140 Z"/>
+        <circle class="neon" cx="200" cy="124" r="4" fill="none" stroke-width="2" transform="rotate(-9 200 120)"/>
+      </g>
+      <g class="acc" data-acc="gravata">
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M200 298 L174 284 L174 312 Z M200 298 L226 284 L226 312 Z"/>
+        <circle class="neon" cx="200" cy="298" r="5" fill="#0f1320" stroke-width="3"/>
+      </g>
+
+      <!-- FELIZ: chapéu de festa -->
+      <g class="acc" data-acc="chapeu">
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" transform="rotate(12 200 120)" d="M176 140 L200 78 L224 140 Z"/>
+        <path class="neon" fill="none" stroke-width="3" transform="rotate(12 200 120)" d="M186 116 L214 116 M193 98 L207 98"/>
+        <circle class="neon" cx="213" cy="76" r="7" fill="none" stroke-width="3"/>
+      </g>
+
+      <!-- PENSANDO: lâmpada na antena -->
+      <g class="acc" data-acc="lampada">
+        <path class="neon" fill="none" stroke-width="4" stroke-linecap="round" d="M200 136 L200 116"/>
+        <circle id="lampada-luz" class="neon" cx="200" cy="100" r="13" fill="none" stroke-width="4"/>
+        <path class="neon" fill="none" stroke-width="3" d="M194 113 h12"/>
+      </g>
+
+      <!-- TRISTE: nuvem de chuva -->
+      <g class="acc" data-acc="nuvem">
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round"
+              d="M150 96 C 136 96, 132 76, 148 72 C 150 56, 174 52, 182 66 C 192 50, 222 54, 222 74 C 240 72, 248 96, 230 96 Z"/>
+        <path class="gota neon" stroke-width="3" stroke-linecap="round" d="M166 104 v8"/>
+        <path class="gota neon" stroke-width="3" stroke-linecap="round" d="M190 104 v8" style="animation-delay:.35s"/>
+        <path class="gota neon" stroke-width="3" stroke-linecap="round" d="M214 104 v8" style="animation-delay:.7s"/>
+      </g>
+
+      <!-- ALERTA: sirene -->
+      <g class="acc" data-acc="sirene">
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M178 136 Q 178 104, 200 104 Q 222 104, 222 136 Z"/>
+        <g id="raios"><path class="neon" fill="none" stroke-width="4" stroke-linecap="round" d="M160 104 l-14 -8 M240 104 l14 -8 M200 92 v-14"/></g>
+      </g>
+
+      <!-- CARTEIRA · PROFESSOR: capelo, lousinha com gráfico e varinha -->
+      <g class="acc" data-acc="lousa">
+        <rect class="neon" x="312" y="146" width="62" height="50" rx="6" fill="#0f1320" stroke-width="4"/>
+        <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M320 186 L334 174 L346 180 L364 158 M356 158 h8 v8"/>
+        <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" d="M292 248 L320 200"/>
+      </g>
+
+      <!-- CARTEIRA · PARCEIRO (mês apertado): cachecol e coração -->
+      <g class="acc" data-acc="coracao"><path id="coracao" class="neon" stroke-width="3" d="M318 150 C 292 132, 300 108, 318 120 C 336 108, 344 132, 318 150 Z"/></g>
+
+      <!-- CARTEIRA · BRONCA (passou do limite): cartão amarelo -->
+      <g class="acc" data-acc="cartao">
+        <rect x="308" y="140" width="42" height="58" rx="6" fill="#ffd400" stroke="#ffd400" stroke-width="3" filter="url(#brilho)" transform="rotate(14 329 169)"/>
+        <path class="neon" fill="none" stroke-width="5" stroke-linecap="round" d="M292 236 Q 312 220, 318 196"/>
+      </g>
+
+      <!-- CARTEIRA · LEMBRETE (conta vencendo): despertador -->
+      <g class="acc" data-acc="despertador">
+        <g id="despertador">
+          <circle class="neon" cx="200" cy="100" r="20" fill="#0f1320" stroke-width="4"/>
+          <path class="neon" fill="none" stroke-width="4" stroke-linecap="round" d="M176 88 a 12 12 0 0 1 14 -14 M224 88 a 12 12 0 0 0 -14 -14"/>
+          <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" d="M200 100 v-11 M200 100 h8 M186 118 l-6 9 M214 118 l6 9"/>
+        </g>
+      </g>
+
+      <!-- REAÇÕES · ECONOMISTA: cofrinho com moeda caindo -->
+      <g class="acc" data-acc="cofrinho">
+        <circle id="moeda" class="neon" cx="338" cy="214" r="8" fill="#0f1320" stroke-width="3"/>
+        <ellipse class="neon" cx="340" cy="262" rx="30" ry="21" fill="#0f1320" stroke-width="4"/>
+        <path class="neon" fill="#0f1320" stroke-width="3" stroke-linejoin="round" d="M326 246 l4 -12 l10 9"/>
+        <rect class="neon" x="368" y="255" width="9" height="13" rx="3" fill="#0f1320" stroke-width="3"/>
+        <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" d="M330 242 h16 M326 280 v8 M352 280 v8"/>
+        <circle cx="356" cy="256" r="2.5" fill="var(--cor)"/>
+      </g>
+      <!-- REAÇÕES · NOJINHO: cheirinho ruim -->
+      <g class="acc" data-acc="fedor">
+        <path class="fedor neon" fill="none" stroke-width="3" stroke-linecap="round" d="M118 150 q 7 -8 0 -16 t 0 -16"/>
+        <path class="fedor neon" fill="none" stroke-width="3" stroke-linecap="round" d="M96 166 q 7 -8 0 -16 t 0 -16" style="animation-delay:.5s"/>
+        <path class="fedor neon" fill="none" stroke-width="3" stroke-linecap="round" d="M140 134 q 7 -8 0 -16 t 0 -16" style="animation-delay:1s"/>
+      </g>
+
+      <!-- REAÇÕES · AMIGÃO: alvo da meta e joinha -->
+      <g class="acc" data-acc="alvo">
+        <circle class="neon" cx="344" cy="166" r="26" fill="#0f1320" stroke-width="4"/>
+        <circle class="neon" cx="344" cy="166" r="15" fill="none" stroke-width="3"/>
+        <circle cx="344" cy="166" r="5" fill="var(--cor)"/>
+        <path id="flecha" class="neon" fill="none" stroke-width="4" stroke-linecap="round" d="M300 214 L 340 170 M300 214 l -4 -12 M300 214 l 12 -2"/>
+      </g>
+      <g class="acc" data-acc="joinha"><g id="joinha">
+        <rect class="neon" x="62" y="236" width="30" height="30" rx="8" fill="#0f1320" stroke-width="4"/>
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M70 238 V 216 q 0 -8 8 -8 q 8 0 8 8 V 238"/>
+        <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" d="M92 246 h8 M92 256 h8"/>
+      </g></g>
+
+      <!-- ESTILOS · HUMORISTA: microfone -->
+      <g class="acc" data-acc="microfone"><g id="microfone">
+        <path class="neon" fill="none" stroke-width="7" stroke-linecap="round" d="M80 228 L 100 266"/>
+        <circle class="neon" cx="72" cy="212" r="16" fill="#0f1320" stroke-width="4"/>
+        <path class="neon" fill="none" stroke-width="2" d="M60 206 h24 M58 214 h28 M62 222 h20"/>
+      </g></g>
+      <!-- ESTILOS · GERENTE: maleta -->
+      <g class="acc" data-acc="maleta">
+        <path class="neon" fill="none" stroke-width="4" stroke-linejoin="round" d="M330 238 v-10 h24 v10"/>
+        <rect class="neon" x="314" y="238" width="56" height="40" rx="7" fill="#0f1320" stroke-width="4"/>
+        <path class="neon" fill="none" stroke-width="3" d="M314 254 h56 M338 250 h8 v8 h-8 z"/>
+      </g>
+      <!-- ESTILOS · INVESTIDOR: boné virado e seta subindo -->
+      <g class="acc" data-acc="seta">
+        <path id="seta" class="neon" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M304 262 L 326 230 L 342 242 L 370 196 M356 194 h16 v16"/>
+      </g>
+      <!-- PREOCUPADO: medidor do limite quase cheio -->
+      <g class="acc" data-acc="medidor">
+        <path class="neon" fill="#0f1320" stroke-width="4" d="M302 200 A 40 40 0 0 1 382 200 Z"/>
+        <path fill="none" stroke="#ff3b5c" stroke-width="6" stroke-linecap="round" filter="url(#brilho)" d="M370 174 A 40 40 0 0 1 378 192"/>
+        <path id="ponteiro" class="neon" fill="none" stroke-width="4" stroke-linecap="round" d="M342 198 L 372 180"/>
+        <text x="342" y="222" text-anchor="middle" font-size="14" font-weight="800" fill="var(--cor)">94%</text>
+      </g>
+
+      <!-- a telinha -->
+      <rect class="neon" x="100" y="135" width="200" height="150" rx="34" fill="#0f1320" stroke-width="5"/>
+      <rect x="114" y="149" width="172" height="122" rx="24" fill="none" stroke="#ffffff" stroke-opacity=".06" stroke-width="2"/>
+
+      <g class="acc" data-acc="capelo">
+        <g transform="rotate(-6 200 120)">
+          <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M172 126 v14 q28 12 56 0 v-14"/>
+          <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M146 120 L200 98 L254 120 L200 142 Z"/>
+          <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" d="M200 120 L246 124 L248 150"/>
+          <rect class="neon" x="243" y="150" width="10" height="12" rx="2" fill="none" stroke-width="3"/>
+        </g>
+      </g>
+      <g class="acc" data-acc="cachecol">
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M112 274 Q 200 300, 288 274 L 290 290 Q 200 318, 110 290 Z"/>
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M244 294 L 252 336 L 270 332 L 262 290"/>
+        <path class="neon" fill="none" stroke-width="2" d="M150 286 v10 M180 292 v10 M210 294 v10 M240 290 v10"/>
+      </g>
+      <!-- REAÇÕES · RICO: terninho e óculos escuros -->
+      <g class="acc" data-acc="terno">
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M128 282 L 112 344 H 288 L 272 282 Z"/>
+        <path class="neon" fill="none" stroke-width="3" stroke-linejoin="round" d="M162 284 L 200 330 L 238 284"/>
+        <path class="neon" fill="#0f1320" stroke-width="3" stroke-linejoin="round" d="M200 290 l -8 9 l 8 30 l 8 -30 z"/>
+        <circle class="neon" cx="200" cy="338" r="2.5" fill="var(--cor)" stroke-width="1"/>
+      </g>
+      <!-- REAÇÕES · DECEPCIONADO e MEDO: gotinha de suor -->
+      <g class="acc" data-acc="suor"><path id="suor" fill="#9fd8ff" stroke="#9fd8ff" stroke-width="2" filter="url(#brilho)" d="M276 158 q -9 13 0 18 q 9 -5 0 -18"/></g>
+      <!-- MEDO: pupilinhas tremendo -->
+      <g class="acc" data-acc="pupilas"><g id="pupilas">
+        <circle cx="161" cy="202" r="3.5" fill="var(--cor)"/><circle cx="239" cy="202" r="3.5" fill="var(--cor)"/>
+      </g></g>
+      <!-- NOJINHO: linguinha -->
+      <g class="acc" data-acc="lingua"><path fill="#ff8fb3" stroke="#ff8fb3" stroke-width="2" d="M208 250 q 2 18 14 12 q 5 -6 -2 -14 z"/></g>
+
+      <!-- INVESTIDOR: boné virado (na frente da telinha) -->
+      <g class="acc" data-acc="bone">
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M140 142 Q 142 102, 200 102 Q 258 102, 260 142 Z"/>
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M142 138 L 100 128 Q 94 140, 104 146 L 142 146 Z"/>
+        <circle class="neon" cx="200" cy="104" r="4" fill="var(--cor)" stroke-width="1"/>
+      </g>
+      <!-- GERENTE: óculos meia-lua -->
+      <g class="acc" data-acc="meialua">
+        <path class="neon" fill="none" stroke-width="3" stroke-linejoin="round" d="M142 208 h38 v4 q 0 14 -19 14 q -19 0 -19 -14 z M220 208 h38 v4 q 0 14 -19 14 q -19 0 -19 -14 z M180 210 h40"/>
+      </g>
+      <!-- acessórios do rosto -->
+      <g class="acc" data-acc="oculos">
+        <circle class="neon" cx="161" cy="198" r="21" fill="none" stroke-width="3"/>
+        <circle class="neon" cx="241" cy="198" r="21" fill="none" stroke-width="3"/>
+        <path class="neon" fill="none" stroke-width="3" d="M182 196 Q 201 188, 220 196"/>
+      </g>
+      <g class="acc" data-acc="monoculo">
+        <circle class="neon" cx="239" cy="206" r="21" fill="none" stroke-width="3"/>
+        <path class="neon" fill="none" stroke-width="2" d="M258 216 Q 272 248, 262 282"/>
+      </g>
+      <g class="acc" data-acc="bochechas">
+        <ellipse cx="144" cy="236" rx="12" ry="6" fill="#ff8fb3" opacity=".55"/>
+        <ellipse cx="256" cy="236" rx="12" ry="6" fill="#ff8fb3" opacity=".55"/>
+      </g>
+      <g class="acc" data-acc="lagrima"><path id="lagrima" class="neon" fill="none" stroke-width="3" d="M156 222 q -6 10 0 13 q 6 -3 0 -13"/></g>
+
+      <g id="rosto">
+        <g id="olhos">
+          <path id="olhoE" class="neon" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path id="olhoD" class="neon" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <path id="sobrancelhas" class="neon" fill="none" stroke-width="4" stroke-linecap="round"/>
+        <path id="boca" class="neon" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        <text id="extra" x="200" y="128" text-anchor="middle" font-size="34" font-weight="800" fill="var(--cor)" filter="url(#brilho)"></text>
+      </g>
+      <g class="acc" data-acc="oculosEscuros">
+        <rect class="neon" x="140" y="186" width="44" height="30" rx="9" fill="#05070c" stroke-width="3"/>
+        <rect class="neon" x="216" y="186" width="44" height="30" rx="9" fill="#05070c" stroke-width="3"/>
+        <path class="neon" fill="none" stroke-width="3" d="M184 196 Q 200 190, 216 196 M140 194 L 118 186 M260 194 L 282 186"/>
+        <path fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="3" stroke-linecap="round" d="M150 194 l 8 -4 M226 194 l 8 -4"/>
+      </g>
+      <!-- REAÇÕES · DESCONFIADO: lupa no olho -->
+      <g class="acc" data-acc="lupa"><g id="lupa">
+        <circle class="neon" cx="241" cy="202" r="24" fill="color-mix(in srgb, var(--cor) 12%, transparent)" stroke-width="5"/>
+        <path class="neon" fill="none" stroke-width="7" stroke-linecap="round" d="M258 220 L 284 250"/>
+        <path fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="3" stroke-linecap="round" d="M228 192 q 6 -8 14 -8"/>
+      </g></g>
+      <!-- HUMORISTA: nariz de palhaço -->
+      <g class="acc" data-acc="nariz"><circle id="nariz" cx="200" cy="226" r="10" fill="#ff3b5c" stroke="#ff3b5c" filter="url(#brilho)"/></g>
+    </g></g>
+  </svg>
+
+  <div class="fala" id="fala" aria-live="polite"></div>
+  <div class="botoes" id="botoes"></div>
+  <button id="passear" type="button">▶ Passear por todas</button>
+
+<script>
+// Cada humor tem uma FORMA: cor, acessórios, jeito do corpo, rosto e como o caos em volta se mexe.
+const formas = {
+  anjinho:   { nome:'😇 Anjinho', quando:'calmo, carinhoso', cor:'#9fe8ff', modo:'lento',
+    acc:['asas','aureola','bochechas'], corpo:'translateY(-6px)',
+    olhoE:{ d:'M148 206 Q 161 196, 174 206', cheio:false }, olhoD:{ d:'M226 206 Q 239 196, 252 206', cheio:false },
+    sob:'', boca:'M184 244 Q 200 256, 216 244', extra:'',
+    fala:'Que mês tranquilo… tudo no lugar. Tô orgulhoso de você, viu?' },
+  feliz:     { nome:'🥳 Festeiro', quando:'meta batida, mês no verde', cor:'#ffd24a', modo:'festa',
+    acc:['chapeu','bochechas'], corpo:'translateY(-10px) scale(1.04)',
+    olhoE:{ d:'M148 208 Q 161 186, 174 208', cheio:false }, olhoD:{ d:'M226 208 Q 239 186, 252 208', cheio:false },
+    sob:'', boca:'M166 236 Q 200 276, 234 236 Z', extra:'',
+    fala:'META BATIDA! Não acostuma, mas hoje tem festa.' },
+  orgulhoso: { nome:'🎩 Pomposo', quando:'orgulhoso, se achando', cor:'#e9c46a', modo:'anel',
+    acc:['coroa','gravata','monoculo'], corpo:'translateY(-12px) rotate(7deg) scale(1.06)',
+    olhoE:{ d:'M150 204 h22 v8 a11 6 0 0 1 -22 0 z', cheio:true }, olhoD:{ d:'M228 204 h22 v8 a11 6 0 0 1 -22 0 z', cheio:true },
+    sob:'M146 192 L174 192 M226 186 L254 180', boca:'M178 252 Q 206 258, 230 240', extra:'',
+    fala:'Naturalmente, a previsão estava correta. Eu raramente erro.' },
+  pensando:  { nome:'🤓 Pensador', quando:'calculando, pesquisando', cor:'#3ef0ff', modo:'lento',
+    acc:['lampada','oculos'], corpo:'rotate(-3deg)',
+    olhoE:{ d:'M156 186 h16 v18 h-16 z', cheio:true }, olhoD:{ d:'M236 186 h16 v18 h-16 z', cheio:true },
+    sob:'', boca:'M180 252 q 10 -6 20 0 t 20 0', extra:'',
+    fala:'Hmm… deixa eu fazer as contas. Ninguém me paga hora extra, mas tudo bem.' },
+  triste:    { nome:'🌧️ Tristinho', quando:'mês no vermelho, decepcionado', cor:'#6fa8ff', modo:'chuva',
+    acc:['nuvem','lagrima'], corpo:'translateY(18px) scale(.95, .88)',
+    olhoE:{ d:'M151 198 h20 v18 h-20 z', cheio:true }, olhoD:{ d:'M229 198 h20 v18 h-20 z', cheio:true },
+    sob:'M146 184 L172 176 M228 176 L254 184', boca:'M178 260 Q 200 244, 222 260', extra:'',
+    fala:'Saiu mais do que entrou esse mês… tudo bem, a gente recomeça.' },
+  tentado:   { nome:'😈 Capetinha', quando:'tentado, zoeira', cor:'#b06bff', modo:'calmo',
+    acc:['chifres','rabo'], corpo:'rotate(-6deg)',
+    olhoE:{ d:'M150 202 h22 v12 h-22 z', cheio:true }, olhoD:{ d:'M228 190 h22 v26 h-22 z', cheio:true },
+    sob:'M226 176 L254 166', boca:'M170 252 Q 200 262, 230 240', extra:'',
+    fala:'Oitenta reais de delivery numa terça-feira. Ousado.' },
+  perturbado:{ nome:'👿 Capeta bravo', quando:'perturbado, irritado', cor:'#ff3b5c', modo:'agitado',
+    acc:['chifres','rabo'], corpo:'scale(1.05)', treme:true,
+    olhoE:{ d:'M148 192 L174 202 V216 H148 Z', cheio:true }, olhoD:{ d:'M252 192 L226 202 V216 H252 Z', cheio:true },
+    sob:'', boca:'M176 258 Q 200 240, 224 258', extra:'',
+    fala:'O orçamento do lazer estourou. De novo. Eu avisei. Duas vezes.' },
+  alerta:    { nome:'🚨 Sirene', quando:'alerta sério', cor:'#ff8a3d', modo:'agitado',
+    acc:['sirene'], corpo:'scale(1.04)',
+    olhoE:{ d:'M149 202 a12 12 0 1 0 24 0 a12 12 0 1 0 -24 0', cheio:false }, olhoD:{ d:'M227 202 a12 12 0 1 0 24 0 a12 12 0 1 0 -24 0', cheio:false },
+    sob:'', boca:'M192 252 a8 8 0 1 0 16 0 a8 8 0 1 0 -16 0', extra:'',
+    fala:'A fatura do cartão vence amanhã: R$ 412,90. Bora pagar hoje?' },
+  professor: { nome:'👨‍🏫 Professor', quando:'dica, ideia, insight', cor:'#7cc4ff', modo:'lento', grupo:'carteira',
+    acc:['capelo','lousa','oculos'], corpo:'rotate(-4deg)',
+    olhoE:{ d:'M152 190 h18 v20 h-18 z', cheio:true }, olhoD:{ d:'M232 190 h18 v20 h-18 z', cheio:true },
+    sob:'M226 170 L254 164', boca:'M180 248 Q 202 258, 224 244', extra:'',
+    fala:'Dica do professor: cortando metade do delivery, sobram R$ 120 no mês. Anota aí.' },
+  parceiro:  { nome:'🤗 Parceiro', quando:'mês apertado, precisa de apoio', cor:'#ffa883', modo:'abraco', grupo:'carteira',
+    acc:['cachecol','coracao','bochechas'], corpo:'translateY(4px) scale(1.02)',
+    olhoE:{ d:'M148 206 Q 161 196, 174 206', cheio:false }, olhoD:{ d:'M226 206 Q 239 196, 252 206', cheio:false },
+    sob:'M148 186 L172 180 M228 180 L252 186', boca:'M182 244 Q 200 256, 218 244', extra:'',
+    fala:'Ei, calma. O mês apertou, mas a gente dá um jeito. Bora ver juntos onde dá pra segurar?' },
+  bronca:    { nome:'🟨 Bronca', quando:'passou do limite', cor:'#ffb020', modo:'calmo', grupo:'carteira',
+    acc:['cartao'], corpo:'rotate(3deg) scale(1.03)',
+    olhoE:{ d:'M150 194 h22 v22 h-22 z', cheio:true }, olhoD:{ d:'M228 194 h22 v22 h-22 z', cheio:true },
+    sob:'M146 176 L172 186 M254 176 L228 186', boca:'M180 254 h40', extra:'',
+    fala:'Cartão amarelo! O mercado passou do limite em R$ 85. Mais uma dessa e é vermelho, hein.' },
+  lembrete:  { nome:'⏰ Lembrete', quando:'conta perto de vencer', cor:'#4ee6a6', modo:'calmo', grupo:'carteira',
+    acc:['despertador'], corpo:'translateY(-4px)',
+    olhoE:{ d:'M152 202 a 9 9 0 1 0 18 0 a 9 9 0 1 0 -18 0', cheio:true }, olhoD:{ d:'M230 202 a 9 9 0 1 0 18 0 a 9 9 0 1 0 -18 0', cheio:true },
+    sob:'M146 182 Q 161 172, 176 182 M224 182 Q 239 172, 254 182', boca:'M186 248 Q 200 258, 214 248', extra:'',
+    fala:'Psiu! A conta de luz (R$ 180) vence depois de amanhã. Já quer marcar como paga?' },
+  chocado:   { nome:'😶 Sem reação', quando:'chocado, sem palavras', cor:'#b77dff', modo:'parado', grupo:'reacoes',
+    acc:[], corpo:'scale(.97)',
+    olhoE:{ d:'M155 200 a 7 7 0 1 0 14 0 a 7 7 0 1 0 -14 0', cheio:true }, olhoD:{ d:'M231 200 a 7 7 0 1 0 14 0 a 7 7 0 1 0 -14 0', cheio:true },
+    sob:'', boca:'', extra:'',
+    fala:'…' },
+  economista:{ nome:'📈 Economista', quando:'controlando melhor as finanças', cor:'#4ade80', modo:'anel', grupo:'reacoes',
+    acc:['cofrinho','bochechas'], corpo:'translateY(-6px) rotate(-3deg)',
+    olhoE:{ d:'M150 192 h22 v24 h-22 z', cheio:true }, olhoD:{ d:'M228 192 h22 v24 h-22 z', cheio:true },
+    sob:'M146 178 Q 161 172, 176 178 M224 178 Q 239 172, 254 178', boca:'M174 242 Q 200 266, 226 242', extra:'',
+    fala:'Olha só! Três semanas dentro do orçamento. Tá virando economista, hein?' },
+  rico:      { nome:'🤑 Rico', quando:'salário caiu', cor:'#ffe27a', modo:'dinheiro', grupo:'reacoes',
+    acc:['terno','oculosEscuros'], corpo:'translateY(-10px) rotate(4deg) scale(1.04)',
+    olhoE:{ d:'M152 196 h18 v16 h-18 z', cheio:true }, olhoD:{ d:'M230 196 h18 v16 h-18 z', cheio:true },
+    sob:'', boca:'M166 240 Q 200 274, 236 236 Z', extra:'',
+    fala:'Agora sim! Salário na conta. Onde vamos comer hoje, patrão?' },
+  decepcionado:{ nome:'😮‍💨 Decepcionado', quando:'estourou o limite do mês', cor:'#a5b4d0', modo:'lento', grupo:'reacoes',
+    acc:['suor'], corpo:'translateY(8px) rotate(-4deg)', anim:'nega',
+    olhoE:{ d:'M150 204 h22 v9 h-22 z', cheio:true }, olhoD:{ d:'M228 204 h22 v9 h-22 z', cheio:true },
+    sob:'M148 192 L 174 196 M226 196 L 252 192', boca:'M182 254 Q 200 249, 220 257', extra:'',
+    fala:'Ai, ai, ai… o limite do lazer estourou em R$ 60. Olha só o que você fez.' },
+  nojinho:   { nome:'🤢 Nojinho', quando:'não curtiu sua atitude', cor:'#c3d44a', modo:'lento', grupo:'reacoes',
+    acc:['fedor','lingua'], corpo:'rotate(-8deg) translateX(-6px)',
+    olhoE:{ d:'M148 196 L 172 204 L 148 212', cheio:false }, olhoD:{ d:'M230 196 h18 v16 h-18 z', cheio:true },
+    sob:'M226 182 L 252 188', boca:'M176 250 q 8 -6 16 0 t 16 0 t 16 0', extra:'',
+    fala:'Eca. Terceiro delivery hoje? Tô até com vergonha por você.' },
+  medo:      { nome:'😱 Medo', quando:'gastando mais do que devia', cor:'#c7d2fe', modo:'medo', grupo:'reacoes',
+    acc:['suor','pupilas'], corpo:'scale(.9) translateY(6px)', treme:true,
+    olhoE:{ d:'M147 202 a 14 14 0 1 0 28 0 a 14 14 0 1 0 -28 0', cheio:false }, olhoD:{ d:'M225 202 a 14 14 0 1 0 28 0 a 14 14 0 1 0 -28 0', cheio:false },
+    sob:'M146 178 L 172 172 M228 172 L 254 178', boca:'M174 256 l 9 -7 l 9 7 l 9 -7 l 9 7 l 9 -7 l 9 7', extra:'',
+    fala:'Socorro… já foi 80% do orçamento e ainda é dia 12. Tô com medo junto com você.' },
+  desconfiado:{ nome:'🤨 Desconfiado', quando:'finge que economiza', cor:'#f472b6', modo:'lento', grupo:'reacoes',
+    acc:['lupa'], corpo:'rotate(6deg) translateX(6px)',
+    olhoE:{ d:'M150 204 h22 v6 h-22 z', cheio:true }, olhoD:{ d:'M240 194 h14 v18 h-14 z', cheio:true },
+    sob:'M146 194 L 174 198 M228 176 L 256 168', boca:'M180 252 h26 q 8 0 12 -6', extra:'',
+    fala:'Hmm… tirou R$ 200 da meta pra pagar o cartão? Isso não é economizar, é tapar buraco. Finjo que acredito.' },
+  amigao:    { nome:'🤝 Amigão', quando:'toque pra chegar na meta', cor:'#2dd4bf', modo:'calmo', grupo:'reacoes',
+    acc:['alvo','joinha'], corpo:'rotate(-4deg) translateY(-4px)',
+    olhoE:{ d:'M148 206 Q 161 192, 174 206', cheio:false }, olhoD:{ d:'M228 190 h22 v24 h-22 z', cheio:true },
+    sob:'M224 176 Q 239 168, 254 176', boca:'M172 242 Q 202 266, 230 238', extra:'',
+    fala:'Amigão, um toque: cortando delivery e corrida de app, sobram R$ 210. Bota na meta da viagem e você chega 2 meses antes.' },
+  humorista: { nome:'🎤 Humorista', quando:'hora da piada', cor:'#ff9f1c', modo:'festa', grupo:'estilos',
+    acc:['microfone','nariz'], corpo:'rotate(-5deg)', anim:'ri',
+    olhoE:{ d:'M148 196 L 172 204 L 148 212', cheio:false }, olhoD:{ d:'M252 196 L 228 204 L 252 212', cheio:false },
+    sob:'', boca:'M168 240 Q 200 280, 232 240 Z', extra:'HA!',
+    fala:'Sabe por que o boleto não vai à festa? Porque ele sempre chega atrasado. Tá, essa foi ruim. Rindo de nervoso aqui.' },
+  gerente:   { nome:'💼 Gerente', quando:'jeito formal, explica a fundo', cor:'#cbd5e1', modo:'anel', grupo:'estilos',
+    acc:['terno','maleta','meialua'], corpo:'scale(1.02)',
+    olhoE:{ d:'M152 190 h18 v16 h-18 z', cheio:true }, olhoD:{ d:'M230 190 h18 v16 h-18 z', cheio:true },
+    sob:'M146 178 h28 M226 178 h28', boca:'M182 250 Q 200 254, 218 250', extra:'',
+    fala:'Vamos aos fundamentos. Funciona assim: quanto mais tempo o dinheiro fica aplicado, mais os juros rendem sobre os juros. Sugiro um plano em três etapas.' },
+  investidor:{ nome:'💡 Investidor', quando:'sugestão leve, sem pressão', cor:'#60a5fa', modo:'calmo', grupo:'estilos',
+    acc:['bone','seta'], corpo:'rotate(-6deg) translateY(-4px)',
+    olhoE:{ d:'M156 196 h18 v18 h-18 z', cheio:true }, olhoD:{ d:'M234 196 h18 v18 h-18 z', cheio:true },
+    sob:'M152 182 Q 165 176, 178 182 M230 180 L 256 174', boca:'M176 246 Q 204 260, 228 242', extra:'',
+    fala:'Ideia solta: e aquele dinheiro parado na conta? Acho que valia olhar uma reserva que rende. Pensa com carinho.' },
+  preocupado:{ nome:'😟 Preocupado', quando:'conta chegando no limite', cor:'#fdba74', modo:'calmo', grupo:'reacoes',
+    acc:['medidor','suor'], corpo:'translateY(4px) rotate(3deg)',
+    olhoE:{ d:'M151 196 h20 v20 h-20 z', cheio:true }, olhoD:{ d:'M229 196 h20 v20 h-20 z', cheio:true },
+    sob:'M146 184 L 172 176 M228 176 L 254 184', boca:'M180 254 q 7 -6 14 0 t 14 0 t 14 0', extra:'',
+    fala:'Amigo, segura! Já foram R$ 750 dos R$ 800 do limite. Cuidado com o que vem aí.' },
+};
+
+const $ = id => document.getElementById(id);
+let atual = 'anjinho';
+
+function desenharRosto(f) {
+  for (const lado of ['olhoE', 'olhoD']) {
+    $(lado).setAttribute('d', f[lado].d);
+    $(lado).style.fill = f[lado].cheio ? f.cor : 'none';
+  }
+  $('sobrancelhas').setAttribute('d', f.sob || 'M0 0');
+  $('sobrancelhas').style.display = f.sob ? '' : 'none';
+  $('boca').setAttribute('d', f.boca || 'M0 0');
+  $('boca').style.display = f.boca ? '' : 'none';
+  $('boca').style.fill = f.boca.endsWith('Z') ? '#0f1320' : 'none';
+  $('extra').textContent = f.extra;
+}
+
+function mostrar(nome, imediato) {
+  const f = formas[nome]; atual = nome;
+  document.documentElement.style.setProperty('--cor', f.cor);
+  document.querySelectorAll('.acc').forEach(g => g.classList.toggle('on', f.acc.includes(g.dataset.acc)));
+  $('forma').style.transform = f.corpo;
+  $('forma').classList.toggle('treme', !!f.treme);
+  $('forma').classList.toggle('nega', f.anim === 'nega');
+  $('forma').classList.toggle('ri', f.anim === 'ri');
+  if (imediato) desenharRosto(f);
+  else { $('rosto').classList.add('troca'); setTimeout(() => { desenharRosto(f); $('rosto').classList.remove('troca'); }, 150); }
+  $('formaNome').textContent = `${f.nome} · ${f.quando}`;
+  $('fala').textContent = f.fala;
+  document.querySelectorAll('#botoes button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.forma === nome)));
+}
+
+const titulos = { humor:'Humores', carteira:'Momentos da Carteira', reacoes:'Reações da Carteira', estilos:'Jeitos de falar (a pessoa escolhe)' };
+let grupoAtual = null;
+for (const [k, f] of Object.entries(formas)) {
+  const g = f.grupo || 'humor';
+  if (g !== grupoAtual) {
+    grupoAtual = g;
+    const t = document.createElement('p'); t.className = 'grupo'; t.textContent = titulos[g];
+    $('botoes').appendChild(t);
+  }
+  const b = document.createElement('button');
+  b.type = 'button'; b.textContent = f.nome; b.dataset.forma = k;
+  b.onclick = () => { pararPasseio(); mostrar(k); };
+  $('botoes').appendChild(b);
+}
+
+let passeio = null;
+function pararPasseio() { clearInterval(passeio); passeio = null; $('passear').textContent = '▶ Passear por todas'; }
+$('passear').onclick = () => {
+  if (passeio) return pararPasseio();
+  const nomes = Object.keys(formas);
+  $('passear').textContent = '⏸ Parar';
+  passeio = setInterval(() => mostrar(nomes[(nomes.indexOf(atual) + 1) % nomes.length]), 2600);
+};
+
+// os pedacinhos do caos em volta
+const NS = 'http://www.w3.org/2000/svg';
+const CONFETE = ['#ffd24a', '#ff5fa2', '#3ef0ff', '#7dff8a', '#b06bff'];
+const pedacos = Array.from({ length: 15 }, (_, i) => {
+  const r = document.createElementNS(NS, 'rect');
+  const t = 5 + (i % 3) * 3;
+  r.setAttribute('width', t); r.setAttribute('height', t); r.setAttribute('rx', 1.5);
+  r.setAttribute('fill', 'none'); r.setAttribute('stroke-width', 2); r.setAttribute('filter', 'url(#brilho)');
+  r.style.opacity = .35 + (i % 4) * .15;
+  $('particulas').appendChild(r);
+  return { el:r, t, ang: i * (Math.PI * 2 / 15), raio: 140 + (i % 5) * 12, vel: .003 + (i % 4) * .0015, giro: i * 37,
+           x: 60 + (i * 53) % 280, y: (i * 41) % 400 };
+});
+
+const parado = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function quadro() {
+  const f = formas[atual], modo = f.modo;
+  const v = { calmo:1, lento:.35, agitado:2.6, festa:1.8, anel:.6, chuva:1, abraco:.25, parado:0, dinheiro:1, medo:1.2 }[modo];
+  const tremor = modo === 'agitado' ? 7 : modo === 'medo' ? 4 : 0;
+  pedacos.forEach((p, i) => {
+    p.el.style.stroke = modo === 'festa' ? CONFETE[i % CONFETE.length] : modo === 'dinheiro' ? '#4ade80' : f.cor;
+    const nota = modo === 'dinheiro';
+    if (p.nota !== nota) { p.nota = nota; p.el.setAttribute('width', nota ? 16 : p.t); p.el.setAttribute('height', nota ? 9 : p.t); }
+    if (parado) return;
+    p.ang += p.vel * v; p.giro += v * 1.5;
+    let x, y;
+    if (modo === 'chuva' || modo === 'dinheiro') {
+      p.y += .6 + (i % 3) * .3; if (p.y > 400) p.y = 20;
+      x = p.x; y = p.y;
+    } else {
+      const raio = modo === 'medo' ? 112 + (i % 3) * 5 : modo === 'festa' ? 150 : modo === 'anel' ? 165 : modo === 'abraco' ? 118 + (i % 3) * 6 : p.raio;
+      const ang = modo === 'anel' ? (i * Math.PI * 2 / 15) + performance.now() / 4000 : p.ang;
+      x = 200 + Math.cos(ang) * raio + (Math.random() - .5) * tremor;
+      y = 212 + Math.sin(ang) * raio * (modo === 'anel' ? .35 : .8) + (Math.random() - .5) * tremor;
+      p.x = x; p.y = y;
+    }
+    p.el.setAttribute('transform', `translate(${x} ${y}) rotate(${modo === 'anel' ? 45 : p.giro})`);
+  });
+  $('faisca').style.opacity = Math.random() < (modo === 'agitado' ? .5 : .15) ? 1 : .2;
+  requestAnimationFrame(quadro);
+}
+requestAnimationFrame(quadro);
+
+// piscar
+(function piscar() {
+  setTimeout(() => {
+    if (formas[atual].olhoE.cheio) { $('olhos').classList.add('pisca'); setTimeout(() => $('olhos').classList.remove('pisca'), 130); }
+    piscar();
+  }, 2500 + Math.random() * 2500);
+})();
+
+const pedida = new URLSearchParams(location.search).get('forma');
+mostrar(formas[pedida] ? pedida : 'anjinho', true);
+</script>
+</body>
+</html>
