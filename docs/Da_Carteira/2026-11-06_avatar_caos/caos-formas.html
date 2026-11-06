@@ -55,6 +55,10 @@
   #pupilas { animation:treme .12s linear infinite; }
   #forma.nega { animation:nega 1.6s ease-in-out infinite; }
   @keyframes nega { 0%,60%,100% { translate:0 0; } 10%,30%,50% { translate:-6px 0; } 20%,40% { translate:6px 0; } }
+  #lupa { transform-box:fill-box; transform-origin:center; animation:lupa 3s ease-in-out infinite; }
+  @keyframes lupa { 0%,100% { translate:0 0; } 50% { translate:-4px 3px; } }
+  #joinha { transform-box:fill-box; transform-origin:center bottom; animation:joinha 1.8s ease-in-out infinite; }
+  @keyframes joinha { 0%,70%,100% { rotate:0deg; } 80% { rotate:-10deg; } 90% { rotate:6deg; } }
   .fala { margin:4px 0 14px; max-width:340px; background:#151a28; border:1px solid #262d42; border-radius:14px;
     padding:12px 14px; font-size:15px; line-height:1.4; min-height:48px; text-align:center; }
   .botoes { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:420px; }
@@ -182,6 +186,19 @@
         <path class="fedor neon" fill="none" stroke-width="3" stroke-linecap="round" d="M140 134 q 7 -8 0 -16 t 0 -16" style="animation-delay:1s"/>
       </g>
 
+      <!-- REAÇÕES · AMIGÃO: alvo da meta e joinha -->
+      <g class="acc" data-acc="alvo">
+        <circle class="neon" cx="344" cy="166" r="26" fill="#0f1320" stroke-width="4"/>
+        <circle class="neon" cx="344" cy="166" r="15" fill="none" stroke-width="3"/>
+        <circle cx="344" cy="166" r="5" fill="var(--cor)"/>
+        <path id="flecha" class="neon" fill="none" stroke-width="4" stroke-linecap="round" d="M300 214 L 340 170 M300 214 l -4 -12 M300 214 l 12 -2"/>
+      </g>
+      <g class="acc" data-acc="joinha"><g id="joinha">
+        <rect class="neon" x="62" y="236" width="30" height="30" rx="8" fill="#0f1320" stroke-width="4"/>
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M70 238 V 216 q 0 -8 8 -8 q 8 0 8 8 V 238"/>
+        <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" d="M92 246 h8 M92 256 h8"/>
+      </g></g>
+
       <!-- a telinha -->
       <rect class="neon" x="100" y="135" width="200" height="150" rx="34" fill="#0f1320" stroke-width="5"/>
       <rect x="114" y="149" width="172" height="122" rx="24" fill="none" stroke="#ffffff" stroke-opacity=".06" stroke-width="2"/>
@@ -246,6 +263,12 @@
         <path class="neon" fill="none" stroke-width="3" d="M184 196 Q 200 190, 216 196 M140 194 L 118 186 M260 194 L 282 186"/>
         <path fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="3" stroke-linecap="round" d="M150 194 l 8 -4 M226 194 l 8 -4"/>
       </g>
+      <!-- REAÇÕES · DESCONFIADO: lupa no olho -->
+      <g class="acc" data-acc="lupa"><g id="lupa">
+        <circle class="neon" cx="241" cy="202" r="24" fill="color-mix(in srgb, var(--cor) 12%, transparent)" stroke-width="5"/>
+        <path class="neon" fill="none" stroke-width="7" stroke-linecap="round" d="M258 220 L 284 250"/>
+        <path fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="3" stroke-linecap="round" d="M228 192 q 6 -8 14 -8"/>
+      </g></g>
     </g></g>
   </svg>
 
@@ -346,6 +369,16 @@ const formas = {
     olhoE:{ d:'M147 202 a 14 14 0 1 0 28 0 a 14 14 0 1 0 -28 0', cheio:false }, olhoD:{ d:'M225 202 a 14 14 0 1 0 28 0 a 14 14 0 1 0 -28 0', cheio:false },
     sob:'M146 178 L 172 172 M228 172 L 254 178', boca:'M174 256 l 9 -7 l 9 7 l 9 -7 l 9 7 l 9 -7 l 9 7', extra:'',
     fala:'Socorro… já foi 80% do orçamento e ainda é dia 12. Tô com medo junto com você.' },
+  desconfiado:{ nome:'🤨 Desconfiado', quando:'finge que economiza', cor:'#f472b6', modo:'lento', grupo:'reacoes',
+    acc:['lupa'], corpo:'rotate(6deg) translateX(6px)',
+    olhoE:{ d:'M150 204 h22 v6 h-22 z', cheio:true }, olhoD:{ d:'M240 194 h14 v18 h-14 z', cheio:true },
+    sob:'M146 194 L 174 198 M228 176 L 256 168', boca:'M180 252 h26 q 8 0 12 -6', extra:'',
+    fala:'Hmm… tirou R$ 200 da meta pra pagar o cartão? Isso não é economizar, é tapar buraco. Finjo que acredito.' },
+  amigao:    { nome:'🤝 Amigão', quando:'toque pra chegar na meta', cor:'#2dd4bf', modo:'calmo', grupo:'reacoes',
+    acc:['alvo','joinha'], corpo:'rotate(-4deg) translateY(-4px)',
+    olhoE:{ d:'M148 206 Q 161 192, 174 206', cheio:false }, olhoD:{ d:'M228 190 h22 v24 h-22 z', cheio:true },
+    sob:'M224 176 Q 239 168, 254 176', boca:'M172 242 Q 202 266, 230 238', extra:'',
+    fala:'Amigão, um toque: cortando delivery e corrida de app, sobram R$ 210. Bota na meta da viagem e você chega 2 meses antes.' },
 };
 
 const $ = id => document.getElementById(id);

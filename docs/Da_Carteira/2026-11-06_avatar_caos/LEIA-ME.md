@@ -44,6 +44,8 @@ em nenhum app** (nem na Carteira). Use, mude ou ignore: quem decide no Perfil é
 | 😮‍💨 Decepcionado | estourou o limite do mês | olho caído, gotinha de suor, balança a cabeça ("ai, ai, ai") |
 | 🤢 Nojinho | não curtiu a atitude | um olho fechado (>), linguinha pra fora, cheirinho ruim subindo |
 | 😱 Medo | gastando mais do que devia | olhão com pupila tremendo, boca em zigue-zague, encolhido e tremendo |
+| 🤨 Desconfiado | finge que economiza (só remaneja) | rosa, olho apertado e lupa no outro olho; "finjo que acredito" (`caos-mais2.png`) |
+| 🤝 Amigão | toque pra chegar na meta | piscadinha, joinha e alvo com flecha (`caos-mais2.png`) |
 
 ## Como funciona (pra copiar fácil)
 - Um objeto `formas` no `<script>`: cada forma tem `cor`, `acc` (lista de acessórios), `corpo` (transform CSS),
