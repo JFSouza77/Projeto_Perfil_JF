@@ -39,7 +39,7 @@ const ARQ = acharMestre(process.argv[2]);
     caosIntrusoErros = 0; caosIntrusoTravaAte = 0;
     // com a sala aberta: a senha do host libera
     redeAbrirSala("local"); await espera(30);
-    out.salaTemSenha = /^\d{4}$/.test(rede.senhaHost || "") && rede.senhaHost !== "0077";
+    out.salaTemSenha = /^\d{4}$/.test(rede.senhaHost || "") && admHash(rede.senhaHost) !== ADM_CRIADOR_HASH;
     showPauseScreen(); await espera(10);
     document.querySelectorAll("#pauseJogadoresBox .pj-partida")[2].click(); await espera(20);
     digitar(rede.senhaHost); btnTxt(/^OK$/).click(); await espera(20);
@@ -48,11 +48,15 @@ const ARQ = acharMestre(process.argv[2]);
     if (conf) conf.click(); await espera(30);
     out.senhaHostRemoveu = players.length === nAntes - 1;
     document.querySelectorAll(".caos-modal-ov, #caosConfirmModal").forEach((o) => o.remove());
-    // a senha do ADM também libera
+    // a senha do ADM também libera (06/11/2026: senha de mentira; a conferência do ADM é trocada só aqui no teste,
+    // pra senha de verdade não ficar escrita no repositório)
+    const admReal = admHash;
+    admHash = (v) => (v === "9911" ? ADM_CRIADOR_HASH : admReal(v) + "x");
     showPauseScreen(); await espera(10);
     const n2 = players.length;
     document.querySelectorAll("#pauseJogadoresBox .pj-partida")[2].click(); await espera(20);
-    digitar("0077"); btnTxt(/^OK$/).click(); await espera(20);
+    digitar("9911"); btnTxt(/^OK$/).click(); await espera(20);
+    admHash = admReal;
     const conf2 = btnTxt(/^Remover$/);
     if (conf2) conf2.click(); await espera(30);
     out.senhaAdmRemoveu = players.length === n2 - 1;
@@ -76,7 +80,7 @@ const ARQ = acharMestre(process.argv[2]);
     ["Pontos divididos entre quem fica", r.pontosDivididos],
     ["1.8: remover da partida pede senha (campo de senha)", r.pedeSenha],
     ["1.8: senha errada não remove ninguém", r.senhaErradaNaoRemove],
-    ["1.8: a sala gera a senha do host (4 números, nunca 0077)", r.salaTemSenha],
+    ["1.8: a sala gera a senha do host (4 números, nunca a do ADM)", r.salaTemSenha],
     ["1.8: senha do host abre a confirmação e remove", r.senhaHostAbreConfirmacao && r.senhaHostRemoveu],
     ["1.8: senha do ADM também remove", r.senhaAdmRemoveu],
   ];

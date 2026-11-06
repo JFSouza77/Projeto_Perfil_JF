@@ -1,12 +1,12 @@
 {
  "sobre": "Manifesto do C.A.O.S. (Perfil JF). Gerado por ferramentas/caos_anatomia.js. Leia junto com docs/CAOS_Anatomia/00_LEIA-ME_Wally.md.",
  "versao": {
-  "caos": "5.5.0",
-  "jogo": "Beta 1.9.4"
+  "caos": "5.6.0",
+  "jogo": "Beta 1.9.5"
  },
- "gerado_em": "2026-11-05",
+ "gerado_em": "2026-11-06",
  "totais": {
-  "funcoes": 569,
+  "funcoes": 580,
   "bancos": 662,
   "falas_prontas": 4387,
   "geradores": 18,
@@ -2286,100 +2286,149 @@
     {
      "arquivo": "src/js/05t-contas.js",
      "nome": "contaGuardarLogin",
-     "args": "nome, token",
+     "args": "nome, token, pin",
      "linha": 28,
+     "nota": ""
+    },
+    {
+     "arquivo": "src/js/05t-contas.js",
+     "nome": "contaPinLocalHash",
+     "args": "pin, sal",
+     "linha": 45,
+     "nota": ""
+    },
+    {
+     "arquivo": "src/js/05t-contas.js",
+     "nome": "contaPinLocalGerar",
+     "args": "pin",
+     "linha": 50,
+     "nota": ""
+    },
+    {
+     "arquivo": "src/js/05t-contas.js",
+     "nome": "contaPinLocalOk",
+     "args": "login, pin",
+     "linha": 59,
      "nota": ""
     },
     {
      "arquivo": "src/js/05t-contas.js",
      "nome": "contaEsquecerLogin",
      "args": "nome",
-     "linha": 34,
+     "linha": 67,
      "nota": ""
     },
     {
      "arquivo": "src/js/05t-contas.js",
      "nome": "contaConhecida",
      "args": "nome",
-     "linha": 39,
+     "linha": 72,
      "nota": ""
     },
     {
      "arquivo": "src/js/05t-contas.js",
      "nome": "contaMarcarConhecida",
      "args": "nome, sim",
-     "linha": 43,
+     "linha": 76,
      "nota": ""
     },
     {
      "arquivo": "src/js/05t-contas.js",
      "nome": "contaPost",
      "args": "acao, corpo",
-     "linha": 51,
+     "linha": 84,
      "nota": ""
     },
     {
      "arquivo": "src/js/05t-contas.js",
      "nome": "contaFichaJuntar",
      "args": "nome, ficha",
-     "linha": 70,
+     "linha": 103,
      "nota": "A ficha da nuvem entra na memória deste dispositivo (se a daqui tiver mais partidas, fica a daqui e ela sobe no fim)"
     },
     {
      "arquivo": "src/js/05t-contas.js",
      "nome": "contaRecusada",
      "args": "nome",
-     "linha": 82,
+     "linha": 115,
      "nota": ""
     },
     {
      "arquivo": "src/js/05t-contas.js",
      "nome": "contaRecusar",
      "args": "nome",
-     "linha": 86,
+     "linha": 119,
      "nota": ""
     },
     {
      "arquivo": "src/js/05t-contas.js",
      "nome": "contaOferecer",
      "args": "nome, existe, semPin, depois, seNao",
-     "linha": 94,
+     "linha": 127,
      "nota": "Pedido do JF: em vez do botão pequeno, a pergunta aparece sozinha logo depois de cadastrar o nick. Nick com cadastro: pede o PIN. Nick sem cadastro: oferece criar (com \"Agora não\" e \"Não perguntar de novo\"). Só pergunta "
     },
     {
      "arquivo": "src/js/05t-contas.js",
      "nome": "contaAoCadastrar",
      "args": "p, contaRede, perguntar, pronto",
-     "linha": 131,
+     "linha": 164,
      "nota": "Jogador entrou no cadastro da partida (aqui ou pela sala). contaRede = login que o celular do jogador mandou. perguntar = cadastro feito neste dispositivo: oferece criar ou entrar no cadastro logo depois."
     },
     {
      "arquivo": "src/js/05t-contas.js",
      "nome": "contasSalvarFichas",
      "args": "",
-     "linha": 184,
+     "linha": 241,
      "nota": "Fim da partida: a ficha de quem tem cadastro sobe pra nuvem."
     },
     {
      "arquivo": "src/js/05t-contas.js",
      "nome": "contaPinModal",
      "args": "msg, cb",
-     "linha": 192,
+     "linha": 249,
      "nota": "Janela do PIN (4 números, escondido)."
     },
     {
      "arquivo": "src/js/05t-contas.js",
      "nome": "contaAbrir",
      "args": "nomeBruto, depois",
-     "linha": 229,
+     "linha": 286,
      "nota": "Botão \"Cadastro\": entra, cria ou mostra quem está conectado com esse nick neste dispositivo."
     },
     {
      "arquivo": "src/js/05t-contas.js",
      "nome": "contaBotaoLigar",
      "args": "",
-     "linha": 283,
+     "linha": 341,
      "nota": "Botão do cadastro na tela de jogadores (este dispositivo)"
+    },
+    {
+     "arquivo": "src/js/05t-contas.js",
+     "nome": "contaNomeComDono",
+     "args": "n",
+     "linha": 364,
+     "nota": ""
+    },
+    {
+     "arquivo": "src/js/05t-contas.js",
+     "nome": "contaPortaoAntes",
+     "args": "nome, seguir",
+     "linha": 378,
+     "nota": "Antes de entrar na lista (addPlayer): o aparelho já sabe que esse nick tem cadastro? Então pergunta o PIN agora. Devolve true quando a janela abriu (o addPlayer espera a resposta e chama de novo)."
+    },
+    {
+     "arquivo": "src/js/05t-contas.js",
+     "nome": "contaSugerirOutroNick",
+     "args": "nome",
+     "linha": 397,
+     "nota": ""
+    },
+    {
+     "arquivo": "src/js/05t-contas.js",
+     "nome": "contaExigirPin",
+     "args": "nome, op",
+     "linha": 408,
+     "nota": "A janela: Digitar o PIN · Usar outro nick · ADM libera (como convidado) op.p: o jogador já está na lista (o servidor avisou depois); sem p, é antes de entrar. op.seguir({ conta }) dono confirmado · op.seguir({ convidado:"
     }
    ]
   },
@@ -3461,128 +3510,156 @@
     },
     {
      "arquivo": "src/js/03-regras.js",
+     "nome": "isAnneNomeBruto",
+     "args": "n",
+     "linha": 36,
+     "nota": "06/11/2026 (pedido do JF): quem o jogo conhece (JF, Anne, amigos com presente, família) é reconhecido pelo CADASTRO, não só pelo nome digitado. As versões \"NomeBruto\" olham só o nome (formulário do cadastro, sugestões); "
+    },
+    {
+     "arquivo": "src/js/03-regras.js",
+     "nome": "isJfNomeBruto",
+     "args": "n",
+     "linha": 40,
+     "nota": ""
+    },
+    {
+     "arquivo": "src/js/03-regras.js",
+     "nome": "presenteDoNomeBruto",
+     "args": "n",
+     "linha": 43,
+     "nota": ""
+    },
+    {
+     "arquivo": "src/js/03-regras.js",
      "nome": "isAnneName",
      "args": "n",
-     "linha": 33,
+     "linha": 50,
      "nota": ""
     },
     {
      "arquivo": "src/js/03-regras.js",
      "nome": "isJfName",
      "args": "n",
-     "linha": 37,
+     "linha": 53,
      "nota": ""
     },
     {
      "arquivo": "src/js/03-regras.js",
      "nome": "presenteDe",
      "args": "n",
-     "linha": 41,
+     "linha": 57,
      "nota": "1.7.10.6: o presente (cor/emoji exclusivos) de quem tem este nick, ou null"
     },
     {
      "arquivo": "src/js/03-regras.js",
      "nome": "presenteEmojis",
      "args": "pr",
-     "linha": 45,
+     "linha": 61,
      "nota": ""
     },
     {
      "arquivo": "src/js/03-regras.js",
      "nome": "presentesGirarEmojis",
      "args": "",
-     "linha": 50,
+     "linha": 66,
      "nota": "Rafa (💣/🦇): o emoji troca a cada carta"
     },
     {
      "arquivo": "src/js/03-regras.js",
      "nome": "humorFamilia",
      "args": "p",
-     "linha": 62,
+     "linha": 78,
      "nota": "< Normal (zoa e implica no limite) < Ácido (implica, briga e fica magoado) < Nível 0 (torra a paciência; você que pediu). Family friendly conta como Suave em todas as travas, e ainda troca qualquer zoeira por incentivo ("
     },
     {
      "arquivo": "src/js/03-regras.js",
      "nome": "humorEscolhido",
      "args": "p",
-     "linha": 65,
+     "linha": 81,
      "nota": ""
     },
     {
      "arquivo": "src/js/03-regras.js",
      "nome": "isJfPlayer",
      "args": "p",
-     "linha": 617,
+     "linha": 633,
      "nota": ""
     },
     {
      "arquivo": "src/js/03-regras.js",
      "nome": "jfPlayerIndex",
      "args": "",
-     "linha": 745,
+     "linha": 761,
      "nota": ""
     },
     {
      "arquivo": "src/js/03-regras.js",
      "nome": "nomeNormalizarFiltro",
      "args": "n",
-     "linha": 808,
+     "linha": 824,
      "nota": ""
     },
     {
      "arquivo": "src/js/03-regras.js",
      "nome": "nomeImproprio",
      "args": "n",
-     "linha": 820,
+     "linha": 836,
      "nota": ""
+    },
+    {
+     "arquivo": "src/js/07-caos/13-amigos.js",
+     "nome": "sobrinhoInfoBruto",
+     "args": "n",
+     "linha": 19,
+     "nota": "só o nome (as regras de apelido); o tratamento usa sobrinhoInfo, que pede o dono confirmado"
     },
     {
      "arquivo": "src/js/07-caos/13-amigos.js",
      "nome": "sobrinhoInfo",
      "args": "n",
-     "linha": 18,
+     "linha": 23,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/13-amigos.js",
      "nome": "sobrinhoDe",
      "args": "n",
-     "linha": 22,
+     "linha": 28,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/13-amigos.js",
      "nome": "caosAmigoBanco",
      "args": "n",
-     "linha": 27,
+     "linha": 33,
      "nota": "O banco de piadas de quem tem este nome (amigo com presente ou sobrinho), com o id pra contar o limite."
     },
     {
      "arquivo": "src/js/07-caos/13-amigos.js",
      "nome": "caosAmigosZerar",
      "args": "",
-     "linha": 35,
+     "linha": 41,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/13-amigos.js",
      "nome": "caosAmigosLiberado",
      "args": "familia",
-     "linha": 38,
+     "linha": 44,
      "nota": ""
     },
     {
      "arquivo": "src/js/07-caos/13-amigos.js",
      "nome": "caosAmigoFala",
      "args": "p, momento, chance",
-     "linha": 42,
+     "linha": 48,
      "nota": "Uma piada interna pro jogador p no momento (vez/erro/acerto), respeitando o limite. Devolve o texto ou null."
     },
     {
      "arquivo": "src/js/07-caos/13-amigos.js",
      "nome": "caosAmigosNaCarta",
      "args": "",
-     "linha": 61,
+     "linha": 67,
      "nota": "Carta nova: às vezes uma piada com quem está na vez (ou o Mestre); senão, talvez uma Dragons."
     }
    ]
@@ -3830,119 +3907,119 @@
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaTitulosAnoNovo",
      "args": "larga",
-     "linha": 405,
+     "linha": 407,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaEspirito",
      "args": "",
-     "linha": 455,
+     "linha": 457,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaSentirFator",
      "args": "emo",
-     "linha": 458,
+     "linha": 460,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaDecaimento",
      "args": "emo, dec",
-     "linha": 464,
+     "linha": 466,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaPacienciaFator",
      "args": "",
-     "linha": 470,
+     "linha": 472,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaPacienciaRecupera",
      "args": "",
-     "linha": 473,
+     "linha": 475,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaDemoraFator",
      "args": "",
-     "linha": 476,
+     "linha": 478,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaEspiritoEstado",
      "args": "",
-     "linha": 479,
+     "linha": 481,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaEspiritoFalar",
      "args": "msg",
-     "linha": 485,
+     "linha": 487,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaEspiritoFalasAqui",
      "args": "",
-     "linha": 491,
+     "linha": 493,
      "nota": "chamado a cada acerto, erro ou pulo (caosConsoleEvento), depois que a emoção já mudou"
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaEspiritoEvento",
      "args": "idx, ev",
-     "linha": 495,
+     "linha": 497,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaEspiritoPerdoar",
      "args": "",
-     "linha": 523,
+     "linha": 525,
      "nota": "esfriou (num acerto ou na virada de carta): perdoa a mesa, no máximo 2 vezes por partida"
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaMais",
      "args": "d, n",
-     "linha": 553,
+     "linha": 555,
      "nota": ""
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaPresenteMomento",
      "args": "data",
-     "linha": 559,
+     "linha": 561,
      "nota": "{ id, momento: \"adiantado\" | \"nodia\" | \"atrasado\" } da data (ou null, longe de qualquer data)"
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaPresenteMomentoAgora",
      "args": "data",
-     "linha": 584,
+     "linha": 586,
      "nota": "O momento de agora. No modo de teste (?temporada=natal), vale o \"no dia\" da temporada forçada."
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaPresenteFalaBanco",
      "args": "data",
-     "linha": 589,
+     "linha": 591,
      "nota": "A fala do presente pra hoje"
     },
     {
      "arquivo": "src/js/05y-temporadas.js",
      "nome": "temporadaPresenteForaDeEpoca",
      "args": "nome",
-     "linha": 597,
+     "linha": 599,
      "nota": "O presente do C.A.O.S. às vezes (metade das vezes) vem com a fala da data: dentro e fora das temporadas."
     }
    ]

@@ -766,7 +766,8 @@ function redeAbrirSala(modo, salaFixa) {
 function redeSenhaHostNova() {
   for (let i = 0; i < 20; i++) {
     const v = String(Math.floor(Math.random() * 10000)).padStart(4, "0");
-    if (v !== "0077" && !/^(\d)\1{3}$/.test(v)) return v;
+    // 06/11/2026: compara pelo embaralhado (o valor da senha do ADM não fica escrito no código)
+    if (!(typeof admHash === "function" && admHash(v) === ADM_CRIADOR_HASH) && !/^(\d)\1{3}$/.test(v)) return v;
   }
   return "4821";
 }
@@ -3206,7 +3207,7 @@ function redeEscolhaDesenhar(box, sala) {
     const usadas = new Set(cad.coresUsadas || []), usados = new Set(cad.avataresUsados || []);
     const tomadaCor = (c) => usadas.has(c) || (!!COR_EXCLUSIVA[c] && !COR_EXCLUSIVA[c].dono(nomeAt));
     // emoji exclusivo do dono (😎 do JF, 👸 da Anne) entra na lista quando o nome é o dele
-    const exclusivo = isJfName(nomeAt) ? "😎" : isAnneName(nomeAt) ? "👸" : presenteEmojis(presenteDe(nomeAt))[0] || null;
+    const exclusivo = isJfNomeBruto(nomeAt) ? "😎" : isAnneNomeBruto(nomeAt) ? "👸" : presenteEmojis(presenteDoNomeBruto(nomeAt))[0] || null;
     const avatares = (exclusivo && !usados.has(exclusivo) ? [exclusivo] : []).concat(cad.avatares);
     // dono digitou o nome: a cor e o emoji dele já vêm marcados (o host faria o mesmo)
     const corDono = cad.cores.find((c) => COR_EXCLUSIVA[c] && COR_EXCLUSIVA[c].dono(nomeAt) && !usadas.has(c));
@@ -3260,7 +3261,7 @@ function redeEscolhaDesenhar(box, sala) {
   if (bConta) bConta.addEventListener("click", () => contaAbrir(r.nome || (nome && nome.value) || "", () => redeConvidadoDesenhar()));
   if (nome) {
     // trocar o nome pode destravar a cor e o emoji de dono: redesenha só quando isso muda
-    const dono = (n) => (isJfName(n) ? "jf" : isAnneName(n) ? "anne" : (presenteDe(n) || {}).id || "");
+    const dono = (n) => (isJfNomeBruto(n) ? "jf" : isAnneNomeBruto(n) ? "anne" : (presenteDoNomeBruto(n) || {}).id || "");
     nome.addEventListener("input", () => {
       const antes = dono(String(r.nome || "").trim());
       r.nome = nome.value;
@@ -3306,7 +3307,7 @@ function redePedirEntrada(perfil) {
   }
   const cad = rede.cadastro || {};
   // 1.7.10.6 (pedido do JF): idade obrigatória; nome que este dispositivo conhece numa faixa maior pede confirmação
-  if (!r.idade && !isJfName(nome)) {
+  if (!r.idade && !isJfNomeBruto(nome)) {
     rede.erroCadastro = cad.equipe ? "Escolha a faixa etária." : "Escolha a idade.";
     redeConvidadoDesenhar();
     return false;

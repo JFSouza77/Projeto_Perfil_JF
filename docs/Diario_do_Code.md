@@ -147,3 +147,22 @@ segura**. Sem rodeio: é pra achar rápido.
   - Teclado: Esc fecha as janelas de recado (reportes, sugestão; na medalha vale "Guardar sem mostrar"); a janela da
     medalha abre com o foco no botão. As janelas de decisão da partida não fecham com Esc (de propósito).
   - Resultado: auditor zerado nos 3 temas e axe com 0 regras quebradas.
+
+### 06/11/2026 · nick com cadastro entrava sem PIN (relato do JF, na 1.9.4)
+
+- **O JF adicionou os nicks da família e o dele, todos com cadastro, e o jogo não pediu PIN nenhum.**
+  - Causa provável (no aparelho dele): quem criou o cadastro naquele aparelho deixou o login guardado ali, e o jogo
+    usava o login guardado sem perguntar. Num aparelho sem login, aparecia a pergunta, mas "Agora não" deixava
+    entrar mesmo assim. E o tratamento de quem o C.A.O.S. conhece (JF, Anne, amigos, família) era só pelo nome.
+  - Mudou (`05t-contas.js`, portão do PIN):
+    - nick com cadastro só entra como o dono depois do PIN, mesmo com login guardado;
+    - PIN digitado no 🔐 Cadastro nos últimos 5 minutos vale;
+    - sem internet, o PIN é conferido no aparelho (PBKDF2 guardado no último login);
+    - sem o PIN: "Usar outro nick" (com sugestão) ou "🛠️ ADM libera como convidado" (sem memória e sem o tratamento
+      do dono).
+  - Reconhecimento: `isJfName`, `isAnneName`, `presenteDe` e `sobrinhoInfo` só dizem sim pro dono confirmado; o
+    formulário usa as versões `…NomeBruto`.
+  - O valor da senha do ADM saiu do código (o sorteio da senha do host compara pelo embaralhado; o teste usa uma senha
+    de mentira).
+  - Teste: `teste_portao_pin` (10 conferências); `teste_cadastro_caos`, `teste_acoes` e `teste_remover_jogador`
+    ajustados pra regra nova; `teste_contas` ok com o servidor local.

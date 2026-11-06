@@ -546,6 +546,7 @@ function sanitizeLoadedState(s) {
         gems,
         ...(typeof p.nickMs === "number" ? { nickMs: p.nickMs } : {}),
         ...(p.nickEmprestado === true ? { nickEmprestado: true } : {}),
+        ...(p.convidadoAdm === true ? { convidadoAdm: true } : {}),
         ...(p.conta && typeof p.conta.token === "string" ? { conta: { nick: String(p.conta.nick || "").slice(0, 15), token: p.conta.token.slice(0, 64) } } : {}),
         ...(p.iniciante === true
           ? {
@@ -1200,7 +1201,7 @@ function nicksRepertorio() {
 function nicksRepertorioGuardar(nome) {
   try {
     const k = nameKeyPlain(nome);
-    if (!k || isJfName(nome) || isAnneName(nome)) return;
+    if (!k || isJfNomeBruto(nome) || isAnneNomeBruto(nome)) return;
     const a = nicksRepertorio().filter((x) => nameKeyPlain(x) !== k);
     a.push(String(nome).slice(0, 15));
     JFStore.setItem(NICKS_REPERTORIO_KEY, JSON.stringify(a.slice(-120)));
@@ -1826,7 +1827,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.9.4 · C.A.O.S. 5.5.0");
+  L.push("- **Versão:** Beta 1.9.5 · C.A.O.S. 5.6.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2368,7 +2369,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.9.4 · C.A.O.S. 5.5.0",
+        versao: "Beta 1.9.5 · C.A.O.S. 5.6.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
