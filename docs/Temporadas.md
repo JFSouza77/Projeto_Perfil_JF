@@ -109,7 +109,9 @@ temporadas, na ordem do calendário.
     - [x] Ano Novo · enfeite (confete e fogos), selo, 15 falas (+ 10 de presente), 5 cores, 5 emojis e 5+5 itens de lojinha.
     - [x] Ano Novo · 5 títulos (Show de Fogos, Champanhe Estourada, Pé Direito, Meia-Noite em Ponto, Promessa de Ano Novo).
     - [x] Ano Novo · 10 cartas valendo o dobro.
-    - [ ] Aniversário do criador (2/1) · tudo (enfeite, falas, o C.A.O.S. pegando leve com o JF, cores, emojis, lojinha, títulos e cartas).
+    - [x] Aniversário do criador (2/1) · enfeite (balões), selo, 30 falas (5 só pro JF na mesa) e o C.A.O.S. pegando leve com o JF.
+    - [ ] Aniversário do criador · 5 cores, 5 emojis e 5+5 itens de lojinha.
+    - [ ] Aniversário do criador · 5 títulos e 10 cartas valendo o dobro.
 11. [ ] As outras 12 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween, com o Doces ou travessuras).
 12. [ ] Bateria final, prints de todas as temporadas e relatório pro JF.
 
@@ -225,3 +227,8 @@ temporadas, na ordem do calendário.
   Entram só no Ano Novo, valem o dobro e o selo da carta agora diz a temporada ("🎆 Carta de Ano Novo · vale o dobro").
   Auditoria: 0 erros (1.020 cartas); o auditor barrou a Romã (vira "roma", igual à carta de Roma) e o catálogo avisou
   que a Uva já está planejada pra 2.0, então ficou a Roupa branca. Teste: `teste_temporadas` (+5 checagens).
+- 06/11/2026 (manhã, sexta): conferência da `main` (1.9.5: build e teste nas 4 saídas, ok) e o 1º pedaço do aniversário do
+  criador (2/1): balões subindo devagar (desligam no Modo Batata e com menos movimento), selo "🎂 Edição de aniversário
+  do criador" e 30 falas (início, avançou, voltou, presentes e 5 de parabéns pro JF quando ele está na mesa). O C.A.O.S.
+  pega leve com o JF o dia todo (humor Suave), só com o cadastro confirmado: um "JF" sem PIN não ganha. Teste:
+  `teste_temporadas` (+5 checagens).

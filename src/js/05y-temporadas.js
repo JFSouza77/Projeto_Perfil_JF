@@ -151,6 +151,15 @@ function temporadaBonzinha() {
   const t = typeof temporadaAtual === "function" ? temporadaAtual() : null;
   return !!t && TEMPORADA_BONZINHA.includes(t.id);
 }
+// Aniversário do criador (2/1): o JF (com o cadastro confirmado) ganha o tratamento Suave o dia todo
+function temporadaPegaLeveCom(p) {
+  try {
+    const t = temporadaAtual();
+    return !!(t && t.id === "aniversario" && p && typeof isJfPlayer === "function" && isJfPlayer(p));
+  } catch (e) {
+    return false;
+  }
+}
 function temporadaFalasDe(chave) {
   const t = typeof temporadaAtual === "function" ? temporadaAtual() : null;
   const b = t && REACTIVE_VOICE.temporada && REACTIVE_VOICE.temporada[t.id];

@@ -470,6 +470,28 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     }
     return r;
   }));
+  // item 10 (06/11): aniversário do criador (2/1): balões, selo, 30 falas, e o C.A.O.S. pega leve só com o JF de verdade
+  await page.goto(url + "?temporada=aniversario");
+  await page.waitForFunction(() => typeof temporadaAplicar === "function");
+  Object.assign(o, await page.evaluate(() => {
+    const r = {};
+    const e = document.getElementById("temporadaEnfeite");
+    r.aniversarioMarcaEEnfeite = document.documentElement.dataset.temporada === "aniversario" && !!e && getComputedStyle(e).display === "block" && getComputedStyle(e).pointerEvents === "none";
+    const selo = document.getElementById("splashTemporada");
+    r.aniversarioSelo = !!selo && !selo.hidden && /aniversário do criador/i.test(selo.textContent);
+    const B = REACTIVE_VOICE.temporada.aniversario;
+    r.aniversarioFalas = ["inicio", "jf", "avancou", "voltou", "presenteJoia", "presentePonto"].every((k) => Array.isArray(B[k]) && B[k].length === 5);
+    const jf = { id: "j", name: "JF", humor: "zero", conta: { nick: "JF", token: "teste" } };
+    const falso = { id: "f", name: "JF", humor: "zero" };
+    const outro = { id: "o", name: "Ana", humor: "acido" };
+    const sp = players;
+    players = [jf, outro];
+    r.aniversarioPegaLeveComOJf = playerHumor(jf) === "suave" && playerHumor(outro) !== "suave";
+    players = [falso, outro];
+    r.aniversarioJfSemCadastroNao = playerHumor(falso) !== "suave";
+    players = sp;
+    return r;
+  }));
   await page.goto(url + "?temporada=nenhuma");
   await page.waitForFunction(() => typeof temporadaAplicar === "function");
   o.semTemporadaSemEnfeite = await page.evaluate(() => {

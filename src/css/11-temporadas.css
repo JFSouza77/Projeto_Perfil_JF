@@ -193,3 +193,40 @@ html[data-temporada="natal"] .rede-fala-rosto {
 .medalha-grande .medalha-svg{filter:drop-shadow(0 4px 14px rgba(250,204,21,.45))}
 @media (prefers-reduced-motion:no-preference){.medalha-grande .medalha-svg{animation:medalhaGira 1.2s ease-out 1}}
 @keyframes medalhaGira{from{transform:scale(.4) rotate(-25deg);opacity:0}to{transform:none;opacity:1}}
+
+/* ---------- Aniversário do criador (2/1): balões coloridos subindo devagar ---------- */
+html[data-temporada="aniversario"] .tmp-enfeite {
+  display: block;
+}
+html[data-temporada="aniversario"] .tmp-neve,
+html[data-temporada="aniversario"] .tmp-neve::after {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(7px 9px at 30px 60px, #f472b6b0 60%, transparent 62%),
+    radial-gradient(7px 9px at 120px 150px, #38bdf8b0 60%, transparent 62%),
+    radial-gradient(7px 9px at 190px 40px, #facc15b0 60%, transparent 62%),
+    radial-gradient(7px 9px at 80px 220px, #a78bfab0 60%, transparent 62%),
+    radial-gradient(7px 9px at 220px 190px, #4ade80b0 60%, transparent 62%);
+  background-size: 260px 260px;
+  opacity: 0.45;
+  animation: tmpSobe 34s linear infinite;
+}
+html[data-temporada="aniversario"] .tmp-neve::after {
+  content: "";
+  background-size: 200px 200px;
+  opacity: 0.3;
+  animation-duration: 46s;
+}
+@keyframes tmpSobe {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -20px -260px;
+  }
+}
+html[data-temporada="aniversario"] .splash-temporada {
+  background: linear-gradient(135deg, #be185d, #6d28d9);
+  border-color: #fde68a99;
+}
