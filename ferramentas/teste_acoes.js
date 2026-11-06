@@ -292,12 +292,12 @@ const ARQ = acharMestre(process.argv[2]);
       redeTravasPerguntar(() => seguiu++, true);
       const abriu = !!document.getElementById('redeTravas') && /Travas ADM/.test(document.getElementById('redeTravas').textContent);
       clicar(/Sim/);
-      const sim = anneLigada() === true && isAnneName('Anne') && seguiu === 1;
+      const sim = anneLigada() === true && isAnneNomeBruto('Anne') && seguiu === 1; // 06/11: a trava liga o nome; o tratamento ainda pede o cadastro
       redeTravasPerguntar(() => seguiu++);
       const naoRepete = !document.getElementById('redeTravas') && seguiu === 2;
       redeTravasPerguntar(() => seguiu++, true);
       clicar(/Não/);
-      const nao = anneLigada() === false && !isAnneName('Anne') && seguiu === 3;
+      const nao = anneLigada() === false && !isAnneNomeBruto('Anne') && seguiu === 3;
       out.travasAdm = abriu && sim && naoRepete && nao;
       anneLigar(antes);
     }
@@ -462,7 +462,8 @@ const ARQ = acharMestre(process.argv[2]);
       const jogAntes = players, iniAntes = starterChosen, fimAntes = gameEnded, modoAntes = CURRENT_MODE, silAntes = caosSilenced, statsAntes = stats.totalDrawn, randAntes = Math.random;
       const agendarOrig = caosFalaAgendar, ditas = [];
       caosFalaAgendar = (fn) => ditas.push(fn());
-      const mk = (n, i) => ({ id: jogadorIdNovo(), name: n, score: 0, position: 0, color: PLAYER_COLORS[i], avatar: '😀', humor: 'normal', gems: {} });
+      // 06/11/2026: quem o C.A.O.S. conhece só é reconhecido com o cadastro confirmado (login de mentira aqui)
+      const mk = (n, i) => ({ id: jogadorIdNovo(), name: n, score: 0, position: 0, color: PLAYER_COLORS[i], avatar: '😀', humor: 'normal', gems: {}, conta: { nick: n, token: 'teste' } });
       starterChosen = true; gameEnded = false; caosSilenced = false; CURRENT_MODE = 'classico';
       players = ['Carro Pika', 'Ana'].map(mk);
       caosAmigosZerar();
@@ -475,13 +476,14 @@ const ARQ = acharMestre(process.argv[2]);
       caosAmigosZerar(); CURRENT_MODE = 'junior'; stats.totalDrawn = 9;
       const semJunior = !caosAmigoFala(players[0], 'vez'); CURRENT_MODE = 'classico';
       // sobrinhos do JF: reconhecidos pelo nick, valem no Júnior, e não confundem com nome parecido
-      const sobrReconhece = sobrinhoDe('Pedrinho the Best') === 'pedro' && sobrinhoDe('Bebel LindAAA') === 'isabel' && sobrinhoDe('Isabel') === 'isabel' && sobrinhoDe('elisinha auruda') === 'elisa' && !sobrinhoDe('Pedro') && !sobrinhoDe('Pedrinho') && !sobrinhoDe('Elisa') && !sobrinhoDe('Isabela');
+      const sb = (x) => (sobrinhoInfoBruto(x) || {}).id || null; // 06/11: as regras do apelido (o tratamento pede o cadastro)
+      const sobrReconhece = sb('Pedrinho the Best') === 'pedro' && sb('Bebel LindAAA') === 'isabel' && sb('Isabel') === 'isabel' && sb('elisinha auruda') === 'elisa' && !sb('Pedro') && !sb('Pedrinho') && !sb('Elisa') && !sb('Isabela');
       players = ['Pedrinho the Best', 'Ana'].map(mk); caosAmigosZerar(); CURRENT_MODE = 'junior'; stats.totalDrawn = 9;
       const sobrJunior = !!caosAmigoFala(players[0], 'vez'); CURRENT_MODE = 'classico';
       // dose por sobrinho: o Pedro leva até o limite dos amigos, a Isabel (suave) no máximo 3
       caosAmigosZerar(); let np = 0;
       for (let c = 1; c <= 40; c++) { stats.totalDrawn = c; if (caosAmigoFala(players[0], 'vez')) np++; }
-      const bebel = mk('Bebel LindAAA', 2); caosAmigosZerar(); let ni = 0;
+      const bebel = mk('Bebel LindAAA', 2); players = [bebel, players[1]]; caosAmigosZerar(); let ni = 0;
       for (let c = 1; c <= 40; c++) { stats.totalDrawn = c; if (caosAmigoFala(bebel, 'vez')) ni++; }
       const sobrDose = np === CAOS_AMIGOS_MAX && ni === 3;
       const sobrinhos = sobrReconhece && sobrJunior && sobrDose;
@@ -500,7 +502,7 @@ const ARQ = acharMestre(process.argv[2]);
       REACTIVE_VOICE.dragons.um.forEach((x) => todas.push([typeof x === 'function' ? x('Vitinho') : x.replace(/\{nome\}/g, 'Vitinho'), 'Vitinho']));
       const vocativas = todas.filter(([t, nm]) => redeFalaComQuem({ texto: t.replace(/^\[C\.A\.O\.S\.\]\s*/, ''), para: [{ id: 'x', nome: nm }] }));
       const daMesa = vocativas.length === 0;
-      const foraDaPaleta = !coresDaPaleta().some((c) => PRESENTES.some((p) => p.cor === c)) && sanitizePlayerColor('Typingg_KK', '#ff0000') === 'GRAD_KIRITO';
+      const foraDaPaleta = !coresDaPaleta().some((c) => PRESENTES.some((p) => p.cor === c)) && (() => { contaConfirmados.add(nameKeyPlain('Typingg_KK')); const c = sanitizePlayerColor('Typingg_KK', '#ff0000'); contaConfirmados.delete(nameKeyPlain('Typingg_KK')); return c === 'GRAD_KIRITO' && sanitizePlayerColor('Typingg_KK', '#ff0000') !== 'GRAD_KIRITO'; })();
       caosFalaAgendar = agendarOrig; Math.random = randAntes;
       players = jogAntes; starterChosen = iniAntes; gameEnded = fimAntes; CURRENT_MODE = modoAntes; caosSilenced = silAntes; stats.totalDrawn = statsAntes;
       caosAmigosZerar();
@@ -575,7 +577,7 @@ const ARQ = acharMestre(process.argv[2]);
       window.showToastMessage = (t) => (dito = String(t || ''));
       Math.random = () => 0;
       caosSilenced = false;
-      const jf = { id: 'jfx', name: 'JF', avatar: '😎', score: 0, humor: 'normal', nickMs: 70e3 };
+      const jf = { id: 'jfx', name: 'JF', avatar: '😎', score: 0, humor: 'normal', nickMs: 70e3, conta: { nick: 'JF', token: 'teste' } };
       players = [jf];
       caosWelcomePlayer(jf);
       const estranho = { id: 'zzx', name: 'Zuleica', avatar: '😀', score: 0, humor: 'normal', nickMs: 70e3 };

@@ -15,6 +15,12 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     await new Promise((ok) => setTimeout(ok, 300));
     r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, existe: /^jf$/i.test(corpo.nick), semPin: false }) });
   });
+  // 06/11/2026: o JF tem cadastro neste teste, então entra com o PIN (portão do PIN); "1234" é o PIN de mentira
+  await page.route(/\/conta\/(entrar|ficha)/, async (r) => {
+    const corpo = JSON.parse(r.request().postData() || "{}");
+    if (/entrar/.test(r.request().url()) && corpo.pin !== "1234") return r.fulfill({ status: 401, contentType: "application/json", body: JSON.stringify({ erro: "pin", restam: 4 }) });
+    r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, token: "token-de-teste", nick: corpo.nick, ficha: null }) });
+  });
   await page.addInitScript(() => {
     try {
       localStorage.setItem("perfil5_tutorial_visto", "x");
@@ -38,11 +44,21 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     const responder = async () => {
       for (let i = 0; i < 40 && !document.querySelector(".caos-modal-ov"); i++) await espera(100);
       const m = document.querySelector(".caos-modal-ov");
+      const pin = m && [...m.querySelectorAll("button")].find((x) => /Digitar o PIN/.test(x.textContent));
+      if (pin) {
+        pin.click();
+        for (let i = 0; i < 20 && !document.querySelector('.caos-modal-ov input[type="password"]'); i++) await espera(50);
+        const campo = document.querySelector('.caos-modal-ov input[type="password"]');
+        if (campo) campo.value = "1234";
+        const okb = [...document.querySelectorAll(".caos-modal-ov button")].find((x) => /^OK$/.test(x.textContent));
+        if (okb) okb.click();
+        return true;
+      }
       const nao = m && [...m.querySelectorAll("button")].find((x) => /Agora não/.test(x.textContent));
       if (nao) nao.click();
       return !!m;
     };
-    // 1) JF (nick com cadastro): a pergunta aparece e o "oi" vem depois que ela fecha
+    // 1) JF (nick com cadastro): pede o PIN (06/11/2026) e o "oi" vem depois que ela fecha
     document.getElementById("playerNameInput").value = "JF";
     addPlayer();
     out.jfSemOiAntesDaPergunta = !falas.some((f) => f.k === "gerador.jfChegou" || /boasVindas|nickReacao/.test(f.k));

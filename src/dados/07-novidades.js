@@ -10,6 +10,21 @@
 //  · o que ainda não entrou fica em docs/Novidades_Rascunho.md.
 const NOVIDADES = [
   {
+    v: "Beta 1.9.5",
+    data: "06/11/2026",
+    nome: "Nick Protegido",
+    t: "Seu nick é só seu: quem tem cadastro com PIN entra com o PIN, e o C.A.O.S. reconhece pelo cadastro.",
+    itens: [
+      "🔐 Nick protegido: se o nick tem cadastro, o jogo pede o PIN antes de entrar na partida, mesmo num aparelho onde ele já entrou antes. Sem o PIN, dá pra usar outro nick, ou o ADM libera como convidado.",
+      "🤖 Reconhecido pelo cadastro: o tratamento especial do C.A.O.S., as cores exclusivas e as piadas internas agora são só de quem entrou com o PIN daquele nick.",
+      "🎆 Cartas de Ano Novo: 10 cartas da virada, como Fogos de artifício, Lentilha e Burj Khalifa, entram no baralho em 31/12 e 1/1 e valem o dobro de pontos.",
+    ],
+    qol: [
+      "📶 Sem internet: o PIN é conferido no próprio aparelho, com base no último login feito com internet.",
+      "⏱️ PIN recente: acabou de criar o cadastro ou de digitar o PIN em 🔐 Cadastro? Não precisa digitar de novo pra entrar.",
+    ],
+  },
+  {
     v: "Beta 1.9.4",
     data: "05/11/2026",
     nome: "Medalhas e Sugestões",

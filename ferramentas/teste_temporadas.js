@@ -149,7 +149,8 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
   // item 8: 10 cartas de Natal (entram só na época, espalhadas no começo, valendo o dobro, com selo)
   Object.assign(o, await page.evaluate(() => {
     const r = {};
-    r.natal10Cartas = TEMPORADA_CARTAS.length === 10 && TEMPORADA_CARTAS.every((c) => c.temporada === "natal" && c.clues.length === 20);
+    const NATAL = TEMPORADA_CARTAS.filter((c) => c.temporada === "natal"); // 06/11: a lista também tem as de Ano Novo
+    r.natal10Cartas = NATAL.length === 10 && NATAL.every((c) => c.clues.length === 20);
     r.cartasNatalForaDoBaralhoFixo = !TEMPORADA_CARTAS.some((c) => ADULT_CARDS.includes(c));
     const modo = CURRENT_MODE, sp = players;
     players = [{ id: "a", name: "Ana", color: "#e94560", avatar: "🦊", score: 0, position: 0 }, { id: "b", name: "Beto", color: "#4ecdc4", avatar: "🐼", score: 0, position: 0 }];
@@ -157,7 +158,7 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     allCards = baralhoClassico();
     resetDeck();
     const ini = deck.slice(-50);
-    r.cartasNatalEntramNoComeco = TEMPORADA_CARTAS.every((c) => ini.includes(c));
+    r.cartasNatalEntramNoComeco = NATAL.every((c) => ini.includes(c)) && !deck.some((c) => c.temporada === "anoNovo");
     r.baralhoNaoPassaDoLimite = deck.length <= deckLimiteModo(); // print do Natal (04/11): "409 de 400"
     r.cartaNatalValeODobro = temporadaMultCarta(TEMPORADA_CARTAS[0]) === 2 && temporadaMultCarta(ADULT_CARDS[0]) === 1;
     r.seloNaCartaDeNatal = /vale o dobro/.test(temporadaSeloCartaHtml(TEMPORADA_CARTAS[0])) && temporadaSeloCartaHtml(ADULT_CARDS[0]) === "";
@@ -449,6 +450,23 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
       caosFalarDepois = sf; players = sp;
       caosConsoleReset();
       r.anoNovoSemCarvaoDoNatal = ditas.length === 0;
+    }
+    // item 10 (06/11): 10 cartas de Ano Novo (5 Lugar, 5 Coisa), só no Ano Novo, valendo o dobro, com o selo 🎆
+    {
+      const ano = TEMPORADA_CARTAS.filter((c) => c.temporada === "anoNovo");
+      r.anoNovo10Cartas = ano.length === 10 && ano.every((c) => c.clues.length === 20) && ano.filter((c) => c.category === "LUGAR").length === 5;
+      const modo = CURRENT_MODE, sp = players;
+      players = [{ id: "a", name: "Ana", color: "#e94560", avatar: "🦊", score: 0, position: 0 }, { id: "b", name: "Beto", color: "#4ecdc4", avatar: "🐼", score: 0, position: 0 }];
+      CURRENT_MODE = "classico";
+      allCards = baralhoClassico();
+      resetDeck();
+      const ini = deck.slice(-50);
+      r.anoNovoCartasEntramSoAsDele = ano.every((c) => ini.includes(c)) && !deck.some((c) => c.temporada === "natal");
+      r.anoNovoCartaValeODobroComSelo = temporadaMultCarta(ano[0]) === 2 && /🎆 Carta de Ano Novo · vale o dobro/.test(temporadaSeloCartaHtml(ano[0]));
+      CURRENT_MODE = "junior";
+      r.anoNovoEspumanteForaDoJunior = !temporadaCartasDoModo().some((c) => c.answer === "Espumante") && temporadaCartasDoModo().some((c) => c.answer === "Roupa branca");
+      CURRENT_MODE = modo; players = sp;
+      r.anoNovoCartaAchadaPeloId = cartaPorId("LUGAR-0901") === ano[0];
     }
     return r;
   }));

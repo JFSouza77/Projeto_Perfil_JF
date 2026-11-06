@@ -108,7 +108,7 @@ temporadas, na ordem do calendário.
 10. [ ] Ano Novo e aniversário do criador (2/1), no mesmo formato do Natal. Em pedaços:
     - [x] Ano Novo · enfeite (confete e fogos), selo, 15 falas (+ 10 de presente), 5 cores, 5 emojis e 5+5 itens de lojinha.
     - [x] Ano Novo · 5 títulos (Show de Fogos, Champanhe Estourada, Pé Direito, Meia-Noite em Ponto, Promessa de Ano Novo).
-    - [ ] Ano Novo · 10 cartas valendo o dobro.
+    - [x] Ano Novo · 10 cartas valendo o dobro.
     - [ ] Aniversário do criador (2/1) · tudo (enfeite, falas, o C.A.O.S. pegando leve com o JF, cores, emojis, lojinha, títulos e cartas).
 11. [ ] As outras 12 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween, com o Doces ou travessuras).
 12. [ ] Bateria final, prints de todas as temporadas e relatório pro JF.
@@ -218,4 +218,10 @@ temporadas, na ordem do calendário.
 - 05/11/2026 (tarefa da madrugada, orçamento baixo): conferência leve da `main` (build e teste nas 4 saídas: ok) e
   os 5 títulos de Ano Novo no resumo da partida, com comentário do C.A.O.S. em cada um e o cabeçalho "🎆 Títulos de
   Ano Novo". Teste: `teste_temporadas` (+3 checagens). As 10 cartas de Ano Novo ficam pra outro pedaço.
-
+- 06/11/2026 (madrugada): Ano Novo · 10 cartas feitas, em `src/dados/02-cartas/96-anonovo.js` (ids 0901+ fora da
+  sequência, como as de Natal):
+  - Lugar: Ópera de Sydney, Burj Khalifa, Portão de Brandemburgo, London Eye e Praça Vermelha (onde a virada é famosa);
+  - Coisa: Fogos de artifício, Espumante (adulta, fora do Júnior), Lentilha, Roupa branca e Calendário.
+  Entram só no Ano Novo, valem o dobro e o selo da carta agora diz a temporada ("🎆 Carta de Ano Novo · vale o dobro").
+  Auditoria: 0 erros (1.020 cartas); o auditor barrou a Romã (vira "roma", igual à carta de Roma) e o catálogo avisou
+  que a Uva já está planejada pra 2.0, então ficou a Roupa branca. Teste: `teste_temporadas` (+5 checagens).
