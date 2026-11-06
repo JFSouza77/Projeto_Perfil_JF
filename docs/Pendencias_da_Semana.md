@@ -40,6 +40,12 @@ Regra do JF (26/10/2026): nesta semana, bug, print ou sugestão que ele mandar f
 pra poupar créditos. Só corrige na hora o que ele pedir "pra agora", e só aquilo. Na **quinta, 29/10, às 18h**
 (Brasília), os créditos renovam e começam os patches com tudo desta lista.
 
+## Esperando o JF (06/11/2026)
+
+- [ ] **Cartas de Ano do Perfil 8:** o JF manda na semana de 09/11 (neste fim de semana não dá).
+- [ ] **Senha de ADM nova:** o JF troca sozinho no Cloudflare quando for mexer no Cloudflare da Carteira. Não é urgente.
+  O Code nunca pede nem recebe o valor.
+
 ## Corrigido na hora (pedido do JF)
 
 - [x] **Categoria aparecia na T2 antes da hora** (26/10): a roleta do celular pousava na categoria (e a cor da caixa

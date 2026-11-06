@@ -35,6 +35,8 @@ e autorizar.** Quando tudo estiver pronto, o Code avisa e mostra o que fez.
 - **Liga e desliga:** uma opção "Temporadas" nas configurações, ligada por padrão.
 - **Só aparência e falas,** com uma exceção pedida pelo JF: **carta da temporada vale o dobro de pontos** durante a
   janela, com um selo na carta (🎃, 🎄, 🎉…). Fora da janela, ela é uma carta comum ou nem aparece.
+- **Número de temporadas (JF, 06/11/2026):** ficam **17** (as 15 + os 2 aniversários de setembro). O JF liberou: o total
+  de temporadas não precisa terminar em 0 ou 5. O que vai dentro de cada uma (falas, cartas, itens) continua no 0 ou 5.
 - **Quantidades terminam em 0 ou 5:** 15 temporadas e, em cada uma, 15 falas do C.A.O.S., 10 cartas, 5 itens por
   lojinha, 5 cores, 5 emojis e 5 títulos.
 - **Júnior:** só falas e cartas leves. As datas de homenagem usam fatos, sem tomar partido (mesma regra das cartas de
