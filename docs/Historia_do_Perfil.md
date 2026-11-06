@@ -27,6 +27,29 @@ são os da época.
 Prints da época (enviados pelo JF): `docs/historia/2026-09-29_tela_inicial_beta_1.6.0.png` (Beta 1.6.0 · C.A.O.S. 3.2,
 575 cartas) e `docs/historia/cerebro_do_caos_5.0.14.png` (o Cérebro do C.A.O.S. 5.0.14).
 
+## Álbum de setembro (prints do JF, em ordem)
+
+| # | Print | O que mostra |
+|---|---|---|
+| 1 | `historia/01_embaralhador_demo.png` | "Perfil — Embaralhador Digital": só jogadores e o botão Sortear carta. |
+| 2 | `historia/02_embaralhador_100_cartas.png` | O mesmo embaralhador, já com 100 cartas. |
+| 3 | `historia/03_perfil_200_tela_inicial.png` | Primeira tela inicial: dado, "Perfil 200", palavras flutuando no fundo (já havia isso!). |
+| 4 | `historia/04_perfil_200_regras.png` | As regras do Perfil 200: 20 pontos por carta, divididos entre quem acerta e o Mestre. |
+| 5 | `historia/05_perfil_3.0_tabuleiro.png` | Perfil JF 3.0: o primeiro tabuleiro de 200 casas, os 20 botões de dica e o cronômetro. |
+| 6 | `historia/06_perfil_3.0_resultado.png` | O primeiro resumo da partida (resposta mais rápida, carta mais fácil, MVP). |
+| 7 | `historia/07_perfil_3.0_esqueleto_v2_modos.png` | Primeira escolha de modo: Clássico, Júnior (em construção), Hardcore e Express. |
+| 8 | `historia/08_perfil_3.0_v3.1_tela_inicial.png` | 3.0 V3.1: o título "PERFIL JF 3.0" e o botão 🎮 JOGAR. |
+| 9 | `historia/09_perfil_3.0_v3.1_modos.png` | Os modos ganham cor (Hardcore laranja, Express azul). |
+| 10 | `historia/10_perfil_4.0_v7.2.1_modo_batata.png` | Perfil JF 4.0 com o botão do 🥔 Modo Batata. |
+| 11 | `historia/11_perfil_4.0_v12_data_na_tela.png` | 4.0 V12: a data da atualização na tela inicial (19/09/2026 às 02:15), como até hoje. |
+| 12 | `historia/12_perfil_4.0_v15_junior.png` | 4.0 V15: as regras do Júnior (150 casas, sem Ano, sem joias). |
+| 13 | `historia/13_perfil_4.0_v15_primeira_fala_do_caos.png` | 🤖 **A primeira fala do C.A.O.S.**: "Olá, humanos. Fui designado pra acompanhar esta partida. Tentarei não me arrepender." |
+| 14 | `historia/14_perfil_4.0_v15.1_vitoria_das_joias.png` | 💎 A primeira vitória pelas 4 joias. |
+| 15 | `historia/15_perfil_4.0_v20_caos_no_cadastro.png` | 4.0 V20: o C.A.O.S. já reconhece gente no cadastro, e o "Como o C.A.O.S. pode zoar esse jogador?" (Suave, Normal, Ácido). |
+| 16 | `historia/16_escolha_do_modo_com_old_school.png` | A escolha de modo em cartões, já com Old School e Modo Aleatório (fim de setembro). |
+
+Ainda faltam (o JF está procurando): o primeiro rostinho e a primeira voz do C.A.O.S.
+
 ## Outubro e novembro de 2026 (pelo HISTÓRICO do jogo)
 
 A partir de outubro já havia regra de versões, então as datas saem do registro de cada versão.
@@ -56,8 +79,8 @@ A partir de outubro já havia regra de versões, então as datas saem do registr
 
 ## Prints que ajudariam a completar a linha do tempo
 
-Tela inicial de cada fase (1.5, 1.7, 1.7.10, 1.8 e 1.9), a primeira sala online, o primeiro rosto do C.A.O.S. e a
-primeira T2 (tela do celular). Print com criança da família não vai pro repositório.
+O primeiro rosto e a primeira voz do C.A.O.S., a tela inicial de cada fase (1.5, 1.7, 1.7.10, 1.8 e 1.9), a primeira
+sala online e a primeira T2 (tela do celular). Print com criança da família não vai pro repositório.
 
 ## Datas no jogo
 
