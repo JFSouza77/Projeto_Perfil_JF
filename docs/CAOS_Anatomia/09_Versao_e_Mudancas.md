@@ -1,6 +1,6 @@
 # Versão do C.A.O.S. e o que mudou (pra manter os projetos em dia)
 
-**Versão atual no Perfil:** C.A.O.S. **5.5.0** · Beta 1.9.4 · Medalhas e Sugestões (05/11/2026).
+**Versão atual no Perfil:** C.A.O.S. **5.6.0** · Beta 1.9.5 · Nick Protegido (06/11/2026).
 **Versão atual na Carteira (conferida em 05/11/2026):** C.A.O.S. 1.3.0 da Carteira.
 
 Como ler a coluna **Porte**:
@@ -12,6 +12,7 @@ Como ler a coluna **Porte**:
 
 | Versão | Data | O que mudou | Porte |
 |---|---|---|---|
+| 5.6.0 | 06/11 | Reconhece as pessoas pelo cadastro (PIN), não pelo nome digitado; portão do PIN pra nick com cadastro | ✅ Na Carteira: perfil de tratamento só vale pro dono confirmado |
 | 5.5.0 | 05/11 | Emoções calibradas: tédio passa quando a mesa volta a jogar; temperamento do dia pesa (rabugento irrita, generoso magoa) | ✅ Tédio = "dias sem registrar" que passa quando a pessoa volta |
 | 5.5.0 | 05/11 | Voz da nuvem: fala com uma emoção só vai inteira num pedido (entonação contínua) | ✅ Direto no `05_Voz.md` |
 | 5.5.0 | 05/11 | Medalhas da temporada (comentário do progresso e da conquista) | 🔶 Medalha do mês na Carteira |
