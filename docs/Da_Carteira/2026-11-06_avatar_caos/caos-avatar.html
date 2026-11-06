@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C.A.O.S. avatar</title>
+<style>
+  :root { --bg:#0b0d14; --cor:#3ef0ff; --texto:#e8ecf5; --suave:#8a93a8; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:radial-gradient(circle at 50% 35%, #161a2a 0, var(--bg) 70%); color:var(--texto);
+    font-family:system-ui, -apple-system, "Segoe UI", sans-serif; min-height:100vh; display:flex; flex-direction:column;
+    align-items:center; padding:24px 16px; }
+  h1 { font-size:20px; letter-spacing:.2em; margin:0 0 4px; color:var(--cor); text-shadow:0 0 12px var(--cor); transition:color .4s, text-shadow .4s; }
+  .sub { color:var(--suave); font-size:13px; margin:0 0 8px; }
+  svg { width:min(360px, 90vw); height:auto; overflow:visible; }
+  #corpo { animation:boia 3.2s ease-in-out infinite; transform-origin:200px 210px; }
+  @keyframes boia { 0%,100% { transform:translateY(0) rotate(-5deg); } 50% { transform:translateY(-10px) rotate(-3deg); } }
+  .neon { stroke:var(--cor); filter:url(#brilho); transition:stroke .4s, fill .4s; }
+  #olhos { transform-origin:200px 202px; transition:transform .08s; }
+  #olhos.pisca { transform:scaleY(.1); }
+  .fala { margin:6px 0 16px; max-width:340px; background:#151a28; border:1px solid #262d42; border-radius:14px;
+    padding:12px 14px; font-size:15px; line-height:1.4; min-height:48px; text-align:center; }
+  .botoes { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:380px; }
+  button { background:#151a28; color:var(--texto); border:1px solid #2a3148; border-radius:999px; padding:10px 14px;
+    font-size:15px; min-height:44px; cursor:pointer; }
+  button[aria-pressed="true"] { border-color:var(--cor); box-shadow:0 0 10px var(--cor); }
+  @media (prefers-reduced-motion: reduce) { #corpo { animation:none; } }
+</style>
+</head>
+<body>
+  <h1>C.A.O.S.</h1>
+  <p class="sub">rascunho do Wally · toque nas caras</p>
+
+  <svg viewBox="0 0 400 400" role="img" aria-label="C.A.O.S., uma telinha flutuante com chifrinhos, rabo de cabo e pedacinhos girando em volta">
+    <defs>
+      <filter id="brilho" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="3" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+
+    <g id="particulas"></g>
+
+    <g id="corpo">
+      <!-- rabo: um cabo que termina em ponta de seta -->
+      <path class="neon" fill="none" stroke-width="5" stroke-linecap="round"
+            d="M262 282 C 300 320, 250 345, 292 362"/>
+      <path class="neon" id="ponta" stroke-width="3" stroke-linejoin="round" d="M284 352 L306 366 L282 374 Z"/>
+
+      <!-- chifrinhos: o esquerdo certinho, o direito torto, com faísca -->
+      <path class="neon" stroke-width="4" stroke-linejoin="round" d="M132 140 L122 96 L158 134 Z"/>
+      <path class="neon" stroke-width="4" stroke-linejoin="round" d="M242 134 L262 104 L276 112 L268 140 Z"/>
+      <circle id="faisca" class="neon" cx="279" cy="100" r="4" stroke-width="2"/>
+
+      <!-- a telinha -->
+      <rect class="neon" x="100" y="135" width="200" height="150" rx="34" fill="#0f1320" stroke-width="5"/>
+      <rect x="114" y="149" width="172" height="122" rx="24" fill="none" stroke="#ffffff" stroke-opacity=".06" stroke-width="2"/>
+
+      <!-- rosto -->
+      <g id="olhos">
+        <path id="olhoE" class="neon" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path id="olhoD" class="neon" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <path id="sobrancelhas" class="neon" fill="none" stroke-width="4" stroke-linecap="round"/>
+      <path id="boca" class="neon" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <text id="extra" x="200" y="125" text-anchor="middle" font-size="34" font-weight="800" fill="var(--cor)" filter="url(#brilho)"></text>
+    </g>
+  </svg>
+
+  <div class="fala" id="fala" aria-live="polite"></div>
+  <div class="botoes" id="botoes"></div>
+
+<script>
+const caras = {
+  neutro:   { nome:'😐 Neutro', cor:'#3ef0ff', modo:'calmo',
+    olhoE:{ d:'M150 188 h22 v28 h-22 z', cheio:true }, olhoD:{ d:'M228 188 h22 v28 h-22 z', cheio:true },
+    sob:'', boca:'M176 250 h48', extra:'',
+    fala:'Analisando seus gastos. Sem julgamento. Por enquanto.' },
+  deboche:  { nome:'😏 Deboche', cor:'#b06bff', modo:'calmo',
+    olhoE:{ d:'M150 202 h22 v12 h-22 z', cheio:true }, olhoD:{ d:'M228 190 h22 v26 h-22 z', cheio:true },
+    sob:'M226 176 L254 166', boca:'M170 252 Q 200 262, 230 240', extra:'',
+    fala:'Oitenta reais de delivery numa terça-feira. Ousado.' },
+  bravo:    { nome:'😠 Bravo', cor:'#ff3b5c', modo:'agitado',
+    olhoE:{ d:'M148 192 L174 202 V216 H148 Z', cheio:true }, olhoD:{ d:'M252 192 L226 202 V216 H252 Z', cheio:true },
+    sob:'', boca:'M176 258 Q 200 240, 224 258', extra:'',
+    fala:'O orçamento do lazer estourou. De novo. Eu avisei. Duas vezes.' },
+  feliz:    { nome:'😄 Feliz', cor:'#ffd24a', modo:'festa',
+    olhoE:{ d:'M148 208 Q 161 186, 174 208', cheio:false }, olhoD:{ d:'M226 208 Q 239 186, 252 208', cheio:false },
+    sob:'', boca:'M166 238 Q 200 274, 234 238', extra:'',
+    fala:'Mês no verde! Não acostuma, mas hoje eu comemoro com você.' },
+  alerta:   { nome:'⚠️ Alerta', cor:'#ff8a3d', modo:'agitado',
+    olhoE:{ d:'M149 202 a12 12 0 1 0 24 0 a12 12 0 1 0 -24 0', cheio:false }, olhoD:{ d:'M227 202 a12 12 0 1 0 24 0 a12 12 0 1 0 -24 0', cheio:false },
+    sob:'', boca:'M192 252 a8 8 0 1 0 16 0 a8 8 0 1 0 -16 0', extra:'!',
+    fala:'A fatura do cartão vence amanhã: R$ 412,90. Bora pagar hoje?' },
+  pensando: { nome:'🤔 Pensando', cor:'#3ef0ff', modo:'lento',
+    olhoE:{ d:'M158 184 h18 v20 h-18 z', cheio:true }, olhoD:{ d:'M234 184 h18 v20 h-18 z', cheio:true },
+    sob:'', boca:'M180 252 q 10 -6 20 0 t 20 0', extra:'…',
+    fala:'Hmm… deixa eu fazer as contas. Ninguém me paga hora extra, mas tudo bem.' },
+};
+
+const $ = id => document.getElementById(id);
+let atual = 'neutro';
+
+function mostrar(nome) {
+  const c = caras[nome]; atual = nome;
+  document.documentElement.style.setProperty('--cor', c.cor);
+  for (const lado of ['olhoE', 'olhoD']) {
+    $(lado).setAttribute('d', c[lado].d);
+    $(lado).setAttribute('fill', c[lado].cheio ? c.cor : 'none');
+    $(lado).style.fill = c[lado].cheio ? c.cor : 'none';
+  }
+  $('sobrancelhas').setAttribute('d', c.sob || 'M0 0');
+  $('sobrancelhas').style.display = c.sob ? '' : 'none';
+  $('boca').setAttribute('d', c.boca);
+  $('extra').textContent = c.extra;
+  $('fala').textContent = c.fala;
+  document.querySelectorAll('#botoes button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cara === nome)));
+}
+
+for (const [k, c] of Object.entries(caras)) {
+  const b = document.createElement('button');
+  b.textContent = c.nome; b.dataset.cara = k; b.onclick = () => mostrar(k);
+  $('botoes').appendChild(b);
+}
+
+// pedacinhos do caos em volta
+const NS = 'http://www.w3.org/2000/svg';
+const pedacos = Array.from({ length: 15 }, (_, i) => {
+  const r = document.createElementNS(NS, 'rect');
+  const t = 5 + (i % 3) * 3;
+  r.setAttribute('width', t); r.setAttribute('height', t); r.setAttribute('rx', 1.5);
+  r.setAttribute('class', 'neon'); r.setAttribute('fill', 'none'); r.setAttribute('stroke-width', 2);
+  r.style.opacity = .35 + (i % 4) * .15;
+  $('particulas').appendChild(r);
+  return { el:r, ang: i * (Math.PI * 2 / 15), raio: 140 + (i % 5) * 12, vel: .003 + (i % 4) * .0015, giro: i * 37 };
+});
+
+const parado = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function quadro() {
+  const modo = caras[atual].modo;
+  const v = { calmo:1, lento:.35, agitado:2.6, festa:1.8 }[modo];
+  const tremor = modo === 'agitado' ? 7 : 0;
+  for (const p of pedacos) {
+    p.ang += parado ? 0 : p.vel * v; p.giro += parado ? 0 : v * 1.5;
+    const raio = modo === 'festa' ? 150 : p.raio;
+    const x = 200 + Math.cos(p.ang) * raio + (Math.random() - .5) * tremor;
+    const y = 212 + Math.sin(p.ang) * raio * .8 + (Math.random() - .5) * tremor;
+    p.el.setAttribute('transform', `translate(${x} ${y}) rotate(${p.giro})`);
+  }
+  $('faisca').style.opacity = Math.random() < (modo === 'agitado' ? .5 : .15) ? 1 : .2;
+  requestAnimationFrame(quadro);
+}
+requestAnimationFrame(quadro);
+
+// piscar
+(function piscar() {
+  setTimeout(() => {
+    if (caras[atual].olhoE.cheio) { $('olhos').classList.add('pisca'); setTimeout(() => $('olhos').classList.remove('pisca'), 130); }
+    piscar();
+  }, 2500 + Math.random() * 2500);
+})();
+
+const pedida = new URLSearchParams(location.search).get('cara');
+mostrar(caras[pedida] ? pedida : 'deboche');
+</script>
+</body>
+</html>
