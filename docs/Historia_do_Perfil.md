@@ -27,6 +27,38 @@ são os da época.
 Prints da época (enviados pelo JF): `docs/historia/2026-09-29_tela_inicial_beta_1.6.0.png` (Beta 1.6.0 · C.A.O.S. 3.2,
 575 cartas) e `docs/historia/cerebro_do_caos_5.0.14.png` (o Cérebro do C.A.O.S. 5.0.14).
 
+## Outubro e novembro de 2026 (pelo HISTÓRICO do jogo)
+
+A partir de outubro já havia regra de versões, então as datas saem do registro de cada versão.
+
+| Dia | Versão | O que aconteceu |
+|---|---|---|
+| 1/10 | 1.7.0 · Rebuild Update | O jogo é reestruturado por dentro: limpeza, correções e a base pra tudo que veio depois. |
+| 9/10 | 1.7.9.4 · Rooms and Network Update | Primeiras **salas**: os celulares entram na partida. |
+| 10/10 | 1.7.9.6 a 1.7.9.8 | Sala mais segura e entrada por **QR code**. |
+| **11/10** | **1.7.10 · Multiplayer Update** | 🌐 **Online de verdade**: servidor e ponte próprios (Cloudflare). **O maior marco: a Beta vira Beta Release.** |
+| 12/10 | 1.7.10.1 | Primeiro teste entre redes diferentes (5G × Wi-Fi). |
+| **13/10** | 1.7.10.2 | 🗣️ **Voz nova do C.A.O.S.** (Azure), no lugar da voz robótica do aparelho. |
+| 18/10 | 1.7.10.6 | Corrida e o primeiro **Modo C.A.O.S. online** com a mesa. |
+| 26/10 | 1.8.0 · C.A.O.S. Expansion Update | C.A.O.S. 5.2.0: guia da mesa, afeto da ficha, falas novas. |
+| 30/10 | 1.9.0 · T2 Viva Update | A tela do celular ganha vida: dicas e o C.A.O.S. mexendo com quem espera. |
+| 4/11 | 1.9.3 · Edição de Natal | Primeira temporada no ar. |
+| 5/11 | 1.9.4 | Emoções calibradas, sugestões dos jogadores, medalhas da temporada. |
+| 6/11 | 1.9.5 · Nick Protegido | O C.A.O.S. reconhece as pessoas pelo cadastro (PIN), não pelo nome. |
+
+## Como foi feito
+
+- Atualização **quase todo dia**, às vezes várias no mesmo dia.
+- IAs que ajudaram o JF ao longo do caminho: GPT, Gemini, Google AI Studio, o Klaus (chat do Claude), o Code no
+  computador e, depois, o Code na nuvem.
+- O multiplayer exigiu o maior trabalho de todos: reestruturar, limpar, corrigir, subir servidor, montar os bancos de
+  falas e trocar a voz.
+
+## Prints que ajudariam a completar a linha do tempo
+
+Tela inicial de cada fase (1.5, 1.7, 1.7.10, 1.8 e 1.9), a primeira sala online, o primeiro rosto do C.A.O.S. e a
+primeira T2 (tela do celular). Print com criança da família não vai pro repositório.
+
 ## Datas no jogo
 
 - **6/9 · Aniversário do Perfil JF** e **20/9 · Aniversário do C.A.O.S.** viraram temporadas (`src/js/05y-temporadas.js`).

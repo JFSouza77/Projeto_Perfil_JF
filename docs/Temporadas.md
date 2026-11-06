@@ -116,6 +116,14 @@ temporadas, na ordem do calendário.
     Inclui as 2 datas novas do JF (06/11/2026), já reconhecidas pelo motor: **6/9 · Aniversário do Perfil JF** (o C.A.O.S.
     lembra quantos anos o jogo faz e conta a história: `docs/Historia_do_Perfil.md`) e **20/9 · Aniversário do C.A.O.S.**
     (ele é o aniversariante: fica todo bobo, comemora com a mesa e relembra de quando era "só um texto na tela").
+    **Ideias do JF pra setembro (06/11/2026), o mês de aniversário do jogo e do C.A.O.S.:**
+    - Setembro inteiro: o C.A.O.S. fica **ansioso** com o aniversário dele (conta os dias, solta indireta, "cobra o bolo"
+      da mesa). Cresce até o 20/9.
+    - **Presentes no Modo C.A.O.S.** com tema de aniversário (ele ganha e ele dá).
+    - Botão **"🎂 Dar parabéns ao C.A.O.S."**: grava na ficha quem deu parabéns (e em que ano). Ele fica grato e passa a
+      gostar mais dessa pessoa (pesa no afeto, como veterano e craque). Só com cadastro, pra valer pra pessoa certa.
+    - **Emblema/medalha comemorativa** do aniversário, brindes na lojinha e comemoração na mesa (6/9 e 20/9).
+    - (O Pix pro C.A.O.S. foi brincadeira do JF: fica de fora.)
 12. [ ] Bateria final, prints de todas as temporadas e relatório pro JF.
 
 ## Progresso
