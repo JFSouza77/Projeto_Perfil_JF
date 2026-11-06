@@ -104,7 +104,7 @@ temporadas, na ordem do calendário.
 8. [x] Natal · 10 cartas de Natal, auditadas, valendo o dobro na janela.
 9. [x] Natal · bateria de testes, prints e relatório pro JF (ele decide se publica).
 9.1. [x] **Publicado:** Beta 1.9.3 · Edição de Natal (04/11/2026, PR #191). O trabalho segue no branch `temporadas-2`.
-9.2. [ ] Medalhas da temporada (ideia do JF, 04/11): desafios, medalha no perfil, exibir ou não, desenho da medalha de Natal. Att grande: quinta/sexta.
+9.2. [x] (05/11, branch `quinta-att`, falta o ok do JF pra publicar) Medalhas da temporada (ideia do JF, 04/11): desafios, medalha no perfil, exibir ou não, desenho da medalha de Natal. Att grande: quinta/sexta.
 10. [ ] Ano Novo e aniversário do criador (2/1), no mesmo formato do Natal. Em pedaços:
     - [x] Ano Novo · enfeite (confete e fogos), selo, 15 falas (+ 10 de presente), 5 cores, 5 emojis e 5+5 itens de lojinha.
     - [x] Ano Novo · 5 títulos (Show de Fogos, Champanhe Estourada, Pé Direito, Meia-Noite em Ponto, Promessa de Ano Novo).

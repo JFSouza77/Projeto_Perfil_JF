@@ -762,6 +762,9 @@ body:not(.batata-mode) .splash-dice {
   -webkit-user-select: none;
   user-select: none;
 }
+.splash-caos .sc-face::before {
+  content: attr(data-f);
+}
 .splash-caos .sc-face {
   flex: 0 0 auto;
   font-family: ui-monospace, Menlo, Consolas, monospace;

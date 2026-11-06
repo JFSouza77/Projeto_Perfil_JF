@@ -16,6 +16,7 @@
  *   GET  /ponte            → { iceServers: [...] } (vazio se a ponte não estiver configurada)
  *   POST /reporte          → carta reportada por qualquer aparelho (1.7.10: id, dica, motivo; nada pessoal)
  *                            ou problema da partida (tipo "problema": categoria, descrição, retrato sem nomes)
+ *                            ou sugestão de jogador (tipo "sugestao", 05/11/2026: categoria e texto, nada pessoal)
  *   GET  /reportes?chave=… → página do JF com os reportes (senha no segredo REPORTES_SENHA); &formato=texto
  *   POST /reportes/apagar  → apaga todos (com a senha)
  *   GET  /reportes/img?chave=…&id=…&n=… → imagem de um reporte (print da tela ou foto anexada, 25/10/2026)
@@ -392,8 +393,10 @@ export class Sinal {
     const imgs = d && Array.isArray(d.imagens) ? d.imagens.filter((x) => typeof x === "string" && x.length <= 300000 && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(x)).slice(0, 3) : [];
     if (d && typeof d === "object") delete d.imagens;
     if (JSON.stringify(d || {}).length > 3000) return json({ erro: "grande" }, 413);
-    const problema = !!d && d.tipo === "problema";
-    if (!d || (!problema && !/^[A-Z]{3,8}-\d{4}$/.test(String(d.id || "")))) return json({ erro: "carta" }, 400);
+    const problema = !!d && d.tipo === "problema", sugestao = !!d && d.tipo === "sugestao";
+    if (!d || (!problema && !sugestao && !/^[A-Z]{3,8}-\d{4}$/.test(String(d.id || "")))) return json({ erro: "carta" }, 400);
+    // 05/11/2026 · sugestão de jogador (aba 💡 Sugestões): precisa de texto; sem imagem e sem retrato da partida
+    if (sugestao && !t(d.nota, 500)) return json({ erro: "vazia" }, 400);
     // no máximo 40 por hora por endereço (em memória; só pra ninguém lotar a caixa)
     const agora = Date.now();
     this.ritmo = this.ritmo || new Map();
@@ -402,7 +405,25 @@ export class Sinal {
     r.push(agora);
     this.ritmo.set(ip, r);
     const id = String(agora).padStart(15, "0") + ":" + Math.random().toString(36).slice(2, 8);
-    const nImg = await this.guardarImagens(id, imgs, ip, agora);
+    const nImg = sugestao ? 0 : await this.guardarImagens(id, imgs, ip, agora);
+    if (sugestao) {
+      const st = this.ctx.storage;
+      await st.put("s:" + id, {
+        cat: ["ideia", "modo", "cartas", "caos", "visual", "outro"].includes(d.cat) ? d.cat : "outro",
+        nota: t(d.nota, 500),
+        modo: t(d.modo, 16),
+        versao: t(d.versao, 20),
+        quando: Number.isFinite(d.quando) ? d.quando : agora,
+        chegou: agora,
+      });
+      const ns = ((await st.get("ns")) || 0) + 1;
+      if (ns > 1000) {
+        const velhos = await st.list({ prefix: "s:", limit: ns - 1000 });
+        await st.delete([...velhos.keys()]);
+        await st.put("ns", 1000);
+      } else await st.put("ns", ns);
+      return json({ ok: true });
+    }
     // 25/10/2026 · problema da partida (bug): categoria, descrição curta e o retrato da partida (sem nomes)
     if (problema) {
       let anexo = null;
@@ -507,13 +528,16 @@ export class Sinal {
     if (!this.senhaOk(url.searchParams.get("chave"))) return new Response("Senha errada.", { status: 401, headers: { "Content-Type": "text/plain; charset=utf-8" } });
     const lista = [...(await this.ctx.storage.list({ prefix: "r:", reverse: true, limit: 1000 })).values()];
     const problemas = [...(await this.ctx.storage.list({ prefix: "p:", reverse: true, limit: 300 })).values()];
+    const sugestoes = [...(await this.ctx.storage.list({ prefix: "s:", reverse: true, limit: 300 })).values()];
+    const sugNome = { ideia: "💡 Ideia nova", modo: "🎮 Modos e regras", cartas: "🃏 Cartas", caos: "🤖 C.A.O.S.", visual: "🎨 Visual e acessibilidade", outro: "✏️ Outro" };
     const catNome = { travou: "🧊 Travou", botao: "👆 Botão/toque", placar: "🔢 Placar", caos: "🤖 C.A.O.S.", online: "📱 Online", visual: "🎨 Visual", outro: "✏️ Outro" };
     const motivo = { fato: "❌ Fato errado", velha: "🕰️ Desatualizada", entrega: "🙊 Entrega a resposta", confusa: "🤔 Confusa", outro: "✏️ Outro" };
     const quando = (ms) => new Date(ms).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", dateStyle: "short", timeStyle: "short" });
     if (url.searchParams.get("formato") === "texto") {
       const txt = lista.map((r) => `• ${r.id} (${r.resposta}) · ${r.dica ? `dica ${r.dica.pos + 1}: "${r.dica.texto}"` : "a carta toda"} · ${(motivo[r.motivo] || r.motivo).replace(/^\S+\s/, "")}${r.nota ? " · " + r.nota : ""} · ${r.modo || "?"} · ${r.versao || "?"} · ${quando(r.quando)}`).join("\n");
       const txtP = problemas.map((r) => `• ${(catNome[r.cat] || r.cat).replace(/^\S+\s/, "")}${r.nota ? " · " + r.nota : ""} · ${r.modo || "?"} · ${r.versao || "?"} · ${quando(r.quando)}${r.anexo ? "\n  " + r.anexo : ""}`).join("\n");
-      return new Response(`Perfil JF · cartas reportadas (${lista.length})\n` + txt + `\n\nProblemas reportados (${problemas.length})\n` + txtP + "\n", { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" } });
+      const txtS = sugestoes.map((r) => `• ${(sugNome[r.cat] || r.cat).replace(/^\S+\s/, "")} · ${r.nota} · ${r.modo || "?"} · ${r.versao || "?"} · ${quando(r.quando)}`).join("\n");
+      return new Response(`Perfil JF · cartas reportadas (${lista.length})\n` + txt + `\n\nProblemas reportados (${problemas.length})\n` + txtP + `\n\nSugestões (${sugestoes.length})\n` + txtS + "\n", { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" } });
     }
     const e = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
     const chave = e(url.searchParams.get("chave"));
@@ -527,7 +551,8 @@ export class Sinal {
     const itensP = problemas
       .map((r) => `<li><b>${e(catNome[r.cat] || r.cat)}</b>${r.nota ? `<br>${e(r.nota)}` : ""}<small>${e(r.modo)} · ${e(r.versao)} · ${e(quando(r.quando))}</small>${fotos(r)}${r.anexo ? `<details><summary>Retrato da partida</summary><pre>${e(r.anexo)}</pre></details>` : ""}</li>`)
       .join("");
-    const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Cartas reportadas</title><style>body{font-family:system-ui,sans-serif;background:#12121c;color:#eee;margin:0;padding:16px;max-width:760px;margin:auto}h1{font-size:1.3rem}li{list-style:none;background:#1e1e2e;border-radius:12px;padding:12px;margin:10px 0;line-height:1.45}li span{opacity:.7;font-size:.85em}li small{display:block;opacity:.6;margin-top:4px}pre{white-space:pre-wrap;word-break:break-all;font-size:.8em;opacity:.85}.imgs img{width:110px;height:auto;border-radius:8px;margin:8px 8px 0 0;border:1px solid #333}em{color:#fbbf24;font-style:normal}a,button{color:#22d3ee}button{background:none;border:1px solid #e11d48;color:#fda4af;border-radius:10px;padding:10px 14px;margin-top:16px}</style></head><body><h1>⚑ Cartas reportadas (${lista.length})</h1><p><a href="?chave=${chave}&formato=texto">Ver como texto (pra copiar)</a></p><ul style="padding:0">${itens || "<li>Nenhuma carta reportada ainda.</li>"}</ul><h1>🐞 Problemas reportados (${problemas.length})</h1><ul style="padding:0">${itensP || "<li>Nenhum problema reportado ainda.</li>"}</ul><form method="post" action="/reportes/apagar" onsubmit="return confirm('Apagar todos os reportes?')"><input type="hidden" name="chave" value="${chave}"><button>🗑️ Apagar todos</button></form></body></html>`;
+    const itensS = sugestoes.map((r) => `<li><b>${e(sugNome[r.cat] || r.cat)}</b><br>${e(r.nota)}<small>${e(r.modo)} · ${e(r.versao)} · ${e(quando(r.quando))}</small></li>`).join("");
+    const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Cartas reportadas</title><style>body{font-family:system-ui,sans-serif;background:#12121c;color:#eee;margin:0;padding:16px;max-width:760px;margin:auto}h1{font-size:1.3rem}li{list-style:none;background:#1e1e2e;border-radius:12px;padding:12px;margin:10px 0;line-height:1.45}li span{opacity:.7;font-size:.85em}li small{display:block;opacity:.6;margin-top:4px}pre{white-space:pre-wrap;word-break:break-all;font-size:.8em;opacity:.85}.imgs img{width:110px;height:auto;border-radius:8px;margin:8px 8px 0 0;border:1px solid #333}em{color:#fbbf24;font-style:normal}a,button{color:#22d3ee}button{background:none;border:1px solid #e11d48;color:#fda4af;border-radius:10px;padding:10px 14px;margin-top:16px}</style></head><body><h1>⚑ Cartas reportadas (${lista.length})</h1><p><a href="?chave=${chave}&formato=texto">Ver como texto (pra copiar)</a></p><ul style="padding:0">${itens || "<li>Nenhuma carta reportada ainda.</li>"}</ul><h1>🐞 Problemas reportados (${problemas.length})</h1><ul style="padding:0">${itensP || "<li>Nenhum problema reportado ainda.</li>"}</ul><h1>💡 Sugestões (${sugestoes.length})</h1><ul style="padding:0">${itensS || "<li>Nenhuma sugestão ainda.</li>"}</ul><form method="post" action="/reportes/apagar" onsubmit="return confirm('Apagar todos os reportes?')"><input type="hidden" name="chave" value="${chave}"><button>🗑️ Apagar todos</button></form></body></html>`;
     return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" } });
   }
   async apagarReportes(req) {
@@ -540,10 +565,12 @@ export class Sinal {
     let lista;
     while ((lista = await st.list({ prefix: "r:", limit: 128 })).size) await st.delete([...lista.keys()]);
     while ((lista = await st.list({ prefix: "p:", limit: 128 })).size) await st.delete([...lista.keys()]);
+    while ((lista = await st.list({ prefix: "s:", limit: 128 })).size) await st.delete([...lista.keys()]);
     while ((lista = await st.list({ prefix: "i:", limit: 128 })).size) await st.delete([...lista.keys()]);
     await st.put("nic", 0);
     await st.put("n", 0);
     await st.put("np", 0);
+    await st.put("ns", 0);
     return new Response(null, { status: 303, headers: { Location: "/reportes?chave=" + encodeURIComponent(chave) } });
   }
   /* --- 11/2026 · Cadastro dos jogadores (instância "contas"; pedido do JF, ideia do Henrique) ---

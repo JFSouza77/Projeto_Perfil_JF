@@ -443,9 +443,13 @@ function caosMemFimDePartida() {
           return l.length === 1 ? l[0] : -1;
         })()
       : -1;
+  const medalhas = [];
   players.forEach((p, i) => {
     if (!memContaFicha(p)) return;
     fichaUpd(p.name, (f) => {
+      // 05/11/2026 · medalha da temporada (05y2-medalhas.js): vitória por joias no Júnior, Clássico ou Old School
+      const md = typeof medalhaAnotar === "function" ? medalhaAnotar(f, venc.includes(i)) : null;
+      if (md) medalhas.push({ ...md, nome: p.name });
       f.partidas++;
       if (venc.includes(i)) f.vitorias++;
       f.melhorPts = Math.max(f.melhorPts, memNum(p.score, 0));
@@ -485,6 +489,7 @@ function caosMemFimDePartida() {
     setTimeout(() => {
       if (gameEnded) showToastMessage(recMsg, null, true);
     }, 9e3);
+  if (medalhas.length && typeof medalhaAvisar === "function") medalhaAvisar(medalhas);
 }
 function caosMemResetPartida() {
   caosMomentos = [];

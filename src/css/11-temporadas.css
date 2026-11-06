@@ -185,3 +185,11 @@ html[data-temporada="natal"] .rede-fala-rosto {
   border: 1px solid #fde68a99;
   box-shadow: 0 0 10px #fde68a55;
 }
+/* 05/11/2026 · Medalhas da temporada (src/js/05y2-medalhas.js) */
+.medalha-tag{display:inline-flex;vertical-align:-3px;margin-left:2px}
+.medalha-tag .medalha-svg{filter:drop-shadow(0 1px 2px #0008)}
+.medalha-modal{text-align:center}
+.medalha-grande{display:flex;justify-content:center;margin:4px 0 8px}
+.medalha-grande .medalha-svg{filter:drop-shadow(0 4px 14px rgba(250,204,21,.45))}
+@media (prefers-reduced-motion:no-preference){.medalha-grande .medalha-svg{animation:medalhaGira 1.2s ease-out 1}}
+@keyframes medalhaGira{from{transform:scale(.4) rotate(-25deg);opacity:0}to{transform:none;opacity:1}}

@@ -105,3 +105,45 @@ segura**. Sem rodeio: é pra achar rápido.
   - Mudou: com o baralho no limite, as de Natal tomam o lugar das últimas 10 cartas a sair (nunca de outra de Natal).
   - Teste: `teste_temporadas` › `baralhoNaoPassaDoLimite` (falha sem a correção, passa com ela).
 
+
+### 05/11/2026 · emoções calibradas e voz contínua (lista de quinta do JF, entra na próxima versão)
+
+- **Tédio que não passava:** depois da mesa parada, o C.A.O.S. seguia entediado por ~20 cartas, mesmo com a mesa
+  jogando de novo.
+  - Causa: só o tempo derretia o tédio; acerto e erro não mexiam nele.
+  - Mudou: acerto tira 0,8 de tédio e erro tira 0,4 (com 6 erros seguidos ou mais, não tira: a mesa empacou).
+  - Teste: `teste_emocoes` › "Tédio vai embora" (era 20 a 24 cartas; agora 4 a 8).
+- **Temperamento do dia quase não aparecia:** rabugento e generoso reagiam igual a erro em série (os dois magoados).
+  - Mudou: raiva pesa mais com tensão do dia (0,15 → 0,25) e a tristeza pesa menos (rabugento e elétrico se irritam;
+    normal e generoso se magoam).
+  - Teste: `teste_emocoes` › "Erro em série" (falha sem a mudança).
+- **Voz picada:** na voz da nuvem cada frase era um áudio, com respiro e entonação recomeçando.
+  - Mudou: fala com uma emoção só e até 300 letras vai num pedido só (`vozNuvemJuntar`).
+  - Teste: `teste_voz` › "Duas frases, uma emoção: um pedido só".
+- **💡 Sugestões (pedido do JF: "aba de sugestões e feedback pros jogadores"):** botão no menu ⋮ da tela inicial e na
+  Pausa. Categoria e texto (até 500 letras), sem nome e sem retrato da partida. Vai pela fila do Reportar problema
+  (sem internet, guarda e manda depois) e aparece na página dos reportes do JF, seção 💡 Sugestões (também no
+  formato texto). O servidor recusa sugestão vazia e guarda no máximo 1.000.
+  - Arquivos: `src/js/05u2-sugestoes.js`, `servidor/worker.js` (tipo "sugestao", prefixo `s:`), CSS das janelas.
+  - Teste: `teste_sugestoes` (9 conferências, com o servidor local).
+- **🏅 Medalhas da temporada (ideia do JF, 04/11):** vitória por joias no Júnior, no Clássico e no Old School durante
+  a temporada dá a medalha dela ("natal-2026"). Fica na ficha (sobe com o cadastro); nick emprestado não conta. O
+  C.A.O.S. comenta o progresso (10 falas) e a conquista (10 falas); quem ganha escolhe se mostra ao lado do nome no
+  placar. Desenho em SVG nas cores de cada temporada, com o emoji dela.
+  - Arquivos: `src/js/05y2-medalhas.js`, `fichaLimpa` (08-salvamento), `caosMemFimDePartida`, placar (05-tela), CSS.
+  - Teste: `teste_medalhas` (16 conferências, inclusive "o jogo não muda").
+- **Pente fino de acessibilidade (lista de quinta do JF):** o `auditar_botoes.js` ganhou `--axe=` (axe-core, WCAG 2.2
+  A/AA, em todas as telas do roteiro, Noturno e Claro) e passou a contar a transparência dos botões (antes só no texto
+  solto). Achados e correções:
+  - Humores não escolhidos ficavam com 35% de opacidade (1,7 a 3:1), mas continuam clicáveis: agora menos cor e letra
+    legível (o escolhido segue com o brilho). 💀 Nível 0 no Noturno com vermelho mais claro.
+  - 🥔 Batata e 🗣️ Voz desligados no Claro: 4,0 e 4,45:1 → sem transparência (a borda tracejada mostra o desligado).
+  - Título do resumo das regras e rostinho do recado no Claro: tinta mais escura.
+  - Nome do botão diferente do texto na tela (WCAG 2.5.3, quem usa comando de voz): recado do C.A.O.S., Jogar online
+    e 💡 Sugestões. O rostinho do recado agora é desenhado pelo CSS.
+  - Apagado de propósito (➕ Adicionar incompleto, humor travado no passo) é isento e o auditor sabe disso.
+  - Roteiro do auditor ganhou a tela final, a 💡 sugestão e a 🏅 medalha (69 telas); os botões Fechar e Guardar das
+    janelas novas ganharam 44 px e cor legível no Claro.
+  - Teclado: Esc fecha as janelas de recado (reportes, sugestão; na medalha vale "Guardar sem mostrar"); a janela da
+    medalha abre com o foco no botão. As janelas de decisão da partida não fecham com Esc (de propósito).
+  - Resultado: auditor zerado nos 3 temas e axe com 0 regras quebradas.

@@ -26,6 +26,7 @@
         <button id="btnInstalar" class="chip splash-menu-instalar" style="--cc:#f472b6; display:none;">📲 Instalar o app</button>
         <button id="btnAcessibilidade" data-fecha-menu class="chip splash-menu-instalar" style="--cc:#60a5fa;" aria-label="Acessibilidade: letra, tempo, voz e contraste">♿ Acessibilidade</button>
         <button id="btnManual" data-fecha-menu class="chip splash-menu-instalar" style="--cc:#fde047;" aria-label="Manual completo: todas as regras e detalhes">📖 Manual completo</button>
+        <button id="btnSugestao" data-fecha-menu class="chip splash-menu-instalar" style="--cc:#4ade80;" aria-label="Sugestões: mande uma ideia ou opinião pro JF">💡 Sugestões</button>
         <div class="splash-menu-grade splash-menu-voz">
           <button id="btnVoz" class="chip" style="--cc:#34d399;">🗣️ Voz</button>
           <button id="btnVozAjustar" class="chip" style="--cc:#fb923c;">🎚️ Ajustar voz</button>
@@ -50,14 +51,14 @@
     <div class="splash-subtitle" id="splashSubtitle">Preparando as cartas…</div>
     
     <div class="splash-go-flutua"><button class="btn-start btn-neo neo-solid neo-still splash-go" id="goToRulesBtn" style="--mc:#ff1f4b; --mc-glow:rgba(255,31,75,0.55);"><span class="sg-ic">🎮</span><span class="sg-tx">Jogar</span></button></div>
-    <div class="splash-caos" id="splashCaos" role="button" tabindex="0" aria-label="Recado do C.A.O.S. (toque pra outra frase)"><span class="sc-face">(•‿•)</span><span class="sc-txt">Oi!</span></div>
+    <div class="splash-caos" id="splashCaos" role="button" tabindex="0" aria-label="Recado do C.A.O.S. (toque pra outra frase)"><span class="sc-face" aria-hidden="true" data-f="(•‿•)"></span><span class="sc-txt">Oi!</span></div>
     <button class="btn-start btn-neo neo-solid neo-still neo-ghost splash-go2" id="btnTutorial" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);"><span class="sg-ic">🎓</span><span class="sg-tx">Como jogar</span></button>
     <div class="splash-settings">
       <div id="storageStatus" style="margin-top:8px; font-size:0.68rem;"></div>
-      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.9.3 · Edição de Natal<br>C.A.O.S. 5.4.0 · Atualizada em 04/11/2026</div>
+      <div class="splash-buildlog" id="splashBuildLog">🚀 Beta 1.9.4 · Medalhas e Sugestões<br>C.A.O.S. 5.5.0 · Atualizada em 05/11/2026</div>
     </div>
     <!-- 1.7.9.10: o online chegou em beta (abre pela pausa). O lançamento completo é a 1.7.10. -->
-    <button type="button" class="splash-embreve" id="splashEmBreve" aria-label="Jogar online: entrar numa sala com o código"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
+    <button type="button" class="splash-embreve" id="splashEmBreve"><span class="eb-selo">🧪 Beta</span><b class="eb-titulo">🌐 Jogar online</b><span class="eb-sub">Entrar numa sala com o código · ou abra a sua em Jogar</span></button>
     <!-- 1.7.10.6: os modos chegaram (o aviso "Em breve" da 1.7.10.5.7 virou "Novo") -->
     <div class="splash-embreve splash-novos" id="splashNovosModos" role="note" aria-label="Novo: dois modos, Modo C.A.O.S. e Corrida contra o Tempo, em Jogar"><span class="eb-selo">🆕 Novo</span><b class="eb-titulo">2 novos modos</b><span class="eb-sub">🌀 Modo C.A.O.S. · ⏱️ Corrida contra o Tempo · em Jogar</span></div>
   </section>
@@ -187,6 +188,8 @@
       <button class="btn-sec" id="pauseReportarBtn" type="button">⚑ Reportar esta carta (fato errado, entrega a resposta…)</button>
       <!-- 25/10/2026: bug da partida, com o retrato do estado anexado (src/js/05u) -->
       <button class="btn-sec" id="pauseProblemaBtn" type="button">🐞 Reportar um problema (travou, botão, placar…)</button>
+      <!-- 05/11/2026 (pedido do JF): ideia ou opinião de qualquer jogador (src/js/05u2) -->
+      <button class="btn-sec" id="pauseSugestaoBtn" type="button">💡 Mandar uma sugestão pro JF</button>
       <!-- 25/10/2026 (pedido do JF): quem desistiu? remover da sala (só o aparelho) ou da partida (sai de vez) -->
       <details class="pause-jogadores">
         <summary>👥 Jogadores (alguém desistiu?)</summary>

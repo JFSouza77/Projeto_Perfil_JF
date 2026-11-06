@@ -64,7 +64,7 @@ a:focus-visible {
 }
 /* Contraste no Noturno */
 body:not(.claro) .humor-btn[data-humor="zero"]:not(.on) {
-  color: #f87171 !important;
+  color: #fca5a5 !important; /* 05/11/2026: #f87171 ficava 4,15:1 com a opção não escolhida */
   border-color: #ef4444 !important;
 }
 body:not(.claro) .remove-player {
