@@ -40,6 +40,18 @@ Regra do JF (26/10/2026): nesta semana, bug, print ou sugestão que ele mandar f
 pra poupar créditos. Só corrige na hora o que ele pedir "pra agora", e só aquilo. Na **quinta, 29/10, às 18h**
 (Brasília), os créditos renovam e começam os patches com tudo desta lista.
 
+## Esperando o JF (06/11/2026)
+
+- [ ] **Cartas de Ano do Perfil 8:** o JF manda na semana de 09/11 (neste fim de semana não dá).
+- [ ] **Senha de ADM nova:** o JF troca sozinho no Cloudflare quando for mexer no Cloudflare da Carteira. Não é urgente.
+  O Code nunca pede nem recebe o valor.
+- [ ] **QUINTA, 12/11 (ok do JF em 06/11): Avatar do C.A.O.S. com formas (do Wally, PR #208)** no Modo C.A.O.S., em teste:
+  versão de teste só no Modo C.A.O.S., ligada por opção, cada rosto do jogo virando uma forma (carinho/calmo → anjinho,
+  festa → festeiro, orgulho → pomposo, espiando → pensador, triste → tristinho, raiva → capetinha, fúria → capeta bravo,
+  medo/ansiedade → sirene). Tédio, vergonha e nojo: o Wally desenha (pedido feito em 06/11). Não publica sem o JF ver.
+- [ ] **Segurança (dica do Wally/GPT na Carteira):** conferir no Perfil se importar save/backup valida tudo antes de gravar
+  e escapa nome/emoji que vão pra tela, e se o servidor conta o tamanho do pedido em bytes. Só conferir; corrigir se achar.
+
 ## Corrigido na hora (pedido do JF)
 
 - [x] **Categoria aparecia na T2 antes da hora** (26/10): a roleta do celular pousava na categoria (e a cor da caixa

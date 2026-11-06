@@ -51,6 +51,9 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
       [2027, 8, 8, "pais"],
       [2027, 8, 22, "folclore"],
       [2027, 9, 7, "independencia"],
+      [2027, 9, 6, "aniversarioJogo"], // 06/11/2026: aniversário do jogo e do C.A.O.S. (pedido do JF)
+      [2027, 9, 20, "aniversarioCaos"],
+      [2027, 9, 21, null],
       [2027, 11, 26, "blackfriday"],
       [2026, 2, 17, "carnaval"], // Páscoa 2026 = 5/4
       [2026, 4, 3, "pascoa"],
@@ -59,7 +62,8 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     ];
     out.erradas = casos.filter(([a, m, d, e]) => id(a, m, d) !== e).map(([a, m, d, e]) => `${d}/${m}/${a}: ${id(a, m, d)} (esperado ${e})`);
     out.datasCertas = out.erradas.length === 0;
-    out.quinze = TEMPORADAS.length === 15 && new Set(TEMPORADAS.map((t) => t.id)).size === 15;
+    // 06/11/2026: 17 com os aniversários do jogo e do C.A.O.S.; pela regra do 0 ou 5, faltam 3 datas pra fechar 20 (o JF escolhe)
+    out.temporadasSemRepetir = TEMPORADAS.length === 17 && new Set(TEMPORADAS.map((t) => t.id)).size === 17;
     // todas aparecem em todo ano de 2026 a 2040
     const faltou = [];
     for (let a = 2026; a <= 2040; a++) {
@@ -468,6 +472,28 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
       CURRENT_MODE = modo; players = sp;
       r.anoNovoCartaAchadaPeloId = cartaPorId("LUGAR-0901") === ano[0];
     }
+    return r;
+  }));
+  // item 10 (06/11): aniversário do criador (2/1): balões, selo, 30 falas, e o C.A.O.S. pega leve só com o JF de verdade
+  await page.goto(url + "?temporada=aniversario");
+  await page.waitForFunction(() => typeof temporadaAplicar === "function");
+  Object.assign(o, await page.evaluate(() => {
+    const r = {};
+    const e = document.getElementById("temporadaEnfeite");
+    r.aniversarioMarcaEEnfeite = document.documentElement.dataset.temporada === "aniversario" && !!e && getComputedStyle(e).display === "block" && getComputedStyle(e).pointerEvents === "none";
+    const selo = document.getElementById("splashTemporada");
+    r.aniversarioSelo = !!selo && !selo.hidden && /aniversário do criador/i.test(selo.textContent);
+    const B = REACTIVE_VOICE.temporada.aniversario;
+    r.aniversarioFalas = ["inicio", "jf", "avancou", "voltou", "presenteJoia", "presentePonto"].every((k) => Array.isArray(B[k]) && B[k].length === 5);
+    const jf = { id: "j", name: "JF", humor: "zero", conta: { nick: "JF", token: "teste" } };
+    const falso = { id: "f", name: "JF", humor: "zero" };
+    const outro = { id: "o", name: "Ana", humor: "acido" };
+    const sp = players;
+    players = [jf, outro];
+    r.aniversarioPegaLeveComOJf = playerHumor(jf) === "suave" && playerHumor(outro) !== "suave";
+    players = [falso, outro];
+    r.aniversarioJfSemCadastroNao = playerHumor(falso) !== "suave";
+    players = sp;
     return r;
   }));
   await page.goto(url + "?temporada=nenhuma");

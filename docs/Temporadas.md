@@ -35,6 +35,8 @@ e autorizar.** Quando tudo estiver pronto, o Code avisa e mostra o que fez.
 - **Liga e desliga:** uma opção "Temporadas" nas configurações, ligada por padrão.
 - **Só aparência e falas,** com uma exceção pedida pelo JF: **carta da temporada vale o dobro de pontos** durante a
   janela, com um selo na carta (🎃, 🎄, 🎉…). Fora da janela, ela é uma carta comum ou nem aparece.
+- **Número de temporadas (JF, 06/11/2026):** ficam **17** (as 15 + os 2 aniversários de setembro). O JF liberou: o total
+  de temporadas não precisa terminar em 0 ou 5. O que vai dentro de cada uma (falas, cartas, itens) continua no 0 ou 5.
 - **Quantidades terminam em 0 ou 5:** 15 temporadas e, em cada uma, 15 falas do C.A.O.S., 10 cartas, 5 itens por
   lojinha, 5 cores, 5 emojis e 5 títulos.
 - **Júnior:** só falas e cartas leves. As datas de homenagem usam fatos, sem tomar partido (mesma regra das cartas de
@@ -109,8 +111,21 @@ temporadas, na ordem do calendário.
     - [x] Ano Novo · enfeite (confete e fogos), selo, 15 falas (+ 10 de presente), 5 cores, 5 emojis e 5+5 itens de lojinha.
     - [x] Ano Novo · 5 títulos (Show de Fogos, Champanhe Estourada, Pé Direito, Meia-Noite em Ponto, Promessa de Ano Novo).
     - [x] Ano Novo · 10 cartas valendo o dobro.
-    - [ ] Aniversário do criador (2/1) · tudo (enfeite, falas, o C.A.O.S. pegando leve com o JF, cores, emojis, lojinha, títulos e cartas).
-11. [ ] As outras 12 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween, com o Doces ou travessuras).
+    - [x] Aniversário do criador (2/1) · enfeite (balões), selo, 30 falas (5 só pro JF na mesa) e o C.A.O.S. pegando leve com o JF.
+    - [ ] Aniversário do criador · 5 cores, 5 emojis e 5+5 itens de lojinha.
+    - [ ] Aniversário do criador · 5 títulos e 10 cartas valendo o dobro.
+11. [ ] As outras 14 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween, com o Doces ou travessuras).
+    Inclui as 2 datas novas do JF (06/11/2026), já reconhecidas pelo motor: **6/9 · Aniversário do Perfil JF** (o C.A.O.S.
+    lembra quantos anos o jogo faz e conta a história: `docs/Historia_do_Perfil.md`) e **20/9 · Aniversário do C.A.O.S.**
+    (ele é o aniversariante: fica todo bobo, comemora com a mesa e relembra de quando era "só um texto na tela").
+    **Ideias do JF pra setembro (06/11/2026), o mês de aniversário do jogo e do C.A.O.S.:**
+    - Setembro inteiro: o C.A.O.S. fica **ansioso** com o aniversário dele (conta os dias, solta indireta, "cobra o bolo"
+      da mesa). Cresce até o 20/9.
+    - **Presentes no Modo C.A.O.S.** com tema de aniversário (ele ganha e ele dá).
+    - Botão **"🎂 Dar parabéns ao C.A.O.S."**: grava na ficha quem deu parabéns (e em que ano). Ele fica grato e passa a
+      gostar mais dessa pessoa (pesa no afeto, como veterano e craque). Só com cadastro, pra valer pra pessoa certa.
+    - **Emblema/medalha comemorativa** do aniversário, brindes na lojinha e comemoração na mesa (6/9 e 20/9).
+    - (O Pix pro C.A.O.S. foi brincadeira do JF: fica de fora.)
 12. [ ] Bateria final, prints de todas as temporadas e relatório pro JF.
 
 ## Progresso
@@ -225,3 +240,8 @@ temporadas, na ordem do calendário.
   Entram só no Ano Novo, valem o dobro e o selo da carta agora diz a temporada ("🎆 Carta de Ano Novo · vale o dobro").
   Auditoria: 0 erros (1.020 cartas); o auditor barrou a Romã (vira "roma", igual à carta de Roma) e o catálogo avisou
   que a Uva já está planejada pra 2.0, então ficou a Roupa branca. Teste: `teste_temporadas` (+5 checagens).
+- 06/11/2026 (manhã, sexta): conferência da `main` (1.9.5: build e teste nas 4 saídas, ok) e o 1º pedaço do aniversário do
+  criador (2/1): balões subindo devagar (desligam no Modo Batata e com menos movimento), selo "🎂 Edição de aniversário
+  do criador" e 30 falas (início, avançou, voltou, presentes e 5 de parabéns pro JF quando ele está na mesa). O C.A.O.S.
+  pega leve com o JF o dia todo (humor Suave), só com o cadastro confirmado: um "JF" sem PIN não ganha. Teste:
+  `teste_temporadas` (+5 checagens).
