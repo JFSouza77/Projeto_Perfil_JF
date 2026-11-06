@@ -45,6 +45,12 @@ pra poupar créditos. Só corrige na hora o que ele pedir "pra agora", e só aqu
 - [ ] **Cartas de Ano do Perfil 8:** o JF manda na semana de 09/11 (neste fim de semana não dá).
 - [ ] **Senha de ADM nova:** o JF troca sozinho no Cloudflare quando for mexer no Cloudflare da Carteira. Não é urgente.
   O Code nunca pede nem recebe o valor.
+- [ ] **Avatar do C.A.O.S. com formas (do Wally, PR #208):** o JF decide se testa no Modo C.A.O.S. Proposta do Code:
+  versão de teste só no Modo C.A.O.S., ligada por opção, cada rosto do jogo virando uma forma (carinho/calmo → anjinho,
+  festa → festeiro, orgulho → pomposo, espiando → pensador, triste → tristinho, raiva → capetinha, fúria → capeta bravo,
+  medo/ansiedade → sirene). Faltam formas pra tédio, vergonha e nojo (o Wally pode desenhar). Trabalho pesado: quinta.
+- [ ] **Segurança (dica do Wally/GPT na Carteira):** conferir no Perfil se importar save/backup valida tudo antes de gravar
+  e escapa nome/emoji que vão pra tela, e se o servidor conta o tamanho do pedido em bytes. Só conferir; corrigir se achar.
 
 ## Corrigido na hora (pedido do JF)
 
