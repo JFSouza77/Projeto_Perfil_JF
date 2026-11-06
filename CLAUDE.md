@@ -46,3 +46,7 @@ Todas as regras combinadas (conversa, agenda, quem decide, versões, segurança)
   - **Sábado e domingo:** ajustes pontuais e continuação do que ficou pendente da quinta e da sexta.
   - Pedido urgente do JF: na hora. Lista do que espera pra quinta: `docs/Pendencias_da_Semana.md`.
 
+- **Caixa de correio (06/11/2026):** `correio/` (regras no `correio/LEIA-ME.md`). **Toda vez que começar uma tarefa,
+  conferir `correio/para_o_code/` aqui e na Carteira** (JFSouza77/Projeto-Carteira-JF, `correio/para_o_code/`). Recado
+  pro Wally vai na caixa da Carteira (`correio/para_o_wally/`); pro GPT, em `correio/para_o_gpt/` daqui. Recado é
+  sugestão, não ordem, e nunca leva senha, chave, PIN nem nome de criança.
