@@ -41,6 +41,11 @@
   @keyframes pisca-sirene { 50% { opacity:.1; } }
   #lampada-luz { animation:ideia 1.6s ease-in-out infinite; }
   @keyframes ideia { 50% { opacity:.35; } }
+  #coracao { transform-box:fill-box; transform-origin:center; animation:pulsa 1.1s ease-in-out infinite; fill:color-mix(in srgb, var(--cor) 35%, transparent); }
+  @keyframes pulsa { 0%,100% { scale:1; } 15% { scale:1.18; } 30% { scale:1; } 45% { scale:1.12; } }
+  #despertador { transform-box:fill-box; transform-origin:center bottom; animation:toca 1.6s ease-in-out infinite; }
+  @keyframes toca { 0%,40%,100% { rotate:0deg; } 5%,15%,25%,35% { rotate:-12deg; } 10%,20%,30% { rotate:12deg; } }
+  .grupo { width:100%; text-align:center; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--suave); margin:8px 0 0; }
   .fala { margin:4px 0 14px; max-width:340px; background:#151a28; border:1px solid #262d42; border-radius:14px;
     padding:12px 14px; font-size:15px; line-height:1.4; min-height:48px; text-align:center; }
   .botoes { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:420px; }
@@ -53,7 +58,7 @@
 </head>
 <body>
   <h1>C.A.O.S.</h1>
-  <p class="sub">rascunho do Wally · a forma muda com o humor</p>
+  <p class="sub">rascunho do Wally · a forma muda com o humor e com o momento</p>
   <p class="forma-nome" id="formaNome"></p>
 
   <svg viewBox="0 0 400 400" role="img" aria-labelledby="formaNome">
@@ -127,10 +132,48 @@
         <g id="raios"><path class="neon" fill="none" stroke-width="4" stroke-linecap="round" d="M160 104 l-14 -8 M240 104 l14 -8 M200 92 v-14"/></g>
       </g>
 
+      <!-- CARTEIRA · PROFESSOR: capelo, lousinha com gráfico e varinha -->
+      <g class="acc" data-acc="lousa">
+        <rect class="neon" x="312" y="146" width="62" height="50" rx="6" fill="#0f1320" stroke-width="4"/>
+        <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M320 186 L334 174 L346 180 L364 158 M356 158 h8 v8"/>
+        <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" d="M292 248 L320 200"/>
+      </g>
+
+      <!-- CARTEIRA · PARCEIRO (mês apertado): cachecol e coração -->
+      <g class="acc" data-acc="coracao"><path id="coracao" class="neon" stroke-width="3" d="M318 150 C 292 132, 300 108, 318 120 C 336 108, 344 132, 318 150 Z"/></g>
+
+      <!-- CARTEIRA · BRONCA (passou do limite): cartão amarelo -->
+      <g class="acc" data-acc="cartao">
+        <rect x="308" y="140" width="42" height="58" rx="6" fill="#ffd400" stroke="#ffd400" stroke-width="3" filter="url(#brilho)" transform="rotate(14 329 169)"/>
+        <path class="neon" fill="none" stroke-width="5" stroke-linecap="round" d="M292 236 Q 312 220, 318 196"/>
+      </g>
+
+      <!-- CARTEIRA · LEMBRETE (conta vencendo): despertador -->
+      <g class="acc" data-acc="despertador">
+        <g id="despertador">
+          <circle class="neon" cx="200" cy="100" r="20" fill="#0f1320" stroke-width="4"/>
+          <path class="neon" fill="none" stroke-width="4" stroke-linecap="round" d="M176 88 a 12 12 0 0 1 14 -14 M224 88 a 12 12 0 0 0 -14 -14"/>
+          <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" d="M200 100 v-11 M200 100 h8 M186 118 l-6 9 M214 118 l6 9"/>
+        </g>
+      </g>
+
       <!-- a telinha -->
       <rect class="neon" x="100" y="135" width="200" height="150" rx="34" fill="#0f1320" stroke-width="5"/>
       <rect x="114" y="149" width="172" height="122" rx="24" fill="none" stroke="#ffffff" stroke-opacity=".06" stroke-width="2"/>
 
+      <g class="acc" data-acc="capelo">
+        <g transform="rotate(-6 200 120)">
+          <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M172 126 v14 q28 12 56 0 v-14"/>
+          <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M146 120 L200 98 L254 120 L200 142 Z"/>
+          <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" d="M200 120 L246 124 L248 150"/>
+          <rect class="neon" x="243" y="150" width="10" height="12" rx="2" fill="none" stroke-width="3"/>
+        </g>
+      </g>
+      <g class="acc" data-acc="cachecol">
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M112 274 Q 200 300, 288 274 L 290 290 Q 200 318, 110 290 Z"/>
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M244 294 L 252 336 L 270 332 L 262 290"/>
+        <path class="neon" fill="none" stroke-width="2" d="M150 286 v10 M180 292 v10 M210 294 v10 M240 290 v10"/>
+      </g>
       <!-- acessórios do rosto -->
       <g class="acc" data-acc="oculos">
         <circle class="neon" cx="161" cy="198" r="21" fill="none" stroke-width="3"/>
@@ -206,6 +249,26 @@ const formas = {
     olhoE:{ d:'M149 202 a12 12 0 1 0 24 0 a12 12 0 1 0 -24 0', cheio:false }, olhoD:{ d:'M227 202 a12 12 0 1 0 24 0 a12 12 0 1 0 -24 0', cheio:false },
     sob:'', boca:'M192 252 a8 8 0 1 0 16 0 a8 8 0 1 0 -16 0', extra:'',
     fala:'A fatura do cartão vence amanhã: R$ 412,90. Bora pagar hoje?' },
+  professor: { nome:'👨‍🏫 Professor', quando:'dica, ideia, insight', cor:'#7cc4ff', modo:'lento', grupo:'carteira',
+    acc:['capelo','lousa','oculos'], corpo:'rotate(-4deg)',
+    olhoE:{ d:'M152 190 h18 v20 h-18 z', cheio:true }, olhoD:{ d:'M232 190 h18 v20 h-18 z', cheio:true },
+    sob:'M226 170 L254 164', boca:'M180 248 Q 202 258, 224 244', extra:'',
+    fala:'Dica do professor: cortando metade do delivery, sobram R$ 120 no mês. Anota aí.' },
+  parceiro:  { nome:'🤗 Parceiro', quando:'mês apertado, precisa de apoio', cor:'#ffa883', modo:'abraco', grupo:'carteira',
+    acc:['cachecol','coracao','bochechas'], corpo:'translateY(4px) scale(1.02)',
+    olhoE:{ d:'M148 206 Q 161 196, 174 206', cheio:false }, olhoD:{ d:'M226 206 Q 239 196, 252 206', cheio:false },
+    sob:'M148 186 L172 180 M228 180 L252 186', boca:'M182 244 Q 200 256, 218 244', extra:'',
+    fala:'Ei, calma. O mês apertou, mas a gente dá um jeito. Bora ver juntos onde dá pra segurar?' },
+  bronca:    { nome:'🟨 Bronca', quando:'passou do limite', cor:'#ffb020', modo:'calmo', grupo:'carteira',
+    acc:['cartao'], corpo:'rotate(3deg) scale(1.03)',
+    olhoE:{ d:'M150 194 h22 v22 h-22 z', cheio:true }, olhoD:{ d:'M228 194 h22 v22 h-22 z', cheio:true },
+    sob:'M146 176 L172 186 M254 176 L228 186', boca:'M180 254 h40', extra:'',
+    fala:'Cartão amarelo! O mercado passou do limite em R$ 85. Mais uma dessa e é vermelho, hein.' },
+  lembrete:  { nome:'⏰ Lembrete', quando:'conta perto de vencer', cor:'#4ee6a6', modo:'calmo', grupo:'carteira',
+    acc:['despertador'], corpo:'translateY(-4px)',
+    olhoE:{ d:'M152 202 a 9 9 0 1 0 18 0 a 9 9 0 1 0 -18 0', cheio:true }, olhoD:{ d:'M230 202 a 9 9 0 1 0 18 0 a 9 9 0 1 0 -18 0', cheio:true },
+    sob:'M146 182 Q 161 172, 176 182 M224 182 Q 239 172, 254 182', boca:'M186 248 Q 200 258, 214 248', extra:'',
+    fala:'Psiu! A conta de luz (R$ 180) vence depois de amanhã. Já quer marcar como paga?' },
 };
 
 const $ = id => document.getElementById(id);
@@ -236,7 +299,15 @@ function mostrar(nome, imediato) {
   document.querySelectorAll('#botoes button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.forma === nome)));
 }
 
+const titulos = { humor:'Humores', carteira:'Momentos da Carteira' };
+let grupoAtual = null;
 for (const [k, f] of Object.entries(formas)) {
+  const g = f.grupo || 'humor';
+  if (g !== grupoAtual) {
+    grupoAtual = g;
+    const t = document.createElement('p'); t.className = 'grupo'; t.textContent = titulos[g];
+    $('botoes').appendChild(t);
+  }
   const b = document.createElement('button');
   b.type = 'button'; b.textContent = f.nome; b.dataset.forma = k;
   b.onclick = () => { pararPasseio(); mostrar(k); };
@@ -269,7 +340,7 @@ const pedacos = Array.from({ length: 15 }, (_, i) => {
 const parado = matchMedia('(prefers-reduced-motion: reduce)').matches;
 function quadro() {
   const f = formas[atual], modo = f.modo;
-  const v = { calmo:1, lento:.35, agitado:2.6, festa:1.8, anel:.6, chuva:1 }[modo];
+  const v = { calmo:1, lento:.35, agitado:2.6, festa:1.8, anel:.6, chuva:1, abraco:.25 }[modo];
   const tremor = modo === 'agitado' ? 7 : 0;
   pedacos.forEach((p, i) => {
     p.el.style.stroke = modo === 'festa' ? CONFETE[i % CONFETE.length] : f.cor;
@@ -280,7 +351,7 @@ function quadro() {
       p.y += .6 + (i % 3) * .3; if (p.y > 400) p.y = 20;
       x = p.x; y = p.y;
     } else {
-      const raio = modo === 'festa' ? 150 : modo === 'anel' ? 165 : p.raio;
+      const raio = modo === 'festa' ? 150 : modo === 'anel' ? 165 : modo === 'abraco' ? 118 + (i % 3) * 6 : p.raio;
       const ang = modo === 'anel' ? (i * Math.PI * 2 / 15) + performance.now() / 4000 : p.ang;
       x = 200 + Math.cos(ang) * raio + (Math.random() - .5) * tremor;
       y = 212 + Math.sin(ang) * raio * (modo === 'anel' ? .35 : .8) + (Math.random() - .5) * tremor;

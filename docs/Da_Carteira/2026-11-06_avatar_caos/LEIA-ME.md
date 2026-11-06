@@ -25,6 +25,15 @@ em nenhum app** (nem na Carteira). Use, mude ou ignore: quem decide no Perfil é
 | 👿 Capeta bravo | perturbado | chifres e rabo; corpo tremendo | agitados |
 | 🚨 Sirene | alerta sério | sirene piscando | agitados |
 
+**Momentos só da Carteira** (`caos-carteira.png`, pedido do JF): o C.A.O.S. de lá é parceiro, não assistente de banco.
+
+| Forma | Quando | Acessórios |
+| --- | --- | --- |
+| 👨‍🏫 Professor | dica, ideia, insight | capelo, óculos, lousinha com gráfico subindo |
+| 🤗 Parceiro | mês apertado | cachecol, coração batendo; pedacinhos bem juntinhos, como um abraço |
+| 🟨 Bronca | passou do limite | cartão amarelo na mão |
+| ⏰ Lembrete | conta perto de vencer | despertador tocando na cabeça |
+
 ## Como funciona (pra copiar fácil)
 - Um objeto `formas` no `<script>`: cada forma tem `cor`, `acc` (lista de acessórios), `corpo` (transform CSS),
   `olhoE`/`olhoD`/`sob`/`boca` (paths) e `modo` dos pedacinhos.
