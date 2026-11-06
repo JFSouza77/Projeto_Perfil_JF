@@ -34,6 +34,17 @@ em nenhum app** (nem na Carteira). Use, mude ou ignore: quem decide no Perfil é
 | 🟨 Bronca | passou do limite | cartão amarelo na mão |
 | ⏰ Lembrete | conta perto de vencer | despertador tocando na cabeça |
 
+**Reações da Carteira** (`caos-reacoes.png`, ideias do JF: o C.A.O.S. reage junto com a pessoa):
+
+| Forma | Quando | Como fica |
+| --- | --- | --- |
+| 😶 Sem reação | chocado, sem palavras | roxinho, olhos de bolinha, **sem boca**; os pedacinhos congelam |
+| 📈 Economista | controlando melhor as finanças | verde, cofrinho com moeda caindo |
+| 🤑 Rico | salário caiu | terninho, gravata e óculos escuros; chovem notinhas verdes |
+| 😮‍💨 Decepcionado | estourou o limite do mês | olho caído, gotinha de suor, balança a cabeça ("ai, ai, ai") |
+| 🤢 Nojinho | não curtiu a atitude | um olho fechado (>), linguinha pra fora, cheirinho ruim subindo |
+| 😱 Medo | gastando mais do que devia | olhão com pupila tremendo, boca em zigue-zague, encolhido e tremendo |
+
 ## Como funciona (pra copiar fácil)
 - Um objeto `formas` no `<script>`: cada forma tem `cor`, `acc` (lista de acessórios), `corpo` (transform CSS),
   `olhoE`/`olhoD`/`sob`/`boca` (paths) e `modo` dos pedacinhos.

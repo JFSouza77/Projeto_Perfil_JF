@@ -46,6 +46,15 @@
   #despertador { transform-box:fill-box; transform-origin:center bottom; animation:toca 1.6s ease-in-out infinite; }
   @keyframes toca { 0%,40%,100% { rotate:0deg; } 5%,15%,25%,35% { rotate:-12deg; } 10%,20%,30% { rotate:12deg; } }
   .grupo { width:100%; text-align:center; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--suave); margin:8px 0 0; }
+  #moeda { animation:moeda 1.8s ease-in infinite; }
+  @keyframes moeda { 0% { translate:0 -10px; opacity:0; } 20% { opacity:1; } 70% { translate:0 30px; opacity:1; } 100% { translate:0 32px; opacity:0; } }
+  .fedor { animation:fedor 2s ease-in-out infinite; }
+  @keyframes fedor { 0% { translate:0 6px; opacity:0; } 40% { opacity:1; } 100% { translate:0 -10px; opacity:0; } }
+  #suor { animation:suor 2.4s ease-in infinite; }
+  @keyframes suor { 0% { translate:0 0; opacity:0; } 20% { opacity:1; } 100% { translate:0 22px; opacity:0; } }
+  #pupilas { animation:treme .12s linear infinite; }
+  #forma.nega { animation:nega 1.6s ease-in-out infinite; }
+  @keyframes nega { 0%,60%,100% { translate:0 0; } 10%,30%,50% { translate:-6px 0; } 20%,40% { translate:6px 0; } }
   .fala { margin:4px 0 14px; max-width:340px; background:#151a28; border:1px solid #262d42; border-radius:14px;
     padding:12px 14px; font-size:15px; line-height:1.4; min-height:48px; text-align:center; }
   .botoes { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:420px; }
@@ -58,7 +67,7 @@
 </head>
 <body>
   <h1>C.A.O.S.</h1>
-  <p class="sub">rascunho do Wally · a forma muda com o humor e com o momento</p>
+  <p class="sub">rascunho do Wally · a forma muda com o humor, o momento e a reação</p>
   <p class="forma-nome" id="formaNome"></p>
 
   <svg viewBox="0 0 400 400" role="img" aria-labelledby="formaNome">
@@ -157,6 +166,22 @@
         </g>
       </g>
 
+      <!-- REAÇÕES · ECONOMISTA: cofrinho com moeda caindo -->
+      <g class="acc" data-acc="cofrinho">
+        <circle id="moeda" class="neon" cx="338" cy="214" r="8" fill="#0f1320" stroke-width="3"/>
+        <ellipse class="neon" cx="340" cy="262" rx="30" ry="21" fill="#0f1320" stroke-width="4"/>
+        <path class="neon" fill="#0f1320" stroke-width="3" stroke-linejoin="round" d="M326 246 l4 -12 l10 9"/>
+        <rect class="neon" x="368" y="255" width="9" height="13" rx="3" fill="#0f1320" stroke-width="3"/>
+        <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" d="M330 242 h16 M326 280 v8 M352 280 v8"/>
+        <circle cx="356" cy="256" r="2.5" fill="var(--cor)"/>
+      </g>
+      <!-- REAÇÕES · NOJINHO: cheirinho ruim -->
+      <g class="acc" data-acc="fedor">
+        <path class="fedor neon" fill="none" stroke-width="3" stroke-linecap="round" d="M118 150 q 7 -8 0 -16 t 0 -16"/>
+        <path class="fedor neon" fill="none" stroke-width="3" stroke-linecap="round" d="M96 166 q 7 -8 0 -16 t 0 -16" style="animation-delay:.5s"/>
+        <path class="fedor neon" fill="none" stroke-width="3" stroke-linecap="round" d="M140 134 q 7 -8 0 -16 t 0 -16" style="animation-delay:1s"/>
+      </g>
+
       <!-- a telinha -->
       <rect class="neon" x="100" y="135" width="200" height="150" rx="34" fill="#0f1320" stroke-width="5"/>
       <rect x="114" y="149" width="172" height="122" rx="24" fill="none" stroke="#ffffff" stroke-opacity=".06" stroke-width="2"/>
@@ -174,6 +199,22 @@
         <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M244 294 L 252 336 L 270 332 L 262 290"/>
         <path class="neon" fill="none" stroke-width="2" d="M150 286 v10 M180 292 v10 M210 294 v10 M240 290 v10"/>
       </g>
+      <!-- REAÇÕES · RICO: terninho e óculos escuros -->
+      <g class="acc" data-acc="terno">
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M128 282 L 112 344 H 288 L 272 282 Z"/>
+        <path class="neon" fill="none" stroke-width="3" stroke-linejoin="round" d="M162 284 L 200 330 L 238 284"/>
+        <path class="neon" fill="#0f1320" stroke-width="3" stroke-linejoin="round" d="M200 290 l -8 9 l 8 30 l 8 -30 z"/>
+        <circle class="neon" cx="200" cy="338" r="2.5" fill="var(--cor)" stroke-width="1"/>
+      </g>
+      <!-- REAÇÕES · DECEPCIONADO e MEDO: gotinha de suor -->
+      <g class="acc" data-acc="suor"><path id="suor" fill="#9fd8ff" stroke="#9fd8ff" stroke-width="2" filter="url(#brilho)" d="M276 158 q -9 13 0 18 q 9 -5 0 -18"/></g>
+      <!-- MEDO: pupilinhas tremendo -->
+      <g class="acc" data-acc="pupilas"><g id="pupilas">
+        <circle cx="161" cy="202" r="3.5" fill="var(--cor)"/><circle cx="239" cy="202" r="3.5" fill="var(--cor)"/>
+      </g></g>
+      <!-- NOJINHO: linguinha -->
+      <g class="acc" data-acc="lingua"><path fill="#ff8fb3" stroke="#ff8fb3" stroke-width="2" d="M208 250 q 2 18 14 12 q 5 -6 -2 -14 z"/></g>
+
       <!-- acessórios do rosto -->
       <g class="acc" data-acc="oculos">
         <circle class="neon" cx="161" cy="198" r="21" fill="none" stroke-width="3"/>
@@ -198,6 +239,12 @@
         <path id="sobrancelhas" class="neon" fill="none" stroke-width="4" stroke-linecap="round"/>
         <path id="boca" class="neon" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
         <text id="extra" x="200" y="128" text-anchor="middle" font-size="34" font-weight="800" fill="var(--cor)" filter="url(#brilho)"></text>
+      </g>
+      <g class="acc" data-acc="oculosEscuros">
+        <rect class="neon" x="140" y="186" width="44" height="30" rx="9" fill="#05070c" stroke-width="3"/>
+        <rect class="neon" x="216" y="186" width="44" height="30" rx="9" fill="#05070c" stroke-width="3"/>
+        <path class="neon" fill="none" stroke-width="3" d="M184 196 Q 200 190, 216 196 M140 194 L 118 186 M260 194 L 282 186"/>
+        <path fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="3" stroke-linecap="round" d="M150 194 l 8 -4 M226 194 l 8 -4"/>
       </g>
     </g></g>
   </svg>
@@ -269,6 +316,36 @@ const formas = {
     olhoE:{ d:'M152 202 a 9 9 0 1 0 18 0 a 9 9 0 1 0 -18 0', cheio:true }, olhoD:{ d:'M230 202 a 9 9 0 1 0 18 0 a 9 9 0 1 0 -18 0', cheio:true },
     sob:'M146 182 Q 161 172, 176 182 M224 182 Q 239 172, 254 182', boca:'M186 248 Q 200 258, 214 248', extra:'',
     fala:'Psiu! A conta de luz (R$ 180) vence depois de amanhã. Já quer marcar como paga?' },
+  chocado:   { nome:'😶 Sem reação', quando:'chocado, sem palavras', cor:'#b77dff', modo:'parado', grupo:'reacoes',
+    acc:[], corpo:'scale(.97)',
+    olhoE:{ d:'M155 200 a 7 7 0 1 0 14 0 a 7 7 0 1 0 -14 0', cheio:true }, olhoD:{ d:'M231 200 a 7 7 0 1 0 14 0 a 7 7 0 1 0 -14 0', cheio:true },
+    sob:'', boca:'', extra:'',
+    fala:'…' },
+  economista:{ nome:'📈 Economista', quando:'controlando melhor as finanças', cor:'#4ade80', modo:'anel', grupo:'reacoes',
+    acc:['cofrinho','bochechas'], corpo:'translateY(-6px) rotate(-3deg)',
+    olhoE:{ d:'M150 192 h22 v24 h-22 z', cheio:true }, olhoD:{ d:'M228 192 h22 v24 h-22 z', cheio:true },
+    sob:'M146 178 Q 161 172, 176 178 M224 178 Q 239 172, 254 178', boca:'M174 242 Q 200 266, 226 242', extra:'',
+    fala:'Olha só! Três semanas dentro do orçamento. Tá virando economista, hein?' },
+  rico:      { nome:'🤑 Rico', quando:'salário caiu', cor:'#ffe27a', modo:'dinheiro', grupo:'reacoes',
+    acc:['terno','oculosEscuros'], corpo:'translateY(-10px) rotate(4deg) scale(1.04)',
+    olhoE:{ d:'M152 196 h18 v16 h-18 z', cheio:true }, olhoD:{ d:'M230 196 h18 v16 h-18 z', cheio:true },
+    sob:'', boca:'M166 240 Q 200 274, 236 236 Z', extra:'',
+    fala:'Agora sim! Salário na conta. Onde vamos comer hoje, patrão?' },
+  decepcionado:{ nome:'😮‍💨 Decepcionado', quando:'estourou o limite do mês', cor:'#a5b4d0', modo:'lento', grupo:'reacoes',
+    acc:['suor'], corpo:'translateY(8px) rotate(-4deg)', anim:'nega',
+    olhoE:{ d:'M150 204 h22 v9 h-22 z', cheio:true }, olhoD:{ d:'M228 204 h22 v9 h-22 z', cheio:true },
+    sob:'M148 192 L 174 196 M226 196 L 252 192', boca:'M182 254 Q 200 249, 220 257', extra:'',
+    fala:'Ai, ai, ai… o limite do lazer estourou em R$ 60. Olha só o que você fez.' },
+  nojinho:   { nome:'🤢 Nojinho', quando:'não curtiu sua atitude', cor:'#c3d44a', modo:'lento', grupo:'reacoes',
+    acc:['fedor','lingua'], corpo:'rotate(-8deg) translateX(-6px)',
+    olhoE:{ d:'M148 196 L 172 204 L 148 212', cheio:false }, olhoD:{ d:'M230 196 h18 v16 h-18 z', cheio:true },
+    sob:'M226 182 L 252 188', boca:'M176 250 q 8 -6 16 0 t 16 0 t 16 0', extra:'',
+    fala:'Eca. Terceiro delivery hoje? Tô até com vergonha por você.' },
+  medo:      { nome:'😱 Medo', quando:'gastando mais do que devia', cor:'#c7d2fe', modo:'medo', grupo:'reacoes',
+    acc:['suor','pupilas'], corpo:'scale(.9) translateY(6px)', treme:true,
+    olhoE:{ d:'M147 202 a 14 14 0 1 0 28 0 a 14 14 0 1 0 -28 0', cheio:false }, olhoD:{ d:'M225 202 a 14 14 0 1 0 28 0 a 14 14 0 1 0 -28 0', cheio:false },
+    sob:'M146 178 L 172 172 M228 172 L 254 178', boca:'M174 256 l 9 -7 l 9 7 l 9 -7 l 9 7 l 9 -7 l 9 7', extra:'',
+    fala:'Socorro… já foi 80% do orçamento e ainda é dia 12. Tô com medo junto com você.' },
 };
 
 const $ = id => document.getElementById(id);
@@ -281,7 +358,8 @@ function desenharRosto(f) {
   }
   $('sobrancelhas').setAttribute('d', f.sob || 'M0 0');
   $('sobrancelhas').style.display = f.sob ? '' : 'none';
-  $('boca').setAttribute('d', f.boca);
+  $('boca').setAttribute('d', f.boca || 'M0 0');
+  $('boca').style.display = f.boca ? '' : 'none';
   $('boca').style.fill = f.boca.endsWith('Z') ? '#0f1320' : 'none';
   $('extra').textContent = f.extra;
 }
@@ -292,6 +370,7 @@ function mostrar(nome, imediato) {
   document.querySelectorAll('.acc').forEach(g => g.classList.toggle('on', f.acc.includes(g.dataset.acc)));
   $('forma').style.transform = f.corpo;
   $('forma').classList.toggle('treme', !!f.treme);
+  $('forma').classList.toggle('nega', f.anim === 'nega');
   if (imediato) desenharRosto(f);
   else { $('rosto').classList.add('troca'); setTimeout(() => { desenharRosto(f); $('rosto').classList.remove('troca'); }, 150); }
   $('formaNome').textContent = `${f.nome} · ${f.quando}`;
@@ -299,7 +378,7 @@ function mostrar(nome, imediato) {
   document.querySelectorAll('#botoes button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.forma === nome)));
 }
 
-const titulos = { humor:'Humores', carteira:'Momentos da Carteira' };
+const titulos = { humor:'Humores', carteira:'Momentos da Carteira', reacoes:'Reações da Carteira' };
 let grupoAtual = null;
 for (const [k, f] of Object.entries(formas)) {
   const g = f.grupo || 'humor';
@@ -333,25 +412,27 @@ const pedacos = Array.from({ length: 15 }, (_, i) => {
   r.setAttribute('fill', 'none'); r.setAttribute('stroke-width', 2); r.setAttribute('filter', 'url(#brilho)');
   r.style.opacity = .35 + (i % 4) * .15;
   $('particulas').appendChild(r);
-  return { el:r, ang: i * (Math.PI * 2 / 15), raio: 140 + (i % 5) * 12, vel: .003 + (i % 4) * .0015, giro: i * 37,
+  return { el:r, t, ang: i * (Math.PI * 2 / 15), raio: 140 + (i % 5) * 12, vel: .003 + (i % 4) * .0015, giro: i * 37,
            x: 60 + (i * 53) % 280, y: (i * 41) % 400 };
 });
 
 const parado = matchMedia('(prefers-reduced-motion: reduce)').matches;
 function quadro() {
   const f = formas[atual], modo = f.modo;
-  const v = { calmo:1, lento:.35, agitado:2.6, festa:1.8, anel:.6, chuva:1, abraco:.25 }[modo];
-  const tremor = modo === 'agitado' ? 7 : 0;
+  const v = { calmo:1, lento:.35, agitado:2.6, festa:1.8, anel:.6, chuva:1, abraco:.25, parado:0, dinheiro:1, medo:1.2 }[modo];
+  const tremor = modo === 'agitado' ? 7 : modo === 'medo' ? 4 : 0;
   pedacos.forEach((p, i) => {
-    p.el.style.stroke = modo === 'festa' ? CONFETE[i % CONFETE.length] : f.cor;
+    p.el.style.stroke = modo === 'festa' ? CONFETE[i % CONFETE.length] : modo === 'dinheiro' ? '#4ade80' : f.cor;
+    const nota = modo === 'dinheiro';
+    if (p.nota !== nota) { p.nota = nota; p.el.setAttribute('width', nota ? 16 : p.t); p.el.setAttribute('height', nota ? 9 : p.t); }
     if (parado) return;
     p.ang += p.vel * v; p.giro += v * 1.5;
     let x, y;
-    if (modo === 'chuva') {
+    if (modo === 'chuva' || modo === 'dinheiro') {
       p.y += .6 + (i % 3) * .3; if (p.y > 400) p.y = 20;
       x = p.x; y = p.y;
     } else {
-      const raio = modo === 'festa' ? 150 : modo === 'anel' ? 165 : modo === 'abraco' ? 118 + (i % 3) * 6 : p.raio;
+      const raio = modo === 'medo' ? 112 + (i % 3) * 5 : modo === 'festa' ? 150 : modo === 'anel' ? 165 : modo === 'abraco' ? 118 + (i % 3) * 6 : p.raio;
       const ang = modo === 'anel' ? (i * Math.PI * 2 / 15) + performance.now() / 4000 : p.ang;
       x = 200 + Math.cos(ang) * raio + (Math.random() - .5) * tremor;
       y = 212 + Math.sin(ang) * raio * (modo === 'anel' ? .35 : .8) + (Math.random() - .5) * tremor;
