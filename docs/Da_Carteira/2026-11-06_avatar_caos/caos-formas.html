@@ -77,6 +77,11 @@
   #forma.varre #lupa { animation:varre 2.6s ease-in-out infinite; }
   @keyframes varre { 0%,100% { translate:0 0; } 50% { translate:-80px 0; } }
   #curto { animation:pisca-sirene .25s steps(2) infinite; }
+  #pino { transform-box:fill-box; transform-origin:center bottom; animation:pino 1s ease-in-out infinite; }
+  @keyframes pino { 0%,100% { translate:0 0; } 50% { translate:0 -8px; } }
+  #rota { animation:rota .8s linear infinite; }
+  @keyframes rota { to { stroke-dashoffset:-20; } }
+  #cena { margin-top:8px; }
   .fala { margin:4px 0 14px; max-width:340px; background:#151a28; border:1px solid #262d42; border-radius:14px;
     padding:12px 14px; font-size:15px; line-height:1.4; min-height:48px; text-align:center; }
   .botoes { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:420px; }
@@ -321,6 +326,22 @@
         <path fill="none" stroke="#a855f7" stroke-width="4" stroke-linecap="round" filter="url(#brilho)" d="M146 224 Q 161 232, 176 224 M224 224 Q 239 232, 254 224"/>
       </g>
 
+      <!-- JF · DESNORTEADO: estrelinhas rodando na cabeça -->
+      <g class="acc" data-acc="tontura">
+        <path class="tont neon" fill="var(--cor)" stroke-width="1" d="M0 -8 L2.4 -2.4 L8 -2.4 L3.4 1.2 L5 7.4 L0 3.6 L-5 7.4 L-3.4 1.2 L-8 -2.4 L-2.4 -2.4 Z"/>
+        <path class="tont neon" fill="var(--cor)" stroke-width="1" d="M0 -8 L2.4 -2.4 L8 -2.4 L3.4 1.2 L5 7.4 L0 3.6 L-5 7.4 L-3.4 1.2 L-8 -2.4 L-2.4 -2.4 Z"/>
+        <path class="tont neon" fill="var(--cor)" stroke-width="1" d="M0 -8 L2.4 -2.4 L8 -2.4 L3.4 1.2 L5 7.4 L0 3.6 L-5 7.4 L-3.4 1.2 L-8 -2.4 L-2.4 -2.4 Z"/>
+      </g>
+      <!-- JF · RECALCULANDO: alfinete de mapa e rota -->
+      <g class="acc" data-acc="gps">
+        <g id="pino">
+          <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M200 64 c -14 0 -22 10 -22 22 c 0 16 22 38 22 38 s 22 -22 22 -38 c 0 -12 -8 -22 -22 -22 z"/>
+          <circle class="neon" cx="200" cy="86" r="7" fill="var(--cor)" stroke-width="2"/>
+        </g>
+        <path id="rota" class="neon" fill="none" stroke-width="4" stroke-linecap="round" stroke-dasharray="10 10" d="M56 360 C 110 320, 160 380, 214 346 S 312 318, 344 344"/>
+        <path class="neon" fill="#0f1320" stroke-width="3" stroke-linejoin="round" d="M344 344 V 312 L 368 320 L 344 328"/>
+      </g>
+
       <!-- acessórios do rosto -->
       <g class="acc" data-acc="oculos">
         <circle class="neon" cx="161" cy="198" r="21" fill="none" stroke-width="3"/>
@@ -366,6 +387,7 @@
   <div class="fala" id="fala" aria-live="polite"></div>
   <div class="botoes" id="botoes"></div>
   <button id="passear" type="button">▶ Passear por todas</button>
+  <button id="cena" type="button">🎬 Cena: sumiu e voltou</button>
 
 <script>
 // Cada humor tem uma FORMA: cor, acessórios, jeito do corpo, rosto e como o caos em volta se mexe.
@@ -510,6 +532,16 @@ const formas = {
     olhoE:{ d:'M148 204 a 13 13 0 1 0 26 0 a 13 13 0 1 0 -26 0', cheio:false }, olhoD:{ d:'M234 204 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0', cheio:true },
     sob:'', boca:'M178 256 L 196 250 L 210 258 L 224 250', extra:'',
     fala:'Fim de mês. O saldo acabou, o limite evaporou. Sobrevivendo à base de água e luz solar.' },
+  desnorteado:{ nome:'😵‍💫 Desnorteado', quando:'sumiu um tempão e voltou com a bomba', cor:'#67e8f9', modo:'bagunca', grupo:'reacoes',
+    acc:['tontura','suor'], corpo:'translateY(4px)', anim:'cambaleia',
+    olhoE:{ d:'M161 202 a 3 3 0 0 1 6 0 a 6 6 0 0 1 -12 0 a 9 9 0 0 1 18 0 a 12 12 0 0 1 -24 0', cheio:false }, olhoD:{ d:'M239 202 a 3 3 0 0 1 6 0 a 6 6 0 0 1 -12 0 a 9 9 0 0 1 18 0 a 12 12 0 0 1 -24 0', cheio:false },
+    sob:'M146 182 Q 160 172, 174 178 M226 176 Q 240 172, 254 184', boca:'M180 256 q 8 -10 16 0 t 16 0 t 16 -4', extra:'?!',
+    fala:'Meu Deus… você sumiu 23 dias e voltou com essa bomba? Metade do planejamento foi por água abaixo. Peraí, tô tonto.' },
+  recalculando:{ nome:'🧭 Recalculando', quando:'alerta vermelho: refazer a rota', cor:'#ff4d5e', modo:'anel', grupo:'reacoes',
+    acc:['gps'], corpo:'scale(1.03)',
+    olhoE:{ d:'M150 196 h22 v18 h-22 z', cheio:true }, olhoD:{ d:'M228 196 h22 v18 h-22 z', cheio:true },
+    sob:'M146 182 L 174 186 M254 182 L 226 186', boca:'M178 250 h44', extra:'',
+    fala:'ALERTA VERMELHO. Recalculando a rota: 1) estancar o que vaza, 2) pagar o que vence, 3) refazer as metas. Bora junto, passo a passo.' },
 };
 
 const $ = id => document.getElementById(id);
@@ -585,7 +617,7 @@ const pedacos = Array.from({ length: 15 }, (_, i) => {
 const parado = matchMedia('(prefers-reduced-motion: reduce)').matches;
 function quadro() {
   const f = formas[atual], modo = f.modo;
-  const v = { calmo:1, lento:.35, agitado:2.6, festa:1.8, anel:.6, chuva:1, abraco:.25, parado:0, dinheiro:1, medo:1.2 }[modo];
+  const v = { calmo:1, lento:.35, agitado:2.6, festa:1.8, anel:.6, chuva:1, abraco:.25, bagunca:3, parado:0, dinheiro:1, medo:1.2 }[modo];
   const tremor = modo === 'agitado' ? 7 : modo === 'medo' ? 4 : 0;
   pedacos.forEach((p, i) => {
     p.el.style.stroke = modo === 'festa' ? CONFETE[i % CONFETE.length] : modo === 'dinheiro' ? '#4ade80' : f.cor;
@@ -604,8 +636,19 @@ function quadro() {
       y = 212 + Math.sin(ang) * raio * (modo === 'anel' ? .35 : .8) + (Math.random() - .5) * tremor;
       p.x = x; p.y = y;
     }
+    if (modo === 'bagunca') {
+      if (Math.random() < .03) { p.bx = 40 + Math.random() * 320; p.by = 40 + Math.random() * 330; }
+      if (p.bx !== undefined) { x = p.bx + (Math.random() - .5) * 3; y = p.by + (Math.random() - .5) * 3; }
+    }
     p.el.setAttribute('transform', `translate(${x} ${y}) rotate(${modo === 'anel' ? 45 : p.giro})`);
   });
+  if (atual === 'desnorteado' && !parado) {
+    const t = performance.now() / 600;
+    document.querySelectorAll('.tont').forEach((e, i) => {
+      const a = t + i * 2.09;
+      e.setAttribute('transform', `translate(${200 + Math.cos(a) * 62} ${112 + Math.sin(a) * 14}) scale(${.8 + (Math.sin(a) + 1) * .25})`);
+    });
+  }
   $('faisca').style.opacity = Math.random() < (modo === 'agitado' ? .5 : .15) ? 1 : .2;
   requestAnimationFrame(quadro);
 }
@@ -618,6 +661,12 @@ requestAnimationFrame(quadro);
     piscar();
   }, 2500 + Math.random() * 2500);
 })();
+
+$('cena').onclick = () => {
+  pararPasseio();
+  mostrar('desnorteado');
+  setTimeout(() => { if (atual === 'desnorteado') mostrar('recalculando'); }, 3800);
+};
 
 const pedida = new URLSearchParams(location.search).get('forma');
 mostrar(formas[pedida] ? pedida : 'anjinho', true);

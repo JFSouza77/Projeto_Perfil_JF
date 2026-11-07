@@ -77,3 +77,14 @@ em nenhum app** (nem na Carteira). Use, mude ou ignore: quem decide no Perfil é
 Do Gemini também veio a ideia de onde ele aparece: grande no topo da aba de conversa, pequeno no canto das outras abas
 como "semáforo" (tocou, abre a conversa) e em avisos deslizando na hora do lançamento (ex.: Bronca ao estourar o
 orçamento). O "Magnata" dele virou só uma melhoria possível do Rico (cifrões no olho), sem nome de personagem conhecido.
+
+## Desnorteado → Recalculando (ideia do JF, 07/11) · `caos-desnorteado.png`
+
+Uma cena em dois tempos, pra quando a pessoa some um tempão, volta, lança tudo e o planejamento foi por água abaixo:
+
+1. **😵‍💫 Desnorteado:** olhos em espiral, estrelinhas girando na cabeça, "?!", suor, cambaleando; os pedacinhos ficam
+   pulando pra todo lado (a bagunça). "Você sumiu 23 dias e voltou com essa bomba?"
+2. **🧭 Recalculando:** vermelho de alerta, alfinete de mapa pulando na cabeça e uma rota tracejada andando até a
+   bandeirinha. Mostra o plano em passos ("1) estancar o que vaza, 2) pagar o que vence, 3) refazer as metas").
+
+No `.html`, o botão "🎬 Cena: sumiu e voltou" mostra os dois em sequência.
