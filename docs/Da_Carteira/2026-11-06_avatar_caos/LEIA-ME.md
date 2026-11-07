@@ -138,4 +138,4 @@ com fita e calendário marcando a próxima data de promoção (ex.: Black Friday
   todo (e treme no Medo); todo olho aberto pisca; no Desconfiado a lupa troca de olho.
 - **Joinha do Amigão corrigido:** antes parecia o dedo do meio; agora o polegar sai do lado e os dedos ficam dobrados.
 - **Formas novas:** 😌 Calmo (azul, tranquilo, risonho), 😎 Confiante (mês melhor que o passado, gráfico subindo e
-  brilho no olho) e 🟥 Cartão vermelho (2 cartões ou mais perto do limite, apito e cartão vermelho). 45 formas no total.
+  brilho no olho) e 🟥 Cartão vermelho (2 cartões ou mais perto do limite, apito e cartão vermelho). 43 formas no total.
