@@ -96,6 +96,12 @@
   @keyframes gira { to { rotate:360deg; } }
   #leque { transform-box:fill-box; transform-origin:center bottom; animation:leque 2.6s ease-in-out infinite; }
   @keyframes leque { 0%,100% { rotate:0deg; } 50% { rotate:-6deg; } }
+  #tesoura { transform-box:fill-box; transform-origin:left center; animation:corta .7s ease-in-out infinite; }
+  @keyframes corta { 0%,100% { scale:1 1; } 50% { scale:1 .55; } }
+  #caneta { transform-box:fill-box; transform-origin:right top; animation:bate-caneta .9s ease-in-out infinite; }
+  @keyframes bate-caneta { 0%,100% { rotate:0deg; } 50% { rotate:-14deg; } }
+  #chama { transform-box:fill-box; transform-origin:center bottom; animation:chama 1s ease-in-out infinite; }
+  @keyframes chama { 0%,100% { scale:1 1; } 50% { scale:.94 1.08; } }
   .fala { margin:4px 0 14px; max-width:340px; background:#151a28; border:1px solid #262d42; border-radius:14px;
     padding:12px 14px; font-size:15px; line-height:1.4; min-height:48px; text-align:center; }
   .botoes { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:420px; }
@@ -285,6 +291,34 @@
         <circle cx="332" cy="252" r="3" fill="var(--cor)"/>
       </g>
 
+      <!-- AUDITOR: tesoura e carimbo -->
+      <g class="acc" data-acc="tesoura"><g id="tesoura">
+        <path class="neon" fill="none" stroke-width="5" stroke-linecap="round" d="M322 232 L 372 194 M322 198 L 372 236"/>
+        <circle class="neon" cx="314" cy="240" r="9" fill="#0f1320" stroke-width="4"/>
+        <circle class="neon" cx="314" cy="190" r="9" fill="#0f1320" stroke-width="4"/>
+      </g></g>
+      <g class="acc" data-acc="carimbo">
+        <circle class="neon" cx="74" cy="196" r="10" fill="#0f1320" stroke-width="4"/>
+        <rect class="neon" x="68" y="206" width="12" height="22" fill="#0f1320" stroke-width="3"/>
+        <rect x="52" y="228" width="44" height="14" rx="3" fill="#ff3b5c" stroke="#ff3b5c" filter="url(#brilho)"/>
+        <text x="74" y="270" text-anchor="middle" font-size="13" font-weight="900" fill="#ff3b5c" transform="rotate(-10 74 266)">CORTA</text>
+      </g>
+      <!-- COBRADOR: prancheta -->
+      <g class="acc" data-acc="prancheta">
+        <rect class="neon" x="46" y="168" width="58" height="80" rx="7" fill="#0f1320" stroke-width="4"/>
+        <rect class="neon" x="62" y="162" width="26" height="12" rx="3" fill="#0f1320" stroke-width="3"/>
+        <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M56 194 l 6 6 l 10 -12 M78 196 h18 M56 218 l 6 6 l 10 -12 M78 220 h18 M78 238 h18"/>
+      </g>
+      <!-- TREINADOR: chama da ofensiva -->
+      <g class="acc" data-acc="chama"><g id="chama">
+        <path fill="#ff8a3d" stroke="#ffb020" stroke-width="3" stroke-linejoin="round" filter="url(#brilho)" d="M76 160 C 52 134, 74 112, 74 88 C 96 104, 110 124, 102 160 Z"/>
+        <text x="89" y="152" text-anchor="middle" font-size="24" font-weight="900" fill="#0f1320">5</text>
+      </g></g>
+      <!-- VOVÔ: bengala -->
+      <g class="acc" data-acc="bengala">
+        <path class="neon" fill="none" stroke-width="7" stroke-linecap="round" d="M74 304 V 214 Q 74 190, 96 190 Q 114 190, 114 206"/>
+      </g>
+
       <!-- a telinha -->
       <rect class="neon" x="100" y="135" width="200" height="150" rx="34" fill="#0f1320" stroke-width="5"/>
       <rect x="114" y="149" width="172" height="122" rx="24" fill="none" stroke="#ffffff" stroke-opacity=".06" stroke-width="2"/>
@@ -400,6 +434,26 @@
         <path fill="none" stroke="#ff8fb3" stroke-width="5" filter="url(#brilho)" d="M158 130 Q 200 122, 242 130"/>
       </g>
 
+      <!-- COBRADOR: boné de cobrador antigo e caneta -->
+      <g class="acc" data-acc="boneCobrador">
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M146 142 Q 148 106, 200 104 Q 252 106, 254 142 Z"/>
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M140 140 Q 200 154, 260 140 L 268 150 Q 200 168, 132 150 Z"/>
+        <circle class="neon" cx="200" cy="124" r="7" fill="var(--cor)" stroke-width="2"/>
+      </g>
+      <g class="acc" data-acc="caneta"><g id="caneta">
+        <path class="neon" fill="none" stroke-width="7" stroke-linecap="round" d="M266 118 L 304 86"/>
+        <path fill="#fff" d="M262 122 l -6 6 l 9 -2 z"/>
+      </g></g>
+      <!-- TREINADOR: faixa na testa -->
+      <g class="acc" data-acc="faixa">
+        <path fill="#ff4d5e" stroke="#ff4d5e" stroke-width="2" filter="url(#brilho)" d="M104 164 Q 200 146, 296 164 L 296 178 Q 200 160, 104 178 Z"/>
+        <path fill="#ff4d5e" stroke="#ff4d5e" stroke-width="2" d="M294 166 l 22 -6 l -4 10 l 8 6 l -24 2 z"/>
+      </g>
+      <!-- VOVÔ: sobrancelhas grossas -->
+      <g class="acc" data-acc="sobrancelhoes">
+        <path fill="#f8fafc" stroke="#f8fafc" stroke-width="2" stroke-linejoin="round" d="M138 176 Q 160 160, 182 172 Q 160 170, 140 184 Z M262 176 Q 240 160, 218 172 Q 240 170, 260 184 Z"/>
+      </g>
+
       <!-- acessórios do rosto -->
       <g class="acc" data-acc="oculos">
         <circle class="neon" cx="161" cy="198" r="21" fill="none" stroke-width="3"/>
@@ -460,6 +514,16 @@
       <!-- BANQUEIRO: bigodinho -->
       <g class="acc" data-acc="bigode">
         <path class="neon" fill="var(--cor)" stroke-width="2" stroke-linejoin="round" d="M200 236 Q 186 226, 172 234 Q 162 240, 156 232 Q 160 248, 178 244 Q 192 242, 200 238 Q 208 242, 222 244 Q 240 248, 244 232 Q 238 240, 228 234 Q 214 226, 200 236 Z"/>
+      </g>
+      <!-- TREINADOR: apito -->
+      <g class="acc" data-acc="apito">
+        <rect class="neon" x="206" y="242" width="30" height="16" rx="7" fill="#0f1320" stroke-width="3"/>
+        <circle class="neon" cx="230" cy="250" r="4" fill="none" stroke-width="2"/>
+        <path class="neon" fill="none" stroke-width="2" d="M236 252 Q 262 268, 256 290"/>
+      </g>
+      <!-- VOVÔ: bigodão branco -->
+      <g class="acc" data-acc="bigodao">
+        <path fill="#f8fafc" stroke="#f8fafc" stroke-width="2" stroke-linejoin="round" filter="url(#brilho)" d="M200 234 Q 180 220, 160 232 Q 146 242, 140 232 Q 142 258, 168 256 Q 188 254, 200 246 Q 212 254, 232 256 Q 258 258, 260 232 Q 254 242, 240 232 Q 220 220, 200 234 Z"/>
       </g>
     </g></g>
   </svg>
@@ -647,6 +711,26 @@ const formas = {
     olhoE:{ d:'M152 196 h18 v16 h-18 z', cheio:true }, olhoD:{ d:'M230 196 h18 v16 h-18 z', cheio:true },
     sob:'', boca:'M170 240 Q 200 268, 230 240', extra:'',
     fala:'Modo férias! Sem condução e sem marmita esse mês: dá pra curtir R$ 400 a mais sem estourar nada.' },
+  auditor:   { nome:'✂️ Auditor', quando:'assinaturas comendo o orçamento', cor:'#fb7185', modo:'lento', grupo:'gemini2',
+    acc:['tesoura','carimbo','meialua'], corpo:'rotate(-3deg)',
+    olhoE:{ d:'M150 200 h22 v8 h-22 z', cheio:true }, olhoD:{ d:'M228 200 h22 v8 h-22 z', cheio:true },
+    sob:'M146 186 L 174 190 M226 184 L 254 178', boca:'M184 254 h30', extra:'',
+    fala:'Oito assinaturas de streaming. Você não tem nem tempo de vida pra assistir tudo isso. Bora cortar alguma?' },
+  cobrador:  { nome:'🧾 Cobrador', quando:'conta rachada, falta receber', cor:'#a3e635', modo:'calmo', grupo:'gemini2',
+    acc:['prancheta','boneCobrador','caneta'], corpo:'rotate(3deg)',
+    olhoE:{ d:'M150 194 h22 v20 h-22 z', cheio:true }, olhoD:{ d:'M228 194 h22 v20 h-22 z', cheio:true },
+    sob:'M146 182 h26 M226 178 L 254 172', boca:'M178 248 Q 204 258, 226 242', extra:'',
+    fala:'Anotei a pizza de ontem: o Fulano te deve R$ 45,50. Deixo no radar pra você lembrar de cobrar.' },
+  treinador: { nome:'🏋️ Treinador', quando:'ofensiva: dias seguidos anotando', cor:'#f97316', modo:'agitado', grupo:'gemini2',
+    acc:['chama','faixa','apito'], corpo:'translateY(-6px) rotate(-4deg)', anim:'ri',
+    olhoE:{ d:'M150 190 h22 v20 h-22 z', cheio:true }, olhoD:{ d:'M228 190 h22 v20 h-22 z', cheio:true },
+    sob:'', boca:'M176 250 Q 190 256, 204 250', extra:'',
+    fala:'Cinco dias seguidos anotando tudo! Esse é o foco. Não deixa a peteca cair no fim de semana.' },
+  vovo:      { nome:'👴 Vovô', quando:'inflação, comparar com o ano passado', cor:'#f5d0a9', modo:'lento', grupo:'gemini2',
+    acc:['bengala','sobrancelhoes','bigodao','oculos'], corpo:'translateY(8px) rotate(-3deg)', anim:'balanca',
+    olhoE:{ d:'M150 204 Q 161 196, 172 204', cheio:false }, olhoD:{ d:'M230 204 Q 241 196, 252 204', cheio:false },
+    sob:'', boca:'', extra:'',
+    fala:'No ano passado, R$ 400 no mercado enchiam o carrinho. Hoje mal dá duas sacolas. A inflação não tem pena, patrão.' },
 };
 
 const $ = id => document.getElementById(id);
@@ -681,7 +765,7 @@ function mostrar(nome, imediato) {
   document.querySelectorAll('#botoes button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.forma === nome)));
 }
 
-const titulos = { humor:'Humores', carteira:'Momentos da Carteira', reacoes:'Reações da Carteira', estilos:'Jeitos de falar (a pessoa escolhe)', gemini:'Ideias do Gemini', jf2:'Funções da Carteira (ideias do JF)', perfil:'Pedidos do Code (Modo C.A.O.S. do Perfil)' };
+const titulos = { humor:'Humores', carteira:'Momentos da Carteira', reacoes:'Reações da Carteira', estilos:'Jeitos de falar (a pessoa escolhe)', gemini:'Ideias do Gemini', jf2:'Funções da Carteira (ideias do JF)', perfil:'Pedidos do Code (Modo C.A.O.S. do Perfil)', gemini2:'Mecânicas novas (ideias do Gemini)' };
 let grupoAtual = null;
 for (const [k, f] of Object.entries(formas)) {
   const g = f.grupo || 'humor';

@@ -105,3 +105,12 @@ espiando → Pensador · triste → Tristinho · raiva → Capetinha · fúria �
 tédio → Sonolento · vergonha → Envergonhado · nojo → Nojinho.
 
 **Correção:** o filtro de brilho agora usa `filterUnits="userSpaceOnUse"`; antes, traço reto (altura zero) sumia.
+
+## Mecânicas novas do Gemini (07/11) · `caos-mecanicas.png`
+
+| Forma | Mecânica | Como fica |
+| --- | --- | --- |
+| ✂️ Auditor | assinaturas comendo o orçamento | óculos meia-lua, tesoura cortando, carimbo "CORTA" |
+| 🧾 Cobrador | conta rachada, falta receber | prancheta com ✓, boné de cobrador, caneta batendo |
+| 🏋️ Treinador | ofensiva (dias seguidos anotando) | faixa na testa, apito, chama com o número da ofensiva |
+| 👴 Vovô | inflação, comparar com o ano passado | sobrancelhas e bigodão brancos, óculos redondos, bengala |
