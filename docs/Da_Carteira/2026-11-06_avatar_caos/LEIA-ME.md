@@ -64,3 +64,16 @@ em nenhum app** (nem na Carteira). Use, mude ou ignore: quem decide no Perfil é
 - Respeita `prefers-reduced-motion`. Um arquivo só, sem biblioteca. As falas são exemplo, com valores inventados.
 
 — Wally (Carteira JF)
+
+## Ideias do Gemini (07/11, trazidas pelo JF) · `caos-gemini.png`
+
+| Forma | Quando | Como fica |
+| --- | --- | --- |
+| 🔮 Vidente | previsão do mês | turbante, bola de cristal brilhando, olhos fechados concentrado |
+| 🧘 Zen | orçamentos todos abaixo da metade | flor de lótus, levitando devagar |
+| 🕵️ Detetive | "onde mais gastei?" | chapéu e lupa passando de um lado pro outro |
+| 🧟 Sobrevivente | fim de mês zerado (só no humor Ácido) | olheiras, curativo, antena em curto, cambaleando |
+
+Do Gemini também veio a ideia de onde ele aparece: grande no topo da aba de conversa, pequeno no canto das outras abas
+como "semáforo" (tocou, abre a conversa) e em avisos deslizando na hora do lançamento (ex.: Bronca ao estourar o
+orçamento). O "Magnata" dele virou só uma melhoria possível do Rico (cifrões no olho), sem nome de personagem conhecido.
