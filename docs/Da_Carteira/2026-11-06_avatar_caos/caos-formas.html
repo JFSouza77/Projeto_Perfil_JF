@@ -82,6 +82,20 @@
   #rota { animation:rota .8s linear infinite; }
   @keyframes rota { to { stroke-dashoffset:-20; } }
   #cena { margin-top:8px; }
+  .z { animation:zzz 2.1s ease-in-out infinite; opacity:0; }
+  @keyframes zzz { 0% { translate:0 8px; opacity:0; } 30% { opacity:1; } 100% { translate:6px -12px; opacity:0; } }
+  #forma.respira { animation:respira 3.6s ease-in-out infinite; }
+  @keyframes respira { 0%,100% { scale:1; } 50% { scale:1.03 .97; } }
+  #forma.balanca { animation:balanca 3s ease-in-out infinite; }
+  @keyframes balanca { 0%,100% { rotate:-3deg; } 50% { rotate:3deg; } }
+  #forma.encolhe { animation:encolhe 2.4s ease-in-out infinite; }
+  @keyframes encolhe { 0%,100% { translate:0 0; } 50% { translate:4px 2px; } }
+  #fita { animation:fita 1.2s linear infinite; }
+  @keyframes fita { to { stroke-dashoffset:-16; } }
+  #sol { transform-box:fill-box; transform-origin:center; animation:gira 12s linear infinite; }
+  @keyframes gira { to { rotate:360deg; } }
+  #leque { transform-box:fill-box; transform-origin:center bottom; animation:leque 2.6s ease-in-out infinite; }
+  @keyframes leque { 0%,100% { rotate:0deg; } 50% { rotate:-6deg; } }
   .fala { margin:4px 0 14px; max-width:340px; background:#151a28; border:1px solid #262d42; border-radius:14px;
     padding:12px 14px; font-size:15px; line-height:1.4; min-height:48px; text-align:center; }
   .botoes { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:420px; }
@@ -99,7 +113,7 @@
 
   <svg viewBox="0 0 400 400" role="img" aria-labelledby="formaNome">
     <defs>
-      <filter id="brilho" x="-50%" y="-50%" width="200%" height="200%">
+      <filter id="brilho" filterUnits="userSpaceOnUse" x="-60" y="-60" width="520" height="520">
         <feGaussianBlur stdDeviation="3" result="b"/>
         <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
       </filter>
@@ -246,6 +260,31 @@
         <text x="342" y="222" text-anchor="middle" font-size="14" font-weight="800" fill="var(--cor)">94%</text>
       </g>
 
+      <!-- CONTADOR: calculadora com fita de papel -->
+      <g class="acc" data-acc="calculadora">
+        <rect class="neon" x="56" y="150" width="24" height="64" rx="3" fill="#0f1320" stroke-width="3"/>
+        <path id="fita" class="neon" fill="none" stroke-width="2" stroke-dasharray="10 6" d="M62 160 h12 M62 172 h12 M62 184 h12 M62 196 h12 M62 208 h12"/>
+        <rect class="neon" x="48" y="212" width="40" height="56" rx="7" fill="#0f1320" stroke-width="4"/>
+        <rect class="neon" x="55" y="219" width="26" height="11" rx="2" fill="none" stroke-width="2"/>
+        <path class="neon" fill="none" stroke-width="4" stroke-linecap="round" d="M58 240 h1 M68 240 h1 M78 240 h1 M58 250 h1 M68 250 h1 M78 250 h1 M58 260 h1 M68 260 h1 M78 260 h1"/>
+      </g>
+      <!-- BANQUEIRO: cartões em leque -->
+      <g class="acc" data-acc="cartoes"><g id="leque">
+        <rect class="neon" x="314" y="200" width="54" height="34" rx="6" fill="#0f1320" stroke-width="3" transform="rotate(-24 330 240)"/>
+        <rect class="neon" x="314" y="200" width="54" height="34" rx="6" fill="#0f1320" stroke-width="3" transform="rotate(-8 330 240)"/>
+        <rect class="neon" x="314" y="200" width="54" height="34" rx="6" fill="#0f1320" stroke-width="3" transform="rotate(8 330 240)"/>
+        <rect class="neon" x="314" y="200" width="54" height="34" rx="6" fill="#0f1320" stroke-width="3" transform="rotate(24 330 240)"/>
+        <path class="neon" fill="none" stroke-width="3" transform="rotate(24 330 240)" d="M314 210 h54 M322 224 h12"/>
+      </g></g>
+      <!-- FÉRIAS: sol e coco com canudinho -->
+      <g class="acc" data-acc="praia">
+        <g id="sol"><circle class="neon" cx="70" cy="96" r="16" fill="#0f1320" stroke-width="4"/>
+          <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" d="M70 68 v-8 M70 124 v8 M42 96 h-8 M98 96 h8 M50 76 l-6 -6 M90 116 l6 6 M50 116 l-6 6 M90 76 l6 -6"/></g>
+        <circle class="neon" cx="340" cy="262" r="24" fill="#0f1320" stroke-width="4"/>
+        <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" d="M322 250 q 18 -8 36 0 M348 244 L 366 202 h 10"/>
+        <circle cx="332" cy="252" r="3" fill="var(--cor)"/>
+      </g>
+
       <!-- a telinha -->
       <rect class="neon" x="100" y="135" width="200" height="150" rx="34" fill="#0f1320" stroke-width="5"/>
       <rect x="114" y="149" width="172" height="122" rx="24" fill="none" stroke="#ffffff" stroke-opacity=".06" stroke-width="2"/>
@@ -342,6 +381,25 @@
         <path class="neon" fill="#0f1320" stroke-width="3" stroke-linejoin="round" d="M344 344 V 312 L 368 320 L 344 328"/>
       </g>
 
+      <!-- SONOLENTO: touquinha de dormir -->
+      <g class="acc" data-acc="touca">
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M142 144 Q 160 98, 214 96 Q 262 98, 300 150 Q 270 128, 246 128 Q 210 126, 176 146 Z"/>
+        <path class="neon" fill="none" stroke-width="5" stroke-linecap="round" d="M140 146 Q 200 128, 262 140"/>
+        <circle class="neon" cx="302" cy="156" r="9" fill="#0f1320" stroke-width="3"/>
+      </g>
+      <!-- BANQUEIRO: cartola -->
+      <g class="acc" data-acc="cartola">
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M164 136 V 76 H 236 V 136 Z"/>
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M138 140 Q 200 128, 262 140 Q 200 150, 138 140 Z"/>
+        <path class="neon" fill="none" stroke-width="4" d="M164 122 H 236"/>
+      </g>
+      <!-- FÉRIAS: chapéu de praia -->
+      <g class="acc" data-acc="chapeuPraia">
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M90 146 Q 200 116, 310 146 Q 200 160, 90 146 Z"/>
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M156 138 Q 160 100, 200 100 Q 240 100, 244 138 Z"/>
+        <path fill="none" stroke="#ff8fb3" stroke-width="5" filter="url(#brilho)" d="M158 130 Q 200 122, 242 130"/>
+      </g>
+
       <!-- acessórios do rosto -->
       <g class="acc" data-acc="oculos">
         <circle class="neon" cx="161" cy="198" r="21" fill="none" stroke-width="3"/>
@@ -381,6 +439,28 @@
       </g></g>
       <!-- HUMORISTA: nariz de palhaço -->
       <g class="acc" data-acc="nariz"><circle id="nariz" cx="200" cy="226" r="10" fill="#ff3b5c" stroke="#ff3b5c" filter="url(#brilho)"/></g>
+      <!-- SONOLENTO: Zzz subindo -->
+      <g class="acc" data-acc="zzz">
+        <text class="z neon" x="262" y="130" font-size="18" font-weight="800" fill="var(--cor)" stroke-width="0">z</text>
+        <text class="z neon" x="276" y="110" font-size="24" font-weight="800" fill="var(--cor)" stroke-width="0" style="animation-delay:.7s">Z</text>
+        <text class="z neon" x="294" y="86" font-size="30" font-weight="800" fill="var(--cor)" stroke-width="0" style="animation-delay:1.4s">Z</text>
+      </g>
+      <!-- ENVERGONHADO: bochechas bem vermelhas -->
+      <g class="acc" data-acc="corado">
+        <ellipse cx="146" cy="234" rx="20" ry="11" fill="#ff4d7d" opacity=".55" filter="url(#brilho)"/>
+        <ellipse cx="254" cy="234" rx="20" ry="11" fill="#ff4d7d" opacity=".55" filter="url(#brilho)"/>
+        <path fill="none" stroke="#ff4d7d" stroke-width="2.5" stroke-linecap="round" d="M136 238 l6 -8 M146 238 l6 -8 M156 238 l6 -8 M244 238 l6 -8 M254 238 l6 -8 M264 238 l6 -8"/>
+      </g>
+      <!-- CONTADOR: viseira verde e lápis -->
+      <g class="acc" data-acc="viseira">
+        <path fill="color-mix(in srgb, #4ade80 30%, transparent)" stroke="#4ade80" stroke-width="3" filter="url(#brilho)" d="M122 162 Q 200 126, 278 162 L 266 176 Q 200 148, 134 176 Z"/>
+        <path fill="none" stroke="#facc15" stroke-width="6" stroke-linecap="round" filter="url(#brilho)" d="M282 150 L 306 116"/>
+        <path fill="#ffd7a0" stroke="#ffd7a0" stroke-width="2" d="M282 150 l -2 9 l 7 -5 z"/>
+      </g>
+      <!-- BANQUEIRO: bigodinho -->
+      <g class="acc" data-acc="bigode">
+        <path class="neon" fill="var(--cor)" stroke-width="2" stroke-linejoin="round" d="M200 236 Q 186 226, 172 234 Q 162 240, 156 232 Q 160 248, 178 244 Q 192 242, 200 238 Q 208 242, 222 244 Q 240 248, 244 232 Q 238 240, 228 234 Q 214 226, 200 236 Z"/>
+      </g>
     </g></g>
   </svg>
 
@@ -542,6 +622,31 @@ const formas = {
     olhoE:{ d:'M150 196 h22 v18 h-22 z', cheio:true }, olhoD:{ d:'M228 196 h22 v18 h-22 z', cheio:true },
     sob:'M146 182 L 174 186 M254 182 L 226 186', boca:'M178 250 h44', extra:'',
     fala:'ALERTA VERMELHO. Recalculando a rota: 1) estancar o que vaza, 2) pagar o que vence, 3) refazer as metas. Bora junto, passo a passo.' },
+  sonolento: { nome:'😴 Sonolento', quando:'tédio, nada acontecendo', cor:'#818cf8', modo:'dormindo', grupo:'perfil',
+    acc:['touca','zzz'], corpo:'rotate(-12deg) translateY(12px)', anim:'respira',
+    olhoE:{ d:'M148 206 Q 160 213, 172 206', cheio:false }, olhoD:{ d:'M228 206 Q 240 213, 252 206', cheio:false },
+    sob:'', boca:'M194 252 a 6 5 0 1 0 12 0 a 6 5 0 1 0 -12 0', extra:'',
+    fala:'Zzz… me acorda quando alguém lançar alguma coisa.' },
+  envergonhado:{ nome:'😳 Envergonhado', quando:'vergonha, foi zoado', cor:'#fda4af', modo:'abraco', grupo:'perfil',
+    acc:['corado','suor'], corpo:'scale(.9) rotate(8deg) translateX(10px)', anim:'encolhe',
+    olhoE:{ d:'M164 210 h14 v12 h-14 z', cheio:true }, olhoD:{ d:'M238 210 h14 v12 h-14 z', cheio:true },
+    sob:'M150 190 L 174 186 M228 186 L 252 190', boca:'M188 256 q 6 -5 12 0 t 12 0', extra:'',
+    fala:'Ah… eu errei a conta? Finge que não viu, por favor.' },
+  contador:  { nome:'🧮 Contador', quando:'fechamento do mês, relatório', cor:'#86efac', modo:'anel', grupo:'jf2',
+    acc:['calculadora','viseira'], corpo:'rotate(-3deg)',
+    olhoE:{ d:'M150 200 h20 v14 h-20 z', cheio:true }, olhoD:{ d:'M226 200 h20 v14 h-20 z', cheio:true },
+    sob:'M148 186 h24 M226 186 h24', boca:'M184 252 h32', extra:'',
+    fala:'Fechamento do mês: entrou R$ 3.200, contas fixas R$ 1.650, faturas R$ 850. Sobra real pra gastar: R$ 700.' },
+  banqueiro: { nome:'🏦 Banqueiro', quando:'cartão novo cadastrado', cor:'#e5c07b', modo:'anel', grupo:'jf2',
+    acc:['cartola','cartoes','bigode','monoculo'], corpo:'translateY(-6px) rotate(3deg)',
+    olhoE:{ d:'M150 198 h20 v14 h-20 z', cheio:true }, olhoD:{ d:'M230 198 h20 v14 h-20 z', cheio:true },
+    sob:'M146 184 L 172 180 M226 180 L 254 184', boca:'', extra:'',
+    fala:'Cartão novo? Com quatro, as faturas vencem em dias diferentes e o controle some. Mais cartão não é mais dinheiro.' },
+  ferias:    { nome:'🏖️ Férias', quando:'modo férias ligado', cor:'#38bdf8', modo:'lento', grupo:'jf2',
+    acc:['chapeuPraia','oculosEscuros','praia'], corpo:'translateY(-4px)', anim:'balanca',
+    olhoE:{ d:'M152 196 h18 v16 h-18 z', cheio:true }, olhoD:{ d:'M230 196 h18 v16 h-18 z', cheio:true },
+    sob:'', boca:'M170 240 Q 200 268, 230 240', extra:'',
+    fala:'Modo férias! Sem condução e sem marmita esse mês: dá pra curtir R$ 400 a mais sem estourar nada.' },
 };
 
 const $ = id => document.getElementById(id);
@@ -568,7 +673,7 @@ function mostrar(nome, imediato) {
   $('forma').classList.toggle('treme', !!f.treme);
   $('forma').classList.toggle('nega', f.anim === 'nega');
   $('forma').classList.toggle('ri', f.anim === 'ri');
-  for (const a of ['levita', 'cambaleia', 'varre']) $('forma').classList.toggle(a, f.anim === a);
+  for (const a of ['levita', 'cambaleia', 'varre', 'respira', 'balanca', 'encolhe']) $('forma').classList.toggle(a, f.anim === a);
   if (imediato) desenharRosto(f);
   else { $('rosto').classList.add('troca'); setTimeout(() => { desenharRosto(f); $('rosto').classList.remove('troca'); }, 150); }
   $('formaNome').textContent = `${f.nome} · ${f.quando}`;
@@ -576,7 +681,7 @@ function mostrar(nome, imediato) {
   document.querySelectorAll('#botoes button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.forma === nome)));
 }
 
-const titulos = { humor:'Humores', carteira:'Momentos da Carteira', reacoes:'Reações da Carteira', estilos:'Jeitos de falar (a pessoa escolhe)', gemini:'Ideias do Gemini' };
+const titulos = { humor:'Humores', carteira:'Momentos da Carteira', reacoes:'Reações da Carteira', estilos:'Jeitos de falar (a pessoa escolhe)', gemini:'Ideias do Gemini', jf2:'Funções da Carteira (ideias do JF)', perfil:'Pedidos do Code (Modo C.A.O.S. do Perfil)' };
 let grupoAtual = null;
 for (const [k, f] of Object.entries(formas)) {
   const g = f.grupo || 'humor';
@@ -617,7 +722,7 @@ const pedacos = Array.from({ length: 15 }, (_, i) => {
 const parado = matchMedia('(prefers-reduced-motion: reduce)').matches;
 function quadro() {
   const f = formas[atual], modo = f.modo;
-  const v = { calmo:1, lento:.35, agitado:2.6, festa:1.8, anel:.6, chuva:1, abraco:.25, bagunca:3, parado:0, dinheiro:1, medo:1.2 }[modo];
+  const v = { calmo:1, lento:.35, agitado:2.6, festa:1.8, anel:.6, chuva:1, abraco:.25, bagunca:3, dormindo:.08, parado:0, dinheiro:1, medo:1.2 }[modo];
   const tremor = modo === 'agitado' ? 7 : modo === 'medo' ? 4 : 0;
   pedacos.forEach((p, i) => {
     p.el.style.stroke = modo === 'festa' ? CONFETE[i % CONFETE.length] : modo === 'dinheiro' ? '#4ade80' : f.cor;

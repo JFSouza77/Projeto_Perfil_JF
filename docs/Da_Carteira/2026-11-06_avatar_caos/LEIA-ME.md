@@ -88,3 +88,20 @@ Uma cena em dois tempos, pra quando a pessoa some um tempão, volta, lança tudo
    bandeirinha. Mostra o plano em passos ("1) estancar o que vaza, 2) pagar o que vence, 3) refazer as metas").
 
 No `.html`, o botão "🎬 Cena: sumiu e voltou" mostra os dois em sequência.
+
+## Pedido do Code + funções da Carteira (07/11) · `caos-lote5.png`
+
+| Forma | Quando | Como fica |
+| --- | --- | --- |
+| 😴 Sonolento | tédio (Perfil) | touquinha, "zZZ" subindo, olhos fechados, caído de lado |
+| 😳 Envergonhado | vergonha (Perfil) | bochechas bem vermelhas, olhar pro lado, encolhido |
+| 🤢 Nojinho | nojo (Perfil) | já existia (ver acima) |
+| 🧮 Contador | fechamento do mês, relatório, saldo real | viseira verde, lápis, calculadora com fita de papel |
+| 🏦 Banqueiro | cartão novo cadastrado | cartola, bigode, monóculo, cartões em leque |
+| 🏖️ Férias | modo férias | chapéu de praia, óculos escuros, sol girando, coco com canudinho |
+
+Tabela do Code (rosto do Perfil → forma): carinho/calmo → Anjinho · festa → Festeiro · orgulho → Pomposo ·
+espiando → Pensador · triste → Tristinho · raiva → Capetinha · fúria → Capeta bravo · medo/ansiedade → Sirene ·
+tédio → Sonolento · vergonha → Envergonhado · nojo → Nojinho.
+
+**Correção:** o filtro de brilho agora usa `filterUnits="userSpaceOnUse"`; antes, traço reto (altura zero) sumia.
