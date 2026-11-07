@@ -102,8 +102,12 @@
   @keyframes bate-caneta { 0%,100% { rotate:0deg; } 50% { rotate:-14deg; } }
   #chama { transform-box:fill-box; transform-origin:center bottom; animation:chama 1s ease-in-out infinite; }
   @keyframes chama { 0%,100% { scale:1 1; } 50% { scale:.94 1.08; } }
-  #trave { transform-box:view-box; transform-origin:200px 78px; animation:pesa 3s ease-in-out infinite; }
   @keyframes pesa { 0%,100% { rotate:-8deg; } 50% { rotate:8deg; } }
+  #olhar { transition:transform .35s ease-out; }
+  .gira { transform-box:fill-box; transform-origin:center; animation:gira 1.1s linear infinite; }
+  .falando { transform-box:fill-box; transform-origin:center; animation:mexeBoca .16s ease-in-out infinite alternate; }
+  @keyframes mexeBoca { from { scale:1 1; } to { scale:1.06 .5; } }
+  #fala.digitando::after { content:'▍'; animation:pisca-sirene .8s steps(2) infinite; }
   .fala { margin:4px 0 14px; max-width:340px; background:#151a28; border:1px solid #262d42; border-radius:14px;
     padding:12px 14px; font-size:15px; line-height:1.4; min-height:48px; text-align:center; }
   .botoes { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:420px; }
@@ -468,13 +472,14 @@
       <g class="acc" data-acc="balanca">
         <path class="neon" fill="none" stroke-width="4" stroke-linecap="round" d="M200 136 V 76"/>
         <path class="neon" fill="#0f1320" stroke-width="3" d="M188 136 h24"/>
-        <g id="trave">
-          <path class="neon" fill="none" stroke-width="4" stroke-linecap="round" d="M146 78 H 254"/>
-          <path class="neon" fill="none" stroke-width="2" d="M150 78 l -12 26 M150 78 l 12 26 M250 78 l -12 26 M250 78 l 12 26"/>
-          <path class="neon" fill="#0f1320" stroke-width="3" d="M132 104 h36 q -2 12 -18 12 q -16 0 -18 -12 z M232 104 h36 q -2 12 -18 12 q -16 0 -18 -12 z"/>
-          <text x="150" y="98" text-anchor="middle" font-size="9" font-weight="900" fill="var(--cor)">AGORA</text>
-          <text x="250" y="98" text-anchor="middle" font-size="9" font-weight="900" fill="var(--cor)">ESPERAR</text>
-        </g>
+        <path id="trave" class="neon" fill="none" stroke-width="4" stroke-linecap="round" d="M146 78 H 254"/>
+        <g id="pratoE"><path class="neon" fill="none" stroke-width="2" d="M0 0 l -12 26 M0 0 l 12 26"/>
+          <path class="neon" fill="#0f1320" stroke-width="3" d="M-18 26 h36 q -2 12 -18 12 q -16 0 -18 -12 z"/>
+          <text x="0" y="20" text-anchor="middle" font-size="9" font-weight="900" fill="var(--cor)">AGORA</text></g>
+        <g id="pratoD"><path class="neon" fill="none" stroke-width="2" d="M0 0 l -12 26 M0 0 l 12 26"/>
+          <path class="neon" fill="#0f1320" stroke-width="3" d="M-18 26 h36 q -2 12 -18 12 q -16 0 -18 -12 z"/>
+          <text x="0" y="20" text-anchor="middle" font-size="9" font-weight="900" fill="var(--cor)">ESPERAR</text></g>
+        <g id="moedasBal"></g>
         <circle class="neon" cx="200" cy="76" r="5" fill="var(--cor)" stroke-width="1"/>
       </g>
 
@@ -495,10 +500,10 @@
       <g class="acc" data-acc="lagrima"><path id="lagrima" class="neon" fill="none" stroke-width="3" d="M156 222 q -6 10 0 13 q 6 -3 0 -13"/></g>
 
       <g id="rosto">
-        <g id="olhos">
+        <g id="olhar"><g id="olhos">
           <path id="olhoE" class="neon" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
           <path id="olhoD" class="neon" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-        </g>
+        </g></g>
         <path id="sobrancelhas" class="neon" fill="none" stroke-width="4" stroke-linecap="round"/>
         <path id="boca" class="neon" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
         <text id="extra" x="200" y="128" text-anchor="middle" font-size="34" font-weight="800" fill="var(--cor)" filter="url(#brilho)"></text>
@@ -537,7 +542,7 @@
       </g>
       <!-- BANQUEIRO: bigodinho -->
       <g class="acc" data-acc="bigode">
-        <path class="neon" fill="var(--cor)" stroke-width="2" stroke-linejoin="round" d="M200 236 Q 186 226, 172 234 Q 162 240, 156 232 Q 160 248, 178 244 Q 192 242, 200 238 Q 208 242, 222 244 Q 240 248, 244 232 Q 238 240, 228 234 Q 214 226, 200 236 Z"/>
+        <path id="bigodeVivo" class="neon" fill="var(--cor)" stroke-width="2" stroke-linejoin="round" d="M200 236 Q 186 226, 172 234 Q 162 240, 156 232 Q 160 248, 178 244 Q 192 242, 200 238 Q 208 242, 222 244 Q 240 248, 244 232 Q 238 240, 228 234 Q 214 226, 200 236 Z"/>
       </g>
       <!-- TREINADOR: apito -->
       <g class="acc" data-acc="apito">
@@ -700,8 +705,9 @@ const formas = {
     olhoE:{ d:'M148 204 a 13 13 0 1 0 26 0 a 13 13 0 1 0 -26 0', cheio:false }, olhoD:{ d:'M234 204 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0', cheio:true },
     sob:'', boca:'M178 256 L 196 250 L 210 258 L 224 250', extra:'',
     fala:'Fim de mês. O saldo acabou, o limite evaporou. Sobrevivendo à base de água e luz solar.' },
-  desnorteado:{ nome:'😵‍💫 Desnorteado', quando:'sumiu um tempão e voltou com a bomba', cor:'#67e8f9', modo:'bagunca', grupo:'reacoes',
+  desnorteado:{ gira:true, nome:'😵‍💫 Desnorteado', quando:'sumiu um tempão e voltou com a bomba', cor:'#67e8f9', modo:'bagunca', grupo:'reacoes',
     acc:['tontura','suor'], corpo:'translateY(4px)', anim:'cambaleia',
+    gira:true,
     olhoE:{ d:'M161 202 a 3 3 0 0 1 6 0 a 6 6 0 0 1 -12 0 a 9 9 0 0 1 18 0 a 12 12 0 0 1 -24 0', cheio:false }, olhoD:{ d:'M239 202 a 3 3 0 0 1 6 0 a 6 6 0 0 1 -12 0 a 9 9 0 0 1 18 0 a 12 12 0 0 1 -24 0', cheio:false },
     sob:'M146 182 Q 160 172, 174 178 M226 176 Q 240 172, 254 184', boca:'M180 256 q 8 -10 16 0 t 16 0 t 16 -4', extra:'?!',
     fala:'Meu Deus… você sumiu 23 dias e voltou com essa bomba? Metade do planejamento foi por água abaixo. Peraí, tô tonto.' },
@@ -776,7 +782,39 @@ function desenharRosto(f) {
   $('boca').style.display = f.boca ? '' : 'none';
   $('boca').style.fill = f.boca.endsWith('Z') ? '#0f1320' : 'none';
   $('extra').textContent = f.extra;
+  for (const lado of ['olhoE', 'olhoD']) $(lado).classList.toggle('gira', !!f.gira && !parado);
 }
+
+// ---------- vida: boca que fala, texto aparecendo, olhar que passeia ----------
+let falaTimer = null;
+function falar(texto) {
+  clearInterval(falaTimer);
+  const bocas = ['boca', 'bigodeVivo'].map(id => document.getElementById(id)).filter(Boolean);
+  const el = $('fala');
+  if (parado) { el.textContent = texto; return; }
+  let i = 0;
+  el.textContent = '';
+  el.classList.add('digitando');
+  bocas.forEach(b => b.classList.add('falando'));
+  falaTimer = setInterval(() => {
+    i += 2;
+    el.textContent = texto.slice(0, i);
+    if (i >= texto.length) {
+      clearInterval(falaTimer);
+      el.classList.remove('digitando');
+      bocas.forEach(b => b.classList.remove('falando'));
+    }
+  }, 35);
+}
+(function passeiaOlhar() {
+  setTimeout(() => {
+    if (!parado && !formas[atual].gira) {
+      const olha = Math.random() < .35 ? 'translate(0px,0px)' : `translate(${Math.round((Math.random() - .5) * 10)}px,${Math.round((Math.random() - .5) * 5)}px)`;
+      $('olhar').style.transform = olha;
+    } else $('olhar').style.transform = '';
+    passeiaOlhar();
+  }, 1400 + Math.random() * 2200);
+})();
 
 function mostrar(nome, imediato) {
   const f = formas[nome]; atual = nome;
@@ -790,7 +828,7 @@ function mostrar(nome, imediato) {
   if (imediato) desenharRosto(f);
   else { $('rosto').classList.add('troca'); setTimeout(() => { desenharRosto(f); $('rosto').classList.remove('troca'); }, 150); }
   $('formaNome').textContent = `${f.nome} · ${f.quando}`;
-  $('fala').textContent = f.fala;
+  falar(f.fala);
   document.querySelectorAll('#botoes button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.forma === nome)));
 }
 
@@ -867,10 +905,43 @@ function quadro() {
       e.setAttribute('transform', `translate(${200 + Math.cos(a) * 62} ${112 + Math.sin(a) * 14}) scale(${.8 + (Math.sin(a) + 1) * .25})`);
     });
   }
+  if (atual === 'simulador' && !parado) balancaQuadro();
   $('faisca').style.opacity = Math.random() < (modo === 'agitado' ? .5 : .15) ? 1 : .2;
   requestAnimationFrame(quadro);
 }
 requestAnimationFrame(quadro);
+
+// balança: trave sobe e desce, pratos ficam pendurados retinhos, moeda cai no prato mais baixo
+const moedas = [];
+let proximaMoeda = 0;
+function balancaQuadro() {
+  const agora = performance.now();
+  const ang = Math.sin(agora / 900) * 0.16; // ~9 graus pra cada lado
+  const dx = 54 * Math.cos(ang), dy = 54 * Math.sin(ang);
+  $('trave').setAttribute('transform', `rotate(${ang * 180 / Math.PI} 200 78)`);
+  const pE = { x: 200 - dx, y: 78 - dy }, pD = { x: 200 + dx, y: 78 + dy };
+  $('pratoE').setAttribute('transform', `translate(${pE.x} ${pE.y})`);
+  $('pratoD').setAttribute('transform', `translate(${pD.x} ${pD.y})`);
+  if (agora > proximaMoeda) {
+    proximaMoeda = agora + 700 + Math.random() * 500;
+    const alvo = pD.y > pE.y ? 'D' : 'E';
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('r', '5.5'); c.setAttribute('fill', '#ffd400'); c.setAttribute('stroke', '#b8860b'); c.setAttribute('stroke-width', '1');
+    $('moedasBal').appendChild(c);
+    moedas.push({ el: c, lado: alvo, dxo: (Math.random() - .5) * 16, y: 20, vy: 0, parada: 0 });
+  }
+  for (let k = moedas.length - 1; k >= 0; k--) {
+    const m = moedas[k], prato = m.lado === 'D' ? pD : pE;
+    const fundo = prato.y + 30;
+    if (!m.parada) {
+      m.vy += 0.35; m.y += m.vy;
+      if (m.y >= fundo) { m.y = fundo; m.vy *= -0.35; if (Math.abs(m.vy) < 0.6) m.parada = agora; }
+    } else m.y = fundo; // acompanha o prato subindo e descendo
+    m.el.setAttribute('cx', prato.x + m.dxo); m.el.setAttribute('cy', m.y);
+    if (m.parada && agora - m.parada > 1200) { m.el.remove(); moedas.splice(k, 1); }
+    else if (m.parada) m.el.setAttribute('opacity', String(1 - (agora - m.parada) / 1200));
+  }
+}
 
 // piscar
 (function piscar() {

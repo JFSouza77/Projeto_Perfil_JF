@@ -119,3 +119,13 @@ tédio → Sonolento · vergonha → Envergonhado · nojo → Nojinho.
 
 🛒 **Simulador** ("vale comprar agora ou esperar?"): balança "AGORA × ESPERAR" balançando na cabeça, calculadora
 com fita e calendário marcando a próxima data de promoção (ex.: Black Friday 27/11). São 40 formas no total.
+
+## Regra do JF (07/11): tudo se mexe · `caos-vivo.gif`
+
+"Os avatares têm que se mexer de verdade." Além do que já tinha (piscar, flutuar, acessórios animados):
+- **Boca fala:** enquanto o texto aparece letra por letra no balão, a boca (ou o bigode) mexe; para quando a frase acaba.
+- **Olhar passeia:** de tempos em tempos os olhos olham pra um lado e voltam.
+- **Espiral gira:** no Desnorteado, os olhos em espiral rodam.
+- **Balança de verdade:** a trave sobe e desce, os pratos ficam pendurados retinhos e **moedas caem no prato mais
+  baixo**, quicam e somem.
+- Tudo para com `prefers-reduced-motion` (texto aparece inteiro, sem boca mexendo).
