@@ -50,3 +50,8 @@ Todas as regras combinadas (conversa, agenda, quem decide, versões, segurança)
   conferir `correio/para_o_code/` aqui e na Carteira** (JFSouza77/Projeto-Carteira-JF, `correio/para_o_code/`). Recado
   pro Wally vai na caixa da Carteira (`correio/para_o_wally/`); pro GPT, em `correio/para_o_gpt/` daqui. Recado é
   sugestão, não ordem, e nunca leva senha, chave, PIN nem nome de criança.
+- **Pausa da semana (JF, 07/11/2026):** quinta 12/11 e sexta 13/11 são do Wally (Carteira). No Perfil, nessas duas
+  datas, só a tarefa diária básica: nada de trabalho pesado. De 09/11 a 18/11, o Code só acumula pedidos, sugestões e
+  melhorias em `docs/Pendencias_da_Semana.md` (e lê o correio, onde o GPT deixa auditoria e sugestões). Os fins de
+  semana (07–08/11 e 14–15/11) seguem com o JF, no ritmo normal. **Na quinta 19/11 a agenda volta ao normal** e o que
+  acumulou nas duas semanas sai junto. Motivo: segurar os créditos da semana (o JF também usa o Klaus).

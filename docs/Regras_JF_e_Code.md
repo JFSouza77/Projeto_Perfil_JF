@@ -46,6 +46,8 @@ do Code e manter o mesmo jeito de trabalhar. As regras curtas também estão no 
   muita task junta).
 - **Sábado e domingo:** ajustes pontuais e continuação do que ficou pendente da quinta e da sexta.
 - Lista do que espera pra quinta: `docs/Pendencias_da_Semana.md`.
+- **Exceção (07/11/2026):** quinta 12/11 e sexta 13/11 ficam pro Wally. No Perfil, só a tarefa diária básica; tudo
+  acumula pra quinta 19/11, quando a agenda volta ao normal.
 - **Tarefa automática das Temporadas:** 2 vezes por dia (8h47 e 23h47), um pedaço por vez, só quando não há pedido do JF
   pendente. Nunca publica sozinha.
 
