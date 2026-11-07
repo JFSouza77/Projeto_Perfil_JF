@@ -54,6 +54,9 @@ pra poupar créditos. Só corrige na hora o que ele pedir "pra agora", e só aqu
   versão de teste só no Modo C.A.O.S., ligada por opção, cada rosto do jogo virando uma forma (carinho/calmo → anjinho,
   festa → festeiro, orgulho → pomposo, espiando → pensador, triste → tristinho, raiva → capetinha, fúria → capeta bravo,
   medo/ansiedade → sirene). Tédio, vergonha e nojo: o Wally desenha (pedido feito em 06/11). Não publica sem o JF ver.
+- [ ] **A partir de 19/11 (ideia do JF, 07/11): ícone do app por temporada** (Natal, Ano Novo, Halloween e as outras bem
+  tematizadas) e as datas nerd: 25/5 Orgulho Nerd/Geek e 29/8 Dia do Gamer (C.A.O.S. nerd, cartas de cultura pop).
+  Detalhes em `docs/Temporadas.md`.
 - [ ] **Ofensiva 🔥 (ideia do Wally, 07/11):** "dias seguidos jogando" no Perfil, no molde do `ofensiva()` da Carteira
   (viva se jogou hoje ou ontem, guarda o recorde, C.A.O.S. comemora nos marcos 3, 7, 14, 30…). Pro JF decidir; agenda normal.
 - [ ] **Segurança (dica do Wally/GPT na Carteira):** conferir no Perfil se importar save/backup valida tudo antes de gravar

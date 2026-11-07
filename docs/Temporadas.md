@@ -90,6 +90,16 @@ e autorizar.** Quando tudo estiver pronto, o Code avisa e mostra o que fez.
     mandar a arte dele depois).
   - Mais desafios: o JF vai pensar.
 
+## Ideias do JF pra depois de 19/11 (07/11/2026)
+
+- **Ícone do app por temporada:** nas temporadas bem tematizadas (Natal, Ano Novo, Halloween…), o ícone do jogo também
+  muda. Preparar os ícones novos quando a agenda normal voltar.
+- **Datas novas (só ideia, nada agora):**
+  - **25/5 · Dia do Orgulho Nerd/Geek;**
+  - **29/8 · Dia do Gamer.**
+  
+  No clima: C.A.O.S. com estilo nerd e mais piadas nerds, e cartas de cultura nerd e cultura pop no geral.
+
 ## Ordem de trabalho (um pedaço por dia)
 
 **Prioridade: o Natal** (pedido do JF, 30/10/2026). O Natal fica completo primeiro, pra estar pronto antes de 1/12.
