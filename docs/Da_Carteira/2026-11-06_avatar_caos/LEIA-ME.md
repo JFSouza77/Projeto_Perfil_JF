@@ -141,3 +141,5 @@ com fita e calendário marcando a próxima data de promoção (ex.: Black Friday
   brilho no olho) e 🟥 Cartão vermelho (2 cartões ou mais perto do limite, apito e cartão vermelho). 43 formas no total.
 - **Ajustes do JF (07/11) · `caos-ajuste.png`:** 🟥 Cartão vermelho agora com cara de bravo de verdade (olhos
   apertados, boca pra baixo, tremendo, fumacinha saindo); 🤝 Amigão trocou a mão por um bilhetinho "DICA +R$210".
+- **Cartão vermelho, 2º ajuste (07/11) · `caos-vermelho.gif`:** alterna boca brava e apito na boca com "PRIII!"
+  piscando (de 2,6 em 2,6 s), e sai fumaça de 7 pontos da cabeça.
