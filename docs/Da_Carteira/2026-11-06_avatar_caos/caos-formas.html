@@ -81,7 +81,7 @@
   @keyframes pino { 0%,100% { translate:0 0; } 50% { translate:0 -8px; } }
   #rota { animation:rota .8s linear infinite; }
   @keyframes rota { to { stroke-dashoffset:-20; } }
-  #cena { margin-top:8px; }
+  #cena, #cena2 { margin-top:8px; }
   .z { animation:zzz 2.1s ease-in-out infinite; opacity:0; }
   @keyframes zzz { 0% { translate:0 8px; opacity:0; } 30% { opacity:1; } 100% { translate:6px -12px; opacity:0; } }
   #forma.respira { animation:respira 3.6s ease-in-out infinite; }
@@ -135,6 +135,10 @@
   #forma.apitando #boca { animation:bocaSome 2.6s ease-in-out infinite; }
   @keyframes bocaSome { 0%,45% { opacity:1; } 52%,88% { opacity:0; } 92%,100% { opacity:1; } }
   #forma.apitando #apitoVai text { animation:pisca-sirene .25s steps(2) infinite; }
+  .espanto { animation:espanto 1.4s ease-out infinite; transform-box:view-box; transform-origin:200px 200px; }
+  @keyframes espanto { 0% { scale:.85; opacity:0; } 25% { scale:1.05; opacity:1; } 70%,100% { scale:1.15; opacity:0; } }
+  #forma.pulo { animation:pulo 2.4s ease-out infinite; }
+  @keyframes pulo { 0%,100% { translate:0 0; } 8% { translate:0 -26px; } 16% { translate:0 0; } 22% { translate:0 -8px; } 28% { translate:0 0; } }
   .fumo { animation:fumo 1.2s ease-out infinite; }
   @keyframes fumo { 0% { translate:0 6px; opacity:0; } 30% { opacity:1; } 100% { translate:0 -14px; opacity:0; } }
   .fala { margin:4px 0 14px; max-width:340px; background:#151a28; border:1px solid #262d42; border-radius:14px;
@@ -617,6 +621,12 @@
         <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" d="M242 240 l 12 -8 M244 249 h 14 M242 258 l 12 8"/>
         <text x="282" y="262" text-anchor="middle" font-size="15" font-weight="900" fill="#fff" transform="rotate(-10 282 262)">PRIII!</text>
       </g></g>
+      <!-- SURPRESO: linhas de espanto em volta da cabeça -->
+      <g class="acc" data-acc="espanto">
+        <path class="espanto neon" fill="none" stroke-width="4" stroke-linecap="round" d="M120 128 l -14 -12 M280 128 l 14 -12 M200 110 v -18 M150 112 l -6 -16 M250 112 l 6 -16 M98 170 h -16 M302 170 h 16"/>
+        <path fill="#fff" d="M196 228 a 3 3 0 1 0 0.1 0 Z"/>
+        <circle class="brilhinho" cx="168" cy="196" r="3" fill="#fff"/><circle class="brilhinho" cx="246" cy="196" r="3" fill="#fff" style="animation-delay:.4s"/>
+      </g>
     </g></g>
   </svg>
 
@@ -624,6 +634,7 @@
   <div class="botoes" id="botoes"></div>
   <button id="passear" type="button">▶ Passear por todas</button>
   <button id="cena" type="button">🎬 Cena: sumiu e voltou</button>
+  <button id="cena2" type="button">🎬 Cena: você evoluiu</button>
 
 <script>
 // Cada humor tem uma FORMA: cor, acessórios, jeito do corpo, rosto e como o caos em volta se mexe.
@@ -824,6 +835,11 @@ const formas = {
     olhoE:{ d:'M151 196 h20 v20 h-20 z', cheio:true }, olhoD:{ d:'M229 196 h20 v20 h-20 z', cheio:true },
     sob:'M148 182 Q 161 178, 174 182 M226 182 Q 239 178, 252 182', boca:'M180 246 Q 200 258, 220 246', extra:'',
     fala:'Mês tranquilo, contas em dia, tudo no lugar. Assim dá gosto. Bora manter?' },
+  surpreso:  { nome:'😲 Surpreso', quando:'você evoluiu, seguiu as dicas', cor:'#f0abfc', modo:'festa', grupo:'reacoes',
+    acc:['espanto'], corpo:'translateY(-4px)', anim:'pulo',
+    olhoE:{ d:'M148 202 a 13 13 0 1 0 26 0 a 13 13 0 1 0 -26 0', cheio:true }, olhoD:{ d:'M226 202 a 13 13 0 1 0 26 0 a 13 13 0 1 0 -26 0', cheio:true },
+    sob:'M144 176 Q 161 164, 178 174 M222 174 Q 239 164, 256 176', boca:'M188 252 a 12 14 0 1 0 24 0 a 12 14 0 1 0 -24 0 Z', extra:'!!',
+    fala:'Opa! Uma semana inteira sem delivery e você ainda cortou um streaming? Tô surpreso, de verdade!' },
   confiante: { nome:'😎 Confiante', quando:'mês bem melhor que o passado', cor:'#2ee6a8', modo:'anel', grupo:'reacoes',
     acc:['evolucao','brilhoOlho'], corpo:'translateY(-8px) rotate(4deg) scale(1.03)',
     olhoE:{ d:'M150 200 h22 v14 h-22 z', cheio:true }, olhoD:{ d:'M228 196 h22 v18 h-22 z', cheio:true },
@@ -900,7 +916,7 @@ let lado = 1;
   }, 1400 + Math.random() * 2200);
 })();
 
-function mostrar(nome, imediato) {
+function mostrar(nome, imediato, texto) {
   const f = formas[nome]; atual = nome;
   document.documentElement.style.setProperty('--cor', f.cor);
   document.querySelectorAll('.acc').forEach(g => g.classList.toggle('on', f.acc.includes(g.dataset.acc)));
@@ -908,11 +924,11 @@ function mostrar(nome, imediato) {
   $('forma').classList.toggle('treme', !!f.treme);
   $('forma').classList.toggle('nega', f.anim === 'nega');
   $('forma').classList.toggle('ri', f.anim === 'ri');
-  for (const a of ['levita', 'cambaleia', 'varre', 'respira', 'balanca', 'encolhe', 'trocaOlho', 'apitando']) $('forma').classList.toggle(a, f.anim === a);
+  for (const a of ['levita', 'cambaleia', 'varre', 'respira', 'balanca', 'encolhe', 'trocaOlho', 'apitando', 'pulo']) $('forma').classList.toggle(a, f.anim === a);
   if (imediato) desenharRosto(f);
   else { $('rosto').classList.add('troca'); setTimeout(() => { desenharRosto(f); $('rosto').classList.remove('troca'); }, 150); }
   $('formaNome').textContent = `${f.nome} · ${f.quando}`;
-  falar(f.fala);
+  falar(texto || f.fala);
   document.querySelectorAll('#botoes button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.forma === nome)));
 }
 
@@ -929,10 +945,12 @@ for (const [k, f] of emOrdem) {
   }
   const b = document.createElement('button');
   b.type = 'button'; b.textContent = f.nome; b.dataset.forma = k;
-  b.onclick = () => { pararPasseio(); mostrar(k); };
+  b.onclick = () => { pararPasseio(); mostrar(k); subir(); };
   $('botoes').appendChild(b);
 }
 
+// no celular os botões ficam lá embaixo: depois de tocar, volta pro C.A.O.S.
+const subir = () => window.scrollTo({ top: 0, behavior: parado ? 'auto' : 'smooth' });
 let passeio = null;
 function pararPasseio() { clearInterval(passeio); passeio = null; $('passear').textContent = '▶ Passear por todas'; }
 $('passear').onclick = () => {
@@ -1038,7 +1056,7 @@ function balancaQuadro() {
 })();
 
 $('cena').onclick = () => {
-  pararPasseio();
+  pararPasseio(); subir();
   mostrar('desnorteado');
   setTimeout(() => { if (atual === 'desnorteado') mostrar('recalculando'); }, 3800);
 };
@@ -1060,6 +1078,16 @@ document.querySelectorAll('.acc').forEach((g, i) => {
   while (g.firstChild) w.appendChild(g.firstChild);
   g.appendChild(w);
 });
+
+$('cena2').onclick = () => {
+  pararPasseio(); subir();
+  const passos = [
+    ['surpreso', 'Opa! Uma semana inteira sem delivery e você ainda cortou um streaming? Tô surpreso, de verdade!'],
+    ['feliz', 'Isso merece festa! Sua ofensiva ganhou pontos extras: você não só anotou, você evoluiu.'],
+    ['treinador', 'Mas sem relaxar, hein! Mantém o ritmo: de pouco em pouco a gente economiza.'],
+  ];
+  passos.forEach(([forma, texto], i) => setTimeout(() => mostrar(forma, false, texto), i * 4200));
+};
 
 const pedida = new URLSearchParams(location.search).get('forma');
 mostrar(formas[pedida] ? pedida : 'anjinho', true);

@@ -143,3 +143,11 @@ com fita e calendário marcando a próxima data de promoção (ex.: Black Friday
   apertados, boca pra baixo, tremendo, fumacinha saindo); 🤝 Amigão trocou a mão por um bilhetinho "DICA +R$210".
 - **Cartão vermelho, 2º ajuste (07/11) · `caos-vermelho.gif`:** alterna boca brava e apito na boca com "PRIII!"
   piscando (de 2,6 em 2,6 s), e sai fumaça de 7 pontos da cabeça.
+
+## Surpreso e a cena "você evoluiu" (07/11) · `caos-cena-evoluiu.gif`
+
+- 😲 **Surpreso:** olhos redondos com brilho, sobrancelhas lá em cima, boca em "O", "!!", linhas de espanto e pulinho.
+- **Cena "você evoluiu"** (botão 🎬): Surpreso ("uma semana sem delivery e cortou um streaming?") → 🥳 Festeiro
+  ("sua ofensiva ganhou pontos extras") → 🏋️ Treinador ("mantém o ritmo"). `mostrar(forma, imediato, texto)` aceita
+  um texto próprio pra cena.
+- **Celular:** depois de tocar num botão, a página sobe sozinha até o C.A.O.S. (os botões ficam lá embaixo).
