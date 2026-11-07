@@ -114,3 +114,8 @@ tédio → Sonolento · vergonha → Envergonhado · nojo → Nojinho.
 | 🧾 Cobrador | conta rachada, falta receber | prancheta com ✓, boné de cobrador, caneta batendo |
 | 🏋️ Treinador | ofensiva (dias seguidos anotando) | faixa na testa, apito, chama com o número da ofensiva |
 | 👴 Vovô | inflação, comparar com o ano passado | sobrancelhas e bigodão brancos, óculos redondos, bengala |
+
+## Simulador de compras (07/11) · `caos-simulador.png`
+
+🛒 **Simulador** ("vale comprar agora ou esperar?"): balança "AGORA × ESPERAR" balançando na cabeça, calculadora
+com fita e calendário marcando a próxima data de promoção (ex.: Black Friday 27/11). São 40 formas no total.

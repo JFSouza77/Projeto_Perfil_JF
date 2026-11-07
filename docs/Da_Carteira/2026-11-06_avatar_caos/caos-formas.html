@@ -102,6 +102,8 @@
   @keyframes bate-caneta { 0%,100% { rotate:0deg; } 50% { rotate:-14deg; } }
   #chama { transform-box:fill-box; transform-origin:center bottom; animation:chama 1s ease-in-out infinite; }
   @keyframes chama { 0%,100% { scale:1 1; } 50% { scale:.94 1.08; } }
+  #trave { transform-box:view-box; transform-origin:200px 78px; animation:pesa 3s ease-in-out infinite; }
+  @keyframes pesa { 0%,100% { rotate:-8deg; } 50% { rotate:8deg; } }
   .fala { margin:4px 0 14px; max-width:340px; background:#151a28; border:1px solid #262d42; border-radius:14px;
     padding:12px 14px; font-size:15px; line-height:1.4; min-height:48px; text-align:center; }
   .botoes { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:420px; }
@@ -319,6 +321,14 @@
         <path class="neon" fill="none" stroke-width="7" stroke-linecap="round" d="M74 304 V 214 Q 74 190, 96 190 Q 114 190, 114 206"/>
       </g>
 
+      <!-- SIMULADOR: calendário de promoções -->
+      <g class="acc" data-acc="calendario">
+        <rect class="neon" x="312" y="196" width="58" height="56" rx="8" fill="#0f1320" stroke-width="4"/>
+        <path class="neon" fill="none" stroke-width="4" d="M312 212 h58 M326 190 v12 M356 190 v12"/>
+        <text x="341" y="236" text-anchor="middle" font-size="17" font-weight="900" fill="var(--cor)">27/11</text>
+        <text x="341" y="248" text-anchor="middle" font-size="8" font-weight="800" fill="var(--cor)">BLACK FRIDAY</text>
+      </g>
+
       <!-- a telinha -->
       <rect class="neon" x="100" y="135" width="200" height="150" rx="34" fill="#0f1320" stroke-width="5"/>
       <rect x="114" y="149" width="172" height="122" rx="24" fill="none" stroke="#ffffff" stroke-opacity=".06" stroke-width="2"/>
@@ -452,6 +462,20 @@
       <!-- VOVÔ: sobrancelhas grossas -->
       <g class="acc" data-acc="sobrancelhoes">
         <path fill="#f8fafc" stroke="#f8fafc" stroke-width="2" stroke-linejoin="round" d="M138 176 Q 160 160, 182 172 Q 160 170, 140 184 Z M262 176 Q 240 160, 218 172 Q 240 170, 260 184 Z"/>
+      </g>
+
+      <!-- SIMULADOR: balança "comprar agora × esperar" -->
+      <g class="acc" data-acc="balanca">
+        <path class="neon" fill="none" stroke-width="4" stroke-linecap="round" d="M200 136 V 76"/>
+        <path class="neon" fill="#0f1320" stroke-width="3" d="M188 136 h24"/>
+        <g id="trave">
+          <path class="neon" fill="none" stroke-width="4" stroke-linecap="round" d="M146 78 H 254"/>
+          <path class="neon" fill="none" stroke-width="2" d="M150 78 l -12 26 M150 78 l 12 26 M250 78 l -12 26 M250 78 l 12 26"/>
+          <path class="neon" fill="#0f1320" stroke-width="3" d="M132 104 h36 q -2 12 -18 12 q -16 0 -18 -12 z M232 104 h36 q -2 12 -18 12 q -16 0 -18 -12 z"/>
+          <text x="150" y="98" text-anchor="middle" font-size="9" font-weight="900" fill="var(--cor)">AGORA</text>
+          <text x="250" y="98" text-anchor="middle" font-size="9" font-weight="900" fill="var(--cor)">ESPERAR</text>
+        </g>
+        <circle class="neon" cx="200" cy="76" r="5" fill="var(--cor)" stroke-width="1"/>
       </g>
 
       <!-- acessórios do rosto -->
@@ -711,6 +735,11 @@ const formas = {
     olhoE:{ d:'M152 196 h18 v16 h-18 z', cheio:true }, olhoD:{ d:'M230 196 h18 v16 h-18 z', cheio:true },
     sob:'', boca:'M170 240 Q 200 268, 230 240', extra:'',
     fala:'Modo férias! Sem condução e sem marmita esse mês: dá pra curtir R$ 400 a mais sem estourar nada.' },
+  simulador: { nome:'🛒 Simulador', quando:'"vale comprar agora ou esperar?"', cor:'#facc15', modo:'lento', grupo:'jf2',
+    acc:['balanca','calculadora','calendario'], corpo:'rotate(-2deg)',
+    olhoE:{ d:'M156 190 h16 v18 h-16 z', cheio:true }, olhoD:{ d:'M236 190 h16 v18 h-16 z', cheio:true },
+    sob:'M150 178 Q 163 172, 176 178 M226 174 L 252 168', boca:'M182 250 q 9 -6 18 0 t 18 0', extra:'',
+    fala:'Geladeira de R$ 2.600, orçamento de R$ 2.500. A Black Friday é 27/11, daqui a 20 dias: vale esperar. Se não der, tiro R$ 100 do lazer sem estrago.' },
   auditor:   { nome:'✂️ Auditor', quando:'assinaturas comendo o orçamento', cor:'#fb7185', modo:'lento', grupo:'gemini2',
     acc:['tesoura','carimbo','meialua'], corpo:'rotate(-3deg)',
     olhoE:{ d:'M150 200 h22 v8 h-22 z', cheio:true }, olhoD:{ d:'M228 200 h22 v8 h-22 z', cheio:true },
