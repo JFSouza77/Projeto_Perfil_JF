@@ -108,6 +108,28 @@
   .falando { transform-box:fill-box; transform-origin:center; animation:mexeBoca .16s ease-in-out infinite alternate; }
   @keyframes mexeBoca { from { scale:1 1; } to { scale:1.06 .5; } }
   #fala.digitando::after { content:'▍'; animation:pisca-sirene .8s steps(2) infinite; }
+  .tecla { animation:tecla 1.9s steps(1) infinite; opacity:.35; }
+  @keyframes tecla { 0%,100% { opacity:.3; } 12% { opacity:1; } 24% { opacity:.3; } }
+  #fitaSobe { animation:fitaSobe 1.6s ease-in-out infinite; }
+  @keyframes fitaSobe { 0%,100% { translate:0 0; } 50% { translate:0 -12px; } }
+  .mexe { transform-box:fill-box; transform-origin:center; animation-duration:2.6s; animation-iteration-count:infinite; animation-timing-function:ease-in-out; }
+  .mexe-balanca { animation-name:mx-balanca; } @keyframes mx-balanca { 0%,100% { rotate:-6deg; } 50% { rotate:6deg; } }
+  .mexe-sobe { animation-name:mx-sobe; } @keyframes mx-sobe { 0%,100% { translate:0 0; } 50% { translate:0 -5px; } }
+  .mexe-pulsa { animation-name:mx-pulsa; } @keyframes mx-pulsa { 0%,100% { scale:1; } 50% { scale:1.08; } }
+  .mexe-vaivem { animation-name:mx-vaivem; animation-duration:1.2s; } @keyframes mx-vaivem { 0%,100% { scale:1; rotate:0deg; } 50% { scale:1.15; rotate:-8deg; } }
+  .mexe-bate { transform-origin:center bottom; animation-name:mx-bate; animation-duration:1.4s; } @keyframes mx-bate { 0%,60%,100% { rotate:0deg; } 70% { rotate:-12deg; } 85% { rotate:4deg; } }
+  .mexe-lingua { transform-origin:left top; animation-name:mx-lingua; animation-duration:.9s; } @keyframes mx-lingua { 0%,100% { rotate:-10deg; } 50% { rotate:14deg; } }
+  .mexe-bigode { animation-name:mx-bigode; animation-duration:1.8s; } @keyframes mx-bigode { 0%,100% { rotate:0deg; scale:1; } 30% { rotate:3deg; } 60% { rotate:-3deg; scale:1.04 1; } }
+  #sobrancelhas { transform-box:fill-box; transform-origin:center; transition:transform .35s ease-out, translate .35s; }
+  #boca.oscila { transform-box:fill-box; transform-origin:center; animation:oscila 3.4s ease-in-out infinite; }
+  @keyframes oscila { 0%,100% { scale:1 1; } 40% { scale:1.04 .9; } 70% { scale:.97 1.06; } }
+  #boca.tremula { transform-box:fill-box; transform-origin:center; animation:treme .1s linear infinite; }
+  #forma.trocaOlho #lupa { animation:trocaOlho 4s ease-in-out infinite; }
+  @keyframes trocaOlho { 0%,40% { translate:0 0; } 50%,90% { translate:-78px 0; } 100% { translate:0 0; } }
+  .cresce { transform-box:fill-box; transform-origin:center bottom; animation:cresce 2.2s ease-out infinite; }
+  @keyframes cresce { 0% { scale:1 .3; } 60%,100% { scale:1 1; } }
+  .brilhinho { transform-box:fill-box; transform-origin:center; animation:brilhinho 1.6s ease-in-out infinite; }
+  @keyframes brilhinho { 0%,100% { scale:.4; opacity:.3; } 50% { scale:1.2; opacity:1; } }
   .fala { margin:4px 0 14px; max-width:340px; background:#151a28; border:1px solid #262d42; border-radius:14px;
     padding:12px 14px; font-size:15px; line-height:1.4; min-height:48px; text-align:center; }
   .botoes { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:420px; }
@@ -243,9 +265,10 @@
         <path id="flecha" class="neon" fill="none" stroke-width="4" stroke-linecap="round" d="M300 214 L 340 170 M300 214 l -4 -12 M300 214 l 12 -2"/>
       </g>
       <g class="acc" data-acc="joinha"><g id="joinha">
-        <rect class="neon" x="62" y="236" width="30" height="30" rx="8" fill="#0f1320" stroke-width="4"/>
-        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M70 238 V 216 q 0 -8 8 -8 q 8 0 8 8 V 238"/>
-        <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" d="M92 246 h8 M92 256 h8"/>
+        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M60 242 Q 54 214, 70 206 Q 78 204, 77 214 L 75 236 Z"/>
+        <rect class="neon" x="62" y="234" width="38" height="34" rx="9" fill="#0f1320" stroke-width="4"/>
+        <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" d="M78 243 h22 M78 251 h22 M78 259 h20"/>
+        <rect class="neon" x="56" y="262" width="12" height="10" rx="2" fill="#0f1320" stroke-width="3"/>
       </g></g>
 
       <!-- ESTILOS · HUMORISTA: microfone -->
@@ -274,11 +297,11 @@
 
       <!-- CONTADOR: calculadora com fita de papel -->
       <g class="acc" data-acc="calculadora">
-        <rect class="neon" x="56" y="150" width="24" height="64" rx="3" fill="#0f1320" stroke-width="3"/>
-        <path id="fita" class="neon" fill="none" stroke-width="2" stroke-dasharray="10 6" d="M62 160 h12 M62 172 h12 M62 184 h12 M62 196 h12 M62 208 h12"/>
+        <g id="fitaSobe"><rect class="neon" x="56" y="150" width="24" height="64" rx="3" fill="#0f1320" stroke-width="3"/>
+        <path id="fita" class="neon" fill="none" stroke-width="2" stroke-dasharray="10 6" d="M62 160 h12 M62 172 h12 M62 184 h12 M62 196 h12 M62 208 h12"/></g>
         <rect class="neon" x="48" y="212" width="40" height="56" rx="7" fill="#0f1320" stroke-width="4"/>
         <rect class="neon" x="55" y="219" width="26" height="11" rx="2" fill="none" stroke-width="2"/>
-        <path class="neon" fill="none" stroke-width="4" stroke-linecap="round" d="M58 240 h1 M68 240 h1 M78 240 h1 M58 250 h1 M68 250 h1 M78 250 h1 M58 260 h1 M68 260 h1 M78 260 h1"/>
+        <rect class="tecla" x="54" y="236" width="8" height="6" rx="1.5" fill="var(--cor)" style="animation-delay:0.00s"/><rect class="tecla" x="64" y="236" width="8" height="6" rx="1.5" fill="var(--cor)" style="animation-delay:0.37s"/><rect class="tecla" x="74" y="236" width="8" height="6" rx="1.5" fill="var(--cor)" style="animation-delay:0.74s"/><rect class="tecla" x="54" y="246" width="8" height="6" rx="1.5" fill="var(--cor)" style="animation-delay:1.11s"/><rect class="tecla" x="64" y="246" width="8" height="6" rx="1.5" fill="var(--cor)" style="animation-delay:1.48s"/><rect class="tecla" x="74" y="246" width="8" height="6" rx="1.5" fill="var(--cor)" style="animation-delay:1.85s"/><rect class="tecla" x="54" y="256" width="8" height="6" rx="1.5" fill="var(--cor)" style="animation-delay:0.32s"/><rect class="tecla" x="64" y="256" width="8" height="6" rx="1.5" fill="var(--cor)" style="animation-delay:0.69s"/><rect class="tecla" x="74" y="256" width="8" height="6" rx="1.5" fill="var(--cor)" style="animation-delay:1.06s"/>
       </g>
       <!-- BANQUEIRO: cartões em leque -->
       <g class="acc" data-acc="cartoes"><g id="leque">
@@ -331,6 +354,19 @@
         <path class="neon" fill="none" stroke-width="4" d="M312 212 h58 M326 190 v12 M356 190 v12"/>
         <text x="341" y="236" text-anchor="middle" font-size="17" font-weight="900" fill="var(--cor)">27/11</text>
         <text x="341" y="248" text-anchor="middle" font-size="8" font-weight="800" fill="var(--cor)">BLACK FRIDAY</text>
+      </g>
+
+      <!-- CARTÃO VERMELHO: dois cartões no limite -->
+      <g class="acc" data-acc="cartaoVermelho">
+        <rect x="306" y="136" width="44" height="62" rx="6" fill="#ff2d4b" stroke="#ff2d4b" stroke-width="3" filter="url(#brilho)" transform="rotate(12 328 167)"/>
+        <path class="neon" fill="none" stroke-width="5" stroke-linecap="round" d="M292 236 Q 312 220, 316 194"/>
+      </g>
+      <!-- CONFIANTE: gráfico deste mês × mês passado -->
+      <g class="acc" data-acc="evolucao">
+        <rect class="neon" x="306" y="200" width="66" height="62" rx="8" fill="#0f1320" stroke-width="3"/>
+        <rect x="318" y="232" width="14" height="22" rx="2" fill="var(--cor)" opacity=".45"/>
+        <rect class="cresce" x="344" y="212" width="14" height="42" rx="2" fill="var(--cor)"/>
+        <text x="339" y="225" text-anchor="middle" font-size="11" font-weight="900" fill="var(--cor)">↑</text>
       </g>
 
       <!-- a telinha -->
@@ -554,6 +590,8 @@
       <g class="acc" data-acc="bigodao">
         <path fill="#f8fafc" stroke="#f8fafc" stroke-width="2" stroke-linejoin="round" filter="url(#brilho)" d="M200 234 Q 180 220, 160 232 Q 146 242, 140 232 Q 142 258, 168 256 Q 188 254, 200 246 Q 212 254, 232 256 Q 258 258, 260 232 Q 254 242, 240 232 Q 220 220, 200 234 Z"/>
       </g>
+      <!-- CONFIANTE: brilho no olho -->
+      <g class="acc" data-acc="brilhoOlho"><path class="brilhinho" fill="#fff" d="M250 186 l 2 5 l 5 2 l -5 2 l -2 5 l -2 -5 l -5 -2 l 5 -2 z"/></g>
     </g></g>
   </svg>
 
@@ -651,12 +689,12 @@ const formas = {
     sob:'M226 182 L 252 188', boca:'M176 250 q 8 -6 16 0 t 16 0 t 16 0', extra:'',
     fala:'Eca. Terceiro delivery hoje? Tô até com vergonha por você.' },
   medo:      { nome:'😱 Medo', quando:'gastando mais do que devia', cor:'#c7d2fe', modo:'medo', grupo:'reacoes',
-    acc:['suor','pupilas'], corpo:'scale(.9) translateY(6px)', treme:true,
+    acc:['suor','pupilas'], corpo:'scale(.9) translateY(6px)', treme:true, bocaTreme:true,
     olhoE:{ d:'M147 202 a 14 14 0 1 0 28 0 a 14 14 0 1 0 -28 0', cheio:false }, olhoD:{ d:'M225 202 a 14 14 0 1 0 28 0 a 14 14 0 1 0 -28 0', cheio:false },
     sob:'M146 178 L 172 172 M228 172 L 254 178', boca:'M174 256 l 9 -7 l 9 7 l 9 -7 l 9 7 l 9 -7 l 9 7', extra:'',
     fala:'Socorro… já foi 80% do orçamento e ainda é dia 12. Tô com medo junto com você.' },
   desconfiado:{ nome:'🤨 Desconfiado', quando:'finge que economiza', cor:'#f472b6', modo:'lento', grupo:'reacoes',
-    acc:['lupa'], corpo:'rotate(6deg) translateX(6px)',
+    acc:['lupa'], corpo:'rotate(6deg) translateX(6px)', anim:'trocaOlho',
     olhoE:{ d:'M150 204 h22 v6 h-22 z', cheio:true }, olhoD:{ d:'M240 194 h14 v18 h-14 z', cheio:true },
     sob:'M146 194 L 174 198 M228 176 L 256 168', boca:'M180 252 h26 q 8 0 12 -6', extra:'',
     fala:'Hmm… tirou R$ 200 da meta pra pagar o cartão? Isso não é economizar, é tapar buraco. Finjo que acredito.' },
@@ -756,6 +794,21 @@ const formas = {
     olhoE:{ d:'M150 194 h22 v20 h-22 z', cheio:true }, olhoD:{ d:'M228 194 h22 v20 h-22 z', cheio:true },
     sob:'M146 182 h26 M226 178 L 254 172', boca:'M178 248 Q 204 258, 226 242', extra:'',
     fala:'Anotei a pizza de ontem: o Fulano te deve R$ 45,50. Deixo no radar pra você lembrar de cobrar.' },
+  calmo:     { nome:'😌 Calmo', quando:'tudo tranquilo, mês bom', cor:'#7dd3fc', modo:'lento', grupo:'humor',
+    acc:['bochechas'], corpo:'rotate(-3deg)',
+    olhoE:{ d:'M151 196 h20 v20 h-20 z', cheio:true }, olhoD:{ d:'M229 196 h20 v20 h-20 z', cheio:true },
+    sob:'M148 182 Q 161 178, 174 182 M226 182 Q 239 178, 252 182', boca:'M180 246 Q 200 258, 220 246', extra:'',
+    fala:'Mês tranquilo, contas em dia, tudo no lugar. Assim dá gosto. Bora manter?' },
+  confiante: { nome:'😎 Confiante', quando:'mês bem melhor que o passado', cor:'#2ee6a8', modo:'anel', grupo:'reacoes',
+    acc:['evolucao','brilhoOlho'], corpo:'translateY(-8px) rotate(4deg) scale(1.03)',
+    olhoE:{ d:'M150 200 h22 v14 h-22 z', cheio:true }, olhoD:{ d:'M228 196 h22 v18 h-22 z', cheio:true },
+    sob:'M146 186 L 174 188 M226 178 Q 240 170, 254 176', boca:'M174 244 Q 204 262, 230 238', extra:'',
+    fala:'Agora sim! Gastou 18% menos que no mês passado. Tô confiante: esse mês vai fechar no verde.' },
+  vermelho:  { nome:'🟥 Cartão vermelho', quando:'2 cartões ou mais perto do limite', cor:'#ff2d4b', modo:'agitado', grupo:'reacoes',
+    acc:['cartaoVermelho','apito'], corpo:'rotate(-3deg) scale(1.04)', anim:'nega',
+    olhoE:{ d:'M150 192 h22 v20 h-22 z', cheio:true }, olhoD:{ d:'M228 192 h22 v20 h-22 z', cheio:true },
+    sob:'M146 176 L 174 186 M254 176 L 226 186', boca:'M176 250 Q 190 256, 204 250', extra:'',
+    fala:'CARTÃO VERMELHO! Dois cartões passando de 90% do limite. Parou, amigão: chega de crédito esse mês.' },
   treinador: { nome:'🏋️ Treinador', quando:'ofensiva: dias seguidos anotando', cor:'#f97316', modo:'agitado', grupo:'gemini2',
     acc:['chama','faixa','apito'], corpo:'translateY(-6px) rotate(-4deg)', anim:'ri',
     olhoE:{ d:'M150 190 h22 v20 h-22 z', cheio:true }, olhoD:{ d:'M228 190 h22 v20 h-22 z', cheio:true },
@@ -783,6 +836,8 @@ function desenharRosto(f) {
   $('boca').style.fill = f.boca.endsWith('Z') ? '#0f1320' : 'none';
   $('extra').textContent = f.extra;
   for (const lado of ['olhoE', 'olhoD']) $(lado).classList.toggle('gira', !!f.gira && !parado);
+  $('boca').classList.toggle('oscila', !parado && !f.bocaTreme);
+  $('boca').classList.toggle('tremula', !parado && !!f.bocaTreme);
 }
 
 // ---------- vida: boca que fala, texto aparecendo, olhar que passeia ----------
@@ -806,12 +861,16 @@ function falar(texto) {
     }
   }, 35);
 }
+let lado = 1;
 (function passeiaOlhar() {
   setTimeout(() => {
     if (!parado && !formas[atual].gira) {
       const olha = Math.random() < .35 ? 'translate(0px,0px)' : `translate(${Math.round((Math.random() - .5) * 10)}px,${Math.round((Math.random() - .5) * 5)}px)`;
       $('olhar').style.transform = olha;
-    } else $('olhar').style.transform = '';
+      // sobrancelha acompanha: uma sobe, a outra desce (e troca na próxima olhada)
+      lado = -lado;
+      $('sobrancelhas').style.transform = olha === 'translate(0px,0px)' ? '' : `rotate(${lado * 5}deg) translateY(${Math.random() < .5 ? -2 : 0}px)`;
+    } else { $('olhar').style.transform = ''; $('sobrancelhas').style.transform = ''; }
     passeiaOlhar();
   }, 1400 + Math.random() * 2200);
 })();
@@ -824,7 +883,7 @@ function mostrar(nome, imediato) {
   $('forma').classList.toggle('treme', !!f.treme);
   $('forma').classList.toggle('nega', f.anim === 'nega');
   $('forma').classList.toggle('ri', f.anim === 'ri');
-  for (const a of ['levita', 'cambaleia', 'varre', 'respira', 'balanca', 'encolhe']) $('forma').classList.toggle(a, f.anim === a);
+  for (const a of ['levita', 'cambaleia', 'varre', 'respira', 'balanca', 'encolhe', 'trocaOlho']) $('forma').classList.toggle(a, f.anim === a);
   if (imediato) desenharRosto(f);
   else { $('rosto').classList.add('troca'); setTimeout(() => { desenharRosto(f); $('rosto').classList.remove('troca'); }, 150); }
   $('formaNome').textContent = `${f.nome} · ${f.quando}`;
@@ -834,7 +893,9 @@ function mostrar(nome, imediato) {
 
 const titulos = { humor:'Humores', carteira:'Momentos da Carteira', reacoes:'Reações da Carteira', estilos:'Jeitos de falar (a pessoa escolhe)', gemini:'Ideias do Gemini', jf2:'Funções da Carteira (ideias do JF)', perfil:'Pedidos do Code (Modo C.A.O.S. do Perfil)', gemini2:'Mecânicas novas (ideias do Gemini)' };
 let grupoAtual = null;
-for (const [k, f] of Object.entries(formas)) {
+const ordemGrupos = Object.keys(titulos);
+const emOrdem = Object.entries(formas).sort((a, b) => ordemGrupos.indexOf(a[1].grupo || 'humor') - ordemGrupos.indexOf(b[1].grupo || 'humor'));
+for (const [k, f] of emOrdem) {
   const g = f.grupo || 'humor';
   if (g !== grupoAtual) {
     grupoAtual = g;
@@ -946,7 +1007,7 @@ function balancaQuadro() {
 // piscar
 (function piscar() {
   setTimeout(() => {
-    if (formas[atual].olhoE.cheio) { $('olhos').classList.add('pisca'); setTimeout(() => $('olhos').classList.remove('pisca'), 130); }
+    if (!/Q/.test(formas[atual].olhoE.d) && !formas[atual].gira) { $('olhos').classList.add('pisca'); setTimeout(() => $('olhos').classList.remove('pisca'), 130); }
     piscar();
   }, 2500 + Math.random() * 2500);
 })();
@@ -956,6 +1017,24 @@ $('cena').onclick = () => {
   mostrar('desnorteado');
   setTimeout(() => { if (atual === 'desnorteado') mostrar('recalculando'); }, 3800);
 };
+
+const ANIM_ACC = {
+  cofrinho:'balanca', cartao:'vaivem', cartaoVermelho:'vaivem', meialua:'sobe', oculos:'sobe', oculosEscuros:'sobe', bengala:'bate',
+  maleta:'balanca', lingua:'lingua', prancheta:'balanca', apito:'balanca', seta:'sobe', lousa:'pulsa', lotus:'pulsa', carimbo:'bate',
+  alvo:'pulsa', calendario:'balanca', cartola:'sobe', chapeuPraia:'balanca', touca:'balanca', corado:'pulsa', sobrancelhoes:'sobe',
+  bigodao:'bigode', bigode:'bigode', chapeu:'balanca', coroa:'balanca', gravata:'balanca', terno:'sobe', tesoura:'balanca',
+  boneCobrador:'sobe', faixa:'sobe', viseira:'sobe', chapeuDetetive:'balanca', turbante:'sobe', nariz:'pulsa', microfone:'balanca',
+  medidor:'balanca', evolucao:'sobe', capelo:'balanca', bochechas:'pulsa', monoculo:'balanca', joinha:'bate', olheiras:'pulsa',
+};
+document.querySelectorAll('.acc').forEach((g, i) => {
+  const tipo = ANIM_ACC[g.dataset.acc];
+  if (!tipo || parado) return;
+  const w = document.createElementNS(NS, 'g');
+  w.setAttribute('class', `mexe mexe-${tipo}`);
+  w.style.animationDelay = `${(i * 0.29) % 1.3}s`;
+  while (g.firstChild) w.appendChild(g.firstChild);
+  g.appendChild(w);
+});
 
 const pedida = new URLSearchParams(location.search).get('forma');
 mostrar(formas[pedida] ? pedida : 'anjinho', true);

@@ -129,3 +129,13 @@ com fita e calendário marcando a próxima data de promoção (ex.: Black Friday
 - **Balança de verdade:** a trave sobe e desce, os pratos ficam pendurados retinhos e **moedas caem no prato mais
   baixo**, quicam e somem.
 - Tudo para com `prefers-reduced-motion` (texto aparece inteiro, sem boca mexendo).
+
+## Mais vida e 3 formas novas (07/11) · `caos-vivo2.gif`, `caos-novas3.png`
+
+- **Todo acessório se mexe** (tabela `ANIM_ACC` no script: balança, sobe, pulsa, vai-e-vem, bate, língua, bigode),
+  cada um com um atraso diferente pra não ficarem sincronizados. Calculadora: teclas acendem e a fita sobe e desce.
+- **Rosto vivo:** sobrancelhas inclinam pra um lado e pro outro junto com o olhar; a boca oscila de leve o tempo
+  todo (e treme no Medo); todo olho aberto pisca; no Desconfiado a lupa troca de olho.
+- **Joinha do Amigão corrigido:** antes parecia o dedo do meio; agora o polegar sai do lado e os dedos ficam dobrados.
+- **Formas novas:** 😌 Calmo (azul, tranquilo, risonho), 😎 Confiante (mês melhor que o passado, gráfico subindo e
+  brilho no olho) e 🟥 Cartão vermelho (2 cartões ou mais perto do limite, apito e cartão vermelho). 45 formas no total.
