@@ -112,7 +112,7 @@ temporadas, na ordem do calendário.
     - [x] Ano Novo · 5 títulos (Show de Fogos, Champanhe Estourada, Pé Direito, Meia-Noite em Ponto, Promessa de Ano Novo).
     - [x] Ano Novo · 10 cartas valendo o dobro.
     - [x] Aniversário do criador (2/1) · enfeite (balões), selo, 30 falas (5 só pro JF na mesa) e o C.A.O.S. pegando leve com o JF.
-    - [ ] Aniversário do criador · 5 cores, 5 emojis e 5+5 itens de lojinha.
+    - [x] Aniversário do criador · 5 cores, 5 emojis e 5+5 itens de lojinha.
     - [ ] Aniversário do criador · 5 títulos e 10 cartas valendo o dobro.
 11. [ ] As outras 14 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween, com o Doces ou travessuras).
     Inclui as 2 datas novas do JF (06/11/2026), já reconhecidas pelo motor: **6/9 · Aniversário do Perfil JF** (o C.A.O.S.
@@ -245,3 +245,10 @@ temporadas, na ordem do calendário.
   do criador" e 30 falas (início, avançou, voltou, presentes e 5 de parabéns pro JF quando ele está na mesa). O C.A.O.S.
   pega leve com o JF o dia todo (humor Suave), só com o cadastro confirmado: um "JF" sem PIN não ganha. Teste:
   `teste_temporadas` (+5 checagens).
+- 07/11/2026 (madrugada de sábado): conferência da `main` e o 2º pedaço do aniversário do criador: 5 cores (Bolo de
+  chocolate, Balão, Vela acesa, Serpentina, Glacê), 5 emojis novos (🎂 🧁 🎊 🎉 🕯️) e 5 itens em cada lojinha (Modo
+  C.A.O.S.: Presente do Aniversariante, Fatia de Bolo, Assopra a Vela, Brigadeiro, Chapéu de Festa; Corrida: Presente,
+  Balões, Parabéns pra Você, Brigadeiro, Língua de Sogra), só na vitrine no dia 2/1. Teste: `teste_temporadas` (+4
+  checagens, que falham sem a mudança), `teste_loja_caos`, `teste_corrida` e `teste_acoes` ok. De quebra: a checagem da
+  "gafe" falhava às vezes desde as falas do aniversário (o C.A.O.S. podia errar a data com uma fala de aniversário, que o
+  teste não reconhecia); corrigido no teste.

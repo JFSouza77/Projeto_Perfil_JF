@@ -494,6 +494,20 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     players = [falso, outro];
     r.aniversarioJfSemCadastroNao = playerHumor(falso) !== "suave";
     players = sp;
+    // 07/11: 5 cores, 5 emojis e 5 itens em cada lojinha, só do aniversário
+    const E = TEMPORADA_ESTILOS.aniversario;
+    r.aniversario5Cores5Emojis = !!E && E.cores.length === 5 && E.emojis.length === 5 && E.nomesCores.length === 5 && E.cores.every((c) => GRADIENTS[c] && coresDaPaleta().includes(c)) && E.emojis.every((x) => avatarsForMode().includes(x)) && new Set(E.emojis).size === 5;
+    r.aniversarioEmojisNovos = !!E && E.emojis.every((x) => !AVATARS.includes(x));
+    const an = (cat) => Object.keys(cat).filter((k) => cat[k].temporada === "aniversario");
+    const basesOk = (cat) => an(cat).every((k) => { const it = cat[k]; return it.surpresa ? it.surpresa.every((b) => cat[b] && !cat[b].temporada) : cat[it.base] && !cat[it.base].temporada; });
+    r.aniversarioLoja5Cada = an(MC_LOJA).length === 5 && an(CORRIDA_LOJA).length === 5 && basesOk(MC_LOJA) && basesOk(CORRIDA_LOJA);
+    let ok = true;
+    for (let i = 0; i < 60; i++) {
+      const v = Object.keys(lojaVitrineSortear(MC_LOJA, MC_VITRINE).estoque).filter((k) => MC_LOJA[k].temporada);
+      const c = Object.keys(lojaVitrineSortear(CORRIDA_LOJA, CORRIDA_VITRINE).estoque).filter((k) => CORRIDA_LOJA[k].temporada);
+      if (v.length !== 2 || c.length !== 2 || v.concat(c).some((k) => !/^aniversario/.test(k))) ok = false;
+    }
+    r.aniversarioVitrineSoDoAniversario = ok;
     return r;
   }));
   await page.goto(url + "?temporada=nenhuma");
@@ -577,7 +591,7 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
       players = s.players; CURRENT_MODE = s.CURRENT_MODE; mc = s.mc; cartasPartida = s.cartasPartida; mcAnunciar = s.mcAnunciar;
     }
     const t = caosTemporadaGafeTexto();
-    r.gafeFalaErradaEConserta = /\.\.\./.test(t) && REACTIVE_VOICE.temporada.gafe.some((g) => t.includes(String(typeof g === "function" ? g() : g).replace(/^\[C\.A\.O\.S\.\]\s*/, ""))) && /Natal|Ho, ho|gorro|Pisca|bonzinhos|Ano Novo|ondas|champanhe|Fogos|Dez, nove/i.test(t);
+    r.gafeFalaErradaEConserta = /\.\.\./.test(t) && REACTIVE_VOICE.temporada.gafe.some((g) => t.includes(String(typeof g === "function" ? g() : g).replace(/^\[C\.A\.O\.S\.\]\s*/, ""))) && /Natal|Ho, ho|gorro|Pisca|bonzinhos|Ano Novo|ondas|champanhe|Fogos|Dez, nove|aniversário|Parabéns|Balões|criador|2 de janeiro/i.test(t);
     const modo = CURRENT_MODE;
     CURRENT_MODE = "junior";
     let jr = false;
