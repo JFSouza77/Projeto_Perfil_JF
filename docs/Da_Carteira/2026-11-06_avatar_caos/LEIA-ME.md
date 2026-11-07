@@ -139,3 +139,5 @@ com fita e calendário marcando a próxima data de promoção (ex.: Black Friday
 - **Joinha do Amigão corrigido:** antes parecia o dedo do meio; agora o polegar sai do lado e os dedos ficam dobrados.
 - **Formas novas:** 😌 Calmo (azul, tranquilo, risonho), 😎 Confiante (mês melhor que o passado, gráfico subindo e
   brilho no olho) e 🟥 Cartão vermelho (2 cartões ou mais perto do limite, apito e cartão vermelho). 43 formas no total.
+- **Ajustes do JF (07/11) · `caos-ajuste.png`:** 🟥 Cartão vermelho agora com cara de bravo de verdade (olhos
+  apertados, boca pra baixo, tremendo, fumacinha saindo); 🤝 Amigão trocou a mão por um bilhetinho "DICA +R$210".

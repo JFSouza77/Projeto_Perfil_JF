@@ -130,6 +130,8 @@
   @keyframes cresce { 0% { scale:1 .3; } 60%,100% { scale:1 1; } }
   .brilhinho { transform-box:fill-box; transform-origin:center; animation:brilhinho 1.6s ease-in-out infinite; }
   @keyframes brilhinho { 0%,100% { scale:.4; opacity:.3; } 50% { scale:1.2; opacity:1; } }
+  .fumo { animation:fumo 1.2s ease-out infinite; }
+  @keyframes fumo { 0% { translate:0 6px; opacity:0; } 30% { opacity:1; } 100% { translate:0 -14px; opacity:0; } }
   .fala { margin:4px 0 14px; max-width:340px; background:#151a28; border:1px solid #262d42; border-radius:14px;
     padding:12px 14px; font-size:15px; line-height:1.4; min-height:48px; text-align:center; }
   .botoes { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:420px; }
@@ -264,12 +266,12 @@
         <circle cx="344" cy="166" r="5" fill="var(--cor)"/>
         <path id="flecha" class="neon" fill="none" stroke-width="4" stroke-linecap="round" d="M300 214 L 340 170 M300 214 l -4 -12 M300 214 l 12 -2"/>
       </g>
-      <g class="acc" data-acc="joinha"><g id="joinha">
-        <path class="neon" fill="#0f1320" stroke-width="4" stroke-linejoin="round" d="M60 242 Q 54 214, 70 206 Q 78 204, 77 214 L 75 236 Z"/>
-        <rect class="neon" x="62" y="234" width="38" height="34" rx="9" fill="#0f1320" stroke-width="4"/>
-        <path class="neon" fill="none" stroke-width="3" stroke-linecap="round" d="M78 243 h22 M78 251 h22 M78 259 h20"/>
-        <rect class="neon" x="56" y="262" width="12" height="10" rx="2" fill="#0f1320" stroke-width="3"/>
-      </g></g>
+      <g class="acc" data-acc="bilhete">
+        <path class="neon" fill="#0f1320" stroke-width="3" stroke-linejoin="round" transform="rotate(-8 74 232)" d="M44 200 h58 v52 l -12 12 h -46 z M102 252 h -12 v 12"/>
+        <text x="73" y="222" text-anchor="middle" font-size="11" font-weight="900" fill="var(--cor)" transform="rotate(-8 74 232)">DICA</text>
+        <text x="73" y="242" text-anchor="middle" font-size="13" font-weight="900" fill="var(--cor)" transform="rotate(-8 74 232)">+R$210</text>
+        <path class="neon" fill="none" stroke-width="2" stroke-linecap="round" transform="rotate(-8 74 232)" d="M54 252 h30"/>
+      </g>
 
       <!-- ESTILOS · HUMORISTA: microfone -->
       <g class="acc" data-acc="microfone"><g id="microfone">
@@ -367,6 +369,12 @@
         <rect x="318" y="232" width="14" height="22" rx="2" fill="var(--cor)" opacity=".45"/>
         <rect class="cresce" x="344" y="212" width="14" height="42" rx="2" fill="var(--cor)"/>
         <text x="339" y="225" text-anchor="middle" font-size="11" font-weight="900" fill="var(--cor)">↑</text>
+      </g>
+
+      <!-- CARTÃO VERMELHO: fumacinha de raiva -->
+      <g class="acc" data-acc="fumaca">
+        <path class="fumo neon" fill="none" stroke-width="4" stroke-linecap="round" d="M120 140 q -10 -8 0 -16 q 10 -8 0 -16"/>
+        <path class="fumo neon" fill="none" stroke-width="4" stroke-linecap="round" d="M280 140 q 10 -8 0 -16 q -10 -8 0 -16" style="animation-delay:.6s"/>
       </g>
 
       <!-- a telinha -->
@@ -699,7 +707,7 @@ const formas = {
     sob:'M146 194 L 174 198 M228 176 L 256 168', boca:'M180 252 h26 q 8 0 12 -6', extra:'',
     fala:'Hmm… tirou R$ 200 da meta pra pagar o cartão? Isso não é economizar, é tapar buraco. Finjo que acredito.' },
   amigao:    { nome:'🤝 Amigão', quando:'toque pra chegar na meta', cor:'#2dd4bf', modo:'calmo', grupo:'reacoes',
-    acc:['alvo','joinha'], corpo:'rotate(-4deg) translateY(-4px)',
+    acc:['alvo','bilhete'], corpo:'rotate(-4deg) translateY(-4px)',
     olhoE:{ d:'M148 206 Q 161 192, 174 206', cheio:false }, olhoD:{ d:'M228 190 h22 v24 h-22 z', cheio:true },
     sob:'M224 176 Q 239 168, 254 176', boca:'M172 242 Q 202 266, 230 238', extra:'',
     fala:'Amigão, um toque: cortando delivery e corrida de app, sobram R$ 210. Bota na meta da viagem e você chega 2 meses antes.' },
@@ -805,9 +813,9 @@ const formas = {
     sob:'M146 186 L 174 188 M226 178 Q 240 170, 254 176', boca:'M174 244 Q 204 262, 230 238', extra:'',
     fala:'Agora sim! Gastou 18% menos que no mês passado. Tô confiante: esse mês vai fechar no verde.' },
   vermelho:  { nome:'🟥 Cartão vermelho', quando:'2 cartões ou mais perto do limite', cor:'#ff2d4b', modo:'agitado', grupo:'reacoes',
-    acc:['cartaoVermelho','apito'], corpo:'rotate(-3deg) scale(1.04)', anim:'nega',
-    olhoE:{ d:'M150 192 h22 v20 h-22 z', cheio:true }, olhoD:{ d:'M228 192 h22 v20 h-22 z', cheio:true },
-    sob:'M146 176 L 174 186 M254 176 L 226 186', boca:'M176 250 Q 190 256, 204 250', extra:'',
+    acc:['cartaoVermelho','fumaca'], corpo:'rotate(-3deg) scale(1.05)', treme:true,
+    olhoE:{ d:'M148 190 L 176 202 V 216 H 148 Z', cheio:true }, olhoD:{ d:'M252 190 L 224 202 V 216 H 252 Z', cheio:true },
+    sob:'M144 178 L 178 192 M256 178 L 222 192', boca:'M172 262 Q 200 238, 228 262', extra:'',
     fala:'CARTÃO VERMELHO! Dois cartões passando de 90% do limite. Parou, amigão: chega de crédito esse mês.' },
   treinador: { nome:'🏋️ Treinador', quando:'ofensiva: dias seguidos anotando', cor:'#f97316', modo:'agitado', grupo:'gemini2',
     acc:['chama','faixa','apito'], corpo:'translateY(-6px) rotate(-4deg)', anim:'ri',
@@ -1024,7 +1032,7 @@ const ANIM_ACC = {
   alvo:'pulsa', calendario:'balanca', cartola:'sobe', chapeuPraia:'balanca', touca:'balanca', corado:'pulsa', sobrancelhoes:'sobe',
   bigodao:'bigode', bigode:'bigode', chapeu:'balanca', coroa:'balanca', gravata:'balanca', terno:'sobe', tesoura:'balanca',
   boneCobrador:'sobe', faixa:'sobe', viseira:'sobe', chapeuDetetive:'balanca', turbante:'sobe', nariz:'pulsa', microfone:'balanca',
-  medidor:'balanca', evolucao:'sobe', capelo:'balanca', bochechas:'pulsa', monoculo:'balanca', joinha:'bate', olheiras:'pulsa',
+  medidor:'balanca', evolucao:'sobe', capelo:'balanca', bochechas:'pulsa', monoculo:'balanca', bilhete:'balanca', olheiras:'pulsa',
 };
 document.querySelectorAll('.acc').forEach((g, i) => {
   const tipo = ANIM_ACC[g.dataset.acc];
