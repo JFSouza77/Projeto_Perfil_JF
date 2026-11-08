@@ -315,11 +315,13 @@ function temporadaEstiloPerguntar(p, depois) {
    no Natal, o "Papai Noel" vai pro Mestre que mais distribuiu presentes. Cada título só aparece com dado de verdade. */
 function temporadaTitulosCabecalho() {
   const t = typeof temporadaAtual === "function" ? temporadaAtual() : null;
+  if (t && t.id === "aniversario") return "🎂 Títulos de aniversário";
   return t && t.id === "anoNovo" ? "🎆 Títulos de Ano Novo" : "🎄 Títulos de Natal";
 }
 function temporadaTitulosHtml(larga) {
   const t = typeof temporadaAtual === "function" ? temporadaAtual() : null;
   if (t && t.id === "anoNovo" && typeof larga === "function") return temporadaTitulosAnoNovo(larga);
+  if (t && t.id === "aniversario" && typeof larga === "function") return temporadaTitulosAniversario(larga);
   if (!t || t.id !== "natal" || typeof larga !== "function") return "";
   const pj = (nome) => players.find((p) => p.name === nome);
   const nomeH = (p) => (p ? playerNameHtml(p.name, p.color, p.avatar) : "?");
@@ -441,6 +443,37 @@ function temporadaTitulosAnoNovo(larga) {
   // 📝 Promessa de Ano Novo: quem mais errou (zoeira de leve)
   const prom = players.filter((p) => (p.errosPartida || 0) >= 2).sort((a, b) => b.errosPartida - a.errosPartida)[0];
   if (prom) h += larga("📝", "Promessa de Ano Novo", nomeH(prom), `errou ${prom.errosPartida} palpites e prometeu acertar mais no ano que vem`, "#a78bfa", { t: "anoNovoPromessa", n: prom.name, v: prom.errosPartida });
+  return h;
+}
+
+/* Temporadas · item 10 (08/11): 5 títulos do aniversário do criador (2/1), no mesmo formato. Só com dado de verdade. */
+function temporadaTitulosAniversario(larga) {
+  const pj = (nome) => players.find((p) => p.name === nome);
+  const nomeH = (p) => (p ? playerNameHtml(p.name, p.color, p.avatar) : "?");
+  const ac = (history || []).filter((h) => typeof h.cluesUsed === "number" && h.playerName);
+  let h = "";
+  // 🎂 Dono do Bolo: quem fez mais pontos somando as cartas
+  const pts = {};
+  ac.forEach((x) => (pts[x.playerName] = (pts[x.playerName] || 0) + (typeof x.points === "number" ? x.points : 0)));
+  const bolo = Object.entries(pts).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1])[0];
+  if (bolo) h += larga("🎂", "Dono do Bolo", nomeH(pj(bolo[0])), `${bolo[1]} pontos: ficou com a maior fatia`, "#f9a8d4", { t: "aniversarioBolo", n: bolo[0], v: bolo[1] });
+  // 🕯️ Assoprou as Velas: o acerto com menos dicas
+  const velas = ac.slice().sort((a, b) => a.cluesUsed - b.cluesUsed)[0];
+  if (velas) h += larga("🕯️", "Assoprou as Velas", nomeH(pj(velas.playerName)), `acertou uma carta com ${velas.cluesUsed} ${velas.cluesUsed === 1 ? "dica" : "dicas"}, de um sopro só`, "#fde047", { t: "aniversarioVelas", n: velas.playerName, v: velas.cluesUsed });
+  // 🎈 Balão Mais Alto: quem mais acertou
+  const conta = {};
+  ac.forEach((x) => (conta[x.playerName] = (conta[x.playerName] || 0) + 1));
+  const balao = Object.entries(conta).filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1])[0];
+  if (balao) h += larga("🎈", "Balão Mais Alto", nomeH(pj(balao[0])), `acertou ${balao[1]} cartas e subiu mais que todo mundo`, "#ef4444", { t: "aniversarioBalao", n: balao[0], v: balao[1] });
+  // 🎶 Parabéns Atrasado: o acerto mais demorado (zoeira de leve)
+  const lento = ac.filter((x) => typeof x.timeTakenMs === "number" && x.timeTakenMs >= 1500).sort((a, b) => b.timeTakenMs - a.timeTakenMs)[0];
+  if (lento) {
+    const seg = Math.max(1, Math.round(lento.timeTakenMs / 1000));
+    h += larga("🎶", "Parabéns Atrasado", nomeH(pj(lento.playerName)), `levou ${seg} s numa carta: chegou depois do parabéns`, "#60a5fa", { t: "aniversarioAtrasado", n: lento.playerName, v: seg });
+  }
+  // 🥳 Penetra da Festa: quem mais errou (zoeira de leve)
+  const pen = players.filter((p) => (p.errosPartida || 0) >= 2).sort((a, b) => b.errosPartida - a.errosPartida)[0];
+  if (pen) h += larga("🥳", "Penetra da Festa", nomeH(pen), `chutou ${pen.errosPartida} palpites sem ser convidado`, "#a78bfa", { t: "aniversarioPenetra", n: pen.name, v: pen.errosPartida });
   return h;
 }
 

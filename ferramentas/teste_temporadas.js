@@ -508,6 +508,23 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
       if (v.length !== 2 || c.length !== 2 || v.concat(c).some((k) => !/^aniversario/.test(k))) ok = false;
     }
     r.aniversarioVitrineSoDoAniversario = ok;
+    // 08/11: 5 títulos de aniversário no resumo da partida
+    {
+      const sh = history, sp2 = players;
+      players = [{ id: "a", name: "Ana", color: "#e94560", avatar: "🦊", errosPartida: 3 }, { id: "b", name: "Beto", color: "#4ecdc4", avatar: "🐼", errosPartida: 0 }];
+      history = [
+        { playerName: "Beto", cluesUsed: 4, timeTakenMs: 40000, points: 16 },
+        { playerName: "Ana", cluesUsed: 2, timeTakenMs: 6000, points: 18 },
+        { playerName: "Ana", cluesUsed: 7, timeTakenMs: 30000, points: 13 },
+      ];
+      const got = [];
+      temporadaTitulosHtml((ic, tit, nome, desc, cor, meta) => (got.push([tit, meta.n, meta.t]), ""));
+      history = sh; players = sp2;
+      const tem = (tit, n) => got.some((g) => g[0] === tit && g[1] === n);
+      r.aniversario5Titulos = got.length === 5 && tem("Dono do Bolo", "Ana") && tem("Assoprou as Velas", "Ana") && tem("Balão Mais Alto", "Ana") && tem("Parabéns Atrasado", "Beto") && tem("Penetra da Festa", "Ana");
+      r.aniversarioTitulosComentaveis = got.every((g) => !!caosComentFato({ t: g[2], n: g[1], v: 3 })) && got.every((g) => CAOS_COMENT_TOM[g[2]]);
+      r.aniversarioCabecalho = /aniversário/i.test(temporadaTitulosCabecalho());
+    }
     return r;
   }));
   await page.goto(url + "?temporada=nenhuma");

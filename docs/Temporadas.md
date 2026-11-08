@@ -123,7 +123,8 @@ temporadas, na ordem do calendário.
     - [x] Ano Novo · 10 cartas valendo o dobro.
     - [x] Aniversário do criador (2/1) · enfeite (balões), selo, 30 falas (5 só pro JF na mesa) e o C.A.O.S. pegando leve com o JF.
     - [x] Aniversário do criador · 5 cores, 5 emojis e 5+5 itens de lojinha.
-    - [ ] Aniversário do criador · 5 títulos e 10 cartas valendo o dobro.
+    - [x] Aniversário do criador · 5 títulos (Dono do Bolo, Assoprou as Velas, Balão Mais Alto, Parabéns Atrasado, Penetra da Festa).
+    - [ ] Aniversário do criador · 10 cartas valendo o dobro.
 11. [ ] As outras 14 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween, com o Doces ou travessuras).
     Inclui as 2 datas novas do JF (06/11/2026), já reconhecidas pelo motor: **6/9 · Aniversário do Perfil JF** (o C.A.O.S.
     lembra quantos anos o jogo faz e conta a história: `docs/Historia_do_Perfil.md`) e **20/9 · Aniversário do C.A.O.S.**
@@ -262,3 +263,9 @@ temporadas, na ordem do calendário.
   checagens, que falham sem a mudança), `teste_loja_caos`, `teste_corrida` e `teste_acoes` ok. De quebra: a checagem da
   "gafe" falhava às vezes desde as falas do aniversário (o C.A.O.S. podia errar a data com uma fala de aniversário, que o
   teste não reconhecia); corrigido no teste.
+- 08/11/2026 (noite de sábado, tarefa 1x/dia): correio conferido (o Wally confirmou o acordo da semana; nada pra fazer).
+  `main` sem mudança no jogo desde a conferência de ontem (só documentos), então não rodei a bateria de novo. Pedaço do
+  dia: 5 títulos de aniversário no resumo da partida (🎂 Dono do Bolo, 🕯️ Assoprou as Velas, 🎈 Balão Mais Alto,
+  🎶 Parabéns Atrasado e 🥳 Penetra da Festa), com o C.A.O.S. comentando cada um. Teste: `teste_temporadas` (+3
+  checagens, que falham sem a mudança).
+
