@@ -268,4 +268,7 @@ temporadas, na ordem do calendário.
   dia: 5 títulos de aniversário no resumo da partida (🎂 Dono do Bolo, 🕯️ Assoprou as Velas, 🎈 Balão Mais Alto,
   🎶 Parabéns Atrasado e 🥳 Penetra da Festa), com o C.A.O.S. comentando cada um. Teste: `teste_temporadas` (+3
   checagens, que falham sem a mudança).
+- 09/11/2026 (noite de domingo, tarefa 1x/dia): correio sem recado novo; o jogo na `main` não mudou desde a 1.9.5
+  conferida (só documentos), então não rodei a bateria. O próximo pedaço (10 cartas de aniversário, com dicas e auditor)
+  não é pequeno: fica pra agenda normal, a partir de 19/11. Até lá a tarefa só confere o correio e a `main`.
 
