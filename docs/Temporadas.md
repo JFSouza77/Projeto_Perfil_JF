@@ -271,4 +271,6 @@ temporadas, na ordem do calendário.
 - 09/11/2026 (noite de domingo, tarefa 1x/dia): correio sem recado novo; o jogo na `main` não mudou desde a 1.9.5
   conferida (só documentos), então não rodei a bateria. O próximo pedaço (10 cartas de aniversário, com dicas e auditor)
   não é pequeno: fica pra agenda normal, a partir de 19/11. Até lá a tarefa só confere o correio e a `main`.
+- 12/11/2026 (quinta, triagem retomada depois do reset dos créditos): correio sem recado novo. Conferência da `main`
+  (1.9.5): build e teste nas 4 saídas ok. Nenhum pedaço pequeno de temporada sobrando; o resto fica pra 19/11.
 
