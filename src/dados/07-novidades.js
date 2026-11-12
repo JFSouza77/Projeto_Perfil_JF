@@ -11,6 +11,7 @@
 const NOVIDADES = [
   {
     v: "Beta 1.9.5",
+    ate: "1.9.5.1", // a lista junta os ajustes até essa versão
     data: "06/11/2026",
     nome: "Nick Protegido",
     t: "Seu nick é só seu: quem tem cadastro com PIN entra com o PIN, e o C.A.O.S. reconhece pelo cadastro.",
@@ -21,6 +22,7 @@ const NOVIDADES = [
     ],
     qol: [
       "📶 Sem internet: o PIN é conferido no próprio aparelho, com base no último login feito com internet.",
+      "🕸️ Sexta-feira 13: o C.A.O.S. ganhou 5 jeitos de comentar o dia mais azarado do calendário no começo da partida.",
       "⏱️ PIN recente: acabou de criar o cadastro ou de digitar o PIN em 🔐 Cadastro? Não precisa digitar de novo pra entrar.",
     ],
   },
