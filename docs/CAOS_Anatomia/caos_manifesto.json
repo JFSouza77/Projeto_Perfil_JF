@@ -1,14 +1,14 @@
 {
  "sobre": "Manifesto do C.A.O.S. (Perfil JF). Gerado por ferramentas/caos_anatomia.js. Leia junto com docs/CAOS_Anatomia/00_LEIA-ME_Wally.md.",
  "versao": {
-  "caos": "5.6.0",
-  "jogo": "Beta 1.9.5"
+  "caos": "5.6.1",
+  "jogo": "Beta 1.9.5.1"
  },
- "gerado_em": "2026-11-06",
+ "gerado_em": "2026-11-12",
  "totais": {
   "funcoes": 580,
   "bancos": 662,
-  "falas_prontas": 4387,
+  "falas_prontas": 4391,
   "geradores": 18,
   "pedacos_de_gerador": 720
  },
@@ -6139,7 +6139,7 @@
   },
   {
    "banco": "relogio.especial.sexta13",
-   "qtd": 1,
+   "qtd": 5,
    "amostra": "Sexta-feira 13. Se alguém errar tudo hoje, pelo menos vai ter uma desculpa sobrenatural."
   },
   {

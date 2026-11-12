@@ -1,9 +1,9 @@
-# Amostras de falas do C.A.O.S. (Beta 1.9.5 · C.A.O.S. 5.6.0)
+# Amostras de falas do C.A.O.S. (Beta 1.9.5.1 · C.A.O.S. 5.6.1)
 
 Gerado por `node ferramentas/caos_anatomia.js`. Uma fala de cada banco e uma montagem de cada gerador, pra sentir o
 tom. "Fulano", 3 e "Lugar" são valores de exemplo no lugar do nome, do número e da categoria.
 
-**Totais:** 4387 falas prontas em 662 bancos · 18 geradores com 720 pedaços.
+**Totais:** 4391 falas prontas em 662 bancos · 18 geradores com 720 pedaços.
 
 ## Geradores (falas montadas por pedaços)
 
@@ -327,7 +327,7 @@ tom. "Fulano", 3 e "Lugar" são valores de exemplo no lugar do nome, do número 
 | `relogio.especial.namoradosCasal` | 1 | Dia dos Namorados, JF e Anne na mesma mesa. JF, se você marcar erro da Anne hoje, nem eu te defendo. |
 | `relogio.especial.criancas` | 1 | Dia das Crianças. Hoje eu libero um erro bobo por pessoa. Unzinho. |
 | `relogio.especial.halloween` | 1 | Dia das Bruxas. O mais assustador que vai aparecer aqui hoje são os chutes de vocês. |
-| `relogio.especial.sexta13` | 1 | Sexta-feira 13. Se alguém errar tudo hoje, pelo menos vai ter uma desculpa sobrenatural. |
+| `relogio.especial.sexta13` | 5 | Sexta-feira 13. Se alguém errar tudo hoje, pelo menos vai ter uma desculpa sobrenatural. |
 | `relogio.marco.30` | 4 | Meia hora de partida. Eu já decorei o jeito de cada um errar. |
 | `relogio.marco.60` | 4 | Uma hora de partida. Eu já teria desistido de vocês, mas eu não tenho perna pra ir embora. |
 | `relogio.marco.90` | 1 | Uma hora e meia. Dá tempo de ver um jogo de futebol inteiro. E vocês ainda estão aqui errando carta. |
