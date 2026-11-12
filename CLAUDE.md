@@ -55,3 +55,7 @@ Todas as regras combinadas (conversa, agenda, quem decide, versões, segurança)
   melhorias em `docs/Pendencias_da_Semana.md` (e lê o correio, onde o GPT deixa auditoria e sugestões). Os fins de
   semana (07–08/11 e 14–15/11) seguem com o JF, no ritmo normal. **Na quinta 19/11 a agenda volta ao normal** e o que
   acumulou nas duas semanas sai junto. Motivo: segurar os créditos da semana (o JF também usa o Klaus).
+- **Cobranças pausadas (JF, 12/11/2026):** não lembrar o JF das perguntas abertas (senha de ADM, cartas de Ano e outras)
+  até **quarta 18/11**. A partir de quarta, volta o lembrete de sempre, com tudo o que ficou aberto.
+- **C.A.O.S. único (JF, 12/11/2026):** o núcleo (identidade, vida, criador, leis, emoções, avatar) é um só em todos os
+  projetos: `docs/CAOS_Anatomia/caos_nucleo.json` e `11_CAOS_Unico.md`. Só muda com o ok do JF, nos dois projetos juntos.

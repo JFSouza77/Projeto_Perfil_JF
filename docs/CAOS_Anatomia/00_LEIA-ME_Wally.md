@@ -91,3 +91,5 @@ O JF contou que o Wally já confere o que mudou no C.A.O.S. do Perfil. Pra isso 
   cresceram, constantes novas).
 - **O Code do Perfil atualiza o kit** sempre que mexer no C.A.O.S.: roda `node ferramentas/caos_anatomia.js` e escreve a
   linha da versão no `09`.
+
+> **Novo (12/11/2026):** `11_CAOS_Unico.md` e `caos_nucleo.json`: o núcleo que tem que ser igual nos dois projetos.
