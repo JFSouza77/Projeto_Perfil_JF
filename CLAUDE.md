@@ -64,5 +64,6 @@ Todas as regras combinadas (conversa, agenda, quem decide, versões, segurança)
 - **Código comentado com o porquê (JF, 13/11/2026):** todo trecho novo ou mexido leva um comentário curto dizendo **por
   que** existe (a versão e o pedido: "// 1.9.5 (pedido do JF): ..."), não só o que faz. Assim qualquer IA que abrir o
   código entende a razão. Vale pro Perfil e pra Carteira.
-- **Marca JF (13/11/2026):** Perfil e Carteira são da mesma "casa": escuro com neon, uma cor de destaque por projeto,
-  ícones de traço, a mesma fonte de título (Baloo 2), o mesmo C.A.O.S. (núcleo). Detalhes no recado de 13/11 pro Wally.
+- **Marca JF (13/11/2026):** Perfil e Carteira são da mesma "casa": escuro com neon, ícones de traço, a mesma fonte de
+  título (Baloo 2), o mesmo C.A.O.S. (núcleo). **Cores:** pode ser colorido e dinâmico, desde que cada cor queira dizer
+  alguma coisa; nunca "carnaval de cor" ("às vezes o menos é mais", JF).
