@@ -59,3 +59,5 @@ Todas as regras combinadas (conversa, agenda, quem decide, versões, segurança)
   até **quarta 18/11**. A partir de quarta, volta o lembrete de sempre, com tudo o que ficou aberto.
 - **C.A.O.S. único (JF, 12/11/2026):** o núcleo (identidade, vida, criador, leis, emoções, avatar) é um só em todos os
   projetos: `docs/CAOS_Anatomia/caos_nucleo.json` e `11_CAOS_Unico.md`. Só muda com o ok do JF, nos dois projetos juntos.
+  **Regra de ouro (JF, 13/11):** toda característica única do C.A.O.S. vai pro núcleo e é avisada ao Wally pelo correio no
+  mesmo dia. O JF quer, um dia, transformar o C.A.O.S. num agente virtual de verdade: o núcleo é a bagagem dele.
