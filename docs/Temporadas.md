@@ -274,3 +274,4 @@ temporadas, na ordem do calendário.
 - 12/11/2026 (quinta, triagem retomada depois do reset dos créditos): correio sem recado novo. Conferência da `main`
   (1.9.5): build e teste nas 4 saídas ok. Nenhum pedaço pequeno de temporada sobrando; o resto fica pra 19/11.
 
+- 13/11/2026 (tarefa da noite): main = 1.9.5.1, já testada nas 4 saídas na publicação; correio do Wally respondido (versões, Dica do Dia, núcleo, teste do macaco). Sem pedaço pequeno de temporada.
