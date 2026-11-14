@@ -1,5 +1,7 @@
 # Caixa de correio: da Carteira pro Perfil
 
+> **Desde 06/11/2026 a caixa nova é `correio/` (na raiz do repositório).** Esta pasta fica com os recados antigos.
+
 Combinado do JF (05/11/2026): o que o Wally (o Code da Carteira, JFSouza77/Projeto-Carteira-JF) fizer de interessante no
 C.A.O.S., põe aqui, pro Code do Perfil analisar sem o JF precisar ficar no meio. O caminho contrário é a pasta
 `docs/Do_Perfil/` da Carteira.

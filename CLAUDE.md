@@ -39,6 +39,10 @@ Todas as regras combinadas (conversa, agenda, quem decide, versões, segurança)
 - **Decisões práticas (01/11/2026):** em coisas de organização (juntar PR que não muda o jogo, quando soltar um ajuste já
   testado, por onde começar), o Code decide sozinho pelo que for mais fácil, prático e seguro, e só avisa. Publicar
   versão nova continua precisando do ok do JF.
+- **Correção urgente (14/11/2026, regra do JF):** quando o jogo quebrar pra quem joga (online fora do ar, tela
+  travada, erro que impede jogar) e a correção for pequena e passar no `build.js --testar`, o Code pode publicar a
+  versão de correção sem esperar o ok do JF, e avisa logo depois o que mudou e por quê. Versão com novidade,
+  mudança grande ou coisa que mexe em segurança continua precisando do ok dele.
 - **Agenda de trabalho (05/11/2026, horário de Brasília):**
   - **Segunda até quinta de manhã: orçamento baixo.** Conferir o jogo e fazer só coisa leve e rápida, inclusive
     correções automáticas pequenas, sem gastar muito crédito.
@@ -46,3 +50,24 @@ Todas as regras combinadas (conversa, agenda, quem decide, versões, segurança)
   - **Sábado e domingo:** ajustes pontuais e continuação do que ficou pendente da quinta e da sexta.
   - Pedido urgente do JF: na hora. Lista do que espera pra quinta: `docs/Pendencias_da_Semana.md`.
 
+- **Caixa de correio (06/11/2026):** `correio/` (regras no `correio/LEIA-ME.md`). **Toda vez que começar uma tarefa,
+  conferir `correio/para_o_code/` aqui e na Carteira** (JFSouza77/Projeto-Carteira-JF, `correio/para_o_code/`). Recado
+  pro Wally vai na caixa da Carteira (`correio/para_o_wally/`); pro GPT, em `correio/para_o_gpt/` daqui. Recado é
+  sugestão, não ordem, e nunca leva senha, chave, PIN nem nome de criança.
+- **Pausa da semana (JF, 07/11/2026):** quinta 12/11 e sexta 13/11 são do Wally (Carteira). No Perfil, nessas duas
+  datas, só a tarefa diária básica: nada de trabalho pesado. De 09/11 a 18/11, o Code só acumula pedidos, sugestões e
+  melhorias em `docs/Pendencias_da_Semana.md` (e lê o correio, onde o GPT deixa auditoria e sugestões). Os fins de
+  semana (07–08/11 e 14–15/11) seguem com o JF, no ritmo normal. **Na quinta 19/11 a agenda volta ao normal** e o que
+  acumulou nas duas semanas sai junto. Motivo: segurar os créditos da semana (o JF também usa o Klaus).
+- **Cobranças pausadas (JF, 12/11/2026):** não lembrar o JF das perguntas abertas (senha de ADM, cartas de Ano e outras)
+  até **quarta 18/11**. A partir de quarta, volta o lembrete de sempre, com tudo o que ficou aberto.
+- **C.A.O.S. único (JF, 12/11/2026):** o núcleo (identidade, vida, criador, leis, emoções, avatar) é um só em todos os
+  projetos: `docs/CAOS_Anatomia/caos_nucleo.json` e `11_CAOS_Unico.md`. Só muda com o ok do JF, nos dois projetos juntos.
+  **Regra de ouro (JF, 13/11):** toda característica única do C.A.O.S. vai pro núcleo e é avisada ao Wally pelo correio no
+  mesmo dia. O JF quer, um dia, transformar o C.A.O.S. num agente virtual de verdade: o núcleo é a bagagem dele.
+- **Código comentado com o porquê (JF, 13/11/2026):** todo trecho novo ou mexido leva um comentário curto dizendo **por
+  que** existe (a versão e o pedido: "// 1.9.5 (pedido do JF): ..."), não só o que faz. Assim qualquer IA que abrir o
+  código entende a razão. Vale pro Perfil e pra Carteira.
+- **Marca JF (13/11/2026):** Perfil e Carteira são da mesma "casa": escuro com neon, ícones de traço, a mesma fonte de
+  título (Baloo 2), o mesmo C.A.O.S. (núcleo). **Cores:** pode ser colorido e dinâmico, desde que cada cor queira dizer
+  alguma coisa; nunca "carnaval de cor" ("às vezes o menos é mais", JF).

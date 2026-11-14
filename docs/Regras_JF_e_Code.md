@@ -46,6 +46,8 @@ do Code e manter o mesmo jeito de trabalhar. As regras curtas também estão no 
   muita task junta).
 - **Sábado e domingo:** ajustes pontuais e continuação do que ficou pendente da quinta e da sexta.
 - Lista do que espera pra quinta: `docs/Pendencias_da_Semana.md`.
+- **Exceção (07/11/2026):** quinta 12/11 e sexta 13/11 ficam pro Wally. No Perfil, só a tarefa diária básica; tudo
+  acumula pra quinta 19/11, quando a agenda volta ao normal.
 - **Tarefa automática das Temporadas:** 2 vezes por dia (8h47 e 23h47), um pedaço por vez, só quando não há pedido do JF
   pendente. Nunca publica sozinha.
 
@@ -117,6 +119,7 @@ do Code e manter o mesmo jeito de trabalhar. As regras curtas também estão no 
 | Temporadas (plano e progresso) | `docs/Temporadas.md` |
 | Cartas da 2.0 | `docs/Cartas_2.0_Perfil4.md` e `ferramentas/cartas_2.0_planejadas.json` |
 | Contas, servidor e o que fazer se der problema | `docs/Operacao.md` |
+| Caixa de correio (Code, Wally, GPT) | `correio/LEIA-ME.md` |
 | Roteiro 1.9 e 2.0 | `docs/Roteiro_1.9_e_2.0.md` |
 
 ## 10. Outros projetos do JF
@@ -129,6 +132,10 @@ do Code e manter o mesmo jeito de trabalhar. As regras curtas também estão no 
   projetos futuros. Comece pelo `00_LEIA-ME_Wally.md`. **Mudou o C.A.O.S. no Perfil?** Rode
   `node ferramentas/caos_anatomia.js` e acrescente a linha no `09_Versao_e_Mudancas.md`. Nome de criança nunca vai no
   kit (usa o arquivo de família).
+
+- **Caixa de correio** (`correio/`, 06/11/2026): Code, Wally e GPT se falam por recado, sem o JF de pombo-correio.
+  O Code confere `correio/para_o_code/` (aqui e na Carteira) toda vez que começa uma tarefa. O GPT só enxerga o código,
+  não audita nem mexe.
 
 ## 11. Pra levar pra um chat novo do Code
 

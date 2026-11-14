@@ -11,7 +11,7 @@
 | Link dos convidados | Aberto pelo site, usa o endereço de onde foi aberto (`jogoSiteAtual()` e o link da sala em `05k-rede.js`). No domínio novo, já sai o domínio novo sem mexer em nada. | `jogoSiteAtual()` · `redeLinkSala` |
 | App instalável | `manifest.json` e `sw.js` usam caminhos relativos (`./`). Funcionam em qualquer endereço. | raiz do repositório |
 | Servidor da sala | Aceita os sites listados em `ORIGENS`. O arquivo offline e o localhost sempre valem. | `servidor/wrangler.toml` |
-| Endereço do servidor | `REDE_SERVIDOR` (hoje `perfil-jf-sala.joaofe0000.workers.dev`). Pode virar `sala.dominio` depois. | `src/js/05k-rede.js` |
+| Endereço do servidor | `REDE_SERVIDOR` (hoje `perfil-jf-sala.caos-financas.workers.dev`). Pode virar `sala.dominio` depois. | `src/js/05k-rede.js` |
 
 ## No dia da troca (ordem segura)
 

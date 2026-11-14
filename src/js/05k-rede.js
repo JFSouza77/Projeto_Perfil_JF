@@ -227,7 +227,9 @@ const REDE_ICE = [
    fica de reserva: o host abre a sala nos dois, e o convidado tenta o nosso e, se não achar, o público. */
 // endereço do Worker (conta do JF, 10/10/2026). Com domínio próprio, pode virar um subdomínio (ex.: sala.dominio):
 // ver docs/Dominio_Preparacao.md
-const REDE_SERVIDOR = "perfil-jf-sala.joaofe0000.workers.dev";
+// 1.9.5.2 (14/11/2026): o JF trocou o subdomínio dos Workers da conta pra caos-financas (o antigo mostrava o começo do
+// e-mail dele). Vale pra todos os Workers da conta: o endereço antigo parou de responder.
+const REDE_SERVIDOR = "perfil-jf-sala.caos-financas.workers.dev";
 const REDE_SERVIDOR_CHAVE = "perfiljf";
 const REDE_PONTE_KEY = "perfil5_rede_ponte";
 let redePonte = null; // { iceServers, validade } vindo do servidor nosso

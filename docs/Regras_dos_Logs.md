@@ -27,6 +27,9 @@ Estas regras valem para as NOVIDADES do jogo e para o HISTÓRICO do Mestre.
 - O C.A.O.S. sobe de versão sempre que ele for mexido.
 - A 4.10.0 foi a última da série 4. **A próxima mudança no C.A.O.S. vira 5.0.0.**
 - Daqui pra frente, igual à versão do jogo: depois do .9 sobe o número de cima. Então 5.9.x é seguida de 6.0.0, nunca de 5.10.
+- **Número próprio (JF, 13/11/2026):** a versão do C.A.O.S. é dele e não acompanha a do jogo (ele nasceu depois do jogo). O
+  da Carteira tem o número dele também (1.24.0, que vira 2.0.0 na próxima mudança). O que é igual nos dois é o núcleo
+  (`docs/CAOS_Anatomia/caos_nucleo.json`), com versão própria.
 
 ## Tamanho do log e quando a versão sobe (regra do JF, 24/10/2026)
 

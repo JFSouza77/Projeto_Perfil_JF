@@ -3533,7 +3533,14 @@ const REACTIVE_VOICE = {
       ],
       criancas: ["Dia das Crianças. Hoje eu libero um erro bobo por pessoa. Unzinho."],
       halloween: ["Dia das Bruxas. O mais assustador que vai aparecer aqui hoje são os chutes de vocês."],
-      sexta13: ["Sexta-feira 13. Se alguém errar tudo hoje, pelo menos vai ter uma desculpa sobrenatural."],
+      // 12/11/2026 (ideia do JF): 5 falas, pra não repetir a mesma em toda partida do dia
+      sexta13: [
+        "Sexta-feira 13. Se alguém errar tudo hoje, pelo menos vai ter uma desculpa sobrenatural.",
+        "Sexta-feira 13. Eu sou um robô, não acredito em azar. Mas também não passo debaixo de escada nenhuma.",
+        "Sexta-feira 13 e vocês vieram jogar. Corajosos. As cartas de hoje podem estar assombradas.",
+        "Sexta-feira 13. Se a carta parecer impossível, a culpa não é minha: é do calendário.",
+        "Hoje é sexta-feira 13. Quem acertar na primeira dica vai ser investigado por bruxaria.",
+      ],
     },
     marco: {
       30: [

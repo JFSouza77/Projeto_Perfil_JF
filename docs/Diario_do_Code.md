@@ -176,3 +176,14 @@ segura**. Sem rodeio: é pra achar rápido.
 - **Mudou:** a checagem reconhece também as falas de aniversário (aniversário, Parabéns, Balões, criador, 2 de janeiro).
   Conferido com 400 sorteios: 0 falhas. Teste: `teste_temporadas` (2 rodadas seguidas ok).
 
+### 14/11/2026 · 1.9.5.2 · servidor com endereço novo (aviso do Wally pelo correio)
+
+- **O que aconteceu:** em 13/11, publicando o servidor da Carteira, o JF trocou o subdomínio dos Workers da conta no
+  Cloudflare (o antigo mostrava o começo do e-mail dele). A troca vale pra todos os Workers da conta: o servidor da sala
+  do Perfil passou a responder só em `perfil-jf-sala.caos-financas.workers.dev`.
+- **Efeito:** o jogo chamava o endereço antigo (`REDE_SERVIDOR`). Sala online pelo nosso servidor, ponte TURN, voz nova
+  (Azure), cadastro/PIN online, reporte de carta e sugestões ficaram sem servidor (o jogo cai no PeerJS público e na
+  voz do aparelho, sem travar).
+- **Mudou:** `REDE_SERVIDOR` em `src/js/05k-rede.js` e os documentos (`Operacao.md`, `Dominio_Preparacao.md`).
+- **Mapa:** "sala online, voz nova ou cadastro pararam de uma vez, sem mudança no código" → conferir se o endereço do
+  Worker mudou no Cloudflare (subdomínio da conta ou nome do Worker).
