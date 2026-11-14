@@ -61,6 +61,9 @@ pra poupar créditos. Só corrige na hora o que ele pedir "pra agora", e só aqu
   (viva se jogou hoje ou ontem, guarda o recorde, C.A.O.S. comemora nos marcos 3, 7, 14, 30…). Pro JF decidir; agenda normal.
 - [ ] **Segurança (dica do Wally/GPT na Carteira):** conferir no Perfil se importar save/backup valida tudo antes de gravar
   e escapa nome/emoji que vão pra tela, e se o servidor conta o tamanho do pedido em bytes. Só conferir; corrigir se achar.
+- [ ] **Dezembro (aviso do JF pelo Wally, 14/11): IA online no Perfil**, como a Carteira ganhou em 13/11: rota no Worker
+  da sala, chave da Anthropic só no segredo `ANTHROPIC_API_KEY`, crédito pré-pago sem recarga, as leis do C.A.O.S.
+  valendo pra IA, voz do aparelho/fala pronta quando o servidor cair. Passo a passo do Windows: `npm.cmd`/`npx.cmd`.
 
 ## Corrigido na hora (pedido do JF)
 
