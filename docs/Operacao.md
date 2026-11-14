@@ -6,7 +6,7 @@
 | Conta | Pra quê | Quem cuida |
 |---|---|---|
 | **GitHub** (JFSouza77) | Código (`Projeto_Perfil_JF`) e o site (GitHub Pages: `jfsouza77.github.io/Projeto_Perfil_JF/`) | JF |
-| **Cloudflare** (joaofe0000@…) | Servidor da sala `perfil-jf-sala.joaofe0000.workers.dev`: apresenta os aparelhos, lista as salas, ponte TURN, cartas reportadas | JF |
+| **Cloudflare** (conta do JF; subdomínio dos Workers: `caos-financas`, desde 13/11/2026) | Servidor da sala `perfil-jf-sala.caos-financas.workers.dev`: apresenta os aparelhos, lista as salas, ponte TURN, cartas reportadas | JF |
 | **Registro do domínio** (futuro, DICAOS) | Endereço próprio | JF |
 
 **Segurança das contas (o JF faz):** autenticação em dois fatores nas três e códigos de recuperação guardados **fora do celular** (papel ou outro lugar seguro).
@@ -29,7 +29,7 @@
   2. Troque `TURN_KEY_ID` e `TURN_KEY_API_TOKEN` e toque em Deploy.
   3. Os jogos pegam as credenciais novas sozinhos (elas valem 24 h).
 - **Trocar a senha dos reportes:** edite `REPORTES_SENHA` e toque em Deploy. O favorito antigo para de abrir.
-- **Ver as cartas reportadas:** `https://perfil-jf-sala.joaofe0000.workers.dev/reportes?chave=SENHA`. "Ver como texto" serve pra copiar e mandar pro Claude.
+- **Ver as cartas reportadas:** `https://perfil-jf-sala.caos-financas.workers.dev/reportes?chave=SENHA`. "Ver como texto" serve pra copiar e mandar pro Claude.
 - **Republicar o servidor:** qualquer mudança na pasta `servidor/` que entra na `main` é publicada sozinha (Cloudflare Builds). Pra forçar: Deployments → Retry build.
 - **Publicar uma versão do jogo:** PR para a `main` (o Claude Code faz). O GitHub Pages publica o `index.html` em ~1 min.
 - **Limpar versões antigas:** no repositório ficam só as 3 versões mais novas. `node ferramentas/limpar_versoes.js` mostra o que sai e `--apagar` limpa (a rotina mensal faz isso sozinha).
