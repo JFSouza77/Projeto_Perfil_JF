@@ -167,6 +167,15 @@ segura**. Sem rodeio: é pra achar rápido.
   - Teste: `teste_portao_pin` (10 conferências); `teste_cadastro_caos`, `teste_acoes` e `teste_remover_jogador`
     ajustados pra regra nova; `teste_contas` ok com o servidor local.
 
+### 07/11/2026 · teste da "gafe" das temporadas falhando às vezes
+
+- **Sintoma:** `teste_temporadas` deu `FALHA gafeFalaErradaEConserta` numa rodada e passou na seguinte.
+- **Causa:** a gafe (o C.A.O.S. solta a fala de outra data e se corrige) sorteia entre as temporadas com falas. Desde
+  06/11 o aniversário do criador também tem falas, e a checagem só reconhecia palavras de Natal e Ano Novo. O jogo estava
+  certo; o teste é que estava velho (falhava em ~1 de cada 15 sorteios).
+- **Mudou:** a checagem reconhece também as falas de aniversário (aniversário, Parabéns, Balões, criador, 2 de janeiro).
+  Conferido com 400 sorteios: 0 falhas. Teste: `teste_temporadas` (2 rodadas seguidas ok).
+
 ### 14/11/2026 · 1.9.5.2 · servidor com endereço novo (aviso do Wally pelo correio)
 
 - **O que aconteceu:** em 13/11, publicando o servidor da Carteira, o JF trocou o subdomínio dos Workers da conta no

@@ -51,6 +51,9 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
       [2027, 8, 8, "pais"],
       [2027, 8, 22, "folclore"],
       [2027, 9, 7, "independencia"],
+      [2027, 9, 6, "aniversarioJogo"], // 06/11/2026: aniversário do jogo e do C.A.O.S. (pedido do JF)
+      [2027, 9, 20, "aniversarioCaos"],
+      [2027, 9, 21, null],
       [2027, 11, 26, "blackfriday"],
       [2026, 2, 17, "carnaval"], // Páscoa 2026 = 5/4
       [2026, 4, 3, "pascoa"],
@@ -59,7 +62,8 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     ];
     out.erradas = casos.filter(([a, m, d, e]) => id(a, m, d) !== e).map(([a, m, d, e]) => `${d}/${m}/${a}: ${id(a, m, d)} (esperado ${e})`);
     out.datasCertas = out.erradas.length === 0;
-    out.quinze = TEMPORADAS.length === 15 && new Set(TEMPORADAS.map((t) => t.id)).size === 15;
+    // 06/11/2026: 17 com os aniversários do jogo e do C.A.O.S.; pela regra do 0 ou 5, faltam 3 datas pra fechar 20 (o JF escolhe)
+    out.temporadasSemRepetir = TEMPORADAS.length === 17 && new Set(TEMPORADAS.map((t) => t.id)).size === 17;
     // todas aparecem em todo ano de 2026 a 2040
     const faltou = [];
     for (let a = 2026; a <= 2040; a++) {
@@ -470,6 +474,59 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     }
     return r;
   }));
+  // item 10 (06/11): aniversário do criador (2/1): balões, selo, 30 falas, e o C.A.O.S. pega leve só com o JF de verdade
+  await page.goto(url + "?temporada=aniversario");
+  await page.waitForFunction(() => typeof temporadaAplicar === "function");
+  Object.assign(o, await page.evaluate(() => {
+    const r = {};
+    const e = document.getElementById("temporadaEnfeite");
+    r.aniversarioMarcaEEnfeite = document.documentElement.dataset.temporada === "aniversario" && !!e && getComputedStyle(e).display === "block" && getComputedStyle(e).pointerEvents === "none";
+    const selo = document.getElementById("splashTemporada");
+    r.aniversarioSelo = !!selo && !selo.hidden && /aniversário do criador/i.test(selo.textContent);
+    const B = REACTIVE_VOICE.temporada.aniversario;
+    r.aniversarioFalas = ["inicio", "jf", "avancou", "voltou", "presenteJoia", "presentePonto"].every((k) => Array.isArray(B[k]) && B[k].length === 5);
+    const jf = { id: "j", name: "JF", humor: "zero", conta: { nick: "JF", token: "teste" } };
+    const falso = { id: "f", name: "JF", humor: "zero" };
+    const outro = { id: "o", name: "Ana", humor: "acido" };
+    const sp = players;
+    players = [jf, outro];
+    r.aniversarioPegaLeveComOJf = playerHumor(jf) === "suave" && playerHumor(outro) !== "suave";
+    players = [falso, outro];
+    r.aniversarioJfSemCadastroNao = playerHumor(falso) !== "suave";
+    players = sp;
+    // 07/11: 5 cores, 5 emojis e 5 itens em cada lojinha, só do aniversário
+    const E = TEMPORADA_ESTILOS.aniversario;
+    r.aniversario5Cores5Emojis = !!E && E.cores.length === 5 && E.emojis.length === 5 && E.nomesCores.length === 5 && E.cores.every((c) => GRADIENTS[c] && coresDaPaleta().includes(c)) && E.emojis.every((x) => avatarsForMode().includes(x)) && new Set(E.emojis).size === 5;
+    r.aniversarioEmojisNovos = !!E && E.emojis.every((x) => !AVATARS.includes(x));
+    const an = (cat) => Object.keys(cat).filter((k) => cat[k].temporada === "aniversario");
+    const basesOk = (cat) => an(cat).every((k) => { const it = cat[k]; return it.surpresa ? it.surpresa.every((b) => cat[b] && !cat[b].temporada) : cat[it.base] && !cat[it.base].temporada; });
+    r.aniversarioLoja5Cada = an(MC_LOJA).length === 5 && an(CORRIDA_LOJA).length === 5 && basesOk(MC_LOJA) && basesOk(CORRIDA_LOJA);
+    let ok = true;
+    for (let i = 0; i < 60; i++) {
+      const v = Object.keys(lojaVitrineSortear(MC_LOJA, MC_VITRINE).estoque).filter((k) => MC_LOJA[k].temporada);
+      const c = Object.keys(lojaVitrineSortear(CORRIDA_LOJA, CORRIDA_VITRINE).estoque).filter((k) => CORRIDA_LOJA[k].temporada);
+      if (v.length !== 2 || c.length !== 2 || v.concat(c).some((k) => !/^aniversario/.test(k))) ok = false;
+    }
+    r.aniversarioVitrineSoDoAniversario = ok;
+    // 08/11: 5 títulos de aniversário no resumo da partida
+    {
+      const sh = history, sp2 = players;
+      players = [{ id: "a", name: "Ana", color: "#e94560", avatar: "🦊", errosPartida: 3 }, { id: "b", name: "Beto", color: "#4ecdc4", avatar: "🐼", errosPartida: 0 }];
+      history = [
+        { playerName: "Beto", cluesUsed: 4, timeTakenMs: 40000, points: 16 },
+        { playerName: "Ana", cluesUsed: 2, timeTakenMs: 6000, points: 18 },
+        { playerName: "Ana", cluesUsed: 7, timeTakenMs: 30000, points: 13 },
+      ];
+      const got = [];
+      temporadaTitulosHtml((ic, tit, nome, desc, cor, meta) => (got.push([tit, meta.n, meta.t]), ""));
+      history = sh; players = sp2;
+      const tem = (tit, n) => got.some((g) => g[0] === tit && g[1] === n);
+      r.aniversario5Titulos = got.length === 5 && tem("Dono do Bolo", "Ana") && tem("Assoprou as Velas", "Ana") && tem("Balão Mais Alto", "Ana") && tem("Parabéns Atrasado", "Beto") && tem("Penetra da Festa", "Ana");
+      r.aniversarioTitulosComentaveis = got.every((g) => !!caosComentFato({ t: g[2], n: g[1], v: 3 })) && got.every((g) => CAOS_COMENT_TOM[g[2]]);
+      r.aniversarioCabecalho = /aniversário/i.test(temporadaTitulosCabecalho());
+    }
+    return r;
+  }));
   await page.goto(url + "?temporada=nenhuma");
   await page.waitForFunction(() => typeof temporadaAplicar === "function");
   o.semTemporadaSemEnfeite = await page.evaluate(() => {
@@ -551,7 +608,7 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
       players = s.players; CURRENT_MODE = s.CURRENT_MODE; mc = s.mc; cartasPartida = s.cartasPartida; mcAnunciar = s.mcAnunciar;
     }
     const t = caosTemporadaGafeTexto();
-    r.gafeFalaErradaEConserta = /\.\.\./.test(t) && REACTIVE_VOICE.temporada.gafe.some((g) => t.includes(String(typeof g === "function" ? g() : g).replace(/^\[C\.A\.O\.S\.\]\s*/, ""))) && /Natal|Ho, ho|gorro|Pisca|bonzinhos|Ano Novo|ondas|champanhe|Fogos|Dez, nove/i.test(t);
+    r.gafeFalaErradaEConserta = /\.\.\./.test(t) && REACTIVE_VOICE.temporada.gafe.some((g) => t.includes(String(typeof g === "function" ? g() : g).replace(/^\[C\.A\.O\.S\.\]\s*/, ""))) && /Natal|Ho, ho|gorro|Pisca|bonzinhos|Ano Novo|ondas|champanhe|Fogos|Dez, nove|aniversário|Parabéns|Balões|criador|2 de janeiro/i.test(t);
     const modo = CURRENT_MODE;
     CURRENT_MODE = "junior";
     let jr = false;

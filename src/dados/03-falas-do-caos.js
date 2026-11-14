@@ -4401,6 +4401,52 @@ const REACTIVE_VOICE = {
         (name, n) => `[C.A.O.S.] Feliz Ano Novo! ${n} PC pra ${name}. Promessa cumprida.`,
       ],
     },
+    // Aniversário do criador (2/1, temporada "aniversario"): festa, bolo e o C.A.O.S. pegando leve com o JF.
+    // jf = início quando o JF (com o cadastro confirmado) está na mesa.
+    aniversario: {
+      inicio: [
+        "Hoje é aniversário do meu criador! Tem bolo virtual pra todo mundo. Menos pra quem errar.",
+        "Parabéns pra você, nesta data querida... não é você, é o JF. Mas pode cantar junto.",
+        "Dia 2 de janeiro: o dia em que nasceu quem me programou. Vou me comportar. Um pouco.",
+        "Balões no ar! Hoje a festa é do criador. Bora jogar em homenagem a ele.",
+        "Aniversário do JF! Assoprei as velinhas e queimei um processador. Valeu a pena.",
+      ],
+      jf: [
+        "Parabéns, JF! Hoje eu pego leve com você. Só hoje, hein?",
+        "Olha o aniversariante na mesa! Feliz aniversário, criador. Prometo não zoar seus erros. Muito.",
+        "JF, feliz aniversário! De presente, hoje não te culpo pelos meus bugs.",
+        "O dono da festa chegou! Parabéns, JF. Hoje até eu torço por você.",
+        "Feliz aniversário, JF! Mais um ano me aguentando. Isso merece um bolo.",
+      ],
+      avancou: [
+        (name, n) => `[C.A.O.S.] Presente de aniversário pra ${name}: ${n} casa${n === 1 ? "" : "s"} pra frente!`,
+        (name, n) => `[C.A.O.S.] ${name} subiu igual balão de festa: ${n} casa${n === 1 ? "" : "s"}.`,
+        (name, n) => `[C.A.O.S.] Pedaço de bolo pra ${name}, que avançou ${n} casa${n === 1 ? "" : "s"}.`,
+        (name, n) => `[C.A.O.S.] Ê, ${name}! ${n} casa${n === 1 ? "" : "s"} na frente. É festa!`,
+        (name, n) => `[C.A.O.S.] Os parabéns empurraram ${name} ${n} casa${n === 1 ? "" : "s"} adiante.`,
+      ],
+      voltou: [
+        (name, n) => `[C.A.O.S.] O balão de ${name} estourou: ${n} casa${n === 1 ? "" : "s"} pra trás.`,
+        (name, n) => `[C.A.O.S.] ${name} tropeçou na mesa do bolo e voltou ${n} casa${n === 1 ? "" : "s"}.`,
+        (name, n) => `[C.A.O.S.] Sem bolo pra ${name}: ${n} casa${n === 1 ? "" : "s"} pra trás.`,
+        (name, n) => `[C.A.O.S.] A vela apagou antes da hora, ${name}. Voltou ${n} casa${n === 1 ? "" : "s"}.`,
+        (name, n) => `[C.A.O.S.] Festa é festa, mas ${name} voltou ${n} casa${n === 1 ? "" : "s"}.`,
+      ],
+      presenteJoia: [
+        (name, cat) => `[C.A.O.S.] Lembrancinha de festa pra ${name}: uma joia de ${cat}!`,
+        (name, cat) => `[C.A.O.S.] Achei uma joia de ${cat} dentro do bolo. É de ${name}.`,
+        (name, cat) => `[C.A.O.S.] O aniversário é do JF, mas o presente é de ${name}: joia de ${cat}.`,
+        (name, cat) => `[C.A.O.S.] Saquinho surpresa pra ${name}: tem uma joia de ${cat}. A última não, hein?`,
+        (name, cat) => `[C.A.O.S.] Estourei um balão e caiu uma joia de ${cat} no colo de ${name}.`,
+      ],
+      presentePonto: [
+        (name, n) => `[C.A.O.S.] Brigadeiro extra pra ${name}: ${n} PC!`,
+        (name, n) => `[C.A.O.S.] ${n} PC de lembrancinha pra ${name}. Obrigado por vir à festa.`,
+        (name, n) => `[C.A.O.S.] Dia de festa, ${name} ganha ${n} PC. Aproveita.`,
+        (name, n) => `[C.A.O.S.] ${name} achou ${n} PC no saquinho surpresa.`,
+        (name, n) => `[C.A.O.S.] Parabéns pro JF, presente pra ${name}: ${n} PC.`,
+      ],
+    },
     // Presente com data (JF, 04/11): quando o C.A.O.S. dá um presente perto de uma data comemorativa, a fala segue o
     // calendário (adiantado, no dia, atrasado). Fora de qualquer data, vale o presenteForaDeEpoca.aniversario.
     // Gerador: não (são frases inteiras com o nome; o gerador de presente pode usar as etiquetas data_<id>_<momento>).

@@ -83,6 +83,8 @@ function humorEscolhido(p) {
 }
 // 1.7.10.6 · Peça ao C.A.O.S.: o jogador pediu humor mais leve ou mais ácido (preferência dele, não muda regra)
 function playerHumor(p) {
+  // Temporadas (06/11/2026): no aniversário do criador (2/1), o C.A.O.S. pega leve com o JF (só o JF de verdade)
+  if (typeof temporadaPegaLeveCom === "function" && temporadaPegaLeveCom(p)) return "suave";
   const base = playerHumorBase(p);
   const pc = p && p.pedeCaos;
   if (!pc || !pc.humor || (p && p.iniciante)) return base;

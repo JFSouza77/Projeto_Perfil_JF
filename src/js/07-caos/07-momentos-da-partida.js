@@ -159,7 +159,10 @@ function caosStartBeatText(type) {
         : "";
     case "temporada": {
       const t = caosTemporadaFalas();
-      return t && caosOncePerMatch("temporada_inicio") ? getRandomReaction(t.inicio) : "";
+      if (!t || !caosOncePerMatch("temporada_inicio")) return "";
+      // aniversário do criador: com o JF (cadastro confirmado) na mesa, os parabéns são pra ele
+      if (t.jf && players.some((p) => isJfPlayer(p))) return getRandomReaction(t.jf);
+      return getRandomReaction(t.inicio);
     }
     case "gafe":
       return caosOncePerMatch("temporada_gafe") ? caosTemporadaGafeTexto() : "";
