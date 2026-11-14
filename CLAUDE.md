@@ -39,6 +39,10 @@ Todas as regras combinadas (conversa, agenda, quem decide, versões, segurança)
 - **Decisões práticas (01/11/2026):** em coisas de organização (juntar PR que não muda o jogo, quando soltar um ajuste já
   testado, por onde começar), o Code decide sozinho pelo que for mais fácil, prático e seguro, e só avisa. Publicar
   versão nova continua precisando do ok do JF.
+- **Correção urgente (14/11/2026, regra do JF):** quando o jogo quebrar pra quem joga (online fora do ar, tela
+  travada, erro que impede jogar) e a correção for pequena e passar no `build.js --testar`, o Code pode publicar a
+  versão de correção sem esperar o ok do JF, e avisa logo depois o que mudou e por quê. Versão com novidade,
+  mudança grande ou coisa que mexe em segurança continua precisando do ok dele.
 - **Agenda de trabalho (05/11/2026, horário de Brasília):**
   - **Segunda até quinta de manhã: orçamento baixo.** Conferir o jogo e fazer só coisa leve e rápida, inclusive
     correções automáticas pequenas, sem gastar muito crédito.
