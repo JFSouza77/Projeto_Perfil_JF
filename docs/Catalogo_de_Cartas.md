@@ -1,17 +1,17 @@
 # Catálogo de cartas do Perfil JF
 
-Gerado pelo Code (Claude Code) em 2026-11-06 com `node ferramentas/catalogo_cartas.js`. Só os nomes, sem dicas.
+Gerado pelo Code (Claude Code) em 2026-11-15 com `node ferramentas/catalogo_cartas.js`. Só os nomes, sem dicas.
 
-**1970 cartas: 1020 já estão no jogo e 950 estão planejadas pra Beta 2.0 (marcadas com 🆕).**
+**1980 cartas: 1030 já estão no jogo e 950 estão planejadas pra Beta 2.0 (marcadas com 🆕).**
 
 | Categoria | No jogo | Planejadas 🆕 | Total |
 |---|---|---|---|
 | 🐾 Animal | 200 | 65 | 265 |
 | 📅 Ano | 200 | 55 | 255 |
-| 📦 Coisa | 210 | 255 | 465 |
+| 📦 Coisa | 215 | 255 | 470 |
 | 📍 Lugar | 205 | 235 | 440 |
-| 🧑 Pessoa | 205 | 340 | 545 |
-| **Total** | **1020** | **950** | **1970** |
+| 🧑 Pessoa | 210 | 340 | 550 |
+| **Total** | **1030** | **950** | **1980** |
 
 ## Como conferir uma ideia de carta (instruções pro GPT)
 
@@ -264,7 +264,10 @@ Avestruz 🧸 · Camelo 🧸 · Chimpanzé 🧸 · Dragão-de-komodo · Dromedá
 - 2025
 - 2026 🆕 (Copa do Mundo nos Estados Unidos, Canadá e México, a primeira com 48 seleções; e Lula é reeleito (2º turno em 25/10, contra Flávio Bolsonaro), o primeiro presidente eleito quatro vezes pelo voto direto no Brasil (tema político: só fatos, fora do Júnior))
 
-## 📦 Coisa · 465 (210 no jogo, 255 🆕)
+## 📦 Coisa · 470 (215 no jogo, 255 🆕)
+
+**Aniversário** (5)
+Chapéu de festa · Língua de sogra · Parabéns a Você · Pinhata · Vela de aniversário
 
 **Ano Novo** (5)
 Calendário · Espumante · Fogos de artifício · Lentilha · Roupa branca
@@ -439,13 +442,16 @@ Vale do Silício 🆕 (fecha a conta de Lugar em 225)
 **Universidades e estúdios** (3)
 Herbert Richers 📼 · Projac 🆕 · UFRJ 📼
 
-## 🧑 Pessoa · 545 (205 no jogo, 340 🆕)
+## 🧑 Pessoa · 550 (210 no jogo, 340 🆕)
 
 **Animação** (2)
 Bruno Madrigal 🆕 (ideia do JF 03/11) · Mirabel Madrigal 🆕 (ideia do JF 03/11)
 
 **Anime, mangá e Pokémon** (10)
 Ash Ketchum · Goku · Itachi Uchiha 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Kakashi Hatake 🆕 (handoff JF+GPT 29/10) · Kira (Light Yagami) 🆕 (nome: Kira (Light Yagami); tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Luffy · Naruto Uzumaki · Pikachu 🧸 · Rimuru Tempest · Shenlong 🆕 (handoff JF+GPT 29/10)
+
+**Aniversário** (5)
+Jeanne Calment · Marilyn Monroe · Rainha Elizabeth II · Ronald McDonald · Stevie Wonder
 
 **Arte (pintura e música clássica)** (8)
 Frida Kahlo · Leonardo da Vinci 📼 · Ludwig van Beethoven 📼 · Pablo Picasso 🆕 (handoff JF+GPT 29/10) · Romero Britto 🆕 (handoff JF+GPT 29/10) · Salvador Dalí 📼 · Tarsila do Amaral 🆕 (handoff JF+GPT 29/10) · Vincent van Gogh

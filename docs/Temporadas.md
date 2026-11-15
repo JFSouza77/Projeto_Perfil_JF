@@ -117,14 +117,14 @@ temporadas, na ordem do calendário.
 9. [x] Natal · bateria de testes, prints e relatório pro JF (ele decide se publica).
 9.1. [x] **Publicado:** Beta 1.9.3 · Edição de Natal (04/11/2026, PR #191). O trabalho segue no branch `temporadas-2`.
 9.2. [x] (05/11, branch `quinta-att`, falta o ok do JF pra publicar) Medalhas da temporada (ideia do JF, 04/11): desafios, medalha no perfil, exibir ou não, desenho da medalha de Natal. Att grande: quinta/sexta.
-10. [ ] Ano Novo e aniversário do criador (2/1), no mesmo formato do Natal. Em pedaços:
+10. [x] Ano Novo e aniversário do criador (2/1), no mesmo formato do Natal. Em pedaços:
     - [x] Ano Novo · enfeite (confete e fogos), selo, 15 falas (+ 10 de presente), 5 cores, 5 emojis e 5+5 itens de lojinha.
     - [x] Ano Novo · 5 títulos (Show de Fogos, Champanhe Estourada, Pé Direito, Meia-Noite em Ponto, Promessa de Ano Novo).
     - [x] Ano Novo · 10 cartas valendo o dobro.
     - [x] Aniversário do criador (2/1) · enfeite (balões), selo, 30 falas (5 só pro JF na mesa) e o C.A.O.S. pegando leve com o JF.
     - [x] Aniversário do criador · 5 cores, 5 emojis e 5+5 itens de lojinha.
     - [x] Aniversário do criador · 5 títulos (Dono do Bolo, Assoprou as Velas, Balão Mais Alto, Parabéns Atrasado, Penetra da Festa).
-    - [ ] Aniversário do criador · 10 cartas valendo o dobro.
+    - [x] Aniversário do criador · 10 cartas valendo o dobro (5 Pessoa, 5 Coisa).
 11. [ ] As outras 14 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween, com o Doces ou travessuras).
     Inclui as 2 datas novas do JF (06/11/2026), já reconhecidas pelo motor: **6/9 · Aniversário do Perfil JF** (o C.A.O.S.
     lembra quantos anos o jogo faz e conta a história: `docs/Historia_do_Perfil.md`) e **20/9 · Aniversário do C.A.O.S.**
@@ -275,3 +275,9 @@ temporadas, na ordem do calendário.
   (1.9.5): build e teste nas 4 saídas ok. Nenhum pedaço pequeno de temporada sobrando; o resto fica pra 19/11.
 
 - 13/11/2026 (tarefa da noite): main = 1.9.5.1, já testada nas 4 saídas na publicação; correio do Wally respondido (versões, Dica do Dia, núcleo, teste do macaco). Sem pedaço pequeno de temporada.
+- 15/11/2026: item 10 fechado. 10 cartas do aniversário do criador em `src/dados/02-cartas/94-aniversario.js` (ids
+  0911+, 20 dicas e 3 ações cada, todas livres, então entram também no Júnior): Rainha Elizabeth II (dois aniversários
+  por ano), Marilyn Monroe (o parabéns pro Kennedy), Stevie Wonder (o "Happy Birthday" do feriado de Martin Luther King),
+  Jeanne Calment (122 anos), Ronald McDonald (festas na lanchonete), Vela de aniversário, Língua de sogra, Chapéu de festa,
+  Pinhata e Parabéns a Você. Só no 2/1, valendo o dobro, selo 🎂. Assuntos no catálogo ("Aniversário"); auditor sem
+  aviso novo. Teste: `teste_temporadas` (5 checagens novas).

@@ -525,6 +525,23 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
       r.aniversarioTitulosComentaveis = got.every((g) => !!caosComentFato({ t: g[2], n: g[1], v: 3 })) && got.every((g) => CAOS_COMENT_TOM[g[2]]);
       r.aniversarioCabecalho = /aniversário/i.test(temporadaTitulosCabecalho());
     }
+    // item 10 (15/11): 10 cartas do aniversário do criador (5 Pessoa, 5 Coisa), só no 2/1, valendo o dobro, selo 🎂
+    {
+      const an = TEMPORADA_CARTAS.filter((c) => c.temporada === "aniversario");
+      r.aniversario10Cartas = an.length === 10 && an.every((c) => c.clues.length === 20) && an.filter((c) => c.category === "PESSOA").length === 5;
+      const modo = CURRENT_MODE, sp = players;
+      players = [{ id: "a", name: "Ana", color: "#e94560", avatar: "🦊", score: 0, position: 0 }, { id: "b", name: "Beto", color: "#4ecdc4", avatar: "🐼", score: 0, position: 0 }];
+      CURRENT_MODE = "classico";
+      allCards = baralhoClassico();
+      resetDeck();
+      const ini = deck.slice(-50);
+      r.aniversarioCartasEntramSoAsDele = an.every((c) => ini.includes(c)) && !deck.some((c) => c.temporada && c.temporada !== "aniversario");
+      r.aniversarioCartaValeODobroComSelo = temporadaMultCarta(an[0]) === 2 && /🎂 Carta de Aniversário do criador · vale o dobro/.test(temporadaSeloCartaHtml(an[0]));
+      CURRENT_MODE = "junior";
+      r.aniversarioCartasNoJunior = temporadaCartasDoModo().length === 10;
+      CURRENT_MODE = modo; players = sp;
+      r.aniversarioCartaAchadaPeloId = cartaPorId("PESSOA-0911") === an[0] && cartaPorId("COISA-0920") === an[9];
+    }
     return r;
   }));
   await page.goto(url + "?temporada=nenhuma");
