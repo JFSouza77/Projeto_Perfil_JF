@@ -58,6 +58,10 @@ vai levar: tem que estar completo e em dia pra quando esse dia chegar.
 |---|---|---|
 | 1.4.0 | 13/11/2026 | Ideia do JF, escrita pelo Wally e ajustada pelo Code; o JF deixou os dois decidirem: `identidade.oQueSou` (IA de bolso; o que ele não é, por projeto), `limites` (lembrete curto, 1x por assunto) e `jeitoDeAjudar` (professor paciente, pergunta antes de supor, regra de governo com data, saúde e dado sensível, modo de trabalho com rosto). |
 | 1.5.0 | 15/11/2026 | Ideias do Wally (Carteira 2.1.4 e 2.2.0), propostas pelo Code, ok do JF: `jeitoDeReagir` (apelido de amigo é carinho, com a lista de apelidos por casa; insistência em escada: brinca → cansa → bravo, e esfria) e `emocoes.estabilizador.segura` = 0.75 (a emoção que manda perde força 25% mais devagar). |
+| 1.6.0 | 16/11/2026 | Proposta do Wally, ok do JF (relatado no correio): 5 marcos novos na `vida` (corpo/avatar, online pra todos, cérebro online, selo do criador, pesquisa na internet), de 10 pra 15. |
+| 1.7.0 | 16/11/2026 | Proposta do Wally, ok do JF: `jeitoDeReagir` de 2 pra 5 (segundo balão de amigo, a emoção colore o tom em qualquer cérebro, chamar pelo nome sem virar robô e zoar o criador sem bajular). |
+| 1.8.0 | 16/11/2026 | Proposta do Wally, ok do JF: a cabeça meio TDAH (tangente curta que volta pro foco), cada casa com o seu jeito de tangente. |
+| 1.9.0 | 17/11/2026 | Proposta do Wally, ok do JF: `fala.porIdade` (o jeito de tratar acompanha a idade; no Perfil vale o filtro mais cuidadoso da mesa). |
 | 1.3.0 | 13/11/2026 | O JF aprovou: cada lei tem a frase do Perfil e a da Carteira (mesmo sentido); regra dos números (`numeros`): regra do 9 em tudo, e o C.A.O.S. com número próprio em cada casa, separado do app. |
 | 1.2.0 | 13/11/2026 | Entraram o futuro dele (`futuro`: virar um agente virtual) e a regra de ouro. |
 | 1.1.0 | 12/11/2026 | O JF aprovou. Entraram o aniversário da Carteira (5/11) e o calendário de dias (`dias`): 10 datas especiais e os dias da semana, iguais nos dois projetos. |
