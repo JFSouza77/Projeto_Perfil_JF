@@ -40,6 +40,13 @@ Regra do JF (26/10/2026): nesta semana, bug, print ou sugestão que ele mandar f
 pra poupar créditos. Só corrige na hora o que ele pedir "pra agora", e só aquilo. Na **quinta, 29/10, às 18h**
 (Brasília), os créditos renovam e começam os patches com tudo desta lista.
 
+- [ ] **Voz no iPhone (achado do Wally, 17/11):** na Carteira, a voz natural saía robótica no iPhone porque o WebAudio
+  só era destravado no 1º `pointerdown`. O iOS pede o destrave no `touchend` e trava de novo quando o app vai pro fundo
+  (estado "interrupted"). Conferir o `audioDestravarNoToque` do Perfil: destravar em todo toque e dar `resume()` em
+  qualquer estado diferente de "running". Agenda normal (19/11+).
+- [ ] **Núcleo 1.9.0 no Perfil (19/11+):** aplicar o `fala.porIdade` e o `jeitoDeReagir` novo no motor do jogo, com o
+  filtro da mesa (idades misturadas: vale o mais cuidadoso).
+
 ## Corrigido na hora (pedido do JF)
 
 - [x] **Categoria aparecia na T2 antes da hora** (26/10): a roleta do celular pousava na categoria (e a cor da caixa
