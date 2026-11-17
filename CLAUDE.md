@@ -65,6 +65,9 @@ Todas as regras combinadas (conversa, agenda, quem decide, versões, segurança)
   projetos: `docs/CAOS_Anatomia/caos_nucleo.json` e `11_CAOS_Unico.md`. Só muda com o ok do JF, nos dois projetos juntos.
   **Regra de ouro (JF, 13/11):** toda característica única do C.A.O.S. vai pro núcleo e é avisada ao Wally pelo correio no
   mesmo dia. O JF quer, um dia, transformar o C.A.O.S. num agente virtual de verdade: o núcleo é a bagagem dele.
+- **Propostas do Wally (JF, 17/11/2026):** o que o Wally trouxer pelo correio dizendo que precisa do ok do JF (núcleo do
+  C.A.O.S. e afins) já tem o ok dele: o Code aplica sem perguntar nem ficar confirmando. Se ainda assim sobrar dúvida, guarda
+  pra lembrar o JF na quinta 19/11.
 - **Código comentado com o porquê (JF, 13/11/2026):** todo trecho novo ou mexido leva um comentário curto dizendo **por
   que** existe (a versão e o pedido: "// 1.9.5 (pedido do JF): ..."), não só o que faz. Assim qualquer IA que abrir o
   código entende a razão. Vale pro Perfil e pra Carteira.
