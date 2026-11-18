@@ -47,6 +47,12 @@ pra poupar créditos. Só corrige na hora o que ele pedir "pra agora", e só aqu
 - [ ] **Núcleo 2.0.0 no Perfil (19/11+):** aplicar o `fala.bordao` ("Rapaz…", nunca no Júnior nem com criança na mesa), o `fala.porIdade` e o `jeitoDeReagir` novo no motor do jogo, com o
   filtro da mesa (idades misturadas: vale o mais cuidadoso).
 
+- [ ] **QUINTA 19/11, primeiro item (pedido do JF, 18/11): desligar o "casal" JF + Anne.** Tirar ou reescrever as
+  falas e piadas que ligam os dois como casal (dormir no sofá, briga de casal, ciúme, "a patroa" etc.) nos geradores
+  (`jfChegou`, `anneChegou`, `boasVindas`…), nas falas do C.A.O.S., nos apelidos e nos vínculos. **Fica:** o conteúdo
+  bonito sobre a Anne, as cartas e as travas de conteúdo dela. **Pode sair:** a trava de ADM ligada a ela. Manter 0 ou 5
+  em cada grupo depois do corte. Fazer junto com o JF.
+
 ## Corrigido na hora (pedido do JF)
 
 - [x] **Categoria aparecia na T2 antes da hora** (26/10): a roleta do celular pousava na categoria (e a cor da caixa
