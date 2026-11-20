@@ -570,15 +570,15 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 1331 | showToastMessage | - |
+| 1334 | showToastMessage | - |
 
 ## js/11-iniciar.js (6)
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 457 | showToastMessage | - |
-| 459 | getRandomReaction | nickRepertorio |
-| 460 | getRandomReaction | nickSugestaoAceita |
-| 504 | getRandomReaction | botaoEncerrar |
-| 769 | showToastMessage | - |
-| 770 | getRandomReaction | inicioInvalido |
+| 461 | showToastMessage | - |
+| 463 | getRandomReaction | nickRepertorio |
+| 464 | getRandomReaction | nickSugestaoAceita |
+| 508 | getRandomReaction | botaoEncerrar |
+| 773 | showToastMessage | - |
+| 774 | getRandomReaction | inicioInvalido |
