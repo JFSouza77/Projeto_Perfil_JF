@@ -9,6 +9,10 @@ function iniciar() {
     acessCarregar();
     aplicarAcessibilidade();
   } catch (e) {}
+  // 1.9.6: avatar do C.A.O.S. (teste, só no Modo C.A.O.S. com a opção ligada)
+  try {
+    caosAvatarIniciar();
+  } catch (e) {}
   // espinha do C.A.O.S.: as 3 leis e o canal de falas (js/07c)
   try {
     caosEspinhaInstalar();
@@ -823,7 +827,8 @@ function iniciar() {
   });
   document.getElementById("confirmStartBtn").addEventListener("click", beginGameplay);
   // Som no iPhone: o primeiro toque religa o áudio que o Safari tiver suspendido.
-  ["touchend", "pointerdown", "keydown"].forEach((ev) =>
+  // 1.9.6: o "click" também conta (no iPhone, alguns toques só chegam como click)
+  ["touchend", "pointerdown", "click", "keydown"].forEach((ev) =>
     document.addEventListener(ev, audioDestravarNoToque, { capture: true, passive: true }),
   );
   document.addEventListener("visibilitychange", () => {

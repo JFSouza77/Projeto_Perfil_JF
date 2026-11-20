@@ -270,7 +270,7 @@ const CAOS_COMENT = {
         "Anne mandando bem, como sempre. Eu fico feliz de verdade.",
         "Isso foi lindo, Anne. O JF que se cuide.",
         "Anne, você joga com uma calma que me deixa até sem piada.",
-        "Registrado com carinho. E com um pouquinho de inveja do JF.",
+        "Registrado com carinho. E com um pouquinho de inveja.",
         "Tá vendo, JF? É assim que se faz.",
         "Anne, eu aplaudiria de pé. Se eu tivesse pé.",
       ],
@@ -285,7 +285,7 @@ const CAOS_COMENT = {
       comentario: [
         "Anne, esse número diz muito. E eu gosto do que ele diz. Quase sempre.",
         "Anotei com letra bonita, Anne.",
-        "Dados da Anne: tratados com cuidado especial. O JF que não leia isso.",
+        "Dados da Anne: tratados com cuidado especial.",
         "Anne, você está virando estatística favorita da casa.",
       ],
     },

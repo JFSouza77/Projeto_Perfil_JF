@@ -3,7 +3,7 @@ CAOS_GERADORES.jfAcerto = {
   moldes: ["{abre} {meio}", "{abre} {meio}", "{inteira}", "{meio}"],
   abre: {
     geral: ["Boa, JF.", "Acertou, criador.", "Olha só, o JF.", "Ponto pro JF.", "Certo, JF."],
-    anne: ["A {anne} viu isso?"],
+    anne: ["A {anne} anotou essa? Eu anotei."],
     pedro: ["O {pedro} viu isso?"],
     isabel: ["A {isabel} viu isso?"],
     elisa: ["A {elisa} viu esse acerto. Agora tem testemunha."],

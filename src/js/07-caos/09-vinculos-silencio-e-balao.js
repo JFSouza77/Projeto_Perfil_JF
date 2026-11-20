@@ -159,22 +159,8 @@ function caosVinculoResenha(f, pick, suave) {
       ]),
     );
 }
-function caosAusentesTalvez() {
-  try {
-    if (stats.totalDrawn !== 2 || !caosOncePerMatch("ausentes") || CURRENT_MODE === "junior") return;
-    const fichas = Object.values(fichasTodas() || {}),
-      jaJogou = (f) => fichas.some((x) => x && x.nome && f(x.nome));
-    const temJf = players.some((p) => isJfName(p.name)),
-      temAnne = players.some((p) => isAnneName(p.name));
-    const conheceJf = jaJogou(isJfName),
-      conheceAnne = jaJogou(isAnneName);
-    let bank = null;
-    if (!temJf && !temAnne && conheceJf && conheceAnne && Math.random() < 0.6) bank = REACTIVE_VOICE.ausentes.ambos;
-    else if (temJf && !temAnne && conheceAnne && Math.random() < 0.45) bank = REACTIVE_VOICE.ausentes.anne;
-    else if (!temJf && temAnne && conheceJf && Math.random() < 0.45) bank = REACTIVE_VOICE.ausentes.jf;
-    if (bank) caosToastAtrasado(() => showToastMessage(getRandomReaction(bank)), 1500);
-  } catch (e) {}
-}
+// 1.9.6 (pedido do JF, 18/11/2026): o "cadê a Anne / cadê o JF" tratava os dois como casal. Desligado.
+function caosAusentesTalvez() {}
 function caosSatisfacaoTalvez() {
   try {
     if (gameEnded || stats.totalDrawn < 4 || document.getElementById("caosPergunta")) return;
@@ -727,6 +713,8 @@ function showToastMessage(msg, afterClose, bypassSilence, priority, noFreeze, _d
   const msgAntesTropeco = msg;
   if (!priority && !viradaManual) msg = caosTropeco(msg, caosBancoFala);
   const tropecou = msg !== msgAntesTropeco;
+  // 1.9.6 (núcleo 2.0.0): o bordão "Rapaz…" do criador, de vez em quando (nunca junto com tropeço nem em fala de prioridade)
+  if (!priority && !bypassSilence && !viradaManual && !tropecou) msg = caosBordao(msg);
   if (
     caosEmoFala &&
     caosUltEmojiAdd &&

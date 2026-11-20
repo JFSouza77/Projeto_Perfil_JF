@@ -28,8 +28,32 @@ segura**. Sem rodeio: é pra achar rápido.
 | Teste online "Modo C.A.O.S. até o fim" estourou 300 s | visto 1 vez na bateria inteira da 1.9.1 (máquina carregada); `--so=caos` passou 8/8 na 1.9.1 e na 1.9.0. Se repetir sozinho, aí caçar |
 | Build (`--testar`) parou em "adicionar Ana" | o roteiro do build.js e o auditar_botoes esperam o Adicionar incompleto; desde a 1.9.1 ele fica `.bloqueado` (nunca `:disabled`) |
 | Teste falhou logo depois de mudar fala | inventário desatualizado: `node ferramentas/caos_inventario.js`; contagens fixas em `teste_guia` e afins |
+| Voz nova do C.A.O.S. robótica no iPhone | WebAudio parado: `audioDestravarNoToque` (06-voz) destrava com efeitos OU voz ligada; `vozNuvemUsa` |
+| Avatar do C.A.O.S. não aparece | opção `acessCfg.avatar` (Acessibilidade), só no Modo C.A.O.S.: `caosAvatarNaHora` (17b-avatar-mesa) |
 
 ## Registro (mais novo primeiro)
+
+### 20/11/2026 · 1.9.6 · pendências da semana (pedido do JF: "o que tiver pendente, faça hoje")
+
+- **Falas de casal JF + Anne (pedido do JF, 18/11).** O JF pediu pra desconectar os dois como casal, mantendo as
+  coisas bonitas sobre a Anne e as travas dela. Mudou: `caosCasal()` fica sempre `null` e as funções de casal não falam
+  mais; saíram os bancos `perfilJogador.casal`, `duploPadrao.casal`, `especial.namoradosCasal`, `ausentes` e
+  `autoConsciencia.jfAnne`; 5 frases soltas dos geradores e dos apelidos foram reescritas. +2 falas bonitas da Anne em
+  `boasVindas.anneVolta` pra fechar o total em 4305. Teste: `teste_bordao` (casal desligado), `teste_cerebro`.
+- **Voz robótica no iPhone (achado do Wally na Carteira, 17/11).** Causa no Perfil: `audioDestravarNoToque` saía cedo
+  com os efeitos sonoros desligados, mesmo com a voz ligada, e a voz nova (que toca pelo WebAudio) nunca destravava.
+  Mudou: destrava com efeitos OU voz ligada, e o `click` também conta. Teste: `teste_bordao`; `teste_voz` com o
+  servidor local e o Azure de mentira.
+- **Núcleo 2.0.0 no motor: bordão "Rapaz…".** `caosBordao` (08-hall) abre a fala com "Rapaz…" de vez em quando: nunca no
+  Júnior, com criança ou idade sem marcar, em fala curta, pergunta ou com interjeição; no máximo 1 a cada 6 cartas e 3
+  por partida. Teste: `teste_bordao`.
+- **Conferência de segurança.** Save importado já era validado (`importSaveConferir`). A memória do C.A.O.S. importada
+  ganhou limite (`CAOS_MEMORIA_MAX`). O servidor lia o pedido inteiro e media em letras; agora `lerCorpoLimitado` mede
+  em bytes enquanto lê e para no limite (vale quando o JF publicar o Worker). Teste: `teste_contas` e `teste_voz` com o
+  servidor local; pedido de 6 KB em `/sala` volta 413.
+- **Avatar do C.A.O.S. no Modo C.A.O.S. (teste).** Veio da Carteira (`js/avatar.js` do Wally) embrulhado em
+  `CaosAvatar` (17-avatar.js, sem nome solto) e o CSS com `.caos-avatar`. `17b-avatar-mesa.js` liga só no Modo C.A.O.S.
+  com a opção da Acessibilidade e escolhe a forma pelo humor do console. Teste: `teste_avatar`.
 
 ### 31/10/2026 · 1.9.2 · respostas do JF aos prints 8, 11 e 12
 

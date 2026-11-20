@@ -40,14 +40,14 @@ Regra do JF (26/10/2026): nesta semana, bug, print ou sugestão que ele mandar f
 pra poupar créditos. Só corrige na hora o que ele pedir "pra agora", e só aquilo. Na **quinta, 29/10, às 18h**
 (Brasília), os créditos renovam e começam os patches com tudo desta lista.
 
-- [ ] **Voz no iPhone (achado do Wally, 17/11):** na Carteira, a voz natural saía robótica no iPhone porque o WebAudio
+- [x] (1.9.6, 20/11) **Voz no iPhone (achado do Wally, 17/11):** na Carteira, a voz natural saía robótica no iPhone porque o WebAudio
   só era destravado no 1º `pointerdown`. O iOS pede o destrave no `touchend` e trava de novo quando o app vai pro fundo
   (estado "interrupted"). Conferir o `audioDestravarNoToque` do Perfil: destravar em todo toque e dar `resume()` em
   qualquer estado diferente de "running". Agenda normal (19/11+).
-- [ ] **Núcleo 2.0.0 no Perfil (19/11+):** aplicar o `fala.bordao` ("Rapaz…", nunca no Júnior nem com criança na mesa), o `fala.porIdade` e o `jeitoDeReagir` novo no motor do jogo, com o
+- [ ] (1.9.6, 20/11: o bordão entrou; falta o `porIdade` e o resto do `jeitoDeReagir`) **Núcleo 2.0.0 no Perfil (19/11+):** aplicar o `fala.bordao` ("Rapaz…", nunca no Júnior nem com criança na mesa), o `fala.porIdade` e o `jeitoDeReagir` novo no motor do jogo, com o
   filtro da mesa (idades misturadas: vale o mais cuidadoso).
 
-- [ ] **QUINTA 19/11, primeiro item (pedido do JF, 18/11): desligar o "casal" JF + Anne.** Tirar ou reescrever as
+- [x] (1.9.6, 20/11) **QUINTA 19/11, primeiro item (pedido do JF, 18/11): desligar o "casal" JF + Anne.** Tirar ou reescrever as
   falas e piadas que ligam os dois como casal (dormir no sofá, briga de casal, ciúme, "a patroa" etc.) nos geradores
   (`jfChegou`, `anneChegou`, `boasVindas`…), nas falas do C.A.O.S., nos apelidos e nos vínculos. **Fica:** o conteúdo
   bonito sobre a Anne, as cartas e as travas de conteúdo dela. **Pode sair:** a trava de ADM ligada a ela. Manter 0 ou 5

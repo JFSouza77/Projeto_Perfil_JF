@@ -10,6 +10,21 @@
 //  · o que ainda não entrou fica em docs/Novidades_Rascunho.md.
 const NOVIDADES = [
   {
+    v: "Beta 1.9.6",
+    data: "20/11/2026",
+    nome: "Corpo do C.A.O.S.",
+    t: "O C.A.O.S. ganhou um corpo em teste, pegou um bordão novo e a voz voltou a tocar certinho no iPhone.",
+    itens: [
+      "🤖 Avatar do C.A.O.S. (em teste): ligue em Acessibilidade, na opção Avatar do C.A.O.S. No Modo C.A.O.S., ele aparece no canto da tela como uma telinha neon que flutua e muda de forma com o humor: anjinho quando está calmo, festeiro na alegria, capetinha na raiva e sirene no medo.",
+      "💬 Rapaz…: o C.A.O.S. pegou a mania do criador e, de vez em quando, começa a fala com \"Rapaz…\". É raro, pra não cansar, e nunca acontece no Júnior nem com criança na mesa.",
+      "🔊 Voz no iPhone: com os efeitos sonoros desligados e a voz do C.A.O.S. ligada, a voz nova voltou a tocar. Antes ela caía na voz robótica do aparelho.",
+    ],
+    qol: [
+      "🧹 Falas revistas: algumas piadas do C.A.O.S. sobre quem senta na mesa saíram ou foram reescritas.",
+      "🛡️ Memória do C.A.O.S.: um código de memória grande demais pra trazer agora é recusado com um aviso, sem travar o aparelho.",
+    ],
+  },
+  {
     v: "Beta 1.9.5",
     ate: "1.9.5.2", // a lista junta os ajustes até essa versão
     data: "06/11/2026",

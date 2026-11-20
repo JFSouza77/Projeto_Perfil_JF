@@ -1284,12 +1284,15 @@ function caosMemoriaExportar() {
     navigator.clipboard.writeText(code).then(() => caosAvisoModal(msg + " O código já foi copiado."), manual);
   else manual();
 }
+const CAOS_MEMORIA_MAX = 4e6; // caracteres do código da memória (a de verdade fica bem abaixo)
 function caosMemoriaImportar() {
   caosPromptModal("Cole aqui o código da memória do C.A.O.S. (começa com CAOSMEM1.):", "", (code) => {
     if (!code) return;
     let pacote = null;
     try {
       const t = String(code).trim();
+      // 1.9.6 (conferência de segurança): código gigante não entra (o armazenamento do aparelho tem uns 5 MB)
+      if (t.length > CAOS_MEMORIA_MAX) throw new Error("grande");
       if (t.indexOf(CAOS_MEMORIA_PREFIXO) !== 0) throw new Error("prefixo");
       pacote = JSON.parse(decodeURIComponent(atob(t.slice(CAOS_MEMORIA_PREFIXO.length))));
     } catch (e) {
@@ -1827,7 +1830,7 @@ function caosPartidaMarkdown() {
   const minutos = caosPartidaInicioAt ? caosMinutosPartida() : null;
   L.push("# Perfil JF — Dados da partida", "");
   L.push("- **Exportado em:** " + agora.toLocaleString("pt-BR"));
-  L.push("- **Versão:** Beta 1.9.5.2 · C.A.O.S. 5.6.1");
+  L.push("- **Versão:** Beta 1.9.6 · C.A.O.S. 5.7.0");
   if (matchId) L.push("- **Partida:** `" + matchId + "`");
   L.push("- **Modo:** " + modoNome + " · **Formato:** " + (equipe ? "Equipe" : "Versus"));
   L.push("- **Condição de vitória:** " + wcLabel);
@@ -2369,7 +2372,7 @@ function caosPartidaMarkdown() {
     raw = JSON.stringify(
       {
         exportadoEm: agora.toISOString(),
-        versao: "Beta 1.9.5.2 · C.A.O.S. 5.6.1",
+        versao: "Beta 1.9.6 · C.A.O.S. 5.7.0",
         modo: CURRENT_MODE,
         formato: CURRENT_FORMAT,
         condicaoVitoria: wc,
