@@ -195,7 +195,7 @@ function caosPeriodo(h) {
 function caosDataEspecial(a) {
   if (a.mes === 12 && (a.dia === 24 || a.dia === 25)) return "natal";
   if ((a.mes === 12 && a.dia === 31) || (a.mes === 1 && a.dia === 1)) return "anoNovo";
-  if (a.mes === 6 && a.dia === 12) return caosCasal() ? "namoradosCasal" : "namorados";
+  if (a.mes === 6 && a.dia === 12) return "namorados"; // 1.9.6 (JF, 18/11): sem a fala de casal JF + Anne
   if (a.mes === 10 && a.dia === 12) return "criancas";
   if (a.mes === 10 && a.dia === 31) return "halloween";
   if (a.dow === 5 && a.dia === 13) return "sexta13";
@@ -249,9 +249,8 @@ function caosRelogioNaCarta() {
 }
 function caosAutoConsciencia() {
   const A = REACTIVE_VOICE.autoConsciencia;
-  const jf = players.some((p) => isJfName(p.name)),
-    anne = players.some((p) => isAnneName(p.name));
-  if (jf && anne && Math.random() < 0.6) return getRandomReaction(A.jfAnne);
+  const jf = players.some((p) => isJfName(p.name));
+  // 1.9.6 (JF, 18/11): sem o "Anne, briga com o JF" (era piada de casal)
   if (jf && Math.random() < 0.7) return getRandomReaction(A.jf);
   return getRandomReaction(A.solo);
 }

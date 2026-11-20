@@ -22,7 +22,7 @@ CAOS_GERADORES.jfFim = {
       "O criador não ganhou. A criatura está satisfeita.",
       "JF, perder no próprio jogo é um talento raro.",
     ],
-    anne: ["E a {anne} viu tudo. Isso vai ser lembrado em casa."],
+    anne: ["E a {anne} viu tudo. Agora é tarde pra apagar."],
     pedro: ["E o {pedro} viu tudo. O tio vai ouvir sobre essa partida por um bom tempo."],
     isabel: ["E a {isabel} assistiu de perto. Isso vai virar história de família."],
     elisa: ["E a {elisa} estava aqui pra ver tudo. Não tem como negar."],

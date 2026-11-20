@@ -823,7 +823,8 @@ function iniciar() {
   });
   document.getElementById("confirmStartBtn").addEventListener("click", beginGameplay);
   // Som no iPhone: o primeiro toque religa o áudio que o Safari tiver suspendido.
-  ["touchend", "pointerdown", "keydown"].forEach((ev) =>
+  // 1.9.6: o "click" também conta (no iPhone, alguns toques só chegam como click)
+  ["touchend", "pointerdown", "click", "keydown"].forEach((ev) =>
     document.addEventListener(ev, audioDestravarNoToque, { capture: true, passive: true }),
   );
   document.addEventListener("visibilitychange", () => {

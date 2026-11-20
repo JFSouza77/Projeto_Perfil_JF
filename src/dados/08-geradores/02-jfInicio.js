@@ -19,7 +19,7 @@ CAOS_GERADORES.jfInicio = {
       "o desenvolvedor está entre nós. Se algo quebrar, finjam que não viram.",
       "o JF jura que não decorou as cartas. Eu tenho minhas dúvidas.",
     ],
-    anne: ["a {anne} e o JF na mesma mesa. Eu vou fingir neutralidade."],
+    anne: ["a {anne} está na mesa. O JF que se cuide."],
     pedro: ["o {pedro} contra o JF. Tio e sobrinho. Eu trouxe pipoca.", "o {pedro} quer provar que é o melhor da família. O JF que se cuide."],
     isabel: ["a {isabel} está de olho no JF. Eu também.", "a {isabel} veio torcer contra o tio. Eu apoio."],
     elisa: ["a {elisa} vai ver o JF jogar. Sem pressão, JF.", "a {elisa} está na mesa, então o JF vai ter que dar o exemplo."],

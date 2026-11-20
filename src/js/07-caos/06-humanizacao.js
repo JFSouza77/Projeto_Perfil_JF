@@ -12,6 +12,7 @@ function caosHumanizaReset() {
   caosPausaInicio = null;
   caosPausaDegrau = -1;
   caosTropecos = { n: 0, ult: -99, nomes: {} };
+  if (typeof caosBordaoReset === "function") caosBordaoReset(); // 1.9.6: o bordão conta por partida
 }
 function caosToastSegurarInicio() {
   clearTimeout(caosSeguraRef);

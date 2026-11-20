@@ -227,6 +227,35 @@ function caosFalaFechaSozinha(corpo) {
   if (/[!?]$/.test(t) || /\p{Extended_Pictographic}\uFE0F?\s*$/u.test(t)) return true;
   return t.split(/(?<=[.!?…])\s+/).filter((x) => x.length > 3).length >= 2;
 }
+/* 1.9.6 · Núcleo 2.0.0 (fala.bordao, ok do JF em 17/11/2026): o C.A.O.S. pegou a mania do criador e, de vez em
+   quando, abre a fala com "Rapaz…". No Perfil: nunca no Júnior, nunca com criança (menos de 12) ou idade sem marcar
+   na mesa, nem em fala curta, pergunta ou aviso de regra. No máximo 1 a cada 6 cartas e 3 por partida, pra não cansar. */
+const CAOS_BORDAO = "Rapaz…";
+const CAOS_BORDAO_CHANCE = 0.12;
+let caosBordaoEstado = { n: 0, carta: -99 };
+function caosBordaoPode() {
+  if (CURRENT_MODE === "junior" || !players.length) return false;
+  if (players.some((p) => !p || (idadeNorm(p.idade) !== "doze" && idadeNorm(p.idade) !== "dezesseis"))) return false;
+  return caosBordaoEstado.n < 3 && stats.totalDrawn - caosBordaoEstado.carta >= 6;
+}
+function caosBordao(msg) {
+  try {
+    if (typeof msg !== "string" || msg.indexOf("[C.A.O.S.] ") !== 0) return msg;
+    const corpo = msg.slice("[C.A.O.S.] ".length);
+    if (corpo.length < 30 || corpo.length > 160 || /\?\s*$/.test(corpo)) return msg;
+    // já começa com interjeição, nome entre colchetes ou emoji: deixa como está
+    if (/^(rapaz|ah|ai|ih|eita|opa|ops|olha|uau|nossa|hm+|ué|oxe|vish|caramba|\p{Extended_Pictographic}|\[|\(|"|«)/iu.test(corpo)) return msg;
+    if (!caosBordaoPode() || Math.random() >= CAOS_BORDAO_CHANCE) return msg;
+    caosBordaoEstado.n++;
+    caosBordaoEstado.carta = stats.totalDrawn;
+    return "[C.A.O.S.] " + CAOS_BORDAO + " " + corpo;
+  } catch (e) {
+    return msg;
+  }
+}
+function caosBordaoReset() {
+  caosBordaoEstado = { n: 0, carta: -99 };
+}
 function caosTropeco(msg, bank) {
   try {
     if (typeof msg !== "string" || msg.indexOf("[C.A.O.S.]") !== 0 || msg.length > 150 || msg.length < 24) return msg;

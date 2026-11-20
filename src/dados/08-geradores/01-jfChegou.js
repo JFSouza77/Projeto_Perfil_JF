@@ -59,7 +59,7 @@ CAOS_GERADORES.jfChegou = {
     ],
     anne: [
       "E a {anne} já está aqui. Vou me comportar em dobro.",
-      "Com a {anne} na mesa, a disputa hoje é em casa.",
+      "Com a {anne} na mesa, o JF vai ter concorrência de verdade.",
       "A {anne} chegou antes. Já começou perdendo, JF.",
     ],
     pedro: [

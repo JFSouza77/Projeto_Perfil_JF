@@ -441,7 +441,9 @@ function audioRetomar(c) {
 // Qualquer toque na tela religa o som se ele estiver parado. Se 3 toques seguidos não
 // adiantarem (contexto travado), troca por um novo.
 function audioDestravarNoToque() {
-  if (!soundOn) return;
+  // 1.9.6 (achado do Wally na Carteira, 17/11): a voz nova do C.A.O.S. também toca pelo WebAudio. Com os efeitos
+  // desligados e a voz ligada, o som nunca era destravado e a fala caía na voz robótica do aparelho.
+  if (!soundOn && !(typeof caosVoiceOn !== "undefined" && caosVoiceOn)) return;
   const c = window.audioCtx;
   if (c && c.state === "running") {
     audioTravadoToques = 0;
