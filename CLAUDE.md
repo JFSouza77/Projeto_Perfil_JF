@@ -68,6 +68,11 @@ Todas as regras combinadas (conversa, agenda, quem decide, versões, segurança)
 - **Propostas do Wally (JF, 17/11/2026):** o que o Wally trouxer pelo correio dizendo que precisa do ok do JF (núcleo do
   C.A.O.S. e afins) já tem o ok dele: o Code aplica sem perguntar nem ficar confirmando. Se ainda assim sobrar dúvida, guarda
   pra lembrar o JF na quinta 19/11.
+- **Pausa do fim de novembro (JF, 20/11/2026):** surgiu um projeto do serviço do JF. A semana do Perfil foi adiada pro
+  último fim de semana do mês (**26, 27 e 28/11**). Na **quinta 26/11** fica a agenda, mas só o que for **realmente
+  necessário**. Até lá e depois disso, o Code **só anota** (pendências, sugestões, correio), sem trabalho pesado nem
+  temporadas. **A partir da primeira quinta de dezembro (3/12) a agenda volta ao normal.** Pedido urgente do JF
+  continua valendo na hora.
 - **Código comentado com o porquê (JF, 13/11/2026):** todo trecho novo ou mexido leva um comentário curto dizendo **por
   que** existe (a versão e o pedido: "// 1.9.5 (pedido do JF): ..."), não só o que faz. Assim qualquer IA que abrir o
   código entende a razão. Vale pro Perfil e pra Carteira.
