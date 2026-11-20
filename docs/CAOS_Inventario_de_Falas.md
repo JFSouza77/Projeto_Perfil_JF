@@ -134,14 +134,14 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
 | 90 | showToastMessage | - |
-| 888 | caosGerarFala | gerador hostCaiu |
-| 889 | showToastMessage | - |
-| 2029 | showToastMessage | - |
-| 2170 | showToastMessage | - |
-| 2218 | showToastMessage | - |
-| 2219 | showToastMessage | - |
-| 2596 | getRandomReaction | vozCalada |
-| 3517 | showToastMessage | - |
+| 890 | caosGerarFala | gerador hostCaiu |
+| 891 | showToastMessage | - |
+| 2031 | showToastMessage | - |
+| 2172 | showToastMessage | - |
+| 2220 | showToastMessage | - |
+| 2221 | showToastMessage | - |
+| 2598 | getRandomReaction | vozCalada |
+| 3519 | showToastMessage | - |
 
 ## js/05o-corrida.js (5)
 
@@ -180,16 +180,16 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 195 | getRandomReaction | - |
-| 196 | showToastMessage | - |
-| 295 | getRandomReaction | - |
-| 296 | showToastMessage | - |
-| 498 | caosFalarDepois | - |
-| 499 | showToastMessage | - |
-| 520 | getRandomReaction | - |
-| 526 | getRandomReaction | - |
-| 540 | getRandomReaction | - |
-| 612 | getRandomReaction | - |
+| 198 | getRandomReaction | - |
+| 199 | showToastMessage | - |
+| 298 | getRandomReaction | - |
+| 299 | showToastMessage | - |
+| 565 | caosFalarDepois | - |
+| 566 | showToastMessage | - |
+| 587 | getRandomReaction | - |
+| 593 | getRandomReaction | - |
+| 607 | getRandomReaction | - |
+| 679 | getRandomReaction | - |
 
 ## js/05y2-medalhas.js (2)
 
@@ -508,16 +508,16 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 199 | showToastMessage | - |
-| 559 | caosGerarFala | gerador pausaHumor |
-| 560 | getRandomReaction | pausaHumor |
-| 589 | caosFalaAgendar | - |
-| 591 | caosGerarFala | gerador pausaVolta |
-| 592 | getRandomReaction | pausaVolta |
-| 616 | caosFalaAgendar | - |
-| 617 | getRandomReaction | retaFinal |
-| 636 | getRandomReaction | - |
-| 638 | showToastMessage | - |
+| 221 | showToastMessage | - |
+| 581 | caosGerarFala | gerador pausaHumor |
+| 582 | getRandomReaction | pausaHumor |
+| 611 | caosFalaAgendar | - |
+| 613 | caosGerarFala | gerador pausaVolta |
+| 614 | getRandomReaction | pausaVolta |
+| 638 | caosFalaAgendar | - |
+| 639 | getRandomReaction | retaFinal |
+| 658 | getRandomReaction | - |
+| 660 | showToastMessage | - |
 
 ## js/07-caos/09-vinculos-silencio-e-balao.js (23)
 

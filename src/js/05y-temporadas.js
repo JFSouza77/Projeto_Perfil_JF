@@ -316,12 +316,14 @@ function temporadaEstiloPerguntar(p, depois) {
 function temporadaTitulosCabecalho() {
   const t = typeof temporadaAtual === "function" ? temporadaAtual() : null;
   if (t && t.id === "aniversario") return "🎂 Títulos de aniversário";
+  if (t && t.id === "carnaval") return "🎭 Títulos de Carnaval";
   return t && t.id === "anoNovo" ? "🎆 Títulos de Ano Novo" : "🎄 Títulos de Natal";
 }
 function temporadaTitulosHtml(larga) {
   const t = typeof temporadaAtual === "function" ? temporadaAtual() : null;
   if (t && t.id === "anoNovo" && typeof larga === "function") return temporadaTitulosAnoNovo(larga);
   if (t && t.id === "aniversario" && typeof larga === "function") return temporadaTitulosAniversario(larga);
+  if (t && t.id === "carnaval" && typeof larga === "function") return temporadaTitulosCarnaval(larga);
   if (!t || t.id !== "natal" || typeof larga !== "function") return "";
   const pj = (nome) => players.find((p) => p.name === nome);
   const nomeH = (p) => (p ? playerNameHtml(p.name, p.color, p.avatar) : "?");
@@ -474,6 +476,35 @@ function temporadaTitulosAniversario(larga) {
   // 🥳 Penetra da Festa: quem mais errou (zoeira de leve)
   const pen = players.filter((p) => (p.errosPartida || 0) >= 2).sort((a, b) => b.errosPartida - a.errosPartida)[0];
   if (pen) h += larga("🥳", "Penetra da Festa", nomeH(pen), `chutou ${pen.errosPartida} palpites sem ser convidado`, "#a78bfa", { t: "aniversarioPenetra", n: pen.name, v: pen.errosPartida });
+  return h;
+}
+
+/* Temporadas · item 11 (20/11/2026): 5 títulos de Carnaval, no mesmo formato. Só com dado de verdade. */
+function temporadaTitulosCarnaval(larga) {
+  const pj = (nome) => players.find((p) => p.name === nome);
+  const nomeH = (p) => (p ? playerNameHtml(p.name, p.color, p.avatar) : "?");
+  const ac = (history || []).filter((h) => typeof h.cluesUsed === "number" && h.playerName);
+  let h = "";
+  // 👑 Destaque da Folia: quem mais acertou
+  const conta = {};
+  ac.forEach((x) => (conta[x.playerName] = (conta[x.playerName] || 0) + 1));
+  const dest = Object.entries(conta).filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1])[0];
+  if (dest) h += larga("👑", "Destaque da Folia", nomeH(pj(dest[0])), `acertou ${dest[1]} cartas e brilhou mais que o carro alegórico`, "#facc15", { t: "carnavalDestaque", n: dest[0], v: dest[1] });
+  // 💃 Comissão de Frente: o primeiro acerto da partida
+  const frente = ac[0];
+  if (frente) h += larga("💃", "Comissão de Frente", nomeH(pj(frente.playerName)), "acertou a primeira carta e abriu o desfile", "#f472b6", { t: "carnavalFrente", n: frente.playerName, v: frente.cluesUsed });
+  // 🥁 Mestre de Bateria: o acerto mais rápido
+  const rapido = ac.filter((x) => typeof x.timeTakenMs === "number" && x.timeTakenMs >= 1500).sort((a, b) => a.timeTakenMs - b.timeTakenMs)[0];
+  if (rapido) {
+    const seg = Math.max(1, Math.round(rapido.timeTakenMs / 1000));
+    h += larga("🥁", "Mestre de Bateria", nomeH(pj(rapido.playerName)), `acertou uma carta em ${seg} s, no ritmo da bateria`, "#22d3ee", { t: "carnavalBateria", n: rapido.playerName, v: seg });
+  }
+  // 🔟 Nota Dez: o acerto com menos dicas
+  const dez = ac.slice().sort((a, b) => a.cluesUsed - b.cluesUsed)[0];
+  if (dez) h += larga("🔟", "Nota Dez", nomeH(pj(dez.playerName)), `acertou uma carta com ${dez.cluesUsed} ${dez.cluesUsed === 1 ? "dica" : "dicas"}: nota dez, nota dez`, "#22c55e", { t: "carnavalNotaDez", n: dez.playerName, v: dez.cluesUsed });
+  // 🎭 Folião Perdido: quem mais errou (zoeira de leve)
+  const perd = players.filter((p) => (p.errosPartida || 0) >= 2).sort((a, b) => b.errosPartida - a.errosPartida)[0];
+  if (perd) h += larga("🎭", "Folião Perdido", nomeH(perd), `chutou ${perd.errosPartida} palpites e perdeu o bloco`, "#a78bfa", { t: "carnavalPerdido", n: perd.name, v: perd.errosPartida });
   return h;
 }
 

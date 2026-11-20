@@ -128,7 +128,7 @@ temporadas, na ordem do calendário.
 11. [ ] As outras 14 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween, com o Doces ou travessuras).
     - [x] Carnaval · enfeite (confete e serpentinas), selo, 15 falas, 5 cores e 5 emojis.
     - [x] Carnaval · 5+5 itens de lojinha (Modo C.A.O.S.: Chuva de Confete, Marchinha, Trio Elétrico, Máscara, Abadá VIP; Corrida: Chuva de Confete, Bloco de Rua, Trio Elétrico, Fantasia Premiada, Passo de Frevo).
-    - [ ] Carnaval · 5 títulos.
+    - [x] Carnaval · 5 títulos (Destaque da Folia, Comissão de Frente, Mestre de Bateria, Nota Dez, Folião Perdido).
     - [ ] Carnaval · 10 cartas valendo o dobro.
     Inclui as 2 datas novas do JF (06/11/2026), já reconhecidas pelo motor: **6/9 · Aniversário do Perfil JF** (o C.A.O.S.
     lembra quantos anos o jogo faz e conta a história: `docs/Historia_do_Perfil.md`) e **20/9 · Aniversário do C.A.O.S.**
@@ -290,3 +290,4 @@ temporadas, na ordem do calendário.
   Sombrinha de frevo, Máscara) e 5 emojis (🎺 💃 🎷 🪘 🎊). A gafe de data passou a reconhecer as falas de Carnaval.
   Teste: `teste_temporadas` (6 checagens novas).
   Lojinha de Carnaval: 5 itens em cada loja, todos virando itens de sempre na compra (`teste_temporadas`, 3 checagens).
+  Títulos de Carnaval no resumo da partida, com comentário do C.A.O.S. (`teste_temporadas`, 3 checagens).
