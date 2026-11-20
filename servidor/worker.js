@@ -190,6 +190,35 @@ async function doFetch(stub, req) {
     throw e;
   }
 }
+// 1.9.6 (conferência de segurança, dica do Wally/GPT): mede o pedido em BYTES enquanto lê e para no limite, sem
+// guardar o resto na memória. Antes o corpo era lido inteiro e só depois medido (e em letras, não em bytes).
+async function lerCorpoLimitado(req, maxBytes) {
+  const cl = Number(req.headers.get("Content-Length") || 0);
+  if (cl > maxBytes) return null;
+  if (!req.body) return "";
+  const leitor = req.body.getReader();
+  const partes = [];
+  let total = 0;
+  for (;;) {
+    const { done, value } = await leitor.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > maxBytes) {
+      try {
+        await leitor.cancel();
+      } catch (e) {}
+      return null;
+    }
+    partes.push(value);
+  }
+  const tudo = new Uint8Array(total);
+  let i = 0;
+  for (const pt of partes) {
+    tudo.set(pt, i);
+    i += pt.byteLength;
+  }
+  return new TextDecoder().decode(tudo);
+}
 export default {
   async fetch(req, env) {
     try {
@@ -224,9 +253,9 @@ async function atender(req, env) {
     }
     if (!ok) return json({ erro: "origem" }, 403, h);
     if (p === "/reporte" && req.method === "POST") {
-      const corpo = await req.text();
       // 25/10/2026: com imagens (até 3 prints/fotos reduzidos) o corpo cresce; o texto continua limitado a 3000 no DO
-      if (corpo.length > 900000) return json({ erro: "grande" }, 413, h);
+      const corpo = await lerCorpoLimitado(req, 900000);
+      if (corpo === null) return json({ erro: "grande" }, 413, h);
       const r = await doFetch(caixa(), new Request("https://caixa/reporte", { method: "POST", body: corpo, headers: { "CF-Connecting-IP": req.headers.get("CF-Connecting-IP") || "" } }));
       return json(await r.json(), r.status, h);
     }
@@ -235,8 +264,8 @@ async function atender(req, env) {
       return json(await r.json(), 200, h);
     }
     if (p === "/sala" && req.method === "POST") {
-      const corpo = await req.text();
-      if (corpo.length > 2000) return json({ erro: "grande" }, 413, h);
+      const corpo = await lerCorpoLimitado(req, 4000);
+      if (corpo === null) return json({ erro: "grande" }, 413, h);
       const r = await doFetch(sinal(), new Request("https://sinal/sala", { method: "POST", body: corpo, headers: { "CF-Connecting-IP": req.headers.get("CF-Connecting-IP") || "" } }));
       return json(await r.json(), r.status, h);
     }
@@ -247,8 +276,8 @@ async function atender(req, env) {
       return doFetch(contas(), req);
     }
     if (p.startsWith("/conta/") && req.method === "POST") {
-      const corpo = await req.text();
-      if (corpo.length > 12000) return json({ erro: "grande" }, 413, h);
+      const corpo = await lerCorpoLimitado(req, 24000);
+      if (corpo === null) return json({ erro: "grande" }, 413, h);
       const r = await doFetch(contas(), new Request("https://contas" + p, { method: "POST", body: corpo, headers: { "CF-Connecting-IP": req.headers.get("CF-Connecting-IP") || "" } }));
       return json(await r.json(), r.status, h);
     }
@@ -257,8 +286,8 @@ async function atender(req, env) {
     if (p === "/voz/estado" && req.method === "GET") return json({ ligada: vozesDoServidor(env).length > 0 }, 200, h);
     if (p === "/voz" && req.method === "POST") {
       if (!vozesDoServidor(env).length) return json({ erro: "sem_voz" }, 503, h);
-      const corpo = await req.text();
-      if (corpo.length > 1500) return json({ erro: "grande" }, 413, h);
+      const corpo = await lerCorpoLimitado(req, 3000);
+      if (corpo === null) return json({ erro: "grande" }, 413, h);
       const r = await doFetch(voz(), new Request("https://voz/voz", { method: "POST", body: corpo, headers: { "CF-Connecting-IP": req.headers.get("CF-Connecting-IP") || "" } }));
       const cab = new Headers(r.headers);
       Object.entries(h).forEach(([k, v]) => cab.set(k, v));

@@ -1284,12 +1284,15 @@ function caosMemoriaExportar() {
     navigator.clipboard.writeText(code).then(() => caosAvisoModal(msg + " O código já foi copiado."), manual);
   else manual();
 }
+const CAOS_MEMORIA_MAX = 4e6; // caracteres do código da memória (a de verdade fica bem abaixo)
 function caosMemoriaImportar() {
   caosPromptModal("Cole aqui o código da memória do C.A.O.S. (começa com CAOSMEM1.):", "", (code) => {
     if (!code) return;
     let pacote = null;
     try {
       const t = String(code).trim();
+      // 1.9.6 (conferência de segurança): código gigante não entra (o armazenamento do aparelho tem uns 5 MB)
+      if (t.length > CAOS_MEMORIA_MAX) throw new Error("grande");
       if (t.indexOf(CAOS_MEMORIA_PREFIXO) !== 0) throw new Error("prefixo");
       pacote = JSON.parse(decodeURIComponent(atob(t.slice(CAOS_MEMORIA_PREFIXO.length))));
     } catch (e) {
