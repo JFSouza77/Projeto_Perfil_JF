@@ -754,9 +754,7 @@ function caosDuploPadrao(idx) {
     ac = p;
     tipo = "acidoAgora";
   } else return;
-  const casal =
-    players.length >= 3 && ((isJfName(ac.name) && isAnneName(su.name)) || (isAnneName(ac.name) && isJfName(su.name)));
-  if (casal && Math.random() < 0.5) tipo = "casal";
+  // 1.9.6 (pedido do JF, 18/11/2026): sem a variante "casal" (JF + Anne) do Suave × Ácido.
   caosDuploN++;
   caosDuploCarta = agora;
   caosLog("duploPadrao", `${su.name} (Suave) × ${ac.name} (${playerHumor(ac)}) · ${tipo}`);

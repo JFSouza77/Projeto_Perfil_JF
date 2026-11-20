@@ -991,78 +991,19 @@ function caosPerfilCadastro(p) {
   if (!op.length || R() >= 0.6) return null;
   return op[Math.floor(R() * op.length)]() || null;
 }
+// 1.9.6 (pedido do JF, 18/11/2026): o JF e a Anne não são mais um casal. As piadas de casal saíram (as falas
+// bonitas sobre a Anne ficam); esta chave fica sempre desligada, então nenhum caminho de "casal" fala mais.
 function caosCasal() {
-  if (players.length < 3) return null;
-  const j = players.findIndex((p) => isJfName(p.name)),
-    a = players.findIndex((p) => isAnneName(p.name));
-  return j >= 0 && a >= 0 ? { j, a } : null;
+  return null;
 }
-function caosCasalPode() {
-  return stats.totalDrawn - (caosMesa.casalCarta ?? -99) >= 3;
+// As chamadas ficam (acerto, erro, escolha de quem volta, fim da partida), mas não dizem mais nada.
+function caosCasalErro() {
+  return "";
 }
-function caosCasalMarca() {
-  caosMesa.casalCarta = stats.totalDrawn;
+function caosCasalAcerto() {
+  return "";
 }
-function caosCasalErro(tipo, p) {
-  const c = caosCasal();
-  if (!c || !p || tipo === "pular" || !caosCasalPode()) return "";
-  const C = REACTIVE_VOICE.perfilJogador.casal,
-    idx = players.indexOf(p),
-    R = Math.random;
-  let m = "";
-  if (idx === c.a && mestreIndex === c.j)
-    m =
-      tipo === "absurdo"
-        ? R() < 0.8
-          ? getRandomReaction(C.anneAbsurdo)
-          : ""
-        : R() < 0.45
-          ? getRandomReaction(C.anneErraJfMestre)
-          : "";
-  else if (idx === c.j && mestreIndex === c.a)
-    m =
-      tipo === "absurdo"
-        ? R() < 0.8
-          ? getRandomReaction(C.jfAbsurdoPelaAnne)
-          : ""
-        : R() < 0.4
-          ? getRandomReaction(C.jfErraAnneMestre)
-          : "";
-  if (m) caosCasalMarca();
-  return m;
+function caosCasalEspecial() {
+  return "";
 }
-function caosCasalAcerto(p, scorerIdx) {
-  const c = caosCasal();
-  if (!c || !p || !caosCasalPode()) return "";
-  const C = REACTIVE_VOICE.perfilJogador.casal,
-    R = Math.random,
-    par = scorerIdx === c.j ? c.a : scorerIdx === c.a ? c.j : -1;
-  if (par < 0) return "";
-  let m = "";
-  if (caosPrevLeaderIdx === par && caosLeaderIdx() === scorerIdx && R() < 0.8)
-    m = getRandomReaction(C.virada, p.name, players[par].name);
-  else if (mestreIndex === par && R() < 0.35) m = getRandomReaction(C.acertoParceiroMestre, p.name, players[par].name);
-  if (m) caosCasalMarca();
-  return m;
-}
-function caosCasalEspecial(quemIdx, alvoIdx) {
-  const c = caosCasal();
-  if (!c) return "";
-  if (!((quemIdx === c.j && alvoIdx === c.a) || (quemIdx === c.a && alvoIdx === c.j))) return "";
-  if (!caosOncePerMatch("casal_esp_" + quemIdx)) return "";
-  caosCasalMarca();
-  return getRandomReaction(REACTIVE_VOICE.perfilJogador.casal.especial, players[quemIdx].name, players[alvoIdx].name);
-}
-function caosCasalFim() {
-  const c = caosCasal();
-  if (!c || Math.random() >= 0.8) return;
-  const vj = rankValue(players[c.j]),
-    va = rankValue(players[c.a]);
-  if (vj === va) return;
-  const msg = getRandomReaction(
-    vj > va ? REACTIVE_VOICE.perfilJogador.casal.fimJf : REACTIVE_VOICE.perfilJogador.casal.fimAnne,
-  );
-  setTimeout(() => {
-    if (gameEnded) showToastMessage(msg, null, true);
-  }, 12e3);
-}
+function caosCasalFim() {}

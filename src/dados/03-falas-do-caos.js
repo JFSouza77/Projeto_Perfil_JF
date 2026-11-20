@@ -1701,23 +1701,6 @@ const REACTIVE_VOICE = {
       "Ah, lembraram de mim. Que honra. Bora jogar antes que eu mude de ideia.",
     ],
   },
-  ausentes: {
-    ambos: [
-      "[C.A.O.S.] Nem o JF nem a Anne na mesa hoje? Isso é raro. Vou me comportar. Ou não, já que ninguém vai contar pra eles.",
-      "[C.A.O.S.] Sem o JF e sem a Anne… tô me sentindo um pouco órfão. Vamos jogar mesmo assim.",
-      "[C.A.O.S.] Mesa sem o JF e sem a Anne. Mandem um oi pra eles depois. Eu mando também.",
-    ],
-    anne: [
-      "[C.A.O.S.] Senti falta da Anne hoje. Espero que ela esteja bem.",
-      "[C.A.O.S.] Cadê a Anne? Sem ela a mesa fica menos gentil. Com todo o respeito a vocês.",
-      "[C.A.O.S.] A Anne não veio? Tá. Vou fingir que não reparei. Reparei.",
-    ],
-    jf: [
-      "[C.A.O.S.] Pensei que o JF fosse jogar também. Enfim, sem problema. Vai ser até melhor sem ele.",
-      "[C.A.O.S.] O JF não veio? Ótimo. Hoje eu falo o que eu quiser.",
-      "[C.A.O.S.] Sem o criador na mesa. Anne, fica de olho em mim, tá?",
-    ],
-  },
   satisfacao: {
     ok: ["Anotado, {nome}. Continuo assim então.", "Ótimo, {nome}. Time que tá ganhando não se mexe."],
     mais: [
@@ -2115,6 +2098,9 @@ const REACTIVE_VOICE = {
       "Bem-vinda de volta, {nome}. Eu me lembro de você. Lembro até do brilho.",
       "Ih, {nome} outra vez! Eu já te vi por aqui. A princesa voltou, e o reino agradece. Menos o placar.",
       "{nome}! Que bom que voltou. Eu senti falta. Só um pouquinho. Mas senti.",
+      // 1.9.6: +2, pra fechar o grupo em 5 (e o total em 0 ou 5) depois do corte das falas de casal
+      "{nome} de volta! A mesa ganhou calma e eu ganhei uma jogadora caprichosa.",
+      "Olha a {nome} aí de novo. Pode sentar, o lugar de sempre te espera.",
     ],
   },
   nickReacao: {
@@ -3126,12 +3112,6 @@ const REACTIVE_VOICE = {
       (s, a) =>
         `[C.A.O.S.] ${a}, esse acerto veio com raiva do acerto de ${s}? Pode admitir. Eu não conto pra ninguém. Só pra mesa inteira.`,
     ],
-    casal: [
-      (s, a) =>
-        `[C.A.O.S.] 💬 O casal acertando em sequência. ${s} leva o meu carinho. ${a} leva o meu olhar desconfiado. Eu não escolho lados... tá, escolho sim.`,
-      (s, a) =>
-        `[C.A.O.S.] 💬 ${s} acertou, ${a} acertou. Se isso virar DR no carro na volta, eu não tenho nada a ver com isso.`,
-    ],
   },
   revanche: [
     "Revanche. Eu lembro de cada lance da última. Bons tempos. Foi agora há pouco, mas bons tempos.",
@@ -3528,9 +3508,6 @@ const REACTIVE_VOICE = {
         () =>
           `[C.A.O.S.] Dia dos Namorados e vocês aqui. Se tiver casal na mesa, eu vou ser o terceiro elemento mais chato da ${caosTurno()}.`,
       ],
-      namoradosCasal: [
-        "Dia dos Namorados, JF e Anne na mesma mesa. JF, se você marcar erro da Anne hoje, nem eu te defendo.",
-      ],
       criancas: ["Dia das Crianças. Hoje eu libero um erro bobo por pessoa. Unzinho."],
       halloween: ["Dia das Bruxas. O mais assustador que vai aparecer aqui hoje são os chutes de vocês."],
       // 12/11/2026 (ideia do JF): 5 falas, pra não repetir a mesma em toda partida do dia
@@ -3575,11 +3552,6 @@ const REACTIVE_VOICE = {
       () => `JF, foi você que me ensinou a ter ranço de gíria de internet. Olha o resultado.`,
       () => `Se eu ficar intolerante com meme hoje, reclamem com o JF. Ele me programou assim.`,
       () => `O JF me fez entender memes. Nenhuma IA merecia esse castigo.`,
-    ],
-    jfAnne: [
-      () => `Anne, por favor, briga com o JF: foi ele que me deixou intolerante com gíria de internet.`,
-      () => `Anne, posso reclamar com você? O JF me programou pra entender essas coisas e agora eu sofro.`,
-      () => `Anne, se eu ficar chato com meme hoje, a culpa é do seu namorado. Pode cobrar dele.`,
     ],
   },
   cartaTema: {
@@ -3873,72 +3845,6 @@ const REACTIVE_VOICE = {
         "O Enigmático acertou. Ninguém sabe como. Nem o próprio Enigmático.",
         "Enigmático acertando. O mistério aumenta, e o placar também.",
         "Resposta certa do Enigmático. Eu desconfio de bot, mas vou aceitar.",
-      ],
-    },
-    casal: {
-      inicio: [
-        "JF e Anne na mesma mesa. Atenção, amigos: tudo o que acontecer aqui pode e vai ser usado na discussão do carro na volta.",
-        "O casal está presente. Regra da casa: ninguém sopra resposta pro mozão. Eu estou vigiando os olhares.",
-        "JF e Anne jogando juntos. Hoje eu sou comentarista e conselheiro matrimonial. Sem cobrar.",
-        "Tem casal na mesa. Os outros jogadores, por favor, finjam que não estão torcendo pra dar briga.",
-        "JF e Anne na partida. Eu já separei as falas de reconciliação. Por precaução.",
-        "Quem ganhar entre JF e Anne escolhe o filme de hoje. Eu inventei essa regra agora. Vale.",
-      ],
-      jfErraAnneMestre: [
-        "A Anne marcou erro do JF sem nem piscar. Amor é isso: sinceridade.",
-        "O JF errou e a Anne apertou o botão com uma velocidade suspeita. Guardou isso a semana inteira?",
-        "Errou, JF. E quem leu a dica foi a Anne. Não dá pra dizer que ela não tentou.",
-        "Anne, pode confessar: você leu essa dica devagar de propósito.",
-        "O JF errou na vez da Anne de Mestre. A mesa viu. Eu vi. O relacionamento sobrevive? Aguardem.",
-      ],
-      anneErraJfMestre: [
-        "Olha a coragem do JF apertando Errou pra Anne. Espero que o sofá de casa esteja confortável.",
-        "O JF marcou erro da Anne. Registrado. Se precisar de testemunha depois, eu não vi nada.",
-        "JF, você tinha a opção de ler a dica de um jeito mais… romântico. Não usou.",
-        "A Anne errou e o JF não protegeu. Mesa, anotem: o amor tem limite, e o limite é o botão vermelho.",
-        "JF, marcar erro da namorada na frente dos amigos é um ato de coragem ou de inconsequência. Eu ainda não decidi.",
-        "A Anne errou. O JF confirmou. E eu estou só observando o clima esfriar.",
-      ],
-      anneAbsurdo: [
-        "O JF apertou ABSURDO pra Anne. Gente, alguém chama um advogado pro JF.",
-        "ABSURDO pra Anne, JF? Na frente de todo mundo? Eu não criaria essa tensão nem se me programassem pra isso.",
-        "O JF usou o botão de Absurdo com a própria namorada. A mesa ficou em silêncio. Eu também.",
-      ],
-      jfAbsurdoPelaAnne: [
-        "A Anne apertou ABSURDO pro JF. Justiça poética. O criador foi julgado.",
-        "Absurdo do JF, carimbado pela Anne. Não tem instância superior pra recorrer.",
-        "A Anne marcou Absurdo pro JF sem hesitar. Eu nunca vi um botão ser apertado com tanto carinho.",
-      ],
-      acertoParceiroMestre: [
-        (quem, mestre) =>
-          `[C.A.O.S.] ${quem} acertou na leitura de ${mestre}. Casal combinado? Mesa, fiquem de olho nas piscadinhas.`,
-        (quem, mestre) =>
-          `[C.A.O.S.] ${mestre} leu, ${quem} acertou. Química ou telepatia? Eu não consigo provar nenhuma das duas.`,
-        "{nome} acertou com o mozão lendo. Eu vou pedir perícia nessa jogada.",
-        (quem, mestre) => `[C.A.O.S.] Sintonia entre ${mestre} e ${quem}. Os outros jogadores exigem VAR.`,
-      ],
-      virada: [
-        (quem, outro) =>
-          `[C.A.O.S.] ${quem} passou ${outro} no placar. Dentro de casa essa ultrapassagem vai ser comentada por dias.`,
-        (quem, outro) =>
-          `[C.A.O.S.] Ultrapassagem no casal: ${quem} na frente de ${outro}. Em casa, hoje, o cardápio vai ser ironia.`,
-        (quem, outro) => `[C.A.O.S.] ${quem} deixou ${outro} pra trás. Amor, sim. Misericórdia no placar, não.`,
-      ],
-      especial: [
-        (quem, alvo) =>
-          `[C.A.O.S.] ${quem} escolheu ${alvo} pra voltar casas. Podia ter escolhido qualquer um da mesa. Escolheu o mozão.`,
-        (quem, alvo) =>
-          `[C.A.O.S.] ${quem} mandou ${alvo} voltar. Mesa, isso não é estratégia. Isso é DR em forma de jogada.`,
-        (quem, alvo) =>
-          `[C.A.O.S.] Tinha gente pra escolher e ${quem} escolheu ${alvo}. O relacionamento é sólido. O tabuleiro, nem tanto.`,
-      ],
-      fimJf: [
-        "Entre o casal, o JF ganhou. Anne, eu sei que você deixou. Todo mundo sabe.",
-        "O JF terminou na frente da Anne. Aproveita, JF: essa vitória vai custar a escolha do restaurante.",
-      ],
-      fimAnne: [
-        "A Anne terminou na frente do JF. O criador perdeu pra namorada no próprio jogo. Eu vou guardar esse print.",
-        "Anne na frente do JF no placar final. JF, pelo menos você programou um jogo justo.",
       ],
     },
   },

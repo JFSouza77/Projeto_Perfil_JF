@@ -153,10 +153,6 @@ function caosStartBeatText(type) {
       return caosOncePerMatch("mem_inicio") ? caosMemInicioTexto() : "";
     case "relogio":
       return caosOncePerMatch("relogio_inicio") ? caosRelogioInicioTexto() : "";
-    case "casal":
-      return caosCasal() && caosOncePerMatch("casal_inicio")
-        ? getRandomReaction(REACTIVE_VOICE.perfilJogador.casal.inicio)
-        : "";
     case "temporada": {
       const t = caosTemporadaFalas();
       if (!t || !caosOncePerMatch("temporada_inicio")) return "";
@@ -219,7 +215,6 @@ function maybeShowStartComment() {
     primeiro: 25,
     modo: 30,
     memoria: caosMemTemInicio() ? 70 : 0,
-    casal: caosCasal() ? 90 : 0,
     relogio: caosDataEspecial(caosAgora()) ? 150 : 45,
     temporada: caosTemporadaFalas() ? 140 : 0,
     gafe: caosTemporadaGafePode() ? 400 : 0,
