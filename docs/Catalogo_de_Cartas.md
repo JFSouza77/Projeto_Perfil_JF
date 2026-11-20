@@ -1,17 +1,17 @@
 # Catálogo de cartas do Perfil JF
 
-Gerado pelo Code (Claude Code) em 2026-11-15 com `node ferramentas/catalogo_cartas.js`. Só os nomes, sem dicas.
+Gerado pelo Code (Claude Code) em 2026-11-20 com `node ferramentas/catalogo_cartas.js`. Só os nomes, sem dicas.
 
-**1980 cartas: 1030 já estão no jogo e 950 estão planejadas pra Beta 2.0 (marcadas com 🆕).**
+**1990 cartas: 1040 já estão no jogo e 950 estão planejadas pra Beta 2.0 (marcadas com 🆕).**
 
 | Categoria | No jogo | Planejadas 🆕 | Total |
 |---|---|---|---|
 | 🐾 Animal | 200 | 65 | 265 |
 | 📅 Ano | 200 | 55 | 255 |
-| 📦 Coisa | 215 | 255 | 470 |
-| 📍 Lugar | 205 | 235 | 440 |
-| 🧑 Pessoa | 210 | 340 | 550 |
-| **Total** | **1030** | **950** | **1980** |
+| 📦 Coisa | 221 | 255 | 476 |
+| 📍 Lugar | 206 | 235 | 441 |
+| 🧑 Pessoa | 213 | 340 | 553 |
+| **Total** | **1040** | **950** | **1990** |
 
 ## Como conferir uma ideia de carta (instruções pro GPT)
 
@@ -264,13 +264,16 @@ Avestruz 🧸 · Camelo 🧸 · Chimpanzé 🧸 · Dragão-de-komodo · Dromedá
 - 2025
 - 2026 🆕 (Copa do Mundo nos Estados Unidos, Canadá e México, a primeira com 48 seleções; e Lula é reeleito (2º turno em 25/10, contra Flávio Bolsonaro), o primeiro presidente eleito quatro vezes pelo voto direto no Brasil (tema político: só fatos, fora do Júnior))
 
-## 📦 Coisa · 470 (215 no jogo, 255 🆕)
+## 📦 Coisa · 476 (221 no jogo, 255 🆕)
 
 **Aniversário** (5)
 Chapéu de festa · Língua de sogra · Parabéns a Você · Pinhata · Vela de aniversário
 
 **Ano Novo** (5)
 Calendário · Espumante · Fogos de artifício · Lentilha · Roupa branca
+
+**Carnaval** (6)
+Abadá · Confete · Cuíca · Escola de samba · Maracatu · Trio elétrico
 
 **Casa e objetos do dia a dia** (47)
 Abajur 🧸 · Agulha 🆕 · Aliança 🆕 · Aparelho de jantar 🆕 · Armadilha 🆕 · Aspirador de pó 🧸 · Bacia 🆕 · Bengala 🆕 · Carimbo 🆕 · Carpete 🆕 · Chave · Chinelo 🧸 · Colchão 🆕 · Colher 🧸 · Colher de pau 🆕 · Dicionário · Enxada 🆕 · Escova de dente 🧸 · Espelho 📼 · Extintor de incêndio 📼 · Galocha 🆕 · Geladeira 🧸 · Guarda-chuva · Janela 🧸 · Laço de fita 🆕 · Lâmpada · Lancheira 🧸 · Lápis 🧸 · Livro · Lixeira 🆕 · Lustre 🆕 · Máquina de costura 🆕 · Máscara 🆕 · Mochila 🧸 · Óculos · Paletó 🆕 · Pasta de dente 🆕 · Relógio 📼 · Rolha 🆕 · Sabonete 🧸 · Selo 🆕 · Tanque de lavar roupas 🆕 · Tesoura 🧸 · Tijolo 🆕 · Travesseiro 🧸 · Vassoura 🧸 · Velcro 🆕
@@ -353,13 +356,16 @@ A Praça é Nossa 📼 · Big Brother Brasil 📼 · Bom Dia & Cia 📼 · Bom D
 **Videogames** (1)
 Pac-Man 🆕 (ideia do JF 03/11; o jogo)
 
-## 📍 Lugar · 440 (205 no jogo, 235 🆕)
+## 📍 Lugar · 441 (206 no jogo, 235 🆕)
 
 **Animação** (2)
 Arendelle 🆕 (ideia do JF 03/11) · Casa Madrigal 🆕 (o Code completou pra fechar em 5; Encanto)
 
 **Ano Novo** (5)
 Burj Khalifa · London Eye · Ópera de Sydney · Portão de Brandemburgo · Praça Vermelha
+
+**Carnaval** (1)
+Olinda
 
 **Cidades do mundo** (37)
 Amsterdã · Barcelona · Berlim · Brooklyn 🆕 (handoff JF+GPT 29/10) · Buenos Aires 🆕 · Cairo 🆕 · Ciudad del Este 📼 · Dubai · Florença 🆕 · Flórida 🆕 (handoff JF+GPT 29/10) · Hollywood · Istambul · Jerusalém · Kyoto · Las Vegas 📼 · Londres · Los Angeles 🆕 (handoff JF+GPT 29/10) · Manhattan 🆕 · Meca · Miami · Moscou · Munique 🆕 · Nova Orleans 🆕 (handoff JF+GPT 29/10) · Nova York · Orlando 🆕 (handoff JF+GPT 29/10) · Paris · Pier de Santa Mônica 🆕 (handoff JF+GPT 29/10) · Punta del Este 🆕 (handoff JF+GPT 30/10) · Roma 📼 · Santiago do Chile 🆕 (handoff JF+GPT 29/10) · Shibuya · Singapura · Sydney · Tóquio · Transilvânia 🆕 (handoff JF+GPT 30/10) · Vancouver 🆕 · Veneza 📼
@@ -442,7 +448,7 @@ Vale do Silício 🆕 (fecha a conta de Lugar em 225)
 **Universidades e estúdios** (3)
 Herbert Richers 📼 · Projac 🆕 · UFRJ 📼
 
-## 🧑 Pessoa · 550 (210 no jogo, 340 🆕)
+## 🧑 Pessoa · 553 (213 no jogo, 340 🆕)
 
 **Animação** (2)
 Bruno Madrigal 🆕 (ideia do JF 03/11) · Mirabel Madrigal 🆕 (ideia do JF 03/11)
@@ -455,6 +461,9 @@ Jeanne Calment · Marilyn Monroe · Rainha Elizabeth II · Ronald McDonald · St
 
 **Arte (pintura e música clássica)** (8)
 Frida Kahlo · Leonardo da Vinci 📼 · Ludwig van Beethoven 📼 · Pablo Picasso 🆕 (handoff JF+GPT 29/10) · Romero Britto 🆕 (handoff JF+GPT 29/10) · Salvador Dalí 📼 · Tarsila do Amaral 🆕 (handoff JF+GPT 29/10) · Vincent van Gogh
+
+**Carnaval** (3)
+Daniela Mercury · Joãosinho Trinta · Rei Momo
 
 **Ciência, invenção e tecnologia** (24)
 Ada Lovelace 🆕 · Alan Turing 🆕 · Albert Einstein 📼 · Aristóteles 🆕 (handoff JF+GPT 29/10) · Bill Gates 🆕 · Charles Darwin 📼 · Diógenes 🆕 (handoff JF+GPT 29/10) · Elon Musk · Enzo Ferrari 🆕 · Ferruccio Lamborghini 🆕 · Galileu Galilei 🆕 (handoff JF+GPT 29/10) · Isaac Newton 📼 · Marie Curie 📼 · Mark Zuckerberg 🆕 · Neil Armstrong 🆕 (handoff JF+GPT 29/10) · Nikola Tesla · Oscar Niemeyer 🆕 (handoff JF+GPT 29/10) · Pitágoras 🆕 (handoff JF+GPT 29/10) · Platão 🆕 (handoff JF+GPT 29/10) · Santos Dumont 📼 · Sigmund Freud 🆕 (handoff JF+GPT 29/10) · Sócrates 🆕 (handoff JF+GPT 29/10) · Steve Jobs 🆕 · Thomas Edison 🆕 (handoff JF+GPT 29/10)

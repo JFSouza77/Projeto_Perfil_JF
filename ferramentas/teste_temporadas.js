@@ -570,6 +570,23 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
       if (v.length !== 2 || c.length !== 2 || v.concat(c).some((k) => !/^carnaval/.test(k))) ok = false;
     }
     r.carnavalVitrineSoDoCarnaval = ok;
+    // 10 cartas de Carnaval (3 Pessoa, 1 Lugar, 6 Coisa), só no Carnaval, valendo o dobro, selo 🎭
+    {
+      const ca2 = TEMPORADA_CARTAS.filter((c) => c.temporada === "carnaval");
+      r.carnaval10Cartas = ca2.length === 10 && ca2.every((c) => c.clues.length === 20) && ca2.filter((c) => c.category === "COISA").length === 6;
+      const modo = CURRENT_MODE, sp = players;
+      players = [{ id: "a", name: "Ana", color: "#e94560", avatar: "🦊", score: 0, position: 0 }, { id: "b", name: "Beto", color: "#4ecdc4", avatar: "🐼", score: 0, position: 0 }];
+      CURRENT_MODE = "classico";
+      allCards = baralhoClassico();
+      resetDeck();
+      const ini = deck.slice(-50);
+      r.carnavalCartasEntramSoAsDele = ca2.every((c) => ini.includes(c)) && !deck.some((c) => c.temporada && c.temporada !== "carnaval");
+      r.carnavalCartaValeODobroComSelo = temporadaMultCarta(ca2[0]) === 2 && /🎭 Carta de Carnaval · vale o dobro/.test(temporadaSeloCartaHtml(ca2[0]));
+      CURRENT_MODE = "junior";
+      r.carnavalCartasNoJunior = temporadaCartasDoModo().length === 10;
+      CURRENT_MODE = modo; players = sp;
+      r.carnavalCartaAchadaPeloId = cartaPorId("PESSOA-0921") === ca2[0] && cartaPorId("COISA-0930") === ca2[9];
+    }
     // 5 títulos de Carnaval no resumo da partida
     {
       const sh = history, sp2 = players;

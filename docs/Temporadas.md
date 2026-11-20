@@ -129,7 +129,7 @@ temporadas, na ordem do calendário.
     - [x] Carnaval · enfeite (confete e serpentinas), selo, 15 falas, 5 cores e 5 emojis.
     - [x] Carnaval · 5+5 itens de lojinha (Modo C.A.O.S.: Chuva de Confete, Marchinha, Trio Elétrico, Máscara, Abadá VIP; Corrida: Chuva de Confete, Bloco de Rua, Trio Elétrico, Fantasia Premiada, Passo de Frevo).
     - [x] Carnaval · 5 títulos (Destaque da Folia, Comissão de Frente, Mestre de Bateria, Nota Dez, Folião Perdido).
-    - [ ] Carnaval · 10 cartas valendo o dobro.
+    - [x] Carnaval · 10 cartas valendo o dobro (Rei Momo, Joãosinho Trinta, Daniela Mercury, Olinda, Trio elétrico, Abadá, Confete, Cuíca, Escola de samba, Maracatu).
     Inclui as 2 datas novas do JF (06/11/2026), já reconhecidas pelo motor: **6/9 · Aniversário do Perfil JF** (o C.A.O.S.
     lembra quantos anos o jogo faz e conta a história: `docs/Historia_do_Perfil.md`) e **20/9 · Aniversário do C.A.O.S.**
     (ele é o aniversariante: fica todo bobo, comemora com a mesa e relembra de quando era "só um texto na tela").
@@ -291,3 +291,5 @@ temporadas, na ordem do calendário.
   Teste: `teste_temporadas` (6 checagens novas).
   Lojinha de Carnaval: 5 itens em cada loja, todos virando itens de sempre na compra (`teste_temporadas`, 3 checagens).
   Títulos de Carnaval no resumo da partida, com comentário do C.A.O.S. (`teste_temporadas`, 3 checagens).
+  10 cartas de Carnaval em `src/dados/02-cartas/93-carnaval.js` (ids 0921+, todas livres), com assunto "Carnaval" no
+  catálogo; auditor sem aviso novo. **Carnaval completo.** Teste: `teste_temporadas` (5 checagens das cartas).
