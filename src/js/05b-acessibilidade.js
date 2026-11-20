@@ -15,7 +15,7 @@
 const ACESS_KEY = "perfil5_acessibilidade";
 // Segundos a mais por tipo de relógio quando "Mais tempo" está ligado.
 const ACESS_TEMPO_EXTRA = { pick: 15, response: 30, special: 10, turn: 5 };
-const ACESS_PADRAO = { letra: 0, tempo: false, lerDicas: false, volVoz: 1, volSom: 1, contraste: false, calmo: false, temporadas: true };
+const ACESS_PADRAO = { letra: 0, tempo: false, lerDicas: false, volVoz: 1, volSom: 1, contraste: false, calmo: false, temporadas: true, avatar: false };
 let acessCfg = { ...ACESS_PADRAO };
 function acessCarregar() {
   try {
@@ -27,7 +27,7 @@ function acessCarregar() {
     Object.keys(ACESS_PADRAO).forEach((k) => {
       if (k in ok) acessCfg[k] = ok[k];
     });
-    ["tempo", "lerDicas", "contraste", "calmo"].forEach((k) => {
+    ["tempo", "lerDicas", "contraste", "calmo", "avatar"].forEach((k) => {
       acessCfg[k] = acessCfg[k] === true;
     });
     acessCfg.temporadas = acessCfg.temporadas !== false; // temporadas: ligadas, a não ser que desligue
@@ -67,6 +67,7 @@ function aplicarAcessibilidade() {
   h.classList.toggle("acess-contraste", !!acessCfg.contraste);
   h.classList.toggle("acess-calmo", !!acessCfg.calmo);
   if (typeof temporadaAplicar === "function") temporadaAplicar();
+  if (typeof caosAvatarAtualizar === "function") caosAvatarAtualizar(); // 1.9.6: liga ou some na hora
 }
 // Menos movimento: a opção do jogo ou o "reduzir movimento" do aparelho. O Batata também tira o
 // movimento, mas por outro motivo (desempenho) e junto com o resto; quem quer saber do Batata
@@ -124,6 +125,7 @@ function acessPainelAbrir() {
       <button type="button" data-tog="contraste"${sel(acessCfg.contraste)}>🌗 Alto contraste <small>texto mais forte, sem brilho neon</small></button>
       <button type="button" data-tog="calmo"${sel(acessCfg.calmo)}>🐢 Menos movimento <small>nada treme, pula, gira ou desliza. Cores, neon e brilho continuam</small></button>
       <button type="button" data-tog="temporadas"${sel(acessCfg.temporadas)}>🎄 Temporadas <small>o jogo entra no clima das datas (Natal, Halloween, Carnaval...). Desligado, fica sempre o visual normal</small></button>
+      <button type="button" data-tog="avatar"${sel(acessCfg.avatar)}>🤖 Avatar do C.A.O.S. <small>em teste: no Modo C.A.O.S., ele aparece no canto da tela e muda de forma com o humor</small></button>
       <div class="acess-grupo"><label class="acess-rot" for="acessVolVoz">🗣️ Volume da voz <b>${Math.round(acessCfg.volVoz * 100)}%</b></label>
         <input id="acessVolVoz" type="range" min="0" max="1" step="0.05" value="${acessCfg.volVoz}"></div>
       <div class="acess-grupo"><label class="acess-rot" for="acessVolSom">🎵 Volume dos sons <b>${Math.round(acessCfg.volSom * 100)}%</b></label>
