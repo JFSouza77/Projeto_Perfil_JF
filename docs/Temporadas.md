@@ -127,7 +127,7 @@ temporadas, na ordem do calendário.
     - [x] Aniversário do criador · 10 cartas valendo o dobro (5 Pessoa, 5 Coisa).
 11. [ ] As outras 14 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween, com o Doces ou travessuras).
     - [x] Carnaval · enfeite (confete e serpentinas), selo, 15 falas, 5 cores e 5 emojis.
-    - [ ] Carnaval · 5+5 itens de lojinha.
+    - [x] Carnaval · 5+5 itens de lojinha (Modo C.A.O.S.: Chuva de Confete, Marchinha, Trio Elétrico, Máscara, Abadá VIP; Corrida: Chuva de Confete, Bloco de Rua, Trio Elétrico, Fantasia Premiada, Passo de Frevo).
     - [ ] Carnaval · 5 títulos.
     - [ ] Carnaval · 10 cartas valendo o dobro.
     Inclui as 2 datas novas do JF (06/11/2026), já reconhecidas pelo motor: **6/9 · Aniversário do Perfil JF** (o C.A.O.S.
@@ -289,3 +289,4 @@ temporadas, na ordem do calendário.
   15 falas (`REACTIVE_VOICE.temporada.carnaval`: começo, avançar e voltar), 5 cores (Confete, Serpentina, Paetê,
   Sombrinha de frevo, Máscara) e 5 emojis (🎺 💃 🎷 🪘 🎊). A gafe de data passou a reconhecer as falas de Carnaval.
   Teste: `teste_temporadas` (6 checagens novas).
+  Lojinha de Carnaval: 5 itens em cada loja, todos virando itens de sempre na compra (`teste_temporadas`, 3 checagens).

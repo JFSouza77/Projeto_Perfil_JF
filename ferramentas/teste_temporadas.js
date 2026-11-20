@@ -559,6 +559,17 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     const E = TEMPORADA_ESTILOS.carnaval;
     r.carnaval5Cores5Emojis = E.cores.length === 5 && E.emojis.length === 5 && E.nomesCores.length === 5 && E.cores.every((c) => GRADIENTS[c] && coresDaPaleta().includes(c)) && E.emojis.every((x) => avatarsForMode().includes(x));
     r.carnavalSemCoresDoNatal = !TEMPORADA_ESTILOS.natal.cores.some((c) => coresDaPaleta().includes(c));
+    r.carnavalEmojisNovos = E.emojis.every((x) => !AVATARS.includes(x)) && new Set(E.emojis).size === 5;
+    const ca = (cat) => Object.keys(cat).filter((k) => cat[k].temporada === "carnaval");
+    const basesOk = (cat) => ca(cat).every((k) => { const it = cat[k]; return it.surpresa ? it.surpresa.every((b) => cat[b] && !cat[b].temporada) : cat[it.base] && !cat[it.base].temporada; });
+    r.carnavalLoja5Cada = ca(MC_LOJA).length === 5 && ca(CORRIDA_LOJA).length === 5 && basesOk(MC_LOJA) && basesOk(CORRIDA_LOJA);
+    let ok = true;
+    for (let i = 0; i < 60; i++) {
+      const v = Object.keys(lojaVitrineSortear(MC_LOJA, MC_VITRINE).estoque).filter((k) => MC_LOJA[k].temporada);
+      const c = Object.keys(lojaVitrineSortear(CORRIDA_LOJA, CORRIDA_VITRINE).estoque).filter((k) => CORRIDA_LOJA[k].temporada);
+      if (v.length !== 2 || c.length !== 2 || v.concat(c).some((k) => !/^carnaval/.test(k))) ok = false;
+    }
+    r.carnavalVitrineSoDoCarnaval = ok;
     return r;
   }));
   await page.goto(url + "?temporada=nenhuma");

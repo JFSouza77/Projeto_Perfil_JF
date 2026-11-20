@@ -459,6 +459,12 @@ const MC_LOJA = {
   aniversarioVela: { ic: "🕯️", nome: "Assopra a Vela", preco: 35, peso: 2, temporada: "aniversario", base: "congelar", desc: "uma Era do Gelo mais barata: os outros param pra cantar parabéns, travados por 7 s" },
   aniversarioBrigadeiro: { ic: "🍫", nome: "Brigadeiro", preco: 40, peso: 1, temporada: "aniversario", base: "olho", desc: "um Olho do C.A.O.S.: a 1ª letra da resposta só pra você" },
   aniversarioChapeu: { ic: "🥳", nome: "Chapéu de Festa", preco: 50, peso: 1, temporada: "aniversario", base: "kevlar", desc: "um Colete Anti-Caos: ninguém estraga a festa, anula 1 roubo, assalto ou punição contra você" },
+  // Temporadas (item 11, 20/11/2026): Carnaval na lojinha do Modo C.A.O.S.
+  carnavalConfete: { ic: "🎊", nome: "Chuva de Confete", preco: 25, peso: 2, temporada: "carnaval", surpresa: ["corte", "folego", "mordaca", "olho", "espelho"], desc: "joga confete pra cima e cai um item sorteado da lojinha" },
+  carnavalMarchinha: { ic: "🎺", nome: "Marchinha", preco: 30, peso: 2, temporada: "carnaval", base: "folego", qtd: 2, desc: "2 Vidas Extras de uma vez (errou? 2ª tentativa na mesma dica)" },
+  carnavalTrio: { ic: "🚚", nome: "Trio Elétrico", preco: 35, peso: 2, temporada: "carnaval", base: "congelar", desc: "uma Era do Gelo mais barata: os outros param pra ver o trio passar, travados por 7 s" },
+  carnavalMascara: { ic: "🎭", nome: "Máscara", preco: 40, peso: 1, temporada: "carnaval", base: "olho", desc: "um Olho do C.A.O.S.: a 1ª letra da resposta só pra você" },
+  carnavalAbada: { ic: "👕", nome: "Abadá VIP", preco: 50, peso: 1, temporada: "carnaval", base: "kevlar", desc: "um Colete Anti-Caos: área VIP, anula 1 roubo, assalto ou punição contra você" },
 };
 const MC_VITRINE = 5;
 const LOJA_TRAVA_MS = 3e3; // 1.7.10.9.3 (JF): no intervalo a vitrine aparece na hora, mas os botões só liberam depois de 3 s (pra dar tempo de ler)
@@ -502,6 +508,12 @@ const CORRIDA_LOJA = {
   aniversarioParabens: { ic: "🎶", nome: "Parabéns pra Você", preco: 25, peso: 2, temporada: "aniversario", base: "congelar", max: 1, desc: "uma Pausa Dramática mais barata: o relógio geral para 15 s na próxima carta, todo mundo cantando" },
   aniversarioBrigadeiro: { ic: "🍫", nome: "Brigadeiro", preco: 20, peso: 1, temporada: "aniversario", base: "cofrinho", desc: "um Cofrinho: a sua próxima carta acertada vale +40 pontos" },
   aniversarioLingua: { ic: "🪅", nome: "Língua de Sogra", preco: 25, peso: 1, temporada: "aniversario", base: "desfib", desc: "um Choque de Tempo: +15 s no relógio da carta, na hora que quiser" },
+  // Temporadas (item 11, 20/11/2026): Carnaval na lojinha da Corrida
+  carnavalConfete: { ic: "🎊", nome: "Chuva de Confete", preco: 20, peso: 2, temporada: "carnaval", surpresa: ["corte", "desfib", "cofrinho"], desc: "um item sorteado (Passe Livre, Choque de Tempo ou Cofrinho)" },
+  carnavalBloco: { ic: "🥁", nome: "Bloco de Rua", preco: 25, peso: 2, temporada: "carnaval", base: "corte", qtd: 2, desc: "2 Passes Livres de uma vez (pula a sua vez sem gastar dica)" },
+  carnavalTrio: { ic: "🚚", nome: "Trio Elétrico", preco: 25, peso: 2, temporada: "carnaval", base: "congelar", max: 1, desc: "uma Pausa Dramática mais barata: o relógio geral para 15 s na próxima carta" },
+  carnavalFantasia: { ic: "🎭", nome: "Fantasia Premiada", preco: 20, peso: 1, temporada: "carnaval", base: "cofrinho", desc: "um Cofrinho: a sua próxima carta acertada vale +40 pontos" },
+  carnavalFrevo: { ic: "☂️", nome: "Passo de Frevo", preco: 25, peso: 1, temporada: "carnaval", base: "desfib", desc: "um Choque de Tempo: +15 s no relógio da carta, na hora que quiser" },
 };
 const LOJA_TEMPORADA_VITRINE = 2; // itens da temporada que entram na vitrine, além dos de sempre
 const CORRIDA_VITRINE = 4;
