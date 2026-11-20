@@ -126,6 +126,10 @@ temporadas, na ordem do calendário.
     - [x] Aniversário do criador · 5 títulos (Dono do Bolo, Assoprou as Velas, Balão Mais Alto, Parabéns Atrasado, Penetra da Festa).
     - [x] Aniversário do criador · 10 cartas valendo o dobro (5 Pessoa, 5 Coisa).
 11. [ ] As outras 14 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween, com o Doces ou travessuras).
+    - [x] Carnaval · enfeite (confete e serpentinas), selo, 15 falas, 5 cores e 5 emojis.
+    - [ ] Carnaval · 5+5 itens de lojinha.
+    - [ ] Carnaval · 5 títulos.
+    - [ ] Carnaval · 10 cartas valendo o dobro.
     Inclui as 2 datas novas do JF (06/11/2026), já reconhecidas pelo motor: **6/9 · Aniversário do Perfil JF** (o C.A.O.S.
     lembra quantos anos o jogo faz e conta a história: `docs/Historia_do_Perfil.md`) e **20/9 · Aniversário do C.A.O.S.**
     (ele é o aniversariante: fica todo bobo, comemora com a mesa e relembra de quando era "só um texto na tela").
@@ -281,3 +285,7 @@ temporadas, na ordem do calendário.
   Jeanne Calment (122 anos), Ronald McDonald (festas na lanchonete), Vela de aniversário, Língua de sogra, Chapéu de festa,
   Pinhata e Parabéns a Você. Só no 2/1, valendo o dobro, selo 🎂. Assuntos no catálogo ("Aniversário"); auditor sem
   aviso novo. Teste: `teste_temporadas` (5 checagens novas).
+- 20/11/2026: item 11 começou pelo Carnaval: confete caindo e serpentinas balançando no alto (`11-temporadas.css`),
+  15 falas (`REACTIVE_VOICE.temporada.carnaval`: começo, avançar e voltar), 5 cores (Confete, Serpentina, Paetê,
+  Sombrinha de frevo, Máscara) e 5 emojis (🎺 💃 🎷 🪘 🎊). A gafe de data passou a reconhecer as falas de Carnaval.
+  Teste: `teste_temporadas` (6 checagens novas).

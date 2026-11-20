@@ -113,6 +113,12 @@ const GRADIENTS = {
   GRAD_ANIV_VELA: "linear-gradient(180deg, #fde047 0%, #f97316 30%, #e0f2fe 31%, #60a5fa 100%)",
   GRAD_ANIV_SERPENTINA: "repeating-linear-gradient(135deg, #ec4899 0 7px, #facc15 7px 14px, #22d3ee 14px 21px)",
   GRAD_ANIV_GLACE: "linear-gradient(135deg, #fdf2f8 0%, #f9a8d4 50%, #c084fc 100%)",
+  // Temporadas (item 11, 20/11/2026): as 5 cores do Carnaval
+  GRAD_CARNAVAL_CONFETE: "radial-gradient(circle at 25% 30%, #facc15 0 9%, transparent 10%), radial-gradient(circle at 70% 60%, #22d3ee 0 9%, transparent 10%), radial-gradient(circle at 40% 75%, #f472b6 0 9%, transparent 10%), linear-gradient(135deg, #7c3aed 0%, #db2777 100%)",
+  GRAD_CARNAVAL_SERPENTINA: "repeating-linear-gradient(135deg, #22c55e 0 7px, #facc15 7px 14px, #a855f7 14px 21px, #f97316 21px 28px)",
+  GRAD_CARNAVAL_PAETE: "linear-gradient(135deg, #f59e0b 0%, #fde68a 25%, #d946ef 50%, #fde68a 75%, #0ea5e9 100%)",
+  GRAD_CARNAVAL_FREVO: "conic-gradient(from 0deg, #ef4444 0 25%, #facc15 25% 50%, #22c55e 50% 75%, #3b82f6 75% 100%)",
+  GRAD_CARNAVAL_MASCARA: "linear-gradient(135deg, #1e1b4b 0%, #7e22ce 50%, #facc15 100%)",
 };
 // Temporadas (docs/Temporadas.md, item 6): 5 cores e 5 emojis por temporada, só na paleta durante a época.
 // Jogador cadastrado que escolhe um deles recebe a pergunta "Quer usar durante a temporada?"; o estilo fica salvo só
@@ -132,6 +138,11 @@ const TEMPORADA_ESTILOS = {
     cores: ["GRAD_ANIV_BOLO", "GRAD_ANIV_BALAO", "GRAD_ANIV_VELA", "GRAD_ANIV_SERPENTINA", "GRAD_ANIV_GLACE"],
     nomesCores: ["Bolo de chocolate", "Balão", "Vela acesa", "Serpentina", "Glacê"],
     emojis: ["🎂", "🧁", "🎊", "🎉", "🕯️"],
+  },
+  carnaval: {
+    cores: ["GRAD_CARNAVAL_CONFETE", "GRAD_CARNAVAL_SERPENTINA", "GRAD_CARNAVAL_PAETE", "GRAD_CARNAVAL_FREVO", "GRAD_CARNAVAL_MASCARA"],
+    nomesCores: ["Confete", "Serpentina", "Paetê", "Sombrinha de frevo", "Máscara"],
+    emojis: ["🎺", "💃", "🎷", "🪘", "🎊"],
   },
 };
 const TEMPORADA_ESTILO_KEY = "perfil_jf_estilo_temporada";

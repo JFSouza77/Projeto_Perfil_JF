@@ -544,6 +544,23 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     }
     return r;
   }));
+  // item 11 (20/11): Carnaval: confete e serpentina, selo, 15 falas, 5 cores e 5 emojis da época
+  await page.goto(url + "?temporada=carnaval");
+  await page.waitForFunction(() => typeof temporadaAplicar === "function");
+  Object.assign(o, await page.evaluate(() => {
+    const r = {};
+    const e = document.getElementById("temporadaEnfeite");
+    r.carnavalMarcaEEnfeite = document.documentElement.dataset.temporada === "carnaval" && !!e && getComputedStyle(e).display === "block" && getComputedStyle(e).pointerEvents === "none";
+    const selo = document.getElementById("splashTemporada");
+    r.carnavalSelo = !!selo && !selo.hidden && /Carnaval/.test(selo.textContent);
+    const C = REACTIVE_VOICE.temporada.carnaval;
+    r.carnaval15Falas = !!C && C.inicio.length === 5 && C.avancou.length === 5 && C.voltou.length === 5 && caosTemporadaFalas() === C;
+    r.carnavalFalaComNome = /Ana/.test(C.avancou[0]("Ana", 2)) && /2 casas/.test(C.avancou[0]("Ana", 2)) && /1 casa\b/.test(C.voltou[0]("Ana", 1));
+    const E = TEMPORADA_ESTILOS.carnaval;
+    r.carnaval5Cores5Emojis = E.cores.length === 5 && E.emojis.length === 5 && E.nomesCores.length === 5 && E.cores.every((c) => GRADIENTS[c] && coresDaPaleta().includes(c)) && E.emojis.every((x) => avatarsForMode().includes(x));
+    r.carnavalSemCoresDoNatal = !TEMPORADA_ESTILOS.natal.cores.some((c) => coresDaPaleta().includes(c));
+    return r;
+  }));
   await page.goto(url + "?temporada=nenhuma");
   await page.waitForFunction(() => typeof temporadaAplicar === "function");
   o.semTemporadaSemEnfeite = await page.evaluate(() => {
@@ -625,7 +642,7 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
       players = s.players; CURRENT_MODE = s.CURRENT_MODE; mc = s.mc; cartasPartida = s.cartasPartida; mcAnunciar = s.mcAnunciar;
     }
     const t = caosTemporadaGafeTexto();
-    r.gafeFalaErradaEConserta = /\.\.\./.test(t) && REACTIVE_VOICE.temporada.gafe.some((g) => t.includes(String(typeof g === "function" ? g() : g).replace(/^\[C\.A\.O\.S\.\]\s*/, ""))) && /Natal|Ho, ho|gorro|Pisca|bonzinhos|Ano Novo|ondas|champanhe|Fogos|Dez, nove|aniversário|Parabéns|Balões|criador|2 de janeiro/i.test(t);
+    r.gafeFalaErradaEConserta = /\.\.\./.test(t) && REACTIVE_VOICE.temporada.gafe.some((g) => t.includes(String(typeof g === "function" ? g() : g).replace(/^\[C\.A\.O\.S\.\]\s*/, ""))) && /Natal|Ho, ho|gorro|Pisca|bonzinhos|Ano Novo|ondas|champanhe|Fogos|Dez, nove|aniversário|Parabéns|Balões|criador|2 de janeiro|Carnaval|folia|bloco|fantasia|Confete|alas/i.test(t);
     const modo = CURRENT_MODE;
     CURRENT_MODE = "junior";
     let jr = false;

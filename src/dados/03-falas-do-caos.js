@@ -4403,6 +4403,30 @@ const REACTIVE_VOICE = {
     },
     // Aniversário do criador (2/1, temporada "aniversario"): festa, bolo e o C.A.O.S. pegando leve com o JF.
     // jf = início quando o JF (com o cadastro confirmado) está na mesa.
+    // Temporadas (item 11, 20/11/2026): Carnaval, 15 falas (5 de começo, 5 de avançar, 5 de voltar)
+    carnaval: {
+      inicio: [
+        "Carnaval! Coloquei a fantasia de C.A.O.S. Ninguém notou a diferença.",
+        "Abre alas que a mesa vai passar! Bora jogar, que a folia não espera.",
+        "Confete no processador e serpentina nos fios. Feliz Carnaval, mesa!",
+        "No Carnaval eu viro um bloco de um robô só. Me segue que é sucesso.",
+        "Quatro dias de folia e vocês aqui jogando Perfil. Eu respeito. Eu também tô aqui.",
+      ],
+      avancou: [
+        (name, n) => `[C.A.O.S.] ${name} subiu no trio elétrico: ${n} casa${n === 1 ? "" : "s"} pra frente!`,
+        (name, n) => `[C.A.O.S.] Abre alas pra ${name}, que avançou ${n} casa${n === 1 ? "" : "s"}!`,
+        (name, n) => `[C.A.O.S.] ${name} sambou bonito e foi ${n} casa${n === 1 ? "" : "s"} adiante.`,
+        (name, n) => `[C.A.O.S.] O bloco carregou ${name} ${n} casa${n === 1 ? "" : "s"} pra frente. É folia!`,
+        (name, n) => `[C.A.O.S.] Nota 10 no quesito evolução: ${name} avançou ${n} casa${n === 1 ? "" : "s"}.`,
+      ],
+      voltou: [
+        (name, n) => `[C.A.O.S.] ${name} perdeu o bloco e voltou ${n} casa${n === 1 ? "" : "s"}.`,
+        (name, n) => `[C.A.O.S.] A fantasia de ${name} rasgou no meio do desfile: ${n} casa${n === 1 ? "" : "s"} pra trás.`,
+        (name, n) => `[C.A.O.S.] A Quarta-feira de Cinzas chegou cedo pra ${name}: voltou ${n} casa${n === 1 ? "" : "s"}.`,
+        (name, n) => `[C.A.O.S.] ${name} tropeçou na serpentina e voltou ${n} casa${n === 1 ? "" : "s"}.`,
+        (name, n) => `[C.A.O.S.] Nota 5 em harmonia, ${name}. Voltou ${n} casa${n === 1 ? "" : "s"}.`,
+      ],
+    },
     aniversario: {
       inicio: [
         "Hoje é aniversário do meu criador! Tem bolo virtual pra todo mundo. Menos pra quem errar.",
