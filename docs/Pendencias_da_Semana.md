@@ -1,5 +1,8 @@
 # Pendências da semana
 
+> **Pausa (JF, 07/11/2026):** quinta 12/11 e sexta 13/11 são do Wally. Até lá, aqui só acumula; o trabalho pesado volta
+> na **quinta 19/11**, com tudo o que juntou nas duas semanas. Fins de semana seguem com o JF.
+
 ## Para a quinta, 05/11, a partir das 18h (pedido do JF em 04/11/2026)
 
 - [x] (05/11, no main: PRs #203 e #204) **PRIMEIRO: Kit de dissecação do C.A.O.S. (pedido do JF, 05/11, pra hoje).** O Code da Carteira vai remontar o C.A.O.S.
@@ -40,14 +43,35 @@ Regra do JF (26/10/2026): nesta semana, bug, print ou sugestão que ele mandar f
 pra poupar créditos. Só corrige na hora o que ele pedir "pra agora", e só aquilo. Na **quinta, 29/10, às 18h**
 (Brasília), os créditos renovam e começam os patches com tudo desta lista.
 
-- [x] (1.9.6, 20/11) **Voz no iPhone (achado do Wally, 17/11):** na Carteira, a voz natural saía robótica no iPhone porque o WebAudio
+## Esperando o JF (06/11/2026)
+
+- [ ] **Cartas de Ano do Perfil 8:** o JF manda na semana de 09/11 (neste fim de semana não dá).
+- [ ] **Senha de ADM nova:** o JF troca sozinho no Cloudflare quando for mexer no Cloudflare da Carteira. Não é urgente.
+  O Code nunca pede nem recebe o valor.
+- [x] (1.9.6, 20/11, PR #225) **QUINTA, 19/11 (ok do JF em 06/11; adiado em 07/11, a semana de 12/11 é do Wally): Avatar do C.A.O.S. com
+  formas (do Wally, PR #208; as 3 que faltavam já chegaram em 07/11)** no Modo C.A.O.S., em teste. Antes disso, pensar
+  junto com o JF no fim de semana como ele vai funcionar:
+  versão de teste só no Modo C.A.O.S., ligada por opção, cada rosto do jogo virando uma forma (carinho/calmo → anjinho,
+  festa → festeiro, orgulho → pomposo, espiando → pensador, triste → tristinho, raiva → capetinha, fúria → capeta bravo,
+  medo/ansiedade → sirene). Tédio, vergonha e nojo: o Wally desenha (pedido feito em 06/11). Não publica sem o JF ver.
+- [ ] **A partir de 19/11 (ideia do JF, 07/11): ícone do app por temporada** (Natal, Ano Novo, Halloween e as outras bem
+  tematizadas) e as datas nerd: 25/5 Orgulho Nerd/Geek e 29/8 Dia do Gamer (C.A.O.S. nerd, cartas de cultura pop).
+  Detalhes em `docs/Temporadas.md`.
+- [ ] **Ofensiva 🔥 (ideia do Wally, 07/11):** "dias seguidos jogando" no Perfil, no molde do `ofensiva()` da Carteira
+  (viva se jogou hoje ou ontem, guarda o recorde, C.A.O.S. comemora nos marcos 3, 7, 14, 30…). Pro JF decidir; agenda normal.
+- [x] (1.9.6, 20/11, PR #225) **Segurança (dica do Wally/GPT na Carteira):** conferir no Perfil se importar save/backup valida tudo antes de gravar
+  e escapa nome/emoji que vão pra tela, e se o servidor conta o tamanho do pedido em bytes. Só conferir; corrigir se achar.
+- [ ] **Dezembro (aviso do JF pelo Wally, 14/11): IA online no Perfil**, como a Carteira ganhou em 13/11: rota no Worker
+  da sala, chave da Anthropic só no segredo `ANTHROPIC_API_KEY`, crédito pré-pago sem recarga, as leis do C.A.O.S.
+  valendo pra IA, voz do aparelho/fala pronta quando o servidor cair. Passo a passo do Windows: `npm.cmd`/`npx.cmd`.
+- [x] (1.9.6, 20/11, PR #225) **Voz no iPhone (achado do Wally, 17/11):** na Carteira, a voz natural saía robótica no iPhone porque o WebAudio
   só era destravado no 1º `pointerdown`. O iOS pede o destrave no `touchend` e trava de novo quando o app vai pro fundo
   (estado "interrupted"). Conferir o `audioDestravarNoToque` do Perfil: destravar em todo toque e dar `resume()` em
   qualquer estado diferente de "running". Agenda normal (19/11+).
 - [ ] (1.9.6, 20/11: o bordão entrou; falta o `porIdade` e o resto do `jeitoDeReagir`) **Núcleo 2.0.0 no Perfil (19/11+):** aplicar o `fala.bordao` ("Rapaz…", nunca no Júnior nem com criança na mesa), o `fala.porIdade` e o `jeitoDeReagir` novo no motor do jogo, com o
   filtro da mesa (idades misturadas: vale o mais cuidadoso).
 
-- [x] (1.9.6, 20/11) **QUINTA 19/11, primeiro item (pedido do JF, 18/11): desligar o "casal" JF + Anne.** Tirar ou reescrever as
+- [x] (1.9.6, 20/11, PR #225) **QUINTA 19/11, primeiro item (pedido do JF, 18/11): desligar o "casal" JF + Anne.** Tirar ou reescrever as
   falas e piadas que ligam os dois como casal (dormir no sofá, briga de casal, ciúme, "a patroa" etc.) nos geradores
   (`jfChegou`, `anneChegou`, `boasVindas`…), nas falas do C.A.O.S., nos apelidos e nos vínculos. **Fica:** o conteúdo
   bonito sobre a Anne, as cartas e as travas de conteúdo dela. **Pode sair:** a trava de ADM ligada a ela. Manter 0 ou 5
