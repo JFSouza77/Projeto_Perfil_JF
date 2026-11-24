@@ -1,0 +1,63 @@
+<!doctype html>
+<!-- 1.9.6.1 (pedido do JF, 24/11/2026): o JF esqueceu a senha do ADM. Esta página transforma a senha nova num código
+     de 8 letras (o mesmo cálculo do admHash do jogo). A senha não sai do aparelho: nada é enviado pra lugar nenhum.
+     O JF manda só o código pro Code, que troca o ADM_CRIADOR_HASH em src/js/01-configuracao.js. -->
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Código do ADM</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; background: #0b0b14; color: #e8e8f0; font: 17px/1.5 system-ui, sans-serif; }
+  main { max-width: 460px; margin: 0 auto; padding: 28px 16px; }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  p { color: #b8b8c8; }
+  label { display: block; margin: 18px 0 6px; }
+  input { width: 100%; box-sizing: border-box; padding: 12px; font-size: 18px; border-radius: 10px;
+          border: 2px solid #3b82f6; background: #12121e; color: #fff; }
+  #saida { margin-top: 22px; padding: 16px; border-radius: 12px; border: 1px solid #a855f7; text-align: center; }
+  #codigo { font: 700 32px/1.2 ui-monospace, monospace; letter-spacing: 3px; color: #c4b5fd; }
+  .aviso { color: #fbbf24; font-size: 15px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>🛠️ Código da senha nova do ADM</h1>
+  <p>Digite a senha nova duas vezes. Esta página não envia nada pra internet: o cálculo é feito aqui no aparelho.</p>
+  <label for="a">Senha nova</label>
+  <input id="a" type="password" autocomplete="new-password">
+  <label for="b">Repita a senha</label>
+  <input id="b" type="password" autocomplete="new-password">
+  <div id="saida">
+    <div id="codigo">—</div>
+    <p id="msg">Mande <b>só esse código</b> pro Code (nunca a senha). Depois salve a senha no app Senhas.</p>
+  </div>
+  <p class="aviso">Dica: use pelo menos 8 letras e números, e não repita a senha de outra coisa.</p>
+</main>
+<script>
+  // Mesmo cálculo do admHash do jogo (src/js/05-tela.js). Se um mudar, o outro muda junto.
+  function admHash(s) {
+    let h = 2166136261;
+    const t = "adm|" + String(s || "").trim();
+    for (let i = 0; i < t.length; i++) {
+      h ^= t.charCodeAt(i);
+      h = Math.imul(h, 16777619) >>> 0;
+    }
+    return h.toString(16).padStart(8, "0");
+  }
+  const a = document.getElementById("a"), b = document.getElementById("b");
+  const cod = document.getElementById("codigo"), msg = document.getElementById("msg");
+  function atualizar() {
+    const x = a.value.trim(), y = b.value.trim();
+    if (!x) { cod.textContent = "—"; return; }
+    if (x !== y) { cod.textContent = "—"; msg.textContent = "As duas senhas ainda não estão iguais."; return; }
+    if (x.length < 6) { cod.textContent = "—"; msg.textContent = "Use pelo menos 6 caracteres."; return; }
+    cod.textContent = admHash(x);
+    msg.innerHTML = "Mande <b>só esse código</b> pro Code (nunca a senha). Depois salve a senha no app Senhas.";
+  }
+  a.addEventListener("input", atualizar);
+  b.addEventListener("input", atualizar);
+</script>
+</body>
+</html>
