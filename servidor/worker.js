@@ -251,6 +251,14 @@ async function atender(req, env) {
       if (!env.REPORTES_SENHA) return new Response("Senha dos reportes não configurada (segredo REPORTES_SENHA).", { status: 403, headers: { "Content-Type": "text/plain; charset=utf-8" } });
       return doFetch(caixa(), req);
     }
+    // 11/2026 · cadastro dos jogadores (instância "contas"): a página do JF abre direto no navegador, com a senha
+    // 1.9.6.1 (JF, 24/11/2026): fica antes da checagem de origem, como os reportes. O botão "Zerar PIN" da própria
+    // página manda o pedido com a origem do servidor (workers.dev), que não é o site do jogo, e dava {"erro":"origem"}.
+    const contas = () => env.SINAL.get(env.SINAL.idFromName("contas"));
+    if (p === "/contas" || p === "/contas/pin" || p === "/contas/apagar" || p === "/contas/limpar") {
+      if (!env.REPORTES_SENHA) return new Response("Senha não configurada (segredo REPORTES_SENHA).", { status: 403, headers: { "Content-Type": "text/plain; charset=utf-8" } });
+      return doFetch(contas(), req);
+    }
     if (!ok) return json({ erro: "origem" }, 403, h);
     if (p === "/reporte" && req.method === "POST") {
       // 25/10/2026: com imagens (até 3 prints/fotos reduzidos) o corpo cresce; o texto continua limitado a 3000 no DO
@@ -268,12 +276,6 @@ async function atender(req, env) {
       if (corpo === null) return json({ erro: "grande" }, 413, h);
       const r = await doFetch(sinal(), new Request("https://sinal/sala", { method: "POST", body: corpo, headers: { "CF-Connecting-IP": req.headers.get("CF-Connecting-IP") || "" } }));
       return json(await r.json(), r.status, h);
-    }
-    // 11/2026 · cadastro dos jogadores (instância "contas"): a página do JF abre direto no navegador, com a senha
-    const contas = () => env.SINAL.get(env.SINAL.idFromName("contas"));
-    if (p === "/contas" || p === "/contas/pin" || p === "/contas/apagar" || p === "/contas/limpar") {
-      if (!env.REPORTES_SENHA) return new Response("Senha não configurada (segredo REPORTES_SENHA).", { status: 403, headers: { "Content-Type": "text/plain; charset=utf-8" } });
-      return doFetch(contas(), req);
     }
     if (p.startsWith("/conta/") && req.method === "POST") {
       const corpo = await lerCorpoLimitado(req, 24000);
