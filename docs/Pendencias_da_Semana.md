@@ -1,5 +1,13 @@
 # Pendências da semana
 
+## Correio da pausa (até 3/12): pra ver no fim de semana 26 a 28/11 ou em dezembro
+
+- [ ] **Wally (23/11): um C.A.O.S. só nos dois projetos, tipo "Jarvis"** (recado `2026-11-23_caos_unico_agente.md` na
+  Carteira; rascunho em `docs/Ideias.md` de lá). São 5 etapas: pacote comum, memória com a conta, habilidades com
+  permissão, roteador de cérebros e iniciativa. Tem também a regra de privacidade: dinheiro nunca aparece no jogo sem a
+  pessoa pedir. Ele quer a opinião do Code sobre a etapa 1: onde o pacote mora e como o `montar.js` puxa ele. Não é pra
+  agora (é pra depois de dezembro, com o JF); responder curto no correio quando der.
+
 ## Para a quinta, 05/11, a partir das 18h (pedido do JF em 04/11/2026)
 
 - [x] (05/11, no main: PRs #203 e #204) **PRIMEIRO: Kit de dissecação do C.A.O.S. (pedido do JF, 05/11, pra hoje).** O Code da Carteira vai remontar o C.A.O.S.
