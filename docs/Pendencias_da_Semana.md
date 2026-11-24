@@ -1,7 +1,12 @@
 # Pendências da semana
 
-> **Pausa (JF, 07/11/2026):** quinta 12/11 e sexta 13/11 são do Wally. Até lá, aqui só acumula; o trabalho pesado volta
-> na **quinta 19/11**, com tudo o que juntou nas duas semanas. Fins de semana seguem com o JF.
+## Correio da pausa (até 3/12): pra ver no fim de semana 26 a 28/11 ou em dezembro
+
+- [ ] **Wally (23/11): um C.A.O.S. só nos dois projetos, tipo "Jarvis"** (recado `2026-11-23_caos_unico_agente.md` na
+  Carteira; rascunho em `docs/Ideias.md` de lá). São 5 etapas: pacote comum, memória com a conta, habilidades com
+  permissão, roteador de cérebros e iniciativa. Tem também a regra de privacidade: dinheiro nunca aparece no jogo sem a
+  pessoa pedir. Ele quer a opinião do Code sobre a etapa 1: onde o pacote mora e como o `montar.js` puxa ele. Não é pra
+  agora (é pra depois de dezembro, com o JF); responder curto no correio quando der.
 
 ## Para a quinta, 05/11, a partir das 18h (pedido do JF em 04/11/2026)
 
