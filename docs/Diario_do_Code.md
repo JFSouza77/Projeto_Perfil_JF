@@ -30,8 +30,27 @@ segura**. Sem rodeio: é pra achar rápido.
 | Teste falhou logo depois de mudar fala | inventário desatualizado: `node ferramentas/caos_inventario.js`; contagens fixas em `teste_guia` e afins |
 | Voz nova do C.A.O.S. robótica no iPhone | WebAudio parado: `audioDestravarNoToque` (06-voz) destrava com efeitos OU voz ligada; `vozNuvemUsa` |
 | Avatar do C.A.O.S. não aparece | opção `acessCfg.avatar` (Acessibilidade), só no Modo C.A.O.S.: `caosAvatarNaHora` (17b-avatar-mesa) |
+| Botão da página das contas ou dos reportes dá `{"erro":"origem"}` | ordem no `atender` (servidor/worker.js): rota com senha tem que vir **antes** do `if (!ok)` da origem; e o JF precisa ter feito o deploy |
+| Esqueceu a senha do ADM | `ADM_CRIADOR_HASH` (01-configuracao); o JF gera o código novo em `ferramentas/codigo_adm.html` e manda só o código |
+| "Rapaz…" em lugar estranho | `caosBordao` (08-hall): filtros de fala curta, pergunta, interjeição e fala que já chama alguém |
 
 ## Registro (mais novo primeiro)
+
+### 26/11/2026 · fim de semana do Perfil (núcleo 2.0.1)
+
+- **"Rapaz… JF, ..." (pedido do JF, 25/11, trazido pelo Wally).** O bordão não pode vir antes do nome: é chamar a
+  pessoa duas vezes. Mudou: `caosBordao` pula a fala que já começa com o nome de alguém da mesa ou com um apelido seguido
+  de vírgula. O bordão continua sempre com reticências. Teste: `teste_bordao`.
+
+### 24/11/2026 · 1.9.6.1 · senha do ADM e PIN do JF esquecidos (relato do JF, com prints)
+
+- **Senha do ADM.** O JF esqueceu a senha e o jogo só guarda o código dela (`ADM_CRIADOR_HASH`). Mudou: a página
+  `ferramentas/codigo_adm.html` gera o código no próprio aparelho, sem enviar nada; o JF mandou só o código e saiu a
+  1.9.6.1 com ele. O Code nunca viu a senha.
+- **"Zerar PIN" dava `{"erro":"origem"}`.** Causa: no `atender` (servidor/worker.js) as rotas `/contas*` ficavam depois da
+  checagem de origem, e o botão da própria página manda o pedido com a origem do workers.dev. Mudou: `/contas*` subiu pra
+  antes da checagem, como os reportes (continua protegido pela senha). O JF fez o deploy pelo PC. Teste: wrangler local,
+  senha certa zera e senha errada é recusada.
 
 ### 20/11/2026 · 1.9.6 · pendências da semana (pedido do JF: "o que tiver pendente, faça hoje")
 

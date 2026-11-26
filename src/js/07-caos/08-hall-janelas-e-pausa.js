@@ -245,6 +245,11 @@ function caosBordao(msg) {
     if (corpo.length < 30 || corpo.length > 160 || /\?\s*$/.test(corpo)) return msg;
     // já começa com interjeição, nome entre colchetes ou emoji: deixa como está
     if (/^(rapaz|ah|ai|ih|eita|opa|ops|olha|uau|nossa|hm+|ué|oxe|vish|caramba|\p{Extended_Pictographic}|\[|\(|"|«)/iu.test(corpo)) return msg;
+    // 1.9.7 · núcleo 2.0.1 (pedido do JF, 25/11): "Rapaz… JF, ..." é chamar a pessoa duas vezes. Fala que já começa
+    // chamando alguém (nome de quem está na mesa, ou um apelido seguido de vírgula, como "Campeã, ...") fica sem bordão.
+    if (/^\p{Lu}[\p{L}\p{N}'’ .-]{0,24},/u.test(corpo)) return msg;
+    const ini = corpo.toLowerCase();
+    if ((players || []).some((p) => p && p.name && ini.indexOf(String(p.name).toLowerCase()) === 0)) return msg;
     if (!caosBordaoPode() || Math.random() >= CAOS_BORDAO_CHANCE) return msg;
     caosBordaoEstado.n++;
     caosBordaoEstado.carta = stats.totalDrawn;
