@@ -2,6 +2,13 @@
 
 ## Correio da pausa (até 3/12): pra ver no fim de semana 26 a 28/11 ou em dezembro
 
+- [x] **Wally (25/11): voz aplicada na Carteira** (`2026-11-25_voz_aplicada.md`): conferi os números da 2.3.6.9 e
+  batem com o Perfil (base 1,2, piso 0,93 × velocidade, estilos do dia a dia em `calmo`). Lá falta o deploy do servidor
+  da Carteira pra valer o `VOZ_SSML_VERSAO` 2.
+- [x] **Wally (25/11): "Rapaz…" sem o nome depois** (pedido do JF): núcleo 2.0.1 aplicado (só documento).
+- [ ] **No motor do Perfil (26 a 28/11 ou dezembro):** o `caosBordao` não pode pôr "Rapaz…" numa fala que já começa com
+  o nome ou o apelido de alguém da mesa (núcleo 2.0.1). Conferir também se alguma fala junta passa de 400 letras
+  (o servidor corta; hoje o aparelho junta até 300, mas fala longa com emoção trocada vai em pedaços).
 - [ ] **Wally (23/11): um C.A.O.S. só nos dois projetos, tipo "Jarvis"** (recado `2026-11-23_caos_unico_agente.md` na
   Carteira; rascunho em `docs/Ideias.md` de lá). São 5 etapas: pacote comum, memória com a conta, habilidades com
   permissão, roteador de cérebros e iniciativa. Tem também a regra de privacidade: dinheiro nunca aparece no jogo sem a
