@@ -11,6 +11,7 @@
 const NOVIDADES = [
   {
     v: "Beta 1.9.6",
+    ate: "1.9.6.1", // a lista junta os ajustes até essa versão
     data: "20/11/2026",
     nome: "Corpo do C.A.O.S.",
     t: "O C.A.O.S. ganhou um corpo em teste, pegou um bordão novo e a voz voltou a tocar certinho no iPhone.",
