@@ -1,1 +1,1 @@
-]).map((c) => Object.assign(c, { temporada: "natal" })).concat(TEMPORADA_CARTAS_ANO_NOVO, TEMPORADA_CARTAS_ANIVERSARIO, TEMPORADA_CARTAS_CARNAVAL); // + Ano Novo (95/96), aniversário do criador (94) e Carnaval (93)
+]).map((c) => Object.assign(c, { temporada: "natal" })).concat(TEMPORADA_CARTAS_ANO_NOVO, TEMPORADA_CARTAS_ANIVERSARIO, TEMPORADA_CARTAS_CARNAVAL, TEMPORADA_CARTAS_MULHER); // + Ano Novo (95/96), aniversário do criador (94), Carnaval (93) e Dia da Mulher (92)

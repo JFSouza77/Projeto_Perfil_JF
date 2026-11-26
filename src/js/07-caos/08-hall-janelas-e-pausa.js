@@ -149,6 +149,17 @@ function caosComentFato(d) {
       return { fr: `${n} acertou uma carta com ${v} ${pl(d.v, "dica", "dicas")} e levou nota dez`, np: `acertar com ${v} dicas` };
     case "carnavalPerdido":
       return { fr: `${n} chutou ${v} ${pl(d.v, "palpite", "palpites")} errados e perdeu o bloco`, np: `errar ${v} palpites` };
+    // Temporadas (item 11, 26/11/2026) · Títulos do Dia da Mulher (todos elogio)
+    case "mulherBrilhante":
+      return { fr: `${n} acertou ${v} ${pl(d.v, "carta", "cartas")} com cabeça de cientista`, np: `acertar ${v} cartas` };
+    case "mulherCaminho":
+      return { fr: `${n} acertou a primeira carta e abriu o caminho`, np: `acertar a primeira carta` };
+    case "mulherCraque":
+      return { fr: `${n} acertou uma carta em ${v} segundos, velocidade de craque`, np: `acertar em ${v} segundos` };
+    case "mulherCientista":
+      return { fr: `${n} acertou uma carta com ${v} ${pl(d.v, "dica", "dicas")}, precisão de cientista`, np: `acertar com ${v} dicas` };
+    case "mulherPersistente":
+      return { fr: `${n} tentou ${v} ${pl(d.v, "palpite", "palpites")} e não desistiu`, np: `tentar ${v} palpites` };
     case "notamestre":
       return { fr: `${n} tirou nota ${v} como Mestre`, np: `tirar nota ${v} como Mestre` };
     case "precoce":

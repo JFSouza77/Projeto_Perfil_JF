@@ -74,6 +74,9 @@ dados/02-cartas/03-lugar.js
 dados/02-cartas/04-coisa.js
 dados/02-cartas/05-animal.js
 dados/02-cartas/99-fechamento.js
+dados/02-cartas/92-mulher-abre.js
+dados/02-cartas/92-mulher.js
+dados/02-cartas/92-mulher-fecha.js
 dados/02-cartas/93-carnaval-abre.js
 dados/02-cartas/93-carnaval.js
 dados/02-cartas/93-carnaval-fecha.js

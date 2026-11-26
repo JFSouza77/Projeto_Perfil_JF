@@ -4333,6 +4333,31 @@ const REACTIVE_VOICE = {
         (name, n) => `[C.A.O.S.] Nota 5 em harmonia, ${name}. Voltou ${n} casa${n === 1 ? "" : "s"}.`,
       ],
     },
+    // Temporadas (item 11, 26/11/2026): Dia da Mulher, 15 falas (5 de começo, 5 de avançar, 5 de voltar). Data de
+    // homenagem: carinho e fatos, sem piada pesada (docs/Temporadas.md, "Tom").
+    mulher: {
+      inicio: [
+        "Hoje é 8 de março, Dia Internacional da Mulher. Um viva pra todas as mulheres da mesa e de fora dela!",
+        "Dia da Mulher: hoje o baralho tem cartas de mulheres que mudaram a história. Elas valem o dobro.",
+        "Cientistas, atletas, escritoras, heroínas. Hoje o jogo homenageia todas elas. Bora jogar!",
+        "Dia Internacional da Mulher. Eu, como inteligência artificial, sei reconhecer gente brilhante. Feliz 8 de março!",
+        "8 de março. Flores pras mulheres da mesa, e respeito o ano inteiro. Vamos começar?",
+      ],
+      avancou: [
+        (name, n) => `[C.A.O.S.] ${name} abriu caminho: ${n} casa${n === 1 ? "" : "s"} pra frente!`,
+        (name, n) => `[C.A.O.S.] Rumo ao pódio! ${name} avançou ${n} casa${n === 1 ? "" : "s"}.`,
+        (name, n) => `[C.A.O.S.] ${name} foi ${n} casa${n === 1 ? "" : "s"} adiante, como as pioneiras da história.`,
+        (name, n) => `[C.A.O.S.] Experimento bem-sucedido: ${name} andou ${n} casa${n === 1 ? "" : "s"}.`,
+        (name, n) => `[C.A.O.S.] ${name} ganhou flores e ${n} casa${n === 1 ? "" : "s"} de presente.`,
+      ],
+      voltou: [
+        (name, n) => `[C.A.O.S.] ${name} voltou ${n} casa${n === 1 ? "" : "s"}. Faz parte: toda pioneira da história também tropeçou.`,
+        (name, n) => `[C.A.O.S.] O experimento de ${name} deu errado: ${n} casa${n === 1 ? "" : "s"} pra trás. Ajusta e tenta de novo.`,
+        (name, n) => `[C.A.O.S.] ${name} recuou ${n} casa${n === 1 ? "" : "s"}, só pra pegar impulso.`,
+        (name, n) => `[C.A.O.S.] ${name} voltou ${n} casa${n === 1 ? "" : "s"}. Nenhuma campeã chegou lá sem voltar umas casas.`,
+        (name, n) => `[C.A.O.S.] ${n} casa${n === 1 ? "" : "s"} pra trás, ${name}. Respira e segue.`,
+      ],
+    },
     aniversario: {
       inicio: [
         "Hoje é aniversário do meu criador! Tem bolo virtual pra todo mundo. Menos pra quem errar.",

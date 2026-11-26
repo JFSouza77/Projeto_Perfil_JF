@@ -184,19 +184,19 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 199 | showToastMessage | - |
 | 298 | getRandomReaction | - |
 | 299 | showToastMessage | - |
-| 565 | caosFalarDepois | - |
-| 566 | showToastMessage | - |
-| 587 | getRandomReaction | - |
-| 593 | getRandomReaction | - |
-| 607 | getRandomReaction | - |
-| 679 | getRandomReaction | - |
+| 597 | caosFalarDepois | - |
+| 598 | showToastMessage | - |
+| 619 | getRandomReaction | - |
+| 625 | getRandomReaction | - |
+| 639 | getRandomReaction | - |
+| 711 | getRandomReaction | - |
 
 ## js/05y2-medalhas.js (2)
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 94 | getRandomReaction | - |
-| 95 | showToastMessage | - |
+| 95 | getRandomReaction | - |
+| 96 | showToastMessage | - |
 
 ## js/06-voz-som-vibracao.js (3)
 
@@ -497,16 +497,16 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 221 | showToastMessage | - |
-| 610 | caosGerarFala | gerador pausaHumor |
-| 611 | getRandomReaction | pausaHumor |
-| 640 | caosFalaAgendar | - |
-| 642 | caosGerarFala | gerador pausaVolta |
-| 643 | getRandomReaction | pausaVolta |
-| 667 | caosFalaAgendar | - |
-| 668 | getRandomReaction | retaFinal |
-| 687 | getRandomReaction | - |
-| 689 | showToastMessage | - |
+| 232 | showToastMessage | - |
+| 621 | caosGerarFala | gerador pausaHumor |
+| 622 | getRandomReaction | pausaHumor |
+| 651 | caosFalaAgendar | - |
+| 653 | caosGerarFala | gerador pausaVolta |
+| 654 | getRandomReaction | pausaVolta |
+| 678 | caosFalaAgendar | - |
+| 679 | getRandomReaction | retaFinal |
+| 698 | getRandomReaction | - |
+| 700 | showToastMessage | - |
 
 ## js/07-caos/09-vinculos-silencio-e-balao.js (22)
 

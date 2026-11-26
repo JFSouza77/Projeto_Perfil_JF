@@ -317,6 +317,7 @@ function temporadaTitulosCabecalho() {
   const t = typeof temporadaAtual === "function" ? temporadaAtual() : null;
   if (t && t.id === "aniversario") return "🎂 Títulos de aniversário";
   if (t && t.id === "carnaval") return "🎭 Títulos de Carnaval";
+  if (t && t.id === "mulher") return "💐 Títulos do Dia da Mulher";
   return t && t.id === "anoNovo" ? "🎆 Títulos de Ano Novo" : "🎄 Títulos de Natal";
 }
 function temporadaTitulosHtml(larga) {
@@ -324,6 +325,7 @@ function temporadaTitulosHtml(larga) {
   if (t && t.id === "anoNovo" && typeof larga === "function") return temporadaTitulosAnoNovo(larga);
   if (t && t.id === "aniversario" && typeof larga === "function") return temporadaTitulosAniversario(larga);
   if (t && t.id === "carnaval" && typeof larga === "function") return temporadaTitulosCarnaval(larga);
+  if (t && t.id === "mulher" && typeof larga === "function") return temporadaTitulosMulher(larga);
   if (!t || t.id !== "natal" || typeof larga !== "function") return "";
   const pj = (nome) => players.find((p) => p.name === nome);
   const nomeH = (p) => (p ? playerNameHtml(p.name, p.color, p.avatar) : "?");
@@ -476,6 +478,36 @@ function temporadaTitulosAniversario(larga) {
   // 🥳 Penetra da Festa: quem mais errou (zoeira de leve)
   const pen = players.filter((p) => (p.errosPartida || 0) >= 2).sort((a, b) => b.errosPartida - a.errosPartida)[0];
   if (pen) h += larga("🥳", "Penetra da Festa", nomeH(pen), `chutou ${pen.errosPartida} palpites sem ser convidado`, "#a78bfa", { t: "aniversarioPenetra", n: pen.name, v: pen.errosPartida });
+  return h;
+}
+
+/* Temporadas · item 11 (26/11/2026): 5 títulos do Dia da Mulher. Data de homenagem: todos são elogio, inspirados em
+   mulheres das cartas (cientistas, pioneiras, atletas), e valem pra qualquer jogador. Só com dado de verdade. */
+function temporadaTitulosMulher(larga) {
+  const pj = (nome) => players.find((p) => p.name === nome);
+  const nomeH = (p) => (p ? playerNameHtml(p.name, p.color, p.avatar) : "?");
+  const ac = (history || []).filter((h) => typeof h.cluesUsed === "number" && h.playerName);
+  let h = "";
+  // 💡 Mente Brilhante: quem mais acertou
+  const conta = {};
+  ac.forEach((x) => (conta[x.playerName] = (conta[x.playerName] || 0) + 1));
+  const top = Object.entries(conta).filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1])[0];
+  if (top) h += larga("💡", "Mente Brilhante", nomeH(pj(top[0])), `acertou ${top[1]} cartas, cabeça de cientista`, "#c084fc", { t: "mulherBrilhante", n: top[0], v: top[1] });
+  // 🛤️ Abre-Caminhos: o primeiro acerto da partida
+  const pri = ac[0];
+  if (pri) h += larga("🛤️", "Abre-Caminhos", nomeH(pj(pri.playerName)), "acertou a primeira carta e abriu o caminho pra mesa", "#f472b6", { t: "mulherCaminho", n: pri.playerName, v: pri.cluesUsed });
+  // ⚽ Velocidade de Craque: o acerto mais rápido
+  const rap = ac.filter((x) => typeof x.timeTakenMs === "number" && x.timeTakenMs >= 1500).sort((a, b) => a.timeTakenMs - b.timeTakenMs)[0];
+  if (rap) {
+    const seg = Math.max(1, Math.round(rap.timeTakenMs / 1000));
+    h += larga("⚽", "Velocidade de Craque", nomeH(pj(rap.playerName)), `acertou uma carta em ${seg} s`, "#22d3ee", { t: "mulherCraque", n: rap.playerName, v: seg });
+  }
+  // 🔬 Precisão de Cientista: o acerto com menos dicas
+  const prec = ac.slice().sort((a, b) => a.cluesUsed - b.cluesUsed)[0];
+  if (prec) h += larga("🔬", "Precisão de Cientista", nomeH(pj(prec.playerName)), `acertou uma carta com ${prec.cluesUsed} ${prec.cluesUsed === 1 ? "dica" : "dicas"}`, "#22c55e", { t: "mulherCientista", n: prec.playerName, v: prec.cluesUsed });
+  // 💪 Não Desiste Nunca: quem mais tentou (palpites errados), com carinho e sem zoeira
+  const pers = players.filter((p) => (p.errosPartida || 0) >= 2).sort((a, b) => b.errosPartida - a.errosPartida)[0];
+  if (pers) h += larga("💪", "Não Desiste Nunca", nomeH(pers), `tentou ${pers.errosPartida} palpites e não desistiu`, "#a78bfa", { t: "mulherPersistente", n: pers.name, v: pers.errosPartida });
   return h;
 }
 

@@ -16,6 +16,7 @@ const MEDALHA_CORES = {
   anoNovo: ["#1e3a8a", "#facc15", "#fde68a"],
   halloween: ["#ea580c", "#581c87", "#fb923c"],
   carnaval: ["#db2777", "#7c3aed", "#facc15"],
+  mulher: ["#6d28d9", "#c084fc", "#fde68a"], // 26/11/2026: roxo, lavanda e ouro
   junina: ["#b45309", "#dc2626", "#fbbf24"],
   independencia: ["#16a34a", "#facc15", "#2563eb"],
   _: ["#4f46e5", "#a855f7", "#facc15"],

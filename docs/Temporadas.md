@@ -130,6 +130,11 @@ temporadas, na ordem do calendário.
     - [x] Carnaval · 5+5 itens de lojinha (Modo C.A.O.S.: Chuva de Confete, Marchinha, Trio Elétrico, Máscara, Abadá VIP; Corrida: Chuva de Confete, Bloco de Rua, Trio Elétrico, Fantasia Premiada, Passo de Frevo).
     - [x] Carnaval · 5 títulos (Destaque da Folia, Comissão de Frente, Mestre de Bateria, Nota Dez, Folião Perdido).
     - [x] Carnaval · 10 cartas valendo o dobro (Rei Momo, Joãosinho Trinta, Daniela Mercury, Olinda, Trio elétrico, Abadá, Confete, Cuíca, Escola de samba, Maracatu).
+    - [x] Dia da Mulher (26/11) · enfeite (pétalas lilás e guirlanda de flores), selo 💐, 15 falas carinhosas, 5 cores (Violeta, Buquê, Lavanda, Pódio, Aurora) e 5 emojis (💐 🌷 🌺 💜 🌻).
+    - [x] Dia da Mulher · 5+5 itens de lojinha (Modo C.A.O.S.: Buquê Surpresa, Laboratório, Pódio, Lupa da Cientista, Rede de Apoio; Corrida: Buquê Surpresa, Caminho Aberto, Pódio, Prêmio Nobel, Recorde Olímpico).
+    - [x] Dia da Mulher · 5 títulos, todos elogio (Mente Brilhante, Abre-Caminhos, Velocidade de Craque, Precisão de Cientista, Não Desiste Nunca).
+    - [x] Dia da Mulher · 10 cartas de mulheres marcantes valendo o dobro (Bertha Lutz, Nise da Silveira, Carolina Maria de Jesus, Maria Quitéria, Anita Garibaldi, Florence Nightingale, Zilda Arns, Maria Esther Bueno, Cecília Meireles, Chiquinha Gonzaga).
+    - [ ] Próxima: Páscoa.
     Inclui as 2 datas novas do JF (06/11/2026), já reconhecidas pelo motor: **6/9 · Aniversário do Perfil JF** (o C.A.O.S.
     lembra quantos anos o jogo faz e conta a história: `docs/Historia_do_Perfil.md`) e **20/9 · Aniversário do C.A.O.S.**
     (ele é o aniversariante: fica todo bobo, comemora com a mesa e relembra de quando era "só um texto na tela").
@@ -293,3 +298,4 @@ temporadas, na ordem do calendário.
   Títulos de Carnaval no resumo da partida, com comentário do C.A.O.S. (`teste_temporadas`, 3 checagens).
   10 cartas de Carnaval em `src/dados/02-cartas/93-carnaval.js` (ids 0921+, todas livres), com assunto "Carnaval" no
   catálogo; auditor sem aviso novo. **Carnaval completo.** Teste: `teste_temporadas` (5 checagens das cartas).
+- 26/11/2026: Dia da Mulher completo (enfeite, selo, falas, cores, emojis, lojinha, títulos e 10 cartas), no branch `temporadas-2`. `teste_temporadas`, `auditar_cartas` sem aviso novo, `teste_cerebro`, `teste_medalhas`.

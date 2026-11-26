@@ -606,6 +606,68 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
     }
     return r;
   }));
+  // item 11 (26/11): Dia da Mulher: pétalas e flores, selo, 15 falas, 5 cores e 5 emojis da data
+  await page.goto(url + "?temporada=mulher");
+  await page.waitForFunction(() => typeof temporadaAplicar === "function");
+  Object.assign(o, await page.evaluate(() => {
+    const r = {};
+    const e = document.getElementById("temporadaEnfeite");
+    r.mulherMarcaEEnfeite = document.documentElement.dataset.temporada === "mulher" && !!e && getComputedStyle(e).display === "block" && getComputedStyle(e).pointerEvents === "none";
+    const selo = document.getElementById("splashTemporada");
+    r.mulherSelo = !!selo && !selo.hidden && /Mulher/.test(selo.textContent);
+    const C = REACTIVE_VOICE.temporada.mulher;
+    r.mulher15Falas = !!C && C.inicio.length === 5 && C.avancou.length === 5 && C.voltou.length === 5 && caosTemporadaFalas() === C;
+    r.mulherFalaComNome = /Ana/.test(C.avancou[0]("Ana", 2)) && /2 casas/.test(C.avancou[0]("Ana", 2)) && /1 casa\b/.test(C.voltou[0]("Ana", 1));
+    const E = TEMPORADA_ESTILOS.mulher;
+    r.mulher5Cores5Emojis = E.cores.length === 5 && E.emojis.length === 5 && E.nomesCores.length === 5 && E.cores.every((c) => GRADIENTS[c] && coresDaPaleta().includes(c)) && E.emojis.every((x) => avatarsForMode().includes(x));
+    r.mulherSemCoresDoNatal = !TEMPORADA_ESTILOS.natal.cores.some((c) => coresDaPaleta().includes(c));
+    r.mulherEmojisNovos = E.emojis.every((x) => !AVATARS.includes(x)) && new Set(E.emojis).size === 5;
+    const ca = (cat) => Object.keys(cat).filter((k) => cat[k].temporada === "mulher");
+    const basesOk = (cat) => ca(cat).every((k) => { const it = cat[k]; return it.surpresa ? it.surpresa.every((b) => cat[b] && !cat[b].temporada) : cat[it.base] && !cat[it.base].temporada; });
+    r.mulherLoja5Cada = ca(MC_LOJA).length === 5 && ca(CORRIDA_LOJA).length === 5 && basesOk(MC_LOJA) && basesOk(CORRIDA_LOJA);
+    let ok = true;
+    for (let i = 0; i < 60; i++) {
+      const v = Object.keys(lojaVitrineSortear(MC_LOJA, MC_VITRINE).estoque).filter((k) => MC_LOJA[k].temporada);
+      const c = Object.keys(lojaVitrineSortear(CORRIDA_LOJA, CORRIDA_VITRINE).estoque).filter((k) => CORRIDA_LOJA[k].temporada);
+      if (v.length !== 2 || c.length !== 2 || v.concat(c).some((k) => !/^mulher/.test(k))) ok = false;
+    }
+    r.mulherVitrineSoDaMulher = ok;
+    // 10 cartas do Dia da Mulher (todas Pessoa), só no 8 de março, valendo o dobro, selo 💐
+    {
+      const ca2 = TEMPORADA_CARTAS.filter((c) => c.temporada === "mulher");
+      r.mulher10Cartas = ca2.length === 10 && ca2.every((c) => c.clues.length === 20) && ca2.every((c) => c.category === "PESSOA");
+      const modo = CURRENT_MODE, sp = players;
+      players = [{ id: "a", name: "Ana", color: "#e94560", avatar: "🦊", score: 0, position: 0 }, { id: "b", name: "Beto", color: "#4ecdc4", avatar: "🐼", score: 0, position: 0 }];
+      CURRENT_MODE = "classico";
+      allCards = baralhoClassico();
+      resetDeck();
+      const ini = deck.slice(-50);
+      r.mulherCartasEntramSoAsDele = ca2.every((c) => ini.includes(c)) && !deck.some((c) => c.temporada && c.temporada !== "mulher");
+      r.mulherCartaValeODobroComSelo = temporadaMultCarta(ca2[0]) === 2 && /💐 Carta de Dia da Mulher · vale o dobro/.test(temporadaSeloCartaHtml(ca2[0]));
+      CURRENT_MODE = "junior";
+      r.mulherCartasNoJunior = temporadaCartasDoModo().length === 10;
+      CURRENT_MODE = modo; players = sp;
+      r.mulherCartaAchadaPeloId = cartaPorId("PESSOA-0931") === ca2[0] && cartaPorId("PESSOA-0940") === ca2[9];
+    }
+    // 5 títulos do Dia da Mulher no resumo da partida (todos elogio)
+    {
+      const sh = history, sp2 = players;
+      players = [{ id: "a", name: "Ana", color: "#e94560", avatar: "🦊", errosPartida: 3 }, { id: "b", name: "Beto", color: "#4ecdc4", avatar: "🐼", errosPartida: 0 }];
+      history = [
+        { playerName: "Beto", cluesUsed: 4, timeTakenMs: 40000, points: 16 },
+        { playerName: "Ana", cluesUsed: 2, timeTakenMs: 6000, points: 18 },
+        { playerName: "Ana", cluesUsed: 7, timeTakenMs: 30000, points: 13 },
+      ];
+      const got = [];
+      temporadaTitulosHtml((ic, tit, nome, desc, cor, meta) => (got.push([tit, meta.n, meta.t]), ""));
+      history = sh; players = sp2;
+      const tem = (tit, n) => got.some((g) => g[0] === tit && g[1] === n);
+      r.mulher5Titulos = got.length === 5 && tem("Mente Brilhante", "Ana") && tem("Abre-Caminhos", "Beto") && tem("Velocidade de Craque", "Ana") && tem("Precisão de Cientista", "Ana") && tem("Não Desiste Nunca", "Ana");
+      r.mulherTitulosComentaveis = got.every((g) => !!caosComentFato({ t: g[2], n: g[1], v: 3 })) && got.every((g) => CAOS_COMENT_TOM[g[2]] === "elogio");
+      r.mulherCabecalho = /Dia da Mulher/.test(temporadaTitulosCabecalho());
+    }
+    return r;
+  }));
   await page.goto(url + "?temporada=nenhuma");
   await page.waitForFunction(() => typeof temporadaAplicar === "function");
   o.semTemporadaSemEnfeite = await page.evaluate(() => {
@@ -687,7 +749,7 @@ const { acharMestre, abrirNavegador } = require("./_navegador");
       players = s.players; CURRENT_MODE = s.CURRENT_MODE; mc = s.mc; cartasPartida = s.cartasPartida; mcAnunciar = s.mcAnunciar;
     }
     const t = caosTemporadaGafeTexto();
-    r.gafeFalaErradaEConserta = /\.\.\./.test(t) && REACTIVE_VOICE.temporada.gafe.some((g) => t.includes(String(typeof g === "function" ? g() : g).replace(/^\[C\.A\.O\.S\.\]\s*/, ""))) && /Natal|Ho, ho|gorro|Pisca|bonzinhos|Ano Novo|ondas|champanhe|Fogos|Dez, nove|aniversário|Parabéns|Balões|criador|2 de janeiro|Carnaval|folia|bloco|fantasia|Confete|alas/i.test(t);
+    r.gafeFalaErradaEConserta = /\.\.\./.test(t) && REACTIVE_VOICE.temporada.gafe.some((g) => t.includes(String(typeof g === "function" ? g() : g).replace(/^\[C\.A\.O\.S\.\]\s*/, ""))) && /Natal|Ho, ho|gorro|Pisca|bonzinhos|Ano Novo|ondas|champanhe|Fogos|Dez, nove|aniversário|Parabéns|Balões|criador|2 de janeiro|Carnaval|folia|bloco|fantasia|Confete|alas|Mulher|8 de março|pioneira|pódio|flores|experimento|campeã|impulso|Respira/i.test(t);
     const modo = CURRENT_MODE;
     CURRENT_MODE = "junior";
     let jr = false;

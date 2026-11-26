@@ -284,3 +284,45 @@ html[data-temporada="carnaval"] .splash-temporada {
   background: linear-gradient(135deg, #7c3aed, #db2777, #f59e0b);
   border-color: #fde68a99;
 }
+
+/* ---------- Dia da Mulher (item 11, 26/11/2026): pétalas lilás caindo devagar e uma guirlanda de flores no alto.
+   Por quê: data de homenagem (docs/Temporadas.md), então o clima é delicado, sem festa barulhenta; o roxo é a cor do dia. */
+html[data-temporada="mulher"] .tmp-enfeite {
+  display: block;
+}
+html[data-temporada="mulher"] .tmp-neve,
+html[data-temporada="mulher"] .tmp-neve::after {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(4px 3px at 30px 40px, #c084fcc0 50%, transparent 51%),
+    radial-gradient(3px 4px at 110px 140px, #f0abfcb0 50%, transparent 51%),
+    radial-gradient(4px 3px at 180px 70px, #e9d5ffc0 50%, transparent 51%),
+    radial-gradient(3px 4px at 70px 200px, #f9a8d4a0 50%, transparent 51%);
+  background-size: 230px 230px;
+  opacity: 0.5;
+  animation: tmpNeve 30s linear infinite;
+}
+html[data-temporada="mulher"] .tmp-neve::after {
+  content: "";
+  background-size: 180px 180px;
+  opacity: 0.35;
+  animation-duration: 42s;
+}
+html[data-temporada="mulher"] .tmp-luzes {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: env(safe-area-inset-top, 0px);
+  height: 22px;
+  background-image:
+    radial-gradient(circle at 12px 10px, #c084fc 0 5px, transparent 6px),
+    radial-gradient(circle at 36px 12px, #f472b6 0 4px, transparent 5px),
+    radial-gradient(circle at 60px 9px, #e9d5ff 0 4px, transparent 5px);
+  background-size: 72px 22px;
+  opacity: 0.8;
+}
+html[data-temporada="mulher"] .splash-temporada {
+  background: linear-gradient(135deg, #6d28d9, #a855f7, #db2777);
+  border-color: #e9d5ff99;
+}

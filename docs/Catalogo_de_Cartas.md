@@ -1,8 +1,8 @@
 # Catálogo de cartas do Perfil JF
 
-Gerado pelo Code (Claude Code) em 2026-11-20 com `node ferramentas/catalogo_cartas.js`. Só os nomes, sem dicas.
+Gerado pelo Code (Claude Code) em 2026-11-26 com `node ferramentas/catalogo_cartas.js`. Só os nomes, sem dicas.
 
-**1990 cartas: 1040 já estão no jogo e 950 estão planejadas pra Beta 2.0 (marcadas com 🆕).**
+**2000 cartas: 1050 já estão no jogo e 950 estão planejadas pra Beta 2.0 (marcadas com 🆕).**
 
 | Categoria | No jogo | Planejadas 🆕 | Total |
 |---|---|---|---|
@@ -10,8 +10,8 @@ Gerado pelo Code (Claude Code) em 2026-11-20 com `node ferramentas/catalogo_cart
 | 📅 Ano | 200 | 55 | 255 |
 | 📦 Coisa | 221 | 255 | 476 |
 | 📍 Lugar | 206 | 235 | 441 |
-| 🧑 Pessoa | 213 | 340 | 553 |
-| **Total** | **1040** | **950** | **1990** |
+| 🧑 Pessoa | 223 | 340 | 563 |
+| **Total** | **1050** | **950** | **2000** |
 
 ## Como conferir uma ideia de carta (instruções pro GPT)
 
@@ -448,7 +448,7 @@ Vale do Silício 🆕 (fecha a conta de Lugar em 225)
 **Universidades e estúdios** (3)
 Herbert Richers 📼 · Projac 🆕 · UFRJ 📼
 
-## 🧑 Pessoa · 553 (213 no jogo, 340 🆕)
+## 🧑 Pessoa · 563 (223 no jogo, 340 🆕)
 
 **Animação** (2)
 Bruno Madrigal 🆕 (ideia do JF 03/11) · Mirabel Madrigal 🆕 (ideia do JF 03/11)
@@ -488,6 +488,9 @@ Backyardigans 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Bob Esponja 
 
 **Desenhos para os pequenos** (11)
 Bananas de Pijamas 🆕 (combina com o Júnior; Old School; handoff JF+GPT 29/10) · Barbie 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Barney 🆕 (combina com o Júnior; Old School; handoff JF+GPT 29/10) · Bluey 🧸 · Bob, o Construtor 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Botas 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Dora Aventureira · Galinha Pintadinha 🧸 · Garibaldo 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Peppa Pig 🧸 · Raposo
+
+**Dia da Mulher** (10)
+Anita Garibaldi · Bertha Lutz · Carolina Maria de Jesus · Cecília Meireles · Chiquinha Gonzaga · Florence Nightingale · Maria Esther Bueno · Maria Quitéria · Nise da Silveira · Zilda Arns
 
 **Disney e Pixar** (36)
 Alegria (Divertida Mente) 🧸 · Alvo Dumbledore 🆕 (handoff JF+GPT 29/10) · Bambi 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Bela Adormecida 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Bela e a Fera 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Branca de Neve 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Buzz Lightyear 🧸 · Capitão Gancho 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Cinderela 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Elsa · Gaston 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Huguinho, Zezinho e Luisinho 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Ió 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Irmãos Metralha 📼 · Leitão 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Lilo 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Malévola · Mickey Mouse · Moana 🧸 · Mulan 🧸 · Olaf 🧸 · Pateta 📼 · Pato Donald 📼 · Pequena Sereia 🆕 (combina com o Júnior; handoff JF+GPT 30/10) · Rapunzel 🧸 · Sete Anões 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Simba 🧸 · Sininho 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Stitch 🧸 · Tiana 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Tio Patinhas 📼 · Ursinho Pooh 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Vanellope von Schweetz 🆕 (Detona Ralph) · WALL-E 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Woody 🧸 · Zé Carioca 📼
