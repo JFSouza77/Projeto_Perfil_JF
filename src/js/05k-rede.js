@@ -2760,7 +2760,7 @@ const REDE_ESPERA_DICAS = [
   "Pense em voz baixa: se você falar o chute alto fora da vez, entrega a resposta pros outros.",
   "Dica boa é dica comparada: junte as pistas antes de chutar.",
   "Ficou na dúvida do que tocar? Olhe o topo da tela: ele mostra de quem é a vez.",
-  "Quem tem menos de 12 anos ganha tempo extra pra ler quando for o Mestre.",
+  "Quem tem menos de 12 ou 60 anos ou mais ganha tempo extra pra ler quando for o Mestre.",
   "No tabuleiro, cada ponto vira uma casa. Chegue no fim primeiro e vença.",
   "Dá pra pausar a partida pelo botão ⏸️. O tempo congela pra todo mundo.",
   "Viu uma carta com algo errado? Na pausa tem o botão de reportar pro JF consertar.",
@@ -3246,7 +3246,7 @@ function redeEscolhaDesenhar(box, sala) {
       <div class="rede-rot">😀 Emoji</div><div class="avatar-picker-row rede-paleta">${emojis}</div>
       <div class="rede-rot">🎭 Zoeira · Como o C.A.O.S. pode zoar você?</div><div class="color-picker-row rede-paleta tem-escolha">${humores}</div>
       ${hAtual && hAtual.dica ? `<div class="rede-dica-humor">${escapeHtml(hAtual.dica)}</div>` : ""}
-      <div class="rede-rot">${cad.equipe ? "🎂 Faixa etária <small>(obrigatória)</small>" : "🎂 Idade <small>(obrigatória · com menos de 12, ganha tempo extra pra ler quando for o Mestre; o Modo C.A.O.S. é 16+)</small>"}</div><div class="color-picker-row rede-paleta${r.idade ? " tem-escolha" : ""}">${idades}</div>
+      <div class="rede-rot">${cad.equipe ? "🎂 Faixa etária <small>(obrigatória)</small>" : "🎂 Idade <small>(obrigatória · com menos de 12 ou 60+, ganha tempo extra pra ler quando for o Mestre; o Modo C.A.O.S. é 16+)</small>"}</div><div class="color-picker-row rede-paleta${r.idade ? " tem-escolha" : ""}">${idades}</div>
       ${rede.erroCadastro ? `<div class="rede-aviso">${escapeHtml(rede.erroCadastro)}</div>` : ""}
       <button type="button" class="btn-start btn-neo neo-solid neo-still" id="redePedir" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">🙋 Pedir pra entrar</button>
     </div>`;

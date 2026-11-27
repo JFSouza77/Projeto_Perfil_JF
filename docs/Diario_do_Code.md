@@ -33,8 +33,16 @@ segura**. Sem rodeio: é pra achar rápido.
 | Botão da página das contas ou dos reportes dá `{"erro":"origem"}` | ordem no `atender` (servidor/worker.js): rota com senha tem que vir **antes** do `if (!ok)` da origem; e o JF precisa ter feito o deploy |
 | Esqueceu a senha do ADM | `ADM_CRIADOR_HASH` (01-configuracao); o JF gera o código novo em `ferramentas/codigo_adm.html` e manda só o código |
 | "Rapaz…" em lugar estranho | `caosBordao` (08-hall): filtros de fala curta, pergunta, interjeição e fala que já chama alguém |
+| Voz do C.A.O.S. mais lenta que o normal | alguém de 60+ na mesa: `caosVelVoz` (06-voz) e `mesaTem60` (05d) |
 
 ## Registro (mais novo primeiro)
+
+### 27/11/2026 · botão de idade "60 ou mais" (pedido do JF)
+
+- **Idade 60+ (núcleo `fala.porIdade`, ok do JF em 27/11).** O núcleo pede o C.A.O.S. calmo, claro e sem pressa com
+  quem tem 60 ou mais, e o Perfil só tinha 3 faixas. Mudou: `IDADE_OPCOES` ganhou "👴 60 ou mais" (`sessenta`), que
+  vale como 16+ pro Modo C.A.O.S. e pro bordão (`jogador16`); `jogador60` dá o tempo extra de Mestre; com alguém de
+  60+ na mesa, `caosVelVoz` deixa a voz ~8% mais calma. Teste: `teste_idade60` (e `teste_idade`, `teste_bordao`).
 
 ### 26/11/2026 · fim de semana do Perfil (núcleo 2.0.1)
 

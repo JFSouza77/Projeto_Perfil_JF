@@ -235,7 +235,8 @@ const CAOS_BORDAO_CHANCE = 0.12;
 let caosBordaoEstado = { n: 0, carta: -99 };
 function caosBordaoPode() {
   if (CURRENT_MODE === "junior" || !players.length) return false;
-  if (players.some((p) => !p || (idadeNorm(p.idade) !== "doze" && idadeNorm(p.idade) !== "dezesseis"))) return false;
+  // 1.9.7: "60 ou mais" também é adulto pro bordão
+  if (players.some((p) => !p || !["doze", "dezesseis", "sessenta"].includes(idadeNorm(p.idade)))) return false;
   return caosBordaoEstado.n < 3 && stats.totalDrawn - caosBordaoEstado.carta >= 6;
 }
 function caosBordao(msg) {

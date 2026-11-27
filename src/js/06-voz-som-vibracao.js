@@ -50,13 +50,13 @@ function caosVoiceCancel() {
   } catch (e) {}
 }
 function caosSpeakSample(txt) {
-  if (vozNuvemUsa()) return caosFalarNuvem([txt], [[Math.min(2, caosVoiceSpeed), 1]], null, null, -1);
+  if (vozNuvemUsa()) return caosFalarNuvem([txt], [[Math.min(2, caosVelVoz()), 1]], null, null, -1);
   try {
     const u = new SpeechSynthesisUtterance(txt);
     u.lang = "pt-BR";
     const v = caosPickVoice();
     if (v) u.voice = v;
-    u.rate = Math.min(2, caosVoiceSpeed);
+    u.rate = Math.min(2, caosVelVoz());
     u.volume = acessVolVoz();
     u.pitch = Math.max(0.4, Math.min(2, caosTomEfetivo()));
     window.speechSynthesis.cancel();
@@ -110,6 +110,11 @@ function caosSpeechText(msg, pausa) {
     .replace(/^\s*⏸\s*/, "")
     .replace(/\s*⏸\s*$/, ".")
     .trim();
+}
+// 1.9.7 (pedido do JF, 27/11/2026; núcleo fala.porIdade): com alguém de 60+ na mesa, a voz fica ~8% mais calma
+// (da base 1,2 cai pra uns 1,1), pra sair clara e sem pressa. A escolha do jogador nas opções continua valendo.
+function caosVelVoz() {
+  return caosVoiceSpeed * (typeof mesaTem60 === "function" && mesaTem60() ? 0.92 : 1);
 }
 function caosSemPausa(t) {
   return t.replace(/\s*⏸\s*/g, ", ");
@@ -187,7 +192,7 @@ function caosSpeak(msg, humorForcado, onEnd, onPedaco, vir) {
       const end = chunk.slice(-1);
       const stP = hmV && pi >= corteV ? [st0[0] * hmV[0], st0[1] * hmV[1]] : st;
       // sem sorteio aqui: a voz nova guarda cada fala pelo jeito exato (o sorteio fica só na voz do aparelho)
-      const vel = Math.max(0.93 * caosVoiceSpeed, Math.min(2, stP[0] * caosVoiceSpeed));
+      const vel = Math.max(0.93 * caosVelVoz(), Math.min(2, stP[0] * caosVelVoz()));
       return [vel, stP[1] + (end === "?" ? 0.08 : end === "!" ? 0.05 : 0), hmV && pi >= corteV ? vir.para : emo0];
     });
     // 1.7.10.2: com internet, a voz nova (servidor → Azure); sem ela, ou se demorar, a voz do aparelho
@@ -210,7 +215,7 @@ function caosFalarAparelho(partes, jeitos, onEnd, onPedaco, corteV, voice) {
     u.volume = acessVolVoz();
     if (voice === undefined) voice = caosPickVoice();
     if (voice) u.voice = voice;
-    u.rate = Math.max(0.93 * caosVoiceSpeed, Math.min(2, jeitos[pi][0] + (Math.random() - 0.5) * 0.06));
+    u.rate = Math.max(0.93 * caosVelVoz(), Math.min(2, jeitos[pi][0] + (Math.random() - 0.5) * 0.06));
     u.pitch = Math.max(Math.max(0.4, 0.88 * tom), Math.min(2, (jeitos[pi][1] + (Math.random() - 0.5) * 0.08) * tom));
     if (corteV >= 0 && typeof onPedaco === "function")
       u.onstart = () => {
