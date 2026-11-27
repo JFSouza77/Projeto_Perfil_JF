@@ -284,21 +284,14 @@ const ARQ = acharMestre(process.argv[2]);
       out.nomeRepetido = marcou && !!toast && /Anne/.test(toast.textContent) && !document.querySelector('.caos-modal-ov');
       players = salvos; starterChosen = iniAntes; inp.value = ''; renderScoreboard();
     }
-    // Travas ADM (pedido do JF): a pergunta abre; Sim trava o nick da Anne (reconhecida), Não desliga; respondida, não pergunta de novo
+    // 1.9.7 (pedido do JF, 27/11/2026): a pergunta das Travas ADM não existe mais; a partida segue direto, sem mexer
+    // no conteúdo da Anne (ela entra como jogadora comum, com cadastro), e o JF segue reconhecido
     {
       const antes = anneLigada();
-      const clicar = (re) => [...document.querySelectorAll('#redeTravas button')].find((x) => re.test(x.textContent)).click();
+      anneLigar(false);
       let seguiu = 0;
-      redeTravasPerguntar(() => seguiu++, true);
-      const abriu = !!document.getElementById('redeTravas') && /Travas ADM/.test(document.getElementById('redeTravas').textContent);
-      clicar(/Sim/);
-      const sim = anneLigada() === true && isAnneNomeBruto('Anne') && seguiu === 1; // 06/11: a trava liga o nome; o tratamento ainda pede o cadastro
       redeTravasPerguntar(() => seguiu++);
-      const naoRepete = !document.getElementById('redeTravas') && seguiu === 2;
-      redeTravasPerguntar(() => seguiu++, true);
-      clicar(/Não/);
-      const nao = anneLigada() === false && !isAnneNomeBruto('Anne') && seguiu === 3;
-      out.travasAdm = abriu && sim && naoRepete && nao;
+      out.travasAdm = !document.getElementById('redeTravas') && seguiu === 1 && anneLigada() === false && !isAnneNomeBruto('Anne') && isJfNomeBruto('JF');
       anneLigar(antes);
     }
     // Pedido do JF: no cadastro, a pergunta da voz. Voz já ligada = não pergunta; Sim liga; Não = fala triste, voz desligada
@@ -814,7 +807,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.10: Reportar carta anota no aparelho, sem resposta na janela e sem mexer na partida', r.reportar],
     ['Reportar problema: vai pra fila com o retrato da partida, sem nomes e sem a resposta', r.problema],
     ['1.7.10: nome repetido: o nome já cadastrado fica em destaque, o campo fica vermelho e o C.A.O.S. comenta', r.nomeRepetido],
-    ['Travas ADM: a pergunta abre, Sim trava o nick da Anne, Não desliga, e não pergunta duas vezes na mesma partida', r.travasAdm],
+    ['Sem a pergunta das Travas ADM: a partida segue direto, a Anne como jogadora comum e o JF reconhecido', r.travasAdm],
     ['C.A.O.S. 4.3: comentário espera a fala anterior terminar + respiro (até 10 por carta), aviso de regra passa, no online Alt-Tab não pausa e pular fala não marca ninguém, e o que ele já apresentou volta no save', r.caos42],
     ['C.A.O.S. 4.3: pular fala marca quem pulou (aparelho do host e celular); todos calaram = quieto (regra passa); parte calou = ciúmes; quem religa traz ele de volta', r.caos43],
     ['1.7.10.5: quem está na vez pede a dica no aparelho (o Mestre recebe o pedido); quem tem a ficha toca em Palpitar agora e o Mestre julga só esse palpite; errou, a ficha volta e a vez segue', r.palpiteAgora],

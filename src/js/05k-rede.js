@@ -3530,29 +3530,14 @@ function redePartidaOnlineOrfa() {
   ov.querySelector("#redeOrfaOk").addEventListener("click", () => redeEncerrarOnline("A sala da partida online foi encerrada."));
   document.body.appendChild(ov);
 }
-// Pedido do JF: ao abrir a sala, o host decide as Travas ADM da partida. Aplicar as travas = travar os nicks
-// de dono (hoje o da Anne: o mesmo botão do Cérebro fica ligado e o C.A.O.S. reconhece a Anne); Não = desligado.
-// O JF segue sempre reconhecido. Vale também nos celulares (vai no retrato e na escolha).
-// Vale também na partida local: a pergunta aparece ao tocar em Jogar; respondida, abrir a sala não pergunta de novo.
+// 1.9.7 (pedido do JF, 27/11/2026): a pergunta das Travas ADM saiu. A trava do JF vale sempre (ele segue reconhecido
+// em toda partida) e a Anne virou jogadora como as outras: pra ter o tratamento dela, cadastra o nick com PIN, como todo
+// mundo. O conteúdo antigo dela só liga pelo botão do Cérebro (ADM). A função fica, com o mesmo nome, porque a partida
+// local e a sala ainda passam por aqui antes de seguir; agora ela só segue, sem perguntar nem mexer na Anne.
 let travasRespondidas = false;
-function redeTravasPerguntar(seguir, deNovo) {
-  if (travasRespondidas && !deNovo) return seguir();
-  document.getElementById("redeTravas")?.remove();
-  const { ov, box } = caosModalBase();
-  ov.id = "redeTravas";
-  const fim = (travar) => {
-    ov.remove();
-    travasRespondidas = true;
-    anneLigar(travar);
-    try {
-      caosLog("adm", "Travas ADM " + (travar ? "aplicadas" : "não aplicadas") + " na sala");
-    } catch (e) {}
-    seguir();
-  };
-  const row = caosModalRow();
-  row.append(caosModalBtn("Não", "#444a66", () => fim(false)), caosModalBtn("🔒 Sim, aplicar", "#dc2626", () => fim(true)));
-  box.append(caosModalMsg("🛡️ Deseja aplicar as Travas ADM nessa partida?!"), row);
-  document.body.appendChild(ov);
+function redeTravasPerguntar(seguir) {
+  travasRespondidas = true;
+  seguir();
 }
 function redePerguntarSalaTalvez() {
   try {

@@ -39,6 +39,11 @@ segura**. Sem rodeio: é pra achar rápido.
 
 ### 27/11/2026 · botão de idade "60 ou mais" (pedido do JF)
 
+- **Pergunta das Travas ADM (print do JF, 27/11).** O JF e a Anne terminaram: a pergunta "Deseja aplicar as Travas
+  ADM?" não deve mais aparecer. Mudou: `redeTravasPerguntar` só segue (sem pergunta), a trava do JF continua sempre
+  ativa, e a chave `ANNE_LIGADA_KEY` mudou de nome pra zerar o "Sim" que ficou gravado nos aparelhos. A Anne entra como
+  jogadora comum (com cadastro, se quiser); o conteúdo dela só liga pelo botão do Cérebro. Teste: `teste_acoes`.
+
 - **Idade 60+ (núcleo `fala.porIdade`, ok do JF em 27/11).** O núcleo pede o C.A.O.S. calmo, claro e sem pressa com
   quem tem 60 ou mais, e o Perfil só tinha 3 faixas. Mudou: `IDADE_OPCOES` ganhou "👴 60 ou mais" (`sessenta`), que
   vale como 16+ pro Modo C.A.O.S. e pro bordão (`jogador16`); `jogador60` dá o tempo extra de Mestre; com alguém de

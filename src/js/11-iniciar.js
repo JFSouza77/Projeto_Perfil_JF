@@ -553,12 +553,9 @@ function iniciar() {
       resetFormatSelectionUI();
       renderModeCardDescs();
     };
-    // Travas ADM (pedido do JF): toda partida nova, local ou online, começa com a pergunta. Navegador de teste
-    // automático não pergunta (os testes abrem a pergunta direto, em teste_acoes).
-    travasRespondidas = false;
+    // 1.9.7 (pedido do JF, 27/11/2026): sem a pergunta das Travas ADM; a do JF vale sempre (ver redeTravasPerguntar)
     vozPerguntada = false;
-    if (navigator.webdriver) return seguir();
-    redeTravasPerguntar(seguir, true);
+    seguir();
   });
   ["versus", "equipe"].forEach((fmt) =>
     document.getElementById(fmt === "versus" ? "btnFormatVersus" : "btnFormatEquipe").addEventListener("click", () => {
