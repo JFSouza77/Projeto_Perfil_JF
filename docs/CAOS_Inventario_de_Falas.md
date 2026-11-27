@@ -580,5 +580,5 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 463 | getRandomReaction | nickRepertorio |
 | 464 | getRandomReaction | nickSugestaoAceita |
 | 508 | getRandomReaction | botaoEncerrar |
-| 773 | showToastMessage | - |
-| 774 | getRandomReaction | inicioInvalido |
+| 770 | showToastMessage | - |
+| 771 | getRandomReaction | inicioInvalido |
