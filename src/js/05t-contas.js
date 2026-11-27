@@ -445,7 +445,16 @@ function contaExigirPin(nome, op) {
           contaEsquecerLogin(nome);
           return caosAvisoModal(`O cadastro de "${nome}" não existe mais. O nick está livre.`, () => pronto({ livre: true }));
         }
-        if (r && r.erro === "sem_pin") return caosAvisoModal(`O PIN de "${nome}" foi zerado. Toque em 🔐 Cadastro pra criar um PIN novo.`, reabrir);
+        // 1.9.7 (relato do JF, 27/11/2026): com o PIN zerado pelo ADM, a janela mandava pro "🔐 Cadastro" e voltava pra
+        // ela mesma, sem saída. Agora já abre a criação do PIN novo ali (a memória continua) e o jogador segue entrando.
+        if (r && r.erro === "sem_pin")
+          return caosAvisoModal(`O PIN de "${nome}" foi zerado pelo ADM. Vamos criar um PIN novo (a memória continua).`, () =>
+            contaAbrir(nome, () => {
+              const l = contaLogin(nome);
+              if (l) return pronto({ conta: { nick: l.nick, token: l.token } });
+              reabrir();
+            }),
+          );
         caosAvisoModal(CONTA_ERRO_TXT[r && r.erro] || CONTA_ERRO_TXT.offline, reabrir);
       });
     }),

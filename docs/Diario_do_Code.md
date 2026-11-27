@@ -39,6 +39,11 @@ segura**. Sem rodeio: é pra achar rápido.
 
 ### 27/11/2026 · botão de idade "60 ou mais" (pedido do JF)
 
+- **PIN zerado e a janela do nick sem saída (print do JF, 27/11).** Depois de zerar o PIN do JF, a janela "esse nick tem
+  cadastro" pedia o PIN; o servidor respondia "sem PIN" e o aviso mandava tocar em 🔐 Cadastro, mas voltava pra mesma
+  janela. Mudou: em `contaExigirPin`, o "sem PIN" já abre a criação do PIN novo (`contaAbrir`) e, criado, o jogador
+  entra. Teste: `teste_contas` com o servidor local, `teste_cadastro_caos`.
+
 - **Pergunta das Travas ADM (print do JF, 27/11).** O JF e a Anne terminaram: a pergunta "Deseja aplicar as Travas
   ADM?" não deve mais aparecer. Mudou: `redeTravasPerguntar` só segue (sem pergunta), a trava do JF continua sempre
   ativa, e a chave `ANNE_LIGADA_KEY` mudou de nome pra zerar o "Sim" que ficou gravado nos aparelhos. A Anne entra como
