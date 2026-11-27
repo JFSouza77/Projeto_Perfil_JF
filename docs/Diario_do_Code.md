@@ -14,7 +14,7 @@ segura**. Sem rodeio: é pra achar rápido.
 | Fala só no balão, sem voz | filtro "Mestre, leia" (`CAOS_MASTER_RE` / `caosSpeechIsForMaster` em 06-voz); `caosMudoCarta`; voz desligada; fala que foi pro celular (`redeFalaSoLonge`) |
 | Fala cortada / sumiu | `showToastMessage` (janela aberta > 25 s descarta), `caosToastBloquear` (orçamento, respiro, Corrida, Modo C.A.O.S.), `caosSilenced`; ver `caosEmit("cortada")` |
 | Cérebro (Inspetor) não muda de cor | a cor é a emoção que manda (`caosConsole.mostra`), não o vetor; estabilizador `CAOS_CONSOLE_CFG.dwell`; Sandbox usa `caosSandboxSentir` |
-| Nome conhecido (Anne, amigos) tratado como estranho | Anne desligada por padrão (`anneLigada`, Cérebro → Falas); emoji exclusivo (`sanitizePlayerAvatar`); `presenteDe`; `nickEmprestado` (nick com cadastro sem PIN) |
+| Nome conhecido (Anne, amigos) tratado como estranho | sem o cadastro confirmado (desde a 1.9.7 a Anne não tem mais liga/desliga); emoji exclusivo (`sanitizePlayerAvatar`); `presenteDe`; `nickEmprestado` (nick com cadastro sem PIN) |
 | Pergunta do cadastro / PIN | `contaAoCadastrar` e `contaOferecer` (05t-contas) |
 | Botão que pisca demais / "autoritário" | `.guia-pulso` (10-rede.css, guia da mesa), `.cta-pulsa`, `.number-btn.pedida` |
 | Mesa travada, ninguém sabe o que fazer | guia da mesa (16-guia-da-mesa.js): `guiaQuemAge`, `guiaTick`, `guiaCutucar` |
@@ -38,6 +38,12 @@ segura**. Sem rodeio: é pra achar rápido.
 ## Registro (mais novo primeiro)
 
 ### 27/11/2026 · botão de idade "60 ou mais" (pedido do JF)
+
+- **Anne como os outros jogadores (pedido do JF, 27/11).** O conteúdo dela (cor Princesa, 👸, falas bonitas) fica, mas
+  sem o botão do Cérebro e sem liga/desliga: `anneLigada()` vale sempre e o tratamento só vem com o cadastro, como o JF
+  e os amigos. 7 falas que ainda ligavam os dois (apelidos da Anne, `anneChegou` com o JF, `jfFim`) foram reescritas
+  como disputa de mesa, sem casal. Teste: `teste_acoes`, `teste_identidade`, `teste_afeto`, `teste_cadastro_caos`.
+  Obs.: "o novo host joga com o próprio jogador" no `teste_rede` falhou 1 vez em 3, também sem a mudança (intermitente).
 
 - **PIN zerado e a janela do nick sem saída (print do JF, 27/11).** Depois de zerar o PIN do JF, a janela "esse nick tem
   cadastro" pedia o PIN; o servidor respondia "sem PIN" e o aviso mandava tocar em 🔐 Cadastro, mas voltava pra mesma

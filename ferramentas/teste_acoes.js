@@ -291,7 +291,7 @@ const ARQ = acharMestre(process.argv[2]);
       anneLigar(false);
       let seguiu = 0;
       redeTravasPerguntar(() => seguiu++);
-      out.travasAdm = !document.getElementById('redeTravas') && seguiu === 1 && anneLigada() === false && !isAnneNomeBruto('Anne') && isJfNomeBruto('JF');
+      out.travasAdm = !document.getElementById('redeTravas') && seguiu === 1 && isAnneNomeBruto('Anne') && isJfNomeBruto('JF');
       anneLigar(antes);
     }
     // Pedido do JF: no cadastro, a pergunta da voz. Voz já ligada = não pergunta; Sim liga; Não = fala triste, voz desligada
@@ -807,7 +807,7 @@ const ARQ = acharMestre(process.argv[2]);
     ['1.7.10: Reportar carta anota no aparelho, sem resposta na janela e sem mexer na partida', r.reportar],
     ['Reportar problema: vai pra fila com o retrato da partida, sem nomes e sem a resposta', r.problema],
     ['1.7.10: nome repetido: o nome já cadastrado fica em destaque, o campo fica vermelho e o C.A.O.S. comenta', r.nomeRepetido],
-    ['Sem a pergunta das Travas ADM: a partida segue direto, a Anne como jogadora comum e o JF reconhecido', r.travasAdm],
+    ['Sem a pergunta das Travas ADM: a partida segue direto, o JF e a Anne reconhecidos pelo nome (o tratamento ainda pede o cadastro)', r.travasAdm],
     ['C.A.O.S. 4.3: comentário espera a fala anterior terminar + respiro (até 10 por carta), aviso de regra passa, no online Alt-Tab não pausa e pular fala não marca ninguém, e o que ele já apresentou volta no save', r.caos42],
     ['C.A.O.S. 4.3: pular fala marca quem pulou (aparelho do host e celular); todos calaram = quieto (regra passa); parte calou = ciúmes; quem religa traz ele de volta', r.caos43],
     ['1.7.10.5: quem está na vez pede a dica no aparelho (o Mestre recebe o pedido); quem tem a ficha toca em Palpitar agora e o Mestre julga só esse palpite; errou, a ficha volta e a vez segue', r.palpiteAgora],

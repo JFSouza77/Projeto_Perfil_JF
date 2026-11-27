@@ -22,7 +22,7 @@ CAOS_GERADORES.anneChegou = {
     geral: [
       "O placar já ficou mais elegante.",
       "Hoje eu vou me comportar. Prometo. Mais ou menos.",
-      "Tenho ordens de tratar a princesa bem. Não lembro quem deu, mas estou cumprindo.",
+      "Trato todo mundo bem. Com a princesa, eu capricho.",
       "A mesa inteira sentou mais reta.",
       "Só não deixa a coroa cair quando errar.",
       "A coroa é sua. O mérito, a gente vê.",
@@ -31,10 +31,11 @@ CAOS_GERADORES.anneChegou = {
     semana: ["Eu me lembro de você. Lembro até do brilho.", "Eu senti falta. Só um pouquinho. Mas senti."],
     sumido: ["Eu senti falta. Muito. Não conta pra ninguém.", "Já estava achando que a princesa tinha mudado de reino."],
     estreia: ["Primeira vez aqui? Prometo ser um cavalheiro. De lata, mas cavalheiro."],
+    // 1.9.7 (pedido do JF, 27/11/2026): sem falas que tratam o JF e a Anne como casal; só disputa de mesa
     jf: [
-      "O {jf} já está aqui. Agora a mesa tem juízo.",
-      "Com o {jf} na mesa, alguém precisava trazer bom senso.",
-      "O {jf} programou o jogo, mas quem manda na mesa é você.",
+      "O {jf} também está aqui. A disputa promete.",
+      "Com o {jf} na mesa, o placar vai ser disputado.",
+      "O {jf} programou o jogo, mas quem ganha é quem joga melhor.",
     ],
     pedro: ["O {pedro} também está aqui. A família está reunida.", "O {pedro} já chegou e está confiante. O nick não deixa mentir."],
     isabel: ["A {isabel} também veio. Vou ser gentil em dobro.", "A {isabel} chegou antes. Agora a mesa tem duas favoritas."],
@@ -52,7 +53,7 @@ CAOS_GERADORES.anneChegou = {
       "{nome} entrou, e o placar já ficou mais elegante. A coroa é sua. O mérito, a gente vê.",
       "Bem-vinda, {nome}! Como é que você tá? Bora jogar?",
       "{nome}! Que bom te ver. Hoje eu vou me comportar. Prometo. Mais ou menos.",
-      "Bem-vinda, {nome}. Tenho ordens de tratar a princesa bem. Não lembro quem deu, mas estou cumprindo.",
+      "Bem-vinda, {nome}. Trato todo mundo bem. Com a princesa, eu capricho.",
       "Alteza {nome} na sala! A mesa inteira sentou mais reta. Sem pressão.",
     ],
     hoje: ["Ih, {nome} outra vez! Eu já te vi por aqui. A princesa voltou, e o reino agradece. Menos o placar."],

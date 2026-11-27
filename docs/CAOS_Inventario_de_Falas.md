@@ -18,7 +18,7 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 606 | showToastMessage | - |
+| 588 | showToastMessage | - |
 
 ## js/04-turno-e-rodada.js (47)
 
