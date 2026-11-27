@@ -1,17 +1,17 @@
 # Catálogo de cartas do Perfil JF
 
-Gerado pelo Code (Claude Code) em 2026-11-26 com `node ferramentas/catalogo_cartas.js`. Só os nomes, sem dicas.
+Gerado pelo Code (Claude Code) em 2026-11-27 com `node ferramentas/catalogo_cartas.js`. Só os nomes, sem dicas.
 
-**2000 cartas: 1050 já estão no jogo e 950 estão planejadas pra Beta 2.0 (marcadas com 🆕).**
+**2005 cartas: 1050 já estão no jogo e 955 estão planejadas pra Beta 2.0 (marcadas com 🆕).**
 
 | Categoria | No jogo | Planejadas 🆕 | Total |
 |---|---|---|---|
 | 🐾 Animal | 200 | 65 | 265 |
 | 📅 Ano | 200 | 55 | 255 |
 | 📦 Coisa | 221 | 255 | 476 |
-| 📍 Lugar | 206 | 235 | 441 |
+| 📍 Lugar | 206 | 240 | 446 |
 | 🧑 Pessoa | 223 | 340 | 563 |
-| **Total** | **1050** | **950** | **2000** |
+| **Total** | **1050** | **955** | **2005** |
 
 ## Como conferir uma ideia de carta (instruções pro GPT)
 
@@ -356,7 +356,7 @@ A Praça é Nossa 📼 · Big Brother Brasil 📼 · Bom Dia & Cia 📼 · Bom D
 **Videogames** (1)
 Pac-Man 🆕 (ideia do JF 03/11; o jogo)
 
-## 📍 Lugar · 441 (206 no jogo, 235 🆕)
+## 📍 Lugar · 446 (206 no jogo, 240 🆕)
 
 **Animação** (2)
 Arendelle 🆕 (ideia do JF 03/11) · Casa Madrigal 🆕 (o Code completou pra fechar em 5; Encanto)
@@ -391,8 +391,8 @@ MIT 🆕 (ideia do JF 03/11) · Universidade de Harvard 🆕 (o Code completou p
 **Espaço** (17)
 Cabo Canaveral 🆕 (handoff JF+GPT 29/10) · CERN 🆕 (nome: CERN; handoff JF+GPT 29/10) · Espaço sideral 🆕 (handoff JF+GPT 29/10) · Estratosfera 🆕 (handoff JF+GPT 29/10) · Galáxia de Andrômeda 🆕 (handoff JF+GPT 29/10) · Júpiter 🆕 · Lua 🧸 · Marte 🧸 · Mercúrio 🆕 · Netuno 🆕 · Plutão 🆕 · Saturno · Sol 🧸 · Terra 🆕 · Urano 🆕 · Vênus 🆕 · Via Láctea 🆕 (handoff JF+GPT 29/10)
 
-**Espírito Santo (Vitória e região)** (14)
-Convento da Penha 📼 · Fábrica da Garoto 🆕 (Vila Velha) · Frade e a Freira 🆕 (handoff JF+GPT 29/10) · Fucape 📼 · Gruta da Onça 📼 · Morro do Moreno 🆕 (handoff JF+GPT 29/10) · Palácio Anchieta 📼 · Parque Moscoso 📼 · Parque Pedra da Cebola 📼 · Pedra Azul 🆕 (handoff JF+GPT 29/10) · Rota do Lagarto 🆕 (trilha do ES; respostas do JF 31/10) · Rua da Lama 📼 · Terceira Ponte 📼 · UFES 📼
+**Espírito Santo (Vitória e região)** (19)
+Catedral Metropolitana de Vitória 🆕 (ideia do JF (27/11/2026, passando por Vitória); Cidade Alta) · Convento da Penha 📼 · Escadaria Maria Ortiz 🆕 (ideia do JF (27/11/2026, passando por Vitória); centro histórico, homenageia a heroína que enfrentou os holandeses) · Fábrica da Garoto 🆕 (Vila Velha) · Frade e a Freira 🆕 (handoff JF+GPT 29/10) · Fucape 📼 · Gruta da Onça 📼 · Ilha das Caieiras 🆕 (o Code completou pra fechar em 5; moqueca e desfiadeiras de siri) · Morro do Moreno 🆕 (handoff JF+GPT 29/10) · Palácio Anchieta 📼 · Parque Moscoso 📼 · Parque Pedra da Cebola 📼 · Pedra Azul 🆕 (handoff JF+GPT 29/10) · Praia de Camburi 🆕 (o Code completou pra fechar em 5; a maior praia de Vitória) · Rota do Lagarto 🆕 (trilha do ES; respostas do JF 31/10) · Rua da Lama 📼 · Terceira Ponte 📼 · Theatro Carlos Gomes 🆕 (o Code completou pra fechar em 5; Praça Costa Pereira, centro de Vitória) · UFES 📼
 
 **História** (1)
 Pompeia 🆕 (fecha a conta de Lugar em 225)
