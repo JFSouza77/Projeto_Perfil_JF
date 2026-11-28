@@ -35,6 +35,8 @@ e autorizar.** Quando tudo estiver pronto, o Code avisa e mostra o que fez.
 - **Liga e desliga:** uma opção "Temporadas" nas configurações, ligada por padrão.
 - **Só aparência e falas,** com uma exceção pedida pelo JF: **carta da temporada vale o dobro de pontos** durante a
   janela, com um selo na carta (🎃, 🎄, 🎉…). Fora da janela, ela é uma carta comum ou nem aparece.
+- **Número de temporadas (JF, 06/11/2026):** ficam **17** (as 15 + os 2 aniversários de setembro). O JF liberou: o total
+  de temporadas não precisa terminar em 0 ou 5. O que vai dentro de cada uma (falas, cartas, itens) continua no 0 ou 5.
 - **Quantidades terminam em 0 ou 5:** 15 temporadas e, em cada uma, 15 falas do C.A.O.S., 10 cartas, 5 itens por
   lojinha, 5 cores, 5 emojis e 5 títulos.
 - **Júnior:** só falas e cartas leves. As datas de homenagem usam fatos, sem tomar partido (mesma regra das cartas de
@@ -88,6 +90,16 @@ e autorizar.** Quando tudo estiver pronto, o Code avisa e mostra o que fez.
     mandar a arte dele depois).
   - Mais desafios: o JF vai pensar.
 
+## Ideias do JF pra depois de 19/11 (07/11/2026)
+
+- **Ícone do app por temporada:** nas temporadas bem tematizadas (Natal, Ano Novo, Halloween…), o ícone do jogo também
+  muda. Preparar os ícones novos quando a agenda normal voltar.
+- **Datas novas (só ideia, nada agora):**
+  - **25/5 · Dia do Orgulho Nerd/Geek;**
+  - **29/8 · Dia do Gamer.**
+  
+  No clima: C.A.O.S. com estilo nerd e mais piadas nerds, e cartas de cultura nerd e cultura pop no geral.
+
 ## Ordem de trabalho (um pedaço por dia)
 
 **Prioridade: o Natal** (pedido do JF, 30/10/2026). O Natal fica completo primeiro, pra estar pronto antes de 1/12.
@@ -105,12 +117,35 @@ temporadas, na ordem do calendário.
 9. [x] Natal · bateria de testes, prints e relatório pro JF (ele decide se publica).
 9.1. [x] **Publicado:** Beta 1.9.3 · Edição de Natal (04/11/2026, PR #191). O trabalho segue no branch `temporadas-2`.
 9.2. [x] (05/11, branch `quinta-att`, falta o ok do JF pra publicar) Medalhas da temporada (ideia do JF, 04/11): desafios, medalha no perfil, exibir ou não, desenho da medalha de Natal. Att grande: quinta/sexta.
-10. [ ] Ano Novo e aniversário do criador (2/1), no mesmo formato do Natal. Em pedaços:
+10. [x] Ano Novo e aniversário do criador (2/1), no mesmo formato do Natal. Em pedaços:
     - [x] Ano Novo · enfeite (confete e fogos), selo, 15 falas (+ 10 de presente), 5 cores, 5 emojis e 5+5 itens de lojinha.
     - [x] Ano Novo · 5 títulos (Show de Fogos, Champanhe Estourada, Pé Direito, Meia-Noite em Ponto, Promessa de Ano Novo).
     - [x] Ano Novo · 10 cartas valendo o dobro.
-    - [ ] Aniversário do criador (2/1) · tudo (enfeite, falas, o C.A.O.S. pegando leve com o JF, cores, emojis, lojinha, títulos e cartas).
-11. [ ] As outras 12 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween, com o Doces ou travessuras).
+    - [x] Aniversário do criador (2/1) · enfeite (balões), selo, 30 falas (5 só pro JF na mesa) e o C.A.O.S. pegando leve com o JF.
+    - [x] Aniversário do criador · 5 cores, 5 emojis e 5+5 itens de lojinha.
+    - [x] Aniversário do criador · 5 títulos (Dono do Bolo, Assoprou as Velas, Balão Mais Alto, Parabéns Atrasado, Penetra da Festa).
+    - [x] Aniversário do criador · 10 cartas valendo o dobro (5 Pessoa, 5 Coisa).
+11. [ ] As outras 14 temporadas, uma de cada vez, na ordem do calendário (Carnaval → … → Halloween, com o Doces ou travessuras).
+    - [x] Carnaval · enfeite (confete e serpentinas), selo, 15 falas, 5 cores e 5 emojis.
+    - [x] Carnaval · 5+5 itens de lojinha (Modo C.A.O.S.: Chuva de Confete, Marchinha, Trio Elétrico, Máscara, Abadá VIP; Corrida: Chuva de Confete, Bloco de Rua, Trio Elétrico, Fantasia Premiada, Passo de Frevo).
+    - [x] Carnaval · 5 títulos (Destaque da Folia, Comissão de Frente, Mestre de Bateria, Nota Dez, Folião Perdido).
+    - [x] Carnaval · 10 cartas valendo o dobro (Rei Momo, Joãosinho Trinta, Daniela Mercury, Olinda, Trio elétrico, Abadá, Confete, Cuíca, Escola de samba, Maracatu).
+    - [x] Dia da Mulher (26/11) · enfeite (pétalas lilás e guirlanda de flores), selo 💐, 15 falas carinhosas, 5 cores (Violeta, Buquê, Lavanda, Pódio, Aurora) e 5 emojis (💐 🌷 🌺 💜 🌻).
+    - [x] Dia da Mulher · 5+5 itens de lojinha (Modo C.A.O.S.: Buquê Surpresa, Laboratório, Pódio, Lupa da Cientista, Rede de Apoio; Corrida: Buquê Surpresa, Caminho Aberto, Pódio, Prêmio Nobel, Recorde Olímpico).
+    - [x] Dia da Mulher · 5 títulos, todos elogio (Mente Brilhante, Abre-Caminhos, Velocidade de Craque, Precisão de Cientista, Não Desiste Nunca).
+    - [x] Dia da Mulher · 10 cartas de mulheres marcantes valendo o dobro (Bertha Lutz, Nise da Silveira, Carolina Maria de Jesus, Maria Quitéria, Anita Garibaldi, Florence Nightingale, Zilda Arns, Maria Esther Bueno, Cecília Meireles, Chiquinha Gonzaga).
+    - [ ] Próxima: Páscoa.
+    Inclui as 2 datas novas do JF (06/11/2026), já reconhecidas pelo motor: **6/9 · Aniversário do Perfil JF** (o C.A.O.S.
+    lembra quantos anos o jogo faz e conta a história: `docs/Historia_do_Perfil.md`) e **20/9 · Aniversário do C.A.O.S.**
+    (ele é o aniversariante: fica todo bobo, comemora com a mesa e relembra de quando era "só um texto na tela").
+    **Ideias do JF pra setembro (06/11/2026), o mês de aniversário do jogo e do C.A.O.S.:**
+    - Setembro inteiro: o C.A.O.S. fica **ansioso** com o aniversário dele (conta os dias, solta indireta, "cobra o bolo"
+      da mesa). Cresce até o 20/9.
+    - **Presentes no Modo C.A.O.S.** com tema de aniversário (ele ganha e ele dá).
+    - Botão **"🎂 Dar parabéns ao C.A.O.S."**: grava na ficha quem deu parabéns (e em que ano). Ele fica grato e passa a
+      gostar mais dessa pessoa (pesa no afeto, como veterano e craque). Só com cadastro, pra valer pra pessoa certa.
+    - **Emblema/medalha comemorativa** do aniversário, brindes na lojinha e comemoração na mesa (6/9 e 20/9).
+    - (O Pix pro C.A.O.S. foi brincadeira do JF: fica de fora.)
 12. [ ] Bateria final, prints de todas as temporadas e relatório pro JF.
 
 ## Progresso
@@ -225,3 +260,42 @@ temporadas, na ordem do calendário.
   Entram só no Ano Novo, valem o dobro e o selo da carta agora diz a temporada ("🎆 Carta de Ano Novo · vale o dobro").
   Auditoria: 0 erros (1.020 cartas); o auditor barrou a Romã (vira "roma", igual à carta de Roma) e o catálogo avisou
   que a Uva já está planejada pra 2.0, então ficou a Roupa branca. Teste: `teste_temporadas` (+5 checagens).
+- 06/11/2026 (manhã, sexta): conferência da `main` (1.9.5: build e teste nas 4 saídas, ok) e o 1º pedaço do aniversário do
+  criador (2/1): balões subindo devagar (desligam no Modo Batata e com menos movimento), selo "🎂 Edição de aniversário
+  do criador" e 30 falas (início, avançou, voltou, presentes e 5 de parabéns pro JF quando ele está na mesa). O C.A.O.S.
+  pega leve com o JF o dia todo (humor Suave), só com o cadastro confirmado: um "JF" sem PIN não ganha. Teste:
+  `teste_temporadas` (+5 checagens).
+- 07/11/2026 (madrugada de sábado): conferência da `main` e o 2º pedaço do aniversário do criador: 5 cores (Bolo de
+  chocolate, Balão, Vela acesa, Serpentina, Glacê), 5 emojis novos (🎂 🧁 🎊 🎉 🕯️) e 5 itens em cada lojinha (Modo
+  C.A.O.S.: Presente do Aniversariante, Fatia de Bolo, Assopra a Vela, Brigadeiro, Chapéu de Festa; Corrida: Presente,
+  Balões, Parabéns pra Você, Brigadeiro, Língua de Sogra), só na vitrine no dia 2/1. Teste: `teste_temporadas` (+4
+  checagens, que falham sem a mudança), `teste_loja_caos`, `teste_corrida` e `teste_acoes` ok. De quebra: a checagem da
+  "gafe" falhava às vezes desde as falas do aniversário (o C.A.O.S. podia errar a data com uma fala de aniversário, que o
+  teste não reconhecia); corrigido no teste.
+- 08/11/2026 (noite de sábado, tarefa 1x/dia): correio conferido (o Wally confirmou o acordo da semana; nada pra fazer).
+  `main` sem mudança no jogo desde a conferência de ontem (só documentos), então não rodei a bateria de novo. Pedaço do
+  dia: 5 títulos de aniversário no resumo da partida (🎂 Dono do Bolo, 🕯️ Assoprou as Velas, 🎈 Balão Mais Alto,
+  🎶 Parabéns Atrasado e 🥳 Penetra da Festa), com o C.A.O.S. comentando cada um. Teste: `teste_temporadas` (+3
+  checagens, que falham sem a mudança).
+- 09/11/2026 (noite de domingo, tarefa 1x/dia): correio sem recado novo; o jogo na `main` não mudou desde a 1.9.5
+  conferida (só documentos), então não rodei a bateria. O próximo pedaço (10 cartas de aniversário, com dicas e auditor)
+  não é pequeno: fica pra agenda normal, a partir de 19/11. Até lá a tarefa só confere o correio e a `main`.
+- 12/11/2026 (quinta, triagem retomada depois do reset dos créditos): correio sem recado novo. Conferência da `main`
+  (1.9.5): build e teste nas 4 saídas ok. Nenhum pedaço pequeno de temporada sobrando; o resto fica pra 19/11.
+
+- 13/11/2026 (tarefa da noite): main = 1.9.5.1, já testada nas 4 saídas na publicação; correio do Wally respondido (versões, Dica do Dia, núcleo, teste do macaco). Sem pedaço pequeno de temporada.
+- 15/11/2026: item 10 fechado. 10 cartas do aniversário do criador em `src/dados/02-cartas/94-aniversario.js` (ids
+  0911+, 20 dicas e 3 ações cada, todas livres, então entram também no Júnior): Rainha Elizabeth II (dois aniversários
+  por ano), Marilyn Monroe (o parabéns pro Kennedy), Stevie Wonder (o "Happy Birthday" do feriado de Martin Luther King),
+  Jeanne Calment (122 anos), Ronald McDonald (festas na lanchonete), Vela de aniversário, Língua de sogra, Chapéu de festa,
+  Pinhata e Parabéns a Você. Só no 2/1, valendo o dobro, selo 🎂. Assuntos no catálogo ("Aniversário"); auditor sem
+  aviso novo. Teste: `teste_temporadas` (5 checagens novas).
+- 20/11/2026: item 11 começou pelo Carnaval: confete caindo e serpentinas balançando no alto (`11-temporadas.css`),
+  15 falas (`REACTIVE_VOICE.temporada.carnaval`: começo, avançar e voltar), 5 cores (Confete, Serpentina, Paetê,
+  Sombrinha de frevo, Máscara) e 5 emojis (🎺 💃 🎷 🪘 🎊). A gafe de data passou a reconhecer as falas de Carnaval.
+  Teste: `teste_temporadas` (6 checagens novas).
+  Lojinha de Carnaval: 5 itens em cada loja, todos virando itens de sempre na compra (`teste_temporadas`, 3 checagens).
+  Títulos de Carnaval no resumo da partida, com comentário do C.A.O.S. (`teste_temporadas`, 3 checagens).
+  10 cartas de Carnaval em `src/dados/02-cartas/93-carnaval.js` (ids 0921+, todas livres), com assunto "Carnaval" no
+  catálogo; auditor sem aviso novo. **Carnaval completo.** Teste: `teste_temporadas` (5 checagens das cartas).
+- 26/11/2026: Dia da Mulher completo (enfeite, selo, falas, cores, emojis, lojinha, títulos e 10 cartas), no branch `temporadas-2`. `teste_temporadas`, `auditar_cartas` sem aviso novo, `teste_cerebro`, `teste_medalhas`.

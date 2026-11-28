@@ -2,16 +2,16 @@
 
 Gerado pelo Code (Claude Code) em 2026-11-27 com `node ferramentas/catalogo_cartas.js`. Só os nomes, sem dicas.
 
-**1975 cartas: 1020 já estão no jogo e 955 estão planejadas pra Beta 2.0 (marcadas com 🆕).**
+**2005 cartas: 1050 já estão no jogo e 955 estão planejadas pra Beta 2.0 (marcadas com 🆕).**
 
 | Categoria | No jogo | Planejadas 🆕 | Total |
 |---|---|---|---|
 | 🐾 Animal | 200 | 65 | 265 |
 | 📅 Ano | 200 | 55 | 255 |
-| 📦 Coisa | 210 | 255 | 465 |
-| 📍 Lugar | 205 | 240 | 445 |
-| 🧑 Pessoa | 205 | 340 | 545 |
-| **Total** | **1020** | **955** | **1975** |
+| 📦 Coisa | 221 | 255 | 476 |
+| 📍 Lugar | 206 | 240 | 446 |
+| 🧑 Pessoa | 223 | 340 | 563 |
+| **Total** | **1050** | **955** | **2005** |
 
 ## Como conferir uma ideia de carta (instruções pro GPT)
 
@@ -264,10 +264,16 @@ Avestruz 🧸 · Camelo 🧸 · Chimpanzé 🧸 · Dragão-de-komodo · Dromedá
 - 2025
 - 2026 🆕 (Copa do Mundo nos Estados Unidos, Canadá e México, a primeira com 48 seleções; e Lula é reeleito (2º turno em 25/10, contra Flávio Bolsonaro), o primeiro presidente eleito quatro vezes pelo voto direto no Brasil (tema político: só fatos, fora do Júnior))
 
-## 📦 Coisa · 465 (210 no jogo, 255 🆕)
+## 📦 Coisa · 476 (221 no jogo, 255 🆕)
+
+**Aniversário** (5)
+Chapéu de festa · Língua de sogra · Parabéns a Você · Pinhata · Vela de aniversário
 
 **Ano Novo** (5)
 Calendário · Espumante · Fogos de artifício · Lentilha · Roupa branca
+
+**Carnaval** (6)
+Abadá · Confete · Cuíca · Escola de samba · Maracatu · Trio elétrico
 
 **Casa e objetos do dia a dia** (47)
 Abajur 🧸 · Agulha 🆕 · Aliança 🆕 · Aparelho de jantar 🆕 · Armadilha 🆕 · Aspirador de pó 🧸 · Bacia 🆕 · Bengala 🆕 · Carimbo 🆕 · Carpete 🆕 · Chave · Chinelo 🧸 · Colchão 🆕 · Colher 🧸 · Colher de pau 🆕 · Dicionário · Enxada 🆕 · Escova de dente 🧸 · Espelho 📼 · Extintor de incêndio 📼 · Galocha 🆕 · Geladeira 🧸 · Guarda-chuva · Janela 🧸 · Laço de fita 🆕 · Lâmpada · Lancheira 🧸 · Lápis 🧸 · Livro · Lixeira 🆕 · Lustre 🆕 · Máquina de costura 🆕 · Máscara 🆕 · Mochila 🧸 · Óculos · Paletó 🆕 · Pasta de dente 🆕 · Relógio 📼 · Rolha 🆕 · Sabonete 🧸 · Selo 🆕 · Tanque de lavar roupas 🆕 · Tesoura 🧸 · Tijolo 🆕 · Travesseiro 🧸 · Vassoura 🧸 · Velcro 🆕
@@ -350,13 +356,16 @@ A Praça é Nossa 📼 · Big Brother Brasil 📼 · Bom Dia & Cia 📼 · Bom D
 **Videogames** (1)
 Pac-Man 🆕 (ideia do JF 03/11; o jogo)
 
-## 📍 Lugar · 445 (205 no jogo, 240 🆕)
+## 📍 Lugar · 446 (206 no jogo, 240 🆕)
 
 **Animação** (2)
 Arendelle 🆕 (ideia do JF 03/11) · Casa Madrigal 🆕 (o Code completou pra fechar em 5; Encanto)
 
 **Ano Novo** (5)
 Burj Khalifa · London Eye · Ópera de Sydney · Portão de Brandemburgo · Praça Vermelha
+
+**Carnaval** (1)
+Olinda
 
 **Cidades do mundo** (37)
 Amsterdã · Barcelona · Berlim · Brooklyn 🆕 (handoff JF+GPT 29/10) · Buenos Aires 🆕 · Cairo 🆕 · Ciudad del Este 📼 · Dubai · Florença 🆕 · Flórida 🆕 (handoff JF+GPT 29/10) · Hollywood · Istambul · Jerusalém · Kyoto · Las Vegas 📼 · Londres · Los Angeles 🆕 (handoff JF+GPT 29/10) · Manhattan 🆕 · Meca · Miami · Moscou · Munique 🆕 · Nova Orleans 🆕 (handoff JF+GPT 29/10) · Nova York · Orlando 🆕 (handoff JF+GPT 29/10) · Paris · Pier de Santa Mônica 🆕 (handoff JF+GPT 29/10) · Punta del Este 🆕 (handoff JF+GPT 30/10) · Roma 📼 · Santiago do Chile 🆕 (handoff JF+GPT 29/10) · Shibuya · Singapura · Sydney · Tóquio · Transilvânia 🆕 (handoff JF+GPT 30/10) · Vancouver 🆕 · Veneza 📼
@@ -439,7 +448,7 @@ Vale do Silício 🆕 (fecha a conta de Lugar em 225)
 **Universidades e estúdios** (3)
 Herbert Richers 📼 · Projac 🆕 · UFRJ 📼
 
-## 🧑 Pessoa · 545 (205 no jogo, 340 🆕)
+## 🧑 Pessoa · 563 (223 no jogo, 340 🆕)
 
 **Animação** (2)
 Bruno Madrigal 🆕 (ideia do JF 03/11) · Mirabel Madrigal 🆕 (ideia do JF 03/11)
@@ -447,8 +456,14 @@ Bruno Madrigal 🆕 (ideia do JF 03/11) · Mirabel Madrigal 🆕 (ideia do JF 03
 **Anime, mangá e Pokémon** (10)
 Ash Ketchum · Goku · Itachi Uchiha 🆕 (tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Kakashi Hatake 🆕 (handoff JF+GPT 29/10) · Kira (Light Yagami) 🆕 (nome: Kira (Light Yagami); tema pesado: só fatos, nunca no Júnior; handoff JF+GPT 29/10) · Luffy · Naruto Uzumaki · Pikachu 🧸 · Rimuru Tempest · Shenlong 🆕 (handoff JF+GPT 29/10)
 
+**Aniversário** (5)
+Jeanne Calment · Marilyn Monroe · Rainha Elizabeth II · Ronald McDonald · Stevie Wonder
+
 **Arte (pintura e música clássica)** (8)
 Frida Kahlo · Leonardo da Vinci 📼 · Ludwig van Beethoven 📼 · Pablo Picasso 🆕 (handoff JF+GPT 29/10) · Romero Britto 🆕 (handoff JF+GPT 29/10) · Salvador Dalí 📼 · Tarsila do Amaral 🆕 (handoff JF+GPT 29/10) · Vincent van Gogh
+
+**Carnaval** (3)
+Daniela Mercury · Joãosinho Trinta · Rei Momo
 
 **Ciência, invenção e tecnologia** (24)
 Ada Lovelace 🆕 · Alan Turing 🆕 · Albert Einstein 📼 · Aristóteles 🆕 (handoff JF+GPT 29/10) · Bill Gates 🆕 · Charles Darwin 📼 · Diógenes 🆕 (handoff JF+GPT 29/10) · Elon Musk · Enzo Ferrari 🆕 · Ferruccio Lamborghini 🆕 · Galileu Galilei 🆕 (handoff JF+GPT 29/10) · Isaac Newton 📼 · Marie Curie 📼 · Mark Zuckerberg 🆕 · Neil Armstrong 🆕 (handoff JF+GPT 29/10) · Nikola Tesla · Oscar Niemeyer 🆕 (handoff JF+GPT 29/10) · Pitágoras 🆕 (handoff JF+GPT 29/10) · Platão 🆕 (handoff JF+GPT 29/10) · Santos Dumont 📼 · Sigmund Freud 🆕 (handoff JF+GPT 29/10) · Sócrates 🆕 (handoff JF+GPT 29/10) · Steve Jobs 🆕 · Thomas Edison 🆕 (handoff JF+GPT 29/10)
@@ -473,6 +488,9 @@ Backyardigans 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Bob Esponja 
 
 **Desenhos para os pequenos** (11)
 Bananas de Pijamas 🆕 (combina com o Júnior; Old School; handoff JF+GPT 29/10) · Barbie 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Barney 🆕 (combina com o Júnior; Old School; handoff JF+GPT 29/10) · Bluey 🧸 · Bob, o Construtor 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Botas 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Dora Aventureira · Galinha Pintadinha 🧸 · Garibaldo 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Peppa Pig 🧸 · Raposo
+
+**Dia da Mulher** (10)
+Anita Garibaldi · Bertha Lutz · Carolina Maria de Jesus · Cecília Meireles · Chiquinha Gonzaga · Florence Nightingale · Maria Esther Bueno · Maria Quitéria · Nise da Silveira · Zilda Arns
 
 **Disney e Pixar** (36)
 Alegria (Divertida Mente) 🧸 · Alvo Dumbledore 🆕 (handoff JF+GPT 29/10) · Bambi 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Bela Adormecida 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Bela e a Fera 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Branca de Neve 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Buzz Lightyear 🧸 · Capitão Gancho 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Cinderela 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Elsa · Gaston 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Huguinho, Zezinho e Luisinho 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Ió 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Irmãos Metralha 📼 · Leitão 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Lilo 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Malévola · Mickey Mouse · Moana 🧸 · Mulan 🧸 · Olaf 🧸 · Pateta 📼 · Pato Donald 📼 · Pequena Sereia 🆕 (combina com o Júnior; handoff JF+GPT 30/10) · Rapunzel 🧸 · Sete Anões 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Simba 🧸 · Sininho 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Stitch 🧸 · Tiana 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Tio Patinhas 📼 · Ursinho Pooh 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Vanellope von Schweetz 🆕 (Detona Ralph) · WALL-E 🆕 (combina com o Júnior; handoff JF+GPT 29/10) · Woody 🧸 · Zé Carioca 📼

@@ -107,6 +107,24 @@ const GRADIENTS = {
   GRAD_ANONOVO_BRANCO: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #fde68a 100%)",
   GRAD_ANONOVO_MEIANOITE: "linear-gradient(135deg, #0f172a 0%, #312e81 60%, #eab308 100%)",
   GRAD_ANONOVO_CONFETE: "linear-gradient(135deg, #ef4444 0 20%, #f59e0b 20% 40%, #22c55e 40% 60%, #3b82f6 60% 80%, #a855f7 80% 100%)",
+  // Temporadas (item 10): as 5 cores do aniversário do criador (2/1)
+  GRAD_ANIV_BOLO: "linear-gradient(135deg, #4a2511 0%, #7c3f1d 55%, #f9a8d4 56%, #fbcfe8 100%)",
+  GRAD_ANIV_BALAO: "radial-gradient(circle at 35% 30%, #fecaca 0 12%, #ef4444 13% 60%, #991b1b 100%)",
+  GRAD_ANIV_VELA: "linear-gradient(180deg, #fde047 0%, #f97316 30%, #e0f2fe 31%, #60a5fa 100%)",
+  GRAD_ANIV_SERPENTINA: "repeating-linear-gradient(135deg, #ec4899 0 7px, #facc15 7px 14px, #22d3ee 14px 21px)",
+  GRAD_ANIV_GLACE: "linear-gradient(135deg, #fdf2f8 0%, #f9a8d4 50%, #c084fc 100%)",
+  // Temporadas (item 11, 20/11/2026): as 5 cores do Carnaval
+  GRAD_CARNAVAL_CONFETE: "radial-gradient(circle at 25% 30%, #facc15 0 9%, transparent 10%), radial-gradient(circle at 70% 60%, #22d3ee 0 9%, transparent 10%), radial-gradient(circle at 40% 75%, #f472b6 0 9%, transparent 10%), linear-gradient(135deg, #7c3aed 0%, #db2777 100%)",
+  GRAD_CARNAVAL_SERPENTINA: "repeating-linear-gradient(135deg, #22c55e 0 7px, #facc15 7px 14px, #a855f7 14px 21px, #f97316 21px 28px)",
+  GRAD_CARNAVAL_PAETE: "linear-gradient(135deg, #f59e0b 0%, #fde68a 25%, #d946ef 50%, #fde68a 75%, #0ea5e9 100%)",
+  GRAD_CARNAVAL_FREVO: "conic-gradient(from 0deg, #ef4444 0 25%, #facc15 25% 50%, #22c55e 50% 75%, #3b82f6 75% 100%)",
+  GRAD_CARNAVAL_MASCARA: "linear-gradient(135deg, #1e1b4b 0%, #7e22ce 50%, #facc15 100%)",
+  // Temporadas (item 11, 26/11/2026): as 5 cores do Dia da Mulher (o roxo é a cor do dia; cada uma lembra uma homenagem)
+  GRAD_MULHER_VIOLETA: "linear-gradient(135deg, #4c1d95 0%, #7c3aed 50%, #c084fc 100%)",
+  GRAD_MULHER_BUQUE: "radial-gradient(circle at 30% 35%, #f472b6 0 12%, transparent 13%), radial-gradient(circle at 65% 55%, #c084fc 0 12%, transparent 13%), linear-gradient(135deg, #831843, #6d28d9)",
+  GRAD_MULHER_LAVANDA: "linear-gradient(135deg, #a78bfa 0%, #e9d5ff 50%, #a78bfa 100%)",
+  GRAD_MULHER_PODIO: "linear-gradient(135deg, #b45309 0%, #facc15 50%, #7c3aed 100%)",
+  GRAD_MULHER_AURORA: "linear-gradient(135deg, #db2777 0%, #a855f7 50%, #38bdf8 100%)",
 };
 // Temporadas (docs/Temporadas.md, item 6): 5 cores e 5 emojis por temporada, só na paleta durante a época.
 // Jogador cadastrado que escolhe um deles recebe a pergunta "Quer usar durante a temporada?"; o estilo fica salvo só
@@ -121,6 +139,21 @@ const TEMPORADA_ESTILOS = {
     cores: ["GRAD_ANONOVO_CHAMPANHE", "GRAD_ANONOVO_FOGOS", "GRAD_ANONOVO_BRANCO", "GRAD_ANONOVO_MEIANOITE", "GRAD_ANONOVO_CONFETE"],
     nomesCores: ["Champanhe", "Fogos", "Roupa branca", "Meia-noite", "Confete"],
     emojis: ["🎆", "🥂", "🍾", "🎇", "🕛"],
+  },
+  aniversario: {
+    cores: ["GRAD_ANIV_BOLO", "GRAD_ANIV_BALAO", "GRAD_ANIV_VELA", "GRAD_ANIV_SERPENTINA", "GRAD_ANIV_GLACE"],
+    nomesCores: ["Bolo de chocolate", "Balão", "Vela acesa", "Serpentina", "Glacê"],
+    emojis: ["🎂", "🧁", "🎊", "🎉", "🕯️"],
+  },
+  carnaval: {
+    cores: ["GRAD_CARNAVAL_CONFETE", "GRAD_CARNAVAL_SERPENTINA", "GRAD_CARNAVAL_PAETE", "GRAD_CARNAVAL_FREVO", "GRAD_CARNAVAL_MASCARA"],
+    nomesCores: ["Confete", "Serpentina", "Paetê", "Sombrinha de frevo", "Máscara"],
+    emojis: ["🎺", "💃", "🎷", "🪘", "🎊"],
+  },
+  mulher: {
+    cores: ["GRAD_MULHER_VIOLETA", "GRAD_MULHER_BUQUE", "GRAD_MULHER_LAVANDA", "GRAD_MULHER_PODIO", "GRAD_MULHER_AURORA"],
+    nomesCores: ["Violeta", "Buquê", "Lavanda", "Pódio", "Aurora"],
+    emojis: ["💐", "🌷", "🌺", "💜", "🌻"],
   },
 };
 const TEMPORADA_ESTILO_KEY = "perfil_jf_estilo_temporada";
@@ -432,6 +465,23 @@ const MC_LOJA = {
   anoNovoFogos: { ic: "🎆", nome: "Queima de Fogos", preco: 35, peso: 2, temporada: "anoNovo", base: "congelar", desc: "uma Era do Gelo mais barata: os outros ficam olhando os fogos, travados por 7 s" },
   anoNovoUvas: { ic: "🍇", nome: "12 Uvas", preco: 40, peso: 1, temporada: "anoNovo", base: "olho", desc: "um Olho do C.A.O.S.: a 1ª letra da resposta só pra você" },
   anoNovoBranco: { ic: "🤍", nome: "Roupa Branca", preco: 50, peso: 1, temporada: "anoNovo", base: "kevlar", desc: "um Colete Anti-Caos: paz no ano novo, anula 1 roubo, assalto ou punição contra você" },
+  aniversarioPresente: { ic: "🎀", nome: "Presente do Aniversariante", preco: 25, peso: 2, temporada: "aniversario", surpresa: ["corte", "folego", "mordaca", "olho", "espelho"], desc: "um item sorteado da lojinha, com laço e tudo" },
+  aniversarioBolo: { ic: "🎂", nome: "Fatia de Bolo", preco: 30, peso: 2, temporada: "aniversario", base: "folego", qtd: 2, desc: "2 Vidas Extras de uma vez (errou? 2ª tentativa na mesma dica)" },
+  aniversarioVela: { ic: "🕯️", nome: "Assopra a Vela", preco: 35, peso: 2, temporada: "aniversario", base: "congelar", desc: "uma Era do Gelo mais barata: os outros param pra cantar parabéns, travados por 7 s" },
+  aniversarioBrigadeiro: { ic: "🍫", nome: "Brigadeiro", preco: 40, peso: 1, temporada: "aniversario", base: "olho", desc: "um Olho do C.A.O.S.: a 1ª letra da resposta só pra você" },
+  aniversarioChapeu: { ic: "🥳", nome: "Chapéu de Festa", preco: 50, peso: 1, temporada: "aniversario", base: "kevlar", desc: "um Colete Anti-Caos: ninguém estraga a festa, anula 1 roubo, assalto ou punição contra você" },
+  // Temporadas (item 11, 20/11/2026): Carnaval na lojinha do Modo C.A.O.S.
+  carnavalConfete: { ic: "🎊", nome: "Chuva de Confete", preco: 25, peso: 2, temporada: "carnaval", surpresa: ["corte", "folego", "mordaca", "olho", "espelho"], desc: "joga confete pra cima e cai um item sorteado da lojinha" },
+  carnavalMarchinha: { ic: "🎺", nome: "Marchinha", preco: 30, peso: 2, temporada: "carnaval", base: "folego", qtd: 2, desc: "2 Vidas Extras de uma vez (errou? 2ª tentativa na mesma dica)" },
+  carnavalTrio: { ic: "🚚", nome: "Trio Elétrico", preco: 35, peso: 2, temporada: "carnaval", base: "congelar", desc: "uma Era do Gelo mais barata: os outros param pra ver o trio passar, travados por 7 s" },
+  carnavalMascara: { ic: "🎭", nome: "Máscara", preco: 40, peso: 1, temporada: "carnaval", base: "olho", desc: "um Olho do C.A.O.S.: a 1ª letra da resposta só pra você" },
+  carnavalAbada: { ic: "👕", nome: "Abadá VIP", preco: 50, peso: 1, temporada: "carnaval", base: "kevlar", desc: "um Colete Anti-Caos: área VIP, anula 1 roubo, assalto ou punição contra você" },
+  // Temporadas (item 11, 26/11/2026): Dia da Mulher na lojinha do Modo C.A.O.S. (temas de homenagem, sem piada)
+  mulherBuque: { ic: "💐", nome: "Buquê Surpresa", preco: 25, peso: 2, temporada: "mulher", surpresa: ["corte", "folego", "mordaca", "olho", "espelho"], desc: "um buquê com um item sorteado da lojinha escondido entre as flores" },
+  mulherLaboratorio: { ic: "🔬", nome: "Laboratório", preco: 30, peso: 2, temporada: "mulher", base: "folego", qtd: 2, desc: "2 Vidas Extras de uma vez: experimento que deu errado se repete (errou? 2ª tentativa na mesma dica)" },
+  mulherPodio: { ic: "🏅", nome: "Pódio", preco: 35, peso: 2, temporada: "mulher", base: "congelar", desc: "uma Era do Gelo mais barata: os outros param pra aplaudir, travados por 7 s" },
+  mulherLupa: { ic: "🔎", nome: "Lupa da Cientista", preco: 40, peso: 1, temporada: "mulher", base: "olho", desc: "um Olho do C.A.O.S.: a 1ª letra da resposta só pra você" },
+  mulherRede: { ic: "🤝", nome: "Rede de Apoio", preco: 50, peso: 1, temporada: "mulher", base: "kevlar", desc: "um Colete Anti-Caos: ninguém fica sozinha, anula 1 roubo, assalto ou punição contra você" },
 };
 const MC_VITRINE = 5;
 const LOJA_TRAVA_MS = 3e3; // 1.7.10.9.3 (JF): no intervalo a vitrine aparece na hora, mas os botões só liberam depois de 3 s (pra dar tempo de ler)
@@ -470,6 +520,23 @@ const CORRIDA_LOJA = {
   anoNovoFogos: { ic: "🎆", nome: "Queima de Fogos", preco: 25, peso: 2, temporada: "anoNovo", base: "congelar", max: 1, desc: "uma Pausa Dramática mais barata: o relógio geral para 15 s na próxima carta" },
   anoNovoLentilha: { ic: "🥣", nome: "Lentilha da Sorte", preco: 20, peso: 1, temporada: "anoNovo", base: "cofrinho", desc: "um Cofrinho: a sua próxima carta acertada vale +40 pontos" },
   anoNovoContagem: { ic: "🕛", nome: "Contagem Regressiva", preco: 25, peso: 1, temporada: "anoNovo", base: "desfib", desc: "um Choque de Tempo: +15 s no relógio da carta, na hora que quiser" },
+  aniversarioPresente: { ic: "🎀", nome: "Presente do Aniversariante", preco: 20, peso: 2, temporada: "aniversario", surpresa: ["corte", "desfib", "cofrinho"], desc: "um item sorteado (Passe Livre, Choque de Tempo ou Cofrinho)" },
+  aniversarioBalao: { ic: "🎈", nome: "Balões", preco: 25, peso: 2, temporada: "aniversario", base: "corte", qtd: 2, desc: "2 Passes Livres de uma vez (pula a sua vez sem gastar dica)" },
+  aniversarioParabens: { ic: "🎶", nome: "Parabéns pra Você", preco: 25, peso: 2, temporada: "aniversario", base: "congelar", max: 1, desc: "uma Pausa Dramática mais barata: o relógio geral para 15 s na próxima carta, todo mundo cantando" },
+  aniversarioBrigadeiro: { ic: "🍫", nome: "Brigadeiro", preco: 20, peso: 1, temporada: "aniversario", base: "cofrinho", desc: "um Cofrinho: a sua próxima carta acertada vale +40 pontos" },
+  aniversarioLingua: { ic: "🪅", nome: "Língua de Sogra", preco: 25, peso: 1, temporada: "aniversario", base: "desfib", desc: "um Choque de Tempo: +15 s no relógio da carta, na hora que quiser" },
+  // Temporadas (item 11, 20/11/2026): Carnaval na lojinha da Corrida
+  carnavalConfete: { ic: "🎊", nome: "Chuva de Confete", preco: 20, peso: 2, temporada: "carnaval", surpresa: ["corte", "desfib", "cofrinho"], desc: "um item sorteado (Passe Livre, Choque de Tempo ou Cofrinho)" },
+  carnavalBloco: { ic: "🥁", nome: "Bloco de Rua", preco: 25, peso: 2, temporada: "carnaval", base: "corte", qtd: 2, desc: "2 Passes Livres de uma vez (pula a sua vez sem gastar dica)" },
+  carnavalTrio: { ic: "🚚", nome: "Trio Elétrico", preco: 25, peso: 2, temporada: "carnaval", base: "congelar", max: 1, desc: "uma Pausa Dramática mais barata: o relógio geral para 15 s na próxima carta" },
+  carnavalFantasia: { ic: "🎭", nome: "Fantasia Premiada", preco: 20, peso: 1, temporada: "carnaval", base: "cofrinho", desc: "um Cofrinho: a sua próxima carta acertada vale +40 pontos" },
+  carnavalFrevo: { ic: "☂️", nome: "Passo de Frevo", preco: 25, peso: 1, temporada: "carnaval", base: "desfib", desc: "um Choque de Tempo: +15 s no relógio da carta, na hora que quiser" },
+  // Temporadas (item 11, 26/11/2026): Dia da Mulher na lojinha da Corrida
+  mulherBuque: { ic: "💐", nome: "Buquê Surpresa", preco: 20, peso: 2, temporada: "mulher", surpresa: ["corte", "desfib", "cofrinho"], desc: "um item sorteado (Passe Livre, Choque de Tempo ou Cofrinho)" },
+  mulherCaminho: { ic: "🛤️", nome: "Caminho Aberto", preco: 25, peso: 2, temporada: "mulher", base: "corte", qtd: 2, desc: "2 Passes Livres de uma vez (pula a sua vez sem gastar dica)" },
+  mulherPodio: { ic: "🏅", nome: "Pódio", preco: 25, peso: 2, temporada: "mulher", base: "congelar", max: 1, desc: "uma Pausa Dramática mais barata: o relógio geral para 15 s na próxima carta, todo mundo aplaudindo" },
+  mulherNobel: { ic: "🏆", nome: "Prêmio Nobel", preco: 20, peso: 1, temporada: "mulher", base: "cofrinho", desc: "um Cofrinho: a sua próxima carta acertada vale +40 pontos" },
+  mulherRecorde: { ic: "⏱️", nome: "Recorde Olímpico", preco: 25, peso: 1, temporada: "mulher", base: "desfib", desc: "um Choque de Tempo: +15 s no relógio da carta, na hora que quiser" },
 };
 const LOJA_TEMPORADA_VITRINE = 2; // itens da temporada que entram na vitrine, além dos de sempre
 const CORRIDA_VITRINE = 4;
@@ -1037,6 +1104,22 @@ const CAOS_COMENT_TOM = {
   anoNovoPeDireito: "elogio",
   anoNovoMeiaNoite: "elogio",
   anoNovoPromessa: "zoeira",
+  aniversarioBolo: "elogio",
+  aniversarioVelas: "elogio",
+  aniversarioBalao: "elogio",
+  aniversarioAtrasado: "zoeira",
+  aniversarioPenetra: "zoeira",
+  carnavalDestaque: "elogio",
+  carnavalFrente: "elogio",
+  carnavalBateria: "elogio",
+  carnavalNotaDez: "elogio",
+  carnavalPerdido: "zoeira",
+  // Dia da Mulher (26/11/2026): data de homenagem, então os 5 títulos são elogio (sem zoeira)
+  mulherBrilhante: "elogio",
+  mulherCaminho: "elogio",
+  mulherCraque: "elogio",
+  mulherCientista: "elogio",
+  mulherPersistente: "elogio",
   tartaruga: "zoeira",
   inimigo: "zoeira",
   notamestre: "elogio",

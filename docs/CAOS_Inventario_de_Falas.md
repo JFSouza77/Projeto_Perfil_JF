@@ -10,15 +10,15 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | `caosFalaAgendar` | 36 |
 | `caosFalarDepois` | 16 |
 | `admFala` | 5 |
-| `getRandomReaction` | 313 |
+| `getRandomReaction` | 314 |
 | `caosGerarFala` | 18 |
-| **Total de linhas com fala** | **429** |
+| **Total de linhas com fala** | **430** |
 
 ## js/03-regras.js (1)
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 606 | showToastMessage | - |
+| 608 | showToastMessage | - |
 
 ## js/04-turno-e-rodada.js (47)
 
@@ -180,23 +180,23 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 186 | getRandomReaction | - |
-| 187 | showToastMessage | - |
-| 286 | getRandomReaction | - |
-| 287 | showToastMessage | - |
-| 489 | caosFalarDepois | - |
-| 490 | showToastMessage | - |
-| 511 | getRandomReaction | - |
-| 517 | getRandomReaction | - |
-| 531 | getRandomReaction | - |
-| 603 | getRandomReaction | - |
+| 198 | getRandomReaction | - |
+| 199 | showToastMessage | - |
+| 298 | getRandomReaction | - |
+| 299 | showToastMessage | - |
+| 597 | caosFalarDepois | - |
+| 598 | showToastMessage | - |
+| 619 | getRandomReaction | - |
+| 625 | getRandomReaction | - |
+| 639 | getRandomReaction | - |
+| 711 | getRandomReaction | - |
 
 ## js/05y2-medalhas.js (2)
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 94 | getRandomReaction | - |
-| 95 | showToastMessage | - |
+| 95 | getRandomReaction | - |
+| 96 | showToastMessage | - |
 
 ## js/06-voz-som-vibracao.js (3)
 
@@ -393,7 +393,7 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 494 | getRandomReaction | iniciante.bilheteMestre |
 | 496 | getRandomReaction | iniciante.ajuda |
 
-## js/07-caos/07-momentos-da-partida.js (94)
+## js/07-caos/07-momentos-da-partida.js (95)
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
@@ -416,96 +416,97 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 141 | getRandomReaction | inicioJogadores |
 | 146 | getRandomReaction, caosGerarFala | inicioMestre, gerador inicioMestre |
 | 150 | getRandomReaction, caosGerarFala | inicioPrimeiro, gerador inicioPrimeiro |
-| 158 | getRandomReaction | - |
-| 165 | caosGerarFala | gerador inicioModo |
-| 166 | getRandomReaction | inicioModo |
-| 198 | getRandomReaction | - |
-| 199 | getRandomReaction | - |
-| 235 | showToastMessage | - |
-| 239 | showToastMessage, getRandomReaction | cartaIA |
-| 250 | getRandomReaction | - |
-| 252 | getRandomReaction | acido |
-| 263 | getRandomReaction | acido |
-| 269 | showToastMessage, getRandomReaction | apresentacaoInicial |
-| 275 | showToastMessage, getRandomReaction | lembreteNome |
-| 282 | showToastMessage, getRandomReaction | marco100 |
-| 284 | showToastMessage, getRandomReaction | marco77 |
-| 286 | showToastMessage, getRandomReaction | marco67 |
-| 288 | showToastMessage, getRandomReaction | marcosExatos |
-| 309 | showToastMessage, getRandomReaction | bolaCristalAnuncio |
-| 331 | getRandomReaction | previsaoCartaComResposta |
-| 332 | getRandomReaction | previsaoCartaSoCategoria |
-| 343 | showToastMessage | - |
-| 380 | caosGerarFala | gerador pensamento |
-| 392 | getRandomReaction | meta |
-| 393 | getRandomReaction | espontaneo |
-| 419 | getRandomReaction | - |
-| 421 | showToastMessage | - |
-| 444 | getRandomReaction | - |
-| 445 | showToastMessage | - |
-| 453 | showToastMessage | - |
-| 454 | getRandomReaction | oldSchool.nostalgia |
-| 461 | showToastMessage | - |
-| 487 | getRandomReaction | aviao |
-| 517 | getRandomReaction | bolaCristalAcerto |
-| 518 | getRandomReaction | bolaCristalErro |
-| 525 | getRandomReaction | previsaoCartaAcertou |
-| 526 | getRandomReaction | previsaoCartaPassouPerto |
-| 539 | getRandomReaction | surpresaAcertoDificil |
-| 562 | getRandomReaction | acertoVirada |
-| 564 | getRandomReaction | acertoRecuperacao |
-| 566 | getRandomReaction | acertoAposErro |
-| 568 | getRandomReaction | acertoComResposta |
-| 574 | getRandomReaction | acertoUmaDica |
-| 580 | getRandomReaction | acertoRidiculamenteRapido |
-| 585 | getRandomReaction | acertoCategoriaRapido |
-| 594 | getRandomReaction | acertoRidiculamenteRapido |
-| 595 | getRandomReaction | tempoPessoalRapido |
-| 597 | getRandomReaction | - |
-| 607 | getRandomReaction | acertoPorDicas |
-| 610 | getRandomReaction | sequenciaAcertos |
-| 613 | getRandomReaction | jogadorLento |
-| 619 | getRandomReaction | carinho |
-| 622 | getRandomReaction, caosGerarFala | jfAcerto, gerador jfAcerto |
-| 632 | getRandomReaction | cantada |
-| 635 | getRandomReaction | nivelZero.acerto |
-| 640 | getRandomReaction | reacaoCurta |
-| 658 | showToastMessage | - |
-| 665 | getRandomReaction | especialEscolhaJogador |
-| 667 | showToastMessage | - |
-| 674 | getRandomReaction | - |
-| 676 | showToastMessage | - |
-| 682 | getRandomReaction | especialAvancou |
-| 683 | getRandomReaction | especialVoltou |
-| 684 | showToastMessage | - |
-| 696 | getRandomReaction | especialPalpite |
-| 697 | getRandomReaction | especialPercaVez |
-| 698 | showToastMessage | - |
-| 702 | getRandomReaction | especialExpressSkip |
-| 703 | getRandomReaction | especialExpressReverse |
-| 704 | getRandomReaction | especialExpressBlock |
-| 705 | getRandomReaction | especialExpressSteal |
-| 720 | showToastMessage | - |
-| 761 | getRandomReaction | - |
-| 762 | getRandomReaction | iniciante.fimDasDicas |
-| 772 | showToastMessage | - |
-| 777 | showToastMessage, getRandomReaction | iniciante.acerto |
-| 807 | showToastMessage, getRandomReaction | iniciante.formatura |
+| 160 | getRandomReaction | - |
+| 161 | getRandomReaction | - |
+| 168 | caosGerarFala | gerador inicioModo |
+| 169 | getRandomReaction | inicioModo |
+| 201 | getRandomReaction | - |
+| 202 | getRandomReaction | - |
+| 238 | showToastMessage | - |
+| 242 | showToastMessage, getRandomReaction | cartaIA |
+| 253 | getRandomReaction | - |
+| 255 | getRandomReaction | acido |
+| 266 | getRandomReaction | acido |
+| 272 | showToastMessage, getRandomReaction | apresentacaoInicial |
+| 278 | showToastMessage, getRandomReaction | lembreteNome |
+| 285 | showToastMessage, getRandomReaction | marco100 |
+| 287 | showToastMessage, getRandomReaction | marco77 |
+| 289 | showToastMessage, getRandomReaction | marco67 |
+| 291 | showToastMessage, getRandomReaction | marcosExatos |
+| 312 | showToastMessage, getRandomReaction | bolaCristalAnuncio |
+| 334 | getRandomReaction | previsaoCartaComResposta |
+| 335 | getRandomReaction | previsaoCartaSoCategoria |
+| 346 | showToastMessage | - |
+| 383 | caosGerarFala | gerador pensamento |
+| 395 | getRandomReaction | meta |
+| 396 | getRandomReaction | espontaneo |
+| 422 | getRandomReaction | - |
+| 424 | showToastMessage | - |
+| 447 | getRandomReaction | - |
+| 448 | showToastMessage | - |
+| 456 | showToastMessage | - |
+| 457 | getRandomReaction | oldSchool.nostalgia |
+| 464 | showToastMessage | - |
+| 490 | getRandomReaction | aviao |
+| 520 | getRandomReaction | bolaCristalAcerto |
+| 521 | getRandomReaction | bolaCristalErro |
+| 528 | getRandomReaction | previsaoCartaAcertou |
+| 529 | getRandomReaction | previsaoCartaPassouPerto |
+| 542 | getRandomReaction | surpresaAcertoDificil |
+| 565 | getRandomReaction | acertoVirada |
+| 567 | getRandomReaction | acertoRecuperacao |
+| 569 | getRandomReaction | acertoAposErro |
+| 571 | getRandomReaction | acertoComResposta |
+| 577 | getRandomReaction | acertoUmaDica |
+| 583 | getRandomReaction | acertoRidiculamenteRapido |
+| 588 | getRandomReaction | acertoCategoriaRapido |
+| 597 | getRandomReaction | acertoRidiculamenteRapido |
+| 598 | getRandomReaction | tempoPessoalRapido |
+| 600 | getRandomReaction | - |
+| 610 | getRandomReaction | acertoPorDicas |
+| 613 | getRandomReaction | sequenciaAcertos |
+| 616 | getRandomReaction | jogadorLento |
+| 622 | getRandomReaction | carinho |
+| 625 | getRandomReaction, caosGerarFala | jfAcerto, gerador jfAcerto |
+| 635 | getRandomReaction | cantada |
+| 638 | getRandomReaction | nivelZero.acerto |
+| 643 | getRandomReaction | reacaoCurta |
+| 661 | showToastMessage | - |
+| 668 | getRandomReaction | especialEscolhaJogador |
+| 670 | showToastMessage | - |
+| 677 | getRandomReaction | - |
+| 679 | showToastMessage | - |
+| 685 | getRandomReaction | especialAvancou |
+| 686 | getRandomReaction | especialVoltou |
+| 687 | showToastMessage | - |
+| 699 | getRandomReaction | especialPalpite |
+| 700 | getRandomReaction | especialPercaVez |
+| 701 | showToastMessage | - |
+| 705 | getRandomReaction | especialExpressSkip |
+| 706 | getRandomReaction | especialExpressReverse |
+| 707 | getRandomReaction | especialExpressBlock |
+| 708 | getRandomReaction | especialExpressSteal |
+| 723 | showToastMessage | - |
+| 764 | getRandomReaction | - |
+| 765 | getRandomReaction | iniciante.fimDasDicas |
+| 775 | showToastMessage | - |
+| 780 | showToastMessage, getRandomReaction | iniciante.acerto |
+| 810 | showToastMessage, getRandomReaction | iniciante.formatura |
 
 ## js/07-caos/08-hall-janelas-e-pausa.js (10)
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 199 | showToastMessage | - |
-| 588 | caosGerarFala | gerador pausaHumor |
-| 589 | getRandomReaction | pausaHumor |
-| 618 | caosFalaAgendar | - |
-| 620 | caosGerarFala | gerador pausaVolta |
-| 621 | getRandomReaction | pausaVolta |
-| 645 | caosFalaAgendar | - |
-| 646 | getRandomReaction | retaFinal |
-| 665 | getRandomReaction | - |
-| 667 | showToastMessage | - |
+| 232 | showToastMessage | - |
+| 621 | caosGerarFala | gerador pausaHumor |
+| 622 | getRandomReaction | pausaHumor |
+| 651 | caosFalaAgendar | - |
+| 653 | caosGerarFala | gerador pausaVolta |
+| 654 | getRandomReaction | pausaVolta |
+| 678 | caosFalaAgendar | - |
+| 679 | getRandomReaction | retaFinal |
+| 698 | getRandomReaction | - |
+| 700 | showToastMessage | - |
 
 ## js/07-caos/09-vinculos-silencio-e-balao.js (22)
 
