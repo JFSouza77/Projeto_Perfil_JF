@@ -23,8 +23,11 @@ const IDADE_OPCOES = [
   { id: "menor", label: "🧒 Menos de 12", cor: "#22d3ee" },
   { id: "doze", label: "🧑 12 a 15", cor: "#a78bfa" },
   { id: "dezesseis", label: "🧔 16 ou mais", cor: "#f472b6" },
+  // 1.9.7 (pedido do JF, 27/11/2026; núcleo fala.porIdade): de 60 em diante o C.A.O.S. fala mais calmo e claro, e o
+  // Mestre ganha o tempo extra pra ler. Pra todo o resto (Modo C.A.O.S. 16+, bordão) vale como "16 ou mais".
+  { id: "sessenta", label: "👴 60 ou mais", cor: "#fbbf24" },
 ];
-const IDADE_RANK = { menor: 0, doze: 1, dezesseis: 2 };
+const IDADE_RANK = { menor: 0, doze: 1, dezesseis: 2, sessenta: 3 };
 function idadeNorm(v) {
   return v === "maior" ? "doze" : IDADE_RANK[v] !== undefined ? v : null;
 }
@@ -37,7 +40,8 @@ function idadeDaFaixa(f) {
   return f === "crianca" ? "menor" : f === "pre" ? "doze" : f === "jovem" || f === "adulto" ? "dezesseis" : null;
 }
 function jogador16(p) {
-  return !!p && idadeNorm(p.idade) === "dezesseis";
+  const v = idadeNorm(p && p.idade);
+  return !!p && (v === "dezesseis" || v === "sessenta");
 }
 /* Memória de idade por nick, neste dispositivo (pedido do JF): o jogo lembra a faixa de cada nome. Se um nome
    conhecido aparece numa faixa MAIOR do que a lembrada (ex.: era "menos de 12" e agora marcou "12 a 15"), pede
@@ -86,8 +90,16 @@ let mestreObsEstourou = false; // o tempo acabou: o veredito que vem logo depois
 function jogadorMenor12(p) {
   return !!p && (p.idade === "menor" || (CURRENT_FORMAT === "equipe" && p.ageBracket === "crianca"));
 }
+// 1.9.7 (pedido do JF, 27/11/2026): 60 ou mais
+function jogador60(p) {
+  return !!p && idadeNorm(p.idade) === "sessenta";
+}
+// tem alguém de 60+ na mesa: a voz do C.A.O.S. fica um pouco mais calma (núcleo: "calmo, claro, sem pressa")
+function mesaTem60() {
+  return typeof players !== "undefined" && Array.isArray(players) && players.some(jogador60);
+}
 function mestreTemAjuda(p) {
-  return !!p && (p.iniciante === true || jogadorMenor12(p) || p.mestreAjuda === true);
+  return !!p && (p.iniciante === true || jogadorMenor12(p) || jogador60(p) || p.mestreAjuda === true);
 }
 function mestreAtual() {
   return typeof mestreIndex === "number" && players[mestreIndex] ? players[mestreIndex] : null;
@@ -99,7 +111,7 @@ function mestreTempoExtra(kind) {
 }
 function mestreAjudaMotivo(p) {
   if (p.iniciante) return "iniciante";
-  if (jogadorMenor12(p)) return "idade";
+  if (jogadorMenor12(p) || jogador60(p)) return "idade"; // 1.9.7: 60+ também
   return "mesa";
 }
 
@@ -181,7 +193,7 @@ function idadeCompletarAntes(seguir) {
   );
   const fechar = caosModalRow();
   fechar.append(caosModalBtn("Voltar", "#444a66", () => ov.remove()));
-  box.append(caosModalMsg(`🎂 Qual a idade de ${(p.avatar ? p.avatar + " " : "") + p.name}?\n\nA idade é obrigatória: com menos de 12 o Mestre ganha tempo extra pra ler, e o Modo C.A.O.S. é só pra 16+.`), row, fechar);
+  box.append(caosModalMsg(`🎂 Qual a idade de ${(p.avatar ? p.avatar + " " : "") + p.name}?\n\nA idade é obrigatória: com menos de 12 ou 60 ou mais, o Mestre ganha tempo extra pra ler, e o Modo C.A.O.S. é só pra 16+.`), row, fechar);
   document.body.appendChild(ov);
 }
 

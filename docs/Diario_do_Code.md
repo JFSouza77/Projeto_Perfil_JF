@@ -14,7 +14,7 @@ segura**. Sem rodeio: é pra achar rápido.
 | Fala só no balão, sem voz | filtro "Mestre, leia" (`CAOS_MASTER_RE` / `caosSpeechIsForMaster` em 06-voz); `caosMudoCarta`; voz desligada; fala que foi pro celular (`redeFalaSoLonge`) |
 | Fala cortada / sumiu | `showToastMessage` (janela aberta > 25 s descarta), `caosToastBloquear` (orçamento, respiro, Corrida, Modo C.A.O.S.), `caosSilenced`; ver `caosEmit("cortada")` |
 | Cérebro (Inspetor) não muda de cor | a cor é a emoção que manda (`caosConsole.mostra`), não o vetor; estabilizador `CAOS_CONSOLE_CFG.dwell`; Sandbox usa `caosSandboxSentir` |
-| Nome conhecido (Anne, amigos) tratado como estranho | Anne desligada por padrão (`anneLigada`, Cérebro → Falas); emoji exclusivo (`sanitizePlayerAvatar`); `presenteDe`; `nickEmprestado` (nick com cadastro sem PIN) |
+| Nome conhecido (Anne, amigos) tratado como estranho | sem o cadastro confirmado (desde a 1.9.7 a Anne não tem mais liga/desliga); emoji exclusivo (`sanitizePlayerAvatar`); `presenteDe`; `nickEmprestado` (nick com cadastro sem PIN) |
 | Pergunta do cadastro / PIN | `contaAoCadastrar` e `contaOferecer` (05t-contas) |
 | Botão que pisca demais / "autoritário" | `.guia-pulso` (10-rede.css, guia da mesa), `.cta-pulsa`, `.number-btn.pedida` |
 | Mesa travada, ninguém sabe o que fazer | guia da mesa (16-guia-da-mesa.js): `guiaQuemAge`, `guiaTick`, `guiaCutucar` |
@@ -30,8 +30,51 @@ segura**. Sem rodeio: é pra achar rápido.
 | Teste falhou logo depois de mudar fala | inventário desatualizado: `node ferramentas/caos_inventario.js`; contagens fixas em `teste_guia` e afins |
 | Voz nova do C.A.O.S. robótica no iPhone | WebAudio parado: `audioDestravarNoToque` (06-voz) destrava com efeitos OU voz ligada; `vozNuvemUsa` |
 | Avatar do C.A.O.S. não aparece | opção `acessCfg.avatar` (Acessibilidade), só no Modo C.A.O.S.: `caosAvatarNaHora` (17b-avatar-mesa) |
+| Botão da página das contas ou dos reportes dá `{"erro":"origem"}` | ordem no `atender` (servidor/worker.js): rota com senha tem que vir **antes** do `if (!ok)` da origem; e o JF precisa ter feito o deploy |
+| Esqueceu a senha do ADM | `ADM_CRIADOR_HASH` (01-configuracao); o JF gera o código novo em `ferramentas/codigo_adm.html` e manda só o código |
+| "Rapaz…" em lugar estranho | `caosBordao` (08-hall): filtros de fala curta, pergunta, interjeição e fala que já chama alguém |
+| Voz do C.A.O.S. mais lenta que o normal | alguém de 60+ na mesa: `caosVelVoz` (06-voz) e `mesaTem60` (05d) |
 
 ## Registro (mais novo primeiro)
+
+### 27/11/2026 · botão de idade "60 ou mais" (pedido do JF)
+
+- **Anne como os outros jogadores (pedido do JF, 27/11).** O conteúdo dela (cor Princesa, 👸, falas bonitas) fica, mas
+  sem o botão do Cérebro e sem liga/desliga: `anneLigada()` vale sempre e o tratamento só vem com o cadastro, como o JF
+  e os amigos. 7 falas que ainda ligavam os dois (apelidos da Anne, `anneChegou` com o JF, `jfFim`) foram reescritas
+  como disputa de mesa, sem casal. Teste: `teste_acoes`, `teste_identidade`, `teste_afeto`, `teste_cadastro_caos`.
+  Obs.: "o novo host joga com o próprio jogador" no `teste_rede` falhou 1 vez em 3, também sem a mudança (intermitente).
+
+- **PIN zerado e a janela do nick sem saída (print do JF, 27/11).** Depois de zerar o PIN do JF, a janela "esse nick tem
+  cadastro" pedia o PIN; o servidor respondia "sem PIN" e o aviso mandava tocar em 🔐 Cadastro, mas voltava pra mesma
+  janela. Mudou: em `contaExigirPin`, o "sem PIN" já abre a criação do PIN novo (`contaAbrir`) e, criado, o jogador
+  entra. Teste: `teste_contas` com o servidor local, `teste_cadastro_caos`.
+
+- **Pergunta das Travas ADM (print do JF, 27/11).** O JF e a Anne terminaram: a pergunta "Deseja aplicar as Travas
+  ADM?" não deve mais aparecer. Mudou: `redeTravasPerguntar` só segue (sem pergunta), a trava do JF continua sempre
+  ativa, e a chave `ANNE_LIGADA_KEY` mudou de nome pra zerar o "Sim" que ficou gravado nos aparelhos. A Anne entra como
+  jogadora comum (com cadastro, se quiser); o conteúdo dela só liga pelo botão do Cérebro. Teste: `teste_acoes`.
+
+- **Idade 60+ (núcleo `fala.porIdade`, ok do JF em 27/11).** O núcleo pede o C.A.O.S. calmo, claro e sem pressa com
+  quem tem 60 ou mais, e o Perfil só tinha 3 faixas. Mudou: `IDADE_OPCOES` ganhou "👴 60 ou mais" (`sessenta`), que
+  vale como 16+ pro Modo C.A.O.S. e pro bordão (`jogador16`); `jogador60` dá o tempo extra de Mestre; com alguém de
+  60+ na mesa, `caosVelVoz` deixa a voz ~8% mais calma. Teste: `teste_idade60` (e `teste_idade`, `teste_bordao`).
+
+### 26/11/2026 · fim de semana do Perfil (núcleo 2.0.1)
+
+- **"Rapaz… JF, ..." (pedido do JF, 25/11, trazido pelo Wally).** O bordão não pode vir antes do nome: é chamar a
+  pessoa duas vezes. Mudou: `caosBordao` pula a fala que já começa com o nome de alguém da mesa ou com um apelido seguido
+  de vírgula. O bordão continua sempre com reticências. Teste: `teste_bordao`.
+
+### 24/11/2026 · 1.9.6.1 · senha do ADM e PIN do JF esquecidos (relato do JF, com prints)
+
+- **Senha do ADM.** O JF esqueceu a senha e o jogo só guarda o código dela (`ADM_CRIADOR_HASH`). Mudou: a página
+  `ferramentas/codigo_adm.html` gera o código no próprio aparelho, sem enviar nada; o JF mandou só o código e saiu a
+  1.9.6.1 com ele. O Code nunca viu a senha.
+- **"Zerar PIN" dava `{"erro":"origem"}`.** Causa: no `atender` (servidor/worker.js) as rotas `/contas*` ficavam depois da
+  checagem de origem, e o botão da própria página manda o pedido com a origem do workers.dev. Mudou: `/contas*` subiu pra
+  antes da checagem, como os reportes (continua protegido pela senha). O JF fez o deploy pelo PC. Teste: wrangler local,
+  senha certa zera e senha errada é recusada.
 
 ### 20/11/2026 · 1.9.6 · pendências da semana (pedido do JF: "o que tiver pendente, faça hoje")
 

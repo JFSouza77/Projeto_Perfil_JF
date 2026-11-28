@@ -2,34 +2,16 @@
  * 3. REGRAS (VITÓRIA, PONTOS, JOIAS, TABULEIRO, BARALHO, EQUIPES)
  * ====================================================================== */
 
-// Desligado (padrão, decisão do JF), ninguém é reconhecido como a Anne: cor, emoji, falas e memória ficam parados.
-let anneLigadaCache = null;
-// Online: no celular convidado vale o que o host da sala decidiu (chega no retrato e na escolha; não grava)
+// 1.9.7 (pedido do JF, 27/11/2026): o conteúdo da Anne (cor Princesa, emoji 👸, falas bonitas) fica, sem botão de
+// liga/desliga e sem a pergunta das Travas ADM. Ela é tratada como os outros jogadores que o jogo conhece: o tratamento
+// só vale quando o nick dela entra com o cadastro (PIN), como o JF e os amigos (isAnneName / contaNomeComDono). As
+// funções antigas ficam com o mesmo nome porque a rede e os testes ainda chamam; agora não mudam nada.
 let anneDaSalaValor = null;
-function anneDaSala(v) {
-  anneDaSalaValor = typeof v === "boolean" ? v : null;
-}
+function anneDaSala() {}
 function anneLigada() {
-  if (anneDaSalaValor !== null) return anneDaSalaValor;
-  if (anneLigadaCache === null) {
-    try {
-      anneLigadaCache = JFStore.getItem(ANNE_LIGADA_KEY) === "1";
-    } catch (e) {
-      return false; // ainda carregando: fica desligado
-    }
-  }
-  return anneLigadaCache;
+  return true;
 }
-function anneLigar(sim) {
-  anneLigadaCache = !!sim;
-  try {
-    JFStore.setItem(ANNE_LIGADA_KEY, sim ? "1" : "0");
-  } catch (e) {}
-  // host com sala aberta: os celulares recebem a mudança na hora
-  try {
-    if (typeof rede !== "undefined" && rede && rede.papel === "host") redeHostPublicar(true);
-  } catch (e) {}
-}
+function anneLigar() {}
 // 06/11/2026 (pedido do JF): quem o jogo conhece (JF, Anne, amigos com presente, família) é reconhecido pelo
 // CADASTRO, não só pelo nome digitado. As versões "NomeBruto" olham só o nome (formulário do cadastro, sugestões);
 // isJfName / isAnneName / presenteDe / sobrinhoInfo só dizem sim quando o dono confirmou (contaNomeComDono, 05t).

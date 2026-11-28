@@ -2760,7 +2760,7 @@ const REDE_ESPERA_DICAS = [
   "Pense em voz baixa: se você falar o chute alto fora da vez, entrega a resposta pros outros.",
   "Dica boa é dica comparada: junte as pistas antes de chutar.",
   "Ficou na dúvida do que tocar? Olhe o topo da tela: ele mostra de quem é a vez.",
-  "Quem tem menos de 12 anos ganha tempo extra pra ler quando for o Mestre.",
+  "Quem tem menos de 12 ou 60 anos ou mais ganha tempo extra pra ler quando for o Mestre.",
   "No tabuleiro, cada ponto vira uma casa. Chegue no fim primeiro e vença.",
   "Dá pra pausar a partida pelo botão ⏸️. O tempo congela pra todo mundo.",
   "Viu uma carta com algo errado? Na pausa tem o botão de reportar pro JF consertar.",
@@ -3246,7 +3246,7 @@ function redeEscolhaDesenhar(box, sala) {
       <div class="rede-rot">😀 Emoji</div><div class="avatar-picker-row rede-paleta">${emojis}</div>
       <div class="rede-rot">🎭 Zoeira · Como o C.A.O.S. pode zoar você?</div><div class="color-picker-row rede-paleta tem-escolha">${humores}</div>
       ${hAtual && hAtual.dica ? `<div class="rede-dica-humor">${escapeHtml(hAtual.dica)}</div>` : ""}
-      <div class="rede-rot">${cad.equipe ? "🎂 Faixa etária <small>(obrigatória)</small>" : "🎂 Idade <small>(obrigatória · com menos de 12, ganha tempo extra pra ler quando for o Mestre; o Modo C.A.O.S. é 16+)</small>"}</div><div class="color-picker-row rede-paleta${r.idade ? " tem-escolha" : ""}">${idades}</div>
+      <div class="rede-rot">${cad.equipe ? "🎂 Faixa etária <small>(obrigatória)</small>" : "🎂 Idade <small>(obrigatória · com menos de 12 ou 60+, ganha tempo extra pra ler quando for o Mestre; o Modo C.A.O.S. é 16+)</small>"}</div><div class="color-picker-row rede-paleta${r.idade ? " tem-escolha" : ""}">${idades}</div>
       ${rede.erroCadastro ? `<div class="rede-aviso">${escapeHtml(rede.erroCadastro)}</div>` : ""}
       <button type="button" class="btn-start btn-neo neo-solid neo-still" id="redePedir" style="--mc:#22d3ee; --mc-glow:rgba(34,211,238,0.35);">🙋 Pedir pra entrar</button>
     </div>`;
@@ -3530,29 +3530,14 @@ function redePartidaOnlineOrfa() {
   ov.querySelector("#redeOrfaOk").addEventListener("click", () => redeEncerrarOnline("A sala da partida online foi encerrada."));
   document.body.appendChild(ov);
 }
-// Pedido do JF: ao abrir a sala, o host decide as Travas ADM da partida. Aplicar as travas = travar os nicks
-// de dono (hoje o da Anne: o mesmo botão do Cérebro fica ligado e o C.A.O.S. reconhece a Anne); Não = desligado.
-// O JF segue sempre reconhecido. Vale também nos celulares (vai no retrato e na escolha).
-// Vale também na partida local: a pergunta aparece ao tocar em Jogar; respondida, abrir a sala não pergunta de novo.
+// 1.9.7 (pedido do JF, 27/11/2026): a pergunta das Travas ADM saiu. A trava do JF vale sempre (ele segue reconhecido
+// em toda partida) e a Anne virou jogadora como as outras: pra ter o tratamento dela, cadastra o nick com PIN, como todo
+// mundo. O conteúdo antigo dela só liga pelo botão do Cérebro (ADM). A função fica, com o mesmo nome, porque a partida
+// local e a sala ainda passam por aqui antes de seguir; agora ela só segue, sem perguntar nem mexer na Anne.
 let travasRespondidas = false;
-function redeTravasPerguntar(seguir, deNovo) {
-  if (travasRespondidas && !deNovo) return seguir();
-  document.getElementById("redeTravas")?.remove();
-  const { ov, box } = caosModalBase();
-  ov.id = "redeTravas";
-  const fim = (travar) => {
-    ov.remove();
-    travasRespondidas = true;
-    anneLigar(travar);
-    try {
-      caosLog("adm", "Travas ADM " + (travar ? "aplicadas" : "não aplicadas") + " na sala");
-    } catch (e) {}
-    seguir();
-  };
-  const row = caosModalRow();
-  row.append(caosModalBtn("Não", "#444a66", () => fim(false)), caosModalBtn("🔒 Sim, aplicar", "#dc2626", () => fim(true)));
-  box.append(caosModalMsg("🛡️ Deseja aplicar as Travas ADM nessa partida?!"), row);
-  document.body.appendChild(ov);
+function redeTravasPerguntar(seguir) {
+  travasRespondidas = true;
+  seguir();
 }
 function redePerguntarSalaTalvez() {
   try {

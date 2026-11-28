@@ -2,7 +2,7 @@
 // Teste do bordão "Rapaz…" (1.9.6, núcleo 2.0.0 do C.A.O.S.) e do destrave do áudio com a voz ligada. Confere:
 //   1. mesa só de 12+ com idade marcada: às vezes a fala começa com "Rapaz…", no máximo 3 por partida;
 //   2. Júnior, criança (menos de 12) ou idade sem marcar: nunca;
-//   3. fala curta, pergunta ou que já começa com interjeição: nunca;
+//   3. fala curta, pergunta, que já começa com interjeição ou chamando alguém (núcleo 2.0.1): nunca;
 //   4. sem casal JF + Anne: a chave caosCasal fica desligada e os bancos de casal sumiram;
 //   5. efeitos desligados e voz ligada: o toque ainda destrava o áudio (a voz nova toca pelo WebAudio).
 //   node ferramentas/teste_bordao.js [mestre.html]
@@ -51,6 +51,15 @@ const ARQ = acharMestre(process.argv[2]);
     out.curta = caosBordao("[C.A.O.S.] Boa jogada.") === "[C.A.O.S.] Boa jogada.";
     out.pergunta = caosBordao("[C.A.O.S.] Alguém aqui sabe o que está fazendo nessa mesa hoje?").indexOf("Rapaz") === -1;
     out.interjeicao = caosBordao("[C.A.O.S.] Eita, essa resposta foi tão rápida que eu nem processei.").indexOf("Rapaz") === -1;
+    // núcleo 2.0.1: fala que já chama alguém (nome da mesa ou apelido com vírgula) fica sem bordão
+    Math.random = () => 0;
+    mesa(["dezesseis", "dezesseis", "dezesseis"]);
+    caosBordaoReset();
+    stats.totalDrawn = 60;
+    out.semNome =
+      caosBordao("[C.A.O.S.] J1 acertou de novo e a mesa inteira já está desconfiada disso.").indexOf("Rapaz") === -1 &&
+      caosBordao("[C.A.O.S.] Campeã, essa resposta veio antes de eu terminar de ler a dica.").indexOf("Rapaz") === -1;
+    out.reticencias = caosBordao(fala).indexOf("[C.A.O.S.] Rapaz… ") === 0;
     Math.random = () => 0.99;
     caosBordaoReset();
     out.raro = caosBordao(fala) === fala; // sorteio alto: sem bordão
@@ -96,6 +105,8 @@ const ARQ = acharMestre(process.argv[2]);
     ["No Júnior: nunca", r.junior, {}],
     ["Fala curta, pergunta ou com interjeição: sem bordão", r.curta && r.pergunta && r.interjeicao, r],
     ["Sorteio alto: sem bordão (é de vez em quando)", r.raro, {}],
+    ["Fala que já chama alguém pelo nome ou apelido: sem bordão", r.semNome, {}],
+    ["Bordão sempre com reticências (\"Rapaz…\")", r.reticencias, {}],
     ["Sem casal JF + Anne: chave desligada e bancos de casal fora", r.semCasal, {}],
     ["Efeitos desligados e voz ligada: o toque ainda destrava o áudio", r.destrave, {}],
   ];

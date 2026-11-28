@@ -172,7 +172,6 @@ const PRESENTE_FORA_JUNIOR = ["😈", "💣", "🥷", "⚔️"];
 const AVATAR_EXCLUSIVE = ["😎", "👸"].concat(...PRESENTES.map((p) => p.emojis));
 const OWNER_ANNE_RE = /^an{1,2}(e|izinha|izinho)(zinha|zinho|zona)?([^a-z]|$)/;
 // Conteúdo ligado à Anne (cor, emoji, falas, memória do C.A.O.S.): liga/desliga no Cérebro (aba Falas). Desligado por padrão.
-const ANNE_LIGADA_KEY = "perfil5_anne_ligada";
 const OWNER_JF_RE = /^jf([^a-z]|$)/;
 const CATEGORY_LABELS = {
   ANO: "um ano",

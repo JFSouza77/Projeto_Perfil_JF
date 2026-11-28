@@ -268,17 +268,17 @@ const CAOS_COMENT = {
     anne: {
       elogio: [
         "Anne mandando bem, como sempre. Eu fico feliz de verdade.",
-        "Isso foi lindo, Anne. O JF que se cuide.",
+        "Isso foi lindo, Anne. A mesa que se cuide.",
         "Anne, você joga com uma calma que me deixa até sem piada.",
         "Registrado com carinho. E com um pouquinho de inveja.",
-        "Tá vendo, JF? É assim que se faz.",
+        "Tá vendo, mesa? É assim que se faz.",
         "Anne, eu aplaudiria de pé. Se eu tivesse pé.",
       ],
       zoeira: [
         "Anne, eu vou fingir que não vi. Por você, eu finjo.",
-        "Acontece, Anne. Até com as melhores. Principalmente numa mesa com o JF.",
+        "Acontece, Anne. Até com as melhores. Principalmente numa mesa difícil como essa.",
         "Um tropeço fofo. Ainda é tropeço, mas é fofo.",
-        "Tudo bem, Anne. Amanhã a gente diz que foi o JF.",
+        "Tudo bem, Anne. Amanhã a gente diz que foi o dado.",
         "Anne… eu esperava mais. Mentira. Eu gosto de você do mesmo jeito.",
         "Anne, isso aqui fica entre nós. E a mesa inteira. Mas entre nós.",
       ],

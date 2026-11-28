@@ -18,7 +18,7 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 606 | showToastMessage | - |
+| 588 | showToastMessage | - |
 
 ## js/04-turno-e-rodada.js (47)
 
@@ -106,8 +106,8 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 260 | caosFalaAgendar | - |
-| 307 | showToastMessage | - |
+| 272 | caosFalaAgendar | - |
+| 319 | showToastMessage | - |
 
 ## js/05g-acoes.js (2)
 
@@ -202,9 +202,9 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
-| 415 | caosFalaAgendar, getRandomReaction | vozCalada |
-| 595 | getRandomReaction | vozRecusada |
-| 597 | showToastMessage | - |
+| 420 | caosFalaAgendar, getRandomReaction | vozCalada |
+| 600 | getRandomReaction | vozRecusada |
+| 602 | showToastMessage | - |
 
 ## js/07-caos/01-nucleo-e-falas.js (62)
 
@@ -497,15 +497,15 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | Linha | Chamada | Banco ou gerador |
 |---|---|---|
 | 199 | showToastMessage | - |
-| 588 | caosGerarFala | gerador pausaHumor |
-| 589 | getRandomReaction | pausaHumor |
-| 618 | caosFalaAgendar | - |
-| 620 | caosGerarFala | gerador pausaVolta |
-| 621 | getRandomReaction | pausaVolta |
-| 645 | caosFalaAgendar | - |
-| 646 | getRandomReaction | retaFinal |
-| 665 | getRandomReaction | - |
-| 667 | showToastMessage | - |
+| 594 | caosGerarFala | gerador pausaHumor |
+| 595 | getRandomReaction | pausaHumor |
+| 624 | caosFalaAgendar | - |
+| 626 | caosGerarFala | gerador pausaVolta |
+| 627 | getRandomReaction | pausaVolta |
+| 651 | caosFalaAgendar | - |
+| 652 | getRandomReaction | retaFinal |
+| 671 | getRandomReaction | - |
+| 673 | showToastMessage | - |
 
 ## js/07-caos/09-vinculos-silencio-e-balao.js (22)
 
@@ -580,5 +580,5 @@ e o funil anota tudo em `caosEmit` (`src/js/07-caos/15-cerebro-sombra.js`).
 | 463 | getRandomReaction | nickRepertorio |
 | 464 | getRandomReaction | nickSugestaoAceita |
 | 508 | getRandomReaction | botaoEncerrar |
-| 773 | showToastMessage | - |
-| 774 | getRandomReaction | inicioInvalido |
+| 770 | showToastMessage | - |
+| 771 | getRandomReaction | inicioInvalido |
