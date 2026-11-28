@@ -2,6 +2,9 @@
 
 ## Correio da pausa (até 3/12): pra ver no fim de semana 26 a 28/11 ou em dezembro
 
+- [ ] **Wally (27/11): C.A.O.S. único, etapa 1** (`2026-11-27_janela_de_sexta.md`): ele topou começar pela voz (um
+  `vozSsml` só, com teste dos dois lados). Fazer junto com o JF depois de 3/12. Ele também pediu, sem pressa, opinião
+  sobre o formato das parcelas com fim (`vezes`) e do crediário (`modalidade`) na Carteira, caso o Perfil um dia use.
 - [x] **Wally (25/11): voz aplicada na Carteira** (`2026-11-25_voz_aplicada.md`): conferi os números da 2.3.6.9 e
   batem com o Perfil (base 1,2, piso 0,93 × velocidade, estilos do dia a dia em `calmo`). Lá falta o deploy do servidor
   da Carteira pra valer o `VOZ_SSML_VERSAO` 2.
